@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Life-cycle Insights — worldenergydata</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#eef2f6; --panel:#fff; --panel-2:#f6f9fc; --ink:#0c1a28; --muted:#5a6b7b; --line:#d6e0ea;
+    --accent:#d9822b; --accent-ink:#7a4410; --done:#1d5fa8; --done-deep:#10365e; --future:#a9bccd;
+    --good:#2e9e6b; --alert:#c0453b;
+    --shadow:0 1px 2px rgba(12,26,40,.06),0 8px 24px rgba(12,26,40,.06);
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#0a141f;--panel:#10202f;--panel-2:#0d1b28;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;
+    --accent:#f0a24a;--accent-ink:#f7c489;--done:#4d91d6;--done-deep:#2f6ba8;--future:#3a5064;
+    --good:#43b982;--alert:#e0685e;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);}}
+  :root[data-theme="dark"]{--bg:#0a141f;--panel:#10202f;--panel-2:#0d1b28;--ink:#e8eef4;--muted:#8ca0b3;
+    --line:#24384b;--accent:#f0a24a;--accent-ink:#f7c489;--done:#4d91d6;--done-deep:#2f6ba8;--future:#3a5064;
+    --good:#43b982;--alert:#e0685e;}
+  :root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel-2:#f6f9fc;--ink:#0c1a28;--muted:#5a6b7b;
+    --line:#d6e0ea;--accent:#d9822b;--accent-ink:#7a4410;--done:#1d5fa8;--done-deep:#10365e;--future:#a9bccd;
+    --good:#2e9e6b;--alert:#c0453b;}
+  *{box-sizing:border-box} body{margin:0}
+  .wrap{background:var(--bg);color:var(--ink);font-family:var(--sans);padding:clamp(16px,3vw,40px);min-height:100%}
+  .sheet{max-width:1180px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .head{padding:clamp(18px,2.4vw,32px);border-bottom:1px solid var(--line)}
+  .crumb{font-family:var(--mono);font-size:11px;color:var(--muted);margin:0 0 12px}
+  .crumb a{color:var(--accent-ink);text-decoration:none} @media(prefers-color-scheme:dark){.crumb a{color:var(--accent)}}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .title{font-size:clamp(26px,4vw,42px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.03}
+  .thesis{color:var(--ink);margin:14px 0 0;font-size:16.5px;max-width:74ch;line-height:1.5}
+  .thesis b{color:var(--accent-ink)} @media(prefers-color-scheme:dark){.thesis b{color:var(--accent)}}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+  .metric{background:var(--panel-2);padding:16px 20px}
+  .metric .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .metric .v{font-family:var(--mono);font-size:23px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+  .metric .v small{font-size:12px;color:var(--muted);font-weight:500}
+  .body{padding:clamp(18px,2.4vw,32px);display:grid;gap:34px}
+  .lane-label{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;font-weight:600}
+  .lane-label b{color:var(--accent-ink)} @media(prefers-color-scheme:dark){.lane-label b{color:var(--accent)}}
+  .scrollx{overflow-x:auto;padding-bottom:6px}
+  .spine{display:flex;min-width:760px;gap:5px}
+  .stage{position:relative;flex:1 1 0;min-width:132px;padding:16px 16px 16px 28px;color:#fff;text-decoration:none;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,0 100%,18px 50%);
+    background:var(--done);transition:transform .14s,filter .14s}
+  .stage:first-child{padding-left:18px;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 50%,calc(100% - 18px) 100%,0 100%)}
+  .stage:nth-child(2){background:var(--done-deep)}
+  .stage:nth-child(3){background:var(--good)}
+  .stage:nth-child(4){background:var(--accent);color:#1c1206}
+  .stage:nth-child(5){background:var(--alert)}
+  .stage:hover{transform:translateY(-3px);filter:brightness(1.06)}
+  .stage .pk{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.82;margin-bottom:3px}
+  .stage .pn{font-weight:800;font-size:16px;line-height:1.1}
+  .stage .ps{font-size:11.5px;opacity:.92;margin-top:5px;line-height:1.25}
+  .stage .go{font-family:var(--mono);font-size:11px;margin-top:9px;opacity:.9}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .card{display:flex;flex-direction:column;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;
+    padding:18px 18px 16px;text-decoration:none;color:inherit;transition:transform .14s,border-color .14s,box-shadow .14s}
+  .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--done) 55%,var(--line));box-shadow:var(--shadow)}
+  .card .tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--done);margin-bottom:7px}
+  @media(prefers-color-scheme:dark){.card .tag{color:var(--accent)}}
+  .card h3{margin:0 0 6px;font-size:16px;font-weight:700;line-height:1.25}
+  .card .num{font-family:var(--mono);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;margin:2px 0 8px}
+  .card p{margin:0;color:var(--muted);font-size:13.5px;flex:1;line-height:1.45}
+  .card .go{font-family:var(--mono);font-size:12px;margin-top:12px;color:var(--done);font-weight:600}
+  @media(prefers-color-scheme:dark){.card .go{color:var(--accent)}}
+  .note{color:var(--muted);font-size:13px;line-height:1.5;background:var(--panel-2);border:1px solid var(--line);
+    border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px}
+  .foot{border-top:1px solid var(--line);padding:18px clamp(18px,2.4vw,32px);display:flex;flex-wrap:wrap;
+    gap:6px 18px;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--mono)}
+  .foot a{color:var(--accent-ink)} @media(prefers-color-scheme:dark){.foot a{color:var(--accent)}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="sheet">
+  <header class="head">
+    <p class="crumb"><a href="index.html">&larr; Capabilities</a> &middot; <a href="../">All data outputs</a></p>
+    <p class="eyebrow">Life-cycle insights &middot; hub</p>
+    <h1 class="title">One well, one life-cycle &mdash; the deterministic insight at every stage</h1>
+    <p class="thesis">Every offshore well runs the same arc: <b>Drill &rarr; Complete &rarr; Produce &rarr; Workover &rarr; Decommission</b>.
+    Below, each stage links a single front-door analysis &mdash; one thesis, one number, computed from public BSEE data.
+    The arc opens on <b>11,124 rig-days</b> of Gulf-of-Mexico Lower-Tertiary drilling and closes on <b>$65&ndash;73B</b> of
+    latent plug-and-abandonment liability still on the books.</p>
+  </header>
+  <div class="metrics">
+    <div class="metric"><div class="k">Drilled (GoM LT)</div><div class="v">11,124 <small>rig-days</small></div></div>
+    <div class="metric"><div class="k">Latent P&amp;A liability</div><div class="v">$65&ndash;73 <small>B</small></div></div>
+    <div class="metric"><div class="k">Deepwater access gap</div><div class="v">4.4&times; <small>demand / units</small></div></div>
+    <div class="metric"><div class="k">Atlas coverage</div><div class="v">205 <small>countries</small></div></div>
+  </div>
+  <div class="body">
+
+    <section>
+      <p class="lane-label">The life-cycle spine &middot; <b>each stage links its front door</b></p>
+      <div class="scrollx"><div class="spine">
+        <a class="stage" href="../drilling-insights.html">
+          <div class="pk">Stage 1</div><div class="pn">Drill</div>
+          <div class="ps">Learning curve &mdash; 184 wellbores, median 46.5 d</div><div class="go">Open &rarr;</div></a>
+        <a class="stage" href="../completion/">
+          <div class="pk">Stage 2</div><div class="pn">Complete</div>
+          <div class="ps">Drilling &amp; completion days &mdash; 217 wells / 12 fields</div><div class="go">Open &rarr;</div></a>
+        <a class="stage" href="../benchmark.html">
+          <div class="pk">Stage 3</div><div class="pn">Produce</div>
+          <div class="ps">Well benchmarking &mdash; cross-field, 2010&ndash;latest</div><div class="go">Open &rarr;</div></a>
+        <a class="stage" href="../intervention-db/intervention-stats-brief.html#serviceability">
+          <div class="pk">Stage 4</div><div class="pn">Workover</div>
+          <div class="ps">Intervention access &mdash; 4.4&times; deepwater gap</div><div class="go">Open &rarr;</div></a>
+        <a class="stage" href="../decommissioning/pa-liability-wave.html">
+          <div class="pk">Stage 5</div><div class="pn">Decommission</div>
+          <div class="ps">P&amp;A liability wave &mdash; 8,161 unplugged</div><div class="go">Open &rarr;</div></a>
+      </div></div>
+    </section>
+
+    <section>
+      <p class="lane-label">Stage detail &middot; <b>one thesis, one number</b></p>
+      <div class="cards">
+        <a class="card" href="../drilling-insights.html">
+          <div class="tag">Drill &middot; BSEE WAR</div>
+          <h3>GoM Lower-Tertiary drilling learning curve</h3>
+          <div class="num">11,124 rig-days &middot; 184 wells</div>
+          <p>Median 46.5 rig-days per development wellbore. Each extra 1,000 ft of TVD adds only ~3.3 days and depth
+          explains just 11% of the spread &mdash; field execution and hole trouble, not geology, drive the curve.</p>
+          <div class="go">Open drilling insights &rarr;</div></a>
+        <a class="card" href="../completion/">
+          <div class="tag">Complete &middot; BSEE WAR</div>
+          <h3>Drilling &amp; completion days</h3>
+          <div class="num">217 wells &middot; 12 fields</div>
+          <p>Well-Activity-Report-derived drilling and completion durations across the twelve Lower-Tertiary fields,
+          with medians by field &mdash; the existing completion surface.</p>
+          <div class="go">Open completion report &rarr;</div></a>
+        <a class="card" href="../benchmark.html">
+          <div class="tag">Produce &middot; BSEE OGOR-A</div>
+          <h3>Lower-Tertiary well benchmarking</h3>
+          <div class="num">2010&ndash;latest</div>
+          <p>Cross-field per-well production benchmarking on the same frozen data window as the sanctioned V30
+          economics &mdash; the existing benchmark surface.</p>
+          <div class="go">Open benchmarking &rarr;</div></a>
+        <a class="card" href="../intervention-db/intervention-stats-brief.html#serviceability">
+          <div class="tag">Workover &middot; well &times; fleet</div>
+          <h3>Subsea intervention serviceability</h3>
+          <div class="num">270 wells &middot; ~3 units &middot; 4.4&times;</div>
+          <p>270 subsea wells concentrate in the 5,000&ndash;10,000 ft band against only ~3 GoM-resident heavy
+          intervention units &mdash; a 4.4&times; forward access-gap ratio and ~$1.0B/yr of exposure.</p>
+          <div class="go">Open intervention brief &rarr;</div></a>
+        <a class="card" href="../decommissioning/pa-liability-wave.html">
+          <div class="tag">Decommission &middot; BSEE wells</div>
+          <h3>GoM P&amp;A liability wave</h3>
+          <div class="num">8,161 unplugged &middot; $65&ndash;73B</div>
+          <p>8,161 boreholes are drilled but not yet permanently plugged; at the model's $8&ndash;9M/well shelf cost that
+          is $65&ndash;73B of latent liability, and the 3,288 already-temporarily-abandoned wells ($26B) are the imminent,
+          Idle-Iron-overdue crest.</p>
+          <div class="go">Open P&amp;A liability wave &rarr;</div></a>
+      </div>
+    </section>
+
+    <section>
+      <p class="lane-label">Cross-cutting comparisons &middot; <b>orthogonal to the spine</b></p>
+      <div class="cards">
+        <a class="card" href="../region-devtype-comparison.html">
+          <div class="tag">Region &times; development-type</div>
+          <h3>Dry-tree vs wet-tree by water depth</h3>
+          <div class="num">80% &rarr; 20%</div>
+          <p>Deepwater is wet-tree country: past ~1500 m the dry-tree share of producing trees collapses from 80% on
+          the shallow shelf to 20% in ultra-deepwater.</p>
+          <div class="go">Open region &times; dev-type &rarr;</div></a>
+        <a class="card" href="../all-regions-atlas.html">
+          <div class="tag">All-regions field atlas</div>
+          <h3>Honest coverage map with density badges</h3>
+          <div class="num">205 countries</div>
+          <p>Reference-depth coverage across 205 countries, the Gulf of Mexico at full life-cycle depth &mdash; the honest
+          map: 1 RICH region, 78 SAMPLE-reference, 5 ROADMAP.</p>
+          <div class="go">Open the atlas &rarr;</div></a>
+      </div>
+    </section>
+
+    <p class="note"><b>How to read this hub.</b> Each card is a presentation layer over a frozen, deterministically-computed
+    report artifact &mdash; the numbers are identical for everyone, every time. The Complete and Produce stages link
+    existing surfaces (WAR-derived completion days and cross-field benchmarking); the Drill, Workover and Decommission
+    stages and both cross-cutting comparisons are the life-cycle insight front doors. Where a data source is partial,
+    each front door says so in its own caveats rather than filling the gap with a guess.</p>
+
+  </div>
+  <footer class="foot">
+    <span>Sources: BSEE Well Activity Reports (drilling/completion days), BSEE OGOR-A (benchmarking),
+    <code>well_data.csv</code> (57,281 boreholes &rarr; P&amp;A wave), SubseaIQ&ndash;BSEE crosswalk (region &times; dev-type),
+    field catalogue (205-country atlas), well-inventory &times; fleet (intervention). Public US Gulf of Mexico data.</span>
+    <span>Built by <a href="../../scripts/build_pages.py">scripts/build_pages.py</a> &middot; presentation only, computes nothing</span>
+  </footer>
+</div></div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All-Regions Field Atlas — Offshore Coverage, Honest Density</title>
+<style>
+:root {
+  --ink:#15202b; --muted:#5b6b7b; --accent:#0b3d5c; --accent-soft:#e8eef3;
+  --rule:#cdd7e0; --zebra:#f5f8fa;
+  --rich:#0b6b3a; --rich-soft:#e3f2e9;
+  --sample:#0b3d5c; --sample-soft:#e8eef3;
+  --road:#9a6a00; --road-soft:#f6eedd;
+}
+* { box-sizing:border-box; }
+body { font-family:"Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+  color:var(--ink); line-height:1.45; margin:0; font-size:11pt; background:#fff; }
+.page { max-width:1040px; margin:0 auto; padding:0 28px 48px; }
+.hdr { border-bottom:3px solid var(--accent); padding:22px 0 14px; margin-bottom:8px; }
+.hdr .brand { font-size:15pt; font-weight:700; color:var(--accent); letter-spacing:.2px; }
+.hdr .meta { font-size:9pt; color:var(--muted); margin-top:4px; }
+h1 { font-size:19pt; color:var(--accent); margin:16px 0 4px; line-height:1.2; }
+.thesis { font-size:12pt; color:var(--ink); margin:6px 0 4px; font-weight:600; }
+.thesis .big { color:var(--accent); }
+h2 { font-size:13.5pt; color:var(--accent); border-bottom:1px solid var(--rule);
+  padding-bottom:4px; margin:30px 0 12px; }
+p { margin:8px 0; }
+.kpis { display:flex; flex-wrap:wrap; gap:12px; margin:16px 0 4px; }
+.kpi { flex:1 1 150px; border:1px solid var(--rule); border-radius:8px; padding:12px 14px;
+  background:var(--zebra); }
+.kpi .v { font-size:20pt; font-weight:700; color:var(--accent); line-height:1; }
+.kpi .l { font-size:8.5pt; color:var(--muted); margin-top:6px; text-transform:uppercase;
+  letter-spacing:.4px; }
+.kpi.rich .v { color:var(--rich); }
+.legend { display:flex; flex-wrap:wrap; gap:10px 22px; margin:10px 0 4px; }
+.lg { display:flex; align-items:baseline; gap:8px; font-size:9.5pt; color:var(--muted);
+  flex:1 1 300px; }
+.lgtxt { line-height:1.3; }
+.badge { display:inline-block; font-size:8pt; font-weight:700; letter-spacing:.5px;
+  padding:2px 7px; border-radius:10px; color:#fff; white-space:nowrap; }
+.b-rich { background:var(--rich); }
+.b-sample { background:var(--sample); }
+.b-roadmap { background:var(--road); }
+.gom { border:2px solid var(--rich); border-radius:10px; padding:18px 20px; margin:14px 0 6px;
+  background:linear-gradient(180deg,var(--rich-soft),#fff); }
+.gom h3 { margin:0 0 4px; font-size:13pt; color:var(--rich); }
+.gom .sub { font-size:9.5pt; color:var(--muted); margin:0 0 12px; }
+.gomgrid { display:flex; flex-wrap:wrap; gap:14px; }
+.gomstat { flex:1 1 120px; }
+.gomstat .v { font-size:17pt; font-weight:700; color:var(--rich); line-height:1; }
+.gomstat .l { font-size:8.5pt; color:var(--muted); margin-top:5px; }
+.gomlinks { margin-top:12px; font-size:9.5pt; }
+.gomlinks a { color:var(--accent); text-decoration:none; border-bottom:1px solid var(--rule);
+  margin-right:14px; white-space:nowrap; }
+.gomlinks a:hover { border-bottom-color:var(--accent); }
+.chartwrap { border:1px solid var(--rule); border-radius:8px; padding:14px 16px; overflow-x:auto; }
+.tablewrap { overflow-x:auto; }
+table.atlas { border-collapse:collapse; width:100%; font-size:10pt; margin-top:6px; }
+table.atlas th, table.atlas td { padding:6px 9px; text-align:left; border-bottom:1px solid var(--rule); }
+table.atlas th { background:var(--accent-soft); color:var(--accent); font-size:8.5pt;
+  text-transform:uppercase; letter-spacing:.4px; cursor:pointer; user-select:none;
+  position:sticky; top:0; }
+table.atlas th.num, table.atlas td.num { text-align:right; font-variant-numeric:tabular-nums; }
+table.atlas td.rank { color:var(--muted); font-size:9pt; }
+table.atlas td.cty { font-weight:600; }
+table.atlas td.mod { color:var(--muted); font-size:9pt; }
+table.atlas tbody tr:nth-child(even) { background:var(--zebra); }
+th.sorted-asc::after { content:" \25B2"; font-size:7pt; }
+th.sorted-desc::after { content:" \25BC"; font-size:7pt; }
+.footer { border-top:1px solid var(--rule); margin-top:34px; padding-top:10px;
+  font-size:8.5pt; color:var(--muted); }
+.footer .sources { font-weight:600; color:var(--accent); }
+.note { font-size:9pt; color:var(--muted); background:var(--zebra); border-left:3px solid var(--rule);
+  padding:8px 12px; border-radius:0 6px 6px 0; margin:12px 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="brand">World Energy Data &middot; Offshore Field Atlas</div>
+    <div class="meta">Front-door coverage map &middot; generated 2026-07-04 &middot; issue #779</div>
+  </div>
+
+  <h1>All-Regions Field Atlas</h1>
+  <p class="thesis">We cover <span class="big">205 countries</span> at
+  reference depth; the <span class="big">Gulf of Mexico</span> at full life-cycle depth —
+  here's the honest map.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">205</div><div class="l">Countries in atlas scope</div></div>
+    <div class="kpi"><div class="v">2,149</div><div class="l">Offshore fields catalogued</div></div>
+    <div class="kpi"><div class="v">836</div><div class="l">Production facilities</div></div>
+    <div class="kpi rich"><div class="v">1</div><div class="l">RICH region (US Gulf of Mexico)</div></div>
+  </div>
+
+  <div class="legend"><div class="lg"><span class="badge b-rich">RICH</span><span class="lgtxt">Full life-cycle depth: fields + wells + production + economics.</span></div><div class="lg"><span class="badge b-sample">SAMPLE</span><span class="lgtxt">Reference inventory: curated field &amp; facility counts only.</span></div><div class="lg"><span class="badge b-roadmap">ROADMAP</span><span class="lgtxt">National deep-ingest pipeline scaffolded; not yet materialised.</span></div></div>
+  <p class="note"><strong>How to read the badge.</strong> The field &amp; facility
+  <em>counts</em> below are real reference-catalogue records for every country. The
+  <em>badge</em> reports how deep our ingest goes beyond that shared reference inventory,
+  driven by each country's dedicated national-regulator module status in the freshness
+  scorecard. Only <strong>US Gulf of Mexico</strong> is materialised to full life-cycle
+  depth (1 RICH); 78 countries carry the reference inventory
+  only (SAMPLE) and 5 have a national deep-ingest pipeline scaffolded but
+  not yet materialised (ROADMAP).</p>
+
+  <div class="gom">
+    <h3>Gulf of Mexico — the one region at full life-cycle depth</h3>
+    <p class="sub">Real BSEE fields &amp; wells, concept-matched development pages, and a
+    Lower Tertiary economics benchmark — the depth we intend to bring to every basin.</p>
+    <div class="gomgrid">
+      <div class="gomstat"><div class="v">~1,390</div><div class="l">BSEE Gulf of Mexico fields<sup>&dagger;</sup></div></div>
+      <div class="gomstat"><div class="v">~30k</div><div class="l">BSEE offshore wells<sup>&dagger;</sup></div></div>
+      <div class="gomstat"><div class="v">115</div><div class="l">Concept-matched field pages</div></div>
+      <div class="gomstat"><div class="v">56</div><div class="l">Lower Tertiary benchmark wells</div></div>
+      <div class="gomstat"><div class="v">10</div><div class="l">Field life-cycle pages</div></div>
+      <div class="gomstat"><div class="v">333</div><div class="l">GoM fields in reference catalog</div></div>
+    </div>
+    <div class="gomlinks">
+      <a href="./lifecycle/index.html">Field life-cycle pages &rarr;</a>
+      <a href="./benchmark.html">LT well benchmark &rarr;</a>
+      <a href="./field-development/bsee-matched/index.html">Concept-matched pages &rarr;</a>
+      <a href="./field-development/showcase.html">Concept-match showcase &rarr;</a>
+    </div>
+  </div>
+
+  <h2>Top 15 countries by offshore field count</h2>
+  <div class="chartwrap"><svg viewBox="0 0 738 436" width="100%" preserveAspectRatio="xMinYMin meet" role="img" aria-label="Top countries by offshore field count"><text x="112" y="23" text-anchor="end" font-size="11" fill="#15202b">US</text><rect x="118" y="8" width="560" height="22" rx="2" fill="#0b6b3a"><title>US: 333 fields (RICH)</title></rect><text x="684" y="23" font-size="10.5" fill="#5b6b7b">333</text><text x="112" y="51" text-anchor="end" font-size="11" fill="#15202b">UK</text><rect x="118" y="36" width="518" height="22" rx="2" fill="#9a6a00"><title>UK: 308 fields (ROADMAP)</title></rect><text x="642" y="51" font-size="10.5" fill="#5b6b7b">308</text><text x="112" y="79" text-anchor="end" font-size="11" fill="#15202b">Norway</text><rect x="118" y="64" width="508" height="22" rx="2" fill="#9a6a00"><title>Norway: 302 fields (ROADMAP)</title></rect><text x="632" y="79" font-size="10.5" fill="#5b6b7b">302</text><text x="112" y="107" text-anchor="end" font-size="11" fill="#15202b">Australia</text><rect x="118" y="92" width="323" height="22" rx="2" fill="#0b3d5c"><title>Australia: 192 fields (SAMPLE)</title></rect><text x="447" y="107" font-size="10.5" fill="#5b6b7b">192</text><text x="112" y="135" text-anchor="end" font-size="11" fill="#15202b">Brazil</text><rect x="118" y="120" width="165" height="22" rx="2" fill="#9a6a00"><title>Brazil: 98 fields (ROADMAP)</title></rect><text x="289" y="135" font-size="10.5" fill="#5b6b7b">98</text><text x="112" y="163" text-anchor="end" font-size="11" fill="#15202b">Angola</text><rect x="118" y="148" width="126" height="22" rx="2" fill="#0b3d5c"><title>Angola: 75 fields (SAMPLE)</title></rect><text x="250" y="163" font-size="10.5" fill="#5b6b7b">75</text><text x="112" y="191" text-anchor="end" font-size="11" fill="#15202b">Malaysia</text><rect x="118" y="176" width="109" height="22" rx="2" fill="#0b3d5c"><title>Malaysia: 65 fields (SAMPLE)</title></rect><text x="233" y="191" font-size="10.5" fill="#5b6b7b">65</text><text x="112" y="219" text-anchor="end" font-size="11" fill="#15202b">Indonesia</text><rect x="118" y="204" width="104" height="22" rx="2" fill="#0b3d5c"><title>Indonesia: 62 fields (SAMPLE)</title></rect><text x="228" y="219" font-size="10.5" fill="#5b6b7b">62</text><text x="112" y="247" text-anchor="end" font-size="11" fill="#15202b">Ireland</text><rect x="118" y="232" width="66" height="22" rx="2" fill="#0b3d5c"><title>Ireland: 39 fields (SAMPLE)</title></rect><text x="190" y="247" font-size="10.5" fill="#5b6b7b">39</text><text x="112" y="275" text-anchor="end" font-size="11" fill="#15202b">Denmark</text><rect x="118" y="260" width="55" height="22" rx="2" fill="#0b3d5c"><title>Denmark: 33 fields (SAMPLE)</title></rect><text x="179" y="275" font-size="10.5" fill="#5b6b7b">33</text><text x="112" y="303" text-anchor="end" font-size="11" fill="#15202b">Thailand</text><rect x="118" y="288" width="50" height="22" rx="2" fill="#0b3d5c"><title>Thailand: 30 fields (SAMPLE)</title></rect><text x="174" y="303" font-size="10.5" fill="#5b6b7b">30</text><text x="112" y="331" text-anchor="end" font-size="11" fill="#15202b">China</text><rect x="118" y="316" width="49" height="22" rx="2" fill="#0b3d5c"><title>China: 29 fields (SAMPLE)</title></rect><text x="173" y="331" font-size="10.5" fill="#5b6b7b">29</text><text x="112" y="359" text-anchor="end" font-size="11" fill="#15202b">Egypt</text><rect x="118" y="344" width="49" height="22" rx="2" fill="#0b3d5c"><title>Egypt: 29 fields (SAMPLE)</title></rect><text x="173" y="359" font-size="10.5" fill="#5b6b7b">29</text><text x="112" y="387" text-anchor="end" font-size="11" fill="#15202b">Viet nam</text><rect x="118" y="372" width="49" height="22" rx="2" fill="#0b3d5c"><title>Viet nam: 29 fields (SAMPLE)</title></rect><text x="173" y="387" font-size="10.5" fill="#5b6b7b">29</text><text x="112" y="415" text-anchor="end" font-size="11" fill="#15202b">Nigeria</text><rect x="118" y="400" width="47" height="22" rx="2" fill="#0b3d5c"><title>Nigeria: 28 fields (SAMPLE)</title></rect><text x="171" y="415" font-size="10.5" fill="#5b6b7b">28</text></svg></div>
+
+  <h2>Per-country coverage &amp; density badge</h2>
+  <p style="font-size:9.5pt;color:var(--muted);margin:2px 0 6px;">Click any column
+  header to sort. 84 countries with field/facility roll-ups in the reference
+  catalogue (of 205 in the geographic atlas; 84 distinct
+  countries appear in fields.csv). Density = facilities &divide; fields.</p>
+  <div class="tablewrap">
+  <table class="atlas" id="atlas">
+    <thead><tr>
+      <th data-k="rank" data-t="n">#</th>
+      <th data-k="cty" data-t="s">Country</th>
+      <th class="num" data-k="fields" data-t="n">Fields</th>
+      <th class="num" data-k="fac" data-t="n">Facilities</th>
+      <th class="num" data-k="dens" data-t="n">Density</th>
+      <th data-k="badge" data-t="s">Badge</th>
+      <th data-k="mod" data-t="s">Source module</th>
+    </tr></thead>
+    <tbody>
+<tr><td class="rank">1</td><td class="cty">US</td><td class="num">333</td><td class="num">88</td><td class="num">0.26</td><td><span class="badge b-rich">RICH</span></td><td class="mod">bsee</td></tr>
+<tr><td class="rank">2</td><td class="cty">UK</td><td class="num">308</td><td class="num">124</td><td class="num">0.40</td><td><span class="badge b-roadmap">ROADMAP</span></td><td class="mod">ukcs</td></tr>
+<tr><td class="rank">3</td><td class="cty">Norway</td><td class="num">302</td><td class="num">82</td><td class="num">0.27</td><td><span class="badge b-roadmap">ROADMAP</span></td><td class="mod">sodir</td></tr>
+<tr><td class="rank">4</td><td class="cty">Australia</td><td class="num">192</td><td class="num">50</td><td class="num">0.26</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">5</td><td class="cty">Brazil</td><td class="num">98</td><td class="num">58</td><td class="num">0.59</td><td><span class="badge b-roadmap">ROADMAP</span></td><td class="mod">brazil_anp</td></tr>
+<tr><td class="rank">6</td><td class="cty">Angola</td><td class="num">75</td><td class="num">24</td><td class="num">0.32</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">7</td><td class="cty">Malaysia</td><td class="num">65</td><td class="num">48</td><td class="num">0.74</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">8</td><td class="cty">Indonesia</td><td class="num">62</td><td class="num">30</td><td class="num">0.48</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">9</td><td class="cty">Ireland</td><td class="num">39</td><td class="num">4</td><td class="num">0.10</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">10</td><td class="cty">Denmark</td><td class="num">33</td><td class="num">15</td><td class="num">0.45</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">11</td><td class="cty">Thailand</td><td class="num">30</td><td class="num">25</td><td class="num">0.83</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">12</td><td class="cty">China</td><td class="num">29</td><td class="num">32</td><td class="num">1.10</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">13</td><td class="cty">Egypt</td><td class="num">29</td><td class="num">20</td><td class="num">0.69</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">14</td><td class="cty">Viet nam</td><td class="num">29</td><td class="num">21</td><td class="num">0.72</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">15</td><td class="cty">Nigeria</td><td class="num">28</td><td class="num">24</td><td class="num">0.86</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">16</td><td class="cty">New Zealand</td><td class="num">24</td><td class="num">7</td><td class="num">0.29</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">17</td><td class="cty">Philippines</td><td class="num">23</td><td class="num">5</td><td class="num">0.22</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">18</td><td class="cty">Canada</td><td class="num">22</td><td class="num">8</td><td class="num">0.36</td><td><span class="badge b-roadmap">ROADMAP</span></td><td class="mod">canada</td></tr>
+<tr><td class="rank">19</td><td class="cty">Ghana</td><td class="num">22</td><td class="num">2</td><td class="num">0.09</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">20</td><td class="cty">Falkland Islands (Malvinas)</td><td class="num">21</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">21</td><td class="cty">Tanzania, United Republic of</td><td class="num">20</td><td class="num">1</td><td class="num">0.05</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">22</td><td class="cty">Trin. &amp; Tobago</td><td class="num">19</td><td class="num">10</td><td class="num">0.53</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">23</td><td class="cty">Gabon</td><td class="num">17</td><td class="num">8</td><td class="num">0.47</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">24</td><td class="cty">Equatorial Guinea</td><td class="num">16</td><td class="num">7</td><td class="num">0.44</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">25</td><td class="cty">Tunisia</td><td class="num">16</td><td class="num">7</td><td class="num">0.44</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">26</td><td class="cty">Mexico</td><td class="num">15</td><td class="num">6</td><td class="num">0.40</td><td><span class="badge b-roadmap">ROADMAP</span></td><td class="mod">mexico_cnh</td></tr>
+<tr><td class="rank">27</td><td class="cty">Israel</td><td class="num">14</td><td class="num">2</td><td class="num">0.14</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">28</td><td class="cty">Russian Federation</td><td class="num">14</td><td class="num">14</td><td class="num">1.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">29</td><td class="cty">Morocco</td><td class="num">13</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">30</td><td class="cty">Mozambique</td><td class="num">13</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">31</td><td class="cty">Congo</td><td class="num">12</td><td class="num">5</td><td class="num">0.42</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">32</td><td class="cty">India</td><td class="num">12</td><td class="num">6</td><td class="num">0.50</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">33</td><td class="cty">Kenya</td><td class="num">11</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">34</td><td class="cty">Namibia</td><td class="num">11</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">35</td><td class="cty">Italy</td><td class="num">10</td><td class="num">4</td><td class="num">0.40</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">36</td><td class="cty">Myanmar</td><td class="num">10</td><td class="num">9</td><td class="num">0.90</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">37</td><td class="cty">Netherlands</td><td class="num">10</td><td class="num">10</td><td class="num">1.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">38</td><td class="cty">South Africa</td><td class="num">9</td><td class="num">3</td><td class="num">0.33</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">39</td><td class="cty">Liberia</td><td class="num">8</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">40</td><td class="cty">Qatar</td><td class="num">7</td><td class="num">19</td><td class="num">2.71</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">41</td><td class="cty">UAE</td><td class="num">7</td><td class="num">9</td><td class="num">1.29</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">42</td><td class="cty">Mauritania</td><td class="num">6</td><td class="num">1</td><td class="num">0.17</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">43</td><td class="cty">Senegal</td><td class="num">6</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">44</td><td class="cty">Brunei Darussalam</td><td class="num">5</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">45</td><td class="cty">Bulgaria</td><td class="num">5</td><td class="num">3</td><td class="num">0.60</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">46</td><td class="cty">Libya</td><td class="num">5</td><td class="num">6</td><td class="num">1.20</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">47</td><td class="cty">Oman</td><td class="num">5</td><td class="num">2</td><td class="num">0.40</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">48</td><td class="cty">Peru</td><td class="num">5</td><td class="num">3</td><td class="num">0.60</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">49</td><td class="cty">Romania</td><td class="num">5</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">50</td><td class="cty">Bangladesh</td><td class="num">4</td><td class="num">1</td><td class="num">0.25</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">51</td><td class="cty">Cameroon</td><td class="num">4</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">52</td><td class="cty">Faroe Islands</td><td class="num">4</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">53</td><td class="cty">Greenland</td><td class="num">4</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">54</td><td class="cty">Papua New Guinea</td><td class="num">4</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">55</td><td class="cty">Sierra Leone</td><td class="num">4</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">56</td><td class="cty">Argentina</td><td class="num">3</td><td class="num">3</td><td class="num">1.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">57</td><td class="cty">Azerbaijan</td><td class="num">3</td><td class="num">9</td><td class="num">3.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">58</td><td class="cty">Congo, The Demo. Rep. of the</td><td class="num">3</td><td class="num">1</td><td class="num">0.33</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">59</td><td class="cty">Greece</td><td class="num">3</td><td class="num">2</td><td class="num">0.67</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">60</td><td class="cty">Guinea</td><td class="num">3</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">61</td><td class="cty">Guinea-Bissau</td><td class="num">3</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">62</td><td class="cty">Sao Tome and Principe</td><td class="num">3</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">63</td><td class="cty">Spain</td><td class="num">3</td><td class="num">1</td><td class="num">0.33</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">64</td><td class="cty">Turkey</td><td class="num">3</td><td class="num">2</td><td class="num">0.67</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">65</td><td class="cty">Albania</td><td class="num">2</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">66</td><td class="cty">Colombia</td><td class="num">2</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">67</td><td class="cty">Guyana</td><td class="num">2</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">68</td><td class="cty">Iran</td><td class="num">2</td><td class="num">1</td><td class="num">0.50</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">69</td><td class="cty">Kazakhstan</td><td class="num">2</td><td class="num">4</td><td class="num">2.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">70</td><td class="cty">Sri Lanka</td><td class="num">2</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">71</td><td class="cty">Turkmenistan</td><td class="num">2</td><td class="num">5</td><td class="num">2.50</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">72</td><td class="cty">Venezuela</td><td class="num">2</td><td class="num">1</td><td class="num">0.50</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">73</td><td class="cty">Croatia</td><td class="num">1</td><td class="num">2</td><td class="num">2.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">74</td><td class="cty">Cuba</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">75</td><td class="cty">Cyprus</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">76</td><td class="cty">French Guiana</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">77</td><td class="cty">Gambia</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">78</td><td class="cty">Japan</td><td class="num">1</td><td class="num">1</td><td class="num">1.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">79</td><td class="cty">Madagascar</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">80</td><td class="cty">Malta</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">81</td><td class="cty">Nicaragua</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">82</td><td class="cty">Niger</td><td class="num">1</td><td class="num">1</td><td class="num">1.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">83</td><td class="cty">Palestinian Territory, occupied</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+<tr><td class="rank">84</td><td class="cty">Saudi Arabia</td><td class="num">1</td><td class="num">0</td><td class="num">0.00</td><td><span class="badge b-sample">SAMPLE</span></td><td class="mod">offshore_assets (reference)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="footer">
+    <p><span class="sources">Sources.</span>
+    data/modules/offshore_assets/curated/coverage_summary.csv (per-country roll-up,
+    84 countries; totals 2,149 fields / 836
+    facilities; US Gulf of Mexico flagged 333 fields / 88
+    facilities, rest of world 1,816 / 748) &middot;
+    data/modules/offshore_assets/curated/country_centroids.csv (205
+    countries in atlas scope) &middot; fields.csv (84 distinct countries)
+    &middot; data/freshness-scorecard.json (catalog_status &rarr; density badge) &middot;
+    reports/field_development/bsee_matched/ (115 concept-matched pages)
+    &middot; reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
+    (56 benchmark wells) &middot; reports/lower_tertiary/lifecycle/
+    (10 life-cycle pages).</p>
+    <p><strong>Data limits.</strong> Badge maps each country's dedicated national-regulator
+    module: US&rarr;bsee, UK&rarr;ukcs, Norway&rarr;sodir, Brazil&rarr;brazil_anp,
+    Mexico&rarr;mexico_cnh, Canada&rarr;canada; all other countries carry the shared
+    curated reference inventory (SAMPLE). RICH is asserted only for US Gulf of Mexico,
+    where BSEE is materialised to full life-cycle depth.
+    <sup>&dagger;</sup> The ~1,390-field / ~30k-well figures are the BSEE Gulf of Mexico
+    program catalogue scope; the ~300&nbsp;MB BSEE binary is not carried in this worktree
+    (run <code>make data</code>), so these two figures are the documented BSEE catalogue
+    scope rather than recomputed here. The four right-hand GoM stats and every per-country
+    number are computed directly from files listed above.</p>
+  </div>
+</div>
+<script>
+(function(){
+  var t=document.getElementById('atlas');
+  var tb=t.tBodies[0];
+  var ths=t.tHead.rows[0].cells;
+  function val(tr,i,type){
+    var c=tr.cells[i];
+    if(type==='n'){var n=parseFloat(c.textContent.replace(/[^0-9.\-]/g,''));return isNaN(n)?-Infinity:n;}
+    return c.textContent.trim().toLowerCase();
+  }
+  for(var i=0;i<ths.length;i++){(function(i){
+    var asc=true;
+    ths[i].addEventListener('click',function(){
+      var type=ths[i].getAttribute('data-t');
+      var rows=Array.prototype.slice.call(tb.rows);
+      rows.sort(function(a,b){
+        var va=val(a,i,type),vb=val(b,i,type);
+        if(va<vb)return asc?-1:1; if(va>vb)return asc?1:-1; return 0;
+      });
+      rows.forEach(function(r){tb.appendChild(r);});
+      // renumber rank column
+      Array.prototype.slice.call(tb.rows).forEach(function(r,idx){r.cells[0].textContent=idx+1;});
+      for(var j=0;j<ths.length;j++){ths[j].classList.remove('sorted-asc','sorted-desc');}
+      ths[i].classList.add(asc?'sorted-asc':'sorted-desc');
+      asc=!asc;
+    });
+  })(i);}
+})();
+</script>
+</body>
+</html>

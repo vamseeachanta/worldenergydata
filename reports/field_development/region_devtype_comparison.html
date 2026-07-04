@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Region &times; Development-Type — Dry vs Wet Tree Comparison</title>
+<style>
+:root{--ink:#15202b;--muted:#5b6b7b;--accent:#0b3d5c;--accent-soft:#e8eef3;
+--rule:#cdd7e0;--zebra:#f5f8fa;--bg:#ffffff;--card:#ffffff;}
+@media (prefers-color-scheme:dark){:root{--ink:#e6edf3;--muted:#9fb0c0;
+--accent:#7fb2d4;--accent-soft:#172634;--rule:#2b3947;--zebra:#141c25;
+--bg:#0d1620;--card:#111c27;}}
+:root[data-theme="dark"]{--ink:#e6edf3;--muted:#9fb0c0;--accent:#7fb2d4;
+--accent-soft:#172634;--rule:#2b3947;--zebra:#141c25;--bg:#0d1620;--card:#111c27;}
+:root[data-theme="light"]{--ink:#15202b;--muted:#5b6b7b;--accent:#0b3d5c;
+--accent-soft:#e8eef3;--rule:#cdd7e0;--zebra:#f5f8fa;--bg:#ffffff;--card:#ffffff;}
+*{box-sizing:border-box;}
+body{font-family:"Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+color:var(--ink);background:var(--bg);line-height:1.45;margin:0;font-size:15px;}
+.page{max-width:1000px;margin:0 auto;padding:0 24px 64px;}
+.head{border-bottom:3px solid var(--accent);padding:26px 0 16px;margin-bottom:10px;}
+.brand{font-size:20px;font-weight:700;color:var(--accent);letter-spacing:.2px;}
+.meta{font-size:12.5px;color:var(--muted);margin-top:5px;}
+h1{font-size:27px;color:var(--ink);margin:22px 0 6px;line-height:1.18;}
+h2{font-size:19px;color:var(--accent);border-bottom:1px solid var(--rule);
+padding-bottom:5px;margin:38px 0 12px;}
+h4{font-size:13px;margin:0 0 6px;}
+p{margin:9px 0;}
+.thesis{background:var(--accent-soft);border-left:5px solid var(--accent);
+border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0 8px;font-size:16.5px;}
+.thesis b{color:var(--accent);}
+.big{font-size:34px;font-weight:800;color:var(--accent);line-height:1;}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:12px;margin:20px 0 8px;}
+.kpi{border:1px solid var(--rule);border-radius:8px;padding:13px 15px;
+background:var(--card);}
+.kpi .v{font-size:24px;font-weight:800;color:var(--ink);}
+.kpi .l{font-size:11.5px;color:var(--muted);margin-top:3px;
+text-transform:uppercase;letter-spacing:.4px;}
+.card{border:1px solid var(--rule);border-radius:10px;padding:16px 18px;
+background:var(--card);margin:14px 0;overflow-x:auto;}
+.legend{display:flex;flex-wrap:wrap;gap:14px 22px;margin:6px 0 14px;
+font-size:12px;color:var(--muted);}
+.lg{display:inline-flex;align-items:center;gap:7px;}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block;}
+table{border-collapse:collapse;width:100%;margin:10px 0 6px;font-size:13px;}
+th,td{border:1px solid var(--rule);padding:6px 9px;text-align:left;}
+th{background:var(--accent);color:#fff;font-weight:600;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+tbody tr:nth-child(even){background:var(--zebra);}
+.topgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+gap:16px;}
+.mini{font-size:12.5px;}
+.mini td{border:none;border-bottom:1px solid var(--rule);padding:4px 6px;}
+.chip{display:inline-block;background:var(--accent-soft);border:1px solid var(--rule);
+border-radius:14px;padding:3px 10px;margin:3px 4px 3px 0;font-size:12px;
+color:var(--ink);}
+.chip b{margin-left:6px;color:var(--accent);}
+.foot{border-top:1px solid var(--rule);margin-top:40px;padding-top:12px;
+font-size:12px;color:var(--muted);}
+.foot b{color:var(--accent);}
+.note{font-size:12.5px;color:var(--muted);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <div class="brand">World Energy Data &middot; Field Development Insights</div>
+    <div class="meta">Region &times; development-type comparison (dry-tree vs
+      wet-tree vs other) &middot; Issue #776 &middot; Offshore production-facility
+      universe</div>
+  </div>
+
+  <h1>Where dry trees give way to wet: the offshore development map</h1>
+  <div class="thesis">Deepwater is <b>wet-tree country</b>. Across 836 producing offshore facilities worldwide, the dry-tree share of trees collapses from <b>80%</b> on the shallow shelf to <b>20%</b> in ultra-deepwater (&ge;1&#8239;500&#8239;m) — surface well access does not survive the swim to the seabed.</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="v">836</div>
+      <div class="l">Facilities</div></div>
+    <div class="kpi"><div class="v">9</div>
+      <div class="l">Regions</div></div>
+    <div class="kpi"><div class="v">514</div>
+      <div class="l">Dry-tree &middot; 61%</div></div>
+    <div class="kpi"><div class="v">266</div>
+      <div class="l">Wet-tree &middot; 32%</div></div>
+    <div class="kpi"><div class="v">56</div>
+      <div class="l">Other hull &middot; 7%</div></div>
+  </div>
+
+  <h2>Region &times; tree-type matrix</h2>
+  <p>Every producing facility placed on the dry / wet / other trichotomy, by
+     offshore region. Bars are facility counts; the trailing figure is the
+     regional total.</p>
+  <div class="legend"><span class="lg"><span class="sw" style="background:#0b3d5c"></span>Dry tree (surface trees on fixed jacket / compliant tower / TLP / spar)</span><span class="lg"><span class="sw" style="background:#2a9d8f"></span>Wet tree (subsea trees: semisub-FPS / FPSO / FLNG / tieback)</span><span class="lg"><span class="sw" style="background:#94a3b2"></span>Other hull (FSO-FSU / MOPU / artificial island — no producing trees)</span></div>
+  <div class="card"><svg viewBox="0 0 858 364" width="100%" style="max-width:858px" role="img" aria-label="Facility count by region and tree type"><text x="210" y="31.0" text-anchor="end" font-size="12.5" fill="var(--ink)">North Sea &amp; NW Europe</text><rect x="224.0" y="14" width="369.4" height="26" fill="#0b3d5c"/><text x="408.7" y="31.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">155</text><rect x="593.4" y="14" width="164.4" height="26" fill="#2a9d8f"/><text x="675.6" y="31.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">69</text><rect x="757.8" y="14" width="26.2" height="26" fill="#94a3b2"/><text x="770.9" y="31.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">11</text><text x="792.0" y="31.0" font-size="11.5" fill="var(--muted)">235</text><text x="210" y="69.0" text-anchor="end" font-size="12.5" fill="var(--ink)">Asia-Pacific</text><rect x="224.0" y="52" width="336.0" height="26" fill="#0b3d5c"/><text x="392.0" y="69.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">141</text><rect x="560.0" y="52" width="171.6" height="26" fill="#2a9d8f"/><text x="645.8" y="69.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">72</text><rect x="731.6" y="52" width="52.4" height="26" fill="#94a3b2"/><text x="757.8" y="69.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">22</text><text x="792.0" y="69.0" font-size="11.5" fill="var(--muted)">235</text><text x="210" y="107.0" text-anchor="end" font-size="12.5" fill="var(--ink)">US Gulf of Mexico</text><rect x="224.0" y="90" width="152.5" height="26" fill="#0b3d5c"/><text x="300.3" y="107.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">64</text><rect x="376.5" y="90" width="54.8" height="26" fill="#2a9d8f"/><text x="403.9" y="107.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">23</text><rect x="431.3" y="90" width="2.4" height="26" fill="#94a3b2"/><text x="441.7" y="107.0" font-size="11.5" fill="var(--muted)">88</text><text x="210" y="145.0" text-anchor="end" font-size="12.5" fill="var(--ink)">South America &amp; Caribbean</text><rect x="224.0" y="128" width="71.5" height="26" fill="#0b3d5c"/><text x="259.7" y="145.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">30</text><rect x="295.5" y="128" width="119.1" height="26" fill="#2a9d8f"/><text x="355.1" y="145.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">50</text><rect x="414.6" y="128" width="2.4" height="26" fill="#94a3b2"/><text x="425.0" y="145.0" font-size="11.5" fill="var(--muted)">81</text><text x="210" y="183.0" text-anchor="end" font-size="12.5" fill="var(--ink)">West Africa</text><rect x="224.0" y="166" width="73.9" height="26" fill="#0b3d5c"/><text x="260.9" y="183.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">31</text><rect x="297.9" y="166" width="95.3" height="26" fill="#2a9d8f"/><text x="345.5" y="183.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">40</text><rect x="393.2" y="166" width="14.3" height="26" fill="#94a3b2"/><text x="415.5" y="183.0" font-size="11.5" fill="var(--muted)">77</text><text x="210" y="221.0" text-anchor="end" font-size="12.5" fill="var(--ink)">Mediterranean &amp; N Africa</text><rect x="224.0" y="204" width="73.9" height="26" fill="#0b3d5c"/><text x="260.9" y="221.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">31</text><rect x="297.9" y="204" width="21.4" height="26" fill="#2a9d8f"/><rect x="319.3" y="204" width="9.5" height="26" fill="#94a3b2"/><text x="336.9" y="221.0" font-size="11.5" fill="var(--muted)">44</text><text x="210" y="259.0" text-anchor="end" font-size="12.5" fill="var(--ink)">Caspian &amp; Russia</text><rect x="224.0" y="242" width="62.0" height="26" fill="#0b3d5c"/><text x="255.0" y="259.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">26</text><rect x="286.0" y="242" width="7.1" height="26" fill="#2a9d8f"/><rect x="293.1" y="242" width="14.3" height="26" fill="#94a3b2"/><text x="315.4" y="259.0" font-size="11.5" fill="var(--muted)">35</text><text x="210" y="297.0" text-anchor="end" font-size="12.5" fill="var(--ink)">Middle East</text><rect x="224.0" y="280" width="69.1" height="26" fill="#0b3d5c"/><text x="258.6" y="297.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">29</text><rect x="293.1" y="280" width="9.5" height="26" fill="#94a3b2"/><text x="310.6" y="297.0" font-size="11.5" fill="var(--muted)">33</text><text x="210" y="335.0" text-anchor="end" font-size="12.5" fill="var(--ink)">Atlantic Canada &amp; Arctic</text><rect x="224.0" y="318" width="16.7" height="26" fill="#0b3d5c"/><rect x="240.7" y="318" width="2.4" height="26" fill="#94a3b2"/><text x="251.1" y="335.0" font-size="11.5" fill="var(--muted)">8</text></svg></div>
+  <table>
+    <thead><tr><th>Region</th><th>Dry</th><th>Wet</th><th>Other</th>
+      <th>Total</th><th>Typed&nbsp;%</th></tr></thead>
+    <tbody><tr><td>North Sea &amp; NW Europe</td><td class='num'>155</td><td class='num'>69</td><td class='num'>11</td><td class='num'><strong>235</strong></td><td class='num'>95%</td></tr><tr><td>Asia-Pacific</td><td class='num'>141</td><td class='num'>72</td><td class='num'>22</td><td class='num'><strong>235</strong></td><td class='num'>91%</td></tr><tr><td>US Gulf of Mexico</td><td class='num'>64</td><td class='num'>23</td><td class='num'>1</td><td class='num'><strong>88</strong></td><td class='num'>99%</td></tr><tr><td>South America &amp; Caribbean</td><td class='num'>30</td><td class='num'>50</td><td class='num'>1</td><td class='num'><strong>81</strong></td><td class='num'>99%</td></tr><tr><td>West Africa</td><td class='num'>31</td><td class='num'>40</td><td class='num'>6</td><td class='num'><strong>77</strong></td><td class='num'>92%</td></tr><tr><td>Mediterranean &amp; N Africa</td><td class='num'>31</td><td class='num'>9</td><td class='num'>4</td><td class='num'><strong>44</strong></td><td class='num'>91%</td></tr><tr><td>Caspian &amp; Russia</td><td class='num'>26</td><td class='num'>3</td><td class='num'>6</td><td class='num'><strong>35</strong></td><td class='num'>83%</td></tr><tr><td>Middle East</td><td class='num'>29</td><td class='num'>0</td><td class='num'>4</td><td class='num'><strong>33</strong></td><td class='num'>88%</td></tr><tr><td>Atlantic Canada &amp; Arctic</td><td class='num'>7</td><td class='num'>0</td><td class='num'>1</td><td class='num'><strong>8</strong></td><td class='num'>88%</td></tr></tbody>
+  </table>
+  <p class="note">"Typed %" = share of the region's facilities that map to a
+     dry- or wet-tree concept (i.e. not an FSO/FSU, MOPU or artificial island).
+     South America &amp; Caribbean and West Africa read wet-tree-heavy — those are
+     the FPSO provinces; the Middle East and Caspian read all-dry — shallow,
+     benign, jacket country.</p>
+
+  <h2>The physical story: dry-tree share fades with water depth</h2>
+  <p>Restricted to the 738 facilities with a recorded water
+     depth. Bars are normalised across producing trees only (dry + wet; the few
+     non-tree hulls are excluded), so the navy segment is the dry-tree share of
+     trees. Read top-to-bottom, shallow to deep — the navy shrinks at every
+     step.</p>
+  <div class="legend"><span class="lg"><span class="sw" style="background:#0b3d5c"></span>Dry tree (surface trees on fixed jacket / compliant tower / TLP / spar)</span><span class="lg"><span class="sw" style="background:#2a9d8f"></span>Wet tree (subsea trees: semisub-FPS / FPSO / FLNG / tieback)</span><span class="lg"><span class="sw" style="background:#94a3b2"></span>Other hull (FSO-FSU / MOPU / artificial island — no producing trees)</span></div>
+  <div class="card"><svg viewBox="0 0 914 210" width="100%" style="max-width:914px" role="img" aria-label="Dry vs wet tree share by water-depth band"><text x="250" y="29.0" text-anchor="end" font-size="12" fill="var(--ink)">0-150 m (shallow shelf)</text><rect x="264.0" y="10" width="417.4" height="30" fill="#0b3d5c"/><text x="472.7" y="29.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">80%</text><rect x="681.4" y="10" width="102.6" height="30" fill="#2a9d8f"/><text x="732.7" y="29.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">20%</text><text x="794.0" y="29.0" font-size="11.5" fill="var(--muted)">436 trees</text><text x="250" y="77.0" text-anchor="end" font-size="12" fill="var(--ink)">150-500 m (deep shelf)</text><rect x="264.0" y="58" width="272.9" height="30" fill="#0b3d5c"/><text x="400.4" y="77.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">52%</text><rect x="536.9" y="58" width="247.1" height="30" fill="#2a9d8f"/><text x="660.4" y="77.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">48%</text><text x="794.0" y="77.0" font-size="11.5" fill="var(--muted)">101 trees</text><text x="250" y="125.0" text-anchor="end" font-size="12" fill="var(--ink)">500-1500 m (deepwater)</text><rect x="264.0" y="106" width="192.6" height="30" fill="#0b3d5c"/><text x="360.3" y="125.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">37%</text><rect x="456.6" y="106" width="327.4" height="30" fill="#2a9d8f"/><text x="620.3" y="125.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">63%</text><text x="794.0" y="125.0" font-size="11.5" fill="var(--muted)">108 trees</text><text x="250" y="173.0" text-anchor="end" font-size="12" fill="var(--ink)">1500-3000 m (ultra-deepwater)</text><rect x="264.0" y="154" width="104.0" height="30" fill="#0b3d5c"/><text x="316.0" y="173.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">20%</text><rect x="368.0" y="154" width="416.0" height="30" fill="#2a9d8f"/><text x="576.0" y="173.0" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">80%</text><text x="794.0" y="173.0" font-size="11.5" fill="var(--muted)">45 trees</text></svg></div>
+  <table>
+    <thead><tr><th>Water-depth band</th><th>Dry</th><th>Wet</th><th>Other</th>
+      <th>Dry share of trees</th><th>n</th></tr></thead>
+    <tbody><tr><td>0-150 m (shallow shelf)</td><td class='num'>350</td><td class='num'>86</td><td class='num'>44</td><td class='num'><strong>80%</strong></td><td class='num'>480</td></tr><tr><td>150-500 m (deep shelf)</td><td class='num'>53</td><td class='num'>48</td><td class='num'>4</td><td class='num'><strong>52%</strong></td><td class='num'>105</td></tr><tr><td>500-1500 m (deepwater)</td><td class='num'>40</td><td class='num'>68</td><td class='num'>0</td><td class='num'><strong>37%</strong></td><td class='num'>108</td></tr><tr><td>1500-3000 m (ultra-deepwater)</td><td class='num'>9</td><td class='num'>36</td><td class='num'>0</td><td class='num'><strong>20%</strong></td><td class='num'>45</td></tr></tbody>
+  </table>
+  <p class="note">Below 1&#8239;500&#8239;m, dry trees are 9 of
+     45 trees (20%); above it,
+     443 of 645
+     (69%). The nine deep dry-tree facilities are the
+     TLPs and spars that push surface access to its engineering limit.</p>
+
+  <h2>Who builds what: country leaders by tree type</h2>
+  <div class="topgrid"><div class="topcol"><h4 style="color:#0b3d5c">Dry-tree leaders</h4><table class="mini"><tbody><tr><td>UK</td><td class='num'>82</td></tr><tr><td>US</td><td class='num'>64</td></tr><tr><td>Norway</td><td class='num'>46</td></tr><tr><td>Malaysia</td><td class='num'>33</td></tr><tr><td>China</td><td class='num'>25</td></tr><tr><td>Australia</td><td class='num'>18</td></tr></tbody></table></div><div class="topcol"><h4 style="color:#2a9d8f">Wet-tree leaders</h4><table class="mini"><tbody><tr><td>Brazil</td><td class='num'>49</td></tr><tr><td>UK</td><td class='num'>37</td></tr><tr><td>Norway</td><td class='num'>31</td></tr><tr><td>Australia</td><td class='num'>29</td></tr><tr><td>US</td><td class='num'>23</td></tr><tr><td>Angola</td><td class='num'>15</td></tr></tbody></table></div><div class="topcol"><h4 style="color:#94a3b2">Other-hull leaders</h4><table class="mini"><tbody><tr><td>Thailand</td><td class='num'>7</td></tr><tr><td>Nigeria</td><td class='num'>5</td></tr><tr><td>Norway</td><td class='num'>5</td></tr><tr><td>UK</td><td class='num'>5</td></tr><tr><td>Malaysia</td><td class='num'>5</td></tr><tr><td>Kazakhstan</td><td class='num'>4</td></tr></tbody></table></div></div>
+
+  <h2>Concept mix (as-built host type)</h2>
+  <div class="card"><span class="chip">fixed_jacket<b>465</b></span><span class="chip">fpso<b>152</b></span><span class="chip">(unmapped/other)<b>56</b></span><span class="chip">subsea_tieback<b>54</b></span><span class="chip">semisub_fps<b>52</b></span><span class="chip">tlp<b>25</b></span><span class="chip">spar<b>20</b></span><span class="chip">flng<b>8</b></span><span class="chip">compliant_tower<b>4</b></span></div>
+
+  <h2>Coverage &amp; honesty</h2>
+  <p>This universe is the curated <code>production_facilities.csv</code>
+     (836 standalone facilities). Two limits worth stating plainly:</p>
+  <ul>
+    <li><b>Subsea tiebacks are under-counted.</b> A tieback is not a standalone
+      facility — it hangs off a host — so only 266 wet-tree hulls appear
+      here, of which just the 54
+      that the source lists as their own line are tiebacks. Where we do have
+      block-level ground truth (the GoM SubseaIQ&ndash;BSEE crosswalk,
+      75 typed fields), subsea tiebacks are
+      10 of them — the true wet-tree footprint is larger
+      than a facility census shows.</li>
+    <li><b>The typed/untyped split is honest per region.</b> 56
+      of 836 facilities (7%) are non-tree hulls (FSO/FSU, MOPU,
+      artificial island) and are held out of the dry-vs-wet ratios rather than
+      forced into one bucket. 98 facilities lack a recorded
+      water depth and are excluded from the depth chart only.</li>
+  </ul>
+
+  <div class="foot">
+    <b>Sources:</b> data/modules/offshore_assets/curated/production_facilities.csv
+    (836 rows, HOST_TYPE &rarr; concept &rarr; tree_type) &middot;
+    subseaiq_bsee_block_crosswalk.csv (115 matched GoM rows,
+    supplementary subsea-tieback prevalence only).
+    <b>Trichotomy:</b> dry = {fixed_jacket, compliant_tower, tlp, spar, nui}
+    (imported verbatim from
+    <code>worldenergydata.field_development.recommendation._DRY_TREE</code>);
+    wet = {semisub_fps, fpso, flng, subsea_tieback, subsea_to_shore};
+    other = unmapped HOST_TYPE + null.
+    <b>Method:</b> <code>build_portfolio()</code> imports cleanly but covers only
+    the 115-field GoM matched set, so the all-region matrix is built directly
+    from the facility census with the mapping above.
+    <b>Build:</b> scripts/field_development/build_region_devtype_comparison.py
+    &rarr; reports/field_development/region_devtype_matrix.csv. Counts are
+    facilities, not fields or wells; every figure on this page is computed from
+    the source rows (flag-don't-fake).
+  </div>
+</div>
+</body>
+</html>
