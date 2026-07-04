@@ -65,6 +65,18 @@
     padding: 6px 12px; border-radius: 999px; white-space: nowrap; }
   .status .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sc, var(--good));
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc, var(--good)) 22%, transparent); }
+  /* Development-type (dry vs wet tree) badge — links to the region×dev-type page. */
+  .devtype { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono);
+    font-size: 11.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    text-decoration: none; white-space: nowrap; padding: 5px 11px; border-radius: 999px;
+    color: var(--dc, var(--muted)); background: color-mix(in srgb, var(--dc, var(--muted)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--dc, var(--muted)) 38%, transparent); }
+  .devtype::before { content: ""; width: 8px; height: 8px; border-radius: 2px;
+    background: var(--dc, var(--muted)); }
+  .devtype[data-tree="dry"] { --dc: var(--done); }        /* dry = cool blue */
+  .devtype[data-tree="wet"] { --dc: var(--good); }        /* wet = teal/green */
+  .devtype[data-tree="wet"]::before { border-radius: 50%; }
+  .devtype:hover { background: color-mix(in srgb, var(--dc, var(--muted)) 20%, transparent); }
 
   .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
     gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
@@ -202,6 +214,7 @@
       </div>
       <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
         <span class="status"><span class="dot"></span><span id="f-status">—</span></span>
+        <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -301,6 +314,12 @@ document.title = FIELD.name + " — Field Development Life-Cycle";
 $("f-title").textContent = FIELD.name;
 $("f-sub").innerHTML = `${FIELD.operator} · ${FIELD.region} — ${FIELD.host}`;
 $("f-status").textContent = FIELD.statusLabel;
+if (FIELD.treeLabel) {
+  const dt = $("f-devtype");
+  dt.textContent = FIELD.treeLabel;
+  dt.setAttribute("data-tree", FIELD.treeType || "");
+  dt.hidden = false;
+}
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
   + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--accent) 10%,var(--panel-2));`
