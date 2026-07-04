@@ -1,8 +1,9 @@
 """Tests for production Colorado ECMC FacilityDetail/Form 5A ingest (#751)."""
 
+from urllib.error import HTTPError
+
 import pandas as pd
 import pytest
-from urllib.error import HTTPError
 
 from worldenergydata.modules.state_regulators.colorado_ecmc import (
     facility_detail_ingest,
