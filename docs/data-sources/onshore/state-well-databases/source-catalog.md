@@ -151,7 +151,7 @@ No initial/shut-in BHP, shut-in wellhead pressure, or deliverability-test values
 | Daily Activity Dashboard full export | 9 activity datasets (pending/approved permits Form 2/2A, spuds, completions activity, etc.) | https://ecmc.state.co.us/documents/data/downloads/Dashboard/DAD_Export.zip (26 MB) | Zip of tables | Daily (verified last-mod 2026-07-02) | Free | VERIFIED |
 | Well analytical (chemistry) data | Gas/produced-water analytical sample data (useful for gas composition, not pressure) | https://ecmc.state.co.us/documents/data/downloads/environmental/ProdWellDownLoad.zip | .mdb in zip | Labeled "Updated Monthly" but last-mod 2024-03-01 (stale) | Free | VERIFIED (staleness noted) |
 | Spacing orders | Section/twp/range, cause/order number, well density, unit size, formation code | CauseOrderTabl_Download.zip via spacing-download page | Access .mdb | Post-hearings | Free | Landing page verified; zip path UNVERIFIED |
-| Formation tops / initial completion tests | Tops (with logged/cored/DST flags), casing/cement, completed-interval and **Initial Test Data** — per-well COGIS scout pages only, not bulk | https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx?api={CCSSSSS} (verified rendering tops + initial test block) | HTML (structured, scrapeable) | Live DB | Free | VERIFIED + SCOUTED ([#749](https://github.com/vamseeachanta/worldenergydata/issues/749)); production ingest deferred to [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) |
+| Formation tops / initial completion tests | Tops (with logged/cored/DST flags), casing/cement, completed-interval and **Initial Test Data** — per-well COGIS scout pages only, not bulk | https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx?api={CCSSSSS} (verified rendering tops + initial test block) | HTML (structured, scrapeable) | Live DB; use capped polite refresh | Free | VERIFIED + SCOUTED ([#749](https://github.com/vamseeachanta/worldenergydata/issues/749)); candidate-only production ingest added in [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) |
 
 Master index: https://ecmc.colorado.gov/data-maps-reports/downloadable-data-documents (403 to non-browser user agents). Download guide: https://ecmc.state.co.us/documents/data/downloads/ECMC_Download_Guidance_v2_ada.pdf.
 
@@ -176,16 +176,51 @@ candidate pressure observations: `CASING_PRESS=1700` and `TUBING_PRESS=1300`
 for the NIOBRARA (`NBRR`) interval. The sample output lives under
 `/mnt/ace/worldenergydata/data/modules/colorado_ecmc/source_discovery/`.
 
-There is still **no bulk download of the Form 5A test or tops tables**; a
-statewide automated ingest now requires the separate [#751](https://github.com/vamseeachanta/worldenergydata/issues/751)
-plan for source-list construction, throttling, retry/resume, coverage
-accounting, and parser drift checks. Bradenhead (Form 17) annulus-pressure
+There is still **no bulk download of the Form 5A test or tops tables**. The
+[#751](https://github.com/vamseeachanta/worldenergydata/issues/751) production
+lane derives a capped source list from the official WELLS GIS ZIP, fetches live
+FacilityDetail pages with identity checks and status sidecars, parses every
+Initial Test Data block, and emits candidate-only pressure observations under
+`/mnt/ace/worldenergydata/data/modules/colorado_ecmc/facility_detail_ingest/`.
+Bradenhead (Form 17) annulus-pressure
 tests exist as imaged forms only. MIT (Form 21) test data is a genuine
 structured monthly bulk download, but it is engineering integrity pressure, not
 reservoir/wellhead production pressure.
 
 ### Ingestion effort estimate
-**Low** for wells master, production CSVs, MIT, and DAD exports: static HTTPS files with stable URL patterns, no auth — gotchas: ecmc.colorado.gov landing pages 403 without a browser User-Agent, annual summary files are Access .mdb (need mdbtools/UCanAccess), 2023 production file has a nonstandard name (`2023_prod_reports_20240903.csv`). Initial-test/tops data is **medium-high**: FacilityDetail is structured enough for a direct-source parser, but a production run must be throttled, resumable, and coverage-audited before any statewide crawl.
+**Low** for wells master, production CSVs, MIT, and DAD exports: static HTTPS files with stable URL patterns, no auth — gotchas: ecmc.colorado.gov landing pages 403 without a browser User-Agent, annual summary files are Access .mdb (need mdbtools/UCanAccess), 2023 production file has a nonstandard name (`2023_prod_reports_20240903.csv`). Initial-test/tops data is **medium-high**: FacilityDetail is structured enough for a direct-source parser, but production runs must stay throttled, resumable, identity-checked, and coverage-audited before any statewide crawl.
+
+### Implemented [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) Form 5A candidate-ingest lane
+
+The Form 5A lane is configured by:
+
+```text
+config/colorado_ecmc_facility_detail_ingest.yml
+```
+
+Default heavy-output layout:
+
+```text
+/mnt/ace/worldenergydata/data/modules/colorado_ecmc/facility_detail_ingest/
+  source_lists/facility_detail_source_list.parquet
+  raw/facility_detail/status/{fetched,failed,skipped}.jsonl
+  raw/facility_detail/html/{api_fragment}.html
+  parsed/facility_detail_initial_tests.parquet
+  curated/pressure/well_pressure_observations.parquet
+  curated/pressure/colorado_ecmc_form5a_pressure_observation_quality.json
+  reports/colorado_ecmc_form5a_ingest_summary.json
+```
+
+Refresh cadence: WELLS source-list spine is daily; FacilityDetail is live COGIS
+HTML and should be refreshed with explicit caps/throttle rather than a blind
+daily statewide crawl. Curated `CASING_PRESS` and `TUBING_PRESS` rows remain
+candidate-only (`candidate_only` promotion status) and do not enter
+`config/underpressured_screen.yml`.
+
+Default capped run on 2026-07-04 used the official WELLS ZIP
+(124,332 rows), fetched 5 FacilityDetail pages, parsed 49 Initial Test Data
+rows, and produced 11 usable candidate pressure observations with 0
+screen-promotable rows.
 
 ### Implemented [#749](https://github.com/vamseeachanta/worldenergydata/issues/749) source-discovery snapshot
 

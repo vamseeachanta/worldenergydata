@@ -9,21 +9,23 @@ Survey and live-scout date: 2026-07-04.
 
 ## Decision
 
-The official ECMC FacilityDetail endpoint is a viable candidate for a
-production-grade Form 5A / Initial Test Data pressure ingest, but it is not yet
-a screen-ready Colorado pressure source.
+The official ECMC FacilityDetail endpoint is a viable source for a
+production-grade Form 5A / Initial Test Data pressure ingest, but it remains a
+candidate-only Colorado pressure source for the underpressured screen.
 
 The approved [#749](https://github.com/vamseeachanta/worldenergydata/issues/749)
 scout proved that the public FacilityDetail HTML contains structured initial
 test rows with `CASING_PRESS` and `TUBING_PRESS`. It intentionally used a
 single configured API sample and did not attempt statewide iteration. A
-production ingest now needs a separate reviewed plan under
-[#751](https://github.com/vamseeachanta/worldenergydata/issues/751) covering
-source-list construction, throttling, retry/resume, coverage accounting, parser
-drift checks, and pressure interpretation.
+production ingest lane under
+[#751](https://github.com/vamseeachanta/worldenergydata/issues/751) now covers
+source-list construction, throttling, retry/resume, coverage accounting,
+multi-block parsing, identity checks, and candidate-only pressure
+interpretation.
 
-Colorado therefore remains excluded from underpressured-screen participation
-gates until that follow-up ingest is approved, implemented, and reviewed.
+Colorado Form 5A rows therefore remain excluded from underpressured-screen
+participation gates until a later reviewed rule maps a pressure kind to
+`WHP_shut_in`.
 
 ## Official Source Matrix
 
@@ -93,17 +95,68 @@ The discovery parser classifies pressure-like values before any screen use:
 
 | Lane | Classification | Screen use |
 |---|---|---|
-| FacilityDetail Initial Test Data `CASING_PRESS` | Candidate pressure observation | Not eligible until [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) approves ingest + interpretation |
-| FacilityDetail Initial Test Data `TUBING_PRESS` | Candidate pressure observation | Not eligible until [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) approves ingest + interpretation |
+| FacilityDetail Initial Test Data `CASING_PRESS` | Candidate pressure observation | Candidate-only in [#751](https://github.com/vamseeachanta/worldenergydata/issues/751); not screen-promotable until a later shut-in interpretation rule |
+| FacilityDetail Initial Test Data `TUBING_PRESS` | Candidate pressure observation | Candidate-only in [#751](https://github.com/vamseeachanta/worldenergydata/issues/751); flowing-pressure evidence is not screen-promotable |
 | FacilityDetail treatment pressure | Excluded engineering pressure | Never screen evidence without a later explicit contract change |
 | MIT/Form 21 pressures | Excluded integrity pressure | Never screen evidence without a later explicit contract change |
 | Form 17/bradenhead pressures | Excluded annulus/compliance pressure | Never screen evidence without a later explicit contract change |
 | Form 7 production pressure columns | Implemented spine source | Empty in [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) 2025+monthly live slice |
 
+## Production Ingest Lane (#751)
+
+The production lane is configured by:
+
+```text
+config/colorado_ecmc_facility_detail_ingest.yml
+```
+
+The default configuration is capped (`max_requests: 5`) and writes heavy
+outputs under:
+
+```text
+/mnt/ace/worldenergydata/data/modules/colorado_ecmc/facility_detail_ingest/
+  source_lists/
+  raw/facility_detail/html/
+  raw/facility_detail/status/
+  parsed/
+  curated/pressure/
+  reports/
+```
+
+Refresh cadence:
+
+- WELLS source list spine: daily official GIS ZIP.
+- FacilityDetail/Form 5A pages: live COGIS pages; use a polite, capped,
+  resumable crawl, not a blind daily statewide refresh.
+- Form 7 production pressure columns: monthly/annual bulk lane from
+  [#745](https://github.com/vamseeachanta/worldenergydata/issues/745), not the
+  Form 5A source of record.
+
+The curated Form 5A table preserves reported psig and converted psia, selected
+reference depth, raw HTML lineage, and `era=completion_initial_test`.
+`TUBING_PRESS` is tagged `flowing_tubing_initial_test`; `CASING_PRESS` is
+tagged `initial_test_casing_pressure_unverified`. Both are candidate-only and
+not screen-promotable in [#751](https://github.com/vamseeachanta/worldenergydata/issues/751).
+
+Default capped run evidence from 2026-07-04:
+
+| Metric | Value |
+|---|---:|
+| Source WELLS rows | 124,332 |
+| FacilityDetail request rows | 5 |
+| Fetched pages | 5 |
+| Parsed initial-test rows | 49 |
+| Usable candidate pressure rows | 11 |
+| Screen-promotable rows | 0 |
+| Promotion status | `candidate_only` |
+
+Runtime note: local Miniforge `python3` environments may lack parquet support.
+Use `/usr/bin/python3` or the repo CI environment for commands that write
+parquet outputs.
+
 ## Follow-Up Requirements
 
-[#751](https://github.com/vamseeachanta/worldenergydata/issues/751) should plan
-the production ingest before any statewide run. Required controls:
+Any future statewide run or screen activation should keep these controls:
 
 - use an approved source list from the wells/facilities spine;
 - carry a hard throttle and retry/backoff policy;
