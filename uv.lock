@@ -38,6 +38,7 @@ members = [
     "worldenergydata-safety-analysis",
     "worldenergydata-scheduler",
     "worldenergydata-sodir",
+    "worldenergydata-spain",
     "worldenergydata-subsea",
     "worldenergydata-texas-rrc",
     "worldenergydata-ukcs",
@@ -6649,6 +6650,7 @@ dependencies = [
     { name = "worldenergydata-safety-analysis" },
     { name = "worldenergydata-scheduler" },
     { name = "worldenergydata-sodir" },
+    { name = "worldenergydata-spain" },
     { name = "worldenergydata-subsea" },
     { name = "worldenergydata-texas-rrc" },
     { name = "worldenergydata-ukcs" },
@@ -6839,6 +6841,7 @@ requires-dist = [
     { name = "worldenergydata-safety-analysis", editable = "packages/worldenergydata-safety_analysis" },
     { name = "worldenergydata-scheduler", editable = "packages/worldenergydata-scheduler" },
     { name = "worldenergydata-sodir", editable = "packages/worldenergydata-sodir" },
+    { name = "worldenergydata-spain", editable = "packages/worldenergydata-spain" },
     { name = "worldenergydata-subsea", editable = "packages/worldenergydata-subsea" },
     { name = "worldenergydata-texas-rrc", editable = "packages/worldenergydata-texas_rrc" },
     { name = "worldenergydata-ukcs", editable = "packages/worldenergydata-ukcs" },
@@ -7560,6 +7563,23 @@ requires-dist = [
     { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "seaborn", specifier = ">=0.13.0,<1.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+]
+
+[[package]]
+name = "worldenergydata-spain"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-spain" }
+dependencies = [
+    { name = "openpyxl" },
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 

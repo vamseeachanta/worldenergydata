@@ -29,13 +29,14 @@ class TestUnifiedProductionClientQuery:
         assert "gom" in regions_in_data
         assert "brazil" in regions_in_data
 
-    def test_query_all_eight_regions(self):
+    def test_query_all_nine_regions(self):
         q = ProductionQuery(
             regions=[
                 "ncs",
                 "gom",
                 "brazil",
                 "ukcs",
+                "spain",
                 "eia_us",
                 "mexico",
                 "texas",
@@ -44,7 +45,7 @@ class TestUnifiedProductionClientQuery:
         )
         result = self.client.query(q)
         assert not result.is_empty()
-        assert len(result.sources_used) == 8
+        assert len(result.sources_used) == 9
 
     def test_query_result_has_standard_columns(self):
         q = ProductionQuery(regions=["ncs"])
@@ -115,9 +116,9 @@ class TestUnifiedProductionClientListRegions:
         regions = self.client.list_regions()
         assert isinstance(regions, list)
 
-    def test_list_regions_has_eight_entries(self):
+    def test_list_regions_has_nine_entries(self):
         regions = self.client.list_regions()
-        assert len(regions) == 8
+        assert len(regions) == 9
 
     def test_list_regions_contains_all_canonical(self):
         regions = self.client.list_regions()
@@ -126,6 +127,7 @@ class TestUnifiedProductionClientListRegions:
             "gom",
             "brazil",
             "ukcs",
+            "spain",
             "eia_us",
             "mexico",
             "texas",

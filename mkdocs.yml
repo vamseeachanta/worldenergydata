@@ -47,6 +47,7 @@ plugins:
             - packages/worldenergydata-safety_analysis/src
             - packages/worldenergydata-scheduler/src
             - packages/worldenergydata-sodir/src
+            - packages/worldenergydata-spain/src
             - packages/worldenergydata-subsea/src
             - packages/worldenergydata-texas_rrc/src
             - packages/worldenergydata-ukcs/src

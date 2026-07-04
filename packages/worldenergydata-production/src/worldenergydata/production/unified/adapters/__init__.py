@@ -11,6 +11,9 @@ from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
     MexicoCnhAdapter,
 )
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.spain_cores_adapter import (
+    SpainCoresAdapter,
+)
 from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
     TexasRrcAdapter,
 )
@@ -22,6 +25,7 @@ __all__ = [
     "BseeAdapter",
     "BrazilAnpAdapter",
     "UkcsAdapter",
+    "SpainCoresAdapter",
     "EiaUsAdapter",
     "MexicoCnhAdapter",
     "TexasRrcAdapter",
