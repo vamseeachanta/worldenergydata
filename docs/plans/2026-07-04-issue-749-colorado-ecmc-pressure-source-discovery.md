@@ -1,7 +1,7 @@
 # Plan: Issue #749 - Colorado ECMC pressure-source discovery
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/749
-**Status:** plan-review
+**Status:** implemented
 **Tier:** T2 (official source discovery, bounded live scout, parser fixture, docs, follow-up decision)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
