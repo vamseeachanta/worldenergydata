@@ -43,6 +43,7 @@ full rebuild.
 With no arguments the output is byte-for-byte identical to the pre-P2 monolithic
 build — the refactor is presentation-preserving.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -583,6 +584,21 @@ def build_hse(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_field_atlas(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the field-atlas browse page (Country→Domain→Region→Play→Field).
+
+    Self-contained HTML built by ``scripts/field_atlas/build_field_atlas.py`` from
+    ``reports/field-atlas/_roster.json`` (120 concept-matched GoM fields, tiered).
+    Returns ``[]`` — the landing index keys off what exists in ``public/``."""
+    src = REPORTS / "field-atlas" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "field-atlas"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    return []
+
+
 # Registry of per-domain builders. Add new domains here (key == reports/<domain>/
 # subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
 DOMAINS = {
@@ -592,6 +608,7 @@ DOMAINS = {
     "marine_safety": build_marine_safety,
     "hse": build_hse,
     "capabilities": build_capabilities,
+    "field-atlas": build_field_atlas,
 }
 
 
