@@ -151,7 +151,7 @@ No initial/shut-in BHP, shut-in wellhead pressure, or deliverability-test values
 | Daily Activity Dashboard full export | 9 activity datasets (pending/approved permits Form 2/2A, spuds, completions activity, etc.) | https://ecmc.state.co.us/documents/data/downloads/Dashboard/DAD_Export.zip (26 MB) | Zip of tables | Daily (verified last-mod 2026-07-02) | Free | VERIFIED |
 | Well analytical (chemistry) data | Gas/produced-water analytical sample data (useful for gas composition, not pressure) | https://ecmc.state.co.us/documents/data/downloads/environmental/ProdWellDownLoad.zip | .mdb in zip | Labeled "Updated Monthly" but last-mod 2024-03-01 (stale) | Free | VERIFIED (staleness noted) |
 | Spacing orders | Section/twp/range, cause/order number, well density, unit size, formation code | CauseOrderTabl_Download.zip via spacing-download page | Access .mdb | Post-hearings | Free | Landing page verified; zip path UNVERIFIED |
-| Formation tops / initial completion tests | Tops (with logged/cored/DST flags), casing/cement, completed-interval and **Initial Test Data** — per-well COGIS scout pages only, not bulk | https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail?api={CCSSSSS}&type=WELL (verified rendering tops + initial test block) | HTML (structured, scrapeable) | Live DB | Free | VERIFIED (no bulk download exists) |
+| Formation tops / initial completion tests | Tops (with logged/cored/DST flags), casing/cement, completed-interval and **Initial Test Data** — per-well COGIS scout pages only, not bulk | https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx?api={CCSSSSS} (verified rendering tops + initial test block) | HTML (structured, scrapeable) | Live DB | Free | VERIFIED + SCOUTED ([#749](https://github.com/vamseeachanta/worldenergydata/issues/749)); production ingest deferred to [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) |
 
 Master index: https://ecmc.colorado.gov/data-maps-reports/downloadable-data-documents (403 to non-browser user agents). Download guide: https://ecmc.state.co.us/documents/data/downloads/ECMC_Download_Guidance_v2_ada.pdf.
 
@@ -168,18 +168,43 @@ Colorado pressure evidence into the screen.
 
 Initial completion test data comes from Form 5A (Completed Interval Report)
 and is stored structured in COGIS: the per-well scout card renders an "Initial
-Test Data" block (test date, method, hours tested, choke, test-type/measure
-pairs — verified on an oil-well example showing BBLS_OIL/GRAVITY_OIL; whether
-gas-well records carry SITP/CAOF measures is UNVERIFIED) plus formation tops
-with a DSTs column. There is still **no bulk download of the Form 5A test or
-tops tables**; getting reservoir-relevant Colorado pressure requires a
-polite per-API FacilityDetail scrape or an ECMC data request. Bradenhead
-(Form 17) annulus-pressure tests exist as imaged forms only. MIT (Form 21)
-test data is a genuine structured monthly bulk download, but it is engineering
-integrity pressure, not reservoir/wellhead production pressure.
+Test Data" block (test date, method, hours tested, gas type, test-type/measure
+pairs) plus formation tops with a DSTs column. The [#749](https://github.com/vamseeachanta/worldenergydata/issues/749)
+live scout on 2026-07-04 fetched one official FacilityDetail page
+(`api=12339345`, 50,740 bytes), parsed 11 initial-test rows, and found two
+candidate pressure observations: `CASING_PRESS=1700` and `TUBING_PRESS=1300`
+for the NIOBRARA (`NBRR`) interval. The sample output lives under
+`/mnt/ace/worldenergydata/data/modules/colorado_ecmc/source_discovery/`.
+
+There is still **no bulk download of the Form 5A test or tops tables**; a
+statewide automated ingest now requires the separate [#751](https://github.com/vamseeachanta/worldenergydata/issues/751)
+plan for source-list construction, throttling, retry/resume, coverage
+accounting, and parser drift checks. Bradenhead (Form 17) annulus-pressure
+tests exist as imaged forms only. MIT (Form 21) test data is a genuine
+structured monthly bulk download, but it is engineering integrity pressure, not
+reservoir/wellhead production pressure.
 
 ### Ingestion effort estimate
-**Low** for wells master, production CSVs, MIT, and DAD exports: static HTTPS files with stable URL patterns, no auth — gotchas: ecmc.colorado.gov landing pages 403 without a browser User-Agent, annual summary files are Access .mdb (need mdbtools/UCanAccess), 2023 production file has a nonstandard name (`2023_prod_reports_20240903.csv`). Initial-test/tops data is **medium-high**: a ~100k-page scrape of COGIS FacilityDetail (simple `api=` parameter, HTML parse; throttle politely).
+**Low** for wells master, production CSVs, MIT, and DAD exports: static HTTPS files with stable URL patterns, no auth — gotchas: ecmc.colorado.gov landing pages 403 without a browser User-Agent, annual summary files are Access .mdb (need mdbtools/UCanAccess), 2023 production file has a nonstandard name (`2023_prod_reports_20240903.csv`). Initial-test/tops data is **medium-high**: FacilityDetail is structured enough for a direct-source parser, but a production run must be throttled, resumable, and coverage-audited before any statewide crawl.
+
+### Implemented [#749](https://github.com/vamseeachanta/worldenergydata/issues/749) source-discovery snapshot
+
+The bounded source-discovery lane now writes:
+
+```text
+/mnt/ace/worldenergydata/data/modules/colorado_ecmc/source_discovery/
+  raw/facility_detail/12339345.html
+  raw/facility_detail/manifest.json
+  parsed/facility_detail_initial_tests.parquet
+  parsed/facility_detail_initial_tests.json
+  reports/colorado_ecmc_pressure_source_discovery.json
+```
+
+The live scout fetched one official FacilityDetail page and produced
+`parsed_row_count: 11`, `candidate_pressure_count: 2`, and
+`decision: facility_detail_candidate_for_follow_up`. The candidate rows remain
+`source_discovery_not_screen_ready`; [#751](https://github.com/vamseeachanta/worldenergydata/issues/751)
+is the gated follow-up for production ingest.
 
 ### Implemented [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) snapshot
 
