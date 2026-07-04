@@ -84,6 +84,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-approved | 2026-07-02 |
 | [#709](https://github.com/vamseeachanta/worldenergydata/issues/709) | [texas-rrc-pressure-observations](2026-07-03-issue-709-texas-rrc-pressure-observations.md) | implemented | 2026-07-03 |
 | [#716](https://github.com/vamseeachanta/worldenergydata/issues/716) | [norway-sodir-reference-chain](2026-07-04-issue-716-norway-sodir-reference-chain.md) | plan-approved | 2026-07-04 |
+| [#717](https://github.com/vamseeachanta/worldenergydata/issues/717) | [ukcs-nsta-reference-chain](2026-07-04-issue-717-ukcs-nsta-reference-chain.md) | plan-approved | 2026-07-04 |
 | [#732](https://github.com/vamseeachanta/worldenergydata/issues/732) | [texas-rrc-underpressured-screen](2026-07-03-issue-732-texas-rrc-underpressured-screen.md) | implemented | 2026-07-03 |
 | [#740](https://github.com/vamseeachanta/worldenergydata/issues/740) | [oklahoma-occ-pressure-observations](2026-07-03-issue-740-oklahoma-occ-pressure-observations.md) | implemented | 2026-07-03 |
 | [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) | [colorado-ecmc-wellhead-pressure-observations](2026-07-03-issue-745-colorado-ecmc-wellhead-pressure-observations.md) | implemented | 2026-07-03 |
