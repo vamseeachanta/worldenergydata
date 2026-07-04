@@ -13,6 +13,54 @@
 
 A comprehensive Python data library and analysis platform for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation, safety analysis, and production forecasting tools.
 
+## Why this exists — the engineering ↔ asset circle
+
+`digitalmodel` and `worldenergydata` are two halves of one loop.
+
+- **digitalmodel** is the engineering brain — deterministic, code-based analysis (mooring, riser, fitness-for-service, hydrodynamics, structural, tubulars, installation): *what is possible and safe via engineering*.
+- **worldenergydata** is the real-world asset ledger — public-source, reproducible field / well / facility data across the whole life cycle: *what was actually built, and how it performs*.
+
+Together they close a circle. Engineering designs an asset; it gets built and operated; operations feed back into engineering (inspection, fitness-for-service, fatigue re-assessment); at end of life it is decommissioned — itself an engineering problem — and the outcomes loop back as empirical priors for the next design. The **life-cycle timeline** is the shared spine: `worldenergydata` supplies each stage's real dates and assets, `digitalmodel` supplies each stage's engineering.
+
+```mermaid
+flowchart LR
+  E["Engineering<br/><i>digitalmodel</i><br/>design &amp; analysis"] -->|design &amp; size| A["Asset built<br/><i>worldenergydata</i><br/>field · well · facility"]
+  A -->|operate| O["Operations<br/>production · metocean · IMR"]
+  O -->|inspection · FFS · fatigue| E
+  O -->|end of life| D["Decommissioning<br/>late-life · P&amp;A · cost &amp; regs"]
+  D -->|lessons ground the next design| E
+```
+
+The same stage-gate timeline is **fractal** — one grammar that reads coherently from a whole region down to a single wellbore stage:
+
+```mermaid
+flowchart LR
+  R[Region] --> P[Play] --> F["Field<br/>Acquire→Abandon"] --> W["Well<br/>Spud→P&amp;A"] --> S["Stage<br/>drill · complete · workover"]
+```
+
+And the two repos meet at that timeline — each asset on a field page can show *what is possible via engineering*:
+
+```mermaid
+flowchart LR
+  subgraph DM["digitalmodel — engineering"]
+    direction TB
+    M1["mooring · riser · FFS"]
+    M2["hydrodynamics · structural"]
+    M3["tubulars · installation"]
+  end
+  subgraph WED["worldenergydata — assets &amp; data"]
+    direction TB
+    A1["field &amp; well registers"]
+    A2["facilities · components"]
+    A3["production · decommissioning"]
+  end
+  DM <-->|"life-cycle timeline"| WED
+```
+
+Live: [worldenergydata field life-cycle](https://vamseeachanta.github.io/worldenergydata/lifecycle/) · [digitalmodel engineering capabilities](https://vamseeachanta.github.io/digitalmodel/capabilities/)
+
+This repo is the **asset & data** half of that loop — the public-source field/well/facility ledger the engineering runs against.
+
 ## Overview
 
 WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:

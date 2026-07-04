@@ -1,0 +1,16 @@
+# Colorado ECMC official pressure-source discovery (#749).
+# Heavy raw/parsed/report evidence stays under /mnt/ace.
+module: colorado_ecmc_source_discovery
+
+storage:
+  base_dir: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/source_discovery
+
+facility_detail:
+  base_url: https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx
+  sample_apis:
+    - "12339345"
+  max_requests: 1
+  request_delay_seconds: 1
+  timeout_seconds: 60
+  source_role: candidate_pressure_observation
+  refresh: live_database

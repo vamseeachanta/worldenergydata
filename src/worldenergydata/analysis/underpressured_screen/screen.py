@@ -40,8 +40,8 @@ def load_config(config_path: str | Path) -> dict:
 def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
     """Add ``bhp_psia_est`` and ``bhp_gradient_psi_ft``.
 
-    Wellhead readings get the average-temperature-and-z static gas-column
-    correction; measured BHP values pass through unchanged.
+    Shut-in wellhead readings get the average-temperature-and-z static gas-column
+    correction; measured BHP and non-shut-in WHP values pass through unchanged.
     """
     frame = observations.copy()
     exponent = (
@@ -51,11 +51,13 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
         / (settings["z_avg"] * settings["t_avg_rankine"])
     )
     multiplier = np.exp(exponent)
-    is_whp = frame["pressure_kind"].fillna("").astype(str).str.startswith("WHP_")
+    is_shut_in_whp = frame["pressure_kind"].fillna("").astype(str).eq("WHP_shut_in")
     frame["bhp_psia_est"] = frame["pressure_psia"].where(
-        ~is_whp, frame["pressure_psia"] * multiplier
+        ~is_shut_in_whp, frame["pressure_psia"] * multiplier
     )
-    frame["bhp_method"] = np.where(is_whp, "static_gas_column_avg_zt", "as_reported")
+    frame["bhp_method"] = np.where(
+        is_shut_in_whp, "static_gas_column_avg_zt", "as_reported"
+    )
     has_depth = frame["reference_depth_ft"] > 0
     frame["bhp_gradient_psi_ft"] = np.where(
         has_depth, frame["bhp_psia_est"] / frame["reference_depth_ft"], np.nan
