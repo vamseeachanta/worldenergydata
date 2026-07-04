@@ -208,6 +208,7 @@
 
     <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
+    <div id="f-assets"></div>
 
     <div class="body">
       <section>
@@ -293,6 +294,7 @@ const FIELD = {
   "id": "kaskida",
   "wellsHref": null,
   "wellsCount": 0,
+  "assetsHref": null,
   "name": "Kaskida",
   "operator": "BP",
   "region": "Keathley Canyon 292 · US Gulf of Mexico",
@@ -419,6 +421,11 @@ if (FIELD.wellsHref) $("f-wells").innerHTML =
   + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--accent) 10%,var(--panel-2));`
   + `border-bottom:1px solid var(--line);color:var(--accent-ink);font-weight:700;font-size:13.5px;text-decoration:none">`
   + `<span>▾ Deep-dive · well-level life-cycle timelines (${FIELD.wellsCount} wells)</span><span>Open →</span></a>`;
+if (FIELD.assetsHref) $("f-assets").innerHTML =
+  `<a href="${FIELD.assetsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
+  + `padding:12px clamp(18px,2.4vw,30px);background:color-mix(in srgb,var(--done) 8%,var(--panel-2));`
+  + `border-bottom:1px solid var(--line);color:var(--done);font-weight:700;font-size:13.5px;text-decoration:none">`
+  + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
 
