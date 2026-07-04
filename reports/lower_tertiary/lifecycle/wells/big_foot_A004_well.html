@@ -329,7 +329,7 @@ $("spine").innerHTML=WELL.phases.map((p,i)=>{
   return `<div class="phase ${c}">${here}<div class="pk">Stage ${i+1}</div><div class="pn">${p.n}</div></div>`;
 }).join("");
 function renderTL(el,axis,gates,spans){
-  const pos=v=>((v-axis.start)/(axis.end-axis.start))*100;
+  const pos=v=>3+((v-axis.start)/(axis.end-axis.start))*94;  // inset so edge flags aren't clipped
   let h=`<div class="tl-axis"></div>`;
   h+=axis.ticks.map(t=>`<div class="tl-tick" style="left:${pos(t.v)}%">${t.t}</div>`).join("");
   h+=spans.map(s=>{const l=pos(s.from),w=pos(s.to)-pos(s.from);return `<div class="tl-span" style="left:${l}%;width:${w}%"><div class="bar"></div><span class="txt">${s.txt}</span></div>`;}).join("");
