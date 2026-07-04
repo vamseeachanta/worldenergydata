@@ -23,7 +23,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
+
+_SRC = Path(__file__).resolve().parents[2] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
+    classify_tree_type,
+)
 
 HERE = Path(__file__).resolve().parents[2] / "reports/lower_tertiary/lifecycle"
 TEMPLATE = HERE / "lifecycle_template.html"
@@ -236,6 +245,13 @@ def facts_to_field(f: dict) -> dict:
         host_facts.append(["Data through", _pretty(g["data_through"])])
 
     label, hue = STATUS.get(f.get("status", "producing"), STATUS["producing"])
+
+    # Dry- vs wet-tree development-type badge (classified from the host text).
+    tree_type, concept_label = classify_tree_type(f.get("host_type", ""))
+    tree_label = None
+    if tree_type is not None:
+        tree_label = f"{'Dry' if tree_type == 'dry' else 'Wet'} tree · {concept_label}"
+
     region = f.get("region_block", "")
     if f.get("basin"):
         region = f"{region} · {f['basin']}" if region else f["basin"]
@@ -245,17 +261,23 @@ def facts_to_field(f: dict) -> dict:
     well_files = (
         sorted(wells_dir.glob(f"{f['id']}_*_well.html")) if wells_dir.exists() else []
     )
+    assets_page = HERE / "assets" / f"{f['id']}_assets.html"
 
     return {
         "id": f["id"],
         "wellsHref": "wells/" if well_files else None,
         "wellsCount": len(well_files),
+        "assetsHref": (
+            f"assets/{f['id']}_assets.html" if assets_page.exists() else None
+        ),
         "name": f["name"],
         "operator": f.get("operator", ""),
         "region": region,
         "host": f.get("host_type", ""),
         "statusLabel": label,
         "statusHue": hue,
+        "treeType": tree_type,
+        "treeLabel": tree_label,
         "currentPhase": f.get("current_phase", "operate"),
         "metrics": metrics,
         "axis": {"start": start, "end": end, "ticks": ticks},

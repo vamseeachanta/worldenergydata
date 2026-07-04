@@ -9,6 +9,7 @@ from worldenergydata.brazil_anp.production.well_production import (
     convert_mm3_to_m3,
     convert_sm3_to_bbl,
 )
+from worldenergydata.common.units import GasUnits
 
 MOCK_WELL_DATA = pd.DataFrame(
     {
@@ -112,3 +113,59 @@ class TestWellProductionLoader:
         result = loader.load(empty)
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 0
+
+
+CURRENT_ANP_DATA = pd.DataFrame(
+    [
+        {
+            "Estado": "Rio de Janeiro",
+            "Bacia": "Santos",
+            "Nome Poço ANP": "7-TUPI-1",
+            "Campo": "TUPI",
+            "Operador": "Petrobras",
+            "Ambiente": "Mar",
+            "Período": "2023/01",
+            "Óleo (bbl/dia)": "1.000,5000",
+            "Condensado (bbl/dia)": "10,0000",
+            "Gás Natural (Mm³/dia) Gás Total": "5,5000",
+            "Água (bbl/dia)": "20,2500",
+            "location_source": "presal",
+        }
+    ]
+)
+
+
+class TestCurrentAnpWellProductionSchema:
+    @pytest.fixture
+    def loader(self):
+        return WellProductionLoader()
+
+    def test_current_portuguese_schema_parses_decimal_comma_rates(self, loader):
+        result = loader.load(CURRENT_ANP_DATA.copy())
+        row = result.iloc[0]
+
+        assert row["field"] == "TUPI"
+        assert row["well"] == "7-TUPI-1"
+        assert row["year"] == 2023
+        assert row["month"] == 1
+        assert row["date"] == pd.Timestamp("2023-01-01")
+        assert row["oil_bbl"] == pytest.approx(1000.5 * 31)
+        assert row["condensate_bbl"] == pytest.approx(10.0 * 31)
+        assert row["water_bbl"] == pytest.approx(20.25 * 31)
+
+    def test_current_gas_thousand_m3_per_day_converts_to_monthly_mcf(self, loader):
+        result = loader.load(CURRENT_ANP_DATA.copy())
+
+        # ANP's Brazilian "Mm³/dia" is thousand m³/day, so the 1000 m³ and
+        # 1000 scf/Mcf factors cancel: value * 35.3147 * days.
+        expected = 5.5 * GasUnits.SM3_TO_SCF * 31
+        assert result.iloc[0]["gas_mcf"] == pytest.approx(expected)
+
+    def test_current_schema_preserves_source_metadata(self, loader):
+        result = loader.load(CURRENT_ANP_DATA.copy())
+        row = result.iloc[0]
+
+        assert row["operator"] == "Petrobras"
+        assert row["basin"] == "Santos"
+        assert row["environment"] == "Mar"
+        assert row["location_source"] == "presal"
