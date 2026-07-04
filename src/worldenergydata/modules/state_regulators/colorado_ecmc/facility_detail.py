@@ -20,23 +20,25 @@ def parse_facility_detail_html(
     soup = BeautifulSoup(html, "html.parser")
     page_text = _normalize_space(soup.get_text(" ", strip=True))
     context = _page_context(page_text)
-    initial_table = _find_initial_test_table(soup)
-    if initial_table is None:
+    initial_tables = _find_initial_test_tables(soup)
+    if not initial_tables:
         return pd.DataFrame(columns=_columns())
 
-    fields = {**context, **_initial_test_fields(initial_table)}
     rows = []
-    for test_type, measure in _initial_test_measures(initial_table):
-        rows.append(
-            {
-                **fields,
-                "source_url": source_url,
-                "source_section": "initial_test_data",
-                "test_type": test_type,
-                "measure_value": _number(measure),
-                "measure_raw": measure,
-            }
-        )
+    for initial_table in initial_tables:
+        block_context = _present_values(_initial_test_block_context(initial_table))
+        fields = {**context, **block_context, **_initial_test_fields(initial_table)}
+        for test_type, measure in _initial_test_measures(initial_table):
+            rows.append(
+                {
+                    **fields,
+                    "source_url": source_url,
+                    "source_section": "initial_test_data",
+                    "test_type": test_type,
+                    "measure_value": _number(measure),
+                    "measure_raw": measure,
+                }
+            )
     return pd.DataFrame(rows, columns=_columns())
 
 
@@ -103,11 +105,40 @@ def _page_context(page_text: str) -> dict:
     }
 
 
-def _find_initial_test_table(soup: BeautifulSoup):
-    marker = soup.find(string=lambda text: text and "Initial Test Data" in text)
-    if marker is None:
-        return None
-    return marker.find_parent("table")
+def _find_initial_test_tables(soup: BeautifulSoup) -> list:
+    tables = []
+    seen = set()
+    markers = soup.find_all(string=lambda text: text and "Initial Test Data" in text)
+    for marker in markers:
+        table = marker.find_parent("table")
+        if table is not None and id(table) not in seen:
+            tables.append(table)
+            seen.add(id(table))
+    return tables
+
+
+def _initial_test_block_context(table) -> dict:
+    container = table.find_parent("div", class_="accordion2") or table
+    block_text = _normalize_space(container.get_text(" ", strip=True))
+    return {
+        "formation_code": _first_group(
+            r"Formation\s+([A-Z0-9]+)\s+Formation Classification", block_text
+        ),
+        "formation": _first_group(
+            r"Completed Information for Formation\s+([A-Z0-9 ]+?)"
+            r"(?:\s+1st Production Date|\s+Formation Name|$)",
+            block_text,
+        ),
+        "interval_top_ft": _number(
+            _first_group(r"Interval Top:\s*([\d,]+)\s*ft", block_text)
+        ),
+        "interval_bottom_ft": _number(
+            _first_group(r"Interval Bottom:\s*([\d,]+)\s*ft", block_text)
+        ),
+        "first_production_date": _date(
+            _first_group(r"1st Production Date:\s*([0-9/]+)", block_text)
+        ),
+    }
 
 
 def _initial_test_fields(table) -> dict:
@@ -183,6 +214,10 @@ def _clean_field(value):
     if pd.isna(value):
         return pd.NA
     return str(value).split("-", 1)[0].strip()
+
+
+def _present_values(values: dict) -> dict:
+    return {key: value for key, value in values.items() if not pd.isna(value)}
 
 
 def _number(value):
