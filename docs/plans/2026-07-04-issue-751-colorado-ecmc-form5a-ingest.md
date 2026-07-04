@@ -1,7 +1,7 @@
 # Plan: Issue #751 - Colorado ECMC Form 5A initial-test pressure ingest
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/751
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T3 (production-grade direct-source HTML ingest, resumable `/mnt/ace` writes, pressure-screen contract risk)
 **Client:** N/A
 **Project:** worldenergydata onshore pressure screen
@@ -28,7 +28,7 @@ Planning-time probes on 2026-07-04 show:
 |---|---|---|
 | [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) | closed, `status:done` | Colorado bulk Form 7 production + WELLS GIS spine |
 | [#749](https://github.com/vamseeachanta/worldenergydata/issues/749) | closed, `status:done` | FacilityDetail/Form 5A source-discovery scout |
-| [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) | open, `status:needs-plan` | This production-grade FacilityDetail/Form 5A ingest |
+| [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) | open, `status:plan-approved` | This production-grade FacilityDetail/Form 5A ingest |
 | [#708](https://github.com/vamseeachanta/worldenergydata/issues/708) | open parent epic | Multi-state underpressured-screen lifecycle |
 
 [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) will build

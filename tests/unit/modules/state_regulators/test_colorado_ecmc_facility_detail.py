@@ -58,6 +58,53 @@ def test_parse_facility_detail_html_extracts_initial_test_rows():
     assert tubing["measure_value"] == 1300
 
 
+def test_parse_facility_detail_html_extracts_multiple_initial_test_blocks():
+    html = """
+    <html><body>
+      <table>
+        <tr><td>API# 05-123-32498</td></tr>
+        <tr><td>FacilityID:</td><td>420193</td><td>Field:</td><td>WATTENBERG</td></tr>
+      </table>
+      <div class="accordion2">
+        <h4>Formation NBRR Formation Classification: OW
+            Interval Top: 7397 ft. Interval Bottom: 14700 ft.</h4>
+        <table>
+          <tr><td>Completed Information for Formation NIOBRARA</td></tr>
+          <tr><td>1st Production Date:</td><td>5/19/2017</td></tr>
+          <tr><td>Initial Test Data:</td></tr>
+          <tr><td>Test Date:</td><td>5/19/2017</td><td>Test Method:</td><td>Flowing</td></tr>
+          <tr><th>Test Type</th><th>Measure</th></tr>
+          <tr><td>CASING_PRESS</td><td>1700</td></tr>
+          <tr><td>TUBING_PRESS</td><td>1300</td></tr>
+        </table>
+      </div>
+      <div class="accordion2">
+        <h4>Formation CODE Formation Classification: OW
+            Interval Top: 7020 ft. Interval Bottom: 7300 ft.</h4>
+        <table>
+          <tr><td>Completed Information for Formation CODELL</td></tr>
+          <tr><td>1st Production Date:</td><td>6/1/2017</td></tr>
+          <tr><td>Initial Test Data:</td></tr>
+          <tr><td>Test Date:</td><td>6/2/2017</td><td>Test Method:</td><td>Flowing</td></tr>
+          <tr><th>Test Type</th><th>Measure</th></tr>
+          <tr><td>CASING_PRESS</td><td>1800</td></tr>
+          <tr><td>TUBING_PRESS</td><td>1400</td></tr>
+        </table>
+      </div>
+    </body></html>
+    """
+
+    rows = parse_facility_detail_html(html, source_url=SOURCE_URL)
+    casing = rows[rows["test_type"] == "CASING_PRESS"].sort_values("formation_code")
+
+    assert len(rows) == 4
+    assert list(casing["formation_code"]) == ["CODE", "NBRR"]
+    assert list(casing["formation"]) == ["CODELL", "NIOBRARA"]
+    assert list(casing["interval_top_ft"]) == [7020, 7397]
+    assert list(casing["interval_bottom_ft"]) == [7300, 14700]
+    assert list(casing["measure_value"]) == [1800, 1700]
+
+
 def test_classify_facility_detail_pressures_keeps_only_initial_test_candidates():
     raw = pd.DataFrame(
         [
