@@ -16,7 +16,9 @@ FIXTURE = (
     / "colorado_ecmc"
     / "facility_detail_12339345_excerpt.html"
 )
-SOURCE_URL = "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx?api=12339345"
+SOURCE_URL = (
+    "https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx?api=12339345"
+)
 
 
 def test_parse_facility_detail_html_extracts_initial_test_rows():

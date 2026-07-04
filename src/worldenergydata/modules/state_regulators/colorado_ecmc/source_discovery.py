@@ -38,13 +38,13 @@ def build_facility_detail_url(api_fragment: str, base_url: str = BASE_URL) -> st
     elif len(digits) == 10 and digits.startswith("05"):
         digits = digits[2:10]
     if len(digits) != 8:
-        raise ValueError(f"expected Colorado county+sequence API fragment: {api_fragment}")
+        raise ValueError(
+            f"expected Colorado county+sequence API fragment: {api_fragment}"
+        )
     return f"{base_url}?{urlencode({'api': digits})}"
 
 
-def fetch_facility_detail(
-    url: str, destination: str | Path, timeout: int = 60
-) -> dict:
+def fetch_facility_detail(url: str, destination: str | Path, timeout: int = 60) -> dict:
     path = Path(destination)
     path.parent.mkdir(parents=True, exist_ok=True)
     digest = hashlib.sha256()
@@ -79,7 +79,9 @@ def write_source_discovery_manifest(
     manifest = {
         "source": "colorado_ecmc_facility_detail",
         "request_count": len(downloads),
-        "parsed_row_count": int(sum(item.get("parsed_row_count", 0) for item in downloads)),
+        "parsed_row_count": int(
+            sum(item.get("parsed_row_count", 0) for item in downloads)
+        ),
         "candidate_pressure_count": int(
             sum(item.get("candidate_pressure_count", 0) for item in downloads)
         ),
@@ -100,7 +102,9 @@ def run_source_discovery(config_path: str | Path) -> dict:
     for index, api_fragment in enumerate(scout["sample_apis"][: scout["max_requests"]]):
         url = build_facility_detail_url(api_fragment, scout["base_url"])
         raw_path = raw_dir / f"{_api_fragment(api_fragment)}.html"
-        metadata = fetch_facility_detail(url, raw_path, scout.get("timeout_seconds", 60))
+        metadata = fetch_facility_detail(
+            url, raw_path, scout.get("timeout_seconds", 60)
+        )
         parsed = parse_facility_detail_html(raw_path.read_text(encoding="utf-8"), url)
         classified = classify_facility_detail_pressures(parsed)
         metadata["api_fragment"] = _api_fragment(api_fragment)

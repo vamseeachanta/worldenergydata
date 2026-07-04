@@ -190,12 +190,8 @@ def test_run_source_discovery_writes_raw_parsed_and_report_outputs(
 
     result = run_source_discovery(config_path)
 
-    parsed_json = (
-        base_dir / "parsed" / "facility_detail_initial_tests.json"
-    )
-    report_json = (
-        base_dir / "reports" / "colorado_ecmc_pressure_source_discovery.json"
-    )
+    parsed_json = base_dir / "parsed" / "facility_detail_initial_tests.json"
+    report_json = base_dir / "reports" / "colorado_ecmc_pressure_source_discovery.json"
     assert result["report"]["request_count"] == 1
     assert result["report"]["parsed_row_count"] == 7
     assert result["report"]["candidate_pressure_count"] == 2

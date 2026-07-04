@@ -86,7 +86,9 @@ def _page_context(page_text: str) -> dict:
             page_text,
         ),
         "wellbore": _first_group(r"Wellbore\s+#(\d+)", page_text),
-        "measured_td_ft": _number(_first_group(r"Measured TD:\s*([\d,]+)\s*ft", page_text)),
+        "measured_td_ft": _number(
+            _first_group(r"Measured TD:\s*([\d,]+)\s*ft", page_text)
+        ),
         "vertical_td_ft": _number(
             _first_group(r"Vertical TD:\s*([\d,]+)\s*ft", page_text)
         ),
