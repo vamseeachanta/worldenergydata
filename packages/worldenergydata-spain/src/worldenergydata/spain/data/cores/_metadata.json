@@ -1,0 +1,12 @@
+{
+  "source_name": "CORES Indigenous Crude Oil Production",
+  "source_url": "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+  "statistics_page": "https://www.cores.es/en/estadisticas",
+  "source_updated_date": "2026-06-12",
+  "sample_extracted_date": "2026-07-04",
+  "sample_field": "Ayoluengo",
+  "source_unit": "tonnes",
+  "normalized_unit": "bbl",
+  "conversion": "oil_bbl = tonnes * 7.33",
+  "license_note": "CORES attribution required; cite source URL and latest-update date."
+}

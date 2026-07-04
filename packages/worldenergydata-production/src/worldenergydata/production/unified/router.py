@@ -20,6 +20,9 @@ from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
     MexicoCnhAdapter,
 )
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.spain_cores_adapter import (
+    SpainCoresAdapter,
+)
 from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
     TexasRrcAdapter,
 )
@@ -42,6 +45,9 @@ REGION_ALIASES: Dict[str, str] = {
     # UK Continental Shelf
     "ukcs": "ukcs",
     "uk": "ukcs",
+    # Spain CORES
+    "spain": "spain",
+    "cores": "spain",
     # EIA US plays
     "eia_us": "eia_us",
     "eia": "eia_us",
@@ -76,6 +82,7 @@ class RegionRouter:
             "gom": BseeAdapter(),
             "brazil": BrazilAnpAdapter(),
             "ukcs": UkcsAdapter(),
+            "spain": SpainCoresAdapter(),
             "eia_us": EiaUsAdapter(),
             "mexico": MexicoCnhAdapter(),
             "texas": TexasRrcAdapter(),

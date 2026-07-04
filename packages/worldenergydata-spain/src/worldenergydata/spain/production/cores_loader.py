@@ -17,6 +17,8 @@ committed binary fixture.
 
 from __future__ import annotations
 
+import json
+from importlib.resources import files
 from pathlib import Path
 from typing import Optional
 
@@ -33,12 +35,30 @@ GWH_TO_MCF = 3290.0
 
 _MONTHS = {
     # Spanish
-    "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
-    "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11,
+    "enero": 1,
+    "febrero": 2,
+    "marzo": 3,
+    "abril": 4,
+    "mayo": 5,
+    "junio": 6,
+    "julio": 7,
+    "agosto": 8,
+    "septiembre": 9,
+    "octubre": 10,
+    "noviembre": 11,
     "diciembre": 12,
     # English (EN export)
-    "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
-    "july": 7, "august": 8, "september": 9, "october": 10, "november": 11,
+    "january": 1,
+    "february": 2,
+    "march": 3,
+    "april": 4,
+    "may": 5,
+    "june": 6,
+    "july": 7,
+    "august": 8,
+    "september": 9,
+    "october": 10,
+    "november": 11,
     "december": 12,
 }
 
@@ -46,6 +66,9 @@ _MONTHS = {
 _YEAR_COLS = {"año", "year"}
 _MONTH_COLS = {"mes", "month"}
 _TOTAL_COLS = {"grand total", "total general"}
+_DATA_ROOT = files("worldenergydata.spain").joinpath("data/cores")
+DEFAULT_FIXTURE_CSV = _DATA_ROOT.joinpath("ayoluengo_oil_sample.csv")
+DEFAULT_METADATA_JSON = _DATA_ROOT.joinpath("_metadata.json")
 
 
 class CoresParseError(ValueError):
@@ -77,11 +100,10 @@ def parse_cores_frame(raw: pd.DataFrame, *, product: str) -> pd.DataFrame:
     year_col = next((cols[c] for c in _YEAR_COLS if c in cols), None)
     month_col = next((cols[c] for c in _MONTH_COLS if c in cols), None)
     if year_col is None or month_col is None:
-        raise CoresParseError(
-            f"missing Year/Month columns; have {list(raw.columns)}"
-        )
+        raise CoresParseError(f"missing Year/Month columns; have {list(raw.columns)}")
     field_cols = [
-        c for c in raw.columns
+        c
+        for c in raw.columns
         if str(c).strip().lower() not in (_YEAR_COLS | _MONTH_COLS | _TOTAL_COLS)
     ]
     if not field_cols:
@@ -121,19 +143,52 @@ class CoresProductionLoader:
     """Reads a CORES XLSX (or an injected frame) → long loader rows.
 
     Dependency-injected ``raw_frame`` (a pre-read DataFrame) is used for tests;
-    otherwise ``path`` is read via ``pd.read_excel`` (header row auto-detected by
-    the presence of a Year/Month header).
+    otherwise ``path`` is read via ``pd.read_excel`` with CORES' default
+    production-sheet header row (row 6, ``header_row=5``).
     """
 
-    def __init__(self, *, product: str, path: Optional[Path] = None,
-                 raw_frame: Optional[pd.DataFrame] = None, header_row: int = 5):
+    def __init__(
+        self,
+        *,
+        product: str,
+        path: Optional[Path] = None,
+        raw_frame: Optional[pd.DataFrame] = None,
+        header_row: int = 5,
+    ):
         self.product = product
         self._path = path
         self._raw = raw_frame
         self._header_row = header_row
 
     def load(self) -> pd.DataFrame:
-        raw = self._raw if self._raw is not None else pd.read_excel(
-            self._path, header=self._header_row
+        raw = (
+            self._raw
+            if self._raw is not None
+            else pd.read_excel(self._path, header=self._header_row)
         )
         return parse_cores_frame(raw, product=self.product)
+
+
+class CoresFixtureProductionLoader:
+    """Loader facade over the committed direct-source Ayoluengo fixture."""
+
+    def __init__(
+        self,
+        *,
+        path=DEFAULT_FIXTURE_CSV,
+        metadata_path=DEFAULT_METADATA_JSON,
+    ):
+        self._path = path
+        self._metadata_path = metadata_path
+
+    def load_all_production(self) -> pd.DataFrame:
+        return pd.read_csv(self._path)
+
+    def load_field_production(self, field_name: str) -> pd.DataFrame:
+        frame = self.load_all_production()
+        mask = frame["field_name"].astype(str).str.lower() == field_name.lower()
+        return frame[mask].copy()
+
+    def metadata(self) -> dict:
+        with self._metadata_path.open(encoding="utf-8") as fh:
+            return json.load(fh)
