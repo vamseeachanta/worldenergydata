@@ -102,11 +102,12 @@ jobs:
   changelog-check:
     name: Changelog Check
     runs-on: ubuntu-latest
-    if: |
-      !contains(github.event.pull_request.labels.*.name, 'skip-changelog') &&
-      !startsWith(github.event.pull_request.title, 'chore') &&
-      !startsWith(github.event.pull_request.title, 'ci')
-
+    # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
+    # in the main branch ruleset, and a required check that is skipped (via a
+    # job-level `if:`) is never "satisfied" — it deadlocks the PR at BLOCKED
+    # forever. That previously made every chore/ci/dependabot PR unmergeable
+    # (#802). The step below is advisory only (it emits a notice, never fails),
+    # so running it unconditionally is safe and satisfies the required context.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
