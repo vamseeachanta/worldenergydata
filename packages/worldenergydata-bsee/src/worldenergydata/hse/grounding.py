@@ -73,6 +73,16 @@ FAILURE_MODES: dict[str, FailureMode] = {
             re.I,
         ),
     ),
+    "riser_fatigue": FailureMode(
+        key="riser_fatigue",
+        label="Riser / flowline structural failure",
+        sources=("bsee",),
+        include=re.compile(
+            r"\briser\b|marine riser|drilling riser|\bSCR\b|flexible\s*(pipe|jumper|riser)"
+            r"|\bflowline\b|catenary|\bjumper\b",
+            re.I,
+        ),
+    ),
     "well_control": FailureMode(
         key="well_control",
         label="Well control / blowout",
