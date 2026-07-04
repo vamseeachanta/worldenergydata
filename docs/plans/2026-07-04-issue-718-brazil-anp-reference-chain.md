@@ -2,7 +2,7 @@
 
 - **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/718
 - **Date:** 2026-07-04
-- **Status:** plan-review
+- **Status:** plan-approved
 - **Client:** N/A
 - **Project:** N/A
 - **Lane:** lane:codex
@@ -52,7 +52,10 @@ Official direct-source evidence:
 - ANP "Produção de Petróleo e Gás Natural por Poço" says monthly production by
   well has been published since 2010, carries field/basin/state/operator/contract
   and production-period metadata, and is released with a two-month publication
-  lag. It publishes separate files for `terra`, `mar`, and `pré-sal`.
+  lag. It publishes separate files for `terra`, `mar`, and `pré-sal`; live
+  January 2023 source probing showed `pré-sal` overlaps `mar`, so the
+  implementation will deduplicate that expected overlap and keep the more
+  specific `presal` marker.
 - The ANP production-by-well metadata PDF identifies the file format as CSV,
   update frequency as monthly, and the source as ANP SDT/SIGEP.
 - The official monthly archive URL
@@ -186,10 +189,10 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
 - ANP client source resolver:
   - old CDP APEX URL is not used for downloads;
   - official gov.br monthly ZIP URL is accepted and cached by year/month;
-  - a fixture ZIP with `Mar`, `Presal`, and `Terra` CSVs is parsed as mutually
-    exclusive ANP partitions and concatenated with `location_source`;
-  - duplicate `(field, well, date)` keys across partitions fail closed to protect
-    against future upstream overlap.
+  - a fixture ZIP with `Mar`, `Presal`, and `Terra` CSVs is parsed with
+    `location_source`;
+  - expected `Mar`/`Presal` overlap is deduplicated by `(field, well, date)`,
+    retaining `presal`; unexpected duplicate source combinations fail closed.
 - Current ANP well-production schema:
   - Portuguese columns with accents and decimal commas parse correctly;
   - `Período` becomes `year`, `month`, and `date`;
@@ -231,9 +234,9 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
   the stale CDP APEX year/semester URL.
 - Current ANP production-by-well CSVs normalize into field-month totals that can
   feed the unified production adapter.
-- ANP `Mar`, `Presal`, and `Terra` monthly files are treated as disjoint
-  partitions, with a duplicate-key guard to prevent double counting if upstream
-  semantics change.
+- ANP `Mar`, `Presal`, and `Terra` monthly files are normalized without double
+  counting: expected `Mar`/`Presal` overlap is deduplicated with `presal`
+  retained, while unexpected duplicate source combinations fail closed.
 - Loader-backed `BrazilAnpAdapter.fetch` emits exactly the unified
   `STANDARD_COLUMNS` contract for supplied ANP loader data.
 - Existing Brazil adapter compatibility tests stay green through the no-loader
@@ -254,10 +257,10 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
 - ANP monthly direct-source links may change path conventions. The resolver will
   prefer scraping the official page for monthly links over hardcoding a single
   guessed URL pattern.
-- The production-by-well ZIP separates `mar`, `terra`, and `pré-sal` files. The
-  implementation will treat them as ANP's disjoint monthly partitions and will
-  include a duplicate-key guard so any future upstream overlap fails closed
-  before aggregation.
+- The production-by-well ZIP separates `mar`, `terra`, and `pré-sal` files. Live
+  January 2023 probing showed `pré-sal` overlaps `mar`; the implementation will
+  deduplicate that expected overlap before aggregation and keep a duplicate-key
+  guard for unexpected source combinations.
 - The current loader column names are stale and use different units than current
   ANP metadata. Tests will pin current daily-rate columns and monthly conversion
   explicitly.
@@ -283,6 +286,5 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
 - Codex and Gemini provider artifacts were UNAVAILABLE in r1:
   `scripts/review/results/2026-07-04-plan-718-codex.md` and
   `scripts/review/results/2026-07-04-plan-718-gemini.md`.
-- Implementation will remain blocked until final review artifacts report no
-  unresolved MAJOR findings and the user applies the `status:plan-approved`
-  gate.
+- Implementation is authorized by the user approval gate recorded on
+  2026-07-04, with local marker `.planning/plan-approved/718.md`.
