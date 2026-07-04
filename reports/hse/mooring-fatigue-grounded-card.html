@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mooring Fatigue — Deepwater Semi, 8-line Chain-Polyester — Grounded Analysis</title>
+<title>Mooring Fatigue — 8-line R4 120mm chain (deepwater spread) — Grounded Analysis</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
   :root { --ink:#0f172a; --muted:#475569; --line:#e2e8f0; --accent:#0b5394; }
@@ -38,15 +38,15 @@
 </style></head>
 <body><div class="card">
   <header>
-    <h1>Mooring Fatigue — Deepwater Semi, 8-line Chain-Polyester</h1>
+    <h1>Mooring Fatigue — 8-line R4 120mm chain (deepwater spread)</h1>
     <p>Engineering analysis, grounded in real-world precedent</p>
   </header>
 
   <section>
     <h2>Engineering result</h2>
-    <p class="headline">Minimum fatigue life 18.4 yr at the fairlead chain — below the 25-yr design basis.</p>
-    <div class="metrics"><div class="metric"><div class="m-val">Min fatigue life (fairlead)</div><div class="m-lab">18.4 yr</div></div><div class="metric"><div class="m-val">Max annual damage / line</div><div class="m-lab">0.74</div></div><div class="metric"><div class="m-val">Governing line</div><div class="m-lab">Line 3</div></div><div class="metric"><div class="m-val">Design basis</div><div class="m-lab">25 yr</div></div></div>
-    <p class="basis">T-N curve screening (DNV-OS-E301), spectral fatigue across the scatter diagram · Illustrative result from the mooring_fatigue workflow (parametric pilot, dm#796); replace with a live run when wired.</p>
+    <p class="headline">Minimum fatigue life 458 yr at Line 1 — above the 25-yr design basis.</p>
+    <div class="metrics"><div class="metric"><div class="m-val">Min fatigue life</div><div class="m-lab">458 yr</div></div><div class="metric"><div class="m-val">Max damage / line</div><div class="m-lab">0.055</div></div><div class="metric"><div class="m-val">Governing line</div><div class="m-lab">Line 1</div></div><div class="metric"><div class="m-val">Design basis</div><div class="m-lab">25 yr</div></div></div>
+    <p class="basis">Live digitalmodel mooring_fatigue — T-N screening (DNV-RP-C203 S-N curve D, seawater with CP), Miner&#x27;s-rule damage across the tension scatter, DFF 3 · LIVE digitalmodel mooring_fatigue run (subprocess, dm&#x27;s own venv). Component MC-CH-R4-120 — MBL 11700 kN, Vicinay catalog; geometry + MBL from the mooring component catalog. Tension scatter is a representative spectrum scaled to MBL (illustrative loading; the catalog carries no cyclic history). #768.</p>
   </section>
 
   <section>
@@ -69,7 +69,7 @@
   <footer>
     <div class="vintage">Data vintage: BSEE incident investigations; corpus current to 2026-01-08.</div>
     Source: BSEE incident investigations (data.bsee.gov), public record. Incidents are cited by area block + lease and date only —
-    no operator names (aggregation policy). Generated 2026-06-18.
+    no operator names (aggregation policy). Generated 2026-07-04.
   </footer>
 </div>
 <script>
