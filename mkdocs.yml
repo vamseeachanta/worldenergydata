@@ -13,7 +13,48 @@ plugins:
       default_handler: python
       handlers:
         python:
-          paths: [src]
+          # Monorepo: worldenergydata.* is a PEP 420 namespace package split
+          # across the root src/ tree AND every packages/*/src tree (e.g.
+          # worldenergydata.common lives in worldenergydata-core/src). griffe does
+          # static analysis, so every source root must be listed here or it fails
+          # to collect the module (workspace-hub#3286 / #3293 --strict).
+          paths:
+            - src
+            - packages/worldenergydata-baker_hughes/src
+            - packages/worldenergydata-brazil_anp/src
+            - packages/worldenergydata-bsee/src
+            - packages/worldenergydata-canada/src
+            - packages/worldenergydata-core/src
+            - packages/worldenergydata-cost/src
+            - packages/worldenergydata-dashboard/src
+            - packages/worldenergydata-decommissioning/src
+            - packages/worldenergydata-drilling/src
+            - packages/worldenergydata-drilling_pressure_management/src
+            - packages/worldenergydata-economics/src
+            - packages/worldenergydata-eia/src
+            - packages/worldenergydata-eia_us/src
+            - packages/worldenergydata-fdas/src
+            - packages/worldenergydata-landman/src
+            - packages/worldenergydata-lng_terminals/src
+            - packages/worldenergydata-marine/src
+            - packages/worldenergydata-marine_safety/src
+            - packages/worldenergydata-metocean/src
+            - packages/worldenergydata-mexico_cnh/src
+            - packages/worldenergydata-pipeline_safety/src
+            - packages/worldenergydata-production/src
+            - packages/worldenergydata-reporting/src
+            - packages/worldenergydata-reservoir/src
+            - packages/worldenergydata-safety_analysis/src
+            - packages/worldenergydata-scheduler/src
+            - packages/worldenergydata-sodir/src
+            - packages/worldenergydata-subsea/src
+            - packages/worldenergydata-texas_rrc/src
+            - packages/worldenergydata-ukcs/src
+            - packages/worldenergydata-vessel_fleet/src
+            - packages/worldenergydata-vessel_hull_models/src
+            - packages/worldenergydata-well_bore_design/src
+            - packages/worldenergydata-well_planning/src
+            - packages/worldenergydata-west_africa/src
           inventories: []
           options:
             docstring_style: google

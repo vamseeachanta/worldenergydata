@@ -17,7 +17,7 @@ Examples:
     worldenergydata texas-rrc validate-api 42-123-12345
 """
 
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 from typing import List, Optional
@@ -258,6 +258,1293 @@ def collect(
             import traceback
 
             console.print(f"[dim]{traceback.format_exc()}[/dim]")
+        raise typer.Exit(1)
+
+
+def _print_refresh_plans(plans) -> None:
+    table = Table(
+        title="Texas RRC Raw Refresh Sources",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Source", style="dim", no_wrap=True)
+    table.add_column("Strategy", no_wrap=True)
+    table.add_column("Status")
+    table.add_column("Target", overflow="fold")
+
+    for plan in plans:
+        status = "planned" if plan.refreshable else plan.skip_reason or "skipped"
+        table.add_row(
+            plan.source_id,
+            plan.download_strategy,
+            status,
+            str(plan.target_path),
+        )
+
+    console.print(table)
+
+
+def _print_directory_refresh_plans(plans) -> None:
+    table = Table(
+        title="Texas RRC GoDrive Directory Refresh",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Source", style="dim", no_wrap=True)
+    table.add_column("Rows", justify="right")
+    table.add_column("Selected", justify="right")
+    table.add_column("Files", overflow="fold")
+
+    for plan in plans:
+        table.add_row(
+            plan.source_id,
+            str(plan.row_count),
+            str(len(plan.selected_files)),
+            ", ".join(file.filename for file in plan.selected_files),
+        )
+
+    console.print(table)
+
+
+def _validate_refresh_selection(
+    source: Optional[List[str]],
+    all_sources: bool,
+) -> None:
+    if source and all_sources:
+        console.print("[red]Error:[/red] Use either --source or --all, not both")
+        raise typer.Exit(1)
+    if not source and not all_sources:
+        console.print("[red]Error:[/red] Use --source, --all, or --list-sources")
+        raise typer.Exit(1)
+
+
+def _execute_refresh_plans(refresher, plans, explicit_sources: bool) -> None:
+    refreshed = []
+    for plan in plans:
+        if not plan.refreshable:
+            if explicit_sources:
+                console.print(
+                    f"[red]Error:[/red] {plan.source_id} is not refreshable: "
+                    f"{plan.skip_reason}"
+                )
+                raise typer.Exit(1)
+            continue
+        refreshed.append(refresher.refresh_source(plan.source_id))
+
+    if not refreshed:
+        console.print(
+            "[yellow]No refreshable direct-source snapshots selected[/yellow]"
+        )
+        return
+
+    for manifest in refreshed:
+        console.print(
+            f"[green]Downloaded[/green] {manifest.source_id}: "
+            f"{manifest.byte_size} bytes -> {manifest.raw_path}"
+        )
+
+
+def _is_directory_source(refresher, source_id: str) -> bool:
+    return (
+        refresher.catalog[source_id]["download_strategy"]
+        == "official_godrive_directory"
+    )
+
+
+def _validate_directory_options(
+    refresher, source_ids, since_date, through_date
+) -> None:
+    if not (since_date or through_date):
+        return
+    if any(not _is_directory_source(refresher, source_id) for source_id in source_ids):
+        console.print(
+            "[red]Error:[/red] date-window options only apply to directory sources"
+        )
+        raise typer.Exit(1)
+    if any(
+        refresher.catalog[source_id].get("directory_refresh_policy") == "all_files"
+        for source_id in source_ids
+    ):
+        console.print(
+            "[red]Error:[/red] date-window options only apply to dated directory "
+            "sources"
+        )
+        raise typer.Exit(1)
+
+
+def _parse_refresh_date(value: str | None, option_name: str) -> date | None:
+    if value is None:
+        return None
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        console.print(f"[red]Error:[/red] {option_name} must use YYYY-MM-DD")
+        raise typer.Exit(1) from None
+
+
+def _normalize_selection_mode(selection: str) -> str:
+    mode = selection.replace("-", "_")
+    if mode not in {"catalog_default", "latest", "all"}:
+        console.print(
+            "[red]Error:[/red] selection must be one of: catalog_default, latest, all"
+        )
+        raise typer.Exit(1)
+    return mode
+
+
+def _validate_rows_per_page(rows_per_page: int) -> None:
+    if rows_per_page < 1:
+        console.print("[red]Error:[/red] --rows-per-page must be at least 1")
+        raise typer.Exit(1)
+
+
+@app.command()
+def refresh(
+    source: Optional[List[str]] = typer.Option(
+        None,
+        "--source",
+        "-s",
+        help="Source ID to refresh; repeat for multiple sources",
+    ),
+    all_sources: bool = typer.Option(
+        False,
+        "--all",
+        help="Refresh every direct-source catalog entry",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Plan refresh actions without downloading data",
+    ),
+    list_sources: bool = typer.Option(
+        False,
+        "--list-sources",
+        help="List configured Texas RRC refresh sources",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Raw data output root",
+    ),
+    since_date: Optional[str] = typer.Option(
+        None,
+        "--since-date",
+        help="First filename date to include for directory sources",
+    ),
+    through_date: Optional[str] = typer.Option(
+        None,
+        "--through-date",
+        help="Last filename date to include for directory sources",
+    ),
+    selection: str = typer.Option(
+        "catalog_default",
+        "--selection",
+        help="Directory selection: catalog_default, latest, or all",
+    ),
+    rows_per_page: int = typer.Option(
+        1000,
+        "--rows-per-page",
+        help="GoDrive directory rows requested per page",
+    ),
+) -> None:
+    """Refresh official Texas RRC raw snapshots into the /mnt/ace contract."""
+    from worldenergydata.texas_rrc.raw_refresh import (
+        DirectorySelection,
+        RawSnapshotRefresher,
+    )
+
+    selection = _normalize_selection_mode(selection)
+    _validate_rows_per_page(rows_per_page)
+    refresher = RawSnapshotRefresher(output_root=output_root)
+
+    if list_sources:
+        _print_refresh_plans(refresher.plan_sources())
+        return
+
+    _validate_refresh_selection(source, all_sources)
+    source_ids = source if source else sorted(refresher.catalog)
+    _validate_directory_options(refresher, source_ids, since_date, through_date)
+    directory_selection = DirectorySelection(
+        since_date=_parse_refresh_date(since_date, "--since-date"),
+        through_date=_parse_refresh_date(through_date, "--through-date"),
+        mode=selection,
+    )
+
+    if source and any(_is_directory_source(refresher, item) for item in source):
+        directory_source_ids = [
+            item for item in source if _is_directory_source(refresher, item)
+        ]
+        file_source_ids = [
+            item for item in source if not _is_directory_source(refresher, item)
+        ]
+        directory_plans = [
+            refresher.discover_directory_source(
+                item, directory_selection, rows_per_page
+            )
+            for item in directory_source_ids
+        ]
+        file_plans = refresher.plan_sources(file_source_ids) if file_source_ids else []
+        if dry_run:
+            _print_directory_refresh_plans(directory_plans)
+            if file_plans:
+                _print_refresh_plans(file_plans)
+            return
+        for plan in directory_plans:
+            manifest = refresher.refresh_source(
+                plan.source_id,
+                directory_selection,
+                rows_per_page,
+            )
+            console.print(
+                f"[green]Downloaded[/green] {manifest.source_id}: "
+                f"{manifest.byte_size} bytes -> {manifest.raw_path}"
+            )
+        if file_plans:
+            _execute_refresh_plans(refresher, file_plans, explicit_sources=True)
+        return
+
+    plans = refresher.plan_sources(source_ids if source else None)
+    if dry_run:
+        _print_refresh_plans(plans)
+        return
+
+    _execute_refresh_plans(refresher, plans, explicit_sources=bool(source))
+
+
+def _lifecycle_input_paths(raw_root: Path) -> list[str]:
+    raw_path = raw_root / "raw"
+    if not raw_path.exists():
+        return []
+    return [
+        str(path.relative_to(raw_root))
+        for path in sorted(raw_path.rglob("*"))
+        if path.is_file()
+    ]
+
+
+def _print_lifecycle_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Lifecycle Normalization",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Lifecycle rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+@app.command("normalize-lifecycle")
+def normalize_lifecycle(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw lifecycle snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated lifecycle outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the lifecycle spine summary without writing curated outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any lifecycle source directory is missing or empty",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+) -> None:
+    """Normalize local official Texas RRC raw snapshots into a lifecycle spine."""
+    from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
+    from worldenergydata.texas_rrc.lifecycle.quality import assess_lifecycle_quality
+    from worldenergydata.texas_rrc.lifecycle.sources import load_lifecycle_inputs
+    from worldenergydata.texas_rrc.lifecycle.spine import build_lifecycle_spine
+
+    try:
+        inputs = load_lifecycle_inputs(raw_root)
+        if require_sources and inputs.source_gaps:
+            console.print(
+                "[red]Error:[/red] missing lifecycle sources: "
+                f"{', '.join(inputs.source_gaps)}"
+            )
+            raise typer.Exit(1)
+
+        spine = build_lifecycle_spine(inputs)
+        quality = assess_lifecycle_quality(spine, source_gaps=inputs.source_gaps)
+        _print_lifecycle_summary(len(spine), inputs.source_gaps)
+
+        if dry_run:
+            console.print("[yellow]Dry run:[/yellow] no lifecycle outputs written")
+            return
+
+        manifest = write_lifecycle_outputs(
+            spine,
+            quality,
+            output_root=output_root,
+            input_paths=_lifecycle_input_paths(raw_root),
+            allow_non_ace_root=allow_non_ace_output,
+        )
+        console.print(
+            "[green]Wrote lifecycle spine[/green] "
+            f"{manifest.row_count} rows -> {manifest.spine_path}"
+        )
+        console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+        console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+def _print_pressure_observation_summary(
+    row_count: int,
+    candidate_count: int,
+    source_gaps,
+    source_warnings,
+) -> None:
+    table = Table(
+        title="Texas RRC Pressure Observations",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Curated observations", str(row_count))
+    table.add_row("Normalized candidates", str(candidate_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    table.add_row(
+        "Source warnings",
+        ", ".join(source_warnings) if source_warnings else "None",
+    )
+    console.print(table)
+    for warning in source_warnings:
+        console.print(f"[yellow]Source warning:[/yellow] {warning}")
+
+
+def _print_pressure_observation_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote pressure observations[/green] "
+        f"{manifest.row_count} rows -> {manifest.observations_csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.observations_parquet_path}[/dim]")
+    console.print(f"[dim]Candidates CSV: {manifest.candidates_csv_path}[/dim]")
+    console.print(f"[dim]Candidates Parquet: {manifest.candidates_parquet_path}[/dim]")
+    console.print(
+        "[dim]District/decade coverage: "
+        f"{manifest.coverage_by_district_decade_csv_path}[/dim]"
+    )
+    console.print(
+        "[dim]Field/decade coverage: "
+        f"{manifest.coverage_by_field_decade_csv_path}[/dim]"
+    )
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("build-pressure-observations")
+def build_pressure_observations_command(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw completion and wellbore snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated pressure-observation outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the pressure-observation summary without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when completion or wellbore pressure inputs are missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+) -> None:
+    """Build Texas RRC well pressure observations from local official data."""
+    _run_pressure_observation_build(
+        raw_root=raw_root,
+        output_root=output_root,
+        dry_run=dry_run,
+        require_sources=require_sources,
+        allow_non_ace_output=allow_non_ace_output,
+    )
+
+
+def _run_pressure_observation_build(
+    raw_root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    allow_non_ace_output: bool,
+) -> None:
+    from worldenergydata.texas_rrc.pressure_observations.cli_support import (
+        run_build_pressure_observations,
+    )
+
+    try:
+        result = run_build_pressure_observations(
+            raw_root=raw_root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+        )
+        _print_pressure_observation_summary(
+            result.row_count,
+            result.candidate_count,
+            result.source_gaps,
+            result.source_warnings,
+        )
+        if dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no pressure-observation outputs written"
+            )
+            return
+        if result.manifest is not None:
+            _print_pressure_observation_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+def _print_production_atlas_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Production Field Atlas",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Production atlas rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_production_atlas_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote production atlas[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _run_build_production_atlas(
+    raw_root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    from worldenergydata.texas_rrc.production_atlas import atlas as atlas_mod
+    from worldenergydata.texas_rrc.production_atlas import io as atlas_io
+    from worldenergydata.texas_rrc.production_atlas import sources as atlas_sources
+
+    inputs = atlas_sources.iter_production_input_chunks(raw_root, chunksize=chunksize)
+    source_gaps = tuple(inputs.source_gaps)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    atlas = atlas_mod.build_production_atlas_from_chunks(inputs.chunks)
+    if atlas.empty and not source_gaps:
+        source_gaps = ("production_pdq",)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing production sources: " f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    _print_production_atlas_summary(len(atlas), source_gaps)
+    if dry_run:
+        console.print("[yellow]Dry run:[/yellow] no production atlas outputs written")
+        return
+
+    manifest = atlas_io.write_production_atlas_outputs(
+        atlas,
+        output_root=output_root,
+        input_paths=inputs.input_paths,
+        source_gaps=source_gaps,
+        allow_non_ace_root=allow_non_ace_output,
+        command=(
+            "worldenergydata texas-rrc build-production-atlas "
+            f"--raw-root {raw_root} --output-root {output_root} "
+            f"--chunksize {chunksize}"
+        ),
+    )
+    _print_production_atlas_outputs(manifest)
+
+
+@app.command("build-production-atlas")
+def build_production_atlas_command(
+    raw_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--raw-root",
+        help="Root containing Texas RRC raw PDQ production snapshots",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated production atlas outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the production atlas summary without writing curated outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when the production PDQ source directory is missing or empty",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    chunksize: int = typer.Option(
+        1_000_000,
+        "--chunksize",
+        min=1,
+        help="Rows per PDQ production chunk while building the atlas",
+    ),
+) -> None:
+    """Build the Texas RRC production field atlas from local official PDQ data."""
+    try:
+        _run_build_production_atlas(
+            raw_root,
+            output_root,
+            dry_run,
+            require_sources,
+            allow_non_ace_output,
+            chunksize,
+        )
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+def _field_development_input_paths(root: Path) -> list[str]:
+    from worldenergydata.texas_rrc.field_development import io as field_io
+    from worldenergydata.texas_rrc.lifecycle import io as lifecycle_io
+    from worldenergydata.texas_rrc.production_atlas import io as atlas_io
+
+    candidates = [
+        lifecycle_io.LIFECYCLE_SPINE_DIR / lifecycle_io.SPINE_FILENAME,
+        lifecycle_io.LIFECYCLE_SPINE_DIR / lifecycle_io.QUALITY_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.PARQUET_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.CSV_FILENAME,
+        atlas_io.PRODUCTION_ATLAS_DIR / atlas_io.QUALITY_FILENAME,
+    ]
+    output_candidates = {
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.CSV_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.PARQUET_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.QUALITY_FILENAME,
+        field_io.FIELD_DEVELOPMENT_METRICS_DIR / field_io.MANIFEST_FILENAME,
+    }
+    return [
+        str(path)
+        for path in candidates
+        if (root / path).exists() and path not in output_candidates
+    ]
+
+
+def _print_field_development_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Field Development Metrics",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Field-development rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_development_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-development metrics[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _build_missing_lifecycle(root: Path, allow_non_ace_output: bool) -> None:
+    from worldenergydata.texas_rrc.lifecycle.io import write_lifecycle_outputs
+    from worldenergydata.texas_rrc.lifecycle.quality import assess_lifecycle_quality
+    from worldenergydata.texas_rrc.lifecycle.sources import load_lifecycle_inputs
+    from worldenergydata.texas_rrc.lifecycle.spine import build_lifecycle_spine
+
+    inputs = load_lifecycle_inputs(root)
+    if inputs.source_gaps:
+        console.print(
+            "[red]Error:[/red] missing lifecycle sources: "
+            f"{', '.join(inputs.source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    spine = build_lifecycle_spine(inputs)
+    quality = assess_lifecycle_quality(spine, source_gaps=inputs.source_gaps)
+    manifest = write_lifecycle_outputs(
+        spine,
+        quality,
+        output_root=root,
+        input_paths=_lifecycle_input_paths(root),
+        allow_non_ace_root=allow_non_ace_output,
+    )
+    console.print(
+        "[green]Wrote lifecycle spine[/green] "
+        f"{manifest.row_count} rows -> {manifest.spine_path}"
+    )
+
+
+def _build_missing_production(
+    root: Path,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    _run_build_production_atlas(
+        raw_root=root,
+        output_root=root,
+        dry_run=False,
+        require_sources=True,
+        allow_non_ace_output=allow_non_ace_output,
+        chunksize=chunksize,
+    )
+
+
+def _run_build_field_development_metrics(
+    root: Path,
+    output_root: Path,
+    dry_run: bool,
+    require_sources: bool,
+    build_missing_lifecycle: bool,
+    build_missing_production: bool,
+    allow_non_ace_output: bool,
+    chunksize: int,
+) -> None:
+    from worldenergydata.texas_rrc.field_development import (
+        assess_field_development_quality,
+        build_field_development_metrics,
+        load_field_development_inputs,
+        write_field_development_outputs,
+    )
+
+    inputs = load_field_development_inputs(root)
+    if "well_lifecycle_spine" in inputs.source_gaps and build_missing_lifecycle:
+        _build_missing_lifecycle(root, allow_non_ace_output)
+        inputs = load_field_development_inputs(root)
+    if "production_field_atlas" in inputs.source_gaps and build_missing_production:
+        _build_missing_production(root, allow_non_ace_output, chunksize)
+        inputs = load_field_development_inputs(root)
+
+    source_gaps = tuple(inputs.source_gaps)
+    if source_gaps and (require_sources or not dry_run):
+        console.print(
+            "[red]Error:[/red] missing field-development sources: "
+            f"{', '.join(source_gaps)}"
+        )
+        raise typer.Exit(1)
+
+    metrics = build_field_development_metrics(inputs)
+    quality = assess_field_development_quality(metrics, inputs)
+    _print_field_development_summary(len(metrics), source_gaps)
+
+    if dry_run:
+        console.print("[yellow]Dry run:[/yellow] no field-development outputs written")
+        return
+
+    manifest = write_field_development_outputs(
+        metrics,
+        quality,
+        output_root=output_root,
+        input_paths=_field_development_input_paths(root),
+        allow_non_ace_root=allow_non_ace_output,
+        command=(
+            "worldenergydata texas-rrc build-field-development-metrics "
+            f"--root {root} --output-root {output_root}"
+        ),
+    )
+    _print_field_development_outputs(manifest)
+
+
+@app.command("build-field-development-metrics")
+def build_field_development_metrics_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC lifecycle and production artifacts",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-development metric outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the field-development summary without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated lifecycle or production input is missing",
+    ),
+    build_missing_lifecycle: bool = typer.Option(
+        False,
+        "--build-missing-lifecycle",
+        help="Build missing lifecycle spine from local raw snapshots",
+    ),
+    build_missing_production: bool = typer.Option(
+        False,
+        "--build-missing-production",
+        help="Build missing production atlas from local raw snapshots",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    chunksize: int = typer.Option(
+        1_000_000,
+        "--chunksize",
+        min=1,
+        help="Rows per PDQ production chunk when building a missing atlas",
+    ),
+) -> None:
+    """Build Texas RRC field-development metrics from curated direct sources."""
+    try:
+        _run_build_field_development_metrics(
+            root,
+            output_root,
+            dry_run,
+            require_sources,
+            build_missing_lifecycle,
+            build_missing_production,
+            allow_non_ace_output,
+            chunksize,
+        )
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+def _print_infrastructure_access_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Infrastructure Access Metrics",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Infrastructure access rows", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_infrastructure_access_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote infrastructure access metrics[/green] "
+        f"{manifest.row_count} rows -> {manifest.csv_path}"
+    )
+    console.print(f"[dim]Parquet: {manifest.parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("build-infrastructure-access-metrics")
+def build_infrastructure_access_metrics_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing Texas RRC curated metrics and raw GIS layers",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated infrastructure access metric outputs",
+    ),
+    refresh_gis: bool = typer.Option(
+        False,
+        "--refresh-gis",
+        help="Refresh official RRC well and pipeline GIS layers before building",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated or GIS input source is missing",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the infrastructure access summary without writing outputs",
+    ),
+    nearby_radius_miles: float = typer.Option(
+        25.0,
+        "--nearby-radius-miles",
+        min=1.0,
+        help="Maximum distance used for nearby pipeline screening",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    rows_per_page: int = typer.Option(
+        1000,
+        "--rows-per-page",
+        min=1,
+        help="GoDrive directory rows requested per page when refreshing GIS",
+    ),
+) -> None:
+    """Build Texas RRC field-level infrastructure access metrics."""
+    from worldenergydata.texas_rrc.infrastructure.cli_support import (
+        run_build_infrastructure_access_metrics,
+    )
+
+    try:
+        result = run_build_infrastructure_access_metrics(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            refresh_gis=refresh_gis,
+            nearby_radius_miles=nearby_radius_miles,
+            allow_non_ace_output=allow_non_ace_output,
+            rows_per_page=rows_per_page,
+        )
+        _print_infrastructure_access_summary(result.row_count, result.source_gaps)
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no infrastructure access outputs written"
+            )
+            return
+        _print_infrastructure_access_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+def _print_field_atlas_report_summary(
+    row_count: int, page_count: int, source_gaps
+) -> None:
+    table = Table(
+        title="Texas RRC Field Atlas Reports",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Summary rows", str(row_count))
+    table.add_row("Field pages", str(page_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_atlas_report_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-atlas reports[/green] "
+        f"{manifest.page_count} pages -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Index: {manifest.index_path}[/dim]")
+    console.print(f"[dim]Summary CSV: {manifest.summary_csv_path}[/dim]")
+    console.print(f"[dim]Summary Parquet: {manifest.summary_parquet_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _print_field_opportunity_summary(row_count: int, source_gaps) -> None:
+    table = Table(
+        title="Texas RRC Field Opportunity Rankings",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Ranked fields", str(row_count))
+    table.add_row("Source gaps", ", ".join(source_gaps) if source_gaps else "None")
+    console.print(table)
+
+
+def _print_field_opportunity_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-opportunity rankings[/green] "
+        f"{manifest.row_count} rows -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Rankings CSV: {manifest.rankings_csv_path}[/dim]")
+    console.print(f"[dim]Rankings Parquet: {manifest.rankings_parquet_path}[/dim]")
+    console.print(f"[dim]HTML summary: {manifest.html_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _print_field_architecture_dossier_summary(
+    row_count: int,
+    blocking_source_gaps,
+    informational_source_gaps,
+) -> None:
+    table = Table(
+        title="Texas RRC Field Architecture Dossiers",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Selected dossiers", str(row_count))
+    table.add_row(
+        "Blocking source gaps",
+        ", ".join(blocking_source_gaps) if blocking_source_gaps else "None",
+    )
+    table.add_row(
+        "Informational source gaps",
+        ", ".join(informational_source_gaps) if informational_source_gaps else "None",
+    )
+    console.print(table)
+
+
+def _print_field_architecture_dossier_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-architecture dossiers[/green] "
+        f"{manifest.row_count} rows -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Index CSV: {manifest.index_csv_path}[/dim]")
+    console.print(f"[dim]Index Parquet: {manifest.index_parquet_path}[/dim]")
+    console.print(f"[dim]HTML summary: {manifest.summary_html_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+def _print_field_architecture_portfolio_summary(
+    row_count: int,
+    blocking_source_gaps,
+    informational_source_gaps,
+) -> None:
+    table = Table(
+        title="Texas RRC Field Architecture Portfolio",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("Metric", style="dim")
+    table.add_column("Value")
+    table.add_row("Portfolio rows", str(row_count))
+    table.add_row(
+        "Blocking source gaps",
+        ", ".join(blocking_source_gaps) if blocking_source_gaps else "None",
+    )
+    table.add_row(
+        "Informational source gaps",
+        ", ".join(informational_source_gaps) if informational_source_gaps else "None",
+    )
+    console.print(table)
+
+
+def _print_field_architecture_portfolio_outputs(manifest) -> None:
+    console.print(
+        "[green]Wrote field-architecture portfolio[/green] "
+        f"{manifest.row_count} rows -> {manifest.output_dir}"
+    )
+    console.print(f"[dim]Action Queue CSV: {manifest.action_queue_csv_path}[/dim]")
+    console.print(
+        f"[dim]Action Queue Parquet: {manifest.action_queue_parquet_path}[/dim]"
+    )
+    console.print(f"[dim]Class Summary CSV: {manifest.class_summary_csv_path}[/dim]")
+    console.print(
+        f"[dim]Follow-up Summary CSV: {manifest.followup_summary_csv_path}[/dim]"
+    )
+    console.print(f"[dim]HTML report: {manifest.html_path}[/dim]")
+    console.print(f"[dim]Quality report: {manifest.quality_path}[/dim]")
+    console.print(f"[dim]Manifest: {manifest.manifest_path}[/dim]")
+
+
+@app.command("publish-field-atlas-reports")
+def publish_field_atlas_reports_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field, production, and access inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-atlas report outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the report model without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated field-atlas report input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    max_fields: int | None = typer.Option(
+        None,
+        "--max-fields",
+        min=1,
+        help="Limit generated field pages after rank sorting",
+    ),
+) -> None:
+    """Publish Texas RRC field-atlas index and field deep-dive reports."""
+    from worldenergydata.texas_rrc.reports.cli_support import (
+        run_publish_field_atlas_reports,
+    )
+
+    try:
+        result = run_publish_field_atlas_reports(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+            max_fields=max_fields,
+        )
+        _print_field_atlas_report_summary(
+            result.row_count,
+            result.page_count,
+            result.source_gaps,
+        )
+        if result.dry_run:
+            console.print("[yellow]Dry run:[/yellow] no field-atlas reports written")
+            return
+        _print_field_atlas_report_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+@app.command("build-field-opportunities")
+def build_field_opportunities_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field-atlas report inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-opportunity ranking outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build the ranking model without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated field-opportunity input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    max_fields: int | None = typer.Option(
+        None,
+        "--max-fields",
+        min=1,
+        help="Limit ranked fields after score sorting",
+    ),
+) -> None:
+    """Build Texas RRC field opportunity and architecture-signal rankings."""
+    from worldenergydata.texas_rrc.opportunities.cli_support import (
+        run_build_field_opportunities,
+    )
+
+    try:
+        result = run_build_field_opportunities(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+            max_fields=max_fields,
+        )
+        _print_field_opportunity_summary(result.row_count, result.source_gaps)
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no field-opportunity outputs written"
+            )
+            return
+        _print_field_opportunity_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+@app.command("build-field-architecture-dossiers")
+def build_field_architecture_dossiers_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC opportunity and context inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-architecture dossier outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build dossier models without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated dossier input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+    max_fields: int = typer.Option(
+        25,
+        "--max-fields",
+        min=1,
+        help="Top-ranked opportunity rows to include before class coverage",
+    ),
+    class_coverage_limit: int = typer.Option(
+        3,
+        "--class-coverage-limit",
+        min=0,
+        help="Rows to add for each architecture class absent from top-ranked rows",
+    ),
+) -> None:
+    """Build Texas RRC field architecture dossier packets."""
+    from worldenergydata.texas_rrc.dossiers.cli_support import (
+        run_build_field_architecture_dossiers,
+    )
+
+    try:
+        result = run_build_field_architecture_dossiers(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+            max_fields=max_fields,
+            class_coverage_limit=class_coverage_limit,
+        )
+        _print_field_architecture_dossier_summary(
+            result.row_count,
+            result.blocking_source_gaps,
+            result.informational_source_gaps,
+        )
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no field-architecture dossier outputs written"
+            )
+            return
+        _print_field_architecture_dossier_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
+        raise typer.Exit(1)
+
+
+@app.command("build-field-architecture-portfolio")
+def build_field_architecture_portfolio_command(
+    root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--root",
+        help="Root containing curated Texas RRC field-architecture dossier inputs",
+    ),
+    output_root: Path = typer.Option(
+        Path("/mnt/ace/worldenergydata/data/modules/texas_rrc"),
+        "--output-root",
+        help="Root for curated field-architecture portfolio outputs",
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Build portfolio models without writing outputs",
+    ),
+    require_sources: bool = typer.Option(
+        False,
+        "--require-sources",
+        help="Fail when any curated portfolio input is missing",
+    ),
+    allow_non_ace_output: bool = typer.Option(
+        False,
+        "--allow-non-ace-output",
+        help="Allow non-/mnt/ace output roots for isolated tests or sandboxes",
+    ),
+) -> None:
+    """Build Texas RRC field architecture portfolio action report."""
+    from worldenergydata.texas_rrc.architecture_portfolio.cli_support import (
+        run_build_field_architecture_portfolio,
+    )
+
+    try:
+        result = run_build_field_architecture_portfolio(
+            root=root,
+            output_root=output_root,
+            dry_run=dry_run,
+            require_sources=require_sources,
+            allow_non_ace_output=allow_non_ace_output,
+        )
+        _print_field_architecture_portfolio_summary(
+            result.row_count,
+            result.blocking_source_gaps,
+            result.informational_source_gaps,
+        )
+        if result.dry_run:
+            console.print(
+                "[yellow]Dry run:[/yellow] no field-architecture portfolio outputs written"
+            )
+            return
+        _print_field_architecture_portfolio_outputs(result.manifest)
+    except typer.Exit:
+        raise
+    except Exception as e:
+        console.print(f"[red]Error:[/red] {str(e)}")
         raise typer.Exit(1)
 
 

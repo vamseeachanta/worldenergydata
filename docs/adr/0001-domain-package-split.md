@@ -232,3 +232,42 @@ tree; downstream import path is unchanged. The gated next step is carving
 `worldenergydata-core` (the fan-in-26 shared infra) as the first uv workspace
 member, then rolling out leaf domains most-isolated-first, each as its own PR
 with a `digitalmodel` downstream smoke test — exactly the phased plan above.
+
+---
+
+## Amendment — `fdas` carved out of the BSEE cluster (2026-07-02, issue #714)
+
+Batch 3 shipped `fdas` *inside* the `worldenergydata-bsee` cluster member on the
+premise of a **`bsee ⇄ fdas` import cycle** (recorded in the Evidence table and
+the batch-3 pyproject comments). **That premise is refuted for `fdas`.**
+
+**Evidence (re-measured on the real tree, two independent module-level greps —
+planner + adversarial reviewer):**
+
+- `grep -rE '^(from|import) worldenergydata\.(bsee|lower_tertiary)'` over the
+  entire `fdas/` tree → **zero hits.** `fdas` imports nothing from `bsee` or
+  `lower_tertiary`.
+- The only inbound edges are *into* `fdas`, from the cluster:
+  `bsee/analysis/production_api12.py`, `lower_tertiary/portfolio_economics.py`,
+  `lower_tertiary/portfolio_analytics.py`.
+- `fdas`'s only outbound cross-domain edge is `fdas.api → cost.disclosure_analytics`
+  (a leaf; `worldenergydata-cost` depends only on core, so no member cycle).
+
+This matches — and sharpens — the original spike's own Evidence §1, which listed
+`fdas → cost` as `fdas`'s sole outbound edge and never recorded an `fdas → bsee`
+edge. **`fdas` is a shared LEAF, not a member of the `bsee ⇄ lower_tertiary`
+strongly-connected component.** The real cycle is `bsee ⇄ lower_tertiary` alone.
+
+**Decision:** carve `fdas` into its own member, `worldenergydata-fdas`
+(`packages/worldenergydata-fdas/`), so non-US sources can run field economics
+without importing the US-GoM `bsee` cluster. The `bsee` cluster now ships FOUR
+subpackages (`bsee`, `lower_tertiary`, `hse`, `well_production_dashboard`) and
+**depends on** `worldenergydata-fdas`; the orphaned `worldenergydata-cost` dep
+(present solely for `fdas.api`) moves to the new member. Import path
+`worldenergydata.fdas` is unchanged (PEP 420). The new member also introduces a
+source-agnostic **fiscal-terms deck layer** (country royalty/tax decks) — the
+economics substrate for the international field-development epic (#713).
+
+**Guard:** if a real `fdas → bsee` / `fdas → lower_tertiary` back-edge is ever
+introduced, STOP — it recreates the cycle and invalidates this carve. The
+`bsee ⇄ lower_tertiary` cycle is untouched and still ships as one member.

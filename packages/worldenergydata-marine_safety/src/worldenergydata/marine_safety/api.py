@@ -29,13 +29,21 @@ from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
+from worldenergydata.common.query_api import FilterSpec, TypedQuery
 
-class IncidentsQuery:
+
+class IncidentsQuery(TypedQuery):
     """Query marine safety incidents across multiple databases.
 
     Wraps :class:`~worldenergydata.marine_safety.cross_database.CrossDatabaseAnalyzer`
     with a simpler, filter-oriented interface. Uses built-in synthetic data
     by default; pass ``importer_config`` for live data.
+
+    Re-expressed on :class:`~worldenergydata.common.query_api.TypedQuery`
+    (workspace-hub#3286): the singular/plural collapse + single-year shorthand
+    are now declared via ``filters`` and handled by the base ``_normalize``;
+    behavior is byte-for-byte preserved (see
+    ``tests/marine_safety/test_api_on_base.py``).
 
     Examples
     --------
@@ -44,6 +52,27 @@ class IncidentsQuery:
     >>> df = iq.query(source="maib")
     >>> df = iq.query(vessel_type="tanker", start_year=2020)
     """
+
+    query_id = "marine_safety.incidents"
+    filters = [
+        FilterSpec("sources", "source", "list"),
+        FilterSpec("vessel_types", "vessel_type", "list"),
+        FilterSpec("incident_types", "incident_type", "list"),
+        FilterSpec("regions", "region", "list"),
+        FilterSpec("years", None, "year"),
+    ]
+    result_columns = [
+        "source",
+        "incident_id",
+        "date",
+        "incident_type",
+        "vessel_type",
+        "region",
+        "fatalities",
+        "injuries",
+        "severity",
+        "description",
+    ]
 
     def __init__(
         self,
@@ -135,52 +164,38 @@ class IncidentsQuery:
         >>> df = iq.query(vessel_type="tanker", start_year=2020, end_year=2023)
         >>> df = iq.query(incident_types=["collision", "grounding"])
         """
+        # Keep an explicit-keyword signature (existing tests introspect it) but
+        # delegate the singular/plural + year normalization to the shared base.
+        return self._execute(
+            self._normalize(
+                source=source,
+                sources=sources,
+                year=year,
+                start_year=start_year,
+                end_year=end_year,
+                vessel_type=vessel_type,
+                vessel_types=vessel_types,
+                incident_type=incident_type,
+                incident_types=incident_types,
+                region=region,
+                regions=regions,
+                **kwargs,
+            )
+        )
+
+    def _execute(self, normalized: Dict[str, Any]) -> pd.DataFrame:
+        """Run the cross-database incident query from a normalized filter dict."""
         from worldenergydata.marine_safety.cross_database import (
             CrossDatabaseQuery,
         )
 
-        # Build source list
-        src_list: Optional[List[str]] = None
-        if sources:
-            src_list = sources
-        elif source:
-            src_list = [source]
-
-        # Build vessel_types list
-        vt_list: Optional[List[str]] = None
-        if vessel_types:
-            vt_list = vessel_types
-        elif vessel_type:
-            vt_list = [vessel_type]
-
-        # Build incident_types list
-        it_list: Optional[List[str]] = None
-        if incident_types:
-            it_list = incident_types
-        elif incident_type:
-            it_list = [incident_type]
-
-        # Build regions list
-        reg_list: Optional[List[str]] = None
-        if regions:
-            reg_list = regions
-        elif region:
-            reg_list = [region]
-
-        # Handle single year shorthand
-        sy = start_year
-        ey = end_year
-        if year is not None:
-            sy = year
-            ey = year
-
         q = CrossDatabaseQuery(
-            sources=src_list or ["maib", "imo", "emsa", "tsb"],
-            incident_types=it_list,
-            vessel_types=vt_list,
-            start_year=sy,
-            end_year=ey,
-            regions=reg_list,
+            sources=normalized["sources"] or ["maib", "imo", "emsa", "tsb"],
+            incident_types=normalized["incident_types"],
+            vessel_types=normalized["vessel_types"],
+            start_year=normalized["start_year"],
+            end_year=normalized["end_year"],
+            regions=normalized["regions"],
         )
 
         result = self._analyzer.query(q)

@@ -43,6 +43,7 @@ full rebuild.
 With no arguments the output is byte-for-byte identical to the pre-P2 monolithic
 build — the refactor is presentation-preserving.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -318,6 +319,40 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     portfolio summary, and the Julia 3D well-path page. Returns the list of
     ``(slug, display, filename, npv_str, npv_value)`` tuples the landing page
     uses to build its economics table."""
+    # --- Field life-cycle "page 1" gallery (stage-gate posters) ---
+    # Self-contained HTML built by scripts/lower_tertiary/build_lifecycle_posters.py.
+    # Publish the 10 per-field posters + the gallery index (skip the template + _facts.json).
+    lifecycle_src = REPORTS / "lower_tertiary" / "lifecycle"
+    if (lifecycle_src / "index.html").exists():
+        lifecycle_dst = PUBLIC / "lifecycle"
+        lifecycle_dst.mkdir(parents=True, exist_ok=True)
+        for html in sorted(lifecycle_src.glob("*_lifecycle.html")):
+            shutil.copy2(html, lifecycle_dst / html.name)
+        shutil.copy2(lifecycle_src / "index.html", lifecycle_dst / "index.html")
+        # Per-well granular timelines (the fractal well-level deep-dive) nest under wells/.
+        wells_src = lifecycle_src / "wells"
+        if (wells_src / "index.html").exists():
+            wells_dst = lifecycle_dst / "wells"
+            wells_dst.mkdir(parents=True, exist_ok=True)
+            for html in sorted(wells_src.glob("*_well.html")):
+                shutil.copy2(html, wells_dst / html.name)
+            shutil.copy2(wells_src / "index.html", wells_dst / "index.html")
+        # Per-field asset drill-downs (field → facility → asset → component → engineering).
+        assets_src = lifecycle_src / "assets"
+        if assets_src.exists():
+            assets_dst = lifecycle_dst / "assets"
+            assets_dst.mkdir(parents=True, exist_ok=True)
+            for html in sorted(assets_src.glob("*_assets.html")):
+                shutil.copy2(html, assets_dst / html.name)
+
+    # --- Drilling learning-curve front door (issue #775) ---
+    # Self-contained HTML (inline CSS + inline-SVG charts) built by
+    # scripts/lower_tertiary/build_drilling_insights.py; copied verbatim so its
+    # thesis page is reachable at /drilling-insights.html.
+    drill_src = REPORTS / "lower_tertiary" / "drilling_insights.html"
+    if drill_src.exists():
+        shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
+
     # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
     field_names = {
         "anchor": "Anchor",
@@ -471,6 +506,17 @@ def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
         if (src / rel).exists():
             shutil.copyfile(src / rel, dst / out)
 
+    # Cross-cutting comparison front doors (issues #776, #779). These are
+    # self-contained thesis pages (inline CSS + inline-SVG). They are published
+    # flat at the site root (not under /field-development/) so they read as
+    # orthogonal, whole-atlas comparisons rather than one field's page.
+    for rel, out in (
+        ("region_devtype_comparison.html", "region-devtype-comparison.html"),
+        ("all_regions_atlas.html", "all-regions-atlas.html"),
+    ):
+        if (src / rel).exists():
+            shutil.copyfile(src / rel, PUBLIC / out)
+
     # Multi-page report sets (index + per-field pages) — copy the whole tree so
     # the relative links between the index and its field pages survive.
     for sub, out in (("portfolio", "portfolio"), ("bsee_matched", "bsee-matched")):
@@ -484,11 +530,135 @@ def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_capabilities(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the self-contained capabilities overview at ``/capabilities/``.
+
+    The page is a hand-authored, fully self-contained HTML file (inline CSS, no
+    external assets) that summarises what the repo can do and links the live
+    dashboards. Like the field-development surfaces it is copied verbatim &mdash; no
+    template wrapping &mdash; so its internal ``../`` links to the sibling dashboards
+    resolve against the site root. Returns ``[]``; the landing index keys off the
+    file existing in ``public/`` (see :func:`build_index`)."""
+    src = REPORTS / "capabilities" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "capabilities"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    # Life-cycle Insights HUB (self-contained, hand-authored). Copied verbatim so
+    # its sibling link (index.html) and its ../ links to the published front
+    # doors resolve under /capabilities/.
+    insights = REPORTS / "capabilities" / "insights.html"
+    if insights.exists():
+        shutil.copyfile(insights, dst / "insights.html")
+    # Publish the intervention-serviceability brief (lives under docs/) so the
+    # Insights hub's Workover front-door link resolves in the published tree at
+    # /intervention-db/intervention-stats-brief.html. Self-contained (inline
+    # CSS + inline-SVG), copied verbatim.
+    brief = ROOT / "docs" / "intervention-db" / "intervention-stats-brief.html"
+    if brief.exists():
+        brief_dst = PUBLIC / "intervention-db"
+        brief_dst.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(brief, brief_dst / "intervention-stats-brief.html")
+    # Per-capability client one-pager PDFs and self-contained workflow-API
+    # artifacts, generated by scripts/capabilities/build_onepagers.py and
+    # committed as frozen artifacts; copied verbatim so the page's pdf/ and api/
+    # links resolve under /capabilities/.
+    for sub in ("pdf", "api"):
+        srcdir = REPORTS / "capabilities" / sub
+        if srcdir.exists():
+            shutil.copytree(srcdir, dst / sub, dirs_exist_ok=True)
+    return []
+
+
+def build_completion(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the well drilling-&-completion-days report at ``/completion/``.
+
+    The page is a self-contained HTML artifact (inline CSS, no external assets)
+    generated by ``scripts/completion/build_completion_report.py`` from a frozen
+    BSEE WAR-derived reference workbook; here it is copied verbatim so its ``../``
+    link back to the capabilities page resolves against the site root. Returns
+    ``[]`` &mdash; the landing index keys off what exists in ``public/``."""
+    src = REPORTS / "completion" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "completion"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    return []
+
+
+def build_marine_safety(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the marine-safety analytics surface.
+
+    These artifacts are already **self-contained** HTML (inline CSS/JS, Plotly
+    from CDN). The ``marine_safety/`` set is a small report tree whose pages link
+    to one another with relative hrefs (the executive summary links the fatality,
+    foundering and hatch analyses), so the whole tree is copied to preserve those
+    links. The IMO GISIS executive report is a single top-level file copied flat.
+    Only real-data reports are published; the synthetic ``*_demo`` page is not.
+    Returns ``[]`` &mdash; the landing index keys off what exists in ``public/``."""
+    src = REPORTS / "marine_safety"
+    if src.exists():
+        dst = PUBLIC / "marine_safety"
+        dst.mkdir(parents=True, exist_ok=True)
+        for f in src.glob("*.html"):
+            shutil.copyfile(f, dst / f.name)
+    imo = REPORTS / "IMO_GISIS_Executive_Report.html"
+    if imo.exists():
+        shutil.copyfile(imo, PUBLIC / imo.name)
+    return []
+
+
+def build_hse(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the HSE surface: self-contained offshore-incident report cards
+    (e.g. the mooring-fatigue grounded card). Only ``*.html`` is published; the
+    Markdown/JSON working notes under ``reports/hse/`` stay out of the site.
+    Returns ``[]`` &mdash; the landing index keys off what exists in ``public/``."""
+    src = REPORTS / "hse"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "hse"
+    dst.mkdir(parents=True, exist_ok=True)
+    for f in src.glob("*.html"):
+        shutil.copyfile(f, dst / f.name)
+    return []
+
+
+def build_decommissioning(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the decommissioning surface: the GoM P&A liability-wave front door
+    (issue #777). The page is a self-contained HTML artifact (inline CSS +
+    inline-SVG charts) built by ``scripts/decommissioning/build_pa_liability_wave.py``
+    from the frozen BSEE well inventory; copied verbatim into
+    ``public/decommissioning/pa-liability-wave.html``. Returns ``[]`` &mdash; the
+    landing index keys off what exists in ``public/``."""
+    dst = PUBLIC / "decommissioning"
+    pages = {
+        "pa_liability_wave.html": "pa-liability-wave.html",
+        "regional_liability.html": "regional-liability.html",
+    }
+    made = False
+    for src_name, dst_name in pages.items():
+        src = REPORTS / "decommissioning" / src_name
+        if not src.exists():
+            continue
+        if not made:
+            dst.mkdir(parents=True, exist_ok=True)
+            made = True
+        shutil.copyfile(src, dst / dst_name)
+    return []
+
+
 # Registry of per-domain builders. Add new domains here (key == reports/<domain>/
 # subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
 DOMAINS = {
     "lower_tertiary": build_lower_tertiary,
     "field_development": build_field_development,
+    "completion": build_completion,
+    "marine_safety": build_marine_safety,
+    "hse": build_hse,
+    "decommissioning": build_decommissioning,
+    "capabilities": build_capabilities,
 }
 
 
@@ -575,6 +745,97 @@ def _field_development_section() -> str:
     )
 
 
+def _safety_section() -> str:
+    """Landing section for the offshore-safety / HSE surfaces published by
+    :func:`build_marine_safety` and :func:`build_hse`. Cards link only the pages
+    that exist on disk, so a partial build still produces a correct section."""
+    cards = []
+    if (PUBLIC / "marine_safety" / "executive_summary.html").exists():
+        cards.append(
+            '<a class="card" href="marine_safety/executive_summary.html">'
+            "<h3>Marine Safety Analytics &rarr;</h3><p>Cross-database casualty "
+            "analysis &mdash; foundering, fatality and hatch breakdowns over "
+            "102,618 incident records (Canadian TSB, IMO GISIS, UK MAIB).</p></a>"
+        )
+    if (PUBLIC / "IMO_GISIS_Executive_Report.html").exists():
+        cards.append(
+            '<a class="card" href="IMO_GISIS_Executive_Report.html">'
+            "<h3>IMO GISIS Casualties &rarr;</h3><p>13,338 marine casualties "
+            "(1900&ndash;2025) by severity, vessel type and flag state, from the "
+            "IMO GISIS public database.</p></a>"
+        )
+    if (PUBLIC / "hse" / "mooring-fatigue-grounded-card.html").exists():
+        cards.append(
+            '<a class="card" href="hse/mooring-fatigue-grounded-card.html">'
+            "<h3>Mooring-Fatigue Grounded Card &rarr;</h3><p>Fatigue-life screening "
+            "anchored to real BSEE mooring-failure incidents (DNV-OS-E301 T-N "
+            "curves).</p></a>"
+        )
+    if not cards:
+        return ""
+    return (
+        "<h2>Offshore safety &amp; HSE</h2>"
+        "<p>Public marine-casualty and offshore-incident data, normalized and "
+        "analysed deterministically &mdash; incident classification, cause-event "
+        "breakdowns, and engineering screens anchored to real failures.</p>"
+        f'<div class="cards">{"".join(cards)}</div>'
+    )
+
+
+def _insights_section() -> str:
+    """Landing section for the life-cycle Insights hub + its front doors (issues
+    #775/#776/#777/#779). Cards link only pages that exist on disk, so a partial
+    build still produces a correct section."""
+    cards = []
+    if (PUBLIC / "capabilities" / "insights.html").exists():
+        cards.append(
+            '<a class="card" href="capabilities/insights.html">'
+            "<h3>Life-cycle Insights hub &rarr;</h3><p>Every insight arranged along "
+            "the well life-cycle spine &mdash; Drill &rarr; Complete &rarr; Produce "
+            "&rarr; Workover &rarr; Decommission &mdash; plus the cross-cutting "
+            "comparisons.</p></a>"
+        )
+    if (PUBLIC / "drilling-insights.html").exists():
+        cards.append(
+            '<a class="card" href="drilling-insights.html">'
+            "<h3>Drilling learning curve &rarr;</h3><p>184 GoM Lower-Tertiary "
+            "development wellbores burned 11,124 rig-days; depth explains only 11% "
+            "of the spread &mdash; execution, not geology, drives the curve.</p></a>"
+        )
+    if (PUBLIC / "region-devtype-comparison.html").exists():
+        cards.append(
+            '<a class="card" href="region-devtype-comparison.html">'
+            "<h3>Region &times; development-type &rarr;</h3><p>Deepwater is wet-tree "
+            "country: past ~1500 m the dry-tree share of producing trees collapses "
+            "from 80% on the shelf to 20% in ultra-deepwater.</p></a>"
+        )
+    if (PUBLIC / "all-regions-atlas.html").exists():
+        cards.append(
+            '<a class="card" href="all-regions-atlas.html">'
+            "<h3>All-regions field atlas &rarr;</h3><p>205 countries at reference "
+            "depth, the Gulf of Mexico at full life-cycle depth &mdash; the honest "
+            "coverage map with RICH / SAMPLE / ROADMAP density badges.</p></a>"
+        )
+    if (PUBLIC / "decommissioning" / "pa-liability-wave.html").exists():
+        cards.append(
+            '<a class="card" href="decommissioning/pa-liability-wave.html">'
+            "<h3>P&amp;A liability wave &rarr;</h3><p>8,161 GoM boreholes drilled but "
+            "not permanently plugged &mdash; $65&ndash;73B of latent P&amp;A "
+            "liability, with 3,288 temporarily-abandoned wells the imminent "
+            "crest.</p></a>"
+        )
+    if not cards:
+        return ""
+    return (
+        "<h2>Life-cycle insights</h2>"
+        "<p>Front-door analyses along the offshore well life-cycle &mdash; drilling "
+        "performance, development-concept mix, and the decommissioning liability "
+        "wave &mdash; each a single thesis backed by a number, computed "
+        "deterministically from public BSEE data.</p>"
+        f'<div class="cards">{"".join(cards)}</div>'
+    )
+
+
 def build_index() -> None:
     cards = []
     if (PUBLIC / "portfolio.html").exists():
@@ -591,6 +852,12 @@ def build_index() -> None:
         cards.append(
             '<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
             "<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>"
+        )
+    if (PUBLIC / "completion" / "index.html").exists():
+        cards.append(
+            '<a class="card" href="completion/"><h3>Drilling &amp; Completion Days &rarr;</h3>'
+            "<p>WAR-derived drilling and completion durations for 217 wells across "
+            "the 12 Lower-Tertiary fields.</p></a>"
         )
 
     # Portfolio economics table, worst NPV first. Only list fields whose page
@@ -617,11 +884,28 @@ def build_index() -> None:
             + "</tbody></table></div>"
         )
 
+    capabilities_section = ""
+    if (PUBLIC / "capabilities" / "index.html").exists():
+        capabilities_section = (
+            "<h2>Capabilities overview</h2>"
+            "<p>A single-page tour of every analytical surface in this repo &mdash; "
+            "BSEE field economics, the field-development playbook, and multi-region "
+            "production &amp; safety data &mdash; with the sanctioned figures it is "
+            "validated against.</p>"
+            '<div class="cards"><a class="card" href="capabilities/">'
+            "<h3>Engineering Capabilities &rarr;</h3><p>What worldenergydata does, "
+            "the governing data source behind each surface, and the live dashboards "
+            "&mdash; in one page.</p></a></div>"
+        )
+
     landing = page(
         "Open Data Outputs",
         "Deterministic petroleum-engineering analyses + an offshore "
         "field-development playbook on public data.",
-        _field_development_section()
+        capabilities_section
+        + _insights_section()
+        + _field_development_section()
+        + _safety_section()
         + f'<h2>Lower-Tertiary economics &amp; benchmarking</h2><div class="cards">'
         f'{"".join(cards)}</div>' + econ_table + "<h2>How this works</h2>"
         "<p>Every analysis here is computed by unit-tested domain code, frozen into a "

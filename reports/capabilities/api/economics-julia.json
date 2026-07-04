@@ -1,0 +1,36 @@
+{
+  "schema": "deckhand.workflow_api.ResultEnvelope/2",
+  "status": "ok",
+  "repo": "worldenergydata",
+  "report_url": "https://vamseeachanta.github.io/worldenergydata/economics-julia.html",
+  "provenance": {
+    "basis": "BSEE OGOR-A \u00b7 sanctioned V30",
+    "deterministic": true,
+    "source": "public regulatory filings"
+  },
+  "request": {
+    "method": "GET",
+    "url": "https://vamseeachanta.github.io/worldenergydata/economics-julia.html"
+  },
+  "surface": "worldenergydata:economics-julia",
+  "outputs": [
+    {
+      "kind": "report",
+      "url": "https://vamseeachanta.github.io/worldenergydata/economics-julia.html"
+    }
+  ],
+  "note": "Published report surface \u2014 the deterministic output is served as a self-contained page; GET the report_url to consume it.",
+  "prompt": "Run the sanctioned V30 field economics for Julia \u2014 per-well NPV, MIRR and the breakeven WTI.",
+  "how_to_run": [
+    {
+      "via": "telegram",
+      "bot": "@the_deckhand_bot",
+      "deep_link": "https://t.me/the_deckhand_bot",
+      "step": "Open @the_deckhand_bot and send: Run the sanctioned V30 field economics for Julia \u2014 per-well NPV, MIRR and the breakeven WTI."
+    },
+    {
+      "via": "http",
+      "step": "GET https://vamseeachanta.github.io/worldenergydata/economics-julia.html"
+    }
+  ]
+}

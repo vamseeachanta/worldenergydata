@@ -1,0 +1,30 @@
+# Colorado ECMC FacilityDetail/Form 5A direct-source ingest (#751).
+# Heavy raw/parsed/curated outputs stay under /mnt/ace.
+module: colorado_ecmc_facility_detail_ingest
+
+storage:
+  base_dir: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/facility_detail_ingest
+
+source_list:
+  path: /mnt/ace/worldenergydata/data/modules/colorado_ecmc/raw/wells/WELLS_SHP.ZIP
+  source_type: wells_shapefile
+  refresh: daily
+
+facility_detail:
+  base_url: https://ecmc.state.co.us/cogisdb/Facility/FacilityDetail.aspx
+  refresh: live_cogis_polite
+  timeout_seconds: 60
+  request_delay_seconds: 0.5
+  user_agent: worldenergydata/0.1 (+https://github.com/vamseeachanta/worldenergydata; research ingest)
+  max_retries: 1
+  stop_on_identity_mismatch: true
+
+pressure_observations:
+  atmospheric_psi: 14.7
+
+dry_run_source_list_only: false
+max_requests: 5
+allow_full_source_list: false
+max_failures: 2
+max_parser_drift_fraction: 0.2
+configure_underpressured_screen: false

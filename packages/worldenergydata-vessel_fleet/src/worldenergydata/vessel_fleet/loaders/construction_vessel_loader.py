@@ -329,6 +329,30 @@ class ConstructionVesselLoader:
 
         return df[mask].copy()
 
+    def get_burial_capable_vessels(self) -> pd.DataFrame:
+        """Get all vessels with pipeline-burial capability (#701 fields).
+
+        Tolerates datasets predating the burial columns: returns rows where
+        BURIAL_CAPABLE is truthy or a burial diameter is recorded.
+
+        Returns:
+            DataFrame of burial-capable vessels.
+        """
+        df = self.load()
+        if df.empty:
+            return df
+
+        mask = pd.Series(False, index=df.index)
+
+        if "BURIAL_CAPABLE" in df.columns:
+            # .eq(True) maps nulls to False without dtype downcasting.
+            mask |= df["BURIAL_CAPABLE"].eq(True)
+
+        if "BURIAL_MAX_DIAMETER_IN" in df.columns:
+            mask |= df["BURIAL_MAX_DIAMETER_IN"].notna()
+
+        return df[mask].copy()
+
     def get_crane_vessels(self) -> pd.DataFrame:
         """Get all vessels with crane capability.
 

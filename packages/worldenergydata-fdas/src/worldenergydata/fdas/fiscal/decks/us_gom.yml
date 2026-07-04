@@ -1,0 +1,33 @@
+# US Gulf of Mexico federal offshore fiscal terms.
+#
+# v1 CONSUMED: royalty only. rate_by_dev_system reproduces the legacy
+# per-dev-system ROYALTY_RATE vector in fdas.core.config.DEFAULT_ASSUMPTIONS
+# EXACTLY (dry 12.5% shallow-water, 18.75% deepwater) so a deck-driven run is
+# byte-identical to the today-path. Do not edit these four rates without a
+# corresponding parity re-baseline (Suite 5).
+schema_version: 1
+country: us_gom
+currency: USD
+price_marker: wti
+discount_rate: 0.10          # declarative in v1 (NPV discount seam -> #716)
+
+royalty:
+  model: flat
+  rate_by_dev_system:
+    dry: 0.125               # shallow-water / dry-tree lease royalty
+    subsea15: 0.188          # deepwater standard 18.75%
+    subsea20: 0.188
+    default: 0.188
+
+# Declarative income-tax layer (not consumed in v1; PSC/tax seam -> #716).
+income_tax:
+  federal_cit: 0.21          # US federal corporate income tax (declarative)
+
+source_url: https://www.boem.gov/oil-gas-energy/leasing/lease-and-royalty-information
+source_ref: "BOEM GoM federal offshore royalty: 12.5% shallow-water, 18.75% deepwater; ported from FDAS DEFAULT_ASSUMPTIONS ROYALTY_RATE"
+revision: "1"
+effective_date: "2026-07-03"
+notes: >
+  Values mirror fdas.core.config.DEFAULT_ASSUMPTIONS['ROYALTY_RATE'] for exact
+  parity with the pre-carve BSEE-validated path. federal_cit and discount_rate
+  are declarative metadata only in v1.
