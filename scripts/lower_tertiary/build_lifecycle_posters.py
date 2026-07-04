@@ -292,6 +292,7 @@ def facts_to_field(f: dict) -> dict:
             for w in wi
         ],
         "hostFacts": host_facts,
+        "reservoir": f.get("reservoir"),
         "provenance": f.get(
             "provenance", "Data: field YAML + public disclosures + BSEE"
         ),

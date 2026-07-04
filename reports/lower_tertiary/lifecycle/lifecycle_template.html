@@ -199,6 +199,21 @@
     color: var(--accent-ink); letter-spacing:.02em; }
   :root[data-theme="dark"] .wi-row .op.lead::after { color: var(--accent); }
 
+  /* ---- Reservoir & HPHT card ---- */
+  .rcol { display:flex; flex-direction:column; gap:22px; }
+  .mut { color: var(--muted); font-weight: 400; }
+  .hpht { display:inline-flex; align-items:center; font-family:var(--mono); font-size:11px;
+    font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 9px;
+    border-radius:999px; }
+  .hpht.ultra { color: var(--alert);
+    background: color-mix(in srgb, var(--alert) 14%, transparent);
+    border:1px solid color-mix(in srgb, var(--alert) 42%, transparent); }
+  .hpht.hot { color: var(--accent-ink);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 44%, transparent); }
+  :root[data-theme="dark"] .hpht.hot { color: var(--accent); }
+  @media (prefers-color-scheme: dark){ .hpht.hot { color: var(--accent); } }
+
   /* ---- Legend + footer ---- */
   .legend { display:flex; flex-wrap:wrap; gap: 8px 18px; font-size:11.5px; color:var(--muted);
     font-family:var(--mono); }
@@ -258,10 +273,16 @@
           <h3>Key phase activities</h3>
           <div class="act" id="f-activities"></div>
         </div>
-        <div class="card">
-          <h3>Host concept &amp; ownership</h3>
-          <dl class="kv" id="f-host"></dl>
-          <div class="wi" id="f-wi"></div>
+        <div class="rcol">
+          <div class="card">
+            <h3>Host concept &amp; ownership</h3>
+            <dl class="kv" id="f-host"></dl>
+            <div class="wi" id="f-wi"></div>
+          </div>
+          <div class="card" id="f-reservoir-card" hidden>
+            <h3>Reservoir &amp; HPHT</h3>
+            <dl class="kv" id="f-reservoir"></dl>
+          </div>
         </div>
       </section>
 
@@ -416,6 +437,48 @@ $("f-activities").innerHTML = showIdx.map(i => {
   const tag = i === curIdx ? " · now" : (i < curIdx ? " · done" : " · next");
   return `<div class="act${cur}"><h4>${p.name}${tag}</h4><ul>${p.activities.map(a=>`<li>${a}</li>`).join("")}</ul></div>`;
 }).join("");
+
+/* reservoir & HPHT — honesty-gated; nulls render as an em dash */
+if (FIELD.reservoir) {
+  const r = FIELD.reservoir;
+  const DASH = "—";
+  const nfmt = (v) => v.toLocaleString("en-US");
+  const rows = [];
+  rows.push(["Formation", r.formation || DASH]);
+
+  let pill;
+  if (r.hpht_class === "ultra-HPHT") pill = `<span class="hpht ultra">ultra-HPHT</span>`;
+  else if (r.hpht_class === "HPHT") pill = `<span class="hpht hot">HPHT</span>`;
+  else pill = `<span class="mut">${DASH}</span>`;
+  rows.push(["HPHT class", pill]);
+
+  let pressure;
+  if (r.pressure_psi == null) {
+    pressure = `<span class="mut">${DASH}</span>`;
+  } else {
+    const q = r.pressure_qual || "";
+    const sep = /[a-z]$/i.test(q) ? " " : "";
+    pressure = `${q}${sep}${nfmt(r.pressure_psi)} psi`;
+  }
+  if (r.equip_rating_psi != null &&
+      (r.pressure_psi == null || r.pressure_psi !== r.equip_rating_psi)) {
+    pressure += ` <span class="mut">· vs ${nfmt(r.equip_rating_psi)}-psi equipment</span>`;
+  }
+  rows.push(["Reservoir pressure", pressure]);
+
+  rows.push(["Reservoir temp",
+    r.temp_f == null ? `<span class="mut">${DASH}</span>` : `${nfmt(r.temp_f)}°F`]);
+  rows.push(["Reservoir depth",
+    r.tvd_ft == null ? `<span class="mut">${DASH}</span>` : `${nfmt(r.tvd_ft)} ft TVD`]);
+
+  let fluid = r.fluid || DASH;
+  if (r.api != null) fluid += ` <span class="mut">· ${r.api}°API</span>`;
+  rows.push(["Fluid", fluid]);
+
+  $("f-reservoir").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  $("f-reservoir-card").hidden = false;
+  if (r.source_note) $("f-prov").textContent = FIELD.provenance + " · Reservoir: " + r.source_note;
+}
 
 /* host facts + working interest */
 $("f-host").innerHTML = FIELD.hostFacts.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");

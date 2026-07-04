@@ -12,6 +12,9 @@ from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
     MexicoCnhAdapter,
 )
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.spain_cores_adapter import (
+    SpainCoresAdapter,
+)
 from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
     TexasRrcAdapter,
 )
@@ -23,9 +26,9 @@ class TestRegionRouter:
     def setup_method(self):
         self.router = RegionRouter()
 
-    def test_list_regions_returns_eight(self):
+    def test_list_regions_returns_nine(self):
         regions = self.router.list_regions()
-        assert len(regions) == 8
+        assert len(regions) == 9
 
     def test_list_regions_sorted(self):
         regions = self.router.list_regions()
@@ -46,6 +49,10 @@ class TestRegionRouter:
     def test_get_adapter_ukcs(self):
         adapter = self.router.get_adapter("ukcs")
         assert isinstance(adapter, UkcsAdapter)
+
+    def test_get_adapter_spain(self):
+        adapter = self.router.get_adapter("spain")
+        assert isinstance(adapter, SpainCoresAdapter)
 
     def test_get_adapter_eia_us(self):
         adapter = self.router.get_adapter("eia_us")
@@ -74,6 +81,10 @@ class TestRegionRouter:
     def test_alias_uk_resolves_to_ukcs(self):
         adapter = self.router.get_adapter("uk")
         assert isinstance(adapter, UkcsAdapter)
+
+    def test_alias_cores_resolves_to_spain(self):
+        adapter = self.router.get_adapter("cores")
+        assert isinstance(adapter, SpainCoresAdapter)
 
     def test_unknown_region_raises_key_error(self):
         with pytest.raises(KeyError, match="Unknown region"):

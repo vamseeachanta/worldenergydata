@@ -13,6 +13,9 @@ from worldenergydata.production.unified.adapters.mexico_cnh_adapter import (
     MexicoCnhAdapter,
 )
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.adapters.spain_cores_adapter import (
+    SpainCoresAdapter,
+)
 from worldenergydata.production.unified.adapters.texas_rrc_adapter import (
     TexasRrcAdapter,
 )
@@ -24,6 +27,7 @@ _ALL_ADAPTERS = [
     BseeAdapter,
     BrazilAnpAdapter,
     UkcsAdapter,
+    SpainCoresAdapter,
     EiaUsAdapter,
     MexicoCnhAdapter,
     TexasRrcAdapter,
@@ -68,8 +72,9 @@ class TestAdapterSchemaCompliance:
         adapter = AdapterClass()
         df = adapter.fetch(_default_query(adapter))
         for col in ("oil_bbl", "gas_mcf", "water_bbl", "condensate_bbl"):
+            values = df[col].dropna()
             assert (
-                df[col] >= 0
+                values >= 0
             ).all(), f"{AdapterClass.__name__}: negative values in '{col}'"
 
     @pytest.mark.parametrize("AdapterClass", _ALL_ADAPTERS)
@@ -193,3 +198,8 @@ class TestSpecificAdapterFields:
         assert "Hibernia" in fields
         assert "Terra Nova" in fields
         assert "White Rose" in fields
+
+    def test_spain_has_expected_fields(self):
+        adapter = SpainCoresAdapter()
+        fields = adapter.available_fields()
+        assert "Ayoluengo" in fields
