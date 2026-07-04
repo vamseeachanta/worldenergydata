@@ -3,13 +3,13 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.common.units import GasUnits
 from worldenergydata.brazil_anp.production.well_production import (
     SM3_TO_BBL,
     WellProductionLoader,
     convert_mm3_to_m3,
     convert_sm3_to_bbl,
 )
+from worldenergydata.common.units import GasUnits
 
 MOCK_WELL_DATA = pd.DataFrame(
     {

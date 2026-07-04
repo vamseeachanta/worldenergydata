@@ -94,16 +94,12 @@ class TestANPClientMonthCache:
 
     def test_is_cached_returns_true_when_zip_present(self, tmp_path):
         client = ANPClient(cache_dir=str(tmp_path))
-        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(
-            _partition_zip()
-        )
+        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(_partition_zip())
         assert client.is_cached(year=2023, month=1) is True
 
     def test_load_cached_monthly_zip(self, tmp_path):
         client = ANPClient(cache_dir=str(tmp_path))
-        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(
-            _partition_zip()
-        )
+        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(_partition_zip())
 
         df = client.load_cached(year=2023, month=1)
 
@@ -138,9 +134,7 @@ class TestANPClientDownloadMonth:
         tmp_path,
     ):
         client = ANPClient(cache_dir=str(tmp_path))
-        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(
-            _partition_zip()
-        )
+        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(_partition_zip())
 
         df = client.download_month(year=2023, month=1)
 
@@ -150,9 +144,7 @@ class TestANPClientDownloadMonth:
     @patch("worldenergydata.brazil_anp.production.anp_client.requests")
     def test_force_refresh_replaces_cache(self, mock_requests, tmp_path):
         client = ANPClient(cache_dir=str(tmp_path))
-        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(
-            _partition_zip()
-        )
+        (tmp_path / client._cache_key(year=2023, month=1)).write_bytes(_partition_zip())
         mock_response = MagicMock()
         mock_response.content = _partition_zip()
         mock_response.raise_for_status = MagicMock()
