@@ -625,6 +625,21 @@ def build_hse(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_field_atlas(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the field-atlas browse page (Country→Domain→Region→Play→Field).
+
+    Self-contained HTML built by ``scripts/field_atlas/build_field_atlas.py`` from
+    ``reports/field-atlas/_roster.json`` (120 concept-matched GoM fields, tiered).
+    Returns ``[]`` — the landing index keys off what exists in ``public/``."""
+    src = REPORTS / "field-atlas" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "field-atlas"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    return []
+
+
 def build_decommissioning(available_viz: dict[str, bool]) -> list[tuple]:
     """Publish the decommissioning surface: the GoM P&A liability-wave front door
     (issue #777). The page is a self-contained HTML artifact (inline CSS +
@@ -659,6 +674,7 @@ DOMAINS = {
     "hse": build_hse,
     "decommissioning": build_decommissioning,
     "capabilities": build_capabilities,
+    "field-atlas": build_field_atlas,
 }
 
 
