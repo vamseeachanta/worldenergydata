@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stones — Asset Drill-Down</title>
+<style>
+  :root{--navy:#0B3D91;--teal:#0f8a7e;--bg:#eef3fa;--panel:#fff;--ink:#13233f;--muted:#5b6b86;
+        --line:#dbe4f0;--soft:#f4f8fc;--accent:#d9822b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:34px 22px 80px}
+  .eyebrow{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.4px;color:var(--navy);margin:6px 0 6px}
+  .sub{color:var(--muted);font-size:15px}
+  .sub a{color:var(--teal);font-weight:700}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:20px 0 8px}
+  .meta div{background:var(--panel);padding:12px 16px}
+  .meta .k{font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .meta .v{font-family:ui-monospace,monospace;font-size:17px;font-weight:700;margin-top:3px}
+  .path{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);margin:22px 0 10px}
+  .path b{color:var(--navy)}
+  h2{font-size:19px;color:var(--navy);border-left:4px solid var(--teal);padding-left:12px;margin:28px 0 4px}
+  .lead{color:var(--muted);font-size:13.5px;padding-left:16px;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 2px rgba(16,40,80,.04)}
+  .card h3{font-size:16px;color:var(--ink);display:flex;align-items:baseline;gap:9px}
+  .card h3 .n{font-family:ui-monospace,monospace;font-size:20px;font-weight:800;color:var(--navy)}
+  .card p{font-size:13px;color:var(--muted);margin-top:6px}
+  .eng{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .eng .lab{font-family:ui-monospace,monospace;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .eng a{font-size:12.5px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--teal),var(--navy));padding:6px 11px;border-radius:9px}
+  .eng a.live{background:linear-gradient(135deg,var(--accent),#a85e14)}
+  .eng .std{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)}
+  .facility{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .facility h3{font-size:16px}.facility .tag{font-family:ui-monospace,monospace;font-size:11px;color:var(--teal);font-weight:700}
+  .facility ul{margin:8px 0 0 18px;font-size:13px;color:var(--muted)}
+  .note{margin-top:26px;font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+  .note b{color:var(--navy)}
+  @media (prefers-color-scheme:dark){:root{--bg:#0a141f;--panel:#10202f;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;--soft:#0d1b28;--navy:#5b9de0;--teal:#3fb99b;--accent:#f0a24a}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">worldenergydata · asset drill-down</p>
+  <h1>Stones — Asset Drill-Down</h1>
+  <p class="sub">Walker Ridge 508 · Shell Offshore Inc. — nested under the
+     <a href="../stones_lifecycle.html">Stones field life-cycle</a>. Each asset links to
+     <b>what is possible via engineering</b> (digitalmodel).</p>
+
+  <div class="meta">
+    <div><div class="k">Field code</div><div class="v">WR508</div></div>
+    <div><div class="k">Water depth</div><div class="v">9,317 ft</div></div>
+    <div><div class="k">Host</div><div class="v">Turritella FPSO</div></div>
+    <div><div class="k">Structures</div><div class="v">1</div></div>
+    <div><div class="k">Pipelines</div><div class="v">26</div></div>
+    <div><div class="k">Appurtenances</div><div class="v">298</div></div>
+  </div>
+
+  <p class="path">Drill-down: <b>Field</b> → <b>Facility</b> → <b>Asset</b> → <b>Component</b> → <b>Engineering</b></p>
+
+  <h2>Facilities</h2>
+  <p class="lead">The host platform and the subsea production system.</p>
+  <div class="facility">
+    <h3>A (Turritella) <span class="tag">· FPSO (disconnectable) · host</span></h3>
+    <p style="font-size:13px;color:var(--muted);margin-top:4px">World's deepest FPSO at start-up (2016), Walker Ridge, ~9,300 ft. Turret-moored, disconnectable for hurricane evacuation.</p>
+  </div>
+  <div class="facility">
+    <h3>Subsea production system <span class="tag">· 12 subsea boreholes</span></h3>
+    <ul><li>SN206, SN207, SN114 … — subsea wells tied back to the FPSO via risers, manifolds and flowlines.</li></ul>
+  </div>
+
+  <h2>Assets &amp; components</h2>
+  <p class="lead">From the BSEE field-infrastructure register (298 appurtenances + 26 pipelines). Each asset type routes to its digitalmodel engineering capability.</p>
+  <div class="grid">
+    <div class="card"><h3><span class="n">16</span> Risers</h3>
+      <p>Steel catenary / flexible risers connecting the subsea wells to the FPSO turret.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/">catenary riser + VIV / fatigue</a>
+        <span class="std">DNV-OS-F201 · DNV-RP-F105</span></div></div>
+
+    <div class="card"><h3><span class="n">—</span> Mooring (spread)</h3>
+      <p>The FPSO's mooring system — chain / wire / polyester legs holding station in 9,300 ft.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a class="live" href="../../hse/mooring-fatigue-grounded-card.html">LIVE mooring-fatigue card →</a>
+        <span class="std">DNV-OS-E301 · grounded vs real BSEE failures</span></div></div>
+
+    <div class="card"><h3><span class="n">4</span> Subsea manifolds</h3>
+      <p>Gather production from multiple wells before the flowline / riser run.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/">structural + cathodic protection</a></div></div>
+
+    <div class="card"><h3><span class="n">2</span> Wells</h3>
+      <p>Subsea wellheads / trees — casing &amp; tubular strings to reservoir depth.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/">tubular / casing design</a>
+        <span class="std">API RP 19D</span></div></div>
+
+    <div class="card"><h3><span class="n">26</span> Pipelines</h3>
+      <p>21 bulk-oil flowlines + umbilicals (6–11"), 23 active / 3 proposed.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/">FFS / metal-loss (fitness-for-service)</a>
+        <span class="std">API 579-1 · DNV-RP-F101</span></div></div>
+
+    <div class="card"><h3><span class="n">2</span> Pipeline sleds</h3>
+      <p>Subsea tie-in structures at flowline terminations.</p>
+      <div class="eng"><span class="lab">Engineering →</span>
+        <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/">structural / installation</a></div></div>
+  </div>
+
+  <div class="note">This closes the <b>engineering ↔ asset circle</b> on a real field: worldenergydata supplies the
+     as-built assets (BSEE field-infrastructure bundle, contract v1), digitalmodel supplies the analysis that
+     sizes, checks and re-assesses them. The <b>mooring</b> card is a <b>live digitalmodel run</b> grounded
+     against real BSEE mooring failures (#768); the other asset types follow the same pattern (#764).
+     Data: <code>reports/bsee/field_infrastructure/stones/</code> (structures / pipeline_segments / appurtenances).</div>
+</div>
+</body>
+</html>
