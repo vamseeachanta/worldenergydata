@@ -87,6 +87,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#740](https://github.com/vamseeachanta/worldenergydata/issues/740) | [oklahoma-occ-pressure-observations](2026-07-03-issue-740-oklahoma-occ-pressure-observations.md) | implemented | 2026-07-03 |
 | [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) | [colorado-ecmc-wellhead-pressure-observations](2026-07-03-issue-745-colorado-ecmc-wellhead-pressure-observations.md) | implemented | 2026-07-03 |
 | [#749](https://github.com/vamseeachanta/worldenergydata/issues/749) | [colorado-ecmc-pressure-source-discovery](2026-07-04-issue-749-colorado-ecmc-pressure-source-discovery.md) | implemented | 2026-07-04 |
+| [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) | [colorado-ecmc-form5a-ingest](2026-07-04-issue-751-colorado-ecmc-form5a-ingest.md) | plan-review | 2026-07-04 |
 
 ## Closed / superseded plans
 

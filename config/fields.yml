@@ -1,0 +1,99 @@
+# ABOUTME: Canonical field registry + crosswalk for the field-centric hub (epic #754, issue #755).
+# ABOUTME: Resolves each field by ONE canonical id (== lifecycle _facts.json id) to its BSEE block/lease,
+#          FDP portfolio slug, and which per-field surfaces exist. Externalized per repo config rule.
+#
+# has_* flags reflect what is actually built today (not a roadmap).
+# FDP portfolio pages that map to NO canonical lifecycle field (Miocene/other-play tiebacks) are listed
+# under `unmapped_fdp_pages` so the crosswalk stays honest.
+
+fields:
+  - canonical_id: big_foot
+    display_name: "Big Foot"
+    region: "US Gulf of Mexico"
+    play: "Wilcox / Lower Tertiary"
+    bsee_block: "Walker Ridge 29"
+    lease_number: "G16942"
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+  - canonical_id: anchor
+    display_name: "Anchor"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary Wilcox"
+    bsee_block: "Green Canyon 807"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+  - canonical_id: cascade_chinook
+    display_name: "Cascade/Chinook"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary (Wilcox)"
+    bsee_block: "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)"
+    lease_number: null
+    fdp_slug: chinook   # NOTE: portfolio has only chinook.html — covers the Chinook half of the field
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
+  - canonical_id: jack_st_malo
+    display_name: "Jack/St. Malo"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary (Wilcox)"
+    bsee_block: "Walker Ridge 678 (St. Malo) / 758-759 (Jack)"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+  - canonical_id: julia
+    display_name: "Julia"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary Wilcox"
+    bsee_block: "Walker Ridge 627 (WR 540/583/584/627/628)"
+    lease_number: null
+    fdp_slug: julia
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
+  - canonical_id: kaskida
+    display_name: "Kaskida"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary (Wilcox)"
+    bsee_block: "Keathley Canyon 292"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+  - canonical_id: north_platte
+    display_name: "North Platte (renamed Sparta)"
+    region: "US Gulf of Mexico"
+    play: "Wilcox (Lower Tertiary / Paleogene)"
+    bsee_block: "Garden Banks 959 (straddles GB 915/916/958/959)"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+  - canonical_id: shenandoah
+    display_name: "Shenandoah"
+    region: "US Gulf of Mexico"
+    play: "Wilcox (Lower Tertiary)"
+    bsee_block: "Walker Ridge 52 (blocks 51, 52, N/2 53)"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
+  - canonical_id: stones
+    display_name: "Stones"
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary Wilcox"
+    bsee_block: "Walker Ridge 508"
+    lease_number: null
+    fdp_slug: stones
+    surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
+  - canonical_id: tiber
+    display_name: "Tiber"
+    region: "US Gulf of Mexico"
+    play: "Wilcox (Lower Tertiary / Paleogene)"
+    bsee_block: "Keathley Canyon 102"
+    lease_number: null
+    fdp_slug: null
+    surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+
+# FDP portfolio pages with no canonical lifecycle field (out of scope for the hub join):
+unmapped_fdp_pages:
+  - {slug: aconcagua, block: MC305}
+  - {slug: camden-hills, block: MC348}
+  - {slug: cheyenne, block: LL399}
+  - {slug: coulomb, block: MC657}
+  - {slug: great-white, block: AC857}
+  - {slug: king, block: MC84}
+  - {slug: tobago, block: AC859}
