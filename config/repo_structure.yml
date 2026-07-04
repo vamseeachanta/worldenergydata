@@ -5,6 +5,7 @@
 allowed_roots:
   # Standard project roots
   - src
+  - packages  # source-agnostic monorepo packages (src->packages reorg, #713/#714)
   - tests
   - docs
   - config
@@ -104,8 +105,210 @@ temporary_exceptions:
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
+      - reports/capabilities/api/benchmark.html
+      - reports/capabilities/api/benchmark.json
+      - reports/capabilities/api/completion.html
+      - reports/capabilities/api/completion.json
+      - reports/capabilities/api/economics-anchor.html
+      - reports/capabilities/api/economics-anchor.json
+      - reports/capabilities/api/economics-big_foot.html
+      - reports/capabilities/api/economics-big_foot.json
+      - reports/capabilities/api/economics-cascade_chinook.html
+      - reports/capabilities/api/economics-cascade_chinook.json
+      - reports/capabilities/api/economics-jack_st_malo.html
+      - reports/capabilities/api/economics-jack_st_malo.json
+      - reports/capabilities/api/economics-julia.html
+      - reports/capabilities/api/economics-julia.json
+      - reports/capabilities/api/economics-shenandoah.html
+      - reports/capabilities/api/economics-shenandoah.json
+      - reports/capabilities/api/economics-stones.html
+      - reports/capabilities/api/economics-stones.json
+      - reports/capabilities/api/fd-bsee-matched.html
+      - reports/capabilities/api/fd-bsee-matched.json
+      - reports/capabilities/api/fd-playbook.html
+      - reports/capabilities/api/fd-playbook.json
+      - reports/capabilities/api/fd-portfolio.html
+      - reports/capabilities/api/fd-portfolio.json
+      - reports/capabilities/api/fd-showcase.html
+      - reports/capabilities/api/fd-showcase.json
+      - reports/capabilities/api/imo.html
+      - reports/capabilities/api/imo.json
+      - reports/capabilities/api/mooring.html
+      - reports/capabilities/api/mooring.json
+      - reports/capabilities/api/ms-exec.html
+      - reports/capabilities/api/ms-exec.json
+      - reports/capabilities/api/ms-fatality.html
+      - reports/capabilities/api/ms-fatality.json
+      - reports/capabilities/api/ms-foundering.html
+      - reports/capabilities/api/ms-foundering.json
+      - reports/capabilities/api/ms-hatch.html
+      - reports/capabilities/api/ms-hatch.json
+      - reports/capabilities/api/portfolio.html
+      - reports/capabilities/api/portfolio.json
+      - reports/capabilities/api/well-path.html
+      - reports/capabilities/api/well-path.json
+      - reports/capabilities/index.html
+      - reports/capabilities/pdf/benchmark.pdf
+      - reports/capabilities/pdf/completion.pdf
+      - reports/capabilities/pdf/economics-anchor.pdf
+      - reports/capabilities/pdf/economics-big_foot.pdf
+      - reports/capabilities/pdf/economics-cascade_chinook.pdf
+      - reports/capabilities/pdf/economics-jack_st_malo.pdf
+      - reports/capabilities/pdf/economics-julia.pdf
+      - reports/capabilities/pdf/economics-shenandoah.pdf
+      - reports/capabilities/pdf/economics-stones.pdf
+      - reports/capabilities/pdf/fd-bsee-matched.pdf
+      - reports/capabilities/pdf/fd-playbook.pdf
+      - reports/capabilities/pdf/fd-portfolio.pdf
+      - reports/capabilities/pdf/fd-showcase.pdf
+      - reports/capabilities/pdf/imo.pdf
+      - reports/capabilities/pdf/mooring.pdf
+      - reports/capabilities/pdf/ms-exec.pdf
+      - reports/capabilities/pdf/ms-fatality.pdf
+      - reports/capabilities/pdf/ms-foundering.pdf
+      - reports/capabilities/pdf/ms-hatch.pdf
+      - reports/capabilities/pdf/portfolio.pdf
+      - reports/capabilities/pdf/sec-economics.pdf
+      - reports/capabilities/pdf/sec-playbook.pdf
+      - reports/capabilities/pdf/sec-safety.pdf
+      - reports/capabilities/pdf/sec-validation.pdf
+      - reports/capabilities/pdf/sec-wells.pdf
+      - reports/capabilities/pdf/well-path.pdf
+      - reports/completion/index.html
       - reports/compliance/module_compliance_report.json
       - reports/field_analysis_report.html
+      - reports/field_development/bsee_matched/_summary.json
+      - reports/field_development/bsee_matched/aconcagua.html
+      - reports/field_development/bsee_matched/allegheny.html
+      - reports/field_development/bsee_matched/amethyst.html
+      - reports/field_development/bsee_matched/anduin.html
+      - reports/field_development/bsee_matched/angelica.html
+      - reports/field_development/bsee_matched/angus.html
+      - reports/field_development/bsee_matched/ariel.html
+      - reports/field_development/bsee_matched/armstrong.html
+      - reports/field_development/bsee_matched/arnold.html
+      - reports/field_development/bsee_matched/aspen.html
+      - reports/field_development/bsee_matched/atlantis-north.html
+      - reports/field_development/bsee_matched/atlas-nw.html
+      - reports/field_development/bsee_matched/auger.html
+      - reports/field_development/bsee_matched/baccarat.html
+      - reports/field_development/bsee_matched/balboa.html
+      - reports/field_development/bsee_matched/big-bend-noble.html
+      - reports/field_development/bsee_matched/big-foot.html
+      - reports/field_development/bsee_matched/boris.html
+      - reports/field_development/bsee_matched/brutus.html
+      - reports/field_development/bsee_matched/buckskin.html
+      - reports/field_development/bsee_matched/bullwinkle.html
+      - reports/field_development/bsee_matched/bushwood-geauxpher.html
+      - reports/field_development/bsee_matched/callisto.html
+      - reports/field_development/bsee_matched/camden-hills.html
+      - reports/field_development/bsee_matched/cardona-south.html
+      - reports/field_development/bsee_matched/cardona.html
+      - reports/field_development/bsee_matched/cheyenne.html
+      - reports/field_development/bsee_matched/chinook.html
+      - reports/field_development/bsee_matched/clipper.html
+      - reports/field_development/bsee_matched/constitution.html
+      - reports/field_development/bsee_matched/cottonwood.html
+      - reports/field_development/bsee_matched/coulomb.html
+      - reports/field_development/bsee_matched/dalmatian-north.html
+      - reports/field_development/bsee_matched/dalmatian-south.html
+      - reports/field_development/bsee_matched/daniel-boone.html
+      - reports/field_development/bsee_matched/deep-blue.html
+      - reports/field_development/bsee_matched/devils-tower.html
+      - reports/field_development/bsee_matched/diana.html
+      - reports/field_development/bsee_matched/dorado.html
+      - reports/field_development/bsee_matched/droshky.html
+      - reports/field_development/bsee_matched/dulcimer.html
+      - reports/field_development/bsee_matched/east-anstey.html
+      - reports/field_development/bsee_matched/ew-998.html
+      - reports/field_development/bsee_matched/falcon.html
+      - reports/field_development/bsee_matched/fastball.html
+      - reports/field_development/bsee_matched/fiji.html
+      - reports/field_development/bsee_matched/flintcreek.html
+      - reports/field_development/bsee_matched/flying-dutchman.html
+      - reports/field_development/bsee_matched/fourier.html
+      - reports/field_development/bsee_matched/friesian.html
+      - reports/field_development/bsee_matched/front-runner-south.html
+      - reports/field_development/bsee_matched/gladden.html
+      - reports/field_development/bsee_matched/great-white.html
+      - reports/field_development/bsee_matched/guadalupe.html
+      - reports/field_development/bsee_matched/gunflint-freedom.html
+      - reports/field_development/bsee_matched/hadrian-south.html
+      - reports/field_development/bsee_matched/harrier.html
+      - reports/field_development/bsee_matched/hartebeest.html
+      - reports/field_development/bsee_matched/heidelberg.html
+      - reports/field_development/bsee_matched/hoover.html
+      - reports/field_development/bsee_matched/index.html
+      - reports/field_development/bsee_matched/jaguar-buccaneer.html
+      - reports/field_development/bsee_matched/kakuna.html
+      - reports/field_development/bsee_matched/kepler.html
+      - reports/field_development/bsee_matched/king.html
+      - reports/field_development/bsee_matched/lafitte.html
+      - reports/field_development/bsee_matched/leon.html
+      - reports/field_development/bsee_matched/longhorn-aka-leo.html
+      - reports/field_development/bsee_matched/macaroni.html
+      - reports/field_development/bsee_matched/macondo.html
+      - reports/field_development/bsee_matched/madison.html
+      - reports/field_development/bsee_matched/magnolia.html
+      - reports/field_development/bsee_matched/mahogany.html
+      - reports/field_development/bsee_matched/main-pass-108.html
+      - reports/field_development/bsee_matched/main-pass-98.html
+      - reports/field_development/bsee_matched/marco-polo.html
+      - reports/field_development/bsee_matched/matterhorn.html
+      - reports/field_development/bsee_matched/mica-deep.html
+      - reports/field_development/bsee_matched/moccasin.html
+      - reports/field_development/bsee_matched/mondo-nw.html
+      - reports/field_development/bsee_matched/morpeth.html
+      - reports/field_development/bsee_matched/nautilus-gom.html
+      - reports/field_development/bsee_matched/nile.html
+      - reports/field_development/bsee_matched/north-boomvang.html
+      - reports/field_development/bsee_matched/northwood.html
+      - reports/field_development/bsee_matched/parmer.html
+      - reports/field_development/bsee_matched/pegasus.html
+      - reports/field_development/bsee_matched/petronius.html
+      - reports/field_development/bsee_matched/phobos.html
+      - reports/field_development/bsee_matched/phoenix.html
+      - reports/field_development/bsee_matched/pony.html
+      - reports/field_development/bsee_matched/prince.html
+      - reports/field_development/bsee_matched/pyrenees.html
+      - reports/field_development/bsee_matched/q.html
+      - reports/field_development/bsee_matched/raptor.html
+      - reports/field_development/bsee_matched/red-hawk.html
+      - reports/field_development/bsee_matched/samurai.html
+      - reports/field_development/bsee_matched/san-jacinto.html
+      - reports/field_development/bsee_matched/sob-2.html
+      - reports/field_development/bsee_matched/st-malo.html
+      - reports/field_development/bsee_matched/stones.html
+      - reports/field_development/bsee_matched/swordfish.html
+      - reports/field_development/bsee_matched/taggart.html
+      - reports/field_development/bsee_matched/tahiti.html
+      - reports/field_development/bsee_matched/tahoe.html
+      - reports/field_development/bsee_matched/telemark.html
+      - reports/field_development/bsee_matched/tiber.html
+      - reports/field_development/bsee_matched/ticonderoga.html
+      - reports/field_development/bsee_matched/tobago.html
+      - reports/field_development/bsee_matched/toddy.html
+      - reports/field_development/bsee_matched/trident.html
+      - reports/field_development/bsee_matched/troubadour.html
+      - reports/field_development/bsee_matched/west-boomvang.html
+      - reports/field_development/bsee_matched/who-dat.html
+      - reports/field_development/bsee_matched/wide-berth.html
+      - reports/field_development/bsee_matched/wrigley.html
+      - reports/field_development/interactive/playbook.html
+      - reports/field_development/portfolio/README.md
+      - reports/field_development/portfolio/_research.json
+      - reports/field_development/portfolio/aconcagua.html
+      - reports/field_development/portfolio/camden-hills.html
+      - reports/field_development/portfolio/cheyenne.html
+      - reports/field_development/portfolio/chinook.html
+      - reports/field_development/portfolio/coulomb.html
+      - reports/field_development/portfolio/great-white.html
+      - reports/field_development/portfolio/index.html
+      - reports/field_development/portfolio/julia.html
+      - reports/field_development/portfolio/king.html
+      - reports/field_development/portfolio/stones.html
+      - reports/field_development/portfolio/tobago.html
+      - reports/field_development/showcase/index.html
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
       - reports/gtm/2026-05-04-fdas-field-development-economics.html
       - reports/gtm/2026-05-04-gtm-production-decline-forecast.html
@@ -120,20 +323,41 @@ temporary_exceptions:
       - reports/lower_tertiary/cascade_chinook_npv_stackup.html
       - reports/lower_tertiary/field_economics_anchor.md
       - reports/lower_tertiary/field_economics_anchor_v30.md
+      - reports/lower_tertiary/field_economics_anchor_v50.md
       - reports/lower_tertiary/field_economics_big_foot.md
       - reports/lower_tertiary/field_economics_big_foot_v30.md
+      - reports/lower_tertiary/field_economics_big_foot_v50.md
       - reports/lower_tertiary/field_economics_cascade_chinook.md
       - reports/lower_tertiary/field_economics_cascade_chinook_v30.md
+      - reports/lower_tertiary/field_economics_cascade_chinook_v50.md
       - reports/lower_tertiary/field_economics_jack_st_malo.md
       - reports/lower_tertiary/field_economics_jack_st_malo_v30.md
+      - reports/lower_tertiary/field_economics_jack_st_malo_v50.md
       - reports/lower_tertiary/field_economics_julia.md
       - reports/lower_tertiary/field_economics_julia_v30.md
+      - reports/lower_tertiary/field_economics_julia_v50.md
       - reports/lower_tertiary/field_economics_shenandoah.md
       - reports/lower_tertiary/field_economics_shenandoah_v30.md
+      - reports/lower_tertiary/field_economics_shenandoah_v50.md
       - reports/lower_tertiary/field_economics_stones.md
       - reports/lower_tertiary/field_economics_stones_v30.md
+      - reports/lower_tertiary/field_economics_stones_v50.md
       - reports/lower_tertiary/jack_st_malo_npv_stackup.html
+      - reports/lower_tertiary/julia_fdp.html
       - reports/lower_tertiary/julia_npv_stackup.html
+      - reports/lower_tertiary/lifecycle/_facts.json
+      - reports/lower_tertiary/lifecycle/anchor_lifecycle.html
+      - reports/lower_tertiary/lifecycle/big_foot_lifecycle.html
+      - reports/lower_tertiary/lifecycle/cascade_chinook_lifecycle.html
+      - reports/lower_tertiary/lifecycle/index.html
+      - reports/lower_tertiary/lifecycle/jack_st_malo_lifecycle.html
+      - reports/lower_tertiary/lifecycle/julia_lifecycle.html
+      - reports/lower_tertiary/lifecycle/kaskida_lifecycle.html
+      - reports/lower_tertiary/lifecycle/lifecycle_template.html
+      - reports/lower_tertiary/lifecycle/north_platte_lifecycle.html
+      - reports/lower_tertiary/lifecycle/shenandoah_lifecycle.html
+      - reports/lower_tertiary/lifecycle/stones_lifecycle.html
+      - reports/lower_tertiary/lifecycle/tiber_lifecycle.html
       - reports/lower_tertiary/lt_field_performance_comparison.md
       - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
       - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.md
@@ -141,6 +365,8 @@ temporary_exceptions:
       - reports/lower_tertiary/shenandoah_npv_stackup.html
       - reports/lower_tertiary/stones_npv_stackup.html
       - reports/lower_tertiary/v30_repeatability_report.md
+      - reports/lower_tertiary/v30_v50_brief.html
+      - reports/lower_tertiary/v30_vs_v50_comparison.md
       - reports/lower_tertiary/wrk010_latest_data_report.md
       - reports/lower_tertiary_field_summary.html
       - reports/lower_tertiary_field_summary.md
@@ -154,15 +380,15 @@ temporary_exceptions:
       - reports/modules/marketing/COMPLETION_SUMMARY.md
       - reports/modules/marketing/DECISION_IMPLEMENTATION_GUIDE.md
       - reports/modules/marketing/GENERATION_SUMMARY.md
+      - reports/modules/marketing/PDF_GENERATION_CHECKLIST.md
+      - reports/modules/marketing/PREREQUISITES_VALIDATION_SUMMARY.md
+      - reports/modules/marketing/QUICK_START.md
+      - reports/modules/marketing/VALIDATION_REPORT.md
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic.html
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_dark.png
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.html
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_client_markup_white.png
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_stats.json
-      - reports/modules/marketing/PDF_GENERATION_CHECKLIST.md
-      - reports/modules/marketing/PREREQUISITES_VALIDATION_SUMMARY.md
-      - reports/modules/marketing/QUICK_START.md
-      - reports/modules/marketing/VALIDATION_REPORT.md
       - reports/modules/marketing/marketing_brochure_bsee_data_integration.md
       - reports/modules/marketing/marketing_brochure_economic_evaluation_npv_analysis.md
       - reports/modules/marketing/marketing_brochure_fdas_field_data_analysis_system.md
@@ -177,6 +403,8 @@ temporary_exceptions:
       - reports/capabilities/insights.html
       - reports/decommissioning/pa_liability_wave.csv
       - reports/decommissioning/pa_liability_wave.html
+      - reports/decommissioning/regional_liability.csv
+      - reports/decommissioning/regional_liability.html
       - reports/field_development/all_regions_atlas.html
       - reports/field_development/all_regions_coverage.csv
       - reports/field_development/region_devtype_comparison.html
