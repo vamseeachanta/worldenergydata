@@ -1,0 +1,141 @@
+<meta charset="utf-8">
+<title>GoM P&amp;A Liability Wave</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#eef2f6; --panel:#fff; --panel-2:#f6f9fc; --ink:#0c1a28; --muted:#5a6b7b;
+    --line:#d6e0ea; --accent:#d9822b; --accent-ink:#7a4410; --done:#1d5fa8;
+    --future:#a9bccd; --good:#2e9e6b; --alert:#c0453b;
+    --shadow:0 1px 2px rgba(12,26,40,.06),0 8px 24px rgba(12,26,40,.06);
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#0a141f; --panel:#10202f; --panel-2:#0d1b28; --ink:#e8eef4; --muted:#8ca0b3;
+    --line:#24384b; --accent:#f0a24a; --accent-ink:#f7c489; --done:#4d91d6;
+    --future:#3a5064; --good:#43b982; --alert:#e0685e;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel-2:#f6f9fc;--ink:#0c1a28;--muted:#5a6b7b;--line:#d6e0ea;--accent:#d9822b;--done:#1d5fa8;--future:#a9bccd;--good:#2e9e6b;--alert:#c0453b;}
+  :root[data-theme="dark"]{--bg:#0a141f;--panel:#10202f;--panel-2:#0d1b28;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;--accent:#f0a24a;--done:#4d91d6;--future:#3a5064;--good:#43b982;--alert:#e0685e;}
+  *{box-sizing:border-box;} body{margin:0;}
+  .wrap{background:var(--bg);color:var(--ink);font-family:var(--sans);padding:clamp(16px,3vw,40px);min-height:100%;-webkit-font-smoothing:antialiased;}
+  .sheet{max-width:1080px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;}
+  .head{padding:clamp(20px,2.6vw,34px);border-bottom:1px solid var(--line);}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;}
+  .title{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.03;text-wrap:balance;}
+  .thesis{color:var(--ink);margin:14px 0 0;font-size:clamp(15px,1.6vw,18px);max-width:70ch;line-height:1.5;}
+  .thesis b{color:var(--alert);}
+  .body{padding:clamp(20px,2.6vw,34px);}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:0 0 26px;}
+  .kpi{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .kpi .n{font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1;}
+  .kpi .n.alert{color:var(--alert);} .kpi .n.accent{color:var(--accent);}
+  .kpi .l{color:var(--muted);font-size:12px;margin-top:7px;line-height:1.35;}
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:30px 0 12px;font-weight:600;}
+  .chartwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);padding:16px;}
+  .bl{fill:var(--ink);font-family:var(--sans);font-size:15px;font-weight:800;}
+  .bm{fill:var(--accent-ink,var(--accent));font-family:var(--mono);font-size:12px;font-weight:700;}
+  @media (prefers-color-scheme:dark){.bm{fill:var(--accent);}}
+  .bx{fill:var(--muted);font-family:var(--mono);font-size:12px;}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:12px 2px 0;font-size:12px;color:var(--muted);}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px;}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px;}
+  thead th{text-align:right;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);}
+  thead th:first-child{text-align:left;}
+  td{padding:8px 10px;border-bottom:1px solid var(--line);}
+  td.lab{font-weight:600;} td.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);}
+  td.strong{font-weight:800;} td.muted{color:var(--muted);}
+  tbody tr:last-child td{border-bottom:none;}
+  .note{color:var(--muted);font-size:12.5px;line-height:1.55;margin:10px 0 0;}
+  .reg{background:var(--panel-2);border-left:3px solid var(--alert);border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:13.5px;line-height:1.5;}
+  .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.6;}
+  code{font-family:var(--mono);font-size:.92em;background:var(--panel-2);padding:1px 5px;border-radius:4px;}
+  a{color:var(--done);}
+</style>
+<div class="wrap"><div class="sheet">
+  <div class="head">
+    <p class="eyebrow">World Energy Data · Decommissioning · Abandon stage (issue #777)</p>
+    <h1 class="title">The Gulf of Mexico P&amp;A liability wave</h1>
+    <p class="thesis"><b>8,161 GoM boreholes are drilled but not yet permanently plugged</b>
+    (3,288 temporarily abandoned + 4,873 completed/open). At the decommissioning
+    model's GoM P&amp;A cost of <b>$8–9M</b> per shelf well
+    (deepwater wells run higher, ~$26M each), that is
+    <b>$65.3B&nbsp;–&nbsp;$72.6B</b> of latent P&amp;A liability —
+    and the 3,288 already-idled wells ($26.3B) are the imminent, overdue crest.</p>
+  </div>
+  <div class="body">
+    <div class="kpis">
+      <div class="kpi"><div class="n alert">8,161</div><div class="l">Boreholes awaiting P&amp;A (TA + completed/open)</div></div>
+      <div class="kpi"><div class="n">$65.3B</div><div class="l">Latent liability floor @ $8M/well (GoM base)</div></div>
+      <div class="kpi"><div class="n alert">3,288</div><div class="l">Temporarily abandoned = overdue Idle-Iron crest</div></div>
+      <div class="kpi"><div class="n accent">30,400</div><div class="l">Already permanently plugged (wave to date)</div></div>
+    </div>
+
+    <h2>Forward liability wave — by idle / completion vintage</h2>
+    <div class="chartwrap"><svg viewBox="0 0 808 300" width="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Forward P&amp;A liability by vintage decade"><g><rect x="18" y="230.5" width="96" height="5.5" fill="var(--alert)" rx="3"><title>67 temporarily abandoned (imminent)</title></rect><rect x="18" y="182.3" width="96" height="48.2" fill="var(--future)" rx="3"><title>590 completed/open</title></rect><text x="66" y="160" text-anchor="middle" class="bl">657</text><text x="66" y="174" text-anchor="middle" class="bm">$5.3B</text><text x="66" y="256" text-anchor="middle" class="bx">pre-1980</text></g><g><rect x="148" y="226.7" width="96" height="9.3" fill="var(--alert)" rx="3"><title>114 temporarily abandoned (imminent)</title></rect><rect x="148" y="163.6" width="96" height="63.1" fill="var(--future)" rx="3"><title>772 completed/open</title></rect><text x="196" y="142" text-anchor="middle" class="bl">886</text><text x="196" y="156" text-anchor="middle" class="bm">$7.1B</text><text x="196" y="256" text-anchor="middle" class="bx">1980s</text></g><g><rect x="278" y="213.9" width="96" height="22.1" fill="var(--alert)" rx="3"><title>271 temporarily abandoned (imminent)</title></rect><rect x="278" y="141.6" width="96" height="72.2" fill="var(--future)" rx="3"><title>884 completed/open</title></rect><text x="326" y="120" text-anchor="middle" class="bl">1,155</text><text x="326" y="134" text-anchor="middle" class="bm">$9.2B</text><text x="326" y="256" text-anchor="middle" class="bx">1990s</text></g><g><rect x="408" y="186.6" width="96" height="49.4" fill="var(--alert)" rx="3"><title>605 temporarily abandoned (imminent)</title></rect><rect x="408" y="80.6" width="96" height="106.0" fill="var(--future)" rx="3"><title>1297 completed/open</title></rect><text x="456" y="59" text-anchor="middle" class="bl">1,902</text><text x="456" y="73" text-anchor="middle" class="bm">$15.2B</text><text x="456" y="256" text-anchor="middle" class="bx">2000s</text></g><g><rect x="538" y="114.7" width="96" height="121.3" fill="var(--alert)" rx="3"><title>1484 temporarily abandoned (imminent)</title></rect><rect x="538" y="34.0" width="96" height="80.7" fill="var(--future)" rx="3"><title>988 completed/open</title></rect><text x="586" y="12" text-anchor="middle" class="bl">2,472</text><text x="586" y="26" text-anchor="middle" class="bm">$19.8B</text><text x="586" y="256" text-anchor="middle" class="bx">2010s</text></g><g><rect x="668" y="175.0" width="96" height="61.0" fill="var(--alert)" rx="3"><title>747 temporarily abandoned (imminent)</title></rect><rect x="668" y="147.0" width="96" height="27.9" fill="var(--future)" rx="3"><title>342 completed/open</title></rect><text x="716" y="125" text-anchor="middle" class="bl">1,089</text><text x="716" y="139" text-anchor="middle" class="bm">$8.7B</text><text x="716" y="256" text-anchor="middle" class="bx">2020s</text></g><line x1="8" y1="236" x2="798" y2="236" stroke="var(--line)" stroke-width="1"/></svg></div>
+    <div class="legend">
+      <span><i style="background:var(--alert)"></i>Temporarily abandoned (imminent, overdue &gt;5&nbsp;yr rule)</span>
+      <span><i style="background:var(--future)"></i>Completed / open (latent future P&amp;A)</span>
+      <span>Bar label = borehole count · figure = liability @ $8M/well</span>
+    </div>
+    <p class="note">Vintage = the decade each borehole entered its current BSEE status
+    (<code>BOREHOLE_STAT_DT</code>). Wells idled in earlier decades are the most overdue: the deeper
+    the vintage, the longer the plug-or-justify clock has run.</p>
+
+    <div class="reg"><b>Regulatory driver.</b> BSEE BSEE NTL 2018-N02 — "Wells idle &gt;5 years must be permanently plugged or justified" (6-month lead time). The 3,288 temporarily-abandoned
+    boreholes are precisely the population this rule targets — each a deferred, not discharged, P&amp;A obligation.</div>
+
+    <h2>Vintage roll-up</h2>
+    <table>
+      <thead><tr><th>Vintage decade</th><th>Temp. abandoned</th><th>Completed / open</th>
+      <th>Forward P&amp;A wells</th><th>Liability @ $8M</th><th>Already plugged</th></tr></thead>
+      <tbody><tr><td class="lab">pre-1980</td><td class="num">67</td><td class="num">590</td><td class="num strong">657</td><td class="num">$5.3B</td><td class="num muted">6,366</td></tr><tr><td class="lab">1980s</td><td class="num">114</td><td class="num">772</td><td class="num strong">886</td><td class="num">$7.1B</td><td class="num muted">4,771</td></tr><tr><td class="lab">1990s</td><td class="num">271</td><td class="num">884</td><td class="num strong">1,155</td><td class="num">$9.2B</td><td class="num muted">5,171</td></tr><tr><td class="lab">2000s</td><td class="num">605</td><td class="num">1,297</td><td class="num strong">1,902</td><td class="num">$15.2B</td><td class="num muted">5,888</td></tr><tr><td class="lab">2010s</td><td class="num">1,484</td><td class="num">988</td><td class="num strong">2,472</td><td class="num">$19.8B</td><td class="num muted">6,289</td></tr><tr><td class="lab">2020s</td><td class="num">747</td><td class="num">342</td><td class="num strong">1,089</td><td class="num">$8.7B</td><td class="num muted">1,914</td></tr><tr><td class="lab">Undated</td><td class="num">0</td><td class="num">0</td><td class="num strong">0</td><td class="num">$0.0B</td><td class="num muted">1</td></tr>
+      <tr><td class="lab strong">Total</td><td class="num">3,288</td><td class="num">4,873</td>
+      <td class="num strong">8,161</td><td class="num strong">$65.3B</td>
+      <td class="num muted">30,400</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Per-well P&amp;A cost (decommissioning cost model, region = GoM)</h2>
+    <p class="note">
+      <code>well_p_and_a</code> = $8.0M base + $0.015M per m water depth × GoM multiplier 1.0.
+      Reference points: base / shelf floor <b>$8M</b> (depth term = 0);
+      shelf ~60&nbsp;m <b>$8.9M</b>;
+      shelf edge ~200&nbsp;m <b>$11M</b>;
+      deep water ~1209&nbsp;m <b>$26M</b>
+      (model confidence: medium). The <b>headline liability range prices the whole
+      forward population at the shelf band</b> ($8–9M/well), where the
+      GoM P&amp;A backlog overwhelmingly sits; the deepwater figure is per-well escalation, not applied to every
+      well (the data does not carry a per-well depth to weight the mix). Cited P&amp;A cost benchmark, not a project quote.
+    </p>
+
+    <p class="note"><b>Forward P&amp;A demand context.</b> The
+    <a href="../../docs/intervention-db/intervention-stats-brief.html">GoM intervention-access brief</a>
+    already flags heavy dead-well work — tubing pull / recompletion / <b>P&amp;A</b> — as forward-looking
+    rig-day demand across every water-depth band, with the deep bands short of GoM-resident heavy-intervention
+    units (e.g. 5,000–10,000&nbsp;ft: ~4.4× the resident rig-days). That access gap is the SUPPLY side of the same
+    wave this page prices on the LIABILITY side; the demand figures are cited from the brief, not recomputed here.</p>
+
+    <p class="note"><b>Global companion.</b> This page is the Gulf-of-Mexico <em>well</em> P&amp;A wave. The
+    <a href="regional-liability.html">regional decommissioning-liability view</a> prices the global <em>facility</em>
+    portfolio (836 offshore facilities, 5 regions) and shows why floating production — not the North Sea's
+    fixed jackets — carries most of the modeled $17.5B removal bill.</p>
+
+    <div class="foot">
+      <b>Source.</b> BSEE curated borehole inventory <code>data/modules/bsee/current/wells/well_data.csv</code>
+      — 57,281 boreholes. Status mix: PA 30,400 · ST 17,559 · COM 4,873
+      · TA 3,288 · CNL 1,005 · other 153.
+      Sidetrack (<code>ST</code>) and cancelled/permit (<code>CNL</code>/<code>DSI</code>/<code>APD</code>) boreholes are
+      excluded from the forward P&amp;A count (not standalone plug units).<br>
+      <b>Data limits.</b> Per-well <code>WATER_DEPTH</code> is populated for only 100 of 57,281
+      boreholes, so the cost model's depth term cannot be applied per well; every $ figure is priced at the GoM
+      P&amp;A base ($8M) as a floor, with the shelf-to-deepwater band shown separately. Counts are boreholes,
+      not distinct wellbores (a re-entered well may carry multiple status records). "Completed/open" includes active
+      producers whose P&amp;A obligation is real but not yet due; the temporarily-abandoned tier is the imminent
+      subset. Cost factors are parametric industry benchmarks (model confidence: medium), not project estimates.<br>
+      Generated by <code>scripts/decommissioning/build_pa_liability_wave.py</code> · cost model
+      <code>worldenergydata.decommissioning.cost_model</code> · regs <code>BSEE NTL 2018-N02</code>.
+    </div>
+  </div>
+</div></div>
