@@ -624,12 +624,20 @@ def build_decommissioning(available_viz: dict[str, bool]) -> list[tuple]:
     from the frozen BSEE well inventory; copied verbatim into
     ``public/decommissioning/pa-liability-wave.html``. Returns ``[]`` &mdash; the
     landing index keys off what exists in ``public/``."""
-    src = REPORTS / "decommissioning" / "pa_liability_wave.html"
-    if not src.exists():
-        return []
     dst = PUBLIC / "decommissioning"
-    dst.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(src, dst / "pa-liability-wave.html")
+    pages = {
+        "pa_liability_wave.html": "pa-liability-wave.html",
+        "regional_liability.html": "regional-liability.html",
+    }
+    made = False
+    for src_name, dst_name in pages.items():
+        src = REPORTS / "decommissioning" / src_name
+        if not src.exists():
+            continue
+        if not made:
+            dst.mkdir(parents=True, exist_ok=True)
+            made = True
+        shutil.copyfile(src, dst / dst_name)
     return []
 
 

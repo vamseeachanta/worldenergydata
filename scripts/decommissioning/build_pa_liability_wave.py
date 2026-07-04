@@ -385,6 +385,11 @@ def render_html(**k) -> str:
     units (e.g. 5,000–10,000&nbsp;ft: ~4.4× the resident rig-days). That access gap is the SUPPLY side of the same
     wave this page prices on the LIABILITY side; the demand figures are cited from the brief, not recomputed here.</p>
 
+    <p class="note"><b>Global companion.</b> This page is the Gulf-of-Mexico <em>well</em> P&amp;A wave. The
+    <a href="regional-liability.html">regional decommissioning-liability view</a> prices the global <em>facility</em>
+    portfolio (836 offshore facilities, 5 regions) and shows why floating production — not the North Sea's
+    fixed jackets — carries most of the modeled $17.5B removal bill.</p>
+
     <div class="foot">
       <b>Source.</b> BSEE curated borehole inventory <code>data/modules/bsee/current/wells/well_data.csv</code>
       — {k['n_total']:,} boreholes. Status mix: PA {scget('PA'):,} · ST {scget('ST'):,} · COM {scget('COM'):,}

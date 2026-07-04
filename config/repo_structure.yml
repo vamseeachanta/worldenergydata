@@ -177,6 +177,8 @@ temporary_exceptions:
       - reports/capabilities/insights.html
       - reports/decommissioning/pa_liability_wave.csv
       - reports/decommissioning/pa_liability_wave.html
+      - reports/decommissioning/regional_liability.csv
+      - reports/decommissioning/regional_liability.html
       - reports/field_development/all_regions_atlas.html
       - reports/field_development/all_regions_coverage.csv
       - reports/field_development/region_devtype_comparison.html
