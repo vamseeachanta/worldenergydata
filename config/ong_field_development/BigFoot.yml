@@ -1,0 +1,47 @@
+# Auto-generated field input — scripts/gen_field_inputs.py
+# BOEM blocks mirror aceengineercode config/ong_field_development; enriched with BSEE leases + validated economics.
+field:
+  nickname: Big Foot
+  id: big_foot
+  status: producing
+  dev_system: dry
+  water_depth_ft: 5190
+  first_oil: '2018-11-01'
+location:
+  boem_fields:
+  - WR029
+  leases:
+  - G16942
+  well_type:
+  - E
+  - D
+analysis:
+  economics: true
+  discount_rate_annual: 0.1
+  by:
+  - field
+  - block
+  - well
+  vintages:
+  - v30
+  - latest
+validated_economics:
+  total_oil_bbl: 66870656
+  revenue_usd: 4737808705.76
+  capex_usd: 4517300000
+  npv10_usd: -1063363725.61
+  mirr_annual: 0.0348
+  producers: 7
+  wellbores: 38
+public_metadata:
+  operator: Chevron
+  partners: Chevron 60/Equinor 27.5/Marubeni 12.5
+  facility: extended tension-leg platform (ETLP), 15-slot
+  play: Miocene (unconfirmed)
+  reported_first_oil: 2018-11
+  reported_capex_usd: 4000000000.0
+  plateau_bopd: 75000
+provenance:
+  boem_source: aceengineercode/config/ong_field_development/BigFoot.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

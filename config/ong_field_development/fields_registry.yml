@@ -1,0 +1,289 @@
+# Auto-generated canonical registry — see scripts/gen_field_inputs.py
+meta:
+  source: aceengineercode boem_fields + worldenergydata lease_mapping_fdas + golden_baseline_v30
+  discount_rate_annual: 0.1
+  price_basis: EIA WTI historical deck
+  validation: field economics reproduce golden_baseline_v30.yml to ~0.001%
+fields:
+  stones:
+    field_nickname: Stones
+    boem_fields:
+    - WR508
+    leases:
+    - G17001
+    well_type:
+    - E
+    - D
+    dev_system: subsea15
+    water_depth_ft: 9525
+    status: producing
+    first_oil: '2016-09-01'
+    validated_economics:
+      total_oil_bbl: 83657789
+      revenue_usd: 5582443248.58
+      capex_usd: 6231600000
+      npv10_usd: -1479469165.42
+      mirr_annual: 0.027
+      producers: 10
+      wellbores: 22
+    public_metadata:
+      operator: Shell
+      partners: Shell 100% field WI (Turritella FPSO is a separate vessel JV)
+      facility: FPSO Turritella (disconnectable turret-moored)
+      play: Lower Tertiary Wilcox
+      reported_first_oil: 2016-09
+      reported_capex_usd: null
+      plateau_bopd: 50000
+  cascade_chinook:
+    field_nickname: Cascade/Chinook
+    boem_fields:
+    - WR205
+    - WR206
+    - WR469
+    - WR470
+    leases:
+    - G16965
+    - G16997
+    well_type:
+    - E
+    - D
+    dev_system: subsea15
+    water_depth_ft: 8200
+    status: producing
+    first_oil: '2014-01-01'
+    validated_economics:
+      total_oil_bbl: 34322807
+      revenue_usd: 2326873535.6
+      capex_usd: 3873600000
+      npv10_usd: -1474083632.85
+      mirr_annual: -0.0176
+      producers: 3
+      wellbores: 14
+    public_metadata:
+      operator: Petrobras America
+      partners: 'Cascade: Petrobras 100; Chinook: Petrobras 66.67/TotalEnergies 33.33'
+      facility: FPSO BW Pioneer (first US-GoM FPSO)
+      play: Lower Tertiary Wilcox
+      reported_first_oil: 2012-02
+      reported_capex_usd: null
+      plateau_bopd: 80000
+  julia:
+    field_nickname: Julia
+    boem_fields:
+    - WR627
+    leases:
+    - G20351
+    well_type:
+    - E
+    - D
+    dev_system: tieback15
+    water_depth_ft: 7335
+    status: producing
+    first_oil: '2016-03-01'
+    validated_economics:
+      total_oil_bbl: 70936158
+      revenue_usd: 4715155663.31
+      capex_usd: 2724600000
+      npv10_usd: -530637776.31
+      mirr_annual: 0.06313
+      producers: 4
+      wellbores: 9
+    public_metadata:
+      operator: ExxonMobil
+      partners: ExxonMobil 50% (op), Equinor 50%
+      facility: subsea tieback to Chevron Jack/St. Malo semi host (~15 mi)
+      play: Lower Tertiary (Wilcox neighborhood)
+      reported_first_oil: 2016-04
+      reported_capex_usd: 4000000000.0
+      plateau_bopd: 34000
+  anchor:
+    field_nickname: Anchor
+    boem_fields:
+    - GC807
+    leases:
+    - G31752
+    - G31751
+    well_type:
+    - E
+    - D
+    dev_system: subsea20
+    water_depth_ft: 5080
+    status: producing
+    first_oil: '2024-08-01'
+    validated_economics:
+      total_oil_bbl: 6912846
+      revenue_usd: 476309533.77
+      capex_usd: 4161200000
+      npv10_usd: -1732808337.14
+      mirr_annual: -0.17684
+      producers: 2
+      wellbores: 15
+    public_metadata:
+      operator: Chevron
+      partners: Chevron 62.86/TotalEnergies 37.14
+      facility: "semisubmersible FPU, 7-well subsea \u2014 industry-first 20,000 psi (20K)"
+      play: Lower Tertiary Wilcox
+      reported_first_oil: 2024-08
+      reported_capex_usd: 5700000000.0
+      plateau_bopd: 75000
+  jack_st_malo:
+    field_nickname: Jack/St. Malo
+    boem_fields:
+    - WR758
+    - WR759
+    - WR678
+    leases:
+    - G21245
+    - G18753
+    - G18745
+    - G17015
+    - G17016
+    - G20394
+    well_type:
+    - E
+    - D
+    dev_system: subsea15
+    water_depth_ft: 7240
+    status: producing
+    first_oil: '2014-12-01'
+    validated_economics:
+      total_oil_bbl: 406571771
+      revenue_usd: 25648472771.59
+      capex_usd: 12850400000
+      npv10_usd: -881064818.72
+      mirr_annual: 0.08515
+      producers: 22
+      wellbores: 73
+    public_metadata:
+      operator: Chevron
+      partners: 'Jack: Chevron 50/Maersk 25/Statoil 25; St Malo: Chevron 51/Petrobras 25/Statoil 21.5/ExxonMobil
+        1.25/ENI 1.25'
+      facility: deep-draft semisubmersible FPU + subsea tiebacks (up to ~15 mi)
+      play: Lower Tertiary Wilcox
+      reported_first_oil: 2014-12
+      reported_capex_usd: 7500000000.0
+      plateau_bopd: 170000
+  kaskida:
+    field_nickname: Kaskida
+    boem_fields:
+    - KC292
+    - KC291
+    leases:
+    - g25792
+    - g19555
+    well_type:
+    - E
+    - D
+    dev_system: subsea20
+    water_depth_ft: 5860
+    status: pre-FID
+    first_oil: null
+    validated_economics:
+      total_oil_bbl: 0
+      revenue_usd: null
+      capex_usd: 925100000
+      npv10_usd: -625020726.74
+      mirr_annual: null
+      producers: null
+      wellbores: 7
+    public_metadata: {}
+  tiber:
+    field_nickname: Tiber
+    boem_fields:
+    - KC102
+    leases:
+    - G25782
+    well_type:
+    - E
+    - D
+    dev_system: subsea20
+    water_depth_ft: 4130
+    status: pre-FID
+    first_oil: null
+    validated_economics:
+      total_oil_bbl: 0
+      revenue_usd: null
+      capex_usd: 275000000
+      npv10_usd: -227969015.46
+      mirr_annual: null
+      producers: null
+      wellbores: 2
+    public_metadata: {}
+  shenandoah:
+    field_nickname: Shenandoah
+    boem_fields:
+    - WR051
+    leases:
+    - G31938
+    - G25232
+    well_type:
+    - E
+    - D
+    dev_system: subsea20
+    water_depth_ft: 5800
+    status: producing
+    first_oil: '2025-02-01'
+    validated_economics:
+      total_oil_bbl: 3784
+      revenue_usd: 270669.52
+      capex_usd: 3866500000
+      npv10_usd: -1166364362.66
+      mirr_annual: null
+      producers: 1
+      wellbores: 23
+    public_metadata: {}
+  north_platte:
+    field_nickname: North Platte
+    boem_fields:
+    - GB915
+    - GB916
+    - GB958
+    - GB959
+    leases:
+    - G30876
+    - G32460
+    well_type:
+    - E
+    - D
+    dev_system: subsea20
+    water_depth_ft: 5840
+    status: non_producing
+    first_oil: null
+    validated_economics:
+      total_oil_bbl: 0
+      revenue_usd: null
+      capex_usd: 1068100000
+      npv10_usd: -783522050.82
+      mirr_annual: null
+      producers: null
+      wellbores: 14
+    public_metadata: {}
+  big_foot:
+    field_nickname: Big Foot
+    boem_fields:
+    - WR029
+    leases:
+    - G16942
+    well_type:
+    - E
+    - D
+    dev_system: dry
+    water_depth_ft: 5190
+    status: producing
+    first_oil: '2018-11-01'
+    validated_economics:
+      total_oil_bbl: 66870656
+      revenue_usd: 4737808705.76
+      capex_usd: 4517300000
+      npv10_usd: -1063363725.61
+      mirr_annual: 0.0348
+      producers: 7
+      wellbores: 38
+    public_metadata:
+      operator: Chevron
+      partners: Chevron 60/Equinor 27.5/Marubeni 12.5
+      facility: extended tension-leg platform (ETLP), 15-slot
+      play: Miocene (unconfirmed)
+      reported_first_oil: 2018-11
+      reported_capex_usd: 4000000000.0
+      plateau_bopd: 75000
