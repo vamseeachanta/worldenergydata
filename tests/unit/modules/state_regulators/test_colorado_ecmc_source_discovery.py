@@ -14,7 +14,6 @@ from worldenergydata.modules.state_regulators.colorado_ecmc.source_discovery imp
     write_source_discovery_manifest,
 )
 
-
 FIXTURE = (
     Path(__file__).parents[3]
     / "fixtures"

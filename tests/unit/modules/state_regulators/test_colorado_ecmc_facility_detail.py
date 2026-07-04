@@ -9,7 +9,6 @@ from worldenergydata.modules.state_regulators.colorado_ecmc.facility_detail impo
     parse_facility_detail_html,
 )
 
-
 FIXTURE = (
     Path(__file__).parents[3]
     / "fixtures"

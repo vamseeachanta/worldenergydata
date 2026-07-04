@@ -7,7 +7,6 @@ import re
 import pandas as pd
 from bs4 import BeautifulSoup
 
-
 PRESSURE_KINDS = {
     ("initial_test_data", "CASING_PRESS"): "WHP_casing_initial_test",
     ("initial_test_data", "TUBING_PRESS"): "WHP_flowing_tubing_initial_test",
