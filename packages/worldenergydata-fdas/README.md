@@ -57,6 +57,46 @@ argument → `fiscal_terms` deck → legacy `AssumptionsManager` ROYALTY_RATE. W
 no deck (`fiscal_terms=None`) the behavior is **byte-identical** to the
 pre-carve engine.
 
+## F2 country adapter contract (#715)
+
+The source-adapter interface that feeds these decks. It bridges the repo's
+existing per-country production adapters
+(`worldenergydata.production.unified` — `AbstractProductionAdapter`, 8 country
+implementations) into FDAS, with two entry points:
+
+```python
+from worldenergydata.fdas.adapters.contract import to_fdas_production
+from worldenergydata.fdas.adapters.field_concept_normalizer import (
+    FieldMapEntry, FieldMetaMapping, to_field_concept, number_from, year_from,
+)
+```
+
+- **`to_fdas_production(unified_df)`** — normalizes a unified `STANDARD_COLUMNS`
+  frame (`region, field_name, year, month, oil_bbl, gas_mcf, water_bbl, …`) to
+  the canonical FDAS monthly-production schema the cashflow engine reads:
+  `YEAR_MONTH, DEV_NAME, MONTHLY_OIL_BBL, MONTHLY_WATER_BBL, MONTHLY_GAS_MCF`
+  (the `_BBL`/`_MCF` columns, **not** the legacy `bsee_adapter`
+  `MONTHLY_*_VOLUME`). A pure pandas leaf — no `field_development` import.
+- **`to_field_concept(meta, mapping)` / `FieldMetaMapping`** — maps a country
+  regulator's field-metadata dict → a validated
+  `field_development.models.FieldConcept` for concept screening. A
+  `FieldMetaMapping` is `{fieldconcept_field: FieldMapEntry(source_key,
+  transform)}` carrying per-field callables (`number_from`, `year_from`,
+  `fluid_from_reserve_type`, `reduce_concept_type`) so no `subseaiq` logic is
+  lost; targets are validated against `FieldConcept` at construction.
+
+### Consumed vs. deferred
+
+Production is **consumed now** — `to_fdas_production` output drives monthly
+cashflow. Wells / drilling-timeline inputs are **deferred to #783**
+(`STANDARD_COLUMNS` cannot carry them). When a drilling timeline is absent the
+cashflow engine's empty-timeline **honesty guard** emits a WARNING
+("drilling CAPEX is 0") so the silent-zero-drilling-CAPEX case is visible; the
+value is still `0`.
+
+Onboarding a new country: see
+[`docs/modules/fdas/country-adapter-checklist.md`](../../docs/modules/fdas/country-adapter-checklist.md).
+
 ## Handoff
 
 Country fiscal-terms coverage expands per the international field-development

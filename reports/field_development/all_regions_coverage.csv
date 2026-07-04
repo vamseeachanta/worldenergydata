@@ -1,0 +1,85 @@
+country,fields,facilities,facility_density,badge,source_module,catalog_status
+US,333,88,0.264,RICH,bsee,sample
+UK,308,124,0.403,ROADMAP,ukcs,runtime_fetched
+Norway,302,82,0.272,ROADMAP,sodir,runtime_fetched
+Australia,192,50,0.26,SAMPLE,offshore_assets (reference),reference
+Brazil,98,58,0.592,ROADMAP,brazil_anp,runtime_fetched
+Angola,75,24,0.32,SAMPLE,offshore_assets (reference),reference
+Malaysia,65,48,0.738,SAMPLE,offshore_assets (reference),reference
+Indonesia,62,30,0.484,SAMPLE,offshore_assets (reference),reference
+Ireland,39,4,0.103,SAMPLE,offshore_assets (reference),reference
+Denmark,33,15,0.455,SAMPLE,offshore_assets (reference),reference
+Thailand,30,25,0.833,SAMPLE,offshore_assets (reference),reference
+China,29,32,1.103,SAMPLE,offshore_assets (reference),reference
+Egypt,29,20,0.69,SAMPLE,offshore_assets (reference),reference
+Viet nam,29,21,0.724,SAMPLE,offshore_assets (reference),reference
+Nigeria,28,24,0.857,SAMPLE,offshore_assets (reference),reference
+New Zealand,24,7,0.292,SAMPLE,offshore_assets (reference),reference
+Philippines,23,5,0.217,SAMPLE,offshore_assets (reference),reference
+Canada,22,8,0.364,ROADMAP,canada,runtime_fetched
+Ghana,22,2,0.091,SAMPLE,offshore_assets (reference),reference
+Falkland Islands (Malvinas),21,0,0.0,SAMPLE,offshore_assets (reference),reference
+"Tanzania, United Republic of",20,1,0.05,SAMPLE,offshore_assets (reference),reference
+Trin. & Tobago,19,10,0.526,SAMPLE,offshore_assets (reference),reference
+Gabon,17,8,0.471,SAMPLE,offshore_assets (reference),reference
+Equatorial Guinea,16,7,0.438,SAMPLE,offshore_assets (reference),reference
+Tunisia,16,7,0.438,SAMPLE,offshore_assets (reference),reference
+Mexico,15,6,0.4,ROADMAP,mexico_cnh,runtime_fetched
+Israel,14,2,0.143,SAMPLE,offshore_assets (reference),reference
+Russian Federation,14,14,1.0,SAMPLE,offshore_assets (reference),reference
+Morocco,13,0,0.0,SAMPLE,offshore_assets (reference),reference
+Mozambique,13,0,0.0,SAMPLE,offshore_assets (reference),reference
+Congo,12,5,0.417,SAMPLE,offshore_assets (reference),reference
+India,12,6,0.5,SAMPLE,offshore_assets (reference),reference
+Kenya,11,0,0.0,SAMPLE,offshore_assets (reference),reference
+Namibia,11,0,0.0,SAMPLE,offshore_assets (reference),reference
+Italy,10,4,0.4,SAMPLE,offshore_assets (reference),reference
+Myanmar,10,9,0.9,SAMPLE,offshore_assets (reference),reference
+Netherlands,10,10,1.0,SAMPLE,offshore_assets (reference),reference
+South Africa,9,3,0.333,SAMPLE,offshore_assets (reference),reference
+Liberia,8,0,0.0,SAMPLE,offshore_assets (reference),reference
+Qatar,7,19,2.714,SAMPLE,offshore_assets (reference),reference
+UAE,7,9,1.286,SAMPLE,offshore_assets (reference),reference
+Mauritania,6,1,0.167,SAMPLE,offshore_assets (reference),reference
+Senegal,6,0,0.0,SAMPLE,offshore_assets (reference),reference
+Brunei Darussalam,5,0,0.0,SAMPLE,offshore_assets (reference),reference
+Bulgaria,5,3,0.6,SAMPLE,offshore_assets (reference),reference
+Libya,5,6,1.2,SAMPLE,offshore_assets (reference),reference
+Oman,5,2,0.4,SAMPLE,offshore_assets (reference),reference
+Peru,5,3,0.6,SAMPLE,offshore_assets (reference),reference
+Romania,5,0,0.0,SAMPLE,offshore_assets (reference),reference
+Bangladesh,4,1,0.25,SAMPLE,offshore_assets (reference),reference
+Cameroon,4,0,0.0,SAMPLE,offshore_assets (reference),reference
+Faroe Islands,4,0,0.0,SAMPLE,offshore_assets (reference),reference
+Greenland,4,0,0.0,SAMPLE,offshore_assets (reference),reference
+Papua New Guinea,4,0,0.0,SAMPLE,offshore_assets (reference),reference
+Sierra Leone,4,0,0.0,SAMPLE,offshore_assets (reference),reference
+Argentina,3,3,1.0,SAMPLE,offshore_assets (reference),reference
+Azerbaijan,3,9,3.0,SAMPLE,offshore_assets (reference),reference
+"Congo, The Demo. Rep. of the",3,1,0.333,SAMPLE,offshore_assets (reference),reference
+Greece,3,2,0.667,SAMPLE,offshore_assets (reference),reference
+Guinea,3,0,0.0,SAMPLE,offshore_assets (reference),reference
+Guinea-Bissau,3,0,0.0,SAMPLE,offshore_assets (reference),reference
+Sao Tome and Principe,3,0,0.0,SAMPLE,offshore_assets (reference),reference
+Spain,3,1,0.333,SAMPLE,offshore_assets (reference),reference
+Turkey,3,2,0.667,SAMPLE,offshore_assets (reference),reference
+Albania,2,0,0.0,SAMPLE,offshore_assets (reference),reference
+Colombia,2,0,0.0,SAMPLE,offshore_assets (reference),reference
+Guyana,2,0,0.0,SAMPLE,offshore_assets (reference),reference
+Iran,2,1,0.5,SAMPLE,offshore_assets (reference),reference
+Kazakhstan,2,4,2.0,SAMPLE,offshore_assets (reference),reference
+Sri Lanka,2,0,0.0,SAMPLE,offshore_assets (reference),reference
+Turkmenistan,2,5,2.5,SAMPLE,offshore_assets (reference),reference
+Venezuela,2,1,0.5,SAMPLE,offshore_assets (reference),reference
+Croatia,1,2,2.0,SAMPLE,offshore_assets (reference),reference
+Cuba,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Cyprus,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+French Guiana,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Gambia,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Japan,1,1,1.0,SAMPLE,offshore_assets (reference),reference
+Madagascar,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Malta,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Nicaragua,1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Niger,1,1,1.0,SAMPLE,offshore_assets (reference),reference
+"Palestinian Territory, occupied",1,0,0.0,SAMPLE,offshore_assets (reference),reference
+Saudi Arabia,1,0,0.0,SAMPLE,offshore_assets (reference),reference
