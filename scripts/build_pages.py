@@ -43,6 +43,7 @@ full rebuild.
 With no arguments the output is byte-for-byte identical to the pre-P2 monolithic
 build — the refactor is presentation-preserving.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -336,6 +337,13 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             for html in sorted(wells_src.glob("*_well.html")):
                 shutil.copy2(html, wells_dst / html.name)
             shutil.copy2(wells_src / "index.html", wells_dst / "index.html")
+        # Per-field asset drill-downs (field → facility → asset → component → engineering).
+        assets_src = lifecycle_src / "assets"
+        if assets_src.exists():
+            assets_dst = lifecycle_dst / "assets"
+            assets_dst.mkdir(parents=True, exist_ok=True)
+            for html in sorted(assets_src.glob("*_assets.html")):
+                shutil.copy2(html, assets_dst / html.name)
 
     # --- Drilling learning-curve front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
