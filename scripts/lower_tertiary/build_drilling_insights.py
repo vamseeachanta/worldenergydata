@@ -38,9 +38,18 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
+from worldenergydata.lower_tertiary.drilling_learning import (  # noqa: E402
+    compute_learning,
+)
+
 DEFAULT_SOURCE = (
     PROJECT_ROOT
-    / "docs" / "modules" / "bsee" / "analysis" / "production" / "FDAS_V30"
+    / "docs"
+    / "modules"
+    / "bsee"
+    / "analysis"
+    / "production"
+    / "FDAS_V30"
     / "drilling_and_completion_days.xlsx"
 )
 REPORTS_DIR = PROJECT_ROOT / "reports" / "lower_tertiary"
@@ -117,7 +126,9 @@ def compute_stats(df: pd.DataFrame) -> dict:
 
     # deepest / fastest / slowest (only among wells with a derivable drill_days)
     dd = df.dropna(subset=["drill_days"])
-    deepest = dd.dropna(subset=["MAX_WELL_BORE_TVD"]).nlargest(1, "MAX_WELL_BORE_TVD").iloc[0]
+    deepest = (
+        dd.dropna(subset=["MAX_WELL_BORE_TVD"]).nlargest(1, "MAX_WELL_BORE_TVD").iloc[0]
+    )
     fastest = dd.nsmallest(5, "drill_days")
     slowest = dd.nlargest(5, "drill_days")
 
@@ -193,8 +204,18 @@ def esc(s) -> str:
 # Inline-SVG chart builders (class-styled so the page CSS themes them)
 # --------------------------------------------------------------------------- #
 def svg_scatter(
-    xs, ys, *, x_dom, y_dom, x_label, y_label, title, fit=None,
-    highlight=None, width=760, height=430,
+    xs,
+    ys,
+    *,
+    x_dom,
+    y_dom,
+    x_label,
+    y_label,
+    title,
+    fit=None,
+    highlight=None,
+    width=760,
+    height=430,
 ):
     ml, mr, mt, mb = 66, 22, 20, 52
     pw, ph = width - ml - mr, height - mt - mb
@@ -232,7 +253,7 @@ def svg_scatter(
         )
         parts.append(
             f'<text x="{xx:.1f}" y="{mt+ph+18:.1f}" class="tick" text-anchor="middle">'
-            f'{_n(t/1000,1)}k</text>'
+            f"{_n(t/1000,1)}k</text>"
         )
     # axes
     parts.append(
@@ -297,6 +318,70 @@ def svg_barh(labels, values, notes, *, x_max, title, unit="", width=760, bar_h=2
     return "".join(parts)
 
 
+def svg_diverging_barh(rows, *, title, width=760, bar_h=24):
+    """Zero-centered horizontal bars of per-field dpk_delta_pct.
+
+    Negative (depth-normalized drilling got faster = learning) extends left and
+    is styled cool/green; positive (step-out reset the clock) extends right and
+    is styled warm/red; near-zero (flat) is muted. ``rows`` is the per_field
+    list from ``compute_learning`` (already sorted by dpk_delta_pct).
+    """
+    ml, mr, mt, mb = 132, 58, 34, 20
+    n = len(rows)
+    height = mt + mb + n * (bar_h + 8)
+    pw = width - ml - mr
+    cx = ml + pw / 2.0
+    vmax = max(abs(r["dpk_delta_pct"]) for r in rows) * 1.08
+
+    def bx(v):
+        return v / vmax * (pw / 2.0)
+
+    parts = [
+        f'<svg viewBox="0 0 {width} {height}" width="100%" role="img" '
+        f'aria-label="{esc(title)}" class="chart" preserveAspectRatio="xMidYMid meet">',
+        f"<title>{esc(title)}</title>",
+    ]
+    # header direction labels
+    parts.append(
+        f'<text x="{cx-8:.0f}" y="{mt-16:.0f}" class="divhdr" text-anchor="end">'
+        f"&#8592; faster (learning)</text>"
+    )
+    parts.append(
+        f'<text x="{cx+8:.0f}" y="{mt-16:.0f}" class="divhdr warm" text-anchor="start">'
+        f"slower (step-out) &#8594;</text>"
+    )
+    y_bot = mt + n * (bar_h + 8) - 8 + bar_h
+    parts.append(
+        f'<line x1="{cx:.1f}" y1="{mt-6:.1f}" x2="{cx:.1f}" y2="{y_bot:.1f}" class="axis"/>'
+    )
+    for i, r in enumerate(rows):
+        y = mt + i * (bar_h + 8)
+        v = r["dpk_delta_pct"]
+        w = bx(v)
+        x = cx if w >= 0 else cx + w
+        cls = {"learn": "div-learn", "stepout": "div-step", "flat": "div-flat"}[
+            r["verdict"]
+        ]
+        parts.append(
+            f'<text x="{ml-10:.0f}" y="{y+bar_h*0.68:.1f}" class="tick" '
+            f'text-anchor="end">{esc(r["field"])}</text>'
+        )
+        parts.append(
+            f'<rect x="{x:.1f}" y="{y:.1f}" width="{abs(w):.1f}" height="{bar_h}" '
+            f'rx="3" class="{cls}"/>'
+        )
+        if w >= 0:
+            lx, anch = cx + w + 7, "start"
+        else:
+            lx, anch = cx + w - 7, "end"
+        parts.append(
+            f'<text x="{lx:.1f}" y="{y+bar_h*0.68:.1f}" class="barval" '
+            f'text-anchor="{anch}">{v:+.0f}%<tspan class="barnote"> (n={r["n"]})</tspan></text>'
+        )
+    parts.append("</svg>")
+    return "".join(parts)
+
+
 # --------------------------------------------------------------------------- #
 # Page
 # --------------------------------------------------------------------------- #
@@ -333,6 +418,24 @@ def render_html(s: dict, source: Path) -> str:
         title="Median drilling days by field",
         unit=" d",
     )
+
+    lrn = s["learning"]
+    learn_bar = svg_diverging_barh(
+        lrn["per_field"],
+        title="Change in depth-normalized drilling intensity, first half vs last half",
+    )
+    lc_counts = lrn["counts"]
+    learn_flds = [r for r in lrn["per_field"] if r["verdict"] == "learn"]
+    step_flds = [r for r in lrn["per_field"] if r["verdict"] == "stepout"]
+    learn_names = ", ".join(
+        f"{esc(r['field'])} {r['dpk_delta_pct']:+.0f}%" for r in learn_flds
+    )
+    step_names = ", ".join(
+        f"{esc(r['field'])} {r['dpk_delta_pct']:+.0f}%"
+        for r in sorted(step_flds, key=lambda r: -r["dpk_delta_pct"])
+    )
+    sm = lrn["stmalo"]
+    pooled = lrn["pooled"]
 
     def rows(frame):
         out = []
@@ -440,6 +543,23 @@ def render_html(s: dict, source: Path) -> str:
   .chart .barval {{ font-family:var(--mono); font-size:11px; fill:var(--ink);
     font-variant-numeric:tabular-nums; dominant-baseline:middle; }}
   .chart .barnote {{ fill:var(--muted); }}
+  .chart .div-learn {{ fill:var(--good); }}
+  .chart .div-step {{ fill:var(--alert); }}
+  .chart .div-flat {{ fill:var(--muted); opacity:.55; }}
+  .chart .divhdr {{ font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    fill:var(--good); font-weight:600; }}
+  .chart .divhdr.warm {{ fill:var(--alert); }}
+
+  .callout {{ border:1px solid var(--line); border-left:4px solid var(--accent);
+    background:var(--panel-2); border-radius:10px; padding:16px 18px; margin:2px 0 0;
+    font-size:14px; line-height:1.55; }}
+  .callout .ct {{ font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent-ink); font-weight:700; margin:0 0 6px; }}
+  @media (prefers-color-scheme:dark) {{ .callout .ct {{ color:var(--accent); }} }}
+  :root[data-theme="dark"] .callout .ct {{ color:var(--accent); }}
+  .callout b {{ font-variant-numeric:tabular-nums; }}
+  .note {{ font-size:12.5px; color:var(--muted); margin:12px 0 0; line-height:1.5;
+    max-width:82ch; }}
 
   table {{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px; }}
   th, td {{ text-align:left; padding:7px 12px; border-bottom:1px solid var(--line); }}
@@ -528,6 +648,53 @@ def render_html(s: dict, source: Path) -> str:
     </section>
 
     <section>
+      <p class="lane-label">Repetition vs step-out</p>
+      <h2>What actually drives drilling days &mdash; repetition vs step-out</h2>
+      <p class="lead">
+        Ordering each field's wells by spud date and splitting them in half, the
+        honest signal is depth-normalized: <b>rig-days per 1,000&nbsp;ft TVD</b>
+        (dpk), first-half median vs last-half median. That controls for a field
+        simply moving to shallower targets. Of the {lc_counts['learn']+lc_counts['stepout']+lc_counts['flat']}
+        fields with n&nbsp;&ge;&nbsp;4 datable wells, <b>{lc_counts['learn']} learned</b>
+        (dpk fell &gt;10%), <b>{lc_counts['stepout']} stepped out</b> (dpk rose &gt;10%),
+        and {lc_counts['flat']} held flat.
+      </p>
+      <div class="scrollx"><figure>{learn_bar}
+        <figcaption>Percent change in depth-normalized drilling intensity
+        (rig-days per 1,000&nbsp;ft TVD), first half &rarr; last half of each field's
+        spud-ordered wells. Green = repetition compounding; red = step-outs into
+        new fault blocks resetting the clock.</figcaption></figure></div>
+
+      <div class="callout" style="margin-top:16px">
+        <p class="ct">St&nbsp;Malo spotlight &mdash; why depth-normalizing matters</p>
+        Across St&nbsp;Malo's <b>{sm['n']} wells</b>, raw drilling time looks like a
+        clean win &mdash; first-half median <b>{_n(sm['h1_median'])} days</b> falling to
+        <b>{_n(sm['h2_median'])} days</b> ({(sm['h2_median']/sm['h1_median']-1)*100:+.0f}% raw).
+        But the last-half wells are ~<b>{_n(abs(sm['tvd_drift']))}&nbsp;ft shallower</b>
+        (TVD drift {sm['tvd_drift']:+,.0f}&nbsp;ft), so a good chunk of that speed-up is
+        just easier holes. Depth-normalized, the real, defensible learning is
+        <b>{sm['dpk_delta_pct']:+.0f}%</b> &mdash; {_n(sm['dpk_h1'],1)} &rarr;
+        {_n(sm['dpk_h2'],1)} rig-days per 1,000&nbsp;ft.
+      </div>
+
+      <p class="lead" style="margin-top:16px">
+        <b>Repetition compounds:</b> {len(learn_flds)} fields cut depth-normalized
+        drilling intensity 26&ndash;67% ({learn_names}). <b>Step-outs reset the
+        clock:</b> {len(step_flds)} fields worsened by +29&ndash;266% as they pushed
+        into new fault blocks and reservoir compartments ({step_names}).
+      </p>
+      <p class="note">
+        Honest note: this is depth-normalized and limited to fields with
+        n&nbsp;&ge;&nbsp;4 datable wells. Pooled across every well-in-sequence, the
+        learning trend is <b>weak</b> (r&nbsp;&asymp;&nbsp;{pooled['r']:.2f} over
+        {pooled['n']} wells, {_n(pooled['slope_per_well'],1)} days per additional well) &mdash;
+        so the thesis is <i>not</i> &ldquo;wells always get faster,&rdquo; but rather that
+        <i>repetition within a known block</i> compounds while step-outs pay the
+        first-well tax again.
+      </p>
+    </section>
+
+    <section>
       <p class="lane-label">Mud program</p>
       <h2>Mud weight vs depth</h2>
       <p class="lead">
@@ -604,8 +771,11 @@ def render_html(s: dict, source: Path) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", default=str(DEFAULT_SOURCE),
-                        help="Path to drilling_and_completion_days.xlsx")
+    parser.add_argument(
+        "--source",
+        default=str(DEFAULT_SOURCE),
+        help="Path to drilling_and_completion_days.xlsx",
+    )
     args = parser.parse_args(argv)
 
     source = Path(args.source)
@@ -621,6 +791,7 @@ def main(argv: list[str] | None = None) -> int:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     write_csv(df, CSV_PATH)
     stats = compute_stats(df)
+    stats["learning"] = compute_learning(df)
     HTML_PATH.write_text(render_html(stats, source), encoding="utf-8")
 
     print(f"Wrote {CSV_PATH}")

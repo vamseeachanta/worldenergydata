@@ -73,6 +73,23 @@
   .chart .barval { font-family:var(--mono); font-size:11px; fill:var(--ink);
     font-variant-numeric:tabular-nums; dominant-baseline:middle; }
   .chart .barnote { fill:var(--muted); }
+  .chart .div-learn { fill:var(--good); }
+  .chart .div-step { fill:var(--alert); }
+  .chart .div-flat { fill:var(--muted); opacity:.55; }
+  .chart .divhdr { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    fill:var(--good); font-weight:600; }
+  .chart .divhdr.warm { fill:var(--alert); }
+
+  .callout { border:1px solid var(--line); border-left:4px solid var(--accent);
+    background:var(--panel-2); border-radius:10px; padding:16px 18px; margin:2px 0 0;
+    font-size:14px; line-height:1.55; }
+  .callout .ct { font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent-ink); font-weight:700; margin:0 0 6px; }
+  @media (prefers-color-scheme:dark) { .callout .ct { color:var(--accent); } }
+  :root[data-theme="dark"] .callout .ct { color:var(--accent); }
+  .callout b { font-variant-numeric:tabular-nums; }
+  .note { font-size:12.5px; color:var(--muted); margin:12px 0 0; line-height:1.5;
+    max-width:82ch; }
 
   table { border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px; }
   th, td { text-align:left; padding:7px 12px; border-bottom:1px solid var(--line); }
@@ -158,6 +175,53 @@
         <figcaption>Median drilling days per field (n = wellbores with a derivable
         duration). St&nbsp;Malo's low median reflects many short re-entry / sidetrack
         intervals in a 65-wellbore program.</figcaption></figure></div>
+    </section>
+
+    <section>
+      <p class="lane-label">Repetition vs step-out</p>
+      <h2>What actually drives drilling days &mdash; repetition vs step-out</h2>
+      <p class="lead">
+        Ordering each field's wells by spud date and splitting them in half, the
+        honest signal is depth-normalized: <b>rig-days per 1,000&nbsp;ft TVD</b>
+        (dpk), first-half median vs last-half median. That controls for a field
+        simply moving to shallower targets. Of the 11
+        fields with n&nbsp;&ge;&nbsp;4 datable wells, <b>5 learned</b>
+        (dpk fell &gt;10%), <b>4 stepped out</b> (dpk rose &gt;10%),
+        and 2 held flat.
+      </p>
+      <div class="scrollx"><figure><svg viewBox="0 0 760 406" width="100%" role="img" aria-label="Change in depth-normalized drilling intensity, first half vs last half" class="chart" preserveAspectRatio="xMidYMid meet"><title>Change in depth-normalized drilling intensity, first half vs last half</title><text x="409" y="18" class="divhdr" text-anchor="end">&#8592; faster (learning)</text><text x="425" y="18" class="divhdr warm" text-anchor="start">slower (step-out) &#8594;</text><line x1="417.0" y1="28.0" x2="417.0" y2="402.0" class="axis"/><text x="122" y="50.3" class="tick" text-anchor="end">Chinook</text><rect x="350.1" y="34.0" width="66.9" height="24" rx="3" class="div-learn"/><text x="343.1" y="50.3" class="barval" text-anchor="end">-67%<tspan class="barnote"> (n=5)</tspan></text><text x="122" y="82.3" class="tick" text-anchor="end">Shenandoah</text><rect x="359.9" y="66.0" width="57.1" height="24" rx="3" class="div-learn"/><text x="352.9" y="82.3" class="barval" text-anchor="end">-57%<tspan class="barnote"> (n=17)</tspan></text><text x="122" y="114.3" class="tick" text-anchor="end">St Malo</text><rect x="385.6" y="98.0" width="31.4" height="24" rx="3" class="div-learn"/><text x="378.6" y="114.3" class="barval" text-anchor="end">-32%<tspan class="barnote"> (n=57)</tspan></text><text x="122" y="146.3" class="tick" text-anchor="end">Stones</text><rect x="390.4" y="130.0" width="26.6" height="24" rx="3" class="div-learn"/><text x="383.4" y="146.3" class="barval" text-anchor="end">-27%<tspan class="barnote"> (n=21)</tspan></text><text x="122" y="178.3" class="tick" text-anchor="end">North Platte</text><rect x="391.1" y="162.0" width="25.9" height="24" rx="3" class="div-learn"/><text x="384.1" y="178.3" class="barval" text-anchor="end">-26%<tspan class="barnote"> (n=12)</tspan></text><text x="122" y="210.3" class="tick" text-anchor="end">Kaskida</text><rect x="415.7" y="194.0" width="1.3" height="24" rx="3" class="div-flat"/><text x="408.7" y="210.3" class="barval" text-anchor="end">-1%<tspan class="barnote"> (n=7)</tspan></text><text x="122" y="242.3" class="tick" text-anchor="end">Big Foot</text><rect x="417.0" y="226.0" width="6.8" height="24" rx="3" class="div-flat"/><text x="430.8" y="242.3" class="barval" text-anchor="start">+7%<tspan class="barnote"> (n=24)</tspan></text><text x="122" y="274.3" class="tick" text-anchor="end">Jack</text><rect x="417.0" y="258.0" width="29.2" height="24" rx="3" class="div-step"/><text x="453.2" y="274.3" class="barval" text-anchor="start">+29%<tspan class="barnote"> (n=8)</tspan></text><text x="122" y="306.3" class="tick" text-anchor="end">Julia</text><rect x="417.0" y="290.0" width="45.1" height="24" rx="3" class="div-step"/><text x="469.1" y="306.3" class="barval" text-anchor="start">+45%<tspan class="barnote"> (n=9)</tspan></text><text x="122" y="338.3" class="tick" text-anchor="end">Anchor</text><rect x="417.0" y="322.0" width="118.3" height="24" rx="3" class="div-step"/><text x="542.3" y="338.3" class="barval" text-anchor="start">+119%<tspan class="barnote"> (n=13)</tspan></text><text x="122" y="370.3" class="tick" text-anchor="end">Cascade</text><rect x="417.0" y="354.0" width="263.9" height="24" rx="3" class="div-step"/><text x="687.9" y="370.3" class="barval" text-anchor="start">+266%<tspan class="barnote"> (n=9)</tspan></text></svg>
+        <figcaption>Percent change in depth-normalized drilling intensity
+        (rig-days per 1,000&nbsp;ft TVD), first half &rarr; last half of each field's
+        spud-ordered wells. Green = repetition compounding; red = step-outs into
+        new fault blocks resetting the clock.</figcaption></figure></div>
+
+      <div class="callout" style="margin-top:16px">
+        <p class="ct">St&nbsp;Malo spotlight &mdash; why depth-normalizing matters</p>
+        Across St&nbsp;Malo's <b>57 wells</b>, raw drilling time looks like a
+        clean win &mdash; first-half median <b>42 days</b> falling to
+        <b>19 days</b> (-54% raw).
+        But the last-half wells are ~<b>5,078&nbsp;ft shallower</b>
+        (TVD drift -5,078&nbsp;ft), so a good chunk of that speed-up is
+        just easier holes. Depth-normalized, the real, defensible learning is
+        <b>-32%</b> &mdash; 1.6 &rarr;
+        1.1 rig-days per 1,000&nbsp;ft.
+      </div>
+
+      <p class="lead" style="margin-top:16px">
+        <b>Repetition compounds:</b> 5 fields cut depth-normalized
+        drilling intensity 26&ndash;67% (Chinook -67%, Shenandoah -57%, St Malo -32%, Stones -27%, North Platte -26%). <b>Step-outs reset the
+        clock:</b> 4 fields worsened by +29&ndash;266% as they pushed
+        into new fault blocks and reservoir compartments (Cascade +266%, Anchor +119%, Julia +45%, Jack +29%).
+      </p>
+      <p class="note">
+        Honest note: this is depth-normalized and limited to fields with
+        n&nbsp;&ge;&nbsp;4 datable wells. Pooled across every well-in-sequence, the
+        learning trend is <b>weak</b> (r&nbsp;&asymp;&nbsp;-0.28 over
+        182 wells, -1.1 days per additional well) &mdash;
+        so the thesis is <i>not</i> &ldquo;wells always get faster,&rdquo; but rather that
+        <i>repetition within a known block</i> compounds while step-outs pay the
+        first-well tax again.
+      </p>
     </section>
 
     <section>
