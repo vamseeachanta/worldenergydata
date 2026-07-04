@@ -240,8 +240,16 @@ def facts_to_field(f: dict) -> dict:
     if f.get("basin"):
         region = f"{region} · {f['basin']}" if region else f["basin"]
 
+    # Drill-down to well-level timelines, if any were generated for this field.
+    wells_dir = HERE / "wells"
+    well_files = (
+        sorted(wells_dir.glob(f"{f['id']}_*_well.html")) if wells_dir.exists() else []
+    )
+
     return {
         "id": f["id"],
+        "wellsHref": "wells/" if well_files else None,
+        "wellsCount": len(well_files),
         "name": f["name"],
         "operator": f.get("operator", ""),
         "region": region,
