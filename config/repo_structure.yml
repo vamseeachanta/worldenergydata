@@ -399,3 +399,13 @@ temporary_exceptions:
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft.html
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft_stats.json
       - reports/subsea/subsea_manifold_market_intelligence.md
+      # Life-cycle insights front doors + hub (issues #775/#776/#777/#779)
+      - reports/capabilities/insights.html
+      - reports/decommissioning/pa_liability_wave.csv
+      - reports/decommissioning/pa_liability_wave.html
+      - reports/field_development/all_regions_atlas.html
+      - reports/field_development/all_regions_coverage.csv
+      - reports/field_development/region_devtype_comparison.html
+      - reports/field_development/region_devtype_matrix.csv
+      - reports/lower_tertiary/drilling_insights.html
+      - reports/lower_tertiary/lt_drilling_insights.csv

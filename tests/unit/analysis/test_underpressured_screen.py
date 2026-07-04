@@ -57,7 +57,7 @@ class TestEstimateBhp:
         assert result["bhp_psia_est"].iloc[0] == pytest.approx(expected)
         assert result["bhp_method"].iloc[0] == "static_gas_column_avg_zt"
 
-    def test_flowing_tubing_whp_gets_static_column_screening_correction(self):
+    def test_non_shut_in_whp_kind_passes_through_without_static_column_correction(self):
         obs = make_observations(
             [
                 {
@@ -65,14 +65,13 @@ class TestEstimateBhp:
                     "test_year": 2024,
                     "pressure_psia": 100.0,
                     "reference_depth_ft": 2800.0,
-                    "pressure_kind": "WHP_flowing_tubing",
+                    "pressure_kind": "WHP_flowing_tubing_initial_test",
                 }
             ]
         )
         result = estimate_bhp(obs, BHP_SETTINGS)
-        expected = 100.0 * math.exp(0.01875 * 0.65 * 2800.0 / (0.95 * 520.0))
-        assert result["bhp_psia_est"].iloc[0] == pytest.approx(expected)
-        assert result["bhp_method"].iloc[0] == "static_gas_column_avg_zt"
+        assert result["bhp_psia_est"].iloc[0] == pytest.approx(100.0)
+        assert result["bhp_method"].iloc[0] == "as_reported"
 
     def test_measured_bhp_passes_through(self):
         obs = make_observations(
