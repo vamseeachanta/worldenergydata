@@ -158,6 +158,16 @@
   .subchip.op  { background: color-mix(in srgb, var(--done) 12%, transparent);
     color: var(--done); border-color: color-mix(in srgb, var(--done) 32%, transparent); }
   .subchip.empty { visibility:hidden; }
+  /* engineering-by-stage overlay */
+  .engtrack { display:flex; min-width:900px; gap:4px; margin-top:8px; }
+  .engcell { flex:1 1 0; min-width:96px; display:flex; flex-direction:column; gap:4px; }
+  .engchip { font-family:var(--mono); font-size:9.5px; line-height:1.2; padding:4px 6px; border-radius:5px; text-align:center;
+    background:color-mix(in srgb, var(--done) 9%, transparent); color:var(--done);
+    border:1px solid color-mix(in srgb, var(--done) 25%, transparent); }
+  a.engchip.link { background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--accent-ink);
+    border-color:color-mix(in srgb, var(--accent) 38%, transparent); font-weight:700; text-decoration:none; }
+  :root[data-theme="dark"] a.engchip.link { color:var(--accent); }
+  @media (prefers-color-scheme:dark){ a.engchip.link { color:var(--accent); } }
   .fel { min-width:900px; margin-top:6px; font-family:var(--mono); font-size:10px;
     color:var(--muted); text-align:center; border-top:1px dashed var(--line); padding-top:4px; }
 
@@ -236,6 +246,11 @@
           <div class="subtrack" id="f-subtrack"></div>
           <div class="fel">◄ FEL — Front-End Loading (engineering phases for concept selection → detail → follow-on) ►</div>
         </div>
+      </section>
+
+      <section>
+        <p class="lane-label">Engineering by stage · <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/" style="color:inherit;text-decoration:underline">→ digitalmodel</a></p>
+        <div class="scrollx"><div class="engtrack" id="f-eng"></div></div>
       </section>
 
       <section class="grid2">
@@ -442,7 +457,7 @@ const FIELD = {
       "Dec 2024"
     ]
   ],
-  "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data_through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water_depth_ft ~5,180 (block-level estimate). projected_cop_year and lease_year left null (not confidently sourced); incident null."
+  "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water depth ~5,180 (block-level estimate). projected end-of-production and lease year not confidently sourced; no notable incident."
 };
 
 /* ---------------- render ---------------- */
@@ -509,6 +524,29 @@ $("f-spine").innerHTML = MODEL.phases.map((p, i) => {
 $("f-subtrack").innerHTML = MODEL.subtrack.map(s =>
   `<div class="subcell"><div class="subchip ${s.type}">${s.label}</div></div>`
 ).join("");
+
+/* engineering-by-stage overlay — each stage's disciplines, linking to digitalmodel */
+const ENG = {
+  acquire: [], explore: ["Geoscience", "Reservoir"], appraise: ["Reservoir model", "Geohazard"],
+  select: ["Concept select", "Naval architecture"],
+  define: ["FEED", "Riser / mooring design", "Hydrodynamics (RAOs)", "Structural"],
+  execute: ["Fabrication", "Installation / pipelay", "CFD"],
+  operate: ["FFS", "Fatigue / VIV", "Mooring fatigue", "IMR", "Flow assurance"],
+  abandon: ["P&amp;A tubulars", "Removal lift", "Pipeline abandon"],
+};
+const ENG_LINK = {
+  "Mooring fatigue": "../hse/mooring-fatigue-grounded-card.html",
+  "Fatigue / VIV": "../hse/riser-fatigue-grounded-card.html",
+};
+$("f-eng").innerHTML = MODEL.phases.map(p => {
+  const chips = (ENG[p.key] || []).map(d => {
+    const href = ENG_LINK[d];
+    return href
+      ? `<a class="engchip link" href="${href}">${d} →</a>`
+      : `<div class="engchip">${d}</div>`;
+  }).join("");
+  return `<div class="engcell">${chips}</div>`;
+}).join("");
 
 /* activities — current phase + its two neighbours */
 const showIdx = [curIdx-1, curIdx, curIdx+1].filter(i => i >= 0 && i < MODEL.phases.length);

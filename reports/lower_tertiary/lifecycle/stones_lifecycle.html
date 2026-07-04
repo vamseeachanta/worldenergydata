@@ -158,6 +158,16 @@
   .subchip.op  { background: color-mix(in srgb, var(--done) 12%, transparent);
     color: var(--done); border-color: color-mix(in srgb, var(--done) 32%, transparent); }
   .subchip.empty { visibility:hidden; }
+  /* engineering-by-stage overlay */
+  .engtrack { display:flex; min-width:900px; gap:4px; margin-top:8px; }
+  .engcell { flex:1 1 0; min-width:96px; display:flex; flex-direction:column; gap:4px; }
+  .engchip { font-family:var(--mono); font-size:9.5px; line-height:1.2; padding:4px 6px; border-radius:5px; text-align:center;
+    background:color-mix(in srgb, var(--done) 9%, transparent); color:var(--done);
+    border:1px solid color-mix(in srgb, var(--done) 25%, transparent); }
+  a.engchip.link { background:color-mix(in srgb, var(--accent) 12%, transparent); color:var(--accent-ink);
+    border-color:color-mix(in srgb, var(--accent) 38%, transparent); font-weight:700; text-decoration:none; }
+  :root[data-theme="dark"] a.engchip.link { color:var(--accent); }
+  @media (prefers-color-scheme:dark){ a.engchip.link { color:var(--accent); } }
   .fel { min-width:900px; margin-top:6px; font-family:var(--mono); font-size:10px;
     color:var(--muted); text-align:center; border-top:1px dashed var(--line); padding-top:4px; }
 
@@ -236,6 +246,11 @@
           <div class="subtrack" id="f-subtrack"></div>
           <div class="fel">◄ FEL — Front-End Loading (engineering phases for concept selection → detail → follow-on) ►</div>
         </div>
+      </section>
+
+      <section>
+        <p class="lane-label">Engineering by stage · <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/" style="color:inherit;text-decoration:underline">→ digitalmodel</a></p>
+        <div class="scrollx"><div class="engtrack" id="f-eng"></div></div>
       </section>
 
       <section class="grid2">
@@ -435,7 +450,7 @@ const FIELD = {
       "Dec 2024"
     ]
   ],
-  "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first_oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease_year and projected_cop_year unknown -> null; no notable schedule-driving incident identified."
+  "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease year and projected end-of-production unknown; no notable schedule-driving incident identified."
 };
 
 /* ---------------- render ---------------- */
@@ -502,6 +517,29 @@ $("f-spine").innerHTML = MODEL.phases.map((p, i) => {
 $("f-subtrack").innerHTML = MODEL.subtrack.map(s =>
   `<div class="subcell"><div class="subchip ${s.type}">${s.label}</div></div>`
 ).join("");
+
+/* engineering-by-stage overlay — each stage's disciplines, linking to digitalmodel */
+const ENG = {
+  acquire: [], explore: ["Geoscience", "Reservoir"], appraise: ["Reservoir model", "Geohazard"],
+  select: ["Concept select", "Naval architecture"],
+  define: ["FEED", "Riser / mooring design", "Hydrodynamics (RAOs)", "Structural"],
+  execute: ["Fabrication", "Installation / pipelay", "CFD"],
+  operate: ["FFS", "Fatigue / VIV", "Mooring fatigue", "IMR", "Flow assurance"],
+  abandon: ["P&amp;A tubulars", "Removal lift", "Pipeline abandon"],
+};
+const ENG_LINK = {
+  "Mooring fatigue": "../hse/mooring-fatigue-grounded-card.html",
+  "Fatigue / VIV": "../hse/riser-fatigue-grounded-card.html",
+};
+$("f-eng").innerHTML = MODEL.phases.map(p => {
+  const chips = (ENG[p.key] || []).map(d => {
+    const href = ENG_LINK[d];
+    return href
+      ? `<a class="engchip link" href="${href}">${d} →</a>`
+      : `<div class="engchip">${d}</div>`;
+  }).join("");
+  return `<div class="engcell">${chips}</div>`;
+}).join("");
 
 /* activities — current phase + its two neighbours */
 const showIdx = [curIdx-1, curIdx, curIdx+1].filter(i => i >= 0 && i < MODEL.phases.length);
