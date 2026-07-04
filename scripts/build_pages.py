@@ -328,6 +328,14 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
         for html in sorted(lifecycle_src.glob("*_lifecycle.html")):
             shutil.copy2(html, lifecycle_dst / html.name)
         shutil.copy2(lifecycle_src / "index.html", lifecycle_dst / "index.html")
+        # Per-well granular timelines (the fractal well-level deep-dive) nest under wells/.
+        wells_src = lifecycle_src / "wells"
+        if (wells_src / "index.html").exists():
+            wells_dst = lifecycle_dst / "wells"
+            wells_dst.mkdir(parents=True, exist_ok=True)
+            for html in sorted(wells_src.glob("*_well.html")):
+                shutil.copy2(html, wells_dst / html.name)
+            shutil.copy2(wells_src / "index.html", wells_dst / "index.html")
 
     # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
     field_names = {

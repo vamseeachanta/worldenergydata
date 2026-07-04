@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "big_foot": {
+      "display_name": "Big Foot",
+      "operator": "Chevron",
+      "host": "Extended Tension-Leg Platform (eTLP)",
+      "lease": "G16942",
+      "block": "Walker Ridge 29",
+      "play": "Wilcox / Lower Tertiary"
+    }
+  },
+  "wells": [
+    {"api": "608124006001", "slot": "A004", "field_id": "big_foot", "spud_date": "2019-03-10", "td_date": "2019-03-25", "drilling_rig_days": 15, "completion_rig_days": 156, "max_tvd_ft": 22253, "mud_weight_ppg": 16.4, "first_oil": "2019-06-01", "workovers": [{"date": "2020-08-30", "type": "Workover"}], "cum_oil_mmbbl": 32.2, "uptime_pct": 93.7, "status": "producing"},
+    {"api": "608124006603", "slot": "A006", "field_id": "big_foot", "spud_date": "2020-02-12", "td_date": "2020-03-01", "drilling_rig_days": 18, "completion_rig_days": 224, "max_tvd_ft": 21395, "mud_weight_ppg": 16.4, "first_oil": "2020-09-01", "workovers": [{"date": "2022-03-16", "type": "Workover"}], "cum_oil_mmbbl": 21.3, "uptime_pct": 92.2, "status": "producing"},
+    {"api": "608124006200", "slot": "A001", "field_id": "big_foot", "spud_date": "2012-04-03", "td_date": "2012-08-07", "drilling_rig_days": 126, "completion_rig_days": 265, "max_tvd_ft": 23187, "mud_weight_ppg": 16.4, "first_oil": "2018-11-01", "workovers": [{"date": "2021-07-15", "type": "Workover"}], "cum_oil_mmbbl": 14.9, "uptime_pct": 94.6, "status": "producing"},
+    {"api": "608124006800", "slot": "A008", "field_id": "big_foot", "spud_date": "2013-01-22", "td_date": "2021-12-02", "drilling_rig_days": 118, "completion_rig_days": 164, "max_tvd_ft": 21801, "mud_weight_ppg": 17, "first_oil": "2022-07-01", "workovers": [{"date": "2025-10-03", "type": "Workover"}], "cum_oil_mmbbl": 4.7, "uptime_pct": 92.4, "status": "producing"},
+    {"api": "608124006302", "slot": "A002", "field_id": "big_foot", "spud_date": "2024-07-11", "td_date": "2024-07-24", "drilling_rig_days": 13, "completion_rig_days": 168, "max_tvd_ft": 21830, "mud_weight_ppg": 14, "first_oil": "2025-01-01", "workovers": [], "cum_oil_mmbbl": 1.5, "uptime_pct": 96.3, "status": "producing"}
+  ]
+}
