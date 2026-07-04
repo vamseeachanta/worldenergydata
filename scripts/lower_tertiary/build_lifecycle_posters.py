@@ -261,11 +261,15 @@ def facts_to_field(f: dict) -> dict:
     well_files = (
         sorted(wells_dir.glob(f"{f['id']}_*_well.html")) if wells_dir.exists() else []
     )
+    assets_page = HERE / "assets" / f"{f['id']}_assets.html"
 
     return {
         "id": f["id"],
         "wellsHref": "wells/" if well_files else None,
         "wellsCount": len(well_files),
+        "assetsHref": (
+            f"assets/{f['id']}_assets.html" if assets_page.exists() else None
+        ),
         "name": f["name"],
         "operator": f.get("operator", ""),
         "region": region,
