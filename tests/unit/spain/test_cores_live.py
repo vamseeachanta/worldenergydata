@@ -63,7 +63,9 @@ def test_download_all_writes_raw_files_atomically_and_records_metadata(tmp_path)
             content=f"""
             <a href="{DEFAULT_WORKBOOKS["oil"].source_url}">oil</a>
             <a href="{DEFAULT_WORKBOOKS["gas"].source_url}">gas</a>
-            """.encode("utf-8"),
+            """.encode(
+                "utf-8"
+            ),
             headers={"Content-Type": "text/html"},
         ),
         DEFAULT_WORKBOOKS["oil"].source_url: CoresHttpResponse(
