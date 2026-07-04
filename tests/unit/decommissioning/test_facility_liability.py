@@ -11,7 +11,6 @@ from worldenergydata.decommissioning.facility_liability import (
     region_of,
 )
 
-
 # ---------------------------------------------------------------------------
 # classify_asset_type
 # ---------------------------------------------------------------------------
