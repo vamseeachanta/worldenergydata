@@ -83,9 +83,14 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#702](https://github.com/vamseeachanta/worldenergydata/issues/702) | [texas-rrc-field-architecture-dossiers](2026-07-02-issue-702-texas-rrc-field-architecture-dossiers.md) | implemented | 2026-07-02 |
 | [#707](https://github.com/vamseeachanta/worldenergydata/issues/707) | [texas-rrc-field-architecture-portfolio](2026-07-02-issue-707-texas-rrc-field-architecture-portfolio.md) | plan-approved | 2026-07-02 |
 | [#709](https://github.com/vamseeachanta/worldenergydata/issues/709) | [texas-rrc-pressure-observations](2026-07-03-issue-709-texas-rrc-pressure-observations.md) | implemented | 2026-07-03 |
+| [#716](https://github.com/vamseeachanta/worldenergydata/issues/716) | [norway-sodir-reference-chain](2026-07-04-issue-716-norway-sodir-reference-chain.md) | plan-approved | 2026-07-04 |
+| [#717](https://github.com/vamseeachanta/worldenergydata/issues/717) | [ukcs-nsta-reference-chain](2026-07-04-issue-717-ukcs-nsta-reference-chain.md) | plan-approved | 2026-07-04 |
+| [#718](https://github.com/vamseeachanta/worldenergydata/issues/718) | [brazil-anp-reference-chain](2026-07-04-issue-718-brazil-anp-reference-chain.md) | plan-review | 2026-07-04 |
 | [#732](https://github.com/vamseeachanta/worldenergydata/issues/732) | [texas-rrc-underpressured-screen](2026-07-03-issue-732-texas-rrc-underpressured-screen.md) | implemented | 2026-07-03 |
 | [#740](https://github.com/vamseeachanta/worldenergydata/issues/740) | [oklahoma-occ-pressure-observations](2026-07-03-issue-740-oklahoma-occ-pressure-observations.md) | implemented | 2026-07-03 |
 | [#745](https://github.com/vamseeachanta/worldenergydata/issues/745) | [colorado-ecmc-wellhead-pressure-observations](2026-07-03-issue-745-colorado-ecmc-wellhead-pressure-observations.md) | implemented | 2026-07-03 |
+| [#749](https://github.com/vamseeachanta/worldenergydata/issues/749) | [colorado-ecmc-pressure-source-discovery](2026-07-04-issue-749-colorado-ecmc-pressure-source-discovery.md) | implemented | 2026-07-04 |
+| [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) | [colorado-ecmc-form5a-ingest](2026-07-04-issue-751-colorado-ecmc-form5a-ingest.md) | plan-approved | 2026-07-04 |
 
 ## Closed / superseded plans
 

@@ -1,0 +1,317 @@
+<meta charset="utf-8">
+<title>GoM Lower-Tertiary Drilling Learning Curve</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#eef2f6; --panel:#fff; --panel-2:#f6f9fc; --ink:#0c1a28; --muted:#5a6b7b;
+    --line:#d6e0ea; --accent:#d9822b; --accent-ink:#7a4410; --blue:#1d5fa8;
+    --good:#2e9e6b; --alert:#c0453b; --grid:#e3e9ee;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --shadow:0 1px 2px rgba(12,26,40,.06),0 8px 24px rgba(12,26,40,.06);
+  }
+  @media (prefers-color-scheme:dark) {
+    :root {
+      --bg:#0a141f; --panel:#10202f; --panel-2:#0d1b28; --ink:#e8eef4; --muted:#8ca0b3;
+      --line:#24384b; --accent:#f0a24a; --accent-ink:#f7c489; --blue:#5b9de0;
+      --good:#43b982; --alert:#e0685e; --grid:#1c2e40;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] { --bg:#eef2f6; --panel:#fff; --panel-2:#f6f9fc; --ink:#0c1a28;
+    --muted:#5a6b7b; --line:#d6e0ea; --accent:#d9822b; --accent-ink:#7a4410; --blue:#1d5fa8;
+    --good:#2e9e6b; --alert:#c0453b; --grid:#e3e9ee; }
+  :root[data-theme="dark"] { --bg:#0a141f; --panel:#10202f; --panel-2:#0d1b28; --ink:#e8eef4;
+    --muted:#8ca0b3; --line:#24384b; --accent:#f0a24a; --accent-ink:#f7c489; --blue:#5b9de0;
+    --good:#43b982; --alert:#e0685e; --grid:#1c2e40; }
+
+  * { box-sizing:border-box; }
+  body { margin:0; }
+  .wrap { background:var(--bg); color:var(--ink); font-family:var(--sans);
+    padding:clamp(16px,3vw,40px); min-height:100%; -webkit-font-smoothing:antialiased; }
+  .sheet { max-width:1180px; margin:0 auto; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; box-shadow:var(--shadow); overflow:hidden; }
+  .head { padding:clamp(20px,2.6vw,34px); border-bottom:1px solid var(--line); }
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 8px; }
+  .title { font-size:clamp(26px,3.6vw,40px); font-weight:800; letter-spacing:-.02em; margin:0;
+    line-height:1.05; text-wrap:balance; }
+  .thesis { color:var(--ink); margin:14px 0 0; font-size:clamp(15px,1.5vw,17px); max-width:74ch;
+    line-height:1.5; }
+  .thesis b { color:var(--accent-ink); }
+  @media (prefers-color-scheme:dark) { .thesis b { color:var(--accent); } }
+  :root[data-theme="dark"] .thesis b { color:var(--accent); }
+
+  .metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:1px; background:var(--line); border-top:1px solid var(--line); }
+  .metric { background:var(--panel-2); padding:16px 18px; }
+  .metric .k { font-family:var(--mono); font-size:10.5px; letter-spacing:.09em;
+    text-transform:uppercase; color:var(--muted); }
+  .metric .v { font-family:var(--mono); font-size:23px; font-weight:700;
+    font-variant-numeric:tabular-nums; margin-top:5px; letter-spacing:-.01em; }
+  .metric .v small { font-size:12px; color:var(--muted); font-weight:500; }
+
+  .body { padding:clamp(18px,2.6vw,34px); display:grid; gap:34px; }
+  section h2 { font-size:19px; margin:0 0 4px; letter-spacing:-.01em; }
+  section p.lead { color:var(--muted); margin:0 0 14px; font-size:14.5px; max-width:80ch; line-height:1.5; }
+  .lane-label { font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 10px; font-weight:600; }
+  .scrollx { overflow-x:auto; }
+  figure { margin:0; }
+  figcaption { font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.45; }
+
+  /* charts */
+  .chart { max-width:820px; height:auto; display:block; margin:0 auto; }
+  .chart .grid { stroke:var(--grid); stroke-width:1; }
+  .chart .axis { stroke:var(--line); stroke-width:1.2; }
+  .chart .tick { font-family:var(--mono); font-size:10px; fill:var(--muted); }
+  .chart .axlab { font-family:var(--sans); font-size:11.5px; fill:var(--muted); }
+  .chart .pt { fill:var(--blue); opacity:.5; }
+  .chart .pt.hi { fill:var(--accent); opacity:1; stroke:var(--panel); stroke-width:1.4; }
+  .chart .fit { stroke:var(--accent); stroke-width:2.4; stroke-dasharray:6 4; }
+  .chart .bar { fill:var(--blue); }
+  .chart .barval { font-family:var(--mono); font-size:11px; fill:var(--ink);
+    font-variant-numeric:tabular-nums; dominant-baseline:middle; }
+  .chart .barnote { fill:var(--muted); }
+  .chart .div-learn { fill:var(--good); }
+  .chart .div-step { fill:var(--alert); }
+  .chart .div-flat { fill:var(--muted); opacity:.55; }
+  .chart .divhdr { font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    fill:var(--good); font-weight:600; }
+  .chart .divhdr.warm { fill:var(--alert); }
+
+  .callout { border:1px solid var(--line); border-left:4px solid var(--accent);
+    background:var(--panel-2); border-radius:10px; padding:16px 18px; margin:2px 0 0;
+    font-size:14px; line-height:1.55; }
+  .callout .ct { font-family:var(--mono); font-size:10.5px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent-ink); font-weight:700; margin:0 0 6px; }
+  @media (prefers-color-scheme:dark) { .callout .ct { color:var(--accent); } }
+  :root[data-theme="dark"] .callout .ct { color:var(--accent); }
+  .callout b { font-variant-numeric:tabular-nums; }
+  .note { font-size:12.5px; color:var(--muted); margin:12px 0 0; line-height:1.5;
+    max-width:82ch; }
+
+  table { border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px; }
+  th, td { text-align:left; padding:7px 12px; border-bottom:1px solid var(--line); }
+  th { font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--muted); font-weight:600; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; font-family:var(--mono); }
+  tbody tr:nth-child(odd) td { background:var(--panel-2); }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:26px; }
+  @media (max-width:760px) { .cols { grid-template-columns:1fr; } }
+
+  .foot { border-top:1px solid var(--line); padding:18px clamp(18px,2.6vw,34px);
+    font-size:12px; color:var(--muted); line-height:1.55; }
+  .foot b { color:var(--ink); }
+  code { font-family:var(--mono); font-size:.92em; background:var(--panel-2);
+    padding:1px 5px; border-radius:4px; }
+</style>
+<div class="wrap">
+<div class="sheet">
+  <header class="head">
+    <p class="eyebrow">worldenergydata &middot; Gulf of Mexico &middot; Lower-Tertiary play</p>
+    <h1 class="title">The Lower-Tertiary Drilling Learning Curve</h1>
+    <p class="thesis">
+      Across 12 Paleogene fields, <b>184 development wellbores</b>
+      burned <b>11,124 rig-days</b> (30.5 rig-years)
+      of drilling &mdash; a median of <b>46.5 days</b> per wellbore
+      (IQR 19&ndash;82). Each extra 1,000&nbsp;ft of true vertical
+      depth adds only about <b>3.3 drilling days</b>, and TVD explains
+      just <b>11%</b> of the spread (r&sup2;=0.11): in this play
+      field execution and hole trouble &mdash; not depth &mdash; drive the learning curve.
+    </p>
+  </header>
+
+  <div class="metrics">
+    <div class="metric"><div class="k">Wellbores (drill-days derivable)</div>
+      <div class="v">184<small> / 217</small></div></div>
+    <div class="metric"><div class="k">Total rig-days</div>
+      <div class="v">11,124<small> d</small></div></div>
+    <div class="metric"><div class="k">Median drill-days</div>
+      <div class="v">46.5<small> (mean 60.5)</small></div></div>
+    <div class="metric"><div class="k">Median completion-days</div>
+      <div class="v">33.0<small> (n=186)</small></div></div>
+    <div class="metric"><div class="k">Days per 1,000 ft TVD</div>
+      <div class="v">3.3<small> r&sup2;=0.11</small></div></div>
+    <div class="metric"><div class="k">Median mud weight</div>
+      <div class="v">16.8<small> ppg (max 20.0)</small></div></div>
+    <div class="metric"><div class="k">Median water depth</div>
+      <div class="v">6,820<small> ft (max 9,525)</small></div></div>
+    <div class="metric"><div class="k">Deepest wellbore TVD</div>
+      <div class="v">35,115<small> ft</small></div></div>
+  </div>
+
+  <div class="body">
+    <section>
+      <p class="lane-label">Learning curve</p>
+      <h2>Drilling days vs true vertical depth</h2>
+      <p class="lead">
+        Each dot is one of the 184 wellbores with both a recorded drilling
+        duration and a TVD. The dashed line is the least-squares fit
+        (slope 3.3 days per 1,000&nbsp;ft, r&sup2;=0.11);
+        the highlighted point is the deepest hole, North Platte
+        004 at 35,115&nbsp;ft TVD,
+        drilled in only 50 days &mdash; deeper is not
+        automatically slower.
+      </p>
+      <div class="scrollx"><figure><svg viewBox="0 0 760 430" width="100%" role="img" aria-label="Lower-Tertiary drilling learning curve: days vs TVD" class="chart" preserveAspectRatio="xMidYMid meet"><title>Lower-Tertiary drilling learning curve: days vs TVD</title><line x1="66.0" y1="378.0" x2="738.0" y2="378.0" class="grid"/><text x="58.0" y="381.5" class="tick" text-anchor="end">0</text><line x1="66.0" y1="306.4" x2="738.0" y2="306.4" class="grid"/><text x="58.0" y="309.9" class="tick" text-anchor="end">76</text><line x1="66.0" y1="234.8" x2="738.0" y2="234.8" class="grid"/><text x="58.0" y="238.3" class="tick" text-anchor="end">152</text><line x1="66.0" y1="163.2" x2="738.0" y2="163.2" class="grid"/><text x="58.0" y="166.7" class="tick" text-anchor="end">228</text><line x1="66.0" y1="91.6" x2="738.0" y2="91.6" class="grid"/><text x="58.0" y="95.1" class="tick" text-anchor="end">304</text><line x1="66.0" y1="20.0" x2="738.0" y2="20.0" class="grid"/><text x="58.0" y="23.5" class="tick" text-anchor="end">380</text><line x1="66.0" y1="378.0" x2="66.0" y2="383.0" class="axis"/><text x="66.0" y="396.0" class="tick" text-anchor="middle">4.0k</text><line x1="178.0" y1="378.0" x2="178.0" y2="383.0" class="axis"/><text x="178.0" y="396.0" class="tick" text-anchor="middle">9.3k</text><line x1="290.0" y1="378.0" x2="290.0" y2="383.0" class="axis"/><text x="290.0" y="396.0" class="tick" text-anchor="middle">14.7k</text><line x1="402.0" y1="378.0" x2="402.0" y2="383.0" class="axis"/><text x="402.0" y="396.0" class="tick" text-anchor="middle">20.0k</text><line x1="514.0" y1="378.0" x2="514.0" y2="383.0" class="axis"/><text x="514.0" y="396.0" class="tick" text-anchor="middle">25.3k</text><line x1="626.0" y1="378.0" x2="626.0" y2="383.0" class="axis"/><text x="626.0" y="396.0" class="tick" text-anchor="middle">30.7k</text><line x1="738.0" y1="378.0" x2="738.0" y2="383.0" class="axis"/><text x="738.0" y="396.0" class="tick" text-anchor="middle">36.0k</text><line x1="66.0" y1="20.0" x2="66.0" y2="378.0" class="axis"/><line x1="66.0" y1="378.0" x2="738.0" y2="378.0" class="axis"/><text x="402.0" y="424.0" class="axlab" text-anchor="middle">Max wellbore TVD (ft)</text><text x="16" y="199.0" class="axlab" text-anchor="middle" transform="rotate(-90 16 199.0)">Drilling days</text><line x1="66.0" y1="389.4" x2="738.0" y2="290.6" class="fit"/><circle cx="304.5" cy="319.6" r="4" class="pt"/><circle cx="523.7" cy="362.0" r="4" class="pt"/><circle cx="218.2" cy="362.9" r="4" class="pt"/><circle cx="694.1" cy="271.5" r="4" class="pt"/><circle cx="690.7" cy="276.3" r="4" class="pt"/><circle cx="683.3" cy="360.1" r="4" class="pt"/><circle cx="698.0" cy="351.6" r="4" class="pt"/><circle cx="577.5" cy="330.0" r="4" class="pt"/><circle cx="676.0" cy="330.0" r="4" class="pt"/><circle cx="683.4" cy="287.6" r="4" class="pt"/><circle cx="682.7" cy="300.7" r="4" class="pt"/><circle cx="686.3" cy="216.9" r="4" class="pt"/><circle cx="96.3" cy="371.4" r="4" class="pt"/><circle cx="153.2" cy="376.1" r="4" class="pt"/><circle cx="509.7" cy="269.7" r="4" class="pt"/><circle cx="433.4" cy="364.8" r="4" class="pt"/><circle cx="446.9" cy="376.1" r="4" class="pt"/><circle cx="495.1" cy="345.0" r="4" class="pt"/><circle cx="454.5" cy="371.4" r="4" class="pt"/><circle cx="446.3" cy="342.2" r="4" class="pt"/><circle cx="447.0" cy="291.3" r="4" class="pt"/><circle cx="513.0" cy="346.0" r="4" class="pt"/><circle cx="483.4" cy="339.4" r="4" class="pt"/><circle cx="468.9" cy="259.3" r="4" class="pt"/><circle cx="440.4" cy="365.8" r="4" class="pt"/><circle cx="449.1" cy="306.4" r="4" class="pt"/><circle cx="449.3" cy="363.9" r="4" class="pt"/><circle cx="506.2" cy="318.6" r="4" class="pt"/><circle cx="392.5" cy="272.5" r="4" class="pt"/><circle cx="396.8" cy="367.6" r="4" class="pt"/><circle cx="431.3" cy="361.0" r="4" class="pt"/><circle cx="516.4" cy="285.7" r="4" class="pt"/><circle cx="439.8" cy="266.8" r="4" class="pt"/><circle cx="456.4" cy="315.8" r="4" class="pt"/><circle cx="455.5" cy="371.4" r="4" class="pt"/><circle cx="452.9" cy="293.2" r="4" class="pt"/><circle cx="464.3" cy="364.8" r="4" class="pt"/><circle cx="542.4" cy="309.2" r="4" class="pt"/><circle cx="568.1" cy="356.3" r="4" class="pt"/><circle cx="570.0" cy="311.1" r="4" class="pt"/><circle cx="540.1" cy="334.7" r="4" class="pt"/><circle cx="388.3" cy="212.2" r="4" class="pt"/><circle cx="233.3" cy="375.2" r="4" class="pt"/><circle cx="544.9" cy="181.1" r="4" class="pt"/><circle cx="538.4" cy="316.8" r="4" class="pt"/><circle cx="548.3" cy="168.9" r="4" class="pt"/><circle cx="562.1" cy="230.1" r="4" class="pt"/><circle cx="437.1" cy="354.4" r="4" class="pt"/><circle cx="507.5" cy="351.6" r="4" class="pt"/><circle cx="532.7" cy="365.8" r="4" class="pt"/><circle cx="533.5" cy="289.4" r="4" class="pt"/><circle cx="407.6" cy="321.5" r="4" class="pt"/><circle cx="544.7" cy="340.3" r="4" class="pt"/><circle cx="587.7" cy="360.1" r="4" class="pt"/><circle cx="591.3" cy="284.7" r="4" class="pt"/><circle cx="575.0" cy="165.1" r="4" class="pt"/><circle cx="575.6" cy="325.2" r="4" class="pt"/><circle cx="576.3" cy="335.6" r="4" class="pt"/><circle cx="576.1" cy="277.2" r="4" class="pt"/><circle cx="626.4" cy="268.7" r="4" class="pt"/><circle cx="632.0" cy="287.6" r="4" class="pt"/><circle cx="621.5" cy="343.1" r="4" class="pt"/><circle cx="629.1" cy="299.8" r="4" class="pt"/><circle cx="618.5" cy="248.0" r="4" class="pt"/><circle cx="425.0" cy="329.0" r="4" class="pt"/><circle cx="590.2" cy="263.1" r="4" class="pt"/><circle cx="619.0" cy="247.0" r="4" class="pt"/><circle cx="594.9" cy="360.1" r="4" class="pt"/><circle cx="358.9" cy="354.4" r="4" class="pt"/><circle cx="621.3" cy="343.1" r="4" class="pt"/><circle cx="664.0" cy="342.2" r="4" class="pt"/><circle cx="607.2" cy="364.8" r="4" class="pt"/><circle cx="663.1" cy="333.7" r="4" class="pt"/><circle cx="640.9" cy="35.1" r="4" class="pt"/><circle cx="667.2" cy="348.8" r="4" class="pt"/><circle cx="471.7" cy="335.6" r="4" class="pt"/><circle cx="706.5" cy="314.9" r="4" class="pt"/><circle cx="685.5" cy="356.3" r="4" class="pt"/><circle cx="416.7" cy="333.7" r="4" class="pt"/><circle cx="694.2" cy="207.5" r="4" class="pt"/><circle cx="684.7" cy="352.6" r="4" class="pt"/><circle cx="653.2" cy="334.7" r="4" class="pt"/><circle cx="700.1" cy="281.0" r="4" class="pt"/><circle cx="719.4" cy="330.9" r="4" class="pt hi"/><circle cx="657.0" cy="373.3" r="4" class="pt"/><circle cx="654.9" cy="352.6" r="4" class="pt"/><circle cx="684.6" cy="327.1" r="4" class="pt"/><circle cx="332.4" cy="360.1" r="4" class="pt"/><circle cx="514.7" cy="275.3" r="4" class="pt"/><circle cx="610.9" cy="310.2" r="4" class="pt"/><circle cx="256.6" cy="313.0" r="4" class="pt"/><circle cx="641.5" cy="251.8" r="4" class="pt"/><circle cx="670.9" cy="224.4" r="4" class="pt"/><circle cx="640.8" cy="366.7" r="4" class="pt"/><circle cx="633.5" cy="289.4" r="4" class="pt"/><circle cx="649.9" cy="342.2" r="4" class="pt"/><circle cx="645.4" cy="331.8" r="4" class="pt"/><circle cx="595.0" cy="366.7" r="4" class="pt"/><circle cx="649.1" cy="328.1" r="4" class="pt"/><circle cx="610.6" cy="371.4" r="4" class="pt"/><circle cx="635.1" cy="271.5" r="4" class="pt"/><circle cx="615.0" cy="366.7" r="4" class="pt"/><circle cx="628.4" cy="267.8" r="4" class="pt"/><circle cx="634.8" cy="222.6" r="4" class="pt"/><circle cx="394.5" cy="312.1" r="4" class="pt"/><circle cx="590.7" cy="329.0" r="4" class="pt"/><circle cx="579.6" cy="216.0" r="4" class="pt"/><circle cx="184.7" cy="376.1" r="4" class="pt"/><circle cx="441.4" cy="363.9" r="4" class="pt"/><circle cx="455.6" cy="373.3" r="4" class="pt"/><circle cx="575.6" cy="339.4" r="4" class="pt"/><circle cx="587.6" cy="373.3" r="4" class="pt"/><circle cx="401.7" cy="360.1" r="4" class="pt"/><circle cx="465.9" cy="351.6" r="4" class="pt"/><circle cx="452.3" cy="376.1" r="4" class="pt"/><circle cx="576.9" cy="264.9" r="4" class="pt"/><circle cx="572.0" cy="310.2" r="4" class="pt"/><circle cx="571.6" cy="320.5" r="4" class="pt"/><circle cx="576.4" cy="316.8" r="4" class="pt"/><circle cx="405.6" cy="353.5" r="4" class="pt"/><circle cx="408.8" cy="365.8" r="4" class="pt"/><circle cx="583.8" cy="301.7" r="4" class="pt"/><circle cx="406.1" cy="355.4" r="4" class="pt"/><circle cx="576.7" cy="350.7" r="4" class="pt"/><circle cx="392.6" cy="355.4" r="4" class="pt"/><circle cx="577.7" cy="300.7" r="4" class="pt"/><circle cx="577.0" cy="330.9" r="4" class="pt"/><circle cx="575.3" cy="370.5" r="4" class="pt"/><circle cx="577.2" cy="349.7" r="4" class="pt"/><circle cx="580.5" cy="189.6" r="4" class="pt"/><circle cx="568.7" cy="357.3" r="4" class="pt"/><circle cx="575.6" cy="324.3" r="4" class="pt"/><circle cx="571.0" cy="273.4" r="4" class="pt"/><circle cx="351.6" cy="360.1" r="4" class="pt"/><circle cx="581.0" cy="344.1" r="4" class="pt"/><circle cx="574.1" cy="336.5" r="4" class="pt"/><circle cx="495.9" cy="341.3" r="4" class="pt"/><circle cx="484.4" cy="377.1" r="4" class="pt"/><circle cx="518.3" cy="375.2" r="4" class="pt"/><circle cx="574.2" cy="347.9" r="4" class="pt"/><circle cx="575.5" cy="288.5" r="4" class="pt"/><circle cx="251.8" cy="353.5" r="4" class="pt"/><circle cx="581.3" cy="301.7" r="4" class="pt"/><circle cx="581.5" cy="331.8" r="4" class="pt"/><circle cx="582.4" cy="334.7" r="4" class="pt"/><circle cx="438.2" cy="320.5" r="4" class="pt"/><circle cx="446.5" cy="375.2" r="4" class="pt"/><circle cx="452.3" cy="376.1" r="4" class="pt"/><circle cx="399.4" cy="376.1" r="4" class="pt"/><circle cx="577.8" cy="342.2" r="4" class="pt"/><circle cx="581.2" cy="333.7" r="4" class="pt"/><circle cx="455.4" cy="363.9" r="4" class="pt"/><circle cx="457.6" cy="376.1" r="4" class="pt"/><circle cx="458.5" cy="373.3" r="4" class="pt"/><circle cx="466.4" cy="371.4" r="4" class="pt"/><circle cx="459.3" cy="372.3" r="4" class="pt"/><circle cx="575.4" cy="332.8" r="4" class="pt"/><circle cx="570.0" cy="371.4" r="4" class="pt"/><circle cx="570.3" cy="342.2" r="4" class="pt"/><circle cx="590.4" cy="374.2" r="4" class="pt"/><circle cx="582.4" cy="326.2" r="4" class="pt"/><circle cx="583.4" cy="313.0" r="4" class="pt"/><circle cx="571.6" cy="262.1" r="4" class="pt"/><circle cx="331.3" cy="311.1" r="4" class="pt"/><circle cx="378.2" cy="341.3" r="4" class="pt"/><circle cx="462.2" cy="301.7" r="4" class="pt"/><circle cx="217.7" cy="377.1" r="4" class="pt"/><circle cx="217.8" cy="377.1" r="4" class="pt"/><circle cx="572.6" cy="305.5" r="4" class="pt"/><circle cx="576.4" cy="232.0" r="4" class="pt"/><circle cx="577.0" cy="303.6" r="4" class="pt"/><circle cx="553.8" cy="356.3" r="4" class="pt"/><circle cx="541.3" cy="231.0" r="4" class="pt"/><circle cx="549.5" cy="374.2" r="4" class="pt"/><circle cx="559.2" cy="204.7" r="4" class="pt"/><circle cx="552.6" cy="304.5" r="4" class="pt"/><circle cx="573.8" cy="319.6" r="4" class="pt"/><circle cx="555.8" cy="295.1" r="4" class="pt"/><circle cx="575.7" cy="341.3" r="4" class="pt"/><circle cx="561.5" cy="302.6" r="4" class="pt"/><circle cx="568.6" cy="335.6" r="4" class="pt"/><circle cx="560.0" cy="376.1" r="4" class="pt"/><circle cx="718.1" cy="231.0" r="4" class="pt"/><circle cx="629.6" cy="323.4" r="4" class="pt"/></svg>
+        <figcaption>Drilling days vs max wellbore TVD, 184 GoM Lower-Tertiary
+        wellbores. The weak fit (r&sup2;=0.11) is the point: depth sets a
+        floor, execution sets the spread.</figcaption></figure></div>
+    </section>
+
+    <section>
+      <p class="lane-label">By field</p>
+      <h2>Median drilling days by field</h2>
+      <p class="lead">
+        Field medians range from 28.0 days
+        (Chinook) to
+        107.0 days
+        (Tiber) &mdash; a
+        3.8&times;
+        spread across the same play, at broadly similar depths.
+      </p>
+      <div class="scrollx"><figure><svg viewBox="0 0 760 452" width="100%" role="img" aria-label="Median drilling days by field" class="chart" preserveAspectRatio="xMidYMid meet"><title>Median drilling days by field</title><text x="140" y="31.7" class="tick" text-anchor="end">Chinook</text><rect x="150" y="14.0" width="122.0" height="26" rx="3" class="bar"/><text x="280.0" y="31.7" class="barval">28.0 d<tspan class="barnote"> (n=5)</tspan></text><text x="140" y="65.7" class="tick" text-anchor="end">St Malo</text><rect x="150" y="48.0" width="130.7" height="26" rx="3" class="bar"/><text x="288.7" y="65.7" class="barval">30.0 d<tspan class="barnote"> (n=57)</tspan></text><text x="140" y="99.7" class="tick" text-anchor="end">Big Foot</text><rect x="150" y="82.0" width="159.0" height="26" rx="3" class="bar"/><text x="317.0" y="99.7" class="barval">36.5 d<tspan class="barnote"> (n=24)</tspan></text><text x="140" y="133.7" class="tick" text-anchor="end">Kaskida</text><rect x="150" y="116.0" width="161.2" height="26" rx="3" class="bar"/><text x="319.2" y="133.7" class="barval">37.0 d<tspan class="barnote"> (n=7)</tspan></text><text x="140" y="167.7" class="tick" text-anchor="end">North Platte</text><rect x="150" y="150.0" width="202.6" height="26" rx="3" class="bar"/><text x="360.6" y="167.7" class="barval">46.5 d<tspan class="barnote"> (n=12)</tspan></text><text x="140" y="201.7" class="tick" text-anchor="end">Anchor</text><rect x="150" y="184.0" width="222.2" height="26" rx="3" class="bar"/><text x="380.2" y="201.7" class="barval">51.0 d<tspan class="barnote"> (n=13)</tspan></text><text x="140" y="235.7" class="tick" text-anchor="end">Jack</text><rect x="150" y="218.0" width="252.7" height="26" rx="3" class="bar"/><text x="410.7" y="235.7" class="barval">58.0 d<tspan class="barnote"> (n=8)</tspan></text><text x="140" y="269.7" class="tick" text-anchor="end">Shenandoah</text><rect x="150" y="252.0" width="300.6" height="26" rx="3" class="bar"/><text x="458.6" y="269.7" class="barval">69.0 d<tspan class="barnote"> (n=17)</tspan></text><text x="140" y="303.7" class="tick" text-anchor="end">Stones</text><rect x="150" y="286.0" width="309.3" height="26" rx="3" class="bar"/><text x="467.3" y="303.7" class="barval">71.0 d<tspan class="barnote"> (n=21)</tspan></text><text x="140" y="337.7" class="tick" text-anchor="end">Cascade</text><rect x="150" y="320.0" width="309.3" height="26" rx="3" class="bar"/><text x="467.3" y="337.7" class="barval">71.0 d<tspan class="barnote"> (n=9)</tspan></text><text x="140" y="371.7" class="tick" text-anchor="end">Julia</text><rect x="150" y="354.0" width="418.2" height="26" rx="3" class="bar"/><text x="576.2" y="371.7" class="barval">96.0 d<tspan class="barnote"> (n=9)</tspan></text><text x="140" y="405.7" class="tick" text-anchor="end">Tiber</text><rect x="150" y="388.0" width="466.1" height="26" rx="3" class="bar"/><text x="624.1" y="405.7" class="barval">107.0 d<tspan class="barnote"> (n=2)</tspan></text></svg>
+        <figcaption>Median drilling days per field (n = wellbores with a derivable
+        duration). St&nbsp;Malo's low median reflects many short re-entry / sidetrack
+        intervals in a 65-wellbore program.</figcaption></figure></div>
+    </section>
+
+    <section>
+      <p class="lane-label">Repetition vs step-out</p>
+      <h2>What actually drives drilling days &mdash; repetition vs step-out</h2>
+      <p class="lead">
+        Ordering each field's wells by spud date and splitting them in half, the
+        honest signal is depth-normalized: <b>rig-days per 1,000&nbsp;ft TVD</b>
+        (dpk), first-half median vs last-half median. That controls for a field
+        simply moving to shallower targets. Of the 11
+        fields with n&nbsp;&ge;&nbsp;4 datable wells, <b>5 learned</b>
+        (dpk fell &gt;10%), <b>4 stepped out</b> (dpk rose &gt;10%),
+        and 2 held flat.
+      </p>
+      <div class="scrollx"><figure><svg viewBox="0 0 760 406" width="100%" role="img" aria-label="Change in depth-normalized drilling intensity, first half vs last half" class="chart" preserveAspectRatio="xMidYMid meet"><title>Change in depth-normalized drilling intensity, first half vs last half</title><text x="409" y="18" class="divhdr" text-anchor="end">&#8592; faster (learning)</text><text x="425" y="18" class="divhdr warm" text-anchor="start">slower (step-out) &#8594;</text><line x1="417.0" y1="28.0" x2="417.0" y2="402.0" class="axis"/><text x="122" y="50.3" class="tick" text-anchor="end">Chinook</text><rect x="350.1" y="34.0" width="66.9" height="24" rx="3" class="div-learn"/><text x="343.1" y="50.3" class="barval" text-anchor="end">-67%<tspan class="barnote"> (n=5)</tspan></text><text x="122" y="82.3" class="tick" text-anchor="end">Shenandoah</text><rect x="359.9" y="66.0" width="57.1" height="24" rx="3" class="div-learn"/><text x="352.9" y="82.3" class="barval" text-anchor="end">-57%<tspan class="barnote"> (n=17)</tspan></text><text x="122" y="114.3" class="tick" text-anchor="end">St Malo</text><rect x="385.6" y="98.0" width="31.4" height="24" rx="3" class="div-learn"/><text x="378.6" y="114.3" class="barval" text-anchor="end">-32%<tspan class="barnote"> (n=57)</tspan></text><text x="122" y="146.3" class="tick" text-anchor="end">Stones</text><rect x="390.4" y="130.0" width="26.6" height="24" rx="3" class="div-learn"/><text x="383.4" y="146.3" class="barval" text-anchor="end">-27%<tspan class="barnote"> (n=21)</tspan></text><text x="122" y="178.3" class="tick" text-anchor="end">North Platte</text><rect x="391.1" y="162.0" width="25.9" height="24" rx="3" class="div-learn"/><text x="384.1" y="178.3" class="barval" text-anchor="end">-26%<tspan class="barnote"> (n=12)</tspan></text><text x="122" y="210.3" class="tick" text-anchor="end">Kaskida</text><rect x="415.7" y="194.0" width="1.3" height="24" rx="3" class="div-flat"/><text x="408.7" y="210.3" class="barval" text-anchor="end">-1%<tspan class="barnote"> (n=7)</tspan></text><text x="122" y="242.3" class="tick" text-anchor="end">Big Foot</text><rect x="417.0" y="226.0" width="6.8" height="24" rx="3" class="div-flat"/><text x="430.8" y="242.3" class="barval" text-anchor="start">+7%<tspan class="barnote"> (n=24)</tspan></text><text x="122" y="274.3" class="tick" text-anchor="end">Jack</text><rect x="417.0" y="258.0" width="29.2" height="24" rx="3" class="div-step"/><text x="453.2" y="274.3" class="barval" text-anchor="start">+29%<tspan class="barnote"> (n=8)</tspan></text><text x="122" y="306.3" class="tick" text-anchor="end">Julia</text><rect x="417.0" y="290.0" width="45.1" height="24" rx="3" class="div-step"/><text x="469.1" y="306.3" class="barval" text-anchor="start">+45%<tspan class="barnote"> (n=9)</tspan></text><text x="122" y="338.3" class="tick" text-anchor="end">Anchor</text><rect x="417.0" y="322.0" width="118.3" height="24" rx="3" class="div-step"/><text x="542.3" y="338.3" class="barval" text-anchor="start">+119%<tspan class="barnote"> (n=13)</tspan></text><text x="122" y="370.3" class="tick" text-anchor="end">Cascade</text><rect x="417.0" y="354.0" width="263.9" height="24" rx="3" class="div-step"/><text x="687.9" y="370.3" class="barval" text-anchor="start">+266%<tspan class="barnote"> (n=9)</tspan></text></svg>
+        <figcaption>Percent change in depth-normalized drilling intensity
+        (rig-days per 1,000&nbsp;ft TVD), first half &rarr; last half of each field's
+        spud-ordered wells. Green = repetition compounding; red = step-outs into
+        new fault blocks resetting the clock.</figcaption></figure></div>
+
+      <div class="callout" style="margin-top:16px">
+        <p class="ct">St&nbsp;Malo spotlight &mdash; why depth-normalizing matters</p>
+        Across St&nbsp;Malo's <b>57 wells</b>, raw drilling time looks like a
+        clean win &mdash; first-half median <b>42 days</b> falling to
+        <b>19 days</b> (-54% raw).
+        But the last-half wells are ~<b>5,078&nbsp;ft shallower</b>
+        (TVD drift -5,078&nbsp;ft), so a good chunk of that speed-up is
+        just easier holes. Depth-normalized, the real, defensible learning is
+        <b>-32%</b> &mdash; 1.6 &rarr;
+        1.1 rig-days per 1,000&nbsp;ft.
+      </div>
+
+      <p class="lead" style="margin-top:16px">
+        <b>Repetition compounds:</b> 5 fields cut depth-normalized
+        drilling intensity 26&ndash;67% (Chinook -67%, Shenandoah -57%, St Malo -32%, Stones -27%, North Platte -26%). <b>Step-outs reset the
+        clock:</b> 4 fields worsened by +29&ndash;266% as they pushed
+        into new fault blocks and reservoir compartments (Cascade +266%, Anchor +119%, Julia +45%, Jack +29%).
+      </p>
+      <p class="note">
+        Honest note: this is depth-normalized and limited to fields with
+        n&nbsp;&ge;&nbsp;4 datable wells. Pooled across every well-in-sequence, the
+        learning trend is <b>weak</b> (r&nbsp;&asymp;&nbsp;-0.28 over
+        182 wells, -1.1 days per additional well) &mdash;
+        so the thesis is <i>not</i> &ldquo;wells always get faster,&rdquo; but rather that
+        <i>repetition within a known block</i> compounds while step-outs pay the
+        first-well tax again.
+      </p>
+    </section>
+
+    <section>
+      <p class="lane-label">Mud program</p>
+      <h2>Mud weight vs depth</h2>
+      <p class="lead">
+        Maximum drilling-fluid weight rises with depth as pore-pressure ramps in the
+        Paleogene section &mdash; median 16.8 ppg, topping out at
+        20.0 ppg. 5 readings outside the physical
+        9&ndash;22 ppg band (including one 80 ppg keying error)
+        are excluded as data errors.
+      </p>
+      <div class="scrollx"><figure><svg viewBox="0 0 760 430" width="100%" role="img" aria-label="Mud weight vs depth" class="chart" preserveAspectRatio="xMidYMid meet"><title>Mud weight vs depth</title><line x1="66.0" y1="378.0" x2="738.0" y2="378.0" class="grid"/><text x="58.0" y="381.5" class="tick" text-anchor="end">9</text><line x1="66.0" y1="306.4" x2="738.0" y2="306.4" class="grid"/><text x="58.0" y="309.9" class="tick" text-anchor="end">11</text><line x1="66.0" y1="234.8" x2="738.0" y2="234.8" class="grid"/><text x="58.0" y="238.3" class="tick" text-anchor="end">13</text><line x1="66.0" y1="163.2" x2="738.0" y2="163.2" class="grid"/><text x="58.0" y="166.7" class="tick" text-anchor="end">16</text><line x1="66.0" y1="91.6" x2="738.0" y2="91.6" class="grid"/><text x="58.0" y="95.1" class="tick" text-anchor="end">18</text><line x1="66.0" y1="20.0" x2="738.0" y2="20.0" class="grid"/><text x="58.0" y="23.5" class="tick" text-anchor="end">20</text><line x1="66.0" y1="378.0" x2="66.0" y2="383.0" class="axis"/><text x="66.0" y="396.0" class="tick" text-anchor="middle">4.0k</text><line x1="178.0" y1="378.0" x2="178.0" y2="383.0" class="axis"/><text x="178.0" y="396.0" class="tick" text-anchor="middle">9.3k</text><line x1="290.0" y1="378.0" x2="290.0" y2="383.0" class="axis"/><text x="290.0" y="396.0" class="tick" text-anchor="middle">14.7k</text><line x1="402.0" y1="378.0" x2="402.0" y2="383.0" class="axis"/><text x="402.0" y="396.0" class="tick" text-anchor="middle">20.0k</text><line x1="514.0" y1="378.0" x2="514.0" y2="383.0" class="axis"/><text x="514.0" y="396.0" class="tick" text-anchor="middle">25.3k</text><line x1="626.0" y1="378.0" x2="626.0" y2="383.0" class="axis"/><text x="626.0" y="396.0" class="tick" text-anchor="middle">30.7k</text><line x1="738.0" y1="378.0" x2="738.0" y2="383.0" class="axis"/><text x="738.0" y="396.0" class="tick" text-anchor="middle">36.0k</text><line x1="66.0" y1="20.0" x2="66.0" y2="378.0" class="axis"/><line x1="66.0" y1="378.0" x2="738.0" y2="378.0" class="axis"/><text x="402.0" y="424.0" class="axlab" text-anchor="middle">Max wellbore TVD (ft)</text><text x="16" y="199.0" class="axlab" text-anchor="middle" transform="rotate(-90 16 199.0)">Max mud weight (ppg)</text><circle cx="304.5" cy="117.6" r="4" class="pt"/><circle cx="523.7" cy="117.6" r="4" class="pt"/><circle cx="218.2" cy="117.6" r="4" class="pt"/><circle cx="694.1" cy="68.8" r="4" class="pt"/><circle cx="690.7" cy="124.1" r="4" class="pt"/><circle cx="683.3" cy="143.7" r="4" class="pt"/><circle cx="698.0" cy="130.7" r="4" class="pt"/><circle cx="577.5" cy="124.1" r="4" class="pt"/><circle cx="676.0" cy="130.7" r="4" class="pt"/><circle cx="683.4" cy="49.3" r="4" class="pt"/><circle cx="682.7" cy="101.4" r="4" class="pt"/><circle cx="686.3" cy="52.5" r="4" class="pt"/><circle cx="96.3" cy="277.1" r="4" class="pt"/><circle cx="153.2" cy="150.2" r="4" class="pt"/><circle cx="509.7" cy="130.7" r="4" class="pt"/><circle cx="433.4" cy="231.5" r="4" class="pt"/><circle cx="446.9" cy="192.5" r="4" class="pt"/><circle cx="495.1" cy="117.6" r="4" class="pt"/><circle cx="454.5" cy="117.6" r="4" class="pt"/><circle cx="446.3" cy="124.1" r="4" class="pt"/><circle cx="447.0" cy="124.1" r="4" class="pt"/><circle cx="513.0" cy="133.9" r="4" class="pt"/><circle cx="483.4" cy="124.1" r="4" class="pt"/><circle cx="468.9" cy="137.2" r="4" class="pt"/><circle cx="440.4" cy="215.3" r="4" class="pt"/><circle cx="449.1" cy="150.2" r="4" class="pt"/><circle cx="449.3" cy="137.2" r="4" class="pt"/><circle cx="506.2" cy="117.6" r="4" class="pt"/><circle cx="392.5" cy="117.6" r="4" class="pt"/><circle cx="369.8" cy="117.6" r="4" class="pt"/><circle cx="396.8" cy="117.6" r="4" class="pt"/><circle cx="431.3" cy="137.2" r="4" class="pt"/><circle cx="516.4" cy="117.6" r="4" class="pt"/><circle cx="439.8" cy="117.6" r="4" class="pt"/><circle cx="456.4" cy="117.6" r="4" class="pt"/><circle cx="455.5" cy="182.7" r="4" class="pt"/><circle cx="452.9" cy="215.3" r="4" class="pt"/><circle cx="464.3" cy="228.3" r="4" class="pt"/><circle cx="570.0" cy="199.0" r="4" class="pt"/><circle cx="540.1" cy="124.1" r="4" class="pt"/><circle cx="388.3" cy="137.2" r="4" class="pt"/><circle cx="233.3" cy="137.2" r="4" class="pt"/><circle cx="544.9" cy="163.2" r="4" class="pt"/><circle cx="538.4" cy="46.0" r="4" class="pt"/><circle cx="548.3" cy="117.6" r="4" class="pt"/><circle cx="562.1" cy="145.3" r="4" class="pt"/><circle cx="437.1" cy="133.9" r="4" class="pt"/><circle cx="507.5" cy="150.2" r="4" class="pt"/><circle cx="532.7" cy="186.0" r="4" class="pt"/><circle cx="533.5" cy="75.3" r="4" class="pt"/><circle cx="587.7" cy="124.1" r="4" class="pt"/><circle cx="591.3" cy="68.8" r="4" class="pt"/><circle cx="575.0" cy="124.1" r="4" class="pt"/><circle cx="575.6" cy="137.2" r="4" class="pt"/><circle cx="576.3" cy="85.1" r="4" class="pt"/><circle cx="576.1" cy="68.8" r="4" class="pt"/><circle cx="632.0" cy="120.9" r="4" class="pt"/><circle cx="621.5" cy="143.7" r="4" class="pt"/><circle cx="629.1" cy="130.7" r="4" class="pt"/><circle cx="618.5" cy="20.0" r="4" class="pt"/><circle cx="425.0" cy="117.6" r="4" class="pt"/><circle cx="590.2" cy="133.9" r="4" class="pt"/><circle cx="619.0" cy="124.1" r="4" class="pt"/><circle cx="594.9" cy="137.2" r="4" class="pt"/><circle cx="621.3" cy="182.7" r="4" class="pt"/><circle cx="664.0" cy="176.2" r="4" class="pt"/><circle cx="607.2" cy="169.7" r="4" class="pt"/><circle cx="667.2" cy="101.4" r="4" class="pt"/><circle cx="471.7" cy="117.6" r="4" class="pt"/><circle cx="706.5" cy="119.9" r="4" class="pt"/><circle cx="685.5" cy="159.9" r="4" class="pt"/><circle cx="416.7" cy="117.6" r="4" class="pt"/><circle cx="694.2" cy="85.1" r="4" class="pt"/><circle cx="684.7" cy="88.3" r="4" class="pt"/><circle cx="653.2" cy="78.6" r="4" class="pt"/><circle cx="700.1" cy="52.5" r="4" class="pt"/><circle cx="719.4" cy="78.6" r="4" class="pt"/><circle cx="657.0" cy="65.6" r="4" class="pt"/><circle cx="654.9" cy="65.6" r="4" class="pt"/><circle cx="684.6" cy="130.7" r="4" class="pt"/><circle cx="332.4" cy="257.6" r="4" class="pt"/><circle cx="514.7" cy="163.2" r="4" class="pt"/><circle cx="610.9" cy="117.6" r="4" class="pt"/><circle cx="256.6" cy="140.4" r="4" class="pt"/><circle cx="641.5" cy="117.6" r="4" class="pt"/><circle cx="670.9" cy="117.6" r="4" class="pt"/><circle cx="640.8" cy="199.0" r="4" class="pt"/><circle cx="633.5" cy="117.6" r="4" class="pt"/><circle cx="649.9" cy="124.1" r="4" class="pt"/><circle cx="645.4" cy="124.1" r="4" class="pt"/><circle cx="595.0" cy="91.6" r="4" class="pt"/><circle cx="649.1" cy="114.4" r="4" class="pt"/><circle cx="610.6" cy="117.6" r="4" class="pt"/><circle cx="635.1" cy="85.1" r="4" class="pt"/><circle cx="628.4" cy="62.3" r="4" class="pt"/><circle cx="634.8" cy="46.0" r="4" class="pt"/><circle cx="394.5" cy="212.0" r="4" class="pt"/><circle cx="590.7" cy="202.3" r="4" class="pt"/><circle cx="579.6" cy="117.6" r="4" class="pt"/><circle cx="184.7" cy="238.1" r="4" class="pt"/><circle cx="441.4" cy="117.6" r="4" class="pt"/><circle cx="455.6" cy="127.4" r="4" class="pt"/><circle cx="575.6" cy="117.6" r="4" class="pt"/><circle cx="587.6" cy="117.6" r="4" class="pt"/><circle cx="401.7" cy="303.1" r="4" class="pt"/><circle cx="465.9" cy="260.8" r="4" class="pt"/><circle cx="452.3" cy="255.6" r="4" class="pt"/><circle cx="576.9" cy="179.8" r="4" class="pt"/><circle cx="572.0" cy="117.6" r="4" class="pt"/><circle cx="571.6" cy="137.2" r="4" class="pt"/><circle cx="576.4" cy="117.6" r="4" class="pt"/><circle cx="405.6" cy="117.6" r="4" class="pt"/><circle cx="408.8" cy="117.6" r="4" class="pt"/><circle cx="583.8" cy="85.1" r="4" class="pt"/><circle cx="406.1" cy="117.6" r="4" class="pt"/><circle cx="576.7" cy="117.6" r="4" class="pt"/><circle cx="392.6" cy="117.6" r="4" class="pt"/><circle cx="577.7" cy="117.6" r="4" class="pt"/><circle cx="577.0" cy="117.6" r="4" class="pt"/><circle cx="575.3" cy="130.7" r="4" class="pt"/><circle cx="577.2" cy="130.7" r="4" class="pt"/><circle cx="580.5" cy="117.6" r="4" class="pt"/><circle cx="568.7" cy="137.2" r="4" class="pt"/><circle cx="575.6" cy="85.1" r="4" class="pt"/><circle cx="571.0" cy="150.2" r="4" class="pt"/><circle cx="351.6" cy="117.6" r="4" class="pt"/><circle cx="581.0" cy="117.6" r="4" class="pt"/><circle cx="574.1" cy="130.7" r="4" class="pt"/><circle cx="495.9" cy="150.2" r="4" class="pt"/><circle cx="484.4" cy="228.3" r="4" class="pt"/><circle cx="518.3" cy="231.5" r="4" class="pt"/><circle cx="574.2" cy="137.2" r="4" class="pt"/><circle cx="575.5" cy="127.4" r="4" class="pt"/><circle cx="251.8" cy="117.6" r="4" class="pt"/><circle cx="581.3" cy="117.6" r="4" class="pt"/><circle cx="581.5" cy="117.6" r="4" class="pt"/><circle cx="582.4" cy="85.1" r="4" class="pt"/><circle cx="452.3" cy="117.6" r="4" class="pt"/><circle cx="399.4" cy="117.6" r="4" class="pt"/><circle cx="577.8" cy="133.9" r="4" class="pt"/><circle cx="581.2" cy="117.6" r="4" class="pt"/><circle cx="455.4" cy="124.1" r="4" class="pt"/><circle cx="457.6" cy="117.6" r="4" class="pt"/><circle cx="458.5" cy="114.4" r="4" class="pt"/><circle cx="466.4" cy="114.4" r="4" class="pt"/><circle cx="459.3" cy="124.1" r="4" class="pt"/><circle cx="575.4" cy="85.1" r="4" class="pt"/><circle cx="570.0" cy="94.9" r="4" class="pt"/><circle cx="570.3" cy="85.1" r="4" class="pt"/><circle cx="590.4" cy="137.2" r="4" class="pt"/><circle cx="582.4" cy="117.6" r="4" class="pt"/><circle cx="583.4" cy="156.7" r="4" class="pt"/><circle cx="571.6" cy="156.7" r="4" class="pt"/><circle cx="246.6" cy="156.7" r="4" class="pt"/><circle cx="331.3" cy="150.2" r="4" class="pt"/><circle cx="378.2" cy="163.2" r="4" class="pt"/><circle cx="462.2" cy="137.2" r="4" class="pt"/><circle cx="217.7" cy="361.7" r="4" class="pt"/><circle cx="217.8" cy="163.2" r="4" class="pt"/><circle cx="572.6" cy="130.7" r="4" class="pt"/><circle cx="576.4" cy="137.2" r="4" class="pt"/><circle cx="577.0" cy="130.7" r="4" class="pt"/><circle cx="553.8" cy="117.6" r="4" class="pt"/><circle cx="541.3" cy="124.1" r="4" class="pt"/><circle cx="549.5" cy="124.1" r="4" class="pt"/><circle cx="559.2" cy="137.2" r="4" class="pt"/><circle cx="552.6" cy="143.7" r="4" class="pt"/><circle cx="573.8" cy="140.4" r="4" class="pt"/><circle cx="555.8" cy="143.7" r="4" class="pt"/><circle cx="575.7" cy="143.7" r="4" class="pt"/><circle cx="561.5" cy="143.7" r="4" class="pt"/><circle cx="568.6" cy="111.1" r="4" class="pt"/><circle cx="560.0" cy="137.2" r="4" class="pt"/><circle cx="718.1" cy="125.8" r="4" class="pt"/><circle cx="629.6" cy="124.1" r="4" class="pt"/></svg>
+        <figcaption>Max mud weight (ppg) vs max wellbore TVD, 175 wellbores
+        with a valid reading.</figcaption></figure></div>
+    </section>
+
+    <section class="cols">
+      <div>
+        <p class="lane-label">Fastest</p>
+        <h2 style="font-size:16px">Quickest wellbores</h2>
+        <div class="scrollx"><table>
+          <thead><tr><th>Field</th><th>Well</th><th class="num">Drill&nbsp;d</th>
+            <th class="num">TVD&nbsp;ft</th><th class="num">WD&nbsp;ft</th></tr></thead>
+          <tbody><tr><td>St Malo</td><td>PS004</td><td class='num'>1</td><td class='num'>23,924</td><td class='num'>6,820</td></tr>
+<tr><td>Stones</td><td>008</td><td class='num'>1</td><td class='num'>11,226</td><td class='num'>9,525</td></tr>
+<tr><td>Stones</td><td>009</td><td class='num'>1</td><td class='num'>11,230</td><td class='num'>9,525</td></tr>
+<tr><td>Big Foot</td><td>001</td><td class='num'>2</td><td class='num'>8,150</td><td class='num'>5,190</td></tr>
+<tr><td>Big Foot</td><td>002</td><td class='num'>2</td><td class='num'>22,137</td><td class='num'>5,190</td></tr></tbody></table></div>
+        <p class="lead" style="margin-top:10px">Sub-3-day entries at deep TVD are
+        re-entry / completion-only intervals, not full wells &mdash; the duration is
+        real but the scope is partial.</p>
+      </div>
+      <div>
+        <p class="lane-label">Slowest</p>
+        <h2 style="font-size:16px">Longest wellbores</h2>
+        <div class="scrollx"><table>
+          <thead><tr><th>Field</th><th>Well</th><th class="num">Drill&nbsp;d</th>
+            <th class="num">TVD&nbsp;ft</th><th class="num">WD&nbsp;ft</th></tr></thead>
+          <tbody><tr><td>Kaskida</td><td>002</td><td class='num'>364</td><td class='num'>31,375</td><td class='num'>5,860</td></tr>
+<tr><td>Jack</td><td>003</td><td class='num'>226</td><td class='num'>28,238</td><td class='num'>7,240</td></tr>
+<tr><td>Cascade</td><td>CA006</td><td class='num'>222</td><td class='num'>26,969</td><td class='num'>8,200</td></tr>
+<tr><td>Cascade</td><td>CA003</td><td class='num'>209</td><td class='num'>26,804</td><td class='num'>8,200</td></tr>
+<tr><td>St Malo</td><td>PS002</td><td class='num'>200</td><td class='num'>28,498</td><td class='num'>6,820</td></tr></tbody></table></div>
+        <p class="lead" style="margin-top:10px">The slowest hole,
+        Kaskida
+        002, took
+        364 days &mdash;
+        7.8&times; the play median.</p>
+      </div>
+    </section>
+
+    <section>
+      <p class="lane-label">Field table</p>
+      <h2>Per-field drilling summary</h2>
+      <div class="scrollx"><table>
+        <thead><tr><th>Field</th><th class="num">Wellbores</th>
+          <th class="num">Median&nbsp;d</th><th class="num">Total&nbsp;rig-d</th>
+          <th class="num">Median&nbsp;TVD&nbsp;ft</th></tr></thead>
+        <tbody><tr><td>Chinook</td><td class='num'>5</td><td class='num'>28.0</td><td class='num'>317</td><td class='num'>26,222</td></tr>
+<tr><td>St Malo</td><td class='num'>57</td><td class='num'>30.0</td><td class='num'>2,297</td><td class='num'>28,049</td></tr>
+<tr><td>Big Foot</td><td class='num'>24</td><td class='num'>36.5</td><td class='num'>1,207</td><td class='num'>22,338</td></tr>
+<tr><td>Kaskida</td><td class='num'>7</td><td class='num'>37.0</td><td class='num'>556</td><td class='num'>31,375</td></tr>
+<tr><td>North Platte</td><td class='num'>12</td><td class='num'>46.5</td><td class='num'>675</td><td class='num'>33,460</td></tr>
+<tr><td>Anchor</td><td class='num'>13</td><td class='num'>51.0</td><td class='num'>821</td><td class='num'>33,367</td></tr>
+<tr><td>Jack</td><td class='num'>8</td><td class='num'>58.0</td><td class='num'>652</td><td class='num'>28,278</td></tr>
+<tr><td>Shenandoah</td><td class='num'>17</td><td class='num'>69.0</td><td class='num'>1,238</td><td class='num'>31,025</td></tr>
+<tr><td>Stones</td><td class='num'>21</td><td class='num'>71.0</td><td class='num'>1,457</td><td class='num'>27,488</td></tr>
+<tr><td>Cascade</td><td class='num'>9</td><td class='num'>71.0</td><td class='num'>888</td><td class='num'>26,685</td></tr>
+<tr><td>Julia</td><td class='num'>9</td><td class='num'>96.0</td><td class='num'>802</td><td class='num'>30,334</td></tr>
+<tr><td>Tiber</td><td class='num'>2</td><td class='num'>107.0</td><td class='num'>214</td><td class='num'>32,944</td></tr></tbody></table></div>
+    </section>
+  </div>
+
+  <footer class="foot">
+    <div><b>Source:</b> <code>docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx</code> (Sheet1) &mdash;
+      217 Lower-Tertiary development wellbores after dropping one blank
+      row and one spreadsheet TOTALS trailer. Per-well export:
+      <code>reports/lower_tertiary/lt_drilling_insights.csv</code>.</div>
+    <div style="margin-top:8px"><b>Data limits (flag-don't-fake):</b>
+      33 wellbores carry no recorded drilling duration
+      (0-day rows with no spud/TD date, mostly re-entries) and are shown as &mdash;,
+      excluded from every drilling statistic. 5 mud-weight readings
+      outside 9&ndash;22 ppg are excluded as keying errors.
+      Spud dates span 2000&ndash;2024. Drilling and
+      completion days are as-reported in the V30 workbook (BSEE well/API records);
+      "fastest" short-duration rows are partial-scope re-entries, not full wells.</div>
+    <div style="margin-top:8px">Generated 2026-07-04 by
+      <code>scripts/lower_tertiary/build_drilling_insights.py</code> (worldenergydata&nbsp;#775).
+      Same workbook &rarr; identical page.</div>
+  </footer>
+</div>
+</div>
