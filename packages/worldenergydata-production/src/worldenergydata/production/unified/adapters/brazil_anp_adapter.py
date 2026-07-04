@@ -12,7 +12,7 @@ import pandas as pd
 
 from worldenergydata.common.units import GasUnits, OilUnits
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
-from worldenergydata.production.unified.query import ProductionQuery
+from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 
 _SM3_TO_BBL = OilUnits.SM3_TO_BBL
 # 1 Sm3 gas → scf → /1000 = Mcf
@@ -33,41 +33,107 @@ class BrazilAnpAdapter(AbstractProductionAdapter):
         ("Marlim", 600_000, 700_000, 800_000, 20_000, 1994, 9, 363),
     ]
 
-    def fetch(self, query: ProductionQuery) -> pd.DataFrame:
-        rows = []
-        for (
-            field_name,
-            peak_oil,
-            peak_gas,
-            peak_water,
-            peak_cond,
-            sy,
-            sm,
-            n_months,
-        ) in self._FIELDS:
-            rows.extend(
-                self._generate_field_rows(
-                    field_name,
-                    peak_oil,
-                    peak_gas,
-                    peak_water,
-                    peak_cond,
-                    sy,
-                    sm,
-                    n_months,
-                )
-            )
+    def __init__(self, loader=None):
+        self.loader = loader
 
-        df = pd.DataFrame(rows)
+    def fetch(self, query: ProductionQuery) -> pd.DataFrame:
+        if self.loader is not None:
+            df = self._loader_to_standard_columns(self._load_from_loader(query))
+        else:
+            rows = []
+            for (
+                field_name,
+                peak_oil,
+                peak_gas,
+                peak_water,
+                peak_cond,
+                sy,
+                sm,
+                n_months,
+            ) in self._FIELDS:
+                rows.extend(
+                    self._generate_field_rows(
+                        field_name,
+                        peak_oil,
+                        peak_gas,
+                        peak_water,
+                        peak_cond,
+                        sy,
+                        sm,
+                        n_months,
+                    )
+                )
+            df = pd.DataFrame(rows)
+
         df = self._filter_by_fields(df, query.fields)
         df = self._filter_by_date(df, query.start, query.end)
         return df.reset_index(drop=True)
 
     def available_fields(self) -> List[str]:
+        if self.loader is not None:
+            df = self._loader_to_standard_columns(
+                self._load_from_loader(ProductionQuery(regions=[self.region]))
+            )
+            return sorted(df["field_name"].dropna().unique().tolist())
         return [f[0] for f in self._FIELDS]
 
     def date_range(self) -> Tuple[str, str]:
+        if self.loader is not None:
+            df = self._loader_to_standard_columns(
+                self._load_from_loader(ProductionQuery(regions=[self.region]))
+            )
+            if df.empty:
+                return ("", "")
+            periods = df["year"].astype(int) * 100 + df["month"].astype(int)
+            start = int(periods.min())
+            end = int(periods.max())
+            return (
+                f"{start // 100:04d}-{start % 100:02d}",
+                f"{end // 100:04d}-{end % 100:02d}",
+            )
         return ("1994-09", "2024-12")
+
+    def _load_from_loader(self, query: ProductionQuery) -> pd.DataFrame:
+        if query.fields and hasattr(self.loader, "load_field_production"):
+            frames = [
+                self.loader.load_field_production(field_name)
+                for field_name in query.fields
+            ]
+            frames = [frame for frame in frames if frame is not None and len(frame) > 0]
+            if not frames:
+                return pd.DataFrame()
+            return pd.concat(frames, ignore_index=True)
+        if hasattr(self.loader, "load_all_production"):
+            return self.loader.load_all_production()
+        raise TypeError(
+            "Brazil ANP loader must expose load_all_production() or "
+            "load_field_production(field_name)"
+        )
+
+    def _loader_to_standard_columns(self, loader_df: pd.DataFrame) -> pd.DataFrame:
+        if loader_df is None or loader_df.empty:
+            return self._empty_frame()
+
+        out = pd.DataFrame()
+        field_col = "field_name" if "field_name" in loader_df.columns else "field"
+        out["field_name"] = loader_df[field_col].astype(str).str.strip()
+        out["region"] = self.region
+        if "year" in loader_df.columns and "month" in loader_df.columns:
+            out["year"] = loader_df["year"].astype(int)
+            out["month"] = loader_df["month"].astype(int)
+        else:
+            date = pd.to_datetime(loader_df["date"])
+            out["year"] = date.dt.year.astype(int)
+            out["month"] = date.dt.month.astype(int)
+        out["oil_bbl"] = pd.to_numeric(loader_df["oil_bbl"], errors="coerce")
+        out["gas_mcf"] = pd.to_numeric(loader_df["gas_mcf"], errors="coerce")
+        out["water_bbl"] = pd.to_numeric(loader_df["water_bbl"], errors="coerce")
+        out["condensate_bbl"] = pd.to_numeric(
+            loader_df["condensate_bbl"],
+            errors="coerce",
+        )
+        out["source"] = "anp_producao_poco"
+        return out[list(STANDARD_COLUMNS)]
 
     @staticmethod
     def _generate_field_rows(

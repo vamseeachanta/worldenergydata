@@ -19,6 +19,7 @@ class FieldProductionAggregator:
                     "date",
                     "oil_bbl",
                     "condensate_bbl",
+                    "gas_mcf",
                     "gas_m3",
                     "water_bbl",
                     "oil_bbl_per_day",
@@ -30,10 +31,12 @@ class FieldProductionAggregator:
         numeric_cols = [
             "oil_bbl",
             "condensate_bbl",
+            "gas_mcf",
             "gas_m3",
             "water_bbl",
             "oil_bbl_per_day",
         ]
+        numeric_cols = [col for col in numeric_cols if col in well_df.columns]
         grouped = well_df.groupby(["field", "date"])
 
         agg = grouped[numeric_cols].sum().reset_index()
