@@ -6,7 +6,6 @@ import pytest
 from worldenergydata.brazil_anp.production.field_production import (
     FieldProductionAggregator,
 )
-from worldenergydata.brazil_anp.production.well_production import SM3_TO_BBL
 
 MOCK_WELL_RECORDS = pd.DataFrame(
     {
@@ -56,6 +55,18 @@ class TestFieldProductionAggregator:
         expected = 125796.0 + 138375.6
         assert abs(lula_jan.iloc[0]["water_bbl"] - expected) < 1.0
 
+    def test_aggregate_sums_current_schema_gas_mcf(self, aggregator):
+        records = MOCK_WELL_RECORDS.copy()
+        records["gas_mcf"] = [100.0, 200.0, 300.0, 400.0, 500.0]
+
+        result = aggregator.aggregate(records)
+        lula_jan = result[
+            (result["field"] == "LULA") & (result["date"] == pd.Timestamp("2023-01-01"))
+        ]
+
+        assert "gas_mcf" in result.columns
+        assert lula_jan.iloc[0]["gas_mcf"] == pytest.approx(300.0)
+
     def test_aggregate_counts_wells(self, aggregator):
         result = aggregator.aggregate(MOCK_WELL_RECORDS.copy())
         lula_jan = result[
@@ -96,7 +107,7 @@ class TestFieldProductionAggregator:
                 "date",
                 "oil_bbl",
                 "condensate_bbl",
-                "gas_m3",
+                "gas_mcf",
                 "water_bbl",
                 "oil_bbl_per_day",
             ]
