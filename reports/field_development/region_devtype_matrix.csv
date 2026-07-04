@@ -1,0 +1,837 @@
+facility_id,facility_name,country,region,water_depth_m,depth_band,host_type,concept_type,tree_type
+720,Aasta Hansteen Spar,Norway,North Sea & NW Europe,1300.0,500-1500 m (deepwater),SPAR,spar,dry
+874,Abadi FLNG,Indonesia,Asia-Pacific,1000.0,500-1500 m (deepwater),FLNG,flng,wet
+760,Abo FPSO,Nigeria,West Africa,550.0,500-1500 m (deepwater),FPSO,fpso,wet
+1275,Abu Qir Complex,Egypt,Mediterranean & N Africa,35.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+249,Agbami FPSO,Nigeria,West Africa,1462.0,500-1500 m (deepwater),FPSO,fpso,wet
+708,Aje FPSO,Niger,West Africa,900.0,500-1500 m (deepwater),FPSO,fpso,wet
+560,Akcakoca Platform,Turkey,Mediterranean & N Africa,95.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+668,Akepo FSO,Nigeria,West Africa,8.0,0-150 m (shallow shelf),FSO/FSU,,other
+252,Akpo FPSO,Nigeria,West Africa,1325.0,500-1500 m (deepwater),FPSO,fpso,wet
+1276,Al Jalilah Complex,UAE,Middle East,,,Fixed Platform,fixed_jacket,dry
+1498,Al Jurf Platform,Libya,Mediterranean & N Africa,90.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen FSO 1,Qatar,Middle East,70.0,0-150 m (shallow shelf),FSO/FSU,,other
+452,Al Shaheen FSO 2,Qatar,Middle East,70.0,0-150 m (shallow shelf),FSO/FSU,,other
+452,Al Shaheen FSO 3,Qatar,Middle East,70.0,0-150 m (shallow shelf),FSO/FSU,,other
+452,Al Shaheen Location 1,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 2,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 3,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 4,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 5,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 6,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 7,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 8,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+452,Al Shaheen Location 9,Qatar,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+784,Al Zaafarana FPSO,Egypt,Mediterranean & N Africa,60.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1467,Alba (EG) B2 Platform,Equatorial Guinea,West Africa,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1467,Alba (EG) B3 Compression Platform,Equatorial Guinea,West Africa,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+226,Alba Northern Platform,UK,North Sea & NW Europe,158.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+226,Alba Southern Platform,UK,North Sea & NW Europe,138.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+550,Albacora Platform,Peru,South America & Caribbean,,,Fixed Platform,fixed_jacket,dry
+477,Alen Platform,Equatorial Guinea,West Africa,530.0,500-1500 m (deepwater),Fixed Platform,fixed_jacket,dry
+305,Alima FPU,Congo,West Africa,1200.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+116,Allegheny SeaStar Mini-TLP,US,US Gulf of Mexico,1005.0,500-1500 m (deepwater),Mini-TLP,tlp,dry
+492,Alma Fixed Platform,Canada,Atlantic Canada & Arctic,67.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+212,Alvheim FPSO,Norway,North Sea & NW Europe,130.0,0-150 m (shallow shelf),FPSO,fpso,wet
+227,Alwyn North A Platform,UK,North Sea & NW Europe,126.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+227,Alwyn North B Platform,UK,North Sea & NW Europe,126.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+168,Amberjack Fixed Platform,US,US Gulf of Mexico,314.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+318,Amenam Kpono Production Platform (Phase I),Nigeria,West Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+318,Amenam Kpono Production Platform (Phase II),Nigeria,West Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+783,Amethyst Platforms,UK,North Sea & NW Europe,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1791,Amstel Platform,Netherlands,North Sea & NW Europe,19.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1269,Anasuria FPSO,UK,North Sea & NW Europe,,,FPSO,fpso,wet
+1367,Ande Ande Lumut FPSO,Indonesia,Asia-Pacific,80.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1367,Ande Ande Lumut Wellhead Platform,Indonesia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+786,Andrew Platform,UK,North Sea & NW Europe,117.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1730,Anggerik WHP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+868,Anglia Fixed Platform,UK,North Sea & NW Europe,26.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1144,Annamaria A Platform,Croatia,Mediterranean & N Africa,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1144,Annamaria B Platform,Croatia,Mediterranean & N Africa,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1368,Anoa Gas Compression Platform,Indonesia,Asia-Pacific,77.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1368,Anoa Gas Export Platform,Indonesia,Asia-Pacific,77.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1368,Anoa Natuna FPSO,Indonesia,Asia-Pacific,77.0,0-150 m (shallow shelf),FPSO,fpso,wet
+238,Aoka Mizu FPSO,UK,North Sea & NW Europe,110.0,0-150 m (shallow shelf),FPSO,fpso,wet
+398,Appaloosa Subsea,US,US Gulf of Mexico,853.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+1402,Arbroath Platform,UK,North Sea & NW Europe,93.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+270,Aries Platform,Argentina,South America & Caribbean,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+393,Arkutun-Dagi GBS,Russian Federation,Caspian & Russia,,,Fixed Platform,fixed_jacket,dry
+911,Armada Clair FPSO,Australia,Asia-Pacific,137.0,0-150 m (shallow shelf),FPSO,fpso,wet
+488,Armada Perdana FPSO,Nigeria,West Africa,350.0,150-500 m (deep shelf),FPSO,fpso,wet
+771,Armada Platform,UK,North Sea & NW Europe,88.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1520,Armada TGT 1 FPSO,Viet nam,Asia-Pacific,45.0,0-150 m (shallow shelf),FPSO,fpso,wet
+288,Arthit CPU,Thailand,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+477,Aseng FPSO,Equatorial Guinea,West Africa,945.0,500-1500 m (deepwater),FPSO,fpso,wet
+357,Asgard A FPSO,Norway,North Sea & NW Europe,300.0,150-500 m (deep shelf),FPSO,fpso,wet
+357,Asgard B Semisubmersible,Norway,North Sea & NW Europe,310.0,150-500 m (deep shelf),Semisub,semisub_fps,wet
+358,Asgard C FSO,Norway,North Sea & NW Europe,300.0,150-500 m (deep shelf),FSO/FSU,,other
+357,Asgard Subsea Compression,Norway,North Sea & NW Europe,300.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+1455,Ashtart Platform,Tunisia,Mediterranean & N Africa,66.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+144,Atlantis Semisub,US,US Gulf of Mexico,2160.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+971,Audrey,UK,North Sea & NW Europe,24.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+139,Auger TLP,US,US Gulf of Mexico,872.0,500-1500 m (deepwater),TLP,tlp,dry
+908,Auk A Platform,UK,North Sea & NW Europe,84.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+348,Autonomous Re-Pumping Platform (PRA-1),Brazil,South America & Caribbean,106.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+767,Avouma Fixed Platform,Gabon,West Africa,137.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+622,Awawa Wellhead Platform,Nigeria,West Africa,95.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+501,Ayatsil B Platform,Mexico,South America & Caribbean,125.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+560,Ayazli Platform,Turkey,Mediterranean & N Africa,76.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+370,Azurite FDPSO,"Congo, The Demo. Rep. of the",West Africa,,,FPSO,fpso,wet
+551,Babbage Fixed Platform,UK,North Sea & NW Europe,42.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1242,Balai Wellhead Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1142,Balder FPU,Norway,North Sea & NW Europe,125.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+131,Baldpate Compliant Tower,US,US Gulf of Mexico,502.0,500-1500 m (deepwater),Compliant Tower,compliant_tower,dry
+778,Balmoral FPS,UK,North Sea & NW Europe,150.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+1369,Banyu Urip Central Processing Complex,Indonesia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1369,Banyu Urip FSO,Indonesia,Asia-Pacific,,,FSO/FSU,,other
+519,Barboni Production Platform,Egypt,Mediterranean & N Africa,350.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+766,Bardolino Subsea,UK,North Sea & NW Europe,92.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+272,Barracuda FPSO P-43,Brazil,South America & Caribbean,1100.0,500-1500 m (deepwater),FPSO,fpso,wet
+669,Barzan WHP-1,Qatar,Middle East,,,Fixed Platform,fixed_jacket,dry
+669,Barzan WHP-2,Qatar,Middle East,,,Fixed Platform,fixed_jacket,dry
+669,Barzan WHP-3,Qatar,Middle East,,,Fixed Platform,fixed_jacket,dry
+665,Bayu-Undan Complex,Australia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+665,Bayu-Undan FSO,Australia,Asia-Pacific,80.0,0-150 m (shallow shelf),FSO/FSU,,other
+665,Bayu-Undan Wellhead Platform,Australia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+323,Beatrice Alpha Platform,UK,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+323,Beatrice Bravo Platform,UK,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+530,Belayim Platforms,Egypt,Mediterranean & N Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1210,Benguela-Belize Lobito-Tomboco Compliant Tower,Angola,West Africa,396.0,150-500 m (deep shelf),Compliant Tower,compliant_tower,dry
+1242,Bentara Wellhead Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+719,Bentley FSO,UK,North Sea & NW Europe,113.0,0-150 m (shallow shelf),FSO/FSU,,other
+719,Bentley Platform,UK,North Sea & NW Europe,113.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1730,Bergarding CPP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1039,Bertam FPSO,Malaysia,Asia-Pacific,76.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1039,Bertam WHP,Malaysia,Asia-Pacific,76.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+343,Big Foot TLP,US,US Gulf of Mexico,1615.0,1500-3000 m (ultra-deepwater),Mini-TLP,tlp,dry
+445,Blacktip Wellhead Platform,Australia,Asia-Pacific,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+319,Bleo Holm FPSO,UK,North Sea & NW Europe,105.0,0-150 m (shallow shelf),FPSO,fpso,wet
+119,Blind Faith Semisub,US,US Gulf of Mexico,1981.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+336,Bohai Ming Zhu FPSO,China,Asia-Pacific,31.0,0-150 m (shallow shelf),FPSO,fpso,wet
+417,Bohai Shi Ji FPSO,China,Asia-Pacific,20.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1080,Bonaparte FLNG,Australia,Asia-Pacific,,,FLNG,flng,wet
+250,Bonga FPSO,Nigeria,West Africa,1030.0,500-1500 m (deepwater),FPSO,fpso,wet
+118,Boomvang Spar Platform,US,US Gulf of Mexico,1052.0,500-1500 m (deepwater),SPAR,spar,dry
+1143,Brae Alpha,UK,North Sea & NW Europe,112.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+479,Brage Fixed Platform,Norway,North Sea & NW Europe,140.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+520,Breagh Alpha Platform,UK,North Sea & NW Europe,59.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1579,Bressay FSU,UK,North Sea & NW Europe,102.0,0-150 m (shallow shelf),FSO/FSU,,other
+1579,Bressay PDQ,UK,North Sea & NW Europe,102.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+322,Brigantine BG Fixed Platform,UK,North Sea & NW Europe,29.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+322,Brigantine BR Fixed Platform,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+1605,BritSats BLP,UK,North Sea & NW Europe,148.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+943,Browse FLNG Facility,Australia,Asia-Pacific,,,FLNG,flng,wet
+1452,Bruce CR,UK,North Sea & NW Europe,121.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1452,Bruce D,UK,North Sea & NW Europe,121.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1452,Bruce PUQ,UK,North Sea & NW Europe,121.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+140,Brutus TLP,US,US Gulf of Mexico,1036.0,500-1500 m (deepwater),TLP,tlp,dry
+332,Bua Ban FSO,Thailand,Asia-Pacific,30.0,0-150 m (shallow shelf),FSO/FSU,,other
+332,Bua Ban Platform,Thailand,Asia-Pacific,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+363,Bualuang Alpha,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+363,Bualuang Bravo,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+363,Bualuang Charlie,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+363,Bualuang FSO,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),FSO/FSU,,other
+175,Bud Lite Platform,US,US Gulf of Mexico,84.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+175,Bud Production Platform,US,US Gulf of Mexico,84.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+380,Bukha Platform,Oman,Middle East,90.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1736,Bukit Tua FPSO,Indonesia,Asia-Pacific,60.0,0-150 m (shallow shelf),FPSO,fpso,wet
+136,Bullwinkle Fixed Platform,US,US Gulf of Mexico,412.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1860,Bunga Kertas FPSO,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),FPSO,fpso,wet
+778,Burghley Subsea,UK,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+237,Buzzard Platform,UK,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+651,BW Athena FPSO,UK,North Sea & NW Europe,134.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1194,BW Joko Tole FPSO,Indonesia,Asia-Pacific,300.0,150-500 m (deep shelf),FPSO,fpso,wet
+124,BW Pioneer FPSO,US,US Gulf of Mexico,2690.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1258,CA Litoral-A Compression,Mexico,South America & Caribbean,26.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+369,Ca Ngu Vang Wellhead Platform,Viet nam,Asia-Pacific,56.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+628,Cadlao FPSO,Philippines,Asia-Pacific,20.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1545,Caister,UK,North Sea & NW Europe,41.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1246,Cakerawala Complex,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+535,Cantarell Complex,Mexico,South America & Caribbean,35.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+115,Canyon Express Subsea,US,US Gulf of Mexico,2195.0,1500-3000 m (ultra-deepwater),Subsea Tieback,subsea_tieback,wet
+115,Canyon Station Production Platform,US,US Gulf of Mexico,2346.0,1500-3000 m (ultra-deepwater),Fixed Platform,fixed_jacket,dry
+243,Captain FPSO,UK,North Sea & NW Europe,106.0,0-150 m (shallow shelf),FPSO,fpso,wet
+272,Caratinga FPSO P-48,Brazil,South America & Caribbean,1350.0,500-1500 m (deepwater),FPSO,fpso,wet
+270,Carina Platform,Argentina,South America & Caribbean,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1118,Casablanca Production,Spain,Mediterranean & N Africa,161.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1199,Cash-Maple FLNG,Australia,Asia-Pacific,,,FLNG,flng,wet
+554,Casino Subsea,Australia,Asia-Pacific,56.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+646,Catcher FPSO,UK,North Sea & NW Europe,90.0,0-150 m (shallow shelf),FPSO,fpso,wet
+561,Cecilie Wellhead Platform,Denmark,North Sea & NW Europe,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1509,Cendor FSO,Malaysia,Asia-Pacific,72.0,0-150 m (shallow shelf),FSO/FSU,,other
+1509,Cendor Producer MOPU,Malaysia,Asia-Pacific,,,MOPU,,other
+273,Central Azeri Compression and Water Injection Platform,Azerbaijan,Caspian & Russia,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+273,Central Azeri Platform,Azerbaijan,Caspian & Russia,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+464,Central Processing Platform,Trin. & Tobago,South America & Caribbean,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1105,Ceres Subsea Tieback,UK,North Sea & NW Europe,32.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1128,Cheviot Octabuoy Platform,UK,North Sea & NW Europe,152.0,150-500 m (deep shelf),Semisub,semisub_fps,wet
+383,Chim Sao Platform 1,Viet nam,Asia-Pacific,115.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+383,Chim Sao Platform 2,Viet nam,Asia-Pacific,115.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+258,Chinguetti - Berge Helene FPSO,Mauritania,West Africa,800.0,500-1500 m (deepwater),FPSO,fpso,wet
+273,Chirag-1 Platform,Azerbaijan,Caspian & Russia,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+274,Cidade de Angra dos Reis FPSO,Brazil,South America & Caribbean,2150.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+536,Cidade de Ilhabela FPSO,Brazil,South America & Caribbean,2140.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1478,Cidade de Itajai FPSO,Brazil,South America & Caribbean,275.0,150-500 m (deep shelf),FPSO,fpso,wet
+703,Cidade de Macae FSO,Brazil,South America & Caribbean,,,FSO/FSU,,other
+703,Cidade de Niteroi MV18 FPSO,Brazil,South America & Caribbean,1500.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+274,Cidade de Paraty FPSO,Brazil,South America & Caribbean,2120.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+729,Cidade de Rio das Ostras FPSO,Brazil,South America & Caribbean,977.0,500-1500 m (deepwater),FPSO,fpso,wet
+352,Cidade de Sao Mateus FPSO,Brazil,South America & Caribbean,763.0,500-1500 m (deepwater),FPSO,fpso,wet
+536,Cidade de Sao Paulo FPSO,Brazil,South America & Caribbean,2141.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+274,Cidade de Sao Vicente FPSO,Brazil,South America & Caribbean,2170.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+364,Cidade de Vitoria FPSO,Brazil,South America & Caribbean,1400.0,500-1500 m (deepwater),FPSO,fpso,wet
+282,Cidade do Rio de Janeiro FPSO,Brazil,South America & Caribbean,,,FPSO,fpso,wet
+242,Clair Platform,UK,North Sea & NW Europe,140.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+242,Clair Ridge Drilling Platform,UK,North Sea & NW Europe,140.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+242,Clair Ridge PUQ,UK,North Sea & NW Europe,140.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1700,Claymore Platform,UK,North Sea & NW Europe,111.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+797,Cliff Head Platform,Australia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+404,Clipper South Platform,UK,North Sea & NW Europe,24.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+354,Clipper Subsea Tie-Back,US,US Gulf of Mexico,1055.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+324,CLOV FPSO,Angola,West Africa,,,FPSO,fpso,wet
+552,Cluster-7 FPSO,India,Asia-Pacific,85.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1095,Clyde,UK,North Sea & NW Europe,79.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+137,Cognac Fixed Platform,US,US Gulf of Mexico,312.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+150,Constitution Truss Spar,US,US Gulf of Mexico,1554.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+1108,Conwy Platform,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+227,Cormorant Alpha Platform,UK,North Sea & NW Europe,126.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+579,Corral Platform (Formerly Crystal),US,US Gulf of Mexico,619.0,500-1500 m (deepwater),Fixed Platform,fixed_jacket,dry
+327,Corrib Subsea,Ireland,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+695,Crawford Subsea Tieback,UK,North Sea & NW Europe,117.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1704,Cuulong Thai Binh FPSO,Viet nam,Asia-Pacific,48.0,0-150 m (shallow shelf),FPSO,fpso,wet
+447,CX-11 Platform,Peru,South America & Caribbean,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+447,CX-15 Platform,Peru,South America & Caribbean,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+514,Cygnus Complex,UK,North Sea & NW Europe,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1591,D15a-A Platform,Netherlands,North Sea & NW Europe,42.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1689,D18 Platform,Malaysia,Asia-Pacific,31.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1591,D18a-A Platform,Netherlands,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+446,Dai Hung Fixed Wellhead Platform,Viet nam,Asia-Pacific,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+446,Dai Hung FPU,Viet nam,Asia-Pacific,110.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+248,Dalia FPSO,Angola,West Africa,1500.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1799,Damar A Platform,Malaysia,Asia-Pacific,55.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+321,Dampier Spirit FSO,Australia,Asia-Pacific,49.0,0-150 m (shallow shelf),FSO/FSU,,other
+1341,Dan Center,Denmark,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1117,De Ruyter GBS,Netherlands,North Sea & NW Europe,35.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+279,Deep Panuke PFC,Canada,Atlantic Canada & Arctic,,,MOPU,,other
+1253,Delta House FPU,US,US Gulf of Mexico,1371.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+152,Devils Tower SPAR Platform,US,US Gulf of Mexico,1710.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+1263,Dhirubhai-1 FPSO,India,Asia-Pacific,1200.0,500-1500 m (deepwater),FPSO,fpso,wet
+453,Didon Fixed Platform,Tunisia,Mediterranean & N Africa,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+453,Didon FSO,Tunisia,Mediterranean & N Africa,75.0,0-150 m (shallow shelf),FSO/FSU,,other
+612,DOL-1 Platform,Qatar,Middle East,,,Fixed Platform,fixed_jacket,dry
+612,DOL-2 Platform,Qatar,Middle East,,,Fixed Platform,fixed_jacket,dry
+559,Dolphin Deep SS Tieback,Trin. & Tobago,South America & Caribbean,198.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+559,Dolphin Platform,Trin. & Tobago,South America & Caribbean,198.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1108,Douglas Platform,UK,North Sea & NW Europe,33.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1460,DP3 Platform,Libya,Mediterranean & N Africa,160.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1460,DP4 Platform,Libya,Mediterranean & N Africa,160.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+799,Draugen,Norway,North Sea & NW Europe,250.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+136,Droshky Subsea,US,US Gulf of Mexico,884.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+383,Dua Subsea Tieback,Viet nam,Asia-Pacific,,,Subsea Tieback,subsea_tieback,wet
+1444,Dulang Platforms,Malaysia,Asia-Pacific,76.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+227,Dunbar Platform,UK,North Sea & NW Europe,145.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1149,Dunlin Alpha Platform,UK,North Sea & NW Europe,152.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1326,Dzheitune Lam A Platform,Turkmenistan,Caspian & Russia,8.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1326,Dzheitune Lam B Platform,Turkmenistan,Caspian & Russia,8.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1326,Dzheitune Lam C Platform,Turkmenistan,Caspian & Russia,8.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1327,Dzhygalybeg (Zhdanov) A Platform,Turkmenistan,Caspian & Russia,8.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1327,Dzhygalybeg (Zhdanov) B Platform,Turkmenistan,Caspian & Russia,8.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1873,E-CE,South Africa,West Africa,150.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+273,East Azeri Platform,Azerbaijan,Caspian & Russia,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+785,East Belumut A,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+695,East Brae Platform,UK,North Sea & NW Europe,113.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+170,East Breaks 110 Fixed Platform,US,US Gulf of Mexico,213.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1843,East Hub FPSO,Angola,West Africa,500.0,500-1500 m (deepwater),FPSO,fpso,wet
+1534,East Natuna Platform,Indonesia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+767,Ebouri Production Platform,Gabon,West Africa,,,Fixed Platform,fixed_jacket,dry
+156,EC 373,US,US Gulf of Mexico,670.0,500-1500 m (deepwater),Fixed Platform,fixed_jacket,dry
+662,Egina FPSO,Nigeria,West Africa,1600.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+822,Eider Platform,UK,North Sea & NW Europe,159.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+556,Ekofisk 2/4 Z,Norway,North Sea & NW Europe,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+556,Ekofisk Center,Norway,North Sea & NW Europe,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+556,Ekofisk South Wellhead Platform,Norway,North Sea & NW Europe,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1460,El Bouri FSO,Libya,Mediterranean & N Africa,160.0,150-500 m (deep shelf),FSO/FSU,,other
+556,Eldfisk 2/7 B,Norway,North Sea & NW Europe,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+556,Eldfisk 2/7A,Norway,North Sea & NW Europe,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+287,Elgin Platform,UK,North Sea & NW Europe,93.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+287,Elgin PUQ,UK,North Sea & NW Europe,93.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+737,Ellen Platform,US,US Gulf of Mexico,81.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+737,Elly Platform,US,US Gulf of Mexico,81.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+155,Enchilada Fixed Platform,US,US Gulf of Mexico,215.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1190,EnQuest Producer,UK,North Sea & NW Europe,74.0,0-150 m (shallow shelf),FPSO,fpso,wet
+632,Epsilon Platform,Greece,Mediterranean & N Africa,32.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+658,Erha FPSO,Nigeria,West Africa,1200.0,500-1500 m (deepwater),FPSO,fpso,wet
+282,Espadarte FPSO,Brazil,South America & Caribbean,850.0,500-1500 m (deepwater),FPSO,fpso,wet
+365,Espirito Santo FPSO,Brazil,South America & Caribbean,1780.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+737,Eureka Platform,US,US Gulf of Mexico,213.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+483,EW 910 Platform A,US,US Gulf of Mexico,168.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1876,F-A Platform,South Africa,West Africa,100.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1111,Falcon Subsea,UK,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+1498,Farwah FPSO,Libya,Mediterranean & N Africa,90.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1793,Fateh Complex,UAE,Middle East,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+670,Firenze FPSO,Italy,Mediterranean & N Africa,850.0,500-1500 m (deepwater),FPSO,fpso,wet
+443,Forties Alpha Fixed Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Alpha Satellite Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Bravo Fixed Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Charlie Fixed Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Delta Fixed Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Echo Fixed Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+443,Forties Unity Riser Platform,UK,North Sea & NW Europe,107.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+586,FPF-1,UK,North Sea & NW Europe,85.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+313,Frade FPSO,Brazil,South America & Caribbean,1128.0,500-1500 m (deepwater),FPSO,fpso,wet
+287,Franklin Platform,UK,North Sea & NW Europe,93.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+337,Front Puffin FPSO,Australia,Asia-Pacific,110.0,0-150 m (shallow shelf),FPSO,fpso,wet
+120,Front Runner SPAR,US,US Gulf of Mexico,1006.0,500-1500 m (deepwater),SPAR,spar,dry
+410,Fulla Subsea,Norway,North Sea & NW Europe,111.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+908,Fulmar A Platform,UK,North Sea & NW Europe,81.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1029,Fyne Production Facility,UK,North Sea & NW Europe,283.0,150-500 m (deep shelf),FPSO,fpso,wet
+1461,Gajah Baru Central Processing Platform,Indonesia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+403,Gajah Baru Wellhead Platform,Indonesia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+500,Galata Platform,Bulgaria,Caspian & Russia,,,Fixed Platform,fixed_jacket,dry
+362,Galoc Subsea,Philippines,Asia-Pacific,400.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+361,Gamma Subsea,Norway,North Sea & NW Europe,226.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+464,Gas Processing Platform,Trin. & Tobago,South America & Caribbean,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+169,GB 236 Platform,US,US Gulf of Mexico,209.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+672,Gehem FPU,Indonesia,Asia-Pacific,1829.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+672,Gendalo FPU,Indonesia,Asia-Pacific,1829.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+159,Genesis SPAR Platform,US,US Gulf of Mexico,790.0,500-1500 m (deepwater),SPAR,spar,dry
+1304,Geographe Subsea Tieback,Australia,Asia-Pacific,85.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+306,Gimboa FPSO,Angola,West Africa,700.0,500-1500 m (deepwater),FPSO,fpso,wet
+821,Gina Krog FSO,Norway,North Sea & NW Europe,120.0,0-150 m (shallow shelf),FSO/FSU,,other
+821,Gina Krog Platform,Norway,North Sea & NW Europe,119.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+325,Girassol FPSO,Angola,West Africa,1350.0,500-1500 m (deepwater),FPSO,fpso,wet
+286,Gjoa FPU,Norway,North Sea & NW Europe,360.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+440,Glas Dowr FPSO,Australia,Asia-Pacific,344.0,150-500 m (deep shelf),FPSO,fpso,wet
+629,Global Producer III FPSO,UK,North Sea & NW Europe,140.0,0-150 m (shallow shelf),FPSO,fpso,wet
+157,Global Producer VII Truss Spar,US,US Gulf of Mexico,945.0,500-1500 m (deepwater),SPAR,spar,dry
+924,Golden Eagle PUQ,UK,North Sea & NW Europe,114.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+924,Golden Eagle WHP,UK,North Sea & NW Europe,114.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+309,Goldeneye FSO,UK,North Sea & NW Europe,122.0,0-150 m (shallow shelf),FSO/FSU,,other
+400,Goliat FPSO,Norway,North Sea & NW Europe,400.0,150-500 m (deep shelf),FPSO,fpso,wet
+161,Gomez Hub (ATP Innovator),US,US Gulf of Mexico,914.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+1431,Gorm Platforms,Denmark,North Sea & NW Europe,39.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1526,Grane Platform,Norway,North Sea & NW Europe,127.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+271,Greater Gorgon Subsea,Australia,Asia-Pacific,1300.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+1390,Greater Plutonio FPSO,Angola,West Africa,1450.0,500-1500 m (deepwater),FPSO,fpso,wet
+1529,Gryphon Alpha FPSO,UK,North Sea & NW Europe,112.0,0-150 m (shallow shelf),FPSO,fpso,wet
+374,Gudrun Platform,Norway,North Sea & NW Europe,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+505,Guendalina Platform,Italy,Mediterranean & N Africa,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+505,Guendalina Subsea Tie-Back,Italy,Mediterranean & N Africa,20.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+198,Gullfaks A Platform,Norway,North Sea & NW Europe,138.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+198,Gullfaks B Platform,Norway,North Sea & NW Europe,143.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+198,Gullfaks C Platform,Norway,North Sea & NW Europe,143.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1247,Gumusut - Kakap FPS,Malaysia,Asia-Pacific,1000.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+273,Gunashli CPU,Azerbaijan,Caspian & Russia,175.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+273,Gunashli Drilling/Production Platform,Azerbaijan,Caspian & Russia,175.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1443,Guntong Hub,Malaysia,Asia-Pacific,64.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1420,Gyda PDQ,Norway,North Sea & NW Europe,66.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+723,Haewene Brim FPSO,UK,North Sea & NW Europe,85.0,0-150 m (shallow shelf),FPSO,fpso,wet
+336,Hai Yang Shi You 117 FPSO,China,Asia-Pacific,23.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1430,Halfdan B,Denmark,North Sea & NW Europe,43.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1430,Halfdan D,Denmark,North Sea & NW Europe,43.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+839,Halyard/Spar Subsea Tieback,Australia,Asia-Pacific,,,Subsea Tieback,subsea_tieback,wet
+1685,Hanze GBS,Netherlands,North Sea & NW Europe,44.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1428,Harald A,Denmark,North Sea & NW Europe,64.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1428,Harald B Accommodation Unit,Denmark,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+1533,Harding Platform,UK,North Sea & NW Europe,111.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+347,Harmony Fixed Platform,US,US Gulf of Mexico,365.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+731,Harriet Bravo Platform,Australia,Asia-Pacific,24.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1458,Hasdrubal Platform,Tunisia,Mediterranean & N Africa,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1738,Heather A Platform,UK,North Sea & NW Europe,144.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+486,Hebron GBS,Canada,Atlantic Canada & Arctic,92.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+427,Heidelberg Spar,US,US Gulf of Mexico,1608.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+437,Heidrun FSU,Norway,North Sea & NW Europe,351.0,150-500 m (deep shelf),FSO/FSU,,other
+437,Heidrun TLP,Norway,North Sea & NW Europe,351.0,150-500 m (deep shelf),TLP,tlp,dry
+1698,Heimdal Gas Center,Norway,North Sea & NW Europe,122.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1101,Hejre Platform,Denmark,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+607,Helix Producer I,US,US Gulf of Mexico,2679.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+347,Heritage Fixed Platform,US,US Gulf of Mexico,328.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+277,Hibernia,Canada,Atlantic Canada & Arctic,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1515,High Island A Platform,US,US Gulf of Mexico,11.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1515,High Island B Platform,US,US Gulf of Mexico,11.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+307,Holstein Spar Platform,US,US Gulf of Mexico,1324.0,500-1500 m (deepwater),SPAR,spar,dry
+347,Hondo Fixed Platform,US,US Gulf of Mexico,259.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+315,Hoover Deep Draft Caisson Vessel platform (DDCV),US,US Gulf of Mexico,1420.0,500-1500 m (deepwater),DDCV,spar,dry
+146,Horn Mountain SPAR Platform,US,US Gulf of Mexico,1653.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+549,Huldra Wellhead Platform,Norway,North Sea & NW Europe,125.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+378,Hummingbird Spirit FPSO,UK,North Sea & NW Europe,120.0,0-150 m (shallow shelf),FPSO,fpso,wet
+376,Iago Platform,Australia,Asia-Pacific,200.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+384,Ichthys CPF,Australia,Asia-Pacific,280.0,150-500 m (deep shelf),FLNG,flng,wet
+384,Ichthys FPSO,Australia,Asia-Pacific,280.0,150-500 m (deep shelf),FPSO,fpso,wet
+1039,Ikdam FPSO,Malaysia,Asia-Pacific,76.0,0-150 m (shallow shelf),FPSO,fpso,wet
+434,Inde AC Platform,UK,North Sea & NW Europe,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+121,Independence Hub Semisub,US,US Gulf of Mexico,2700.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+1586,ISND Central Production Station,Qatar,Middle East,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1586,ISND Complex,Qatar,Middle East,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1252,Ivar Aasen (Draupne) Platform,Norway,North Sea & NW Europe,111.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1379,Iwafune-Oki Platform,Japan,Asia-Pacific,36.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+541,J10D Drilling Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J10G Gas Lift Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J10P Processing Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J22 Water Injection Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J4 Wellhead Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J6 Wellhead Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+541,J8 Wellhead Platform,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+340,Jack/St. Malo FPU,US,US Gulf of Mexico,2134.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+323,Jacky Platform,UK,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+748,Jangkrik Barge FPU,Indonesia,Asia-Pacific,120.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+316,Janice A Platform,UK,North Sea & NW Europe,90.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+1604,Jasmine Platform Complex,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1604,Jasmine Venture MV7 FPSO,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),FPSO,fpso,wet
+675,Jasmine WHP,UK,North Sea & NW Europe,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1374,Jawhara 5 MOPU,Tunisia,Mediterranean & N Africa,76.0,0-150 m (shallow shelf),MOPU,,other
+1802,John Brookes Subsea,Australia,Asia-Pacific,65.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1424,Jotun A FPSO,Norway,North Sea & NW Europe,126.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1424,Jotun B,Norway,North Sea & NW Europe,126.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+675,Judy,UK,North Sea & NW Europe,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+764,Juscelino Kubitschek Petrobras-34,Brazil,South America & Caribbean,1300.0,500-1500 m (deepwater),FPSO,fpso,wet
+130,K2 Subsea,US,US Gulf of Mexico,1189.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+500,Kaliakra Subsea,Bulgaria,Caspian & Russia,,,Subsea Tieback,subsea_tieback,wet
+498,Kambuna Production Platform,Indonesia,Asia-Pacific,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1730,Kamelia-A WHP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1382,Kanowit FLNG,Malaysia,Asia-Pacific,80.0,0-150 m (shallow shelf),FLNG,flng,wet
+1854,Kaombo FPSO 1,Angola,West Africa,1600.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1854,Kaombo FPSO 2,Angola,West Africa,1600.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1361,Kappa Platform,Greece,Mediterranean & N Africa,51.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+418,Kashagan Drilling Island A,Kazakhstan,Caspian & Russia,3.0,0-150 m (shallow shelf),Artificial Island,,other
+418,Kashagan Drilling Island B,Kazakhstan,Caspian & Russia,3.0,0-150 m (shallow shelf),Artificial Island,,other
+418,Kashagan Drilling Island C,Kazakhstan,Caspian & Russia,3.0,0-150 m (shallow shelf),Artificial Island,,other
+418,Kashagan Drilling Island D,Kazakhstan,Caspian & Russia,3.0,0-150 m (shallow shelf),Artificial Island,,other
+1545,Katy Satellite Platform,UK,North Sea & NW Europe,26.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+500,Kavarna Subsea,Bulgaria,Caspian & Russia,,,Subsea Tieback,subsea_tieback,wet
+1619,KBM FPSO,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1619,KBM MOPU,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),MOPU,,other
+1881,Ketch Platform,UK,North Sea & NW Europe,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1730,Kezumba WHP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+444,KG-8 Wellhead Plaform,India,Asia-Pacific,109.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1816,Kikeh FPSO,Malaysia,Asia-Pacific,1341.0,500-1500 m (deepwater),FPSO,fpso,wet
+283,Kikeh Spar,Malaysia,Asia-Pacific,1341.0,500-1500 m (deepwater),SPAR,spar,dry
+1377,Kinsale Alpha,Ireland,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1377,Kinsale Bravo,Ireland,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+320,Kipper Subsea,Australia,Asia-Pacific,95.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1785,Kirinskoye Subsea,Russian Federation,Caspian & Russia,90.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+639,Kizomba A FPSO,Angola,West Africa,1203.0,500-1500 m (deepwater),FPSO,fpso,wet
+639,Kizomba B FPSO,Angola,West Africa,1036.0,500-1500 m (deepwater),FPSO,fpso,wet
+639,Kizomba C FPSO,Angola,West Africa,732.0,500-1500 m (deepwater),FPSO,fpso,wet
+540,KMZ Platforms,Mexico,South America & Caribbean,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+301,Knarr (Jordbaer) FPSO,Norway,North Sea & NW Europe,400.0,150-500 m (deep shelf),FPSO,fpso,wet
+406,Knock Allan FPSO,Gabon,West Africa,50.0,0-150 m (shallow shelf),FPSO,fpso,wet
+412,Kraken FPSO,UK,North Sea & NW Europe,120.0,0-150 m (shallow shelf),FPSO,fpso,wet
+202,Kristin Semisub,Norway,North Sea & NW Europe,370.0,150-500 m (deep shelf),Semisub,semisub_fps,wet
+451,Kungulo Water Injection Platform,Angola,West Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+448,Kupe Platform,New Zealand,Asia-Pacific,35.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1425,Kvitebjorn Platform,Norway,North Sea & NW Europe,190.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+382,Kwame Nkrumah MV21 FPSO,Ghana,West Africa,1100.0,500-1500 m (deepwater),FPSO,fpso,wet
+392,L11b-A Platform,Netherlands,North Sea & NW Europe,27.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1848,L5 Sierra Platform,Netherlands,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1849,L5-FA-1,Netherlands,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+653,Laggan-Tormore Subsea Tie-back,UK,North Sea & NW Europe,600.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+663,Lapa FPSO,Brazil,South America & Caribbean,2000.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1800,Lawit Complex,Malaysia,Asia-Pacific,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+383,Lewek Emas FPSO,Viet nam,Asia-Pacific,,,FPSO,fpso,wet
+518,Liberty Drilling Rig,US,US Gulf of Mexico,,,Artificial Island,,other
+1193,Lishui Platform,China,Asia-Pacific,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1801,Litchendjili Platform,Congo,West Africa,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1250,Liverpool Bay FSO,UK,North Sea & NW Europe,33.0,0-150 m (shallow shelf),FSO/FSU,,other
+402,Liwan Central Platform,China,Asia-Pacific,200.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+912,Lomond,UK,North Sea & NW Europe,86.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+454,Longtom Subsea Tieback,Australia,Asia-Pacific,56.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+475,LSP-1,Russian Federation,Caspian & Russia,13.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+475,LSP-2,Russian Federation,Caspian & Russia,13.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+572,Lucius Spar,US,US Gulf of Mexico,2172.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+573,Luno Platform,Norway,North Sea & NW Europe,108.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+293,Lunskoye-A,Russian Federation,Caspian & Russia,48.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+331,M/T Tove Knutsen,Philippines,Asia-Pacific,101.0,0-150 m (shallow shelf),FSO/FSU,,other
+391,M7-A Platform,Netherlands,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+1305,Macedon,Australia,Asia-Pacific,180.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+148,Mad Dog Spar,US,US Gulf of Mexico,1311.0,500-1500 m (deepwater),SPAR,spar,dry
+1259,Madura FPSO,Indonesia,Asia-Pacific,55.0,0-150 m (shallow shelf),FPSO,fpso,wet
+330,Maersk Curlew FPSO,UK,North Sea & NW Europe,92.0,0-150 m (shallow shelf),FPSO,fpso,wet
+451,Mafumeira Norte,Angola,West Africa,49.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+451,Mafumeira Norte Platform,Angola,West Africa,49.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+151,Magnolia TLP,US,US Gulf of Mexico,1433.0,500-1500 m (deepwater),TLP,tlp,dry
+578,Mahogany B Platform,Trin. & Tobago,South America & Caribbean,87.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1514,Main Pass 108 Platform,US,US Gulf of Mexico,25.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1516,Main Pass 98 Platform,US,US Gulf of Mexico,28.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1249,Malampaya Platform,Philippines,Asia-Pacific,43.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1371,Maleo MOPU,Indonesia,Asia-Pacific,57.0,0-150 m (shallow shelf),MOPU,,other
+511,Malikai TLP,Malaysia,Asia-Pacific,565.0,500-1500 m (deepwater),TLP,tlp,dry
+1254,Manati Platform,Brazil,South America & Caribbean,46.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1055,Manora FSO,Thailand,Asia-Pacific,50.0,0-150 m (shallow shelf),FSO/FSU,,other
+1055,Manora Platform,Thailand,Asia-Pacific,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+130,Marco Polo TLP,US,US Gulf of Mexico,1311.0,500-1500 m (deepwater),TLP,tlp,dry
+1329,Mari-B Platform,Israel,Middle East,235.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1110,Mariner FSU,UK,North Sea & NW Europe,110.0,0-150 m (shallow shelf),FSO/FSU,,other
+1110,Mariner PDQ,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+371,Marlim Sul (South) FPSO,Brazil,South America & Caribbean,1430.0,500-1500 m (deepwater),FPSO,fpso,wet
+320,Marlin A,Australia,Asia-Pacific,59.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+320,Marlin B,Australia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+147,Marlin TLP,US,US Gulf of Mexico,986.0,500-1500 m (deepwater),TLP,tlp,dry
+141,Mars B Olympus TLP,US,US Gulf of Mexico,914.0,500-1500 m (deepwater),TLP,tlp,dry
+758,Mars TLP,US,US Gulf of Mexico,896.0,500-1500 m (deepwater),TLP,tlp,dry
+461,Martin Linge (Hild) Platform,Norway,North Sea & NW Europe,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+171,Matterhorn TLP,US,US Gulf of Mexico,869.0,500-1500 m (deepwater),TLP,tlp,dry
+1289,Maui A,New Zealand,Asia-Pacific,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1289,Maui B,New Zealand,Asia-Pacific,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+158,Medusa Spar Facility,US,US Gulf of Mexico,762.0,500-1500 m (deepwater),SPAR,spar,dry
+1457,Miskar Platform,Tunisia,Mediterranean & N Africa,62.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+910,MODEC Venture 11 FPSO,Australia,Asia-Pacific,160.0,150-500 m (deep shelf),FPSO,fpso,wet
+305,Moho Nord TLP,Congo,West Africa,780.0,500-1500 m (deepwater),TLP,tlp,dry
+305,Moho-Bilondo FPU,Congo,West Africa,1100.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+293,Molikpaq,Russian Federation,Caspian & Russia,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+335,Montara Venture FPSO,Australia,Asia-Pacific,72.0,0-150 m (shallow shelf),FPSO,fpso,wet
+335,Montara Wellhead Platform,Australia,Asia-Pacific,77.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1402,Montrose Alpha,UK,North Sea & NW Europe,91.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+153,Morpeth TLP,US,US Gulf of Mexico,518.0,500-1500 m (deepwater),Mini-TLP,tlp,dry
+480,Mubaraka FSU,UAE,Middle East,61.0,0-150 m (shallow shelf),FSO/FSU,,other
+480,Mubarek Processing Platform,UAE,Middle East,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+480,Mubarek Welhead Platform,UAE,Middle East,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1246,Muda Central Processing Platform,Thailand,Asia-Pacific,65.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+552,Mumbai High Complex,India,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1391,Murchison Unit,Norway,North Sea & NW Europe,156.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1545,Murdoch Complex,UK,North Sea & NW Europe,32.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+126,Na Kika FPU,US,US Gulf of Mexico,2000.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+1461,Naga - Pelikan WHP,Indonesia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1461,Naga Wellhead Platform,Indonesia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+280,Nanhai Sheng Li FPSO,China,Asia-Pacific,370.0,150-500 m (deep shelf),FSO/FSU,,other
+280,Nanhai Tiao Zhan FPS,China,Asia-Pacific,370.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+166,Nansen Spar,US,US Gulf of Mexico,1120.0,500-1500 m (deepwater),SPAR,spar,dry
+304,Natalia Subsea,Norway,North Sea & NW Europe,299.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+1532,Navion Saga,Norway,North Sea & NW Europe,80.0,0-150 m (shallow shelf),FSO/FSU,,other
+766,Nelson Platform,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+176,Neptune SPAR,US,US Gulf of Mexico,588.0,500-1500 m (deepwater),SPAR,spar,dry
+123,Neptune TLP,US,US Gulf of Mexico,1295.0,500-1500 m (deepwater),TLP,tlp,dry
+1137,Nganhurra FPSO,Australia,Asia-Pacific,600.0,500-1500 m (deepwater),FPSO,fpso,wet
+346,Ngujima-Yin FPSO,Australia,Asia-Pacific,400.0,150-500 m (deep shelf),FPSO,fpso,wet
+401,NI-P1Platform,Egypt,Mediterranean & N Africa,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+401,NI-P2 Platform,Egypt,Mediterranean & N Africa,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+339,Ningaloo Vision FPSO,Australia,Asia-Pacific,380.0,150-500 m (deep shelf),FPSO,fpso,wet
+561,Nini East,Denmark,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+561,Nini Wellhead Platform,Denmark,North Sea & NW Europe,58.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1393,Ninian,UK,North Sea & NW Europe,135.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1393,Ninian Central,UK,North Sea & NW Europe,139.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1393,Ninian South,UK,North Sea & NW Europe,139.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+705,Njord A,Norway,North Sea & NW Europe,330.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+1612,Nkossa Platform,Congo,West Africa,305.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+1625,Nong Yao Processing Platform,Thailand,Asia-Pacific,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1625,Nong Yao WHP,Thailand,Asia-Pacific,75.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1449,Norne FPSO,Norway,North Sea & NW Europe,380.0,150-500 m (deep shelf),FPSO,fpso,wet
+1111,North Cormorant Platform,UK,North Sea & NW Europe,530.0,500-1500 m (deepwater),Fixed Platform,fixed_jacket,dry
+1860,North Lukut WHP,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1464,North Morecambe Platform,Ireland,North Sea & NW Europe,27.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1296,North Nemba,Angola,West Africa,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1869,North Palin CPP,Thailand,Asia-Pacific,58.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1684,North Rankin A,Australia,Asia-Pacific,125.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1684,North Rankin B,Australia,Asia-Pacific,125.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+300,North Sea Producer FPSO,UK,North Sea & NW Europe,125.0,0-150 m (shallow shelf),FPSO,fpso,wet
+492,North Triumph Fixed Platform,Canada,Atlantic Canada & Arctic,76.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1883,Northern Endeavour FPSO,Australia,Asia-Pacific,340.0,150-500 m (deep shelf),FPSO,fpso,wet
+1388,Northern Fields CPU,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1388,Northern Fields FSO,Malaysia,Asia-Pacific,,,FSO/FSU,,other
+1388,Northern Fields Platform 1,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1388,Northern Fields Platform 2,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+345,Northern Producer FPU,UK,North Sea & NW Europe,152.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+582,Northstar Sea Island,US,US Gulf of Mexico,12.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1127,NS377 Subsea Tieback,Egypt,Mediterranean & N Africa,,,Subsea Tieback,subsea_tieback,wet
+227,Nuggets Subsea,UK,North Sea & NW Europe,125.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+652,Obrina Mare FPSO,Italy,Mediterranean & N Africa,20.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1130,ODA,China,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1130,ODB Platform,China,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1408,Ofon 2,Nigeria,West Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1408,Ofon AMD1,Nigeria,West Africa,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1301,Okha FPSO,Australia,Asia-Pacific,80.0,0-150 m (shallow shelf),FPSO,fpso,wet
+293,Okha FSO,Russian Federation,Caspian & Russia,30.0,0-150 m (shallow shelf),FSO/FSU,,other
+1159,Okoro FPSO,Nigeria,West Africa,,,FPSO,fpso,wet
+1159,Okoro Further Field Development WHP,Nigeria,West Africa,,,Fixed Platform,fixed_jacket,dry
+1159,Okoro MOPU,Nigeria,West Africa,,,MOPU,,other
+1159,Okoro Platform,Nigeria,West Africa,,,Fixed Platform,fixed_jacket,dry
+296,Okume/Ebano TLP,Equatorial Guinea,West Africa,500.0,500-1500 m (deepwater),TLP,tlp,dry
+406,Olowi Platform 1,Gabon,West Africa,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+406,Olowi Platform 2,Gabon,West Africa,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+406,Olowi Platform 3,Gabon,West Africa,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+406,Olowi Platform 4,Gabon,West Africa,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+555,Oooguruk Subsea Tieback,US,US Gulf of Mexico,2.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1130,OPA,China,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1130,OPB Platform,China,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1872,Orca FPSO,South Africa,West Africa,120.0,0-150 m (shallow shelf),FPSO,fpso,wet
+222,Ormen Lange Subsea,Norway,North Sea & NW Europe,850.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+479,Oseberg A Fixed Platform,Norway,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+479,Oseberg B Fixed Platform,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+479,Oseberg C Fixed Platform,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+479,Oseberg D Fixed Platform,Norway,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+479,Oseberg South (Sor) Fixed Platform,Norway,North Sea & NW Europe,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+479,Oseberg Vestflanken Subsea,Norway,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+1223,OSX-1 FPSO,Brazil,South America & Caribbean,130.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1223,OSX-2 FPSO,Brazil,South America & Caribbean,,,FPSO,fpso,wet
+865,OSX-3 FPSO,Brazil,South America & Caribbean,105.0,0-150 m (shallow shelf),FPSO,fpso,wet
+296,Oveng TLP,Equatorial Guinea,West Africa,280.0,150-500 m (deep shelf),TLP,tlp,dry
+850,Oyong Fixed Platform,Indonesia,Asia-Pacific,45.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1792,P-15c Platform,Netherlands,North Sea & NW Europe,26.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+299,P-18 Semisub,Brazil,South America & Caribbean,910.0,500-1500 m (deepwater),Semisub,semisub_fps,wet
+299,P-19 Semisub,Brazil,South America & Caribbean,940.0,500-1500 m (deepwater),Semisub,semisub_fps,wet
+299,P-20 Semisub,Brazil,South America & Caribbean,700.0,500-1500 m (deepwater),Semisub,semisub_fps,wet
+299,P-26 Semisub,Brazil,South America & Caribbean,990.0,500-1500 m (deepwater),Semisub,semisub_fps,wet
+299,P-32 FPSO,Brazil,South America & Caribbean,160.0,150-500 m (deep shelf),FPSO,fpso,wet
+299,P-33 FPSO,Brazil,South America & Caribbean,330.0,150-500 m (deep shelf),FPSO,fpso,wet
+299,P-35 FPSO,Brazil,South America & Caribbean,860.0,500-1500 m (deepwater),FPSO,fpso,wet
+299,P-37 FPSO,Brazil,South America & Caribbean,905.0,500-1500 m (deepwater),FPSO,fpso,wet
+371,P-38 Semisub,Brazil,South America & Caribbean,,,Semisub,semisub_fps,wet
+371,P-40 Semisub,Brazil,South America & Caribbean,,,Semisub,semisub_fps,wet
+299,P-47 FPSO,Brazil,South America & Caribbean,189.0,150-500 m (deep shelf),FPSO,fpso,wet
+371,P-51 FPU,Brazil,South America & Caribbean,1650.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+348,P-52 Semisub,Brazil,South America & Caribbean,1800.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+703,P-53 FPU,Brazil,South America & Caribbean,1080.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+348,P-54 FPSO,Brazil,South America & Caribbean,1400.0,500-1500 m (deepwater),FPSO,fpso,wet
+348,P-55 Semisub,Brazil,South America & Caribbean,1795.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+371,P-56 Semisub,Brazil,South America & Caribbean,1650.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+764,P-57 FPSO,Brazil,South America & Caribbean,1300.0,500-1500 m (deepwater),FPSO,fpso,wet
+282,P-58 FPSO,Brazil,South America & Caribbean,1400.0,500-1500 m (deepwater),FPSO,fpso,wet
+568,P-61 TLP,Brazil,South America & Caribbean,1200.0,500-1500 m (deepwater),Mini-TLP,tlp,dry
+568,P-61 TLWP,Brazil,South America & Caribbean,1200.0,500-1500 m (deepwater),Mini-TLP,tlp,dry
+348,P-62 FPSO,Brazil,South America & Caribbean,1545.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+568,P-63 FPSO,Brazil,South America & Caribbean,,,FPSO,fpso,wet
+1474,P-76 FPSO,Brazil,South America & Caribbean,1860.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1474,P-77 FPSO,Brazil,South America & Caribbean,1860.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1869,Pailin CPP,Thailand,Asia-Pacific,58.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1364,Panna - Mukta Platform,India,Asia-Pacific,55.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1766,Panyu (PY) 30-1 Platform,China,Asia-Pacific,200.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1251,Panyu 4-2 Platform,China,Asia-Pacific,97.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1251,Panyu 5-1 Platform,China,Asia-Pacific,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1251,Panyu FPSO,China,Asia-Pacific,100.0,0-150 m (shallow shelf),FPSO,fpso,wet
+326,Pazflor FPSO,Angola,West Africa,762.0,500-1500 m (deepwater),FPSO,fpso,wet
+1262,PB Litoral-A,Mexico,South America & Caribbean,26.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1719,Peciko Complex,Indonesia,Asia-Pacific,90.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1461,Pelikan Wellhead Platform,Indonesia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1858,Penara A Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai CPU,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Platform (Phase I),China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Wellhead Platform A,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Wellhead Platform B,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Wellhead Platform C,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Wellhead Platform D,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+336,Peng Lai Wellhead Platform E,China,Asia-Pacific,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+125,Perdido SPAR Platform,US,US Gulf of Mexico,2377.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+432,Peregrino FPSO,Brazil,South America & Caribbean,120.0,0-150 m (shallow shelf),FPSO,fpso,wet
+432,Peregrino Wellhead Platform A,Brazil,South America & Caribbean,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+432,Peregrino Wellhead Platform B,Brazil,South America & Caribbean,120.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1730,Perisai Kamelia FPSO,Malaysia,Asia-Pacific,,,FPSO,fpso,wet
+543,Perla Platform,Venezuela,South America & Caribbean,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1129,Perth FPSO,UK,North Sea & NW Europe,127.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1145,Petrojarl Banff FPSO,UK,North Sea & NW Europe,89.0,0-150 m (shallow shelf),FPSO,fpso,wet
+436,Petrojarl Foinaven FPSO,UK,North Sea & NW Europe,450.0,150-500 m (deep shelf),FPSO,fpso,wet
+194,Petrojarl I FPSO,Norway,North Sea & NW Europe,100.0,0-150 m (shallow shelf),FPSO,fpso,wet
+664,Petrojarl Varg FPSO,Norway,North Sea & NW Europe,84.0,0-150 m (shallow shelf),FPSO,fpso,wet
+767,Petroleo Nautipa FPSO,Gabon,West Africa,137.0,0-150 m (shallow shelf),FPSO,fpso,wet
+117,Petronius Compliant Tower,US,US Gulf of Mexico,535.0,500-1500 m (deepwater),Compliant Tower,compliant_tower,dry
+1382,PFLNG-1,Malaysia,Asia-Pacific,80.0,0-150 m (shallow shelf),FLNG,flng,wet
+805,Pickerill A Platform,UK,North Sea & NW Europe,21.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+293,Piltun-Astokhskoye-B,Russian Federation,Caspian & Russia,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1348,Piranema Spirit FPSO,Brazil,South America & Caribbean,1600.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1013,Platong Complex,Thailand,Asia-Pacific,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1013,Platong FSO,Thailand,Asia-Pacific,70.0,0-150 m (shallow shelf),FSO/FSU,,other
+377,Pluto Production Platform,Australia,Asia-Pacific,85.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+377,Pluto Subsea,Australia,Asia-Pacific,830.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+587,Poinsettia Platform,Trin. & Tobago,South America & Caribbean,158.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1512,Polvo A Platform,Brazil,South America & Caribbean,85.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1512,Polvo FPSO,Brazil,South America & Caribbean,85.0,0-150 m (shallow shelf),FPSO,fpso,wet
+162,Pompano Production Platform,US,US Gulf of Mexico,393.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1244,PPB Platform,New Zealand,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+494,Prelude FLNG,Australia,Asia-Pacific,,,FLNG,flng,wet
+186,Prince TLP,US,US Gulf of Mexico,454.0,150-500 m (deep shelf),TLP,tlp,dry
+1682,Prirazlomnaya,Russian Federation,Caspian & Russia,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+253,PSVM FPSO,Angola,West Africa,2000.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+1347,PTAP One FPSO,Indonesia,Asia-Pacific,91.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1246,Puteri Cakerawala FSO,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),FSO/FSU,,other
+1444,Puteri Dulang FSO,Malaysia,Asia-Pacific,77.0,0-150 m (shallow shelf),FSO/FSU,,other
+1859,Puteri WHP,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+338,Pyrenees Venture FPSO,Australia,Asia-Pacific,200.0,150-500 m (deep shelf),FPSO,fpso,wet
+417,QHD 32-6 Wellhead Platform 1,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 32-6 Wellhead Platform 2,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 32-6 Wellhead Platform 3,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 32-6 Wellhead Platform 4,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 32-6 Wellhead Platform 5,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 32-6 Wellhead Platform 6,China,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+417,QHD 33-1 Subsea,China,Asia-Pacific,31.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+627,Quad 204 FPSO,UK,North Sea & NW Europe,400.0,150-500 m (deep shelf),FPSO,fpso,wet
+1705,Queensway FSO,Viet nam,Asia-Pacific,50.0,0-150 m (shallow shelf),FSO/FSU,,other
+188,Ram Powell TLP,US,US Gulf of Mexico,980.0,500-1500 m (deepwater),TLP,tlp,dry
+515,Ramadan-6,Egypt,Mediterranean & N Africa,,,Fixed Platform,fixed_jacket,dry
+1708,Rang Dong E1 WHP,Viet nam,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1708,Rang Dong MV17 FSO,Viet nam,Asia-Pacific,60.0,0-150 m (shallow shelf),FSO/FSU,,other
+1708,Rang Dong N1 WHP,Viet nam,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1708,Rang Dong S1 WHP,Viet nam,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+366,Raroa FPSO,New Zealand,Asia-Pacific,102.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1246,Ratu Songkhla,Thailand,Asia-Pacific,65.0,0-150 m (shallow shelf),FSO/FSU,,other
+173,Red Hawk SPAR Platform,US,US Gulf of Mexico,1615.0,1500-3000 m (ultra-deepwater),SPAR,spar,dry
+673,Reindeer Platform,Australia,Asia-Pacific,65.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+247,Rosa Subsea,Angola,West Africa,1350.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+413,Rosebank,UK,North Sea & NW Europe,1128.0,500-1500 m (deepwater),FPSO,fpso,wet
+362,Rubicon Intrepid FPSO,Philippines,Asia-Pacific,320.0,150-500 m (deep shelf),FPSO,fpso,wet
+363,Rubicon Vantage FPSO,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1373,Ruby Production Platform,Indonesia,Asia-Pacific,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1373,Ruby Wellhead Platform,Indonesia,Asia-Pacific,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1375,Sabratha Platform,Libya,Mediterranean & N Africa,190.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+602,Saffron/Scarab Subsea,Egypt,Mediterranean & N Africa,850.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+393,Sakhalin I Platform,Russian Federation,Caspian & Russia,,,Fixed Platform,fixed_jacket,dry
+155,Salsa FIxed Platform,US,US Gulf of Mexico,453.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1134,Sangu-A Platform,Bangladesh,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+464,Satellite Wellhead Protector Platform 1,Trin. & Tobago,South America & Caribbean,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+464,Satellite Wellhead Protector Platform 2,Trin. & Tobago,South America & Caribbean,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+464,Satellite Wellhead Protector Platform 3,Trin. & Tobago,South America & Caribbean,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+578,Savonette Platform,Trin. & Tobago,South America & Caribbean,88.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1700,Scapa Subsea,UK,North Sea & NW Europe,111.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+627,Schiehallion FPSO,UK,North Sea & NW Europe,400.0,150-500 m (deep shelf),FPSO,fpso,wet
+909,Schooner Platform,UK,North Sea & NW Europe,71.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1693,Scott Platform,UK,North Sea & NW Europe,142.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+764,Seillean FPSO,Brazil,South America & Caribbean,1365.0,500-1500 m (deepwater),FPSO,fpso,wet
+295,Sendje Ceiba FPSO,Equatorial Guinea,West Africa,2200.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+602,Sequoia Subsea Tieback,Egypt,Mediterranean & N Africa,570.0,500-1500 m (deepwater),Subsea Tieback,subsea_tieback,wet
+1343,Seth Platform,Egypt,Mediterranean & N Africa,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+415,Shah Deniz Production Platform,Azerbaijan,Caspian & Russia,105.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+133,Shenzi TLP,US,US Gulf of Mexico,1341.0,500-1500 m (deepwater),TLP,tlp,dry
+1790,Shwe Platform,Myanmar,Asia-Pacific,110.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+203,Sigyn Subsea,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+561,Siri Center,Denmark,North Sea & NW Europe,58.0,0-150 m (shallow shelf),FSO/FSU,,other
+373,Skarv FPSO,Norway,North Sea & NW Europe,391.0,150-500 m (deep shelf),FPSO,fpso,wet
+374,Sleipner A,Norway,North Sea & NW Europe,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+374,Sleipner B,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+374,Sleipner T,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+223,Snohvit Subsea,Norway,North Sea & NW Europe,340.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+204,Snorre A TLP,Norway,North Sea & NW Europe,350.0,150-500 m (deep shelf),TLP,tlp,dry
+204,Snorre B Platform,Norway,North Sea & NW Europe,,,Semisub,semisub_fps,wet
+1296,SNX Platform,Angola,West Africa,118.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1113,Solan Platform,UK,North Sea & NW Europe,135.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+332,Songkhla FPU,Thailand,Asia-Pacific,2750.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+1412,Songo Songo Island,"Tanzania, United Republic of",West Africa,,,Artificial Island,,other
+776,South Arne Platform,Denmark,North Sea & NW Europe,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1463,South Morecambe Cluster,UK,North Sea & NW Europe,32.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1296,South Nemba,Angola,West Africa,119.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+284,South Pars,Iran,Middle East,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+140,South Timbalier 301,US,US Gulf of Mexico,101.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+492,South Venture Fixed Platform,Canada,Atlantic Canada & Arctic,23.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1794,Southwest Fateh Complex,UAE,Middle East,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1242,Spaoh Wellhead Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+419,Spectacular Bid (GB 72 Platform A),US,US Gulf of Mexico,541.0,500-1500 m (deepwater),Fixed Platform,fixed_jacket,dry
+1338,SS349 A Platform,US,US Gulf of Mexico,113.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+321,Stag Platform,Australia,Asia-Pacific,49.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+128,Stampede TLP,US,US Gulf of Mexico,1000.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+208,Statfjord A Platform,Norway,North Sea & NW Europe,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+208,Statfjord B Platform,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+208,Statfjord C Platform,Norway,North Sea & NW Europe,290.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+350,Stones FPSO,US,US Gulf of Mexico,2896.0,1500-3000 m (ultra-deepwater),FPSO,fpso,wet
+342,Stybarrow Venture FPSO,Australia,Asia-Pacific,825.0,500-1500 m (deepwater),FPSO,fpso,wet
+1704,Su Tu Den WHP-A,Viet nam,Asia-Pacific,48.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1707,Su Tu Nau North,Viet nam,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1707,Su Tu Nau South,Viet nam,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1706,Su Tu Trang CPP,Viet nam,Asia-Pacific,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1705,Su Tu Vang WHP,Viet nam,Asia-Pacific,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1692,Suizhong 36-1 Complex,China,Asia-Pacific,32.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+127,Tahiti Spar Platform,US,US Gulf of Mexico,1339.0,500-1500 m (deepwater),SPAR,spar,dry
+1324,Takula Platform,Angola,West Africa,57.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+459,Tamar Platform,Israel,Middle East,244.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1385,Tapis A Platform,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1385,Tapis B Platform,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1385,Tapis C Platform,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1385,Tapis D Platform,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1385,Tapis E Platform,Malaysia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1385,Tapis R Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1365,Tapti Processing Platform,India,Asia-Pacific,20.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1146,Tartan Platform,UK,North Sea & NW Europe,138.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+491,Taurt Subsea Tie-back,Egypt,Mediterranean & N Africa,100.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+407,Telemark Hub (ATP Titan),US,US Gulf of Mexico,1201.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+1442,Telok A Platform,Malaysia,Asia-Pacific,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1442,Telok B Platform,Malaysia,Asia-Pacific,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1038,TEN FPSO,Ghana,West Africa,1425.0,500-1500 m (deepwater),FPSO,fpso,wet
+1503,Tern Alpha Platform,UK,North Sea & NW Europe,167.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+698,TGT H1 Platform,Viet nam,Asia-Pacific,45.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+698,TGT H4 Platform,Viet nam,Asia-Pacific,45.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1374,Thapsus FSO,Tunisia,Mediterranean & N Africa,76.0,0-150 m (shallow shelf),FSO/FSU,,other
+492,Thebaud Fixed Platform,Canada,Atlantic Canada & Arctic,30.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1312,Thistle Alpha Platform,UK,North Sea & NW Europe,160.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+368,Thunder Hawk FPU,US,US Gulf of Mexico,1850.0,1500-3000 m (ultra-deepwater),FPU/FPS,semisub_fps,wet
+129,Thunder Horse Semisub,US,US Gulf of Mexico,1841.0,1500-3000 m (ultra-deepwater),Semisub,semisub_fps,wet
+1304,Thylacine Platform,Australia,Asia-Pacific,100.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1392,Tiffany Platform,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+366,Tiro Tiro Moana Platform,New Zealand,Asia-Pacific,102.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+539,Tombua Landana Compliant Tower,Angola,West Africa,369.0,150-500 m (deep shelf),Compliant Tower,compliant_tower,dry
+1028,Triton FPSO,UK,North Sea & NW Europe,91.0,0-150 m (shallow shelf),FPSO,fpso,wet
+770,Troll A,Norway,North Sea & NW Europe,340.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+770,Troll B & C,Norway,North Sea & NW Europe,350.0,150-500 m (deep shelf),Semisub,semisub_fps,wet
+1194,TSB FPU,Indonesia,Asia-Pacific,100.0,0-150 m (shallow shelf),FPU/FPS,semisub_fps,wet
+1262,Tsimin C,Mexico,South America & Caribbean,22.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+353,Tubular Bells FPS,US,US Gulf of Mexico,1311.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+479,Tune South (Sor) Subsea,Norway,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+479,Tune Subsea,Norway,North Sea & NW Europe,95.0,0-150 m (shallow shelf),Subsea Tieback,subsea_tieback,wet
+1429,Tyra East,Denmark,North Sea & NW Europe,38.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1429,Tyra Southeast Platform,Denmark,North Sea & NW Europe,38.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1429,Tyra West,Denmark,North Sea & NW Europe,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+317,Tyrihans Subsea,Norway,North Sea & NW Europe,270.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+433,Ula Fixed Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1035,Umm Shaif Complex,UAE,Middle East,13.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+610,Umuroa FPSO,New Zealand,Asia-Pacific,120.0,0-150 m (shallow shelf),FPSO,fpso,wet
+318,Unity FSO,Nigeria,West Africa,40.0,0-150 m (shallow shelf),FSO/FSU,,other
+149,Ursa TLP,US,US Gulf of Mexico,1222.0,500-1500 m (deepwater),TLP,tlp,dry
+341,Usan FPSO,Nigeria,West Africa,750.0,500-1500 m (deepwater),FPSO,fpso,wet
+1104,Valemon Fixed Platform,Norway,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+462,Valhall Flank North Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+462,Valhall Flank South Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+462,Valhall Production Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+462,Valhall Quarters Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+462,Valhall Water Injection Platform,Norway,North Sea & NW Europe,70.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+664,Varg Wellhead Platform,Norway,North Sea & NW Europe,84.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+379,Veer Prem MOPU,Nigeria,West Africa,41.0,0-150 m (shallow shelf),Semisub,semisub_fps,wet
+1690,Vega Pleyade Wellhead Platform,Argentina,South America & Caribbean,50.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+337,Venture 1 FPSO,Australia,Asia-Pacific,110.0,0-150 m (shallow shelf),FPSO,fpso,wet
+492,Venture Fixed Platform,Canada,Atlantic Canada & Arctic,,,Fixed Platform,fixed_jacket,dry
+549,Veslefrikk A,Norway,North Sea & NW Europe,185.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+549,Veslefrikk B,Norway,North Sea & NW Europe,185.0,150-500 m (deep shelf),Semisub,semisub_fps,wet
+1197,Viking Complex,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+138,Virgo Platform,US,US Gulf of Mexico,345.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+379,Virini Prem FSO,Nigeria,West Africa,41.0,0-150 m (shallow shelf),FSO/FSU,,other
+198,Visund A,Norway,North Sea & NW Europe,335.0,150-500 m (deep shelf),FPU/FPS,semisub_fps,wet
+198,Visund North Subsea,Norway,North Sea & NW Europe,,,Subsea Tieback,subsea_tieback,wet
+1585,Vladimir Filanovsky CPP,Russian Federation,Caspian & Russia,10.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1585,Vladimir Filanovsky Platform,Russian Federation,Caspian & Russia,10.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1585,Vladimir Filanovsky Qarters Platform,Russian Federation,Caspian & Russia,10.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+902,Voyageur Spirit FPSO,UK,North Sea & NW Europe,91.0,0-150 m (shallow shelf),FPSO,fpso,wet
+1893,Wassana FSO,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),FSO/FSU,,other
+1893,Wassana Platform,Thailand,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+726,Weizhou Platform,China,Asia-Pacific,29.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1242,West Acis Wellhead Platform,Malaysia,Asia-Pacific,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+273,West Azeri Platform,Azerbaijan,Caspian & Russia,118.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+380,West Bukha Platform,Oman,Middle East,90.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+273,West Chirag Platform,Azerbaijan,Caspian & Russia,170.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1866,West Desaru FPF5,Malaysia,Asia-Pacific,,,FPSO,fpso,wet
+1866,West Desaru WHP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+700,West Seahorse MOPU,Australia,Asia-Pacific,39.0,0-150 m (shallow shelf),MOPU,,other
+1322,West Seno A TLP,Indonesia,Asia-Pacific,1021.0,500-1500 m (deepwater),TLP,tlp,dry
+1322,West Seno FPU,Indonesia,Asia-Pacific,975.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+963,West Sole Alpha Platform,UK,North Sea & NW Europe,,,Fixed Platform,fixed_jacket,dry
+320,West Tuna Platform,Australia,Asia-Pacific,61.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1107,Western Isles FPSO,UK,North Sea & NW Europe,155.0,150-500 m (deep shelf),FPSO,fpso,wet
+376,Wheatstone Platform,Australia,Asia-Pacific,200.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+376,Wheatstone Subsea,Australia,Asia-Pacific,213.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+954,Who Dat FPS,US,US Gulf of Mexico,914.0,500-1500 m (deepwater),FPU/FPS,semisub_fps,wet
+865,WHP-2,Brazil,South America & Caribbean,105.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+639,Xikomba FPSO,Angola,West Africa,1341.0,500-1500 m (deepwater),FPSO,fpso,wet
+1787,Yadana WHP 1,Myanmar,Asia-Pacific,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1787,Yadana WHP 2,Myanmar,Asia-Pacific,40.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1788,Yetagun FSO,Myanmar,Asia-Pacific,105.0,0-150 m (shallow shelf),FSO/FSU,,other
+1788,Yetagun Platform,Myanmar,Asia-Pacific,105.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+873,Yme MOPU,Norway,North Sea & NW Europe,93.0,0-150 m (shallow shelf),MOPU,,other
+622,Yoho FSO,Nigeria,West Africa,95.0,0-150 m (shallow shelf),FSO/FSU,,other
+622,Yoho Wellhead Platform I,Nigeria,West Africa,95.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+622,Yoho Wellhead Platform II,Nigeria,West Africa,95.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+591,Yolla Platform,Australia,Asia-Pacific,80.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1417,York Platform,UK,North Sea & NW Europe,43.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+359,Yttergryta Subsea,Norway,North Sea & NW Europe,297.0,150-500 m (deep shelf),Subsea Tieback,subsea_tieback,wet
+475,Yuri Korchagin FSO,Russian Federation,Caspian & Russia,13.0,0-150 m (shallow shelf),FSO/FSU,,other
+784,Zaafarana Platform,Egypt,Mediterranean & N Africa,60.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+592,Zakum Central Complex,UAE,Middle East,24.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry
+1623,Zawtika PUQ,Myanmar,Asia-Pacific,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1623,Zawtika WHP 1,Myanmar,Asia-Pacific,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1623,Zawtika WHP 2,Myanmar,Asia-Pacific,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1623,Zawtika WHP 3,Myanmar,Asia-Pacific,150.0,150-500 m (deep shelf),Fixed Platform,fixed_jacket,dry
+1730,Zetung WHP,Malaysia,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1130,Zhao Dong C4,China,Asia-Pacific,,,Fixed Platform,fixed_jacket,dry
+1712,Zora WHP,UAE,Middle East,24.0,0-150 m (shallow shelf),Fixed Platform,fixed_jacket,dry

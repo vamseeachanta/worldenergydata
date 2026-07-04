@@ -1,0 +1,427 @@
+# Regional decommissioning liability (facility-level, offshore-assets)
+# source: data/modules/offshore_assets/curated/production_facilities.csv | 836 facilities
+# modeled=421 (5 regions with a cost multiplier); unmodeled-region=414 excluded; unmapped-asset=1 (Artificial Island) excluded
+# total modeled liability = $17.5B (17,505 MUSD)
+# pricing: DecommissioningCostEstimator, weight=0, depth floor; FPSO base low-confidence
+facility_id,facility_name,country,region,asset,host_type,water_depth_m,cost_musd
+720,Aasta Hansteen Spar,Norway,ncs,spar,SPAR,1300.0,70.07
+760,Abo FPSO,Nigeria,west_africa,fpso,FPSO,550.0,92.0
+249,Agbami FPSO,Nigeria,west_africa,fpso,FPSO,1462.0,92.0
+668,Akepo FSO,Nigeria,west_africa,fpso,FSO/FSU,8.0,92.0
+252,Akpo FPSO,Nigeria,west_africa,fpso,FPSO,1325.0,92.0
+1467,Alba (EG) B2 Platform,Equatorial Guinea,west_africa,jacket,Fixed Platform,75.0,2.7312
+1467,Alba (EG) B3 Compression Platform,Equatorial Guinea,west_africa,jacket,Fixed Platform,75.0,2.7312
+226,Alba Northern Platform,UK,ukcs,jacket,Fixed Platform,158.0,3.4875
+226,Alba Southern Platform,UK,ukcs,jacket,Fixed Platform,138.0,3.3625
+477,Alen Platform,Equatorial Guinea,west_africa,jacket,Fixed Platform,530.0,5.3475
+305,Alima FPU,Congo,west_africa,fpso,FPU/FPS,1200.0,92.0
+116,Allegheny SeaStar Mini-TLP,US,gom,tlp,Mini-TLP,1005.0,42.01
+212,Alvheim FPSO,Norway,ncs,fpso,FPSO,130.0,104.0
+227,Alwyn North A Platform,UK,ukcs,jacket,Fixed Platform,126.0,3.2875
+227,Alwyn North B Platform,UK,ukcs,jacket,Fixed Platform,126.0,3.2875
+168,Amberjack Fixed Platform,US,gom,jacket,Fixed Platform,314.0,3.57
+318,Amenam Kpono Production Platform (Phase I),Nigeria,west_africa,jacket,Fixed Platform,40.0,2.53
+318,Amenam Kpono Production Platform (Phase II),Nigeria,west_africa,jacket,Fixed Platform,40.0,2.53
+783,Amethyst Platforms,UK,ukcs,jacket,Fixed Platform,30.0,2.6875
+1269,Anasuria FPSO,UK,ukcs,fpso,FPSO,0.0,100.0
+786,Andrew Platform,UK,ukcs,jacket,Fixed Platform,117.0,3.2313
+868,Anglia Fixed Platform,UK,ukcs,jacket,Fixed Platform,26.0,2.6625
+238,Aoka Mizu FPSO,UK,ukcs,fpso,FPSO,110.0,100.0
+398,Appaloosa Subsea,US,gom,subsea_tree,Subsea Tieback,853.0,2.0
+1402,Arbroath Platform,UK,ukcs,jacket,Fixed Platform,93.0,3.0812
+488,Armada Perdana FPSO,Nigeria,west_africa,fpso,FPSO,350.0,92.0
+771,Armada Platform,UK,ukcs,jacket,Fixed Platform,88.0,3.05
+477,Aseng FPSO,Equatorial Guinea,west_africa,fpso,FPSO,945.0,92.0
+357,Asgard A FPSO,Norway,ncs,fpso,FPSO,300.0,104.0
+357,Asgard B Semisubmersible,Norway,ncs,fpso,Semisub,310.0,104.0
+358,Asgard C FSO,Norway,ncs,fpso,FSO/FSU,300.0,104.0
+357,Asgard Subsea Compression,Norway,ncs,subsea_tree,Subsea Tieback,300.0,2.6
+144,Atlantis Semisub,US,gom,fpso,Semisub,2160.0,80.0
+971,Audrey,UK,ukcs,jacket,Fixed Platform,24.0,2.65
+139,Auger TLP,US,gom,tlp,TLP,872.0,41.744
+908,Auk A Platform,UK,ukcs,jacket,Fixed Platform,84.0,3.025
+348,Autonomous Re-Pumping Platform (PRA-1),Brazil,brazil,jacket,Fixed Platform,106.0,2.783
+767,Avouma Fixed Platform,Gabon,west_africa,jacket,Fixed Platform,137.0,3.0877
+622,Awawa Wellhead Platform,Nigeria,west_africa,jacket,Fixed Platform,95.0,2.8462
+551,Babbage Fixed Platform,UK,ukcs,jacket,Fixed Platform,42.0,2.7625
+1142,Balder FPU,Norway,ncs,fpso,FPU/FPS,125.0,104.0
+131,Baldpate Compliant Tower,US,gom,jacket,Compliant Tower,502.0,4.51
+778,Balmoral FPS,UK,ukcs,fpso,FPU/FPS,150.0,100.0
+766,Bardolino Subsea,UK,ukcs,subsea_tree,Subsea Tieback,92.0,2.5
+272,Barracuda FPSO P-43,Brazil,brazil,fpso,FPSO,1100.0,88.0
+323,Beatrice Alpha Platform,UK,ukcs,jacket,Fixed Platform,40.0,2.75
+323,Beatrice Bravo Platform,UK,ukcs,jacket,Fixed Platform,40.0,2.75
+1210,Benguela-Belize Lobito-Tomboco Compliant Tower,Angola,west_africa,jacket,Compliant Tower,396.0,4.577
+719,Bentley FSO,UK,ukcs,fpso,FSO/FSU,113.0,100.0
+719,Bentley Platform,UK,ukcs,jacket,Fixed Platform,113.0,3.2062
+343,Big Foot TLP,US,gom,tlp,Mini-TLP,1615.0,43.23
+319,Bleo Holm FPSO,UK,ukcs,fpso,FPSO,105.0,100.0
+119,Blind Faith Semisub,US,gom,fpso,Semisub,1981.0,80.0
+250,Bonga FPSO,Nigeria,west_africa,fpso,FPSO,1030.0,92.0
+118,Boomvang Spar Platform,US,gom,spar,SPAR,1052.0,53.156
+1143,Brae Alpha,UK,ukcs,jacket,Fixed Platform,112.0,3.2
+479,Brage Fixed Platform,Norway,ncs,jacket,Fixed Platform,140.0,3.51
+520,Breagh Alpha Platform,UK,ukcs,jacket,Fixed Platform,59.0,2.8687
+1579,Bressay FSU,UK,ukcs,fpso,FSO/FSU,102.0,100.0
+1579,Bressay PDQ,UK,ukcs,jacket,Fixed Platform,102.0,3.1375
+322,Brigantine BG Fixed Platform,UK,ukcs,jacket,Fixed Platform,29.0,2.6812
+322,Brigantine BR Fixed Platform,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+1605,BritSats BLP,UK,ukcs,jacket,Fixed Platform,148.0,3.425
+1452,Bruce CR,UK,ukcs,jacket,Fixed Platform,121.0,3.2563
+1452,Bruce D,UK,ukcs,jacket,Fixed Platform,121.0,3.2563
+1452,Bruce PUQ,UK,ukcs,jacket,Fixed Platform,121.0,3.2563
+140,Brutus TLP,US,gom,tlp,TLP,1036.0,42.072
+175,Bud Lite Platform,US,gom,jacket,Fixed Platform,84.0,2.42
+175,Bud Production Platform,US,gom,jacket,Fixed Platform,84.0,2.42
+136,Bullwinkle Fixed Platform,US,gom,jacket,Fixed Platform,412.0,4.06
+778,Burghley Subsea,UK,ukcs,subsea_tree,Subsea Tieback,0.0,2.5
+237,Buzzard Platform,UK,ukcs,jacket,Fixed Platform,100.0,3.125
+651,BW Athena FPSO,UK,ukcs,fpso,FPSO,134.0,100.0
+124,BW Pioneer FPSO,US,gom,fpso,FPSO,2690.0,80.0
+1545,Caister,UK,ukcs,jacket,Fixed Platform,41.0,2.7563
+115,Canyon Express Subsea,US,gom,subsea_tree,Subsea Tieback,2195.0,2.0
+115,Canyon Station Production Platform,US,gom,jacket,Fixed Platform,2346.0,13.73
+243,Captain FPSO,UK,ukcs,fpso,FPSO,106.0,100.0
+272,Caratinga FPSO P-48,Brazil,brazil,fpso,FPSO,1350.0,88.0
+646,Catcher FPSO,UK,ukcs,fpso,FPSO,90.0,100.0
+1105,Ceres Subsea Tieback,UK,ukcs,subsea_tree,Subsea Tieback,32.0,2.5
+1128,Cheviot Octabuoy Platform,UK,ukcs,fpso,Semisub,152.0,100.0
+274,Cidade de Angra dos Reis FPSO,Brazil,brazil,fpso,FPSO,2150.0,88.0
+536,Cidade de Ilhabela FPSO,Brazil,brazil,fpso,FPSO,2140.0,88.0
+1478,Cidade de Itajai FPSO,Brazil,brazil,fpso,FPSO,275.0,88.0
+703,Cidade de Macae FSO,Brazil,brazil,fpso,FSO/FSU,0.0,88.0
+703,Cidade de Niteroi MV18 FPSO,Brazil,brazil,fpso,FPSO,1500.0,88.0
+274,Cidade de Paraty FPSO,Brazil,brazil,fpso,FPSO,2120.0,88.0
+729,Cidade de Rio das Ostras FPSO,Brazil,brazil,fpso,FPSO,977.0,88.0
+352,Cidade de Sao Mateus FPSO,Brazil,brazil,fpso,FPSO,763.0,88.0
+536,Cidade de Sao Paulo FPSO,Brazil,brazil,fpso,FPSO,2141.0,88.0
+274,Cidade de Sao Vicente FPSO,Brazil,brazil,fpso,FPSO,2170.0,88.0
+364,Cidade de Vitoria FPSO,Brazil,brazil,fpso,FPSO,1400.0,88.0
+282,Cidade do Rio de Janeiro FPSO,Brazil,brazil,fpso,FPSO,0.0,88.0
+242,Clair Platform,UK,ukcs,jacket,Fixed Platform,140.0,3.375
+242,Clair Ridge Drilling Platform,UK,ukcs,jacket,Fixed Platform,140.0,3.375
+242,Clair Ridge PUQ,UK,ukcs,jacket,Fixed Platform,140.0,3.375
+1700,Claymore Platform,UK,ukcs,jacket,Fixed Platform,111.0,3.1938
+404,Clipper South Platform,UK,ukcs,jacket,Fixed Platform,24.0,2.65
+354,Clipper Subsea Tie-Back,US,gom,subsea_tree,Subsea Tieback,1055.0,2.0
+324,CLOV FPSO,Angola,west_africa,fpso,FPSO,0.0,92.0
+1095,Clyde,UK,ukcs,jacket,Fixed Platform,79.0,2.9937
+137,Cognac Fixed Platform,US,gom,jacket,Fixed Platform,312.0,3.56
+150,Constitution Truss Spar,US,gom,spar,SPAR,1554.0,54.662
+1108,Conwy Platform,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+227,Cormorant Alpha Platform,UK,ukcs,jacket,Fixed Platform,126.0,3.2875
+579,Corral Platform (Formerly Crystal),US,gom,jacket,Fixed Platform,619.0,5.095
+695,Crawford Subsea Tieback,UK,ukcs,subsea_tree,Subsea Tieback,117.0,2.5
+514,Cygnus Complex,UK,ukcs,jacket,Fixed Platform,23.0,2.6438
+248,Dalia FPSO,Angola,west_africa,fpso,FPSO,1500.0,92.0
+1253,Delta House FPU,US,gom,fpso,FPU/FPS,1371.0,80.0
+152,Devils Tower SPAR Platform,US,gom,spar,SPAR,1710.0,55.13
+1108,Douglas Platform,UK,ukcs,jacket,Fixed Platform,33.0,2.7062
+799,Draugen,Norway,ncs,jacket,Fixed Platform,250.0,4.225
+136,Droshky Subsea,US,gom,subsea_tree,Subsea Tieback,884.0,2.0
+227,Dunbar Platform,UK,ukcs,jacket,Fixed Platform,145.0,3.4062
+1149,Dunlin Alpha Platform,UK,ukcs,jacket,Fixed Platform,152.0,3.45
+695,East Brae Platform,UK,ukcs,jacket,Fixed Platform,113.0,3.2062
+170,East Breaks 110 Fixed Platform,US,gom,jacket,Fixed Platform,213.0,3.065
+1843,East Hub FPSO,Angola,west_africa,fpso,FPSO,500.0,92.0
+767,Ebouri Production Platform,Gabon,west_africa,jacket,Fixed Platform,0.0,2.3
+156,EC 373,US,gom,jacket,Fixed Platform,670.0,5.35
+662,Egina FPSO,Nigeria,west_africa,fpso,FPSO,1600.0,92.0
+822,Eider Platform,UK,ukcs,jacket,Fixed Platform,159.0,3.4937
+556,Ekofisk 2/4 Z,Norway,ncs,jacket,Fixed Platform,75.0,3.0875
+556,Ekofisk Center,Norway,ncs,jacket,Fixed Platform,75.0,3.0875
+556,Ekofisk South Wellhead Platform,Norway,ncs,jacket,Fixed Platform,75.0,3.0875
+556,Eldfisk 2/7 B,Norway,ncs,jacket,Fixed Platform,75.0,3.0875
+556,Eldfisk 2/7A,Norway,ncs,jacket,Fixed Platform,75.0,3.0875
+287,Elgin Platform,UK,ukcs,jacket,Fixed Platform,93.0,3.0812
+287,Elgin PUQ,UK,ukcs,jacket,Fixed Platform,93.0,3.0812
+737,Ellen Platform,US,gom,jacket,Fixed Platform,81.0,2.405
+737,Elly Platform,US,gom,jacket,Fixed Platform,81.0,2.405
+155,Enchilada Fixed Platform,US,gom,jacket,Fixed Platform,215.0,3.075
+1190,EnQuest Producer,UK,ukcs,fpso,FPSO,74.0,100.0
+658,Erha FPSO,Nigeria,west_africa,fpso,FPSO,1200.0,92.0
+282,Espadarte FPSO,Brazil,brazil,fpso,FPSO,850.0,88.0
+365,Espirito Santo FPSO,Brazil,brazil,fpso,FPSO,1780.0,88.0
+737,Eureka Platform,US,gom,jacket,Fixed Platform,213.0,3.065
+483,EW 910 Platform A,US,gom,jacket,Fixed Platform,168.0,2.84
+1111,Falcon Subsea,UK,ukcs,subsea_tree,Subsea Tieback,0.0,2.5
+443,Forties Alpha Fixed Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Alpha Satellite Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Bravo Fixed Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Charlie Fixed Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Delta Fixed Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Echo Fixed Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+443,Forties Unity Riser Platform,UK,ukcs,jacket,Fixed Platform,107.0,3.1688
+586,FPF-1,UK,ukcs,fpso,FPU/FPS,85.0,100.0
+313,Frade FPSO,Brazil,brazil,fpso,FPSO,1128.0,88.0
+287,Franklin Platform,UK,ukcs,jacket,Fixed Platform,93.0,3.0812
+120,Front Runner SPAR,US,gom,spar,SPAR,1006.0,53.018
+410,Fulla Subsea,Norway,ncs,subsea_tree,Subsea Tieback,111.0,2.6
+908,Fulmar A Platform,UK,ukcs,jacket,Fixed Platform,81.0,3.0063
+1029,Fyne Production Facility,UK,ukcs,fpso,FPSO,283.0,100.0
+361,Gamma Subsea,Norway,ncs,subsea_tree,Subsea Tieback,226.0,2.6
+169,GB 236 Platform,US,gom,jacket,Fixed Platform,209.0,3.045
+159,Genesis SPAR Platform,US,gom,spar,SPAR,790.0,52.37
+306,Gimboa FPSO,Angola,west_africa,fpso,FPSO,700.0,92.0
+821,Gina Krog FSO,Norway,ncs,fpso,FSO/FSU,120.0,104.0
+821,Gina Krog Platform,Norway,ncs,jacket,Fixed Platform,119.0,3.3735
+325,Girassol FPSO,Angola,west_africa,fpso,FPSO,1350.0,92.0
+286,Gjoa FPU,Norway,ncs,fpso,FPU/FPS,360.0,104.0
+629,Global Producer III FPSO,UK,ukcs,fpso,FPSO,140.0,100.0
+157,Global Producer VII Truss Spar,US,gom,spar,SPAR,945.0,52.835
+924,Golden Eagle PUQ,UK,ukcs,jacket,Fixed Platform,114.0,3.2125
+924,Golden Eagle WHP,UK,ukcs,jacket,Fixed Platform,114.0,3.2125
+309,Goldeneye FSO,UK,ukcs,fpso,FSO/FSU,122.0,100.0
+400,Goliat FPSO,Norway,ncs,fpso,FPSO,400.0,104.0
+161,Gomez Hub (ATP Innovator),US,gom,fpso,FPU/FPS,914.0,80.0
+1526,Grane Platform,Norway,ncs,jacket,Fixed Platform,127.0,3.4255
+1390,Greater Plutonio FPSO,Angola,west_africa,fpso,FPSO,1450.0,92.0
+1529,Gryphon Alpha FPSO,UK,ukcs,fpso,FPSO,112.0,100.0
+374,Gudrun Platform,Norway,ncs,jacket,Fixed Platform,110.0,3.315
+198,Gullfaks A Platform,Norway,ncs,jacket,Fixed Platform,138.0,3.497
+198,Gullfaks B Platform,Norway,ncs,jacket,Fixed Platform,143.0,3.5295
+198,Gullfaks C Platform,Norway,ncs,jacket,Fixed Platform,143.0,3.5295
+1420,Gyda PDQ,Norway,ncs,jacket,Fixed Platform,66.0,3.029
+723,Haewene Brim FPSO,UK,ukcs,fpso,FPSO,85.0,100.0
+1533,Harding Platform,UK,ukcs,jacket,Fixed Platform,111.0,3.1938
+347,Harmony Fixed Platform,US,gom,jacket,Fixed Platform,365.0,3.825
+1738,Heather A Platform,UK,ukcs,jacket,Fixed Platform,144.0,3.4
+427,Heidelberg Spar,US,gom,spar,SPAR,1608.0,54.824
+437,Heidrun FSU,Norway,ncs,fpso,FSO/FSU,351.0,104.0
+437,Heidrun TLP,Norway,ncs,tlp,TLP,351.0,52.9126
+1698,Heimdal Gas Center,Norway,ncs,jacket,Fixed Platform,122.0,3.393
+607,Helix Producer I,US,gom,fpso,FPU/FPS,2679.0,80.0
+347,Heritage Fixed Platform,US,gom,jacket,Fixed Platform,328.0,3.64
+1515,High Island A Platform,US,gom,jacket,Fixed Platform,11.0,2.055
+1515,High Island B Platform,US,gom,jacket,Fixed Platform,11.0,2.055
+307,Holstein Spar Platform,US,gom,spar,SPAR,1324.0,53.972
+347,Hondo Fixed Platform,US,gom,jacket,Fixed Platform,259.0,3.295
+315,Hoover Deep Draft Caisson Vessel platform (DDCV),US,gom,spar,DDCV,1420.0,54.26
+146,Horn Mountain SPAR Platform,US,gom,spar,SPAR,1653.0,54.959
+549,Huldra Wellhead Platform,Norway,ncs,jacket,Fixed Platform,125.0,3.4125
+378,Hummingbird Spirit FPSO,UK,ukcs,fpso,FPSO,120.0,100.0
+434,Inde AC Platform,UK,ukcs,jacket,Fixed Platform,23.0,2.6438
+121,Independence Hub Semisub,US,gom,fpso,Semisub,2700.0,80.0
+1252,Ivar Aasen (Draupne) Platform,Norway,ncs,jacket,Fixed Platform,111.0,3.3215
+340,Jack/St. Malo FPU,US,gom,fpso,FPU/FPS,2134.0,80.0
+323,Jacky Platform,UK,ukcs,jacket,Fixed Platform,40.0,2.75
+316,Janice A Platform,UK,ukcs,fpso,FPU/FPS,90.0,100.0
+675,Jasmine WHP,UK,ukcs,jacket,Fixed Platform,80.0,3.0
+1424,Jotun A FPSO,Norway,ncs,fpso,FPSO,126.0,104.0
+1424,Jotun B,Norway,ncs,jacket,Fixed Platform,126.0,3.419
+675,Judy,UK,ukcs,jacket,Fixed Platform,80.0,3.0
+764,Juscelino Kubitschek Petrobras-34,Brazil,brazil,fpso,FPSO,1300.0,88.0
+130,K2 Subsea,US,gom,subsea_tree,Subsea Tieback,1189.0,2.0
+1854,Kaombo FPSO 1,Angola,west_africa,fpso,FPSO,1600.0,92.0
+1854,Kaombo FPSO 2,Angola,west_africa,fpso,FPSO,1600.0,92.0
+1545,Katy Satellite Platform,UK,ukcs,jacket,Fixed Platform,26.0,2.6625
+1881,Ketch Platform,UK,ukcs,jacket,Fixed Platform,50.0,2.8125
+639,Kizomba A FPSO,Angola,west_africa,fpso,FPSO,1203.0,92.0
+639,Kizomba B FPSO,Angola,west_africa,fpso,FPSO,1036.0,92.0
+639,Kizomba C FPSO,Angola,west_africa,fpso,FPSO,732.0,92.0
+301,Knarr (Jordbaer) FPSO,Norway,ncs,fpso,FPSO,400.0,104.0
+406,Knock Allan FPSO,Gabon,west_africa,fpso,FPSO,50.0,92.0
+412,Kraken FPSO,UK,ukcs,fpso,FPSO,120.0,100.0
+202,Kristin Semisub,Norway,ncs,fpso,Semisub,370.0,104.0
+451,Kungulo Water Injection Platform,Angola,west_africa,jacket,Fixed Platform,40.0,2.53
+1425,Kvitebjorn Platform,Norway,ncs,jacket,Fixed Platform,190.0,3.835
+382,Kwame Nkrumah MV21 FPSO,Ghana,west_africa,fpso,FPSO,1100.0,92.0
+653,Laggan-Tormore Subsea Tie-back,UK,ukcs,subsea_tree,Subsea Tieback,600.0,2.5
+663,Lapa FPSO,Brazil,brazil,fpso,FPSO,2000.0,88.0
+1801,Litchendjili Platform,Congo,west_africa,jacket,Fixed Platform,30.0,2.4725
+1250,Liverpool Bay FSO,UK,ukcs,fpso,FSO/FSU,33.0,100.0
+912,Lomond,UK,ukcs,jacket,Fixed Platform,86.0,3.0375
+572,Lucius Spar,US,gom,spar,SPAR,2172.0,56.516
+573,Luno Platform,Norway,ncs,jacket,Fixed Platform,108.0,3.302
+148,Mad Dog Spar,US,gom,spar,SPAR,1311.0,53.933
+330,Maersk Curlew FPSO,UK,ukcs,fpso,FPSO,92.0,100.0
+451,Mafumeira Norte,Angola,west_africa,jacket,Fixed Platform,49.0,2.5817
+451,Mafumeira Norte Platform,Angola,west_africa,jacket,Fixed Platform,49.0,2.5817
+151,Magnolia TLP,US,gom,tlp,TLP,1433.0,42.866
+1514,Main Pass 108 Platform,US,gom,jacket,Fixed Platform,25.0,2.125
+1516,Main Pass 98 Platform,US,gom,jacket,Fixed Platform,28.0,2.14
+1254,Manati Platform,Brazil,brazil,jacket,Fixed Platform,46.0,2.453
+130,Marco Polo TLP,US,gom,tlp,TLP,1311.0,42.622
+1110,Mariner FSU,UK,ukcs,fpso,FSO/FSU,110.0,100.0
+1110,Mariner PDQ,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+371,Marlim Sul (South) FPSO,Brazil,brazil,fpso,FPSO,1430.0,88.0
+147,Marlin TLP,US,gom,tlp,TLP,986.0,41.972
+141,Mars B Olympus TLP,US,gom,tlp,TLP,914.0,41.828
+758,Mars TLP,US,gom,tlp,TLP,896.0,41.792
+461,Martin Linge (Hild) Platform,Norway,ncs,jacket,Fixed Platform,120.0,3.38
+171,Matterhorn TLP,US,gom,tlp,TLP,869.0,41.738
+158,Medusa Spar Facility,US,gom,spar,SPAR,762.0,52.286
+305,Moho Nord TLP,Congo,west_africa,tlp,TLP,780.0,47.794
+305,Moho-Bilondo FPU,Congo,west_africa,fpso,FPU/FPS,1100.0,92.0
+1402,Montrose Alpha,UK,ukcs,jacket,Fixed Platform,91.0,3.0688
+153,Morpeth TLP,US,gom,tlp,Mini-TLP,518.0,41.036
+1391,Murchison Unit,Norway,ncs,jacket,Fixed Platform,156.0,3.614
+1545,Murdoch Complex,UK,ukcs,jacket,Fixed Platform,32.0,2.7
+126,Na Kika FPU,US,gom,fpso,FPU/FPS,2000.0,80.0
+166,Nansen Spar,US,gom,spar,SPAR,1120.0,53.36
+304,Natalia Subsea,Norway,ncs,subsea_tree,Subsea Tieback,299.0,2.6
+1532,Navion Saga,Norway,ncs,fpso,FSO/FSU,80.0,104.0
+766,Nelson Platform,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+176,Neptune SPAR,US,gom,spar,SPAR,588.0,51.764
+123,Neptune TLP,US,gom,tlp,TLP,1295.0,42.59
+1393,Ninian,UK,ukcs,jacket,Fixed Platform,135.0,3.3438
+1393,Ninian Central,UK,ukcs,jacket,Fixed Platform,139.0,3.3688
+1393,Ninian South,UK,ukcs,jacket,Fixed Platform,139.0,3.3688
+705,Njord A,Norway,ncs,fpso,FPU/FPS,330.0,104.0
+1612,Nkossa Platform,Congo,west_africa,fpso,FPU/FPS,305.0,92.0
+1449,Norne FPSO,Norway,ncs,fpso,FPSO,380.0,104.0
+1111,North Cormorant Platform,UK,ukcs,jacket,Fixed Platform,530.0,5.8125
+1296,North Nemba,Angola,west_africa,jacket,Fixed Platform,120.0,2.99
+300,North Sea Producer FPSO,UK,ukcs,fpso,FPSO,125.0,100.0
+345,Northern Producer FPU,UK,ukcs,fpso,FPU/FPS,152.0,100.0
+582,Northstar Sea Island,US,gom,subsea_tree,Subsea Tieback,12.0,2.0
+227,Nuggets Subsea,UK,ukcs,subsea_tree,Subsea Tieback,125.0,2.5
+1408,Ofon 2,Nigeria,west_africa,jacket,Fixed Platform,40.0,2.53
+1408,Ofon AMD1,Nigeria,west_africa,jacket,Fixed Platform,40.0,2.53
+1159,Okoro FPSO,Nigeria,west_africa,fpso,FPSO,0.0,92.0
+1159,Okoro Further Field Development WHP,Nigeria,west_africa,jacket,Fixed Platform,0.0,2.3
+1159,Okoro MOPU,Nigeria,west_africa,jacket,MOPU,0.0,2.3
+1159,Okoro Platform,Nigeria,west_africa,jacket,Fixed Platform,0.0,2.3
+296,Okume/Ebano TLP,Equatorial Guinea,west_africa,tlp,TLP,500.0,47.15
+406,Olowi Platform 1,Gabon,west_africa,jacket,Fixed Platform,50.0,2.5875
+406,Olowi Platform 2,Gabon,west_africa,jacket,Fixed Platform,50.0,2.5875
+406,Olowi Platform 3,Gabon,west_africa,jacket,Fixed Platform,50.0,2.5875
+406,Olowi Platform 4,Gabon,west_africa,jacket,Fixed Platform,50.0,2.5875
+555,Oooguruk Subsea Tieback,US,gom,subsea_tree,Subsea Tieback,2.0,2.0
+222,Ormen Lange Subsea,Norway,ncs,subsea_tree,Subsea Tieback,850.0,2.6
+479,Oseberg A Fixed Platform,Norway,ncs,jacket,Fixed Platform,100.0,3.25
+479,Oseberg B Fixed Platform,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+479,Oseberg C Fixed Platform,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+479,Oseberg D Fixed Platform,Norway,ncs,jacket,Fixed Platform,100.0,3.25
+479,Oseberg South (Sor) Fixed Platform,Norway,ncs,jacket,Fixed Platform,100.0,3.25
+479,Oseberg Vestflanken Subsea,Norway,ncs,subsea_tree,Subsea Tieback,0.0,2.6
+1223,OSX-1 FPSO,Brazil,brazil,fpso,FPSO,130.0,88.0
+1223,OSX-2 FPSO,Brazil,brazil,fpso,FPSO,0.0,88.0
+865,OSX-3 FPSO,Brazil,brazil,fpso,FPSO,105.0,88.0
+296,Oveng TLP,Equatorial Guinea,west_africa,tlp,TLP,280.0,46.644
+299,P-18 Semisub,Brazil,brazil,fpso,Semisub,910.0,88.0
+299,P-19 Semisub,Brazil,brazil,fpso,Semisub,940.0,88.0
+299,P-20 Semisub,Brazil,brazil,fpso,Semisub,700.0,88.0
+299,P-26 Semisub,Brazil,brazil,fpso,Semisub,990.0,88.0
+299,P-32 FPSO,Brazil,brazil,fpso,FPSO,160.0,88.0
+299,P-33 FPSO,Brazil,brazil,fpso,FPSO,330.0,88.0
+299,P-35 FPSO,Brazil,brazil,fpso,FPSO,860.0,88.0
+299,P-37 FPSO,Brazil,brazil,fpso,FPSO,905.0,88.0
+371,P-38 Semisub,Brazil,brazil,fpso,Semisub,0.0,88.0
+371,P-40 Semisub,Brazil,brazil,fpso,Semisub,0.0,88.0
+299,P-47 FPSO,Brazil,brazil,fpso,FPSO,189.0,88.0
+371,P-51 FPU,Brazil,brazil,fpso,FPU/FPS,1650.0,88.0
+348,P-52 Semisub,Brazil,brazil,fpso,Semisub,1800.0,88.0
+703,P-53 FPU,Brazil,brazil,fpso,FPU/FPS,1080.0,88.0
+348,P-54 FPSO,Brazil,brazil,fpso,FPSO,1400.0,88.0
+348,P-55 Semisub,Brazil,brazil,fpso,Semisub,1795.0,88.0
+371,P-56 Semisub,Brazil,brazil,fpso,Semisub,1650.0,88.0
+764,P-57 FPSO,Brazil,brazil,fpso,FPSO,1300.0,88.0
+282,P-58 FPSO,Brazil,brazil,fpso,FPSO,1400.0,88.0
+568,P-61 TLP,Brazil,brazil,tlp,Mini-TLP,1200.0,46.64
+568,P-61 TLWP,Brazil,brazil,tlp,Mini-TLP,1200.0,46.64
+348,P-62 FPSO,Brazil,brazil,fpso,FPSO,1545.0,88.0
+568,P-63 FPSO,Brazil,brazil,fpso,FPSO,0.0,88.0
+1474,P-76 FPSO,Brazil,brazil,fpso,FPSO,1860.0,88.0
+1474,P-77 FPSO,Brazil,brazil,fpso,FPSO,1860.0,88.0
+326,Pazflor FPSO,Angola,west_africa,fpso,FPSO,762.0,92.0
+125,Perdido SPAR Platform,US,gom,spar,SPAR,2377.0,57.131
+432,Peregrino FPSO,Brazil,brazil,fpso,FPSO,120.0,88.0
+432,Peregrino Wellhead Platform A,Brazil,brazil,jacket,Fixed Platform,120.0,2.86
+432,Peregrino Wellhead Platform B,Brazil,brazil,jacket,Fixed Platform,120.0,2.86
+1129,Perth FPSO,UK,ukcs,fpso,FPSO,127.0,100.0
+1145,Petrojarl Banff FPSO,UK,ukcs,fpso,FPSO,89.0,100.0
+436,Petrojarl Foinaven FPSO,UK,ukcs,fpso,FPSO,450.0,100.0
+194,Petrojarl I FPSO,Norway,ncs,fpso,FPSO,100.0,104.0
+664,Petrojarl Varg FPSO,Norway,ncs,fpso,FPSO,84.0,104.0
+767,Petroleo Nautipa FPSO,Gabon,west_africa,fpso,FPSO,137.0,92.0
+117,Petronius Compliant Tower,US,gom,jacket,Compliant Tower,535.0,4.675
+805,Pickerill A Platform,UK,ukcs,jacket,Fixed Platform,21.0,2.6313
+1348,Piranema Spirit FPSO,Brazil,brazil,fpso,FPSO,1600.0,88.0
+1512,Polvo A Platform,Brazil,brazil,jacket,Fixed Platform,85.0,2.6675
+1512,Polvo FPSO,Brazil,brazil,fpso,FPSO,85.0,88.0
+162,Pompano Production Platform,US,gom,jacket,Fixed Platform,393.0,3.965
+186,Prince TLP,US,gom,tlp,TLP,454.0,40.908
+253,PSVM FPSO,Angola,west_africa,fpso,FPSO,2000.0,92.0
+627,Quad 204 FPSO,UK,ukcs,fpso,FPSO,400.0,100.0
+188,Ram Powell TLP,US,gom,tlp,TLP,980.0,41.96
+173,Red Hawk SPAR Platform,US,gom,spar,SPAR,1615.0,54.845
+247,Rosa Subsea,Angola,west_africa,subsea_tree,Subsea Tieback,1350.0,2.3
+413,Rosebank,UK,ukcs,fpso,FPSO,1128.0,100.0
+155,Salsa FIxed Platform,US,gom,jacket,Fixed Platform,453.0,4.265
+1700,Scapa Subsea,UK,ukcs,subsea_tree,Subsea Tieback,111.0,2.5
+627,Schiehallion FPSO,UK,ukcs,fpso,FPSO,400.0,100.0
+909,Schooner Platform,UK,ukcs,jacket,Fixed Platform,71.0,2.9438
+1693,Scott Platform,UK,ukcs,jacket,Fixed Platform,142.0,3.3875
+764,Seillean FPSO,Brazil,brazil,fpso,FPSO,1365.0,88.0
+295,Sendje Ceiba FPSO,Equatorial Guinea,west_africa,fpso,FPSO,2200.0,92.0
+133,Shenzi TLP,US,gom,tlp,TLP,1341.0,42.682
+203,Sigyn Subsea,Norway,ncs,subsea_tree,Subsea Tieback,70.0,2.6
+373,Skarv FPSO,Norway,ncs,fpso,FPSO,391.0,104.0
+374,Sleipner A,Norway,ncs,jacket,Fixed Platform,80.0,3.12
+374,Sleipner B,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+374,Sleipner T,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+223,Snohvit Subsea,Norway,ncs,subsea_tree,Subsea Tieback,340.0,2.6
+204,Snorre A TLP,Norway,ncs,tlp,TLP,350.0,52.91
+204,Snorre B Platform,Norway,ncs,fpso,Semisub,0.0,104.0
+1296,SNX Platform,Angola,west_africa,jacket,Fixed Platform,118.0,2.9785
+1113,Solan Platform,UK,ukcs,jacket,Fixed Platform,135.0,3.3438
+1463,South Morecambe Cluster,UK,ukcs,jacket,Fixed Platform,32.0,2.7
+1296,South Nemba,Angola,west_africa,jacket,Fixed Platform,119.0,2.9842
+140,South Timbalier 301,US,gom,jacket,Fixed Platform,101.0,2.505
+419,Spectacular Bid (GB 72 Platform A),US,gom,jacket,Fixed Platform,541.0,4.705
+1338,SS349 A Platform,US,gom,jacket,Fixed Platform,113.0,2.565
+128,Stampede TLP,US,gom,fpso,FPU/FPS,1000.0,80.0
+208,Statfjord A Platform,Norway,ncs,jacket,Fixed Platform,150.0,3.575
+208,Statfjord B Platform,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+208,Statfjord C Platform,Norway,ncs,jacket,Fixed Platform,290.0,4.485
+350,Stones FPSO,US,gom,fpso,FPSO,2896.0,80.0
+127,Tahiti Spar Platform,US,gom,spar,SPAR,1339.0,54.017
+1324,Takula Platform,Angola,west_africa,jacket,Fixed Platform,57.0,2.6277
+1146,Tartan Platform,UK,ukcs,jacket,Fixed Platform,138.0,3.3625
+407,Telemark Hub (ATP Titan),US,gom,fpso,FPU/FPS,1201.0,80.0
+1038,TEN FPSO,Ghana,west_africa,fpso,FPSO,1425.0,92.0
+1503,Tern Alpha Platform,UK,ukcs,jacket,Fixed Platform,167.0,3.5438
+1312,Thistle Alpha Platform,UK,ukcs,jacket,Fixed Platform,160.0,3.5
+368,Thunder Hawk FPU,US,gom,fpso,FPU/FPS,1850.0,80.0
+129,Thunder Horse Semisub,US,gom,fpso,Semisub,1841.0,80.0
+1392,Tiffany Platform,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+539,Tombua Landana Compliant Tower,Angola,west_africa,jacket,Compliant Tower,369.0,4.4217
+1028,Triton FPSO,UK,ukcs,fpso,FPSO,91.0,100.0
+770,Troll A,Norway,ncs,jacket,Fixed Platform,340.0,4.81
+770,Troll B & C,Norway,ncs,fpso,Semisub,350.0,104.0
+353,Tubular Bells FPS,US,gom,fpso,FPU/FPS,1311.0,80.0
+479,Tune South (Sor) Subsea,Norway,ncs,subsea_tree,Subsea Tieback,0.0,2.6
+479,Tune Subsea,Norway,ncs,subsea_tree,Subsea Tieback,95.0,2.6
+317,Tyrihans Subsea,Norway,ncs,subsea_tree,Subsea Tieback,270.0,2.6
+433,Ula Fixed Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+318,Unity FSO,Nigeria,west_africa,fpso,FSO/FSU,40.0,92.0
+149,Ursa TLP,US,gom,tlp,TLP,1222.0,42.444
+341,Usan FPSO,Nigeria,west_africa,fpso,FPSO,750.0,92.0
+1104,Valemon Fixed Platform,Norway,ncs,jacket,Fixed Platform,0.0,2.6
+462,Valhall Flank North Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+462,Valhall Flank South Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+462,Valhall Production Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+462,Valhall Quarters Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+462,Valhall Water Injection Platform,Norway,ncs,jacket,Fixed Platform,70.0,3.055
+664,Varg Wellhead Platform,Norway,ncs,jacket,Fixed Platform,84.0,3.146
+379,Veer Prem MOPU,Nigeria,west_africa,fpso,Semisub,41.0,92.0
+549,Veslefrikk A,Norway,ncs,jacket,Fixed Platform,185.0,3.8025
+549,Veslefrikk B,Norway,ncs,fpso,Semisub,185.0,104.0
+1197,Viking Complex,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+138,Virgo Platform,US,gom,jacket,Fixed Platform,345.0,3.725
+379,Virini Prem FSO,Nigeria,west_africa,fpso,FSO/FSU,41.0,92.0
+198,Visund A,Norway,ncs,fpso,FPU/FPS,335.0,104.0
+198,Visund North Subsea,Norway,ncs,subsea_tree,Subsea Tieback,0.0,2.6
+902,Voyageur Spirit FPSO,UK,ukcs,fpso,FPSO,91.0,100.0
+963,West Sole Alpha Platform,UK,ukcs,jacket,Fixed Platform,0.0,2.5
+1107,Western Isles FPSO,UK,ukcs,fpso,FPSO,155.0,100.0
+954,Who Dat FPS,US,gom,fpso,FPU/FPS,914.0,80.0
+865,WHP-2,Brazil,brazil,jacket,Fixed Platform,105.0,2.7775
+639,Xikomba FPSO,Angola,west_africa,fpso,FPSO,1341.0,92.0
+873,Yme MOPU,Norway,ncs,jacket,MOPU,93.0,3.2045
+622,Yoho FSO,Nigeria,west_africa,fpso,FSO/FSU,95.0,92.0
+622,Yoho Wellhead Platform I,Nigeria,west_africa,jacket,Fixed Platform,95.0,2.8462
+622,Yoho Wellhead Platform II,Nigeria,west_africa,jacket,Fixed Platform,95.0,2.8462
+1417,York Platform,UK,ukcs,jacket,Fixed Platform,43.0,2.7687
+359,Yttergryta Subsea,Norway,ncs,subsea_tree,Subsea Tieback,297.0,2.6

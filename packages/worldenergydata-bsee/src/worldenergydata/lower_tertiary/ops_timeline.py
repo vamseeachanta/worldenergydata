@@ -74,7 +74,11 @@ WAR_ACTIVITY_LABELS = {
 # Activity codes that constitute a "critical operation" that moves field value:
 #   - first production of a well (well-added) -> derived from OGOR, not WAR
 #   - workover / recompletion / re-entry / sidetrack -> WAR
-INTERVENTION_CODES = {"WO", "REC", "ST"}
+#   - temporary abandonment / plug & abandon (Abandon-stage milestones) -> WAR;
+#     WAR_ACTIVITY_LABELS maps TA -> "Temporary abandonment" and
+#     PA -> "Plug & abandon" so build_operations_timeline() emits the
+#     decommissioning / Abandon stage of the field life-cycle.
+INTERVENTION_CODES = {"WO", "REC", "ST", "TA", "PA"}
 
 
 # ---------------------------------------------------------------------------
