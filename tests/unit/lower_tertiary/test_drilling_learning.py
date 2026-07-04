@@ -15,7 +15,9 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from worldenergydata.lower_tertiary.drilling_learning import compute_learning  # noqa: E402
+from worldenergydata.lower_tertiary.drilling_learning import (  # noqa: E402
+    compute_learning,
+)
 
 
 def _field(name, days, tvds, start="2010-01-01"):
@@ -38,9 +40,9 @@ def _verdict_for(res, field):
 def test_learn_stepout_flat_verdicts():
     # Constant TVD (10,000 ft) so dpk change tracks drill-days change directly.
     tvd = [10000] * 4
-    learn = _field("Learner", [40, 40, 20, 20], tvd)      # 40 -> 20 dpk => -50%
-    stepout = _field("Stepout", [20, 20, 40, 40], tvd)    # 20 -> 40 dpk => +100%
-    flat = _field("Flat", [40, 40, 41, 41], tvd)          # ~+2.5% => flat
+    learn = _field("Learner", [40, 40, 20, 20], tvd)  # 40 -> 20 dpk => -50%
+    stepout = _field("Stepout", [20, 20, 40, 40], tvd)  # 20 -> 40 dpk => +100%
+    flat = _field("Flat", [40, 40, 41, 41], tvd)  # ~+2.5% => flat
     df = pd.concat([learn, stepout, flat], ignore_index=True)
 
     res = compute_learning(df)
@@ -70,8 +72,8 @@ def test_per_field_sorted_by_dpk_delta():
     tvd = [10000] * 4
     df = pd.concat(
         [
-            _field("A", [20, 20, 40, 40], tvd),   # +100%
-            _field("B", [40, 40, 20, 20], tvd),   # -50%
+            _field("A", [20, 20, 40, 40], tvd),  # +100%
+            _field("B", [40, 40, 20, 20], tvd),  # -50%
         ],
         ignore_index=True,
     )

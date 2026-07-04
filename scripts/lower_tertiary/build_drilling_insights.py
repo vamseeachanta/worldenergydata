@@ -44,7 +44,12 @@ from worldenergydata.lower_tertiary.drilling_learning import (  # noqa: E402
 
 DEFAULT_SOURCE = (
     PROJECT_ROOT
-    / "docs" / "modules" / "bsee" / "analysis" / "production" / "FDAS_V30"
+    / "docs"
+    / "modules"
+    / "bsee"
+    / "analysis"
+    / "production"
+    / "FDAS_V30"
     / "drilling_and_completion_days.xlsx"
 )
 REPORTS_DIR = PROJECT_ROOT / "reports" / "lower_tertiary"
@@ -121,7 +126,9 @@ def compute_stats(df: pd.DataFrame) -> dict:
 
     # deepest / fastest / slowest (only among wells with a derivable drill_days)
     dd = df.dropna(subset=["drill_days"])
-    deepest = dd.dropna(subset=["MAX_WELL_BORE_TVD"]).nlargest(1, "MAX_WELL_BORE_TVD").iloc[0]
+    deepest = (
+        dd.dropna(subset=["MAX_WELL_BORE_TVD"]).nlargest(1, "MAX_WELL_BORE_TVD").iloc[0]
+    )
     fastest = dd.nsmallest(5, "drill_days")
     slowest = dd.nlargest(5, "drill_days")
 
@@ -197,8 +204,18 @@ def esc(s) -> str:
 # Inline-SVG chart builders (class-styled so the page CSS themes them)
 # --------------------------------------------------------------------------- #
 def svg_scatter(
-    xs, ys, *, x_dom, y_dom, x_label, y_label, title, fit=None,
-    highlight=None, width=760, height=430,
+    xs,
+    ys,
+    *,
+    x_dom,
+    y_dom,
+    x_label,
+    y_label,
+    title,
+    fit=None,
+    highlight=None,
+    width=760,
+    height=430,
 ):
     ml, mr, mt, mb = 66, 22, 20, 52
     pw, ph = width - ml - mr, height - mt - mb
@@ -236,7 +253,7 @@ def svg_scatter(
         )
         parts.append(
             f'<text x="{xx:.1f}" y="{mt+ph+18:.1f}" class="tick" text-anchor="middle">'
-            f'{_n(t/1000,1)}k</text>'
+            f"{_n(t/1000,1)}k</text>"
         )
     # axes
     parts.append(
@@ -327,11 +344,11 @@ def svg_diverging_barh(rows, *, title, width=760, bar_h=24):
     # header direction labels
     parts.append(
         f'<text x="{cx-8:.0f}" y="{mt-16:.0f}" class="divhdr" text-anchor="end">'
-        f'&#8592; faster (learning)</text>'
+        f"&#8592; faster (learning)</text>"
     )
     parts.append(
         f'<text x="{cx+8:.0f}" y="{mt-16:.0f}" class="divhdr warm" text-anchor="start">'
-        f'slower (step-out) &#8594;</text>'
+        f"slower (step-out) &#8594;</text>"
     )
     y_bot = mt + n * (bar_h + 8) - 8 + bar_h
     parts.append(
@@ -754,8 +771,11 @@ def render_html(s: dict, source: Path) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", default=str(DEFAULT_SOURCE),
-                        help="Path to drilling_and_completion_days.xlsx")
+    parser.add_argument(
+        "--source",
+        default=str(DEFAULT_SOURCE),
+        help="Path to drilling_and_completion_days.xlsx",
+    )
     args = parser.parse_args(argv)
 
     source = Path(args.source)
