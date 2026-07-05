@@ -1,0 +1,313 @@
+{
+  "concept_mix": {
+    "brazil": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 4
+    },
+    "canada": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 3
+    },
+    "eia_us": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 3
+    },
+    "gom": {
+      "dry": 0,
+      "subsea15": 1,
+      "subsea20": 3,
+      "unknown": 0
+    },
+    "mexico": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 3
+    },
+    "ncs": {
+      "dry": 3,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 1
+    },
+    "spain": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 1
+    },
+    "texas": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 2
+    },
+    "ukcs": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 4
+    }
+  },
+  "generated_regions": [
+    "brazil",
+    "canada",
+    "eia_us",
+    "gom",
+    "mexico",
+    "ncs",
+    "spain",
+    "texas",
+    "ukcs"
+  ],
+  "meta": {
+    "discount_rate": 0.1,
+    "generated_utc": "2026-07-05T00:24:50Z",
+    "n_rows": 28,
+    "oil_price_usd": 70.0
+  },
+  "provenance": {
+    "brazil": "seed",
+    "canada": "seed",
+    "eia_us": "seed",
+    "gom": "seed",
+    "mexico": "seed",
+    "ncs": "seed",
+    "spain": "real",
+    "texas": "seed",
+    "ukcs": "seed"
+  },
+  "rows": [
+    {
+      "disc_posttax_cf_usd": 17955236080.0,
+      "field_name": "Lula",
+      "govt_take": 43.9,
+      "peak_oil_bbl": 8805720.0,
+      "provenance": "seed",
+      "region": "brazil"
+    },
+    {
+      "disc_posttax_cf_usd": 17590416079.0,
+      "field_name": "B\u00fazios",
+      "govt_take": 43.9,
+      "peak_oil_bbl": 11321640.0,
+      "provenance": "seed",
+      "region": "brazil"
+    },
+    {
+      "disc_posttax_cf_usd": 8091198243.0,
+      "field_name": "Marlim",
+      "govt_take": 43.9,
+      "peak_oil_bbl": 3773880.0,
+      "provenance": "seed",
+      "region": "brazil"
+    },
+    {
+      "disc_posttax_cf_usd": 4710751993.0,
+      "field_name": "Mero",
+      "govt_take": 43.9,
+      "peak_oil_bbl": 5660820.0,
+      "provenance": "seed",
+      "region": "brazil"
+    },
+    {
+      "disc_posttax_cf_usd": 15498170402.0,
+      "field_name": "Hibernia",
+      "govt_take": 32.0,
+      "peak_oil_bbl": 6200000.0,
+      "provenance": "seed",
+      "region": "canada"
+    },
+    {
+      "disc_posttax_cf_usd": 5977331678.0,
+      "field_name": "Terra Nova",
+      "govt_take": 32.0,
+      "peak_oil_bbl": 2400000.0,
+      "provenance": "seed",
+      "region": "canada"
+    },
+    {
+      "disc_posttax_cf_usd": 4694687923.0,
+      "field_name": "White Rose",
+      "govt_take": 32.0,
+      "peak_oil_bbl": 1900000.0,
+      "provenance": "seed",
+      "region": "canada"
+    },
+    {
+      "disc_posttax_cf_usd": 755979590817.0,
+      "field_name": "Permian",
+      "govt_take": 30.87,
+      "peak_oil_bbl": 250000000.0,
+      "provenance": "seed",
+      "region": "eia_us"
+    },
+    {
+      "disc_posttax_cf_usd": 247454594760.0,
+      "field_name": "Bakken",
+      "govt_take": 30.88,
+      "peak_oil_bbl": 80000000.0,
+      "provenance": "seed",
+      "region": "eia_us"
+    },
+    {
+      "disc_posttax_cf_usd": 179109877783.0,
+      "field_name": "Eagle Ford",
+      "govt_take": 30.87,
+      "peak_oil_bbl": 60000000.0,
+      "provenance": "seed",
+      "region": "eia_us"
+    },
+    {
+      "disc_posttax_cf_usd": 27905877559.0,
+      "field_name": "Thunder Horse",
+      "govt_take": 35.81,
+      "peak_oil_bbl": 9500000.0,
+      "provenance": "seed",
+      "region": "gom"
+    },
+    {
+      "disc_posttax_cf_usd": 23694967653.0,
+      "field_name": "Atlantis",
+      "govt_take": 35.81,
+      "peak_oil_bbl": 8000000.0,
+      "provenance": "seed",
+      "region": "gom"
+    },
+    {
+      "disc_posttax_cf_usd": 21796335315.0,
+      "field_name": "Mars-Ursa",
+      "govt_take": 35.81,
+      "peak_oil_bbl": 7200000.0,
+      "provenance": "seed",
+      "region": "gom"
+    },
+    {
+      "disc_posttax_cf_usd": 11396037518.0,
+      "field_name": "Na Kika",
+      "govt_take": 35.81,
+      "peak_oil_bbl": 3800000.0,
+      "provenance": "seed",
+      "region": "gom"
+    },
+    {
+      "disc_posttax_cf_usd": 2251559749.0,
+      "field_name": "Ixachi",
+      "govt_take": 34.9,
+      "peak_oil_bbl": 1200000.0,
+      "provenance": "seed",
+      "region": "mexico"
+    },
+    {
+      "disc_posttax_cf_usd": 1464834349.0,
+      "field_name": "Zama",
+      "govt_take": 34.9,
+      "peak_oil_bbl": 2000000.0,
+      "provenance": "seed",
+      "region": "mexico"
+    },
+    {
+      "disc_posttax_cf_usd": 223038925.0,
+      "field_name": "Trion",
+      "govt_take": 34.9,
+      "peak_oil_bbl": 800000.0,
+      "provenance": "seed",
+      "region": "mexico"
+    },
+    {
+      "disc_posttax_cf_usd": 4883283208.0,
+      "field_name": "Edvard Grieg",
+      "govt_take": 78.0,
+      "peak_oil_bbl": 5800000.0,
+      "provenance": "seed",
+      "region": "ncs"
+    },
+    {
+      "disc_posttax_cf_usd": 4609021790.0,
+      "field_name": "Valhall",
+      "govt_take": 78.0,
+      "peak_oil_bbl": 4200000.0,
+      "provenance": "seed",
+      "region": "ncs"
+    },
+    {
+      "disc_posttax_cf_usd": 1293985916.0,
+      "field_name": "Ivar Aasen",
+      "govt_take": 78.0,
+      "peak_oil_bbl": 1600000.0,
+      "provenance": "seed",
+      "region": "ncs"
+    },
+    {
+      "disc_posttax_cf_usd": 589280943.0,
+      "field_name": "Solveig",
+      "govt_take": 78.0,
+      "peak_oil_bbl": 900000.0,
+      "provenance": "seed",
+      "region": "ncs"
+    },
+    {
+      "disc_posttax_cf_usd": 21974289.0,
+      "field_name": "Ayoluengo",
+      "govt_take": 36.25,
+      "peak_oil_bbl": 101175.99,
+      "provenance": "real",
+      "region": "spain"
+    },
+    {
+      "disc_posttax_cf_usd": 301192228998.0,
+      "field_name": "Wolfcamp",
+      "govt_take": 40.75,
+      "peak_oil_bbl": 130000000.0,
+      "provenance": "seed",
+      "region": "texas"
+    },
+    {
+      "disc_posttax_cf_usd": 162180431042.0,
+      "field_name": "Bone Spring",
+      "govt_take": 40.75,
+      "peak_oil_bbl": 70000000.0,
+      "provenance": "seed",
+      "region": "texas"
+    },
+    {
+      "disc_posttax_cf_usd": 23910507791.0,
+      "field_name": "Forties",
+      "govt_take": 40.0,
+      "peak_oil_bbl": 12000000.0,
+      "provenance": "seed",
+      "region": "ukcs"
+    },
+    {
+      "disc_posttax_cf_usd": 15789680682.0,
+      "field_name": "Buzzard",
+      "govt_take": 40.0,
+      "peak_oil_bbl": 8000000.0,
+      "provenance": "seed",
+      "region": "ukcs"
+    },
+    {
+      "disc_posttax_cf_usd": 3934324016.0,
+      "field_name": "Clair Ridge",
+      "govt_take": 40.0,
+      "peak_oil_bbl": 2500000.0,
+      "provenance": "seed",
+      "region": "ukcs"
+    },
+    {
+      "disc_posttax_cf_usd": 2688774671.0,
+      "field_name": "Mariner",
+      "govt_take": 40.0,
+      "peak_oil_bbl": 1800000.0,
+      "provenance": "seed",
+      "region": "ukcs"
+    }
+  ],
+  "skipped_empty": []
+}
