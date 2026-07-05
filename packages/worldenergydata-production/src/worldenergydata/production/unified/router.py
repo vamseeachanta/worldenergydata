@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from typing import Dict, List
 
+from worldenergydata.production.unified.adapters.australia_adapter import (
+    AustraliaAdapter,
+)
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
     BrazilAnpAdapter,
@@ -63,6 +66,9 @@ REGION_ALIASES: Dict[str, str] = {
     # Canada offshore NL
     "canada": "canada",
     "nl": "canada",
+    # Australia (DataVic / NOPTA — screening-only, no production feed yet)
+    "australia": "australia",
+    "au": "australia",
 }
 
 
@@ -87,6 +93,7 @@ class RegionRouter:
             "mexico": MexicoCnhAdapter(),
             "texas": TexasRrcAdapter(),
             "canada": CanadaAdapter(),
+            "australia": AustraliaAdapter(),
         }
 
     # ------------------------------------------------------------------

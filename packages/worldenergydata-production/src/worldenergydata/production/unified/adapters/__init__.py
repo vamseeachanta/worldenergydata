@@ -1,5 +1,8 @@
 """Adapter package for unified production query interface."""
 
+from worldenergydata.production.unified.adapters.australia_adapter import (
+    AustraliaAdapter,
+)
 from worldenergydata.production.unified.adapters.base import AbstractProductionAdapter
 from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
     BrazilAnpAdapter,
@@ -30,4 +33,5 @@ __all__ = [
     "MexicoCnhAdapter",
     "TexasRrcAdapter",
     "CanadaAdapter",
+    "AustraliaAdapter",
 ]

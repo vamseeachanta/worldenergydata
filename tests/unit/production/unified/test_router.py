@@ -26,13 +26,21 @@ class TestRegionRouter:
     def setup_method(self):
         self.router = RegionRouter()
 
-    def test_list_regions_returns_nine(self):
+    def test_list_regions_returns_ten(self):
         regions = self.router.list_regions()
-        assert len(regions) == 9
+        assert len(regions) == 10
 
     def test_list_regions_sorted(self):
         regions = self.router.list_regions()
         assert regions == sorted(regions)
+
+    def test_get_adapter_australia_and_alias(self):
+        from worldenergydata.production.unified.adapters.australia_adapter import (
+            AustraliaAdapter,
+        )
+
+        assert isinstance(self.router.get_adapter("australia"), AustraliaAdapter)
+        assert isinstance(self.router.get_adapter("au"), AustraliaAdapter)
 
     def test_get_adapter_ncs(self):
         adapter = self.router.get_adapter("ncs")

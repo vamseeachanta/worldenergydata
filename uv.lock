@@ -10,6 +10,7 @@ resolution-markers = [
 [manifest]
 members = [
     "worldenergydata",
+    "worldenergydata-australia",
     "worldenergydata-baker-hughes",
     "worldenergydata-brazil-anp",
     "worldenergydata-bsee",
@@ -6622,6 +6623,7 @@ dependencies = [
     { name = "sqlmodel" },
     { name = "tenacity" },
     { name = "typer" },
+    { name = "worldenergydata-australia" },
     { name = "worldenergydata-baker-hughes" },
     { name = "worldenergydata-brazil-anp" },
     { name = "worldenergydata-bsee" },
@@ -6813,6 +6815,7 @@ requires-dist = [
     { name = "types-python-dateutil", marker = "extra == 'dev'", specifier = ">=2.9" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0" },
     { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.33.0.20260518" },
+    { name = "worldenergydata-australia", editable = "packages/worldenergydata-australia" },
     { name = "worldenergydata-baker-hughes", editable = "packages/worldenergydata-baker_hughes" },
     { name = "worldenergydata-brazil-anp", editable = "packages/worldenergydata-brazil_anp" },
     { name = "worldenergydata-bsee", editable = "packages/worldenergydata-bsee" },
@@ -6872,6 +6875,21 @@ docs = [
     { name = "mkdocs", specifier = ">=1.6.0" },
     { name = "mkdocs-material", specifier = ">=9.5.0" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.25.0" },
+]
+
+[[package]]
+name = "worldenergydata-australia"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-australia" }
+dependencies = [
+    { name = "pandas" },
+    { name = "worldenergydata-core" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
 
 [[package]]

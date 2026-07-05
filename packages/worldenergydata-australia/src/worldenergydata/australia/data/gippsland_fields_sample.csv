@@ -1,0 +1,5 @@
+field_name,region,environment,water_depth_m,spud_date,operator,source
+Kingfish,australia,offshore,78.0,1967-09-01,Esso Australia,datavic
+Barracouta,australia,offshore,45.0,1965-03-01,Esso Australia,datavic
+Halibut,australia,offshore,73.0,1967-01-01,Esso Australia,datavic
+Marlin,australia,offshore,61.0,1966-01-01,Esso Australia,datavic
