@@ -83,6 +83,9 @@ git clone https://github.com/username/worldenergydata.git
 cd worldenergydata
 uv sync
 
+# Install git hooks (black/isort/flake8 run at commit, matching CI)
+uv run pre-commit install
+
 # Populate BSEE data (not stored in git, ~300 MB download)
 make data
 # or: python3 scripts/refresh_bsee_all.py
@@ -298,11 +301,12 @@ uv add --dev pytest-cov   # Development dependency
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-feature`)
-3. Write tests first (TDD)
-4. Implement your changes
-5. Run quality checks (`uv run pytest && uv run ruff check .`)
-6. Submit a pull request
+2. Install the pre-commit hooks once (`uv run pre-commit install`) so black/isort/flake8 run at `git commit` with the same versions as CI
+3. Create a feature branch (`git checkout -b feature/new-feature`)
+4. Write tests first (TDD)
+5. Implement your changes
+6. Run quality checks (`uv run pytest && uv run ruff check .`)
+7. Submit a pull request
 
 ## License
 
