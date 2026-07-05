@@ -8,11 +8,11 @@ from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
-from worldenergydata.spain.production.cores_loader import GWH_TO_MCF, TONNES_TO_BBL
 from worldenergydata.spain.production.cores_live import (
     DEFAULT_WORKBOOKS,
     CoresLiveProductionLoader,
 )
+from worldenergydata.spain.production.cores_loader import GWH_TO_MCF, TONNES_TO_BBL
 
 
 class FixtureCoresLoader:

@@ -6,10 +6,6 @@ import json
 import pandas as pd
 import pytest
 
-from worldenergydata.spain.production.cores_loader import (
-    GWH_TO_MCF,
-    TONNES_TO_BBL,
-)
 from worldenergydata.spain.production.cores_live import (
     DEFAULT_WORKBOOKS,
     STATISTICS_PAGE_URL,
@@ -18,6 +14,10 @@ from worldenergydata.spain.production.cores_live import (
     CoresSourceError,
     CoresWorkbookSource,
     refresh_ayoluengo_fixture,
+)
+from worldenergydata.spain.production.cores_loader import (
+    GWH_TO_MCF,
+    TONNES_TO_BBL,
 )
 
 
