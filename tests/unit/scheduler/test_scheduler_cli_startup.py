@@ -27,9 +27,7 @@ HEAVY_JOB_MODULE_PREFIXES = (
     "worldenergydata.scheduler.jobs.spain_cores_refresh",
 )
 
-DATA_SOURCE_MODULE_PREFIXES = (
-    "worldenergydata.spain",
-)
+DATA_SOURCE_MODULE_PREFIXES = ("worldenergydata.spain",)
 
 
 @contextmanager

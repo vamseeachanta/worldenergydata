@@ -108,7 +108,9 @@ class TestJobAdapterInterface:
             (SpainCoresRefreshJob, "data/spain/cores"),
         ],
     )
-    def test_job_default_output_dir_matches_expected_path(self, JobClass, expected_path):
+    def test_job_default_output_dir_matches_expected_path(
+        self, JobClass, expected_path
+    ):
         output_dir = Path(JobClass.default_output_dir)
         assert output_dir.parts[-len(Path(expected_path).parts) :] == tuple(
             Path(expected_path).parts

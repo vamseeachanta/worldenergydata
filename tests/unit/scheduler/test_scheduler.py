@@ -224,9 +224,8 @@ class TestDataSchedulerRunOnce:
         scheduler.run_once("mock_job")
 
         assert MockJob.last_config["_scheduler_repo_root"] == str(tmp_path)
-        assert (
-            "_scheduler_repo_root"
-            not in scheduler._config.get_job_config("mock_job")
+        assert "_scheduler_repo_root" not in scheduler._config.get_job_config(
+            "mock_job"
         )
 
     def test_run_once_spain_cores_writes_outputs_and_manifest_under_one_root(
@@ -279,11 +278,7 @@ monitoring:
                     self.cache_root / "metadata" / "cores_refresh_metadata.json"
                 ).write_text(
                     json.dumps(
-                        {
-                            "statistics_page": (
-                                "https://www.cores.es/en/estadisticas"
-                            )
-                        }
+                        {"statistics_page": ("https://www.cores.es/en/estadisticas")}
                     )
                     + "\n",
                     encoding="utf-8",
