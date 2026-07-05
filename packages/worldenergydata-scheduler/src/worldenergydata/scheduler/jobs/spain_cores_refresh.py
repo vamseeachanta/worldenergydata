@@ -7,16 +7,13 @@ runtime methods so CLI no-op paths do not import live-source clients.
 
 from __future__ import annotations
 
+import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from worldenergydata.scheduler.jobs.base import (
-    AbstractJob,
-    JobResult,
-    write_refresh_metadata,
-)
+from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +40,14 @@ class SpainCoresRefreshJob(AbstractJob):
         from worldenergydata.spain.production import refresh_ayoluengo_fixture
 
         return refresh_ayoluengo_fixture
+
+    def _is_retryable_exception(self, exc: Exception) -> bool:
+        """Classify deterministic CORES source-contract failures."""
+        try:
+            from worldenergydata.spain.production import CoresSourceError
+        except Exception:
+            return True
+        return not isinstance(exc, CoresSourceError)
 
     @staticmethod
     def _resolve_path(value: str | Path, repo_root: str | Path | None) -> Path:
@@ -72,6 +77,30 @@ class SpainCoresRefreshJob(AbstractJob):
             loader.refresh(force_refresh=force_refresh)
             production = loader.load_all_production()
             records_updated = len(production)
+
+            if records_updated <= 0:
+                error_msg = "CORES refresh produced 0 rows (download incomplete)"
+                logger.error(error_msg)
+                return JobResult(
+                    job_name=self.name,
+                    start_time=start,
+                    end_time=datetime.now(),
+                    status="failure",
+                    records_updated=0,
+                    error_msg=error_msg,
+                    retryable=True,
+                )
+
+            if config.get("refresh_fixture", False):
+                fixture_output_dir = self._resolve_path(
+                    config.get("fixture_output_dir", _DEFAULT_FIXTURE_OUTPUT_DIR),
+                    repo_root,
+                )
+                self._fixture_refresher()(
+                    oil_frame=loader.load_oil_production(),
+                    metadata=loader.metadata(),
+                    output_dir=fixture_output_dir,
+                )
         except Exception as exc:
             error_msg = f"CORES refresh failed: {exc}"
             logger.error(error_msg)
@@ -82,34 +111,10 @@ class SpainCoresRefreshJob(AbstractJob):
                 status="failure",
                 records_updated=0,
                 error_msg=error_msg,
-                retryable=True,
+                retryable=self._is_retryable_exception(exc),
             )
 
-        if records_updated <= 0:
-            error_msg = "CORES refresh produced 0 rows (download incomplete)"
-            logger.error(error_msg)
-            return JobResult(
-                job_name=self.name,
-                start_time=start,
-                end_time=datetime.now(),
-                status="failure",
-                records_updated=0,
-                error_msg=error_msg,
-                retryable=True,
-            )
-
-        if config.get("refresh_fixture", False):
-            fixture_output_dir = self._resolve_path(
-                config.get("fixture_output_dir", _DEFAULT_FIXTURE_OUTPUT_DIR),
-                repo_root,
-            )
-            self._fixture_refresher()(
-                oil_frame=loader.load_oil_production(),
-                metadata=loader.metadata(),
-                output_dir=fixture_output_dir,
-            )
-
-        write_refresh_metadata("spain_cores", output_dir, records_updated)
+        self._write_refresh_metadata(output_dir, records_updated)
         logger.info(
             "Spain CORES refresh wrote %d production rows to %s",
             records_updated,
@@ -122,4 +127,28 @@ class SpainCoresRefreshJob(AbstractJob):
             status="success",
             records_updated=records_updated,
             error_msg=None,
+        )
+
+    @staticmethod
+    def _write_refresh_metadata(output_dir: Path, records_updated: int) -> None:
+        """Write Spain CORES freshness metadata with the correct CSV format."""
+        output_dir.mkdir(parents=True, exist_ok=True)
+        files = sorted(
+            p
+            for p in output_dir.rglob("*")
+            if p.is_file() and p.name not in {"_metadata.json", "manifest.json"}
+        )
+        metadata = {
+            "module": "spain_cores",
+            "last_refresh": datetime.now(tz=timezone.utc).isoformat(),
+            "record_count": records_updated,
+            "file_count": len(files),
+            "total_size_bytes": sum(p.stat().st_size for p in files),
+            "source_url": "https://www.cores.es/en/estadisticas",
+            "format": "csv",
+            "files": [str(p.relative_to(output_dir)) for p in files],
+        }
+        (output_dir / "_metadata.json").write_text(
+            json.dumps(metadata, indent=2) + "\n",
+            encoding="utf-8",
         )

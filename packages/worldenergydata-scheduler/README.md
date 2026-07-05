@@ -20,3 +20,10 @@ installed (`uv sync --all-extras`).
 the small committed Ayoluengo fixture when `refresh_fixture: true` is configured.
 The Spain source package is imported lazily only when the job runs, keeping CLI
 startup/help paths free of live-source imports.
+
+For operator runs that should persist outside the checkout, set:
+
+```yaml
+output_dir: /mnt/ace/worldenergydata/data/spain/cores
+refresh_fixture: false
+```

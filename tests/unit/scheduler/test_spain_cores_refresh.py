@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pandas as pd
+
 from worldenergydata.scheduler.jobs.spain_cores_refresh import SpainCoresRefreshJob
 
 
@@ -26,10 +28,10 @@ class _FakeLoader:
         return self.metadata()
 
     def load_all_production(self):
-        return [{"row": idx} for idx in range(self.row_count)]
+        return pd.DataFrame({"row": list(range(self.row_count))})
 
     def load_oil_production(self):
-        return [{"field_name": "Ayoluengo", "oil_bbl": 1.0}]
+        return pd.DataFrame([{"field_name": "Ayoluengo", "oil_bbl": 1.0}])
 
     def metadata(self):
         return {
@@ -41,6 +43,13 @@ class _FakeLoader:
 class _BoomLoader(_FakeLoader):
     def refresh(self, *, force_refresh=False):
         raise RuntimeError("cores offline")
+
+
+class _SourceErrorLoader(_FakeLoader):
+    def refresh(self, *, force_refresh=False):
+        from worldenergydata.spain.production import CoresSourceError
+
+        raise CoresSourceError("statistics page missing workbook link")
 
 
 def _job(loader_cls=_FakeLoader, fixture_refresher=None):
@@ -74,6 +83,7 @@ def test_success_refreshes_cores_and_writes_metadata(tmp_path):
     metadata = json.loads((tmp_path / "_metadata.json").read_text())
     assert metadata["module"] == "spain_cores"
     assert metadata["record_count"] == 3
+    assert metadata["format"] == "csv"
 
 
 def test_fixture_refresh_writes_to_configured_fixture_output(tmp_path):
@@ -101,16 +111,15 @@ def test_fixture_refresh_writes_to_configured_fixture_output(tmp_path):
     )
 
     assert result.status == "success"
-    assert calls == [
-        {
-            "oil_frame": [{"field_name": "Ayoluengo", "oil_bbl": 1.0}],
-            "metadata": {
-                "statistics_page": "https://www.cores.es/en/estadisticas",
-                "workbooks": {"oil": {"sha256": "abc123"}},
-            },
-            "output_dir": fixture_dir,
-        }
+    assert len(calls) == 1
+    assert calls[0]["oil_frame"].to_dict("records") == [
+        {"field_name": "Ayoluengo", "oil_bbl": 1.0}
     ]
+    assert calls[0]["metadata"] == {
+        "statistics_page": "https://www.cores.es/en/estadisticas",
+        "workbooks": {"oil": {"sha256": "abc123"}},
+    }
+    assert calls[0]["output_dir"] == fixture_dir
 
 
 def test_relative_fixture_output_resolves_from_scheduler_repo_root(tmp_path):
@@ -164,6 +173,24 @@ def test_refresh_fixture_false_disables_fixture_refresh(tmp_path):
     assert calls == []
 
 
+def test_fixture_refresh_failure_is_reported_as_retryable_failure(tmp_path):
+    def fixture_refresher(*, oil_frame, metadata, output_dir):
+        raise RuntimeError("fixture write failed")
+
+    result = _job(fixture_refresher=fixture_refresher).run(
+        {
+            "output_dir": str(tmp_path / "out"),
+            "refresh_fixture": True,
+            "fixture_output_dir": str(tmp_path / "fixtures"),
+        }
+    )
+
+    assert result.status == "failure"
+    assert result.records_updated == 0
+    assert result.retryable is True
+    assert "CORES refresh failed" in result.error_msg
+
+
 def test_loader_failure_is_retryable(tmp_path):
     result = _job(loader_cls=_BoomLoader).run({"output_dir": str(tmp_path)})
 
@@ -171,6 +198,15 @@ def test_loader_failure_is_retryable(tmp_path):
     assert result.records_updated == 0
     assert result.retryable is True
     assert "CORES refresh failed" in result.error_msg
+
+
+def test_source_validation_failure_is_not_retryable(tmp_path):
+    result = _job(loader_cls=_SourceErrorLoader).run({"output_dir": str(tmp_path)})
+
+    assert result.status == "failure"
+    assert result.records_updated == 0
+    assert result.retryable is False
+    assert "statistics page missing workbook link" in result.error_msg
 
 
 def test_zero_rows_is_failure(tmp_path):

@@ -136,6 +136,61 @@ class TestCLIRunJobCommand:
                 jobs=[BseeRefreshJob()],
             )
 
+    def test_run_job_default_registry_loads_spain_cores_job(self, tmp_path):
+        config_path = tmp_path / "scheduler_config.yml"
+        config_path.write_text(
+            """
+jobs:
+  - name: spain_cores_refresh
+    interval: monthly
+    time: "08:00"
+    enabled: true
+    output_dir: data/spain/cores
+
+monitoring:
+  log_dir: {log_dir}
+  log_retention_days: 30
+  retry_max: 3
+  retry_backoff_seconds: 0
+  webhook_url: null
+  status_file: {status_file}
+""".format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+            )
+        )
+        from worldenergydata.scheduler import cli
+        from worldenergydata.scheduler.jobs.base import JobResult
+
+        class _FakeSpainJob:
+            name = "spain_cores_refresh"
+
+            def run(self, config):
+                return JobResult(
+                    job_name=self.name,
+                    start_time=datetime.now(),
+                    end_time=datetime.now(),
+                    status="success",
+                    records_updated=2,
+                    error_msg=None,
+                )
+
+        def fake_load_job_class(class_path):
+            assert (
+                class_path
+                == "worldenergydata.scheduler.jobs.spain_cores_refresh.SpainCoresRefreshJob"
+            )
+            return _FakeSpainJob
+
+        with patch.object(cli, "_load_job_class", side_effect=fake_load_job_class):
+            result = cli.cmd_run_job(
+                job_name="spain_cores_refresh",
+                config_path=str(config_path),
+            )
+
+        assert result.status == "success"
+        assert result.records_updated == 2
+
 
 class TestCLIStopCommand:
     def test_stop_returns_confirmation(self, tmp_path):

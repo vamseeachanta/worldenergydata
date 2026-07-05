@@ -68,6 +68,40 @@ class DisabledJob(AbstractJob):
         )
 
 
+class FakeSpainCoresJob(AbstractJob):
+    name = "spain_cores_refresh"
+    default_output_dir = Path("data/spain/cores")
+    last_config = None
+
+    def run(self, config: dict) -> JobResult:
+        FakeSpainCoresJob.last_config = dict(config)
+        output_dir = Path(config["_scheduler_repo_root"]) / config["output_dir"]
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "_metadata.json").write_text(
+            json.dumps({"module": "spain_cores", "record_count": 2}) + "\n",
+            encoding="utf-8",
+        )
+        (output_dir / "metadata").mkdir()
+        (output_dir / "metadata" / "cores_refresh_metadata.json").write_text(
+            json.dumps({"statistics_page": "https://www.cores.es/en/estadisticas"})
+            + "\n",
+            encoding="utf-8",
+        )
+        (output_dir / "normalized").mkdir()
+        (output_dir / "normalized" / "cores_all_production.csv").write_text(
+            "field_name,year,month,oil_bbl,gas_mcf\nAyoluengo,2026,1,1.0,2.0\n",
+            encoding="utf-8",
+        )
+        return JobResult(
+            job_name=self.name,
+            start_time=datetime.now(),
+            end_time=datetime.now(),
+            status="success",
+            records_updated=2,
+            error_msg=None,
+        )
+
+
 def _write_config(tmp_path) -> str:
     log_dir = str(tmp_path / "logs")
     status_file = str(tmp_path / "status.json")
@@ -116,6 +150,7 @@ class TestDataSchedulerRunOnce:
     def setup_method(self):
         MockJob.call_count = 0
         MockJob.last_config = None
+        FakeSpainCoresJob.last_config = None
 
     def test_run_once_executes_job(self, tmp_path):
         config_path = _write_config(tmp_path)
@@ -231,6 +266,47 @@ class TestDataSchedulerRunOnce:
             "_scheduler_repo_root"
             not in scheduler._config.get_job_config("mock_job")
         )
+
+    def test_run_once_spain_cores_writes_outputs_and_manifest_under_one_root(
+        self, tmp_path
+    ):
+        config_dir = tmp_path / "config" / "scheduler"
+        config_dir.mkdir(parents=True)
+        config_path = config_dir / "scheduler_config.yml"
+        config_path.write_text(
+            """
+jobs:
+  - name: spain_cores_refresh
+    interval: monthly
+    time: "08:00"
+    enabled: true
+    output_dir: data/spain/cores
+    refresh_fixture: false
+
+monitoring:
+  log_dir: {log_dir}
+  log_retention_days: 30
+  retry_max: 3
+  retry_backoff_seconds: 0
+  webhook_url: null
+  status_file: {status_file}
+""".format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+            )
+        )
+        scheduler = DataScheduler(config_path=str(config_path))
+        scheduler.register_job(FakeSpainCoresJob())
+
+        result = scheduler.run_once("spain_cores_refresh")
+
+        output_dir = tmp_path / "data" / "spain" / "cores"
+        assert result.status == "success"
+        assert FakeSpainCoresJob.last_config["_scheduler_repo_root"] == str(tmp_path)
+        assert (output_dir / "_metadata.json").exists()
+        assert (output_dir / "metadata" / "cores_refresh_metadata.json").exists()
+        assert (output_dir / "normalized" / "cores_all_production.csv").exists()
+        assert (output_dir / "manifest.json").exists()
 
 
 class TestDataSchedulerStatus:
