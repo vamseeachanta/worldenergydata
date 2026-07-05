@@ -154,17 +154,23 @@ class CoresProductionLoader:
         path: Optional[Path] = None,
         raw_frame: Optional[pd.DataFrame] = None,
         header_row: int = 5,
+        sheet_name=0,
     ):
         self.product = product
         self._path = path
         self._raw = raw_frame
         self._header_row = header_row
+        self._sheet_name = sheet_name
 
     def load(self) -> pd.DataFrame:
         raw = (
             self._raw
             if self._raw is not None
-            else pd.read_excel(self._path, header=self._header_row)
+            else pd.read_excel(
+                self._path,
+                sheet_name=self._sheet_name,
+                header=self._header_row,
+            )
         )
         return parse_cores_frame(raw, product=self.product)
 

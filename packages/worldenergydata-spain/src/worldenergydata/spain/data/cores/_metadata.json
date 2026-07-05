@@ -1,12 +1,45 @@
 {
-  "source_name": "CORES Indigenous Crude Oil Production",
-  "source_url": "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
-  "statistics_page": "https://www.cores.es/en/estadisticas",
-  "source_updated_date": "2026-06-12",
+  "conversion": "oil_bbl = tonnes * 7.33",
+  "conversion_factors": {
+    "gas_gwh_to_mcf": 3290.0,
+    "oil_tonnes_to_bbl": 7.33
+  },
+  "license_note": "CORES attribution required; cite source URL and latest-update date.",
+  "normalized_unit": "bbl",
   "sample_extracted_date": "2026-07-04",
   "sample_field": "Ayoluengo",
+  "sample_row_count": 6,
+  "source_name": "CORES Indigenous Crude Oil Production",
   "source_unit": "tonnes",
-  "normalized_unit": "bbl",
-  "conversion": "oil_bbl = tonnes * 7.33",
-  "license_note": "CORES attribution required; cite source URL and latest-update date."
+  "source_updated_date": "2026-06-12",
+  "source_url": "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+  "statistics_page": "https://www.cores.es/en/estadisticas",
+  "workbooks": {
+    "gas": {
+      "byte_count": 127915,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "dataset_name": "CORES Indigenous Natural Gas Production",
+      "filename": "gas-production.xlsx",
+      "last_modified": "Fri, 12 Jun 2026 07:52:01 GMT",
+      "normalized_column": "gas_mcf",
+      "raw_path": "raw/gas-production.xlsx",
+      "sha256": "9d4bd877658b8ac82697ae15d81c59217801aa6dc1d2ed3267d7d7feb960533b",
+      "source_unit": "GWh",
+      "source_url": "https://www.cores.es/sites/default/files/archivos/estadisticas/gas-production.xlsx",
+      "status_code": 200
+    },
+    "oil": {
+      "byte_count": 112669,
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "dataset_name": "CORES Indigenous Crude Oil Production",
+      "filename": "crude-oil-production.xlsx",
+      "last_modified": "Fri, 12 Jun 2026 07:51:41 GMT",
+      "normalized_column": "oil_bbl",
+      "raw_path": "raw/crude-oil-production.xlsx",
+      "sha256": "6ef2911eef7cd04ffe0328152c3ec8235353528c695068c8324691bd8de7cd57",
+      "source_unit": "tonnes",
+      "source_url": "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+      "status_code": 200
+    }
+  }
 }

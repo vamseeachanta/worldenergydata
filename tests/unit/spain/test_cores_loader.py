@@ -117,6 +117,43 @@ def test_loader_reads_xlsx_with_cores_header_row(tmp_path):
     ]
 
 
+def test_loader_can_select_real_cores_production_sheet(tmp_path):
+    path = tmp_path / "cores_oil.xlsx"
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2026,
+                "Month": "June",
+                "Ayoluengo": 2.0,
+                "Grand total": 2.0,
+            }
+        ]
+    )
+    with pd.ExcelWriter(path) as writer:
+        pd.DataFrame({"note": ["landing sheet"]}).to_excel(
+            writer,
+            sheet_name="Start",
+            index=False,
+        )
+        raw.to_excel(writer, sheet_name="Production", index=False, startrow=5)
+
+    out = CoresProductionLoader(
+        product="oil",
+        path=path,
+        header_row=5,
+        sheet_name="Production",
+    ).load()
+
+    assert out.to_dict("records") == [
+        {
+            "field_name": "Ayoluengo",
+            "year": 2026,
+            "month": 6,
+            "oil_bbl": pytest.approx(2.0 * TONNES_TO_BBL),
+        }
+    ]
+
+
 def test_fixture_loader_carries_direct_source_provenance():
     loader = CoresFixtureProductionLoader()
 

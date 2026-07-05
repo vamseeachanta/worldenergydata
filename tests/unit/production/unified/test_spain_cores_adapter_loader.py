@@ -8,6 +8,11 @@ from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.spain.production.cores_live import (
+    DEFAULT_WORKBOOKS,
+    CoresLiveProductionLoader,
+)
+from worldenergydata.spain.production.cores_loader import GWH_TO_MCF, TONNES_TO_BBL
 
 
 class FixtureCoresLoader:
@@ -163,3 +168,55 @@ def test_default_adapter_loads_committed_ayoluengo_fixture():
     assert set(out["field_name"]) == {"Ayoluengo"}
     assert set(out["source"]) == {"cores"}
     assert out["oil_bbl"].gt(0).any()
+
+
+def test_adapter_accepts_live_cores_loader(tmp_path):
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    _write_cores_xlsx(
+        raw_dir / DEFAULT_WORKBOOKS["oil"].filename,
+        pd.DataFrame(
+            [
+                {
+                    "Year": 2026,
+                    "Month": "June",
+                    "Ayoluengo": 2.0,
+                    "Grand total": 2.0,
+                }
+            ]
+        ),
+    )
+    _write_cores_xlsx(
+        raw_dir / DEFAULT_WORKBOOKS["gas"].filename,
+        pd.DataFrame(
+            [
+                {
+                    "Year": 2026,
+                    "Month": "June",
+                    "Ayoluengo": 3.0,
+                    "Grand total": 3.0,
+                }
+            ]
+        ),
+    )
+
+    adapter = SpainCoresAdapter(loader=CoresLiveProductionLoader(cache_root=tmp_path))
+    out = adapter.fetch(
+        ProductionQuery(regions=["spain"], fields=["Ayoluengo"], start="2026-06")
+    )
+
+    assert list(out.columns) == list(STANDARD_COLUMNS)
+    assert len(out) == 1
+    assert out.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
+    assert out.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
+    assert out.iloc[0]["source"] == "cores"
+
+
+def _write_cores_xlsx(path, frame):
+    with pd.ExcelWriter(path) as writer:
+        pd.DataFrame({"note": ["landing sheet"]}).to_excel(
+            writer,
+            sheet_name="Start",
+            index=False,
+        )
+        frame.to_excel(writer, sheet_name="Production", index=False, startrow=5)
