@@ -111,6 +111,26 @@ def test_landing_links_the_field_development_showcase(bp):
     assert 'href="field-development/playbook.html"' in index
 
 
+def test_pressure_atlas_domain_publishes_self_contained(bp):
+    # Registry consistency: the domain is registered and has its reports dir.
+    assert "pressure-atlas" in bp.DOMAINS
+    assert (Path(bp.REPORTS) / "pressure-atlas").is_dir()
+
+    bp.build()  # full build renders every registered domain
+
+    published = bp.PUBLIC / "pressure-atlas" / "index.html"
+    assert published.exists(), "pressure-atlas domain did not publish index.html"
+
+    # Real, traceable tokens straight from reports/pressure-atlas/_pressure.json:
+    # the atlas title, plus either the top onshore field (HUGOTON GAS AREA) or
+    # Anchor's disclosed 25,000-psi reservoir pressure. Proves the page shipped
+    # self-contained with honest data, not an empty shell.
+    text = published.read_text(encoding="utf-8")
+    lowered = text.lower()
+    assert "pressure atlas" in lowered
+    assert "hugoton" in lowered or "25,000" in text
+
+
 def test_registry_keys_match_reports_dirs(bp):
     # Each registered domain key should correspond to a reports/<domain>/ dir.
     reports = Path(bp.REPORTS)

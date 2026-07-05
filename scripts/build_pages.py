@@ -640,6 +640,17 @@ def build_field_atlas(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_pressure_atlas(available_viz: dict[str, bool]) -> list[tuple]:
+    """Publish the pressure-atlas browse page (offshore over-pressure + onshore under-pressure)."""
+    src = REPORTS / "pressure-atlas" / "index.html"
+    if not src.exists():
+        return []
+    dst = PUBLIC / "pressure-atlas"
+    dst.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dst / "index.html")
+    return []
+
+
 def build_decommissioning(available_viz: dict[str, bool]) -> list[tuple]:
     """Publish the decommissioning surface: the GoM P&A liability-wave front door
     (issue #777). The page is a self-contained HTML artifact (inline CSS +
@@ -698,6 +709,7 @@ DOMAINS = {
     "decommissioning": build_decommissioning,
     "capabilities": build_capabilities,
     "field-atlas": build_field_atlas,
+    "pressure-atlas": build_pressure_atlas,
     "field_benchmark": build_field_benchmark,
 }
 
@@ -898,6 +910,12 @@ def build_index() -> None:
             '<a class="card" href="completion/"><h3>Drilling &amp; Completion Days &rarr;</h3>'
             "<p>WAR-derived drilling and completion durations for 217 wells across "
             "the 12 Lower-Tertiary fields.</p></a>"
+        )
+    if (PUBLIC / "pressure-atlas" / "index.html").exists():
+        cards.append(
+            '<a class="card" href="pressure-atlas/"><h3>Well Pressure Atlas &rarr;</h3>'
+            "<p>Offshore HPHT over-pressure vs onshore under-pressure &mdash; browsable across "
+            "the US GoM Lower Tertiary and Mid-Continent gas basins.</p></a>"
         )
 
     # Portfolio economics table, worst NPV first. Only list fields whose page
