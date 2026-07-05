@@ -379,8 +379,6 @@ def pytest_ignore_collect(collection_path, config):
 
     # Issue #2433: skip known broken collection targets until missing modules/data are restored.
     broken_module_tests = {
-        # Missing worldenergydata.bsee.analysis.type_curves implementation pieces
-        Path("tests/modules/bsee/analysis/test_type_curves.py"),
         # Duplicate basename clashes with tests/integration/workflows/test_end_to_end.py
         Path("tests/modules/fdas/integration/test_end_to_end.py"),
         # Missing sodir_module.* package
