@@ -93,7 +93,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#751](https://github.com/vamseeachanta/worldenergydata/issues/751) | [colorado-ecmc-form5a-ingest](2026-07-04-issue-751-colorado-ecmc-form5a-ingest.md) | plan-approved | 2026-07-04 |
 | [#806](https://github.com/vamseeachanta/worldenergydata/issues/806) | [spain-live-cores-xlsx](2026-07-04-issue-806-spain-live-cores-xlsx.md) | implemented | 2026-07-04 |
 | [#809](https://github.com/vamseeachanta/worldenergydata/issues/809) | [spain-cores-refresh-job](2026-07-05-issue-809-spain-cores-refresh-job.md) | plan-review | 2026-07-05 |
-| [#810](https://github.com/vamseeachanta/worldenergydata/issues/810) | [spain-cores-field-development-report](2026-07-05-issue-810-spain-cores-field-development-report.md) | plan-review | 2026-07-05 |
+| [#810](https://github.com/vamseeachanta/worldenergydata/issues/810) | [spain-cores-field-development-report](2026-07-05-issue-810-spain-cores-field-development-report.md) | plan-approved | 2026-07-05 |
 
 ## Closed / superseded plans
 

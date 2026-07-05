@@ -1,7 +1,7 @@
 # Plan: Issue #810 - Spain CORES field-development HTML report
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/810
-**Status:** plan-review
+**Status:** plan-approved
 **Tier:** T2 (interactive HTML report over existing live Spain CORES chain)
 **Client:** N/A
 **Project:** worldenergydata Spain CORES production lifecycle
