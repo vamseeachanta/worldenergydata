@@ -97,9 +97,7 @@ def _seed_rows():
 
 def _make_result(rows):
     q = ProductionQuery(regions=["x"])
-    data = (
-        pd.DataFrame(rows) if rows else pd.DataFrame(columns=list(STANDARD_COLUMNS))
-    )
+    data = pd.DataFrame(rows) if rows else pd.DataFrame(columns=list(STANDARD_COLUMNS))
     return ProductionResult(
         query=q,
         data=data,
@@ -240,9 +238,7 @@ def test_unknown_source_is_seed():
 
 def test_missing_source_column_is_seed():
     # A frame with no `source` column at all -> cannot prove real -> seed.
-    df = pd.DataFrame(
-        [{"region": "gom", "field_name": "Atlantis", "oil_bbl": 1.0}]
-    )
+    df = pd.DataFrame([{"region": "gom", "field_name": "Atlantis", "oil_bbl": 1.0}])
     result = ProductionResult(
         query=ProductionQuery(regions=["gom"]),
         data=df,

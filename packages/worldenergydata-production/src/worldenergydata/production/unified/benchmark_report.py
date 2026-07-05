@@ -47,8 +47,17 @@ _CONCEPT_BUCKETS = ("dry", "subsea15", "subsea20", "unknown")
 # by construction, so unknown provenance can never be upgraded to real by
 # naming luck (#723 review Finding 1). Compared case-insensitively.
 _REAL_SOURCES = frozenset(
-    {"bsee", "sodir", "cores", "ukcs", "brazil_anp",
-     "eia_us", "mexico_cnh", "texas_rrc", "canada"}
+    {
+        "bsee",
+        "sodir",
+        "cores",
+        "ukcs",
+        "brazil_anp",
+        "eia_us",
+        "mexico_cnh",
+        "texas_rrc",
+        "canada",
+    }
 )
 
 # Repo root: benchmark_report.py -> unified -> production -> worldenergydata
@@ -133,9 +142,11 @@ def _single_region_result(region: str, df: pd.DataFrame) -> ProductionResult:
         query=ProductionQuery(regions=[region]),
         data=df,
         summary=pd.DataFrame(),
-        sources_used=sorted(df["source"].dropna().unique().tolist())
-        if "source" in df.columns
-        else [],
+        sources_used=(
+            sorted(df["source"].dropna().unique().tolist())
+            if "source" in df.columns
+            else []
+        ),
         coverage_gaps=[],
     )
 
@@ -320,13 +331,13 @@ def render_benchmark_html(benchmark: dict) -> str:
         prov = r.get("provenance", "seed")
         badge_cls, badge_txt = _BADGE.get(prov, _BADGE["seed"])
         body_rows.append(
-            "<tr data-provenance=\"{prov}\">"
+            '<tr data-provenance="{prov}">'
             "<td>{region}</td>"
             "<td>{field}</td>"
-            "<td class=\"num\">{peak}</td>"
-            "<td class=\"num\">{take}</td>"
-            "<td class=\"num\">{npv}</td>"
-            "<td><span class=\"badge {cls}\">{badge}</span></td>"
+            '<td class="num">{peak}</td>'
+            '<td class="num">{take}</td>'
+            '<td class="num">{npv}</td>'
+            '<td><span class="badge {cls}">{badge}</span></td>'
             "</tr>".format(
                 prov=html.escape(prov),
                 region=html.escape(str(r.get("region", ""))),
@@ -346,8 +357,8 @@ def render_benchmark_html(benchmark: dict) -> str:
         crows = []
         for region, counts in sorted(concept_mix.items()):
             crows.append(
-                "<tr><td>{r}</td><td class=\"num\">{d}</td><td class=\"num\">{s15}</td>"
-                "<td class=\"num\">{s20}</td><td class=\"num\">{u}</td></tr>".format(
+                '<tr><td>{r}</td><td class="num">{d}</td><td class="num">{s15}</td>'
+                '<td class="num">{s20}</td><td class="num">{u}</td></tr>'.format(
                     r=html.escape(str(region)),
                     d=counts.get("dry", 0),
                     s15=counts.get("subsea15", 0),
@@ -356,8 +367,8 @@ def render_benchmark_html(benchmark: dict) -> str:
                 )
             )
         concept_html = (
-            "<section class=\"concept\"><h2>Development-concept mix by region</h2>"
-            "<p class=\"sub\">Fields bucketed by water depth via "
+            '<section class="concept"><h2>Development-concept mix by region</h2>'
+            '<p class="sub">Fields bucketed by water depth via '
             "<code>classify_dev_system_by_depth</code>; fields without a known "
             "depth are counted as <em>unknown</em> (depth is never fabricated).</p>"
             "<table><thead><tr><th>Region</th><th>Dry tree</th><th>Subsea (&lt;6000 ft)</th>"
@@ -370,7 +381,7 @@ def render_benchmark_html(benchmark: dict) -> str:
     skip_html = ""
     if skipped:
         skip_html = (
-            "<p class=\"skip\">Regions skipped (adapter returned no rows — no "
+            '<p class="skip">Regions skipped (adapter returned no rows — no '
             "fabricated economics emitted): <strong>"
             + html.escape(", ".join(skipped))
             + "</strong></p>"
@@ -441,8 +452,12 @@ def render_benchmark_html(benchmark: dict) -> str:
 # "unknown" — depth is never fabricated for the economics.
 _ILLUSTRATIVE_DEPTHS_FT: dict[str, dict[str, Optional[float]]] = {
     "ncs": {"Edvard Grieg": 360.0, "Valhall": 230.0, "Ivar Aasen": 360.0},
-    "gom": {"Atlantis": 7070.0, "Thunder Horse": 6300.0,
-            "Mars-Ursa": 3000.0, "Na Kika": 6340.0},
+    "gom": {
+        "Atlantis": 7070.0,
+        "Thunder Horse": 6300.0,
+        "Mars-Ursa": 3000.0,
+        "Na Kika": 6340.0,
+    },
     "brazil": {},
     "ukcs": {},
 }
@@ -476,11 +491,11 @@ def generate_report(output_dir: Optional[Path] = None) -> dict:
         region_depths = _ILLUSTRATIVE_DEPTHS_FT.get(region, {})
         depth_by_field[region] = {f: region_depths.get(f) for f in fields}
 
-    benchmark = build_benchmark(
-        regions, router=router, depth_by_field=depth_by_field
-    )
+    benchmark = build_benchmark(regions, router=router, depth_by_field=depth_by_field)
 
-    out = Path(output_dir) if output_dir else (_REPO_ROOT / "reports" / "field_benchmark")
+    out = (
+        Path(output_dir) if output_dir else (_REPO_ROOT / "reports" / "field_benchmark")
+    )
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_text(render_benchmark_html(benchmark), encoding="utf-8")
     (out / "_facts.json").write_text(
