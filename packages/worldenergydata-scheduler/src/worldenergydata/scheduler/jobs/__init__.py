@@ -22,6 +22,7 @@ _LAZY_EXPORTS = {
     "LngTerminalsRefreshJob": "worldenergydata.scheduler.jobs.lng_terminals_refresh",
     "MetoceanRefreshJob": "worldenergydata.scheduler.jobs.metocean_refresh",
     "SodirRefreshJob": "worldenergydata.scheduler.jobs.sodir_refresh",
+    "SpainCoresRefreshJob": "worldenergydata.scheduler.jobs.spain_cores_refresh",
     "UkcsRefreshJob": "worldenergydata.scheduler.jobs.ukcs_refresh",
 }
 
@@ -48,4 +49,5 @@ __all__ = [
     "UkcsRefreshJob",
     "MetoceanRefreshJob",
     "LngTerminalsRefreshJob",
+    "SpainCoresRefreshJob",
 ]

@@ -43,6 +43,10 @@ _JOB_SPECS: tuple[tuple[str, str], ...] = (
         "lng_terminals_refresh",
         "worldenergydata.scheduler.jobs.lng_terminals_refresh.LngTerminalsRefreshJob",
     ),
+    (
+        "spain_cores_refresh",
+        "worldenergydata.scheduler.jobs.spain_cores_refresh.SpainCoresRefreshJob",
+    ),
 )
 
 

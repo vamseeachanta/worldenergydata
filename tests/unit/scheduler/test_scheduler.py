@@ -2,13 +2,10 @@
 
 import json
 import os
-import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
 
 import pytest
-import yaml
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.scheduler import DataScheduler
@@ -39,9 +36,11 @@ monitoring:
 class MockJob(AbstractJob):
     name = "mock_job"
     call_count = 0
+    last_config = None
 
     def run(self, config: dict) -> JobResult:
         MockJob.call_count += 1
+        MockJob.last_config = dict(config)
         return JobResult(
             job_name=self.name,
             start_time=datetime.now(),
@@ -113,6 +112,7 @@ class TestDataSchedulerRegistration:
 class TestDataSchedulerRunOnce:
     def setup_method(self):
         MockJob.call_count = 0
+        MockJob.last_config = None
 
     def test_run_once_executes_job(self, tmp_path):
         config_path = _write_config(tmp_path)
@@ -205,6 +205,120 @@ class TestDataSchedulerRunOnce:
 
         manifest_path = tmp_path / "data" / "modules" / "mock_job" / "manifest.json"
         assert manifest_path.exists()
+
+    def test_run_once_passes_scheduler_repo_root_to_job_config(self, tmp_path):
+        config_dir = tmp_path / "config" / "scheduler"
+        config_dir.mkdir(parents=True)
+        config_path = config_dir / "scheduler_config.yml"
+        config_path.write_text(
+            MINIMAL_CONFIG.format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+                mock_output_dir="data/modules/mock_job",
+                disabled_output_dir="data/modules/disabled_job",
+            )
+        )
+        scheduler = DataScheduler(config_path=str(config_path))
+        scheduler.register_job(MockJob())
+
+        scheduler.run_once("mock_job")
+
+        assert MockJob.last_config["_scheduler_repo_root"] == str(tmp_path)
+        assert "_scheduler_repo_root" not in scheduler._config.get_job_config(
+            "mock_job"
+        )
+
+    def test_run_once_spain_cores_writes_outputs_and_manifest_under_one_root(
+        self, tmp_path
+    ):
+        import pandas as pd
+
+        from worldenergydata.scheduler.jobs.spain_cores_refresh import (
+            SpainCoresRefreshJob,
+        )
+
+        config_dir = tmp_path / "config" / "scheduler"
+        config_dir.mkdir(parents=True)
+        config_path = config_dir / "scheduler_config.yml"
+        config_path.write_text(
+            """
+jobs:
+  - name: spain_cores_refresh
+    interval: monthly
+    time: "08:00"
+    enabled: true
+    output_dir: data/spain/cores
+    refresh_fixture: false
+
+monitoring:
+  log_dir: {log_dir}
+  log_retention_days: 30
+  retry_max: 3
+  retry_backoff_seconds: 0
+  webhook_url: null
+  status_file: {status_file}
+""".format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+            )
+        )
+        scheduler = DataScheduler(config_path=str(config_path))
+
+        class _SchedulerFakeLoader:
+            instances = []
+
+            def __init__(self, *, cache_root):
+                self.cache_root = Path(cache_root)
+                _SchedulerFakeLoader.instances.append(self)
+
+            def refresh(self, *, force_refresh=False):
+                self.cache_root.mkdir(parents=True, exist_ok=True)
+                (self.cache_root / "metadata").mkdir()
+                (
+                    self.cache_root / "metadata" / "cores_refresh_metadata.json"
+                ).write_text(
+                    json.dumps(
+                        {"statistics_page": ("https://www.cores.es/en/estadisticas")}
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+
+            def load_all_production(self):
+                normalized_dir = self.cache_root / "normalized"
+                normalized_dir.mkdir(exist_ok=True)
+                (normalized_dir / "cores_all_production.csv").write_text(
+                    (
+                        "field_name,year,month,oil_bbl,gas_mcf\n"
+                        "Ayoluengo,2026,1,1.0,2.0\n"
+                    ),
+                    encoding="utf-8",
+                )
+                return pd.DataFrame(
+                    [
+                        {
+                            "field_name": "Ayoluengo",
+                            "year": 2026,
+                            "month": 1,
+                            "oil_bbl": 1.0,
+                            "gas_mcf": 2.0,
+                        }
+                    ]
+                )
+
+        job = SpainCoresRefreshJob()
+        job._loader_class = lambda: _SchedulerFakeLoader
+        scheduler.register_job(job)
+
+        result = scheduler.run_once("spain_cores_refresh")
+
+        output_dir = tmp_path / "data" / "spain" / "cores"
+        assert result.status == "success"
+        assert _SchedulerFakeLoader.instances[0].cache_root == output_dir
+        assert (output_dir / "_metadata.json").exists()
+        assert (output_dir / "metadata" / "cores_refresh_metadata.json").exists()
+        assert (output_dir / "normalized" / "cores_all_production.csv").exists()
+        assert (output_dir / "manifest.json").exists()
 
 
 class TestDataSchedulerStatus:
