@@ -52,8 +52,9 @@ from worldenergydata.canada.emerging_basins.watch_list import (
     get_emerging_basins,
 )
 from worldenergydata.canada.production.cnloer_loader import (
-    CnloerLoader,
-    CnloerProductionRecord,
+    CnloerFixtureLoader,
+    CnloerProductionLoader,
+    parse_cnloer_production_text,
 )
 from worldenergydata.common.logging import get_logger
 
@@ -77,8 +78,9 @@ __all__ = [
     "CanadaCache",
     "FileDownloadCache",
     # C-NLOER offshore production
-    "CnloerLoader",
-    "CnloerProductionRecord",
+    "CnloerProductionLoader",
+    "CnloerFixtureLoader",
+    "parse_cnloer_production_text",
     # Emerging basins
     "EmergingBasinStub",
     "EMERGING_BASINS",
