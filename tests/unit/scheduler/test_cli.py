@@ -1,15 +1,7 @@
 """Tests for scheduler CLI: start | stop | status | run-job <name>."""
 
-import json
-import os
-
-# Use subprocess to invoke CLI as module
-import subprocess
-import sys
-import tempfile
 from datetime import datetime
-from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 

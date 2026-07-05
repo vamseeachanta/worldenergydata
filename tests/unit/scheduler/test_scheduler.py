@@ -2,13 +2,10 @@
 
 import json
 import os
-import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
 
 import pytest
-import yaml
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.scheduler import DataScheduler
