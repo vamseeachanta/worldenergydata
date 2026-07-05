@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Well Pressure Atlas — worldenergydata</title>
+<style>
+  :root{--navy:#0B3D91;--teal:#0f8a7e;--bg:#eef3fa;--panel:#fff;--ink:#13233f;--muted:#5b6b86;
+        --line:#dbe4f0;--soft:#f4f8fc;--severe:#c0392b;--mild:#8a5a12;--normal:#177544;--roadmap:#5b6b86}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+  .nav{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-family:ui-monospace,monospace;font-size:12.5px}
+  .nav a{color:var(--teal);font-weight:700}
+  .nav a:hover{text-decoration:underline}
+  .eyebrow{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.4px;color:var(--navy);margin:6px 0 8px}
+  h2.sec{font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.2px;margin:20px 0 2px}
+  .lede{color:var(--muted);font-size:16px;max-width:820px}
+  .story{display:block;margin-top:14px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--teal);
+         border-radius:10px;padding:12px 16px;font-size:14px;max-width:900px}
+  .story b{color:var(--navy)}
+  .story .over{color:var(--severe);font-weight:700}
+  .story .under{color:var(--teal);font-weight:700}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:24px 0 8px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 16px;
+        box-shadow:0 1px 2px rgba(16,40,80,.04)}
+  .card .k{font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .card .v{font-size:26px;font-weight:800;color:var(--navy);margin:2px 0 1px;letter-spacing:-.5px}
+  .card .s{font-size:12px;color:var(--muted)}
+  .toggle{display:inline-flex;gap:4px;margin:22px 0 4px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:4px}
+  .toggle button{font-family:ui-monospace,monospace;font-size:13px;font-weight:700;padding:8px 18px;border:0;border-radius:20px;background:transparent;color:var(--muted);cursor:pointer}
+  .toggle button.on{background:var(--navy);color:#fff}
+  .toggle button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  .view{display:none}
+  .view.on{display:block}
+  .ctx{font-size:13.5px;color:var(--muted);margin:6px 2px 6px;max-width:900px}
+  .ctx b{color:var(--ink)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+  .chip{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 12px}
+  .chip b{color:var(--navy)}
+  .agg{font-size:13px;color:var(--muted);background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0;line-height:1.9}
+  .agg b{color:var(--ink)}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin-top:8px;background:#fff}
+  table{border-collapse:collapse;width:100%;font-size:13px;min-width:640px}
+  th,td{border-bottom:1px solid var(--line);padding:9px 12px;text-align:left;white-space:nowrap}
+  th{background:var(--soft);cursor:pointer;user-select:none;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);position:sticky;top:0}
+  th:hover{background:#e7eef7}
+  th:focus-visible{outline:2px solid var(--teal);outline-offset:-2px}
+  th::after{content:"\2195";opacity:.35;font-size:10px;margin-left:5px}
+  th[aria-sort="ascending"]::after{content:"\2191";opacity:.9}
+  th[aria-sort="descending"]::after{content:"\2193";opacity:.9}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  td.fld{font-weight:700;color:var(--ink)}
+  td.pr{font-weight:700;color:var(--severe)}
+  td.nodata{text-align:right;color:var(--muted)}
+  tbody tr:hover{background:var(--soft)}
+  .hpht{color:var(--mild);font-weight:700}
+  .hpht-ultra{color:var(--severe);font-weight:700}
+  .cav{color:var(--teal);font-weight:700;font-size:10px}
+  .disc{border:0;background:transparent;color:var(--teal);cursor:pointer;font-size:15px;margin-right:6px;padding:0;vertical-align:-1px}
+  .disc:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+  .note-row td{background:var(--soft);white-space:normal}
+  .src{font-size:12.5px;color:var(--muted);line-height:1.5;padding:2px 0}
+  .src b{color:var(--navy)}
+  .tier{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;text-transform:uppercase;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .t-severe{color:#fff;background:var(--severe)}
+  .t-mild{color:#fff;background:var(--mild)}
+  .t-normal{color:#fff;background:var(--normal)}
+  .vac{color:var(--severe);margin-left:4px}
+  .roadmap{margin-top:26px}
+  .rm{display:inline-block;font-family:ui-monospace,monospace;font-size:12px;color:var(--roadmap);background:#f2f5f9;border:1px dashed var(--line);border-radius:20px;padding:5px 12px;margin:0 6px 6px 0}
+  .foot-note{font-size:12px;color:var(--muted);margin-top:8px;max-width:900px;line-height:1.5}
+  .note{margin-top:12px;font-size:12.5px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;line-height:1.6;max-width:960px}
+  .note b{color:var(--navy)}
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#0a141f;--panel:#10202f;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;--soft:#0d1b28;--navy:#5b9de0;--teal:#3fb99b;--severe:#e5705f;--mild:#d9a441;--normal:#3fc07a;--roadmap:#8ca0b3}
+    .rm{background:#182636}
+    .card .v{color:var(--ink)}
+    td.pr{color:var(--severe)}
+    .t-severe,.t-mild,.t-normal{color:#08131f}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav" aria-label="site">
+    <a href="../">&larr; worldenergydata</a>
+    <a href="../field-atlas/">Field atlas</a>
+    <a href="../capabilities/">Capabilities</a>
+  </nav>
+  <p class="eyebrow">worldenergydata · browse the pressure spectrum</p>
+  <h1>Well Pressure Atlas</h1>
+  <p class="lede">Offshore over-pressure (HPHT) and onshore under-pressure, from public data</p>
+  <div class="story">One axis, two extremes. Offshore Gulf of Mexico Wilcox is
+     <span class="over">extreme over-pressure</span> &mdash; ultra-HPHT reservoirs to
+     <b>~25,000 psi</b> (Anchor; 23,000&ndash;27,000 psi disclosed). Onshore Mid-Continent gas
+     is <span class="under">extreme under-pressure</span> &mdash; a median of
+     <b>~9% of hydrostatic</b> with hundreds of near-vacuum wells. Same subsurface, opposite
+     ends of one pressure axis.</div>
+
+  <div class="cards">
+<div class='card'><div class='k'>Offshore max disclosed</div><div class='v'>~25,000 psi</div><div class='s'>Anchor (reservoir BHP)</div></div>
+<div class='card'><div class='k'>Onshore wells screened</div><div class='v'>30,100</div><div class='s'>19,972 OK · 10,103 KS · 25 TX</div></div>
+<div class='card'><div class='k'>Onshore median</div><div class='v'>9.1%</div><div class='s'>of hydrostatic · 0.0394 psi/ft</div></div>
+<div class='card'><div class='k'>Near-vacuum wells</div><div class='v'>697</div><div class='s'>onshore, at extreme-low BHP</div></div>
+  </div>
+
+  <div class="toggle" id="tog" role="tablist" aria-label="pressure regime">
+    <button data-v="off" class="on" role="tab" aria-selected="true" aria-controls="view-off">Offshore &mdash; over-pressure</button>
+    <button data-v="on" role="tab" aria-selected="false" aria-controls="view-on">Onshore &mdash; under-pressure</button>
+  </div>
+
+  <section class="view on" id="view-off" role="tabpanel" aria-label="Offshore">
+    <h2 class="sec">Offshore — US Gulf of Mexico</h2>
+    <p class="ctx">Over-pressured (HPHT / ultra-HPHT) · Lower Tertiary / Paleogene Wilcox. 10 Lower-Tertiary fields;
+       <b>7</b> with a publicly disclosed reservoir pressure. Click the &#9432; on any
+       row for the exact source. Fields with no published pore pressure show &mdash; (never a
+       borrowed neighbour value).</p>
+    <div class="tblwrap">
+      <table id="t-off">
+        <thead><tr>
+          <th>Field</th><th>Operator</th><th>Water depth (ft)</th>
+          <th>Reservoir pressure (psi)</th><th>Equip rating (psi)</th>
+          <th>Temp (&deg;F)</th><th>TVD (ft)</th><th>HPHT class</th>
+        </tr></thead>
+        <tbody>
+<tr class='off-row' data-i='0'><td class='fld'><button class='disc' aria-label='show source note for Anchor' aria-expanded='false' title='Click for source'>&#9432;</button>Anchor</td><td>Chevron</td><td data-sort='5180' class='num'>5,180</td><td data-sort='25000' class='num pr'>~25,000</td><td data-sort='20000' class='num'>20,000</td><td data-sort='275' class='num'>275</td><td data-sort='30000' class='num'>30,000</td><td class='hpht-ultra'>ultra-HPHT</td></tr><tr class='note-row' data-for='0' hidden><td colspan='8'><div class='src'><b>Anchor &mdash; source:</b> OGJ 2024: initial reservoir (BHP) 23,000–27,000 psi — higher than the 20,000-psi equipment rating; 275F max flowing temp; pay 30,000–34,000 ft TVD (Wilcox 1–4).</div></td></tr>
+<tr class='off-row' data-i='1'><td class='fld'><button class='disc' aria-label='show source note for Shenandoah' aria-expanded='false' title='Click for source'>&#9432;</button>Shenandoah</td><td>Beacon Offshore Energy</td><td data-sort='5800' class='num'>5,800</td><td data-sort='22000' class='num pr'>≥22,000</td><td data-sort='20000' class='num'>20,000</td><td data-sort='200' class='num'>200</td><td data-sort='30000' class='num'>30,000</td><td class='hpht-ultra'>ultra-HPHT</td></tr><tr class='note-row' data-for='1' hidden><td colspan='8'><div class='src'><b>Shenandoah &mdash; source:</b> Clariant/World Oil: reservoir/formation pressures above 22,000 psi at ~200F (ultra-high-PRESSURE, moderate temp), ~30,000 ft TVD; 20,000-psi equipment rating separate.</div></td></tr>
+<tr class='off-row' data-i='2'><td class='fld'><button class='disc' aria-label='show source note for Kaskida' aria-expanded='false' title='Click for source'>&#9432;</button>Kaskida</td><td>BP</td><td data-sort='6000' class='num'>6,000</td><td data-sort='20000' class='num pr'>≥20,000</td><td data-sort='20000' class='num'>20,000</td><td data-sort='-1' class='num'>—</td><td data-sort='-1' class='num'>—</td><td class='hpht-ultra'>ultra-HPHT</td></tr><tr class='note-row' data-for='2' hidden><td colspan='8'><div class='src'><b>Kaskida &mdash; source:</b> AAPG: deep Wilcox is a &#x27;20,000 psi or higher&#x27; reservoir environment (matches the 20K equipment rating); JPT/BOEM: BP 20,000-psi FPU. Exact pore pressure not published — shown as ≥20,000.</div></td></tr>
+<tr class='off-row' data-i='3'><td class='fld'><button class='disc' aria-label='show source note for Tiber' aria-expanded='false' title='Click for source'>&#9432;</button>Tiber</td><td>BP</td><td data-sort='4132' class='num'>4,132</td><td data-sort='20000' class='num pr'>up to 20,000</td><td data-sort='20000' class='num'>20,000</td><td data-sort='-1' class='num'>—</td><td data-sort='28000' class='num'>28,000</td><td class='hpht-ultra'>ultra-HPHT</td></tr><tr class='note-row' data-for='3' hidden><td colspan='8'><div class='src'><b>Tiber &mdash; source:</b> BP FID 2025 (Tiber-Guadalupe): reservoirs &#x27;under pressures of up to 20,000 psi&#x27;, Paleogene Wilcox; ~28,000 ft TVD. Temperature not field-specific.</div></td></tr>
+<tr class='off-row' data-i='4'><td class='fld'><button class='disc' aria-label='show source note for Cascade/Chinook' aria-expanded='false' title='Click for source'>&#9432;</button>Cascade/Chinook</td><td>MP Gulf of Mexico LLC (Murphy EXPRO)</td><td data-sort='8200' class='num'>8,200</td><td data-sort='19500' class='num pr'>~19,500</td><td data-sort='-1' class='num'>—</td><td data-sort='260' class='num'>260</td><td data-sort='25600' class='num'>25,600</td><td class='hpht'>HPHT</td></tr><tr class='note-row' data-for='4' hidden><td colspan='8'><div class='src'><b>Cascade/Chinook &mdash; source:</b> OTC-24162/24163 + JPT: initial reservoir pressure ~19,500 psi, BHT ~256–260F, reservoir mid-point ~25,600 ft TVD.</div></td></tr>
+<tr class='off-row' data-i='5'><td class='fld'><button class='disc' aria-label='show source note for Jack/St. Malo' aria-expanded='false' title='Click for source'>&#9432;</button>Jack/St. Malo</td><td>Chevron</td><td data-sort='7000' class='num'>7,000</td><td data-sort='19374' class='num pr'>19,374</td><td data-sort='-1' class='num'>—</td><td data-sort='224' class='num'>224</td><td data-sort='26500' class='num'>26,500</td><td class='hpht'>HPHT</td></tr><tr class='note-row' data-for='5' hidden><td colspan='8'><div class='src'><b>Jack/St. Malo &mdash; source:</b> Dice regional Wilcox reservoir study: Jack initial pressure 19,374 psi @ 224F, St. Malo 19,023 psi @ 225F; reservoir ~26,500 ft TVD.</div></td></tr>
+<tr class='off-row' data-i='6'><td class='fld'><button class='disc' aria-label='show source note for Julia' aria-expanded='false' title='Click for source'>&#9432;</button>Julia</td><td>ExxonMobil</td><td data-sort='7000' class='num'>7,000</td><td data-sort='13500' class='num pr'>~13,500<sup class='cav' title='see source note'>&dagger;</sup></td><td data-sort='15000' class='num'>15,000</td><td data-sort='-1' class='num'>—</td><td data-sort='30000' class='num'>30,000</td><td class='hpht'>HPHT</td></tr><tr class='note-row' data-for='6' hidden><td colspan='8'><div class='src'><b>Julia &mdash; source:</b> Offshore Mag: subsea pressures ~13,500 psi (15,000-psi-rated trees + first permanent HIPPS); Hart Energy production test: 24.7°API oil.</div></td></tr>
+<tr class='off-row' data-i='7'><td class='fld'><button class='disc' aria-label='show source note for Big Foot' aria-expanded='false' title='Click for source'>&#9432;</button>Big Foot</td><td>Chevron</td><td data-sort='5200' class='num'>5,200</td><td data-sort='-1' class='num nodata'>—</td><td data-sort='-1' class='num'>—</td><td data-sort='-1' class='num'>—</td><td data-sort='-1' class='num'>—</td><td>—</td></tr><tr class='note-row' data-for='7' hidden><td colspan='8'><div class='src'><b>Big Foot &mdash; source:</b> Wilcox oil field (Offshore Technology; Chevron). Field-specific reservoir pressure/temperature not publicly disclosed — shown as — rather than borrowed from neighbouring fields.</div></td></tr>
+<tr class='off-row' data-i='8'><td class='fld'><button class='disc' aria-label='show source note for North Platte (renamed Sparta)' aria-expanded='false' title='Click for source'>&#9432;</button>North Platte (renamed Sparta)</td><td>Shell</td><td data-sort='4265' class='num'>4,265</td><td data-sort='-1' class='num nodata'>—</td><td data-sort='20000' class='num'>20,000</td><td data-sort='-1' class='num'>—</td><td data-sort='-1' class='num'>—</td><td class='hpht-ultra'>ultra-HPHT</td></tr><tr class='note-row' data-for='8' hidden><td colspan='8'><div class='src'><b>North Platte (renamed Sparta) &mdash; source:</b> World Oil/JPT: Sparta (ex-North Platte) is a 20,000-psi-rated development. All public &#x27;20,000 psi&#x27; figures are the equipment rating; true reservoir pore pressure not publicly disclosed — shown as —.</div></td></tr>
+<tr class='off-row' data-i='9'><td class='fld'><button class='disc' aria-label='show source note for Stones' aria-expanded='false' title='Click for source'>&#9432;</button>Stones</td><td>Shell</td><td data-sort='9500' class='num'>9,500</td><td data-sort='-1' class='num nodata'>—</td><td data-sort='-1' class='num'>—</td><td data-sort='-1' class='num'>—</td><td data-sort='26500' class='num'>26,500</td><td class='hpht'>HPHT</td></tr><tr class='note-row' data-for='9' hidden><td colspan='8'><div class='src'><b>Stones &mdash; source:</b> Offshore Mag/S&amp;D: Paleogene Wilcox, reservoir ~26,500 ft TVD (17,000 ft below mudline). Reservoir pressure/temperature not cleanly sourced — shown as —.</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class='foot-note'>&dagger; Julia &mdash; Subsea system pressure (15,000-psi-rated trees + HIPPS), not a disclosed reservoir pore pressure.</p>
+    <p class="ctx" style="font-size:12px">Source: Public field disclosures (OGJ, OTC/JPT, OffshoreMag, operator releases); curated in worldenergydata reports/lower_tertiary/lifecycle/_facts.json</p>
+  </section>
+
+  <section class="view" id="view-on" role="tabpanel" aria-label="Onshore">
+    <h2 class="sec">Onshore — US Mid-Continent</h2>
+    <p class="ctx">Under-pressured / near-vacuum. Top 40 fields by well count (of 178 ranked).
+       Tier is coloured by field: <span class="tier t-severe">severe</span>
+       <span class="tier t-mild">mild</span> <span class="tier t-normal">normal</span>; &#9888;
+       flags fields containing near-vacuum wells.</p>
+    <div class="chips"><span class='chip'><b>OK</b> 19,972 wells</span><span class='chip'><b>KS</b> 10,103 wells</span><span class='chip'><b>TX</b> 25 wells</span></div>
+    <div class="agg">Onshore aggregate: <b>30,100</b> wells · median BHP gradient <b>0.0394 psi/ft</b> (&asymp;9.1% of hydrostatic) · <span class='tier t-severe'>severe</span> 28,316 · <span class='tier t-mild'>mild</span> 814 · <span class='tier t-normal'>normal</span> 970 · <b>697</b> near-vacuum · 178 fields ranked</div>
+    <div class="tblwrap">
+      <table id="t-on">
+        <thead><tr>
+          <th>Field</th><th>State(s)</th><th>Wells</th>
+          <th>Median BHP grad (psi/ft)</th><th>% hydrostatic</th>
+          <th>Near-vacuum</th><th>Earliest test yr</th><th>Tier</th>
+        </tr></thead>
+        <tbody>
+<tr><td class='fld'>HUGOTON GAS AREA</td><td>KS</td><td data-sort='7146' class='num'>7,146</td><td data-sort='0.0316' class='num'>0.0316</td><td data-sort='7.3' class='num'>7.3%</td><td data-sort='159' class='num'>159 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='1996' class='num'>1996</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPIAN</td><td>OK</td><td data-sort='3920' class='num'>3,920</td><td data-sort='0.0609' class='num'>0.0609</td><td data-sort='14.1' class='num'>14.1%</td><td data-sort='24' class='num'>24 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>WOODFORD</td><td>OK</td><td data-sort='3705' class='num'>3,705</td><td data-sort='0.1312' class='num'>0.1312</td><td data-sort='30.3' class='num'>30.3%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>PANOMA GAS AREA</td><td>KS</td><td data-sort='2342' class='num'>2,342</td><td data-sort='0.0289' class='num'>0.0289</td><td data-sort='6.7' class='num'>6.7%</td><td data-sort='20' class='num'>20 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='1996' class='num'>1996</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>(unmatched)</td><td>KS,OK</td><td data-sort='1306' class='num'>1,306</td><td data-sort='0.0157' class='num'>0.0157</td><td data-sort='3.6' class='num'>3.6%</td><td data-sort='15' class='num'>15 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='1996' class='num'>1996</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPI LIME</td><td>OK</td><td data-sort='924' class='num'>924</td><td data-sort='0.0234' class='num'>0.0234</td><td data-sort='5.4' class='num'>5.4%</td><td data-sort='7' class='num'>7 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>CLEVELAND</td><td>OK</td><td data-sort='745' class='num'>745</td><td data-sort='0.0944' class='num'>0.0944</td><td data-sort='21.8' class='num'>21.8%</td><td data-sort='7' class='num'>7 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>HUNTON</td><td>OK</td><td data-sort='647' class='num'>647</td><td data-sort='0.0731' class='num'>0.0731</td><td data-sort='16.9' class='num'>16.9%</td><td data-sort='25' class='num'>25 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>TONKAWA</td><td>OK</td><td data-sort='466' class='num'>466</td><td data-sort='0.098' class='num'>0.0980</td><td data-sort='22.6' class='num'>22.6%</td><td data-sort='2' class='num'>2 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>OSWEGO</td><td>OK</td><td data-sort='431' class='num'>431</td><td data-sort='0.0348' class='num'>0.0348</td><td data-sort='8.0' class='num'>8.0%</td><td data-sort='4' class='num'>4 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPI</td><td>OK</td><td data-sort='422' class='num'>422</td><td data-sort='0.0487' class='num'>0.0487</td><td data-sort='11.2' class='num'>11.2%</td><td data-sort='7' class='num'>7 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPIAN (LESS CHESTER)</td><td>OK</td><td data-sort='379' class='num'>379</td><td data-sort='0.0858' class='num'>0.0858</td><td data-sort='19.8' class='num'>19.8%</td><td data-sort='2' class='num'>2 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2016' class='num'>2016</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>CHEROKEE</td><td>OK</td><td data-sort='374' class='num'>374</td><td data-sort='0.409' class='num'>0.4090</td><td data-sort='94.5' class='num'>94.5%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='mildly_underpressured'><span class='tier t-mild'>mild</span></td></tr>
+<tr><td class='fld'>BARTLESVILLE</td><td>OK</td><td data-sort='273' class='num'>273</td><td data-sort='0.0822' class='num'>0.0822</td><td data-sort='19.0' class='num'>19.0%</td><td data-sort='57' class='num'>57 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MARMATON</td><td>OK</td><td data-sort='271' class='num'>271</td><td data-sort='0.1336' class='num'>0.1336</td><td data-sort='30.9' class='num'>30.9%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>SPRINGER</td><td>OK</td><td data-sort='255' class='num'>255</td><td data-sort='0.3531' class='num'>0.3531</td><td data-sort='81.5' class='num'>81.5%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='mildly_underpressured'><span class='tier t-mild'>mild</span></td></tr>
+<tr><td class='fld'>DES MOINES</td><td>OK</td><td data-sort='243' class='num'>243</td><td data-sort='0.2049' class='num'>0.2049</td><td data-sort='47.3' class='num'>47.3%</td><td data-sort='1' class='num'>1 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>GREENWOOD GAS AREA</td><td>KS</td><td data-sort='233' class='num'>233</td><td data-sort='0.0181' class='num'>0.0181</td><td data-sort='4.2' class='num'>4.2%</td><td data-sort='51' class='num'>51 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='1996' class='num'>1996</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPI SOLID</td><td>OK</td><td data-sort='221' class='num'>221</td><td data-sort='0.1465' class='num'>0.1465</td><td data-sort='33.8' class='num'>33.8%</td><td data-sort='4' class='num'>4 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>HUGOTON</td><td>KS</td><td data-sort='200' class='num'>200</td><td data-sort='0.0352' class='num'>0.0352</td><td data-sort='8.1' class='num'>8.1%</td><td data-sort='12' class='num'>12 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='1996' class='num'>1996</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>DEESE</td><td>OK</td><td data-sort='196' class='num'>196</td><td data-sort='0.0564' class='num'>0.0564</td><td data-sort='13.0' class='num'>13.0%</td><td data-sort='24' class='num'>24 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>HOXBAR</td><td>OK</td><td data-sort='165' class='num'>165</td><td data-sort='0.0915' class='num'>0.0915</td><td data-sort='21.1' class='num'>21.1%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>SYCAMORE</td><td>OK</td><td data-sort='160' class='num'>160</td><td data-sort='0.0931' class='num'>0.0931</td><td data-sort='21.5' class='num'>21.5%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>RED FORK</td><td>OK</td><td data-sort='152' class='num'>152</td><td data-sort='0.115' class='num'>0.1150</td><td data-sort='26.6' class='num'>26.6%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>COTTAGE GROVE</td><td>OK</td><td data-sort='143' class='num'>143</td><td data-sort='0.0888' class='num'>0.0888</td><td data-sort='20.5' class='num'>20.5%</td><td data-sort='1' class='num'>1 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MISSISSIPPI CHAT</td><td>OK</td><td data-sort='134' class='num'>134</td><td data-sort='0.0482' class='num'>0.0482</td><td data-sort='11.1' class='num'>11.1%</td><td data-sort='3' class='num'>3 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>SKINNER</td><td>OK</td><td data-sort='123' class='num'>123</td><td data-sort='0.1297' class='num'>0.1297</td><td data-sort='30.0' class='num'>30.0%</td><td data-sort='5' class='num'>5 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>CHESTER</td><td>OK</td><td data-sort='121' class='num'>121</td><td data-sort='0.0263' class='num'>0.0263</td><td data-sort='6.1' class='num'>6.1%</td><td data-sort='1' class='num'>1 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>VIOLA</td><td>OK</td><td data-sort='119' class='num'>119</td><td data-sort='0.0628' class='num'>0.0628</td><td data-sort='14.5' class='num'>14.5%</td><td data-sort='11' class='num'>11 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MORROW</td><td>OK</td><td data-sort='112' class='num'>112</td><td data-sort='0.0445' class='num'>0.0445</td><td data-sort='10.3' class='num'>10.3%</td><td data-sort='4' class='num'>4 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>BROMIDE</td><td>OK</td><td data-sort='112' class='num'>112</td><td data-sort='0.0912' class='num'>0.0912</td><td data-sort='21.1' class='num'>21.1%</td><td data-sort='3' class='num'>3 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>DES MOINES GRANITE WASH</td><td>OK</td><td data-sort='98' class='num'>98</td><td data-sort='0.135' class='num'>0.1350</td><td data-sort='31.2' class='num'>31.2%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>DUTCHER</td><td>OK</td><td data-sort='93' class='num'>93</td><td data-sort='0.1625' class='num'>0.1625</td><td data-sort='37.5' class='num'>37.5%</td><td data-sort='7' class='num'>7 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>ATOKA</td><td>OK</td><td data-sort='88' class='num'>88</td><td data-sort='0.0665' class='num'>0.0665</td><td data-sort='15.4' class='num'>15.4%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>WILCOX</td><td>OK</td><td data-sort='86' class='num'>86</td><td data-sort='0.0596' class='num'>0.0596</td><td data-sort='13.8' class='num'>13.8%</td><td data-sort='9' class='num'>9 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MARCHAND</td><td>OK</td><td data-sort='81' class='num'>81</td><td data-sort='0.0655' class='num'>0.0655</td><td data-sort='15.1' class='num'>15.1%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>CANEY</td><td>OK</td><td data-sort='77' class='num'>77</td><td data-sort='0.166' class='num'>0.1660</td><td data-sort='38.3' class='num'>38.3%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>MAYES</td><td>OK</td><td data-sort='73' class='num'>73</td><td data-sort='0.057' class='num'>0.0570</td><td data-sort='13.2' class='num'>13.2%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>DOUGLAS</td><td>OK</td><td data-sort='71' class='num'>71</td><td data-sort='0.025' class='num'>0.0250</td><td data-sort='5.8' class='num'>5.8%</td><td data-sort='0' class='num'>0</td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+<tr><td class='fld'>CROMWELL</td><td>OK</td><td data-sort='70' class='num'>70</td><td data-sort='0.0753' class='num'>0.0753</td><td data-sort='17.4' class='num'>17.4%</td><td data-sort='3' class='num'>3 <span class='vac' title='near-vacuum wells present'>&#9888;</span></td><td data-sort='2010' class='num'>2010</td><td data-sort='severely_underpressured'><span class='tier t-severe'>severe</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ctx" style="font-size:12px">Source: State well databases (Kansas KGS proration, Oklahoma OCC, Texas RRC); screened by worldenergydata underpressured_screen (BHP gas-column estimate → gradient tiers).</p>
+  </section>
+
+  <h2 class="sec roadmap">Roadmap &mdash; not yet screened</h2>
+  <div><span class='rm'>US GoM — non-LT plays</span><span class='rm'>Norway (Sodir) / UK (NSTA)</span><span class='rm'>Brazil (ANP) / Mexico (CNH)</span><span class='rm'>Texas RRC — full completion-packet screen</span><span class='rm'>Colorado (ECMC)</span></div>
+
+  <h2 class="sec">Methodology</h2>
+  <div class="note"><b>Offshore</b> figures are public field disclosures
+     (OGJ, OTC/JPT, OffshoreMag, operator releases) &mdash; disclosed reservoir (pore/BHP)
+     pressures, distinct from the wellhead equipment rating; undisclosed values render &mdash;.
+     <b>Onshore</b> figures come from state well databases (Kansas KGS, Oklahoma OCC, Texas RRC)
+     screened by the worldenergydata <i>underpressured_screen</i> BHP gas-column estimate. Onshore
+     is a <b>depleted-era proxy</b> &mdash; it measures economic operability at extreme-low bottomhole
+     pressure in mature gas areas, <b>not</b> virgin sub-hydrostatic reservoirs. Hydrostatic
+     reference: <b>0.433 psi/ft</b>. Every number on this page traces to the committed
+     <code>_pressure.json</code>.</div>
+</div>
+
+<script>
+// Segmented toggle: offshore (default) / onshore
+document.getElementById('tog').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  var v = b.dataset.v;
+  [].forEach.call(this.children, function(x){
+    var on = x===b;
+    x.classList.toggle('on', on);
+    x.setAttribute('aria-selected', on?'true':'false');
+  });
+  document.getElementById('view-off').classList.toggle('on', v==='off');
+  document.getElementById('view-on').classList.toggle('on', v==='on');
+});
+
+// Offshore: reveal that field's source note row; keep aria-expanded in sync
+document.querySelectorAll('#t-off .disc').forEach(function(btn){
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    var tr = btn.closest('tr'); var i = tr.dataset.i;
+    var note = document.querySelector('#t-off .note-row[data-for="'+i+'"]');
+    if(note){ note.hidden = !note.hidden; btn.setAttribute('aria-expanded', note.hidden?'false':'true'); }
+  });
+});
+
+// Click- or keyboard-to-sort headers (numeric-aware; ignores paired note rows; announces via aria-sort)
+document.querySelectorAll('table').forEach(function(table){
+  var ths = table.querySelectorAll('th');
+  ths.forEach(function(th,i){
+    th.tabIndex = 0;
+    th.setAttribute('role','button');
+    function doSort(){
+      var tb = table.tBodies[0];
+      var all = [].slice.call(tb.rows);
+      var rows = all.filter(function(r){ return !r.classList.contains('note-row'); });
+      var notes = {};
+      all.forEach(function(r){ if(r.classList.contains('note-row')) notes[r.dataset.for]=r; });
+      var asc = th.dataset.asc!=='1'; th.dataset.asc = asc?'1':'0';
+      ths.forEach(function(o){ if(o!==th){ o.removeAttribute('aria-sort'); o.dataset.asc=''; } });
+      th.setAttribute('aria-sort', asc?'ascending':'descending');
+      rows.sort(function(a,b){
+        var x=a.cells[i].dataset.sort!==undefined?a.cells[i].dataset.sort:a.cells[i].innerText;
+        var y=b.cells[i].dataset.sort!==undefined?b.cells[i].dataset.sort:b.cells[i].innerText;
+        var nx=parseFloat(x), ny=parseFloat(y);
+        if(!isNaN(nx)&&!isNaN(ny)){x=nx;y=ny;}
+        return (x>y?1:x<y?-1:0)*(asc?1:-1);
+      });
+      rows.forEach(function(r){
+        tb.appendChild(r);
+        if(r.dataset.i!==undefined && notes[r.dataset.i]) tb.appendChild(notes[r.dataset.i]);
+      });
+    }
+    th.addEventListener('click', doSort);
+    th.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); doSort(); }
+    });
+  });
+});
+</script>
+</body>
+</html>
