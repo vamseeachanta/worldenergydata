@@ -33,7 +33,6 @@ from worldenergydata.production.unified.cross_basin import (
     fiscal_sensitivity,
 )
 from worldenergydata.production.unified.query import (
-    STANDARD_COLUMNS,
     ProductionQuery,
     ProductionResult,
 )
