@@ -20,6 +20,7 @@ plugins:
           # to collect the module (workspace-hub#3286 / #3293 --strict).
           paths:
             - src
+            - packages/worldenergydata-australia/src
             - packages/worldenergydata-baker_hughes/src
             - packages/worldenergydata-brazil_anp/src
             - packages/worldenergydata-bsee/src

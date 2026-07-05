@@ -41,6 +41,7 @@ dependencies = [
     "worldenergydata-sodir",
     "worldenergydata-brazil_anp",
     "worldenergydata-spain",
+    "worldenergydata-australia",
     "worldenergydata-canada",
     "worldenergydata-mexico_cnh",
     "worldenergydata-texas_rrc",
@@ -234,6 +235,8 @@ exclude = [
     "worldenergydata.brazil_anp.*",
     "worldenergydata.spain",
     "worldenergydata.spain.*",
+    "worldenergydata.australia",
+    "worldenergydata.australia.*",
     "worldenergydata.canada",
     "worldenergydata.canada.*",
     "worldenergydata.mexico_cnh",
@@ -498,6 +501,7 @@ worldenergydata-ukcs = { workspace = true }
 worldenergydata-sodir = { workspace = true }
 worldenergydata-brazil_anp = { workspace = true }
 worldenergydata-spain = { workspace = true }
+worldenergydata-australia = { workspace = true }
 worldenergydata-canada = { workspace = true }
 worldenergydata-mexico_cnh = { workspace = true }
 worldenergydata-texas_rrc = { workspace = true }

@@ -32,6 +32,9 @@ _REGION_FIXTURES = {
     "gom": ("Thunder Horse", 2024, 120000.0, 60000.0),
     "spain": ("Casablanca", 2024, 5000.0, 1000.0),
     "brazil": ("Tupi", 2024, 200000.0, 90000.0),
+    # Australia region label (synthetic frame — the real AU chain is
+    # screening-only; this only exercises the F2 normalizer path).
+    "australia": ("Kingfish", 2024, 30000.0, 8000.0),
 }
 
 

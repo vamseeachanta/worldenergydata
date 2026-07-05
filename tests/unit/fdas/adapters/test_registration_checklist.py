@@ -56,6 +56,9 @@ def test_region_fixtures_keys_are_nonempty_strings():
 _ADAPTER_IMPORT_ERROR = None
 _ALL_ADAPTERS = []
 try:
+    from worldenergydata.production.unified.adapters.australia_adapter import (
+        AustraliaAdapter,
+    )
     from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
         BrazilAnpAdapter,
     )
@@ -84,6 +87,7 @@ try:
         MexicoCnhAdapter,
         TexasRrcAdapter,
         CanadaAdapter,
+        AustraliaAdapter,
     ]
 except Exception as exc:  # pragma: no cover - depends on optional deps present
     _ADAPTER_IMPORT_ERROR = exc

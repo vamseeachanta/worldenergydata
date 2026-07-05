@@ -116,9 +116,9 @@ class TestUnifiedProductionClientListRegions:
         regions = self.client.list_regions()
         assert isinstance(regions, list)
 
-    def test_list_regions_has_nine_entries(self):
+    def test_list_regions_has_ten_entries(self):
         regions = self.client.list_regions()
-        assert len(regions) == 9
+        assert len(regions) == 10
 
     def test_list_regions_contains_all_canonical(self):
         regions = self.client.list_regions()
@@ -132,5 +132,6 @@ class TestUnifiedProductionClientListRegions:
             "mexico",
             "texas",
             "canada",
+            "australia",
         ]:
             assert expected in regions
