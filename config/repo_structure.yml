@@ -177,6 +177,8 @@ temporary_exceptions:
       - reports/completion/index.html
       - reports/compliance/module_compliance_report.json
       - reports/field_analysis_report.html
+      - reports/field_benchmark/_facts.json
+      - reports/field_benchmark/index.html
       - reports/field_development/bsee_matched/_summary.json
       - reports/field_development/bsee_matched/aconcagua.html
       - reports/field_development/bsee_matched/allegheny.html
@@ -411,3 +413,24 @@ temporary_exceptions:
       - reports/field_development/region_devtype_matrix.csv
       - reports/lower_tertiary/drilling_insights.html
       - reports/lower_tertiary/lt_drilling_insights.csv
+      - reports/field-atlas/_roster.json
+      - reports/field-atlas/index.html
+      - reports/gtm/2026-06-17-julia-field-economics-by-well-block-field.html
+      - reports/gtm/2026-06-17-lower-tertiary-field-deepdive.html
+      - reports/gtm/2026-06-17-lower-tertiary-portfolio-economics.html
+      - reports/hse/riser-fatigue-grounded-card.html
+      - reports/lower_tertiary/2026-06-17-julia-granular-economics-summary.md
+      - reports/lower_tertiary/data/all_fields_economics.json
+      - reports/lower_tertiary/data/all_fields_wells.json
+      - reports/lower_tertiary/data/julia_granular_economics.json
+      - reports/lower_tertiary/data/julia_v30_reproduction.json
+      - reports/lower_tertiary/data/julia_wells.json
+      - reports/lower_tertiary/lifecycle/assets/stones_assets.html
+      - reports/lower_tertiary/lifecycle/wells/_wells.json
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A001_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A002_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A004_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A006_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A008_well.html
+      - reports/lower_tertiary/lifecycle/wells/index.html
+      - reports/lower_tertiary/lifecycle/wells/well_lifecycle_template.html
