@@ -103,6 +103,31 @@ def test_field_development_domain_publishes_self_contained_surfaces(bp):
     assert not list(fd.rglob("*.json"))
 
 
+def test_field_development_publishes_spain_cores_without_json_sidecar(
+    bp, tmp_path, monkeypatch
+):
+    reports = tmp_path / "reports"
+    src = reports / "field_development"
+    src.mkdir(parents=True)
+    (src / "spain_cores.html").write_text(
+        "<!doctype html><html><body>Spain CORES</body></html>",
+        encoding="utf-8",
+    )
+    (src / "spain_cores.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(bp, "REPORTS", reports)
+
+    bp.build(domains=["field_development"])
+
+    fd = bp.PUBLIC / "field-development"
+    index = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
+    assert (fd / "spain-cores.html").exists()
+    assert not (fd / "spain_cores.json").exists()
+    assert 'href="field-development/spain-cores.html"' in index
+    assert "Spain CORES" in index
+    assert "Field-Development Playbook" in index
+    assert "Offshore Field-Development Playbook" not in index
+
+
 def test_landing_links_the_field_development_showcase(bp):
     bp.build()  # full build
     index = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
