@@ -146,6 +146,12 @@ class TestBlasingameTypecurve:
         assert len(tc.qDdi) == 2
         assert len(tc.qDdid) == 2
 
+    def test_blasingame_curves_vary_with_reD(self):
+        """reD-labelled curves must not be identical."""
+        tc = blasingame_typecurve(reD_values=[5, 100], n_points=50)
+        assert not np.allclose(tc.qDd[0], tc.qDd[1])
+        assert not np.allclose(tc.qDdi[0], tc.qDdi[1])
+
 
 # --- Auto-matching with synthetic data ---
 
@@ -208,6 +214,22 @@ class TestAutoMatchSynthetic:
         params = _default_params()
         result = match_fetkovich(data, params)
         assert result.residual < 200.0  # looser tolerance for noisy data
+
+    def test_fetkovich_reD_is_not_guess_dependent(self):
+        """Boundary-only matches must not derive physical outputs from guesses."""
+        t, q, Np, dp = _make_synthetic_exponential(n_days=120)
+        data = ProductionData(time=t, rate=q, cumulative=Np, pressure_drawdown=dp)
+        params = _default_params()
+
+        low_guess = match_fetkovich(data, params, reD_guesses=[5.0])
+        high_guess = match_fetkovich(data, params, reD_guesses=[500.0])
+
+        expected_reD = params.re / params.rw
+        assert low_guess.reD == pytest.approx(expected_reD)
+        assert high_guess.reD == pytest.approx(expected_reD)
+        assert low_guess.k == pytest.approx(high_guess.k, rel=1e-6)
+        assert low_guess.re == pytest.approx(high_guess.re, rel=1e-6)
+        assert low_guess.ooip == pytest.approx(high_guess.ooip, rel=1e-6)
 
 
 # --- Error handling ---

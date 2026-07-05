@@ -397,7 +397,6 @@ addopts = """\
 --cov-report=xml:reports/coverage/coverage.xml \
 --cov-report=json:reports/coverage/coverage.json \
 --ignore=tests/performance \
---ignore=tests/modules/bsee/analysis/test_type_curves.py \
 --ignore=tests/modules/fdas/integration/test_end_to_end.py \
 --ignore=tests/modules/sodir-integration \
 --ignore=tests/modules/well_production_dashboard/test_monitoring.py \

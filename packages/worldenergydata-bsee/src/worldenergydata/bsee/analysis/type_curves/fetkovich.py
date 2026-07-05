@@ -137,23 +137,37 @@ def match_fetkovich(
 ) -> MatchResult:
     """Automatic Fetkovich type curve matching.
 
-    Uses multi-start optimization over (log_Ct, log_Cq, b, reD).
+    Uses multi-start optimization over (log_Ct, log_Cq, b).
+    Boundary-only decline matching does not identify drainage radius, so reD is
+    derived from the supplied reservoir geometry instead of optimizer guesses.
     """
     from scipy.optimize import minimize
 
-    if reD_guesses is None:
-        reD_guesses = [5.0, 20.0, 100.0, 500.0]
+    del reD_guesses
+
+    b_min, b_max = b_range
+    if b_min < 0 or b_max > 1 or b_min > b_max:
+        raise ValueError(f"b_range must be within [0, 1], got {b_range}")
 
     dp = data.pressure_drawdown
     if dp is None:
         dp = np.full_like(data.rate, params.pi - params.pwf)
     q_norm = data.rate / dp
 
-    tDd_model = np.logspace(-2, 2, 300)
+    reD = max(params.re / params.rw, 1.01)
+    positive = q_norm > 0
+    if positive.sum() < 3:
+        raise ValueError("Insufficient valid data points for matching")
+    qn_v = q_norm[positive]
+    t_v = data.time[positive]
+    decline_span = max(t_v[-1] - t_v[0], 1.0)
+    rate_ratio = max(qn_v[-1] / qn_v[0], 1e-12)
+    initial_Ct = max(-np.log(rate_ratio) / decline_span, 1e-8)
+    initial_Cq = max(1.0 / qn_v[0], 1e-12)
 
     def objective(x):
-        log_Ct, log_Cq, b, reD = x
-        if reD <= 1.0 or b < 0 or b > 1:
+        log_Ct, log_Cq, b = x
+        if b < b_min or b > b_max:
             return 1e12
         Ct = 10**log_Ct
         Cq = 10**log_Cq
@@ -168,23 +182,30 @@ def match_fetkovich(
         )
 
     best = None
-    for reD_init in reD_guesses:
-        for b_init in [0.0, 0.3, 0.6, 1.0]:
-            x0 = [0.0, -3.0, b_init, reD_init]
-            try:
-                res = minimize(
-                    objective, x0, method="Nelder-Mead",
-                    options={"maxiter": 5000, "xatol": 1e-8, "fatol": 1e-10},
-                )
-                if best is None or res.fun < best.fun:
-                    best = res
-            except Exception:
-                continue
+    if b_min == b_max:
+        b_inits = [b_min]
+    else:
+        b_inits = np.linspace(b_min, b_max, 4)
+    for b_init in b_inits:
+        x0 = [np.log10(initial_Ct), np.log10(initial_Cq), float(b_init)]
+        try:
+            res = minimize(
+                objective,
+                x0,
+                method="L-BFGS-B",
+                bounds=[(-8.0, 2.0), (-12.0, 6.0), (b_min, b_max)],
+                options={"maxiter": 1000, "ftol": 1e-10},
+            )
+            if best is None or res.fun < best.fun:
+                best = res
+        except Exception:
+            continue
 
     if best is None:
         raise RuntimeError("Optimization failed to converge")
 
-    log_Ct, log_Cq, b, reD = best.x
+    log_Ct, log_Cq, b = best.x
+    b = float(np.clip(b, b_min, b_max))
     Ct = 10**log_Ct
     Cq = 10**log_Cq
 

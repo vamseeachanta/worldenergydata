@@ -88,33 +88,35 @@ def rate_integral_derivative(
 
 def _bDpss_radial(reD: float) -> float:
     """Pseudo-steady-state constant for radial model."""
-    return np.log(reD) - 0.5
+    if reD <= 1.0:
+        raise ValueError(f"reD must be > 1, got {reD}")
+    return max(np.log(reD) - 0.5, 1e-6)
 
 
 def _analytical_qDd(
     tDd: NDArray[np.float64], reD: float
 ) -> NDArray[np.float64]:
-    """Analytical boundary-dominated qDd for Blasingame (harmonic)."""
-    # During boundary-dominated flow, Blasingame collapses to 1/(1+tDd)
-    # weighted by bDpss. For the full solution including transient,
-    # use the exponential integral approximation.
-    return 1.0 / (1.0 + tDd)
+    """Analytical boundary-dominated qDd for Blasingame radial model."""
+    bDpss = _bDpss_radial(reD)
+    return 1.0 / (1.0 + tDd / bDpss)
 
 
 def _analytical_qDdi(
-    tDd: NDArray[np.float64],
+    tDd: NDArray[np.float64], reD: float
 ) -> NDArray[np.float64]:
     """Analytical rate integral for harmonic decline."""
+    bDpss = _bDpss_radial(reD)
+    scaled_tDd = tDd / bDpss
     with np.errstate(divide="ignore", invalid="ignore"):
-        return np.where(tDd > 0, np.log(1.0 + tDd) / tDd, 1.0)
+        return np.where(scaled_tDd > 0, np.log1p(scaled_tDd) / scaled_tDd, 1.0)
 
 
 def _analytical_qDdid(
-    tDd: NDArray[np.float64],
+    tDd: NDArray[np.float64], reD: float
 ) -> NDArray[np.float64]:
     """Analytical rate integral derivative for harmonic decline."""
-    qDdi = _analytical_qDdi(tDd)
-    qDd = _analytical_qDd(tDd, reD=1.0)  # reD not needed for harmonic
+    qDdi = _analytical_qDdi(tDd, reD)
+    qDd = _analytical_qDd(tDd, reD)
     return np.maximum(qDdi - qDd, 1e-30)
 
 
@@ -139,8 +141,8 @@ def blasingame_typecurve(
 
     for reD in reD_values:
         qDd = _analytical_qDd(tDd, reD)
-        qDdi = _analytical_qDdi(tDd)
-        qDdid = _analytical_qDdid(tDd)
+        qDdi = _analytical_qDdi(tDd, reD)
+        qDdid = _analytical_qDdid(tDd, reD)
         result.tDd.append(tDd)
         result.qDd.append(qDd)
         result.qDdi.append(qDdi)
@@ -193,8 +195,8 @@ def match_blasingame(
         tDd = Ct * tc_v
 
         qDd_m = _analytical_qDd(tDd, reD)
-        qDdi_m = _analytical_qDdi(tDd)
-        qDdid_m = _analytical_qDdid(tDd)
+        qDdi_m = _analytical_qDdi(tDd, reD)
+        qDdid_m = _analytical_qDdid(tDd, reD)
 
         qDd_d = Cq * qn_v
         qDdi_d = Cq * qDdi_v
