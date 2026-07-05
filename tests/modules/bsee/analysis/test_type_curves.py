@@ -231,6 +231,18 @@ class TestAutoMatchSynthetic:
         assert low_guess.re == pytest.approx(high_guess.re, rel=1e-6)
         assert low_guess.ooip == pytest.approx(high_guess.ooip, rel=1e-6)
 
+    def test_fetkovich_b_range_is_honored(self):
+        """b_range constrains optimization and rejects invalid bounds."""
+        t, q, Np, dp = _make_synthetic_exponential(n_days=120)
+        data = ProductionData(time=t, rate=q, cumulative=Np, pressure_drawdown=dp)
+        params = _default_params()
+
+        fixed_exponential = match_fetkovich(data, params, b_range=(0.0, 0.0))
+        assert fixed_exponential.b == pytest.approx(0.0)
+
+        with pytest.raises(ValueError, match="b_range must be within"):
+            match_fetkovich(data, params, b_range=(-0.1, 0.5))
+
 
 # --- Error handling ---
 
