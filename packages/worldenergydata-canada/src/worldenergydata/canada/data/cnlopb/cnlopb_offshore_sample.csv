@@ -1,0 +1,11 @@
+field_name,year,month,oil_bbl,gas_mcf,water_bbl,source
+Hibernia,2020,1,3800000,1500000,4200000,cnloer_fixture_synthetic
+Hibernia,2020,2,3550000,1420000,4300000,cnloer_fixture_synthetic
+Hibernia,2020,3,3900000,1560000,4100000,cnloer_fixture_synthetic
+Hibernia,2020,4,3700000,1480000,4350000,cnloer_fixture_synthetic
+Hibernia,2020,5,3600000,1440000,4400000,cnloer_fixture_synthetic
+Hibernia,2020,6,3450000,1380000,4500000,cnloer_fixture_synthetic
+Terra Nova,2020,1,1200000,450000,2100000,cnloer_fixture_synthetic
+Terra Nova,2020,2,1150000,430000,2150000,cnloer_fixture_synthetic
+White Rose,2020,1,980000,360000,1400000,cnloer_fixture_synthetic
+White Rose,2020,2,950000,350000,1450000,cnloer_fixture_synthetic
