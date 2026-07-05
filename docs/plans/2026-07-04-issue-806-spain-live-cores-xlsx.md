@@ -1,7 +1,7 @@
 # Plan: Issue #806 - Spain CORES live XLSX download lane
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/806
-**Status:** plan-review
+**Status:** completed
 **Tier:** T2 (live official-source download, cache/provenance, existing parser seam)
 **Client:** N/A
 **Project:** worldenergydata Spain onshore/offshore production lifecycle

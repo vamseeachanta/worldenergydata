@@ -24,34 +24,46 @@ repos:
       - id: no-commit-to-branch
         args: [--branch, main]
 
-  # Python code formatting
-  - repo: https://github.com/psf/black
-    rev: 24.10.0
+  # Python formatting + lint — MUST stay byte-for-byte in step with the CI
+  # "Lint" job in .github/workflows/ci.yml, which runs:
+  #     uv run black  --check --diff src/ tests/
+  #     uv run isort  --check-only --diff src/ tests/
+  #     uv run flake8 src/ --max-line-length=100 --extend-ignore=E203,W503 ...
+  # These are LOCAL hooks that shell out to the repo's own uv env, so the tool
+  # VERSIONS come straight from uv.lock (black 25.9.0, isort 8.0.1, flake8
+  # 7.3.0) — identical to CI, and they can never silently drift from it. That
+  # drift is the exact bug this fixes: the old pinned mirror ran black 24.10.0
+  # locally while CI ran 25.9.0, so PR #821 was merge-refused twice on
+  # formatting that "passed" at commit time. `--extra dev` pulls the pinned dev
+  # toolchain (uv sync --all-extras in CI). Config is read from the same files
+  # CI uses: [tool.black]/[tool.isort] in pyproject.toml and [flake8] in
+  # .flake8 (incl. per-file-ignores). Hooks run in fix mode (no --check) so a
+  # bad file is reformatted in place and the commit fails until re-staged. (#822)
+  - repo: local
     hooks:
       - id: black
-        language_version: python3.11
-        args: [--line-length=88]
-
-  # Import sorting
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
+        name: black (uv run — matches CI Lint job)
+        entry: uv run --extra dev black
+        language: system
+        types: [python]
+        files: ^(src|tests)/.*\.py$
+        require_serial: true
       - id: isort
-        args: [--profile=black]
-
-  # Linting
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
-    hooks:
+        name: isort (uv run — matches CI Lint job)
+        entry: uv run --extra dev isort
+        language: system
+        types: [python]
+        files: ^(src|tests)/.*\.py$
+        require_serial: true
+      # CI lints src/ only with flake8; .flake8 supplies max-line-length=100,
+      # extend-ignore=E203,W503 and per-file-ignores (__init__.py:F401).
       - id: flake8
-        args:
-          - --max-line-length=100
-          - --extend-ignore=E203,W503
-          - --exclude=__pycache__,*.egg-info,.git,.venv,docs/_legacy
-        additional_dependencies:
-          - flake8-bugbear
-          - flake8-comprehensions
-          - flake8-simplify
+        name: flake8 (uv run — matches CI Lint job)
+        entry: uv run --extra dev flake8
+        language: system
+        types: [python]
+        files: ^src/.*\.py$
+        require_serial: true
 
   # Security checks
   - repo: https://github.com/PyCQA/bandit
