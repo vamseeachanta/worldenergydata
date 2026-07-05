@@ -46,6 +46,12 @@ _CONCEPT_BUCKETS = ("dry", "subsea15", "subsea20", "unknown")
 # a ``*_mock`` tag, a blank/NaN source, or any unrecognised string — is "seed"
 # by construction, so unknown provenance can never be upgraded to real by
 # naming luck (#723 review Finding 1). Compared case-insensitively.
+# Entries are the SOURCE tags adapters emit (not region names). Canada is
+# deliberately EXCLUDED: C-NLOER production data is NOT open-licensed and its
+# derived per-field figures must not publish as "real" on any public surface
+# (capabilities page / reports) until an owner legal read clears it (#819).
+# The Canada adapter emits "cnloer"/"cnloer_fixture_synthetic" (never "canada"),
+# so it correctly badges "seed"; do NOT add "cnloer" here before #819 is closed.
 _REAL_SOURCES = frozenset(
     {
         "bsee",
@@ -56,7 +62,6 @@ _REAL_SOURCES = frozenset(
         "eia_us",
         "mexico_cnh",
         "texas_rrc",
-        "canada",
     }
 )
 
