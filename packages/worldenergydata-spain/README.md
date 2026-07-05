@@ -46,3 +46,21 @@ production = loader.load_all_production()
 Full normalized oil, gas, and merged production CSVs are written under the
 cache root. The committed Ayoluengo fixture stays small and can be refreshed
 from the live oil frame with `refresh_ayoluengo_fixture`.
+
+## CORES field-development report
+
+[#810](https://github.com/vamseeachanta/worldenergydata/issues/810) builds a
+self-contained Spain CORES field-development report from the normalized
+scheduler output. The report reads the CSV cache and scheduler metadata only; it
+does not re-download or re-parse the raw workbooks.
+
+```bash
+uv run python scripts/spain/build_cores_field_development_report.py \
+  --cache-root /mnt/ace/worldenergydata/data/spain/cores \
+  --output-html reports/field_development/spain_cores.html \
+  --output-json reports/field_development/spain_cores.json
+```
+
+The HTML report embeds its data payload inline for static publication. The JSON
+sidecar is retained in the repository as durable provenance for downstream
+field-development analysis, but the Pages builder publishes only the HTML page.

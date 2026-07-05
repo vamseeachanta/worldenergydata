@@ -502,6 +502,7 @@ def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
     for rel, out in (
         ("showcase/index.html", "showcase.html"),
         ("interactive/playbook.html", "playbook.html"),
+        ("spain_cores.html", "spain-cores.html"),
     ):
         if (src / rel).exists():
             shutil.copyfile(src / rel, dst / out)
@@ -785,14 +786,21 @@ def _field_development_section() -> str:
             "with schematics, across 115 BSEE-cross-referenced Gulf of Mexico "
             "fields.</p></a>"
         )
+    if (fd / "spain-cores.html").exists():
+        cards.append(
+            '<a class="card" href="field-development/spain-cores.html">'
+            "<h3>Spain CORES &rarr;</h3><p>Direct-source Spain production, "
+            "scheduler provenance, and field-development screening over the "
+            "normalized CORES refresh.</p></a>"
+        )
     if not cards:
         return ""
     return (
-        "<h2>Offshore Field-Development Playbook</h2>"
+        "<h2>Field-Development Playbook</h2>"
         "<p>From a field's parameters to a ranked development concept, a to-scale "
-        "subsea schematic, indicative economics, flow-assurance flags and 3D "
-        "hardware &mdash; generated deterministically. Coverage spans ~2,150 "
-        "fields across every major offshore region (333 in the Gulf of Mexico).</p>"
+        "development schematic, indicative economics, flow-assurance flags and "
+        "provenance-backed production view &mdash; generated deterministically. "
+        "Coverage spans offshore regions and the Spain CORES production slice.</p>"
         f'<div class="cards">{"".join(cards)}</div>'
     )
 

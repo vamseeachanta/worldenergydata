@@ -131,7 +131,7 @@ def test_field_development_publishes_spain_cores_without_json_sidecar(
 def test_landing_links_the_field_development_showcase(bp):
     bp.build()  # full build
     index = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
-    assert "Offshore Field-Development Playbook" in index
+    assert "Field-Development Playbook" in index
     assert 'href="field-development/showcase.html"' in index
     assert 'href="field-development/playbook.html"' in index
 
