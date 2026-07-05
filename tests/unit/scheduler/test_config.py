@@ -95,7 +95,7 @@ def _write_temp_yaml(content: str) -> str:
 
 
 class TestLoadConfig:
-    def test_repo_scheduler_config_includes_lng_and_modules_output_dirs(self):
+    def test_repo_scheduler_config_includes_lng_spain_and_expected_output_dirs(self):
         repo_config = (
             Path(__file__).resolve().parents[3]
             / "config"
@@ -114,10 +114,29 @@ class TestLoadConfig:
             "brazil_anp_refresh",
             "ukcs_refresh",
             "lng_terminals_refresh",
+            "spain_cores_refresh",
         }
         assert {job["name"] for job in config.jobs} == expected_names
+        expected_output_dirs = {
+            "bsee_refresh": "data/modules/bsee",
+            "hse_refresh": "data/modules/hse",
+            "sodir_refresh": "data/modules/sodir",
+            "eia_us_refresh": "data/modules/eia",
+            "metocean_refresh": "data/modules/metocean",
+            "brazil_anp_refresh": "data/modules/brazil_anp",
+            "ukcs_refresh": "data/modules/ukcs",
+            "lng_terminals_refresh": "data/modules/lng_terminals",
+            "spain_cores_refresh": "data/spain/cores",
+        }
         for job in config.jobs:
-            assert job["output_dir"].startswith("data/modules/")
+            assert job["output_dir"] == expected_output_dirs[job["name"]]
+        spain = next(j for j in config.jobs if j["name"] == "spain_cores_refresh")
+        assert spain["interval"] == "monthly"
+        assert spain["refresh_fixture"] is True
+        assert (
+            spain["fixture_output_dir"]
+            == "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores"
+        )
 
     def test_load_valid_config(self):
         path = _write_temp_yaml(VALID_YAML)

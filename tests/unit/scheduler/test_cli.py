@@ -74,6 +74,7 @@ class TestCLIImports:
 
         names = [job.name for job in ALL_JOBS]
         assert "lng_terminals_refresh" in names
+        assert "spain_cores_refresh" in names
 
 
 class TestCLIStatusCommand:

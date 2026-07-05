@@ -24,6 +24,11 @@ HEAVY_JOB_MODULE_PREFIXES = (
     "worldenergydata.scheduler.jobs.ukcs_refresh",
     "worldenergydata.scheduler.jobs.metocean_refresh",
     "worldenergydata.scheduler.jobs.lng_terminals_refresh",
+    "worldenergydata.scheduler.jobs.spain_cores_refresh",
+)
+
+DATA_SOURCE_MODULE_PREFIXES = (
+    "worldenergydata.spain",
 )
 
 
@@ -68,8 +73,9 @@ def _forbid_imports(prefixes: tuple[str, ...]) -> Iterator[None]:
 
 def test_scheduler_cli_module_import_does_not_import_refresh_jobs():
     """Importing the scheduler CLI must be cheap and avoid job adapters."""
-    prefixes = SCHEDULER_CLI_MODULES + HEAVY_JOB_MODULE_PREFIXES
-    with _fresh_modules(prefixes), _forbid_imports(HEAVY_JOB_MODULE_PREFIXES):
+    forbidden = HEAVY_JOB_MODULE_PREFIXES + DATA_SOURCE_MODULE_PREFIXES
+    prefixes = SCHEDULER_CLI_MODULES + forbidden
+    with _fresh_modules(prefixes), _forbid_imports(forbidden):
         module = importlib.import_module("worldenergydata.scheduler.cli")
 
     assert hasattr(module, "main")
@@ -77,8 +83,9 @@ def test_scheduler_cli_module_import_does_not_import_refresh_jobs():
 
 def test_scheduler_cli_no_args_does_not_import_refresh_jobs():
     """The no-arg usage path must not pay data-source import cost."""
-    prefixes = SCHEDULER_CLI_MODULES + HEAVY_JOB_MODULE_PREFIXES
-    with _fresh_modules(prefixes), _forbid_imports(HEAVY_JOB_MODULE_PREFIXES):
+    forbidden = HEAVY_JOB_MODULE_PREFIXES + DATA_SOURCE_MODULE_PREFIXES
+    prefixes = SCHEDULER_CLI_MODULES + forbidden
+    with _fresh_modules(prefixes), _forbid_imports(forbidden):
         module = importlib.import_module("worldenergydata.scheduler.cli")
         with pytest.raises(SystemExit) as exc_info:
             module.main([])

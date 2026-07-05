@@ -62,6 +62,16 @@ jobs:
     enabled: true
     output_dir: data/modules/lng_terminals
 
+  - name: spain_cores_refresh
+    interval: monthly
+    day: 12
+    time: "08:00"
+    enabled: true
+    output_dir: data/spain/cores
+    force_refresh: false
+    refresh_fixture: true
+    fixture_output_dir: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores
+
 monitoring:
   log_dir: logs/scheduler/
   log_retention_days: 30

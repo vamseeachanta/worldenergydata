@@ -39,9 +39,11 @@ monitoring:
 class MockJob(AbstractJob):
     name = "mock_job"
     call_count = 0
+    last_config = None
 
     def run(self, config: dict) -> JobResult:
         MockJob.call_count += 1
+        MockJob.last_config = dict(config)
         return JobResult(
             job_name=self.name,
             start_time=datetime.now(),
@@ -113,6 +115,7 @@ class TestDataSchedulerRegistration:
 class TestDataSchedulerRunOnce:
     def setup_method(self):
         MockJob.call_count = 0
+        MockJob.last_config = None
 
     def test_run_once_executes_job(self, tmp_path):
         config_path = _write_config(tmp_path)
@@ -205,6 +208,29 @@ class TestDataSchedulerRunOnce:
 
         manifest_path = tmp_path / "data" / "modules" / "mock_job" / "manifest.json"
         assert manifest_path.exists()
+
+    def test_run_once_passes_scheduler_repo_root_to_job_config(self, tmp_path):
+        config_dir = tmp_path / "config" / "scheduler"
+        config_dir.mkdir(parents=True)
+        config_path = config_dir / "scheduler_config.yml"
+        config_path.write_text(
+            MINIMAL_CONFIG.format(
+                log_dir=str(tmp_path / "logs"),
+                status_file=str(tmp_path / "status.json"),
+                mock_output_dir="data/modules/mock_job",
+                disabled_output_dir="data/modules/disabled_job",
+            )
+        )
+        scheduler = DataScheduler(config_path=str(config_path))
+        scheduler.register_job(MockJob())
+
+        scheduler.run_once("mock_job")
+
+        assert MockJob.last_config["_scheduler_repo_root"] == str(tmp_path)
+        assert (
+            "_scheduler_repo_root"
+            not in scheduler._config.get_job_config("mock_job")
+        )
 
 
 class TestDataSchedulerStatus:

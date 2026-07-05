@@ -37,6 +37,7 @@ dependencies = [
     "worldenergydata-eia",
     "worldenergydata-metocean",
     "worldenergydata-sodir",
+    "worldenergydata-spain",
     "worldenergydata-ukcs",
     # Third-party runtime deps measured from the import footprint.
     "pandas>=2.3.3,<3.0",

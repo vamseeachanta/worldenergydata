@@ -15,6 +15,7 @@ from worldenergydata.scheduler.jobs.eia_us_refresh import EiaUsRefreshJob
 from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
 from worldenergydata.scheduler.jobs.sodir_refresh import SodirRefreshJob
+from worldenergydata.scheduler.jobs.spain_cores_refresh import SpainCoresRefreshJob
 from worldenergydata.scheduler.jobs.ukcs_refresh import UkcsRefreshJob
 
 ALL_JOB_CLASSES = [
@@ -25,6 +26,7 @@ ALL_JOB_CLASSES = [
     UkcsRefreshJob,
     MetoceanRefreshJob,
     LngTerminalsRefreshJob,
+    SpainCoresRefreshJob,
 ]
 
 ALL_JOB_NAMES = [
@@ -35,6 +37,7 @@ ALL_JOB_NAMES = [
     "ukcs_refresh",
     "metocean_refresh",
     "lng_terminals_refresh",
+    "spain_cores_refresh",
 ]
 
 
@@ -102,14 +105,14 @@ class TestJobAdapterInterface:
             (UkcsRefreshJob, "data/modules/ukcs"),
             (MetoceanRefreshJob, "data/modules/metocean"),
             (LngTerminalsRefreshJob, "data/modules/lng_terminals"),
+            (SpainCoresRefreshJob, "data/spain/cores"),
         ],
     )
-    def test_job_default_output_dir_matches_modules_convention(
-        self, JobClass, expected_path
-    ):
+    def test_job_default_output_dir_matches_expected_path(self, JobClass, expected_path):
         output_dir = Path(JobClass.default_output_dir)
-        assert output_dir.is_absolute()
-        assert output_dir.parts[-3:] == tuple(Path(expected_path).parts)
+        assert output_dir.parts[-len(Path(expected_path).parts) :] == tuple(
+            Path(expected_path).parts
+        )
 
 
 class TestMetoceanJobLocations:

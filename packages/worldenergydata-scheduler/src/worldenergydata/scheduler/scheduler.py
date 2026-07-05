@@ -135,7 +135,8 @@ class DataScheduler:
             self._record_result(job_name, skipped)
             return skipped
 
-        job_cfg = self._config.get_job_config(job_name) or {}
+        job_cfg = dict(self._config.get_job_config(job_name) or {})
+        job_cfg["_scheduler_repo_root"] = str(self._repo_root)
 
         def _run() -> JobResult:
             return job.run(config=job_cfg)
