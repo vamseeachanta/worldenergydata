@@ -47,6 +47,7 @@ DATASET_MEMBERS = {
     "pipeline_permit": ("PipePermRawData", "mv_pipeperm_applications.txt"),
     "pipeline_location": ("PipeLocRawData", "mv_pipelinelocations.txt"),
     "deepwater_structure": ("PermStrucRawData", "mv_perm_platforms.txt"),
+    "deepqual": ("DeepQualRawData", "mv_deep_water_field_leases.txt"),
 }
 
 HTML_ERROR_PAGE = (
@@ -167,7 +168,7 @@ class TestBseeAdapterPartialFailure:
         # Other datasets were still written (rows reported honestly).
         assert not (tmp_path / "bsee_platform_structures.parquet").exists()
         assert (tmp_path / "bsee_pipeline_permits.parquet").exists()
-        assert result.records_updated == 6  # 3 datasets x 2 rows
+        assert result.records_updated == 8  # 4 of 5 datasets x 2 rows
 
     @patch("worldenergydata.scheduler.jobs.bsee_refresh.BSEEWebScraper")
     def test_deterministic_partial_failure_is_marked_success(
@@ -189,7 +190,7 @@ class TestBseeAdapterPartialFailure:
         assert result.error_msg.startswith("[partial:deterministic]")
         assert "platform" in result.error_msg
         # Deterministic failures get no in-job retry: 4 calls total.
-        assert scraper.download_zip_to_memory.call_count == 4
+        assert scraper.download_zip_to_memory.call_count == 5
 
 
 class TestBseeAdapterAllFail:
@@ -220,8 +221,8 @@ class TestBseeAdapterRecordCount:
         job = BseeRefreshJob()
         result = job.run({"output_dir": str(tmp_path)})
 
-        # 4 datasets x 2 rows each = 8
-        assert result.records_updated == 8
+        # 5 datasets x 2 rows each = 10
+        assert result.records_updated == 10
         assert result.status == "success"
 
 
@@ -296,7 +297,7 @@ class TestBseeAdapterUnknownPayload:
         assert "transient" in result.error_msg
         # Transient => bounded in-job retry per dataset.
         assert (
-            scraper.download_zip_to_memory.call_count == 4 * TRANSIENT_DATASET_ATTEMPTS
+            scraper.download_zip_to_memory.call_count == 5 * TRANSIENT_DATASET_ATTEMPTS
         )
 
 
@@ -325,8 +326,8 @@ class TestBseeSchedulerRetryContract:
         assert result.retryable is False
         assert run_count["n"] == 1, "deterministic failure must not be re-run"
         mock_sleep.assert_not_called()
-        # No in-job retries either: 4 datasets x 1 attempt.
-        assert scraper.download_zip_to_memory.call_count == 4
+        # No in-job retries either: 5 datasets x 1 attempt.
+        assert scraper.download_zip_to_memory.call_count == 5
 
     @patch("worldenergydata.scheduler.jobs.bsee_refresh.BSEEWebScraper")
     @patch("worldenergydata.scheduler.monitor.time.sleep")
@@ -444,7 +445,7 @@ class TestBseeConfiguredPatternsMatchRepresentativeArchives:
 class TestBseeCatalogConfig:
     """config/bsee.yml is the externalized catalog (issue #9 knowledge)."""
 
-    def test_default_catalog_loads_four_scheduler_datasets(self):
+    def test_default_catalog_loads_five_scheduler_datasets(self):
         datasets = load_dataset_catalog()
         assert set(datasets) == set(BSEE_DATASETS)
         for name, info in datasets.items():

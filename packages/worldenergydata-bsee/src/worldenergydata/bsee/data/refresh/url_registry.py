@@ -4,7 +4,7 @@ Maps each bin subdirectory to its ZIP download URL and the .bin files
 that should exist after extraction.  OGOR-A yearly files (1996-2024 +
 current) are generated programmatically.
 
-Total expected stubs across all specs: 129.
+Total expected stubs across all specs: 134.
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from typing import Sequence
 
 BSEE_BASE_URL = "https://www.data.bsee.gov"
+BOEM_BASE_URL = "https://www.data.boem.gov"
 
 
 @dataclass(frozen=True)
@@ -241,6 +242,28 @@ _REGULAR_SPECS: tuple[DatasetSpec, ...] = (
         "Well_APD_Default",
         _url("Well/Files/APDRawData.zip"),
         ["mv_apddata_all.bin", "mv_apd_main_all.bin"],
+    ),
+    # ── BOEM FieldReserves program (#847) ──
+    # Annual reserves tables workbook (vintage-pinned; bump the year in the
+    # URL + expected_bins when BOEM publishes a new vintage — procedure in
+    # data/modules/offshore_assets/curated/LT_RESERVES_DISCOVERY.md).
+    # Members are .xlsx; the refresh orchestrator writes one raw bin per
+    # sheet, named <stem-slug>__<sheet-slug>.bin.
+    DatasetSpec(
+        "fieldreserves_tables",
+        f"{BOEM_BASE_URL}/FieldReserves/Files/2023%20Tables%20xlsx%20Public.zip",
+        [
+            "2023_tables_xlsx_public__2023_table_4_final.bin",
+            "2023_tables_xlsx_public__2023_table_5_final.bin",
+            "2023_tables_xlsx_public__hist_2023.bin",
+        ],
+    ),
+    # Field Name Master List (headerless delimited: area, block,
+    # FIELD_NAME_CODE, lease). Bridge substrate, NOT reserves data.
+    DatasetSpec(
+        "fieldreserves_master",
+        f"{BOEM_BASE_URL}/FieldReserves/Files/mastdatadelimit.zip",
+        ["mastdatadelimit.bin"],
     ),
 )
 

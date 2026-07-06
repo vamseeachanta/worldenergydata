@@ -40,6 +40,7 @@ class BSEEWebScraper:
         "pipeline_permit": "https://www.data.bsee.gov/Pipeline/Files/PipePermRawData.zip",
         "deepwater_structure": "https://www.data.bsee.gov/Other/Files/PermStrucRawData.zip",
         "pipeline_location": "https://www.data.bsee.gov/Pipeline/Files/PipeLocRawData.zip",
+        "deepqual": "https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip",
     }
 
     # Request configuration
@@ -53,6 +54,7 @@ class BSEEWebScraper:
         "pipeline_permit": 600,  # 10 minutes
         "deepwater_structure": 600,  # 10 minutes
         "pipeline_location": 900,  # 15 minutes (larger file)
+        "deepqual": 600,  # 10 minutes (small file)
     }
     CHUNK_SIZE = 32768  # 32KB chunks for faster streaming
     MAX_RETRIES = 5  # Increased retries for large files

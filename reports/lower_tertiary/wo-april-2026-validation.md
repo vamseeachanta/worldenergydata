@@ -64,6 +64,21 @@ Surfaced by our BSEE-grounded check; these are the article's errors, not ours.
 2. **Cost / rate-deck vintage confirmation** — are Table 1/2 costs the V30 `lease_assumptions.xlsx` deck we hold, or a revised deck?
 3. **Complete recoverable-reserves (STB) set + appraisal-well definition** — we hold a few in BOE. BOEM's free Reserves Inventory (EOGR, field-level, 31-Dec-2023 vintage) + Deepwater Qualified Fields (discovery/first-oil dates) are being wired into the refresh pipeline as [#847](https://github.com/vamseeachanta/worldenergydata/issues/847); WO Table 4 recoverable figures for Anchor 440 / JSM 500 / Stones 250 match operator press exactly.
 
+### 5.1 BOEM cross-check (added 2026-07-06, #847 implementation)
+
+The free BOEM Reserves Inventory (Table 4, 31-Dec-2023 vintage) is now in the refresh pipeline; curated output `data/modules/offshore_assets/curated/lt_reserves_discovery.csv`. Cross-check against the WO Table 4 / operator-announced recoverable figures (all MMBOE):
+
+| Development | BOEM original (mean) | Operator/WO announced | Verdict |
+|---|---:|---:|---|
+| Jack St Malo | 550.6 | 500 | consistent (+10%) |
+| **Stones** | **128.3** | **250** | **−48.7% — discrepancy flagged** (`lt_reserves_discrepancies.csv`); ask Roy/Chuck which basis WO intends |
+| Anchor | not booked in 2023 vintage (FO 2024) | 440 | BOEM cross-check possible from the next vintage |
+| Buckskin | 456.6 | — (WO carries no figure) | BOEM fills the gap |
+| Big Foot / Cascade Chinook / Julia | 176.9 / 74.0 / 127.6 | — | new BOEM columns |
+| Kaskida / North Platte / Tiber / Shenandoah | not booked (pre-FID / FO 2025) | — | rows kept with vintage caveat |
+
+Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fields (weekly cadence), field-level first-prod preferred (per-lease dates can post-date field first oil — Buckskin 2019-06 vs a 2026 lease date).
+
 ## 6. Provenance and versioning
 
 - **V30** = frozen baseline (this workbook; production window thru 2025-05). **V50** = rerun on latest OGOR-A (changes production window/economics only). **D&C days are WAR-derived and identical under both** — the Table 1 reconciliation is version-independent (`reports/lower_tertiary/v30_vs_v50_comparison.md`).

@@ -1,0 +1,53 @@
+# Lower Tertiary development → BOEM/BSEE FIELD_NAME_CODE bridge (#847)
+#
+# Reviewed, committed mapping (NOT runtime fuzzy matching). Each code was
+# resolved 2026-07-06 against the deepqual dataset
+# (data/modules/bsee/bin/deepqual/mv_deep_water_field_leases.bin,
+# FIELD_NAME_CODE ↔ FLD_NICK_NAME) and cross-checked against BOEM
+# FieldReserves Table 4 (2023 vintage), which keys on the same codes.
+#
+# Multi-code developments: Cascade+Chinook and Jack+St Malo are separate
+# BOEM fields rolled up into one development each (matches the World Oil
+# article's development grouping). Note deepqual spells "Saint Malo".
+#
+# Consumed by scripts/field_development/build_lt_reserves_discovery.py;
+# integrity-tested in tests/unit/field_development/test_lt_reserves_discovery.py.
+
+developments:
+  Anchor:
+    - code: GC807
+      nickname: Anchor
+  Big Foot:
+    - code: WR029
+      nickname: Big Foot
+  Buckskin:
+    - code: KC872
+      nickname: Buckskin
+  Cascade Chinook:
+    - code: WR206
+      nickname: Cascade
+    - code: WR469
+      nickname: Chinook
+  Jack St Malo:
+    - code: WR759
+      nickname: Jack
+    - code: WR678
+      nickname: Saint Malo
+  Julia:
+    - code: WR627
+      nickname: Julia
+  Kaskida:
+    - code: KC292
+      nickname: Kaskida
+  North Platte:
+    - code: GB958
+      nickname: North Platte
+  Shenandoah:
+    - code: WR051
+      nickname: Shenandoah
+  Stones:
+    - code: WR508
+      nickname: Stones
+  Tiber:
+    - code: KC102
+      nickname: Tiber

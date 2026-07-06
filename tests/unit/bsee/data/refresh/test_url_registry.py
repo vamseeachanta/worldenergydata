@@ -1,6 +1,7 @@
 """Tests for BSEE URL registry."""
 
 from worldenergydata.bsee.data.refresh.url_registry import (
+    BOEM_BASE_URL,
     BSEE_BASE_URL,
     DatasetSpec,
     get_all_specs,
@@ -50,7 +51,7 @@ class TestGetRegularSpecs:
 
     def test_all_have_zip_url(self):
         for spec in get_regular_specs():
-            assert spec.zip_url.startswith(BSEE_BASE_URL)
+            assert spec.zip_url.startswith((BSEE_BASE_URL, BOEM_BASE_URL))
 
     def test_all_have_expected_bins(self):
         for spec in get_regular_specs():
