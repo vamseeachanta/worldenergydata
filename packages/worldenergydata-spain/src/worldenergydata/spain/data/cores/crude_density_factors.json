@@ -1,15 +1,13 @@
 {
-  "registry_version": "2026-07-06-boe-partial-2",
+  "registry_version": "2026-07-06-cited-partial-3",
   "registry_date": "2026-07-06",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, and Tarraco have accepted BOE regulator-record API values. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n and Rodaballo have accepted technical-literature API values from a Fuel reservoir-geochemistry article. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Ayoluengo",
-    "Boquer\u00f3n",
     "Gaviota",
     "Montanazo-Lubina",
-    "Rodaballo",
     "Salmonete",
     "Viura (1)"
   ],
@@ -30,6 +28,24 @@
       "source_url": "https://www.boe.es/boe/dias/1976/05/21/pdfs/A09838-09839.pdf",
       "source_class": "regulator_record",
       "evidence_note": "The BOE order fixes the sales price for crude from the San Carlos I and II (Amposta) exploitation concessions and states 17\u00b0 API with 5.5% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Boquer\u00f3n",
+      "aliases": [
+        "boqueron",
+        "boquer\u00f3n"
+      ],
+      "api_gravity_deg": 38.7,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.565553308321867,
+      "measurement_basis": "Fuel technical-literature study of Western Mediterranean production oils; Boquer\u00f3n is a single-well field producing at its respective well",
+      "source_title": "FTIR and SUVF spectroscopy as an alternative method in reservoir studies. Application to Western Mediterranean oils",
+      "source_url": "https://doi.org/10.1016/j.fuel.2004.06.027",
+      "source_class": "technical_literature",
+      "evidence_note": "The Fuel article states that Boquer\u00f3n and Rodaballo fields produce at their respective wells; Table 1 lists Boquer\u00f3n oil at 38.7\u00b0 API.",
       "confidence": "high",
       "accepted_for_conversion": true
     },
@@ -64,6 +80,23 @@
       "source_url": "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf",
       "source_class": "regulator_record",
       "evidence_note": "The BOE order fixes the sales price for crude from the Dorada exploitation concession and states 21.3\u00b0 API with 0.59% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Rodaballo",
+      "aliases": [
+        "rodaballo"
+      ],
+      "api_gravity_deg": 41.3,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.681125803043588,
+      "measurement_basis": "Fuel technical-literature study of Western Mediterranean production oils; Rodaballo is a single-well field producing at its respective well",
+      "source_title": "FTIR and SUVF spectroscopy as an alternative method in reservoir studies. Application to Western Mediterranean oils",
+      "source_url": "https://doi.org/10.1016/j.fuel.2004.06.027",
+      "source_class": "technical_literature",
+      "evidence_note": "The Fuel article states that Boquer\u00f3n and Rodaballo fields produce at their respective wells; Table 1 lists Rodaballo oil at 41.3\u00b0 API.",
       "confidence": "high",
       "accepted_for_conversion": true
     },
