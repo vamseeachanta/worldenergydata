@@ -1,21 +1,54 @@
 {
-  "registry_version": "2026-07-06-source-gap",
+  "registry_version": "2026-07-06-boe-partial",
   "registry_date": "2026-07-06",
   "coverage_status": "missing",
-  "coverage_note": "No CORES oil field currently has an accepted field-applicable crude density/API conversion factor in this registry. Strict refreshes fail closed until accepted cited factors are added.",
+  "coverage_note": "Casablanca and Tarraco have accepted BOE regulator-record API values. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Amposta",
     "Ayoluengo",
     "Boquer\u00f3n",
-    "Casablanca",
     "Dorada",
     "Gaviota",
     "Montanazo-Lubina",
     "Rodaballo",
     "Salmonete",
-    "Tarraco",
     "Viura (1)"
   ],
-  "factors": []
+  "factors": [
+    {
+      "field_name": "Casablanca",
+      "aliases": [
+        "casablanca"
+      ],
+      "api_gravity_deg": 33.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.312182839124249,
+      "measurement_basis": "BOE national crude price order for crude from the Casablanca exploitation, stated at wellhead",
+      "source_title": "BOE N\u00fam. 167, Orden de 25 de mayo de 1977: Casablanca and Tarraco crude sales prices",
+      "source_url": "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Casablanca exploitation and states 33\u00b0 API with 0.2% sulfur at the wellhead.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Tarraco",
+      "aliases": [
+        "tarraco"
+      ],
+      "api_gravity_deg": 35.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.401084758140957,
+      "measurement_basis": "BOE national crude price order for crude from the Tarraco concession, stated at wellhead",
+      "source_title": "BOE N\u00fam. 167, Orden de 25 de mayo de 1977: Casablanca and Tarraco crude sales prices",
+      "source_url": "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Tarraco concession and states 35\u00b0 API with 0.2% sulfur at the wellhead.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    }
+  ]
 }

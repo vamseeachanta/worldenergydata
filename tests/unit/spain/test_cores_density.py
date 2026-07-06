@@ -167,12 +167,55 @@ def test_default_density_registry_file_loads_from_package_data():
     assert isinstance(factors, dict)
 
 
+def test_default_density_registry_accepts_boe_regulator_fields():
+    factors = load_crude_density_factors()
+    source_url = "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf"
+
+    casablanca = factors["casablanca"]
+    assert casablanca.field_name == "Casablanca"
+    assert casablanca.source_class == "regulator_record"
+    assert casablanca.source_url == source_url
+    assert casablanca.accepted_for_conversion is True
+    assert casablanca.api_gravity_deg == pytest.approx(33.0)
+    assert casablanca.bbl_per_tonne == pytest.approx(7.312182839124249)
+
+    tarraco = factors["tarraco"]
+    assert tarraco.field_name == "Tarraco"
+    assert tarraco.source_class == "regulator_record"
+    assert tarraco.source_url == source_url
+    assert tarraco.accepted_for_conversion is True
+    assert tarraco.api_gravity_deg == pytest.approx(35.0)
+    assert tarraco.bbl_per_tonne == pytest.approx(7.401084758140957)
+
+    audit = build_oil_conversion_audit(
+        ["Casablanca", "Tarraco"],
+        factors,
+        allow_default_density=False,
+    )
+
+    assert audit.used_field_names == ("Casablanca", "Tarraco")
+    assert audit.defaulted_fields == ()
+    assert audit.missing_fields == ()
+
+
 def test_default_density_registry_keeps_current_fields_missing():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
     )
     payload = json.loads(registry_path.read_text())
     expected_fields = payload["source_gap_fields"]
+    assert expected_fields == [
+        "Albatros",
+        "Amposta",
+        "Ayoluengo",
+        "Boquerón",
+        "Dorada",
+        "Gaviota",
+        "Montanazo-Lubina",
+        "Rodaballo",
+        "Salmonete",
+        "Viura (1)",
+    ]
 
     with pytest.raises(CoresDensityCoverageError) as exc_info:
         build_oil_conversion_audit(
@@ -183,6 +226,58 @@ def test_default_density_registry_keeps_current_fields_missing():
     message = str(exc_info.value)
     for field_name in expected_fields:
         assert field_name in message
+
+
+def test_default_density_registry_partially_covers_current_cores_fields():
+    current_fields = [
+        "Albatros",
+        "Amposta",
+        "Ayoluengo",
+        "Boquerón",
+        "Casablanca",
+        "Dorada",
+        "Gaviota",
+        "Montanazo-Lubina",
+        "Rodaballo",
+        "Salmonete",
+        "Tarraco",
+        "Viura (1)",
+    ]
+    expected_gap_fields = [
+        "Albatros",
+        "Amposta",
+        "Ayoluengo",
+        "Boquerón",
+        "Dorada",
+        "Gaviota",
+        "Montanazo-Lubina",
+        "Rodaballo",
+        "Salmonete",
+        "Viura (1)",
+    ]
+    factors = load_crude_density_factors()
+
+    with pytest.raises(CoresDensityCoverageError) as exc_info:
+        build_oil_conversion_audit(
+            current_fields,
+            factors,
+            allow_default_density=False,
+        )
+    message = str(exc_info.value)
+    for field_name in expected_gap_fields:
+        assert field_name in message
+    assert "Casablanca" not in message
+    assert "Tarraco" not in message
+
+    defaulted_audit = build_oil_conversion_audit(
+        current_fields,
+        factors,
+        allow_default_density=True,
+    )
+
+    assert defaulted_audit.used_field_names == ("Casablanca", "Tarraco")
+    assert defaulted_audit.defaulted_fields == tuple(expected_gap_fields)
+    assert defaulted_audit.missing_fields == ()
 
 
 def test_crude_density_factor_rejects_secondary_article_conversion_directly(tmp_path):
