@@ -10,17 +10,18 @@ from typing import Any, Iterable, Mapping, Optional, cast
 
 import pandas as pd
 
+from worldenergydata.spain.production.cores_density import (
+    DEFAULT_OIL_BBL_PER_TONNE,
+    CoresCrudeDensityFactor,
+    CoresOilConversionAudit,
+    build_oil_conversion_audit,
+    load_crude_density_factors,
+)
 from worldenergydata.spain.production.cores_loader import (
     GWH_TO_MCF,
     TONNES_TO_BBL,
     CoresProductionLoader,
-)
-from worldenergydata.spain.production.cores_density import (
-    CoresCrudeDensityFactor,
-    CoresOilConversionAudit,
-    DEFAULT_OIL_BBL_PER_TONNE,
-    build_oil_conversion_audit,
-    load_crude_density_factors,
+    extract_cores_field_names,
 )
 from worldenergydata.spain.production.cores_source import (
     DEFAULT_WORKBOOKS,
@@ -139,8 +140,7 @@ class CoresLiveProductionLoader:
         self,
         raw: pd.DataFrame,
     ) -> CoresOilConversionAudit:
-        legacy_frame = CoresProductionLoader(product="oil", raw_frame=raw).load()
-        field_names = sorted(legacy_frame["field_name"].dropna().astype(str).unique())
+        field_names = extract_cores_field_names(raw)
         factors = load_crude_density_factors(self.oil_density_registry_path)
         return build_oil_conversion_audit(
             field_names,
@@ -170,8 +170,10 @@ class CoresLiveProductionLoader:
             "registry_date": metadata.get("registry_date"),
             "conversion_basis": "cited_field_density_factors",
             "coverage_status": _coverage_status(audit),
-            "oil_field_count": len(audit.used_factors) + len(audit.defaulted_fields),
-            "used_fields": _unique_factor_names(audit.used_factors),
+            "oil_field_count": len(audit.used_field_names)
+            + len(audit.defaulted_fields)
+            + len(audit.missing_fields),
+            "used_fields": list(audit.used_field_names),
             "defaulted_fields": list(audit.defaulted_fields),
             "missing_fields": list(audit.missing_fields),
             "default_bbl_per_tonne": _default_bbl_per_tonne(audit),
@@ -265,11 +267,16 @@ def _fixture_metadata(
         "workbooks": workbooks,
     }
     if oil_conversion_audit is not None:
-        metadata.update(_fixture_density_metadata(oil_conversion_audit))
+        metadata.update(_fixture_density_metadata(oil_conversion_audit, refreshed))
+    else:
+        metadata.update(_fixture_default_density_metadata(refreshed))
     return metadata
 
 
-def _fixture_density_metadata(audit: CoresOilConversionAudit) -> dict[str, Any]:
+def _fixture_density_metadata(
+    audit: CoresOilConversionAudit,
+    generated_at: str,
+) -> dict[str, Any]:
     conversion_factors = {
         "gas_gwh_to_mcf": GWH_TO_MCF,
         "oil_tonnes_to_bbl_by_field": _factor_map(audit.used_factors),
@@ -281,12 +288,44 @@ def _fixture_density_metadata(audit: CoresOilConversionAudit) -> dict[str, Any]:
         "conversion": "oil_bbl = tonnes * cited_field_density_factors",
         "conversion_factors": conversion_factors,
         "oil_conversion_audit": {
+            "schema_version": 1,
+            "generated_at": generated_at,
+            "registry_version": "fixture-refresh-density-audit",
+            "registry_date": generated_at[:10],
+            "conversion_basis": "cited_field_density_factors",
             "coverage_status": _coverage_status(audit),
-            "used_fields": _unique_factor_names(audit.used_factors),
+            "oil_field_count": len(audit.used_field_names)
+            + len(audit.defaulted_fields)
+            + len(audit.missing_fields),
+            "used_fields": list(audit.used_field_names),
             "defaulted_fields": list(audit.defaulted_fields),
             "missing_fields": list(audit.missing_fields),
             "default_bbl_per_tonne": default_bbl_per_tonne,
             "factors": [asdict(factor) for factor in audit.used_factors],
+        },
+    }
+
+
+def _fixture_default_density_metadata(generated_at: str) -> dict[str, Any]:
+    return {
+        "conversion": "oil_bbl = tonnes * cited_field_density_factors",
+        "conversion_factors": {
+            "gas_gwh_to_mcf": GWH_TO_MCF,
+            "oil_tonnes_to_bbl_default": TONNES_TO_BBL,
+        },
+        "oil_conversion_audit": {
+            "schema_version": 1,
+            "generated_at": generated_at,
+            "registry_version": "fixture-default-density",
+            "registry_date": generated_at[:10],
+            "conversion_basis": "cited_field_density_factors",
+            "coverage_status": "defaulted",
+            "oil_field_count": 1,
+            "used_fields": [],
+            "defaulted_fields": ["Ayoluengo"],
+            "missing_fields": [],
+            "default_bbl_per_tonne": TONNES_TO_BBL,
+            "factors": [],
         },
     }
 
@@ -333,13 +372,6 @@ def _default_bbl_per_tonne(audit: CoresOilConversionAudit) -> float | None:
     if audit.defaulted_fields:
         return float(DEFAULT_OIL_BBL_PER_TONNE)
     return None
-
-
-def _unique_factor_names(factors: Iterable[CoresCrudeDensityFactor]) -> list[str]:
-    names: dict[str, None] = {}
-    for factor in factors:
-        names[factor.field_name] = None
-    return list(names)
 
 
 def _optional_str(value: Any) -> str | None:

@@ -23,6 +23,10 @@ _DEFAULT_FIXTURE_OUTPUT_DIR = Path(
 )
 
 
+class SpainCoresConfigError(ValueError):
+    """Raised for deterministic Spain CORES scheduler configuration errors."""
+
+
 class SpainCoresRefreshJob(AbstractJob):
     """Refresh official Spain CORES monthly oil/gas production workbooks."""
 
@@ -43,6 +47,8 @@ class SpainCoresRefreshJob(AbstractJob):
 
     def _is_retryable_exception(self, exc: Exception) -> bool:
         """Classify deterministic CORES source-contract failures."""
+        if isinstance(exc, SpainCoresConfigError):
+            return False
         deterministic_errors: list[type[Exception]] = []
         try:
             from worldenergydata.spain.production import CoresSourceError
@@ -113,17 +119,28 @@ class SpainCoresRefreshJob(AbstractJob):
     ) -> dict[str, Any]:
         repo_root = config.get("_scheduler_repo_root")
         kwargs: dict[str, Any] = {"cache_root": output_dir}
-        if config.get("oil_density_registry_path") is not None:
+        registry_path = self._density_registry_path(config)
+        if registry_path is not None:
             kwargs["oil_density_registry_path"] = self._resolve_path(
-                config["oil_density_registry_path"],
+                registry_path,
                 repo_root,
             )
         if "allow_default_density" in config:
             allow_default_density = config["allow_default_density"]
             if not isinstance(allow_default_density, bool):
-                raise ValueError("allow_default_density must be boolean")
+                raise SpainCoresConfigError("allow_default_density must be boolean")
             kwargs["allow_default_density"] = allow_default_density
         return kwargs
+
+    @staticmethod
+    def _density_registry_path(config: dict[str, Any]) -> Any:
+        primary = config.get("density_registry_path")
+        legacy = config.get("oil_density_registry_path")
+        if primary is not None and legacy is not None and str(primary) != str(legacy):
+            raise SpainCoresConfigError(
+                "density_registry_path conflicts with oil_density_registry_path"
+            )
+        return primary if primary is not None else legacy
 
     def _refresh_fixture(
         self,

@@ -71,7 +71,7 @@ jobs:
     force_refresh: false
     refresh_fixture: true
     fixture_output_dir: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores
-    oil_density_registry_path: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json
+    density_registry_path: packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json
     allow_default_density: false
 
 monitoring:

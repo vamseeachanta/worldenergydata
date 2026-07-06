@@ -9,7 +9,10 @@ from urllib.parse import urlparse
 
 import pandas as pd
 
-from worldenergydata.spain.production.cores_density import CoresCrudeDensityFactor
+from worldenergydata.spain.production.cores_density import (
+    CoresCrudeDensityFactor,
+    normalize_field_key,
+)
 
 
 class CoresDensityAuditError(RuntimeError):
@@ -147,7 +150,19 @@ def _validate_oil_conversion_status_fields(
         raise CoresDensityAuditError(f"{source_name} missing defaulted_fields")
     if audit["coverage_status"] == "missing" and not audit["missing_fields"]:
         raise CoresDensityAuditError(f"{source_name} missing missing_fields")
+    _validate_default_bbl_per_tonne(audit, source_name)
     _validate_oil_field_count(audit, source_name)
+
+
+def _validate_default_bbl_per_tonne(
+    audit: dict[str, Any],
+    source_name: str,
+) -> None:
+    if not audit["defaulted_fields"]:
+        return
+    value = audit.get("default_bbl_per_tonne")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+        raise CoresDensityAuditError(f"{source_name} missing default_bbl_per_tonne")
 
 
 def _validate_oil_field_count(audit: dict[str, Any], source_name: str) -> None:
@@ -162,20 +177,30 @@ def _validate_oil_conversion_factor_links(
     audit: dict[str, Any],
     source_name: str,
 ) -> None:
-    factor_fields = [str(factor["field_name"]) for factor in audit["factors"]]
+    factors = cast(list[dict[str, Any]], audit["factors"])
+    factor_fields = [str(factor["field_name"]) for factor in factors]
     if len(set(factor_fields)) != len(factor_fields):
         raise CoresDensityAuditError(f"{source_name} duplicate density factor field")
     used_fields = [str(field) for field in audit["used_fields"]]
-    _validate_matching_factors(used_fields, factor_fields, source_name)
+    _validate_matching_factors(used_fields, factors, source_name)
 
 
 def _validate_matching_factors(
     used_fields: list[str],
-    factor_fields: list[str],
+    factors: list[dict[str, Any]],
     source_name: str,
 ) -> None:
-    missing_factors = [field for field in used_fields if field not in factor_fields]
-    extra_factors = [field for field in factor_fields if field not in used_fields]
+    used_keys = {normalize_field_key(field) for field in used_fields}
+    missing_factors = [
+        field
+        for field in used_fields
+        if normalize_field_key(field) not in _accepted_factor_keys(factors)
+    ]
+    extra_factors = [
+        str(factor["field_name"])
+        for factor in factors
+        if not _factor_matches_any_used_field(factor, used_keys)
+    ]
     if missing_factors:
         names = ", ".join(missing_factors)
         raise CoresDensityAuditError(
@@ -188,6 +213,24 @@ def _validate_matching_factors(
         )
 
 
+def _accepted_factor_keys(factors: list[dict[str, Any]]) -> set[str]:
+    keys: set[str] = set()
+    for factor in factors:
+        for value in (factor["field_name"], *factor["aliases"]):
+            keys.add(normalize_field_key(str(value)))
+    return keys
+
+
+def _factor_matches_any_used_field(
+    factor: dict[str, Any],
+    used_keys: set[str],
+) -> bool:
+    return any(
+        normalize_field_key(str(value)) in used_keys
+        for value in (factor["field_name"], *factor["aliases"])
+    )
+
+
 def _validate_oil_conversion_coverage(
     audit: dict[str, Any],
     oil_production: pd.DataFrame,
@@ -195,17 +238,22 @@ def _validate_oil_conversion_coverage(
 ) -> None:
     oil_fields = _production_fields(oil_production)
     covered = {
-        str(field)
+        normalize_field_key(str(field)): str(field)
         for key in ("used_fields", "defaulted_fields", "missing_fields")
         for field in audit[key]
     }
-    missing = [field for field in oil_fields if field not in covered]
+    oil_field_keys = {normalize_field_key(field) for field in oil_fields}
+    missing = [
+        field for field in oil_fields if normalize_field_key(field) not in covered
+    ]
     if missing:
         names = ", ".join(missing)
         raise CoresDensityAuditError(
             f"{source_name} missing oil density coverage for: {names}"
         )
-    extra = [field for field in sorted(covered) if field not in oil_fields]
+    extra = [
+        field for key, field in sorted(covered.items()) if key not in oil_field_keys
+    ]
     if extra:
         names = ", ".join(extra)
         raise CoresDensityAuditError(
@@ -220,8 +268,10 @@ def _validate_complete_oil_coverage(
     oil_fields: list[str],
     source_name: str,
 ) -> None:
-    used_fields = {str(field) for field in audit["used_fields"]}
-    missing = [field for field in oil_fields if field not in used_fields]
+    used_fields = {normalize_field_key(str(field)) for field in audit["used_fields"]}
+    missing = [
+        field for field in oil_fields if normalize_field_key(field) not in used_fields
+    ]
     if missing:
         names = ", ".join(missing)
         raise CoresDensityAuditError(

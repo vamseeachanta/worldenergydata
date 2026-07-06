@@ -45,6 +45,7 @@ def test_report_preserves_defaulted_density_limitations(tmp_path):
 
     summary = build_report(tmp_path)
     html = render_spain_cores_html(summary)
+    visible_html = html.split('<script type="application/json"', 1)[0]
 
     assert "oil_tonnes_to_bbl_conversion_deferred_to_issue_807" in html
     assert (
@@ -55,6 +56,7 @@ def test_report_preserves_defaulted_density_limitations(tmp_path):
         for item in summary["limitations"]
     )
     assert "oil_tonnes_to_bbl_has_defaulted_fields: Casablanca" in html
+    assert "7.33" in visible_html
 
 
 def test_report_preserves_missing_density_limitations(tmp_path):
@@ -102,6 +104,23 @@ def test_report_rejects_defaulted_sidecar_without_defaulted_field_names(tmp_path
     _mutate_density_sidecar(tmp_path, lambda sidecar: sidecar.pop("defaulted_fields"))
 
     with pytest.raises(CoresReportError, match="defaulted_fields"):
+        build_report(tmp_path)
+
+
+def test_report_rejects_defaulted_sidecar_without_default_bbl_per_tonne(tmp_path):
+    _write_cache(tmp_path, extra_rows=[_cache_row("Casablanca", 2025, 1, 5.0, pd.NA)])
+    _write_density_sidecar(
+        tmp_path,
+        coverage_status="defaulted",
+        used_fields=["Ayoluengo"],
+        defaulted_fields=["Casablanca"],
+    )
+    _mutate_density_sidecar(
+        tmp_path,
+        lambda sidecar: sidecar.pop("default_bbl_per_tonne"),
+    )
+
+    with pytest.raises(CoresReportError, match="default_bbl_per_tonne"):
         build_report(tmp_path)
 
 
@@ -205,6 +224,22 @@ def test_render_html_shows_density_provenance_fields(tmp_path):
     assert "7.17883" in visible_html
 
 
+def test_report_accepts_sidecar_used_fields_matching_factor_aliases(tmp_path):
+    _write_cache(tmp_path)
+    _rewrite_field_name(tmp_path, "Ayoluengo", "Ayo luengo")
+    _write_density_sidecar(tmp_path, used_fields=["Ayo luengo"])
+    _mutate_density_sidecar(
+        tmp_path,
+        lambda sidecar: sidecar["factors"][0].update({"aliases": ["Ayo luengo"]}),
+    )
+
+    summary = build_report(tmp_path)
+
+    audit = summary["oil_conversion_audit"]
+    assert audit["used_fields"] == ["Ayo luengo"]
+    assert audit["factors"][0]["field_name"] == "Ayoluengo"
+
+
 def _write_cache(root: Path, *, extra_rows: list[dict] | None = None) -> None:
     normalized = root / "normalized"
     metadata = root / "metadata"
@@ -298,6 +333,13 @@ def _mutate_density_sidecar(root: Path, mutator) -> None:
     path.write_text(_json_text(sidecar), encoding="utf-8")
 
 
+def _rewrite_field_name(root: Path, old: str, new: str) -> None:
+    for path in (root / "normalized").glob("cores_*_production.csv"):
+        frame = pd.read_csv(path)
+        frame["field_name"] = frame["field_name"].replace(old, new)
+        frame.to_csv(path, index=False)
+
+
 def _write_density_sidecar(
     root: Path,
     *,
@@ -327,7 +369,7 @@ def _density_sidecar_payload(
     defaulted_fields: list[str],
     missing_fields: list[str],
 ) -> dict:
-    return {
+    payload = {
         "schema_version": 1,
         "generated_at": "2026-07-05T18:37:12.102722+00:00",
         "registry_version": "test-2026-07-06",
@@ -342,6 +384,9 @@ def _density_sidecar_payload(
         "missing_fields": missing_fields,
         "factors": [_density_factor()],
     }
+    if defaulted_fields:
+        payload["default_bbl_per_tonne"] = 7.33
+    return payload
 
 
 def _density_factor() -> dict:

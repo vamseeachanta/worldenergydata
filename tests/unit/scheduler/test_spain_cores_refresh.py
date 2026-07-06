@@ -215,7 +215,7 @@ def test_density_options_pass_to_loader_and_registry_path_resolves_from_repo_roo
     result = _job().run(
         {
             "output_dir": str(tmp_path / "out"),
-            "oil_density_registry_path": registry_path,
+            "density_registry_path": registry_path,
             "allow_default_density": False,
             "_scheduler_repo_root": str(repo_root),
         }
@@ -237,6 +237,7 @@ def test_density_default_opt_in_must_be_boolean(tmp_path):
 
     assert result.status == "failure"
     assert "allow_default_density" in result.error_msg
+    assert result.retryable is False
 
 
 def test_refresh_fixture_false_disables_fixture_refresh(tmp_path):

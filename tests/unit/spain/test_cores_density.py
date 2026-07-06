@@ -1,6 +1,7 @@
 """Spain CORES crude density/API conversion registry tests (#807)."""
 
 import json
+from importlib.resources import files
 
 import pytest
 
@@ -35,7 +36,15 @@ def _factor(**overrides):
 
 
 def _write_registry(path, entries):
-    path.write_text(json.dumps({"registry_version": "test", "factors": entries}))
+    path.write_text(
+        json.dumps(
+            {
+                "registry_version": "test",
+                "registry_date": "2026-07-06",
+                "factors": entries,
+            }
+        )
+    )
 
 
 def test_bbl_per_tonne_from_api_matches_reference_formula():
@@ -53,13 +62,27 @@ def test_density_registry_requires_citation_fields(tmp_path):
         load_crude_density_factors(path)
 
 
-def test_density_registry_accepts_legacy_list_payload(tmp_path):
+def test_density_registry_rejects_legacy_list_payload(tmp_path):
     path = tmp_path / "density.json"
     path.write_text(json.dumps([_factor().__dict__]), encoding="utf-8")
 
-    factors = load_crude_density_factors(path)
+    with pytest.raises(ValueError, match="registry_version"):
+        load_crude_density_factors(path)
 
-    assert factors["ayoluengo"].field_name == "Ayoluengo"
+
+def test_density_registry_requires_root_metadata(tmp_path):
+    path = tmp_path / "density.json"
+    path.write_text(json.dumps({"factors": [_factor().__dict__]}), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="registry_version"):
+        load_crude_density_factors(path)
+
+    path.write_text(
+        json.dumps({"registry_version": "test", "factors": [_factor().__dict__]}),
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="registry_date"):
+        load_crude_density_factors(path)
 
 
 def test_density_registry_rejects_duplicate_aliases(tmp_path):
@@ -145,12 +168,21 @@ def test_default_density_registry_file_loads_from_package_data():
 
 
 def test_default_density_registry_keeps_current_fields_missing():
-    with pytest.raises(CoresDensityCoverageError, match="Ayoluengo"):
+    registry_path = files("worldenergydata.spain").joinpath(
+        "data/cores/crude_density_factors.json"
+    )
+    payload = json.loads(registry_path.read_text())
+    expected_fields = payload["source_gap_fields"]
+
+    with pytest.raises(CoresDensityCoverageError) as exc_info:
         build_oil_conversion_audit(
-            ["Ayoluengo", "Casablanca"],
+            expected_fields,
             load_crude_density_factors(),
             allow_default_density=False,
         )
+    message = str(exc_info.value)
+    for field_name in expected_fields:
+        assert field_name in message
 
 
 def test_crude_density_factor_rejects_secondary_article_conversion_directly(tmp_path):

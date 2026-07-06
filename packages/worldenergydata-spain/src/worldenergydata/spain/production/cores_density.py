@@ -121,6 +121,14 @@ class CoresOilConversionAudit:
             return DEFAULT_OIL_BBL_PER_TONNE
         raise CoresDensityCoverageError(f"missing density factor for {field_name}")
 
+    @property
+    def used_field_names(self) -> tuple[str, ...]:
+        """Parsed CORES display field names resolved to accepted factors."""
+        names: dict[str, None] = {}
+        for field_name, _factor in self._accepted_entries:
+            names[str(field_name)] = None
+        return tuple(names)
+
 
 def validate_crude_density_factor(factor: CoresCrudeDensityFactor) -> None:
     """Validate one cited density factor regardless of construction path."""
@@ -181,10 +189,12 @@ def load_crude_density_factors(
         path = _default_registry_path()
     with Path(path).open(encoding="utf-8") as fh:
         payload = json.load(fh)
-    if isinstance(payload, list):
-        entries = payload
-    else:
-        entries = payload.get("factors", [])
+    if not isinstance(payload, dict):
+        raise ValueError("registry_version is required")
+    _validate_registry_metadata(payload)
+    entries = payload.get("factors", [])
+    if not isinstance(entries, list):
+        raise ValueError("factors must be a list")
     factors: dict[str, CoresCrudeDensityFactor] = {}
     for entry in entries:
         if "accepted_for_conversion" not in entry:
@@ -236,7 +246,7 @@ def build_oil_conversion_audit(
         factor = normalized_factors.get(key)
         if factor is not None and factor.accepted_for_conversion:
             used.append(factor)
-            entries.append((key, factor))
+            entries.append((str(field_name), factor))
         elif allow_default_density:
             defaulted.append(str(field_name))
         else:
@@ -253,6 +263,13 @@ def build_oil_conversion_audit(
         _accepted_entries=tuple(entries),
         _defaulted_field_keys=tuple(normalize_field_key(name) for name in defaulted),
     )
+
+
+def _validate_registry_metadata(payload: Mapping[str, object]) -> None:
+    for key in ("registry_version", "registry_date"):
+        value = payload.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{key} is required")
 
 
 def _default_registry_path() -> Path:

@@ -8,6 +8,7 @@ import pytest
 from worldenergydata.fdas.adapters.contract import to_fdas_production
 from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
+    _EmbeddedCoresFixtureLoader,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 from worldenergydata.spain.production.cores_live import (
@@ -165,11 +166,27 @@ def test_default_adapter_loads_committed_ayoluengo_fixture():
     adapter = SpainCoresAdapter()
 
     out = adapter.fetch(ProductionQuery(regions=["spain"], fields=["Ayoluengo"]))
+    metadata = adapter.loader.metadata()
 
     assert not out.empty
     assert set(out["field_name"]) == {"Ayoluengo"}
     assert set(out["source"]) == {"cores"}
     assert out["oil_bbl"].gt(0).any()
+    audit = metadata["oil_conversion_audit"]
+    assert audit["coverage_status"] == "defaulted"
+    assert audit["defaulted_fields"] == ["Ayoluengo"]
+    assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
+
+
+def test_embedded_fixture_loader_exposes_default_density_metadata():
+    loader = _EmbeddedCoresFixtureLoader()
+
+    metadata = loader.metadata()
+
+    audit = metadata["oil_conversion_audit"]
+    assert audit["coverage_status"] == "defaulted"
+    assert audit["defaulted_fields"] == ["Ayoluengo"]
+    assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
 
 
 def test_adapter_accepts_live_cores_loader(tmp_path):

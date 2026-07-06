@@ -137,7 +137,7 @@ class TestLoadConfig:
             == "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores"
         )
         assert (
-            spain["oil_density_registry_path"]
+            spain["density_registry_path"]
             == "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json"
         )
         assert spain["allow_default_density"] is False

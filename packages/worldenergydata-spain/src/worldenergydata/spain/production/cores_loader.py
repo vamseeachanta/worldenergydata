@@ -113,6 +113,17 @@ def parse_cores_frame(
     return _parsed_output(long, product, oil_conversion_audit)
 
 
+def extract_cores_field_names(raw: pd.DataFrame) -> list[str]:
+    """Return parsed CORES field display names without unit conversion."""
+    year_col, month_col, field_cols = _frame_columns(raw)
+    monthly = _monthly_rows(raw, year_col, month_col)
+    long = _melt_field_values(monthly, field_cols)
+    names: dict[str, None] = {}
+    for value in long["field_name"].dropna():
+        names[str(value).strip()] = None
+    return sorted(names)
+
+
 def _frame_columns(raw: pd.DataFrame) -> tuple[Any, Any, list[Any]]:
     cols = {str(c).strip().lower(): c for c in raw.columns}
     year_col = next((cols[c] for c in _YEAR_COLS if c in cols), None)
@@ -180,7 +191,7 @@ def _conversion_factor(
     if product == "gas":
         return GWH_TO_MCF
     if oil_conversion_audit is None:
-        return TONNES_TO_BBL
+        raise CoresParseError("oil_conversion_audit is required for oil conversion")
     try:
         return long["field_name"].map(oil_conversion_audit.bbl_per_tonne_for_field)
     except CoresDensityCoverageError as exc:

@@ -134,7 +134,14 @@ def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
     assert written_metadata["source_url"] == DEFAULT_WORKBOOKS["oil"].source_url
     assert written_metadata["statistics_page"] == STATISTICS_PAGE_URL
     assert written_metadata["sample_row_count"] == 2
-    assert written_metadata["conversion_factors"]["oil_tonnes_to_bbl"] == TONNES_TO_BBL
+    assert "oil_tonnes_to_bbl" not in written_metadata["conversion_factors"]
+    assert written_metadata["conversion_factors"]["oil_tonnes_to_bbl_default"] == (
+        TONNES_TO_BBL
+    )
+    audit = written_metadata["oil_conversion_audit"]
+    assert audit["coverage_status"] == "defaulted"
+    assert audit["defaulted_fields"] == ["Ayoluengo"]
+    assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
     assert written_metadata["workbooks"]["oil"]["sha256"] == "abc123"
 
 

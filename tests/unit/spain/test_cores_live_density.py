@@ -102,6 +102,30 @@ def test_live_loader_applies_density_registry_and_writes_oil_conversion_audit(tm
     assert sidecar["factors"][0]["source_url"] == "https://example.test/ayoluengo"
 
 
+def test_live_loader_writes_sidecar_used_fields_from_cores_display_alias(tmp_path):
+    _write_live_workbooks(
+        tmp_path,
+        pd.DataFrame([_workbook_row("Ayo luengo", 2.0)]),
+    )
+    registry_path = _write_density_registry(
+        tmp_path,
+        [_density_entry(aliases=["Ayo luengo", "ayoluengo"])],
+    )
+
+    loader = CoresLiveProductionLoader(
+        cache_root=tmp_path,
+        oil_density_registry_path=registry_path,
+    )
+
+    oil = loader.load_oil_production()
+
+    assert oil.iloc[0]["field_name"] == "Ayo luengo"
+    assert oil.iloc[0]["oil_bbl"] == pytest.approx(2.0 * 6.95)
+    sidecar = _read_density_sidecar(tmp_path)
+    assert sidecar["used_fields"] == ["Ayo luengo"]
+    assert sidecar["factors"][0]["field_name"] == "Ayoluengo"
+
+
 def test_live_loader_missing_density_is_fail_closed_without_default(tmp_path):
     raw_dir = tmp_path / "raw"
     raw_dir.mkdir()
@@ -254,7 +278,7 @@ def _single_field_audit():
         used_factors=(factor,),
         defaulted_fields=(),
         missing_fields=(),
-        _accepted_entries=(("ayoluengo", factor),),
+        _accepted_entries=(("Ayoluengo", factor),),
         _defaulted_field_keys=(),
     )
 

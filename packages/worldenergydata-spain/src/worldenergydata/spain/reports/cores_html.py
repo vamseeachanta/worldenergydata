@@ -172,6 +172,12 @@ def _density_field_summary(audit: dict[str, Any]) -> str:
     ):
         values = ", ".join(str(value) for value in audit.get(key, [])) or "None"
         items.append(f"<p><strong>{label}:</strong> {html.escape(values)}</p>")
+    if audit.get("defaulted_fields"):
+        default_factor = audit.get("default_bbl_per_tonne")
+        items.append(
+            f"<p><strong>Default bbl/tonne:</strong> "
+            f"{html.escape(str(default_factor))}</p>"
+        )
     return "".join(items)
 
 
