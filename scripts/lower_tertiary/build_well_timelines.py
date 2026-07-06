@@ -27,6 +27,11 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "packages/worldenergydata-bsee/src"))
 
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 HERE = REPO / "reports/lower_tertiary/lifecycle/wells"
 TEMPLATE = HERE / "well_lifecycle_template.html"
 FACTS = HERE / "_wells.json"
@@ -233,7 +238,7 @@ def build_index(rows: list[dict]) -> str:
   @media (prefers-color-scheme:dark){{li{{background:#10202f;border-color:#24384b}}}}
   a{{font-weight:700;text-decoration:none;color:inherit;font-size:16px}} li span{{font-family:ui-monospace,monospace;font-size:12px;color:#5a6b7b}}
 </style>
-<div class="w"><h1>Well life-cycle timelines</h1>
+<div class="w">{site_nav.crumb_for("wells_index")}<h1>Well life-cycle timelines</h1>
 <p class="sub">Per-well granular deep-dives · draft tracers for #758 · sorted by cumulative oil</p>
 <ul>
 {items}
@@ -286,7 +291,16 @@ def main():
         payload["display"] = econ_cfg["display"]
         well["economics"] = payload
         fname = f"{w['field_id']}_{w['slot']}_well.html"
-        (HERE / fname).write_text(render(well))
+        html = site_nav.inject_for(
+            render(well),
+            "well",
+            {
+                "field_id": w["field_id"],
+                "slot": w["slot"],
+                "field_name": field["display_name"],
+            },
+        )
+        (HERE / fname).write_text(html)
         cum = w.get("cum_oil_mmbbl") or 0
         rows.append(
             {

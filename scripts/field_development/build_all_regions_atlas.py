@@ -32,8 +32,14 @@ from __future__ import annotations
 import csv
 import html
 import json
+import sys
 from datetime import date
 from pathlib import Path
+
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
@@ -84,7 +90,9 @@ def read_coverage():
             fields = int(row[2]) if row[2] else 0
             facs = int(row[3]) if row[3] else 0
             if cat == "by_country":
-                by_country.append({"country": dim, "fields": fields, "facilities": facs})
+                by_country.append(
+                    {"country": dim, "fields": fields, "facilities": facs}
+                )
             elif cat == "by_region":
                 by_region[dim] = {"fields": fields, "facilities": facs}
             elif cat == "total":
@@ -144,7 +152,10 @@ def centroid_country_count() -> int:
 BADGE_META = {
     "RICH": ("RICH", "Full life-cycle depth: fields + wells + production + economics."),
     "SAMPLE": ("SAMPLE", "Reference inventory: curated field & facility counts only."),
-    "ROADMAP": ("ROADMAP", "National deep-ingest pipeline scaffolded; not yet materialised."),
+    "ROADMAP": (
+        "ROADMAP",
+        "National deep-ingest pipeline scaffolded; not yet materialised.",
+    ),
 }
 
 
@@ -181,8 +192,15 @@ def svg_bar(top, max_fields):
     return "".join(parts)
 
 
-def build_html(rows, by_region, totals, atlas_countries, roster_countries,
-               field_countries, gom_proof):
+def build_html(
+    rows,
+    by_region,
+    totals,
+    atlas_countries,
+    roster_countries,
+    field_countries,
+    gom_proof,
+):
     today = date.today().isoformat()
     gom = by_region.get("US Gulf of Mexico (flagged)", {"fields": 0, "facilities": 0})
     row = by_region.get("Rest of world", {"fields": 0, "facilities": 0})
@@ -203,7 +221,7 @@ def build_html(rows, by_region, totals, atlas_countries, roster_countries,
     for i, r in enumerate(tbl_rows):
         dens = f'{r["facilities"]/r["fields"]:.2f}' if r["fields"] else "—"
         table_body.append(
-            f'<tr>'
+            f"<tr>"
             f'<td class="rank">{i+1}</td>'
             f'<td class="cty">{html.escape(r["country"])}</td>'
             f'<td class="num">{r["fields"]}</td>'
@@ -211,7 +229,7 @@ def build_html(rows, by_region, totals, atlas_countries, roster_countries,
             f'<td class="num">{dens}</td>'
             f'<td>{badge_span(r["badge"])}</td>'
             f'<td class="mod">{html.escape(r["module"])}</td>'
-            f'</tr>'
+            f"</tr>"
         )
     table_body = "\n".join(table_body)
 
@@ -339,10 +357,10 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
       <div class="gomstat"><div class="v">{gom['fields']}</div><div class="l">GoM fields in reference catalog</div></div>
     </div>
     <div class="gomlinks">
-      <a href="../lower_tertiary/lifecycle/index.html">Field life-cycle pages &rarr;</a>
-      <a href="../lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.md">LT well benchmark &rarr;</a>
-      <a href="./bsee_matched/aconcagua.html">Concept-matched pages &rarr;</a>
-      <a href="./showcase/index.html">Concept-match showcase &rarr;</a>
+      <a href="lifecycle/index.html">Field life-cycle pages &rarr;</a>
+      <a href="benchmark.html">LT well benchmark &rarr;</a>
+      <a href="field-development/bsee-matched/index.html">Concept-matched pages &rarr;</a>
+      <a href="field-development/showcase.html">Concept-match showcase &rarr;</a>
     </div>
   </div>
 
@@ -437,14 +455,16 @@ def main():
     rows = []
     for c in by_country:
         badge, module, status = badge_for(c["country"], statuses)
-        rows.append({
-            "country": c["country"],
-            "fields": c["fields"],
-            "facilities": c["facilities"],
-            "badge": badge,
-            "module": module,
-            "catalog_status": status,
-        })
+        rows.append(
+            {
+                "country": c["country"],
+                "fields": c["fields"],
+                "facilities": c["facilities"],
+                "badge": badge,
+                "module": module,
+                "catalog_status": status,
+            }
+        )
 
     atlas_countries = centroid_country_count()
     field_countries = distinct_field_countries()
@@ -460,25 +480,55 @@ def main():
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(["country", "fields", "facilities",
-                    "facility_density", "badge", "source_module", "catalog_status"])
+        w.writerow(
+            [
+                "country",
+                "fields",
+                "facilities",
+                "facility_density",
+                "badge",
+                "source_module",
+                "catalog_status",
+            ]
+        )
         for r in sorted(rows, key=lambda r: (-r["fields"], r["country"])):
             dens = round(r["facilities"] / r["fields"], 3) if r["fields"] else ""
-            w.writerow([r["country"], r["fields"], r["facilities"], dens,
-                        r["badge"], r["module"], r["catalog_status"]])
+            w.writerow(
+                [
+                    r["country"],
+                    r["fields"],
+                    r["facilities"],
+                    dens,
+                    r["badge"],
+                    r["module"],
+                    r["catalog_status"],
+                ]
+            )
 
     # --- HTML ---
     OUT_HTML.write_text(
-        build_html(rows, by_region, totals, atlas_countries, len(rows),
-                   field_countries, gom_proof),
+        site_nav.inject_for(
+            build_html(
+                rows,
+                by_region,
+                totals,
+                atlas_countries,
+                len(rows),
+                field_countries,
+                gom_proof,
+            ),
+            "all_regions",
+        ),
         encoding="utf-8",
     )
 
     b = {"RICH": 0, "SAMPLE": 0, "ROADMAP": 0}
     for r in rows:
         b[r["badge"]] += 1
-    print(f"countries(roll-up)={len(rows)}  atlas={atlas_countries}  "
-          f"fields.csv_countries={field_countries}")
+    print(
+        f"countries(roll-up)={len(rows)}  atlas={atlas_countries}  "
+        f"fields.csv_countries={field_countries}"
+    )
     print(f"totals={totals}  gom={by_region.get('US Gulf of Mexico (flagged)')}")
     print(f"badges={b}  gom_proof={gom_proof}")
     print(f"wrote {OUT_CSV}")

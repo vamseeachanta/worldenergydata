@@ -37,6 +37,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(
     0, str(PROJECT_ROOT / "packages" / "worldenergydata-decommissioning" / "src")
 )
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 from worldenergydata.decommissioning.cost_model import (  # noqa: E402
     DecommissioningCostEstimator,
 )
@@ -112,7 +117,9 @@ def main() -> None:
         )
     pd.DataFrame(res["rows"]).to_csv(OUT_CSV, mode="a", index=False)
 
-    html_str = render_html(n_total=n_total, res=res, llf=llf)
+    html_str = site_nav.inject_for(
+        render_html(n_total=n_total, res=res, llf=llf), "regional_liability"
+    )
     OUT_HTML.write_text(html_str, encoding="utf-8")
 
     print(
@@ -120,14 +127,18 @@ def main() -> None:
         f"unmodeled-region={counts['unmodeled_region']} "
         f"unmapped-asset={counts['unmapped_asset']}"
     )
-    print(f"TOTAL modeled liability = {_b(res['total_musd'])} ({res['total_musd']:,.0f} MUSD)")
+    print(
+        f"TOTAL modeled liability = {_b(res['total_musd'])} ({res['total_musd']:,.0f} MUSD)"
+    )
     for reg, d in sorted(res["by_region"].items(), key=lambda kv: -kv[1]["sum_musd"]):
         print(f"  {reg:12s} {_b(d['sum_musd'])}  n={d['count']}")
     for a in ASSET_ORDER:
         d = res["by_asset"].get(a)
         if d:
             print(f"  {a:12s} {_b(d['sum_musd'])}  n={d['count']}")
-    print(f"wrote {OUT_CSV.relative_to(PROJECT_ROOT)} and {OUT_HTML.relative_to(PROJECT_ROOT)}")
+    print(
+        f"wrote {OUT_CSV.relative_to(PROJECT_ROOT)} and {OUT_HTML.relative_to(PROJECT_ROOT)}"
+    )
 
 
 def render_html(*, n_total: int, res: dict, llf: dict) -> str:
@@ -289,7 +300,6 @@ def render_html(*, n_total: int, res: dict, llf: dict) -> str:
 </style>
 <div class="wrap"><div class="sheet">
   <div class="head">
-    <p class="crumb"><a href="../capabilities/insights.html">&larr; Life-cycle insights hub</a> &middot; <a href="pa-liability-wave.html">GoM P&amp;A liability wave</a></p>
     <p class="eyebrow">World Energy Data · Decommissioning · Regional liability</p>
     <h1 class="title">Two forces set the decommissioning bill — and they pull opposite ways</h1>
     <p class="thesis">Per <em>identical</em> asset the North Sea costs 25–30% more to remove (the regional multiplier).

@@ -42,6 +42,11 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 from worldenergydata.field_development.enums import ConceptType  # noqa: E402
 from worldenergydata.field_development.recommendation import _DRY_TREE  # noqa: E402
 
@@ -220,12 +225,10 @@ def build_table() -> pd.DataFrame:
     rows = []
     unmapped_countries = set()
     for _, r in pf.iterrows():
-        host = (str(r.get("HOST_TYPE")).strip() if pd.notna(r.get("HOST_TYPE")) else "")
+        host = str(r.get("HOST_TYPE")).strip() if pd.notna(r.get("HOST_TYPE")) else ""
         concept = HOST_TYPE_TO_CONCEPT.get(host)
         tree = classify(concept)
-        country = (
-            str(r.get("COUNTRY")).strip() if pd.notna(r.get("COUNTRY")) else ""
-        )
+        country = str(r.get("COUNTRY")).strip() if pd.notna(r.get("COUNTRY")) else ""
         region = COUNTRY_TO_REGION.get(country, "Other / Unclassified")
         if country and country not in COUNTRY_TO_REGION:
             unmapped_countries.add(country)
@@ -350,8 +353,8 @@ def compute_stats(df: pd.DataFrame) -> dict:
 # HTML / inline-SVG rendering                                                   #
 # --------------------------------------------------------------------------- #
 
-DRY_C = "#0b3d5c"   # deep navy — surface / platform trees
-WET_C = "#2a9d8f"   # teal — subsea trees
+DRY_C = "#0b3d5c"  # deep navy — surface / platform trees
+WET_C = "#2a9d8f"  # teal — subsea trees
 OTHER_C = "#94a3b2"  # slate — non-tree hulls (FSO/FSU, MOPU, island)
 
 
@@ -443,7 +446,7 @@ def _depth_share_svg(bands: dict) -> str:
                 label = (
                     f'<text x="{x + w / 2:.1f}" y="{cy}" text-anchor="middle" '
                     f'font-size="11" fill="#fff" font-weight="600">'
-                    f'{frac * 100:.0f}%</text>'
+                    f"{frac * 100:.0f}%</text>"
                     if w >= 34
                     else ""
                 )
@@ -465,14 +468,20 @@ def _legend() -> str:
     def sw(color, txt):
         return (
             f'<span class="lg"><span class="sw" style="background:{color}">'
-            f'</span>{txt}</span>'
+            f"</span>{txt}</span>"
         )
 
     return (
         '<div class="legend">'
-        + sw(DRY_C, "Dry tree (surface trees on fixed jacket / compliant tower / TLP / spar)")
+        + sw(
+            DRY_C,
+            "Dry tree (surface trees on fixed jacket / compliant tower / TLP / spar)",
+        )
         + sw(WET_C, "Wet tree (subsea trees: semisub-FPS / FPSO / FLNG / tieback)")
-        + sw(OTHER_C, "Other hull (FSO-FSU / MOPU / artificial island — no producing trees)")
+        + sw(
+            OTHER_C,
+            "Other hull (FSO-FSU / MOPU / artificial island — no producing trees)",
+        )
         + "</div>"
     )
 
@@ -483,8 +492,7 @@ def _top_countries_block(top: dict) -> str:
     colors = {"dry": DRY_C, "wet": WET_C, "other": OTHER_C}
     for tt in ("dry", "wet", "other"):
         rows = "".join(
-            f"<tr><td>{_esc(c)}</td><td class='num'>{n}</td></tr>"
-            for c, n in top[tt]
+            f"<tr><td>{_esc(c)}</td><td class='num'>{n}</td></tr>" for c, n in top[tt]
         )
         cols.append(
             f'<div class="topcol"><h4 style="color:{colors[tt]}">'
@@ -733,7 +741,7 @@ def main() -> None:
     df.to_csv(out_csv, index=False)
     print("wrote", out_csv, "rows", len(df))
     stats = compute_stats(df)
-    html = render_html(stats)
+    html = site_nav.inject_for(render_html(stats), "devtype")
     out_html = OUT_DIR / "region_devtype_comparison.html"
     out_html.write_text(html, encoding="utf-8")
     print("wrote", out_html, "bytes", len(html))
