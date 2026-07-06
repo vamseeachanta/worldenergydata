@@ -7,6 +7,17 @@
 
 ---
 
+## 0. Executive summary
+
+This document is the durable, single-source record of the validation — every number, discrepancy, and open question lives HERE (email carries only brief pointers to it).
+
+1. **The apparent 2× well-days gap is resolved.** Our page had headlined drilling-only days; on a like-for-like drilling-plus-completion basis our BSEE-derived extract reconciles with the article's Table 1 within a few percent, with every per-development difference itemized in §3 and kept current on the [live verification page](https://vamseeachanta.github.io/worldenergydata/completion/verification.html).
+2. **Buckskin is recovered.** It was missing from our extract because the pipeline read a shelf-only dataset; the canonical extractor now reads the raw Keathley Canyon WAR data directly and Buckskin lands within one sidetrack and ~2.6% of the article's figures (§3).
+3. **All four article tables are dispositioned** (§2): BSEE-derived columns reconcile through our code end-to-end; modeled and operator-announced columns are flagged, never recomputed.
+4. **Five article errors were found** and are documented with our evidence for QA hand-back (§4).
+5. **Free BOEM reserves + discovery dates are now in our refresh pipeline** (§5.1), which surfaced one substantive reserves discrepancy on Stones to resolve with the article team.
+6. **Open asks to the article team** (§5): STOIIP basis, cost-deck vintage, and the appraisal-well definition.
+
 ## 1. Headline finding
 
 The article's four tables **are this repository's FDAS V30 model output**: `financial_project_summary.xlsx` reproduces Tables 1 and 2 column-for-column (spud dates 9/9, wellbores, D&C days, oil volumes and revenues in band). Validation therefore splits cleanly:
@@ -62,7 +73,7 @@ Surfaced by our BSEE-grounded check; these are the article's errors, not ours.
 
 1. **STOIIP source for Table 4** *(hard gap)* — no BOEM/BSEE source exists for STOIIP/OOIP; public record is operator FID press only (Buckskin ~5 Bbbl, Julia 6 Bbbl, Stones >2 Bboe, Tiber 4–6 Bbbl; Cascade/Chinook has no clean public figure). Need their basis for a consistent column.
 2. **Cost / rate-deck vintage confirmation** — are Table 1/2 costs the V30 `lease_assumptions.xlsx` deck we hold, or a revised deck?
-3. **Complete recoverable-reserves (STB) set + appraisal-well definition** — we hold a few in BOE. BOEM's free Reserves Inventory (EOGR, field-level, 31-Dec-2023 vintage) + Deepwater Qualified Fields (discovery/first-oil dates) are being wired into the refresh pipeline as [#847](https://github.com/vamseeachanta/worldenergydata/issues/847); WO Table 4 recoverable figures for Anchor 440 / JSM 500 / Stones 250 match operator press exactly.
+3. **Complete recoverable-reserves (STB) set + appraisal-well definition** — we hold a few in BOE. BOEM's free Reserves Inventory (field-level, 31-Dec-2023 vintage) + Deepwater Qualified Fields (discovery/first-oil dates) are NOW IN the refresh pipeline ([#847](https://github.com/vamseeachanta/worldenergydata/issues/847), landed 2026-07-06 — see §5.1); WO Table 4 recoverable figures for Anchor 440 / JSM 500 / Stones 250 match operator press exactly, but BOEM's booked figure for Stones does not (§5.1) — which basis does the article intend?
 
 ### 5.1 BOEM cross-check (added 2026-07-06, #847 implementation)
 
@@ -91,9 +102,22 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 |---|---|
 | wed [#841](https://github.com/vamseeachanta/worldenergydata/pull/841) (merged) | `/completion/` Total-D&C column + verification page |
 | wed [#843](https://github.com/vamseeachanta/worldenergydata/pull/843) (merged) | like-for-like reframe + Buckskin identity surfaced |
-| wed [#851](https://github.com/vamseeachanta/worldenergydata/pull/851) | KC deepwater ingest — raw `.bin` extractor + Buckskin leases + fidelity tests |
-| wed [#842](https://github.com/vamseeachanta/worldenergydata/issues/842) | KC ingest issue; V30-supersede decision recorded |
+| wed [#851](https://github.com/vamseeachanta/worldenergydata/pull/851) (merged) | KC deepwater ingest — raw `.bin` extractor + Buckskin leases + fidelity tests |
+| wed [#852](https://github.com/vamseeachanta/worldenergydata/pull/852) (merged) | benchmark renamed "World Oil April 2026 article" on the live pages |
+| wed [#861](https://github.com/vamseeachanta/worldenergydata/pull/861) (merged) | #847 implementation: BOEM reserves + discovery in the refresh pipeline; curated `lt_reserves_discovery.csv` |
+| wed [#842](https://github.com/vamseeachanta/worldenergydata/issues/842) | KC ingest issue; V30-supersede decision recorded (open pending article-team confirmation) |
 | wed [#844](https://github.com/vamseeachanta/worldenergydata/issues/844) | living cost-basis time-series |
 | wed [#846](https://github.com/vamseeachanta/worldenergydata/issues/846) | JSM D&C overshoot (+119) |
-| wed [#847](https://github.com/vamseeachanta/worldenergydata/issues/847) | BOEM reserves + discovery-date ingest |
+| wed [#847](https://github.com/vamseeachanta/worldenergydata/issues/847) (closed) | BOEM reserves + discovery-date ingest |
+| wed [#855](https://github.com/vamseeachanta/worldenergydata/issues/855) | future BOEM source family (field monthly production, reserve history 1975–2023, older vintages) |
 | wshub [#3385](https://github.com/vamseeachanta/workspace-hub/issues/3385) | "Verified against references & baselines" section epic |
+
+## 8. Change log (session notes — the durable record)
+
+| Date | What happened |
+|---|---|
+| 2026-07-05 | Article-team QA question received (well-days basis). Root cause found the same day: our `/completion/` page headlined drilling-only days; true D&C total reconciles (§3). PR [#841](https://github.com/vamseeachanta/worldenergydata/pull/841): verification page + Total-D&C column shipped. |
+| 2026-07-06 | Consistency review found the original headline comparison was not like-for-like (offsetting Big Foot-vs-Buckskin); reframed via PR [#843](https://github.com/vamseeachanta/worldenergydata/pull/843). Buckskin identity recovered (six Keathley Canyon leases; the shelf-only extract had dropped it). |
+| 2026-07-06 | All four article tables validated against `financial_project_summary.xlsx` (§1–2); five article errors documented (§4); STOIIP confirmed to have no government source (§5). |
+| 2026-07-06 | KC deepwater ingest landed (PR #851): canonical extractor reads raw WAR `.bin`; Buckskin becomes a matched row (§3); Anchor fidelity pinned exactly by test. Benchmark renamed to "World Oil April 2026 article" everywhere (PR #852). This report committed (PR #853). |
+| 2026-07-06 | BOEM reserves + discovery ingest landed (#847 / PR #861, plan #854 with two adversarial review rounds): annual Table 4 workbook + Deepwater Qualified Fields on refresh cadence; curated per-development table with citation columns; **Stones reserves discrepancy surfaced** (§5.1). Follow-on source family filed as #855. |
