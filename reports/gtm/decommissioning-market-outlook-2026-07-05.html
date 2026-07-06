@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>GoM Decommissioning Market Outlook — 2026-07-05</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;margin:0;background:#f8fafc;color:#1F2937}
+.page-wrap{max-width:1180px;margin:0 auto;padding:24px 20px}
+.report-header{background:linear-gradient(135deg,#1e3a5f 0%,#0e7490 100%);color:#fff;padding:34px 40px;border-radius:10px;margin-bottom:26px}
+.report-header h1{margin:0 0 6px;font-size:25px;font-weight:700}
+.report-header .sub{opacity:.85;font-size:14px}
+.report-header .meta{display:flex;gap:24px;margin-top:16px;font-size:13px;opacity:.78;flex-wrap:wrap}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.kpi-card{background:#fff;border-radius:8px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:3px solid #d97706}
+.kpi-card .label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#6B7280;margin-bottom:6px}
+.kpi-card .value{font-size:1.7em;font-weight:700;color:#1e3a5f}
+.kpi-card .unit{font-size:12px;color:#9ca3af;margin-left:3px}
+.kpi-card .note{font-size:11px;color:#9ca3af;margin-top:4px}
+.section{margin-bottom:34px}
+.section h2{color:#1e3a5f;font-size:18px;border-bottom:2px solid #1e3a5f;padding-bottom:8px;margin:0 0 16px}
+.section h3{color:#0e7490;font-size:15px;margin:18px 0 10px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.data-table th{background:#1e3a5f;color:#fff;padding:9px 13px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.data-table td{padding:8px 13px;border-bottom:1px solid #E5E7EB}
+.data-table tr:nth-child(even) td{background:#F9FAFB}
+.data-note{background:#EFF6FF;border-left:4px solid #3B82F6;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.warn-note{background:#FEF3C7;border-left:4px solid #d97706;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.assum-note{background:#F3E8FF;border-left:4px solid #9333ea;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.chart-wrap{background:#fff;border-radius:8px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:18px}
+.chart-wrap h4{margin:0 0 10px;font-size:13px;color:#1e3a5f}
+code{background:#eef2ff;padding:1px 5px;border-radius:3px;font-size:12px}
+.footer{font-size:12px;color:#9ca3af;margin-top:28px;border-top:1px solid #E5E7EB;padding-top:14px}
+</style></head><body><div class="page-wrap">
+<div class="report-header">
+<h1>GoM Decommissioning Market Outlook — 5-Year P&amp;A Forecast</h1>
+<div class="sub">Forward 2026-2030 Gulf of Mexico plug-&amp;-abandonment volume, timing &amp; market sizing · market-intelligence framing</div>
+<div class="meta"><span>Issue #424 (child of #423)</span><span>Data as of 2026-07-05</span>
+<span>BSEE borehole-status census</span><span>Operator-aggregate only</span></div>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi-card"><div class="label">Eligible inventory</div><div class="value">7,405<span class="unit">wells</span></div><div class="note">not-yet-P&amp;A GoM wells (data)</div></div>
+<div class="kpi-card"><div class="label">Idle iron ≥10yr</div><div class="value">2,217<span class="unit">wells</span></div><div class="note">TA idle ≥10yr (data)</div></div>
+<div class="kpi-card"><div class="label">Already P&amp;A (GoM)</div><div class="value">29,800<span class="unit">wells</span></div><div class="note">historical decom record (data)</div></div>
+<div class="kpi-card"><div class="label">Base 5-yr volume</div><div class="value">1,825<span class="unit">wells</span></div><div class="note">2026-2030 forecast</div></div>
+<div class="kpi-card"><div class="label">Base 5-yr market</div><div class="value">$3.89B<span class="unit"></span></div><div class="note">blended unit cost (assump.)</div></div>
+<div class="kpi-card"><div class="label">Sensitivity span</div><div class="value">$1.3–11.7B<span class="unit"></span></div><div class="note">low→high scenario</div></div>
+</div>
+
+<div class="warn-note"><b>Data vs assumptions — hard separation.</b> Inventory, idle-iron aging, and the
+historical P&amp;A rate are <b>measured</b> from BSEE <code>well_data.csv</code>. Unit costs, deepwater mix,
+and attrition pace are <b>explicit cited assumptions</b> (purple boxes), stress-tested in the sensitivity.
+<code>WATER_DEPTH</code>/<code>WELL_SPUD_DATE</code> are unpopulated in this extract, so water-depth strata
+and spud-age cohorts are <b>not</b> grounded — hence the deepwater mix is an assumption, not data.</div>
+
+<div class="section"><h2>1 · Borehole-status inventory (data)</h2>
+<p>BSEE <code>BOREHOLE_STAT_CD</code>, GoM-filtered (54,492 of 57,281 national boreholes).</p>
+<table class="data-table"><thead><tr><th>Status</th><th>Meaning</th><th>GoM wells</th></tr></thead>
+<tbody><tr><td><code>PA</code></td><td>Permanently Abandoned (plugged &amp; abandoned — already decommissioned)</td><td>29,800</td></tr><tr><td><code>ST</code></td><td>Sidetrack (borehole of a sidetracked well — not a standalone P&amp;A unit)</td><td>16,888</td></tr><tr><td><code>COM</code></td><td>Completed (producing or capable — reaches end-of-life over horizon)</td><td>4,215</td></tr><tr><td><code>TA</code></td><td>Temporarily Abandoned (idle/suspended — prime P&amp;A candidate)</td><td>3,190</td></tr><tr><td><code>CNL</code></td><td>Cancelled</td><td>397</td></tr><tr><td><code>DRL</code></td><td>Drilling</td><td>1</td></tr><tr><td><code>APD</code></td><td>Approved Permit to Drill</td><td>1</td></tr><tr><td colspan="2"><b>Total</b></td><td><b>54,492</b></td></tr></tbody></table>
+</div>
+
+<div class="section"><h2>2 · Eligible-for-decommissioning pipeline (data)</h2>
+<table class="data-table"><thead><tr><th>Eligible bucket</th><th>Count</th><th>Basis</th></tr></thead><tbody>
+<tr><td><code>TA</code> temporarily abandoned (idle)</td><td>3,190</td><td>idle iron — direct P&amp;A candidates</td></tr>
+<tr><td><code>COM</code> completed (producing/capable)</td><td>4,215</td><td>reach end-of-life over horizon</td></tr>
+<tr><td><code>DSI</code> drilled &amp; suspended</td><td>0</td><td>inactive</td></tr>
+<tr><td><code>AST</code> abandoned sidetrack</td><td>0</td><td>residual</td></tr>
+<tr><td><b>Total eligible</b></td><td><b>7,405</b></td><td>model drawdown base</td></tr>
+</tbody></table>
+<div class="data-note"><b>Idle-iron aging (data):</b> 2,217 TA wells idle ≥10 years,
+1,178 idle ≥15 years — a standing backlog under BSEE plug-or-restore pressure,
+independent of new end-of-life additions.</div>
+</div>
+
+<div class="section"><h2>3 · Historical P&amp;A rate (data — calibration anchor)</h2>
+<div class="chart-wrap"><h4>GoM permanent abandonments completed per year (2010-2024)</h4><svg width="720" height="230" style="max-width:100%"><rect x="40" y="25" width="34" height="175" fill="#0e7490"/><text x="57.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2010</text><text x="57.0" y="21" font-size="9" text-anchor="middle" fill="#1e3a5f">978</text><rect x="84" y="20" width="34" height="180" fill="#0e7490"/><text x="101.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2011</text><text x="101.0" y="16" font-size="9" text-anchor="middle" fill="#1e3a5f">1005</text><rect x="128" y="57" width="34" height="143" fill="#0e7490"/><text x="145.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2012</text><text x="145.0" y="53" font-size="9" text-anchor="middle" fill="#1e3a5f">802</text><rect x="172" y="95" width="34" height="105" fill="#0e7490"/><text x="189.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2013</text><text x="189.0" y="91" font-size="9" text-anchor="middle" fill="#1e3a5f">588</text><rect x="216" y="88" width="34" height="112" fill="#0e7490"/><text x="233.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2014</text><text x="233.0" y="84" font-size="9" text-anchor="middle" fill="#1e3a5f">627</text><rect x="260" y="115" width="34" height="85" fill="#0e7490"/><text x="277.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2015</text><text x="277.0" y="111" font-size="9" text-anchor="middle" fill="#1e3a5f">479</text><rect x="304" y="78" width="34" height="122" fill="#0e7490"/><text x="321.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2016</text><text x="321.0" y="74" font-size="9" text-anchor="middle" fill="#1e3a5f">683</text><rect x="348" y="125" width="34" height="75" fill="#0e7490"/><text x="365.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2017</text><text x="365.0" y="121" font-size="9" text-anchor="middle" fill="#1e3a5f">423</text><rect x="392" y="129" width="34" height="71" fill="#0e7490"/><text x="409.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2018</text><text x="409.0" y="125" font-size="9" text-anchor="middle" fill="#1e3a5f">397</text><rect x="436" y="146" width="34" height="54" fill="#0e7490"/><text x="453.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2019</text><text x="453.0" y="142" font-size="9" text-anchor="middle" fill="#1e3a5f">304</text><rect x="480" y="162" width="34" height="38" fill="#0e7490"/><text x="497.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2020</text><text x="497.0" y="158" font-size="9" text-anchor="middle" fill="#1e3a5f">214</text><rect x="524" y="146" width="34" height="54" fill="#0e7490"/><text x="541.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2021</text><text x="541.0" y="142" font-size="9" text-anchor="middle" fill="#1e3a5f">302</text><rect x="568" y="129" width="34" height="71" fill="#0e7490"/><text x="585.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2022</text><text x="585.0" y="125" font-size="9" text-anchor="middle" fill="#1e3a5f">397</text><rect x="612" y="91" width="34" height="109" fill="#0e7490"/><text x="629.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2023</text><text x="629.0" y="87" font-size="9" text-anchor="middle" fill="#1e3a5f">610</text><rect x="656" y="153" width="34" height="47" fill="#0e7490"/><text x="673.0" y="214" font-size="9" text-anchor="middle" fill="#6B7280">2024</text><text x="673.0" y="149" font-size="9" text-anchor="middle" fill="#1e3a5f">266</text></svg></div>
+<div class="data-note">2015-2024 mean: <b>408</b> P&amp;A/yr ·
+2020-2024 mean: <b>358</b>/yr ·
+implied historical pace vs. eligible inventory: <b>5.5%/yr</b>
+— the empirical anchor for the assumed attrition pace.</div>
+</div>
+
+<div class="section"><h2>4 · Assumptions (NOT data — explicit &amp; cited)</h2>
+<div class="assum-note">These parameters are <b>public-knowledge assumptions</b>, not measured from the
+data. They are surfaced verbatim and stress-tested below.</div>
+<table class="data-table"><thead><tr><th>Parameter</th><th>Low</th><th>Base</th><th>High</th><th>Source</th></tr></thead><tbody>
+<tr><td>Shelf/shallow P&amp;A unit cost ($MM/well)</td><td>0.8</td><td>1.5</td><td>3.0</td><td>BOEM/BSEE decom cost reports; GAO-16-40</td></tr>
+<tr><td>Deepwater P&amp;A unit cost ($MM/well)</td><td>5.0</td><td>12.0</td><td>25.0</td><td>Wood Mackenzie / Westwood (public)</td></tr>
+<tr><td>Deepwater share of eligible</td><td>3%</td><td>6%</td><td>10%</td><td>BOEM GoM well census (shelf-dominated)</td></tr>
+<tr><td>Annual attrition pace</td><td>4.0%</td><td>5.5%</td><td>7.0%</td><td>calibrated to observed PA rate, flexed ±</td></tr>
+</tbody></table></div>
+
+<div class="section"><h2>5 · 5-year forecast &amp; sensitivity (2026-2030)</h2>
+<div class="chart-wrap"><h4>Base-case P&amp;A volume by year (inventory drawdown)</h4><svg width="380" height="230" style="max-width:100%"><rect x="40" y="20" width="42" height="180" fill="#d97706"/><text x="61.0" y="214" font-size="10" text-anchor="middle" fill="#6B7280">2026</text><text x="61.0" y="16" font-size="10" text-anchor="middle" fill="#1e3a5f">407</text><rect x="104" y="30" width="42" height="170" fill="#d97706"/><text x="125.0" y="214" font-size="10" text-anchor="middle" fill="#6B7280">2027</text><text x="125.0" y="26" font-size="10" text-anchor="middle" fill="#1e3a5f">385</text><rect x="168" y="40" width="42" height="160" fill="#d97706"/><text x="189.0" y="214" font-size="10" text-anchor="middle" fill="#6B7280">2028</text><text x="189.0" y="36" font-size="10" text-anchor="middle" fill="#1e3a5f">364</text><rect x="232" y="48" width="42" height="152" fill="#d97706"/><text x="253.0" y="214" font-size="10" text-anchor="middle" fill="#6B7280">2029</text><text x="253.0" y="44" font-size="10" text-anchor="middle" fill="#1e3a5f">344</text><rect x="296" y="57" width="42" height="143" fill="#d97706"/><text x="317.0" y="214" font-size="10" text-anchor="middle" fill="#6B7280">2030</text><text x="317.0" y="53" font-size="10" text-anchor="middle" fill="#1e3a5f">325</text></svg></div>
+<table class="data-table"><thead><tr><th>Scenario</th><th>Pace</th><th>DW share</th><th>$/well</th><th>2026</th><th>2027</th><th>2028</th><th>2029</th><th>2030</th><th>5-yr wells</th><th>5-yr market</th></tr></thead>
+<tbody><tr><td><b>low</b></td><td>4.0%</td><td>3%</td><td>$0.93MM</td><td>296</td><td>284</td><td>273</td><td>262</td><td>252</td><td><b>1,367</b></td><td><b>$1.27B</b></td></tr><tr><td><b>base</b></td><td>5.5%</td><td>6%</td><td>$2.13MM</td><td>407</td><td>385</td><td>364</td><td>344</td><td>325</td><td><b>1,825</b></td><td><b>$3.89B</b></td></tr><tr><td><b>high</b></td><td>7.0%</td><td>10%</td><td>$5.20MM</td><td>518</td><td>482</td><td>448</td><td>417</td><td>388</td><td><b>2,253</b></td><td><b>$11.72B</b></td></tr></tbody></table>
+<div class="data-note"><b>Base case:</b> 1,825 GoM wells plugged over 2026-2030
+(~407/yr declining as inventory draws down) → <b>$3.89B</b>
+addressable P&amp;A market at $2.13MM/well blended.
+Sensitivity span <b>$1.27B–$11.72B</b>
+(9.2× spread).</div>
+</div>
+
+<div class="section"><h2>6 · Commercial read-through</h2>
+<ul style="font-size:14px;line-height:1.6">
+<li><b>Large, aging pipeline:</b> 7,405 eligible wells, 3,190 already idle,
+2,217 idle ≥10 years — a standing backlog independent of new end-of-life additions.</li>
+<li><b>Durable multi-year demand:</b> several hundred P&amp;A wells/year at base pace — a sustained market for
+well-plugging, rig/vessel, casing-cut and conductor-removal contractors.</li>
+<li><b>Capacity-gap signal:</b> observed 2020-2024 P&amp;A (358/yr) runs below the
+base-case requirement — a backlog-clearing gap favoring decom-capable vendors.</li>
+</ul></div>
+
+<div class="footer">Generated 2026-07-06T02:37:46.138989Z · data as of 2026-07-05 ·
+source <code>data/modules/bsee/current/wells/well_data.csv</code> · operator-aggregate only (#420) ·
+engineering analysis of public BSEE data, not a regulatory finding · reproduce:
+<code>PYTHONPATH=src python3 reports/gtm/decommissioning_market_outlook.py</code></div>
+</div></body></html>

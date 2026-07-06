@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Seasonal Intervention Risk Windows — 2026-07-05</title>
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;margin:0;background:#f8fafc;color:#1F2937}
+.page-wrap{max-width:1100px;margin:0 auto;padding:24px 20px}
+.report-header{background:linear-gradient(135deg,#1e3a5f 0%,#b45309 100%);color:#fff;padding:34px 40px;border-radius:10px;margin-bottom:26px}
+.report-header h1{margin:0 0 6px;font-size:24px;font-weight:700}
+.report-header .sub{opacity:.85;font-size:14px}
+.report-header .meta{display:flex;gap:24px;margin-top:16px;font-size:13px;opacity:.8;flex-wrap:wrap}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:26px}
+.kpi-card{background:#fff;border-radius:8px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:3px solid #d97706}
+.kpi-card .label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#6B7280;margin-bottom:6px}
+.kpi-card .value{font-size:1.6em;font-weight:700;color:#1e3a5f}
+.kpi-card .unit{font-size:12px;color:#9ca3af;margin-left:3px}
+.kpi-card .note{font-size:11px;color:#9ca3af;margin-top:4px}
+.section{margin-bottom:32px}
+.section h2{color:#1e3a5f;font-size:18px;border-bottom:2px solid #1e3a5f;padding-bottom:8px;margin:0 0 14px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.data-table th{background:#1e3a5f;color:#fff;padding:9px 13px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.data-table td{padding:8px 13px;border-bottom:1px solid #E5E7EB}
+.data-note{background:#EFF6FF;border-left:4px solid #3B82F6;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.warn-note{background:#FEF3C7;border-left:4px solid #d97706;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.assum-note{background:#F3E8FF;border-left:4px solid #9333ea;padding:13px 17px;border-radius:4px;margin:16px 0;font-size:13px;line-height:1.5}
+.chart-wrap{background:#fff;border-radius:8px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:18px}
+.chart-wrap h4{margin:0 0 10px;font-size:13px;color:#1e3a5f}
+code{background:#eef2ff;padding:1px 5px;border-radius:3px;font-size:12px}
+.footer{font-size:12px;color:#9ca3af;margin-top:28px;border-top:1px solid #E5E7EB;padding-top:14px}
+</style></head><body><div class="page-wrap">
+<div class="report-header">
+<h1>Seasonal Intervention Risk Windows — Hurricane Season × WAR × Operations</h1>
+<div class="sub">When GoM well-operation activity occurs, overlaid on the Atlantic hurricane season · operational scheduling decision-support</div>
+<div class="meta"><span>Issue #427 (child of #423)</span><span>Data as of 2026-07-05</span>
+<span>BSEE WAR-derived operations</span><span>Aggregate-only · descriptive</span></div>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi-card"><div class="label">WAR records (dated)</div><div class="value">177<span class="unit"></span></div><div class="note">parseable activity starts (data)</div></div>
+<div class="kpi-card"><div class="label">In hurricane season</div><div class="value">40%<span class="unit"></span></div><div class="note">71 of 177 (Jun–Nov)</div></div>
+<div class="kpi-card"><div class="label">In peak Aug–Oct</div><div class="value">14%<span class="unit"></span></div><div class="note">25 records</div></div>
+<div class="kpi-card"><div class="label">Off-season Dec–May</div><div class="value">60%<span class="unit"></span></div><div class="note">106 — lower-storm-risk window</div></div>
+</div>
+
+<div class="warn-note"><b>Data vs assumptions — hard separation.</b> All monthly/seasonal/activity
+counts are <b>measured</b> from local BSEE WAR-derived CSVs. The <b>only</b> non-data input is the
+Atlantic hurricane-season calendar (Jun 1–Nov 30 season, Aug–Oct peak), which is <b>public NOAA/NHC
+climatology</b>, used purely to overlay the measured counts.
+<b>This is a descriptive analysis</b> — the local extracts are small sample CSVs (N=177),
+so no statistical-significance claim is made.</div>
+
+<div class="warn-note"><b>Scope-down (per #426).</b> The assembled
+<code>data/modules/hse/hse_incidents.db</code> is a <b>0-byte stub</b> and no raw BSEE INCINV file
+(<code>mv_acc_investigations.txt</code>) is present locally, so the HSE-incident-rate-by-season cut and
+the #416 Bonferroni-significance recommendation <b>cannot be produced from local data</b> and are
+deferred. This report delivers the WAR operations-timing × hurricane-season overlay only.</div>
+
+<div class="section"><h2>1 · Monthly activity vs hurricane season</h2>
+<div class="chart-wrap"><h4>WAR-derived operation starts by month (shaded = hurricane season; red = Aug–Oct peak)</h4>
+<svg width="654" height="244" style="max-width:100%"><rect x="288" y="24" width="300" height="190" fill="#fde68a" opacity="0.5"/><text x="438" y="37" font-size="10" text-anchor="middle" fill="#92400e">Hurricane season (Jun–Nov)</text><rect x="44" y="61" width="38" height="153" fill="#0e7490"/><text x="63.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Jan</text><text x="63.0" y="57" font-size="10" text-anchor="middle" fill="#1e3a5f">21</text><rect x="94" y="119" width="38" height="95" fill="#0e7490"/><text x="113.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Feb</text><text x="113.0" y="115" font-size="10" text-anchor="middle" fill="#1e3a5f">13</text><rect x="144" y="24" width="38" height="190" fill="#0e7490"/><text x="163.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Mar</text><text x="163.0" y="20" font-size="10" text-anchor="middle" fill="#1e3a5f">26</text><rect x="194" y="141" width="38" height="73" fill="#0e7490"/><text x="213.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Apr</text><text x="213.0" y="137" font-size="10" text-anchor="middle" fill="#1e3a5f">10</text><rect x="244" y="119" width="38" height="95" fill="#0e7490"/><text x="263.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">May</text><text x="263.0" y="115" font-size="10" text-anchor="middle" fill="#1e3a5f">13</text><rect x="294" y="46" width="38" height="168" fill="#d97706"/><text x="313.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Jun</text><text x="313.0" y="42" font-size="10" text-anchor="middle" fill="#1e3a5f">23</text><rect x="344" y="141" width="38" height="73" fill="#d97706"/><text x="363.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Jul</text><text x="363.0" y="137" font-size="10" text-anchor="middle" fill="#1e3a5f">10</text><rect x="394" y="171" width="38" height="43" fill="#dc2626"/><text x="413.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Aug</text><text x="413.0" y="167" font-size="10" text-anchor="middle" fill="#1e3a5f">6</text><rect x="444" y="141" width="38" height="73" fill="#dc2626"/><text x="463.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Sep</text><text x="463.0" y="137" font-size="10" text-anchor="middle" fill="#1e3a5f">10</text><rect x="494" y="149" width="38" height="65" fill="#dc2626"/><text x="513.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Oct</text><text x="513.0" y="145" font-size="10" text-anchor="middle" fill="#1e3a5f">9</text><rect x="544" y="119" width="38" height="95" fill="#d97706"/><text x="563.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Nov</text><text x="563.0" y="115" font-size="10" text-anchor="middle" fill="#1e3a5f">13</text><rect x="594" y="46" width="38" height="168" fill="#0e7490"/><text x="613.0" y="229" font-size="10" text-anchor="middle" fill="#6B7280">Dec</text><text x="613.0" y="42" font-size="10" text-anchor="middle" fill="#1e3a5f">23</text></svg></div>
+<table class="data-table"><thead><tr><th>Month</th><th>Records</th><th>Share</th><th>Hurricane</th><th>Peak</th></tr></thead>
+<tbody><tr><td>Jan</td><td>21</td><td>12%</td><td></td><td></td></tr><tr><td>Feb</td><td>13</td><td>7%</td><td></td><td></td></tr><tr><td>Mar</td><td>26</td><td>15%</td><td></td><td></td></tr><tr><td>Apr</td><td>10</td><td>6%</td><td></td><td></td></tr><tr><td>May</td><td>13</td><td>7%</td><td></td><td></td></tr><tr style="background:#FEF3C7"><td>Jun</td><td>23</td><td>13%</td><td>🌀</td><td></td></tr><tr style="background:#FEF3C7"><td>Jul</td><td>10</td><td>6%</td><td>🌀</td><td></td></tr><tr style="background:#FEF3C7"><td>Aug</td><td>6</td><td>3%</td><td>🌀</td><td>●</td></tr><tr style="background:#FEF3C7"><td>Sep</td><td>10</td><td>6%</td><td>🌀</td><td>●</td></tr><tr style="background:#FEF3C7"><td>Oct</td><td>9</td><td>5%</td><td>🌀</td><td>●</td></tr><tr style="background:#FEF3C7"><td>Nov</td><td>13</td><td>7%</td><td>🌀</td><td></td></tr><tr><td>Dec</td><td>23</td><td>13%</td><td></td><td></td></tr><tr><td><b>Total</b></td><td><b>177</b></td><td></td><td></td><td></td></tr></tbody></table>
+</div>
+
+<div class="section"><h2>2 · Seasonal roll-up</h2>
+<table class="data-table"><thead><tr><th>Meteorological season</th><th>Records</th><th>Share</th></tr></thead>
+<tbody><tr><td>Winter</td><td>57</td><td>32%</td></tr><tr><td>Spring</td><td>49</td><td>28%</td></tr><tr><td>Summer</td><td>39</td><td>22%</td></tr><tr><td>Fall</td><td>32</td><td>18%</td></tr></tbody></table>
+<div class="data-note"><b>Lower-storm-risk off-season (Dec–May):</b> 106 of
+177 observed operation starts (60%). Months with most observed
+off-season activity: Mar (26), Dec (23), Jan (21).</div>
+</div>
+
+<div class="section"><h2>3 · Activity-type mix in vs out of season</h2>
+<table class="data-table"><thead><tr><th>Activity</th><th>Meaning</th><th>In season</th><th>Off season</th><th>Total</th></tr></thead>
+<tbody><tr><td><code>COM</code></td><td>Completion</td><td>21</td><td>33</td><td>54</td></tr><tr><td><code>DRL</code></td><td>Drilling</td><td>28</td><td>22</td><td>50</td></tr><tr><td><code>PA</code></td><td>Plug &amp; abandon (P&amp;A)</td><td>11</td><td>10</td><td>21</td></tr><tr><td><code>TA</code></td><td>Temporary abandonment</td><td>2</td><td>16</td><td>18</td></tr><tr><td><code>PND</code></td><td>Pending / sidetrack-bypass</td><td>0</td><td>12</td><td>12</td></tr><tr><td><code>CHZ</code></td><td></td><td>8</td><td>3</td><td>11</td></tr><tr><td><code>WO</code></td><td>Workover</td><td>0</td><td>6</td><td>6</td></tr><tr><td><code>REC</code></td><td></td><td>1</td><td>2</td><td>3</td></tr><tr><td><code>(blank)</code></td><td></td><td>0</td><td>1</td><td>1</td></tr><tr><td><code>ST</code></td><td>Sidetrack</td><td>0</td><td>1</td><td>1</td></tr></tbody></table>
+</div>
+
+<div class="section"><h2>4 · Operational decision-support read-through</h2>
+<div class="assum-note"><b>Hurricane-season window (assumption — public):</b> NOAA National Hurricane Center — official Atlantic hurricane season (Jun 1-Nov 30) and climatological peak (mid-Aug to mid-Oct). Public knowledge.</div>
+<p>Where intervention scope is schedulable, front-loading discretionary work into the
+<b>Dec–May off-season</b> (and avoiding the <b>Aug–Oct peak</b>) reduces exposure to storm-driven
+deferral, evacuation, and weather-window loss. This is a <b>directional, descriptive</b> recommendation;
+the local sample (N=177) is too small to attach a quantified HSE-rate delta or a
+significance test — that awaits the INCINV/HSE data and the #403 metocean overlay.</p>
+</div>
+
+<div class="section"><h2>5 · Local data sources (data)</h2>
+<table class="data-table"><thead><tr><th>Source</th><th>Path</th><th>Rows</th><th>Parseable dates</th></tr></thead>
+<tbody><tr><td><code>well_activity_summary</code></td><td><code>data/modules/bsee/current/operations/well_activity_summary.csv</code></td><td>100</td><td>100</td></tr><tr><td><code>war_detail_608124003301</code></td><td><code>docs/modules/bsee/analysis/rig_days/war_data_608124003301.csv</code></td><td>32</td><td>32</td></tr><tr><td><code>war_detail_608124009500</code></td><td><code>docs/modules/bsee/analysis/rig_days/war_data_608124009500.csv</code></td><td>45</td><td>45</td></tr></tbody></table>
+</div>
+
+<div class="footer">
+Cross-links: #403 (hurricane-mooring / metocean) · #416 (WAR loaders + INCINV classification) · #423 (parent).<br>
+Reproduce: <code>PYTHONPATH=src python3 reports/gtm/seasonal_intervention_risk_windows.py</code> ·
+Generated 2026-07-06T02:37:46Z · data as of 2026-07-05 · aggregate-only.
+</div>
+</div></body></html>
