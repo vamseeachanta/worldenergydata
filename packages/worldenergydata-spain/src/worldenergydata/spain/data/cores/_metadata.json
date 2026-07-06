@@ -1,11 +1,27 @@
 {
-  "conversion": "oil_bbl = tonnes * 7.33",
+  "conversion": "oil_bbl = tonnes * cited_field_density_factors",
   "conversion_factors": {
     "gas_gwh_to_mcf": 3290.0,
-    "oil_tonnes_to_bbl": 7.33
+    "oil_tonnes_to_bbl_default": 7.33
   },
   "license_note": "CORES attribution required; cite source URL and latest-update date.",
   "normalized_unit": "bbl",
+  "oil_conversion_audit": {
+    "conversion_basis": "cited_field_density_factors",
+    "coverage_status": "defaulted",
+    "default_bbl_per_tonne": 7.33,
+    "defaulted_fields": [
+      "Ayoluengo"
+    ],
+    "factors": [],
+    "generated_at": "2026-07-04T00:00:00Z",
+    "missing_fields": [],
+    "oil_field_count": 1,
+    "registry_date": "2026-07-04",
+    "registry_version": "fixture-default-density",
+    "schema_version": 1,
+    "used_fields": []
+  },
   "sample_extracted_date": "2026-07-04",
   "sample_field": "Ayoluengo",
   "sample_row_count": 6,

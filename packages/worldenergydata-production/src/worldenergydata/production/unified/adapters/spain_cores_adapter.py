@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ class SpainCoresAdapter(AbstractProductionAdapter):
 
     region: str = "spain"
 
-    def __init__(self, loader=None):
+    def __init__(self, loader: Any | None = None) -> None:
         self.loader = loader if loader is not None else self._default_loader()
 
     def fetch(self, query: ProductionQuery) -> pd.DataFrame:
@@ -103,7 +103,7 @@ class SpainCoresAdapter(AbstractProductionAdapter):
         return out[list(STANDARD_COLUMNS)]
 
     @staticmethod
-    def _default_loader():
+    def _default_loader() -> Any:
         try:
             from worldenergydata.spain.production.cores_loader import (
                 CoresFixtureProductionLoader,
@@ -131,6 +131,8 @@ def _numeric_or_default(
 class _EmbeddedCoresFixtureLoader:
     """Direct-source Ayoluengo sample fallback for production-only installs."""
 
+    _DEFAULT_BBL_PER_TONNE = 7.33
+    _GAS_GWH_TO_MCF = 3290.0
     _ROWS = [
         {"field_name": "Ayoluengo", "year": 1968, "month": 1, "oil_bbl": 69356.46},
         {"field_name": "Ayoluengo", "year": 1968, "month": 2, "oil_bbl": 92160.09},
@@ -149,3 +151,34 @@ class _EmbeddedCoresFixtureLoader:
         frame = self.load_all_production()
         mask = frame["field_name"].astype(str).str.lower() == field_name.lower()
         return frame[mask].copy()
+
+    def metadata(self) -> dict:
+        return {
+            "source_name": "CORES Indigenous Crude Oil Production",
+            "source_url": (
+                "https://www.cores.es/sites/default/files/archivos/estadisticas/"
+                "crude-oil-production.xlsx"
+            ),
+            "statistics_page": "https://www.cores.es/en/estadisticas",
+            "source_unit": "tonnes",
+            "normalized_unit": "bbl",
+            "conversion": "oil_bbl = tonnes * cited_field_density_factors",
+            "conversion_factors": {
+                "gas_gwh_to_mcf": self._GAS_GWH_TO_MCF,
+                "oil_tonnes_to_bbl_default": self._DEFAULT_BBL_PER_TONNE,
+            },
+            "oil_conversion_audit": {
+                "schema_version": 1,
+                "generated_at": "2026-07-04T00:00:00Z",
+                "registry_version": "fixture-default-density",
+                "registry_date": "2026-07-04",
+                "conversion_basis": "cited_field_density_factors",
+                "coverage_status": "defaulted",
+                "oil_field_count": 1,
+                "used_fields": [],
+                "defaulted_fields": ["Ayoluengo"],
+                "missing_fields": [],
+                "default_bbl_per_tonne": self._DEFAULT_BBL_PER_TONNE,
+                "factors": [],
+            },
+        }

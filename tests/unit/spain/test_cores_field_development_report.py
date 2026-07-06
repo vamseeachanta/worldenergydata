@@ -266,43 +266,14 @@ def _write_cache(
     source_url: str = "https://www.cores.es/en/estadisticas",
     manifest_status: str = "success",
     include_oil_status: bool = True,
+    extra_rows: list[dict] | None = None,
 ) -> None:
     normalized = root / "normalized"
     metadata = root / "metadata"
     normalized.mkdir(parents=True)
     metadata.mkdir(parents=True)
-    all_rows = pd.DataFrame(
-        [
-            {
-                "field_name": "Ayoluengo",
-                "year": 2025,
-                "month": 1,
-                "oil_bbl": 10.0,
-                "gas_mcf": pd.NA,
-            },
-            {
-                "field_name": "Ayoluengo",
-                "year": 2025,
-                "month": 2,
-                "oil_bbl": 20.0,
-                "gas_mcf": pd.NA,
-            },
-            {
-                "field_name": "Gaviota",
-                "year": 2025,
-                "month": 1,
-                "oil_bbl": pd.NA,
-                "gas_mcf": 100.0,
-            },
-            {
-                "field_name": "Gaviota",
-                "year": 2025,
-                "month": 2,
-                "oil_bbl": pd.NA,
-                "gas_mcf": 150.0,
-            },
-        ]
-    )
+    all_rows = _cache_rows(extra_rows)
+    record_count = len(all_rows) if extra_rows is not None else record_count
     all_rows.to_csv(normalized / "cores_all_production.csv", index=False)
     all_rows[all_rows["oil_bbl"] > 0].to_csv(
         normalized / "cores_oil_production.csv", index=False
@@ -311,33 +282,60 @@ def _write_cache(
         normalized / "cores_gas_production.csv", index=False
     )
     (root / "_metadata.json").write_text(
-        json.dumps(
-            {
-                "format": "csv",
-                "last_refresh": "2026-07-05T18:37:12.102722+00:00",
-                "record_count": record_count,
-                "source_url": source_url,
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
+        _json_text(_cache_metadata(record_count, source_url)),
         encoding="utf-8",
     )
     (root / "manifest.json").write_text(
-        json.dumps(
-            {
-                "job_name": "spain_cores_refresh",
-                "records_updated": record_count,
-                "status": manifest_status,
-                "updated_at": "2026-07-05T18:37:12.102722+00:00",
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
+        _json_text(_cache_manifest(record_count, manifest_status)),
         encoding="utf-8",
     )
+    (metadata / "cores_refresh_metadata.json").write_text(
+        _json_text(_workbook_metadata(source_url, include_oil_status)),
+        encoding="utf-8",
+    )
+
+
+def _cache_rows(extra_rows: list[dict] | None = None) -> pd.DataFrame:
+    rows = [
+        _cache_row("Ayoluengo", 2025, 1, 10.0, pd.NA),
+        _cache_row("Ayoluengo", 2025, 2, 20.0, pd.NA),
+        _cache_row("Gaviota", 2025, 1, pd.NA, 100.0),
+        _cache_row("Gaviota", 2025, 2, pd.NA, 150.0),
+    ]
+    if extra_rows is not None:
+        rows.extend(extra_rows)
+    return pd.DataFrame(rows)
+
+
+def _cache_row(field_name, year, month, oil_bbl, gas_mcf) -> dict:
+    return {
+        "field_name": field_name,
+        "year": year,
+        "month": month,
+        "oil_bbl": oil_bbl,
+        "gas_mcf": gas_mcf,
+    }
+
+
+def _cache_metadata(record_count: int, source_url: str) -> dict:
+    return {
+        "format": "csv",
+        "last_refresh": "2026-07-05T18:37:12.102722+00:00",
+        "record_count": record_count,
+        "source_url": source_url,
+    }
+
+
+def _cache_manifest(record_count: int, manifest_status: str) -> dict:
+    return {
+        "job_name": "spain_cores_refresh",
+        "records_updated": record_count,
+        "status": manifest_status,
+        "updated_at": "2026-07-05T18:37:12.102722+00:00",
+    }
+
+
+def _workbook_metadata(source_url: str, include_oil_status: bool) -> dict:
     oil_workbook = {
         "byte_count": 12345,
         "last_modified": "Fri, 12 Jun 2026 07:51:41 GMT",
@@ -346,25 +344,25 @@ def _write_cache(
     }
     if include_oil_status:
         oil_workbook["status_code"] = 200
-    (metadata / "cores_refresh_metadata.json").write_text(
-        json.dumps(
-            {
-                "refreshed_at_utc": "2026-07-05T18:37:12.102722+00:00",
-                "statistics_page": source_url,
-                "workbooks": {
-                    "oil": oil_workbook,
-                    "gas": {
-                        "byte_count": 23456,
-                        "last_modified": "Fri, 12 Jun 2026 07:52:01 GMT",
-                        "sha256": "1" * 64,
-                        "source_url": "https://www.cores.es/gas.xlsx",
-                        "status_code": 200,
-                    },
-                },
-            },
-            indent=2,
-            sort_keys=True,
-        )
-        + "\n",
-        encoding="utf-8",
-    )
+    return {
+        "refreshed_at_utc": "2026-07-05T18:37:12.102722+00:00",
+        "statistics_page": source_url,
+        "workbooks": {
+            "oil": oil_workbook,
+            "gas": _gas_workbook_metadata(),
+        },
+    }
+
+
+def _gas_workbook_metadata() -> dict:
+    return {
+        "byte_count": 23456,
+        "last_modified": "Fri, 12 Jun 2026 07:52:01 GMT",
+        "sha256": "1" * 64,
+        "source_url": "https://www.cores.es/gas.xlsx",
+        "status_code": 200,
+    }
+
+
+def _json_text(payload: dict) -> str:
+    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
