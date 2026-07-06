@@ -22,25 +22,29 @@ class BuckskinConfig:
     host_facility: str = "Lucius Spar"
 
     # BOEM OCS lease numbers (from BOEM serial register)
-    # KC 871 and KC 872 share the same lease number OCS-G 25823
+    # WAR data (mv_war_main) shows KC 871 under OCS-G 32650 and KC 872 under
+    # OCS-G 25823 — they do NOT share a lease
     boem_leases: Dict[str, str] = field(
         default_factory=lambda: {
             "OCS-G 25806": "KC 785",
             "OCS-G 25813": "KC 828",
             "OCS-G 25814": "KC 829",
             "OCS-G 25815": "KC 830",
-            "OCS-G 25823": "KC 871 / KC 872",
+            "OCS-G 25823": "KC 872",
+            "OCS-G 32650": "KC 871",
         }
     )
 
     # Lease numbers as found in BSEE data (without "OCS-" prefix)
     # The data may use trimmed format like "G25806" or with space "G 25806"
+    # All six carry WAR activity (buckskin_war_activity.csv)
     lease_numbers: Tuple[str, ...] = (
         "G25806",
         "G25813",
         "G25814",
         "G25815",
         "G25823",
+        "G32650",
     )
 
     # Additional leases discovered in BSEE LAB data (8 total)
