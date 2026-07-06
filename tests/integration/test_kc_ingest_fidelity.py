@@ -38,13 +38,14 @@ WAR_MAIN = WAR_BIN_DIR / "mv_war_main.bin"
 WAR_BOREHOLES = WAR_BIN_DIR / "mv_war_boreholes_view.bin"
 WAR_REMARKS = WAR_BIN_DIR / "mv_war_main_prop_remark.bin"
 
-pytestmark = [
-    pytest.mark.slow,
-    pytest.mark.skipif(
-        not WAR_MAIN.exists(),
-        reason="raw WAR .bin share not mounted at /mnt/ace",
-    ),
-]
+pytestmark = pytest.mark.slow
+
+# Only the extraction tests need the share; the leases-CSV integrity test
+# must keep running in CI where /mnt/ace is absent.
+requires_share = pytest.mark.skipif(
+    not WAR_MAIN.exists(),
+    reason="raw WAR .bin share not mounted at /mnt/ace",
+)
 
 BUCKSKIN_LEASES = {"G25806", "G25813", "G25814", "G25815", "G25823", "G32650"}
 
@@ -53,7 +54,7 @@ BUCKSKIN_LEASES = {"G25806", "G25813", "G25814", "G25815", "G25823", "G32650"}
 def extract(tmp_path_factory):
     """Run the canonical extractor once against the raw .bin share."""
     out = tmp_path_factory.mktemp("kc_ingest") / "dc_days_candidate.xlsx"
-    subprocess.run(
+    proc = subprocess.run(
         [
             sys.executable,
             str(SCRIPT),
@@ -68,10 +69,10 @@ def extract(tmp_path_factory):
             "--out",
             str(out),
         ],
-        check=True,
         capture_output=True,
         cwd=FDAS_DIR,
     )
+    assert proc.returncode == 0, proc.stderr.decode()
     df = pd.read_excel(out, sheet_name="Sheet1")
     leases = pd.read_csv(LEASES)
     leases["_KEY"] = leases["LEASE_NUM"].str.upper()
@@ -92,12 +93,14 @@ def test_leases_file_is_v20_plus_buckskin():
     )
 
 
+@requires_share
 def test_anchor_reproduces_frozen_v30_exactly(extract):
     anchor = _dev(extract, "Anchor")
     assert int(anchor["DRILLING_DAYS"].sum()) == 821
     assert int(anchor["COMPLETION_DAYS"].sum()) == 1004
 
 
+@requires_share
 def test_buckskin_recovered(extract):
     buckskin = _dev(extract, "Buckskin")
     assert buckskin["API_WELL_NUMBER"].nunique() == 25
@@ -105,6 +108,7 @@ def test_buckskin_recovered(extract):
     assert dc == 2056  # World Oil April 2026 article: 24 bores / 2,004 D&C
 
 
+@requires_share
 def test_all_wells_map_to_a_development(extract):
     assert extract["DEV_NAME"].notna().all()
     assert len(extract) == 253
