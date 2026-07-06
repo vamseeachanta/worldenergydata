@@ -1,9 +1,9 @@
-"""Tests for the WO-Article reconciliation in the completion-days report.
+"""Tests for the World Oil April 2026 article reconciliation in the completion-days report.
 
 The completion report (``scripts/completion/build_completion_report.py``)
 publishes, alongside the observational drilling/completion-days table, a
 verification surface that reconciles the live worldenergydata (WED) extract
-against the frozen "WO Article, end of 2025" benchmark (World Oil Lower-Tertiary
+against the frozen "World Oil April 2026 article" benchmark (World Oil Lower-Tertiary
 series, Table 1 — BSEE-derived summary thru Nov 2025).
 
 These tests pin the reconciliation arithmetic to the frozen reference workbook
@@ -60,7 +60,7 @@ _WED_DC = {
 
 
 def test_wo_reference_shape(gen):
-    wo = gen.WO_ARTICLE_END_2025
+    wo = gen.WO_APRIL_2026_ARTICLE
     assert len(wo) == 10
     assert "Buckskin" in wo  # in WO, absent from WED
     assert "Big Foot" not in wo  # in WED, excluded from WO comparison set
@@ -146,7 +146,7 @@ def test_bore_deltas_flagged_days_match_not_full_match(recon):
 def test_verification_html_renders(gen, recon):
     data = gen._load()
     html_out = gen.render_verification(recon, data)
-    assert "WO Article, end of 2025" in html_out
+    assert "World Oil April 2026 article" in html_out
     assert "Shenandoah" in html_out
     assert "<table" in html_out
     # like-for-like framing must be present, not just the raw grand total
