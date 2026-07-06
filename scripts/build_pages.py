@@ -86,6 +86,18 @@ _ITALIC = re.compile(r"(?<![A-Za-z0-9_])_([^_]+)_(?![A-Za-z0-9_])")
 _CODE = re.compile(r"`([^`]+)`")
 
 
+def _slug(text: str) -> str:
+    """Stable, human-readable heading id for deep-linking. Strips inline markup
+    (`code`, **bold**, links) and HTML entities, then lowercases and hyphenates.
+    e.g. "3. Field-level D&C reconciliation (Table 1)" -> "field-level-dc-reconciliation-table-1"."""
+    t = _LINK.sub(r"\1", text)            # keep link text, drop target
+    t = re.sub(r"&[#0-9a-zA-Z]+;", " ", t)  # drop HTML entities (&middot; etc.)
+    t = re.sub(r"[`*_]", "", t)             # drop inline-format markers
+    t = t.lower()
+    t = re.sub(r"[^a-z0-9]+", "-", t).strip("-")
+    return t
+
+
 def _inline(text: str) -> str:
     """Apply inline formatting. Text may already contain intentional raw HTML
     (e.g. &middot;, <br>), so we do NOT escape the whole string — only the
@@ -107,6 +119,32 @@ def _table(rows: list[str]) -> str:
         out.append("<tr>" + "".join(f"<td>{_inline(c)}</td>" for c in row) + "</tr>")
     out += ["</tbody></table></div>"]
     return "\n".join(out)
+
+
+def _toc(md: str, *, levels=(2,)) -> str:
+    """Build an ``<nav class="toc">`` contents box from a markdown document's
+    headings. Slugs are produced by the same `_slug` used by the heading
+    renderer, so the links always resolve. Fenced-code lines are skipped so a
+    ``#`` comment inside a code block is never mistaken for a heading."""
+    entries: list[tuple[str, str]] = []
+    in_code = False
+    for line in md.splitlines():
+        s = line.strip()
+        if s.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        m = re.match(r"^(#{1,6})\s+(.*)$", s)
+        if m and len(m.group(1)) in levels:
+            text = m.group(2)
+            entries.append((_slug(text), text))
+    if not entries:
+        return ""
+    items = "".join(
+        f'<li><a href="#{slug}">{_inline(text)}</a></li>' for slug, text in entries
+    )
+    return f'<nav class="toc"><strong>On this page</strong><ol>{items}</ol></nav>'
 
 
 def md_to_html(md: str) -> str:
@@ -156,7 +194,14 @@ def md_to_html(md: str) -> str:
         if m:
             flush_para()
             level = len(m.group(1))
-            out.append(f"<h{level}>{_inline(m.group(2))}</h{level}>")
+            text = m.group(2)
+            slug = _slug(text)
+            # id + hover "#" anchor so every section is directly linkable/shareable.
+            out.append(
+                f'<h{level} id="{slug}">'
+                f'<a class="anchor" href="#{slug}" aria-label="Permalink to this section">#</a>'
+                f"{_inline(text)}</h{level}>"
+            )
             i += 1
             continue
 
@@ -277,6 +322,15 @@ main{max-width:960px;margin:0 auto;padding:28px 22px}
 .limits summary{cursor:pointer;font-weight:600;color:#8a5a00}
 .content h2{margin-top:1.6em;border-bottom:1px solid var(--line);padding-bottom:.2em}
 .content h3{margin-top:1.4em}
+.content h1,.content h2,.content h3,.content h4,.content h5,.content h6{scroll-margin-top:16px;position:relative}
+.content .anchor{position:absolute;left:-.85em;opacity:0;color:var(--muted);text-decoration:none;font-weight:400;padding-right:.15em;transition:opacity .12s}
+.content h1:hover .anchor,.content h2:hover .anchor,.content h3:hover .anchor,.content h4:hover .anchor,.content h5:hover .anchor,.content h6:hover .anchor,.content .anchor:focus{opacity:.6}
+:target{background:#fff6d8;border-radius:4px}
+nav.toc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:0 0 26px}
+nav.toc strong{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:8px}
+nav.toc ol{margin:0;padding-left:1.2em;columns:2;column-gap:32px;font-size:14px}
+nav.toc li{margin:.2em 0;break-inside:avoid}
+@media(max-width:620px){nav.toc ol{columns:1}.content .anchor{left:-.7em}}
 blockquote{margin:1em 0;padding:.6em 1em;background:#f0f3f7;border-left:4px solid var(--muted);border-radius:0 6px 6px 0;color:#374050}
 .table-wrap{overflow-x:auto;margin:1em 0}
 table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
@@ -460,7 +514,8 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 "World Oil April 2026 Article — Validation",
                 "All four article tables validated against the BSEE-derived model: "
                 "reconciliation, article errata, BOEM cross-check, and change log.",
-                md_to_html(val_md.read_text(encoding="utf-8")),
+                _toc(val_md.read_text(encoding="utf-8"))
+                + md_to_html(val_md.read_text(encoding="utf-8")),
                 provenance=(
                     "Every WED number is computed by repository code from BSEE/BOEM raw "
                     "data (WAR, OGOR-A, Reserves Inventory, Deepwater Qualified Fields); "
