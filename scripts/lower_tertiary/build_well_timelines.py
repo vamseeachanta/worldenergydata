@@ -20,9 +20,14 @@ Usage
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parents[2] / "reports/lower_tertiary/lifecycle/wells"
+REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO / "packages/worldenergydata-bsee/src"))
+
+HERE = REPO / "reports/lower_tertiary/lifecycle/wells"
 TEMPLATE = HERE / "well_lifecycle_template.html"
 FACTS = HERE / "_wells.json"
 GENERATED = "Generated 2026-07-04"
@@ -236,13 +241,50 @@ def build_index(rows: list[dict]) -> str:
 """
 
 
+def _economics_context():
+    """Load the #849 economics substrate once (config, rates, revenue, norms)."""
+    import yaml
+
+    from worldenergydata.bsee.analysis.cost.regional_loader import RegionalCostLoader
+    from worldenergydata.field_development import well_economics as we
+
+    cfg = yaml.safe_load((REPO / "config/well_economics.yml").read_text())
+    src = cfg["sources"]
+    rates_dir = REPO / src["rates_dir"]
+    loader = RegionalCostLoader(config_dir=rates_dir)  # explicit, not parents[7]
+    revenue_map = we.load_revenue_map(REPO / src["benchmark_csv"])
+    field_facts = {
+        f["id"]: f for f in json.loads((REPO / src["facts_json"]).read_text())
+    }
+    norms_path = REPO / src["norms_json"]
+    return we, cfg, loader, rates_dir, revenue_map, field_facts, norms_path
+
+
 def main():
     data = json.loads(FACTS.read_text())
     fields = data["fields"]
+    we, econ_cfg, loader, rates_dir, revenue_map, field_facts, norms_path = (
+        _economics_context()
+    )
     rows = []
     for w in data["wells"]:
         field = fields[w["field_id"]]
         well = facts_to_well(w, field)
+        # --- economics card payload (issue #849) ---
+        ff = field_facts.get(w["field_id"], {})
+        econ = we.compute_well_economics(
+            w,
+            {"id": w["field_id"], "water_depth_ft": ff.get("water_depth_ft")},
+            revenue=revenue_map.get(w["api"]),
+            loader=loader,
+            rates_dir=rates_dir,
+            cfg=econ_cfg,
+        )
+        payload = econ.to_json()
+        payload["field_id"] = w["field_id"]
+        payload["norms"] = we.norms_comparison(w, w["field_id"], norms_path)
+        payload["display"] = econ_cfg["display"]
+        well["economics"] = payload
         fname = f"{w['field_id']}_{w['slot']}_well.html"
         (HERE / fname).write_text(render(well))
         cum = w.get("cum_oil_mmbbl") or 0
