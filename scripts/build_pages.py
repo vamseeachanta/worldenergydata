@@ -434,6 +434,29 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
+    # --- World Oil April 2026 validation page (durable QA/QC record) ---
+    val_md = REPORTS / "lower_tertiary" / "wo-april-2026-validation.md"
+    if val_md.exists():
+        (PUBLIC / "wo-april-2026-validation.html").write_text(
+            page(
+                "World Oil April 2026 Article — Validation",
+                "All four article tables validated against the BSEE-derived model: "
+                "reconciliation, article errata, BOEM cross-check, and change log.",
+                md_to_html(val_md.read_text(encoding="utf-8")),
+                provenance=(
+                    "Every WED number is computed by repository code from BSEE/BOEM raw "
+                    "data (WAR, OGOR-A, Reserves Inventory, Deepwater Qualified Fields); "
+                    "modeled and operator-announced columns are flagged, not recomputed."
+                ),
+                data_limits=(
+                    "BOEM reserves reflect the 31-Dec-2023 vintage (developments with "
+                    "later first oil are unbooked); STOIIP has no government source and "
+                    "is deliberately excluded."
+                ),
+            ),
+            encoding="utf-8",
+        )
+
     # --- Portfolio summary page ---
     summ_md = REPORTS / "lower_tertiary_field_summary.md"
     if summ_md.exists():
@@ -915,6 +938,13 @@ def build_index() -> None:
         cards.append(
             '<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
             "<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>"
+        )
+    if (PUBLIC / "wo-april-2026-validation.html").exists():
+        cards.append(
+            '<a class="card" href="wo-april-2026-validation.html">'
+            "<h3>World Oil Article Validation &rarr;</h3>"
+            "<p>QA/QC of the April 2026 Lower-Tertiary article against the "
+            "BSEE-derived model &mdash; reconciliation, errata, and change log.</p></a>"
         )
     if (PUBLIC / "benchmark.html").exists():
         cards.append(
