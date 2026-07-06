@@ -38,7 +38,7 @@ _OUT = _REPO / "reports" / "completion" / "index.html"
 _OUT_VERIFY = _REPO / "reports" / "completion" / "verification.html"
 
 # ---------------------------------------------------------------------------
-# "WO Article, end of 2025" benchmark — World Oil Lower-Tertiary series, Table 1
+# "World Oil April 2026 article" benchmark — World Oil Lower-Tertiary series, Table 1
 # ("Project and well metrics — BSEE data derived summary through 2025", the
 # Nov-2025 cut). This is a FROZEN external reference we reconcile the live
 # worldenergydata (WED) extract against; the numbers are transcribed verbatim
@@ -47,7 +47,7 @@ _OUT_VERIFY = _REPO / "reports" / "completion" / "verification.html"
 #   d_and_c = "Total drilling and completion days" (drilling + completion)
 # Big Foot intentionally has NO row: the article excluded it from its comparison
 # set, so it surfaces in the reconciliation as a WED-only development.
-WO_ARTICLE_END_2025: dict[str, dict] = {
+WO_APRIL_2026_ARTICLE: dict[str, dict] = {
     "Anchor": {"fo": "8/1/24", "prod": 3, "bores": 17, "d_and_c": 1825},
     "Buckskin": {"fo": "6/1/19", "prod": 4, "bores": 24, "d_and_c": 2004},
     "Cascade Chinook": {"fo": "9/1/12", "prod": 3, "bores": 14, "d_and_c": 2467},
@@ -179,7 +179,7 @@ def compute(data: list[dict]) -> dict:
 
 
 def compute_reconciliation(data: list[dict]) -> dict:
-    """Reconcile the live WED extract against the frozen WO-Article benchmark.
+    """Reconcile the live WED extract against the frozen World Oil April 2026 article benchmark.
 
     Rolls the per-lease workbook records up to WO *development* granularity
     (Cascade+Chinook, Jack+St Malo) and pairs each development with its WO row.
@@ -201,12 +201,12 @@ def compute_reconciliation(data: list[dict]) -> dict:
             b["comp"] += d["COMPLETION_DAYS"]
 
     # WO developments in article order, then any WED-only development alphabetically.
-    order = list(WO_ARTICLE_END_2025) + sorted(set(by_dev) - set(WO_ARTICLE_END_2025))
+    order = list(WO_APRIL_2026_ARTICLE) + sorted(set(by_dev) - set(WO_APRIL_2026_ARTICLE))
 
     rows = []
     for dev in order:
         wed = by_dev.get(dev)
-        wo = WO_ARTICLE_END_2025.get(dev)
+        wo = WO_APRIL_2026_ARTICLE.get(dev)
         wed_bores = wed["bores"] if wed else None
         wed_drill = int(round(wed["drill"])) if wed else None
         wed_comp = int(round(wed["comp"])) if wed else None
@@ -249,8 +249,8 @@ def compute_reconciliation(data: list[dict]) -> dict:
     }
     wed_total["dc"] = wed_total["drill"] + wed_total["comp"]
     wo_total = {
-        "bores": sum(v["bores"] for v in WO_ARTICLE_END_2025.values()),
-        "dc": sum(v["d_and_c"] for v in WO_ARTICLE_END_2025.values()),
+        "bores": sum(v["bores"] for v in WO_APRIL_2026_ARTICLE.values()),
+        "dc": sum(v["d_and_c"] for v in WO_APRIL_2026_ARTICLE.values()),
     }
     # Like-for-like: only developments BOTH sides carry (drop WED-only Big Foot and
     # WO-only Buckskin). This is the honest apples-to-apples reconciliation; the raw
@@ -397,7 +397,7 @@ def render(c: dict, recon: dict) -> str:
   <div class="stats">{stats}</div>
 
   <div class="verify">
-    <strong>Verification &middot; reconciled against the WO Article, end of 2025.</strong>
+    <strong>Verification &middot; reconciled against the World Oil April 2026 article.</strong>
     On the {recon['common_n']} developments both sources cover, WED totals
     <b>{recon['wed_common']['dc']:,}</b> D&amp;C days vs the World Oil article's
     <b>{recon['wo_common']['dc']:,}</b> &mdash; {recon['common_delta_dc']:+,} days
@@ -417,7 +417,7 @@ def render(c: dict, recon: dict) -> str:
   (robust to the sidetracks and recompletions whose WAR milestones coincide on a
   single day); means are shown alongside. <b>Total D&amp;C</b> is the summed drilling +
   completion days per lease; rolled up to developments (Cascade+Chinook, Jack+St&nbsp;Malo)
-  it reconciles to the <a href="verification.html">WO Article, end of 2025</a> benchmark
+  it reconciles to the <a href="verification.html">World Oil April 2026 article</a> benchmark
   on the matched developments.{deepest_txt}</p>
   <div class="table-wrap"><table>
     <thead><tr>
@@ -601,14 +601,14 @@ def render_verification(recon: dict, data: list[dict]) -> str:
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>worldenergydata — D&amp;C Days Reconciliation vs WO Article, end of 2025</title>
+<title>worldenergydata — D&amp;C Days Reconciliation vs World Oil April 2026 article</title>
 <style>{_STYLE}</style>
 </head>
 <body>
 <header><div class="wrap">
   <h1>Drilling &amp; Completion Days &mdash; Verification</h1>
   <div class="sub">Field- and well-level reconciliation of the live worldenergydata
-  (WED) BSEE extract against the frozen <b>WO Article, end of 2025</b> benchmark
+  (WED) BSEE extract against the frozen <b>World Oil April 2026 article</b> benchmark
   (World Oil Lower-Tertiary series, Table&nbsp;1 &mdash; &ldquo;Project and well
   metrics, BSEE data derived summary through 2025&rdquo;). A living QA/QC surface:
   flagged rows stay open until each difference is resolved.</div>
@@ -633,7 +633,7 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   latest-OGOR rerun &mdash; V50 extends only the production window (economics), not
   these day counts. So this reconciliation is version-independent.</p>
 
-  <h2>Field-level reconciliation (WED vs WO Article, end of 2025)</h2>
+  <h2>Field-level reconciliation (WED vs World Oil April 2026 article)</h2>
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Development</th><th>First oil</th>
@@ -668,7 +668,7 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   <h2>Provenance</h2>
   <p class="note">WED figures are computed deterministically from the frozen workbook
   <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx"><code>drilling_and_completion_days.xlsx</code></a>
-  (BSEE Well Activity Reports, V30 methodology). WO-Article figures are transcribed
+  (BSEE Well Activity Reports, V30 methodology). World Oil April 2026 article figures are transcribed
   verbatim from World Oil Lower-Tertiary Table&nbsp;1 (BSEE-derived summary thru
   Nov&nbsp;2025) and are held fixed as an external benchmark.</p>
 
