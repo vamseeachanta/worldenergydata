@@ -22,8 +22,16 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO / "scripts"))
+
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
 from worldenergydata.field_development import phase_norms as pn  # noqa: E402
+
+
+def _crumb(stage: str) -> str:
+    return site_nav.crumb_for("norms", {"stage": stage, "stage_title": stage.title()})
+
 
 LIFECYCLE = REPO / "reports/lower_tertiary/lifecycle"
 NORMS_DIR = LIFECYCLE / "norms"
@@ -252,8 +260,7 @@ def render_stage_page(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(STAGE_TITLES[stage])} — LT phase norms</title>
 <style>{CSS}</style></head><body><div class="wrap">
-<div class="crumbs"><a href="../../capabilities/index.html">Capabilities</a> ▸
-<a href="../index.html">Life-cycle hub</a> ▸ Phase norms ▸ {esc(stage.title())}</div>
+{_crumb(stage)}
 <h1>{esc(STAGE_TITLES[stage])}</h1>
 <p class="sub">Field vs Lower Tertiary play (leave-one-field-out) · basis:
 calendar days where durations apply · country baselines

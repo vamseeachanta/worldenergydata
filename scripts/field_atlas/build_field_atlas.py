@@ -12,7 +12,13 @@ rendered as links.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
 HERE = Path(__file__).resolve().parents[2] / "reports/field-atlas"
 ROSTER = HERE / "_roster.json"
@@ -39,7 +45,9 @@ def build() -> str:
             LIFECYCLE_ID.get(f["name"]) if f.get("has_lifecycle") else None
         )
     roster_json = json.dumps(fields, ensure_ascii=False)
-    return TEMPLATE.replace("__ROSTER_JSON__", roster_json)
+    return site_nav.inject_for(
+        TEMPLATE.replace("__ROSTER_JSON__", roster_json), "atlas"
+    )
 
 
 TEMPLATE = r"""<!DOCTYPE html>

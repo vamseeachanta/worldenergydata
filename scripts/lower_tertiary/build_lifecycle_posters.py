@@ -34,6 +34,12 @@ from worldenergydata.field_development.host_text_classifier import (  # noqa: E4
     classify_tree_type,
 )
 
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 HERE = Path(__file__).resolve().parents[2] / "reports/lower_tertiary/lifecycle"
 TEMPLATE = HERE / "lifecycle_template.html"
 FACTS = HERE / "_facts.json"
@@ -301,8 +307,11 @@ def facts_to_field(f: dict) -> dict:
 
 def render(field: dict) -> str:
     tpl = TEMPLATE.read_text()
-    return tpl.replace(
+    html = tpl.replace(
         "__FIELD_JSON__", json.dumps(field, indent=2, ensure_ascii=False)
+    )
+    return site_nav.inject_for(
+        html, "poster", {"field_id": field["id"], "field_name": field["name"]}
     )
 
 
@@ -332,6 +341,7 @@ def build_index(fields: list[dict]) -> str:
   li span{{font-family:ui-monospace,monospace;font-size:12px;color:#5a6b7b}}
 </style>
 <div class="w">
+  {site_nav.crumb_for("gallery")}
   <h1>Lower Tertiary field life-cycle posters</h1>
   <p class="sub">Stage-gate "page 1" summaries · draft tracers for wed #738 · sorted by current phase</p>
   <ul>

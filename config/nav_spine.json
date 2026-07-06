@@ -1,0 +1,199 @@
+{
+  "_comment": "Nav-spine route manifest (issue #850). Single source of truth for every scoped page's breadcrumb: public path, injection anchor, trail (labels+public paths), leaf. Paths are PUBLIC-layout. Stdlib-JSON by deploy-parity contract (Pages runs bare python, no PyYAML).",
+  "nodes": {
+    "home": {"label": "worldenergydata", "path": "index.html"},
+    "capabilities": {"label": "Capabilities", "path": "capabilities/index.html"},
+    "gallery": {"label": "Life-cycle gallery", "path": "lifecycle/index.html"},
+    "insights": {"label": "Insights", "path": "capabilities/insights.html"}
+  },
+  "pages": [
+    {
+      "key": "capabilities",
+      "public": "capabilities/index.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"}
+      ],
+      "leaf": "Capabilities"
+    },
+    {
+      "key": "insights",
+      "public": "capabilities/insights.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"}
+      ],
+      "leaf": "Insights"
+    },
+    {
+      "key": "atlas",
+      "public": "field-atlas/index.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"}
+      ],
+      "leaf": "Field atlas"
+    },
+    {
+      "key": "gallery",
+      "public": "lifecycle/index.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"}
+      ],
+      "leaf": "Life-cycle gallery"
+    },
+    {
+      "key": "poster",
+      "public": "lifecycle/{field_id}_lifecycle.html",
+      "anchor": "<div class=\"metrics\"",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Life-cycle gallery", "path": "lifecycle/index.html"}
+      ],
+      "leaf": "{field_name}"
+    },
+    {
+      "key": "wells_index",
+      "public": "lifecycle/wells/index.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Life-cycle gallery", "path": "lifecycle/index.html"}
+      ],
+      "leaf": "Well timelines"
+    },
+    {
+      "key": "well",
+      "public": "lifecycle/wells/{field_id}_{slot}_well.html",
+      "anchor": "<div class=\"metrics\"",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Life-cycle gallery", "path": "lifecycle/index.html"},
+        {"label": "{field_name}", "path": "lifecycle/{field_id}_lifecycle.html"}
+      ],
+      "leaf": "Well {slot}"
+    },
+    {
+      "key": "assets_stones",
+      "public": "lifecycle/assets/stones_assets.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Life-cycle gallery", "path": "lifecycle/index.html"},
+        {"label": "Stones", "path": "lifecycle/stones_lifecycle.html"}
+      ],
+      "leaf": "Asset drill-down"
+    },
+    {
+      "key": "norms",
+      "public": "lifecycle/norms/{stage}.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Life-cycle gallery", "path": "lifecycle/index.html"}
+      ],
+      "leaf": "Phase norms · {stage_title}"
+    },
+    {
+      "key": "drilling_insights",
+      "public": "drilling-insights.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "Drilling performance"
+    },
+    {
+      "key": "devtype",
+      "public": "region-devtype-comparison.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "Development type"
+    },
+    {
+      "key": "all_regions",
+      "public": "all-regions-atlas.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "All-regions atlas"
+    },
+    {
+      "key": "pa_wave",
+      "public": "decommissioning/pa-liability-wave.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "P&A liability wave"
+    },
+    {
+      "key": "regional_liability",
+      "public": "decommissioning/regional-liability.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "Regional liability"
+    },
+    {
+      "key": "intervention_brief",
+      "public": "intervention-db/intervention-stats-brief.html",
+      "anchor": "<h1",
+      "anchor_mode": "before",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"},
+        {"label": "Insights", "path": "capabilities/insights.html"}
+      ],
+      "leaf": "Subsea interventions"
+    },
+    {
+      "key": "economics",
+      "public": "economics-{field_slug}.html",
+      "anchor": "<main>",
+      "anchor_mode": "after",
+      "trail": [
+        {"label": "worldenergydata", "path": "index.html"},
+        {"label": "Capabilities", "path": "capabilities/index.html"}
+      ],
+      "leaf": "Economics · {field_name}"
+    }
+  ]
+}

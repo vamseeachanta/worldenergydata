@@ -38,6 +38,11 @@ import pandas as pd
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 from worldenergydata.lower_tertiary.drilling_learning import (  # noqa: E402
     compute_learning,
 )
@@ -792,7 +797,10 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(df, CSV_PATH)
     stats = compute_stats(df)
     stats["learning"] = compute_learning(df)
-    HTML_PATH.write_text(render_html(stats, source), encoding="utf-8")
+    HTML_PATH.write_text(
+        site_nav.inject_for(render_html(stats, source), "drilling_insights"),
+        encoding="utf-8",
+    )
 
     print(f"Wrote {CSV_PATH}")
     print(f"Wrote {HTML_PATH}")

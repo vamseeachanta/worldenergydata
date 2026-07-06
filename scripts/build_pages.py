@@ -48,10 +48,16 @@ from __future__ import annotations
 
 import argparse
 import html
+from html import unescape as _html_unescape
 import re
 import shutil
 import sys
 from pathlib import Path
+
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
@@ -202,9 +208,16 @@ def md_to_html(md: str) -> str:
 
 
 def page(
-    title: str, subtitle: str, body: str, *, provenance: str, data_limits: str
+    title: str,
+    subtitle: str,
+    body: str,
+    *,
+    provenance: str,
+    data_limits: str,
+    route_key: str | None = None,
+    route_ctx: dict | None = None,
 ) -> str:
-    return f"""<!doctype html>
+    html_out = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -241,6 +254,9 @@ def page(
 </body>
 </html>
 """
+    if route_key is not None:
+        return site_nav.inject_for(html_out, route_key, route_ctx)
+    return html_out
 
 
 STYLE = """:root{--fg:#1a2230;--muted:#5b6675;--bg:#f7f8fa;--card:#fff;--line:#e2e6ec;--accent:#0a5;--blue:#1763c7}
@@ -407,6 +423,8 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                     "Operation markers (drilling/completion dates) are annotations only and "
                     "do not feed the cashflow model."
                 ),
+                route_key="economics",
+                route_ctx={"field_slug": slug, "field_name": _html_unescape(display)},
             ),
             encoding="utf-8",
         )

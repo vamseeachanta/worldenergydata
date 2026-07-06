@@ -37,6 +37,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(
     0, str(PROJECT_ROOT / "packages" / "worldenergydata-decommissioning" / "src")
 )
+_SCRIPTS = Path(__file__).resolve().parents[1]
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+
 from worldenergydata.decommissioning.cost_model import (  # noqa: E402
     DecommissioningCostEstimator,
 )
@@ -51,7 +56,7 @@ FT_PER_M = 3.280839895
 # Tiers of the forward P&A liability (boreholes NOT yet permanently plugged).
 FORWARD_TIERS = {
     "TA": "Temporarily abandoned",  # imminent / overdue
-    "COM": "Completed (open)",       # latent
+    "COM": "Completed (open)",  # latent
 }
 RETIRED_CODE = "PA"  # permanently plugged & abandoned (wave already spent)
 
@@ -154,11 +159,7 @@ def main() -> None:
 
     # ---- Regulatory hook -----------------------------------------------------
     idle_iron = next(
-        (
-            r
-            for r in get_regulations("gom")
-            if r.requirement_type == "well_plugging"
-        ),
+        (r for r in get_regulations("gom") if r.requirement_type == "well_plugging"),
         None,
     )
 
@@ -182,12 +183,18 @@ def main() -> None:
         table=table,
         idle_iron=idle_iron,
     )
-    OUT_HTML.write_text(html_str, encoding="utf-8")
+    OUT_HTML.write_text(site_nav.inject_for(html_str, "pa_wave"), encoding="utf-8")
 
-    print(f"boreholes={n_total} forward(TA+COM)={n_forward} (TA={n_ta} COM={n_com}) PA={n_pa}")
-    print(f"per-well base=${per_well_base}M forward floor=${total_forward_musd/1000:.1f}B "
-          f"TA floor=${total_ta_musd/1000:.1f}B shelf-anchor=${total_forward_shelf_musd/1000:.1f}B")
-    print(f"wrote {OUT_CSV.relative_to(PROJECT_ROOT)} and {OUT_HTML.relative_to(PROJECT_ROOT)}")
+    print(
+        f"boreholes={n_total} forward(TA+COM)={n_forward} (TA={n_ta} COM={n_com}) PA={n_pa}"
+    )
+    print(
+        f"per-well base=${per_well_base}M forward floor=${total_forward_musd/1000:.1f}B "
+        f"TA floor=${total_ta_musd/1000:.1f}B shelf-anchor=${total_forward_shelf_musd/1000:.1f}B"
+    )
+    print(
+        f"wrote {OUT_CSV.relative_to(PROJECT_ROOT)} and {OUT_HTML.relative_to(PROJECT_ROOT)}"
+    )
 
 
 def _b(musd: float) -> str:
@@ -217,7 +224,7 @@ def render_html(**k) -> str:
         ta_h = h * (r["ta_wells"] / r["forward_wells"]) if r["forward_wells"] else 0
         com_h = h - ta_h
         bars.append(
-            f'<g>'
+            f"<g>"
             f'<rect x="{x}" y="{baseline - ta_h:.1f}" width="{bar_w}" height="{ta_h:.1f}" '
             f'fill="var(--alert)" rx="3"><title>{html.escape(str(r["ta_wells"]))} temporarily abandoned (imminent)</title></rect>'
             f'<rect x="{x}" y="{baseline - h:.1f}" width="{bar_w}" height="{com_h:.1f}" '
@@ -228,7 +235,7 @@ def render_html(**k) -> str:
             f'class="bm">{_b(musd)}</text>'
             f'<text x="{x + bar_w/2:.0f}" y="{top + plot_h + 20:.0f}" text-anchor="middle" '
             f'class="bx">{html.escape(str(r["vintage_decade"]))}</text>'
-            f'</g>'
+            f"</g>"
         )
         x += bar_w + gap
     svg = (
@@ -237,8 +244,7 @@ def render_html(**k) -> str:
         f'aria-label="Forward P&amp;A liability by vintage decade">'
         + "".join(bars)
         + f'<line x1="{left}" y1="{top+plot_h}" x2="{chart_w-10}" y2="{top+plot_h}" '
-        f'stroke="var(--line)" stroke-width="1"/>'
-        + "</svg>"
+        f'stroke="var(--line)" stroke-width="1"/>' + "</svg>"
     )
 
     # --- vintage table rows ---------------------------------------------------
@@ -256,13 +262,14 @@ def render_html(**k) -> str:
         )
 
     idle_txt = (
-        f'{html.escape(idle.regulatory_body)} {html.escape(idle.reference_doc)} — '
+        f"{html.escape(idle.regulatory_body)} {html.escape(idle.reference_doc)} — "
         f'"{html.escape(idle.key_threshold)}" ({idle.lead_time_months}-month lead time)'
         if idle
         else "BSEE Idle Iron (NTL 2018-N02)"
     )
 
     sc = k["status_counts"]
+
     def scget(c):
         return int(sc.get(c, 0))
 
@@ -379,7 +386,7 @@ def render_html(**k) -> str:
     </p>
 
     <p class="note"><b>Forward P&amp;A demand context.</b> The
-    <a href="../../docs/intervention-db/intervention-stats-brief.html">GoM intervention-access brief</a>
+    <a href="../intervention-db/intervention-stats-brief.html">GoM intervention-access brief</a>
     already flags heavy dead-well work — tubing pull / recompletion / <b>P&amp;A</b> — as forward-looking
     rig-day demand across every water-depth band, with the deep bands short of GoM-resident heavy-intervention
     units (e.g. 5,000–10,000&nbsp;ft: ~4.4× the resident rig-days). That access gap is the SUPPLY side of the same
