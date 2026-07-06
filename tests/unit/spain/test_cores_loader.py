@@ -3,6 +3,11 @@
 import pandas as pd
 import pytest
 
+from worldenergydata.spain.production.cores_density import (
+    CoresCrudeDensityFactor,
+    CoresOilConversionAudit,
+    build_oil_conversion_audit,
+)
 from worldenergydata.spain.production.cores_loader import (
     GWH_TO_MCF,
     TONNES_TO_BBL,
@@ -10,11 +15,6 @@ from worldenergydata.spain.production.cores_loader import (
     CoresParseError,
     CoresProductionLoader,
     parse_cores_frame,
-)
-from worldenergydata.spain.production.cores_density import (
-    CoresCrudeDensityFactor,
-    CoresOilConversionAudit,
-    build_oil_conversion_audit,
 )
 
 
