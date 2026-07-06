@@ -7,5 +7,5 @@ selenium>=4.15.0
 webdriver-manager>=4.0.1
 
 # Additional utilities
-python-dateutil>=2.8.2
+python-dateutil>=2.9.0.post0
 requests>=2.31.0
