@@ -17,6 +17,7 @@ This document is the durable, single-source record of the validation — every n
 4. **Five discrepancies were found** and are documented with WED evidence and side-by-side comparison tables for QA hand-back (§4).
 5. **Free BOEM reserves + discovery dates are now in our refresh pipeline** (§5.1), which surfaced one substantive reserves discrepancy on Stones to resolve with the article team.
 6. **Open asks to the article team** (§5): STOIIP basis, cost-deck vintage, and the appraisal-well definition.
+7. **Refreshing to the current WAR vintage adds only 53 D&C days** (Big Foot +33, Stones +20) — all late-life well-servicing on wells drilled years ago; the nine matched developments are unchanged since the article's Nov-2025 cutoff (§3.1).
 
 ## 1. Headline finding
 
@@ -39,23 +40,45 @@ The article's four tables **are this repository's FDAS V30 model output**: `fina
 
 Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)) vs the article, total D&C days:
 
-| Development | WED bores | WO bores | WED D&C | WO D&C | Δ days | Status |
-|---|---:|---:|---:|---:|---:|---|
-| Anchor | 17 | 17 | 1,825 | 1,825 | 0 | exact |
-| Cascade Chinook | 14 | 14 | 2,467 | 2,467 | 0 | exact |
-| Stones | 22 | 22 | 2,625 | 2,625 | 0 | exact |
-| Julia | 9 | 9 | 1,687 | 1,687 | 0 | exact |
-| Kaskida | 7 | 7 | 841 | 841 | 0 | exact |
-| Tiber | 2 | 2 | 250 | 250 | 0 | exact |
-| North Platte | 23 | 20 | 971 | 971 | 0 | days exact; +3 zero-day sidetracks |
-| Shenandoah | 23 | 23 | 2,370 | 2,346 | +24 | resolved (frozen V30 was −357) |
-| **Buckskin** | **25** | **24** | **2,056** | **2,004** | +52 | **recovered** — was missing entirely (shelf-only extract) |
-| Jack St Malo | 73 | 73 | 7,047 | 6,928 | +119 | open — suspect over-counted post-TD completion days; deferred bug [#846](https://github.com/vamseeachanta/worldenergydata/issues/846) |
-| Big Foot | 38 | — | 3,265 | — | — | WED-only: the article intentionally excluded Big Foot |
+The **Δ since Nov '25** column (added 2026-07-06) reports, of our current D&C total, how many days accrued **after the article's November-2025 data cutoff** — computed by re-running the canonical extractor against the 2026-02-19 WAR vintage twice (uncapped vs. capped at 2025-11-30) and differencing; see the [delta-increase analysis in §3.1](#3-1-d-c-days-accrued-since-the-article-s-nov-2025-cutoff).
+
+| Development | WED bores | WO bores | WED D&C | WO D&C | Δ vs WO | Δ since Nov '25 | Status |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Anchor | 17 | 17 | 1,825 | 1,825 | 0 | 0 | exact |
+| Cascade Chinook | 14 | 14 | 2,467 | 2,467 | 0 | 0 | exact |
+| Stones | 22 | 22 | 2,625 | 2,625 | 0 | +20 | exact vs WO; +20 post-cutoff well-servicing days (§3.1) |
+| Julia | 9 | 9 | 1,687 | 1,687 | 0 | 0 | exact |
+| Kaskida | 7 | 7 | 841 | 841 | 0 | 0 | exact |
+| Tiber | 2 | 2 | 250 | 250 | 0 | 0 | exact |
+| North Platte | 23 | 20 | 971 | 971 | 0 | 0 | days exact; +3 zero-day sidetracks |
+| Shenandoah | 23 | 23 | 2,370 | 2,346 | +24 | 0 | resolved (frozen V30 was −357); Δ pre-dates cutoff |
+| **Buckskin** | **25** | **24** | **2,056** | **2,004** | +52 | 0 | **recovered** — was missing entirely (shelf-only extract) |
+| Jack St Malo | 73 | 73 | 7,047 | 6,928 | +119 | 0 | open — suspect over-counted post-TD completion days; deferred bug [#846](https://github.com/vamseeachanta/worldenergydata/issues/846) |
+| Big Foot | 38 | — | 3,265 | — | — | +33 | WED-only: article excluded Big Foot; +33 post-cutoff well-servicing days (§3.1) |
+| **Total (all 11)** | | | **25,404** | | | **+53** | 253 wells; +53 days since the Nov-2025 cutoff |
 
 Fidelity anchor: the candidate extraction reproduces the frozen V30 workbook **exactly** on Anchor (821 drilling / 1,004 completion days), pinned by `tests/integration/test_kc_ingest_fidelity.py`. Candidate totals: 253 wells / 25,404 D&C days across 26 leases, 11 developments.
 
 The like-for-like frozen-V30 reconciliation (217 wells, 22,478 WED vs 21,944 WO D&C days; matched-9 −2.5%) lives on the [verification page](https://vamseeachanta.github.io/worldenergydata/completion/verification.html) and in `scripts/completion/build_completion_report.py` (`WO_APRIL_2026_ARTICLE` frozen benchmark).
+
+### 3.1 D&C days accrued since the article's Nov-2025 cutoff
+
+The article's Table 1 was built on BSEE WAR data through **November 2025**. Our current extract reads the **2026-02-19** WAR vintage (latest rig-on-well activity 2026-02-16). To isolate what the newer data adds, the canonical extractor was re-run twice — once uncapped (which reproduces the **WED D&C** column above *to the day*: 25,404 total) and once with every WAR activity interval capped at 2025-11-30 — and the two differenced. The gap is the D&C days accrued after the article's cutoff:
+
+| Development | WED D&C (Feb-2026 vintage) | …capped at 2025-11-30 | Δ since Nov '25 | Nature of the added days | Latest activity |
+|---|---:|---:|---:|---|---|
+| Big Foot | 3,265 | 3,232 | +33 | post-TD rig-days on one well (TD 2020) | 2026-01-02 |
+| Stones | 2,625 | 2,605 | +20 | post-TD rig-days on three wells (TD 2018–2022) | 2025-12-17 |
+| All nine other developments | — | — | 0 | no rig-on-well activity after the cutoff | ≤ 2025-09-29 |
+| **Total** | **25,404** | **25,351** | **+53** | | 2026-02-16 |
+
+**Findings from the delta-increase analysis:**
+
+1. **The increment is small and concentrated: 53 D&C days, entirely on Big Foot (+33) and Stones (+20).** Every other Lower-Tertiary development shows zero post-cutoff activity in our feed — the article's November-2025 window already captured essentially all of their drilling and completion.
+2. **All 53 added days are completion-phase, none drilling** (`drill_delta = 0` for every well). Each traces to rig-on-well days on wells that reached total depth years ago (Big Foot 2020; Stones 2018–2022), so they are **late-life well-servicing / intervention days**, not new-well D&C — swept in by the extractor's simplified rule that counts every rig-day after TD as "completion" (the same accounting behaviour tracked for Jack St Malo in [#846](https://github.com/vamseeachanta/worldenergydata/issues/846)).
+3. **None of the WED-vs-article Δ days in §3 come from this newer data.** Shenandoah (+24), Buckskin (+52) and Jack St Malo (+119) all pre-date the cutoff (latest activity 2025-09, 2024-05 and 2025-05 respectively); those differences are recompletion accounting, the Buckskin recovery, and the JSM over-count — orthogonal to the data vintage. **Refreshing to the Feb-2026 vintage therefore leaves the reconciliation of the nine matched developments unchanged, and the article stands as printed for them.**
+
+*Reproduce:* re-run `docs/modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py` against the `2026-02-19` WAR `.bin` feed with `leases_v21_kc.csv`, applying an `activity-day > 2025-11-30` filter on the same `WAR_START_DT`/`WAR_END_DT` daily index the extractor already unions.
 
 ## 4. Discrepancies found in the article (QA hand-back)
 
@@ -216,3 +239,4 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 | 2026-07-06 | All four article tables validated against `financial_project_summary.xlsx` (§1–2); five discrepancies documented with comparison tables (§4); STOIIP confirmed to have no government source (§5). |
 | 2026-07-06 | KC deepwater ingest landed (PR #851): canonical extractor reads raw WAR `.bin`; Buckskin becomes a matched row (§3); Anchor fidelity pinned exactly by test. Benchmark renamed to "World Oil April 2026 article" everywhere (PR #852). This report committed (PR #853). |
 | 2026-07-06 | BOEM reserves + discovery ingest landed (#847 / PR #861, plan #854 with two adversarial review rounds): annual Table 4 workbook + Deepwater Qualified Fields on refresh cadence; curated per-development table with citation columns; **Stones reserves discrepancy surfaced** (§5.1). Follow-on source family filed as #855. |
+| 2026-07-06 | Delta-increase analysis added (§3.1): current 2026-02-19 WAR vintage vs the article's Nov-2025 cutoff yields **+53 D&C days** (Big Foot +33, Stones +20), all post-TD well-servicing; Table 1 gains a **Δ since Nov '25** column. Section permalinks + an "On this page" contents nav added to the page. |
