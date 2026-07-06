@@ -145,6 +145,25 @@ The article's Table 1/2 cost columns are the V30 assumptions deck (`lease_assump
 
 (Boost/WI pumps = booster + water-injection pump capital combined; OPEX = variable + fixed. Pre-FID fields carry exploration/appraisal D&C only.)
 
+### 4.7 Project financials — full WED model output (the article's Table 2 equivalent)
+
+The complete per-development financial summary from the same canonical workbook, published so the article team can inspect the WED side of every Table 2 cell and gain confidence in the tables we produce. Production and wells are BSEE-derived (OGOR-A / WAR); dollars are the V30 model on the assumptions deck; all money in $M, lifetime thru 2025-05:
+
+| Development | First oil | Oil produced (MMbbl) | Producer / injector wells | Total bores | Revenue | Royalty | OPEX | Net cash flow | NPV @10% | MIRR (annual) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Anchor | 2024-08 | 6.9 | 2 / 0 | 15 | 476 | 89 | 167 | −3,941 | −1,733 | −17.7% |
+| Big Foot | 2018-11 | 66.9 | 7 / 1 | 38 | 4,738 | 888 | 1,058 | −1,725 | −1,063 | 3.5% |
+| Cascade Chinook | 2014-01 | 34.3 | 3 / 0 | 14 | 2,327 | 436 | 1,837 | −3,820 | −1,474 | −1.8% |
+| Jack St Malo | 2014-12 | 406.6 | 22 / 4 | 73 | 25,649 | 4,809 | 3,201 | +4,788 | −881 | 8.5% |
+| Julia | 2016-03 | 70.9 | 4 / 0 | 9 | 4,715 | 884 | 1,119 | −13 | −531 | 6.3% |
+| Kaskida | pre-FID | 0 | 0 / 0 | 7 | 0 | 0 | 0 | −925 | −625 | — |
+| North Platte | pre-FID | 0 | 0 / 0 | 14 | 0 | 0 | 0 | −1,068 | −784 | — |
+| Shenandoah | 2025-02 | 0.004 | 1 / 0 | 23 | 0.3 | 0.1 | 13 | −3,879 | −1,166 | — |
+| Stones | 2016-09 | 83.7 | 10 / 2 | 22 | 5,582 | 1,047 | 1,610 | −3,306 | −1,480 | 2.7% |
+| Tiber | never | 0 | 0 / 0 | 2 | 0 | 0 | 0 | −275 | −228 | — |
+
+Cross-checks a reader can do immediately: the D2 duplicate row is visible here (Tiber's −275 / −228 are the values the article prints for Stones); D3's Cascade Chinook NCF is here in context; D4's OPEX columns are non-zero for Julia and Stones; Table 3's mean project NPV (−$1.19B) is the average of the NPV column. Per-field monthly cash-flow detail: the live economics pages ([Anchor](https://vamseeachanta.github.io/worldenergydata/economics-anchor.html) · [Big Foot](https://vamseeachanta.github.io/worldenergydata/economics-big_foot.html) · [Cascade–Chinook](https://vamseeachanta.github.io/worldenergydata/economics-cascade_chinook.html) · [Jack/St. Malo](https://vamseeachanta.github.io/worldenergydata/economics-jack_st_malo.html) · [Julia](https://vamseeachanta.github.io/worldenergydata/economics-julia.html) · [Shenandoah](https://vamseeachanta.github.io/worldenergydata/economics-shenandoah.html) · [Stones](https://vamseeachanta.github.io/worldenergydata/economics-stones.html)) and the [portfolio summary](https://vamseeachanta.github.io/worldenergydata/portfolio.html). Sanctioned-baseline figures are CI-guarded against `golden_baseline_v30.yml` — see [capabilities § validation](https://vamseeachanta.github.io/worldenergydata/capabilities/#validation).
+
 ## 5. Open asks to Roy / Chuck (their inputs, cited as theirs)
 
 1. **STOIIP source for Table 4** *(hard gap)* — no BOEM/BSEE source exists for STOIIP/OOIP; public record is operator FID press only (Buckskin ~5 Bbbl, Julia 6 Bbbl, Stones >2 Bboe, Tiber 4–6 Bbbl; Cascade/Chinook has no clean public figure). Need their basis for a consistent column.
