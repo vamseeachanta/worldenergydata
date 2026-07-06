@@ -31,7 +31,7 @@ BSEE_AVAILABILITY = DataAvailability(
     well_path=DomainStatus(
         status="partial",
         notes="Directional survey data exists in BSEE tables but requires LFS "
-        "pull for binary data files (129/133 are LFS stubs).",
+        "pull for binary data files (most of the 134 registry bins are LFS stubs).",
     ),
     casing=DomainStatus(
         status="available",

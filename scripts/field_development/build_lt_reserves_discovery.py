@@ -85,9 +85,7 @@ def parse_table4(raw: pd.DataFrame) -> pd.DataFrame:
     if len(rank_hits) == 0:
         raise ValueError("Table 4 grid: no 'Rank' header row found")
     header_row = rank_hits[0]
-    rank_col = (
-        raw.loc[header_row].astype(str).str.strip().eq("Rank").idxmax()
-    )
+    rank_col = raw.loc[header_row].astype(str).str.strip().eq("Rank").idxmax()
     c = rank_col  # columns are offsets from Rank
     data = raw.iloc[header_row + 3 :]
     data = data[data[c].notna()]
@@ -125,9 +123,7 @@ def build_lt_table(
     dq["FIELD_NAME_CODE"] = dq["FIELD_NAME_CODE"].astype(str).str.strip()
     for col in ("FLD_DISCVR_DATE", "FLD_FIRST_PROD", "FIRST_PROD_DATE"):
         dq[col] = (
-            pd.to_datetime(dq[col], errors="coerce")
-            if col in dq.columns
-            else pd.NaT
+            pd.to_datetime(dq[col], errors="coerce") if col in dq.columns else pd.NaT
         )
     # Per field code: earliest dates; field-level first prod preferred
     # over the per-lease minimum.
@@ -203,14 +199,10 @@ def build_lt_table(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--repo-root", default=None)
-    parser.add_argument(
-        "--access-date", default=_dt.date.today().isoformat()
-    )
+    parser.add_argument("--access-date", default=_dt.date.today().isoformat())
     args = parser.parse_args()
     root = (
-        Path(args.repo_root)
-        if args.repo_root
-        else Path(__file__).resolve().parents[2]
+        Path(args.repo_root) if args.repo_root else Path(__file__).resolve().parents[2]
     )
 
     bridge = load_bridge(root / BRIDGE)

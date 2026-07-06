@@ -51,6 +51,7 @@ def _get_requests():
 
 # ── Result dataclass ──────────────────────────────────────────────
 
+
 @dataclass
 class RefreshResult:
     bin_dir: str
@@ -63,6 +64,7 @@ class RefreshResult:
 
 
 # ── Helpers ───────────────────────────────────────────────────────
+
 
 def _slug(name: str) -> str:
     """Sanitize a ZIP-member stem or worksheet name into a bin-name token.
@@ -100,6 +102,7 @@ def backup_bin(target: Path, run_tag: str) -> Path | None:
 
 # ── Orchestrator ──────────────────────────────────────────────────
 
+
 class BSEERefreshOrchestrator:
     BIN_ROOT = Path("data/modules/bsee/bin")  # relative to project root
 
@@ -120,10 +123,12 @@ class BSEERefreshOrchestrator:
         self.run_tag = time.strftime("%Y%m%dT%H%M%S", time.gmtime())
         requests = _get_requests()
         self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "WorldEnergyData/1.0 (BSEE Data Refresh)",
-            "Accept": "application/zip, application/octet-stream, */*",
-        })
+        self.session.headers.update(
+            {
+                "User-Agent": "WorldEnergyData/1.0 (BSEE Data Refresh)",
+                "Accept": "application/zip, application/octet-stream, */*",
+            }
+        )
         self.results: list[RefreshResult] = []
 
     # ── download ──────────────────────────────────────────────────
@@ -141,10 +146,15 @@ class BSEERefreshOrchestrator:
             try:
                 log.info(
                     "  [attempt %d/%d] GET %s (timeout %ds)",
-                    attempt, MAX_RETRIES, url, current_timeout,
+                    attempt,
+                    MAX_RETRIES,
+                    url,
+                    current_timeout,
                 )
                 resp = self.session.get(
-                    url, stream=True, timeout=current_timeout,
+                    url,
+                    stream=True,
+                    timeout=current_timeout,
                 )
                 resp.raise_for_status()
 
@@ -163,7 +173,8 @@ class BSEERefreshOrchestrator:
 
                 data = b"".join(chunks)
                 log.info(
-                    "  download complete: %.2f MB", len(data) / (1024 * 1024),
+                    "  download complete: %.2f MB",
+                    len(data) / (1024 * 1024),
                 )
                 return data
 
@@ -181,7 +192,9 @@ class BSEERefreshOrchestrator:
     # ── zip → bins ────────────────────────────────────────────────
 
     def _process_zip_to_bins(
-        self, zip_bytes: bytes, spec: "DatasetSpec",
+        self,
+        zip_bytes: bytes,
+        spec: "DatasetSpec",
     ) -> RefreshResult:
         """Extract CSV/TXT files from *zip_bytes*, convert each to a
         pickled DataFrame, and write to the appropriate bin directory.
@@ -196,7 +209,8 @@ class BSEERefreshOrchestrator:
         try:
             with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
                 data_files = [
-                    n for n in zf.namelist()
+                    n
+                    for n in zf.namelist()
                     if n.lower().endswith((".txt", ".csv", ".xlsx"))
                 ]
                 if not data_files:
@@ -208,25 +222,30 @@ class BSEERefreshOrchestrator:
                         duration_s=time.monotonic() - t0,
                     )
 
+                def _skip(bin_name: str) -> bool:
+                    # Protect real (non-stub) data: skip BEFORE parsing so
+                    # idempotent re-runs don't pay the parse cost. --force
+                    # never skips (backup happens at write time below).
+                    target = bin_dir_path / bin_name
+                    if target.exists() and not is_lfs_stub(target) and not self.force:
+                        log.info("    skip %s (already real data)", bin_name)
+                        return True
+                    return False
+
                 for filename in data_files:
                     raw = zf.read(filename)
 
-                    for bin_name, df in self._member_frames(filename, raw):
+                    for bin_name, df in self._member_frames(filename, raw, _skip):
                         target = bin_dir_path / bin_name
 
-                        # Protect real (non-stub) data — only overwrite LFS
-                        # stubs, unless --force, in which case back the file
-                        # up first.
+                        # --force overwrite of real data: back it up first.
                         if target.exists() and not is_lfs_stub(target):
-                            if not self.force:
-                                log.info(
-                                    "    skip %s (already real data)", bin_name,
-                                )
-                                continue
                             bak = backup_bin(target, self.run_tag)
                             if bak is not None:
                                 log.info(
-                                    "    backed up %s -> %s", bin_name, bak.name,
+                                    "    backed up %s -> %s",
+                                    bin_name,
+                                    bak.name,
                                 )
 
                         rows_total += len(df)
@@ -236,7 +255,9 @@ class BSEERefreshOrchestrator:
 
                         bins_written += 1
                         log.info(
-                            "    wrote %s (%d rows)", bin_name, len(df),
+                            "    wrote %s (%d rows)",
+                            bin_name,
+                            len(df),
                         )
 
         except zipfile.BadZipFile as exc:
@@ -257,7 +278,7 @@ class BSEERefreshOrchestrator:
             duration_s=time.monotonic() - t0,
         )
 
-    def _member_frames(self, filename: str, raw: bytes):
+    def _member_frames(self, filename: str, raw: bytes, skip=None):
         """Yield ``(bin_name, DataFrame)`` pairs for one ZIP member.
 
         Delimited members (.txt/.csv) keep their historical behavior: one
@@ -267,16 +288,26 @@ class BSEERefreshOrchestrator:
         pickled as the raw ``header=None`` grid: the sheets carry
         multi-row human headers, so downstream parsers own header
         detection (see scripts/field_development/build_lt_reserves_discovery.py).
+
+        *skip* is an optional ``skip(bin_name) -> bool`` predicate checked
+        BEFORE parsing, so idempotent re-runs over already-real bins do
+        not pay the parse cost.
         """
         import pandas as pd
 
+        skip = skip or (lambda _name: False)
         stem = Path(filename).stem
         if filename.lower().endswith(".xlsx"):
-            sheets = pd.read_excel(
-                io.BytesIO(raw), sheet_name=None, header=None,
-            )
-            for sheet_name, df in sheets.items():
-                yield f"{_slug(stem)}__{_slug(sheet_name)}.bin", df
+            xf = pd.ExcelFile(io.BytesIO(raw))
+            for sheet_name in xf.sheet_names:
+                bin_name = f"{_slug(stem)}__{_slug(sheet_name)}.bin"
+                if skip(bin_name):
+                    continue
+                yield bin_name, xf.parse(sheet_name, header=None)
+            return
+
+        bin_name = f"{stem}.bin"
+        if skip(bin_name):
             return
 
         # Try utf-8 first, fall back to latin-1
@@ -294,7 +325,7 @@ class BSEERefreshOrchestrator:
         if df is None:
             log.warning("    could not parse %s — skipping", filename)
             return
-        yield f"{stem}.bin", df
+        yield bin_name, df
 
     @staticmethod
     def _read_csv_text(text: str) -> "pd.DataFrame | None":
@@ -331,17 +362,21 @@ class BSEERefreshOrchestrator:
                 log.info(
                     "[%s] DRY-RUN(force): would download %s → rewrite %d bin(s)"
                     " (existing real data backed up)",
-                    spec.bin_dir, spec.zip_url, n,
+                    spec.bin_dir,
+                    spec.zip_url,
+                    n,
                 )
             else:
                 stubs = sum(
-                    1 for b in spec.expected_bins
-                    if not (bin_dir_path / b).exists()
-                    or is_lfs_stub(bin_dir_path / b)
+                    1
+                    for b in spec.expected_bins
+                    if not (bin_dir_path / b).exists() or is_lfs_stub(bin_dir_path / b)
                 )
                 log.info(
                     "[%s] DRY-RUN: would download %s → %d stubs to replace",
-                    spec.bin_dir, spec.zip_url, stubs,
+                    spec.bin_dir,
+                    spec.zip_url,
+                    stubs,
                 )
             return RefreshResult(
                 bin_dir=spec.bin_dir,
@@ -359,7 +394,8 @@ class BSEERefreshOrchestrator:
         if all_real:
             log.info(
                 "[%s] all %d bins are already real data — skipping",
-                spec.bin_dir, len(spec.expected_bins),
+                spec.bin_dir,
+                len(spec.expected_bins),
             )
             return RefreshResult(
                 bin_dir=spec.bin_dir,
@@ -385,7 +421,8 @@ class BSEERefreshOrchestrator:
     # ── bulk refresh ──────────────────────────────────────────────
 
     def refresh_all(
-        self, specs: list["DatasetSpec"],
+        self,
+        specs: list["DatasetSpec"],
     ) -> list[RefreshResult]:
         """Run refresh in two phases: regular first, then OGOR-A."""
         regular = [s for s in specs if not s.is_ogor_a]
@@ -397,7 +434,8 @@ class BSEERefreshOrchestrator:
         if regular:
             log.info(
                 "=== Phase 1: %d regular datasets (%d workers) ===",
-                len(regular), self.workers,
+                len(regular),
+                self.workers,
             )
             results.extend(self._run_pool(regular, self.workers))
 
@@ -406,7 +444,8 @@ class BSEERefreshOrchestrator:
             ogor_workers = max(self.workers - 1, 1)
             log.info(
                 "=== Phase 2: %d OGOR-A datasets (%d workers) ===",
-                len(ogor_a), ogor_workers,
+                len(ogor_a),
+                ogor_workers,
             )
             results.extend(self._run_pool(ogor_a, ogor_workers))
 
@@ -420,10 +459,7 @@ class BSEERefreshOrchestrator:
     ) -> list[RefreshResult]:
         results: list[RefreshResult] = []
         with ThreadPoolExecutor(max_workers=workers) as pool:
-            futures = {
-                pool.submit(self.refresh_single, spec): spec
-                for spec in specs
-            }
+            futures = {pool.submit(self.refresh_single, spec): spec for spec in specs}
             for future in as_completed(futures):
                 spec = futures[future]
                 try:
@@ -437,8 +473,10 @@ class BSEERefreshOrchestrator:
                 results.append(result)
                 log.info(
                     "[%s] %s  bins=%d  rows=%d  %.1fs",
-                    result.bin_dir, result.status,
-                    result.bins_written, result.rows_total,
+                    result.bin_dir,
+                    result.status,
+                    result.bins_written,
+                    result.rows_total,
                     result.duration_s,
                 )
         return results
@@ -460,10 +498,11 @@ class BSEERefreshOrchestrator:
 
         print()
         print("=== BSEE DATA REFRESH SUMMARY ===")
-        print(
-            f"Success: {success}/{total} | Failed: {failed} | Skipped: {skipped}"
-        )
-        print(f"Bins written: {bins_written}/129")
+        print(f"Success: {success}/{total} | Failed: {failed} | Skipped: {skipped}")
+        from worldenergydata.bsee.data.refresh.url_registry import get_all_specs
+
+        total_expected = sum(len(sp.expected_bins) for sp in get_all_specs())
+        print(f"Bins written: {bins_written}/{total_expected}")
         print(f"Rows loaded:  {total_rows:,}")
         print(f"Total downloaded: {total_bytes / (1024 * 1024):.1f} MB")
         print(f"Duration: {minutes}m {seconds}s")
@@ -477,6 +516,7 @@ class BSEERefreshOrchestrator:
 
 
 # ── CLI ───────────────────────────────────────────────────────────
+
 
 def _find_project_root() -> Path:
     """Walk up from this script's location looking for pyproject.toml."""
@@ -563,8 +603,7 @@ def main() -> None:
         force=args.force,
     )
     if args.force and not args.dry_run:
-        log.info("FORCE mode: existing bins backed up to .bak-%s",
-                 orchestrator.run_tag)
+        log.info("FORCE mode: existing bins backed up to .bak-%s", orchestrator.run_tag)
 
     results = orchestrator.refresh_all(specs)
     orchestrator.print_summary(results)
