@@ -216,7 +216,13 @@ def compute_reconciliation(data: list[dict]) -> dict:
         if wed and wo:
             delta_bores = wed_bores - wo_bores
             delta_dc = wed_dc - wo_dc
-            status = "match" if delta_dc == 0 else "investigate"
+            if delta_dc != 0:
+                status = "investigate"
+            elif delta_bores != 0:
+                # D&C days agree but the wellbore counts don't — NOT a clean match.
+                status = "days_match"
+            else:
+                status = "match"
         else:
             delta_bores = delta_dc = None
             status = "wo_only" if wo else "wed_only"
@@ -246,7 +252,27 @@ def compute_reconciliation(data: list[dict]) -> dict:
         "bores": sum(v["bores"] for v in WO_ARTICLE_END_2025.values()),
         "dc": sum(v["d_and_c"] for v in WO_ARTICLE_END_2025.values()),
     }
-    return {"rows": rows, "wed_total": wed_total, "wo_total": wo_total}
+    # Like-for-like: only developments BOTH sides carry (drop WED-only Big Foot and
+    # WO-only Buckskin). This is the honest apples-to-apples reconciliation; the raw
+    # grand totals span different field sets, so a near-match there is coincidental.
+    common = [r for r in rows if r["wed_dc"] is not None and r["wo_dc"] is not None]
+    wed_common = {
+        "bores": sum(r["wed_bores"] for r in common),
+        "dc": sum(r["wed_dc"] for r in common),
+    }
+    wo_common = {
+        "bores": sum(r["wo_bores"] for r in common),
+        "dc": sum(r["wo_dc"] for r in common),
+    }
+    return {
+        "rows": rows,
+        "wed_total": wed_total,
+        "wo_total": wo_total,
+        "wed_common": wed_common,
+        "wo_common": wo_common,
+        "common_n": len(common),
+        "common_delta_dc": wed_common["dc"] - wo_common["dc"],
+    }
 
 
 _STYLE = """
@@ -277,8 +303,8 @@ _STYLE = """
   .verify{background:#132132;border:1px solid #1f6feb55;border-left:3px solid var(--accent);
           border-radius:10px;padding:14px 16px;margin:20px 0 0;font-size:13.5px}
   .verify b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:650}
-  td.match,td.investigate,td.wo_only,td.wed_only{font-weight:600}
-  .match{color:var(--ok)}.investigate{color:var(--warn)}
+  td.match,td.days_match,td.investigate,td.wo_only,td.wed_only{font-weight:600}
+  .match{color:var(--ok)}.days_match{color:#bb8009}.investigate{color:var(--warn)}
   .wo_only{color:#f0883e}.wed_only{color:var(--accent)}
   td.neg{color:var(--warn)}
   td.nte{color:var(--mut);font-size:12px;white-space:normal;max-width:360px}
@@ -300,6 +326,8 @@ def _stat(value: str, label: str) -> str:
 def render(c: dict, recon: dict) -> str:
     wed = recon["wed_total"]
     wo = recon["wo_total"]
+    bigfoot_dc = next((r["wed_dc"] for r in recon["rows"] if r["dev"] == "Big Foot"), 0)
+    buckskin_dc = next((r["wo_dc"] for r in recon["rows"] if r["dev"] == "Buckskin"), 0)
     yr = (
         f"{c['year_min']}&ndash;{c['year_max']}"
         if c["year_min"] and c["year_max"]
@@ -308,7 +336,7 @@ def render(c: dict, recon: dict) -> str:
     stats = "".join(
         [
             _stat(f"{c['wells']}", "deepwater wells (WAR records)"),
-            _stat(f"{c['fields']}", "Lower-Tertiary fields"),
+            _stat(f"{c['fields']}", "lease names (10 developments)"),
             _stat(f"{c['leases']}", "federal surface leases"),
             _stat(yr, "spud-year span"),
             _stat(f"{c['drill']['median']:.0f} d", "median drilling time"),
@@ -357,8 +385,8 @@ def render(c: dict, recon: dict) -> str:
 <header><div class="wrap">
   <h1>Well Drilling &amp; Completion Days</h1>
   <div class="sub">Drilling and completion durations reconstructed from BSEE Well
-  Activity Reports for {c['wells']} wells across the {c['fields']} Lower-Tertiary
-  deepwater fields &mdash; spud-to-total-depth (drilling) and total-depth-to-final-
+  Activity Reports for {c['wells']} wells across {c['fields']} Lower-Tertiary
+  deepwater leases (10 developments) &mdash; spud-to-total-depth (drilling) and total-depth-to-final-
   completion-activity (completion), with per-well depth and water-depth context.</div>
   <span class="tag">BSEE Well Activity Reports &middot; V30 drilling/completion-days methodology &middot; deterministic from a frozen reference</span>
 </div></header>
@@ -370,12 +398,16 @@ def render(c: dict, recon: dict) -> str:
 
   <div class="verify">
     <strong>Verification &middot; reconciled against the WO Article, end of 2025.</strong>
-    Drilling <em>and</em> completion days across all {c['wells']} wellbores total
-    <b>{wed['dc']:,}</b> D&amp;C days ({wed['drill']:,} drilling + {wed['comp']:,}
-    completion), reconciling to the World Oil Lower-Tertiary article's
-    <b>{wo['dc']:,}</b>-day / {wo['bores']}-wellbore benchmark within ~2.4%. The
-    &ldquo;{c['drill']['sum']:,.0f}&nbsp;days&rdquo; figure quoted elsewhere counts
-    <em>drilling only</em>.
+    On the {recon['common_n']} developments both sources cover, WED totals
+    <b>{recon['wed_common']['dc']:,}</b> D&amp;C days vs the World Oil article's
+    <b>{recon['wo_common']['dc']:,}</b> &mdash; {recon['common_delta_dc']:+,} days
+    ({recon['common_delta_dc'] / recon['wo_common']['dc'] * 100:+.1f}%) and
+    {recon['wed_common']['bores'] - recon['wo_common']['bores']:+d} wellbores, at or
+    below the benchmark on every matched field. Two fields sit outside the comparison:
+    Big&nbsp;Foot ({bigfoot_dc:,}&nbsp;d, WED-only &mdash; the article excluded it) and
+    Buckskin ({buckskin_dc:,}&nbsp;d, WO-only &mdash; identity recovered, ingest pending
+    <a href="https://github.com/vamseeachanta/worldenergydata/issues/842">#842</a>).
+    Three developments remain under investigation.
     <a href="verification.html">Open the field- and well-level reconciliation &rarr;</a>
   </div>
 
@@ -383,9 +415,10 @@ def render(c: dict, recon: dict) -> str:
   <p class="note">Drilling days = spud date &rarr; total-depth date. Completion days =
   total-depth date &rarr; last completion activity. Medians are the headline figure
   (robust to the sidetracks and recompletions whose WAR milestones coincide on a
-  single day); means are shown alongside. <b>Total D&amp;C</b> is the summed
-  drilling + completion days per field &mdash; the figure that reconciles to the
-  <a href="verification.html">WO Article, end of 2025</a> benchmark.{deepest_txt}</p>
+  single day); means are shown alongside. <b>Total D&amp;C</b> is the summed drilling +
+  completion days per lease; rolled up to developments (Cascade+Chinook, Jack+St&nbsp;Malo)
+  it reconciles to the <a href="verification.html">WO Article, end of 2025</a> benchmark
+  on the matched developments.{deepest_txt}</p>
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Field</th><th class="val">Wells</th>
@@ -430,6 +463,7 @@ def render(c: dict, recon: dict) -> str:
 
 _STATUS_LABEL = {
     "match": "Match",
+    "days_match": "Days match / bore gap",
     "investigate": "Investigate",
     "wo_only": "WO only",
     "wed_only": "WED only",
@@ -468,21 +502,24 @@ def _recon_note(r: dict) -> str:
     dev, s = r["dev"], r["status"]
     if dev == "Buckskin":
         return (
-            "Excluded from the WED extract &mdash; BSEE field crosswalk scored "
-            "<code>match_type=none, confidence 0</code> (Keathley Canyon 872 subsea "
-            "tieback to the Lucius host; its BSEE wells report under Lucius, not "
-            "Buckskin), so its lease never entered the mapping. Real field, producing "
-            "since 2019 &mdash; a known coverage gap, not a zero."
+            "Identity recovered (2026-07): Keathley Canyon 785/828/829/830/871/872, "
+            "leases G25806/G25813/G25814/G25815/G25823/G32650, ~25 wellbores in "
+            "<code>reports/bsee/buckskin/buckskin_war_activity.csv</code>. Not yet in "
+            "the extract &mdash; the pipeline's BSEE slice is shelf-only, so Keathley "
+            "Canyon deepwater must be ingested before its D&amp;C days reconcile "
+            "(tracked in "
+            '<a href="https://github.com/vamseeachanta/worldenergydata/issues/842">#842</a>).'
         )
     if dev == "Big Foot":
         return "In the WED extract; the WO article excluded it from its comparison set."
-    if s == "match" and r["delta_bores"]:
+    if s == "days_match":
         return (
-            f"Days reconcile exactly; WO carries {-r['delta_bores']} extra zero-day "
-            "sidetrack wellbore(s)."
+            f"D&amp;C days reconcile exactly, but WED has {-r['delta_bores']} fewer "
+            "wellbores &mdash; WO counts extra zero-day sidetracks. A bore-count gap, "
+            "not a day gap."
         )
     if s == "match":
-        return "Exact match."
+        return "Exact match (days and wellbore count)."
     if s == "investigate":
         return (
             "Same wellbore count, different day total &mdash; recompletion-interval "
@@ -511,15 +548,31 @@ def render_verification(recon: dict, data: list[dict]) -> str:
             f'<td class="nte">{_recon_note(r)}</td>'
             "</tr>"
         )
+    wed_c, wo_c = recon["wed_common"], recon["wo_common"]
     summary_rows += (
-        '<tr class="tot"><td>Total</td><td></td>'
+        f'<tr class="tot"><td>Common ({recon["common_n"]} devs, like-for-like)</td><td></td>'
+        f'<td class="val">{wo_c["bores"]:,}</td>'
+        f'<td class="val">{wo_c["dc"]:,}</td>'
+        f'<td class="val">{wed_c["bores"]:,}</td>'
+        f'<td class="val">{wed_c["dc"]:,}</td>'
+        f'<td class="val">{wed_c["bores"] - wo_c["bores"]:+d}</td>'
+        f'<td class="val neg">{wed_c["dc"] - wo_c["dc"]:+,}</td>'
+        "<td></td>"
+        '<td class="nte">The developments both sources carry &mdash; the honest '
+        "apples-to-apples reconciliation: WED runs "
+        f'{(wed_c["dc"] - wo_c["dc"]) / wo_c["dc"] * 100:+.1f}% and at/below the '
+        "benchmark on every matched field.</td></tr>"
+    )
+    summary_rows += (
+        '<tr class="tot"><td>Raw total (mixed sets)</td><td></td>'
         f'<td class="val">{wo["bores"]:,}</td>'
         f'<td class="val">{wo["dc"]:,}</td>'
         f'<td class="val">{wed["bores"]:,}</td>'
         f'<td class="val">{wed["dc"]:,}</td>'
         "<td></td><td></td><td></td>"
-        f'<td class="nte">WED total = {wed["drill"]:,} drilling + {wed["comp"]:,} '
-        "completion days.</td></tr>"
+        '<td class="nte">Spans different field sets (WED +Big&nbsp;Foot, WO +Buckskin); '
+        "the ~2% closeness is coincidental offsetting, <em>not</em> like-for-like. "
+        f'WED = {wed["drill"]:,} drilling + {wed["comp"]:,} completion.</td></tr>'
     )
 
     def _dev_of(d):
@@ -567,10 +620,14 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   <h2>How to read this</h2>
   <p class="note"><b>Metric.</b> D&amp;C&nbsp;days = drilling + completion days
   (spud&rarr;total-depth plus total-depth&rarr;final-completion). Wellbores = unique
-  API well numbers (the WO article's convention). The main report headlines
-  <em>drilling-only</em> days ({wed['drill']:,}); this page uses the combined
-  D&amp;C total ({wed['dc']:,}) so it is directly comparable to the WO benchmark
-  ({wo['dc']:,}).<br>
+  API well numbers (the WO article's convention). The main report breaks drilling and
+  completion out separately in its per-field stat cards; this page uses the combined
+  D&amp;C total so it is directly comparable to the WO benchmark.<br>
+  <b>Like-for-like.</b> The headline reconciliation is the {recon['common_n']}
+  developments both sources carry (WED {wed_c['dc']:,} vs WO {wo_c['dc']:,} D&amp;C days).
+  WED-only Big&nbsp;Foot and WO-only Buckskin are shown as separate, non-comparable line
+  items; the raw grand totals ({wed['dc']:,} vs {wo['dc']:,}) span different field sets,
+  so a near-match there is coincidental offsetting, not agreement.<br>
   <b>V30 vs V50.</b> Drilling/completion days and wellbore counts are derived from
   BSEE Well Activity Reports and are <em>identical</em> under V30 and the V50
   latest-OGOR rerun &mdash; V50 extends only the production window (economics), not
@@ -587,7 +644,8 @@ def render_verification(recon: dict, data: list[dict]) -> str:
     </tr></thead>
     <tbody>{summary_rows}</tbody>
   </table></div>
-  <p class="legend"><span class="match">Match</span> = D&amp;C days agree exactly &middot;
+  <p class="legend"><span class="match">Match</span> = days <em>and</em> wellbore count agree &middot;
+  <span class="days_match">Days match / bore gap</span> = D&amp;C days agree but wellbore counts differ &middot;
   <span class="investigate">Investigate</span> = same wellbore count, day gap to chase &middot;
   <span class="wo_only">WO only</span> = in the article, not yet in the WED extract &middot;
   <span class="wed_only">WED only</span> = in the extract, excluded from the article set.
@@ -595,8 +653,9 @@ def render_verification(recon: dict, data: list[dict]) -> str:
 
   <h2>Well-by-well listing ({wed['bores']} wellbores)</h2>
   <p class="note">Every wellbore in the WED extract with its BSEE milestones &mdash;
-  the line-by-line audit trail behind each field total above. Buckskin's 24 wellbores
-  are absent here (see the crosswalk note); every other WO development is present.</p>
+  the line-by-line audit trail behind each field total above. Buckskin's wellbores are
+  absent here &mdash; its identity is recovered (see its row above), but the Keathley
+  Canyon deepwater data is not yet ingested (#842); every other WO development is present.</p>
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Development</th><th>Lease</th><th>Well</th><th class="val">API</th>
