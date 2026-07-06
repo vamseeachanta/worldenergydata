@@ -3,6 +3,7 @@
 import pytest
 
 from worldenergydata.bsee.data.refresh.url_registry import (
+    BOEM_BASE_URL,
     BSEE_BASE_URL,
     DatasetSpec,
     get_all_specs,
@@ -20,6 +21,8 @@ EXPECTED_DIRS = {
     "decomcost",
     "deepqual",
     "dsptsdelimit",
+    "fieldreserves_master",
+    "fieldreserves_tables",
     "fmp",
     "historical_production_yearly",
     "incinv",
@@ -49,16 +52,35 @@ def test_all_specs_cover_all_stub_directories():
     assert actual_dirs == EXPECTED_DIRS
 
 
-def test_total_expected_bins_is_130():
+def test_total_expected_bins_is_134():
     total = sum(len(spec.expected_bins) for spec in get_all_specs())
-    assert total == 130
+    assert total == 134
 
 
-def test_all_urls_use_bsee_base():
+def test_all_urls_use_official_federal_bases():
+    # BSEE for the classic raw-data mirror; BOEM for the FieldReserves
+    # program artifacts (#847). Any other host is a registry defect.
+    allowed = (BSEE_BASE_URL, BOEM_BASE_URL)
     for spec in get_all_specs():
         assert spec.zip_url.startswith(
-            BSEE_BASE_URL
-        ), f"{spec.bin_dir}: url {spec.zip_url!r} does not start with {BSEE_BASE_URL}"
+            allowed
+        ), f"{spec.bin_dir}: url {spec.zip_url!r} not under {allowed}"
+
+
+def test_fieldreserves_specs_registered():
+    tables = get_specs_for_dir("fieldreserves_tables")
+    assert len(tables) == 1
+    assert tables[0].zip_url.startswith(BOEM_BASE_URL)
+    assert "%20" in tables[0].zip_url  # spaces in the upstream filename
+    assert set(tables[0].expected_bins) == {
+        "2023_tables_xlsx_public__2023_table_4_final.bin",
+        "2023_tables_xlsx_public__2023_table_5_final.bin",
+        "2023_tables_xlsx_public__hist_2023.bin",
+    }
+    master = get_specs_for_dir("fieldreserves_master")
+    assert len(master) == 1
+    assert master[0].zip_url.startswith(BOEM_BASE_URL)
+    assert master[0].expected_bins == ["mastdatadelimit.bin"]
 
 
 def test_ogor_a_specs_count():

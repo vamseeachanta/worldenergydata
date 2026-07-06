@@ -64,6 +64,17 @@ class RefreshResult:
 
 # ── Helpers ───────────────────────────────────────────────────────
 
+def _slug(name: str) -> str:
+    """Sanitize a ZIP-member stem or worksheet name into a bin-name token.
+
+    BOEM workbook names carry spaces, commas, and mixed case
+    ("2023 - Table 4 Final"); bins need stable filesystem-safe names.
+    """
+    import re
+
+    return re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")
+
+
 def is_lfs_stub(path: Path) -> bool:
     """Return True if *path* is a Git LFS pointer file."""
     try:
@@ -186,65 +197,47 @@ class BSEERefreshOrchestrator:
             with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
                 data_files = [
                     n for n in zf.namelist()
-                    if n.lower().endswith((".txt", ".csv"))
+                    if n.lower().endswith((".txt", ".csv", ".xlsx"))
                 ]
                 if not data_files:
                     return RefreshResult(
                         bin_dir=spec.bin_dir,
                         status="failed",
-                        error="ZIP contains no .txt/.csv files",
+                        error="ZIP contains no .txt/.csv/.xlsx files",
                         bytes_downloaded=len(zip_bytes),
                         duration_s=time.monotonic() - t0,
                     )
 
                 for filename in data_files:
-                    stem = Path(filename).stem
-                    bin_name = f"{stem}.bin"
-                    target = bin_dir_path / bin_name
-
-                    # Protect real (non-stub) data — only overwrite LFS stubs,
-                    # unless --force, in which case back the file up first.
-                    if target.exists() and not is_lfs_stub(target):
-                        if not self.force:
-                            log.info(
-                                "    skip %s (already real data)", bin_name,
-                            )
-                            continue
-                        bak = backup_bin(target, self.run_tag)
-                        if bak is not None:
-                            log.info(
-                                "    backed up %s -> %s", bin_name, bak.name,
-                            )
-
                     raw = zf.read(filename)
 
-                    # Try utf-8 first, fall back to latin-1
-                    for encoding in ("utf-8", "latin-1"):
-                        try:
-                            text = raw.decode(encoding)
-                            break
-                        except UnicodeDecodeError:
-                            continue
-                    else:
-                        text = raw.decode("utf-8", errors="replace")
+                    for bin_name, df in self._member_frames(filename, raw):
+                        target = bin_dir_path / bin_name
 
-                    # Detect delimiter: comma vs pipe
-                    df = self._read_csv_text(text)
-                    if df is None:
-                        log.warning(
-                            "    could not parse %s — skipping", filename,
+                        # Protect real (non-stub) data — only overwrite LFS
+                        # stubs, unless --force, in which case back the file
+                        # up first.
+                        if target.exists() and not is_lfs_stub(target):
+                            if not self.force:
+                                log.info(
+                                    "    skip %s (already real data)", bin_name,
+                                )
+                                continue
+                            bak = backup_bin(target, self.run_tag)
+                            if bak is not None:
+                                log.info(
+                                    "    backed up %s -> %s", bin_name, bak.name,
+                                )
+
+                        rows_total += len(df)
+
+                        with open(target, "wb") as fh:
+                            pickle.dump(df, fh)
+
+                        bins_written += 1
+                        log.info(
+                            "    wrote %s (%d rows)", bin_name, len(df),
                         )
-                        continue
-
-                    rows_total += len(df)
-
-                    with open(target, "wb") as fh:
-                        pickle.dump(df, fh)
-
-                    bins_written += 1
-                    log.info(
-                        "    wrote %s (%d rows)", bin_name, len(df),
-                    )
 
         except zipfile.BadZipFile as exc:
             return RefreshResult(
@@ -263,6 +256,45 @@ class BSEERefreshOrchestrator:
             bytes_downloaded=len(zip_bytes),
             duration_s=time.monotonic() - t0,
         )
+
+    def _member_frames(self, filename: str, raw: bytes):
+        """Yield ``(bin_name, DataFrame)`` pairs for one ZIP member.
+
+        Delimited members (.txt/.csv) keep their historical behavior: one
+        bin named after the member stem, parsed with header inference.
+        Workbook members (.xlsx — BOEM FieldReserves tables, #847) yield
+        one bin per sheet, named ``<stem-slug>__<sheet-slug>.bin`` and
+        pickled as the raw ``header=None`` grid: the sheets carry
+        multi-row human headers, so downstream parsers own header
+        detection (see scripts/field_development/build_lt_reserves_discovery.py).
+        """
+        import pandas as pd
+
+        stem = Path(filename).stem
+        if filename.lower().endswith(".xlsx"):
+            sheets = pd.read_excel(
+                io.BytesIO(raw), sheet_name=None, header=None,
+            )
+            for sheet_name, df in sheets.items():
+                yield f"{_slug(stem)}__{_slug(sheet_name)}.bin", df
+            return
+
+        # Try utf-8 first, fall back to latin-1
+        for encoding in ("utf-8", "latin-1"):
+            try:
+                text = raw.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            text = raw.decode("utf-8", errors="replace")
+
+        # Detect delimiter: comma vs pipe
+        df = self._read_csv_text(text)
+        if df is None:
+            log.warning("    could not parse %s — skipping", filename)
+            return
+        yield f"{stem}.bin", df
 
     @staticmethod
     def _read_csv_text(text: str) -> "pd.DataFrame | None":

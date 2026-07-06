@@ -81,3 +81,17 @@ scheduler_datasets:
       - mv_perm_platforms.txt
     timeout_s: 600
     approx_size_mb: 0.01  # 8.5 KB zip, live-measured 2026-06-10
+
+  deepqual:
+    # Deepwater Qualified Fields (#847): FIELD_NAME_CODE, nickname,
+    # discovery + first-production dates. Was registry-only (standalone
+    # refresh); now on the weekly cadence so discovery/first-oil dates
+    # stay current as fields qualify.
+    url: https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip
+    url_key: deepqual
+    registry_dir: deepqual
+    output_file: bsee_deepwater_qualified_fields.parquet
+    primary_member_patterns:
+      - mv_deep_water_field_leases.txt
+    timeout_s: 600
+    approx_size_mb: 0.07

@@ -89,3 +89,13 @@ contract is wired structurally, not by string convention:
   Parquet, and lease-area (`lab`) / serial-register datasets in the
   scheduler job — the catalog structure supports adding them as new
   `scheduler_datasets` entries.
+
+## BOEM FieldReserves program (#847)
+
+| Dataset | Upstream | Code home |
+|---|---|---|
+| `fieldreserves_tables` | `https://www.data.boem.gov/FieldReserves/Files/2023%20Tables%20xlsx%20Public.zip` (annual, vintage-pinned — bump per `data/modules/offshore_assets/curated/LT_RESERVES_DISCOVERY.md`) | `url_registry.py` → `scripts/refresh_bsee_all.py` (.xlsx members → one bin per sheet) |
+| `fieldreserves_master` | `https://www.data.boem.gov/FieldReserves/Files/mastdatadelimit.zip` (Field Name Master List: area/block/`FIELD_NAME_CODE`/lease; headerless delimited) | `url_registry.py` → `scripts/refresh_bsee_all.py` |
+| `deepqual` (cadence upgrade) | `https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip` | now also on the weekly scheduler (`config/bsee.yml`), consumed by `FieldNameResolver` + `build_lt_reserves_discovery.py` |
+
+Curated consumer: `data/modules/offshore_assets/curated/lt_reserves_discovery.csv` (+ discrepancies CSV). Future family sources: #855.

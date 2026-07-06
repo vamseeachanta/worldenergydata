@@ -31,6 +31,21 @@ modules:
         source_url: https://www.data.bsee.gov/Company/Files/INCSRawData.zip
       IncidentStatisticsRawData:
         source_url: https://www.data.bsee.gov/Other/Files/IncidentStatisticsRawData.zip
+      DeepQualRawData:
+        source_url: https://www.data.bsee.gov/Other/Files/DeepQualRawData.zip
+        update_frequency: weekly
+
+  boem:
+    source_base_url: https://www.data.boem.gov
+    license: "US Government Public Domain"
+    default_update_frequency: annual
+    datasets:
+      FieldReservesTables:
+        # Annual reserves report tables (Table 4/5 + HIST); vintage-pinned
+        # URL, bump yearly per curated/LT_RESERVES_DISCOVERY.md (#847)
+        source_url: "https://www.data.boem.gov/FieldReserves/Files/2023%20Tables%20xlsx%20Public.zip"
+      FieldReservesMaster:
+        source_url: https://www.data.boem.gov/FieldReserves/Files/mastdatadelimit.zip
 
   hse:
     license: "US Government Public Domain"

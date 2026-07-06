@@ -69,6 +69,11 @@ BSEE_DATASETS = {
         "output_file": "bsee_deepwater_structures.parquet",
         "primary_member_patterns": ["mv_perm_platforms.txt"],
     },
+    "deepqual": {
+        "url_key": "deepqual",
+        "output_file": "bsee_deepwater_qualified_fields.parquet",
+        "primary_member_patterns": ["mv_deep_water_field_leases.txt"],
+    },
 }
 
 
