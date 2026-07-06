@@ -1,14 +1,12 @@
 {
-  "registry_version": "2026-07-06-boe-partial",
+  "registry_version": "2026-07-06-boe-partial-2",
   "registry_date": "2026-07-06",
   "coverage_status": "missing",
-  "coverage_note": "Casablanca and Tarraco have accepted BOE regulator-record API values. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, and Tarraco have accepted BOE regulator-record API values. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
-    "Amposta",
     "Ayoluengo",
     "Boquer\u00f3n",
-    "Dorada",
     "Gaviota",
     "Montanazo-Lubina",
     "Rodaballo",
@@ -16,6 +14,25 @@
     "Viura (1)"
   ],
   "factors": [
+    {
+      "field_name": "Amposta",
+      "aliases": [
+        "amposta",
+        "san carlos i",
+        "san carlos ii"
+      ],
+      "api_gravity_deg": 17.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 6.600967486990584,
+      "measurement_basis": "BOE national crude price order for crude from the San Carlos I and II (Amposta) exploitation concessions, delivered at the destination port",
+      "source_title": "BOE N\u00fam. 122, Orden de 12 de mayo de 1976: San Carlos I and II (Amposta) crude sales price",
+      "source_url": "https://www.boe.es/boe/dias/1976/05/21/pdfs/A09838-09839.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the San Carlos I and II (Amposta) exploitation concessions and states 17\u00b0 API with 5.5% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
     {
       "field_name": "Casablanca",
       "aliases": [
@@ -30,6 +47,23 @@
       "source_url": "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf",
       "source_class": "regulator_record",
       "evidence_note": "The BOE order fixes the sales price for crude from the Casablanca exploitation and states 33\u00b0 API with 0.2% sulfur at the wellhead.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Dorada",
+      "aliases": [
+        "dorada"
+      ],
+      "api_gravity_deg": 21.3,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 6.792106612876507,
+      "measurement_basis": "BOE national crude price order for crude from the Dorada exploitation concession, stated at field shipment position",
+      "source_title": "BOE N\u00fam. 151, Orden de 16 de junio de 1978: Dorada crude sales price",
+      "source_url": "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE order fixes the sales price for crude from the Dorada exploitation concession and states 21.3\u00b0 API with 0.59% sulfur.",
       "confidence": "high",
       "accepted_for_conversion": true
     },
