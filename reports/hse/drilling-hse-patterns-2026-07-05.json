@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-07-06T02:39:24.138518Z",
+  "issue": "https://github.com/vamseeachanta/worldenergydata/issues/426",
+  "methodology": "Re-application of #416 Phase 1A: shared IncidentClassifier over BSEE INCINV records, cut to activity==DRILL.",
+  "source_file": "/mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt",
+  "incinv_total_records": 1987,
+  "drill_filter": "IncidentClassifier(source='bsee').activity == 'DRILL' (Blowout direct-map + drilling-keyword match on ACCIDENT_TYPE)",
+  "activity_distribution_all_incinv": {
+    "PERS": 616,
+    "PSAFE": 529,
+    "ENV": 379,
+    "CRANE": 191,
+    "OTHER": 85,
+    "DRILL": 85,
+    "MARINE": 70,
+    "CONST": 21,
+    "ELEC": 4,
+    "PROD": 4,
+    "PIPE": 3
+  },
+  "drill_total": 85,
+  "drill_pct_of_incinv": 4.28,
+  "drill_subactivity_distribution": {
+    "well_control": 68,
+    "drilling_operations": 6,
+    "unknown": 6,
+    "casing_cementing": 4,
+    "logging": 1
+  },
+  "drill_match_method": {
+    "bsee_accident_type": 58,
+    "keyword_match": 27
+  },
+  "drill_confidence_buckets": {
+    "direct_code(>=0.90)": 58,
+    "keyword_low(<0.50)": 14,
+    "keyword_medium(0.50-0.69)": 12,
+    "keyword_high(0.70-0.89)": 1
+  },
+  "drill_accident_type_top": {
+    "- Blowout": 25,
+    "- Blowout - Pollution": 6,
+    "- Blowout - Fire": 5,
+    "- Top Drive Unplanned Descent": 2,
+    "- Well Control Event, shut-in": 1,
+    "- Blowout - Well Control on Prince TLP": 1,
+    "- Loss well control/H2S release": 1,
+    "- Blowout - Fire - KICK WITH GAS": 1,
+    "- Wireline Tool Overboard": 1,
+    "- drill line unspooled": 1,
+    "- Required Muster - Rig listed": 1,
+    "- Blowout - Injury - Fatality": 1,
+    "- Blowout - Required Evacuation - Pollution - Loss of Well Control": 1,
+    "- Blowout - Fatality - Pollution": 1,
+    "- Blowout - Pollution -   (WELL B-7)": 1,
+    "- Blowout - Injury": 1,
+    "- Well control": 1,
+    "- Extended Kick Control": 1,
+    "- Well Collapse": 1,
+    "- Blowout - Diverter on 26-inch hole": 1
+  },
+  "drill_accident_type_distinct": 51,
+  "drill_severity_proxy": {
+    "major": 56,
+    "other": 25,
+    "fatality": 2,
+    "evacuation_muster": 1,
+    "serious": 1
+  },
+  "drill_by_year": {
+    "1996": 4,
+    "1997": 6,
+    "1998": 7,
+    "1999": 6,
+    "2000": 8,
+    "2001": 9,
+    "2002": 9,
+    "2003": 5,
+    "2004": 6,
+    "2005": 6,
+    "2006": 4,
+    "2008": 2,
+    "2009": 2,
+    "2011": 1,
+    "2012": 2,
+    "2013": 1,
+    "2014": 2,
+    "2016": 1,
+    "2017": 3,
+    "2021": 1
+  },
+  "drill_year_range": [
+    1996,
+    2021
+  ],
+  "drill_top_areas": {
+    "ST": 13,
+    "EI": 12,
+    "MC": 8,
+    "SS": 8,
+    "MP": 6,
+    "GC": 6,
+    "SM": 5,
+    "HI": 4,
+    "EC": 4,
+    "WC": 3
+  },
+  "drill_distinct_leases": 80
+}

@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "issue": 427,
+    "parent": 423,
+    "siblings": [
+      403,
+      416
+    ],
+    "title": "Seasonal intervention risk windows \u2014 hurricane season x WAR x operations",
+    "generated_at": "2026-07-06T02:37:46Z",
+    "date": "2026-07-05",
+    "descriptive_only": true,
+    "statistical_significance_claimed": false
+  },
+  "data_sources": {
+    "well_activity_summary": {
+      "path": "data/modules/bsee/current/operations/well_activity_summary.csv",
+      "rows": 100,
+      "parseable_dates": 100
+    },
+    "war_detail_608124003301": {
+      "path": "docs/modules/bsee/analysis/rig_days/war_data_608124003301.csv",
+      "rows": 32,
+      "parseable_dates": 32
+    },
+    "war_detail_608124009500": {
+      "path": "docs/modules/bsee/analysis/rig_days/war_data_608124009500.csv",
+      "rows": 45,
+      "parseable_dates": 45
+    }
+  },
+  "data_scope_note": "WAR-derived activity-period START dates from local BSEE sample CSVs. HSE-incident-by-season omitted: hse_incidents.db is a 0-byte stub and no raw BSEE INCINV (mv_acc_investigations.txt) is present locally. Small N => descriptive only, no significance test.",
+  "assumptions": {
+    "atlantic_hurricane_season": {
+      "season_months": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "peak_months": [
+        8,
+        9,
+        10
+      ],
+      "season_label": "Jun 1 - Nov 30",
+      "peak_label": "Aug - Oct",
+      "source": "NOAA National Hurricane Center \u2014 official Atlantic hurricane season (Jun 1-Nov 30) and climatological peak (mid-Aug to mid-Oct). Public knowledge.",
+      "note": "GoM operations face elevated storm-evacuation, deferral, and weather-window risk in these months; this is the ONLY non-data input and is used purely to overlay the measured monthly cut."
+    },
+    "data_as_of": "2026-07-05"
+  },
+  "data": {
+    "total_records": 177,
+    "years_present": [
+      2014,
+      2015,
+      2016,
+      2023,
+      2024
+    ],
+    "by_year": {
+      "2014": 24,
+      "2015": 45,
+      "2016": 8,
+      "2023": 19,
+      "2024": 81
+    },
+    "by_month": {
+      "1": 21,
+      "2": 13,
+      "3": 26,
+      "4": 10,
+      "5": 13,
+      "6": 23,
+      "7": 10,
+      "8": 6,
+      "9": 10,
+      "10": 9,
+      "11": 13,
+      "12": 23
+    },
+    "months": [
+      {
+        "month": 1,
+        "label": "Jan",
+        "count": 21,
+        "share": 0.11864406779661017,
+        "in_hurricane_season": false,
+        "is_peak": false
+      },
+      {
+        "month": 2,
+        "label": "Feb",
+        "count": 13,
+        "share": 0.07344632768361582,
+        "in_hurricane_season": false,
+        "is_peak": false
+      },
+      {
+        "month": 3,
+        "label": "Mar",
+        "count": 26,
+        "share": 0.14689265536723164,
+        "in_hurricane_season": false,
+        "is_peak": false
+      },
+      {
+        "month": 4,
+        "label": "Apr",
+        "count": 10,
+        "share": 0.05649717514124294,
+        "in_hurricane_season": false,
+        "is_peak": false
+      },
+      {
+        "month": 5,
+        "label": "May",
+        "count": 13,
+        "share": 0.07344632768361582,
+        "in_hurricane_season": false,
+        "is_peak": false
+      },
+      {
+        "month": 6,
+        "label": "Jun",
+        "count": 23,
+        "share": 0.12994350282485875,
+        "in_hurricane_season": true,
+        "is_peak": false
+      },
+      {
+        "month": 7,
+        "label": "Jul",
+        "count": 10,
+        "share": 0.05649717514124294,
+        "in_hurricane_season": true,
+        "is_peak": false
+      },
+      {
+        "month": 8,
+        "label": "Aug",
+        "count": 6,
+        "share": 0.03389830508474576,
+        "in_hurricane_season": true,
+        "is_peak": true
+      },
+      {
+        "month": 9,
+        "label": "Sep",
+        "count": 10,
+        "share": 0.05649717514124294,
+        "in_hurricane_season": true,
+        "is_peak": true
+      },
+      {
+        "month": 10,
+        "label": "Oct",
+        "count": 9,
+        "share": 0.05084745762711865,
+        "in_hurricane_season": true,
+        "is_peak": true
+      },
+      {
+        "month": 11,
+        "label": "Nov",
+        "count": 13,
+        "share": 0.07344632768361582,
+        "in_hurricane_season": true,
+        "is_peak": false
+      },
+      {
+        "month": 12,
+        "label": "Dec",
+        "count": 23,
+        "share": 0.12994350282485875,
+        "in_hurricane_season": false,
+        "is_peak": false
+      }
+    ],
+    "by_season": {
+      "Winter": 57,
+      "Spring": 49,
+      "Summer": 39,
+      "Fall": 32
+    },
+    "by_activity": {
+      "COM": 54,
+      "DRL": 50,
+      "PA": 21,
+      "TA": 18,
+      "PND": 12,
+      "CHZ": 11,
+      "WO": 6,
+      "REC": 3,
+      "(blank)": 1,
+      "ST": 1
+    },
+    "activity_meaning": {
+      "DRL": "Drilling",
+      "COM": "Completion",
+      "PA": "Plug & abandon (P&A)",
+      "TA": "Temporary abandonment",
+      "PND": "Pending / sidetrack-bypass",
+      "WO": "Workover",
+      "RC": "Recompletion",
+      "ST": "Sidetrack",
+      "BP": "Bypass"
+    },
+    "activity_season_split": {
+      "PA": {
+        "in_season": 11,
+        "off_season": 10,
+        "total": 21
+      },
+      "CHZ": {
+        "in_season": 8,
+        "off_season": 3,
+        "total": 11
+      },
+      "DRL": {
+        "in_season": 28,
+        "off_season": 22,
+        "total": 50
+      },
+      "COM": {
+        "in_season": 21,
+        "off_season": 33,
+        "total": 54
+      },
+      "TA": {
+        "in_season": 2,
+        "off_season": 16,
+        "total": 18
+      },
+      "WO": {
+        "in_season": 0,
+        "off_season": 6,
+        "total": 6
+      },
+      "(blank)": {
+        "in_season": 0,
+        "off_season": 1,
+        "total": 1
+      },
+      "ST": {
+        "in_season": 0,
+        "off_season": 1,
+        "total": 1
+      },
+      "REC": {
+        "in_season": 1,
+        "off_season": 2,
+        "total": 3
+      },
+      "PND": {
+        "in_season": 0,
+        "off_season": 12,
+        "total": 12
+      }
+    }
+  },
+  "overlay": {
+    "hurricane_season_months": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "hurricane_peak_months": [
+      8,
+      9,
+      10
+    ],
+    "records_in_hurricane_season": 71,
+    "records_in_peak": 25,
+    "records_off_season": 106,
+    "share_in_hurricane_season": 0.4011299435028249,
+    "share_in_peak": 0.14124293785310735,
+    "share_off_season": 0.5988700564971752,
+    "lower_risk_windows_ranked": [
+      {
+        "month": "Mar",
+        "count": 26
+      },
+      {
+        "month": "Dec",
+        "count": 23
+      },
+      {
+        "month": "Jan",
+        "count": 21
+      },
+      {
+        "month": "Feb",
+        "count": 13
+      },
+      {
+        "month": "May",
+        "count": 13
+      },
+      {
+        "month": "Apr",
+        "count": 10
+      }
+    ]
+  }
+}
