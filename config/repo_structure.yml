@@ -411,10 +411,14 @@ temporary_exceptions:
       - reports/field_development/all_regions_coverage.csv
       - reports/field_development/region_devtype_comparison.html
       - reports/field_development/region_devtype_matrix.csv
+      - reports/field_development/spain_cores.html
+      - reports/field_development/spain_cores.json
       - reports/lower_tertiary/drilling_insights.html
       - reports/lower_tertiary/lt_drilling_insights.csv
       - reports/field-atlas/_roster.json
       - reports/field-atlas/index.html
+      - reports/pressure-atlas/_pressure.json
+      - reports/pressure-atlas/index.html
       - reports/gtm/2026-06-17-julia-field-economics-by-well-block-field.html
       - reports/gtm/2026-06-17-lower-tertiary-field-deepdive.html
       - reports/gtm/2026-06-17-lower-tertiary-portfolio-economics.html

@@ -24,6 +24,8 @@ classifiers = [
 
 dependencies = [
     "worldenergydata-core",
+    "worldenergydata-fdas",
+    "worldenergydata-production",
     "pandas>=2.3.3,<3.0",
     "openpyxl>=3.1.0,<4.0",
 ]
