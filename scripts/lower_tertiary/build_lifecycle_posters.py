@@ -383,9 +383,18 @@ def main():
         if (args.self_test or not FACTS.exists())
         else json.loads(FACTS.read_text())
     )
+    # Phase-norm chips (issue #848): attach per-field vs-norm strip data when
+    # the norms contract exists (build_phase_norms.py writes it). Posters stay
+    # buildable without it — the template hides the strip when norms is empty.
+    norms_chips = {}
+    norms_path = HERE / "_norms.json"
+    if norms_path.exists():
+        norms_chips = json.loads(norms_path.read_text()).get("chips", {})
+
     fields = []
     for f in facts:
         field = facts_to_field(f)
+        field["norms"] = norms_chips.get(f["id"], [])
         out = HERE / f"{f['id']}_lifecycle.html"
         out.write_text(render(field))
         fields.append(field)

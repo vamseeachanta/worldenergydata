@@ -344,6 +344,16 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             assets_dst.mkdir(parents=True, exist_ok=True)
             for html in sorted(assets_src.glob("*_assets.html")):
                 shutil.copy2(html, assets_dst / html.name)
+        # Phase-norm stage pages + machine contract (issue #848) nest under norms/.
+        norms_src = lifecycle_src / "norms"
+        if norms_src.exists():
+            norms_dst = lifecycle_dst / "norms"
+            norms_dst.mkdir(parents=True, exist_ok=True)
+            for html in sorted(norms_src.glob("*.html")):
+                shutil.copy2(html, norms_dst / html.name)
+        if (lifecycle_src / "_norms.json").exists():
+            # stage pages cite ../_norms.json as their provenance link
+            shutil.copy2(lifecycle_src / "_norms.json", lifecycle_dst / "_norms.json")
 
     # --- Drilling learning-curve front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
