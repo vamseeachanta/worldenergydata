@@ -139,12 +139,13 @@ def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
 
 
 def _fake_workbook_responses(oil_bytes, gas_bytes):
-    return {
-        STATISTICS_PAGE_URL: CoresHttpResponse(
-            content=f"""
+    statistics_page = f"""
             <a href="{DEFAULT_WORKBOOKS["oil"].source_url}">oil</a>
             <a href="{DEFAULT_WORKBOOKS["gas"].source_url}">gas</a>
-            """.encode("utf-8"),
+            """
+    return {
+        STATISTICS_PAGE_URL: CoresHttpResponse(
+            content=statistics_page.encode("utf-8"),
             headers={"Content-Type": "text/html"},
         ),
         DEFAULT_WORKBOOKS["oil"].source_url: _fake_xlsx_response(
