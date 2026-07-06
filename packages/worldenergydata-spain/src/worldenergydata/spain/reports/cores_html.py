@@ -8,35 +8,69 @@ from typing import Any
 
 
 def render_spain_cores_html(summary: dict[str, Any]) -> str:
-    payload = _json_payload(summary)
-    fields = summary["fields"]
-    source = summary["source"]
-    economics = summary["economics"]
-    manifest = summary["scheduler_manifest"]
+    return _document_html(summary, _json_payload(summary))
+
+
+def _document_html(summary: dict[str, Any], payload: str) -> str:
     return f"""<!doctype html>
 <html lang="en">
-<head>
+{_head_html()}
+{_body_html(summary, payload)}
+</html>
+"""
+
+
+def _head_html() -> str:
+    return f"""<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spain CORES Field Development</title>
 <style>{_STYLE}</style>
-</head>
-<body>
-<header>
+</head>"""
+
+
+def _body_html(summary: dict[str, Any], payload: str) -> str:
+    return f"""<body>
+{_header_html()}
+<main>
+  {_metrics_html(summary)}
+  {_source_provenance_html(summary)}
+  {_density_provenance_html(summary)}
+  {_caveats_html(summary)}
+  {_production_layout_html()}
+  {_economics_html()}
+</main>
+<script type="application/json" id="cores-data">{payload}</script>
+<script>{_SCRIPT}</script>
+</body>"""
+
+
+def _header_html() -> str:
+    return """<header>
   <a class="home" href="../index.html">worldenergydata</a>
   <div>
     <h1>Spain CORES Field Development</h1>
     <p>Normalized CORES production, scheduler provenance, and reference-chain field-development screening.</p>
   </div>
-</header>
-<main>
-  <section class="metrics">
+</header>"""
+
+
+def _metrics_html(summary: dict[str, Any]) -> str:
+    fields = summary["fields"]
+    source = summary["source"]
+    economics = summary["economics"]
+    return f"""<section class="metrics">
     <div><strong>{fields["field_count"]}</strong><span>fields</span></div>
     <div><strong>{source["record_count"]:,}</strong><span>normalized rows</span></div>
     <div><strong>{len(economics["evaluated_fields"])}</strong><span>economics runs</span></div>
     <div><strong>{html.escape(source["format"])}</strong><span>format</span></div>
-  </section>
-  <section class="panel provenance">
+  </section>"""
+
+
+def _source_provenance_html(summary: dict[str, Any]) -> str:
+    source = summary["source"]
+    manifest = summary["scheduler_manifest"]
+    return f"""<section class="panel provenance">
     <h2>Source Provenance</h2>
     <p><strong>Source URL:</strong> {html.escape(source["source_url"])}</p>
     <p><strong>Refresh timestamp:</strong> {html.escape(source["last_refresh"])}</p>
@@ -44,12 +78,18 @@ def render_spain_cores_html(summary: dict[str, Any]) -> str:
     <p><strong>Scheduler job:</strong> {html.escape(str(manifest["job_name"]))}</p>
     <p><strong>Scheduler records:</strong> {html.escape(str(manifest["records_updated"]))}</p>
     {_workbook_table(summary)}
-  </section>
-  <section class="panel warning">
+  </section>"""
+
+
+def _caveats_html(summary: dict[str, Any]) -> str:
+    return f"""<section class="panel warning">
     <h2>Caveats</h2>
     {_limitations_html(summary)}
-  </section>
-  <section class="layout">
+  </section>"""
+
+
+def _production_layout_html() -> str:
+    return """<section class="layout">
     <aside class="panel">
       <h2>Fields</h2>
       <label for="field-select">Field</label>
@@ -64,17 +104,14 @@ def render_spain_cores_html(summary: dict[str, Any]) -> str:
         <span><i class="gas"></i> gas mcf</span>
       </div>
     </section>
-  </section>
-  <section class="panel">
+  </section>"""
+
+
+def _economics_html() -> str:
+    return """<section class="panel">
     <h2>Economics And Limits</h2>
     <div id="economics"></div>
-  </section>
-</main>
-<script type="application/json" id="cores-data">{payload}</script>
-<script>{_SCRIPT}</script>
-</body>
-</html>
-"""
+  </section>"""
 
 
 def _json_payload(summary: dict[str, Any]) -> str:
@@ -104,6 +141,71 @@ def _workbook_table(summary: dict[str, Any]) -> str:
         "<th>product</th><th>status_code</th><th>byte_count</th>"
         "<th>last_modified</th><th>sha256</th><th>source_url</th>"
         "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
+    )
+
+
+def _density_provenance_html(summary: dict[str, Any]) -> str:
+    audit = summary.get("oil_conversion_audit")
+    if not isinstance(audit, dict):
+        return ""
+    return (
+        '<section class="panel provenance">'
+        "<h2>Density Provenance</h2>"
+        f"<p><strong>Coverage status:</strong> "
+        f"{html.escape(str(audit['coverage_status']))}</p>"
+        f"<p><strong>Registry version:</strong> "
+        f"{html.escape(str(audit.get('registry_version', 'unknown')))}</p>"
+        f"<p><strong>Registry date:</strong> "
+        f"{html.escape(str(audit.get('registry_date', 'unknown')))}</p>"
+        f"{_density_field_summary(audit)}"
+        f"{_density_factor_table(audit)}"
+        "</section>"
+    )
+
+
+def _density_field_summary(audit: dict[str, Any]) -> str:
+    items = []
+    for label, key in (
+        ("Accepted fields", "used_fields"),
+        ("Defaulted fields", "defaulted_fields"),
+        ("Missing fields", "missing_fields"),
+    ):
+        values = ", ".join(str(value) for value in audit.get(key, [])) or "None"
+        items.append(f"<p><strong>{label}:</strong> {html.escape(values)}</p>")
+    return "".join(items)
+
+
+def _density_factor_table(audit: dict[str, Any]) -> str:
+    rows = [_density_factor_row(factor) for factor in audit.get("factors", [])]
+    if not rows:
+        rows.append(
+            '<tr><td colspan="7">No accepted field density factors are recorded.</td></tr>'
+        )
+    return (
+        "<div class='table-wrap'><table><thead><tr>"
+        "<th>field</th><th>bbl_per_tonne</th><th>source_title</th>"
+        "<th>source_url</th><th>source_class</th><th>confidence</th>"
+        "<th>accepted</th></tr></thead><tbody>"
+        + "".join(rows)
+        + "</tbody></table></div>"
+    )
+
+
+def _density_factor_row(factor: dict[str, Any]) -> str:
+    source_url = str(factor.get("source_url", ""))
+    source_link = (
+        f'<a href="{html.escape(source_url, quote=True)}">{html.escape(source_url)}</a>'
+    )
+    return (
+        "<tr>"
+        f"<td>{html.escape(str(factor.get('field_name', '')))}</td>"
+        f"<td>{html.escape(str(factor.get('bbl_per_tonne', '')))}</td>"
+        f"<td>{html.escape(str(factor.get('source_title', '')))}</td>"
+        f"<td>{source_link}</td>"
+        f"<td>{html.escape(str(factor.get('source_class', '')))}</td>"
+        f"<td>{html.escape(str(factor.get('confidence', '')))}</td>"
+        f"<td>{html.escape(str(factor.get('accepted_for_conversion', '')))}</td>"
+        "</tr>"
     )
 
 

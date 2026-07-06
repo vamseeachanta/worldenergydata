@@ -11,6 +11,40 @@ from worldenergydata.spain.production.cores_loader import (
     CoresProductionLoader,
     parse_cores_frame,
 )
+from worldenergydata.spain.production.cores_density import (
+    CoresCrudeDensityFactor,
+    CoresOilConversionAudit,
+    build_oil_conversion_audit,
+)
+
+
+def _density_factor(field_name="Ayoluengo", aliases=("ayoluengo",), factor=6.95):
+    return CoresCrudeDensityFactor(
+        field_name=field_name,
+        aliases=aliases,
+        api_gravity_deg=None,
+        api_gravity_min_deg=None,
+        api_gravity_max_deg=None,
+        bbl_per_tonne=factor,
+        measurement_basis="representative produced stream",
+        source_title="Example operator assay",
+        source_url="https://example.test/spain-crude-assay",
+        source_class="operator_record",
+        evidence_note="Accepted field-specific conversion factor.",
+        confidence="high",
+        accepted_for_conversion=True,
+    )
+
+
+def _single_field_audit(factor=None):
+    factor = factor or _density_factor()
+    return CoresOilConversionAudit(
+        used_factors=(factor,),
+        defaulted_fields=(),
+        missing_fields=(),
+        _accepted_entries=(("ayoluengo", factor),),
+        _defaulted_field_keys=(),
+    )
 
 
 def test_parse_oil_frame_drops_total_rows_and_converts_tonnes_to_bbl():
@@ -91,6 +125,108 @@ def test_parse_gas_frame_accepts_spanish_months_and_converts_gwh_to_mcf():
     )
 
 
+def test_parse_oil_frame_uses_conversion_audit_factor():
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Ayoluengo": 10.0,
+                "Grand total": 10.0,
+            }
+        ]
+    )
+
+    out = parse_cores_frame(
+        raw,
+        product="oil",
+        oil_conversion_audit=_single_field_audit(),
+    )
+
+    assert out.to_dict("records") == [
+        {
+            "field_name": "Ayoluengo",
+            "year": 2024,
+            "month": 1,
+            "oil_bbl": pytest.approx(10.0 * 6.95),
+        }
+    ]
+
+
+def test_parse_oil_frame_requires_explicit_default_opt_in():
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Ayoluengo": 10.0,
+                "Casablanca": 2.0,
+                "Grand total": 12.0,
+            }
+        ]
+    )
+
+    with pytest.raises(CoresParseError, match="Casablanca"):
+        parse_cores_frame(
+            raw,
+            product="oil",
+            oil_conversion_audit=_single_field_audit(),
+        )
+
+
+def test_parse_oil_frame_allows_legacy_default_when_explicit():
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Ayoluengo": 10.0,
+                "Casablanca": 2.0,
+                "Grand total": 12.0,
+            }
+        ]
+    )
+    audit = build_oil_conversion_audit(
+        ["Ayoluengo", "Casablanca"],
+        {"ayoluengo": _density_factor()},
+        allow_default_density=True,
+    )
+
+    out = parse_cores_frame(raw, product="oil", oil_conversion_audit=audit)
+
+    values = {row["field_name"]: row["oil_bbl"] for row in out.to_dict("records")}
+    assert values["Ayoluengo"] == pytest.approx(10.0 * 6.95)
+    assert values["Casablanca"] == pytest.approx(2.0 * TONNES_TO_BBL)
+
+
+def test_parse_gas_frame_ignores_oil_conversion_audit():
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2024,
+                "Month": "January",
+                "Gaviota": 3.0,
+                "Grand total": 3.0,
+            }
+        ]
+    )
+
+    out = parse_cores_frame(
+        raw,
+        product="gas",
+        oil_conversion_audit=_single_field_audit(),
+    )
+
+    assert out.to_dict("records") == [
+        {
+            "field_name": "Gaviota",
+            "year": 2024,
+            "month": 1,
+            "gas_mcf": pytest.approx(3.0 * GWH_TO_MCF),
+        }
+    ]
+
+
 def test_loader_reads_xlsx_with_cores_header_row(tmp_path):
     path = tmp_path / "cores_oil.xlsx"
     raw = pd.DataFrame(
@@ -113,6 +249,37 @@ def test_loader_reads_xlsx_with_cores_header_row(tmp_path):
             "year": 2026,
             "month": 6,
             "oil_bbl": pytest.approx(2.0 * TONNES_TO_BBL),
+        }
+    ]
+
+
+def test_loader_passes_conversion_audit_to_parser(tmp_path):
+    path = tmp_path / "cores_oil.xlsx"
+    raw = pd.DataFrame(
+        [
+            {
+                "Year": 2026,
+                "Month": "June",
+                "Ayoluengo": 2.0,
+                "Grand total": 2.0,
+            }
+        ]
+    )
+    raw.to_excel(path, index=False, startrow=5)
+
+    out = CoresProductionLoader(
+        product="oil",
+        path=path,
+        header_row=5,
+        oil_conversion_audit=_single_field_audit(),
+    ).load()
+
+    assert out.to_dict("records") == [
+        {
+            "field_name": "Ayoluengo",
+            "year": 2026,
+            "month": 6,
+            "oil_bbl": pytest.approx(2.0 * 6.95),
         }
     ]
 

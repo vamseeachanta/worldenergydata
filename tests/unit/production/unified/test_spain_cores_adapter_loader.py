@@ -1,5 +1,7 @@
 """Spain CORES adapter fixture-backed contract tests (#763b)."""
 
+import json
+
 import pandas as pd
 import pytest
 
@@ -200,7 +202,12 @@ def test_adapter_accepts_live_cores_loader(tmp_path):
         ),
     )
 
-    adapter = SpainCoresAdapter(loader=CoresLiveProductionLoader(cache_root=tmp_path))
+    adapter = SpainCoresAdapter(
+        loader=CoresLiveProductionLoader(
+            cache_root=tmp_path,
+            allow_default_density=True,
+        )
+    )
     out = adapter.fetch(
         ProductionQuery(regions=["spain"], fields=["Ayoluengo"], start="2026-06")
     )
@@ -208,6 +215,52 @@ def test_adapter_accepts_live_cores_loader(tmp_path):
     assert list(out.columns) == list(STANDARD_COLUMNS)
     assert len(out) == 1
     assert out.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
+    assert out.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
+    assert out.iloc[0]["source"] == "cores"
+
+
+def test_adapter_accepts_live_loader_with_density_audit_conversion(tmp_path):
+    raw_dir = tmp_path / "raw"
+    raw_dir.mkdir()
+    _write_cores_xlsx(
+        raw_dir / DEFAULT_WORKBOOKS["oil"].filename,
+        pd.DataFrame(
+            [
+                {
+                    "Year": 2026,
+                    "Month": "June",
+                    "Ayoluengo": 2.0,
+                    "Grand total": 2.0,
+                }
+            ]
+        ),
+    )
+    _write_cores_xlsx(
+        raw_dir / DEFAULT_WORKBOOKS["gas"].filename,
+        pd.DataFrame(
+            [
+                {
+                    "Year": 2026,
+                    "Month": "June",
+                    "Ayoluengo": 3.0,
+                    "Grand total": 3.0,
+                }
+            ]
+        ),
+    )
+    registry_path = _write_density_registry(tmp_path)
+    loader = CoresLiveProductionLoader(
+        cache_root=tmp_path,
+        oil_density_registry_path=registry_path,
+    )
+
+    adapter = SpainCoresAdapter(loader=loader)
+    out = adapter.fetch(
+        ProductionQuery(regions=["spain"], fields=["Ayoluengo"], start="2026-06")
+    )
+
+    assert len(out) == 1
+    assert out.iloc[0]["oil_bbl"] == pytest.approx(2.0 * 6.95)
     assert out.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
     assert out.iloc[0]["source"] == "cores"
 
@@ -220,3 +273,34 @@ def _write_cores_xlsx(path, frame):
             index=False,
         )
         frame.to_excel(writer, sheet_name="Production", index=False, startrow=5)
+
+
+def _write_density_registry(tmp_path):
+    path = tmp_path / "density.json"
+    path.write_text(
+        json.dumps(
+            {
+                "registry_version": "test-2026-07-06",
+                "registry_date": "2026-07-06",
+                "factors": [
+                    {
+                        "field_name": "Ayoluengo",
+                        "aliases": ["ayoluengo"],
+                        "api_gravity_deg": None,
+                        "api_gravity_min_deg": None,
+                        "api_gravity_max_deg": None,
+                        "bbl_per_tonne": 6.95,
+                        "measurement_basis": "representative produced stream",
+                        "source_title": "Example operator assay",
+                        "source_url": "https://example.test/ayoluengo",
+                        "source_class": "operator_record",
+                        "evidence_note": "Accepted field-specific conversion factor.",
+                        "confidence": "high",
+                        "accepted_for_conversion": True,
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    return path

@@ -10,15 +10,11 @@ from worldenergydata.spain.production.cores_live import (
     DEFAULT_WORKBOOKS,
     STATISTICS_PAGE_URL,
     CoresHttpResponse,
-    CoresLiveProductionLoader,
     CoresSourceError,
     CoresWorkbookSource,
     refresh_ayoluengo_fixture,
 )
-from worldenergydata.spain.production.cores_loader import (
-    GWH_TO_MCF,
-    TONNES_TO_BBL,
-)
+from worldenergydata.spain.production.cores_loader import TONNES_TO_BBL
 
 
 def test_discover_resolves_official_workbook_links_from_statistics_page_html(tmp_path):
@@ -58,35 +54,7 @@ def test_discover_fails_closed_when_a_workbook_link_is_missing(tmp_path):
 def test_download_all_writes_raw_files_atomically_and_records_metadata(tmp_path):
     oil_bytes = b"oil workbook bytes"
     gas_bytes = b"gas workbook bytes"
-    responses = {
-        STATISTICS_PAGE_URL: CoresHttpResponse(
-            content=f"""
-            <a href="{DEFAULT_WORKBOOKS["oil"].source_url}">oil</a>
-            <a href="{DEFAULT_WORKBOOKS["gas"].source_url}">gas</a>
-            """.encode(
-                "utf-8"
-            ),
-            headers={"Content-Type": "text/html"},
-        ),
-        DEFAULT_WORKBOOKS["oil"].source_url: CoresHttpResponse(
-            content=oil_bytes,
-            headers={
-                "Content-Type": (
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                ),
-                "Last-Modified": "Fri, 12 Jun 2026 07:51:41 GMT",
-            },
-        ),
-        DEFAULT_WORKBOOKS["gas"].source_url: CoresHttpResponse(
-            content=gas_bytes,
-            headers={
-                "Content-Type": (
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                ),
-                "Last-Modified": "Fri, 12 Jun 2026 07:52:01 GMT",
-            },
-        ),
-    }
+    responses = _fake_workbook_responses(oil_bytes, gas_bytes)
 
     def fake_http_get(url, *, method="GET"):
         assert method == "GET"
@@ -116,51 +84,6 @@ def test_download_all_writes_raw_files_atomically_and_records_metadata(tmp_path)
     assert (
         metadata["workbooks"]["oil"]["last_modified"] == "Fri, 12 Jun 2026 07:51:41 GMT"
     )
-
-
-def test_live_loader_parses_production_sheets_and_writes_normalized_outputs(tmp_path):
-    raw_dir = tmp_path / "raw"
-    raw_dir.mkdir()
-    _write_cores_xlsx(
-        raw_dir / DEFAULT_WORKBOOKS["oil"].filename,
-        pd.DataFrame(
-            [
-                {
-                    "Year": 2026,
-                    "Month": "June",
-                    "Ayoluengo": 2.0,
-                    "Grand total": 2.0,
-                }
-            ]
-        ),
-    )
-    _write_cores_xlsx(
-        raw_dir / DEFAULT_WORKBOOKS["gas"].filename,
-        pd.DataFrame(
-            [
-                {
-                    "Year": 2026,
-                    "Month": "June",
-                    "Ayoluengo": 3.0,
-                    "Grand total": 3.0,
-                }
-            ]
-        ),
-    )
-
-    loader = CoresLiveProductionLoader(cache_root=tmp_path)
-
-    oil = loader.load_oil_production()
-    gas = loader.load_gas_production()
-    all_products = loader.load_all_production()
-
-    assert oil.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
-    assert gas.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
-    assert all_products.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
-    assert all_products.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
-    assert (tmp_path / "normalized" / "cores_oil_production.csv").exists()
-    assert (tmp_path / "normalized" / "cores_gas_production.csv").exists()
-    assert (tmp_path / "normalized" / "cores_all_production.csv").exists()
 
 
 def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
@@ -215,11 +138,33 @@ def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
     assert written_metadata["workbooks"]["oil"]["sha256"] == "abc123"
 
 
-def _write_cores_xlsx(path, frame):
-    with pd.ExcelWriter(path) as writer:
-        pd.DataFrame({"note": ["landing sheet"]}).to_excel(
-            writer,
-            sheet_name="Start",
-            index=False,
-        )
-        frame.to_excel(writer, sheet_name="Production", index=False, startrow=5)
+def _fake_workbook_responses(oil_bytes, gas_bytes):
+    return {
+        STATISTICS_PAGE_URL: CoresHttpResponse(
+            content=f"""
+            <a href="{DEFAULT_WORKBOOKS["oil"].source_url}">oil</a>
+            <a href="{DEFAULT_WORKBOOKS["gas"].source_url}">gas</a>
+            """.encode("utf-8"),
+            headers={"Content-Type": "text/html"},
+        ),
+        DEFAULT_WORKBOOKS["oil"].source_url: _fake_xlsx_response(
+            oil_bytes,
+            "Fri, 12 Jun 2026 07:51:41 GMT",
+        ),
+        DEFAULT_WORKBOOKS["gas"].source_url: _fake_xlsx_response(
+            gas_bytes,
+            "Fri, 12 Jun 2026 07:52:01 GMT",
+        ),
+    }
+
+
+def _fake_xlsx_response(content, last_modified):
+    return CoresHttpResponse(
+        content=content,
+        headers={
+            "Content-Type": (
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ),
+            "Last-Modified": last_modified,
+        },
+    )
