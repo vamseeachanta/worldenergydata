@@ -1,0 +1,27 @@
+LEASE_NUM,Lease_Numeric,LEASE_NAME,DEV_NAME,WATER_DEPTH,DEV_SYSTEM
+G17001,17001,Stones,Stones,9525,subsea15
+G16965,16965,Cascade,Cascade Chinook,8200,subsea15
+G16997,16997,Chinook,Cascade Chinook,8900,subsea15
+G20351,20351,Julia,Julia,7335,tieback15
+G31752,31752,Anchor,Anchor,5080,subsea20
+G31751,31751,Anchor,Anchor,5080,subsea20
+G21245,21245,Jack,Jack St Malo,7240,subsea15
+G18753,18753,St Malo,Jack St Malo,6820,subsea15
+G18745,18745,St Malo,Jack St Malo,6820,subsea15
+G17015,17015,St Malo,Jack St Malo,6820,subsea15
+G17016,17016,St Malo,Jack St Malo,6820,subsea15
+G20394,20394,St Malo,Jack St Malo,6820,subsea15
+g25792,25792,Kaskida,Kaskida,5860,subsea20
+g19555,19555,Kaskida,Kaskida,5860,subsea20
+G25782,25782,Tiber,Tiber,4130,subsea20
+G31938,31938,Shenandoah,Shenandoah,5800,subsea20
+G25232,25232,Shenandoah,Shenandoah,5840,subsea20
+G30876,30876,North Platte,North Platte,5840,subsea20
+G32460,32460,North Platte,North Platte,4230,subsea20
+G16942,16942,Big Foot,Big Foot,5190,dry
+G25806,25806,Buckskin,Buckskin,6800,tieback20
+G25813,25813,Buckskin,Buckskin,6800,tieback20
+G25814,25814,Buckskin,Buckskin,6800,tieback20
+G25815,25815,Buckskin,Buckskin,6800,tieback20
+G25823,25823,Buckskin,Buckskin,6800,tieback20
+G32650,32650,Buckskin,Buckskin,6800,tieback20
