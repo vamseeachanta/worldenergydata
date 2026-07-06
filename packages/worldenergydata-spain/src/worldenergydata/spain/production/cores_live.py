@@ -331,7 +331,7 @@ def _coverage_status(audit: CoresOilConversionAudit) -> str:
 
 def _default_bbl_per_tonne(audit: CoresOilConversionAudit) -> float | None:
     if audit.defaulted_fields:
-        return DEFAULT_OIL_BBL_PER_TONNE
+        return float(DEFAULT_OIL_BBL_PER_TONNE)
     return None
 
 
