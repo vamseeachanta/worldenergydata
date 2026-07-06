@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -14,6 +14,11 @@ from worldenergydata.production.unified.adapters.spain_cores_adapter import (
 )
 from worldenergydata.production.unified.query import ProductionQuery
 from worldenergydata.spain.reference_chain import run_spain_reference_chain
+from worldenergydata.spain.reports.cores_density_audit import (
+    CoresDensityAuditError,
+    load_oil_conversion_audit,
+    oil_conversion_limitations,
+)
 from worldenergydata.spain.reports.cores_html import render_spain_cores_html
 
 FIELD_METADATA = {
@@ -39,6 +44,7 @@ class CoresReportSource:
     metadata: dict[str, Any]
     manifest: dict[str, Any]
     workbook_metadata: dict[str, Any]
+    oil_conversion_audit: dict[str, Any] | None = None
 
 
 class NormalizedCoresReportLoader:
@@ -72,6 +78,14 @@ def load_cores_report_source(cache_root: str | Path) -> CoresReportSource:
     metadata = _read_json(root / "_metadata.json")
     manifest = _read_json(root / "manifest.json")
     workbook_metadata = _read_json(root / "metadata" / "cores_refresh_metadata.json")
+    try:
+        oil_conversion_audit = load_oil_conversion_audit(
+            root,
+            metadata,
+            oil_production,
+        )
+    except CoresDensityAuditError as exc:
+        raise CoresReportError(str(exc)) from exc
     _validate_metadata(metadata, manifest, workbook_metadata, len(all_production))
     return CoresReportSource(
         all_production=all_production,
@@ -80,6 +94,7 @@ def load_cores_report_source(cache_root: str | Path) -> CoresReportSource:
         metadata=metadata,
         manifest=manifest,
         workbook_metadata=workbook_metadata,
+        oil_conversion_audit=oil_conversion_audit,
     )
 
 
@@ -107,7 +122,7 @@ def _summary(
     fields: list[dict[str, Any]],
     economics: dict[str, Any],
 ) -> dict[str, Any]:
-    return {
+    summary = {
         "source": {
             "format": source.metadata["format"],
             "last_refresh": source.metadata["last_refresh"],
@@ -124,10 +139,13 @@ def _summary(
         "limitations": [
             "Only fields with explicit field metadata and oil production run economics.",
             "Gas-only revenue is deferred to issue #808.",
-            "oil_tonnes_to_bbl_conversion_deferred_to_issue_807",
+            *oil_conversion_limitations(source.oil_conversion_audit),
             "Ayoluengo uses offshore FDAS plumbing as a wiring check; mismatch is flagged.",
         ],
     }
+    if source.oil_conversion_audit is not None:
+        summary["oil_conversion_audit"] = source.oil_conversion_audit
+    return summary
 
 
 def _economics_summary(
@@ -279,7 +297,11 @@ def _to_unified(frame: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def _filter_period(frame: pd.DataFrame, start: str | None, end: str | None):
+def _filter_period(
+    frame: pd.DataFrame,
+    start: str | None,
+    end: str | None,
+) -> pd.DataFrame:
     if start is None and end is None:
         return frame
     period = _period_series(frame)
@@ -339,7 +361,7 @@ def _rounded_number(value: Any) -> float:
 def _read_json(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise CoresReportError(f"missing {path.name}")
-    return json.loads(path.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 def _read_csv(path: Path) -> pd.DataFrame:

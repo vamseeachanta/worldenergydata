@@ -16,8 +16,20 @@ class _FakeLoader:
     instances: list["_FakeLoader"] = []
     row_count = 3
 
-    def __init__(self, *, cache_root):
+    def __init__(
+        self,
+        *,
+        cache_root,
+        oil_density_registry_path=None,
+        allow_default_density=True,
+    ):
         self.cache_root = Path(cache_root)
+        self.oil_density_registry_path = (
+            Path(oil_density_registry_path)
+            if oil_density_registry_path is not None
+            else None
+        )
+        self.allow_default_density = allow_default_density
         self.force_refresh = None
         self.refreshed = False
         _FakeLoader.instances.append(self)
@@ -52,6 +64,32 @@ class _SourceErrorLoader(_FakeLoader):
         raise CoresSourceError("statistics page missing workbook link")
 
 
+class _DensityCoverageErrorLoader(_FakeLoader):
+    def refresh(self, *, force_refresh=False):
+        from worldenergydata.spain.production.cores_density import (
+            CoresDensityCoverageError,
+        )
+
+        raise CoresDensityCoverageError("missing density factor for Casablanca")
+
+
+class _AuditLoader(_FakeLoader):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.oil_conversion_audit = {"coverage_status": "complete"}
+
+
+class _SidecarFileLoader(_FakeLoader):
+    def load_all_production(self):
+        normalized = self.cache_root / "normalized"
+        normalized.mkdir(parents=True, exist_ok=True)
+        (normalized / "cores_all_production.csv").write_text("field_name\nAyoluengo\n")
+        (normalized / "cores_oil_density_factors.json").write_text(
+            '{"coverage_status":"defaulted"}\n'
+        )
+        return super().load_all_production()
+
+
 def _job(loader_cls=_FakeLoader, fixture_refresher=None):
     job = SpainCoresRefreshJob()
     job._loader_class = lambda: loader_cls
@@ -84,6 +122,17 @@ def test_success_refreshes_cores_and_writes_metadata(tmp_path):
     assert metadata["module"] == "spain_cores"
     assert metadata["record_count"] == 3
     assert metadata["format"] == "csv"
+
+
+def test_refresh_metadata_separates_csv_files_from_sidecars(tmp_path):
+    result = _job(loader_cls=_SidecarFileLoader).run({"output_dir": str(tmp_path)})
+
+    assert result.status == "success"
+    metadata = json.loads((tmp_path / "_metadata.json").read_text())
+    assert metadata["files"] == ["normalized/cores_all_production.csv"]
+    assert metadata["sidecar_files"] == ["normalized/cores_oil_density_factors.json"]
+    assert metadata["file_count"] == 1
+    assert metadata["sidecar_file_count"] == 1
 
 
 def test_fixture_refresh_writes_to_configured_fixture_output(tmp_path):
@@ -154,6 +203,43 @@ def test_relative_fixture_output_resolves_from_scheduler_repo_root(tmp_path):
     ]
 
 
+def test_density_options_pass_to_loader_and_registry_path_resolves_from_repo_root(
+    tmp_path,
+):
+    repo_root = tmp_path / "repo"
+    registry_path = (
+        "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/"
+        "crude_density_factors.json"
+    )
+
+    result = _job().run(
+        {
+            "output_dir": str(tmp_path / "out"),
+            "density_registry_path": registry_path,
+            "allow_default_density": False,
+            "_scheduler_repo_root": str(repo_root),
+        }
+    )
+
+    assert result.status == "success"
+    loader = _FakeLoader.instances[0]
+    assert loader.oil_density_registry_path == repo_root / registry_path
+    assert loader.allow_default_density is False
+
+
+def test_density_default_opt_in_must_be_boolean(tmp_path):
+    result = _job().run(
+        {
+            "output_dir": str(tmp_path / "out"),
+            "allow_default_density": "false",
+        }
+    )
+
+    assert result.status == "failure"
+    assert "allow_default_density" in result.error_msg
+    assert result.retryable is False
+
+
 def test_refresh_fixture_false_disables_fixture_refresh(tmp_path):
     calls = []
 
@@ -171,6 +257,31 @@ def test_refresh_fixture_false_disables_fixture_refresh(tmp_path):
 
     assert result.status == "success"
     assert calls == []
+
+
+def test_fixture_refresh_receives_loader_oil_conversion_audit(tmp_path):
+    calls = []
+
+    def fixture_refresher(
+        *, oil_frame, metadata, output_dir, oil_conversion_audit=None
+    ):
+        calls.append(oil_conversion_audit)
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        return object()
+
+    result = _job(
+        loader_cls=_AuditLoader,
+        fixture_refresher=fixture_refresher,
+    ).run(
+        {
+            "output_dir": str(tmp_path / "out"),
+            "refresh_fixture": True,
+            "fixture_output_dir": str(tmp_path / "fixtures"),
+        }
+    )
+
+    assert result.status == "success"
+    assert calls == [{"coverage_status": "complete"}]
 
 
 def test_fixture_refresh_failure_is_reported_as_retryable_failure(tmp_path):
@@ -207,6 +318,17 @@ def test_source_validation_failure_is_not_retryable(tmp_path):
     assert result.records_updated == 0
     assert result.retryable is False
     assert "statistics page missing workbook link" in result.error_msg
+
+
+def test_density_coverage_failure_is_not_retryable(tmp_path):
+    result = _job(loader_cls=_DensityCoverageErrorLoader).run(
+        {"output_dir": str(tmp_path)}
+    )
+
+    assert result.status == "failure"
+    assert result.records_updated == 0
+    assert result.retryable is False
+    assert "missing density factor for Casablanca" in result.error_msg
 
 
 def test_zero_rows_is_failure(tmp_path):

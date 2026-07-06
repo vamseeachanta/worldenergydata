@@ -136,6 +136,11 @@ class TestLoadConfig:
             spain["fixture_output_dir"]
             == "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores"
         )
+        assert (
+            spain["density_registry_path"]
+            == "packages/worldenergydata-spain/src/worldenergydata/spain/data/cores/crude_density_factors.json"
+        )
+        assert spain["allow_default_density"] is False
 
     def test_load_valid_config(self):
         path = _write_temp_yaml(VALID_YAML)

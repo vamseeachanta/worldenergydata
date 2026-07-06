@@ -1,0 +1,21 @@
+{
+  "registry_version": "2026-07-06-source-gap",
+  "registry_date": "2026-07-06",
+  "coverage_status": "missing",
+  "coverage_note": "No CORES oil field currently has an accepted field-applicable crude density/API conversion factor in this registry. Strict refreshes fail closed until accepted cited factors are added.",
+  "source_gap_fields": [
+    "Albatros",
+    "Amposta",
+    "Ayoluengo",
+    "Boquer\u00f3n",
+    "Casablanca",
+    "Dorada",
+    "Gaviota",
+    "Montanazo-Lubina",
+    "Rodaballo",
+    "Salmonete",
+    "Tarraco",
+    "Viura (1)"
+  ],
+  "factors": []
+}
