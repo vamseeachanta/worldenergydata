@@ -102,7 +102,13 @@ def load_leases(path):
     return out
 
 def load_war_main(path):
-    df = pd.read_csv(path, encoding="ISO-8859-1", on_bad_lines="skip", low_memory=False)
+    # Raw BSEE WAR is distributed as pickled DataFrames (.bin) on the data share and
+    # as delimited text (.txt) in exports; both carry the same raw columns, so read
+    # either and let the column-mapping below normalise. One canonical extractor.
+    if str(path).lower().endswith(".bin"):
+        df = pd.read_pickle(path)
+    else:
+        df = pd.read_csv(path, encoding="ISO-8859-1", on_bad_lines="skip", low_memory=False)
     C = {c.upper(): c for c in df.columns}
 
     api   = C.get("API_WELL_NUMBER") or C.get("API_NUMBER") or C.get("API")
@@ -127,7 +133,10 @@ def load_war_main(path):
     return out
 
 def load_boreholes(path):
-    df = pd.read_csv(path, encoding="ISO-8859-1", on_bad_lines="skip", low_memory=False)
+    if str(path).lower().endswith(".bin"):
+        df = pd.read_pickle(path)
+    else:
+        df = pd.read_csv(path, encoding="ISO-8859-1", on_bad_lines="skip", low_memory=False)
     C = {c.upper(): c for c in df.columns}
 
     api = C.get("API_WELL_NUMBER") or C.get("API")
@@ -159,11 +168,17 @@ def load_boreholes(path):
     return out
 
 def load_remarks(path):
-    df = pd.read_csv(
-        path, encoding="ISO-8859-1",
-        header=None, names=["SN_WAR","TEXT_REMARK"],
-        on_bad_lines="skip", low_memory=False
-    )
+    if str(path).lower().endswith(".bin"):
+        df = pd.read_pickle(path)
+        cols = {c.upper(): c for c in df.columns}
+        df = df.rename(columns={cols.get("SN_WAR", "SN_WAR"): "SN_WAR",
+                                cols.get("TEXT_REMARK", "TEXT_REMARK"): "TEXT_REMARK"})
+    else:
+        df = pd.read_csv(
+            path, encoding="ISO-8859-1",
+            header=None, names=["SN_WAR","TEXT_REMARK"],
+            on_bad_lines="skip", low_memory=False
+        )
     df = df[df["SN_WAR"].astype(str).str.upper()!="SN_WAR"].copy()
     df["SN_WAR"] = pd.to_numeric(df["SN_WAR"], errors="coerce")
     df = df.dropna(subset=["SN_WAR"])
