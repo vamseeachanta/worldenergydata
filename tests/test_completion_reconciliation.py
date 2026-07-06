@@ -89,6 +89,18 @@ def test_union_covers_eleven_developments(recon):
     assert len(devs) == 11
 
 
+def test_like_for_like_totals(recon):
+    # Honest apples-to-apples: only the 9 developments both sources carry
+    # (drop WED-only Big Foot and WO-only Buckskin).
+    assert recon["common_n"] == 9
+    assert recon["wed_common"]["dc"] == 19445
+    assert recon["wo_common"]["dc"] == 19940
+    assert recon["wed_common"]["bores"] == 179
+    assert recon["wo_common"]["bores"] == 187
+    # WED runs BELOW the benchmark on matched fields (opposite sign to the raw total).
+    assert recon["common_delta_dc"] == -495
+
+
 def test_buckskin_is_wo_only(recon):
     r = _by_dev(recon)["Buckskin"]
     assert r["status"] == "wo_only"
@@ -104,10 +116,11 @@ def test_big_foot_is_wed_only(recon):
 
 
 def test_exact_matches_flagged(recon):
+    # "match" now requires BOTH days AND wellbore count to agree.
     by = _by_dev(recon)
     for dev in ("Cascade Chinook", "Julia", "Kaskida", "Tiber"):
         assert by[dev]["status"] == "match", dev
-        assert by[dev]["delta_dc"] == 0, dev
+        assert by[dev]["delta_dc"] == 0 and by[dev]["delta_bores"] == 0, dev
 
 
 def test_day_deltas_flagged_for_investigation(recon):
@@ -118,13 +131,16 @@ def test_day_deltas_flagged_for_investigation(recon):
     assert by["Stones"]["delta_dc"] == -23
 
 
-def test_bore_deltas_with_matching_days(recon):
-    # Days reconcile exactly but WO carries extra zero-day sidetrack wellbores.
+def test_bore_deltas_flagged_days_match_not_full_match(recon):
+    # Days reconcile exactly but WO carries extra zero-day sidetracks -> the row must
+    # NOT read as a clean green "match"; it gets the distinct "days_match" status.
     by = _by_dev(recon)
     assert by["Anchor"]["delta_dc"] == 0 and by["Anchor"]["delta_bores"] == -2
+    assert by["Anchor"]["status"] == "days_match"
     assert (
         by["North Platte"]["delta_dc"] == 0 and by["North Platte"]["delta_bores"] == -6
     )
+    assert by["North Platte"]["status"] == "days_match"
 
 
 def test_verification_html_renders(gen, recon):
@@ -133,3 +149,7 @@ def test_verification_html_renders(gen, recon):
     assert "WO Article, end of 2025" in html_out
     assert "Shenandoah" in html_out
     assert "<table" in html_out
+    # like-for-like framing must be present, not just the raw grand total
+    assert "like-for-like" in html_out.lower()
+    # Buckskin's recovered identity is surfaced with the ingest tracker
+    assert "#842" in html_out and "G25823" in html_out

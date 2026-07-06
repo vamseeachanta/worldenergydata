@@ -32,8 +32,8 @@
   .verify{background:#132132;border:1px solid #1f6feb55;border-left:3px solid var(--accent);
           border-radius:10px;padding:14px 16px;margin:20px 0 0;font-size:13.5px}
   .verify b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:650}
-  td.match,td.investigate,td.wo_only,td.wed_only{font-weight:600}
-  .match{color:var(--ok)}.investigate{color:var(--warn)}
+  td.match,td.days_match,td.investigate,td.wo_only,td.wed_only{font-weight:600}
+  .match{color:var(--ok)}.days_match{color:#bb8009}.investigate{color:var(--warn)}
   .wo_only{color:#f0883e}.wed_only{color:var(--accent)}
   td.neg{color:var(--warn)}
   td.nte{color:var(--mut);font-size:12px;white-space:normal;max-width:360px}
@@ -51,8 +51,8 @@
 <header><div class="wrap">
   <h1>Well Drilling &amp; Completion Days</h1>
   <div class="sub">Drilling and completion durations reconstructed from BSEE Well
-  Activity Reports for 217 wells across the 12 Lower-Tertiary
-  deepwater fields &mdash; spud-to-total-depth (drilling) and total-depth-to-final-
+  Activity Reports for 217 wells across 12 Lower-Tertiary
+  deepwater leases (10 developments) &mdash; spud-to-total-depth (drilling) and total-depth-to-final-
   completion-activity (completion), with per-well depth and water-depth context.</div>
   <span class="tag">BSEE Well Activity Reports &middot; V30 drilling/completion-days methodology &middot; deterministic from a frozen reference</span>
 </div></header>
@@ -60,16 +60,20 @@
 <div class="wrap">
 
   <h2>Portfolio at a glance</h2>
-  <div class="stats"><div class="stat"><div class="v">217</div><div class="k">deepwater wells (WAR records)</div></div><div class="stat"><div class="v">12</div><div class="k">Lower-Tertiary fields</div></div><div class="stat"><div class="v">19</div><div class="k">federal surface leases</div></div><div class="stat"><div class="v">2000&ndash;2024</div><div class="k">spud-year span</div></div><div class="stat"><div class="v">38 d</div><div class="k">median drilling time</div></div><div class="stat"><div class="v">24 d</div><div class="k">median completion time</div></div><div class="stat"><div class="v">4,130&ndash;9,525 ft</div><div class="k">water-depth range</div></div><div class="stat"><div class="v">37,743 ft</div><div class="k">deepest well (measured depth)</div></div></div>
+  <div class="stats"><div class="stat"><div class="v">217</div><div class="k">deepwater wells (WAR records)</div></div><div class="stat"><div class="v">12</div><div class="k">lease names (10 developments)</div></div><div class="stat"><div class="v">19</div><div class="k">federal surface leases</div></div><div class="stat"><div class="v">2000&ndash;2024</div><div class="k">spud-year span</div></div><div class="stat"><div class="v">38 d</div><div class="k">median drilling time</div></div><div class="stat"><div class="v">24 d</div><div class="k">median completion time</div></div><div class="stat"><div class="v">4,130&ndash;9,525 ft</div><div class="k">water-depth range</div></div><div class="stat"><div class="v">37,743 ft</div><div class="k">deepest well (measured depth)</div></div></div>
 
   <div class="verify">
     <strong>Verification &middot; reconciled against the WO Article, end of 2025.</strong>
-    Drilling <em>and</em> completion days across all 217 wellbores total
-    <b>22,478</b> D&amp;C days (11,124 drilling + 11,354
-    completion), reconciling to the World Oil Lower-Tertiary article's
-    <b>21,944</b>-day / 211-wellbore benchmark within ~2.4%. The
-    &ldquo;11,124&nbsp;days&rdquo; figure quoted elsewhere counts
-    <em>drilling only</em>.
+    On the 9 developments both sources cover, WED totals
+    <b>19,445</b> D&amp;C days vs the World Oil article's
+    <b>19,940</b> &mdash; -495 days
+    (-2.5%) and
+    -8 wellbores, at or
+    below the benchmark on every matched field. Two fields sit outside the comparison:
+    Big&nbsp;Foot (3,033&nbsp;d, WED-only &mdash; the article excluded it) and
+    Buckskin (2,004&nbsp;d, WO-only &mdash; identity recovered, ingest pending
+    <a href="https://github.com/vamseeachanta/worldenergydata/issues/842">#842</a>).
+    Three developments remain under investigation.
     <a href="verification.html">Open the field- and well-level reconciliation &rarr;</a>
   </div>
 
@@ -77,9 +81,10 @@
   <p class="note">Drilling days = spud date &rarr; total-depth date. Completion days =
   total-depth date &rarr; last completion activity. Medians are the headline figure
   (robust to the sidetracks and recompletions whose WAR milestones coincide on a
-  single day); means are shown alongside. <b>Total D&amp;C</b> is the summed
-  drilling + completion days per field &mdash; the figure that reconciles to the
-  <a href="verification.html">WO Article, end of 2025</a> benchmark. The deepest borehole in the set is North Platte well <code>608074032001</code> at 37,743 ft measured / 35,115 ft TVD.</p>
+  single day); means are shown alongside. <b>Total D&amp;C</b> is the summed drilling +
+  completion days per lease; rolled up to developments (Cascade+Chinook, Jack+St&nbsp;Malo)
+  it reconciles to the <a href="verification.html">WO Article, end of 2025</a> benchmark
+  on the matched developments. The deepest borehole in the set is North Platte well <code>608074032001</code> at 37,743 ft measured / 35,115 ft TVD.</p>
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Field</th><th class="val">Wells</th>
