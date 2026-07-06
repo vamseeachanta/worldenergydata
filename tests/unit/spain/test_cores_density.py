@@ -167,13 +167,14 @@ def test_default_density_registry_file_loads_from_package_data():
     assert isinstance(factors, dict)
 
 
-def test_default_density_registry_accepts_boe_regulator_fields():
+def test_default_density_registry_accepts_cited_source_fields():
     factors = load_crude_density_factors()
     casablanca_tarraco_url = (
         "https://www.boe.es/boe/dias/1977/07/14/pdfs/A15865-15866.pdf"
     )
     amposta_url = "https://www.boe.es/boe/dias/1976/05/21/pdfs/A09838-09839.pdf"
     dorada_url = "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf"
+    boqueron_rodaballo_url = "https://doi.org/10.1016/j.fuel.2004.06.027"
 
     amposta = factors["amposta"]
     assert amposta.field_name == "Amposta"
@@ -191,6 +192,14 @@ def test_default_density_registry_accepts_boe_regulator_fields():
     assert casablanca.api_gravity_deg == pytest.approx(33.0)
     assert casablanca.bbl_per_tonne == pytest.approx(7.312182839124249)
 
+    boqueron = factors["boqueron"]
+    assert boqueron.field_name == "Boquerón"
+    assert boqueron.source_class == "technical_literature"
+    assert boqueron.source_url == boqueron_rodaballo_url
+    assert boqueron.accepted_for_conversion is True
+    assert boqueron.api_gravity_deg == pytest.approx(38.7)
+    assert boqueron.bbl_per_tonne == pytest.approx(7.565553308321867)
+
     dorada = factors["dorada"]
     assert dorada.field_name == "Dorada"
     assert dorada.source_class == "regulator_record"
@@ -198,6 +207,14 @@ def test_default_density_registry_accepts_boe_regulator_fields():
     assert dorada.accepted_for_conversion is True
     assert dorada.api_gravity_deg == pytest.approx(21.3)
     assert dorada.bbl_per_tonne == pytest.approx(6.792106612876507)
+
+    rodaballo = factors["rodaballo"]
+    assert rodaballo.field_name == "Rodaballo"
+    assert rodaballo.source_class == "technical_literature"
+    assert rodaballo.source_url == boqueron_rodaballo_url
+    assert rodaballo.accepted_for_conversion is True
+    assert rodaballo.api_gravity_deg == pytest.approx(41.3)
+    assert rodaballo.bbl_per_tonne == pytest.approx(7.681125803043588)
 
     tarraco = factors["tarraco"]
     assert tarraco.field_name == "Tarraco"
@@ -208,12 +225,19 @@ def test_default_density_registry_accepts_boe_regulator_fields():
     assert tarraco.bbl_per_tonne == pytest.approx(7.401084758140957)
 
     audit = build_oil_conversion_audit(
-        ["Amposta", "Casablanca", "Dorada", "Tarraco"],
+        ["Amposta", "Boquerón", "Casablanca", "Dorada", "Rodaballo", "Tarraco"],
         factors,
         allow_default_density=False,
     )
 
-    assert audit.used_field_names == ("Amposta", "Casablanca", "Dorada", "Tarraco")
+    assert audit.used_field_names == (
+        "Amposta",
+        "Boquerón",
+        "Casablanca",
+        "Dorada",
+        "Rodaballo",
+        "Tarraco",
+    )
     assert audit.defaulted_fields == ()
     assert audit.missing_fields == ()
 
@@ -227,10 +251,8 @@ def test_default_density_registry_keeps_current_fields_missing():
     assert expected_fields == [
         "Albatros",
         "Ayoluengo",
-        "Boquerón",
         "Gaviota",
         "Montanazo-Lubina",
-        "Rodaballo",
         "Salmonete",
         "Viura (1)",
     ]
@@ -268,14 +290,19 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     expected_gap_fields = [
         "Albatros",
         "Ayoluengo",
-        "Boquerón",
         "Gaviota",
         "Montanazo-Lubina",
-        "Rodaballo",
         "Salmonete",
         "Viura (1)",
     ]
-    expected_used_fields = ["Amposta", "Casablanca", "Dorada", "Tarraco"]
+    expected_used_fields = [
+        "Amposta",
+        "Boquerón",
+        "Casablanca",
+        "Dorada",
+        "Rodaballo",
+        "Tarraco",
+    ]
     factors = load_crude_density_factors()
 
     assert payload["coverage_status"] == "missing"
@@ -294,8 +321,10 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     for field_name in expected_gap_fields:
         assert field_name in message
     assert "Amposta" not in message
+    assert "Boquerón" not in message
     assert "Casablanca" not in message
     assert "Dorada" not in message
+    assert "Rodaballo" not in message
     assert "Tarraco" not in message
 
     defaulted_audit = build_oil_conversion_audit(
