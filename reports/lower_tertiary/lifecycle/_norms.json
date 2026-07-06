@@ -1,0 +1,2875 @@
+{
+  "chips": {
+    "anchor": [
+      {
+        "delta_play_pct": 10.9,
+        "href": "norms/drill.html#anchor",
+        "n": 13,
+        "play_n": 171,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 51.0
+      },
+      {
+        "delta_play_pct": 16.1,
+        "href": "norms/complete.html#anchor",
+        "n": 13,
+        "play_n": 173,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 36.0
+      },
+      {
+        "delta_play_pct": -1.4,
+        "href": "norms/produce.html#anchor",
+        "n": 3,
+        "play_n": 53,
+        "stage": "produce",
+        "state": "low_n",
+        "unit": "%",
+        "value": 93.3
+      },
+      {
+        "delta_play_pct": -100.0,
+        "href": "norms/workover.html#anchor",
+        "n": 3,
+        "play_n": 53,
+        "stage": "workover",
+        "state": "low_n",
+        "unit": "per well",
+        "value": 0.0
+      },
+      {
+        "href": "norms/abandon.html#anchor",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "big_foot": [
+      {
+        "delta_play_pct": -22.3,
+        "href": "norms/drill.html#big_foot",
+        "n": 24,
+        "play_n": 160,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 36.5
+      },
+      {
+        "delta_play_pct": 12.1,
+        "href": "norms/complete.html#big_foot",
+        "n": 25,
+        "play_n": 161,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 37.0
+      },
+      {
+        "delta_play_pct": -1.8,
+        "href": "norms/produce.html#big_foot",
+        "n": 8,
+        "play_n": 48,
+        "stage": "produce",
+        "state": "ok",
+        "unit": "%",
+        "value": 93.05
+      },
+      {
+        "delta_play_pct": 257.1,
+        "href": "norms/workover.html#big_foot",
+        "n": 8,
+        "play_n": 48,
+        "stage": "workover",
+        "state": "ok",
+        "unit": "per well",
+        "value": 0.75
+      },
+      {
+        "href": "norms/abandon.html#big_foot",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "cascade_chinook": [
+      {
+        "delta_play_pct": 47.8,
+        "href": "norms/drill.html#cascade_chinook",
+        "n": 14,
+        "play_n": 170,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 68.0
+      },
+      {
+        "delta_play_pct": 31.8,
+        "href": "norms/complete.html#cascade_chinook",
+        "n": 14,
+        "play_n": 172,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 43.5
+      },
+      {
+        "delta_play_pct": 0.4,
+        "href": "norms/produce.html#cascade_chinook",
+        "n": 3,
+        "play_n": 53,
+        "stage": "produce",
+        "state": "low_n",
+        "unit": "%",
+        "value": 94.7
+      },
+      {
+        "delta_play_pct": -100.0,
+        "href": "norms/workover.html#cascade_chinook",
+        "n": 3,
+        "play_n": 53,
+        "stage": "workover",
+        "state": "low_n",
+        "unit": "per well",
+        "value": 0.0
+      },
+      {
+        "href": "norms/abandon.html#cascade_chinook",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "jack_st_malo": [
+      {
+        "delta_play_pct": -28.3,
+        "href": "norms/drill.html#jack_st_malo",
+        "n": 65,
+        "play_n": 119,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 38.0
+      },
+      {
+        "delta_play_pct": -21.2,
+        "href": "norms/complete.html#jack_st_malo",
+        "n": 65,
+        "play_n": 121,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 26.0
+      },
+      {
+        "delta_play_pct": 2.6,
+        "href": "norms/produce.html#jack_st_malo",
+        "n": 24,
+        "play_n": 32,
+        "stage": "produce",
+        "state": "ok",
+        "unit": "%",
+        "value": 95.9
+      },
+      {
+        "delta_play_pct": -19.4,
+        "href": "norms/workover.html#jack_st_malo",
+        "n": 24,
+        "play_n": 32,
+        "stage": "workover",
+        "state": "ok",
+        "unit": "per well",
+        "value": 0.25
+      },
+      {
+        "href": "norms/abandon.html#jack_st_malo",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "julia": [
+      {
+        "delta_play_pct": 108.7,
+        "href": "norms/drill.html#julia",
+        "n": 9,
+        "play_n": 175,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 96.0
+      },
+      {
+        "delta_play_pct": 220.0,
+        "href": "norms/complete.html#julia",
+        "n": 9,
+        "play_n": 177,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 96.0
+      },
+      {
+        "delta_play_pct": 2.0,
+        "href": "norms/produce.html#julia",
+        "n": 4,
+        "play_n": 52,
+        "stage": "produce",
+        "state": "low_n",
+        "unit": "%",
+        "value": 96.15
+      },
+      {
+        "delta_play_pct": -100.0,
+        "href": "norms/workover.html#julia",
+        "n": 4,
+        "play_n": 52,
+        "stage": "workover",
+        "state": "low_n",
+        "unit": "per well",
+        "value": 0.0
+      },
+      {
+        "href": "norms/abandon.html#julia",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "kaskida": [
+      {
+        "delta_play_pct": -21.3,
+        "href": "norms/drill.html#kaskida",
+        "n": 7,
+        "play_n": 177,
+        "stage": "drill",
+        "state": "low_n",
+        "unit": "days",
+        "value": 37.0
+      },
+      {
+        "delta_play_pct": 39.4,
+        "href": "norms/complete.html#kaskida",
+        "n": 7,
+        "play_n": 179,
+        "stage": "complete",
+        "state": "low_n",
+        "unit": "days",
+        "value": 46.0
+      },
+      {
+        "href": "norms/produce.html#kaskida",
+        "stage": "produce",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/workover.html#kaskida",
+        "stage": "workover",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/abandon.html#kaskida",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "north_platte": [
+      {
+        "delta_play_pct": 0.0,
+        "href": "norms/drill.html#north_platte",
+        "n": 12,
+        "play_n": 172,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 46.5
+      },
+      {
+        "delta_play_pct": -27.4,
+        "href": "norms/complete.html#north_platte",
+        "n": 12,
+        "play_n": 174,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 26.5
+      },
+      {
+        "href": "norms/produce.html#north_platte",
+        "stage": "produce",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/workover.html#north_platte",
+        "stage": "workover",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/abandon.html#north_platte",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "shenandoah": [
+      {
+        "delta_play_pct": 50.0,
+        "href": "norms/drill.html#shenandoah",
+        "n": 17,
+        "play_n": 167,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 69.0
+      },
+      {
+        "delta_play_pct": -44.1,
+        "href": "norms/complete.html#shenandoah",
+        "n": 17,
+        "play_n": 169,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 19.0
+      },
+      {
+        "delta_play_pct": -10.7,
+        "href": "norms/produce.html#shenandoah",
+        "n": 4,
+        "play_n": 52,
+        "stage": "produce",
+        "state": "low_n",
+        "unit": "%",
+        "value": 84.55
+      },
+      {
+        "delta_play_pct": -13.8,
+        "href": "norms/workover.html#shenandoah",
+        "n": 4,
+        "play_n": 52,
+        "stage": "workover",
+        "state": "low_n",
+        "unit": "per well",
+        "value": 0.25
+      },
+      {
+        "href": "norms/abandon.html#shenandoah",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "stones": [
+      {
+        "delta_play_pct": 54.3,
+        "href": "norms/drill.html#stones",
+        "n": 21,
+        "play_n": 163,
+        "stage": "drill",
+        "state": "ok",
+        "unit": "days",
+        "value": 71.0
+      },
+      {
+        "delta_play_pct": 54.0,
+        "href": "norms/complete.html#stones",
+        "n": 22,
+        "play_n": 164,
+        "stage": "complete",
+        "state": "ok",
+        "unit": "days",
+        "value": 48.5
+      },
+      {
+        "delta_play_pct": -8.1,
+        "href": "norms/produce.html#stones",
+        "n": 10,
+        "play_n": 46,
+        "stage": "produce",
+        "state": "ok",
+        "unit": "%",
+        "value": 86.8
+      },
+      {
+        "delta_play_pct": 7.1,
+        "href": "norms/workover.html#stones",
+        "n": 10,
+        "play_n": 46,
+        "stage": "workover",
+        "state": "ok",
+        "unit": "per well",
+        "value": 0.3
+      },
+      {
+        "href": "norms/abandon.html#stones",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ],
+    "tiber": [
+      {
+        "href": "norms/drill.html#tiber",
+        "stage": "drill",
+        "state": "insufficient"
+      },
+      {
+        "href": "norms/complete.html#tiber",
+        "stage": "complete",
+        "state": "insufficient"
+      },
+      {
+        "href": "norms/produce.html#tiber",
+        "stage": "produce",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/workover.html#tiber",
+        "stage": "workover",
+        "state": "no_data"
+      },
+      {
+        "href": "norms/abandon.html#tiber",
+        "stage": "abandon",
+        "state": "unavailable"
+      }
+    ]
+  },
+  "entries": [
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "anchor",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 16.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 13,
+        "population": "xlsx_wellbores",
+        "value": 36.0
+      },
+      "field_id": "anchor",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 173,
+          "population": "xlsx_wellbores",
+          "value": 31.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 10.9,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 13,
+        "population": "xlsx_wellbores",
+        "value": 51.0
+      },
+      "field_id": "anchor",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 171,
+          "population": "xlsx_wellbores",
+          "value": 46.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 9.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 13,
+        "population": "xlsx_wellbores",
+        "value": 1.8
+      },
+      "field_id": "anchor",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 171,
+          "population": "xlsx_wellbores",
+          "value": 1.65
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -32.9,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 8.43
+      },
+      "field_id": "anchor",
+      "field_status": "low_n",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 12.57
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "anchor",
+      "field_status": "insufficient",
+      "metric_id": "decline_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (insufficient)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -1.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 93.3
+      },
+      "field_id": "anchor",
+      "field_status": "low_n",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 94.6
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -100.0,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 0.0
+      },
+      "field_id": "anchor",
+      "field_status": "low_n",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 0.3
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "big_foot",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 12.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 25,
+        "population": "xlsx_wellbores",
+        "value": 37.0
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 161,
+          "population": "xlsx_wellbores",
+          "value": 33.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -22.3,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 24,
+        "population": "xlsx_wellbores",
+        "value": 36.5
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 160,
+          "population": "xlsx_wellbores",
+          "value": 47.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -5.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 24,
+        "population": "xlsx_wellbores",
+        "value": 1.57
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 160,
+          "population": "xlsx_wellbores",
+          "value": 1.66
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -71.5,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 8,
+        "population": "benchmark_wells",
+        "value": 3.34
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 48,
+          "population": "benchmark_wells",
+          "value": 11.7
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -98.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 8,
+        "population": "benchmark_wells",
+        "value": 0.25
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 46,
+          "population": "benchmark_wells",
+          "value": 15.7
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -1.8,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 8,
+        "population": "benchmark_wells",
+        "value": 93.05
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 48,
+          "population": "benchmark_wells",
+          "value": 94.75
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 257.1,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 8,
+        "population": "benchmark_wells",
+        "value": 0.75
+      },
+      "field_id": "big_foot",
+      "field_status": "ok",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 48,
+          "population": "benchmark_wells",
+          "value": 0.21
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "cascade_chinook",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 31.8,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 14,
+        "population": "xlsx_wellbores",
+        "value": 43.5
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 172,
+          "population": "xlsx_wellbores",
+          "value": 33.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 47.8,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 14,
+        "population": "xlsx_wellbores",
+        "value": 68.0
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 170,
+          "population": "xlsx_wellbores",
+          "value": 46.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 54.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 14,
+        "population": "xlsx_wellbores",
+        "value": 2.49
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 170,
+          "population": "xlsx_wellbores",
+          "value": 1.61
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -3.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 10.43
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "low_n",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 10.83
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 177.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 34.9
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "low_n",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 51,
+          "population": "benchmark_wells",
+          "value": 12.6
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 0.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 94.7
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "low_n",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 94.3
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -100.0,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 3,
+        "population": "benchmark_wells",
+        "value": 0.0
+      },
+      "field_id": "cascade_chinook",
+      "field_status": "low_n",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 53,
+          "population": "benchmark_wells",
+          "value": 0.3
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "jack_st_malo",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -21.2,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 65,
+        "population": "xlsx_wellbores",
+        "value": 26.0
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 121,
+          "population": "xlsx_wellbores",
+          "value": 33.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -28.3,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 65,
+        "population": "xlsx_wellbores",
+        "value": 38.0
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 119,
+          "population": "xlsx_wellbores",
+          "value": 53.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -29.9,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 65,
+        "population": "xlsx_wellbores",
+        "value": 1.36
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 119,
+          "population": "xlsx_wellbores",
+          "value": 1.94
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 145.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 24,
+        "population": "benchmark_wells",
+        "value": 18.21
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 32,
+          "population": "benchmark_wells",
+          "value": 7.42
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 81.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 23,
+        "population": "benchmark_wells",
+        "value": 15.2
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 31,
+          "population": "benchmark_wells",
+          "value": 8.4
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 2.6,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 24,
+        "population": "benchmark_wells",
+        "value": 95.9
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 32,
+          "population": "benchmark_wells",
+          "value": 93.5
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -19.4,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 24,
+        "population": "benchmark_wells",
+        "value": 0.25
+      },
+      "field_id": "jack_st_malo",
+      "field_status": "ok",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 32,
+          "population": "benchmark_wells",
+          "value": 0.31
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "julia",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 220.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 9,
+        "population": "xlsx_wellbores",
+        "value": 96.0
+      },
+      "field_id": "julia",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 177,
+          "population": "xlsx_wellbores",
+          "value": 30.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 108.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 9,
+        "population": "xlsx_wellbores",
+        "value": 96.0
+      },
+      "field_id": "julia",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 175,
+          "population": "xlsx_wellbores",
+          "value": 46.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 92.5,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 9,
+        "population": "xlsx_wellbores",
+        "value": 3.1
+      },
+      "field_id": "julia",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 175,
+          "population": "xlsx_wellbores",
+          "value": 1.61
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 68.2,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 17.02
+      },
+      "field_id": "julia",
+      "field_status": "low_n",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 10.12
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -44.8,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 8.25
+      },
+      "field_id": "julia",
+      "field_status": "low_n",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 50,
+          "population": "benchmark_wells",
+          "value": 14.95
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 2.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 96.15
+      },
+      "field_id": "julia",
+      "field_status": "low_n",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 94.3
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -100.0,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 0.0
+      },
+      "field_id": "julia",
+      "field_status": "low_n",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 0.31
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "kaskida",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 39.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 7,
+        "population": "xlsx_wellbores",
+        "value": 46.0
+      },
+      "field_id": "kaskida",
+      "field_status": "low_n",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 179,
+          "population": "xlsx_wellbores",
+          "value": 33.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -21.3,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 7,
+        "population": "xlsx_wellbores",
+        "value": 37.0
+      },
+      "field_id": "kaskida",
+      "field_status": "low_n",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 177,
+          "population": "xlsx_wellbores",
+          "value": 47.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -29.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 7,
+        "population": "xlsx_wellbores",
+        "value": 1.22
+      },
+      "field_id": "kaskida",
+      "field_status": "low_n",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 177,
+          "population": "xlsx_wellbores",
+          "value": 1.72
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "kaskida",
+      "field_status": "no_data",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "kaskida",
+      "field_status": "no_data",
+      "metric_id": "decline_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "kaskida",
+      "field_status": "no_data",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "kaskida",
+      "field_status": "no_data",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "north_platte",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -27.4,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 12,
+        "population": "xlsx_wellbores",
+        "value": 26.5
+      },
+      "field_id": "north_platte",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 174,
+          "population": "xlsx_wellbores",
+          "value": 36.5
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 0.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 12,
+        "population": "xlsx_wellbores",
+        "value": 46.5
+      },
+      "field_id": "north_platte",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 172,
+          "population": "xlsx_wellbores",
+          "value": 46.5
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -8.9,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 12,
+        "population": "xlsx_wellbores",
+        "value": 1.53
+      },
+      "field_id": "north_platte",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 172,
+          "population": "xlsx_wellbores",
+          "value": 1.68
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "north_platte",
+      "field_status": "no_data",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "north_platte",
+      "field_status": "no_data",
+      "metric_id": "decline_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "north_platte",
+      "field_status": "no_data",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "north_platte",
+      "field_status": "no_data",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "shenandoah",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -44.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 17,
+        "population": "xlsx_wellbores",
+        "value": 19.0
+      },
+      "field_id": "shenandoah",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 169,
+          "population": "xlsx_wellbores",
+          "value": 34.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 50.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 17,
+        "population": "xlsx_wellbores",
+        "value": 69.0
+      },
+      "field_id": "shenandoah",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 167,
+          "population": "xlsx_wellbores",
+          "value": 46.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 49.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 17,
+        "population": "xlsx_wellbores",
+        "value": 2.4
+      },
+      "field_id": "shenandoah",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 167,
+          "population": "xlsx_wellbores",
+          "value": 1.61
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -55.8,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 5.63
+      },
+      "field_id": "shenandoah",
+      "field_status": "low_n",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 12.75
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -87.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 1.95
+      },
+      "field_id": "shenandoah",
+      "field_status": "low_n",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 50,
+          "population": "benchmark_wells",
+          "value": 14.95
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -10.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 84.55
+      },
+      "field_id": "shenandoah",
+      "field_status": "low_n",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 94.65
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -13.8,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 4,
+        "population": "benchmark_wells",
+        "value": 0.25
+      },
+      "field_id": "shenandoah",
+      "field_status": "low_n",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 52,
+          "population": "benchmark_wells",
+          "value": 0.29
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "stones",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 54.0,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 22,
+        "population": "xlsx_wellbores",
+        "value": 48.5
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 164,
+          "population": "xlsx_wellbores",
+          "value": 31.5
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 54.3,
+      "field": {
+        "aggregation": "median",
+        "basis": "calendar_days",
+        "n": 21,
+        "population": "xlsx_wellbores",
+        "value": 71.0
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "calendar_days",
+          "n": 163,
+          "population": "xlsx_wellbores",
+          "value": 46.0
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 72.3,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 21,
+        "population": "xlsx_wellbores",
+        "value": 2.74
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 163,
+          "population": "xlsx_wellbores",
+          "value": 1.59
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -25.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 10,
+        "population": "benchmark_wells",
+        "value": 7.9
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 46,
+          "population": "benchmark_wells",
+          "value": 10.63
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 72.7,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 10,
+        "population": "benchmark_wells",
+        "value": 21.5
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "decline_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 44,
+          "population": "benchmark_wells",
+          "value": 12.45
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": -8.1,
+      "field": {
+        "aggregation": "median",
+        "basis": "ratio",
+        "n": 10,
+        "population": "benchmark_wells",
+        "value": 86.8
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "median",
+          "basis": "ratio",
+          "n": 46,
+          "population": "benchmark_wells",
+          "value": 94.5
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": 7.1,
+      "field": {
+        "aggregation": "mean",
+        "basis": "ratio",
+        "n": 10,
+        "population": "benchmark_wells",
+        "value": 0.3
+      },
+      "field_id": "stones",
+      "field_status": "ok",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": "leave_one_field_out",
+        "metric": {
+          "aggregation": "mean",
+          "basis": "ratio",
+          "n": 46,
+          "population": "benchmark_wells",
+          "value": 0.28
+        },
+        "reason": null,
+        "status": "ok"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "all-GoM PA/TA share shown on the stage page (vintage-mix caveat)",
+        "status": "context_only"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "unavailable",
+      "metric_id": "pa_share",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no per-field abandonment population in v1",
+        "status": "unavailable"
+      },
+      "stage": "abandon",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "insufficient",
+      "metric_id": "completion_days_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (insufficient)",
+        "status": "unavailable"
+      },
+      "stage": "complete",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "insufficient",
+      "metric_id": "drill_days_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (insufficient)",
+        "status": "unavailable"
+      },
+      "stage": "drill",
+      "unit": "days"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "insufficient",
+      "metric_id": "drill_days_per_kft_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (insufficient)",
+        "status": "unavailable"
+      },
+      "stage": "drill",
+      "unit": "days/1000 ft"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "no_data",
+      "metric_id": "cum_oil_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "MMbbl"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "no_data",
+      "metric_id": "decline_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%/yr"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "no_data",
+      "metric_id": "uptime_median",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "produce",
+      "unit": "%"
+    },
+    {
+      "country": {
+        "method": null,
+        "metric": null,
+        "reason": "GoM-wide population pending the drilling-well database (#681)",
+        "status": "roadmap"
+      },
+      "delta_country_pct": null,
+      "delta_play_pct": null,
+      "field": null,
+      "field_id": "tiber",
+      "field_status": "no_data",
+      "metric_id": "interventions_per_well",
+      "play": {
+        "method": null,
+        "metric": null,
+        "reason": "no field-side metric (no_data)",
+        "status": "unavailable"
+      },
+      "stage": "workover",
+      "unit": "per well"
+    }
+  ],
+  "provenance": {
+    "abandon_context": {
+      "caveat": "All-GoM boreholes across every vintage since the 1940s; the vintage mix (shallow-shelf era dominates) makes this a context number, not a norm for young deepwater fields.",
+      "n": 57278,
+      "pa_n": 33688,
+      "share_pct": 58.8
+    },
+    "config": "config/phase_norms.yml",
+    "exclusions": {
+      "blank_or_totals": 2,
+      "compl_nonpositive": 31,
+      "compl_over_max": 0,
+      "drill_nonpositive": 33,
+      "drill_over_max": 0,
+      "unmapped_lease": 0
+    },
+    "join_coverage": 0.9821,
+    "sources": [
+      {
+        "path": "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx",
+        "rows_used": 217,
+        "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
+      },
+      {
+        "path": "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv",
+        "rows_used": 56,
+        "sha256": "48cbed34d2a491d8b515f04ac81438cfe4488f0b033d74679922dcdf16006928"
+      }
+    ]
+  },
+  "schema_version": "1.0"
+}

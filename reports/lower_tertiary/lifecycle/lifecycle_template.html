@@ -170,6 +170,19 @@
   @media (prefers-color-scheme:dark){ a.engchip.link { color:var(--accent); } }
   .fel { min-width:900px; margin-top:6px; font-family:var(--mono); font-size:10px;
     color:var(--muted); text-align:center; border-top:1px dashed var(--line); padding-top:4px; }
+  /* performance-vs-norm strip (issue #848) */
+  .normstrip { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  a.normchip { flex:1 1 170px; min-width:150px; display:block; text-decoration:none;
+    border:1px solid var(--line); border-radius:8px; padding:7px 10px;
+    background:color-mix(in srgb, var(--accent) 5%, transparent); }
+  a.normchip:hover { border-color: var(--accent); }
+  .normchip .ns { font-family:var(--mono); font-size:9.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--muted); }
+  .normchip .nv { font-size:13px; font-weight:700; color:var(--ink); margin-top:2px; }
+  .normchip .nd { font-family:var(--mono); font-size:10.5px; margin-top:2px; }
+  .normchip .nd.neg { color:var(--good); }
+  .normchip .nd.pos { color:var(--alert); }
+  .normchip .nd.mut, .normchip .nv.mut { color:var(--muted); font-weight:500; }
 
   /* ---- Lower grid: activities + host ---- */
   .grid2 { display:grid; grid-template-columns: 1.5fr 1fr; gap: 22px; }
@@ -266,6 +279,11 @@
       <section>
         <p class="lane-label">Engineering by stage · <a href="https://vamseeachanta.github.io/digitalmodel/capabilities/" style="color:inherit;text-decoration:underline">→ digitalmodel</a></p>
         <div class="scrollx"><div class="engtrack" id="f-eng"></div></div>
+      </section>
+
+      <section id="f-norms-section" hidden>
+        <p class="lane-label">Performance vs norm · field vs Lower Tertiary play (leave-one-field-out) · country <span style="opacity:.7">roadmap #681</span></p>
+        <div class="normstrip" id="f-norms"></div>
       </section>
 
       <section class="grid2">
@@ -428,6 +446,37 @@ $("f-eng").innerHTML = MODEL.phases.map(p => {
   }).join("");
   return `<div class="engcell">${chips}</div>`;
 }).join("");
+
+/* performance vs norm strip (issue #848) — rendered when the norms contract
+   exists; degraded states are shown honestly, never filled with numbers */
+if (Array.isArray(FIELD.norms) && FIELD.norms.length) {
+  const STAGE_LABEL = { drill:"Drill", complete:"Complete", produce:"Produce",
+                        workover:"Workover", abandon:"Abandon" };
+  const STATE_TEXT = {
+    no_data: "no well-level data",
+    insufficient: "insufficient wells",
+    unavailable: "no per-field data (v1)",
+  };
+  $("f-norms").innerHTML = FIELD.norms.map(c => {
+    const lab = STAGE_LABEL[c.stage] || c.stage;
+    if (c.value === undefined) {
+      const txt = STATE_TEXT[c.state] || c.state;
+      return `<a class="normchip" href="${c.href}"><div class="ns">${lab}</div>`
+        + `<div class="nv mut">${txt}</div><div class="nd mut">stage page →</div></a>`;
+    }
+    const low = c.state === "low_n" ? " · low n" : "";
+    let delta = `<div class="nd mut">vs play: n/a</div>`;
+    if (c.delta_play_pct !== undefined) {
+      const cls = c.delta_play_pct < 0 ? "neg" : "pos";
+      const sign = c.delta_play_pct > 0 ? "+" : "−";
+      delta = `<div class="nd ${cls}">${sign}${Math.abs(c.delta_play_pct)}% vs LT (n=${c.play_n})</div>`;
+    }
+    return `<a class="normchip" href="${c.href}"><div class="ns">${lab}</div>`
+      + `<div class="nv">${c.value} ${c.unit} <span style="opacity:.6;font-weight:500">n=${c.n}${low}</span></div>`
+      + `${delta}</a>`;
+  }).join("");
+  document.getElementById("f-norms-section").hidden = false;
+}
 
 /* activities — current phase + its two neighbours */
 const showIdx = [curIdx-1, curIdx, curIdx+1].filter(i => i >= 0 && i < MODEL.phases.length);
