@@ -172,10 +172,18 @@ def build_report(
     ops_end = end_date if is_latest else "2025-05-31"
     start_label = "2000-09"
     end_label = pd.Timestamp(ops_end).strftime("%Y-%m")
+    # Frozen-V30 financials (no end_date, so independent of the latest window):
+    # the headline reconciliation AND the per-field reference NPV in the window
+    # header. Compute here so the header shows THIS field's frozen NPV, not a
+    # hardcoded constant.
+    fin = reproduce_v30_financials()
+    sanctioned_npv = fin[dev_name]["npv_usd"]
+    _ref_mm = sanctioned_npv / 1e6
+    _ref_str = f"-${abs(_ref_mm):,.1f}M" if _ref_mm < 0 else f"${_ref_mm:,.1f}M"
     if is_latest:
         window_label = (
             f"{start_label} -> {end_label} (latest); "
-            f"frozen V30 reference NPV = -$530.6M"
+            f"frozen V30 reference NPV = {_ref_str}"
         )
     else:
         window_label = f"{start_label} -> {end_label} (V30 frozen window)"
@@ -199,9 +207,7 @@ def build_report(
             return None
         return float(prior["cumulative_npv_usd"].iloc[-1])
 
-    # Full financials for the headline reconciliation.
-    fin = reproduce_v30_financials()
-    sanctioned_npv = fin[dev_name]["npv_usd"]
+    # (fin / sanctioned_npv computed above, before the window header.)
 
     # Latest revenue/oil comparison (read once; reused by the summary + the
     # Financial Summary table below). None for the frozen report.
@@ -429,7 +435,11 @@ def build_report(
     lines.append("")
 
     # ===================== WELL-LEVEL NPV STACKUP ==========================
-    stk = build_well_npv_stackup(dev_name, end_date=end_date)
+    # Pass the same first-oil overrides as the headline timeline so the stackup's
+    # field NPV matches the field NPV it claims to decompose (Cascade Chinook fix).
+    stk = build_well_npv_stackup(
+        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+    )
     lines.append("## Well-Level NPV Stackup")
     lines.append("")
     lines.append(
