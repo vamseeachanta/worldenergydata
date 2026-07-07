@@ -1167,7 +1167,11 @@ def _build_perwell_monthly_dnc(
     return per_well, shared
 
 
-def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
+def build_well_npv_stackup(
+    dev_name: str,
+    end_date: str | None = None,
+    first_oil_overrides: dict[str, str] | None = None,
+) -> dict:
     """Decompose a development's NPV into per-well contributions that sum exactly.
 
     This is an ADDITIVE presentation helper layered on :func:`build_field_npv_timeline`.
@@ -1195,6 +1199,11 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
         Optional upper date bound (``YYYY-MM-DD``). ``None`` => frozen V30 window
         (matches :func:`build_field_npv_timeline` with ``end_date=None``); a value
         extends the production + WTI window to that date.
+    first_oil_overrides : dict | None
+        Per-development first-oil corrections (e.g.
+        ``latest_runner.FIRST_OIL_CORRECTIONS``). MUST match whatever is passed to
+        :func:`build_field_npv_timeline` for the same report, or the stackup's
+        field NPV will not equal the headline field NPV it decomposes.
 
     Returns
     -------
@@ -1214,8 +1223,14 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
         the single-block (no decomposition) case.
       - ``blocks_note`` : str describing block-scope availability.
     """
-    # 1) Authoritative field timeline (frozen path untouched).
-    field = build_field_npv_timeline(dev_name, end_date=end_date)
+    # 1) Authoritative field timeline (frozen path untouched). The first-oil
+    #    overrides MUST flow through here so the reconstructed field (and every
+    #    per-well split below) uses the same corrected first-oil window as the
+    #    headline timeline — otherwise the stackup silently reverts to the golden
+    #    first oil and contradicts the field NPV it claims to decompose.
+    field = build_field_npv_timeline(
+        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+    )
     field_terminal = field["terminal_npv_usd"]
     dev_system = field["dev_system"]
     first_oil = field["first_oil"]
@@ -1247,7 +1262,9 @@ def build_well_npv_stackup(dev_name: str, end_date: str | None = None) -> dict:
     fopw = _build_fopw_map()
 
     # 2) Reconstruct the field full_range (identical to build_field_npv_timeline).
-    production = reproduce_v30_production(end_date=prod_end)
+    production = reproduce_v30_production(
+        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    )
     if dev_name not in production:
         raise ValueError(f"{dev_name!r} has no production timeline (exploration-only)")
     monthly = production[dev_name]["monthly_production"].copy()
