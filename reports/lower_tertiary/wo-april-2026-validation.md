@@ -3,6 +3,7 @@
 **Status:** validated 2026-07-06 · all 4 tables dispositioned
 **Benchmark name:** "World Oil April 2026 article" (World Oil Lower-Tertiary series, part 2; BSEE-derived data thru Nov 2025)
 **Canonical model artifact:** `docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx` (+ assumptions in `lease_assumptions.xlsx`)
+**Model basis:** the worldenergydata ("wed") toolset is the canonical model going forward. It reproduces the frozen **V30** baseline (2025-09-29) to within ±0.1 % and carries the extended **V50** production window (through 2026-04) on one code path. Economics below are quoted on the **V50 (latest-OGOR-A)** basis, with the frozen V30 reference shown alongside; **D&C days are version-independent** (identical under V30 and V50). Full three-revision comparison, script differences, missed-file inventory and bug review: [FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html) (§6.1).
 **Live reconciliation page:** [/completion/verification.html](https://vamseeachanta.github.io/worldenergydata/completion/verification.html)
 
 ---
@@ -210,9 +211,25 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 
 ## 6. Provenance and versioning
 
-- **V30** = frozen baseline (this workbook; production window thru 2025-05). **V50** = rerun on latest OGOR-A (changes production window/economics only). **D&C days are WAR-derived and identical under both** — the Table 1 reconciliation is version-independent (`reports/lower_tertiary/v30_vs_v50_comparison.md`).
+- **V30** = frozen baseline (2025-09-29 workbook; production window thru 2025-05). **V50** = rerun on latest OGOR-A (2026-06-26; window thru 2026-04, +11 months). **wed** = the canonical toolset (2026-07-06) that reproduces V30 and carries the V50 window on one code path. **D&C days are WAR-derived and identical under all three** — the Table 1 reconciliation is version-independent (`reports/lower_tertiary/v30_vs_v50_comparison.md`).
 - Owner decision (2026-07-06, noted on [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)): the full-raw extraction **supersedes** V30 as canonical D&C once Roy confirms this validation; consumers (`v30_reproducer`, `financial/config_loader`) migrate then.
 - Every "WED" number in this report is computed by repository code from BSEE raw data (WAR + OGOR-A). Numbers we could not recompute in-session are tagged with their recorded source.
+
+### 6.1 Revision lineage (V30 → V50 → wed) and canonical basis
+
+The full three-way comparison — scripts, inputs, months of BSEE data, result tables, script-by-script differences, the missed-file inventory, and an adversarial bug review — is its own living page: **[FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)**. Summary:
+
+| Dimension | V30 (2025-09-29) | V50 (2026-06-26) | wed (2026-07-06) |
+|---|---|---|---|
+| BSEE production window | 2000-09 → 2025-05 | 2000-09 → 2026-04 (+11 mo) | reproduces both |
+| D&C extractor | md5 1b89c23e | identical | identical (version-independent) |
+| `ogora_to_chronological` | `V23_001` | rewrite `Version 008` | ships old `V23_001` |
+| Financial generator | `_V30` (pre-tax) | `_V50` (**after-tax**) | `_V30` (V50 not committed) |
+| lease_assumptions | baseline | **13 cost cells changed** | V30 values (not propagated) |
+| Result workbook | shipped .xlsx | **none shipped** | YAML + markdown reports |
+| Portfolio NPV @10 % | −$8,327.8 MM | −$7,895.3 MM (+$432.5 MM) | reproduces both |
+
+**Two open reconciliation items for the article team** (the "same page" asks): the published V50 numbers were produced by wed's window-only reproducer, **not** by Roy's shipped `generate_financial_summary_V50.py`, which additionally applies (a) an after-tax block and (b) 13 changed cost cells. Adopting wed as canonical needs one agreed answer on **pre-tax vs after-tax** and on **whether those cost changes are intended**. See the comparison page §4.3.
 
 ## 7. Related work
 
@@ -240,3 +257,4 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 | 2026-07-06 | KC deepwater ingest landed (PR #851): canonical extractor reads raw WAR `.bin`; Buckskin becomes a matched row (§3); Anchor fidelity pinned exactly by test. Benchmark renamed to "World Oil April 2026 article" everywhere (PR #852). This report committed (PR #853). |
 | 2026-07-06 | BOEM reserves + discovery ingest landed (#847 / PR #861, plan #854 with two adversarial review rounds): annual Table 4 workbook + Deepwater Qualified Fields on refresh cadence; curated per-development table with citation columns; **Stones reserves discrepancy surfaced** (§5.1). Follow-on source family filed as #855. |
 | 2026-07-06 | Delta-increase analysis added (§3.1): current 2026-02-19 WAR vintage vs the article's Nov-2025 cutoff yields **+53 D&C days** (Big Foot +33, Stones +20), all post-TD well-servicing; Table 1 gains a **Δ since Nov '25** column. Section permalinks + an "On this page" contents nav added to the page. |
+| 2026-07-06 | Migrated the model basis to **V50 (latest OGOR-A)** with V30 as the frozen reference; added §6.1 revision lineage and a full companion page ([FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)) covering the three-revision comparison, V30→V50 script differences, missed-file inventory, and an adversarial bug review of the wed scripts (V30/V50 source archives backed up to `/mnt/ace/.../fdas_revisions/`). Surfaced two reconciliation items for the article team: pre-tax vs after-tax, and 13 changed V50 cost cells. |

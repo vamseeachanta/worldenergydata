@@ -512,6 +512,33 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
+    # --- FDAS revision comparison (V30 -> V50 -> wed) page ---
+    rev_md = REPORTS / "lower_tertiary" / "fdas_revision_comparison.md"
+    if rev_md.exists():
+        (PUBLIC / "fdas-revision-comparison.html").write_text(
+            page(
+                "FDAS Revision Comparison — V30 &rarr; V50 &rarr; wed",
+                "Three-way comparison of the Lower-Tertiary economics pipeline: "
+                "scripts, inputs, BSEE-data months, result tables, script differences, "
+                "missed files, and a bug review — the basis for adopting wed as canonical.",
+                _toc(rev_md.read_text(encoding="utf-8"))
+                + md_to_html(rev_md.read_text(encoding="utf-8")),
+                provenance=(
+                    "Comparison drawn from the V30/V50 source archives "
+                    "(/mnt/ace/.../fdas_revisions) and the wed reproduction reports; "
+                    "the cost-assumptions diff was recomputed cell-by-cell. Revision "
+                    "dates confirmed against Gmail and file vintages."
+                ),
+                data_limits=(
+                    "V50 shipped scripts + inputs only (no result workbook), so wed's "
+                    "V50 figures are validated against V30 reproduction, not a V50 "
+                    "golden workbook. Bugs listed are latent under the current dataset "
+                    "unless noted."
+                ),
+            ),
+            encoding="utf-8",
+        )
+
     # --- Portfolio summary page ---
     summ_md = REPORTS / "lower_tertiary_field_summary.md"
     if summ_md.exists():
@@ -1000,6 +1027,14 @@ def build_index() -> None:
             "<h3>World Oil Article Validation &rarr;</h3>"
             "<p>QA/QC of the April 2026 Lower-Tertiary article against the "
             "BSEE-derived model &mdash; reconciliation, errata, and change log.</p></a>"
+        )
+    if (PUBLIC / "fdas-revision-comparison.html").exists():
+        cards.append(
+            '<a class="card" href="fdas-revision-comparison.html">'
+            "<h3>FDAS Revision Comparison &rarr;</h3>"
+            "<p>V30 &rarr; V50 &rarr; wed: scripts, inputs, BSEE-data months, result "
+            "tables, script differences, missed files, and a bug review &mdash; the "
+            "case for wed as the canonical toolset.</p></a>"
         )
     if (PUBLIC / "benchmark.html").exists():
         cards.append(
