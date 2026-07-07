@@ -401,10 +401,19 @@ def main():
     if norms_path.exists():
         norms_chips = json.loads(norms_path.read_text()).get("chips", {})
 
+    # Field-performance stats (issue #756): attach the per-field BSEE
+    # life-to-date contract when present. Only the 7 producing fields have a
+    # record; None makes the template hide the card (honesty-gated).
+    perf_fields = {}
+    perf_path = HERE / "_performance.json"
+    if perf_path.exists():
+        perf_fields = json.loads(perf_path.read_text()).get("fields", {})
+
     fields = []
     for f in facts:
         field = facts_to_field(f)
         field["norms"] = norms_chips.get(f["id"], [])
+        field["performance"] = perf_fields.get(f["id"])
         out = HERE / f"{f['id']}_lifecycle.html"
         out.write_text(render(field))
         fields.append(field)
