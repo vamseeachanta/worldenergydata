@@ -1,8 +1,8 @@
 {
-  "registry_version": "2026-07-07-cited-partial-6",
+  "registry_version": "2026-07-07-cited-partial-7",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Ayoluengo has an evidence-only heterogeneous 20\u00b0 to 39\u00b0 API range but no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, and Ayoluengo has an evidence-only heterogeneous 20\u00b0 to 39\u00b0 API range; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Ayoluengo",
@@ -10,6 +10,23 @@
     "Viura (1)"
   ],
   "factors": [
+    {
+      "field_name": "Albatros",
+      "aliases": [
+        "albatros"
+      ],
+      "api_gravity_deg": 52.7,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": null,
+      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Albatros under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream",
+      "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 29, 1997",
+      "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1997_worldwide_production_leftcolumn_downloadable_worldwide_production_1997.pdf",
+      "source_class": "industry_technical_article",
+      "evidence_note": "The Spain/Repsol table row lists offshore Albatros, discovered in 1991, at 6,890 ft depth, 1 producing oil well, 130 b/d average production, and 52.7\u00b0 API gravity. The registry keeps Albatros in source_gap_fields because OGJ trade-press evidence is not a conversion-eligible representative source under the approved #807 source policy.",
+      "confidence": "medium",
+      "accepted_for_conversion": false
+    },
     {
       "field_name": "Amposta",
       "aliases": [
@@ -97,6 +114,23 @@
       "evidence_note": "The BOE order fixes the sales price for crude from the Dorada exploitation concession and states 21.3\u00b0 API with 0.59% sulfur.",
       "confidence": "high",
       "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Gaviota",
+      "aliases": [
+        "gaviota"
+      ],
+      "api_gravity_deg": 52.7,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": null,
+      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Gaviota under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream",
+      "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 25, 1995",
+      "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1995_worldwide_production_leftcolumn_downloadable_worldwide_production_1995.pdf",
+      "source_class": "industry_technical_article",
+      "evidence_note": "The Spain/Repsol table row lists offshore Gaviota, discovered in 1980, at 8,300 ft depth, 2 producing oil wells, 123 b/d average production, and 52.7\u00b0 API gravity. The registry keeps Gaviota in source_gap_fields because OGJ trade-press evidence is not a conversion-eligible representative source under the approved #807 source policy.",
+      "confidence": "medium",
+      "accepted_for_conversion": false
     },
     {
       "field_name": "Montanazo-Lubina",

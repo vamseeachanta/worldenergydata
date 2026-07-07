@@ -332,6 +332,57 @@ def test_default_density_registry_retains_ayoluengo_range_as_source_gap():
     assert defaulted_audit.missing_fields == ()
 
 
+def test_default_density_registry_retains_ogj_api_leads_as_source_gaps():
+    registry_path = files("worldenergydata.spain").joinpath(
+        "data/cores/crude_density_factors.json"
+    )
+    payload = json.loads(registry_path.read_text())
+    factors = load_crude_density_factors()
+    albatros_url = (
+        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/"
+        "content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_"
+        "1997_worldwide_production_leftcolumn_downloadable_worldwide_production_"
+        "1997.pdf"
+    )
+    gaviota_url = (
+        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/"
+        "content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_"
+        "1995_worldwide_production_leftcolumn_downloadable_worldwide_production_"
+        "1995.pdf"
+    )
+
+    for field_name, key, source_url in (
+        ("Albatros", "albatros", albatros_url),
+        ("Gaviota", "gaviota", gaviota_url),
+    ):
+        factor = factors[key]
+        assert factor.field_name == field_name
+        assert factor.source_class == "industry_technical_article"
+        assert factor.source_url == source_url
+        assert factor.accepted_for_conversion is False
+        assert factor.api_gravity_deg == pytest.approx(52.7)
+        assert factor.api_gravity_min_deg is None
+        assert factor.api_gravity_max_deg is None
+        assert factor.bbl_per_tonne is None
+        assert field_name in payload["source_gap_fields"]
+
+    with pytest.raises(CoresDensityCoverageError, match="Albatros"):
+        build_oil_conversion_audit(
+            ["Albatros", "Gaviota"],
+            factors,
+            allow_default_density=False,
+        )
+
+    defaulted_audit = build_oil_conversion_audit(
+        ["Albatros", "Gaviota"],
+        factors,
+        allow_default_density=True,
+    )
+    assert defaulted_audit.used_field_names == ()
+    assert defaulted_audit.defaulted_fields == ("Albatros", "Gaviota")
+    assert defaulted_audit.missing_fields == ()
+
+
 def test_default_density_registry_keeps_current_fields_missing():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
