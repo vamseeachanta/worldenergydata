@@ -34,6 +34,7 @@ PRODUCERS = [
     "Cascade Chinook",
     "Anchor",
     "Shenandoah",
+    "Buckskin",
 ]
 
 
@@ -45,7 +46,10 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     for dev in PRODUCERS:
         md = report.build_report(
-            dev, end_date=end_date, first_oil_overrides=FIRST_OIL_CORRECTIONS
+            dev,
+            end_date=end_date,
+            first_oil_overrides=FIRST_OIL_CORRECTIONS,
+            input_set="v50_kc" if dev == "Buckskin" else "v30",
         )
         slug = dev.lower().replace(" ", "_").replace("/", "_")
         path = out_dir / f"field_economics_{slug}_v50.md"

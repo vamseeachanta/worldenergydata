@@ -151,6 +151,7 @@ def build_report(
     lease_num: str | None = None,
     end_date: str | None = None,
     first_oil_overrides: dict[str, str] | None = None,
+    input_set: str = "v30",
 ) -> str:
     from worldenergydata.lower_tertiary.v30_financial_reproducer import (
         build_field_npv_timeline,
@@ -162,7 +163,21 @@ def build_report(
 
     # Resolve the field's lease(s). A single explicit --lease overrides; else
     # auto-derive every lease mapped to the development (multi-lease fields).
-    leases = [lease_num.upper()] if lease_num else leases_for_dev(dev_name)
+    if lease_num:
+        leases = [lease_num.upper()]
+    elif input_set == "v50_kc":
+        from worldenergydata.lower_tertiary.v30_reproducer import load_v50_kc_leases
+
+        leases_df = load_v50_kc_leases()
+        leases = sorted(
+            {
+                str(ln).strip().upper()
+                for ln, dev in zip(leases_df["LEASE_NUM"], leases_df["DEV_NAME"])
+                if dev == dev_name and str(ln).strip()
+            }
+        )
+    else:
+        leases = leases_for_dev(dev_name)
     lease_label = (
         leases[0] if len(leases) == 1 else f"{len(leases)} leases ({', '.join(leases)})"
     )
@@ -176,11 +191,18 @@ def build_report(
     # the headline reconciliation AND the per-field reference NPV in the window
     # header. Compute here so the header shows THIS field's frozen NPV, not a
     # hardcoded constant.
-    fin = reproduce_v30_financials()
+    reference_end_date = end_date if input_set != "v30" else None
+    fin = reproduce_v30_financials(
+        end_date=reference_end_date,
+        first_oil_overrides=first_oil_overrides if input_set != "v30" else None,
+        input_set=input_set,
+    )
     sanctioned_npv = fin[dev_name]["npv_usd"]
     _ref_mm = sanctioned_npv / 1e6
     _ref_str = f"-${abs(_ref_mm):,.1f}M" if _ref_mm < 0 else f"${_ref_mm:,.1f}M"
-    if is_latest:
+    if is_latest and input_set == "v50_kc":
+        window_label = f"{start_label} -> {end_label} (latest V50-KC recompute)"
+    elif is_latest:
         window_label = (
             f"{start_label} -> {end_label} (latest); "
             f"frozen V30 reference NPV = {_ref_str}"
@@ -189,7 +211,10 @@ def build_report(
         window_label = f"{start_label} -> {end_label} (V30 frozen window)"
 
     tl = build_field_npv_timeline(
-        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+        dev_name,
+        end_date=end_date,
+        first_oil_overrides=first_oil_overrides,
+        input_set=input_set,
     )
     timeline: pd.DataFrame = tl["timeline"].copy()
     timeline["month"] = timeline["date"].dt.to_period("M").dt.to_timestamp()
@@ -212,6 +237,13 @@ def build_report(
     # Latest revenue/oil comparison (read once; reused by the summary + the
     # Financial Summary table below). None for the frozen report.
     cmp = _read_latest_comparison(dev_name) if is_latest else None
+    if is_latest and input_set == "v50_kc" and cmp is None:
+        cmp = {
+            "latest_oil_bbl": fin[dev_name].get("total_oil_bbl"),
+            "latest_revenue_usd": fin[dev_name].get("revenue_usd"),
+            "v30_oil_bbl": None,
+            "v30_revenue_usd": None,
+        }
 
     # ---- Price sensitivity + breakeven (NPV is affine in a WTI multiplier) ----
     # One extra scaled timeline pins the exact NPV-vs-price line; everything
@@ -226,6 +258,7 @@ def build_report(
             end_date=end_date,
             wti_price_multiplier=_m,
             first_oil_overrides=first_oil_overrides,
+            input_set=input_set,
         )
         dnpv_dm = (tl_pert["terminal_npv_usd"] - base_npv) / (_m - 1.0)
         if abs(dnpv_dm) > 1.0:  # sensible slope (positive: NPV rises with price)
@@ -307,15 +340,19 @@ def build_report(
     )
     lines.append("## Summary")
     lines.append("")
+    if is_latest and input_set == "v50_kc":
+        summary_suffix = " (V50-KC recompute; no frozen V30 Buckskin row)."
+    elif is_latest:
+        summary_suffix = (
+            f" (frozen V30 sanctioned reference ${sanctioned_npv / 1e6:,.1f} M)."
+        )
+    else:
+        summary_suffix = " (sanctioned V30 model)."
     lines.append(
         f"On public BSEE production + cost data, **{dev_name}** is "
         f"**{sign} at {tl['discount_rate_annual'] * 100:.0f}%** life-to-date: "
         f"terminal cumulative NPV **${terminal_npv / 1e6:,.1f} M**"
-        + (
-            f" (frozen V30 sanctioned reference ${sanctioned_npv / 1e6:,.1f} M)."
-            if is_latest
-            else " (sanctioned V30 model)."
-        )
+        f"{summary_suffix}"
     )
     lines.append("")
     bullet_oil = f"**{oil_mm:,.1f} MMbbl** oil produced" if oil_mm is not None else None
@@ -344,7 +381,15 @@ def build_report(
     lines.extend(summary_bullets)
     lines.append("")
 
-    if is_latest:
+    if is_latest and input_set == "v50_kc":
+        lines.append(
+            "> **V50-KC run.** The NPV timeline is built from the V30 cashflow "
+            "model using the opt-in Keathley Canyon V50 lease and D&C inputs "
+            "(`leases_v21_kc.csv`, `drilling_and_completion_days_v21_kc.csv`) "
+            "through the latest available BSEE OGOR-A month. The frozen V30 "
+            "baseline has no Buckskin row and remains unchanged."
+        )
+    elif is_latest:
         lines.append(
             "> **LATEST run.** The NPV timeline is built from the V30 cashflow "
             "model extended through the latest available BSEE OGOR-A month "
@@ -368,7 +413,14 @@ def build_report(
     # =========================== NPV TIMELINE (TOP) =========================
     lines.append("## NPV Timeline")
     lines.append("")
-    if is_latest:
+    if is_latest and input_set == "v50_kc":
+        lines.append(
+            f"Cumulative discounted NPV evolution over field life, with critical "
+            f"well operations annotated. Terminal cumulative NPV = "
+            f"**${tl['terminal_npv_usd'] / 1e6:,.1f} M** "
+            "(V50-KC recompute; no frozen V30 Buckskin reference)."
+        )
+    elif is_latest:
         delta = tl["terminal_npv_usd"] - sanctioned_npv
         lines.append(
             f"Cumulative discounted NPV evolution over field life, with critical "
@@ -438,7 +490,10 @@ def build_report(
     # Pass the same first-oil overrides as the headline timeline so the stackup's
     # field NPV matches the field NPV it claims to decompose (Cascade Chinook fix).
     stk = build_well_npv_stackup(
-        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+        dev_name,
+        end_date=end_date,
+        first_oil_overrides=first_oil_overrides,
+        input_set=input_set,
     )
     lines.append("## Well-Level NPV Stackup")
     lines.append("")
@@ -587,7 +642,35 @@ def build_report(
     # =========================== FINANCIAL SUMMARY ==========================
     f = fin[dev_name]
     rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
-    if is_latest:
+    if is_latest and input_set == "v50_kc":
+        lines.append("## Financial Summary")
+        lines.append("")
+        lines.append(
+            f"**V50-KC latest window ({start_label} -> {end_label}).** "
+            "Buckskin uses the opt-in KC lease/D&C input set; frozen V30 has no "
+            "Buckskin row."
+        )
+        lines.append("")
+        lines.append("| Metric | Latest V50-KC | Frozen V30 |")
+        lines.append("|--------|------:|------:|")
+        lines.append(
+            f"| **NPV @ {rate_pct}%** "
+            f"| **${_fmt_usd_mm(tl['terminal_npv_usd'])} M** | n/a |"
+        )
+        if cmp and cmp.get("latest_revenue_usd"):
+            lines.append(f"| Revenue | ${_fmt_usd_mm(cmp['latest_revenue_usd'])} M | n/a |")
+        if cmp and cmp.get("latest_oil_bbl"):
+            lines.append(
+                f"| Oil produced (MMbbl) | {cmp['latest_oil_bbl'] / 1e6:,.1f} | n/a |"
+            )
+        lines.append("")
+        lines.append(
+            "_Latest NPV, revenue and oil are recomputed from the V50-KC input set; "
+            f"window through {end_label}._"
+        )
+        lines.append("")
+        lines.append("### V50-KC component breakdown")
+    elif is_latest:
         lines.append("## Financial Summary")
         lines.append("")
         lines.append(
@@ -658,11 +741,18 @@ def build_report(
         "and unambiguous. NPV @ 10% remains the primary value metric._"
     )
     lines.append("")
-    lines.append(
-        "_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. "
-        "NPV reproduced within golden-baseline tolerance by "
-        "`worldenergydata.lower_tertiary.v30_financial_reproducer`._"
-    )
+    if input_set == "v50_kc":
+        lines.append(
+            "_Source-of-record for this recompute: `leases_v21_kc.csv` + "
+            "`drilling_and_completion_days_v21_kc.csv` + BSEE OGOR-A `.bin`; "
+            "the frozen V30 baseline has no Buckskin row._"
+        )
+    else:
+        lines.append(
+            "_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. "
+            "NPV reproduced within golden-baseline tolerance by "
+            "`worldenergydata.lower_tertiary.v30_financial_reproducer`._"
+        )
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -827,6 +917,7 @@ def main(argv: list[str] | None = None) -> None:
         args.lease,
         end_date=end_date if is_latest else None,
         first_oil_overrides=first_oil_overrides,
+        input_set="v50_kc" if is_v50 and args.dev == "Buckskin" else "v30",
     )
 
     if args.out:

@@ -233,7 +233,7 @@ Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article.
 |---|---:|---:|---:|---:|
 | Anchor | 18.6 | 18.6 | 0.0 | 15.0 |
 | Big Foot | 78.2 | 78.7 | −0.5 | – |
-| Buckskin | 72.9 | – | – | 69.6 |
+| Buckskin | 72.9 | 72.9 | 0.0 | 69.6 |
 | Cascade Chinook | 39.7 | 39.7 | 0.0 | 38.8 |
 | Jack St Malo | 438.9 | 438.7 | +0.2 | 423.7 |
 | Julia | 77.5 | 77.5 | 0.0 | 74.6 |
@@ -244,18 +244,18 @@ Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article.
 
 **Revenue ($MM):**
 
-| Field | V50 (2026-04) | wed-frozen (2025-05) | Article (Nov-25) |
+| Field | V50 (2026-04) | wed (available basis) | Article (Nov-25) |
 |---|---:|---:|---:|
 | Anchor | 1,336 | 476 | 1,067 |
 | Big Foot | 5,587 | 4,738 | – |
-| Buckskin | 5,203 | – | 4,959 |
+| Buckskin | 5,203 | 5,116 | 4,959 |
 | Cascade Chinook | 2,790 | 2,327 | 2,725 |
 | Jack St Malo | 28,035 | 25,649 | 26,892 |
 | Julia | 5,197 | 4,715 | 4,983 |
 | Shenandoah | 1,588 | 0.3 | 649 |
 | Stones | 5,979 | 5,582 | 5,815 |
 
-Revenue rises monotonically with window length (V50/2026-04 ≥ Article/Nov-25 ≥ wed-frozen/2025-05), as expected — no methodological gap.
+Revenue rises monotonically with window length where the wed column is still the frozen V30 reference; Buckskin now uses the V50-KC recompute because there is no frozen V30 Buckskin row. The residual Buckskin revenue gap (V50 $5,203M vs wed $5,116M) is price-deck basis, not production volume.
 
 **NPV @ 10% ($MM) — the headline, with the reason for each V50↔wed gap:**
 
@@ -271,7 +271,7 @@ Revenue rises monotonically with window length (V50/2026-04 ≥ Article/Nov-25 �
 | Big Foot | −878.3 | −989.0 | +111 | −1,063.4 | – | dry Host-CAPEX 2000→1500 |
 | Anchor | −1,389.7 | −1,586.9 | +197 | −1,732.8 | −1,421 | Host-CAPEX subsea20 1500→800 (biggest single cost cut) |
 | **Jack St Malo** | **−3,912.8** | **−804.5** | **−3,108** | −881.1 | −577* | **NPV discount reference** — Roy discounts "from Day 1" (first spud, 2000); wed from first cashflow. JSM's 14-yr spud→first-oil gap makes this swing enormous. Undiscounted NCF reconciles (Roy +3,877 vs wed-frozen +4,793), so **≈ $3,005 M of the gap is the discount convention** and **≈ $103 M is corporate tax** (JSM has positive lifetime taxable income). **The discount convention is the one item to settle with the article team.** |
-| Buckskin | −541.4 | – | – | – | −1,473* | wed has no Buckskin V50 recompute yet; Roy V50 −541 vs article −1,473 = window + cost basis |
+| Buckskin | −541.4 | −989.7 | +448 | – | −1,473* | V50-KC recompute now present; WED uses the KC D&C extract + tieback20 cost basis (D&C $2,261.6M, facilities $1,800.0M), while Roy V50 carries lower Buckskin D&C/facilities and a small after-tax effect |
 
 \* Article value is one of the known Table-2 errata — see §4.6.
 
