@@ -8,6 +8,7 @@ import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Mapping
+from urllib.parse import urlparse
 
 DEFAULT_OIL_BBL_PER_TONNE = 7.33
 
@@ -64,6 +65,7 @@ class CoresCrudeDensityFactor:
     evidence_note: str
     confidence: str
     accepted_for_conversion: bool
+    supporting_source_urls: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         validate_crude_density_factor(self)
@@ -149,6 +151,14 @@ def validate_crude_density_factor(factor: CoresCrudeDensityFactor) -> None:
     for alias in factor.aliases:
         if not isinstance(alias, str) or not alias.strip():
             raise ValueError("aliases must be non-empty strings")
+    if not isinstance(factor.supporting_source_urls, tuple):
+        raise ValueError("supporting_source_urls must be a tuple")
+    for url in factor.supporting_source_urls:
+        if not isinstance(url, str) or not url.strip():
+            raise ValueError("supporting_source_urls must contain non-empty strings")
+        parsed = urlparse(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError("supporting_source_urls must contain HTTP(S) URLs")
     if not isinstance(factor.accepted_for_conversion, bool):
         raise ValueError("accepted_for_conversion must be boolean")
     if factor.source_class not in _ALLOWED_SOURCE_CLASSES:
@@ -199,6 +209,9 @@ def load_crude_density_factors(
     for entry in entries:
         if "accepted_for_conversion" not in entry:
             raise ValueError("accepted_for_conversion is required")
+        supporting_source_urls = entry.get("supporting_source_urls", ())
+        if not isinstance(supporting_source_urls, list | tuple):
+            raise ValueError("supporting_source_urls must be a list")
         factor = CoresCrudeDensityFactor(
             field_name=entry.get("field_name"),
             aliases=tuple(entry.get("aliases", ())),
@@ -213,6 +226,7 @@ def load_crude_density_factors(
             evidence_note=entry.get("evidence_note"),
             confidence=entry.get("confidence"),
             accepted_for_conversion=entry.get("accepted_for_conversion", False),
+            supporting_source_urls=tuple(supporting_source_urls),
         )
         factor_keys: set[str] = set()
         for key in (factor.field_name, *factor.aliases):

@@ -60,12 +60,12 @@ def test_report_preserves_defaulted_density_limitations(tmp_path):
 
 
 def test_report_preserves_missing_density_limitations(tmp_path):
-    _write_cache(tmp_path, extra_rows=[_cache_row("Gaviota", 2025, 1, 5.0, pd.NA)])
+    _write_cache(tmp_path, extra_rows=[_cache_row("Albatros", 2025, 1, 5.0, pd.NA)])
     _write_density_sidecar(
         tmp_path,
         coverage_status="missing",
         used_fields=["Ayoluengo"],
-        missing_fields=["Gaviota"],
+        missing_fields=["Albatros"],
     )
 
     summary = build_report(tmp_path)
@@ -76,10 +76,10 @@ def test_report_preserves_missing_density_limitations(tmp_path):
         "oil_tonnes_to_bbl_conversion_deferred_to_issue_807" in summary["limitations"]
     )
     assert any(
-        item == "oil_tonnes_to_bbl_has_missing_fields: Gaviota"
+        item == "oil_tonnes_to_bbl_has_missing_fields: Albatros"
         for item in summary["limitations"]
     )
-    assert "oil_tonnes_to_bbl_has_missing_fields: Gaviota" in html
+    assert "oil_tonnes_to_bbl_has_missing_fields: Albatros" in html
 
 
 def test_report_rejects_malformed_density_sidecar(tmp_path):
@@ -91,6 +91,18 @@ def test_report_rejects_malformed_density_sidecar(tmp_path):
     sidecar_path.write_text(_json_text(sidecar), encoding="utf-8")
 
     with pytest.raises(CoresReportError, match="source_url"):
+        build_report(tmp_path)
+
+
+def test_report_rejects_malformed_supporting_source_urls(tmp_path):
+    _write_cache(tmp_path)
+    _write_density_sidecar(tmp_path)
+    sidecar_path = tmp_path / "normalized" / "cores_oil_density_factors.json"
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    sidecar["factors"][0]["supporting_source_urls"] = "not-a-list"
+    sidecar_path.write_text(_json_text(sidecar), encoding="utf-8")
+
+    with pytest.raises(CoresReportError, match="supporting_source_urls"):
         build_report(tmp_path)
 
 
@@ -404,4 +416,5 @@ def _density_factor() -> dict:
         "evidence_note": "Synthetic test citation",
         "confidence": "high",
         "accepted_for_conversion": True,
+        "supporting_source_urls": [],
     }
