@@ -143,7 +143,10 @@ for fid, fdata in lease_map["fields"].items():
                      + yaml.safe_dump(per, sort_keys=False, default_flow_style=False, width=100))
 
 (OUT / "fields_registry.yml").write_text(
-    "# Auto-generated canonical registry — see scripts/gen_field_inputs.py\n"
+    "# Auto-generated economics/inputs registry — see scripts/gen_field_inputs.py\n"
+    "# Superseded for identity resolution by the canonical config/fields.yml\n"
+    "# (worldenergydata.common.fields_registry, #755). Kept as the SOURCE of the\n"
+    "# structured bsee area_blocks/leases + validated economics per field.\n"
     + yaml.safe_dump(registry, sort_keys=False, default_flow_style=False, width=100))
 
 print(f"Wrote {len(registry['fields'])} per-field input files + fields_registry.yml to {OUT.relative_to(REPO)}")

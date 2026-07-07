@@ -1,4 +1,7 @@
-# Auto-generated canonical registry — see scripts/gen_field_inputs.py
+# Auto-generated economics/inputs registry — see scripts/gen_field_inputs.py
+# Superseded for identity resolution by the canonical config/fields.yml
+# (worldenergydata.common.fields_registry, #755). Kept as the SOURCE of the
+# structured bsee area_blocks/leases + validated economics per field.
 meta:
   source: aceengineercode boem_fields + worldenergydata lease_mapping_fdas + golden_baseline_v30
   discount_rate_annual: 0.1

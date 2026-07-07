@@ -1,5 +1,9 @@
 # Lower Tertiary development → BOEM/BSEE FIELD_NAME_CODE bridge (#847)
 #
+# Superseded for identity resolution by the canonical config/fields.yml
+# (worldenergydata.common.fields_registry, #755). Kept for the BOEM
+# FIELD_NAME_CODE bridge still needed by the reserves ingest.
+#
 # Reviewed, committed mapping (NOT runtime fuzzy matching). Each code was
 # resolved 2026-07-06 against the deepqual dataset
 # (data/modules/bsee/bin/deepqual/mv_deep_water_field_leases.bin,
