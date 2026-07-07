@@ -424,6 +424,12 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
         if (lifecycle_src / "_norms.json").exists():
             # stage pages cite ../_norms.json as their provenance link
             shutil.copy2(lifecycle_src / "_norms.json", lifecycle_dst / "_norms.json")
+        if (lifecycle_src / "_performance.json").exists():
+            # per-field BSEE performance contract consumed by the posters (#756)
+            shutil.copy2(
+                lifecycle_src / "_performance.json",
+                lifecycle_dst / "_performance.json",
+            )
 
     # --- Drilling learning-curve front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
