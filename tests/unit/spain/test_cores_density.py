@@ -293,42 +293,44 @@ def test_default_density_registry_accepts_cited_source_fields():
     assert audit.missing_fields == ()
 
 
-def test_default_density_registry_retains_ayoluengo_range_as_source_gap():
+def test_default_density_registry_accepts_ayoluengo_operator_api_factor():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
     )
     payload = json.loads(registry_path.read_text())
     factors = load_crude_density_factors()
     ayoluengo_url = (
-        "https://sargentesdelalora.com/wp-content/uploads/2017/02/"
-        "libro-50-aniversario.pdf"
+        "https://web.archive.org/web/20170202034751id_/"
+        "http://www.lgo-energy.com/operations-detail/2755723-spain"
     )
 
     ayoluengo = factors["ayoluengo"]
     assert ayoluengo.field_name == "Ayoluengo"
-    assert ayoluengo.source_class == "technical_literature"
+    assert ayoluengo.source_class == "operator_record"
     assert ayoluengo.source_url == ayoluengo_url
-    assert ayoluengo.accepted_for_conversion is False
-    assert ayoluengo.api_gravity_min_deg == pytest.approx(20.0)
-    assert ayoluengo.api_gravity_max_deg == pytest.approx(39.0)
-    assert ayoluengo.api_gravity_deg is None
-    assert ayoluengo.bbl_per_tonne is None
-    assert "Ayoluengo" in payload["source_gap_fields"]
+    assert ayoluengo.accepted_for_conversion is True
+    assert ayoluengo.api_gravity_deg == pytest.approx(37.0)
+    assert ayoluengo.api_gravity_min_deg is None
+    assert ayoluengo.api_gravity_max_deg is None
+    assert ayoluengo.bbl_per_tonne == pytest.approx(7.489986677157665)
+    assert "Ayoluengo" not in payload["source_gap_fields"]
 
-    with pytest.raises(CoresDensityCoverageError, match="Ayoluengo"):
-        build_oil_conversion_audit(
-            ["Ayoluengo"],
-            factors,
-            allow_default_density=False,
-        )
+    audit = build_oil_conversion_audit(
+        ["Ayoluengo"],
+        factors,
+        allow_default_density=False,
+    )
+    assert audit.used_field_names == ("Ayoluengo",)
+    assert audit.defaulted_fields == ()
+    assert audit.missing_fields == ()
 
     defaulted_audit = build_oil_conversion_audit(
         ["Ayoluengo"],
         factors,
         allow_default_density=True,
     )
-    assert defaulted_audit.used_field_names == ()
-    assert defaulted_audit.defaulted_fields == ("Ayoluengo",)
+    assert defaulted_audit.used_field_names == ("Ayoluengo",)
+    assert defaulted_audit.defaulted_fields == ()
     assert defaulted_audit.missing_fields == ()
 
 
@@ -430,7 +432,6 @@ def test_default_density_registry_keeps_current_fields_missing():
     expected_fields = payload["source_gap_fields"]
     assert expected_fields == [
         "Albatros",
-        "Ayoluengo",
         "Gaviota",
         "Viura (1)",
     ]
@@ -467,12 +468,12 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     ]
     expected_gap_fields = [
         "Albatros",
-        "Ayoluengo",
         "Gaviota",
         "Viura (1)",
     ]
     expected_used_fields = [
         "Amposta",
+        "Ayoluengo",
         "Boquerón",
         "Casablanca",
         "Dorada",

@@ -1,11 +1,10 @@
 {
-  "registry_version": "2026-07-07-cited-partial-8",
+  "registry_version": "2026-07-07-cited-partial-9",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, Ayoluengo has an evidence-only heterogeneous 20\u00b0 to 39\u00b0 API range, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
-    "Ayoluengo",
     "Gaviota",
     "Viura (1)"
   ],
@@ -51,17 +50,17 @@
       "aliases": [
         "ayoluengo"
       ],
-      "api_gravity_deg": null,
-      "api_gravity_min_deg": 20.0,
-      "api_gravity_max_deg": 39.0,
-      "bbl_per_tonne": null,
-      "measurement_basis": "Ayoluengo field technical guide gives a heterogeneous 20\u00b0 to 39\u00b0 API crude density range; no representative produced stream, field average, or production-weighted split is cited",
-      "source_title": "El campo de petr\u00f3leo de Ayoluengo: 50 a\u00f1os de historia",
-      "source_url": "https://sargentesdelalora.com/wp-content/uploads/2017/02/libro-50-aniversario.pdf",
-      "source_class": "technical_literature",
-      "evidence_note": "The guide identifies Ayoluengo as Spain's only commercial onshore oil field, states the field's crude quality is heterogeneous, and gives crude density ranging from 20\u00b0 to 39\u00b0 API. The registry preserves that range as evidence only and keeps Ayoluengo in source_gap_fields for strict conversion.",
+      "api_gravity_deg": 37.0,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.489986677157665,
+      "measurement_basis": "Archived LGO Energy operator page identifies the Ayoluengo oilfield as producing low-sulphur crude at 37\u00b0 API",
+      "source_title": "LGO Energy Spain operation overview: Ayoluengo Oilfield",
+      "source_url": "https://web.archive.org/web/20170202034751id_/http://www.lgo-energy.com/operations-detail/2755723-spain",
+      "source_class": "operator_record",
+      "evidence_note": "The archived operator page lists Ayoluengo as LGO's largest Spanish onshore oilfield, states low-sulphur crude at 37\u00b0 API, and notes produced crude sales to industrial users. No structured min/max API range is recorded for this operator source.",
       "confidence": "medium",
-      "accepted_for_conversion": false
+      "accepted_for_conversion": true
     },
     {
       "field_name": "Boquer\u00f3n",
