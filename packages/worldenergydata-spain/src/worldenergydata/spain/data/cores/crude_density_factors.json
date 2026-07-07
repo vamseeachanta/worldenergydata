@@ -1,11 +1,10 @@
 {
-  "registry_version": "2026-07-07-cited-partial-9",
+  "registry_version": "2026-07-07-cited-partial-10",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has an evidence-only OGJ Worldwide Production API lead, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
-    "Gaviota",
     "Viura (1)"
   ],
   "factors": [
@@ -119,17 +118,21 @@
       "aliases": [
         "gaviota"
       ],
-      "api_gravity_deg": 52.7,
+      "api_gravity_deg": null,
       "api_gravity_min_deg": null,
       "api_gravity_max_deg": null,
-      "bbl_per_tonne": null,
-      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Gaviota under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream",
-      "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 25, 1995",
-      "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1995_worldwide_production_leftcolumn_downloadable_worldwide_production_1995.pdf",
-      "source_class": "industry_technical_article",
-      "evidence_note": "The Spain/Repsol table row lists offshore Gaviota, discovered in 1980, at 8,300 ft depth, 2 producing oil wells, 123 b/d average production, and 52.7\u00b0 API gravity. The registry keeps Gaviota in source_gap_fields because OGJ trade-press evidence is not a conversion-eligible representative source under the approved #807 source policy.",
+      "bbl_per_tonne": 8.289443405190332,
+      "measurement_basis": "Derived Gaviota condensate bbl/t factor: Murphy 1993 Form 10-K states net Gaviota condensate rates of 239 b/d in 1992 and 103 b/d in 1993 for its 18% interest; the registry grosses those rates to field barrels and divides by direct CORES gross tonnes of 58,602.8 t in 1992 and 25,218.0 t in 1993",
+      "source_title": "Murphy Oil 1993 Form 10-K and CORES Indigenous Crude Oil Production workbook: Gaviota condensate basis",
+      "source_url": "https://ir.murphyoilcorp.com/static-files/791c4744-6f71-41e5-a4dc-c95c654414d3",
+      "source_class": "securities_filing",
+      "evidence_note": "Murphy's filing identifies the Gaviota field at an 18% interest and reports average daily condensate rates of 239 b/d in 1992 and 103 b/d in 1993. CORES records gross Gaviota oil/condensate production of 58,602.8 t in 1992 and 25,218.0 t in 1993. The accepted factor is a weighted two-year net-to-gross derivation, not a stated API or density.",
       "confidence": "medium",
-      "accepted_for_conversion": false
+      "accepted_for_conversion": true,
+      "supporting_source_urls": [
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+        "https://www.cores.es/en/estadisticas"
+      ]
     },
     {
       "field_name": "Montanazo-Lubina",

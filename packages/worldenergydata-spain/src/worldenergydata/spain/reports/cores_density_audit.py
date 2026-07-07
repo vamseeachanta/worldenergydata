@@ -316,6 +316,7 @@ def _validate_factor_scalar_fields(
                 f"{source_name} factors[{index}] missing {key}"
             )
     _validate_http_url(factor["source_url"], source_name, index)
+    _validate_supporting_source_urls(factor, source_name, index)
     if not isinstance(factor["aliases"], list):
         raise CoresDensityAuditError(
             f"{source_name} factors[{index}] aliases must be a list"
@@ -350,6 +351,7 @@ def _validate_factor_with_registry_rules(
             evidence_note=factor["evidence_note"],
             confidence=factor["confidence"],
             accepted_for_conversion=factor["accepted_for_conversion"],
+            supporting_source_urls=tuple(factor["supporting_source_urls"]),
         )
     except (TypeError, ValueError) as exc:
         raise CoresDensityAuditError(f"{source_name} factors[{index}] {exc}") from exc
@@ -361,6 +363,29 @@ def _validate_http_url(value: str, source_name: str, index: int) -> None:
         raise CoresDensityAuditError(
             f"{source_name} factors[{index}] invalid source_url"
         )
+
+
+def _validate_supporting_source_urls(
+    factor: dict[str, Any],
+    source_name: str,
+    index: int,
+) -> None:
+    urls = factor["supporting_source_urls"]
+    if not isinstance(urls, list):
+        raise CoresDensityAuditError(
+            f"{source_name} factors[{index}] supporting_source_urls must be a list"
+        )
+    for url_index, url in enumerate(urls):
+        if not isinstance(url, str):
+            raise CoresDensityAuditError(
+                f"{source_name} factors[{index}] supporting_source_urls[{url_index}]"
+                " must be a string"
+            )
+        parsed = urlparse(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise CoresDensityAuditError(
+                f"{source_name} factors[{index}] invalid supporting_source_urls"
+            )
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -381,6 +406,7 @@ _FACTOR_KEYS = (
     "evidence_note",
     "confidence",
     "accepted_for_conversion",
+    "supporting_source_urls",
 )
 _REQUIRED_TEXT_KEYS = (
     "field_name",

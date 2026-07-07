@@ -62,6 +62,21 @@ def test_density_registry_requires_citation_fields(tmp_path):
         load_crude_density_factors(path)
 
 
+def test_density_registry_rejects_malformed_supporting_source_urls(tmp_path):
+    with pytest.raises(ValueError, match="supporting_source_urls"):
+        _factor(supporting_source_urls="https://example.test/supporting")
+
+    with pytest.raises(ValueError, match="supporting_source_urls"):
+        _factor(supporting_source_urls=("not-a-url",))
+
+    path = tmp_path / "density.json"
+    entry = _factor().__dict__
+    entry["supporting_source_urls"] = "https://example.test/supporting"
+    _write_registry(path, [entry])
+    with pytest.raises(ValueError, match="supporting_source_urls"):
+        load_crude_density_factors(path)
+
+
 def test_density_registry_rejects_legacy_list_payload(tmp_path):
     path = tmp_path / "density.json"
     path.write_text(json.dumps([_factor().__dict__]), encoding="utf-8")
@@ -334,7 +349,7 @@ def test_default_density_registry_accepts_ayoluengo_operator_api_factor():
     assert defaulted_audit.missing_fields == ()
 
 
-def test_default_density_registry_retains_ogj_api_leads_as_source_gaps():
+def test_default_density_registry_retains_albatros_ogj_api_lead_as_source_gap():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
     )
@@ -346,42 +361,79 @@ def test_default_density_registry_retains_ogj_api_leads_as_source_gaps():
         "1997_worldwide_production_leftcolumn_downloadable_worldwide_production_"
         "1997.pdf"
     )
-    gaviota_url = (
-        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/"
-        "content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_"
-        "1995_worldwide_production_leftcolumn_downloadable_worldwide_production_"
-        "1995.pdf"
-    )
 
-    for field_name, key, source_url in (
-        ("Albatros", "albatros", albatros_url),
-        ("Gaviota", "gaviota", gaviota_url),
-    ):
-        factor = factors[key]
-        assert factor.field_name == field_name
-        assert factor.source_class == "industry_technical_article"
-        assert factor.source_url == source_url
-        assert factor.accepted_for_conversion is False
-        assert factor.api_gravity_deg == pytest.approx(52.7)
-        assert factor.api_gravity_min_deg is None
-        assert factor.api_gravity_max_deg is None
-        assert factor.bbl_per_tonne is None
-        assert field_name in payload["source_gap_fields"]
+    factor = factors["albatros"]
+    assert factor.field_name == "Albatros"
+    assert factor.source_class == "industry_technical_article"
+    assert factor.source_url == albatros_url
+    assert factor.accepted_for_conversion is False
+    assert factor.api_gravity_deg == pytest.approx(52.7)
+    assert factor.api_gravity_min_deg is None
+    assert factor.api_gravity_max_deg is None
+    assert factor.bbl_per_tonne is None
+    assert "Albatros" in payload["source_gap_fields"]
 
     with pytest.raises(CoresDensityCoverageError, match="Albatros"):
         build_oil_conversion_audit(
-            ["Albatros", "Gaviota"],
+            ["Albatros"],
             factors,
             allow_default_density=False,
         )
 
     defaulted_audit = build_oil_conversion_audit(
-        ["Albatros", "Gaviota"],
+        ["Albatros"],
         factors,
         allow_default_density=True,
     )
     assert defaulted_audit.used_field_names == ()
-    assert defaulted_audit.defaulted_fields == ("Albatros", "Gaviota")
+    assert defaulted_audit.defaulted_fields == ("Albatros",)
+    assert defaulted_audit.missing_fields == ()
+
+
+def test_default_density_registry_accepts_gaviota_murphy_cores_derived_factor():
+    registry_path = files("worldenergydata.spain").joinpath(
+        "data/cores/crude_density_factors.json"
+    )
+    payload = json.loads(registry_path.read_text())
+    factors = load_crude_density_factors()
+    murphy_url = (
+        "https://ir.murphyoilcorp.com/static-files/"
+        "791c4744-6f71-41e5-a4dc-c95c654414d3"
+    )
+    cores_workbook_url = (
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/"
+        "crude-oil-production.xlsx"
+    )
+    cores_stats_url = "https://www.cores.es/en/estadisticas"
+
+    gaviota = factors["gaviota"]
+    assert gaviota.field_name == "Gaviota"
+    assert gaviota.source_class == "securities_filing"
+    assert gaviota.source_url == murphy_url
+    assert gaviota.supporting_source_urls == (cores_workbook_url, cores_stats_url)
+    assert gaviota.accepted_for_conversion is True
+    assert gaviota.api_gravity_deg is None
+    assert gaviota.api_gravity_min_deg is None
+    assert gaviota.api_gravity_max_deg is None
+    assert gaviota.bbl_per_tonne == pytest.approx(8.289443405190332)
+    assert "Gaviota" not in payload["source_gap_fields"]
+
+    audit = build_oil_conversion_audit(
+        ["Gaviota"],
+        factors,
+        allow_default_density=False,
+    )
+    assert audit.used_field_names == ("Gaviota",)
+    assert audit.defaulted_fields == ()
+    assert audit.missing_fields == ()
+
+    defaulted_audit = build_oil_conversion_audit(
+        ["Gaviota"],
+        factors,
+        allow_default_density=True,
+    )
+    assert defaulted_audit.used_field_names == ("Gaviota",)
+    assert defaulted_audit.defaulted_fields == ()
     assert defaulted_audit.missing_fields == ()
 
 
@@ -432,7 +484,6 @@ def test_default_density_registry_keeps_current_fields_missing():
     expected_fields = payload["source_gap_fields"]
     assert expected_fields == [
         "Albatros",
-        "Gaviota",
         "Viura (1)",
     ]
 
@@ -468,7 +519,6 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     ]
     expected_gap_fields = [
         "Albatros",
-        "Gaviota",
         "Viura (1)",
     ]
     expected_used_fields = [
@@ -477,6 +527,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Boquerón",
         "Casablanca",
         "Dorada",
+        "Gaviota",
         "Montanazo-Lubina",
         "Rodaballo",
         "Salmonete",
