@@ -1,8 +1,8 @@
 {
-  "registry_version": "2026-07-07-cited-partial-7",
+  "registry_version": "2026-07-07-cited-partial-8",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, and Ayoluengo has an evidence-only heterogeneous 20\u00b0 to 39\u00b0 API range; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros and Gaviota have evidence-only OGJ Worldwide Production API leads, Ayoluengo has an evidence-only heterogeneous 20\u00b0 to 39\u00b0 API range, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Ayoluengo",
@@ -201,6 +201,25 @@
       "evidence_note": "The BOE order fixes the sales price for crude from the Tarraco concession and states 35\u00b0 API with 0.2% sulfur at the wellhead.",
       "confidence": "high",
       "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Viura (1)",
+      "aliases": [
+        "viura 1",
+        "viura-1",
+        "viura1"
+      ],
+      "api_gravity_deg": null,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": null,
+      "measurement_basis": "H&P/Prospex research note states that Viura reservoir gas has a minor condensate cut of 3.5 stb/mmcf, but does not provide condensate density, API gravity, or a tonnes-to-barrels conversion basis",
+      "source_title": "Prospex Energy | H&P Research, Viura restarts and Poland licensing milestone, 22 October 2025",
+      "source_url": "https://prospex.energy/wp-content/uploads/2025/10/Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf",
+      "source_class": "industry_technical_article",
+      "evidence_note": "The research note describes Viura as a gas field and states that the reservoir produces gas with a minor condensate cut of 3.5 stb/mmcf. Because no liquid density/API value is cited, the registry preserves this as a source lead only and keeps Viura (1) in source_gap_fields for strict conversion.",
+      "confidence": "medium",
+      "accepted_for_conversion": false
     }
   ]
 }
