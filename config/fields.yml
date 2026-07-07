@@ -1,92 +1,169 @@
-# ABOUTME: Canonical field registry + crosswalk for the field-centric hub (epic #754, issue #755).
-# ABOUTME: Resolves each field by ONE canonical id (== lifecycle _facts.json id) to its BSEE block/lease,
-#          FDP portfolio slug, and which per-field surfaces exist. Externalized per repo config rule.
+# CANONICAL field-identity registry — the single source of truth for this repo.
+# Do NOT add parallel field-name mappings anywhere else; extend THIS file (and the
+# per-field `aliases:` list) instead. Every field id <-> display name <-> BSEE
+# lease/area-block <-> FDP slug resolution derives from here. All other mapping
+# configs in the repo are superseded for identity resolution by config/fields.yml.
+# Loader + resolution API: worldenergydata.common.fields_registry (epic #754, issue #755).
 #
-# has_* flags reflect what is actually built today (not a roadmap).
-# FDP portfolio pages that map to NO canonical lifecycle field (Miocene/other-play tiebacks) are listed
-# under `unmapped_fdp_pages` so the crosswalk stays honest.
+# GROUP GOAL: establish worldenergydata as the home of THE canonical field-identity
+# source for this analysis ecosystem.
+#
+# Schema (per field under `fields:`):
+#   canonical_id   snake id == lifecycle _facts.json id (never changes)
+#   display_name   human label
+#   aliases        every external name that must resolve to this field (benchmark CSV
+#                  free-text, V30/V50 baseline display names, WO-article name, roster name).
+#                  resolve() is case/punctuation-insensitive, so exact display_name need
+#                  not be repeated here.
+#   region / play  descriptive
+#   bsee:
+#     area_blocks  structured BSEE area+block codes, canonicalized to ^[A-Z]{2}\d{3}$
+#     leases       BSEE OCS lease numbers, canonicalized to ^G\d{5}$ (uppercased; the
+#                  "OCS-G " prefix and internal spaces stripped at authoring time; the
+#                  loader's by_lease() applies the SAME normalization to inputs so
+#                  "OCS-G 25806", "g25806", "G 25806" and "G25806" all resolve).
+#   bsee_block_note  original free-text block string (provenance; NOT machine-parsed).
+#   fdp_slug       hyphenated FDP portfolio slug (unique; explicit override where the
+#                  portfolio page name diverges from the display-name slug rule).
+#   tier           optional; `kc_recovered` distinguishes KC-ingest-recovered fields
+#                  (e.g. Buckskin) from the 10 rich Lower-Tertiary fields. kc_recovered
+#                  entries are exempt from the fields_registry.yml cross-config coherence
+#                  check (they are not in that auto-generated economics registry).
+#   surfaces       has_* flags: what per-field pages are actually built today (not a roadmap).
+#
+# Structured `bsee.area_blocks`/`bsee.leases` are sourced from
+# config/ong_field_development/fields_registry.yml (auto-generated) and, for Buckskin,
+# from packages/worldenergydata-bsee/.../buckskin/buckskin_config.py. fields.yml stays
+# hand-curated + contract-tested; a coherence test guards drift from that registry.
+#
+# FDP portfolio pages that map to NO canonical lifecycle field (Miocene/other-play
+# tiebacks) are listed under `unmapped_fdp_pages` so the crosswalk stays honest.
 
 fields:
   - canonical_id: big_foot
     display_name: "Big Foot"
+    aliases: ["Bigfoot"]
     region: "US Gulf of Mexico"
     play: "Wilcox / Lower Tertiary"
-    bsee_block: "Walker Ridge 29"
-    lease_number: "G16942"
-    fdp_slug: null
+    bsee:
+      area_blocks: [WR029]
+      leases: [G16942]
+    bsee_block_note: "Walker Ridge 29"
+    fdp_slug: big-foot
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
   - canonical_id: anchor
     display_name: "Anchor"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Lower Tertiary Wilcox"
-    bsee_block: "Green Canyon 807"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [GC807]
+      leases: [G31751, G31752]
+    bsee_block_note: "Green Canyon 807"
+    fdp_slug: anchor
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
   - canonical_id: cascade_chinook
     display_name: "Cascade/Chinook"
+    aliases: ["Cascade Chinook", "Cascade", "Chinook"]
     region: "US Gulf of Mexico"
     play: "Lower Tertiary (Wilcox)"
-    bsee_block: "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)"
-    lease_number: null
-    fdp_slug: chinook   # NOTE: portfolio has only chinook.html — covers the Chinook half of the field
+    bsee:
+      area_blocks: [WR205, WR206, WR469, WR470]
+      leases: [G16965, G16997]
+    bsee_block_note: "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)"
+    fdp_slug: chinook   # explicit override: portfolio has only chinook.html (Chinook half)
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: jack_st_malo
     display_name: "Jack/St. Malo"
+    aliases: ["Jack St Malo", "Jack", "St. Malo", "St Malo"]
     region: "US Gulf of Mexico"
     play: "Lower Tertiary (Wilcox)"
-    bsee_block: "Walker Ridge 678 (St. Malo) / 758-759 (Jack)"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [WR678, WR758, WR759]
+      leases: [G17015, G17016, G18745, G18753, G20394, G21245]
+    bsee_block_note: "Walker Ridge 678 (St. Malo) / 758-759 (Jack)"
+    fdp_slug: jack-st-malo
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
   - canonical_id: julia
     display_name: "Julia"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Lower Tertiary Wilcox"
-    bsee_block: "Walker Ridge 627 (WR 540/583/584/627/628)"
-    lease_number: null
+    bsee:
+      area_blocks: [WR627]
+      leases: [G20351]
+    bsee_block_note: "Walker Ridge 627 (WR 540/583/584/627/628)"
     fdp_slug: julia
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: kaskida
     display_name: "Kaskida"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Lower Tertiary (Wilcox)"
-    bsee_block: "Keathley Canyon 292"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [KC291, KC292]
+      leases: [G19555, G25792]
+    bsee_block_note: "Keathley Canyon 292"
+    fdp_slug: kaskida
     surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
   - canonical_id: north_platte
     display_name: "North Platte (renamed Sparta)"
+    aliases: ["North Platte", "North Platte (Sparta)", "Sparta"]
     region: "US Gulf of Mexico"
     play: "Wilcox (Lower Tertiary / Paleogene)"
-    bsee_block: "Garden Banks 959 (straddles GB 915/916/958/959)"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [GB915, GB916, GB958, GB959]
+      leases: [G30876, G32460]
+    bsee_block_note: "Garden Banks 959 (straddles GB 915/916/958/959)"
+    fdp_slug: north-platte
     surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
   - canonical_id: shenandoah
     display_name: "Shenandoah"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Wilcox (Lower Tertiary)"
-    bsee_block: "Walker Ridge 52 (blocks 51, 52, N/2 53)"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [WR051]
+      leases: [G25232, G31938]
+    bsee_block_note: "Walker Ridge 52 (blocks 51, 52, N/2 53)"
+    fdp_slug: shenandoah
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: false}
   - canonical_id: stones
     display_name: "Stones"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Lower Tertiary Wilcox"
-    bsee_block: "Walker Ridge 508"
-    lease_number: null
+    bsee:
+      area_blocks: [WR508]
+      leases: [G17001]
+    bsee_block_note: "Walker Ridge 508"
     fdp_slug: stones
     surfaces: {lifecycle_poster: true, economics_page: true, fdp_page: true}
   - canonical_id: tiber
     display_name: "Tiber"
+    aliases: []
     region: "US Gulf of Mexico"
     play: "Wilcox (Lower Tertiary / Paleogene)"
-    bsee_block: "Keathley Canyon 102"
-    lease_number: null
-    fdp_slug: null
+    bsee:
+      area_blocks: [KC102]
+      leases: [G25782]
+    bsee_block_note: "Keathley Canyon 102"
+    fdp_slug: tiber
     surfaces: {lifecycle_poster: true, economics_page: false, fdp_page: false}
+  # --- KC-ingest-recovered field (issue #842/#851): the crosswalk gap that motivated
+  #     the D&C reconciliation. Included here so the canonical registry never re-loses it.
+  - canonical_id: buckskin
+    display_name: "Buckskin"
+    aliases: []
+    region: "US Gulf of Mexico"
+    play: "Lower Tertiary / Wilcox"
+    tier: kc_recovered
+    bsee:
+      area_blocks: [KC785, KC828, KC829, KC830, KC871, KC872]
+      leases: [G19645, G20979, G25806, G25813, G25814, G25815, G25823, G32650]
+    bsee_block_note: "Keathley Canyon 785/828/829/830/871/872 (Lucius Spar tieback)"
+    fdp_slug: buckskin
+    surfaces: {lifecycle_poster: false, economics_page: false, fdp_page: false}
 
 # FDP portfolio pages with no canonical lifecycle field (out of scope for the hub join):
 unmapped_fdp_pages:
