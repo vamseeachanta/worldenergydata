@@ -176,6 +176,7 @@ def test_default_density_registry_accepts_cited_source_fields():
     dorada_url = "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf"
     montanazo_lubina_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2012-6772"
     boqueron_rodaballo_url = "https://doi.org/10.1016/j.fuel.2004.06.027"
+    salmonete_url = "https://doi.org/10.1016/0146-6380(86)90044-6"
 
     amposta = factors["amposta"]
     assert amposta.field_name == "Amposta"
@@ -247,6 +248,14 @@ def test_default_density_registry_accepts_cited_source_fields():
     assert rodaballo.api_gravity_deg == pytest.approx(41.3)
     assert rodaballo.bbl_per_tonne == pytest.approx(7.681125803043588)
 
+    salmonete = factors["salmonete"]
+    assert salmonete.field_name == "Salmonete"
+    assert salmonete.source_class == "technical_literature"
+    assert salmonete.source_url == salmonete_url
+    assert salmonete.accepted_for_conversion is True
+    assert salmonete.api_gravity_deg == pytest.approx(44.9)
+    assert salmonete.bbl_per_tonne == pytest.approx(7.841149257273662)
+
     tarraco = factors["tarraco"]
     assert tarraco.field_name == "Tarraco"
     assert tarraco.source_class == "regulator_record"
@@ -263,6 +272,7 @@ def test_default_density_registry_accepts_cited_source_fields():
             "Dorada",
             "Montanazo-Lubina",
             "Rodaballo",
+            "Salmonete",
             "Tarraco",
         ],
         factors,
@@ -276,6 +286,7 @@ def test_default_density_registry_accepts_cited_source_fields():
         "Dorada",
         "Montanazo-Lubina",
         "Rodaballo",
+        "Salmonete",
         "Tarraco",
     )
     assert audit.defaulted_fields == ()
@@ -292,7 +303,6 @@ def test_default_density_registry_keeps_current_fields_missing():
         "Albatros",
         "Ayoluengo",
         "Gaviota",
-        "Salmonete",
         "Viura (1)",
     ]
 
@@ -330,7 +340,6 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Albatros",
         "Ayoluengo",
         "Gaviota",
-        "Salmonete",
         "Viura (1)",
     ]
     expected_used_fields = [
@@ -340,6 +349,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Dorada",
         "Montanazo-Lubina",
         "Rodaballo",
+        "Salmonete",
         "Tarraco",
     ]
     factors = load_crude_density_factors()
@@ -365,6 +375,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     assert "Dorada" not in message
     assert "Montanazo-Lubina" not in message
     assert "Rodaballo" not in message
+    assert "Salmonete" not in message
     assert "Tarraco" not in message
 
     defaulted_audit = build_oil_conversion_audit(
