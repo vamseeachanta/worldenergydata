@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urlparse
@@ -46,20 +47,36 @@ def oil_conversion_limitations(audit: dict[str, Any] | None) -> list[str]:
     coverage_status = audit["coverage_status"]
     defaulted_fields = list(audit["defaulted_fields"])
     missing_fields = list(audit["missing_fields"])
+    limitations = []
     if coverage_status == "missing" or missing_fields:
-        return [
-            "oil_tonnes_to_bbl_conversion_deferred_to_issue_807",
-            _field_list_limitation(
-                "oil_tonnes_to_bbl_has_missing_fields", missing_fields
-            ),
-        ]
+        limitations.extend(
+            [
+                _field_list_limitation(
+                    "oil_tonnes_to_bbl_has_missing_fields", missing_fields
+                ),
+                _field_list_limitation(
+                    "oil_tonnes_to_bbl_blocked_by_missing_density_source",
+                    missing_fields,
+                ),
+            ]
+        )
     if coverage_status == "defaulted" or defaulted_fields:
+        limitations.extend(
+            [
+                _field_list_limitation(
+                    "oil_tonnes_to_bbl_has_defaulted_fields",
+                    defaulted_fields,
+                ),
+                _default_factor_limitation(
+                    defaulted_fields,
+                    audit.get("default_bbl_per_tonne"),
+                ),
+            ]
+        )
+    if limitations:
         return [
             "oil_tonnes_to_bbl_conversion_deferred_to_issue_807",
-            _field_list_limitation(
-                "oil_tonnes_to_bbl_has_defaulted_fields",
-                defaulted_fields,
-            ),
+            *limitations,
         ]
     if coverage_status == "complete" and not defaulted_fields and not missing_fields:
         return ["oil_tonnes_to_bbl_uses_cited_field_density_factors"]
@@ -80,6 +97,18 @@ def _field_list_limitation(marker: str, fields: list[str]) -> str:
     if not fields:
         return marker
     return f"{marker}: {', '.join(str(field) for field in fields)}"
+
+
+def _default_factor_limitation(fields: list[str], value: Any) -> str:
+    marker = "oil_tonnes_to_bbl_assumes_default_factor"
+    if not fields:
+        return marker
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return _field_list_limitation(marker, fields)
+    if not math.isfinite(float(value)):
+        return _field_list_limitation(marker, fields)
+    field_assumptions = ", ".join(f"{field}={value:g}" for field in fields)
+    return f"{marker}: {field_assumptions}"
 
 
 def _validated_oil_conversion_audit(audit: Any, source_name: str) -> dict[str, Any]:
@@ -161,7 +190,12 @@ def _validate_default_bbl_per_tonne(
     if not audit["defaulted_fields"]:
         return
     value = audit.get("default_bbl_per_tonne")
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+        or value <= 0
+    ):
         raise CoresDensityAuditError(f"{source_name} missing default_bbl_per_tonne")
 
 
