@@ -349,6 +349,7 @@ temporary_exceptions:
       - reports/lower_tertiary/julia_npv_stackup.html
       - reports/lower_tertiary/lifecycle/_facts.json
       - reports/lower_tertiary/lifecycle/_norms.json
+      - reports/lower_tertiary/lifecycle/_performance.json
       - reports/lower_tertiary/lifecycle/norms/drill.html
       - reports/lower_tertiary/lifecycle/norms/complete.html
       - reports/lower_tertiary/lifecycle/norms/produce.html
