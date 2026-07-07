@@ -1,0 +1,67 @@
+rule,development,drilling_days,completion_days,d_and_c_days,qualified_rule,disqualifier
+current,Anchor,821,1004,1825,True,qualified
+current,Big Foot,1235,2030,3265,True,qualified
+current,Buckskin,1043,1013,2056,True,qualified
+current,Cascade Chinook,1205,1262,2467,True,qualified
+current,Jack St Malo,3065,3982,7047,True,qualified
+current,Julia,802,885,1687,True,qualified
+current,Kaskida,556,285,841,True,qualified
+current,North Platte,675,296,971,True,qualified
+current,Shenandoah,1363,1007,2370,True,qualified
+current,Stones,1457,1168,2625,True,qualified
+current,Tiber,214,36,250,True,qualified
+gap_cap_30d,Anchor,821,417,1238,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Big Foot,1235,1343,2578,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Buckskin,1043,769,1812,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Cascade Chinook,1205,874,2079,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Jack St Malo,3065,2433,5498,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Julia,802,627,1429,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Kaskida,556,231,787,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,North Platte,675,295,970,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Shenandoah,1363,511,1874,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Stones,1457,813,2270,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_30d,Tiber,214,36,250,False,Anchor moved from 821/1004 to 821/417; Buckskin moved from 2056 to 1812
+gap_cap_60d,Anchor,821,649,1470,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Big Foot,1235,1403,2638,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Buckskin,1043,769,1812,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Cascade Chinook,1205,874,2079,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Jack St Malo,3065,2605,5670,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Julia,802,627,1429,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Kaskida,556,231,787,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,North Platte,675,295,970,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Shenandoah,1363,511,1874,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Stones,1457,813,2270,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_60d,Tiber,214,36,250,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Anchor,821,649,1470,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Big Foot,1235,1403,2638,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Buckskin,1043,769,1812,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Cascade Chinook,1205,874,2079,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Jack St Malo,3065,2605,5670,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Julia,802,627,1429,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Kaskida,556,231,787,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,North Platte,675,295,970,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Shenandoah,1363,515,1878,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Stones,1457,851,2308,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_90d,Tiber,214,36,250,False,Anchor moved from 821/1004 to 821/649; Buckskin moved from 2056 to 1812
+gap_cap_180d,Anchor,821,684,1505,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Big Foot,1235,1403,2638,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Buckskin,1043,964,2007,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Cascade Chinook,1205,1003,2208,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Jack St Malo,3065,2777,5842,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Julia,802,627,1429,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Kaskida,556,267,823,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,North Platte,675,295,970,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Shenandoah,1363,515,1878,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Stones,1457,861,2318,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+gap_cap_180d,Tiber,214,36,250,False,Anchor moved from 821/1004 to 821/684; Buckskin moved from 2056 to 2007
+keyword_only,Anchor,821,984,1805,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Big Foot,1235,1939,3174,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Buckskin,1043,842,1885,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Cascade Chinook,1205,1190,2395,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Jack St Malo,3065,3860,6925,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Julia,802,869,1671,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Kaskida,556,266,822,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,North Platte,675,286,961,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Shenandoah,1363,955,2318,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Stones,1457,1083,2540,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
+keyword_only,Tiber,214,36,250,False,Anchor moved from 821/1004 to 821/984; Buckskin moved from 2056 to 1885
