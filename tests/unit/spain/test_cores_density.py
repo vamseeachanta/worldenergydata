@@ -361,11 +361,24 @@ def test_default_density_registry_retains_albatros_ogj_api_lead_as_source_gap():
         "1997_worldwide_production_leftcolumn_downloadable_worldwide_production_"
         "1997.pdf"
     )
+    boe_dia_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-4769"
+    boe_authorization_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-9989"
+    cores_workbook_url = (
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/"
+        "crude-oil-production.xlsx"
+    )
+    cores_stats_url = "https://www.cores.es/en/estadisticas"
 
     factor = factors["albatros"]
     assert factor.field_name == "Albatros"
     assert factor.source_class == "industry_technical_article"
     assert factor.source_url == albatros_url
+    assert factor.supporting_source_urls == (
+        boe_dia_url,
+        boe_authorization_url,
+        cores_workbook_url,
+        cores_stats_url,
+    )
     assert factor.accepted_for_conversion is False
     assert factor.api_gravity_deg == pytest.approx(52.7)
     assert factor.api_gravity_min_deg is None
@@ -437,12 +450,24 @@ def test_default_density_registry_accepts_gaviota_murphy_cores_derived_factor():
     assert defaulted_audit.missing_fields == ()
 
 
-def test_default_density_registry_retains_viura_condensate_lead_as_source_gap():
+def test_default_density_registry_accepts_viura_miteco_crude_equivalent_factor():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
     )
     payload = json.loads(registry_path.read_text())
     factors = load_crude_density_factors()
+    miteco_2020_url = (
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/"
+        "balances/Balances/LibrosEnergia/Libro_Energia_Espana_2020.pdf"
+    )
+    miteco_2017_url = (
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/"
+        "balances/Balances/LibrosEnergia/Libro-Energia-2017.pdf"
+    )
+    miteco_2018_url = (
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/"
+        "balances/Balances/LibrosEnergia/Libro-Energia-2018.pdf"
+    )
     viura_url = (
         "https://prospex.energy/wp-content/uploads/2025/10/"
         "Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf"
@@ -450,29 +475,36 @@ def test_default_density_registry_retains_viura_condensate_lead_as_source_gap():
 
     viura = factors["viura1"]
     assert viura.field_name == "Viura (1)"
-    assert viura.source_class == "industry_technical_article"
-    assert viura.source_url == viura_url
-    assert viura.accepted_for_conversion is False
+    assert viura.source_class == "regulator_record"
+    assert viura.source_url == miteco_2020_url
+    assert viura.supporting_source_urls == (
+        miteco_2017_url,
+        miteco_2018_url,
+        viura_url,
+    )
+    assert viura.accepted_for_conversion is True
     assert viura.api_gravity_deg is None
     assert viura.api_gravity_min_deg is None
     assert viura.api_gravity_max_deg is None
-    assert viura.bbl_per_tonne is None
-    assert "Viura (1)" in payload["source_gap_fields"]
+    assert viura.bbl_per_tonne == pytest.approx(7.330108730412536)
+    assert "Viura (1)" not in payload["source_gap_fields"]
 
-    with pytest.raises(CoresDensityCoverageError, match="Viura"):
-        build_oil_conversion_audit(
-            ["Viura (1)"],
-            factors,
-            allow_default_density=False,
-        )
+    audit = build_oil_conversion_audit(
+        ["Viura (1)"],
+        factors,
+        allow_default_density=False,
+    )
+    assert audit.used_field_names == ("Viura (1)",)
+    assert audit.defaulted_fields == ()
+    assert audit.missing_fields == ()
 
     defaulted_audit = build_oil_conversion_audit(
         ["Viura (1)"],
         factors,
         allow_default_density=True,
     )
-    assert defaulted_audit.used_field_names == ()
-    assert defaulted_audit.defaulted_fields == ("Viura (1)",)
+    assert defaulted_audit.used_field_names == ("Viura (1)",)
+    assert defaulted_audit.defaulted_fields == ()
     assert defaulted_audit.missing_fields == ()
 
 
@@ -484,7 +516,6 @@ def test_default_density_registry_keeps_current_fields_missing():
     expected_fields = payload["source_gap_fields"]
     assert expected_fields == [
         "Albatros",
-        "Viura (1)",
     ]
 
     with pytest.raises(CoresDensityCoverageError) as exc_info:
@@ -519,7 +550,6 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     ]
     expected_gap_fields = [
         "Albatros",
-        "Viura (1)",
     ]
     expected_used_fields = [
         "Amposta",
@@ -532,6 +562,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Rodaballo",
         "Salmonete",
         "Tarraco",
+        "Viura (1)",
     ]
     factors = load_crude_density_factors()
 
