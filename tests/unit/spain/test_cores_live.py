@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from importlib.resources import files
 
 import pandas as pd
 import pytest
@@ -15,6 +16,12 @@ from worldenergydata.spain.production.cores_live import (
     refresh_ayoluengo_fixture,
 )
 from worldenergydata.spain.production.cores_loader import TONNES_TO_BBL
+
+AYOLUENGO_OPERATOR_URL = (
+    "https://web.archive.org/web/20170202034751id_/"
+    "http://www.lgo-energy.com/operations-detail/2755723-spain"
+)
+AYOLUENGO_OPERATOR_BBL_PER_TONNE = 7.489986677157665
 
 
 def test_discover_resolves_official_workbook_links_from_statistics_page_html(tmp_path):
@@ -86,7 +93,7 @@ def test_download_all_writes_raw_files_atomically_and_records_metadata(tmp_path)
     )
 
 
-def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
+def test_refresh_ayoluengo_fixture_without_audit_records_legacy_default(tmp_path):
     oil = pd.DataFrame(
         [
             {"field_name": "Other", "year": 2026, "month": 1, "oil_bbl": 1.0},
@@ -143,6 +150,27 @@ def test_refresh_ayoluengo_fixture_writes_stable_sample_and_metadata(tmp_path):
     assert audit["defaulted_fields"] == ["Ayoluengo"]
     assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
     assert written_metadata["workbooks"]["oil"]["sha256"] == "abc123"
+
+
+def test_committed_ayoluengo_fixture_uses_cited_operator_density_factor():
+    cores_data = files("worldenergydata.spain").joinpath("data/cores")
+    metadata = json.loads(cores_data.joinpath("_metadata.json").read_text())
+    sample = pd.read_csv(cores_data.joinpath("ayoluengo_oil_sample.csv"))
+    source_tonnes = [9462.0, 12573.0, 11933.0, 13803.0, 13194.0, 7593.0]
+
+    assert metadata["conversion_factors"]["oil_tonnes_to_bbl_by_field"] == {
+        "Ayoluengo": AYOLUENGO_OPERATOR_BBL_PER_TONNE
+    }
+    audit = metadata["oil_conversion_audit"]
+    assert audit["coverage_status"] == "complete"
+    assert audit["used_fields"] == ["Ayoluengo"]
+    assert audit["defaulted_fields"] == []
+    assert audit["default_bbl_per_tonne"] is None
+    assert audit["factors"][0]["source_url"] == AYOLUENGO_OPERATOR_URL
+    assert sample["oil_bbl"].tolist() == pytest.approx(
+        [tonnes * AYOLUENGO_OPERATOR_BBL_PER_TONNE for tonnes in source_tonnes],
+        abs=0.01,
+    )
 
 
 def _fake_workbook_responses(oil_bytes, gas_bytes):

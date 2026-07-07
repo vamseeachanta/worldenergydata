@@ -2,27 +2,47 @@
   "conversion": "oil_bbl = tonnes * cited_field_density_factors",
   "conversion_factors": {
     "gas_gwh_to_mcf": 3290.0,
-    "oil_tonnes_to_bbl_default": 7.33
+    "oil_tonnes_to_bbl_by_field": {
+      "Ayoluengo": 7.489986677157665
+    }
   },
   "license_note": "CORES attribution required; cite source URL and latest-update date.",
   "normalized_unit": "bbl",
   "oil_conversion_audit": {
     "conversion_basis": "cited_field_density_factors",
-    "coverage_status": "defaulted",
-    "default_bbl_per_tonne": 7.33,
-    "defaulted_fields": [
-      "Ayoluengo"
+    "coverage_status": "complete",
+    "default_bbl_per_tonne": null,
+    "defaulted_fields": [],
+    "factors": [
+      {
+        "accepted_for_conversion": true,
+        "aliases": [
+          "ayoluengo"
+        ],
+        "api_gravity_deg": 37.0,
+        "api_gravity_max_deg": null,
+        "api_gravity_min_deg": null,
+        "bbl_per_tonne": 7.489986677157665,
+        "confidence": "medium",
+        "evidence_note": "The archived operator page lists Ayoluengo as LGO's largest Spanish onshore oilfield, states low-sulphur crude at 37\u00b0 API, and notes produced crude sales to industrial users. No structured min/max API range is recorded for this operator source.",
+        "field_name": "Ayoluengo",
+        "measurement_basis": "Archived LGO Energy operator page identifies the Ayoluengo oilfield as producing low-sulphur crude at 37\u00b0 API",
+        "source_class": "operator_record",
+        "source_title": "LGO Energy Spain operation overview: Ayoluengo Oilfield",
+        "source_url": "https://web.archive.org/web/20170202034751id_/http://www.lgo-energy.com/operations-detail/2755723-spain"
+      }
     ],
-    "factors": [],
-    "generated_at": "2026-07-04T00:00:00Z",
+    "generated_at": "2026-07-07T00:00:00Z",
     "missing_fields": [],
     "oil_field_count": 1,
-    "registry_date": "2026-07-04",
-    "registry_version": "fixture-default-density",
+    "registry_date": "2026-07-07",
+    "registry_version": "2026-07-07-cited-partial-9",
     "schema_version": 1,
-    "used_fields": []
+    "used_fields": [
+      "Ayoluengo"
+    ]
   },
-  "sample_extracted_date": "2026-07-04",
+  "sample_extracted_date": "2026-07-07",
   "sample_field": "Ayoluengo",
   "sample_row_count": 6,
   "source_name": "CORES Indigenous Crude Oil Production",

@@ -22,8 +22,8 @@ from worldenergydata.spain.production.cores_loader import GWH_TO_MCF, TONNES_TO_
 def test_live_loader_allows_legacy_default_only_when_explicit(tmp_path):
     _write_live_workbooks(
         tmp_path,
-        pd.DataFrame([_workbook_row("Ayoluengo", 2.0)]),
-        pd.DataFrame([_workbook_row("Ayoluengo", 3.0)]),
+        pd.DataFrame([_workbook_row("Albatros", 2.0)]),
+        pd.DataFrame([_workbook_row("Albatros", 3.0)]),
     )
 
     loader = CoresLiveProductionLoader(
@@ -40,10 +40,10 @@ def test_live_loader_allows_legacy_default_only_when_explicit(tmp_path):
     assert all_products.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
     assert all_products.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
     assert loader.oil_conversion_audit is not None
-    assert loader.oil_conversion_audit.defaulted_fields == ("Ayoluengo",)
+    assert loader.oil_conversion_audit.defaulted_fields == ("Albatros",)
     sidecar = _read_density_sidecar(tmp_path)
     assert sidecar["coverage_status"] == "defaulted"
-    assert sidecar["defaulted_fields"] == ["Ayoluengo"]
+    assert sidecar["defaulted_fields"] == ["Albatros"]
     assert sidecar["default_bbl_per_tonne"] == TONNES_TO_BBL
     assert (tmp_path / "normalized" / "cores_oil_production.csv").exists()
     assert (tmp_path / "normalized" / "cores_gas_production.csv").exists()
@@ -63,12 +63,12 @@ def test_live_loader_default_registry_fails_closed_on_source_gaps(tmp_path):
     raw_dir.mkdir()
     _write_cores_xlsx(
         raw_dir / DEFAULT_WORKBOOKS["oil"].filename,
-        pd.DataFrame([_workbook_row("Ayoluengo", 2.0)]),
+        pd.DataFrame([_workbook_row("Albatros", 2.0)]),
     )
 
     loader = CoresLiveProductionLoader(cache_root=tmp_path)
 
-    with pytest.raises(CoresDensityCoverageError, match="Ayoluengo"):
+    with pytest.raises(CoresDensityCoverageError, match="Albatros"):
         loader.load_oil_production()
 
 
