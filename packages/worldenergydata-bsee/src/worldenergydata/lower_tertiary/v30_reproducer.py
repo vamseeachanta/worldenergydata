@@ -25,6 +25,8 @@ OGOR_ZIP_DIR = get_module_data_safe("bsee") / "zip" / "historical_production_yea
 GOLDEN_BASELINE_PATH = (
     PROJECT_ROOT / "config/analysis/lower_tertiary/golden_baseline_v30.yml"
 )
+V50_KC_LEASES_PATH = FDAS_V30_DIR / "leases_v21_kc.csv"
+V50_KC_DRILLING_PATH = FDAS_V30_DIR / "drilling_and_completion_days_v21_kc.csv"
 
 
 def load_v30_leases() -> pd.DataFrame:
@@ -45,6 +47,35 @@ def load_v30_leases() -> pd.DataFrame:
         .str.replace(" ", "", regex=False)
     )
     return df
+
+
+def _normalise_lease_numbers(df: pd.DataFrame) -> pd.DataFrame:
+    """Normalise the FDAS lease-number column in-place-compatible form."""
+    df = df.copy()
+    df["LEASE_NUM"] = (
+        df["LEASE_NUM"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+        .str.replace('"', "", regex=False)
+        .str.replace(" ", "", regex=False)
+    )
+    return df
+
+
+def load_v50_kc_leases() -> pd.DataFrame:
+    """Load V50 lease mappings with the Keathley Canyon Buckskin additions.
+
+    This is an opt-in V50 input set. The frozen V30 ``leases.xlsx`` loader stays
+    unchanged for the sanctioned V30 workbook and its consumers.
+    """
+    df = pd.read_csv(V50_KC_LEASES_PATH)
+    return _normalise_lease_numbers(df)
+
+
+def load_v50_kc_drilling() -> pd.DataFrame:
+    """Load V50 D&C days generated from raw WAR ``.bin`` + ``leases_v21_kc.csv``."""
+    return pd.read_csv(V50_KC_DRILLING_PATH)
 
 
 def load_v30_assumptions() -> pd.DataFrame:
@@ -207,6 +238,31 @@ def load_golden_baseline() -> dict:
         return yaml.safe_load(f)
 
 
+def load_v50_kc_baseline() -> dict:
+    """Return the V30 baseline plus Buckskin metadata for the V50-KC input set.
+
+    Buckskin is intentionally not inserted into ``golden_baseline_v30.yml``:
+    that file is the frozen V30 source of record. The values here are the
+    minimal project metadata the existing financial engine needs to compute the
+    V50 Buckskin report from the opt-in KC leases/D&C inputs.
+    """
+    baseline = load_golden_baseline()
+    projects = dict(baseline.get("projects", {}))
+    if "buckskin" not in projects:
+        projects["buckskin"] = {
+            "display_name": "Buckskin",
+            "dev_system": "tieback20",
+            "first_oil": "2018-08-01",
+            "total_oil_bbl": 0,
+            "producers": 4,
+            "injectors": 0,
+            "wellbores": 25,
+        }
+    out = dict(baseline)
+    out["projects"] = projects
+    return out
+
+
 def _build_first_oil_map(baseline: dict) -> dict[str, pd.Timestamp]:
     """Extract first_oil dates per development display name from baseline."""
     first_oil_map: dict[str, pd.Timestamp] = {}
@@ -221,6 +277,8 @@ def _build_first_oil_map(baseline: dict) -> dict[str, pd.Timestamp]:
 def reproduce_v30_production(
     end_date: str | None = None,
     first_oil_overrides: dict[str, str] | None = None,
+    leases_df: pd.DataFrame | None = None,
+    baseline: dict | None = None,
 ) -> dict[str, dict]:
     """Reproduce V30 production totals from BSEE OGOR data.
 
@@ -242,7 +300,7 @@ def reproduce_v30_production(
       - last_date: latest production date
       - monthly_production: DataFrame with date, oil_bbl columns
     """
-    leases_df = load_v30_leases()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
     end_year = 2025
     if end_date is not None:
         end_year = max(2025, int(end_date[:4]))
@@ -259,7 +317,7 @@ def reproduce_v30_production(
 
     # Load per-development first_oil dates from golden baseline to exclude
     # pre-first-oil test/exploration production that Roy excluded in V30.
-    baseline = load_golden_baseline()
+    baseline = load_golden_baseline() if baseline is None else baseline
     first_oil_map = _build_first_oil_map(baseline)
 
     # Apply corrected first_oil dates (preserves golden baseline untouched)
@@ -284,6 +342,19 @@ def reproduce_v30_production(
         }
 
     return results
+
+
+def reproduce_v50_kc_production(
+    end_date: str | None = None,
+    first_oil_overrides: dict[str, str] | None = None,
+) -> dict[str, dict]:
+    """Reproduce production with the V50 Keathley Canyon lease set."""
+    return reproduce_v30_production(
+        end_date=end_date,
+        first_oil_overrides=first_oil_overrides,
+        leases_df=load_v50_kc_leases(),
+        baseline=load_v50_kc_baseline(),
+    )
 
 
 if __name__ == "__main__":

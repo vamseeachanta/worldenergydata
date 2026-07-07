@@ -74,6 +74,43 @@ SOURCE_NOTE = (
     "(US Gulf of Mexico / Gulf of America)."
 )
 
+LOWER_TERTIARY_FIELD_NAMES = {
+    "anchor": "Anchor",
+    "big_foot": "Big Foot",
+    "buckskin": "Buckskin",
+    "cascade_chinook": "Cascade&ndash;Chinook",
+    "jack_st_malo": "Jack / St. Malo",
+    "julia": "Julia",
+    "shenandoah": "Shenandoah",
+    "stones": "Stones",
+}
+
+
+def _field_economics_slug(path: Path) -> str:
+    name = path.name
+    for suffix in ("_v30.md", "_v50.md"):
+        if name.startswith("field_economics_") and name.endswith(suffix):
+            return name[len("field_economics_") : -len(suffix)]
+    raise ValueError(f"Unsupported field economics report name: {name}")
+
+
+def _lower_tertiary_economics_reports() -> list[tuple[str, Path]]:
+    """Prefer sanctioned V30 field reports; add V50-only fields such as Buckskin."""
+    reports_dir = REPORTS / "lower_tertiary"
+    selected: list[tuple[str, Path]] = []
+    seen: set[str] = set()
+    for md in sorted(reports_dir.glob("field_economics_*_v30.md")):
+        slug = _field_economics_slug(md)
+        selected.append((slug, md))
+        seen.add(slug)
+    for md in sorted(reports_dir.glob("field_economics_*_v50.md")):
+        slug = _field_economics_slug(md)
+        if slug in seen:
+            continue
+        selected.append((slug, md))
+        seen.add(slug)
+    return selected
+
 # ---------------------------------------------------------------------------
 # Minimal, dependency-free Markdown -> HTML for the exact constructs these
 # reports use: ATX headings, GFM tables, blockquotes, fenced code, hr, bold,
@@ -445,21 +482,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     if jsm_dc_src.exists():
         shutil.copyfile(jsm_dc_src, PUBLIC / "jsm-dc-diff.html")
 
-    # --- Economics pages (sanctioned V30), one per Lower-Tertiary field ---
-    field_names = {
-        "anchor": "Anchor",
-        "big_foot": "Big Foot",
-        "cascade_chinook": "Cascade&ndash;Chinook",
-        "jack_st_malo": "Jack / St. Malo",
-        "julia": "Julia",
-        "shenandoah": "Shenandoah",
-        "stones": "Stones",
-    }
+    # --- Economics pages (V30 by default; V50-only fields fall back to V50) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []  # (slug, display, page_filename, npv_str, npv_value)
-    for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
-        slug = md.name[len("field_economics_") : -len("_v30.md")]
-        display = field_names.get(slug, slug.replace("_", " ").title())
+    for slug, md in _lower_tertiary_economics_reports():
+        display = LOWER_TERTIARY_FIELD_NAMES.get(slug, slug.replace("_", " ").title())
         text = md.read_text(encoding="utf-8")
         m = npv_re.search(text)
         npv_str = m.group(1).strip() if m else "&mdash;"
@@ -470,24 +497,37 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
         except ValueError:
             npv_val = 0.0
         fname = f"economics-{slug}.html"
+        is_v50 = md.name.endswith("_v50.md")
+        model_label = (
+            "the latest V50-KC recompute"
+            if is_v50
+            else "the sanctioned V30 financial model"
+        )
         (PUBLIC / fname).write_text(
             page(
                 f"{display} Field Economics",
-                "Per-well and field-level NPV from the sanctioned V30 financial model.",
+                f"Per-well and field-level NPV from {model_label}.",
                 md_to_html(text),
                 provenance=(
-                    "Computed by the V30 cashflow model "
+                    "Computed by the V30 cashflow model with the opt-in V50-KC "
+                    "lease/D&C input set; Buckskin has no frozen V30 row."
+                    if is_v50
+                    else "Computed by the V30 cashflow model "
                     "(<code>build_field_npv_timeline</code>), which reuses the same "
                     "monthly cashflow and trimmed-discount formula as "
                     "<code>reproduce_v30_financials</code>. Terminal NPV reconciles to "
                     "the sanctioned V30 baseline."
                 ),
                 data_limits=(
-                    "The NPV shown is the <strong>sanctioned V30 model truth, presented "
-                    "as-is</strong> &mdash; not reframed as value-positive. Every Lower-"
-                    "Tertiary field here is NPV-negative at a 10% discount rate life-to-date. "
-                    "Operation markers (drilling/completion dates) are annotations only and "
-                    "do not feed the cashflow model."
+                    "The NPV shown is a V50-KC recompute because the frozen V30 "
+                    "baseline does not include Buckskin. Operation markers are "
+                    "annotations only and do not feed the cashflow model."
+                    if is_v50
+                    else "The NPV shown is the <strong>sanctioned V30 model truth, "
+                    "presented as-is</strong> &mdash; not reframed as value-positive. "
+                    "Every Lower-Tertiary field here is NPV-negative at a 10% discount "
+                    "rate life-to-date. Operation markers (drilling/completion dates) "
+                    "are annotations only and do not feed the cashflow model."
                 ),
                 route_key="economics",
                 route_ctx={"field_slug": slug, "field_name": _html_unescape(display)},
@@ -875,20 +915,10 @@ def _lower_tertiary_fields() -> list[tuple]:
     """Parse per-field NPV out of the source reports — independent of whether the
     lower_tertiary domain pages were (re)built this run. Mirrors the parse in
     build_lower_tertiary so the landing economics table is always accurate."""
-    field_names = {
-        "anchor": "Anchor",
-        "big_foot": "Big Foot",
-        "cascade_chinook": "Cascade&ndash;Chinook",
-        "jack_st_malo": "Jack / St. Malo",
-        "julia": "Julia",
-        "shenandoah": "Shenandoah",
-        "stones": "Stones",
-    }
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []
-    for md in sorted((REPORTS / "lower_tertiary").glob("field_economics_*_v30.md")):
-        slug = md.name[len("field_economics_") : -len("_v30.md")]
-        display = field_names.get(slug, slug.replace("_", " ").title())
+    for slug, md in _lower_tertiary_economics_reports():
+        display = LOWER_TERTIARY_FIELD_NAMES.get(slug, slug.replace("_", " ").title())
         text = md.read_text(encoding="utf-8")
         m = npv_re.search(text)
         npv_str = m.group(1).strip() if m else "&mdash;"

@@ -1,8 +1,8 @@
 {
-  "registry_version": "2026-07-07-cited-partial-12",
+  "registry_version": "2026-07-07-cited-partial-13",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Viura (1) has an accepted official MITECO crude-equivalent bbl/t factor from ministry-reported tonnes and barrels. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has evidence-only OGJ Worldwide Production API plus BOE/CORES official source leads but no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Viura (1) has an accepted official MITECO crude-equivalent bbl/t factor from ministry-reported tonnes and barrels. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has evidence-only OGJ Worldwide Production API plus official/operator/CORES source leads checked for negative provenance, but no accepted representative density/API or same-period barrels-per-tonne basis. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros"
   ],
@@ -16,18 +16,24 @@
       "api_gravity_min_deg": null,
       "api_gravity_max_deg": null,
       "bbl_per_tonne": null,
-      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Albatros under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream. BOE abandonment records and CORES tonnes are retained as supporting direct leads, but they do not provide density/API or same-period barrels for conversion.",
+      "measurement_basis": "Oil & Gas Journal Worldwide Production tables list Albatros under Spain/Repsol with a 52.7\u00b0 API column value; these trade-press tables are retained as source leads only and are not treated as conversion-eligible representative produced-stream evidence. BOE, MITECO, CORES, and Murphy source leads identify Albatros, ownership, status, gas development context, or tonnes only, but do not provide density/API or same-period barrels for conversion.",
       "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 29, 1997",
       "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1997_worldwide_production_leftcolumn_downloadable_worldwide_production_1997.pdf",
       "source_class": "industry_technical_article",
-      "evidence_note": "The Spain/Repsol table row lists offshore Albatros, discovered in 1991, at 6,890 ft depth, 1 producing oil well, 130 b/d average production, and 52.7\u00b0 API gravity. BOE-A-2024-9989 identifies the Albatros concession, Vizcaya B-4, and current Repsol/Murphy ownership. BOE-A-2024-4769 models a hypothetical blowout scenario with 2,884 bbl of condensate over 30 days, but this is accident-model volume rather than production or mass evidence. CORES records Albatros gross crude/condensate tonnes in 1995-1997. The registry keeps Albatros in source_gap_fields because no direct conversion-eligible representative density/API or same-period barrels-per-tonne basis has been found.",
+      "evidence_note": "The 1997 and 1999 OGJ Spain/Repsol rows list offshore Albatros with 52.7\u00b0 API gravity; this remains an industry lead, not an accepted conversion source. BOE-B-2022-22886 and BOE-A-2024-9989 identify Vizcaya B-4/Albatros, operating status through 1997, and Repsol/Murphy 82/18 ownership. BOE-A-2024-4769 models a hypothetical blowout scenario with 2,884 bbl of condensate over 30 days, but this is accident-model volume rather than production or mass evidence. MITECO 2008 records cumulative Albatros tonnes, but there is no Albatros-specific Bbl+Tm row for deriving a factor. MITECO 2009 records Albatros/Vizcaya B-4 concession and well identity. The CORES February 1998 bulletin lists Albatros monthly/interim crude production in kt only. Murphy's 1993 Form 10-K describes Albatros as a gas development tied back to Gaviota and does not give Albatros oil/condensate density or production tonnes. The registry keeps Albatros in source_gap_fields because no accepted conversion-grade source has been found.",
       "confidence": "medium",
       "accepted_for_conversion": false,
       "supporting_source_urls": [
         "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-4769",
         "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-9989",
+        "https://www.boe.es/boe/dias/2022/07/14/pdfs/BOE-B-2022-22886.pdf",
         "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
-        "https://www.cores.es/en/estadisticas"
+        "https://www.cores.es/en/estadisticas",
+        "https://www.cores.es/sites/default/files/archivos/publicaciones/boletin-est-hidrocarburos-003-febrero-1998.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/2008/Produccion_Hidrocarburos2008.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/2009/EstadisticaHidrocarburos_2009.pdf",
+        "https://ir.murphyoilcorp.com/static-files/791c4744-6f71-41e5-a4dc-c95c654414d3",
+        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1999_worldwide_production_leftcolumn_downloadable_worldwide_production_1999.pdf"
       ]
     },
     {
