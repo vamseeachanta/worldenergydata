@@ -174,6 +174,7 @@ def test_default_density_registry_accepts_cited_source_fields():
     )
     amposta_url = "https://www.boe.es/boe/dias/1976/05/21/pdfs/A09838-09839.pdf"
     dorada_url = "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf"
+    montanazo_lubina_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2012-6772"
     boqueron_rodaballo_url = "https://doi.org/10.1016/j.fuel.2004.06.027"
 
     amposta = factors["amposta"]
@@ -208,6 +209,36 @@ def test_default_density_registry_accepts_cited_source_fields():
     assert dorada.api_gravity_deg == pytest.approx(21.3)
     assert dorada.bbl_per_tonne == pytest.approx(6.792106612876507)
 
+    montanazo_lubina = factors["montanazolubina"]
+    assert montanazo_lubina.field_name == "Montanazo-Lubina"
+    assert montanazo_lubina.source_class == "regulator_record"
+    assert montanazo_lubina.source_url == montanazo_lubina_url
+    assert montanazo_lubina.accepted_for_conversion is True
+    assert montanazo_lubina.api_gravity_min_deg == pytest.approx(30.81)
+    assert montanazo_lubina.api_gravity_max_deg == pytest.approx(33.33)
+    expected_combined_factor = (1.2 + 2.9) / (
+        (1.2 / bbl_per_tonne_from_api(30.81)) + (2.9 / bbl_per_tonne_from_api(33.33))
+    )
+    assert montanazo_lubina.api_gravity_deg == pytest.approx(32.584375993836886)
+    assert montanazo_lubina.bbl_per_tonne == pytest.approx(expected_combined_factor)
+    assert bbl_per_tonne_from_api(montanazo_lubina.api_gravity_deg) == pytest.approx(
+        expected_combined_factor
+    )
+    assert "montanazo" not in factors
+    assert "lubina" not in factors
+    with pytest.raises(CoresDensityCoverageError, match="Montanazo"):
+        build_oil_conversion_audit(
+            ["Montanazo"],
+            factors,
+            allow_default_density=False,
+        )
+    with pytest.raises(CoresDensityCoverageError, match="Lubina"):
+        build_oil_conversion_audit(
+            ["Lubina"],
+            factors,
+            allow_default_density=False,
+        )
+
     rodaballo = factors["rodaballo"]
     assert rodaballo.field_name == "Rodaballo"
     assert rodaballo.source_class == "technical_literature"
@@ -225,7 +256,15 @@ def test_default_density_registry_accepts_cited_source_fields():
     assert tarraco.bbl_per_tonne == pytest.approx(7.401084758140957)
 
     audit = build_oil_conversion_audit(
-        ["Amposta", "Boquerón", "Casablanca", "Dorada", "Rodaballo", "Tarraco"],
+        [
+            "Amposta",
+            "Boquerón",
+            "Casablanca",
+            "Dorada",
+            "Montanazo-Lubina",
+            "Rodaballo",
+            "Tarraco",
+        ],
         factors,
         allow_default_density=False,
     )
@@ -235,6 +274,7 @@ def test_default_density_registry_accepts_cited_source_fields():
         "Boquerón",
         "Casablanca",
         "Dorada",
+        "Montanazo-Lubina",
         "Rodaballo",
         "Tarraco",
     )
@@ -252,7 +292,6 @@ def test_default_density_registry_keeps_current_fields_missing():
         "Albatros",
         "Ayoluengo",
         "Gaviota",
-        "Montanazo-Lubina",
         "Salmonete",
         "Viura (1)",
     ]
@@ -291,7 +330,6 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Albatros",
         "Ayoluengo",
         "Gaviota",
-        "Montanazo-Lubina",
         "Salmonete",
         "Viura (1)",
     ]
@@ -300,6 +338,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
         "Boquerón",
         "Casablanca",
         "Dorada",
+        "Montanazo-Lubina",
         "Rodaballo",
         "Tarraco",
     ]
@@ -324,6 +363,7 @@ def test_default_density_registry_partially_covers_current_cores_fields():
     assert "Boquerón" not in message
     assert "Casablanca" not in message
     assert "Dorada" not in message
+    assert "Montanazo-Lubina" not in message
     assert "Rodaballo" not in message
     assert "Tarraco" not in message
 

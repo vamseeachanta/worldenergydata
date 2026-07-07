@@ -1,13 +1,12 @@
 {
-  "registry_version": "2026-07-06-cited-partial-3",
+  "registry_version": "2026-07-06-cited-partial-4",
   "registry_date": "2026-07-06",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n and Rodaballo have accepted technical-literature API values from a Fuel reservoir-geochemistry article. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n and Rodaballo have accepted technical-literature API values from a Fuel reservoir-geochemistry article. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Ayoluengo",
     "Gaviota",
-    "Montanazo-Lubina",
     "Salmonete",
     "Viura (1)"
   ],
@@ -80,6 +79,25 @@
       "source_url": "https://www.boe.es/boe/dias/1978/06/26/pdfs/A15132-15132.pdf",
       "source_class": "regulator_record",
       "evidence_note": "The BOE order fixes the sales price for crude from the Dorada exploitation concession and states 21.3\u00b0 API with 0.59% sulfur.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Montanazo-Lubina",
+      "aliases": [
+        "montanazo-lubina",
+        "montanazo lubina",
+        "montanazolubina"
+      ],
+      "api_gravity_deg": 32.584375993836886,
+      "api_gravity_min_deg": 30.81,
+      "api_gravity_max_deg": 33.33,
+      "bbl_per_tonne": 7.293707953255592,
+      "measurement_basis": "BOE environmental declaration gives separate Montanazo and Lubina API values; combined CORES field factor is a derived recoverable-reserves-weighted proxy from stated reserves of 1.2 MMbbl Montanazo and 2.9 MMbbl Lubina",
+      "source_title": "BOE-A-2012-6772, Resoluci\u00f3n de 7 de mayo de 2012: Desarrollo de los campos de Montanazo y Lubina, Tarragona",
+      "source_url": "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2012-6772",
+      "source_class": "regulator_record",
+      "evidence_note": "The BOE declaration states recoverable reserves of 1.2 MMbbl for Montanazo and 2.9 MMbbl for Lubina, average production of 3,000 bbl/d per well, and crude properties of 30.81\u00b0 API for Montanazo and 33.33\u00b0 API for Lubina; this registry derives a combined proxy only for the combined CORES field name.",
       "confidence": "high",
       "accepted_for_conversion": true
     },
