@@ -302,6 +302,10 @@
             <h3>Reservoir &amp; HPHT</h3>
             <dl class="kv" id="f-reservoir"></dl>
           </div>
+          <div class="card" id="f-performance-card" hidden>
+            <h3>Field performance · BSEE life-to-date</h3>
+            <dl class="kv" id="f-performance"></dl>
+          </div>
         </div>
       </section>
 
@@ -556,7 +560,19 @@ const FIELD = {
       "stage": "abandon",
       "state": "unavailable"
     }
-  ]
+  ],
+  "performance": {
+    "avg_decline_pct_yr": 18.4,
+    "avg_uptime_pct": 89.7,
+    "breakeven_wti": 79.0,
+    "cum_oil_mmbbl": 438.8,
+    "display": "Jack St Malo",
+    "eur_mmbbl": 1117,
+    "interventions": 6,
+    "npv_mm": -804.5,
+    "sens_mm_per_dollar": 52.3,
+    "wells": 24
+  }
 };
 
 /* ---------------- render ---------------- */
@@ -727,6 +743,29 @@ if (FIELD.reservoir) {
   $("f-reservoir").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-reservoir-card").hidden = false;
   if (r.source_note) $("f-prov").textContent = FIELD.provenance + " · Reservoir: " + r.source_note;
+}
+
+/* field performance — BSEE life-to-date; honesty-gated, nulls render as em dash */
+if (FIELD.performance) {
+  const p = FIELD.performance;
+  const DASH = "—";
+  const unit = (v, d, u) => v == null
+    ? `<span class="mut">${DASH}</span>`
+    : `${Number(v).toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d})}${u}`;
+  const rows = [
+    ["Benchmark wells", unit(p.wells, 0, "")],
+    ["Cum oil", unit(p.cum_oil_mmbbl, 1, " MMbbl")],
+    ["EUR", unit(p.eur_mmbbl, 0, " MMbbl")],
+    ["Avg uptime", unit(p.avg_uptime_pct, 1, "%")],
+    ["Avg decline", unit(p.avg_decline_pct_yr, 1, "%/yr")],
+    ["Interventions", unit(p.interventions, 0, "")],
+    ["NPV @10%", unit(p.npv_mm, 1, " $MM")],
+    ["WTI break-even", unit(p.breakeven_wti, 0, " $/bbl")],
+    ["NPV per +$1/bbl", unit(p.sens_mm_per_dollar, 1, " $MM")],
+  ];
+  $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
+  $("f-performance-card").hidden = false;
+  $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + V30 economics, life-to-date (not full-cycle)";
 }
 
 /* host facts + working interest */

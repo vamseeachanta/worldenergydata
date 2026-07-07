@@ -15,12 +15,28 @@ Pure stdlib; same inputs -> byte-identical output.
 from __future__ import annotations
 
 import csv
+import json
 import re
 from pathlib import Path
 
 REPORTS = Path(__file__).resolve().parents[2] / "reports" / "lower_tertiary"
 BENCH = REPORTS / "lt_well_benchmark_lower_tertiary_2010_latest.csv"
 OUT = REPORTS / "lt_field_performance_comparison.md"
+CONTRACT = REPORTS / "lifecycle" / "_performance.json"
+
+CONTRACT_META = {
+    "source": (
+        "BSEE OGOR-A per-well benchmark + V30 cost model, "
+        "life-to-date (not full-cycle)"
+    ),
+    "inputs": [
+        "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv",
+        "reports/lower_tertiary/field_economics_<slug>.md",
+    ],
+    "regenerate": (
+        "uv run python scripts/lower_tertiary/build_field_performance_comparison.py"
+    ),
+}
 
 _NPV = re.compile(r"terminal cumulative NPV \*\*\$(-?[\d,]+\.?\d*) M")
 _BE = re.compile(r"zero at a flat-equivalent realized WTI of \$([\d,]+)/bbl")
@@ -53,7 +69,8 @@ def _econ(field: str) -> dict:
     return out
 
 
-def build() -> str:
+def _aggregate() -> dict[str, dict]:
+    """Per-field roll-up of the per-well benchmark (single source of the math)."""
     rows = list(csv.DictReader(BENCH.open(encoding="utf-8")))
     fields: dict[str, dict] = {}
     for r in rows:
@@ -78,9 +95,16 @@ def build() -> str:
             f["decline"].append(float(r["decline_annual_pct"]))
         f["interv"] += int(float(r["interventions"] or 0))
         f["eur"] += float(r["eur_mmbbl"] or 0)
+    return fields
 
-    def avg(xs: list[float]) -> float:
-        return sum(xs) / len(xs) if xs else 0.0
+
+def _avg(xs: list[float]) -> float:
+    return sum(xs) / len(xs) if xs else 0.0
+
+
+def build() -> str:
+    fields = _aggregate()
+    avg = _avg
 
     ordered = sorted(fields.items(), key=lambda kv: kv[1]["cum"], reverse=True)
 
@@ -134,9 +158,36 @@ def build() -> str:
     return "\n".join(lines)
 
 
+def build_contract() -> str:
+    """Machine-readable per-field performance contract (same aggregation as the
+    md renderer). Keyed by canonical id (`_slug` == life-cycle poster id).
+    Benchmark-derived numbers rounded to the table's displayed precision;
+    economics keys are nullable (None when the report regexes miss)."""
+    fields = _aggregate()
+    out: dict[str, dict] = {}
+    for field, f in fields.items():
+        e = _econ(field)
+        out[_slug(field)] = {
+            "display": field,
+            "wells": f["wells"],
+            "cum_oil_mmbbl": round(f["cum"], 1),
+            "eur_mmbbl": round(f["eur"]),
+            "avg_uptime_pct": round(_avg(f["uptime"]), 1),
+            "avg_decline_pct_yr": round(_avg(f["decline"]), 1),
+            "interventions": f["interv"],
+            "npv_mm": e.get("npv_mm"),
+            "breakeven_wti": e.get("breakeven_wti"),
+            "sens_mm_per_dollar": e.get("sens_mm_per_dollar"),
+        }
+    payload = {"meta": CONTRACT_META, "fields": out}
+    return json.dumps(payload, indent=2, sort_keys=True) + "\n"
+
+
 def main() -> int:
     OUT.write_text(build(), encoding="utf-8")
     print(f"wrote {OUT.relative_to(REPORTS.parents[1])}")
+    CONTRACT.write_text(build_contract(), encoding="utf-8")
+    print(f"wrote {CONTRACT.relative_to(REPORTS.parents[1])}")
     return 0
 
 
