@@ -39,6 +39,8 @@ The article's four tables **are this repository's FDAS V30 model output**: `fina
 
 ## 3. Field-level D&C reconciliation (Table 1)
 
+> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html). The table below reconciles our extraction against the **article as published**.
+
 Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)) vs the article, total D&C days:
 
 The **Δ since Nov '25** column (added 2026-07-06) reports, of our current D&C total, how many days accrued **after the article's November-2025 data cutoff** — computed by re-running the canonical extractor against the 2026-02-19 WAR vintage twice (uncapped vs. capped at 2025-11-30) and differencing; see the [delta-increase analysis in §3.1](#3-1-d-c-days-accrued-since-the-article-s-nov-2025-cutoff).
@@ -229,7 +231,17 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | Result workbook | shipped .xlsx | **none shipped** | YAML + markdown reports |
 | Portfolio NPV @10 % | −$8,327.8 MM | −$7,895.3 MM (+$432.5 MM) | reproduces both |
 
-**Two open reconciliation items for the article team** (the "same page" asks): the published V50 numbers were produced by wed's window-only reproducer, **not** by Roy's shipped `generate_financial_summary_V50.py`, which additionally applies (a) an after-tax block and (b) 13 changed cost cells. Adopting wed as canonical needs one agreed answer on **pre-tax vs after-tax** and on **whether those cost changes are intended**. See the comparison page §4.3.
+**Roy's V50 script has now been run and reconciled field-by-field against wed** (2026-07-07; full tables on the [comparison page §4.4–§4.6](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)). Headline result, to verify D&C and financials on the latest (V50/wed) basis:
+
+| Check | Result |
+|---|---|
+| **D&C days** (D, C, D&C per field) | **V50 = wed exactly — Δ = 0 for every field** (byte-identical extractor, same WAR); 253 wells / 25,404 D&C |
+| **Produced oil** | V50 = wed, all fields (same OGOR-A window) |
+| **NPV @10%** | 7 producers within **−$103M…+$197M** (the 13 cost cells); 3 exploration-only fields **exact**; **Jack St Malo −$3.1B — the sole material gap** |
+| **After-tax vs pre-tax** | **small, real** — severance/ad-valorem = 0, but 21% corporate tax hits the 3 fields with positive *lifetime* cash flow: JSM −$103M NPV, Julia −$4.4M, Buckskin −$3.9M; the other 8 (negative cash flow) pay none |
+| **Article Table-2 errata** | Roy's V50 script **corrects** them (Stones≠Tiber, Cascade NCF sign, zero-OPEX) — his code agrees with §4.1–§4.5 here |
+
+**The one open item for the article team:** the Jack St Malo gap is **≈ $3.0B the NPV discount-reference convention** (Roy discounts "from Day 1 / first spud" (2000), wed from first cashflow; JSM's 14-year spud→first-oil gap makes it swing) **plus ~$103M corporate tax**; undiscounted cash flows reconcile. (The 13 cost cells account for only ±$100–200M per field; severance/ad-valorem are 0; the 21% corporate tax is a small real effect on the 3 fields with positive lifetime cash flow. NPV-negative does **not** imply zero tax.)
 
 ## 7. Related work
 
