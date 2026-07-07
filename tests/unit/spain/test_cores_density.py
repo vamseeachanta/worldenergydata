@@ -293,6 +293,45 @@ def test_default_density_registry_accepts_cited_source_fields():
     assert audit.missing_fields == ()
 
 
+def test_default_density_registry_retains_ayoluengo_range_as_source_gap():
+    registry_path = files("worldenergydata.spain").joinpath(
+        "data/cores/crude_density_factors.json"
+    )
+    payload = json.loads(registry_path.read_text())
+    factors = load_crude_density_factors()
+    ayoluengo_url = (
+        "https://sargentesdelalora.com/wp-content/uploads/2017/02/"
+        "libro-50-aniversario.pdf"
+    )
+
+    ayoluengo = factors["ayoluengo"]
+    assert ayoluengo.field_name == "Ayoluengo"
+    assert ayoluengo.source_class == "technical_literature"
+    assert ayoluengo.source_url == ayoluengo_url
+    assert ayoluengo.accepted_for_conversion is False
+    assert ayoluengo.api_gravity_min_deg == pytest.approx(20.0)
+    assert ayoluengo.api_gravity_max_deg == pytest.approx(39.0)
+    assert ayoluengo.api_gravity_deg is None
+    assert ayoluengo.bbl_per_tonne is None
+    assert "Ayoluengo" in payload["source_gap_fields"]
+
+    with pytest.raises(CoresDensityCoverageError, match="Ayoluengo"):
+        build_oil_conversion_audit(
+            ["Ayoluengo"],
+            factors,
+            allow_default_density=False,
+        )
+
+    defaulted_audit = build_oil_conversion_audit(
+        ["Ayoluengo"],
+        factors,
+        allow_default_density=True,
+    )
+    assert defaulted_audit.used_field_names == ()
+    assert defaulted_audit.defaulted_fields == ("Ayoluengo",)
+    assert defaulted_audit.missing_fields == ()
+
+
 def test_default_density_registry_keeps_current_fields_missing():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
