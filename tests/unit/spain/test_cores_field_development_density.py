@@ -35,12 +35,12 @@ def test_build_report_replaces_deferred_caveat_with_density_provenance(tmp_path)
 
 
 def test_report_preserves_defaulted_density_limitations(tmp_path):
-    _write_cache(tmp_path, extra_rows=[_cache_row("Casablanca", 2025, 1, 5.0, pd.NA)])
+    _write_cache(tmp_path, extra_rows=[_cache_row("Albatros", 2025, 1, 5.0, pd.NA)])
     _write_density_sidecar(
         tmp_path,
         coverage_status="defaulted",
         used_fields=["Ayoluengo"],
-        defaulted_fields=["Casablanca"],
+        defaulted_fields=["Albatros"],
     )
 
     summary = build_report(tmp_path)
@@ -52,11 +52,53 @@ def test_report_preserves_defaulted_density_limitations(tmp_path):
         "oil_tonnes_to_bbl_conversion_deferred_to_issue_807" in summary["limitations"]
     )
     assert any(
-        item == "oil_tonnes_to_bbl_has_defaulted_fields: Casablanca"
+        item == "oil_tonnes_to_bbl_has_defaulted_fields: Albatros"
         for item in summary["limitations"]
     )
-    assert "oil_tonnes_to_bbl_has_defaulted_fields: Casablanca" in html
+    assert any(
+        item == "oil_tonnes_to_bbl_assumes_default_factor: Albatros=7.33"
+        for item in summary["limitations"]
+    )
+    assert "oil_tonnes_to_bbl_has_defaulted_fields: Albatros" in visible_html
+    assert "oil_tonnes_to_bbl_assumes_default_factor: Albatros=7.33" in visible_html
     assert "7.33" in visible_html
+
+
+def test_report_preserves_default_assumption_when_missing_fields_also_block_conversion(
+    tmp_path,
+):
+    _write_cache(
+        tmp_path,
+        extra_rows=[
+            _cache_row("Albatros", 2025, 1, 5.0, pd.NA),
+            _cache_row("Casablanca", 2025, 1, 6.0, pd.NA),
+        ],
+    )
+    _write_density_sidecar(
+        tmp_path,
+        coverage_status="missing",
+        used_fields=["Ayoluengo"],
+        defaulted_fields=["Albatros"],
+        missing_fields=["Casablanca"],
+    )
+
+    summary = build_report(tmp_path)
+    html = render_spain_cores_html(summary)
+    visible_html = html.split('<script type="application/json"', 1)[0]
+
+    assert any(
+        item == "oil_tonnes_to_bbl_blocked_by_missing_density_source: Casablanca"
+        for item in summary["limitations"]
+    )
+    assert any(
+        item == "oil_tonnes_to_bbl_assumes_default_factor: Albatros=7.33"
+        for item in summary["limitations"]
+    )
+    assert (
+        "oil_tonnes_to_bbl_blocked_by_missing_density_source: Casablanca"
+        in visible_html
+    )
+    assert "oil_tonnes_to_bbl_assumes_default_factor: Albatros=7.33" in visible_html
 
 
 def test_report_preserves_missing_density_limitations(tmp_path):
@@ -79,7 +121,15 @@ def test_report_preserves_missing_density_limitations(tmp_path):
         item == "oil_tonnes_to_bbl_has_missing_fields: Albatros"
         for item in summary["limitations"]
     )
-    assert "oil_tonnes_to_bbl_has_missing_fields: Albatros" in html
+    assert any(
+        item == "oil_tonnes_to_bbl_blocked_by_missing_density_source: Albatros"
+        for item in summary["limitations"]
+    )
+    visible_html = html.split('<script type="application/json"', 1)[0]
+    assert "oil_tonnes_to_bbl_has_missing_fields: Albatros" in visible_html
+    assert (
+        "oil_tonnes_to_bbl_blocked_by_missing_density_source: Albatros" in visible_html
+    )
 
 
 def test_report_rejects_malformed_density_sidecar(tmp_path):
@@ -130,6 +180,32 @@ def test_report_rejects_defaulted_sidecar_without_default_bbl_per_tonne(tmp_path
     _mutate_density_sidecar(
         tmp_path,
         lambda sidecar: sidecar.pop("default_bbl_per_tonne"),
+    )
+
+    with pytest.raises(CoresReportError, match="default_bbl_per_tonne"):
+        build_report(tmp_path)
+
+
+@pytest.mark.parametrize(
+    "default_bbl_per_tonne",
+    [float("nan"), float("inf")],
+)
+def test_report_rejects_defaulted_sidecar_with_non_finite_default_bbl_per_tonne(
+    tmp_path,
+    default_bbl_per_tonne,
+):
+    _write_cache(tmp_path, extra_rows=[_cache_row("Albatros", 2025, 1, 5.0, pd.NA)])
+    _write_density_sidecar(
+        tmp_path,
+        coverage_status="defaulted",
+        used_fields=["Ayoluengo"],
+        defaulted_fields=["Albatros"],
+    )
+    _mutate_density_sidecar(
+        tmp_path,
+        lambda sidecar: sidecar.update(
+            {"default_bbl_per_tonne": default_bbl_per_tonne}
+        ),
     )
 
     with pytest.raises(CoresReportError, match="default_bbl_per_tonne"):
