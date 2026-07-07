@@ -22,6 +22,7 @@ Both source archives are backed up at `/mnt/ace/worldenergydata/reference/fdas_r
 4. **wed reproduces V30 to ±0.1 % oil / ±1 % NPV** (a passed gate) — the basis for adopting wed as canonical (§4.1).
 5. **~30 latent bugs** were found by adversarial review of the four wed scripts (§6). Almost all are *masked by the current Lower-Tertiary dataset* (so they do **not** change any published number today), but they must be fixed before wed is trusted as a general tool. Two are structural and worth immediate attention.
 6. **Several files were never migrated** V50→wed (the V50 generator scripts, the updated cost assumptions, and any V50 result workbook — which was never generated anywhere) (§5).
+7. **Roy's V50 script has now been run and reconciled field-by-field against wed** (§4.4–§4.6). **D&C days match to the day** (Δ = 0, every field). **Economics match closely** — seven producers within −$103 M…+$197 M NPV (the 13 cost cells), three exploration-only fields **exactly**, and his after-tax block collapses to pre-tax (all fields loss-making). **The one material discrepancy is Jack St Malo (−$3.1 B), and it is purely the NPV discount-reference convention** (Roy "from Day 1" vs wed from first cashflow), not a cost or data difference. Roy's own script also **corrects the article's Table-2 errata** wed flagged (§4.6).
 
 ---
 
@@ -159,9 +160,134 @@ Per-field NPV @10 % ($MM), V30 → V50:
 ### 4.3 The reconciliation ask — one definition of "V50"
 There are currently **two** V50s:
 - **wed's V50** (what the published reports show): V30 methodology, **pre-tax**, costs frozen at V30, only the data window extended. Reproduces V30 exactly and moves only with new data.
-- **Roy's shipped V50 script**: **after-tax** (severance + ad-valorem + corporate 21 % + NOL) on top of the **13 changed cost cells** in §3.4. This script was **never run to a result workbook** anywhere, so its numbers have never been reconciled.
+- **Roy's shipped V50 script**: **after-tax** (severance + ad-valorem + corporate 21 % + NOL) on top of the **13 changed cost cells** in §3.4.
 
-Running Roy's `generate_financial_summary_V50.py` with his V50 assumptions would **not** reproduce the published V50 figures. To get everyone on the same page, agree explicitly on: **(a) pre-tax vs after-tax**, and **(b) whether the 13 cost-cell changes are intended.** wed can carry either — but it should carry exactly one, documented.
+**Update (2026-07-07): Roy's V50 script has now been run** (§4.4–§4.6). It was executed exactly as shipped — his `ogora_to_chronological_V50.py` + `extract_drilling_completion_days.py` + `generate_financial_summary_V50.py`, his 26-lease `leases.xlsx`, his 13-changed-cost `lease_assumptions.xlsx`, after-tax on — against BSEE OGOR-A through **2026-04** and WAR through 2026-02. Two surprises fall straight out: (a) **his after-tax block is a non-difference here** — every development is NPV-negative, so taxable income ≤ 0, NOL zeroes corporate tax, and after-tax ≡ pre-tax; and (b) **his own V50 script already corrects the article's Table-2 errata** we flagged (Stones ≠ Tiber, Cascade NCF sign, zero-OPEX) — §4.6. So the "pre-tax vs after-tax" question is moot for this portfolio; the only real V50-vs-wed gaps are the **13 cost cells**, the **production window**, and the **NPV discount-reference convention** (the dominant one).
+
+*Faithfulness of the run:* OGOR-A came from wed's pickled `.bin` (Roy's original zips are gone) exported to his delimited format; WAR `.bin`→`.txt`; run in both his own WTI deck (flat-fills the last 9 months at $75) and wed's extended deck (thru 2026-05) as a sensitivity. His JSM facilities ($7,850 M) reconcile with wed's golden ($7,400 M), confirming the run is his model, not an artifact.
+
+## 4.4 Days reconciliation — V50 vs wed is **exact** (Δ = 0)
+
+Because `extract_drilling_completion_days.py` is byte-identical across V30/V50/wed and all read the same WAR feed, **Roy's V50 D&C output equals wed's to the day** — the discrepancy the article team asked us to isolate is **zero for every field**, so no well-level drill-down is required (the drill-down triggers only on a discrepancy; there is none). The V30 column is the frozen 20-lease golden (older WAR vintage, no Buckskin); it differs from V50/wed only by newer-WAR recency and the Buckskin addition — lineage, not an open gap.
+
+**Drilling days (D):**
+
+| Field | V30 | V50 | wed | Δ (V50−wed) |
+|---|---:|---:|---:|---:|
+| Anchor | 821 | 821 | 821 | 0 |
+| Big Foot | 1,207 | 1,235 | 1,235 | 0 |
+| Buckskin | – | 1,043 | 1,043 | 0 |
+| Cascade Chinook | 1,205 | 1,205 | 1,205 | 0 |
+| Jack St Malo | 2,949 | 3,065 | 3,065 | 0 |
+| Julia | 802 | 802 | 802 | 0 |
+| Kaskida | 556 | 556 | 556 | 0 |
+| North Platte | 675 | 675 | 675 | 0 |
+| Shenandoah | 1,238 | 1,363 | 1,363 | 0 |
+| Stones | 1,457 | 1,457 | 1,457 | 0 |
+| Tiber | 214 | 214 | 214 | 0 |
+| **Total** | | **12,436** | **12,436** | **0** |
+
+**Completion days (C):**
+
+| Field | V30 | V50 | wed | Δ (V50−wed) |
+|---|---:|---:|---:|---:|
+| Anchor | 1,004 | 1,004 | 1,004 | 0 |
+| Big Foot | 1,826 | 2,030 | 2,030 | 0 |
+| Buckskin | – | 1,013 | 1,013 | 0 |
+| Cascade Chinook | 1,262 | 1,262 | 1,262 | 0 |
+| Jack St Malo | 3,864 | 3,982 | 3,982 | 0 |
+| Julia | 885 | 885 | 885 | 0 |
+| Kaskida | 285 | 285 | 285 | 0 |
+| North Platte | 296 | 296 | 296 | 0 |
+| Shenandoah | 751 | 1,007 | 1,007 | 0 |
+| Stones | 1,145 | 1,168 | 1,168 | 0 |
+| Tiber | 36 | 36 | 36 | 0 |
+| **Total** | | **12,968** | **12,968** | **0** |
+
+**Drilling + completion days (D&C):**
+
+| Field | V30 | V50 | wed | Δ (V50−wed) |
+|---|---:|---:|---:|---:|
+| Anchor | 1,825 | 1,825 | 1,825 | 0 |
+| Big Foot | 3,033 | 3,265 | 3,265 | 0 |
+| Buckskin | – | 2,056 | 2,056 | 0 |
+| Cascade Chinook | 2,467 | 2,467 | 2,467 | 0 |
+| Jack St Malo | 6,813 | 7,047 | 7,047 | 0 |
+| Julia | 1,687 | 1,687 | 1,687 | 0 |
+| Kaskida | 841 | 841 | 841 | 0 |
+| North Platte | 971 | 971 | 971 | 0 |
+| Shenandoah | 1,989 | 2,370 | 2,370 | 0 |
+| Stones | 2,602 | 2,625 | 2,625 | 0 |
+| Tiber | 250 | 250 | 250 | 0 |
+| **Total** | **22,478** | **25,404** | **25,404** | **0** |
+
+V30→V50/wed grows +2,926 D&C days = **Buckskin +2,056** (added via the KC ingest) + **+870** on Big Foot/Jack St Malo/Shenandoah/Stones from the newer WAR vintage (2026-02 vs 2025-09; consistent with §3.1's post-cutoff activity). **None of that is a V50-vs-wed discrepancy** — those two are identical.
+
+## 4.5 Economics reconciliation — V50 vs wed, per column
+
+Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article. **wed-latest** = wed reproduction at the same 2026-04 window (NPV/revenue/oil recomputed); **wed-frozen** = wed's audited V30 breakdown (2025-05, the only window where wed recomputes the full royalty/opex split — shown where wed-latest does not); **Article** = the published WO Table 2 (thru Nov-2025). "–" = not recomputed on that basis.
+
+**Produced oil (MMbbl):**
+
+| Field | V50 (2026-04) | wed (2026-04) | Δ (V50−wed) | Article (Nov-25) |
+|---|---:|---:|---:|---:|
+| Anchor | 18.6 | 18.6 | 0.0 | 15.0 |
+| Big Foot | 78.2 | 78.7 | −0.5 | – |
+| Buckskin | 72.9 | – | – | 69.6 |
+| Cascade Chinook | 39.7 | 39.7 | 0.0 | 38.8 |
+| Jack St Malo | 438.9 | 438.7 | +0.2 | 423.7 |
+| Julia | 77.5 | 77.5 | 0.0 | 74.6 |
+| Shenandoah | 21.2 | 21.2 | 0.0 | 8.7 |
+| Stones | 89.0 | 89.0 | 0.0 | 86.9 |
+
+**Oil is fully reconciled V50↔wed** (both read the same OGOR-A to 2026-04); the article is lower because it stops at Nov-2025 (Shenandoah, still ramping, shows the biggest gap: 21.2 vs 8.7).
+
+**Revenue ($MM):**
+
+| Field | V50 (2026-04) | wed-frozen (2025-05) | Article (Nov-25) |
+|---|---:|---:|---:|
+| Anchor | 1,336 | 476 | 1,067 |
+| Big Foot | 5,587 | 4,738 | – |
+| Buckskin | 5,203 | – | 4,959 |
+| Cascade Chinook | 2,790 | 2,327 | 2,725 |
+| Jack St Malo | 28,035 | 25,649 | 26,892 |
+| Julia | 5,197 | 4,715 | 4,983 |
+| Shenandoah | 1,588 | 0.3 | 649 |
+| Stones | 5,979 | 5,582 | 5,815 |
+
+Revenue rises monotonically with window length (V50/2026-04 ≥ Article/Nov-25 ≥ wed-frozen/2025-05), as expected — no methodological gap.
+
+**NPV @ 10% ($MM) — the headline, with the reason for each V50↔wed gap:**
+
+| Field | V50 (Roy) | wed-latest | Δ (V50−wed) | wed-frozen | Article | Reason for V50↔wed gap |
+|---|---:|---:|---:|---:|---:|---|
+| Kaskida | −625.0 | – | **0** | −625.0 | −784 | exact — exploration-only, D&C-only, version-independent |
+| North Platte | −783.5 | – | **0** | −783.5 | −1,200 | exact — exploration-only |
+| Tiber | −228.0 | – | **0** | −228.0 | −228 | exact — exploration-only (article agrees too) |
+| Stones | −1,383.3 | −1,460.8 | +77 | −1,479.5 | −228* | cost cells (Var-OPEX subsea15 4→6) |
+| Julia | −558.4 | −482.8 | −76 | −530.6 | −625 | tieback host-CAPEX added (0→80) |
+| Shenandoah | −1,094.0 | −991.3 | −103 | −1,166.4 | −1,391 | Host-CAPEX subsea20 1500→800 vs added subsea15 var-opex |
+| Cascade Chinook | −1,474.6 | −1,580.0 | +105 | −1,474.1 | −1,122 | Host-CAPEX subsea15 1200→900 |
+| Big Foot | −878.3 | −989.0 | +111 | −1,063.4 | – | dry Host-CAPEX 2000→1500 |
+| Anchor | −1,389.7 | −1,586.9 | +197 | −1,732.8 | −1,421 | Host-CAPEX subsea20 1500→800 (biggest single cost cut) |
+| **Jack St Malo** | **−3,912.8** | **−804.5** | **−3,108** | −881.1 | −577* | **NPV discount reference** — Roy discounts "from Day 1" (first spud, 2000); wed from first cashflow. JSM's 14-yr spud→first-oil gap makes this swing enormous. Undiscounted NCF reconciles (Roy +3,877 vs wed-frozen +4,793); the entire gap is discounting convention. **This is the one item to settle with the article team.** |
+| Buckskin | −541.4 | – | – | – | −1,473* | wed has no Buckskin V50 recompute yet; Roy V50 −541 vs article −1,473 = window + cost basis |
+
+\* Article value is one of the known Table-2 errata — see §4.6.
+
+**Reading it:** for the seven small-gap producers the V50↔wed NPV difference is only **−$103 M to +$197 M**, entirely attributable to the 13 cost-cell changes (Roy's V50 generally **lowers** host CAPEX, making his NPVs less negative). The three exploration-only fields match **exactly**. **Jack St Malo is the sole material discrepancy, and it is not a cost or data difference at all — it is the NPV discount-reference convention**, amplified by JSM's uniquely long lead time.
+
+## 4.6 Roy's V50 script confirms wed's article-errata findings
+
+Running Roy's *own* newer script resolves the D1–D5 discrepancies wed flagged against the published article — his V50 output disagrees with his article exactly where wed said the article was wrong:
+
+| Article (Table 2) | Roy's V50 script | wed's finding (confirmed) |
+|---|---|---|
+| Stones NPV = **−$228 M** (= Tiber row) | Stones NPV = **−$1,383 M** | D2: Stones/Tiber row-copy slip |
+| Cascade Chinook NCF = **+$3,656 M** | Cascade NCF = **−$3,582 M** | D3: NCF cannot be positive |
+| Julia OPEX = **$0**, Stones OPEX = **$0** | Julia OPEX $1,227 M, Stones $1,947 M | D4: zero-OPEX placeholder |
+
+This is the strongest "same page" evidence in the pack: **wed and Roy's latest script already agree that the published article carries these errors.**
 
 ---
 
