@@ -1,13 +1,12 @@
 {
-  "registry_version": "2026-07-06-cited-partial-4",
-  "registry_date": "2026-07-06",
+  "registry_version": "2026-07-07-cited-partial-5",
+  "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n and Rodaballo have accepted technical-literature API values from a Fuel reservoir-geochemistry article. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
     "Albatros",
     "Ayoluengo",
     "Gaviota",
-    "Salmonete",
     "Viura (1)"
   ],
   "factors": [
@@ -115,6 +114,23 @@
       "source_url": "https://doi.org/10.1016/j.fuel.2004.06.027",
       "source_class": "technical_literature",
       "evidence_note": "The Fuel article states that Boquer\u00f3n and Rodaballo fields produce at their respective wells; Table 1 lists Rodaballo oil at 41.3\u00b0 API.",
+      "confidence": "high",
+      "accepted_for_conversion": true
+    },
+    {
+      "field_name": "Salmonete",
+      "aliases": [
+        "salmonete"
+      ],
+      "api_gravity_deg": 44.9,
+      "api_gravity_min_deg": null,
+      "api_gravity_max_deg": null,
+      "bbl_per_tonne": 7.841149257273662,
+      "measurement_basis": "Organic Geochemistry technical-literature study of Tarragona Basin oils; crude oils were obtained from producing wells and Table 1 maps column A to Salmonete",
+      "source_title": "Petroleum geochemistry of the Tarragona basin (Spanish Mediterranean off-shore)",
+      "source_url": "https://doi.org/10.1016/0146-6380(86)90044-6",
+      "source_class": "technical_literature",
+      "evidence_note": "The article states that crude oils were obtained from producing wells; Table 1 lists column A at 3700 m depth with 44.9\u00b0 API, 0.10% sulfur, and 82% saturates, and maps column A to Salmonete.",
       "confidence": "high",
       "accepted_for_conversion": true
     },
