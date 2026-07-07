@@ -131,20 +131,63 @@ def test_zero_unresolved_internal_targets_and_fragments(public):
 
 
 FIELD_JSON_RE = re.compile(r"const FIELD = (\{.*?\n\});", re.S)
+POSTER_PAGE_RE = re.compile(r"^lifecycle/[^/]+_lifecycle\.html$")
 
 
-def _data_driven_edges(text):
+def _data_driven_edges(text, page_rel=None):
     """Hrefs embedded in the poster's FIELD JSON payload (rendered by JS)."""
+    is_poster_page = page_rel is not None and POSTER_PAGE_RE.match(page_rel)
     m = FIELD_JSON_RE.search(text)
     if not m:
+        if is_poster_page:
+            raise AssertionError(f"{page_rel}: missing FIELD JSON")
         return []
     try:
         field = json.loads(m.group(1))
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as exc:
+        if is_poster_page:
+            raise AssertionError(f"{page_rel}: invalid FIELD JSON") from exc
         return []
-    edges = [field.get("wellsHref"), field.get("assetsHref")]
+    edges = [
+        field.get("wellsHref"),
+        field.get("assetsHref"),
+        field.get("economics_href"),
+        field.get("benchmark_href"),
+    ]
     edges += [c.get("href") for c in field.get("norms", [])]
     return [e.split("#")[0] for e in edges if e]
+
+
+def test_data_driven_edges_include_economics_and_benchmark(public):
+    text = (public / "lifecycle/big_foot_lifecycle.html").read_text()
+    edges = set(_data_driven_edges(text, "lifecycle/big_foot_lifecycle.html"))
+
+    assert "../economics-big_foot.html" in edges
+    assert "../benchmark.html" in edges
+
+
+def test_data_driven_edges_fail_closed_for_malformed_poster_field_json():
+    with pytest.raises(AssertionError, match="missing FIELD JSON"):
+        _data_driven_edges("<html></html>", "lifecycle/big_foot_lifecycle.html")
+
+    with pytest.raises(AssertionError, match="invalid FIELD JSON"):
+        _data_driven_edges(
+            "const FIELD = {\n  nope\n};",
+            "lifecycle/big_foot_lifecycle.html",
+        )
+
+
+def test_data_driven_edges_resolve(public):
+    bad = []
+    for rel, _k, _c in scoped_pages():
+        text = (public / rel).read_text()
+        for target in _data_driven_edges(text, rel):
+            f = _resolve(public, rel, target)
+            if f.is_dir():
+                f = f / "index.html"
+            if not f.exists():
+                bad.append((rel, target))
+    assert not bad, f"unresolved data-driven targets: {bad}"
 
 
 def test_bfs_reachability_from_capabilities(public):
@@ -160,7 +203,7 @@ def test_bfs_reachability_from_capabilities(public):
             continue
         base = posixpath.dirname(cur)
         text = f.read_text()
-        for target in href_re.findall(text) + _data_driven_edges(text):
+        for target in href_re.findall(text) + _data_driven_edges(text, cur):
             if target.startswith(("http", "mailto:", "data:", "//")) or "${" in target:
                 continue
             nxt = posixpath.normpath(posixpath.join(base, target))

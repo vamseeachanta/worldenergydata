@@ -190,6 +190,17 @@
   .card { background: var(--panel-2); border:1px solid var(--line); border-radius:10px;
     padding: 18px 20px; }
   .card h3 { margin:0 0 12px; font-size: 15px; letter-spacing:-.01em; }
+  .econ-card { border-left: 3px solid var(--good); }
+  .econ-card p { margin:0 0 14px; color:var(--muted); font-size:12.5px; line-height:1.45; }
+  .econ-open { display:inline-flex; align-items:center; justify-content:center; width:100%;
+    min-height:36px; padding:8px 12px; border-radius:8px; text-decoration:none; font-weight:800;
+    font-size:13px; color:#fff; background:var(--done); border:1px solid var(--done-deep); }
+  .econ-open:hover { background:var(--done-deep); }
+  .econ-foot { margin-top:12px; padding-top:10px; border-top:1px solid var(--line); }
+  .econ-chip { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono);
+    font-size:10.5px; line-height:1; color:var(--muted); text-decoration:none; padding:5px 8px;
+    border:1px solid var(--line); border-radius:999px; background:color-mix(in srgb, var(--line) 18%, transparent); }
+  .econ-chip:hover { color:var(--ink); border-color:var(--muted); }
   .act { display:grid; grid-template-columns: repeat(2,1fr); gap: 14px 22px; }
   @media (max-width:560px){ .act { grid-template-columns:1fr; } }
   .act h4 { margin:0 0 5px; font-family:var(--mono); font-size:11px; letter-spacing:.08em;
@@ -306,6 +317,14 @@
             <h3>Field performance · BSEE life-to-date</h3>
             <dl class="kv" id="f-performance"></dl>
           </div>
+          <div class="card econ-card" id="f-economics-card" hidden>
+            <h3>Field economics · V30 monthly cash-flow model</h3>
+            <p>Monthly cash-flow detail, NPV narrative, and price-sensitivity context. Headline figures remain in the performance card above.</p>
+            <a class="econ-open" id="f-economics-link" href="#">Open full economics →</a>
+            <div class="econ-foot" id="f-economics-foot" hidden>
+              <a class="econ-chip" id="f-benchmark-link" href="#">Well benchmarking ↗</a>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -367,6 +386,8 @@ const FIELD = {
   "wellsHref": null,
   "wellsCount": 0,
   "assetsHref": null,
+  "economics_href": null,
+  "benchmark_href": "../benchmark.html",
   "name": "Kaskida",
   "operator": "BP",
   "region": "Keathley Canyon 292 · US Gulf of Mexico",
@@ -721,6 +742,15 @@ if (FIELD.performance) {
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;
   $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + V30 economics, life-to-date (not full-cycle)";
+}
+
+if (FIELD.economics_href) {
+  $("f-economics-link").href = FIELD.economics_href;
+  $("f-economics-card").hidden = false;
+  if (FIELD.benchmark_href) {
+    $("f-benchmark-link").href = FIELD.benchmark_href;
+    $("f-economics-foot").hidden = false;
+  }
 }
 
 /* host facts + working interest */

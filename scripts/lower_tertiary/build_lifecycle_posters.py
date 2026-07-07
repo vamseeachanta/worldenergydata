@@ -40,10 +40,13 @@ if str(_SCRIPTS) not in sys.path:
 
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+from worldenergydata.common.fields_registry import load_fields  # noqa: E402
+
 HERE = Path(__file__).resolve().parents[2] / "reports/lower_tertiary/lifecycle"
 TEMPLATE = HERE / "lifecycle_template.html"
 FACTS = HERE / "_facts.json"
 TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
+FIELDS_REGISTRY = load_fields()
 
 PHASE_KEYS = [
     "acquire",
@@ -268,6 +271,14 @@ def facts_to_field(f: dict) -> dict:
         sorted(wells_dir.glob(f"{f['id']}_*_well.html")) if wells_dir.exists() else []
     )
     assets_page = HERE / "assets" / f"{f['id']}_assets.html"
+    registry_field = FIELDS_REGISTRY.by_id(f["id"])
+    if registry_field is None:
+        raise ValueError(f"Lifecycle facts id not in canonical registry: {f['id']}")
+    economics_href = (
+        f"../economics-{f['id']}.html"
+        if registry_field.surfaces.get("economics_page")
+        else None
+    )
 
     return {
         "id": f["id"],
@@ -276,6 +287,8 @@ def facts_to_field(f: dict) -> dict:
         "assetsHref": (
             f"assets/{f['id']}_assets.html" if assets_page.exists() else None
         ),
+        "economics_href": economics_href,
+        "benchmark_href": "../benchmark.html",
         "name": f["name"],
         "operator": f.get("operator", ""),
         "region": region,
@@ -328,7 +341,8 @@ def build_index(fields: list[dict]) -> str:
 <title>Lower Tertiary — Field Life-Cycle Posters</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  body{{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#eef2f6;color:#0c1a28}}
+  body{{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+       background:#eef2f6;color:#0c1a28}}
   @media (prefers-color-scheme:dark){{body{{background:#0a141f;color:#e8eef4}}}}
   .w{{max-width:720px;margin:0 auto;padding:40px 24px}}
   h1{{font-size:28px;letter-spacing:-.02em;margin:0 0 4px}}
@@ -343,7 +357,8 @@ def build_index(fields: list[dict]) -> str:
 <div class="w">
   {site_nav.crumb_for("gallery")}
   <h1>Lower Tertiary field life-cycle posters</h1>
-  <p class="sub">Stage-gate "page 1" summaries · draft tracers for wed #738 · sorted by current phase</p>
+  <p class="sub">Stage-gate "page 1" summaries · draft tracers for wed #738 ·
+    sorted by current phase</p>
   <ul>
 {rows}
   </ul>
@@ -379,7 +394,10 @@ BIG_FOOT_FACTS = {
         "data_through": "2024-12",
         "projected_cop_year": 2038,
     },
-    "provenance": "Data: big_foot.yml + Chevron public disclosures + BSEE (dates to be reconciled in #375)",
+    "provenance": (
+        "Data: big_foot.yml + Chevron public disclosures + BSEE "
+        "(dates to be reconciled in #375)"
+    ),
 }
 
 
@@ -418,7 +436,8 @@ def main():
         out.write_text(render(field))
         fields.append(field)
         print(
-            f"  wrote {out.name}  ({field['statusLabel']}, phase={field['currentPhase']}, gates={len(field['gates'])})"
+            f"  wrote {out.name}  ({field['statusLabel']}, "
+            f"phase={field['currentPhase']}, gates={len(field['gates'])})"
         )
     (HERE / "index.html").write_text(build_index(fields))
     print(f"  wrote index.html  ({len(fields)} fields)")
