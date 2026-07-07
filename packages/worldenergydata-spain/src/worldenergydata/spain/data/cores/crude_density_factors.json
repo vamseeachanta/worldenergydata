@@ -1,11 +1,10 @@
 {
-  "registry_version": "2026-07-07-cited-partial-10",
+  "registry_version": "2026-07-07-cited-partial-12",
   "registry_date": "2026-07-07",
   "coverage_status": "missing",
-  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has an evidence-only OGJ Worldwide Production API lead, and Viura (1) has an evidence-only gas-condensate cut lead; these evidence-only entries have no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
+  "coverage_note": "Amposta, Casablanca, Dorada, Montanazo-Lubina, and Tarraco have accepted BOE regulator-record API values. Ayoluengo has an accepted archived-operator 37\u00b0 API value. Gaviota has an accepted derived bbl/t factor from Murphy 1993 Form 10-K net condensate rates grossed up by working interest and direct CORES tonnes. Viura (1) has an accepted official MITECO crude-equivalent bbl/t factor from ministry-reported tonnes and barrels. Boquer\u00f3n, Rodaballo, and Salmonete have accepted technical-literature API values from reservoir-geochemistry articles. Albatros has evidence-only OGJ Worldwide Production API plus BOE/CORES official source leads but no accepted representative conversion factor. Strict refreshes still fail closed until accepted cited factors cover every current CORES oil field.",
   "source_gap_fields": [
-    "Albatros",
-    "Viura (1)"
+    "Albatros"
   ],
   "factors": [
     {
@@ -17,13 +16,19 @@
       "api_gravity_min_deg": null,
       "api_gravity_max_deg": null,
       "bbl_per_tonne": null,
-      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Albatros under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream",
+      "measurement_basis": "Oil & Gas Journal Worldwide Production table lists Albatros under Spain/Repsol with a 52.7\u00b0 API column value; this trade-press table is retained as a source lead only and is not treated as a conversion-eligible representative produced stream. BOE abandonment records and CORES tonnes are retained as supporting direct leads, but they do not provide density/API or same-period barrels for conversion.",
       "source_title": "Worldwide Production, Oil & Gas Journal, Dec. 29, 1997",
       "source_url": "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_1997_worldwide_production_leftcolumn_downloadable_worldwide_production_1997.pdf",
       "source_class": "industry_technical_article",
-      "evidence_note": "The Spain/Repsol table row lists offshore Albatros, discovered in 1991, at 6,890 ft depth, 1 producing oil well, 130 b/d average production, and 52.7\u00b0 API gravity. The registry keeps Albatros in source_gap_fields because OGJ trade-press evidence is not a conversion-eligible representative source under the approved #807 source policy.",
+      "evidence_note": "The Spain/Repsol table row lists offshore Albatros, discovered in 1991, at 6,890 ft depth, 1 producing oil well, 130 b/d average production, and 52.7\u00b0 API gravity. BOE-A-2024-9989 identifies the Albatros concession, Vizcaya B-4, and current Repsol/Murphy ownership. BOE-A-2024-4769 models a hypothetical blowout scenario with 2,884 bbl of condensate over 30 days, but this is accident-model volume rather than production or mass evidence. CORES records Albatros gross crude/condensate tonnes in 1995-1997. The registry keeps Albatros in source_gap_fields because no direct conversion-eligible representative density/API or same-period barrels-per-tonne basis has been found.",
       "confidence": "medium",
-      "accepted_for_conversion": false
+      "accepted_for_conversion": false,
+      "supporting_source_urls": [
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-4769",
+        "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-9989",
+        "https://www.cores.es/sites/default/files/archivos/estadisticas/crude-oil-production.xlsx",
+        "https://www.cores.es/en/estadisticas"
+      ]
     },
     {
       "field_name": "Amposta",
@@ -214,14 +219,19 @@
       "api_gravity_deg": null,
       "api_gravity_min_deg": null,
       "api_gravity_max_deg": null,
-      "bbl_per_tonne": null,
-      "measurement_basis": "H&P/Prospex research note states that Viura reservoir gas has a minor condensate cut of 3.5 stb/mmcf, but does not provide condensate density, API gravity, or a tonnes-to-barrels conversion basis",
-      "source_title": "Prospex Energy | H&P Research, Viura restarts and Poland licensing milestone, 22 October 2025",
-      "source_url": "https://prospex.energy/wp-content/uploads/2025/10/Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf",
-      "source_class": "industry_technical_article",
-      "evidence_note": "The research note describes Viura as a gas field and states that the reservoir produces gas with a minor condensate cut of 3.5 stb/mmcf. Because no liquid density/API value is cited, the registry preserves this as a source lead only and keeps Viura (1) in source_gap_fields for strict conversion.",
+      "bbl_per_tonne": 7.330108730412536,
+      "measurement_basis": "Official MITECO energy books report Viura condensate tonnes and barrels as condensate production transformed to crude equivalent; the accepted factor is the 2016-2020 weighted bbl/t ratio from those ministry tables, not a measured API gravity or physical density",
+      "source_title": "MITECO Libro de la Energía España 2020: Viura condensate transformed to crude equivalent",
+      "source_url": "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro_Energia_Espana_2020.pdf",
+      "source_class": "regulator_record",
+      "evidence_note": "MITECO 2020 Table 8.4 reports Viura at 1,443 Tm and 10,577 bbl in 2020, and 5,037 Tm and 36,922 bbl in 2019, with the footnote 'Producción de condensado transformada a crudo equivalente'. MITECO 2018 Table 6.3 reports 3,214 Tm and 23,559 bbl in 2018, and 826 Tm and 6,055 bbl in 2017. MITECO 2017 Table 6.3 reports 1,988 Tm and 14,572 bbl in 2016. The combined 2016-2020 ratio is 91,685 bbl / 12,508 Tm = 7.330108730412536 bbl/t. The Prospex/H&P note remains a supporting field-identification lead for condensate cut only.",
       "confidence": "medium",
-      "accepted_for_conversion": false
+      "accepted_for_conversion": true,
+      "supporting_source_urls": [
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro-Energia-2017.pdf",
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/balances/Balances/LibrosEnergia/Libro-Energia-2018.pdf",
+        "https://prospex.energy/wp-content/uploads/2025/10/Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf"
+      ]
     }
   ]
 }
