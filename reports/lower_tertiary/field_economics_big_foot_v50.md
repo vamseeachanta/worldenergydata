@@ -2,7 +2,7 @@
 
 **Development:** Big Foot (dry) &middot; **Lease:** G16942 &middot; **First oil:** 2018-11-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,063.4M
 
 ## Summary
 

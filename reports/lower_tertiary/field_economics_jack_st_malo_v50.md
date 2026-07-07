@@ -2,7 +2,7 @@
 
 **Development:** Jack St Malo (subsea15) &middot; **Lease:** 6 leases (G17015, G17016, G18745, G18753, G20394, G21245) &middot; **First oil:** 2014-12-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$945.0M
 
 ## Summary
 
