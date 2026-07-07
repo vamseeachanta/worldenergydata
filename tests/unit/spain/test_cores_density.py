@@ -383,6 +383,45 @@ def test_default_density_registry_retains_ogj_api_leads_as_source_gaps():
     assert defaulted_audit.missing_fields == ()
 
 
+def test_default_density_registry_retains_viura_condensate_lead_as_source_gap():
+    registry_path = files("worldenergydata.spain").joinpath(
+        "data/cores/crude_density_factors.json"
+    )
+    payload = json.loads(registry_path.read_text())
+    factors = load_crude_density_factors()
+    viura_url = (
+        "https://prospex.energy/wp-content/uploads/2025/10/"
+        "Prospex-Viura-Restart-and-Poland-22nd-Oct-2025.pdf"
+    )
+
+    viura = factors["viura1"]
+    assert viura.field_name == "Viura (1)"
+    assert viura.source_class == "industry_technical_article"
+    assert viura.source_url == viura_url
+    assert viura.accepted_for_conversion is False
+    assert viura.api_gravity_deg is None
+    assert viura.api_gravity_min_deg is None
+    assert viura.api_gravity_max_deg is None
+    assert viura.bbl_per_tonne is None
+    assert "Viura (1)" in payload["source_gap_fields"]
+
+    with pytest.raises(CoresDensityCoverageError, match="Viura"):
+        build_oil_conversion_audit(
+            ["Viura (1)"],
+            factors,
+            allow_default_density=False,
+        )
+
+    defaulted_audit = build_oil_conversion_audit(
+        ["Viura (1)"],
+        factors,
+        allow_default_density=True,
+    )
+    assert defaulted_audit.used_field_names == ()
+    assert defaulted_audit.defaulted_fields == ("Viura (1)",)
+    assert defaulted_audit.missing_fields == ()
+
+
 def test_default_density_registry_keeps_current_fields_missing():
     registry_path = files("worldenergydata.spain").joinpath(
         "data/cores/crude_density_factors.json"
