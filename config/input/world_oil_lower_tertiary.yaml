@@ -1,6 +1,9 @@
 # config/input/world_oil_lower_tertiary.yaml
 # World Oil Lower Tertiary article analysis — field mappings, article metrics, report config
-# Single source of truth for all analysis inputs
+# Single source of truth for the World Oil ARTICLE analysis inputs (metrics/report config).
+# Superseded for identity resolution by the canonical config/fields.yml
+# (worldenergydata.common.fields_registry, #755); extend that file's aliases for
+# any field-name variant rather than adding a parallel mapping here.
 
 metadata:
   feature_name: "world-oil-lower-tertiary-reports"

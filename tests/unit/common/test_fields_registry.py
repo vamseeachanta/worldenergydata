@@ -176,10 +176,12 @@ class TestCrossConfigCoherence:
         for f in reg.fields:
             if f.tier == "kc_recovered":
                 continue  # not present in the auto-generated economics registry
-            assert f.canonical_id in src, (
-                f"{f.canonical_id} missing from fields_registry.yml"
-            )
-            src_leases = {ln.upper() for ln in (src[f.canonical_id].get("leases") or [])}
+            assert (
+                f.canonical_id in src
+            ), f"{f.canonical_id} missing from fields_registry.yml"
+            src_leases = {
+                ln.upper() for ln in (src[f.canonical_id].get("leases") or [])
+            }
             for lease in f.leases:
                 assert lease.upper() in src_leases, (
                     f"{f.canonical_id}: lease {lease} not in fields_registry.yml "
@@ -194,9 +196,9 @@ class TestCrossConfigCoherence:
                 assert reg.by_id(pid) is not None, f"{path.name}: id {pid} unresolved"
                 dn = pv.get("display_name")
                 if dn:
-                    assert reg.resolve(dn) == pid, (
-                        f"{path.name}: display {dn!r} did not resolve to {pid}"
-                    )
+                    assert (
+                        reg.resolve(dn) == pid
+                    ), f"{path.name}: display {dn!r} did not resolve to {pid}"
 
 
 @unit

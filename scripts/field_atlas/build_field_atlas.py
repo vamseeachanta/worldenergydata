@@ -20,29 +20,20 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+# Field identity resolves through THE canonical registry (config/fields.yml via
+# worldenergydata.common.fields_registry) — no local name→id map lives here (#755).
+from worldenergydata.common.fields_registry import load_fields  # noqa: E402
+
 HERE = Path(__file__).resolve().parents[2] / "reports/field-atlas"
 ROSTER = HERE / "_roster.json"
-
-# The 10 rich fields' display-name → life-cycle poster id (from config/fields.yml).
-LIFECYCLE_ID = {
-    "Big Foot": "big_foot",
-    "Anchor": "anchor",
-    "Cascade/Chinook": "cascade_chinook",
-    "Jack/St. Malo": "jack_st_malo",
-    "Julia": "julia",
-    "Kaskida": "kaskida",
-    "North Platte (renamed Sparta)": "north_platte",
-    "Shenandoah": "shenandoah",
-    "Stones": "stones",
-    "Tiber": "tiber",
-}
 
 
 def build() -> str:
     fields = json.loads(ROSTER.read_text())
+    registry = load_fields()
     for f in fields:
         f["lifecycle_id"] = (
-            LIFECYCLE_ID.get(f["name"]) if f.get("has_lifecycle") else None
+            registry.resolve(f["name"]) if f.get("has_lifecycle") else None
         )
     roster_json = json.dumps(fields, ensure_ascii=False)
     return site_nav.inject_for(
