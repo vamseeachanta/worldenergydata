@@ -12,12 +12,42 @@ from worldenergydata.lower_tertiary.v30_reproducer import (
     _build_first_oil_map,
     load_golden_baseline,
     load_ogor_production,
+    load_v50_kc_baseline,
+    load_v50_kc_drilling,
+    load_v50_kc_leases,
     load_v30_assumptions,
     load_v30_drilling,
     load_v30_leases,
     load_v30_wti_prices,
+    reproduce_v50_kc_production,
     reproduce_v30_production,
 )
+
+INPUT_SET_V30 = "v30"
+INPUT_SET_V50_KC = "v50_kc"
+
+
+def _input_set_tables(input_set: str) -> tuple[dict, pd.DataFrame, pd.DataFrame]:
+    """Return baseline, leases and D&C tables for the selected financial input set."""
+    if input_set == INPUT_SET_V50_KC:
+        return load_v50_kc_baseline(), load_v50_kc_leases(), load_v50_kc_drilling()
+    if input_set != INPUT_SET_V30:
+        raise ValueError(f"Unknown lower-tertiary input set: {input_set!r}")
+    return load_golden_baseline(), load_v30_leases(), load_v30_drilling()
+
+
+def _produce_for_input_set(
+    input_set: str,
+    end_date: str | None,
+    first_oil_overrides: dict[str, str] | None,
+) -> dict[str, dict]:
+    if input_set == INPUT_SET_V50_KC:
+        return reproduce_v50_kc_production(
+            end_date=end_date, first_oil_overrides=first_oil_overrides
+        )
+    return reproduce_v30_production(
+        end_date=end_date, first_oil_overrides=first_oil_overrides
+    )
 
 
 def _get_assumption(
@@ -72,14 +102,16 @@ def reproduce_dnc_costs(
     dev_name: str,
     dev_system: str,
     first_oil: pd.Timestamp | None = None,
+    leases_df: pd.DataFrame | None = None,
+    dnc_df: pd.DataFrame | None = None,
 ) -> dict[str, float]:
     """Reproduce D&C total cost for a development.
 
     Uses the V30 methodology: drilling days × MODU rate + completion days × comp rate.
     Rate selection depends on dev_system and first_oil status.
     """
-    dnc_df = load_v30_drilling()
-    leases_df = load_v30_leases()
+    dnc_df = load_v30_drilling() if dnc_df is None else dnc_df.copy()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
     assumptions = _load_assumptions_wide()
 
     # Map D&C wells to developments via SURF_LEASE_NUM
@@ -272,9 +304,9 @@ def _norm_name(s: str) -> str:
     return s
 
 
-def _build_fopw_map() -> dict[float, pd.Timestamp]:
+def _build_fopw_map(leases_df: pd.DataFrame | None = None) -> dict[float, pd.Timestamp]:
     """Build first-oil-per-well mapping from OGOR data."""
-    leases_df = load_v30_leases()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
     ogor = load_ogor_production(start_year=2000, end_year=2025)
     ogor = ogor[(ogor["date"] >= "2000-09-01") & (ogor["date"] <= "2025-05-31")]
     lease_to_dev = dict(zip(leases_df["LEASE_NUM"], leases_df["DEV_NAME"]))
@@ -300,6 +332,8 @@ def _build_monthly_dnc(
     date_range: pd.DatetimeIndex,
     assumptions: pd.DataFrame,
     fopw: dict[float, pd.Timestamp],
+    leases_df: pd.DataFrame | None = None,
+    dnc_df: pd.DataFrame | None = None,
 ) -> pd.Series:
     """Build monthly D&C cost series allocated by well spud/TD dates.
 
@@ -307,8 +341,8 @@ def _build_monthly_dnc(
     spud_date, completion days allocated backward from FO/TD date.
     Rate selection uses subsea15 rate for dry and subsea20 pre-FO drilling.
     """
-    dnc_df = load_v30_drilling()
-    leases_df = load_v30_leases()
+    dnc_df = load_v30_drilling() if dnc_df is None else dnc_df.copy()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
 
     # Join DnC to developments via LEASE_NAME (matching V30 generator)
     lease_name_to_dev = dict(
@@ -532,6 +566,7 @@ def _build_monthly_facilities(
 def reproduce_v30_financials(
     end_date: str | None = None,
     first_oil_overrides: dict[str, str] | None = None,
+    input_set: str = INPUT_SET_V30,
 ) -> dict[str, dict]:
     """Reproduce the full financial summary for all developments.
 
@@ -560,7 +595,7 @@ def reproduce_v30_financials(
       royalty_usd, variable_opex_usd, fixed_opex_usd, net_cashflow_usd, npv_usd,
       mirr_monthly, mirr_annual, producers, injectors, wellbores
     """
-    baseline = load_golden_baseline()
+    baseline, leases_df, dnc_df = _input_set_tables(input_set)
     first_oil_map = _build_first_oil_map(baseline)
     if first_oil_overrides:
         for _dev, _date in first_oil_overrides.items():
@@ -568,8 +603,8 @@ def reproduce_v30_financials(
     # end_date=None preserves the exact frozen V30 behaviour; a passed end_date
     # extends production + WTI cascade + cashflow horizon (V50 vintage).
     prod_end = "2025-05-31" if end_date is None else end_date
-    production = reproduce_v30_production(
-        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    production = _produce_for_input_set(
+        input_set, end_date=prod_end, first_oil_overrides=first_oil_overrides
     )
     if end_date is None:
         wti_df = load_v30_wti_prices()
@@ -580,10 +615,10 @@ def reproduce_v30_financials(
 
         wti_df = load_extended_wti_prices(through_date=end_date)
     assumptions = _load_assumptions_wide()
-    fopw = _build_fopw_map()
+    fopw = _build_fopw_map(leases_df=leases_df)
 
     # Determine global timeline from D&C and production data
-    dnc_all = load_v30_drilling()
+    dnc_all = dnc_df
     dnc_spud_min = pd.to_datetime(dnc_all["WELL_SPUD_DATE"], errors="coerce").min()
     # V30 end date (month-start) when end_date is None; otherwise extend to the
     # month-start of the requested latest end_date (matches build_field_npv_timeline).
@@ -601,7 +636,9 @@ def reproduce_v30_financials(
         sys_norm = dev_system.lower().replace(" ", "")
 
         # D&C costs (totals for reporting)
-        dnc = reproduce_dnc_costs(dev_name, dev_system, first_oil)
+        dnc = reproduce_dnc_costs(
+            dev_name, dev_system, first_oil, leases_df=leases_df, dnc_df=dnc_df
+        )
 
         # Producer/injector counts from golden baseline
         producers = proj_data.get("producers", 0)
@@ -663,7 +700,9 @@ def reproduce_v30_financials(
             # Build full timeline covering D&C activity through production
             prod_start = merged["date"].min()
             # Get earliest DnC activity for this development
-            dnc_df_dev = _get_dev_dnc_dates(dev_name)
+            dnc_df_dev = _get_dev_dnc_dates(
+                dev_name, leases_df=leases_df, dnc_df=dnc_df
+            )
             dev_start_candidates = [prod_start]
             if dnc_df_dev is not None:
                 dev_start_candidates.append(dnc_df_dev)
@@ -684,7 +723,14 @@ def reproduce_v30_financials(
 
             # Build monthly D&C and facilities on full range
             monthly_dnc = _build_monthly_dnc(
-                dev_name, dev_system, first_oil, full_range, assumptions, fopw
+                dev_name,
+                dev_system,
+                first_oil,
+                full_range,
+                assumptions,
+                fopw,
+                leases_df=leases_df,
+                dnc_df=dnc_df,
             )
             monthly_fac = _build_monthly_facilities(
                 dev_system,
@@ -733,7 +779,9 @@ def reproduce_v30_financials(
             total_oil_bbl = 0.0
 
             # Build timeline for DnC-only
-            dnc_df_dev = _get_dev_dnc_dates(dev_name)
+            dnc_df_dev = _get_dev_dnc_dates(
+                dev_name, leases_df=leases_df, dnc_df=dnc_df
+            )
             dev_start = (
                 dnc_df_dev
                 if dnc_df_dev is not None and pd.notna(dnc_df_dev)
@@ -743,7 +791,14 @@ def reproduce_v30_financials(
             full_range = pd.date_range(dev_start, g_end, freq="MS")
 
             monthly_dnc = _build_monthly_dnc(
-                dev_name, dev_system, first_oil, full_range, assumptions, fopw
+                dev_name,
+                dev_system,
+                first_oil,
+                full_range,
+                assumptions,
+                fopw,
+                leases_df=leases_df,
+                dnc_df=dnc_df,
             )
             # No facilities for exploration-only (has_fo is False)
             monthly_fac = pd.Series(0.0, index=full_range)
@@ -795,6 +850,7 @@ def build_field_npv_timeline(
     end_date: str | None = None,
     wti_price_multiplier: float = 1.0,
     first_oil_overrides: dict[str, str] | None = None,
+    input_set: str = INPUT_SET_V30,
 ) -> dict:
     """Build the monthly cumulative-discounted-NPV time series for a development.
 
@@ -837,7 +893,7 @@ def build_field_npv_timeline(
     :func:`reproduce_v30_production`) are supported; exploration-only
     developments raise ``ValueError`` since they have no production timeline.
     """
-    baseline = load_golden_baseline()
+    baseline, leases_df, dnc_df = _input_set_tables(input_set)
     first_oil_map = _build_first_oil_map(baseline)
     if first_oil_overrides:
         for _dev, _date in first_oil_overrides.items():
@@ -845,8 +901,8 @@ def build_field_npv_timeline(
     # end_date=None preserves the exact frozen V30 behaviour; a passed end_date
     # drives both the production window and g_end (latest timeline).
     prod_end = "2025-05-31" if end_date is None else end_date
-    production = reproduce_v30_production(
-        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    production = _produce_for_input_set(
+        input_set, end_date=prod_end, first_oil_overrides=first_oil_overrides
     )
     if end_date is None:
         wti_df = load_v30_wti_prices()
@@ -858,7 +914,7 @@ def build_field_npv_timeline(
 
         wti_df = load_extended_wti_prices(through_date=end_date)
     assumptions = _load_assumptions_wide()
-    fopw = _build_fopw_map()
+    fopw = _build_fopw_map(leases_df=leases_df)
 
     # Locate the project record for dev_system / first_oil metadata.
     proj_data = None
@@ -936,7 +992,7 @@ def build_field_npv_timeline(
 
     # --- Full timeline (mirrors reproduce_v30_financials) ---
     prod_start = merged["date"].min()
-    dnc_df_dev = _get_dev_dnc_dates(dev_name)
+    dnc_df_dev = _get_dev_dnc_dates(dev_name, leases_df=leases_df, dnc_df=dnc_df)
     dev_start_candidates = [prod_start]
     if dnc_df_dev is not None:
         dev_start_candidates.append(dnc_df_dev)
@@ -952,7 +1008,14 @@ def build_field_npv_timeline(
     full_range = pd.date_range(dev_start, g_end, freq="MS")
 
     monthly_dnc = _build_monthly_dnc(
-        dev_name, dev_system, first_oil, full_range, assumptions, fopw
+        dev_name,
+        dev_system,
+        first_oil,
+        full_range,
+        assumptions,
+        fopw,
+        leases_df=leases_df,
+        dnc_df=dnc_df,
     )
     monthly_fac = _build_monthly_facilities(
         dev_system, producers, injectors, first_oil, full_range, assumptions
@@ -1018,6 +1081,8 @@ def _build_perwell_monthly_dnc(
     date_range: pd.DatetimeIndex,
     assumptions: pd.DataFrame,
     fopw: dict[float, pd.Timestamp],
+    leases_df: pd.DataFrame | None = None,
+    dnc_df: pd.DataFrame | None = None,
 ) -> tuple[dict[str, pd.Series], pd.Series]:
     """Build per-well monthly D&C cost series plus an unresolvable-shared series.
 
@@ -1037,8 +1102,8 @@ def _build_perwell_monthly_dnc(
         element-wise sum of every ``per_well`` series plus ``shared`` equals the
         aggregate :func:`_build_monthly_dnc` series for the same inputs.
     """
-    dnc_df = load_v30_drilling()
-    leases_df = load_v30_leases()
+    dnc_df = load_v30_drilling() if dnc_df is None else dnc_df.copy()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
 
     lease_name_to_dev = dict(
         zip(
@@ -1171,6 +1236,7 @@ def build_well_npv_stackup(
     dev_name: str,
     end_date: str | None = None,
     first_oil_overrides: dict[str, str] | None = None,
+    input_set: str = INPUT_SET_V30,
 ) -> dict:
     """Decompose a development's NPV into per-well contributions that sum exactly.
 
@@ -1229,7 +1295,10 @@ def build_well_npv_stackup(
     #    headline timeline — otherwise the stackup silently reverts to the golden
     #    first oil and contradicts the field NPV it claims to decompose.
     field = build_field_npv_timeline(
-        dev_name, end_date=end_date, first_oil_overrides=first_oil_overrides
+        dev_name,
+        end_date=end_date,
+        first_oil_overrides=first_oil_overrides,
+        input_set=input_set,
     )
     field_terminal = field["terminal_npv_usd"]
     dev_system = field["dev_system"]
@@ -1238,7 +1307,7 @@ def build_well_npv_stackup(
     has_fo = first_oil is not None and pd.notna(first_oil)
     sys_norm = dev_system.lower().replace(" ", "")
 
-    baseline = load_golden_baseline()
+    baseline, leases_df, dnc_df = _input_set_tables(input_set)
     proj_data = None
     for pdata in baseline["projects"].values():
         if pdata["display_name"] == dev_name:
@@ -1259,17 +1328,17 @@ def build_well_npv_stackup(
 
         wti_df = load_extended_wti_prices(through_date=end_date)
     assumptions = _load_assumptions_wide()
-    fopw = _build_fopw_map()
+    fopw = _build_fopw_map(leases_df=leases_df)
 
     # 2) Reconstruct the field full_range (identical to build_field_npv_timeline).
-    production = reproduce_v30_production(
-        end_date=prod_end, first_oil_overrides=first_oil_overrides
+    production = _produce_for_input_set(
+        input_set, end_date=prod_end, first_oil_overrides=first_oil_overrides
     )
     if dev_name not in production:
         raise ValueError(f"{dev_name!r} has no production timeline (exploration-only)")
     monthly = production[dev_name]["monthly_production"].copy()
     prod_start = monthly["date"].min()
-    dnc_df_dev = _get_dev_dnc_dates(dev_name)
+    dnc_df_dev = _get_dev_dnc_dates(dev_name, leases_df=leases_df, dnc_df=dnc_df)
     dev_start_candidates = [prod_start]
     if dnc_df_dev is not None:
         dev_start_candidates.append(dnc_df_dev)
@@ -1289,7 +1358,6 @@ def build_well_npv_stackup(
     full_range = pd.date_range(dev_start, g_end, freq="MS")
 
     # 3) Per-well monthly oil over full_range (reuses the monkeypatchable loader).
-    leases_df = load_v30_leases()
     dev_leases = set(leases_df[leases_df["DEV_NAME"] == dev_name]["LEASE_NUM"])
     end_year = max(2025, int(prod_end[:4]))
     ogor = load_ogor_production(start_year=2000, end_year=end_year)
@@ -1345,7 +1413,14 @@ def build_well_npv_stackup(
 
     # 5) Per-well direct D&C + unresolvable-shared D&C.
     dnc_per_well, dnc_shared = _build_perwell_monthly_dnc(
-        dev_name, dev_system, first_oil, full_range, assumptions, fopw
+        dev_name,
+        dev_system,
+        first_oil,
+        full_range,
+        assumptions,
+        fopw,
+        leases_df=leases_df,
+        dnc_df=dnc_df,
     )
     dnc_mat = pd.DataFrame(0.0, index=full_range, columns=well_keys)
     dnc_unresolved = dnc_shared.copy()
@@ -1405,7 +1480,14 @@ def build_well_npv_stackup(
         )
     ops_cf[:] = rev_monthly - roy_monthly - var_monthly - fix_monthly
     monthly_dnc = _build_monthly_dnc(
-        dev_name, dev_system, first_oil, full_range, assumptions, fopw
+        dev_name,
+        dev_system,
+        first_oil,
+        full_range,
+        assumptions,
+        fopw,
+        leases_df=leases_df,
+        dnc_df=dnc_df,
     )
     field_cf = pd.Series(0.0, index=full_range)
     for m in ops_cf.index:
@@ -1435,7 +1517,7 @@ def build_well_npv_stackup(
         return float(np.sum(seg / disc_factors))
 
     # Drilling-day attribution + well-name lookup for reporting.
-    name_map = _wellbore_name_map(dev_name)
+    name_map = _wellbore_name_map(dev_name, leases_df=leases_df, dnc_df=dnc_df)
 
     wells_out: list[dict] = []
     sum_net = 0.0
@@ -1503,10 +1585,14 @@ def build_well_npv_stackup(
     }
 
 
-def _wellbore_name_map(dev_name: str) -> dict[str, str]:
+def _wellbore_name_map(
+    dev_name: str,
+    leases_df: pd.DataFrame | None = None,
+    dnc_df: pd.DataFrame | None = None,
+) -> dict[str, str]:
     """Map 12-digit wellbore API prefix -> well name from V30 drilling data."""
-    dnc_df = load_v30_drilling()
-    leases_df = load_v30_leases()
+    dnc_df = load_v30_drilling() if dnc_df is None else dnc_df.copy()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
     lease_name_to_dev = dict(
         zip(leases_df["LEASE_NAME"].apply(_norm_name), leases_df["DEV_NAME"])
     )
@@ -1528,10 +1614,14 @@ def _wellbore_name_map(dev_name: str) -> dict[str, str]:
     return out
 
 
-def _get_dev_dnc_dates(dev_name: str) -> pd.Timestamp | None:
+def _get_dev_dnc_dates(
+    dev_name: str,
+    leases_df: pd.DataFrame | None = None,
+    dnc_df: pd.DataFrame | None = None,
+) -> pd.Timestamp | None:
     """Get earliest D&C date for a development."""
-    dnc_df = load_v30_drilling()
-    leases_df = load_v30_leases()
+    dnc_df = load_v30_drilling() if dnc_df is None else dnc_df.copy()
+    leases_df = load_v30_leases() if leases_df is None else leases_df
     lease_name_to_dev = dict(
         zip(
             leases_df["LEASE_NAME"].apply(_norm_name),
