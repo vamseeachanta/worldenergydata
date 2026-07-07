@@ -87,3 +87,46 @@ class TestWellStackupSumsToField:
             assert w["gross_npv_usd"] + w["shared_npv_usd"] == pytest.approx(
                 w["net_npv_usd"], abs=0.01
             )
+
+
+class TestWellStackupHonoursFirstOilOverride:
+    """Regression: the stackup must apply the SAME first-oil overrides as the
+    headline timeline. Cascade Chinook carries a first-oil correction
+    (2014-01 -> 2012-09); before this fix ``build_well_npv_stackup`` ignored the
+    override and silently reverted to the golden window, so its field NPV
+    contradicted the headline field NPV it claims to decompose (a ~$99.5M split
+    in the published field_economics_cascade_chinook_v50.md)."""
+
+    OVERRIDES = {"Cascade Chinook": "2012-09-01"}
+
+    def test_stackup_field_npv_matches_timeline_under_override(self):
+        _ensure_ogor_or_skip()
+        end_date = "2026-04-30"
+        field = build_field_npv_timeline(
+            "Cascade Chinook", end_date=end_date, first_oil_overrides=self.OVERRIDES
+        )
+        stk = build_well_npv_stackup(
+            "Cascade Chinook", end_date=end_date, first_oil_overrides=self.OVERRIDES
+        )
+        # The authoritative field NPV the stackup reports must equal the headline.
+        assert stk["field_terminal_npv_usd"] == pytest.approx(
+            field["terminal_npv_usd"], abs=0.01
+        )
+        # And the per-well decomposition still sums to it exactly.
+        assert stk["sum_well_npv_usd"] == pytest.approx(
+            field["terminal_npv_usd"], abs=0.01
+        )
+        assert abs(stk["residual_usd"]) < 0.01
+
+    def test_override_actually_moves_the_number(self):
+        """Guard against a vacuous test: the override must change the stackup's
+        field NPV vs. no override (else the propagation could silently regress)."""
+        _ensure_ogor_or_skip()
+        end_date = "2026-04-30"
+        with_override = build_well_npv_stackup(
+            "Cascade Chinook", end_date=end_date, first_oil_overrides=self.OVERRIDES
+        )["field_terminal_npv_usd"]
+        without = build_well_npv_stackup("Cascade Chinook", end_date=end_date)[
+            "field_terminal_npv_usd"
+        ]
+        assert with_override != pytest.approx(without, abs=1.0)
