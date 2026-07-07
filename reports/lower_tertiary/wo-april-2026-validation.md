@@ -238,10 +238,10 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | **D&C days** (D, C, D&C per field) | **V50 = wed exactly — Δ = 0 for every field** (byte-identical extractor, same WAR); 253 wells / 25,404 D&C |
 | **Produced oil** | V50 = wed, all fields (same OGOR-A window) |
 | **NPV @10%** | 7 producers within **−$103M…+$197M** (the 13 cost cells); 3 exploration-only fields **exact**; **Jack St Malo −$3.1B — the sole material gap** |
-| **After-tax vs pre-tax** | **moot** — every field is loss-making, so NOL zeroes corporate tax and after-tax ≡ pre-tax |
+| **After-tax vs pre-tax** | **small, real** — severance/ad-valorem = 0, but 21% corporate tax hits the 3 fields with positive *lifetime* cash flow: JSM −$103M NPV, Julia −$4.4M, Buckskin −$3.9M; the other 8 (negative cash flow) pay none |
 | **Article Table-2 errata** | Roy's V50 script **corrects** them (Stones≠Tiber, Cascade NCF sign, zero-OPEX) — his code agrees with §4.1–§4.5 here |
 
-**The one open item for the article team:** the Jack St Malo gap is purely the **NPV discount-reference convention** — Roy discounts "from Day 1 / first spud" (2000), wed from first cashflow; JSM's 14-year spud→first-oil gap makes it swing $3.1B. Undiscounted cash flows reconcile. Everything else is settled. (The earlier "pre-tax vs after-tax / 13 cost cells" question is resolved: after-tax is a non-difference, and the cost cells account for only ±$100–200M per field.)
+**The one open item for the article team:** the Jack St Malo gap is **≈ $3.0B the NPV discount-reference convention** (Roy discounts "from Day 1 / first spud" (2000), wed from first cashflow; JSM's 14-year spud→first-oil gap makes it swing) **plus ~$103M corporate tax**; undiscounted cash flows reconcile. (The 13 cost cells account for only ±$100–200M per field; severance/ad-valorem are 0; the 21% corporate tax is a small real effect on the 3 fields with positive lifetime cash flow. NPV-negative does **not** imply zero tax.)
 
 ## 7. Related work
 
