@@ -363,11 +363,38 @@ def test_default_density_registry_retains_albatros_ogj_api_lead_as_source_gap():
     )
     boe_dia_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-4769"
     boe_authorization_url = "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2024-9989"
+    boe_pa_notice_url = (
+        "https://www.boe.es/boe/dias/2022/07/14/pdfs/BOE-B-2022-22886.pdf"
+    )
     cores_workbook_url = (
         "https://www.cores.es/sites/default/files/archivos/estadisticas/"
         "crude-oil-production.xlsx"
     )
     cores_stats_url = "https://www.cores.es/en/estadisticas"
+    cores_1998_bulletin_url = (
+        "https://www.cores.es/sites/default/files/archivos/publicaciones/"
+        "boletin-est-hidrocarburos-003-febrero-1998.pdf"
+    )
+    miteco_2008_url = (
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/"
+        "petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/"
+        "2008/Produccion_Hidrocarburos2008.pdf"
+    )
+    miteco_2009_url = (
+        "https://www.miteco.gob.es/content/dam/miteco/es/energia/files-1/"
+        "petroleo/Exploracion/EstadisticasPetroleo/DatosBibliotecaConsumer/"
+        "2009/EstadisticaHidrocarburos_2009.pdf"
+    )
+    murphy_1993_url = (
+        "https://ir.murphyoilcorp.com/static-files/"
+        "791c4744-6f71-41e5-a4dc-c95c654414d3"
+    )
+    ogj_1999_url = (
+        "https://img.ogj.com/files/base/ebm/ogj/document/2009/06/"
+        "content_dam_ogj_en_downloadables_survey_downloads_worldwide_production_"
+        "1999_worldwide_production_leftcolumn_downloadable_worldwide_production_"
+        "1999.pdf"
+    )
 
     factor = factors["albatros"]
     assert factor.field_name == "Albatros"
@@ -376,14 +403,22 @@ def test_default_density_registry_retains_albatros_ogj_api_lead_as_source_gap():
     assert factor.supporting_source_urls == (
         boe_dia_url,
         boe_authorization_url,
+        boe_pa_notice_url,
         cores_workbook_url,
         cores_stats_url,
+        cores_1998_bulletin_url,
+        miteco_2008_url,
+        miteco_2009_url,
+        murphy_1993_url,
+        ogj_1999_url,
     )
     assert factor.accepted_for_conversion is False
     assert factor.api_gravity_deg == pytest.approx(52.7)
     assert factor.api_gravity_min_deg is None
     assert factor.api_gravity_max_deg is None
     assert factor.bbl_per_tonne is None
+    assert "no Albatros-specific Bbl+Tm row" in factor.evidence_note
+    assert "no accepted conversion-grade source" in factor.evidence_note
     assert "Albatros" in payload["source_gap_fields"]
 
     with pytest.raises(CoresDensityCoverageError, match="Albatros"):
