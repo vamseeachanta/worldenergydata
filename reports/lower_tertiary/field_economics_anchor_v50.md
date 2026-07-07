@@ -2,7 +2,7 @@
 
 **Development:** Anchor (subsea20) &middot; **Lease:** 2 leases (G31751, G31752) &middot; **First oil:** 2024-08-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,732.8M
 
 ## Summary
 

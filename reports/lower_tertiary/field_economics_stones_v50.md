@@ -2,7 +2,7 @@
 
 **Development:** Stones (subsea15) &middot; **Lease:** G17001 &middot; **First oil:** 2016-09-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,479.5M
 
 ## Summary
 

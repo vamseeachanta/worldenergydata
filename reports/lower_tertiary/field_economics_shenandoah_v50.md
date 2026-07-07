@@ -2,7 +2,7 @@
 
 **Development:** Shenandoah (subsea20) &middot; **Lease:** 2 leases (G25232, G31938) &middot; **First oil:** 2025-02-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,166.4M
 
 ## Summary
 

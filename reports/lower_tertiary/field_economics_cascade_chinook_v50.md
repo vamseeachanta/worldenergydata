@@ -2,7 +2,7 @@
 
 **Development:** Cascade Chinook (subsea15) &middot; **Lease:** 2 leases (G16965, G16997) &middot; **First oil:** 2012-09-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,477.2M
 
 ## Summary
 
@@ -86,22 +86,22 @@ _Operations are derived deterministically from BSEE Well Activity Reports (`bin/
 
 ## Well-Level NPV Stackup
 
-Field terminal NPV decomposed into per-well contributions that sum exactly to the field total. Field NPV = **$-1,480.5 M**; sum of per-well net NPV = **$-1,480.5 M** (residual $0.0000).
+Field terminal NPV decomposed into per-well contributions that sum exactly to the field total. Field NPV = **$-1,580.0 M**; sum of per-well net NPV = **$-1,580.0 M** (residual $-0.0000).
 
 | Rank | Well (API) | Name | Oil (MMbbl) | Gross well NPV ($MM) | Allocated shared cost ($MM) | Net well NPV ($MM) | % of field NPV |
 |-----:|-----------|------|------------:|---------------------:|----------------------------:|-------------------:|-----------:|
-| 1 | 608124009700 | CH004 | 24.27 | 109.4 | -1,084.2 | -974.8 | 65.8% |
-| 2 | 608124008300 | CA006 | 10.43 | 28.1 | -465.9 | -437.8 | 29.6% |
-| 3 | 608124004602 | CH002 | 1.69 | 7.8 | -75.6 | -67.8 | 4.6% |
+| 1 | 608124009700 | CH004 | 24.27 | 109.4 | -1,106.1 | -996.7 | 63.1% |
+| 2 | 608124008300 | CA006 | 10.43 | 28.1 | -475.3 | -447.2 | 28.3% |
+| 3 | 608124004602 | CH002 | 4.96 | 89.8 | -225.9 | -136.1 | 8.6% |
 
 > **Reading the ranking.** Under production-pro-rata allocation, the largest producer absorbs the most shared capital — so the highest-output well can show the *most negative* net NPV. The **Gross well NPV** column reflects standalone operating performance; the **Net well NPV** column reflects each well's share of the fully-loaded field (which is NPV-negative overall, so every well's net is negative). **Bottom line:** a negative *net* NPV here is an allocation outcome on an NPV-negative field, not a verdict on the well's own performance — read the **Gross well NPV** column for standalone results.
 
 Per-well net NPV (signed bars; █ = value-additive, ▓ = drag):
 
 ```
-CH004      -974.8 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-CA006      -437.8 M  ▓▓▓▓▓▓▓▓▓▓▓
-CH002       -67.8 M  ▓▓
+CH004      -996.7 M  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+CA006      -447.2 M  ▓▓▓▓▓▓▓▓▓▓▓
+CH002      -136.1 M  ▓▓▓
 ```
 
 **[Interactive NPV waterfalls →](./cascade_chinook_npv_stackup.html)** — two views: an **over-time NPV bridge** (each year's change in cumulative NPV, with the biggest swings annotated by the events that drove them) and this **per-well stackup** (each well's net NPV stepping to the field total). Hover any bar for detail. Rebuild with `uv run --with plotly python scripts/lower_tertiary/build_npv_stackup_chart.py --dev "Cascade Chinook"`.
@@ -110,8 +110,8 @@ CH002       -67.8 M  ▓▓
 
 | Block | Oil (MMbbl) | % of field oil |
 |-------|------------:|---------------:|
-| WR  469 | 25.96 | 71.3% |
-| WR  206 | 10.43 | 28.7% |
+| WR  469 | 29.22 | 73.7% |
+| WR  206 | 10.43 | 26.3% |
 
 _Block scope: 2 OGOR blocks present; per-block oil shares shown. Per-block NPV would require a block-level cost split (gap: shared facilities/D&C are field-level in V30, not block-tagged)._
 
