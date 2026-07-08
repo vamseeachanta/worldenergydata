@@ -225,7 +225,7 @@ V30→V50/wed grows +2,926 D&C days = **Buckskin +2,056** (added via the KC inge
 
 ## 4.5 Economics reconciliation — V50 vs wed, per column
 
-Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article. **wed-latest** = wed reproduction at the same 2026-04 window (NPV/revenue/oil recomputed); **wed-frozen** = wed's audited V30 breakdown (2025-05, the only window where wed recomputes the full royalty/opex split — shown where wed-latest does not); **Article** = the published WO Table 2 (thru Nov-2025). "–" = not recomputed on that basis.
+Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article. **wed-latest** = wed's committed latest-window component baseline at the same 2026-04 window (`golden_baseline_v50.yml`, plus the Buckskin V50-KC recompute because frozen V30 has no Buckskin row). **wed-frozen** is retained only in the NPV table as the audited V30 reference. **Article** = the published WO Table 2 (thru Nov-2025). "–" = no article value or no latest-window producing case.
 
 **Produced oil (MMbbl):**
 
@@ -244,18 +244,72 @@ Roy's V50 (his script, 2026-04, after-tax) beside wed canonical and the article.
 
 **Revenue ($MM):**
 
-| Field | V50 (2026-04) | wed (available basis) | Article (Nov-25) |
-|---|---:|---:|---:|
-| Anchor | 1,336 | 476 | 1,067 |
-| Big Foot | 5,587 | 4,738 | – |
-| Buckskin | 5,203 | 5,116 | 4,959 |
-| Cascade Chinook | 2,790 | 2,327 | 2,725 |
-| Jack St Malo | 28,035 | 25,649 | 26,892 |
-| Julia | 5,197 | 4,715 | 4,983 |
-| Shenandoah | 1,588 | 0.3 | 649 |
-| Stones | 5,979 | 5,582 | 5,815 |
+| Field | V50 (Roy, 2026-04) | wed-latest (2026-04) | Δ (V50−wed) | Article (Nov-25) |
+|---|---:|---:|---:|---:|
+| Anchor | 1,336 | 1,279 | +57 | 1,067 |
+| Big Foot | 5,587 | 5,571 | +16 | – |
+| Buckskin | 5,203 | 5,116 | +88 | 4,959 |
+| Cascade Chinook | 2,790 | 2,778 | +12 | 2,725 |
+| Jack St Malo | 28,035 | 27,891 | +144 | 26,892 |
+| Julia | 5,197 | 5,168 | +29 | 4,983 |
+| Shenandoah | 1,588 | 1,460 | +128 | 649 |
+| Stones | 5,979 | 5,947 | +32 | 5,815 |
 
-Revenue rises monotonically with window length where the wed column is still the frozen V30 reference; Buckskin now uses the V50-KC recompute because there is no frozen V30 Buckskin row. The residual Buckskin revenue gap (V50 $5,203M vs wed $5,116M) is price-deck basis, not production volume.
+Revenue is now compared on the same 2026-04 window. The small residual differences are price-deck/rounding effects (and Big Foot's 0.5 MMbbl oil delta); Buckskin still uses the V50-KC recompute because there is no frozen V30 Buckskin row.
+
+**Royalty ($MM):**
+
+| Field | V50 (Roy, 2026-04) | wed-latest (2026-04) | Δ (V50−wed) |
+|---|---:|---:|---:|
+| Anchor | 250 | 240 | +11 |
+| Big Foot | 1,048 | 1,045 | +3 |
+| Buckskin | 976 | 959 | +16 |
+| Cascade Chinook | 523 | 521 | +2 |
+| Jack St Malo | 5,257 | 5,230 | +27 |
+| Julia | 974 | 969 | +5 |
+| Shenandoah | 298 | 274 | +24 |
+| Stones | 1,121 | 1,115 | +6 |
+
+**OPEX ($MM):**
+
+| Field | V50 (Roy, 2026-04) | wed-latest (2026-04) | Δ (V50−wed) |
+|---|---:|---:|---:|
+| Anchor | 411 | 374 | +37 |
+| Big Foot | 1,213 | 1,215 | −2 |
+| Buckskin | 956 | 1,129 | −173 |
+| Cascade Chinook | 2,275 | 2,196 | +79 |
+| Jack St Malo | 4,383 | 3,467 | +916 |
+| Julia | 1,227 | 1,227 | +0 |
+| Shenandoah | 307 | 265 | +42 |
+| Stones | 1,947 | 1,769 | +178 |
+
+**Net cash flow ($MM):**
+
+| Field | V50 (Roy, 2026-04) | wed-latest (2026-04) | Δ (V50−wed) |
+|---|---:|---:|---:|
+| Anchor | −3,037 | −3,496 | +459 |
+| Big Foot | −895 | −1,206 | +311 |
+| Buckskin | 77 | −1,034 | +1,111 |
+| Cascade Chinook | −3,582 | −3,813 | +230 |
+| Jack St Malo | 3,877 | 6,344 | −2,467 |
+| Julia | 92 | 247 | −156 |
+| Shenandoah | −3,515 | −2,945 | −570 |
+| Stones | −3,014 | −3,169 | +155 |
+
+**MIRR (annual):**
+
+| Field | V50 (Roy, 2026-04) | wed-latest (2026-04) | Δ (V50−wed) |
+|---|---:|---:|---:|
+| Anchor | −6.68% | −7.69% | +1.01 pp |
+| Big Foot | 4.81% | 4.53% | +0.28 pp |
+| Buckskin | 6.66% | 4.47% | +2.19 pp |
+| Cascade Chinook | −1.54% | −1.47% | −0.07 pp |
+| Jack St Malo | 5.58% | 8.74% | −3.16 pp |
+| Julia | 6.55% | 6.91% | −0.36 pp |
+| Shenandoah | −1.43% | −1.06% | −0.37 pp |
+| Stones | 3.13% | 3.19% | −0.05 pp |
+
+OPEX = variable + fixed. Net cash flow is undiscounted. The V50 columns are Roy's after-tax script output; wed-latest remains the pre-tax V30-methodology reproduction unless and until the V50 tax/cost assumptions are formally adopted.
 
 **NPV @ 10% ($MM) — the headline, with the reason for each V50↔wed gap:**
 
