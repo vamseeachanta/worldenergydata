@@ -12,6 +12,7 @@ import scripts.lower_tertiary.regenerate_field_economics_v50 as regen
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 FDAS_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
 REPORTS_DIR = PROJECT_ROOT / "reports/lower_tertiary"
+CAPABILITIES_PAGE = PROJECT_ROOT / "reports/capabilities/index.html"
 
 BUCKSKIN_LEASES = {"G25806", "G25813", "G25814", "G25815", "G25823", "G32650"}
 
@@ -72,3 +73,15 @@ def test_pages_builder_indexes_buckskin_v50_report():
     }
 
     assert reports["buckskin"] == "field_economics_buckskin_v50.md"
+
+
+def test_capabilities_validation_section_links_key_validation_reports():
+    html = CAPABILITIES_PAGE.read_text(encoding="utf-8")
+    validation_section = html.split('<section class="chan" id="validation">', 1)[1]
+    validation_section = validation_section.split("</section>", 1)[0]
+
+    assert "four linked reports" in validation_section
+    assert "../wo-april-2026-validation.html" in validation_section
+    assert "../completion/verification.html" in validation_section
+    assert "../fdas-revision-comparison.html" in validation_section
+    assert "../economics-buckskin.html" in validation_section
