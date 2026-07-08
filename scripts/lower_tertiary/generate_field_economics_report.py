@@ -117,6 +117,32 @@ def _read_latest_comparison(dev_name: str) -> dict | None:
     return None
 
 
+def _read_golden_v30_financials(dev_name: str) -> dict | None:
+    """Read the official frozen V30 financial row for *dev_name*.
+
+    Latest-window reports use this as the audited V30 reference column. The
+    reproducer can carry timing differences for specific fields, so the
+    published reference row must come from the golden baseline of record.
+    """
+    path = (
+        PROJECT_ROOT
+        / "config"
+        / "analysis"
+        / "lower_tertiary"
+        / "golden_baseline_v30.yml"
+    )
+    if not path.exists():
+        return None
+    try:
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    for proj in (data or {}).get("projects", {}).values():
+        if proj.get("display_name") == dev_name:
+            return dict(proj)
+    return None
+
+
 def _sparkline(values: list[float]) -> str:
     """Unicode block sparkline (deterministic) for the cumulative NPV path."""
     blocks = "▁▂▃▄▅▆▇█"
@@ -197,7 +223,13 @@ def build_report(
         first_oil_overrides=first_oil_overrides if input_set != "v30" else None,
         input_set=input_set,
     )
-    sanctioned_npv = fin[dev_name]["npv_usd"]
+    official_v30_fin = (
+        _read_golden_v30_financials(dev_name)
+        if is_latest and input_set == "v30"
+        else None
+    )
+    reference_fin = official_v30_fin or fin[dev_name]
+    sanctioned_npv = reference_fin["npv_usd"]
     _ref_mm = sanctioned_npv / 1e6
     _ref_str = f"-${abs(_ref_mm):,.1f}M" if _ref_mm < 0 else f"${_ref_mm:,.1f}M"
     if is_latest and input_set == "v50_kc":
@@ -329,7 +361,7 @@ def build_report(
     # -------------------------- EXECUTIVE SUMMARY ---------------------------
     # Verdict-first headline so a client reads the bottom line before the
     # tables. All figures trace to the same model the detail sections use.
-    f0 = fin[dev_name]
+    f0 = reference_fin if is_latest and input_set == "v30" else fin[dev_name]
     sign = "NPV-negative" if terminal_npv < 0 else "NPV-positive"
     one_time_capital = f0["dnc_total_usd"] + f0["facilities_cost_usd"]
     oil_mm = cmp["latest_oil_bbl"] / 1e6 if cmp and cmp.get("latest_oil_bbl") else None
@@ -640,7 +672,7 @@ def build_report(
     lines.append("")
 
     # =========================== FINANCIAL SUMMARY ==========================
-    f = fin[dev_name]
+    f = reference_fin if is_latest and input_set == "v30" else fin[dev_name]
     rate_pct = f"{tl['discount_rate_annual'] * 100:.0f}"
     if is_latest and input_set == "v50_kc":
         lines.append("## Financial Summary")
@@ -749,8 +781,9 @@ def build_report(
         )
     else:
         lines.append(
-            "_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. "
-            "NPV reproduced within golden-baseline tolerance by "
+            "_Source-of-record for the frozen reference table: "
+            "`config/analysis/lower_tertiary/golden_baseline_v30.yml`; latest "
+            "window NPV is recomputed by "
             "`worldenergydata.lower_tertiary.v30_financial_reproducer`._"
         )
     lines.append("")

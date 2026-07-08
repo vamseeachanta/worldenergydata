@@ -2,11 +2,11 @@
 
 **Development:** Cascade Chinook (subsea15) &middot; **Lease:** 2 leases (G16965, G16997) &middot; **First oil:** 2012-09-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,477.2M
+**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$1,474.1M
 
 ## Summary
 
-On public BSEE production + cost data, **Cascade Chinook** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,580.0 M** (frozen V30 sanctioned reference $-1,477.2 M).
+On public BSEE production + cost data, **Cascade Chinook** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,580.0 M** (frozen V30 sanctioned reference $-1,474.1 M).
 
 - **39.7 MMbbl** oil produced from **3 producing wells** (**14 total wellbores**), generating **$2,778 M** gross revenue.
 - A **high-capex, deepwater** signature: **$3,874 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
@@ -18,14 +18,14 @@ On public BSEE production + cost data, **Cascade Chinook** is **NPV-negative at 
 
 ## NPV Timeline
 
-Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,580.0 M** (frozen V30 reference: $-1,477.2 M; delta -102.8 M).
+Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,580.0 M** (frozen V30 reference: $-1,474.1 M; delta -106.0 M).
 
 Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▅▄▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁`  _start $-75M → trough $-1,611M (2018) → latest $-1,580M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
-| 2002 | -76.8 | -75.5 | Drilling (spud): 001<br>Sidetrack: 001 (608124000800) |
-| 2003 | -125.6 | -187.4 | Drilling (spud): 001 |
+| 2002 | -76.8 | -75.5 | Drilling (spud): 001<br>Sidetrack: 001 (608124000800)<br>Plug & abandon: 001 (608124000801) |
+| 2003 | -125.6 | -187.4 | Drilling (spud): 001<br>Temporary abandonment: 001 (608124001000) |
 | 2004 | 0.0 | -187.4 |  |
 | 2005 | -93.6 | -254.6 | Drilling (spud): 002<br>Sidetrack: 002 (608124001600) |
 | 2006 | 0.0 | -254.6 |  |
@@ -34,8 +34,8 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▅▄▁▁▁▁▁▁
 | 2009 | -172.0 | -363.0 | Drilling (spud): 004<br>Drilling (spud): 002<br>Completion: CA003 (608124003800) |
 | 2010 | -344.0 | -515.9 | Drilling (spud): 002<br>Drilling (spud): CH002 |
 | 2011 | -600.0 | -759.6 |  |
-| 2012 | -1,801.8 | -1,421.4 | Sidetrack: 004 (608124004700)<br>Drilling (spud): CA004<br>Well online (first production): API 608124004602<br>Completion: CA004 (608124004701)<br>Drilling (spud): 005 |
-| 2013 | -226.8 | -1,497.3 | Drilling (spud): CA006<br>Completion: CA006 (608124008300) |
+| 2012 | -1,801.8 | -1,421.4 | Sidetrack: 004 (608124004700)<br>Drilling (spud): CA004<br>Well online (first production): API 608124004602<br>Completion: CA004 (608124004701)<br>Drilling (spud): 005<br>Plug & abandon: 005 (608124008200) |
+| 2013 | -226.8 | -1,497.3 | Drilling (spud): CA006<br>Completion: CA006 (608124008300)<br>Plug & abandon: 001 (608124001000) |
 | 2014 | 117.1 | -1,461.2 | Well online (first production): API 608124008300<br>Drilling (spud): CH004 |
 | 2015 | -159.6 | -1,506.0 | Completion: CH004 (608124009700) |
 | 2016 | -114.0 | -1,534.7 |  |
@@ -43,7 +43,7 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▅▄▁▁▁▁▁▁
 | 2018 | -141.6 | -1,610.7 | Well online (first production): API 608124009700 |
 | 2019 | 110.8 | -1,589.6 |  |
 | 2020 | -35.9 | -1,595.6 | Workover: CA003 (608124003800) |
-| 2021 | 37.5 | -1,589.8 |  |
+| 2021 | 37.5 | -1,589.8 | Plug & abandon: 002 (608124001601) |
 | 2022 | 84.6 | -1,577.7 |  |
 | 2023 | 31.4 | -1,573.7 |  |
 | 2024 | -14.2 | -1,575.4 |  |
@@ -57,7 +57,9 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▅▄▁▁▁▁▁▁
 | 2002-01-31 | Drilling (spud) | 001 | -0.8 |
 | 2002-04-16 | Sidetrack | 001 (608124000800) | -63.8 |
 | 2002-04-23 | Drilling (spud) | 001 | -63.8 |
+| 2002-06-04 | Plug & abandon | 001 (608124000801) | -75.5 |
 | 2003-01-13 | Drilling (spud) | 001 | -89.3 |
+| 2003-06-30 | Temporary abandonment | 001 (608124001000) | -187.4 |
 | 2005-03-19 | Drilling (spud) | 002 | -195.1 |
 | 2005-10-09 | Drilling (spud) | 002 | -241.9 |
 | 2005-10-09 | Sidetrack | 002 (608124001600) | -241.9 |
@@ -72,13 +74,16 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▆▅▄▁▁▁▁▁▁
 | 2012-09-01 | Well online (first production) | API 608124004602 | -1,425.2 |
 | 2012-10-28 | Completion | CA004 (608124004701) | -1,425.0 |
 | 2012-12-18 | Drilling (spud) | 005 | -1,421.4 |
+| 2012-12-23 | Plug & abandon | 005 (608124008200) | -1,421.4 |
 | 2013-01-01 | Drilling (spud) | CA006 | -1,427.4 |
 | 2013-12-15 | Completion | CA006 (608124008300) | -1,497.3 |
+| 2013-12-16 | Plug & abandon | 001 (608124001000) | -1,497.3 |
 | 2014-01-01 | Well online (first production) | API 608124008300 | -1,502.8 |
 | 2014-12-07 | Drilling (spud) | CH004 | -1,461.2 |
 | 2015-04-05 | Completion | CH004 (608124009700) | -1,486.5 |
 | 2018-07-01 | Well online (first production) | API 608124009700 | -1,629.0 |
 | 2020-01-11 | Workover | CA003 (608124003800) | -1,588.5 |
+| 2021-12-05 | Plug & abandon | 002 (608124001601) | -1,589.8 |
 
 _Operations are derived deterministically from BSEE Well Activity Reports (`bin/war/`) and OGOR-A first-production dates (BSEE OGOR-A pickled .bin DataFrames (zip archives absent in checkout)). Activity codes: DRL=drilling, COM=completion, WO=workover, REC=recompletion, ST=sidetrack; re-entries detected via API completion-suffix changes on a shared wellbore. Markers are annotations only and do not feed the cashflow model._
 
@@ -138,7 +143,7 @@ _They are intentionally **not linked yet**: the geometry render must first be co
 
 | Metric | Latest | Frozen V30 (reference) |
 |--------|------:|------:|
-| **NPV @ 10%** | **$-1,580.0 M** | $-1,477.2 M |
+| **NPV @ 10%** | **$-1,580.0 M** | $-1,474.1 M |
 | Revenue | $2,778.0 M | $2,326.9 M |
 | Oil produced (MMbbl) | 39.7 | 34.3 |
 
@@ -155,15 +160,15 @@ _Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil f
 | D&C cost | $1,973.6 M |
 | Facilities cost | $1,900.0 M |
 | Net cashflow (undiscounted) | $-3,820.3 M |
-| **NPV @ 10%** | **$-1,477.2 M** |
-| MIRR (annual) | -1.77% |
+| **NPV @ 10%** | **$-1,474.1 M** |
+| MIRR (annual) | -1.76% |
 | Producers | 3 |
 | Injectors | 0 |
 | Wellbores | 14 |
 
 _Return metric: **MIRR** is the sanctioned return measure for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
 
-_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+_Source-of-record for the frozen reference table: `config/analysis/lower_tertiary/golden_baseline_v30.yml`; latest window NPV is recomputed by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
 
 ---
 
