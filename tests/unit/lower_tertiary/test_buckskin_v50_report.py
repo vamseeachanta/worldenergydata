@@ -85,3 +85,20 @@ def test_capabilities_validation_section_links_key_validation_reports():
     assert "../completion/verification.html" in validation_section
     assert "../fdas-revision-comparison.html" in validation_section
     assert "../economics-buckskin.html" in validation_section
+
+
+def test_capabilities_validation_table_links_fdas_revision_comparison_row():
+    html = CAPABILITIES_PAGE.read_text(encoding="utf-8")
+    validation_section = html.split('<section class="chan" id="validation">', 1)[1]
+    validation_section = validation_section.split("</section>", 1)[0]
+    table_body = validation_section.split("<tbody>", 1)[1].split("</tbody>", 1)[0]
+
+    expected_row = (
+        '<tr><td><a href="../fdas-revision-comparison.html">'
+        "FDAS revision comparison</a></td>"
+        "<td>V50-vs-wed D&amp;C + component economics</td>"
+        '<td class="val">D&amp;C Δ=0; 40 component rows verified</td>'
+        '<td class="pub">2026-04 wed-latest reconciliation</td></tr>'
+    )
+
+    assert expected_row in table_body
