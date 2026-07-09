@@ -74,6 +74,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#427](https://github.com/vamseeachanta/worldenergydata/issues/427) | [seasonal-intervention-risk](2026-05-18-issue-427-seasonal-intervention-risk.md) | plan-review | 2026-05-18 |
 | [#462](https://github.com/vamseeachanta/worldenergydata/issues/462) | [source-refresh-acceptance-contract](2026-06-09-issue-462-source-refresh-acceptance-contract.md) | plan-review | 2026-06-09 |
 | [#907](https://github.com/vamseeachanta/worldenergydata/issues/907) | [na-kika-coulomb-transaction-package](2026-07-08-issue-907-na-kika-coulomb-transaction-package.md) | draft | 2026-07-08 |
+| [#910](https://github.com/vamseeachanta/worldenergydata/issues/910) | [mnt-ace-ecosystem-data-inventory](2026-07-09-issue-910-mnt-ace-ecosystem-data-inventory.md) | draft | 2026-07-09 |
 
 ## Closed / superseded plans
 
