@@ -364,9 +364,12 @@ _API_TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   .copy{{font:700 12px Arial;color:#fff;background:linear-gradient(135deg,#0f8a7e,#0B3D91);border:0;border-radius:9px;padding:10px 13px;cursor:pointer;white-space:nowrap}}
   .how ol{{margin:8px 0 0 18px}} .how li{{font-size:13.5px;margin:7px 0;color:var(--ink)}}
   .how code{{background:#0e1726;color:#d6e2f5;padding:1px 6px;border-radius:5px;font-size:12px}}
+  /* a11y baseline (wh#3401 / #908): consistent keyboard focus + text-alternative helper */
+  :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}}
+  .sr-only{{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}}
 </style></head>
 <body><div class="wrap">
-  <div class="top">{logo}<div class="kind">Workflow-API · self-contained call</div></div>
+  <div class="top"><a href="../" aria-label="Back to capabilities index" style="display:contents">{logo}</a><div class="kind">Workflow-API · self-contained call</div></div>
   <h1>{title}</h1><div class="std">{std}</div>
 
   <div class="bigpanel">

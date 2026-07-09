@@ -29,9 +29,12 @@
   .copy{font:700 12px Arial;color:#fff;background:linear-gradient(135deg,#0f8a7e,#0B3D91);border:0;border-radius:9px;padding:10px 13px;cursor:pointer;white-space:nowrap}
   .how ol{margin:8px 0 0 18px} .how li{font-size:13.5px;margin:7px 0;color:var(--ink)}
   .how code{background:#0e1726;color:#d6e2f5;padding:1px 6px;border-radius:5px;font-size:12px}
+  /* a11y baseline (wh#3401 / #908): consistent keyboard focus + text-alternative helper */
+  :where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:3px}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 </style></head>
 <body><div class="wrap">
-  <div class="top"><svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-label="worldenergydata">
+  <div class="top"><a href="../" aria-label="Back to capabilities index" style="display:contents"><svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-label="worldenergydata">
   <g fill="none" stroke-width="3">
     <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
     <ellipse cx="32" cy="32" rx="9.5" ry="23" stroke="#2BB2A6" stroke-width="2.5"/>
@@ -43,7 +46,7 @@
   <text x="74" y="43" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">
     <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
   </text>
-</svg><div class="kind">Workflow-API · self-contained call</div></div>
+</svg></a><div class="kind">Workflow-API · self-contained call</div></div>
   <h1>Shenandoah field economics</h1><div class="std">BSEE OGOR-A · sanctioned V30</div>
 
   <div class="bigpanel">
