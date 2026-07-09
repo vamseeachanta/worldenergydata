@@ -24,6 +24,7 @@ from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
 _OUT = _REPO / "reports" / "capabilities" / "pdf"
+_TOKENS = (_REPO / "reports" / "capabilities" / "assets" / "tokens.css").read_text(encoding="utf-8").strip()
 _SITE = "https://vamseeachanta.github.io/worldenergydata"
 _CHROME = os.environ.get("CHROME") or shutil.which("google-chrome") or shutil.which(
     "google-chrome-stable"
@@ -190,7 +191,7 @@ SPECS: list[dict] = [
 _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <style>
   @page{{size:A4;margin:0}}
-  :root{{--navy:#0B3D91;--teal:#0f8a7e;--ink:#13233f;--muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc}}
+  {tokens}
   *{{box-sizing:border-box;margin:0;padding:0}}
   body{{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;
        width:210mm;min-height:297mm;padding:18mm 18mm 14mm}}
@@ -337,7 +338,7 @@ _API_TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} — API call</title>
 <style>
-  :root{{--navy:#0B3D91;--teal:#0f8a7e;--ink:#13233f;--muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc}}
+  {tokens}
   *{{box-sizing:border-box;margin:0;padding:0}}
   body{{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#eef3fa;line-height:1.5}}
   .wrap{{max-width:1000px;margin:0 auto;padding:22px}}
@@ -414,7 +415,7 @@ def _render_api_html(spec: dict, env: dict) -> str:
     for step in env["how_to_run"]:
         label = {"telegram": "Telegram", "http": "HTTP", "cli": "CLI"}.get(step["via"], step["via"])
         howsteps += f"<li><b>{label}.</b> {html.escape(step['step'])}</li>"
-    return _API_TEMPLATE.format(
+    return _API_TEMPLATE.format(tokens=_TOKENS, 
         logo=_LOGO, title=html.escape(spec["title"]), std=html.escape(spec["std"]),
         verb=verb, reqsnippet=reqsnippet,
         envelope=html.escape(_json.dumps(env, indent=2)),
@@ -440,7 +441,7 @@ def _render_html(spec: dict) -> str:
                'border:1px solid var(--line);border-radius:10px;font-size:12.5px">'
                f'<b>Ask Deckhand:</b> &ldquo;{html.escape(_prompt_for(spec))}&rdquo; '
                '&mdash; send to @the_deckhand_bot to run it live.</div>')
-    return _TEMPLATE.format(
+    return _TEMPLATE.format(tokens=_TOKENS, 
         logo=_LOGO, std=html.escape(spec["std"]), title=html.escape(spec["title"]),
         blurb=html.escape(spec["blurb"]), figs=figs, bullets=bullets, live=html.escape(live),
         ask=ask,
