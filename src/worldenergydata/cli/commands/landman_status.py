@@ -17,8 +17,10 @@ from worldenergydata.landman.routing import SourceConfig
 from .landman_render import (
     Operation,
     OutputFormat,
+    emit_county_reference_table,
     emit_failure,
     emit_json,
+    emit_provider_csv,
     emit_provider_table,
 )
 
@@ -52,13 +54,11 @@ def _run_providers(
         if output_format == OutputFormat.json:
             emit_json(payload)
         elif output_format == OutputFormat.csv:
-            typer.echo("name,implementation_status,routable_now")
-            for row in payload["providers"]:
-                typer.echo(
-                    f"{row['name']},{row['implementation_status']},{row['routable_now']}"
-                )
+            emit_provider_csv(payload)
         else:
             emit_provider_table(payload)
+            if payload.get("county_reference"):
+                emit_county_reference_table(payload["county_reference"])
     except LandmanError as error:
         emit_failure(error, "auto", operation.value, output_format)
         raise typer.Exit(1)
@@ -90,6 +90,8 @@ def _run_status(
         payload.update({"module_loaded": True, "data": _data_status(data_path)})
         if output_format == OutputFormat.json:
             emit_json(payload)
+        elif output_format == OutputFormat.csv:
+            emit_provider_csv(payload)
         else:
             emit_provider_table(payload)
             typer.echo(f"Data files: {payload['data']['file_count']}")

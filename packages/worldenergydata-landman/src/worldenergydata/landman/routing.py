@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, ClassVar, Iterable, Mapping, Sequence
 
-from .exceptions import CapabilityUnavailableError
+from .exceptions import CapabilityUnavailableError, FixtureValidationError
 
 
 ATOMIC_OPERATIONS = (
@@ -24,6 +24,31 @@ def _validation_error(message: str, code: str, details: dict[str, Any]):
     from .landman import LandmanValidationError
 
     return LandmanValidationError(message=message, error_code=code, details=details)
+
+
+def _display_name(value: object) -> str:
+    basename = (
+        value.replace("\\", "/").rsplit("/", 1)[-1] if isinstance(value, str) else ""
+    )
+    return basename or "<invalid>"
+
+
+def validate_records_file_name(value: str) -> str:
+    """Require one direct-child JSON basename without exposing rejected paths."""
+    invalid = (
+        not isinstance(value, str)
+        or value in {"", ".", ".."}
+        or "/" in value
+        or "\\" in value
+        or not value.endswith(".json")
+    )
+    if invalid:
+        raise FixtureValidationError(
+            "LANDMAN_FIXTURE_PATH_INVALID",
+            _display_name(value),
+            "custom file must be a direct-child .json basename",
+        )
+    return value
 
 
 @dataclass(frozen=True)
@@ -48,7 +73,12 @@ class SourceConfig:
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any] | None) -> "SourceConfig":
-        value = value or {}
+        if value is None:
+            value = {}
+        elif not isinstance(value, Mapping):
+            raise _validation_error(
+                "Fixture source must be a mapping", "LANDMAN_INVALID_SOURCE", {}
+            )
         unknown = set(value) - {"sample", "records_file"}
         if unknown:
             raise _validation_error(
@@ -71,6 +101,8 @@ class SourceConfig:
             raise _validation_error(
                 "Choose exactly one fixture source", "LANDMAN_INVALID_SOURCE", {}
             )
+        if records_file is not None:
+            validate_records_file_name(records_file)
         return source
 
     @classmethod

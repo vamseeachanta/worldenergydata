@@ -112,6 +112,13 @@ def test_fixture_limits_duplicates_and_json_constants():
         parse_fixture_bytes(b" " * (MAX_FIXTURE_BYTES + 1), "x.json")
 
 
+def test_deep_json_becomes_fixture_validation_error():
+    payload = (b"[" * 2000) + (b"]" * 2000)
+    with pytest.raises(FixtureValidationError) as caught:
+        parse_fixture_bytes(payload, "deep.json")
+    assert caught.value.code == "LANDMAN_FIXTURE_SCHEMA_INVALID"
+
+
 def test_huge_json_integer_becomes_fixture_validation_error():
     payload = _payload(records=[_record(gross_acres=10**400)])
     with pytest.raises(FixtureValidationError) as caught:
