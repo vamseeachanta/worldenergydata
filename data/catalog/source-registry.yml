@@ -212,3 +212,27 @@ modules:
       blm:
         source_url: https://reports.blm.gov/
         update_frequency: monthly
+
+  terrain:
+    # Terrain & bathymetry for field-development layout/screening (#930,
+    # epic #929 A1). Verified 2026-07-10; endpoints + evidence live in
+    # src/worldenergydata/field_development/terrain_sources.yml. Rasters are
+    # fetch-on-demand only (hundreds of MB to GB) — never committed.
+    license: "US Government Public Domain / GEBCO Public Domain"
+    default_update_frequency: annual
+    datasets:
+      usgs_3dep_dem:
+        source_url: https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer
+        update_frequency: continual
+      usgs_3dep_staged_tiles:
+        source_url: https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/13/TIFF/current/
+        update_frequency: continual
+      gebco_global_bathymetry:
+        source_url: https://www.bodc.ac.uk/data/open_download/gebco/gebco_2024/zip/
+        update_frequency: annual
+      noaa_ncei_coastal_relief:
+        source_url: https://www.ngdc.noaa.gov/thredds/catalog/crm/catalog.xml
+        update_frequency: static
+      boem_gom_bathymetry:
+        source_url: https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic
+        update_frequency: static
