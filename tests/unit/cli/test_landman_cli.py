@@ -172,11 +172,14 @@ def test_provider_filters_are_visible_in_table_and_csv():
     assert "MIDLAND" in counties and "GRADY" not in counties
 
 
-def test_status_csv_is_machine_parseable():
-    result = _invoke("status", "--format", "csv")
+def test_status_csv_preserves_module_and_data_status(tmp_path):
+    result = _invoke("status", "--data-path", str(tmp_path), "--format", "csv")
     rows = list(csv.DictReader(io.StringIO(result.stdout)))
     assert result.exit_code == 0
-    assert rows and {row["kind"] for row in rows} == {"provider"}
+    status_rows = [row for row in rows if row["kind"] == "status"]
+    assert status_rows and status_rows[0]["module_loaded"] == "True"
+    assert status_rows[0]["data_path"] == str(tmp_path)
+    assert status_rows[0]["file_count"] == "0"
 
 
 def test_cli_command_option_and_output_compatibility(tmp_path):

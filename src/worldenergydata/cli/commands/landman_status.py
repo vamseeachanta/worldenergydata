@@ -22,6 +22,7 @@ from .landman_render import (
     emit_json,
     emit_provider_csv,
     emit_provider_table,
+    emit_status_csv,
 )
 
 
@@ -91,7 +92,7 @@ def _run_status(
         if output_format == OutputFormat.json:
             emit_json(payload)
         elif output_format == OutputFormat.csv:
-            emit_provider_csv(payload)
+            emit_status_csv(payload)
         else:
             emit_provider_table(payload)
             typer.echo(f"Data files: {payload['data']['file_count']}")

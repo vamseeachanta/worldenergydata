@@ -225,3 +225,52 @@ def emit_provider_csv(payload: dict[str, Any]) -> None:
     writer.writeheader()
     writer.writerows(_provider_csv_rows(payload))
     typer.echo(stream.getvalue(), nl=False)
+
+
+def emit_status_csv(payload: dict[str, Any]) -> None:
+    """Render provider readiness together with module/data-directory status."""
+    fields = [
+        "kind",
+        "name",
+        "implementation_status",
+        "routable_now",
+        "state",
+        "county",
+        "online_search_available",
+        "module_loaded",
+        "data_path",
+        "file_count",
+        "size_bytes",
+        "last_updated",
+    ]
+    rows = [
+        {field: "" for field in fields}
+        | {
+            "kind": "provider",
+            "name": row["name"],
+            "implementation_status": row["implementation_status"],
+            "routable_now": row["routable_now"],
+        }
+        for row in payload["providers"]
+    ]
+    data = payload.get("data", {})
+    rows.append(
+        {field: "" for field in fields}
+        | {
+            "kind": "status",
+            "name": "landman",
+            "implementation_status": "loaded"
+            if payload.get("module_loaded")
+            else "not_loaded",
+            "module_loaded": payload.get("module_loaded", ""),
+            "data_path": data.get("path", ""),
+            "file_count": data.get("file_count", ""),
+            "size_bytes": data.get("size_bytes", ""),
+            "last_updated": data.get("last_updated", ""),
+        }
+    )
+    stream = io.StringIO()
+    writer = csv.DictWriter(stream, fieldnames=fields)
+    writer.writeheader()
+    writer.writerows(rows)
+    typer.echo(stream.getvalue(), nl=False)
