@@ -1,6 +1,6 @@
 # Plan for [#924](https://github.com/vamseeachanta/worldenergydata/issues/924): make Landman provider routing executable and prove the CLI smoke path
 
-> **Status:** plan-review
+> **Status:** plan-approved
 > **Complexity:** T3
 > **Date:** 2026-07-09
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/924
