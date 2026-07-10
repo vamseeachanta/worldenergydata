@@ -1,0 +1,26 @@
+name: Brand Guard
+
+# Fails if a report page that declares the navy/teal brand drifts from the
+# canonical reports/capabilities/assets/tokens.css (worldenergydata#908).
+on:
+  pull_request:
+    paths:
+      - 'reports/**'
+      - 'scripts/**'
+      - '.github/workflows/brand-guard.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'reports/**'
+      - 'scripts/**'
+
+jobs:
+  brand-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Brand-token drift guard
+        run: python scripts/enforcement/check_brand_drift.py
