@@ -7,7 +7,7 @@
 > **Client:** N/A
 > **Lane:** lane:claude
 > **Execution mode:** parallel-readonly planning; single implementation lane after approval
-> **Review artifacts:** scripts/review/results/2026-07-10-plan-910-claude.md | scripts/review/results/2026-07-10-plan-910-codex.md | scripts/review/results/2026-07-10-plan-910-gemini.md
+> **Review artifacts:** scripts/review/results/2026-07-10-plan-910-codex.md | scripts/review/results/2026-07-10-plan-910-claude-unavailable.md | scripts/review/results/2026-07-10-plan-910-gemini-unavailable.md
 
 ## Resource Intelligence Summary
 
@@ -51,6 +51,7 @@ Reproduction proofs: N/A — this is a documentation/inventory issue, not a runt
 - No bounded scanner records ownership, source authority, representative files, and status consistently.
 - No machine-readable quarantine flag separates public downloaded data from private/legacy roots.
 - No tests protect traversal bounds or prevent raw-data copying into the repository.
+- The issue-required evidence set is not yet enumerated in the deliverable: Texas RRC, Kansas KGS, Oklahoma OCC, Colorado ECMC, pressure_screen, HSE, BSEE, Spain CORES, Kaggle ROGII, frontierdeepwater, tiny placeholders, and private/legacy roots.
 
 ## Artifact Map
 
@@ -84,6 +85,13 @@ write_inventory(rows, output):
     never copy raw data into the repository
 ```
 
+Each machine-readable row will contain `root_path`, `root_owner`, `status`,
+`quarantined`, `geography`, `source_authority`, `source_url`,
+`representative_evidence`, `size_bytes`, `observed_at`, `landman_relevance`,
+and `limitations`. The top-level document will contain `schema_version`,
+`scan_policy` (`max_depth`, `max_entries`, `timeout_seconds`), `observed_at`,
+`coverage_warnings`, and `rows`. A row will never contain raw record contents.
+
 ## Files to Change
 
 | Action | Path | Reason |
@@ -110,6 +118,7 @@ write_inventory(rows, output):
 
 - [ ] Tests will be written before implementation and run against synthetic fixtures.
 - [ ] Inventory covers `/mnt/ace/*/data`, `/mnt/ace/worldenergydata/data`, and explicitly named legacy/private roots without recursive bulk crawling.
+- [ ] Inventory explicitly accounts for Texas RRC, Kansas KGS, Oklahoma OCC, Colorado ECMC, pressure_screen, HSE, BSEE, Spain CORES, Kaggle ROGII, frontierdeepwater, tiny placeholder roots, and private/legacy roots, marking unavailable items rather than silently omitting them.
 - [ ] Each row records path, size, owner/root owner, geography, source authority, status, representative evidence, and Landman relevance tags.
 - [ ] Status enum includes `downloaded`, `derived`, `configured-only`, `partial/error`, `missing`, and `private/legacy`.
 - [ ] Private/client/legacy rows are quarantined and cannot be promoted by the scanner.
