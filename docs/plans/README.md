@@ -96,6 +96,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#809](https://github.com/vamseeachanta/worldenergydata/issues/809) | [spain-cores-refresh-job](2026-07-05-issue-809-spain-cores-refresh-job.md) | plan-review | 2026-07-05 |
 | [#810](https://github.com/vamseeachanta/worldenergydata/issues/810) | [spain-cores-field-development-report](2026-07-05-issue-810-spain-cores-field-development-report.md) | plan-approved | 2026-07-05 |
 | [#847](https://github.com/vamseeachanta/worldenergydata/issues/847) | [boem-reserves-discovery-ingest](2026-07-06-issue-847-boem-reserves-discovery-ingest.md) | plan-approved | 2026-07-06 |
+| [#910](https://github.com/vamseeachanta/worldenergydata/issues/910) | [landman-data-root-inventory](2026-07-10-issue-910-landman-data-root-inventory.md) | draft | 2026-07-10 |
 
 ## Closed / superseded plans
 
