@@ -8,7 +8,7 @@ from typing import Optional
 import typer
 
 from worldenergydata.landman.exceptions import LandmanError
-from worldenergydata.landman.landman import Landman
+from worldenergydata.landman.landman import Landman, LandmanValidationError
 from worldenergydata.landman.providers.county_reference import CountyReferenceProvider
 
 from .landman_render import OutputFormat, emit_failure, emit_json
@@ -24,13 +24,15 @@ def _run_lookup(
     output_format: OutputFormat,
     verbose: bool,
 ) -> None:
-    if not any((document_number, book and page, legal_description)):
-        typer.echo(
-            "Error: provide --document-number, --book and --page, or --legal-description",
-            err=True,
-        )
-        raise typer.Exit(1)
     try:
+        if not any((document_number, book and page, legal_description)):
+            raise LandmanValidationError(
+                message=(
+                    "Provide --document-number, --book and --page, "
+                    "or --legal-description"
+                ),
+                error_code="LANDMAN_LOOKUP_SELECTOR_REQUIRED",
+            )
         records = Landman().get_title_records(
             state.upper(),
             county.upper(),

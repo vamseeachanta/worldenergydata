@@ -14,6 +14,7 @@ from typing import Any, Mapping
 
 from .exceptions import FixtureValidationError
 from .models import InterestType, MineralOwnershipRecord
+from .routing import validate_records_file_name
 from .validators import LandmanDataValidator
 
 
@@ -151,7 +152,7 @@ def parse_fixture_bytes(data: bytes, source_name: str) -> FixtureDataset:
         _reject(source_name, "file exceeds 1 MiB", "LANDMAN_FIXTURE_TOO_LARGE")
     try:
         payload = json.loads(data.decode("utf-8"), parse_constant=_reject_constant)
-    except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError, RecursionError):
         _reject(source_name, "content is not strict UTF-8 JSON")
     if not isinstance(payload, dict) or set(payload) != ROOT_KEYS:
         _reject(source_name, "root keys must match the fixture schema exactly")
@@ -170,32 +171,6 @@ def parse_fixture_bytes(data: bytes, source_name: str) -> FixtureDataset:
     if len(identifiers) != len(set(identifiers)):
         _reject(source_name, "record_id values must be unique")
     return FixtureDataset(payload["dataset_id"], records)
-
-
-def _display_name(value: str) -> str:
-    basename = (
-        value.replace("\\", "/").rsplit("/", 1)[-1] if isinstance(value, str) else ""
-    )
-    return basename or "<invalid>"
-
-
-def _validate_basename(value: str) -> str:
-    display = _display_name(value)
-    invalid = (
-        not isinstance(value, str)
-        or value in {"", ".", ".."}
-        or os.path.basename(value) != value
-        or "/" in value
-        or "\\" in value
-        or not value.endswith(".json")
-    )
-    if invalid:
-        _reject(
-            display,
-            "custom file must be a direct-child .json basename",
-            "LANDMAN_FIXTURE_PATH_INVALID",
-        )
-    return value
 
 
 def _descriptor_support_available() -> bool:
@@ -234,7 +209,7 @@ def _read_descriptor(fd: int, source: str) -> bytes:
 
 def read_custom_fixture(records_file: str) -> FixtureDataset:
     """Open one direct child of CWD by descriptor and parse from that same fd."""
-    name = _validate_basename(records_file)
+    name = validate_records_file_name(records_file)
     if not _descriptor_support_available():
         _reject(
             name,

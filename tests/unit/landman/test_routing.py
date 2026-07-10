@@ -4,7 +4,7 @@ from dataclasses import replace
 
 import pytest
 
-from worldenergydata.landman.exceptions import CapabilityUnavailableError
+from worldenergydata.landman.exceptions import CapabilityUnavailableError, LandmanError
 from worldenergydata.landman.landman import Landman, LandmanValidationError
 from worldenergydata.landman.providers.registry import (
     PROVIDER_REGISTRY,
@@ -50,13 +50,18 @@ def test_operation_vocabulary_and_all_order():
 
 def test_router_preflight_is_atomic():
     calls = []
+    constructions = []
 
     class Provider:
         def search_ownership(self, criteria):
             calls.append(criteria)
             return []
 
-    registry = (_registration("fixture", ("ownership",), lambda source: Provider()),)
+    def factory(source):
+        constructions.append(source)
+        return Provider()
+
+    registry = (_registration("fixture", ("ownership",), factory),)
     landman = Landman(registry=registry)
 
     with pytest.raises(CapabilityUnavailableError) as caught:
@@ -70,6 +75,7 @@ def test_router_preflight_is_atomic():
         )
 
     assert calls == []
+    assert constructions == []
     assert [row["operation"] for row in caught.value.failures] == [
         "leases",
         "title",
@@ -152,6 +158,19 @@ def test_source_config_is_immutable_and_requires_exactly_one_source():
         source.sample = False
     with pytest.raises(LandmanValidationError):
         SourceConfig.from_mapping({"sample": True, "records_file": "records.json"})
+    with pytest.raises(LandmanValidationError):
+        SourceConfig.from_mapping([])
+
+
+@pytest.mark.parametrize(
+    "records_file",
+    ["", ".", "..", "nested/records.json", r"C:\private\records.json", "records.txt"],
+)
+def test_source_config_rejects_invalid_custom_file_syntax(records_file):
+    with pytest.raises(LandmanError) as caught:
+        SourceConfig.from_mapping({"records_file": records_file})
+    assert caught.value.code == "LANDMAN_FIXTURE_PATH_INVALID"
+    assert "C:\\private" not in str(caught.value)
 
 
 @pytest.mark.parametrize(
@@ -185,4 +204,33 @@ def test_router_ownership_requires_state_and_county_search_predicates(criteria):
             }
         )
     assert caught.value.code == "LANDMAN_SEARCH_CRITERIA_REQUIRED"
+    assert calls == []
+
+
+@pytest.mark.parametrize(
+    ("criteria", "code"),
+    [
+        ({"state": "ZZ", "county": "MIDLAND"}, "LANDMAN_INVALID_STATE"),
+        ({"state": "TX", "county": "1"}, "LANDMAN_INVALID_COUNTY"),
+    ],
+)
+def test_router_ownership_validates_state_and_county_values(criteria, code):
+    calls = []
+
+    class Provider:
+        def search_ownership(self, search):
+            calls.append(search)
+            return []
+
+    registry = (_registration("fixture", ("ownership",), lambda source: Provider()),)
+    with pytest.raises(LandmanValidationError) as caught:
+        Landman(registry=registry).router(
+            {
+                "data_types": ["ownership"],
+                "provider": "auto",
+                "source": {"sample": True},
+                "search": criteria,
+            }
+        )
+    assert caught.value.code == code
     assert calls == []

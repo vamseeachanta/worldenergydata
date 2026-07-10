@@ -163,3 +163,65 @@ def emit_provider_table(payload: dict[str, Any]) -> None:
             "yes" if row["routable_now"] else "no",
         )
     console.print(table)
+
+
+def emit_county_reference_table(rows: list[dict[str, Any]]) -> None:
+    """Render the filtered county-reference rows requested by the user."""
+    table = Table(title="County Reference", header_style="bold cyan")
+    table.add_column("State")
+    table.add_column("County")
+    table.add_column("Office")
+    table.add_column("Online")
+    for row in rows:
+        table.add_row(
+            str(row["state"]),
+            str(row["county"]),
+            str(row.get("office_name") or "County Clerk"),
+            "yes" if row.get("online_search_available") else "no",
+        )
+    console.print(table)
+
+
+def _provider_csv_rows(payload: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = [
+        {
+            "kind": "provider",
+            "name": row["name"],
+            "implementation_status": row["implementation_status"],
+            "routable_now": row["routable_now"],
+            "state": "",
+            "county": "",
+            "online_search_available": "",
+        }
+        for row in payload["providers"]
+    ]
+    rows.extend(
+        {
+            "kind": "county_reference",
+            "name": row.get("office_name") or "County Clerk",
+            "implementation_status": "reference-only",
+            "routable_now": False,
+            "state": row["state"],
+            "county": row["county"],
+            "online_search_available": row.get("online_search_available", False),
+        }
+        for row in payload.get("county_reference", [])
+    )
+    return rows
+
+
+def emit_provider_csv(payload: dict[str, Any]) -> None:
+    fields = [
+        "kind",
+        "name",
+        "implementation_status",
+        "routable_now",
+        "state",
+        "county",
+        "online_search_available",
+    ]
+    stream = io.StringIO()
+    writer = csv.DictWriter(stream, fieldnames=fields)
+    writer.writeheader()
+    writer.writerows(_provider_csv_rows(payload))
+    typer.echo(stream.getvalue(), nl=False)

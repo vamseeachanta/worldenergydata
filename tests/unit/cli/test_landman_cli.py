@@ -1,6 +1,7 @@
 """Focused command and JSON-envelope coverage for the Landman module CLI."""
 
 import csv
+import io
 import json
 
 import pytest
@@ -126,6 +127,56 @@ def test_source_flags_are_mutually_exclusive_and_required_for_search(tmp_path):
     assert both.exit_code == 1
     assert _json_output(no_source)["status"] == "error"
     assert _json_output(both)["status"] == "error"
+
+
+def test_provider_status_rejects_invalid_custom_file_syntax():
+    result = _invoke(
+        "providers",
+        "--operation",
+        "ownership",
+        "--records-file",
+        ".",
+        "--format",
+        "json",
+    )
+    payload = _json_output(result)
+    assert result.exit_code == 1
+    assert payload["failures"][0]["code"] == "LANDMAN_FIXTURE_PATH_INVALID"
+
+
+def test_lookup_missing_selector_json_is_one_error_object():
+    result = _invoke(
+        "lookup",
+        "--state",
+        "TX",
+        "--county",
+        "MIDLAND",
+        "--format",
+        "json",
+    )
+    payload = _json_output(result)
+    assert result.exit_code == 1
+    assert payload["status"] == "error"
+    assert payload["failures"][0]["code"] == "LANDMAN_LOOKUP_SELECTOR_REQUIRED"
+
+
+def test_provider_filters_are_visible_in_table_and_csv():
+    table = _invoke("providers", "--state", "TX")
+    online = _invoke("providers", "--state", "TX", "--online-only")
+    csv_result = _invoke("providers", "--state", "TX", "--format", "csv")
+    assert table.exit_code == online.exit_code == csv_result.exit_code == 0
+    assert "MIDLAND" in table.stdout and "GRADY" not in table.stdout
+    assert "LOVING" in table.stdout and "LOVING" not in online.stdout
+    rows = list(csv.DictReader(io.StringIO(csv_result.stdout)))
+    counties = {row["county"] for row in rows if row["kind"] == "county_reference"}
+    assert "MIDLAND" in counties and "GRADY" not in counties
+
+
+def test_status_csv_is_machine_parseable():
+    result = _invoke("status", "--format", "csv")
+    rows = list(csv.DictReader(io.StringIO(result.stdout)))
+    assert result.exit_code == 0
+    assert rows and {row["kind"] for row in rows} == {"provider"}
 
 
 def test_cli_command_option_and_output_compatibility(tmp_path):

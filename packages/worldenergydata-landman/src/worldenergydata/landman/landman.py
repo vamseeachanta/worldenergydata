@@ -89,9 +89,8 @@ class Landman:
         section["results"] = data
         return cfg
 
-    @staticmethod
     def _validate_required_search(
-        operations: Sequence[str], criteria: dict[str, Any]
+        self, operations: Sequence[str], criteria: dict[str, Any]
     ) -> None:
         if "ownership" not in operations:
             return
@@ -105,6 +104,15 @@ class Landman:
                 message="Ownership search requires non-empty state and county",
                 error_code="LANDMAN_SEARCH_CRITERIA_REQUIRED",
                 details={"missing_fields": missing},
+            )
+        self._validate_state(criteria["state"])
+        valid, error = self.validator.validate_county_name(
+            criteria["county"], criteria["state"]
+        )
+        if not valid:
+            raise LandmanValidationError(
+                message=f"Invalid county: {error}",
+                error_code="LANDMAN_INVALID_COUNTY",
             )
 
     @staticmethod
