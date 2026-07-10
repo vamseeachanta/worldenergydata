@@ -7,7 +7,7 @@
 > **Client:** N/A
 > **Lane:** lane:claude
 > **Execution mode:** parallel-readonly planning; single implementation lane after approval
-> **Review artifacts:** scripts/review/results/2026-07-10-plan-910-codex.md | scripts/review/results/2026-07-10-plan-910-claude-unavailable.md | scripts/review/results/2026-07-10-plan-910-gemini-unavailable.md
+> **Review artifacts:** scripts/review/results/2026-07-10-plan-910-codex.md | scripts/review/results/2026-07-10-plan-910-codex-r2.md | scripts/review/results/2026-07-10-plan-910-claude-unavailable.md | scripts/review/results/2026-07-10-plan-910-gemini-unavailable.md
 
 ## Resource Intelligence Summary
 
@@ -72,25 +72,44 @@ A bounded, tested inventory of Landman-relevant data roots that records provenan
 
 ```text
 scan_root(root, policy):
-    validate the root against allowed probe roots
-    enumerate only bounded first-level/module entries
-    inspect manifests and a bounded representative sample
-    collect size, owner, source authority, and evidence paths
-    classify status and Landman relevance; quarantine private/legacy roots
+    enumerate only `/mnt/ace/*/data` plus `/mnt/ace/worldenergydata/data`
+    using literal allowed parents, max depth, sorted directory names, and no symlink traversal
+    reject non-directory matches and record permission/errors as unavailable rows
+    classify private/legacy paths before any child enumeration or manifest/sample read
+    inspect only public-safe manifests and bounded representative metadata
+    collect stable fields separately from run metadata; hash only declared public artifacts
+    classify status and Landman relevance; quarantined roots are never promoted
     return rows plus probe limits and incomplete-scan warnings
 
 write_inventory(rows, output):
     validate the closed schema and stable enums
+    normalize stable paths/URLs and use a caller-supplied observation timestamp
+    redact owner/path/manifest values against a no-identifiers policy
     sort rows by canonical path and write JSON/Markdown atomically
     never copy raw data into the repository
 ```
 
 Each machine-readable row will contain `root_path`, `root_owner`, `status`,
 `quarantined`, `geography`, `source_authority`, `source_url`,
-`representative_evidence`, `size_bytes`, `observed_at`, `landman_relevance`,
-and `limitations`. The top-level document will contain `schema_version`,
+`representative_evidence`, `artifact_sha256`, `size_bytes`, `observed_at`,
+`landman_relevance`, and `limitations`. The top-level document will contain `schema_version`,
 `scan_policy` (`max_depth`, `max_entries`, `timeout_seconds`), `observed_at`,
 `coverage_warnings`, and `rows`. A row will never contain raw record contents.
+
+`root_path`, status, geography, source authority, URLs, evidence labels, and
+limitations are stable inventory fields. `observed_at`, size, owner, and artifact
+hash are run metadata and will not be used as source-data vintage. The scanner
+will accept an explicit timestamp in tests and will label live-run values as
+observations rather than treating them as deterministic content.
+
+The enumeration policy will use only the two allowed parent roots above, sort
+entries lexicographically, reject symlinks and non-directories, stop at
+`max_depth=2`, `max_entries=500`, or `timeout_seconds=10`, and record a bounded
+warning on any permission, timeout, or truncation event. A private/legacy path
+match will be determined by an explicit deny-prefix/name policy before traversal;
+the scanner will emit a quarantined metadata row and will not inspect children,
+manifests, owners, or representative files beneath it. No row can clear
+quarantine through a report edit.
 
 ## Files to Change
 
@@ -109,10 +128,13 @@ and `limitations`. The top-level document will contain `schema_version`,
 | `test_inventory_schema_and_required_tags` | representative fixtures | closed schema and required tags |
 | `test_scan_is_bounded` | deep synthetic tree | depth/entry/time limits are enforced |
 | `test_private_legacy_root_is_quarantined` | legacy fixture | `private/legacy`, `quarantined: true` |
-| `test_public_root_records_manifest_provenance` | manifest fixture | URL, timestamp, size, hash, authority captured |
+| `test_quarantine_prevents_child_traversal_or_manifest_reads` | legacy fixture with forbidden child | no child access and no promotion path |
+| `test_public_root_records_manifest_provenance` | manifest fixture | URL, timestamp, size, SHA-256, authority captured |
 | `test_status_classes_are_distinct` | absent/configured/partial fixtures | stable status classification |
+| `test_required_evidence_rows_are_present_or_explicitly_unavailable` | required source list | all eleven issue-required evidence items have a row |
 | `test_inventory_does_not_copy_raw_files` | output inspection | only report artifacts are written |
-| `test_output_is_deterministic` | repeated fixture scan | byte-identical JSON/Markdown |
+| `test_output_is_deterministic_for_fixed_observation_timestamp` | repeated fixture scan | stable fields and fixed run metadata are byte-identical |
+| `test_output_redacts_private_identifiers` | owner/path/manifest fixtures | JSON and Markdown contain no denied identifiers |
 
 ## Acceptance Criteria
 
@@ -122,7 +144,12 @@ and `limitations`. The top-level document will contain `schema_version`,
 - [ ] Each row records path, size, owner/root owner, geography, source authority, status, representative evidence, and Landman relevance tags.
 - [ ] Status enum includes `downloaded`, `derived`, `configured-only`, `partial/error`, `missing`, and `private/legacy`.
 - [ ] Private/client/legacy rows are quarantined and cannot be promoted by the scanner.
+- [ ] Enumeration policy is explicit: allowed parents, sorted direct children, symlink rejection, max depth/entries/time, non-directory handling, and recorded warnings.
+- [ ] Quarantine is fail-closed before child traversal; quarantined roots receive metadata-only rows and no manifest/sample reads.
+- [ ] Every required evidence item has a row or explicit unavailable marker: Texas RRC, Kansas KGS, Oklahoma OCC, Colorado ECMC, pressure_screen, HSE, BSEE, Spain CORES, Kaggle ROGII, frontierdeepwater, tiny placeholders, and private/legacy roots.
+- [ ] Row schema includes `artifact_sha256`; stable fields are separated from run metadata and tests use a fixed observation timestamp.
 - [ ] Outputs are deterministic, public-safe, and contain no copied raw data or client identifiers.
+- [ ] Redaction rules and tests scan both JSON and Markdown outputs for denied private/client identifiers.
 - [ ] #911 can consume this inventory; #913/#914 remain downstream.
 - [ ] Focused tests, legal scan, diff check, and bounded live-root smoke pass.
 - [ ] Adversarial plan review artifacts exist before `status:plan-review`.
@@ -131,6 +158,7 @@ and `limitations`. The top-level document will contain `schema_version`,
 
 - `/mnt/ace` may contain private or legacy material; the scanner must fail closed and record only metadata for quarantined roots.
 - Mount availability and ownership may differ by machine; observed state must not be generalized to every machine.
+- Live smoke will be an explicit bounded command, for example `python scripts/audit/inventory_landman_data_roots.py --root /mnt/ace --max-depth 2 --max-entries 500 --timeout-seconds 10 --observed-at <UTC> --output-dir <temp>`, and will assert exit 0, valid JSON/Markdown, no raw files under output, and warnings for inaccessible/truncated roots.
 - File modification time is not source-data vintage; source dates will be reported only when a manifest or dataset field provides them.
 - The inventory will not decide which source to acquire; #911 owns the readiness matrix and #913/#914 own acquisition/feasibility plans.
 
