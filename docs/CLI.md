@@ -598,22 +598,37 @@ worldenergydata mexico-cnh fetch
 
 ---
 
-## Landman Module (`worldenergydata landman`)
+## Landman Module (`python -m worldenergydata.cli.commands.landman`)
 
-U.S. mineral ownership, lease records, and BLM claims.
+The independently executable Landman module currently routes synthetic or
+user-supplied fixture data only. Root command-family startup is tracked
+separately by issue #926 and is not claimed here.
 
-| Command | Safety | Description |
-|---------|--------|-------------|
-| `worldenergydata landman --help` | `bounded-safe` | Show available commands |
-| `worldenergydata landman search` | `data-required` | Search mineral records |
+| Command | Current behavior |
+|---------|------------------|
+| `search` | Executes `ownership` with exactly one of `--sample` or `--records-file`; other operations fail atomically |
+| `lookup` | Preserved command surface; title routing currently returns a structured unsupported error |
+| `county-info` | Reads embedded county-office reference data; it is not a router provider |
+| `providers` | Reports static implementation status and source-context readiness |
+| `status` | Reports the same provider rows plus local data-directory status |
 
 ```bash
-# Safety: bounded-safe
-worldenergydata landman --help
+# Packaged public synthetic fixture; no network access or credentials.
+python -m worldenergydata.cli.commands.landman search \
+  --state TX --county MIDLAND --type ownership --sample --format json
 
-# Safety: data-required
-worldenergydata landman search --county "Midland" --state TX
+# A custom fixture must be a direct-child .json basename in the current directory.
+python -m worldenergydata.cli.commands.landman search \
+  --state TX --county MIDLAND --records-file records.json --format csv
+
+# Readiness is contextual; this does not silently select the sample.
+python -m worldenergydata.cli.commands.landman providers \
+  --operation ownership --sample --format json
 ```
+
+The fixture output is synthetic research data and is not a legal, acreage, or
+title conclusion. Live BLM, county portal, and state GIS acquisition are not
+implemented by this command.
 
 ---
 

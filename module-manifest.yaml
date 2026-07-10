@@ -213,23 +213,19 @@ modules:
     region: [united_states]
     domain: [regulatory, land_data]
     data_types:
-      - mineral_ownership
-      - lease_records
-      - drilling_permits
-      - blm_mining_claims
-      - well_records
+      - synthetic_fixture_mineral_ownership
+      - county_office_reference
     key_classes:
       - Landman
-      - StateGISProvider
-      - BLMProvider
+      - CountyRecordsProvider
       - CountyReferenceProvider
       - LandmanDataValidator
-    status: stable
-    entry_point: "from worldenergydata.landman import Landman, StateGISProvider"
-    notes: "Mineral ownership and lease data from US county clerk records, BLM federal land records, and state GIS — supporting STR title chain and lease expiration tracking."
+    status: alpha
+    entry_point: "python -m worldenergydata.cli.commands.landman"
+    notes: "Fixture-only ownership routing with a packaged public synthetic sample or one validated direct-child JSON file. County office data is reference-only; live BLM, county, and state sources are not router capabilities."
     in_scheduler: false
     public_cli: true
-    catalog_status: not_applicable
+    catalog_status: sample
     capability_source: manifest
     related_wrk: []
 

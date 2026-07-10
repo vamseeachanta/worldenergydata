@@ -1,21 +1,17 @@
-# ABOUTME: Main Landman module router implementation following established patterns
-# ABOUTME: Orchestrates mineral ownership and lease data collection from multiple providers
+# ABOUTME: Public Landman facade over atomic provider routing.
+# ABOUTME: Preserves search APIs while making source and provenance explicit.
 
-"""
-Main Landman module router implementation.
-
-This module follows the established architectural pattern to provide a consistent
-interface for mineral ownership and lease data collection within the WorldEnergyData framework.
-"""
+"""Main Landman router and compatibility facade."""
 
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 from .exceptions import LandmanError
-from .exceptions import ProviderError as LandmanProviderError
 from .models import LeaseRecord, OwnerSearchResult, TitleRecord
+from .providers.registry import PROVIDER_REGISTRY
+from .routing import ATOMIC_OPERATIONS, SourceConfig, normalize_operations, preflight
 from .validators import US_STATE_CODES, LandmanDataValidator
 
 
@@ -26,7 +22,6 @@ class LandmanValidationError(LandmanError):
 
     @classmethod
     def invalid_state_code(cls, state_code: str) -> "LandmanValidationError":
-        """Create error for invalid state code."""
         return cls(
             message=f"Invalid state code: {state_code}",
             error_code="LANDMAN_INVALID_STATE",
@@ -37,12 +32,11 @@ class LandmanValidationError(LandmanError):
     def invalid_legal_description(
         cls, legal_description: str, reason: str = ""
     ) -> "LandmanValidationError":
-        """Create error for invalid legal description."""
-        msg = f"Invalid legal description: {legal_description}"
+        message = f"Invalid legal description: {legal_description}"
         if reason:
-            msg += f" - {reason}"
+            message += f" - {reason}"
         return cls(
-            message=msg,
+            message=message,
             error_code="LANDMAN_INVALID_LEGAL_DESC",
             details={"legal_description": legal_description},
         )
@@ -52,279 +46,154 @@ logger = logging.getLogger(__name__)
 
 
 class Landman:
-    """
-    Main Landman module class implementing the router pattern.
+    """Operation-aware facade for Landman provider execution."""
 
-    This class orchestrates mineral ownership and lease data collection from
-    multiple providers including public county records and commercial services.
-    """
-
-    # Valid data types for Landman module
-    VALID_DATA_TYPES = [
-        "ownership",
-        "leases",
-        "title",
-        "deeds",
-        "mortgages",
-        "assignments",
-        "all",
+    VALID_DATA_TYPES = [*ATOMIC_OPERATIONS, "all"]
+    VALID_PROVIDERS = [row.name for row in PROVIDER_REGISTRY] + [
+        SourceConfig.ROUTE_MODE
     ]
 
-    # Supported providers
-    VALID_PROVIDERS = [
-        "county_records",  # Public county clerk records
-        "drillinginfo",  # Enverus/DrillingInfo (subscription)
-        "txdir",  # Texas Direct (subscription)
-        "ogorgs",  # Oil & Gas OGS
-        "auto",  # Auto-select best available
-    ]
-
-    def __init__(self):
-        """Initialize Landman module."""
+    def __init__(self, registry: Sequence[Any] | None = None):
         self.module_name = "landman"
         self.validator = LandmanDataValidator()
+        self.registry = tuple(registry or PROVIDER_REGISTRY)
         self._providers: Dict[str, Any] = {}
         self._initialize_components()
 
-    def _initialize_components(self):
-        """Initialize provider components lazily."""
-        # Providers will be imported when needed to avoid circular imports
-        pass
+    def _initialize_components(self) -> None:
+        """Retain the historical lazy-initialization hook."""
 
     def router(self, cfg: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Main router method following established pattern.
-
-        Args:
-            cfg: Configuration dictionary containing:
-                - module: Module name (should be 'landman')
-                - data_types: List of data types to collect
-                - state: State code for search
-                - county: County name for search
-                - provider: Provider to use (default: 'auto')
-                - search: Search criteria (owner_name, legal_description, etc.)
-                - output: Output configuration (directory, format)
-
-        Returns:
-            Updated configuration dictionary with results
-
-        Raises:
-            LandmanValidationError: If configuration is invalid
-            LandmanProviderError: If provider fails
-        """
-        # Validate configuration first
+        """Preflight all requested operations, then execute the resolved providers."""
         self._validate_config(cfg)
+        operations = normalize_operations(cfg.get("data_types", ["all"]))
+        requested = cfg.get("provider", SourceConfig.ROUTE_MODE)
+        source = SourceConfig.from_mapping(cfg.get("source"))
+        criteria = dict(cfg.get("search", {}))
+        self._validate_required_search(operations, criteria)
+        plan = preflight(operations, requested, source, self.registry)
+        instances: dict[str, Any] = {}
+        data = {}
+        for operation in operations:
+            registration = plan.routes[operation]
+            provider = instances.get(registration.name)
+            if provider is None:
+                provider = registration.factory(source)
+                instances[registration.name] = provider
+            data[operation] = self._execute_operation(provider, operation, criteria)
+        basename = cfg.setdefault("basename", self.module_name)
+        section = cfg.setdefault(basename, {})
+        section.update(self._result_metadata(plan, data))
+        section["data"] = dict(cfg.get("data", {}))
+        section["search"] = criteria
+        section["results"] = data
+        return cfg
 
-        try:
-            # Initialize module section in config
-            if "basename" not in cfg:
-                cfg["basename"] = self.module_name
-
-            cfg[cfg["basename"]] = {}
-            cfg[cfg["basename"]].update({"data": cfg.get("data", {}).copy()})
-            cfg[cfg["basename"]].update({"search": cfg.get("search", {}).copy()})
-
-            # Get provider instance
-            provider_name = cfg.get("provider", "auto")
-            provider = self._get_provider(provider_name, cfg)
-
-            # Route to data collection
-            logger.info(
-                f"Starting Landman data collection for types: {cfg.get('data_types', ['all'])}"
+    @staticmethod
+    def _validate_required_search(
+        operations: Sequence[str], criteria: dict[str, Any]
+    ) -> None:
+        if "ownership" not in operations:
+            return
+        missing = [
+            field
+            for field in ("state", "county")
+            if not isinstance(criteria.get(field), str) or not criteria[field].strip()
+        ]
+        if missing:
+            raise LandmanValidationError(
+                message="Ownership search requires non-empty state and county",
+                error_code="LANDMAN_SEARCH_CRITERIA_REQUIRED",
+                details={"missing_fields": missing},
             )
 
-            data = self._collect_data(cfg, provider)
+    @staticmethod
+    def _execute_operation(provider: Any, operation: str, criteria: dict[str, Any]):
+        method = getattr(provider, f"search_{operation}")
+        return method(criteria)
 
-            # Store results
-            cfg[cfg["basename"]]["status"] = "completed"
-            cfg[cfg["basename"]]["data_collected"] = list(data.keys()) if data else []
-            cfg[cfg["basename"]]["record_count"] = sum(
-                len(v) if isinstance(v, list) else 1 for v in data.values()
-            )
-
-            # Add results to config
-            if data:
-                cfg[cfg["basename"]]["results"] = data
-
-            logger.info("Landman module processing completed successfully")
-            return cfg
-
-        except LandmanError:
-            raise
-        except Exception as e:
-            logger.error(f"Error in Landman router: {str(e)}")
-            if "basename" in cfg and cfg["basename"] in cfg:
-                cfg[cfg["basename"]]["status"] = "error"
-                cfg[cfg["basename"]]["error"] = str(e)
-            raise LandmanError(
-                message=f"Landman router failed: {str(e)}",
-                code="LANDMAN_ROUTER_ERROR",
-                cause=e,
-            )
+    @staticmethod
+    def _result_metadata(plan: Any, data: dict[str, Any]) -> dict[str, Any]:
+        count = sum(
+            len(value) if isinstance(value, list) else 1 for value in data.values()
+        )
+        result = {
+            "status": "completed",
+            "requested_provider": plan.requested_provider,
+            "provider_by_operation": dict(plan.provider_by_operation),
+            "data_collected": list(data),
+            "record_count": count,
+        }
+        if plan.resolved_provider is not None:
+            result["resolved_provider"] = plan.resolved_provider
+        return result
 
     def _validate_config(self, cfg: Dict[str, Any]) -> None:
-        """
-        Validate configuration dictionary.
-
-        Args:
-            cfg: Configuration dictionary to validate
-
-        Raises:
-            LandmanValidationError: If configuration is invalid
-        """
         if not cfg:
             raise LandmanValidationError(
                 message="Configuration cannot be empty",
-                code="LANDMAN_CONFIG_EMPTY",
+                error_code="LANDMAN_CONFIG_EMPTY",
             )
-
-        # Validate module name if specified
-        if "module" in cfg and cfg["module"] != self.module_name:
-            logger.warning(
-                f"Module mismatch: expected '{self.module_name}', got '{cfg['module']}'"
-            )
-
-        # Validate data types if specified
-        if "data_types" in cfg:
-            invalid_types = [
-                dt for dt in cfg["data_types"] if dt not in self.VALID_DATA_TYPES
-            ]
-            if invalid_types:
-                raise LandmanValidationError(
-                    message=f"Invalid data types: {invalid_types}. Valid types: {self.VALID_DATA_TYPES}",  # noqa: E501
-                    code="LANDMAN_INVALID_DATA_TYPES",
-                    context={"invalid_types": invalid_types},
-                )
-
-        # Validate provider if specified
-        if "provider" in cfg and cfg["provider"] not in self.VALID_PROVIDERS:
+        normalize_operations(cfg.get("data_types", ["all"]))
+        provider = cfg.get("provider", SourceConfig.ROUTE_MODE)
+        valid_names = [row.name for row in self.registry] + [SourceConfig.ROUTE_MODE]
+        if provider not in valid_names:
             raise LandmanValidationError(
-                message=f"Invalid provider: {cfg['provider']}. Valid providers: {self.VALID_PROVIDERS}",  # noqa: E501
-                code="LANDMAN_INVALID_PROVIDER",
-                context={"provider": cfg["provider"]},
+                message=f"Invalid provider: {provider}",
+                error_code="LANDMAN_INVALID_PROVIDER",
+                details={"provider": provider},
+            )
+        if "state" in cfg:
+            self._validate_state(cfg["state"])
+        search = cfg.get("search", {})
+        if search.get("legal_description"):
+            self._validate_legal(search["legal_description"])
+        if search.get("owner_name"):
+            valid, error = self.validator.validate_owner_name(search["owner_name"])
+            if not valid:
+                raise LandmanValidationError(
+                    message=f"Invalid owner name: {error}",
+                    error_code="LANDMAN_INVALID_OWNER_NAME",
+                )
+
+    def _validate_state(self, state: str) -> None:
+        valid, _ = self.validator.validate_state_code(state)
+        if not valid:
+            raise LandmanValidationError.invalid_state_code(state)
+
+    def _validate_legal(self, legal_description: str) -> None:
+        valid, error = self.validator.validate_legal_description(legal_description)
+        if not valid:
+            raise LandmanValidationError.invalid_legal_description(
+                legal_description, error or ""
             )
 
-        # Validate state if specified
-        if "state" in cfg:
-            is_valid, error = self.validator.validate_state_code(cfg["state"])
-            if not is_valid:
-                raise LandmanValidationError.invalid_state_code(cfg["state"])
-
-        # Validate search criteria if specified
-        if "search" in cfg:
-            search = cfg["search"]
-            if "legal_description" in search:
-                is_valid, error = self.validator.validate_legal_description(
-                    search["legal_description"]
+    def _search_criteria(
+        self,
+        state: str,
+        county: str,
+        legal_description: str | None,
+        owner_name: str | None,
+    ) -> dict[str, str]:
+        self._validate_state(state)
+        valid, error = self.validator.validate_county_name(county, state)
+        if not valid:
+            raise LandmanValidationError(
+                message=f"Invalid county: {error}", error_code="LANDMAN_INVALID_COUNTY"
+            )
+        criteria = {"state": state, "county": county}
+        if legal_description:
+            self._validate_legal(legal_description)
+            criteria["legal_description"] = legal_description
+        if owner_name:
+            valid, error = self.validator.validate_owner_name(owner_name)
+            if not valid:
+                raise LandmanValidationError(
+                    message=f"Invalid owner name: {error}",
+                    error_code="LANDMAN_INVALID_OWNER_NAME",
                 )
-                if not is_valid:
-                    raise LandmanValidationError.invalid_legal_description(
-                        search["legal_description"], error or ""
-                    )
-
-            if "owner_name" in search:
-                is_valid, error = self.validator.validate_owner_name(
-                    search["owner_name"]
-                )
-                if not is_valid:
-                    raise LandmanValidationError(
-                        message=f"Invalid owner name: {error}",
-                        code="LANDMAN_INVALID_OWNER_NAME",
-                    )
-
-        logger.debug("Configuration validated successfully")
-
-    def _get_provider(self, provider_name: str, cfg: Dict[str, Any]) -> Any:
-        """
-        Get or create provider instance.
-
-        Args:
-            provider_name: Name of the provider
-            cfg: Configuration dictionary
-
-        Returns:
-            Provider instance
-
-        Raises:
-            LandmanProviderError: If provider cannot be initialized
-        """
-        if provider_name == "auto":
-            # Select best available provider based on state and configuration
-            provider_name = self._select_best_provider(cfg)
-
-        if provider_name not in self._providers:
-            try:
-                if provider_name == "county_records":
-                    from .providers.county_records import CountyRecordsProvider
-
-                    self._providers[provider_name] = CountyRecordsProvider(cfg)
-                else:
-                    # Future providers will be added here
-                    raise LandmanProviderError.unavailable(
-                        provider_name,
-                        f"Provider '{provider_name}' is not yet implemented",
-                    )
-            except ImportError as e:
-                raise LandmanProviderError.unavailable(
-                    provider_name,
-                    f"Failed to import provider: {str(e)}",
-                    cause=e,
-                )
-
-        return self._providers[provider_name]
-
-    def _select_best_provider(self, cfg: Dict[str, Any]) -> str:
-        """
-        Select the best available provider based on configuration.
-
-        Args:
-            cfg: Configuration dictionary
-
-        Returns:
-            Provider name to use
-        """
-        # For now, default to county_records as it's the free option
-        # Future: Check for subscription credentials and select accordingly
-        return "county_records"
-
-    def _collect_data(self, cfg: Dict[str, Any], provider: Any) -> Dict[str, Any]:
-        """
-        Collect data using the specified provider.
-
-        Args:
-            cfg: Configuration dictionary
-            provider: Provider instance to use
-
-        Returns:
-            Dictionary of collected data
-        """
-        data: Dict[str, Any] = {}
-        data_types = cfg.get("data_types", ["all"])
-
-        if "all" in data_types:
-            data_types = ["ownership", "leases", "title"]
-
-        for data_type in data_types:
-            try:
-                if data_type == "ownership":
-                    data["ownership"] = provider.search_ownership(cfg.get("search", {}))
-                elif data_type == "leases":
-                    data["leases"] = provider.search_leases(cfg.get("search", {}))
-                elif data_type == "title":
-                    data["title"] = provider.search_title(cfg.get("search", {}))
-                elif data_type == "deeds":
-                    data["deeds"] = provider.search_deeds(cfg.get("search", {}))
-                elif data_type == "mortgages":
-                    data["mortgages"] = provider.search_mortgages(cfg.get("search", {}))
-                elif data_type == "assignments":
-                    data["assignments"] = provider.search_assignments(
-                        cfg.get("search", {})
-                    )
-            except Exception as e:
-                logger.warning(f"Failed to collect {data_type} data: {str(e)}")
-                data[f"{data_type}_error"] = str(e)
-
-        return data
+            criteria["owner_name"] = owner_name
+        return criteria
 
     def search_ownership(
         self,
@@ -333,94 +202,38 @@ class Landman:
         legal_description: Optional[str] = None,
         owner_name: Optional[str] = None,
         provider: str = "auto",
+        sample: bool = False,
+        records_file: Optional[str] = None,
     ) -> OwnerSearchResult:
-        """
-        Search for mineral ownership records.
+        """Search one explicitly selected fixture source for ownership records."""
+        started = datetime.now()
+        criteria = self._search_criteria(state, county, legal_description, owner_name)
+        source = SourceConfig.from_keywords(sample, records_file)
+        plan = preflight(["ownership"], provider, source, self.registry)
+        registration = plan.routes["ownership"]
+        records = registration.factory(source).search_ownership(criteria)
+        elapsed = int((datetime.now() - started).total_seconds() * 1000)
+        return OwnerSearchResult(
+            search_id=str(uuid.uuid4()),
+            search_criteria=criteria,
+            state=state,
+            county=county,
+            owner_name=owner_name,
+            legal_description=legal_description,
+            ownership_records=records,
+            provider=registration.name,
+            search_duration_ms=elapsed,
+        )
 
-        Args:
-            state: 2-letter state code
-            county: County name
-            legal_description: Legal description to search
-            owner_name: Owner name to search
-            provider: Provider to use
-
-        Returns:
-            OwnerSearchResult with found records
-        """
-        start_time = datetime.now()
-        search_id = str(uuid.uuid4())
-
-        # Validate inputs
-        is_valid, error = self.validator.validate_state_code(state)
-        if not is_valid:
-            raise LandmanValidationError.invalid_state_code(state)
-
-        is_valid, error = self.validator.validate_county_name(county, state)
-        if not is_valid:
-            raise LandmanValidationError(
-                message=f"Invalid county: {error}",
-                code="LANDMAN_INVALID_COUNTY",
-            )
-
-        if legal_description:
-            is_valid, error = self.validator.validate_legal_description(
-                legal_description
-            )
-            if not is_valid:
-                raise LandmanValidationError.invalid_legal_description(
-                    legal_description, error or ""
-                )
-
-        search_criteria = {
-            "state": state,
-            "county": county,
-        }
-        if legal_description:
-            search_criteria["legal_description"] = legal_description
-        if owner_name:
-            search_criteria["owner_name"] = owner_name
-
-        cfg = {
-            "state": state,
-            "county": county,
-            "provider": provider,
-            "search": search_criteria,
-        }
-
-        try:
-            provider_instance = self._get_provider(provider, cfg)
-            ownership_records = provider_instance.search_ownership(search_criteria)
-
-            elapsed_ms = int((datetime.now() - start_time).total_seconds() * 1000)
-
-            return OwnerSearchResult(
-                search_id=search_id,
-                search_criteria=search_criteria,
-                state=state,
-                county=county,
-                owner_name=owner_name,
-                legal_description=legal_description,
-                ownership_records=ownership_records,
-                provider=provider,
-                search_duration_ms=elapsed_ms,
-            )
-
-        except LandmanError:
-            raise
-        except Exception as e:
-            elapsed_ms = int((datetime.now() - start_time).total_seconds() * 1000)
-            result = OwnerSearchResult(
-                search_id=search_id,
-                search_criteria=search_criteria,
-                state=state,
-                county=county,
-                owner_name=owner_name,
-                legal_description=legal_description,
-                provider=provider,
-                search_duration_ms=elapsed_ms,
-            )
-            result.add_error(f"Search failed: {str(e)}")
-            return result
+    def _unsupported_records(
+        self, operation: str, criteria: dict[str, Any], provider: str
+    ) -> list:
+        source = SourceConfig()
+        plan = preflight([operation], provider, source, self.registry)
+        registration = plan.routes[operation]
+        return self._execute_operation(
+            registration.factory(source), operation, criteria
+        )
 
     def get_lease_records(
         self,
@@ -431,45 +244,10 @@ class Landman:
         lessee: Optional[str] = None,
         provider: str = "auto",
     ) -> List[LeaseRecord]:
-        """
-        Get lease records for specified criteria.
-
-        Args:
-            state: 2-letter state code
-            county: County name
-            owner_name: Lessor/owner name to search
-            legal_description: Legal description to search
-            lessee: Lessee/operator name to search
-            provider: Provider to use
-
-        Returns:
-            List of LeaseRecord objects
-        """
-        # Validate inputs
-        is_valid, _ = self.validator.validate_state_code(state)
-        if not is_valid:
-            raise LandmanValidationError.invalid_state_code(state)
-
-        search_criteria = {
-            "state": state,
-            "county": county,
-        }
-        if owner_name:
-            search_criteria["owner_name"] = owner_name
-        if legal_description:
-            search_criteria["legal_description"] = legal_description
+        criteria = self._search_criteria(state, county, legal_description, owner_name)
         if lessee:
-            search_criteria["lessee"] = lessee
-
-        cfg = {
-            "state": state,
-            "county": county,
-            "provider": provider,
-            "search": search_criteria,
-        }
-
-        provider_instance = self._get_provider(provider, cfg)
-        return provider_instance.search_leases(search_criteria)
+            criteria["lessee"] = lessee
+        return self._unsupported_records("leases", criteria, provider)
 
     def get_title_records(
         self,
@@ -481,57 +259,36 @@ class Landman:
         document_number: Optional[str] = None,
         provider: str = "auto",
     ) -> List[TitleRecord]:
-        """
-        Get title/deed records for specified criteria.
+        criteria = self._search_criteria(state, county, legal_description, None)
+        criteria.update(
+            {
+                key: value
+                for key, value in {
+                    "grantor": grantor,
+                    "grantee": grantee,
+                    "document_number": document_number,
+                }.items()
+                if value
+            }
+        )
+        return self._unsupported_records("title", criteria, provider)
 
-        Args:
-            state: 2-letter state code
-            county: County name
-            grantor: Grantor/seller name to search
-            grantee: Grantee/buyer name to search
-            legal_description: Legal description to search
-            document_number: Specific document number
-            provider: Provider to use
+    def _get_provider(self, provider_name: str, cfg: Dict[str, Any]) -> Any:
+        source = SourceConfig.from_mapping(cfg.get("source"))
+        plan = preflight(["ownership"], provider_name, source, self.registry)
+        registration = plan.routes["ownership"]
+        return registration.factory(source)
 
-        Returns:
-            List of TitleRecord objects
-        """
-        # Validate inputs
-        is_valid, _ = self.validator.validate_state_code(state)
-        if not is_valid:
-            raise LandmanValidationError.invalid_state_code(state)
-
-        search_criteria = {
-            "state": state,
-            "county": county,
-        }
-        if grantor:
-            search_criteria["grantor"] = grantor
-        if grantee:
-            search_criteria["grantee"] = grantee
-        if legal_description:
-            search_criteria["legal_description"] = legal_description
-        if document_number:
-            search_criteria["document_number"] = document_number
-
-        cfg = {
-            "state": state,
-            "county": county,
-            "provider": provider,
-            "search": search_criteria,
-        }
-
-        provider_instance = self._get_provider(provider, cfg)
-        return provider_instance.search_title(search_criteria)
+    def _select_best_provider(self, cfg: Dict[str, Any]) -> str:
+        source = SourceConfig.from_mapping(cfg.get("source"))
+        plan = preflight(["ownership"], "auto", source, self.registry)
+        return plan.routes["ownership"].name
 
     def get_valid_data_types(self) -> List[str]:
-        """Return list of valid data types."""
         return self.VALID_DATA_TYPES.copy()
 
     def get_valid_providers(self) -> List[str]:
-        """Return list of valid providers."""
-        return self.VALID_PROVIDERS.copy()
+        return [row.name for row in self.registry]
 
     def get_valid_states(self) -> Dict[str, str]:
-        """Return dictionary of valid US state codes."""
         return US_STATE_CODES.copy()

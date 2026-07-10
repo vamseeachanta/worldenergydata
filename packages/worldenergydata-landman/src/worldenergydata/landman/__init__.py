@@ -1,54 +1,52 @@
-# ABOUTME: Landman module for mineral ownership, lease records, and title data
-# ABOUTME: Provides unified access to county records and future subscription services
+# ABOUTME: Fixture-only Landman ownership routing and county office reference data.
+# ABOUTME: Exposes validated synthetic/custom records without live-source claims.
+# ruff: noqa: E402
 
-"""
-Landman Module for WorldEnergyData.
+"""Fixture-only Landman ownership routing for WorldEnergyData.
 
-This module provides integration with public county records and commercial
-title/lease data services for mineral ownership research and due diligence.
+The executable router supports ownership records from exactly one validated
+source: the packaged synthetic sample or a direct-child custom JSON fixture.
+County office information is embedded reference data, not a router provider.
+Configured live providers and non-ownership operations are not executable.
 
-Key Features:
-- County clerk record searches (deed, mortgage, mineral lease records)
-- State GIS data for oil/gas wells and permits
-- BLM federal land records (mining claims, fluid mineral leases)
-- Legal description parsing and validation (Section-Township-Range)
-- Mineral ownership chain of title analysis
-- Lease term tracking and expiration monitoring
-- Multiple provider support (county records, commercial services)
-- Standardized data models for ownership and lease records
-- Rate limiting and caching for public record sources
-
-Example usage:
+Example:
     from worldenergydata.landman import Landman
 
-    # Create landman instance
-    landman = Landman()
-
-    # Search for mineral ownership
-    results = landman.search_ownership(
+    results = Landman().search_ownership(
         state="TX",
         county="MIDLAND",
-        legal_description="Section 12, Block 42, T-1-S"
+        sample=True,
     )
-
-    # Get lease records
-    leases = landman.get_lease_records(
-        state="TX",
-        county="MIDLAND",
-        owner_name="Smith"
-    )
-
-    # Using providers directly
-    from worldenergydata.landman import StateGISProvider
-
-    with StateGISProvider() as provider:
-        wells = provider.search_wells_by_location("TX", "REEVES")
 """
+
+import importlib.util
+import sys
+import types
+
+
+def _prepare_common_exceptions_import() -> bool:
+    """Avoid executing unrelated heavy common exports for this leaf package."""
+    if "worldenergydata.common" in sys.modules:
+        return False
+    spec = importlib.util.find_spec("worldenergydata.common")
+    if spec is None or spec.submodule_search_locations is None:
+        return False
+    package = types.ModuleType("worldenergydata.common")
+    package.__path__ = list(spec.submodule_search_locations)
+    package.__package__ = "worldenergydata.common"
+    package.__spec__ = spec
+    sys.modules["worldenergydata.common"] = package
+    return True
+
+
+_LIGHTWEIGHT_COMMON = _prepare_common_exceptions_import()
 
 from .exceptions import (
     APIError,
+    CapabilityUnavailableError,
     ConfigurationError,
     CountyNotFoundError,
+    FixtureValidationError,
     LandmanError,
     ParsingError,
 )
@@ -61,6 +59,10 @@ from .exceptions import (
     StateNotSupportedError,
 )
 from .exceptions import TimeoutError as LandmanTimeoutError
+
+if _LIGHTWEIGHT_COMMON:
+    sys.modules.pop("worldenergydata.common", None)
+
 from .landman import Landman, LandmanValidationError
 from .models import (
     CountyClerkInfo,
@@ -88,6 +90,7 @@ from .providers import (
     BaseProvider,
     BLMProvider,
     CountyReferenceProvider,
+    CountyRecordsProvider,
     StateGISProvider,
 )
 from .validators import LandmanDataValidator
@@ -104,6 +107,7 @@ __all__ = [
     "StateGISProvider",
     "BLMProvider",
     "CountyReferenceProvider",
+    "CountyRecordsProvider",
     # Models - Wells and Permits
     "WellInfo",
     "WellStatus",
@@ -136,4 +140,12 @@ __all__ = [
     "LandmanRecordNotFoundError",
     "LandmanValidationError",
     "LandmanAuthError",
+    "CapabilityUnavailableError",
+    "FixtureValidationError",
+    "APIError",
+    "CountyNotFoundError",
+    "ParsingError",
+    "RateLimitError",
+    "StateNotSupportedError",
+    "LandmanTimeoutError",
 ]

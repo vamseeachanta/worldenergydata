@@ -49,7 +49,7 @@ Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/vi
 | `vessel_fleet` | Global | construction vessels, drilling risers, BOP equipment | stable |
 | `vessel_hull_models` | Global | hull geometry (OBJ), rig hulls | stable |
 | `well_production_dashboard` | Gulf of Mexico | interactive dashboards, well metrics, field aggregation | stable |
-| `landman` | United States | mineral ownership, lease records, BLM claims, well records | stable |
+| `landman` | United States | fixture-only mineral ownership; county office reference data | alpha |
 
 ## Infrastructure Modules (shared utilities)
 

@@ -1,7 +1,5 @@
 """Tests for Landman module constants, validation errors, and init."""
 
-import pytest
-
 from worldenergydata.landman.landman import (
     Landman,
     LandmanValidationError,
@@ -52,7 +50,9 @@ class TestLandmanConstants:
         assert len(Landman.VALID_DATA_TYPES) == 7
 
     def test_providers_count(self):
-        assert len(Landman.VALID_PROVIDERS) == 5
+        assert len(Landman.VALID_PROVIDERS) == 8
+        assert len(Landman().get_valid_providers()) == 7
+        assert "auto" not in Landman().get_valid_providers()
 
 
 # ---------------------------------------------------------------------------

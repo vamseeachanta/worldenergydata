@@ -41,6 +41,7 @@ from worldenergydata.landman.providers.blm import BLMProvider
 from worldenergydata.landman.providers.county_reference import (
     CountyReferenceProvider,
 )
+from worldenergydata.landman.providers.county_records import CountyRecordsProvider
 from worldenergydata.landman.providers.state_gis import StateGISProvider
 
 __all__ = [
@@ -52,4 +53,5 @@ __all__ = [
     "StateGISProvider",
     "BLMProvider",
     "CountyReferenceProvider",
+    "CountyRecordsProvider",
 ]

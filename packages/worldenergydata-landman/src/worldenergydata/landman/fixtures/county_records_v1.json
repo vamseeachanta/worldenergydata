@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "dataset_id": "worldenergydata-public-synthetic-county-records-v1",
+  "mode": "fixture-only",
+  "records": [
+    {
+      "record_id": "SYN-TX-MIDLAND-001",
+      "state": "TX",
+      "county": "MIDLAND",
+      "legal_description": "Section 12, Block 42, T-1-S",
+      "owner_name": "PUBLIC SAMPLE MINERALS LLC",
+      "interest_type": "mineral",
+      "mineral_interest_percent": 50.0,
+      "net_mineral_acres": 80.0,
+      "gross_acres": 160.0,
+      "effective_date": "2024-01-15",
+      "source_document": "SYNTHETIC-DEMO-001",
+      "grantor": "PUBLIC SAMPLE GRANTOR",
+      "recorded_date": "2024-02-01",
+      "instrument_number": "SYN-2024-001",
+      "notes": "Synthetic public fixture; not a legal or title conclusion."
+    },
+    {
+      "record_id": "SYN-TX-REEVES-001",
+      "state": "TX",
+      "county": "REEVES COUNTY",
+      "legal_description": "Section 8, Block 13, T-2-S",
+      "owner_name": "PUBLIC SAMPLE FAMILY TRUST",
+      "interest_type": "royalty",
+      "mineral_interest_percent": 12.5,
+      "net_mineral_acres": 20.0,
+      "gross_acres": 160.0,
+      "recorded_date": "2023-11-03",
+      "instrument_number": "SYN-2023-008"
+    }
+  ]
+}

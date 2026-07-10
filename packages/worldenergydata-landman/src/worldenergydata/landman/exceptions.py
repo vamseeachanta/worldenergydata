@@ -45,6 +45,59 @@ class ProviderError(LandmanError):
 
     default_code = "PROVIDER_ERROR"
 
+    @classmethod
+    def unavailable(
+        cls,
+        provider_name: str,
+        reason: str = "",
+        cause: Optional[Exception] = None,
+    ) -> "ProviderError":
+        """Create a runtime provider-unavailable error."""
+        message = f"Landman provider '{provider_name}' is unavailable"
+        if reason:
+            message += f": {reason}"
+        return cls(
+            message=message,
+            error_code="LANDMAN_PROVIDER_UNAVAILABLE",
+            details={"provider": provider_name, "reason": reason},
+            cause=cause,
+        )
+
+
+class CapabilityUnavailableError(ProviderError):
+    """Raised after atomic preflight finds unsupported operations."""
+
+    default_code = "LANDMAN_CAPABILITY_UNAVAILABLE"
+
+    def __init__(self, requested_provider: str, failures: list[Dict[str, Any]]):
+        operations = ", ".join(row["operation"] for row in failures)
+        super().__init__(
+            message=f"No provider can execute operation(s): {operations}",
+            error_code=self.default_code,
+            details={
+                "requested_provider": requested_provider,
+                "resolved_provider": None,
+                "failures": failures,
+            },
+        )
+        self.requested_provider = requested_provider
+        self.resolved_provider = None
+        self.failures = failures
+
+
+class FixtureValidationError(ProviderError):
+    """Raised when fixture selection, I/O, or content fails closed."""
+
+    default_code = "LANDMAN_FIXTURE_INVALID"
+
+    def __init__(self, code: str, source_name: str, reason: str):
+        super().__init__(
+            message=f"Fixture '{source_name}' rejected: {reason}",
+            error_code=code,
+            details={"source": source_name, "reason": reason},
+        )
+        self.source_name = source_name
+
 
 class StateNotSupportedError(ProviderError):
     """Raised when a state is not supported by the provider."""

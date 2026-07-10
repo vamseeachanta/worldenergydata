@@ -1,515 +1,75 @@
-# Landman Module Configuration
-# Land Research and Mineral Rights Data Integration
-# Free Public Data Sources Only - No Subscription Services
+# Landman routing configuration for issue #924.
+# Runtime coverage is intentionally fixture-only; live sources are reserved work.
 
 module: landman
 version: 1.0.0
-description: Configuration for Landman land research, mineral rights, and county records data collection
+implementation_status: alpha
+execution_mode: fixture-only
 
-# Provider Configuration
-# All providers use free public data sources only
+router:
+  route_modes:
+    - auto
+  atomic_operations:
+    - ownership
+    - leases
+    - title
+    - deeds
+    - mortgages
+    - assignments
+  all_order:
+    - ownership
+    - leases
+    - title
+    - deeds
+    - mortgages
+    - assignments
+  fail_atomic_preflight: true
+
+fixture_source:
+  requirement: exactly_one
+  packaged_sample: county_records_v1.json
+  custom_file_policy: cwd_direct_child_json
+  max_bytes: 1048576
+  max_records: 1000
+
 providers:
-  state_gis:
-    enabled: true
-    description: "State GIS and land survey systems"
-    supported_states:
-      - TX  # Texas General Land Office
-      - NM  # New Mexico State Land Office
-      - OK  # Oklahoma Corporation Commission
-      - ND  # North Dakota Industrial Commission
-      - CO  # Colorado Oil and Gas Conservation Commission
-      - WY  # Wyoming Oil and Gas Conservation Commission
-      - LA  # Louisiana SONRIS
-      - UT  # Utah Division of Oil, Gas and Mining
-    rate_limit: 2  # Conservative for public resources
-    timeout: 30
-    retry_attempts: 3
-
-  blm:
-    enabled: true
-    description: "Bureau of Land Management MLRS (Mining & Land Records System)"
-    base_url: https://www.blm.gov
-    mlrs_url: https://mlrs.blm.gov
-    geocommunicator_url: https://geocommunicator.gov
-    rate_limit: 2
-    timeout: 30
-    retry_attempts: 3
-    data_types:
-      - federal_leases
-      - mining_claims
-      - land_patents
-      - survey_plats
-
+  county_records:
+    implementation_status: implemented
+    router_operations: [ownership]
+    mode: fixture-only
   county_reference:
-    enabled: true
-    description: "County reference data and FIPS codes"
-    # Uses internal reference data
-    cache_enabled: true
+    implementation_status: reference-only
+    router_operations: []
+    mode: embedded-reference
+  blm:
+    implementation_status: configured-only
+    router_operations: []
+    mode: live-reserved
+  state_gis:
+    implementation_status: configured-only
+    router_operations: []
+    mode: live-reserved
+  drillinginfo:
+    implementation_status: unavailable
+    router_operations: []
+    mode: subscription
+  txdir:
+    implementation_status: unavailable
+    router_operations: []
+    mode: subscription
+  ogorgs:
+    implementation_status: unavailable
+    router_operations: []
+    mode: unimplemented
 
-# State-Specific GIS Endpoints
-# Free public endpoints for each supported state
-state_endpoints:
-  TX:
-    name: "Texas"
-    glo_url: https://www.glo.texas.gov
-    rrc_url: https://www.rrc.texas.gov
-    map_url: https://gisweb.glo.texas.gov
-    data_types:
-      - abstract_info
-      - survey_plats
-      - mineral_leases
-      - well_permits
-
-  NM:
-    name: "New Mexico"
-    slo_url: https://www.nmstatelands.org
-    ogcd_url: https://www.emnrd.nm.gov/ocd
-    gis_url: https://gis.emnrd.nm.gov
-    data_types:
-      - township_range
-      - state_leases
-      - well_data
-
-  OK:
-    name: "Oklahoma"
-    occ_url: https://oklahoma.gov/occ
-    gis_url: https://imaging.occ.ok.gov
-    data_types:
-      - well_permits
-      - production_data
-      - lease_info
-
-  ND:
-    name: "North Dakota"
-    ogrb_url: https://www.dmr.nd.gov/oilgas
-    gis_url: https://www.dmr.nd.gov/oilgas/GIS
-    data_types:
-      - well_data
-      - production
-      - spacing_units
-
-  CO:
-    name: "Colorado"
-    cogcc_url: https://cogcc.state.co.us
-    gis_url: https://cogcc.state.co.us/maps
-    data_types:
-      - well_permits
-      - production
-      - spacing_orders
-
-  WY:
-    name: "Wyoming"
-    wogcc_url: https://wogcc.wyo.gov
-    gis_url: https://wogcc.wyo.gov/maps
-    data_types:
-      - well_data
-      - production
-      - permits
-
-  LA:
-    name: "Louisiana"
-    sonris_url: https://sonris.com
-    dnr_url: https://www.dnr.louisiana.gov
-    data_types:
-      - well_data
-      - production
-      - lease_info
-      - coastal_permits
-
-  UT:
-    name: "Utah"
-    dogm_url: https://oilgas.ogm.utah.gov
-    gis_url: https://oilgas.ogm.utah.gov/oilgasweb/live-data-search
-    data_types:
-      - well_data
-      - production
-      - permits
-
-# API Settings
-api:
-  rate_limit: 2  # requests per second (conservative for public resources)
-  timeout: 30  # request timeout in seconds
-  max_retries: 3
-  retry_delay: 2  # seconds between retries
-  backoff_factor: 2.0  # exponential backoff multiplier
-
-  # Headers for web requests
-  headers:
-    User-Agent: "WorldEnergyData Landman Client/1.0 (Research Tool)"
-    Accept: "application/json,text/html,application/xhtml+xml,*/*;q=0.8"
-    Accept-Encoding: "gzip, deflate"
-    Accept-Language: "en-US,en;q=0.9"
-
-  # No authentication required for public data
-  auth:
-    enabled: false
-    method: none
-
-# Cache Settings
-cache:
-  enabled: true
-  ttl: 86400  # 1 day in seconds (24 hours)
-  directory: data/cache/landman
-
-  # Cache organization
-  organization:
-    by_state: true
-    by_county: true
-    by_type: true
-    structure: "{state}/{county}/{data_type}/"
-
-  # Cache limits
-  limits:
-    max_size_mb: 500
-    max_files: 10000
-    cleanup_threshold: 0.9  # Trigger cleanup at 90% capacity
-
-  # Cache invalidation
-  invalidation:
-    on_error: false
-    on_update: true
-    manual_only: false
-
-# Data Types Configuration
-data_types:
-  mineral_ownership:
-    enabled: true
-    description: "Mineral rights ownership information from public records"
-    sources:
-      - state_gis
-      - blm
-    fields:
-      - owner_name
-      - tract_description
-      - legal_description
-      - effective_date
-      - document_type
-
-  lease_records:
-    enabled: true
-    description: "Oil and gas lease records from public filings"
-    sources:
-      - state_gis
-      - blm
-    fields:
-      - lessor
-      - lessee
-      - operator
-      - lease_date
-      - expiration_date
-      - legal_description
-      - bonus_amount
-      - royalty_rate
-      - primary_term
-
-  well_permits:
-    enabled: true
-    description: "Well permit information from state GIS systems"
-    sources:
-      - state_gis
-    fields:
-      - api_number
-      - permit_number
-      - permit_date
-      - operator
-      - well_name
-      - location
-      - proposed_depth
-      - well_type
-
-  county_info:
-    enabled: true
-    description: "County reference information and FIPS codes"
-    sources:
-      - county_reference
-    fields:
-      - county_name
-      - state_code
-      - fips_code
-      - county_seat
-      - area_sq_miles
-      - recorder_office
-
-  survey_plats:
-    enabled: true
-    description: "Land survey plat information"
-    sources:
-      - blm
-      - state_gis
-    fields:
-      - township
-      - range
-      - section
-      - meridian
-      - survey_date
-      - surveyor
-
-  federal_leases:
-    enabled: true
-    description: "Federal oil and gas leases from BLM"
-    sources:
-      - blm
-    fields:
-      - lease_number
-      - effective_date
-      - expiration_date
-      - lessee
-      - acreage
-      - rental_rate
-      - royalty_rate
-      - legal_description
-
-# Legal Description Parsing
-legal_description:
-  # Township-Range-Section format
-  plss:
-    enabled: true
-    format: "T{township}{ns} R{range}{ew} S{section}"
-    example: "T10N R5W S23"
-
-  # Texas Abstract format
-  texas_abstract:
-    enabled: true
-    format: "A-{abstract_number}"
-    example: "A-123"
-
-  # Metes and bounds
-  metes_bounds:
-    enabled: true
-    parse_calls: true
-    parse_distances: true
-
-  # Lot and block
-  lot_block:
-    enabled: true
-    format: "Lot {lot} Block {block} {subdivision}"
-
-# Validation Configuration
-validation:
-  # API Number validation by state
-  api_number:
-    TX:
-      state_code: "42"
-      format: "42-CCC-WWWWW"
-      regex: "^42-\\d{3}-\\d{5}$"
-    NM:
-      state_code: "30"
-      format: "30-CCC-WWWWW"
-      regex: "^30-\\d{3}-\\d{5}$"
-    OK:
-      state_code: "35"
-      format: "35-CCC-WWWWW"
-      regex: "^35-\\d{3}-\\d{5}$"
-    ND:
-      state_code: "33"
-      format: "33-CCC-WWWWW"
-      regex: "^33-\\d{3}-\\d{5}$"
-    CO:
-      state_code: "05"
-      format: "05-CCC-WWWWW"
-      regex: "^05-\\d{3}-\\d{5}$"
-    WY:
-      state_code: "49"
-      format: "49-CCC-WWWWW"
-      regex: "^49-\\d{3}-\\d{5}$"
-    LA:
-      state_code: "17"
-      format: "17-CCC-WWWWW"
-      regex: "^17-\\d{3}-\\d{5}$"
-    UT:
-      state_code: "43"
-      format: "43-CCC-WWWWW"
-      regex: "^43-\\d{3}-\\d{5}$"
-
-  # FIPS code validation
-  fips_code:
-    state_format: "\\d{2}"
-    county_format: "\\d{3}"
-    full_format: "\\d{5}"
-
-  # Coordinate validation (Continental US bounds)
-  coordinates:
-    lat_min: 24.5
-    lat_max: 49.5
-    lon_min: -125.0
-    lon_max: -66.9
-    crs: "EPSG:4326"
-
-  # Data quality checks
-  quality:
-    enabled: true
-    strict_mode: false
-    log_warnings: true
-    rules:
-      - check_api_format
-      - check_fips_code
-      - check_coordinate_bounds
-      - check_date_validity
-      - check_legal_description
-
-# Output Settings
 output:
-  default_format: json
-  output_directory: data/landman
-  supported_formats:
-    - json
-    - csv
-    - parquet
-    - geojson
+  formats: [table, json, csv]
+  json_envelopes: true
+  provider_provenance: true
 
-  # File naming pattern
-  naming:
-    pattern: "{state}_{county}_{data_type}_{date}.{format}"
-    date_format: "%Y%m%d"
-    time_format: "%H%M%S"
-
-  # Compression
-  compression:
-    enabled: false
-    format: gzip
-
-  # Storage organization
-  organization:
-    by_state: true
-    by_county: true
-    by_type: true
-    structure: "{state}/{county}/{data_type}/"
-
-# Data Processing Configuration
-processing:
-  chunk_size: 10000
-  parallel_workers: 2  # Conservative for public APIs
-  normalize_names: true
-  validate_data: true
-
-  # Coordinate system transformation
-  coordinates:
-    source_crs: "EPSG:4326"
-    target_crs: "EPSG:4326"
-
-  # Data normalization
-  normalization:
-    dates_format: "ISO8601"
-    missing_values: null
-    uppercase_names: false
-    trim_whitespace: true
-
-  # Deduplication
-  deduplication:
-    enabled: true
-    key_fields:
-      - api_number
-      - legal_description
-      - document_number
-
-# Logging Configuration
-logging:
-  level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-  file:
-    enabled: true
-    path: "./logs/landman.log"
-    max_size_mb: 10
-    backup_count: 5
-  console:
-    enabled: true
-    colored: true
-
-# Error Handling
-error_handling:
-  # Retry configuration
-  retry:
-    max_attempts: 3
-    backoff_factor: 2.0
-    max_delay: 60  # Maximum delay between retries in seconds
-
-  # Error reporting
-  reporting:
-    save_errors: true
-    error_file: "./logs/landman_errors.json"
-    include_traceback: true
-
-  # Recovery
-  recovery:
-    checkpoint_enabled: true
-    checkpoint_interval: 100
-    resume_on_failure: true
-
-# Performance Configuration
-performance:
-  # Parallel processing (conservative for public APIs)
-  parallel:
-    enabled: true
-    max_workers: 2
-    chunk_size: 10000
-
-  # Memory optimization
-  memory:
-    max_cache_size_mb: 500
-    batch_size: 10000
-
-  # Progress tracking
-  progress:
-    enabled: true
-    update_interval: 10  # seconds
-
-# Integration Configuration
-integration:
-  # BSEE integration for offshore data
-  bsee:
-    enabled: false
-    data_path: "./data/bsee"
-
-  # Texas RRC integration
-  texas_rrc:
-    enabled: false
-    data_path: "./data/texas_rrc"
-
-  # Database integration
-  database:
-    enabled: false
-    type: postgresql
-    connection:
-      host: localhost
-      port: 5432
-      database: worldenergydata
-      user: null
-      password: null
-
-  # Export formats for other systems
-  export:
-    enabled: false
-    formats:
-      - excel
-      - shapefile
-      - geojson
-      - kml
-
-# CLI Configuration
-cli:
-  default_state: null
-  default_county: null
-  default_format: json
-  verbose: false
-  dry_run: false
-
-# Notes on Free Public Data Sources
-# ---------------------------------
-# This module is designed to work exclusively with free public data sources.
-# No subscription services or paid APIs are used.
-#
-# Key free data sources:
-# 1. BLM MLRS - Federal land records, mining claims, oil & gas leases
-# 2. State GIS Portals - Well permits, production data, lease info
-# 3. County Recorder Websites - Property records (varies by county)
-# 4. USGS Geographic Names - Place name lookups
-# 5. Census Bureau - County FIPS codes and boundaries
-#
-# Limitations:
-# - County deed records often require in-person visits or paid services
-# - Some states have more comprehensive free data than others
-# - Real-time mineral ownership tracking typically requires subscription
-# - Historical chain of title searches may be incomplete
-#
-# For comprehensive title searches, professional landman services
-# or subscription databases (e.g., DrillingInfo, IHS) are recommended.
+non_goals:
+  - live_blm_acquisition
+  - live_county_portals
+  - live_state_gis
+  - federal_acreage_output
+  - legal_or_title_conclusions
