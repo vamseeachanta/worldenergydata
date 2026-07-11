@@ -35,7 +35,9 @@ import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 HERE = REPO / "reports/lower_tertiary/lifecycle/wells"
 TEMPLATE = HERE / "well_lifecycle_template.html"
 FACTS = HERE / "_wells.json"
-GENERATED = "Generated 2026-07-04"
+# Non-dated stamp: 56 pages are regenerated on every content change, so a
+# hardcoded date would go stale across the fleet (#948 review f9b).
+GENERATED = "BSEE benchmark (production) + V30 workbook (native rig-days)"
 TODAY_YEAR = 2026.5
 
 MONTHS = [
@@ -153,15 +155,20 @@ def facts_to_well(w: dict, field: dict) -> dict:
         metrics.append({"k": "Uptime", "v": f"{up:g}", "u": "%"})
 
     wo_n = len(w.get("workovers", []))
+    # Drill-card facts: omit TD / mud when the source has no value (the V30
+    # extract carries NaNs, sanitised to None upstream; ``.get(k, default)``
+    # would print "None" for a present-but-null key — #948 review f9).
+    drill_li = []
+    if w.get("max_tvd_ft") is not None:
+        drill_li.append(f"TD {w['max_tvd_ft']:,} ft")
+    if w.get("mud_weight_ppg") is not None:
+        drill_li.append(f"{w['mud_weight_ppg']:g} ppg mud")
+    drill_li.append(f"spud {_pretty(w['spud_date'])}")
     cards = [
         {
             "t": "Drill · done",
             "big": f"{drill:g} rig-days",
-            "li": [
-                f"TD {w.get('max_tvd_ft', 0):,} ft",
-                f"{w.get('mud_weight_ppg', '—')} ppg mud",
-                f"spud {_pretty(w['spud_date'])}",
-            ],
+            "li": drill_li,
         },
         {
             "t": "Complete · done",

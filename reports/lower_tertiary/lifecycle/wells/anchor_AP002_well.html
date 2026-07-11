@@ -88,7 +88,7 @@
       <span class="draft">Draft tracer · #758</span>
     </div>
   </header>
-  <!-- nav-spine --><div class="nav-spine" style="font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 10px;opacity:.75"><a href="../../index.html">worldenergydata</a> ▸ <a href="../../capabilities/index.html">Capabilities</a> ▸ <a href="../index.html">Life-cycle gallery</a> ▸ <a href="../big_foot_lifecycle.html">Big Foot</a> ▸ <span>Well A004</span></div>
+  <!-- nav-spine --><div class="nav-spine" style="font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 10px;opacity:.75"><a href="../../index.html">worldenergydata</a> ▸ <a href="../../capabilities/index.html">Capabilities</a> ▸ <a href="../index.html">Life-cycle gallery</a> ▸ <a href="../anchor_lifecycle.html">Anchor</a> ▸ <span>Well AP002</span></div>
 <div class="metrics" id="m"></div>
   <div class="body">
     <section><p class="lane-label">Well stages · <b>you are here</b></p><div class="scrollx"><div class="spine" id="spine"></div></div></section>
@@ -109,8 +109,8 @@
 
 <script>
 const WELL = {
-  "title": "Big Foot · A004",
-  "sub": "API 608124006001 · Walker Ridge 29 · Chevron · Wilcox / Lower Tertiary — nested under the <a href=\"../big_foot_lifecycle.html\">Big Foot field life-cycle</a>",
+  "title": "Anchor · AP002",
+  "sub": "API 608114075100 · Green Canyon 807 · Chevron · Lower Tertiary Wilcox — nested under the <a href=\"../anchor_lifecycle.html\">Anchor field life-cycle</a>",
   "statusLabel": "Producing",
   "generated": "BSEE benchmark (production) + V30 workbook (native rig-days)",
   "phases": [
@@ -139,38 +139,33 @@ const WELL = {
   "metrics": [
     {
       "k": "Drilling",
-      "v": "15",
+      "v": "82",
       "u": "rig-days"
     },
     {
       "k": "Completion",
-      "v": "156",
+      "v": "139",
       "u": "rig-days"
     },
     {
       "k": "Max TVD",
-      "v": "22,253",
+      "v": "33,367",
       "u": "ft"
     },
     {
-      "k": "Mud weight",
-      "v": "16.4",
-      "u": "ppg"
-    },
-    {
       "k": "Cum oil",
-      "v": "32.2",
+      "v": "9.9",
       "u": "MMbbl"
     },
     {
       "k": "Uptime",
-      "v": "93.7",
+      "v": "94.3",
       "u": "%"
     }
   ],
   "cAxis": {
     "start": 0,
-    "end": 171,
+    "end": 221,
     "ticks": [
       {
         "v": 0,
@@ -189,8 +184,12 @@ const WELL = {
         "t": "150"
       },
       {
-        "v": 171,
-        "t": "171"
+        "v": 200,
+        "t": "200"
+      },
+      {
+        "v": 221,
+        "t": "221"
       }
     ]
   },
@@ -198,42 +197,38 @@ const WELL = {
     {
       "x": 0,
       "lab": "Spud",
-      "dt": "Mar 2019",
+      "dt": "Nov 2022",
       "kind": ""
     },
     {
-      "x": 15,
+      "x": 82,
       "lab": "TD reached",
-      "dt": "Mar 2019",
+      "dt": "Feb 2023",
       "kind": ""
     },
     {
-      "x": 171,
+      "x": 221,
       "lab": "Completed",
-      "dt": "Jun 2019",
+      "dt": "Nov 2024",
       "kind": "now"
     }
   ],
   "cSpans": [
     {
       "from": 0,
-      "to": 15,
-      "txt": "Drill · 15 rig-days"
+      "to": 82,
+      "txt": "Drill · 82 rig-days"
     },
     {
-      "from": 15,
-      "to": 171,
-      "txt": "Complete · 156 rig-days"
+      "from": 82,
+      "to": 221,
+      "txt": "Complete · 139 rig-days"
     }
   ],
   "pAxis": {
-    "start": 2015,
-    "end": 2040,
+    "start": 2020,
+    "end": 2045,
     "ticks": [
-      {
-        "v": 2020,
-        "t": "2020"
-      },
       {
         "v": 2025,
         "t": "2025"
@@ -249,21 +244,19 @@ const WELL = {
       {
         "v": 2040,
         "t": "2040"
+      },
+      {
+        "v": 2045,
+        "t": "2045"
       }
     ]
   },
   "pGates": [
     {
-      "x": 2019.4583333333333,
+      "x": 2024.875,
       "lab": "First oil",
-      "dt": "Jun 2019",
+      "dt": "Nov 2024",
       "kind": "now"
-    },
-    {
-      "x": 2020.625,
-      "lab": "Workover",
-      "dt": "Aug 2020",
-      "kind": "sec"
     },
     {
       "x": 2026.5,
@@ -274,43 +267,42 @@ const WELL = {
   ],
   "pSpans": [
     {
-      "from": 2019.4583333333333,
-      "to": 2038,
-      "txt": "Producing · 32.2 MMbbl · 93.7% uptime"
+      "from": 2024.875,
+      "to": 2043,
+      "txt": "Producing · 9.9 MMbbl · 94.3% uptime"
     }
   ],
   "cards": [
     {
       "t": "Drill · done",
-      "big": "15 rig-days",
+      "big": "82 rig-days",
       "li": [
-        "TD 22,253 ft",
-        "16.4 ppg mud",
-        "spud Mar 2019"
+        "TD 33,367 ft",
+        "spud Nov 2022"
       ]
     },
     {
       "t": "Complete · done",
-      "big": "156 rig-days",
+      "big": "139 rig-days",
       "li": [
-        "first oil Jun 2019",
-        "Wilcox / Lower Tertiary"
+        "first oil Nov 2024",
+        "Lower Tertiary Wilcox"
       ]
     },
     {
       "t": "Produce · now",
-      "big": "32.2 MMbbl",
+      "big": "9.9 MMbbl",
       "li": [
-        "93.7% uptime",
-        "Big Foot · Extended Tension-Leg Platform (eTLP)"
+        "94.3% uptime",
+        "Anchor · Semisubmersible FPU"
       ],
       "cur": true
     },
     {
       "t": "Workover",
-      "big": "1 event",
+      "big": "0 events",
       "li": [
-        "Aug 2020 · Workover"
+        "none to date"
       ]
     },
     {
@@ -324,50 +316,50 @@ const WELL = {
   ],
   "economics": {
     "schema_version": "1.0",
-    "drill_cost_mm_usd": 5.7,
-    "completion_cost_mm_usd": 21.84,
-    "construction_cost_mm_usd": 27.54,
+    "drill_cost_mm_usd": 36.08,
+    "completion_cost_mm_usd": 31.27,
+    "construction_cost_mm_usd": 67.36,
     "rate_cells": [
       {
         "activity": "drilling",
         "band": "deep",
-        "year_requested": 2019,
-        "year_used": 2020,
-        "usd_per_day": 380000.0,
-        "rate_status": "clamped",
+        "year_requested": 2022,
+        "year_used": 2022,
+        "usd_per_day": 440000.0,
+        "rate_status": "exact",
         "vintage_fallback": "spud_year",
         "hpht_applied": false
       },
       {
         "activity": "completion",
         "band": "deep",
-        "year_requested": 2019,
-        "year_used": 2020,
-        "usd_per_day": 140000.0,
-        "rate_status": "clamped",
+        "year_requested": 2024,
+        "year_used": 2024,
+        "usd_per_day": 225000.0,
+        "rate_status": "exact",
         "vintage_fallback": "first_oil_year",
         "hpht_applied": false
       }
     ],
-    "revenue_mm_usd": 2324.5,
+    "revenue_mm_usd": 674.7,
     "revenue_flag": "",
     "revenue_source": "gross · BSEE monthly production × EIA WTI monthly (benchmark)",
-    "coverage_ratio": 84.4,
-    "coverage_status": "degraded",
-    "coverage_reason": "clamped-rate proxy (vintage outside rate DB range)",
+    "coverage_ratio": 10.0,
+    "coverage_status": "indicative",
+    "coverage_reason": null,
     "status": "producing",
     "notes": [
       "Nominal-USD proxy: day rates are nominal per-vintage-year; revenue is nominal realized; the coverage ratio mixes vintages and excludes royalty (~18.75%), working interest, services, mob/demob, opex, facilities, P&A and discounting — an indicative upper bound only."
     ],
-    "field_id": "big_foot",
+    "field_id": "anchor",
     "norms": {
       "state": "ok",
-      "field_median": 36.5,
-      "field_n": 24,
-      "well_vs_field_pct": -58.9,
-      "play_median": 47.0,
-      "play_n": 160,
-      "well_vs_play_pct": -68.1
+      "field_median": 51.0,
+      "field_n": 13,
+      "well_vs_field_pct": 60.8,
+      "play_median": 46.0,
+      "play_n": 171,
+      "well_vs_play_pct": 78.3
     },
     "display": {
       "cost_label": "Construction cost (proxy)",
