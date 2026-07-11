@@ -330,6 +330,22 @@ function renderField(x, f){
     uw = `<div class="xcardlet"><div class="xh">Underwriting signals</div><table>${lines.join("")}</table>
       <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Well-plugging P&amp;A is not attributed per field (BSEE well data lacks a lease join for these fields).</p></div>`;
   }
+  // Lease & landman card (#951): real lease id/depth/dev-system + placeholders
+  // linking the BSEE lease ingest issue.
+  let landman = "";
+  if (f.landman && f.landman.leases && f.landman.leases.length) {
+    const L = f.landman;
+    const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
+    const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
+    const rows = L.leases.map(r =>
+      `<tr><td>${esc(r.lease_num)}</td><td>${r.water_depth_ft?esc(r.water_depth_ft.toLocaleString())+" ft":ph}</td>`
+      + `<td>${r.dev_system?esc(r.dev_system):ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
+    const wi = (L.working_interest||[]).map(w=>`${esc(w.name)} ${w.wi}%${w.operator?" (op)":""}`).join(" · ");
+    landman = `<div class="xcardlet"><div class="xh">Lease &amp; landman</div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 6px">Operator <b>${esc(L.operator||"—")}</b>${wi?" · WI "+wi:""} · Blocks ${esc(L.blocks.join(", "))}</p>
+      <table class="xwells"><thead><tr><th>Lease</th><th>Depth</th><th>Dev</th><th>Status</th><th>Dates</th></tr></thead><tbody>${rows}</tbody></table>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Status, dates, per-lease block &amp; WI pending the <a href="${iss}">BSEE lease ingest (#${L.ingest_issue})</a> — contributions welcome.</p></div>`;
+  }
   show(`
     <div class="xtitle">${esc(f.name)}
       <span class="badge rich">${esc(f.statusLabel)}</span>
@@ -341,7 +357,7 @@ function renderField(x, f){
     <div class="xmets">${mets}</div>
     <div class="xcols">
       <div class="xcardlet"><div class="xh">Host &amp; field facts</div><table>${facts}</table></div>
-      ${perf}${resv}${uw}
+      ${perf}${resv}${uw}${landman}
     </div>
     <div class="xacts">${acts.join("")}</div>
     ${wellsNote}
