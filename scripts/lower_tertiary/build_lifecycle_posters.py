@@ -42,6 +42,10 @@ from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
 from worldenergydata.field_development.concept import build_concept  # noqa: E402
+from worldenergydata.field_development.layout import render_layout  # noqa: E402
+from worldenergydata.field_development.portfolio_concepts import (  # noqa: E402
+    concept_for,
+)
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
@@ -80,6 +84,35 @@ FIELDS_REGISTRY = load_fields()
 _LEASE_INGEST_ISSUE = 959
 # FDP-authoring backlog for the 7 LT fields without a portfolio page (#759).
 _FDP_INGEST_ISSUE = 962
+
+# Per-field caption for the architecture drawing (#969). cascade_chinook is drawn
+# from the Chinook-only concept (2 wells / tieback) — captioned honestly, NOT
+# "Cascade/Chinook" (r2 §3.3 decision). julia/stones caption their concept.
+_ARCH_CAPTION = {
+    "julia": "Julia subsea tieback",
+    "stones": "Stones FPSO",
+    "cascade_chinook": "Chinook subsea tieback",
+}
+
+
+def _architecture_for(field_id: str) -> dict:
+    """Architecture-drawing payload for one field (#969, epic #942).
+
+    Authored fields (cascade_chinook/julia/stones) carry an inline plan-view SVG
+    string rendered from their FieldConcept; the other 7 carry a visible
+    placeholder linking the FDP-authoring issue. Injected ONCE here so the poster
+    embed and the _explorer.json sidecar serialize the SAME object (identity gate).
+    """
+    concept = concept_for(field_id)
+    if concept is None:
+        return {"svg": None, "pending_issue": _FDP_INGEST_ISSUE}
+    return {
+        "svg": render_layout(concept),
+        "source": "render_layout",
+        "caption": _ARCH_CAPTION[field_id],
+    }
+
+
 _V30_DIR = (
     Path(__file__).resolve().parents[2]
     / "docs/modules/bsee/analysis/production/FDAS_V30"
@@ -410,6 +443,7 @@ def facts_to_field(f: dict) -> dict:
             has_fdp=bool(registry_field.surfaces.get("fdp_page")),
             fdp_issue=_FDP_INGEST_ISSUE,
         ),
+        "architecture": _architecture_for(f["id"]),
         "provenance": f.get(
             "provenance", "Data: field YAML + public disclosures + BSEE"
         ),
