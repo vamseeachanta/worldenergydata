@@ -278,6 +278,48 @@ def test_explorer_sidecar_published_and_covers_all_posters(public):
     assert explorer["wells"]["wells"], "wells contract embedded"
 
 
+def test_wells_rollout_fields_and_no_null_strings(public):
+    # #948: exactly the 7 producing LT fields carry a wells drill-down, and
+    # every generated well page is free of "null"/"None"/"nan" leakage or NaN.
+    explorer = _explorer(public)
+    with_wells = {
+        fid: f["wellsCount"]
+        for fid, f in explorer["fields"].items()
+        if f.get("wellsHref")
+    }
+    assert set(with_wells) == {
+        "big_foot",
+        "jack_st_malo",
+        "stones",
+        "julia",
+        "shenandoah",
+        "cascade_chinook",
+        "anchor",
+    }
+    embedded = explorer["wells"]["wells"]
+    assert len(embedded) == sum(with_wells.values()) == 56
+    assert "NaN" not in json.dumps(explorer)
+    bad = []
+    for page in (public / "lifecycle/wells").glob("*_well.html"):
+        text = page.read_text()
+        for token in (">None<", ">nan<", "None ppg", "nan ft", "NaN"):
+            if token in text:
+                bad.append((page.name, token))
+    assert not bad, f"null/NaN leakage in well pages: {bad}"
+
+
+def test_every_well_has_a_page(public):
+    embedded = _explorer(public)["wells"]["wells"]
+    missing = [
+        f"{w['field_id']}_{w['slot']}"
+        for w in embedded
+        if not (
+            public / f"lifecycle/wells/{w['field_id']}_{w['slot']}_well.html"
+        ).exists()
+    ]
+    assert not missing, f"wells without pages: {missing}"
+
+
 def test_explorer_hrefs_resolve_from_poster_and_shell_bases(public):
     # Payload hrefs are lifecycle/-relative BY CONTRACT. The shell at
     # field-atlas/ rebases every href against ../lifecycle/ before it reaches
