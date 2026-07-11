@@ -347,6 +347,7 @@ temporary_exceptions:
       - reports/lower_tertiary/jack_st_malo_npv_stackup.html
       - reports/lower_tertiary/julia_fdp.html
       - reports/lower_tertiary/julia_npv_stackup.html
+      - reports/lower_tertiary/lifecycle/_explorer.json
       - reports/lower_tertiary/lifecycle/_facts.json
       - reports/lower_tertiary/lifecycle/_norms.json
       - reports/lower_tertiary/lifecycle/_performance.json
@@ -423,6 +424,7 @@ temporary_exceptions:
       - reports/lower_tertiary/drilling_insights.html
       - reports/lower_tertiary/lt_drilling_insights.csv
       - reports/field-atlas/_roster.json
+      - reports/field-atlas/atlas_template.html
       - reports/field-atlas/index.html
       - reports/pressure-atlas/_pressure.json
       - reports/pressure-atlas/index.html

@@ -467,6 +467,13 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_src / "_performance.json",
                 lifecycle_dst / "_performance.json",
             )
+        if (lifecycle_src / "_explorer.json").exists():
+            # enriched field payloads + wells contract fetched by the
+            # field-atlas one-page Explorer shell (#946)
+            shutil.copy2(
+                lifecycle_src / "_explorer.json",
+                lifecycle_dst / "_explorer.json",
+            )
 
     # --- Drilling learning-curve front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
