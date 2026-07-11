@@ -485,6 +485,12 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     if drill_src.exists():
         shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
 
+    # --- Jack St Malo D&C over-count diagnostic (issue #846) ---
+    # Self-contained HTML built by scripts/lower_tertiary/build_jsm_dc_diff.py.
+    jsm_dc_src = REPORTS / "lower_tertiary" / "jsm_dc_diff.html"
+    if jsm_dc_src.exists():
+        shutil.copyfile(jsm_dc_src, PUBLIC / "jsm-dc-diff.html")
+
     # --- Economics pages (V30 by default; V50-only fields fall back to V50) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []  # (slug, display, page_filename, npv_str, npv_value)
