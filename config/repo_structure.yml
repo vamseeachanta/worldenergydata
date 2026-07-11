@@ -423,6 +423,7 @@ temporary_exceptions:
       - reports/field_development/spain_cores.json
       - reports/lower_tertiary/drilling_insights.html
       - reports/lower_tertiary/lt_drilling_insights.csv
+      - reports/field-atlas/_atlas_feed.json
       - reports/field-atlas/_roster.json
       - reports/field-atlas/atlas_template.html
       - reports/field-atlas/index.html
