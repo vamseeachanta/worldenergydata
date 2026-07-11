@@ -283,6 +283,7 @@
 <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
     <div id="f-assets"></div>
+    <div id="f-landman"></div>
 
     <div class="body">
       <section>
@@ -535,6 +536,53 @@ const FIELD = {
     },
     "decommissioning": null
   },
+  "landman": {
+    "leases": [
+      {
+        "lease_num": "G16965",
+        "lease_name": "Cascade",
+        "water_depth_ft": 8200,
+        "dev_system": "subsea15"
+      },
+      {
+        "lease_num": "G16997",
+        "lease_name": "Chinook",
+        "water_depth_ft": 8900,
+        "dev_system": "subsea15"
+      }
+    ],
+    "n_leases": 2,
+    "blocks": [
+      "WR205",
+      "WR206",
+      "WR469",
+      "WR470"
+    ],
+    "block_note": "Walker Ridge 206/250 (Cascade), 425/469 (Chinook)",
+    "operator": "MP Gulf of Mexico LLC (Murphy EXPRO)",
+    "working_interest": [
+      {
+        "name": "Murphy EXPRO (MP Gulf of Mexico LLC)",
+        "wi": 80,
+        "operator": true
+      },
+      {
+        "name": "Petrobras America Inc.",
+        "wi": 20,
+        "operator": false
+      }
+    ],
+    "pending": [
+      "status",
+      "effective_date",
+      "expiration_date",
+      "lease_type",
+      "per_lease_block",
+      "per_lease_working_interest",
+      "operator_of_record_history"
+    ],
+    "ingest_issue": 959
+  },
   "provenance": "Life-cycle dates and ownership from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. IMPORTANT: two YAML values were overridden as demonstrably wrong vs. well-documented public record — YAML first oil \"2021-08\" corrected to 2012-02 (Cascade first oil Feb 2012, Chinook Sep 2012; BW Pioneer was the first FPSO in the US GoM), and YAML operator/WI \"TotalEnergies 60% / Equinor 40%\" corrected to current MP Gulf of Mexico LLC (Murphy EXPRO 80% operator, Petrobras America 20%; originally Petrobras-operated with Total 33.33% in Chinook). LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
   "norms": [
     {
@@ -638,6 +686,30 @@ if (FIELD.assetsHref) $("f-assets").innerHTML =
   + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
+
+// Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
+// operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the
+// BSEE lease ingest issue — grabbable work, never a blank cell.
+if (FIELD.landman) {
+  const L = FIELD.landman;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
+  const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
+  const rows = L.leases.map(r =>
+    `<tr><td>${r.lease_num}</td><td>${r.water_depth_ft ? r.water_depth_ft.toLocaleString()+" ft" : ph}</td>`
+    + `<td>${r.dev_system || ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
+  const wi = (L.working_interest || []).map(w =>
+    `${w.name} ${w.wi}%${w.operator ? " (op)" : ""}`).join(" · ");
+  $("f-landman").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
+    + `<p style="margin:0 0 4px;font-size:13px;color:var(--muted)">Operator <b>${L.operator||"—"}</b>`
+    + `${wi ? " · WI " + wi : ""} · Blocks ${L.blocks.join(", ")}${L.block_note ? " ("+L.block_note+")" : ""}</p>`
+    + `<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Lease status, dates, per-lease block &amp; working interest pending the `
+    + `<a href="${iss}">BSEE lease-data ingest (#${L.ingest_issue})</a> — contributions welcome.</p>`
+    + `<div class="scrollx"><table style="width:100%;border-collapse:collapse;font-size:12.5px">`
+    + `<thead><tr style="text-align:left;color:var(--muted)"><th>Lease</th><th>Water depth</th><th>Dev system</th>`
+    + `<th>Status</th><th>Effective</th><th>Expiration</th><th>WI</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
 
 $("f-metrics").innerHTML = FIELD.metrics.map(m =>
   `<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`

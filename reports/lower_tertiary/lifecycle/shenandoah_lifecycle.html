@@ -283,6 +283,7 @@
 <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
     <div id="f-assets"></div>
+    <div id="f-landman"></div>
 
     <div class="body">
       <section>
@@ -553,6 +554,55 @@ const FIELD = {
     },
     "decommissioning": null
   },
+  "landman": {
+    "leases": [
+      {
+        "lease_num": "G25232",
+        "lease_name": "Shenandoah",
+        "water_depth_ft": 5840,
+        "dev_system": "subsea20"
+      },
+      {
+        "lease_num": "G31938",
+        "lease_name": "Shenandoah",
+        "water_depth_ft": 5800,
+        "dev_system": "subsea20"
+      }
+    ],
+    "n_leases": 2,
+    "blocks": [
+      "WR051"
+    ],
+    "block_note": "Walker Ridge 52 (blocks 51, 52, N/2 53)",
+    "operator": "Beacon Offshore Energy",
+    "working_interest": [
+      {
+        "name": "Beacon Offshore Energy",
+        "wi": 31,
+        "operator": true
+      },
+      {
+        "name": "Navitas Petroleum",
+        "wi": 49,
+        "operator": false
+      },
+      {
+        "name": "HEQ Deepwater (Quantum Energy Partners)",
+        "wi": 20,
+        "operator": false
+      }
+    ],
+    "pending": [
+      "status",
+      "effective_date",
+      "expiration_date",
+      "lease_type",
+      "per_lease_block",
+      "per_lease_working_interest",
+      "operator_of_record_history"
+    ],
+    "ingest_issue": 959
+  },
   "provenance": "Base facts (operator, capex, plateau, GOR, data through) from in-repo YAML; discovery 2009 (Anadarko Shenandoah-1, WR52), FID/sanction Aug 2021 (Beacon+Navitas), and actual first oil (first of 4 wells online 25 Jul 2025; ramped to 100 kbopd plateau Oct 2025) from public sources — first oil corrected to 2025-07 vs YAML's placeholder 2025-10. Current WI (Beacon 31% op / Navitas 49% / HEQ 20%) post-2021 restructuring. CAPEX 1.8 is YAML-stated and largely reflects pre-development E&A spend (LOW CONFIDENCE for full development cost); OPEX and projected end-of-production, not available (not defensibly sourced); water depth ~5,800 ft.",
   "norms": [
     {
@@ -656,6 +706,30 @@ if (FIELD.assetsHref) $("f-assets").innerHTML =
   + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
+
+// Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
+// operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the
+// BSEE lease ingest issue — grabbable work, never a blank cell.
+if (FIELD.landman) {
+  const L = FIELD.landman;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
+  const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
+  const rows = L.leases.map(r =>
+    `<tr><td>${r.lease_num}</td><td>${r.water_depth_ft ? r.water_depth_ft.toLocaleString()+" ft" : ph}</td>`
+    + `<td>${r.dev_system || ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
+  const wi = (L.working_interest || []).map(w =>
+    `${w.name} ${w.wi}%${w.operator ? " (op)" : ""}`).join(" · ");
+  $("f-landman").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
+    + `<p style="margin:0 0 4px;font-size:13px;color:var(--muted)">Operator <b>${L.operator||"—"}</b>`
+    + `${wi ? " · WI " + wi : ""} · Blocks ${L.blocks.join(", ")}${L.block_note ? " ("+L.block_note+")" : ""}</p>`
+    + `<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Lease status, dates, per-lease block &amp; working interest pending the `
+    + `<a href="${iss}">BSEE lease-data ingest (#${L.ingest_issue})</a> — contributions welcome.</p>`
+    + `<div class="scrollx"><table style="width:100%;border-collapse:collapse;font-size:12.5px">`
+    + `<thead><tr style="text-align:left;color:var(--muted)"><th>Lease</th><th>Water depth</th><th>Dev system</th>`
+    + `<th>Status</th><th>Effective</th><th>Expiration</th><th>WI</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
 
 $("f-metrics").innerHTML = FIELD.metrics.map(m =>
   `<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`

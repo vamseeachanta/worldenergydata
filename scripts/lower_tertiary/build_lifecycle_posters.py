@@ -38,6 +38,9 @@ from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
+from worldenergydata.field_development.landman import (  # noqa: E402
+    build_landman,
+)
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
@@ -68,6 +71,53 @@ def _load_decom_rows() -> list[dict]:
 _DECOM_ROWS = _load_decom_rows()
 TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
 FIELDS_REGISTRY = load_fields()
+
+# BSEE lease attributes for the landman panel (#951). Committed source is the
+# FDAS V30 lease workbook (name/depth/dev-system only); status/dates/WI/block are
+# placeholders linking the ingest issue below. Build-time only (pandas); the
+# published site just copies the frozen posters + _explorer.json.
+_LEASE_INGEST_ISSUE = 959
+_V30_DIR = (
+    Path(__file__).resolve().parents[2]
+    / "docs/modules/bsee/analysis/production/FDAS_V30"
+)
+
+
+def _load_lease_rows() -> dict:
+    """{normalized_lease_num: {water_depth_ft, dev_system, lease_name}}."""
+    try:
+        import pandas as pd
+    except ImportError:
+        return {}
+    rows: dict[str, dict] = {}
+    for name in ("leases.xlsx", "leases_v21_kc.csv"):
+        path = _V30_DIR / name
+        if not path.exists():
+            continue
+        df = pd.read_excel(path) if name.endswith(".xlsx") else pd.read_csv(path)
+        for _, r in df.iterrows():
+            key = str(r["LEASE_NUM"]).upper().replace(" ", "").strip()
+            wd = pd.to_numeric(r.get("WATER_DEPTH"), errors="coerce")
+            rows.setdefault(
+                key,
+                {
+                    "lease_name": (
+                        str(r["LEASE_NAME"]).strip()
+                        if pd.notna(r.get("LEASE_NAME"))
+                        else None
+                    ),
+                    "water_depth_ft": int(wd) if pd.notna(wd) else None,
+                    "dev_system": (
+                        str(r["DEV_SYSTEM"]).strip()
+                        if pd.notna(r.get("DEV_SYSTEM"))
+                        else None
+                    ),
+                },
+            )
+    return rows
+
+
+_LEASE_ROWS = _load_lease_rows()
 
 PHASE_KEYS = [
     "acquire",
@@ -339,6 +389,14 @@ def facts_to_field(f: dict) -> dict:
                 f.get("decommissioning_facility"), _DECOM_ROWS
             ),
         },
+        "landman": build_landman(
+            f,
+            list(registry_field.leases),
+            list(registry_field.area_blocks),
+            _LEASE_ROWS,
+            _LEASE_INGEST_ISSUE,
+            registry_field.bsee_block_note,
+        ),
         "provenance": f.get(
             "provenance", "Data: field YAML + public disclosures + BSEE"
         ),
