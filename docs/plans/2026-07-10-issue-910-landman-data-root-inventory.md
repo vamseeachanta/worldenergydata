@@ -1,6 +1,6 @@
 # Plan for #910: inventory Landman underwriting data roots
 
-> **Status:** draft
+> **Status:** implementation
 > **Complexity:** T2
 > **Date:** 2026-07-10
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/910
