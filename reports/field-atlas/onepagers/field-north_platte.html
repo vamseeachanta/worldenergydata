@@ -1,0 +1,72 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<style>
+  @page{size:A4;margin:0}
+  :root{--navy:#0B3D91;--teal:#0f8a7e;--ink:#13233f;--muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;
+       width:210mm;min-height:297mm;padding:16mm 18mm 14mm}
+  .top{display:flex;align-items:center;justify-content:space-between;
+       border-bottom:2px solid var(--navy);padding-bottom:12px}
+  .top svg{height:30px;width:auto}
+  .kind{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  h1{font-size:29px;color:var(--navy);margin:20px 0 3px;letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--muted);font-weight:600;font-size:13.5px}
+  .chips{margin:12px 0 2px;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;
+        border:1px solid var(--teal);color:var(--teal);background:transparent}
+  .chip.hpht{border-color:#f5a524;color:#b9760a}
+  .mets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 4px}
+  .met{background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+  .met .v{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+  .met .l{font-size:11px;color:var(--muted);margin-top:2px}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+     margin:22px 0 9px;border-left:4px solid var(--teal);padding-left:10px}
+  .snap{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .snap .cell{border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .snap .v{font-size:16px;font-weight:800;color:var(--ink)}
+  .snap .l{font-size:10.5px;color:var(--muted);margin-top:2px}
+  .ph{background:var(--soft);border:1px dashed var(--teal);border-radius:10px;padding:12px 14px;
+      font-size:13px;line-height:1.5;color:var(--ink)}
+  .ph a{color:var(--navy);font-weight:700}
+  table.lease{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+  table.lease th{text-align:left;color:var(--muted);font-size:10.5px;text-transform:uppercase;
+                 letter-spacing:.5px;border-bottom:1px solid var(--line);padding:4px 6px}
+  table.lease td{padding:5px 6px;border-bottom:1px solid var(--line)}
+  .leadin{font-size:12px;color:var(--muted);margin:0 0 4px}
+  .pending{color:var(--muted)}
+  .prov{font-size:11px;line-height:1.5;color:var(--muted);margin-top:16px;
+        border-top:1px solid var(--line);padding-top:10px}
+  .foot{position:absolute;left:18mm;right:18mm;bottom:14mm;border-top:1px solid var(--line);
+        padding-top:9px;display:flex;justify-content:space-between;align-items:flex-end;
+        font-size:11px;color:var(--muted)}
+  .foot .live{color:var(--navy);font-weight:700}
+</style></head>
+<body>
+  <div class="top"><svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-label="worldenergydata">
+  <g fill="none" stroke-width="3">
+    <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
+    <ellipse cx="32" cy="32" rx="9.5" ry="23" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="9" y1="32" x2="55" y2="32" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="13.5" y1="19" x2="50.5" y2="19" stroke="#0B3D91" stroke-width="2"/>
+    <line x1="13.5" y1="45" x2="50.5" y2="45" stroke="#0B3D91" stroke-width="2"/>
+  </g>
+  <circle cx="32" cy="32" r="3" fill="#2BB2A6"/>
+  <text x="74" y="43" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">
+    <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
+  </text>
+</svg><div class="kind">Field one-pager · Lower Tertiary</div></div>
+  <h1>North Platte (renamed Sparta)</h1>
+  <p class="sub">Shell &middot; Garden Banks 959 (straddles GB 915/916/958/959) · US Gulf of Mexico</p>
+  <div class="chips"><span class="chip hpht">ultra-HPHT · 20k-psi equipment</span></div>
+  <div class="mets"><div class="met"><div class="v">4,265 ft</div><div class="l">Water depth</div></div><div class="met"><div class="v">75 mbopd</div><div class="l">Plateau rate</div></div><div class="met"><div class="v">1,100 scf/bbl</div><div class="l">GOR</div></div><div class="met"><div class="v">51 %</div><div class="l">Operator WI</div></div></div>
+  <h2>Performance snapshot</h2>
+  <div class="ph">Production &amp; performance figures are pending &mdash; this field is pre-production, so no oil has flowed yet. Rollout tracked in <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>.</div>
+  <h2>Lease &amp; landman</h2>
+  <p class="leadin">Operator <b>Shell</b> &middot; WI Shell 51% (op) &middot; Equinor 49% &middot; Blocks GB915, GB916, GB958, GB959</p><table class="lease"><thead><tr><th>Lease</th><th>Depth</th><th>Dev</th><th>Status</th></tr></thead><tbody><tr><td>G30876</td><td>5,840 ft</td><td>subsea20</td><td><a class="pending" href="https://github.com/vamseeachanta/worldenergydata/issues/959">&mdash; pending</a></td></tr><tr><td>G32460</td><td>4,230 ft</td><td>subsea20</td><td><a class="pending" href="https://github.com/vamseeachanta/worldenergydata/issues/959">&mdash; pending</a></td></tr></tbody></table><p class="leadin" style="margin-top:6px">Status, dates &amp; per-lease detail pending the <a href="https://github.com/vamseeachanta/worldenergydata/issues/959">BSEE lease ingest (#959)</a>.</p>
+  <p class="prov">Provenance: Basis: in-repo YAML (superseded TotalEnergies pre-FID case) reconciled against current public record. North Platte was discovered 2012 (Cobalt/Total, Garden Banks). TotalEnergies (then 60% op, Equinor 40%) withdrew Feb 2022; Shell bought 51% and took operatorship from Equinor (49%), redesigned and renamed the project &quot;Sparta.&quot; Shell took FID Dec 2023; first oil projected 2028 (left blank — not yet producing). Water depth ~4,265 ft, subsalt Wilcox, newbuild semisubmersible FPU (8 subsea wells) with ~90,000 boe/d peak (~75 mbopd oil plateau; GOR 1100 scf/bbl from YAML). LOW-CONFIDENCE: capex — YAML&#x27;s $6B reflects the abandoned TotalEnergies ~$5-7B concept, not Shell&#x27;s simplified Sparta scope (not publicly disclosed), so not available; opex and projected COP year not publicly defensible.</p>
+  <div class="foot">
+    <div>worldenergydata &middot; open energy-data &middot; deterministic outputs on public regulatory filings<br>
+      <span class="live">Explore live: https://vamseeachanta.github.io/worldenergydata/field-atlas/#/field/north_platte</span></div>
+    <span>Status: Under construction</span>
+  </div>
+</body></html>
