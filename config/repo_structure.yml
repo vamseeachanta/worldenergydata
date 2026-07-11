@@ -441,10 +441,62 @@ temporary_exceptions:
       - reports/lower_tertiary/data/julia_wells.json
       - reports/lower_tertiary/lifecycle/assets/stones_assets.html
       - reports/lower_tertiary/lifecycle/wells/_wells.json
+      - reports/lower_tertiary/lifecycle/wells/_wells_overrides.json
+      - reports/lower_tertiary/lifecycle/wells/anchor_AP001_well.html
+      - reports/lower_tertiary/lifecycle/wells/anchor_AP002_well.html
+      - reports/lower_tertiary/lifecycle/wells/anchor_w6101_well.html
       - reports/lower_tertiary/lifecycle/wells/big_foot_A001_well.html
       - reports/lower_tertiary/lifecycle/wells/big_foot_A002_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A003_well.html
       - reports/lower_tertiary/lifecycle/wells/big_foot_A004_well.html
       - reports/lower_tertiary/lifecycle/wells/big_foot_A006_well.html
       - reports/lower_tertiary/lifecycle/wells/big_foot_A008_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A011-7102_well.html
+      - reports/lower_tertiary/lifecycle/wells/big_foot_A011-7103_well.html
+      - reports/lower_tertiary/lifecycle/wells/cascade_chinook_CA006_well.html
+      - reports/lower_tertiary/lifecycle/wells/cascade_chinook_CH002_well.html
+      - reports/lower_tertiary/lifecycle/wells/cascade_chinook_CH004_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PN001_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PN002_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PN005_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PN007_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS001-5203_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS001-5700_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS002-1400_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS002-1701_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS003-2601_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS003-5600_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS004-5103_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS004-5800_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS005-1801_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS005-5000_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS006-2500_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS006-3600_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS007-1504_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS007-2200_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS008-1606_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS008-5100_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS009_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS011_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS012_well.html
+      - reports/lower_tertiary/lifecycle/wells/jack_st_malo_PS014_well.html
+      - reports/lower_tertiary/lifecycle/wells/julia_DC101_well.html
+      - reports/lower_tertiary/lifecycle/wells/julia_JU102_well.html
+      - reports/lower_tertiary/lifecycle/wells/julia_JU104_well.html
+      - reports/lower_tertiary/lifecycle/wells/julia_JU106_well.html
+      - reports/lower_tertiary/lifecycle/wells/shenandoah_SA007_well.html
+      - reports/lower_tertiary/lifecycle/wells/shenandoah_SA008_well.html
+      - reports/lower_tertiary/lifecycle/wells/shenandoah_SA009_well.html
+      - reports/lower_tertiary/lifecycle/wells/shenandoah_SA010_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN105_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN109_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN110_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN114_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN115_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN207_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN208_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN213_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN216_well.html
+      - reports/lower_tertiary/lifecycle/wells/stones_SN219_well.html
       - reports/lower_tertiary/lifecycle/wells/index.html
       - reports/lower_tertiary/lifecycle/wells/well_lifecycle_template.html

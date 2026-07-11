@@ -1,0 +1,442 @@
+<meta charset="utf-8">
+<title>Well Life-Cycle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg:#eef2f6; --panel:#fff; --panel-2:#f6f9fc; --ink:#0c1a28; --muted:#5a6b7b; --line:#d6e0ea;
+    --accent:#d9822b; --accent-ink:#7a4410; --done:#1d5fa8; --done-deep:#10365e; --future:#a9bccd;
+    --good:#2e9e6b; --alert:#c0453b; --primary-gate:#1d5fa8;
+    --shadow:0 1px 2px rgba(12,26,40,.06),0 8px 24px rgba(12,26,40,.06);
+    --mono:ui-monospace,"SF Mono","Cascadia Code",Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#0a141f;--panel:#10202f;--panel-2:#0d1b28;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;
+    --accent:#f0a24a;--accent-ink:#f7c489;--done:#4d91d6;--done-deep:#2f6ba8;--future:#3a5064;
+    --good:#43b982;--alert:#e0685e;--primary-gate:#5b9de0;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);}}
+  :root[data-theme="dark"]{--bg:#0a141f;--panel:#10202f;--panel-2:#0d1b28;--ink:#e8eef4;--muted:#8ca0b3;--line:#24384b;
+    --accent:#f0a24a;--accent-ink:#f7c489;--done:#4d91d6;--done-deep:#2f6ba8;--future:#3a5064;--good:#43b982;--alert:#e0685e;--primary-gate:#5b9de0;}
+  :root[data-theme="light"]{--bg:#eef2f6;--panel:#fff;--panel-2:#f6f9fc;--ink:#0c1a28;--muted:#5a6b7b;--line:#d6e0ea;
+    --accent:#d9822b;--accent-ink:#7a4410;--done:#1d5fa8;--done-deep:#10365e;--future:#a9bccd;--good:#2e9e6b;--alert:#c0453b;--primary-gate:#1d5fa8;}
+  *{box-sizing:border-box} body{margin:0}
+  .wrap{background:var(--bg);color:var(--ink);font-family:var(--sans);padding:clamp(16px,3vw,40px);min-height:100%}
+  .sheet{max-width:1180px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
+  .head{padding:clamp(18px,2.4vw,30px);border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+  .title{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.02}
+  .sub{color:var(--muted);margin:8px 0 0;font-size:14.5px;max-width:66ch}
+  .sub a{color:var(--accent-ink)} :root[data-theme="dark"] .sub a,@media(prefers-color-scheme:dark){.sub a{color:var(--accent)}}
+  .status{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent);border:1px solid color-mix(in srgb,var(--good) 40%,transparent);padding:6px 12px;border-radius:999px;white-space:nowrap}
+  .status .dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px color-mix(in srgb,var(--good) 22%,transparent)}
+  .draft{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--alert);
+    border:1px solid color-mix(in srgb,var(--alert) 45%,transparent);padding:3px 8px;border-radius:5px}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+  .metric{background:var(--panel-2);padding:14px 18px}
+  .metric .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .metric .v{font-family:var(--mono);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px}
+  .metric .v small{font-size:12px;color:var(--muted);font-weight:500}
+  .body{padding:clamp(18px,2.4vw,30px);display:grid;gap:30px}
+  .lane-label{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;font-weight:600}
+  .lane-label b{color:var(--accent-ink)} :root[data-theme="dark"] .lane-label b,@media(prefers-color-scheme:dark){.lane-label b{color:var(--accent)}}
+  .scrollx{overflow-x:auto;padding-bottom:4px}
+  .spine{display:flex;min-width:640px;gap:4px}
+  .phase{position:relative;flex:1 1 0;min-width:96px;padding:14px 14px 14px 26px;color:#fff;
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%,16px 50%);background:var(--future)}
+  .phase:first-child{padding-left:16px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 50%,calc(100% - 16px) 100%,0 100%)}
+  .phase.done{background:var(--done)} .phase.done.deep{background:var(--done-deep)}
+  .phase.current{background:var(--accent);color:#1c1206;box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 45%,transparent);z-index:3}
+  .phase.future{background:color-mix(in srgb,var(--future) 55%,var(--panel));color:var(--muted)}
+  .phase .pn{font-weight:800;font-size:15px} .phase .pk{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-bottom:2px}
+  .youhere{position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);white-space:nowrap}
+  :root[data-theme="dark"] .youhere,@media(prefers-color-scheme:dark){.youhere{color:var(--accent)}}
+  .youhere::after{content:"▼";display:block;text-align:center;margin-top:2px;color:var(--accent)}
+  .tl{position:relative;min-width:640px;height:120px;margin-top:6px}
+  .tl-axis{position:absolute;left:0;right:0;top:82px;height:2px;background:linear-gradient(90deg,var(--future),var(--done) 55%,var(--accent))}
+  .tl-tick{position:absolute;top:90px;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .tl-tick::before{content:"";position:absolute;top:-10px;left:50%;width:1px;height:7px;background:var(--line)}
+  .tl-gate{position:absolute;top:82px;transform:translate(-50%,-50%);width:13px;height:13px;border-radius:50%;background:var(--primary-gate);border:2.5px solid var(--panel);box-shadow:0 0 0 1px var(--primary-gate);z-index:2}
+  .tl-gate.sec{background:var(--alert);box-shadow:0 0 0 1px var(--alert)}
+  .tl-gate.now{background:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 0 6px color-mix(in srgb,var(--accent) 22%,transparent)}
+  .tl-flag{position:absolute;bottom:42px;transform:translateX(-50%);text-align:center;width:120px}
+  .tl-flag .lab{font-size:12px;font-weight:700;line-height:1.15} .tl-flag .dt{font-family:var(--mono);font-size:11px;color:var(--accent-ink);font-variant-numeric:tabular-nums}
+  :root[data-theme="dark"] .tl-flag .dt,@media(prefers-color-scheme:dark){.tl-flag .dt{color:var(--accent)}}
+  .tl-flag .stem{position:absolute;left:50%;bottom:-14px;width:1.5px;height:14px;background:var(--line)}
+  .tl-span{position:absolute;top:68px;height:22px;display:flex;align-items:center;justify-content:center}
+  .tl-span .bar{position:absolute;left:0;right:0;top:9px;height:3px;border-radius:2px;background:color-mix(in srgb,var(--done) 45%,transparent)}
+  .tl-span .txt{position:relative;font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--panel);padding:0 6px;white-space:nowrap}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+  .card{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .card h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--done)}
+  .card.cur h4{color:var(--accent-ink)} :root[data-theme="dark"] .card.cur h4,@media(prefers-color-scheme:dark){.card.cur h4{color:var(--accent)}}
+  .card .big{font-family:var(--mono);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .card ul{margin:6px 0 0;padding-left:15px} .card li{font-size:12.5px;color:var(--muted);margin-bottom:2px}
+  .foot{border-top:1px solid var(--line);padding:16px clamp(18px,2.4vw,30px);display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;font-size:11px;color:var(--muted);font-family:var(--mono)}
+  .econ-note{font-size:11px;line-height:1.5;color:#5a6b7b;margin:10px 2px 0;max-width:900px}
+  @media (prefers-color-scheme:dark){.econ-note{color:#8fa3b5}}
+</style>
+
+<div class="wrap"><div class="sheet">
+  <header class="head">
+    <div>
+      <p class="eyebrow">Well life-cycle · deep-dive</p>
+      <h1 class="title" id="t">—</h1>
+      <p class="sub" id="s">—</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+      <span class="status"><span class="dot"></span><span id="st">—</span></span>
+      <span class="draft">Draft tracer · #758</span>
+    </div>
+  </header>
+  <!-- nav-spine --><div class="nav-spine" style="font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 10px;opacity:.75"><a href="../../index.html">worldenergydata</a> ▸ <a href="../../capabilities/index.html">Capabilities</a> ▸ <a href="../index.html">Life-cycle gallery</a> ▸ <a href="../anchor_lifecycle.html">Anchor</a> ▸ <span>Well AP001</span></div>
+<div class="metrics" id="m"></div>
+  <div class="body">
+    <section><p class="lane-label">Well stages · <b>you are here</b></p><div class="scrollx"><div class="spine" id="spine"></div></div></section>
+    <section><p class="lane-label">Well construction · rig-day scale</p><div class="scrollx"><div class="tl" id="tlc"></div></div></section>
+    <section><p class="lane-label">Production life · calendar years</p><div class="scrollx"><div class="tl" id="tlp"></div></div></section>
+    <section><p class="lane-label">Stage detail</p><div class="cards" id="cards"></div></section>
+    <section id="econ-section" hidden>
+      <p class="lane-label">Economics (proxy) · rig-days × day-rate vs gross revenue</p>
+      <div class="cards" id="econ"></div>
+      <p class="econ-note" id="econ-note"></p>
+    </section>
+  </div>
+  <footer class="foot">
+    <span>Data: BSEE WAR (spud/complete/workover milestones) + V30 drilling workbook (native rig-days, TD, mud wt) + OGOR-A (first oil, cum, uptime). Draft tracer — refs #758/#754.</span>
+    <span id="gen">original artwork</span>
+  </footer>
+</div></div>
+
+<script>
+const WELL = {
+  "title": "Anchor · AP001",
+  "sub": "API 608114075000 · Green Canyon 807 · Chevron · Lower Tertiary Wilcox — nested under the <a href=\"../anchor_lifecycle.html\">Anchor field life-cycle</a>",
+  "statusLabel": "Producing",
+  "generated": "BSEE benchmark (production) + V30 workbook (native rig-days)",
+  "phases": [
+    {
+      "k": "spud",
+      "n": "Spud"
+    },
+    {
+      "k": "drill",
+      "n": "Drill"
+    },
+    {
+      "k": "complete",
+      "n": "Complete"
+    },
+    {
+      "k": "produce",
+      "n": "Produce"
+    },
+    {
+      "k": "abandon",
+      "n": "Abandon"
+    }
+  ],
+  "current": "produce",
+  "metrics": [
+    {
+      "k": "Drilling",
+      "v": "96",
+      "u": "rig-days"
+    },
+    {
+      "k": "Completion",
+      "v": "260",
+      "u": "rig-days"
+    },
+    {
+      "k": "Max TVD",
+      "v": "33,399",
+      "u": "ft"
+    },
+    {
+      "k": "Cum oil",
+      "v": "8.4",
+      "u": "MMbbl"
+    },
+    {
+      "k": "Uptime",
+      "v": "93.3",
+      "u": "%"
+    }
+  ],
+  "cAxis": {
+    "start": 0,
+    "end": 356,
+    "ticks": [
+      {
+        "v": 0,
+        "t": "0"
+      },
+      {
+        "v": 100,
+        "t": "100"
+      },
+      {
+        "v": 200,
+        "t": "200"
+      },
+      {
+        "v": 300,
+        "t": "300"
+      },
+      {
+        "v": 356,
+        "t": "356"
+      }
+    ]
+  },
+  "cGates": [
+    {
+      "x": 0,
+      "lab": "Spud",
+      "dt": "Dec 2021",
+      "kind": ""
+    },
+    {
+      "x": 96,
+      "lab": "TD reached",
+      "dt": "Mar 2022",
+      "kind": ""
+    },
+    {
+      "x": 356,
+      "lab": "Completed",
+      "dt": "Aug 2024",
+      "kind": "now"
+    }
+  ],
+  "cSpans": [
+    {
+      "from": 0,
+      "to": 96,
+      "txt": "Drill · 96 rig-days"
+    },
+    {
+      "from": 96,
+      "to": 356,
+      "txt": "Complete · 260 rig-days"
+    }
+  ],
+  "pAxis": {
+    "start": 2020,
+    "end": 2045,
+    "ticks": [
+      {
+        "v": 2025,
+        "t": "2025"
+      },
+      {
+        "v": 2030,
+        "t": "2030"
+      },
+      {
+        "v": 2035,
+        "t": "2035"
+      },
+      {
+        "v": 2040,
+        "t": "2040"
+      },
+      {
+        "v": 2045,
+        "t": "2045"
+      }
+    ]
+  },
+  "pGates": [
+    {
+      "x": 2024.625,
+      "lab": "First oil",
+      "dt": "Aug 2024",
+      "kind": "now"
+    },
+    {
+      "x": 2026.5,
+      "lab": "Today",
+      "dt": "2026",
+      "kind": "nowmark"
+    }
+  ],
+  "pSpans": [
+    {
+      "from": 2024.625,
+      "to": 2043,
+      "txt": "Producing · 8.4 MMbbl · 93.3% uptime"
+    }
+  ],
+  "cards": [
+    {
+      "t": "Drill · done",
+      "big": "96 rig-days",
+      "li": [
+        "TD 33,399 ft",
+        "spud Dec 2021"
+      ]
+    },
+    {
+      "t": "Complete · done",
+      "big": "260 rig-days",
+      "li": [
+        "first oil Aug 2024",
+        "Lower Tertiary Wilcox"
+      ]
+    },
+    {
+      "t": "Produce · now",
+      "big": "8.4 MMbbl",
+      "li": [
+        "93.3% uptime",
+        "Anchor · Semisubmersible FPU"
+      ],
+      "cur": true
+    },
+    {
+      "t": "Workover",
+      "big": "0 events",
+      "li": [
+        "none to date"
+      ]
+    },
+    {
+      "t": "Abandon",
+      "big": "—",
+      "li": [
+        "still producing",
+        "no P&A"
+      ]
+    }
+  ],
+  "economics": {
+    "schema_version": "1.0",
+    "drill_cost_mm_usd": 37.44,
+    "completion_cost_mm_usd": 58.5,
+    "construction_cost_mm_usd": 95.94,
+    "rate_cells": [
+      {
+        "activity": "drilling",
+        "band": "deep",
+        "year_requested": 2021,
+        "year_used": 2021,
+        "usd_per_day": 390000.0,
+        "rate_status": "exact",
+        "vintage_fallback": "spud_year",
+        "hpht_applied": false
+      },
+      {
+        "activity": "completion",
+        "band": "deep",
+        "year_requested": 2024,
+        "year_used": 2024,
+        "usd_per_day": 225000.0,
+        "rate_status": "exact",
+        "vintage_fallback": "first_oil_year",
+        "hpht_applied": false
+      }
+    ],
+    "revenue_mm_usd": 579.4,
+    "revenue_flag": "",
+    "revenue_source": "gross · BSEE monthly production × EIA WTI monthly (benchmark)",
+    "coverage_ratio": 6.0,
+    "coverage_status": "indicative",
+    "coverage_reason": null,
+    "status": "producing",
+    "notes": [
+      "Nominal-USD proxy: day rates are nominal per-vintage-year; revenue is nominal realized; the coverage ratio mixes vintages and excludes royalty (~18.75%), working interest, services, mob/demob, opex, facilities, P&A and discounting — an indicative upper bound only."
+    ],
+    "field_id": "anchor",
+    "norms": {
+      "state": "ok",
+      "field_median": 51.0,
+      "field_n": 13,
+      "well_vs_field_pct": 88.2,
+      "play_median": 46.0,
+      "play_n": 171,
+      "well_vs_play_pct": 108.7
+    },
+    "display": {
+      "cost_label": "Construction cost (proxy)",
+      "cost_qualifier": "proxy · medium confidence · excl. mob/demob & services",
+      "revenue_label": "Revenue to date",
+      "coverage_label": "Gross-revenue coverage (indicative)"
+    }
+  }
+};
+const $=id=>document.getElementById(id);
+document.title = WELL.title + " — Well Life-Cycle";
+$("t").textContent = WELL.title;
+$("s").innerHTML = WELL.sub;
+$("st").textContent = WELL.statusLabel;
+$("gen").textContent = WELL.generated + " · original artwork";
+const curIdx=WELL.phases.findIndex(p=>p.k===WELL.current);
+$("m").innerHTML=WELL.metrics.map(m=>`<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`).join("");
+$("spine").innerHTML=WELL.phases.map((p,i)=>{
+  let c="future"; if(i<curIdx)c="done"; else if(i===curIdx)c="current";
+  const here=i===curIdx?'<div class="youhere">You are here</div>':"";
+  return `<div class="phase ${c}">${here}<div class="pk">Stage ${i+1}</div><div class="pn">${p.n}</div></div>`;
+}).join("");
+function renderTL(el,axis,gates,spans){
+  const pos=v=>3+((v-axis.start)/(axis.end-axis.start))*94;  // inset so edge flags aren't clipped
+  let h=`<div class="tl-axis"></div>`;
+  h+=axis.ticks.map(t=>`<div class="tl-tick" style="left:${pos(t.v)}%">${t.t}</div>`).join("");
+  h+=spans.map(s=>{const l=pos(s.from),w=pos(s.to)-pos(s.from);return `<div class="tl-span" style="left:${l}%;width:${w}%"><div class="bar"></div><span class="txt">${s.txt}</span></div>`;}).join("");
+  h+=gates.map(g=>{
+    const cls=g.kind==="sec"?"sec":((g.kind==="now"||g.kind==="nowmark")?"now":"");
+    return `<div class="tl-gate ${cls}" style="left:${pos(g.x)}%"></div><div class="tl-flag" style="left:${pos(g.x)}%"><div class="lab">${g.lab}</div><div class="dt">${g.dt}</div><div class="stem"></div></div>`;
+  }).join("");
+  el.innerHTML=h;
+}
+renderTL($("tlc"),WELL.cAxis,WELL.cGates,WELL.cSpans);
+renderTL($("tlp"),WELL.pAxis,WELL.pGates,WELL.pSpans);
+$("cards").innerHTML=WELL.cards.map(c=>`<div class="card${c.cur?' cur':''}"><h4>${c.t}</h4><div class="big">${c.big}</div><ul>${c.li.map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* economics card (issue #849) — proxy cost, benchmark revenue verbatim,
+   coverage per the honest-state matrix; degraded states shown, never filled */
+if (WELL.economics) {
+  const E = WELL.economics, D = E.display || {};
+  const cell = (t, big, li) =>
+    `<div class="card"><h4>${t}</h4><div class="big">${big}</div><ul>${li.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+  const cards = [];
+  if (E.construction_cost_mm_usd != null) {
+    const rc = E.rate_cells.map(c =>
+      `${c.activity} ${c.year_used} · $${(c.usd_per_day/1000).toFixed(0)}k/d (${c.band}${c.rate_status==="clamped"?" · clamped":""}${c.hpht_applied?" · HPHT":""})`);
+    cards.push(cell(D.cost_label || "Construction cost (proxy)",
+      `$${E.construction_cost_mm_usd} MM`,
+      rc.concat([D.cost_qualifier || "proxy"])));
+  } else {
+    cards.push(cell(D.cost_label || "Construction cost (proxy)", "—", ["insufficient day data"]));
+  }
+  if (E.revenue_mm_usd != null) {
+    cards.push(cell(D.revenue_label || "Revenue to date",
+      `$${E.revenue_mm_usd} MM`,
+      [E.revenue_source].concat(E.revenue_flag ? [`flag: ${E.revenue_flag}`] : [])));
+  } else {
+    cards.push(cell(D.revenue_label || "Revenue to date", "—", ["no benchmark revenue row"]));
+  }
+  if (E.coverage_status === "suppressed") {
+    cards.push(cell(D.coverage_label || "Coverage", "—", [E.coverage_reason || "not meaningful"]));
+  } else {
+    const q = E.coverage_status === "degraded" ? ` <small>(${E.coverage_reason})</small>` : "";
+    cards.push(cell(D.coverage_label || "Gross-revenue coverage (indicative)",
+      `${E.coverage_ratio}×${q}`, ["upper bound — see note below"]));
+  }
+  const N = E.norms || {};
+  if (N.state === "ok") {
+    const li = [`field median ${N.field_median} d (n=${N.field_n})`];
+    if (N.well_vs_field_pct != null) li.push(`this well ${N.well_vs_field_pct>0?"+":""}${N.well_vs_field_pct}% vs field`);
+    if (N.play_median != null) {
+      li.push(`play median ${N.play_median} d (n=${N.play_n})`);
+      if (N.well_vs_play_pct != null) li.push(`this well ${N.well_vs_play_pct>0?"+":""}${N.well_vs_play_pct}% vs play`);
+    }
+    cards.push(cell("Drill days vs norm", "→", li.concat([`<a href="../norms/drill.html#${WELL.economics.field_id||""}">stage distribution →</a>`])));
+  } else {
+    cards.push(cell("Drill days vs norm", "—", ["norms pending (#848)"]));
+  }
+  $("econ").innerHTML = cards.join("");
+  $("econ-note").textContent = (E.notes && E.notes[0]) || "";
+  $("econ-section").hidden = false;
+}
+</script>
