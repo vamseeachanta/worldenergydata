@@ -77,6 +77,15 @@
   .devtype[data-tree="wet"] { --dc: var(--good); }        /* wet = teal/green */
   .devtype[data-tree="wet"]::before { border-radius: 50%; }
   .devtype:hover { background: color-mix(in srgb, var(--dc, var(--muted)) 20%, transparent); }
+  /* Underwriting risk chips (#949): HPHT + facility decommissioning. */
+  .riskchip { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--mono, ui-monospace,monospace);
+    text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 6px 11px; border-radius: 999px;
+    color: var(--rc, var(--muted)); background: color-mix(in srgb, var(--rc, var(--muted)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rc, var(--muted)) 40%, transparent); }
+  .riskchip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rc, var(--muted)); }
+  .riskchip[data-sev="over-rating"] { --rc: #e5484d; }
+  .riskchip[data-sev="at-rating"] { --rc: #f5a524; }
+  .riskchip[data-conf="low"] { border-style: dashed; }
 
   .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
     gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
@@ -264,6 +273,8 @@
       <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
         <span class="status"><span class="dot"></span><span id="f-status">—</span></span>
         <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
+        <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
+        <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -547,6 +558,16 @@ const FIELD = {
     "api": null,
     "source_note": "Wilcox oil field (Offshore Technology; Chevron). Field-specific reservoir pressure/temperature not publicly disclosed — shown as — rather than borrowed from neighbouring fields."
   },
+  "risk": {
+    "hpht": null,
+    "decommissioning": {
+      "cost_musd": 43.2,
+      "host_type": "Mini-TLP",
+      "confidence": "modeled",
+      "basis": "facility removal (not well P&A)",
+      "label": "Decommission ~$43.2M"
+    }
+  },
   "provenance": "Data: big_foot.yml + Chevron public disclosures + BSEE (dates to be reconciled in #375)",
   "norms": [
     {
@@ -624,6 +645,19 @@ if (FIELD.treeLabel) {
   dt.textContent = FIELD.treeLabel;
   dt.setAttribute("data-tree", FIELD.treeType || "");
   dt.hidden = false;
+}
+const RISK = FIELD.risk || {};
+if (RISK.hpht) {
+  const c = $("f-risk-hpht");
+  c.textContent = RISK.hpht.label;
+  c.setAttribute("data-sev", RISK.hpht.severity);
+  c.hidden = false;
+}
+if (RISK.decommissioning) {
+  const c = $("f-risk-decom");
+  c.textContent = RISK.decommissioning.label;
+  c.setAttribute("data-conf", RISK.decommissioning.confidence);
+  c.hidden = false;
 }
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
