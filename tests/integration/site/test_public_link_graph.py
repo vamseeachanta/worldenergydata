@@ -308,6 +308,48 @@ def test_wells_rollout_fields_and_no_null_strings(public):
     assert not bad, f"null/NaN leakage in well pages: {bad}"
 
 
+def test_underwriting_risk_signals(public):
+    # #949: HPHT badge for the 9 fields with reservoir HPHT data (not big_foot);
+    # facility-decommissioning badge for exactly the 3 name-matched LT facilities.
+    import importlib.util as _il
+
+    _hs = _il.spec_from_file_location(
+        "hpht_risk_ig", REPO / "src/worldenergydata/field_development/hpht_risk.py"
+    )
+    hr = _il.module_from_spec(_hs)
+    _hs.loader.exec_module(hr)
+
+    fields = _explorer(public)["fields"]
+    hpht = {k: v["risk"]["hpht"] for k, v in fields.items() if v["risk"]["hpht"]}
+    decom = {
+        k: v["risk"]["decommissioning"]
+        for k, v in fields.items()
+        if v["risk"]["decommissioning"]
+    }
+    assert set(hpht) == {
+        "anchor",
+        "cascade_chinook",
+        "jack_st_malo",
+        "julia",
+        "kaskida",
+        "north_platte",
+        "shenandoah",
+        "stones",
+        "tiber",
+    }
+    assert fields["big_foot"]["risk"]["hpht"] is None
+    assert set(decom) == {"big_foot", "jack_st_malo", "stones"}
+    assert decom["big_foot"]["confidence"] == "modeled"
+    assert decom["jack_st_malo"]["confidence"] == "low"
+    # Parity: severity recomputed from each field's reservoir matches the sidecar.
+    facts = {f["id"]: f for f in FACTS}
+    for fid, sig in hpht.items():
+        assert hr.classify_hpht(facts[fid]["reservoir"])["severity"] == sig["severity"]
+    # Julia's subsea-system pressure must NOT be rendered as an exceedance.
+    assert hpht["julia"]["exceedance_pct"] is None
+    assert hpht["anchor"]["exceedance_pct"] == 25
+
+
 def test_every_well_has_a_page(public):
     embedded = _explorer(public)["wells"]["wells"]
     missing = [
