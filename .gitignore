@@ -327,3 +327,8 @@ public/
 # Transient per-session dirs; aggregated output lives in workspace-hub/.claude/skills/session-logs/
 .codex/Cu*/
 .gemini/Cu*/
+
+# Explorer HF results projection (#965) — a tracked, deterministic, published
+# artifact; exempt it from the global `results/` runtime-output ignore above.
+!reports/field-atlas/results/
+!reports/field-atlas/results/**
