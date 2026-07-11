@@ -22,6 +22,7 @@ Usage
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from pathlib import Path
@@ -33,6 +34,10 @@ if str(_SRC) not in sys.path:
 from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
     classify_tree_type,
 )
+from worldenergydata.field_development.decommission_risk import (  # noqa: E402
+    classify_decommissioning,
+)
+from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
@@ -45,6 +50,22 @@ from worldenergydata.common.fields_registry import load_fields  # noqa: E402
 HERE = Path(__file__).resolve().parents[2] / "reports/lower_tertiary/lifecycle"
 TEMPLATE = HERE / "lifecycle_template.html"
 FACTS = HERE / "_facts.json"
+# Facility decommissioning liabilities (#949 underwriting badge). Comment lines
+# (leading '#') are the provenance header; skip them.
+_DECOM_CSV = (
+    Path(__file__).resolve().parents[2]
+    / "reports/decommissioning/regional_liability.csv"
+)
+
+
+def _load_decom_rows() -> list[dict]:
+    if not _DECOM_CSV.exists():
+        return []
+    lines = [ln for ln in _DECOM_CSV.read_text().splitlines() if not ln.startswith("#")]
+    return list(csv.DictReader(lines))
+
+
+_DECOM_ROWS = _load_decom_rows()
 TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
 FIELDS_REGISTRY = load_fields()
 
@@ -312,6 +333,12 @@ def facts_to_field(f: dict) -> dict:
         ],
         "hostFacts": host_facts,
         "reservoir": f.get("reservoir"),
+        "risk": {
+            "hpht": classify_hpht(f.get("reservoir")),
+            "decommissioning": classify_decommissioning(
+                f.get("decommissioning_facility"), _DECOM_ROWS
+            ),
+        },
         "provenance": f.get(
             "provenance", "Data: field YAML + public disclosures + BSEE"
         ),
