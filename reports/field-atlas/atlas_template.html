@@ -345,6 +345,22 @@ function renderField(x, f){
       <table class="xwells"><thead><tr><th>Lease</th><th>Depth</th><th>Dev</th><th>Status</th><th>Dates</th></tr></thead><tbody>${rows}</tbody></table>
       <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Status, dates, per-lease block &amp; WI pending the <a href="${iss}">BSEE lease ingest (#${L.ingest_issue})</a> — contributions welcome.</p></div>`;
   }
+  // Concept & development card (#759): real concept/play/milestone for every
+  // field + FDP link when a portfolio page exists, else a placeholder linking
+  // the FDP-authoring issue.
+  let concept = "";
+  if (f.concept) {
+    const C = f.concept;
+    const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${C.fdp_issue}`;
+    const fdp = C.fdp_href
+      ? `<a href="${rb(C.fdp_href)}">FDP portfolio →</a>`
+      : `<a href="${iss}" style="color:var(--muted)">— concept detail pending</a>`;
+    const row = (k, v) => v ? `<tr><td>${esc(k)}</td><td>${v}</td></tr>` : "";
+    concept = `<div class="xcardlet"><div class="xh">Concept &amp; development</div><table>`
+      + row("Concept", esc(C.type || "—")) + row("Play", esc(C.play || "—"))
+      + (C.milestone ? row(C.milestone.label, esc(C.milestone.value)) : "")
+      + row("FDP", fdp) + `</table></div>`;
+  }
   show(`
     <div class="xtitle">${esc(f.name)}
       <span class="badge rich">${esc(f.statusLabel)}</span>
@@ -356,7 +372,7 @@ function renderField(x, f){
     <div class="xmets">${mets}</div>
     <div class="xcols">
       <div class="xcardlet"><div class="xh">Host &amp; field facts</div><table>${facts}</table></div>
-      ${perf}${resv}${uw}${landman}
+      ${concept}${perf}${resv}${uw}${landman}
     </div>
     <div class="xacts">${acts.join("")}</div>
     ${wellsNote}
