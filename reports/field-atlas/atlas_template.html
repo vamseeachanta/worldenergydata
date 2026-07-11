@@ -51,6 +51,19 @@
   .card .go span{font-size:12px;color:var(--muted);font-family:ui-monospace,monospace}
   .note{margin-top:26px;font-size:13px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px}
   .note b{color:var(--navy)}
+  /* ---- Guided-demo band (issue #945) ---- */
+  .guide{margin:16px 0 4px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:12px;padding:12px 18px}
+  .guide h3{font-size:14px;font-weight:800;color:var(--navy);letter-spacing:-.2px;margin-bottom:6px}
+  .guide ol{margin:0 0 4px 18px;font-size:13.5px;color:var(--ink)}
+  .guide li{margin:3px 0}
+  .guide a{color:var(--teal);font-weight:700}
+  .guide .guidenote{font-size:12px;color:var(--muted);margin-top:4px}
+  /* ---- Page-level data-sources footer (issue #945) ---- */
+  .pgfoot{margin-top:40px;border-top:1px solid var(--line);padding-top:22px;font-size:13px;color:var(--muted)}
+  .pgfoot h2{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
+  .pgfoot p{max-width:820px;margin:6px 0}
+  .pgfoot a{color:var(--teal);font-weight:700}
+  .pgfoot b{font-weight:600}
   /* ---- Explorer panel (issue #946) ---- */
   #x-panel{margin-top:26px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--navy);
            border-radius:14px;padding:18px 22px;box-shadow:0 8px 24px rgba(16,40,80,.08)}
@@ -104,6 +117,17 @@
      Fields with a full life-cycle analysis open right here — and link through to their stage-gate hub.</p>
   <div class="story">The <b>Lower Tertiary (Wilcox)</b> play is ~8% of GoM fields but holds <b>~36% of the oil</b> — start there.</div>
 
+  <section class="guide">
+    <h3>Guided demo — a 4-click walkthrough</h3>
+    <ol>
+      <li><a href="#">Start at the default top view</a> — USA · offshore · Gulf of Mexico, where the Lower Tertiary story leads.</li>
+      <li><a href="#/field/jack_st_malo">Open Jack/St Malo — a rich field</a> with full life-cycle depth plus economics, underwriting and landman lenses.</li>
+      <li><a href="#/field/jack_st_malo/wells">Browse its 24 producing wells</a> — rig-days, first oil and cumulative production per slot.</li>
+      <li><a href="#/field/jack_st_malo/wells/PN002">Follow one well, stage by stage</a> — spud through produce for a single slot.</li>
+    </ol>
+    <p class="guidenote">Every step is bookmarkable — copy the address bar at any point to share that exact view.</p>
+  </section>
+
   <div class="funnel">
     <div class="grp"><label>Country</label><select id="f-country"></select></div>
     <span class="arrow">→</span>
@@ -133,6 +157,22 @@
      GoM play attribution beyond the concept-matched set is pending the
      <a href="https://github.com/vamseeachanta/worldenergydata/issues/955" style="color:var(--teal);font-weight:700">BSEE sands-atlas ingest (#955)</a>
      — use the <b>(unattributed)</b> play filter to see those fields.</div>
+
+  <footer class="pgfoot">
+    <h2>Data &amp; provenance</h2>
+    <p>Every figure on this page traces to a disclosed source: <b>BSEE public data</b>
+       (<a href="https://data.bsee.gov">data.bsee.gov</a> — production, well activity and lease records),
+       in-repo <b>curated field data</b> (operator, working interest and life-cycle dates held as
+       reviewable YAML), and <b>public operator disclosures</b> (press releases and investor material).
+       Each field panel carries its own citation line above the actions.</p>
+    <p>Density badges say how deep each field goes:
+       <b style="color:var(--rich)">rich</b> = life-cycle hub plus economics ·
+       <b style="color:var(--sample)">sample</b> = concept data ·
+       <b style="color:var(--roadmap)">roadmap</b> = name and block only.
+       Gaps are shown as honest placeholders, never filled with a guess.</p>
+    <p>Spotted something to improve or a source to add?
+       <a href="https://github.com/vamseeachanta/worldenergydata/issues">Contributions are welcome on the repo issues.</a></p>
+  </footer>
 </div>
 
 <script>
@@ -398,7 +438,8 @@ function renderWells(x, f){
     <table class="xwells"><thead><tr><th>Slot</th><th>Spud</th><th>Drill rig-days</th><th>Compl. rig-days</th>
     <th>TVD ft</th><th>First oil</th><th>Cum oil MMbbl</th><th>Uptime %</th><th>Status</th></tr></thead>
     <tbody>${tr}</tbody></table>
-    <div class="xacts"><a class="xact" href="${rb("wells/")}">All well timelines →</a></div>`);
+    <div class="xacts"><a class="xact" href="${rb("wells/")}">All well timelines →</a></div>
+    <p class="xprov">${esc(f.provenance||"")}</p>`);
 }
 
 function renderWell(x, f, slot){
@@ -422,7 +463,8 @@ function renderWell(x, f, slot){
       ${stage("Workover", wo)}
       ${stage("Produce", `${w.cum_oil_mmbbl??"—"} MMbbl cum` + (w.uptime_pct?` · ${w.uptime_pct}% uptime`:""))}
     </div>
-    <div class="xacts"><a class="xact" href="${rb(`wells/${f.id}_${w.slot}_well.html`)}">Full well timeline →</a></div>`);
+    <div class="xacts"><a class="xact" href="${rb(`wells/${f.id}_${w.slot}_well.html`)}">Full well timeline →</a></div>
+    <p class="xprov">${esc(f.provenance||"")}</p>`);
 }
 
 const ROUTE = /^#\/field\/([a-z0-9_]+)(?:\/(wells)(?:\/([A-Za-z0-9-]+))?)?$/;
