@@ -41,6 +41,9 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+# Country badge rule shared with the field-atlas Explorer feed (#947).
+from catalog_badges import badge_for, load_scorecard  # noqa: E402
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
 COVERAGE_CSV = CURATED / "coverage_summary.csv"
@@ -60,21 +63,8 @@ LIFECYCLE_DIR = PROJECT_ROOT / "reports" / "lower_tertiary" / "lifecycle"
 OUT_CSV = PROJECT_ROOT / "reports" / "field_development" / "all_regions_coverage.csv"
 OUT_HTML = PROJECT_ROOT / "reports" / "field_development" / "all_regions_atlas.html"
 
-# Country (as spelled in coverage_summary) -> dedicated national-regulator ingest module
-COUNTRY_MODULE = {
-    "US": "bsee",
-    "UK": "ukcs",
-    "Norway": "sodir",
-    "Brazil": "brazil_anp",
-    "Mexico": "mexico_cnh",
-    "Canada": "canada",
-}
-CATALOG_TO_BADGE = {
-    "full": "RICH",
-    "sample": "SAMPLE",
-    "runtime_fetched": "ROADMAP",
-    "missing": "ROADMAP",
-}
+# Badge rule (COUNTRY_MODULE / CATALOG_TO_BADGE / badge_for) lives in
+# scripts/catalog_badges.py — single source shared with the Explorer feed (#947).
 
 
 def read_coverage():
@@ -98,24 +88,6 @@ def read_coverage():
             elif cat == "total":
                 totals = {"fields": fields, "facilities": facs}
     return by_country, by_region, totals
-
-
-def load_scorecard():
-    data = json.loads(SCORECARD.read_text(encoding="utf-8"))
-    return {k: v.get("catalog_status") for k, v in data["modules"].items()}
-
-
-def badge_for(country: str, statuses: dict) -> tuple[str, str, str]:
-    """Return (badge, module, catalog_status) for a country."""
-    module = COUNTRY_MODULE.get(country)
-    if country == "US":
-        # BSEE materialised to full life-cycle depth in the Gulf of Mexico.
-        return "RICH", "bsee", statuses.get("bsee", "sample")
-    if module:
-        status = statuses.get(module, "missing")
-        return CATALOG_TO_BADGE.get(status, "ROADMAP"), module, status
-    # No dedicated national module -> shared curated reference inventory only.
-    return "SAMPLE", "offshore_assets (reference)", "reference"
 
 
 def count_glob_html(d: Path, exclude={"index.html"}) -> int:
@@ -450,7 +422,7 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
 
 def main():
     by_country, by_region, totals = read_coverage()
-    statuses = load_scorecard()
+    statuses = load_scorecard(SCORECARD)
 
     rows = []
     for c in by_country:

@@ -57,6 +57,15 @@ def test_lower_tertiary_publishes_explorer_sidecar(bp):
     assert "wells" in data
 
 
+def test_field_atlas_publishes_global_feed(bp):
+    # Global catalog feed lazily fetched by the Explorer funnel (#947).
+    bp.build(domains=["field-atlas"])
+    feed = bp.PUBLIC / "field-atlas" / "_atlas_feed.json"
+    assert feed.exists()
+    data = json.loads(feed.read_text())
+    assert data["countries"] and data["fields"]
+
+
 def test_partial_build_only_touches_its_domain(bp):
     public = bp.PUBLIC
     # Seed a foreign domain's output as if restored from cache.

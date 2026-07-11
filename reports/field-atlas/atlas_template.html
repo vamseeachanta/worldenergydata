@@ -115,6 +115,7 @@
     <div class="grp" style="margin-left:auto"><label>Search</label><input id="f-search" type="search" placeholder="field or block…"></div>
   </div>
   <div class="tiers" id="f-tiers"></div>
+  <div class="count" id="f-cbadge"></div>
   <div class="count" id="f-count"></div>
   <div class="grid" id="f-grid"></div>
 
@@ -123,27 +124,84 @@
     <div id="x-body"></div>
   </section>
 
-  <div class="note">Showing the <b>120 concept-matched</b> Gulf of Mexico fields. The full GoM atlas holds
-     <b>1,390 fields</b> (Lower Tertiary = 111 fields, ~36% of GoM oil); the long tail is a searchable catalog, not shown here.
-     Density: <b style="color:var(--rich)">rich</b> = life-cycle hub + economics · <b style="color:var(--sample)">sample</b> = concept data · <b style="color:var(--roadmap)">roadmap</b> = name/block only.</div>
+  <div class="note"><span id="n-scope">The default view shows the <b>120 concept-matched</b> Gulf of Mexico fields.</span>
+     Selecting a country loads the global catalog — <b><span id="n-fields">2,149</span> fields across
+     <span id="n-countries">84</span> countries</b>; the GoM catalog carries <span id="n-gom">333</span> entries
+     (of BSEE's full <b>1,390-field</b> atlas; Lower Tertiary = 111 fields, ~36% of GoM oil).
+     Density (per field): <b style="color:var(--rich)">rich</b> = life-cycle hub + economics · <b style="color:var(--sample)">sample</b> = concept data · <b style="color:var(--roadmap)">roadmap</b> = name/block only.
+     Country badges (in the Country list) reflect national data-module depth, not per-field detail.
+     GoM play attribution beyond the concept-matched set is pending the
+     <a href="https://github.com/vamseeachanta/worldenergydata/issues/955" style="color:var(--teal);font-weight:700">BSEE sands-atlas ingest (#955)</a>
+     — use the <b>(unattributed)</b> play filter to see those fields.</div>
 </div>
 
 <script>
 const ROSTER = __ROSTER_JSON__;
+const COUNTRIES = __COUNTRIES_JSON__;
+const CBADGE = Object.fromEntries(COUNTRIES.map(c=>[c.country, c]));
 const TIER_ORDER = {rich:0, sample:1, roadmap:2};
 const $ = id => document.getElementById(id);
 let tierFilter = "all";
 
-function uniq(key){ return [...new Set(ROSTER.map(f=>f[key]).filter(Boolean))].sort(); }
+/* Working set (#947): the embedded GoM roster, augmented by the global
+   catalog feed once it has been lazily fetched. The initial paint (no
+   interaction) renders from ROSTER alone — today's page, unchanged. */
+let EXTRA = [], feedState = "idle"; // idle | loading | loaded | error
+function all(){ return EXTRA.length ? ROSTER.concat(EXTRA) : ROSTER; }
+async function ensureFeed(){
+  if (feedState !== "idle") return;
+  feedState = "loading";
+  try {
+    const res = await fetch("_atlas_feed.json");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    EXTRA = (await res.json()).fields;
+    feedState = "loaded";
+  } catch (e){
+    feedState = "error";
+    $("f-cbadge").textContent = `global catalog unavailable (${e.message}) — showing the GoM roster only`;
+    return;
+  }
+  refreshSelects(); render();
+}
+
 function fillSelect(el, vals, allLabel){
   el.innerHTML = `<option value="">${allLabel}</option>` + vals.map(v=>`<option>${v}</option>`).join("");
 }
-fillSelect($("f-country"), uniq("country"), "All countries");
-fillSelect($("f-domain"), uniq("domain"), "All");
-fillSelect($("f-region"), uniq("region"), "All regions");
-fillSelect($("f-play"), uniq("play"), "All plays");
+function fillCountry(){
+  const names = [...new Set([...ROSTER.map(f=>f.country), ...COUNTRIES.map(c=>c.country)])].sort();
+  $("f-country").innerHTML = `<option value="">All countries</option>` + names.map(v=>{
+    const b = CBADGE[v] ? ` · ${CBADGE[v].badge.toLowerCase()}` : "";
+    return `<option value="${v}">${v}${b}</option>`;
+  }).join("");
+}
+function countryBadgeLine(c){
+  const info = CBADGE[c];
+  $("f-cbadge").textContent = (c && info)
+    ? `${c} — data module: ${info.module} · country badge: ${info.badge} · ${info.fields} fields in catalog`
+    : "";
+}
+function refreshSelects(){
+  const c = $("f-country").value;
+  const pool = all().filter(f => !c || f.country === c);
+  const rSel = $("f-region"), pSel = $("f-play");
+  const rPrev = rSel.value, pPrev = pSel.value;
+  const regions = [...new Set(pool.map(f=>f.region).filter(Boolean))].sort();
+  rSel.innerHTML = `<option value="">All regions</option>` + regions.map(v=>`<option>${v}</option>`).join("");
+  if (regions.includes(rPrev)) rSel.value = rPrev;
+  rSel.title = (c && c !== "USA") ? "regional tiers land with the #941 ingest ladder" : "";
+  const plays = [...new Set(pool.map(f=>f.play).filter(Boolean))].sort();
+  pSel.innerHTML = `<option value="">All plays</option>` + plays.map(v=>`<option>${v}</option>`).join("")
+    + `<option>(unattributed)</option>`;
+  if (plays.includes(pPrev) || pPrev === "(unattributed)") pSel.value = pPrev;
+  countryBadgeLine(c);
+}
+
+fillCountry();
+fillSelect($("f-domain"), [...new Set(ROSTER.map(f=>f.domain).filter(Boolean))].sort(), "All");
 // sensible defaults: US · offshore · GoM
-$("f-country").value = "USA"; $("f-domain").value = "offshore"; $("f-region").value = "US Gulf of Mexico";
+$("f-country").value = "USA"; $("f-domain").value = "offshore";
+refreshSelects();
+$("f-region").value = "US Gulf of Mexico";
 
 const tiers = ["all","rich","sample","roadmap"];
 $("f-tiers").innerHTML = tiers.map(t=>`<button class="tierbtn${t==="all"?" on":""}" data-t="${t}">${t==="all"?"All tiers":t}</button>`).join("");
@@ -152,13 +210,15 @@ $("f-tiers").onclick = e => { if(!e.target.dataset.t) return;
   [...$("f-tiers").children].forEach(b=>b.classList.toggle("on", b.dataset.t===tierFilter));
   render(); };
 
-["f-country","f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", render));
+$("f-country").addEventListener("input", () => { ensureFeed(); refreshSelects(); render(); });
+["f-domain","f-region","f-play","f-search"].forEach(id=>$(id).addEventListener("input", render));
 
 function render(){
   const c=$("f-country").value, d=$("f-domain").value, r=$("f-region").value, p=$("f-play").value,
         q=$("f-search").value.trim().toLowerCase();
-  let rows = ROSTER.filter(f =>
-    (!c||f.country===c) && (!d||f.domain===d) && (!r||f.region===r) && (!p||f.play===p) &&
+  let rows = all().filter(f =>
+    (!c||f.country===c) && (!d||f.domain===d) && (!r||f.region===r) &&
+    (p==="(unattributed)" ? !f.play : (!p||f.play===p)) &&
     (tierFilter==="all"||f.density_tier===tierFilter) &&
     (!q || (f.name+" "+(f.block||"")+" "+(f.operator||"")).toLowerCase().includes(q)));
   rows.sort((a,b)=> (TIER_ORDER[a.density_tier]-TIER_ORDER[b.density_tier]) || a.name.localeCompare(b.name));
@@ -169,12 +229,22 @@ function render(){
       : (f.concept ? `<div class="go"><span>concept: ${f.concept}</span></div>` : "");
     const meta = [f.operator, f.block].filter(Boolean).map(x=>`<b>${x}</b>`).join(" · ");
     const play = f.play ? `<div class="concept">${f.play}</div>` : "";
+    const cat = f.catalog_id
+      ? `<div class="meta">${[f.status, f.reserve_type].filter(Boolean).join(" · ")}${f.water_depth_ft?` · ${f.water_depth_ft.toLocaleString()} ft`:""}</div>`
+      : "";
     const fid = f.lifecycle_id ? ` data-fid="${f.lifecycle_id}"` : "";
     return `<div class="card"${fid}><h3>${f.name}<span class="badge ${f.density_tier}">${f.density_tier}</span></h3>
-      ${meta?`<div class="meta">${meta}</div>`:""}${play}${go}</div>`;
+      ${meta?`<div class="meta">${meta}</div>`:""}${play}${cat}${go}</div>`;
   }).join("");
 }
 render();
+// Reconciled note numbers from the embedded country index (#947).
+if (COUNTRIES.length){
+  $("n-countries").textContent = String(COUNTRIES.length);
+  $("n-fields").textContent = COUNTRIES.reduce((s,c)=>s+c.fields, 0).toLocaleString();
+  const usa = CBADGE["USA"];
+  if (usa) $("n-gom").textContent = String(usa.fields);
+}
 
 /* ---- Explorer shell (issue #946): in-place drill-down for rich fields. ----
    Data contract: ../lifecycle/_explorer.json (post-enrichment poster payloads

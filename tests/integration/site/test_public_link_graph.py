@@ -1,6 +1,7 @@
 # ABOUTME: Link-graph gate (issue #850) — builds the public site in-process to a
 # ABOUTME: tmp dir, then asserts existence, resolution, exact trails, reachability.
 
+import csv
 import importlib.util
 import json
 import posixpath
@@ -17,6 +18,12 @@ _sn_spec = importlib.util.spec_from_file_location(
 )
 sn = importlib.util.module_from_spec(_sn_spec)
 _sn_spec.loader.exec_module(sn)
+
+_cb_spec = importlib.util.spec_from_file_location(
+    "catalog_badges_ig", REPO / "scripts" / "catalog_badges.py"
+)
+cb = importlib.util.module_from_spec(_cb_spec)
+_cb_spec.loader.exec_module(cb)
 
 MANIFEST = sn.load_manifest(REPO / "config" / "nav_spine.json")
 FACTS = json.loads((REPO / "reports/lower_tertiary/lifecycle/_facts.json").read_text())
@@ -341,3 +348,103 @@ def test_atlas_shell_pins(public):
     ):
         assert pin in text, pin
     assert text.count("<h1") == 1
+
+
+# --- Global atlas feed contract (issue #947) --------------------------------
+
+
+def _atlas_feed(public):
+    return json.loads((public / "field-atlas/_atlas_feed.json").read_text())
+
+
+def _coverage_countries():
+    with (REPO / "data/modules/offshore_assets/curated/coverage_summary.csv").open(
+        newline="", encoding="utf-8"
+    ) as f:
+        return [r for r in csv.reader(f) if r and r[0] == "by_country"]
+
+
+def test_atlas_feed_published_contract(public):
+    feed = _atlas_feed(public)
+    assert len(feed["countries"]) == len(_coverage_countries())
+    names = {c["country"] for c in feed["countries"]}
+    assert all(f["country"] in names for f in feed["fields"])
+    # Every row must carry domain (the funnel filter requires it — #947 r1 f5)
+    assert all(f["domain"] == "offshore" for f in feed["fields"])
+    # Per-field tier is ALWAYS roadmap for catalog rows (name/block only —
+    # the country badge is a separate dimension, #947 r1 f3).
+    assert all(f["density_tier"] == "roadmap" for f in feed["fields"])
+
+
+def test_atlas_feed_badge_parity(public):
+    # Parity against the shared rule, ALL THREE branches (#947 r1 f2).
+    statuses = cb.load_scorecard(REPO / "data/freshness-scorecard.json")
+    feed = _atlas_feed(public)
+    for c in feed["countries"]:
+        raw = "US" if c["country"] == "USA" else c["country"]
+        badge, module, _status = cb.badge_for(raw, statuses)
+        assert (c["badge"], c["module"]) == (badge, module), c["country"]
+    by = {c["country"]: c for c in feed["countries"]}
+    assert by["USA"]["badge"] == "RICH"  # branch 1: US override
+    assert by["Norway"]["module"] == "sodir"  # branch 2: module country
+    assert by["Angola"]["badge"] == "SAMPLE"  # branch 3: no-module default
+    assert "reference" in by["Angola"]["module"]
+
+
+def test_atlas_feed_dedup_invariants(public):
+    baf_spec = importlib.util.spec_from_file_location(
+        "build_atlas_feed_ig", REPO / "scripts/field_atlas/build_atlas_feed.py"
+    )
+    baf = importlib.util.module_from_spec(baf_spec)
+    baf_spec.loader.exec_module(baf)
+
+    with (REPO / "data/modules/offshore_assets/curated/fields.csv").open(
+        newline="", encoding="utf-8"
+    ) as f:
+        catalog = list(csv.DictReader(f))
+    gom = [r for r in catalog if r["US_GOM_FLAG"].strip()]
+    roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
+    suppressed, _report, _unmatched = baf.dedup_gom([e["name"] for e in roster], gom)
+    feed_gom = [f for f in _atlas_feed(public)["fields"] if f["gom"]]
+    assert len(suppressed) + len(feed_gom) == len(gom)
+    # Ambiguity guard (#947 r1 f4): Big Bend (Petrobras) is a DISTINCT field
+    # and must survive the roster's Big Bend (Noble); exactly one Big Bend
+    # remains in the tail.
+    assert any(f["name"] == "Big Bend (Petrobras)" for f in feed_gom)
+    assert sum(1 for f in feed_gom if "big bend" in f["name"].lower()) == 1
+    # No feed GoM row duplicates a roster name in the exact-normalized sense.
+    roster_keys = {baf.norm_exact(e["name"]) for e in roster}
+    dupes = [f["name"] for f in feed_gom if baf.norm_exact(f["name"]) in roster_keys]
+    assert not dupes, f"feed GoM rows shadowing roster entries: {dupes}"
+
+
+def test_all_regions_badges_match_lifted_rule(public):
+    # Badge-lift identity (#947 T1/D6d): the committed coverage CSV (date-free)
+    # must agree with the lifted shared rule for every country.
+    statuses = cb.load_scorecard(REPO / "data/freshness-scorecard.json")
+    with (REPO / "reports/field_development/all_regions_coverage.csv").open(
+        newline="", encoding="utf-8"
+    ) as f:
+        rows = list(csv.DictReader(f))
+    assert rows
+    for r in rows:
+        badge, module, status = cb.badge_for(r["country"], statuses)
+        assert (r["badge"], r["source_module"], r["catalog_status"]) == (
+            badge,
+            module,
+            status,
+        ), r["country"]
+
+
+def test_atlas_funnel_global_pins(public):
+    text = (public / "field-atlas/index.html").read_text()
+    for pin in (
+        "const COUNTRIES",
+        "(unattributed)",
+        "_atlas_feed.json",
+        'id="f-cbadge"',
+    ):
+        assert pin in text, pin
+    m = re.search(r"const COUNTRIES = (\[.*?\]);", text, re.S)
+    assert m, "embedded country index missing"
+    assert len(json.loads(m.group(1))) == len(_coverage_countries())

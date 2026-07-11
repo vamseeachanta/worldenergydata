@@ -111,6 +111,7 @@ def _lower_tertiary_economics_reports() -> list[tuple[str, Path]]:
         seen.add(slug)
     return selected
 
+
 # ---------------------------------------------------------------------------
 # Minimal, dependency-free Markdown -> HTML for the exact constructs these
 # reports use: ATX headings, GFM tables, blockquotes, fenced code, hr, bold,
@@ -126,10 +127,11 @@ _CODE = re.compile(r"`([^`]+)`")
 def _slug(text: str) -> str:
     """Stable, human-readable heading id for deep-linking. Strips inline markup
     (`code`, **bold**, links) and HTML entities, then lowercases and hyphenates.
-    e.g. "3. Field-level D&C reconciliation (Table 1)" -> "field-level-dc-reconciliation-table-1"."""
-    t = _LINK.sub(r"\1", text)            # keep link text, drop target
+    e.g. "3. Field-level D&C reconciliation (Table 1)" -> "field-level-dc-reconciliation-table-1".
+    """
+    t = _LINK.sub(r"\1", text)  # keep link text, drop target
     t = re.sub(r"&[#0-9a-zA-Z]+;", " ", t)  # drop HTML entities (&middot; etc.)
-    t = re.sub(r"[`*_]", "", t)             # drop inline-format markers
+    t = re.sub(r"[`*_]", "", t)  # drop inline-format markers
     t = t.lower()
     t = re.sub(r"[^a-z0-9]+", "-", t).strip("-")
     return t
@@ -827,6 +829,10 @@ def build_field_atlas(available_viz: dict[str, bool]) -> list[tuple]:
     dst = PUBLIC / "field-atlas"
     dst.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(src, dst / "index.html")
+    feed = REPORTS / "field-atlas" / "_atlas_feed.json"
+    if feed.exists():
+        # global catalog feed lazily fetched by the Explorer funnel (#947)
+        shutil.copyfile(feed, dst / "_atlas_feed.json")
     return []
 
 
