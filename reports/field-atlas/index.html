@@ -313,17 +313,35 @@ function renderField(x, f){
     `<p class="xnote">Well-level timelines cover the benchmark's producing wells;
      this field is pre-production, so it has none yet (rollout
      <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>).</p>`;
+  // Underwriting-lens chips + panel (#949): HPHT and facility decommissioning,
+  // honesty-gated. Well-plugging P&A is NOT attributed per field (documented).
+  const risk = f.risk || {};
+  const sevColor = {"over-rating":"#e5484d","at-rating":"#f5a524"};
+  const chip = (label, color, dashed) =>
+    `<span class="badge" style="color:${color};border:1px ${dashed?"dashed":"solid"} ${color};background:transparent">${esc(label)}</span>`;
+  const riskChips =
+    (risk.hpht ? chip(risk.hpht.label, sevColor[risk.hpht.severity]||"var(--muted)", false) : "") +
+    (risk.decommissioning ? chip(risk.decommissioning.label, "var(--teal)", risk.decommissioning.confidence==="low") : "");
+  let uw = "";
+  if (risk.hpht || risk.decommissioning) {
+    const lines = [];
+    if (risk.hpht) lines.push(`<tr><td>HPHT</td><td>${esc(risk.hpht.label)} · <a href="${rb("pressure-atlas/")}">pressure atlas →</a></td></tr>`);
+    if (risk.decommissioning) lines.push(`<tr><td>Decommission</td><td>${esc(risk.decommissioning.label)} <small>(facility removal, ${esc(risk.decommissioning.confidence)}-confidence)</small> · <a href="${rb("decommissioning/pa-liability-wave.html")}">P&amp;A wave →</a></td></tr>`);
+    uw = `<div class="xcardlet"><div class="xh">Underwriting signals</div><table>${lines.join("")}</table>
+      <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Well-plugging P&amp;A is not attributed per field (BSEE well data lacks a lease join for these fields).</p></div>`;
+  }
   show(`
     <div class="xtitle">${esc(f.name)}
       <span class="badge rich">${esc(f.statusLabel)}</span>
-      ${f.treeLabel?`<span class="badge sample">${esc(f.treeLabel)}</span>`:""}</div>
+      ${f.treeLabel?`<span class="badge sample">${esc(f.treeLabel)}</span>`:""}
+      ${riskChips}</div>
     <p class="xsub">${esc(f.operator)} · ${esc(f.region)}</p>
     <div class="xstrip">${strip}</div>
     ${gates?`<div class="xgates">${gates}</div>`:""}
     <div class="xmets">${mets}</div>
     <div class="xcols">
       <div class="xcardlet"><div class="xh">Host &amp; field facts</div><table>${facts}</table></div>
-      ${perf}${resv}
+      ${perf}${resv}${uw}
     </div>
     <div class="xacts">${acts.join("")}</div>
     ${wellsNote}

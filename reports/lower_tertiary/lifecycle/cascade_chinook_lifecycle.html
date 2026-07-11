@@ -77,6 +77,15 @@
   .devtype[data-tree="wet"] { --dc: var(--good); }        /* wet = teal/green */
   .devtype[data-tree="wet"]::before { border-radius: 50%; }
   .devtype:hover { background: color-mix(in srgb, var(--dc, var(--muted)) 20%, transparent); }
+  /* Underwriting risk chips (#949): HPHT + facility decommissioning. */
+  .riskchip { display: inline-flex; align-items: center; gap: 7px; font: 600 12px/1 var(--mono, ui-monospace,monospace);
+    text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 6px 11px; border-radius: 999px;
+    color: var(--rc, var(--muted)); background: color-mix(in srgb, var(--rc, var(--muted)) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--rc, var(--muted)) 40%, transparent); }
+  .riskchip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rc, var(--muted)); }
+  .riskchip[data-sev="over-rating"] { --rc: #e5484d; }
+  .riskchip[data-sev="at-rating"] { --rc: #f5a524; }
+  .riskchip[data-conf="low"] { border-style: dashed; }
 
   .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
     gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
@@ -264,6 +273,8 @@
       <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
         <span class="status"><span class="dot"></span><span id="f-status">—</span></span>
         <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
+        <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
+        <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -512,6 +523,18 @@ const FIELD = {
     "api": null,
     "source_note": "OTC-24162/24163 + JPT: initial reservoir pressure ~19,500 psi, BHT ~256–260F, reservoir mid-point ~25,600 ft TVD."
   },
+  "risk": {
+    "hpht": {
+      "class": "HPHT",
+      "pressure_psi": 19500,
+      "equip_rating_psi": null,
+      "exceedance_pct": null,
+      "severity": "class-only",
+      "basis": "reservoir",
+      "label": "HPHT · 19.5k psi"
+    },
+    "decommissioning": null
+  },
   "provenance": "Life-cycle dates and ownership from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. IMPORTANT: two YAML values were overridden as demonstrably wrong vs. well-documented public record — YAML first oil \"2021-08\" corrected to 2012-02 (Cascade first oil Feb 2012, Chinook Sep 2012; BW Pioneer was the first FPSO in the US GoM), and YAML operator/WI \"TotalEnergies 60% / Equinor 40%\" corrected to current MP Gulf of Mexico LLC (Murphy EXPRO 80% operator, Petrobras America 20%; originally Petrobras-operated with Total 33.33% in Chinook). LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
   "norms": [
     {
@@ -589,6 +612,19 @@ if (FIELD.treeLabel) {
   dt.textContent = FIELD.treeLabel;
   dt.setAttribute("data-tree", FIELD.treeType || "");
   dt.hidden = false;
+}
+const RISK = FIELD.risk || {};
+if (RISK.hpht) {
+  const c = $("f-risk-hpht");
+  c.textContent = RISK.hpht.label;
+  c.setAttribute("data-sev", RISK.hpht.severity);
+  c.hidden = false;
+}
+if (RISK.decommissioning) {
+  const c = $("f-risk-decom");
+  c.textContent = RISK.decommissioning.label;
+  c.setAttribute("data-conf", RISK.decommissioning.confidence);
+  c.hidden = false;
 }
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`

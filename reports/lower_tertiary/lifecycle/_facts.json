@@ -2,6 +2,7 @@
   {
     "id": "big_foot",
     "name": "Big Foot",
+    "decommissioning_facility": "Big Foot TLP",
     "operator": "Chevron",
     "region_block": "Walker Ridge 29 (G16942)",
     "basin": "US Gulf of Mexico",
@@ -185,6 +186,7 @@
   {
     "id": "jack_st_malo",
     "name": "Jack/St. Malo",
+    "decommissioning_facility": "Jack/St. Malo FPU",
     "operator": "Chevron",
     "status": "producing",
     "current_phase": "operate",
@@ -296,6 +298,7 @@
       "hpht_class": "HPHT",
       "pressure_psi": 13500,
       "pressure_qual": "~",
+      "pressure_basis": "subsea_system",
       "equip_rating_psi": 15000,
       "temp_f": null,
       "tvd_ft": 30000,
@@ -490,6 +493,7 @@
   {
     "id": "stones",
     "name": "Stones",
+    "decommissioning_facility": "Stones FPSO",
     "operator": "Shell",
     "status": "producing",
     "current_phase": "operate",
