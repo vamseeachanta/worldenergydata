@@ -33,6 +33,7 @@ from worldenergydata.common.fields_registry import load_fields  # noqa: E402
 
 HERE = Path(__file__).resolve().parents[2] / "reports/field-atlas"
 ROSTER = HERE / "_roster.json"
+FEED = HERE / "_atlas_feed.json"
 TEMPLATE_PATH = HERE / "atlas_template.html"
 
 
@@ -44,9 +45,18 @@ def build() -> str:
             registry.resolve(f["name"]) if f.get("has_lifecycle") else None
         )
     roster_json = json.dumps(fields, ensure_ascii=False)
+    # Country index from the global feed (#947) — page degrades to the GoM-only
+    # funnel when the feed has not been generated (defensive, never a build error).
+    countries = []
+    if FEED.exists():
+        countries = json.loads(FEED.read_text()).get("countries", [])
+    countries_json = json.dumps(countries, ensure_ascii=False)
     template = TEMPLATE_PATH.read_text()
     return site_nav.inject_for(
-        template.replace("__ROSTER_JSON__", roster_json), "atlas"
+        template.replace("__ROSTER_JSON__", roster_json).replace(
+            "__COUNTRIES_JSON__", countries_json
+        ),
+        "atlas",
     )
 
 
