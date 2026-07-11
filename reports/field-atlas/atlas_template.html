@@ -309,8 +309,9 @@ function renderField(x, f){
   if (f.wellsHref && f.wellsCount) acts.push(`<a class="xact" href="#/field/${f.id}/wells">Wells (${f.wellsCount}) →</a>`);
   if (f.assetsHref) acts.push(`<a class="xact" href="${rb(f.assetsHref)}">Assets →</a>`);
   const wellsNote = f.wellsHref ? "" :
-    `<p class="xnote">Well-level timelines: Big Foot only today — rollout tracked in
-     <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>.</p>`;
+    `<p class="xnote">Well-level timelines cover the benchmark's producing wells;
+     this field is pre-production, so it has none yet (rollout
+     <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>).</p>`;
   show(`
     <div class="xtitle">${esc(f.name)}
       <span class="badge rich">${esc(f.statusLabel)}</span>
@@ -333,7 +334,7 @@ function renderWells(x, f){
   const rows = (x.wells.wells||[]).filter(w=>w.field_id===f.id);
   if (!rows.length){
     show(`<div class="xtitle">${esc(f.name)} · wells</div>
-      <p class="xnote">No well records for this field yet — rollout tracked in
+      <p class="xnote">No producing-well records for this field yet (pre-production) — rollout
       <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>.</p>`);
     return;
   }
