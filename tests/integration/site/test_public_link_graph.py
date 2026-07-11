@@ -235,12 +235,109 @@ def test_hand_authored_fixes_survive_clean_build(public):
 
 
 def test_roster_poster_targets_exist(public):
+    # lifecycle_id is computed at BUILD time (build_field_atlas.py L34-37) and
+    # never lands in the on-disk roster — the previous read of
+    # e.get("lifecycle_id") was always None, so this check asserted nothing
+    # (#946 r1 finding 3). Recompute ids exactly as the generator does.
+    from worldenergydata.common.fields_registry import load_fields
+
     roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
     entries = roster if isinstance(roster, list) else roster.get("fields", [])
+    registry = load_fields()
+    resolved = [registry.resolve(e["name"]) for e in entries if e.get("has_lifecycle")]
+    assert resolved and all(resolved), "rich roster entries must resolve to ids"
+    explorer = _explorer(public)
     missing = [
-        e["lifecycle_id"]
-        for e in entries
-        if e.get("lifecycle_id")
-        and not (public / f"lifecycle/{e['lifecycle_id']}_lifecycle.html").exists()
+        rid
+        for rid in resolved
+        if not (public / f"lifecycle/{rid}_lifecycle.html").exists()
+        or rid not in explorer["fields"]
     ]
-    assert not missing, f"roster lifecycle_ids without posters: {missing}"
+    assert not missing, f"roster ids without posters/explorer payloads: {missing}"
+
+
+# --- Explorer shell contract (issue #946) ----------------------------------
+
+EXPLORER_HREF_KEYS = ("wellsHref", "assetsHref", "economics_href", "benchmark_href")
+
+
+def _explorer(public):
+    return json.loads((public / "lifecycle/_explorer.json").read_text())
+
+
+def test_explorer_sidecar_published_and_covers_all_posters(public):
+    explorer = _explorer(public)
+    assert set(explorer["fields"]) == {f["id"] for f in FACTS}
+    assert explorer["wells"]["wells"], "wells contract embedded"
+
+
+def test_explorer_hrefs_resolve_from_poster_and_shell_bases(public):
+    # Payload hrefs are lifecycle/-relative BY CONTRACT. The shell at
+    # field-atlas/ rebases every href against ../lifecycle/ before it reaches
+    # the DOM (#946 r1 finding 2) — both resolutions must land on a published
+    # file, so a base-handling regression on either side goes red here.
+    bad = []
+    for fid, f in _explorer(public)["fields"].items():
+        targets = [f.get(k) for k in EXPLORER_HREF_KEYS]
+        targets += [c.get("href") for c in f.get("norms", [])]
+        for t in [t.split("#")[0] for t in targets if t]:
+            views = (
+                ("poster", _resolve(public, f"lifecycle/{fid}_lifecycle.html", t)),
+                (
+                    "shell",
+                    _resolve(
+                        public,
+                        "field-atlas/index.html",
+                        posixpath.join("../lifecycle", t),
+                    ),
+                ),
+            )
+            for label, p in views:
+                q = p / "index.html" if p.is_dir() else p
+                if not q.exists():
+                    bad.append((fid, label, t))
+    assert not bad, f"unresolved explorer hrefs: {bad}"
+
+
+def test_explorer_wells_pages_exist(public):
+    missing = [
+        f"{w['field_id']}_{w['slot']}"
+        for w in _explorer(public)["wells"]["wells"]
+        if not (
+            public / f"lifecycle/wells/{w['field_id']}_{w['slot']}_well.html"
+        ).exists()
+    ]
+    assert not missing, f"wells in contract without pages: {missing}"
+
+
+def test_explorer_identity_with_posters(public):
+    # Single-sourcing gate: the sidecar serializes the SAME post-enrichment
+    # dicts the posters embed (facts_to_field + norms + performance attached
+    # in main() — #946 r1 finding 1).
+    explorer = _explorer(public)
+    for f in FACTS:
+        text = (public / f"lifecycle/{f['id']}_lifecycle.html").read_text()
+        embedded = json.loads(FIELD_JSON_RE.search(text).group(1))
+        assert embedded == explorer["fields"][f["id"]], f["id"]
+
+
+def test_atlas_shell_pins(public):
+    # Zero-regression pins for the in-place rebuild of /field-atlas/ (#946):
+    # the funnel survives, the shell is present, and the page keeps exactly
+    # one <h1 so the fail-closed nav-spine inject stays unambiguous.
+    text = (public / "field-atlas/index.html").read_text()
+    roster = json.loads((REPO / "reports/field-atlas/_roster.json").read_text())
+    m = re.search(r"const ROSTER = (\[.*?\]);", text, re.S)
+    assert m, "embedded roster missing"
+    assert len(json.loads(m.group(1))) == len(roster)
+    for pin in (
+        'id="f-country"',
+        'id="f-play"',
+        'id="f-search"',
+        'id="f-tiers"',
+        'id="x-panel"',
+        "#/field/",
+        "_explorer.json",
+    ):
+        assert pin in text, pin
+    assert text.count("<h1") == 1

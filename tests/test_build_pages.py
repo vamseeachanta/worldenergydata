@@ -14,6 +14,7 @@ we redirect those to a tmp dir so tests never touch the working tree.
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -43,6 +44,17 @@ def test_full_build_renders_whole_site(bp):
     assert (public / "benchmark.html").exists()
     econ = list(public.glob("economics-*.html"))
     assert econ, "expected per-field economics pages"
+
+
+def test_lower_tertiary_publishes_explorer_sidecar(bp):
+    # Explorer shell contract (#946): the enriched-payload sidecar deploys
+    # next to the posters so /field-atlas/ can fetch ../lifecycle/_explorer.json.
+    bp.build(domains=["lower_tertiary"])
+    sidecar = bp.PUBLIC / "lifecycle" / "_explorer.json"
+    assert sidecar.exists()
+    data = json.loads(sidecar.read_text())
+    assert data["fields"], "explorer field payloads present"
+    assert "wells" in data
 
 
 def test_partial_build_only_touches_its_domain(bp):
