@@ -350,6 +350,30 @@ def test_underwriting_risk_signals(public):
     assert hpht["anchor"]["exceedance_pct"] == 25
 
 
+def test_landman_lease_panel(public):
+    # #951: all 10 LT fields carry a landman panel; 20 leases total; field-level
+    # blocks only (NO per-lease block — false-precision guard); placeholders link
+    # the ingest issue.
+    fields = _explorer(public)["fields"]
+    total = 0
+    for fid, f in fields.items():
+        lm = f["landman"]
+        assert lm and lm["leases"], fid
+        assert lm["blocks"] and lm["ingest_issue"] == 959
+        assert "per_lease_block" in lm["pending"]
+        for r in lm["leases"]:
+            assert "block" not in r  # never a per-lease block
+        total += lm["n_leases"]
+    assert total == 20, f"expected 20 LT leases, got {total}"
+    # Every canonical LT lease resolves through the registry.
+    from worldenergydata.common.fields_registry import load_fields
+
+    registry = load_fields()
+    for fid, f in fields.items():
+        for r in f["landman"]["leases"]:
+            assert registry.by_lease(r["lease_num"]) == fid, r["lease_num"]
+
+
 def test_every_well_has_a_page(public):
     embedded = _explorer(public)["wells"]["wells"]
     missing = [
