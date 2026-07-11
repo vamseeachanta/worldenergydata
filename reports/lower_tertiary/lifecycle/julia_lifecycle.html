@@ -283,6 +283,7 @@
 <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
     <div id="f-assets"></div>
+    <div id="f-landman"></div>
 
     <div class="body">
       <section>
@@ -561,6 +562,44 @@ const FIELD = {
     },
     "decommissioning": null
   },
+  "landman": {
+    "leases": [
+      {
+        "lease_num": "G20351",
+        "lease_name": "Julia",
+        "water_depth_ft": 7335,
+        "dev_system": "tieback15"
+      }
+    ],
+    "n_leases": 1,
+    "blocks": [
+      "WR627"
+    ],
+    "block_note": "Walker Ridge 627 (WR 540/583/584/627/628)",
+    "operator": "ExxonMobil",
+    "working_interest": [
+      {
+        "name": "ExxonMobil",
+        "wi": 50,
+        "operator": true
+      },
+      {
+        "name": "Equinor",
+        "wi": 50,
+        "operator": false
+      }
+    ],
+    "pending": [
+      "status",
+      "effective_date",
+      "expiration_date",
+      "lease_type",
+      "per_lease_block",
+      "per_lease_working_interest",
+      "operator_of_record_history"
+    ],
+    "ingest_issue": 959
+  },
   "provenance": "Primary facts (capex $4.7B, plateau 34 mbopd, GOR 1000, opex $18/boe, first oil, WI 50/50) from in-repo julia.yml; first oil = BSEE OGOR-A first production (2016-03) per YAML — note ExxonMobil press release states production start April 2016. Operator corrected to ExxonMobil (YAML flagged its \"Equinor\" operator field as disputed; public record = ExxonMobil-operated, Equinor/Statoil 50% partner). Discovery 2007, FID May 2013, water depth 7000+ ft, Walker Ridge blocks, and Jack/St. Malo tieback from Offshore Technology and operator/trade press. lease year and projected end-of-production not confidently sourced.",
   "norms": [
     {
@@ -664,6 +703,30 @@ if (FIELD.assetsHref) $("f-assets").innerHTML =
   + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
+
+// Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
+// operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the
+// BSEE lease ingest issue — grabbable work, never a blank cell.
+if (FIELD.landman) {
+  const L = FIELD.landman;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
+  const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
+  const rows = L.leases.map(r =>
+    `<tr><td>${r.lease_num}</td><td>${r.water_depth_ft ? r.water_depth_ft.toLocaleString()+" ft" : ph}</td>`
+    + `<td>${r.dev_system || ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
+  const wi = (L.working_interest || []).map(w =>
+    `${w.name} ${w.wi}%${w.operator ? " (op)" : ""}`).join(" · ");
+  $("f-landman").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
+    + `<p style="margin:0 0 4px;font-size:13px;color:var(--muted)">Operator <b>${L.operator||"—"}</b>`
+    + `${wi ? " · WI " + wi : ""} · Blocks ${L.blocks.join(", ")}${L.block_note ? " ("+L.block_note+")" : ""}</p>`
+    + `<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Lease status, dates, per-lease block &amp; working interest pending the `
+    + `<a href="${iss}">BSEE lease-data ingest (#${L.ingest_issue})</a> — contributions welcome.</p>`
+    + `<div class="scrollx"><table style="width:100%;border-collapse:collapse;font-size:12.5px">`
+    + `<thead><tr style="text-align:left;color:var(--muted)"><th>Lease</th><th>Water depth</th><th>Dev system</th>`
+    + `<th>Status</th><th>Effective</th><th>Expiration</th><th>WI</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+}
 
 $("f-metrics").innerHTML = FIELD.metrics.map(m =>
   `<div class="metric"><div class="k">${m.k}</div><div class="v">${m.v} <small>${m.u}</small></div></div>`
