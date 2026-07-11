@@ -41,6 +41,7 @@ from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
+from worldenergydata.field_development.concept import build_concept  # noqa: E402
 
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
@@ -77,6 +78,8 @@ FIELDS_REGISTRY = load_fields()
 # placeholders linking the ingest issue below. Build-time only (pandas); the
 # published site just copies the frozen posters + _explorer.json.
 _LEASE_INGEST_ISSUE = 959
+# FDP-authoring backlog for the 7 LT fields without a portfolio page (#759).
+_FDP_INGEST_ISSUE = 962
 _V30_DIR = (
     Path(__file__).resolve().parents[2]
     / "docs/modules/bsee/analysis/production/FDAS_V30"
@@ -396,6 +399,16 @@ def facts_to_field(f: dict) -> dict:
             _LEASE_ROWS,
             _LEASE_INGEST_ISSUE,
             registry_field.bsee_block_note,
+        ),
+        "concept": build_concept(
+            concept_label=concept_label,
+            host_type=f.get("host_type"),
+            play=f.get("play"),
+            first_oil=_pretty(g["first_oil"]) if g.get("first_oil") else None,
+            fid_year=g.get("fid_year"),
+            fdp_slug=registry_field.fdp_slug,
+            has_fdp=bool(registry_field.surfaces.get("fdp_page")),
+            fdp_issue=_FDP_INGEST_ISSUE,
         ),
         "provenance": f.get(
             "provenance", "Data: field YAML + public disclosures + BSEE"

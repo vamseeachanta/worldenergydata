@@ -283,6 +283,7 @@
 <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
     <div id="f-assets"></div>
+    <div id="f-concept"></div>
     <div id="f-landman"></div>
 
     <div class="body">
@@ -590,6 +591,17 @@ const FIELD = {
     ],
     "ingest_issue": 959
   },
+  "concept": {
+    "type": "FPSO",
+    "host": "FPSO (Turritella / Stones FPSO, disconnectable)",
+    "play": "Lower Tertiary Wilcox",
+    "milestone": {
+      "label": "First oil",
+      "value": "Sep 2016"
+    },
+    "fdp_href": "../field-development/portfolio/stones.html",
+    "fdp_issue": 962
+  },
   "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease year and projected end-of-production unknown; no notable schedule-driving incident identified.",
   "norms": [
     {
@@ -693,6 +705,23 @@ if (FIELD.assetsHref) $("f-assets").innerHTML =
   + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
+
+// Concept & development panel (#759). Real concept/play/milestone for every
+// field + FDP link when a portfolio page exists, else a placeholder linking the
+// FDP-authoring issue.
+if (FIELD.concept) {
+  const C = FIELD.concept;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${C.fdp_issue}`;
+  const fdp = C.fdp_href
+    ? `<a href="${C.fdp_href}">FDP portfolio →</a>`
+    : `<a href="${iss}" style="color:var(--muted)">— concept detail pending</a>`;
+  const bits = [C.type, C.play].filter(Boolean).map(x => `<b>${x}</b>`).join(" · ");
+  const ms = C.milestone ? ` · ${C.milestone.label} ${C.milestone.value}` : "";
+  $("f-concept").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Concept &amp; development</h3>`
+    + `<p style="margin:0;font-size:13px;color:var(--muted)">${bits}${ms} · ${fdp}</p></section>`;
+}
 
 // Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
 // operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the

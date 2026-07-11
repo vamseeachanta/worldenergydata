@@ -283,6 +283,7 @@
 <div class="metrics" id="f-metrics"></div>
     <div id="f-wells"></div>
     <div id="f-assets"></div>
+    <div id="f-concept"></div>
     <div id="f-landman"></div>
 
     <div class="body">
@@ -639,6 +640,17 @@ const FIELD = {
     ],
     "ingest_issue": 959
   },
+  "concept": {
+    "type": "Semisub FPU",
+    "host": "Semisubmersible FPU",
+    "play": "Lower Tertiary (Wilcox)",
+    "milestone": {
+      "label": "First oil",
+      "value": "Dec 2014"
+    },
+    "fdp_href": null,
+    "fdp_issue": 962
+  },
   "provenance": "Facts from in-repo YAML (operator, WI Chevron 51%/Equinor 24.5%/Suncor 24.5%, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this OVERRIDES the YAML's first oil \"2014-02-01\", which appears erroneous. Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident.",
   "norms": [
     {
@@ -742,6 +754,23 @@ if (FIELD.assetsHref) $("f-assets").innerHTML =
   + `<span>▾ Asset drill-down · facility → asset → component → engineering</span><span>Open →</span></a>`;
 if (FIELD.statusHue) document.querySelector(".status").style.setProperty("--sc", FIELD.statusHue);
 $("f-prov").textContent = FIELD.provenance;
+
+// Concept & development panel (#759). Real concept/play/milestone for every
+// field + FDP link when a portfolio page exists, else a placeholder linking the
+// FDP-authoring issue.
+if (FIELD.concept) {
+  const C = FIELD.concept;
+  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${C.fdp_issue}`;
+  const fdp = C.fdp_href
+    ? `<a href="${C.fdp_href}">FDP portfolio →</a>`
+    : `<a href="${iss}" style="color:var(--muted)">— concept detail pending</a>`;
+  const bits = [C.type, C.play].filter(Boolean).map(x => `<b>${x}</b>`).join(" · ");
+  const ms = C.milestone ? ` · ${C.milestone.label} ${C.milestone.value}` : "";
+  $("f-concept").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
+    + `<h3 style="margin:0 0 6px;font-size:15px">Concept &amp; development</h3>`
+    + `<p style="margin:0;font-size:13px;color:var(--muted)">${bits}${ms} · ${fdp}</p></section>`;
+}
 
 // Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
 // operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the

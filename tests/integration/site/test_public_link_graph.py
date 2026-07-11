@@ -350,6 +350,36 @@ def test_underwriting_risk_signals(public):
     assert hpht["anchor"]["exceedance_pct"] == 25
 
 
+def test_concept_fdp_links(public):
+    # #759: the concept.fdp_href is a JS-built link the data-driven edge extractor
+    # does NOT auto-catch, so assert it explicitly. Exactly 3 LT fields have an FDP
+    # page; their hrefs resolve; the other 7 carry a placeholder issue.
+    import re as _re
+
+    fields = _explorer(public)["fields"]
+    with_fdp = {
+        fid: c["concept"]["fdp_href"]
+        for fid, c in fields.items()
+        if c["concept"]["fdp_href"]
+    }
+    assert set(with_fdp) == {"cascade_chinook", "julia", "stones"}
+    for fid, href in with_fdp.items():
+        assert _re.fullmatch(
+            r"\.\./field-development/portfolio/[a-z_-]+\.html", href
+        ), href
+        assert (
+            public / "field-development/portfolio" / href.rsplit("/", 1)[1]
+        ).exists()
+    for fid, f in fields.items():
+        c = f["concept"]
+        assert c["fdp_issue"] == 962
+        if fid not in with_fdp:
+            assert c["fdp_href"] is None  # placeholder, not a dead link
+    # Milestone split (review correction): 7 first-oil / 3 sanctioned.
+    labels = [f["concept"]["milestone"]["label"] for f in fields.values()]
+    assert labels.count("First oil") == 7 and labels.count("Sanctioned") == 3
+
+
 def test_landman_lease_panel(public):
     # #951: all 10 LT fields carry a landman panel; 20 leases total; field-level
     # blocks only (NO per-lease block — false-precision guard); placeholders link
