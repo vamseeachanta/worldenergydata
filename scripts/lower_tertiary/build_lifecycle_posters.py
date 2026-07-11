@@ -442,6 +442,32 @@ def main():
     (HERE / "index.html").write_text(build_index(fields))
     print(f"  wrote index.html  ({len(fields)} fields)")
 
+    # Explorer sidecar (issue #946): the SAME post-enrichment payloads the
+    # posters embed (facts_to_field + norms + performance), keyed by id, plus
+    # the wells contract verbatim — one fetch for the field-atlas shell.
+    # Hrefs inside are lifecycle/-relative by contract; consumers outside
+    # lifecycle/ must rebase against ../lifecycle/ (link-graph gate enforces).
+    wells_contract = {}
+    wells_facts = HERE / "wells" / "_wells.json"
+    if wells_facts.exists():
+        wells_contract = json.loads(wells_facts.read_text())
+    (HERE / "_explorer.json").write_text(
+        json.dumps(
+            {
+                "meta": {
+                    "generated_by": "scripts/lower_tertiary/build_lifecycle_posters.py",
+                    "issue": 946,
+                },
+                "fields": {fl["id"]: fl for fl in fields},
+                "wells": wells_contract,
+            },
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
+    print(f"  wrote _explorer.json  ({len(fields)} fields)")
+
 
 if __name__ == "__main__":
     main()
