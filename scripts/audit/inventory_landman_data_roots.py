@@ -50,7 +50,7 @@ def _evidence_key(name: str) -> str:
         "legacy": "private_legacy",
         "private": "private_legacy",
     }
-    return aliases.get(lowered, lowered if lowered in REQUIRED_EVIDENCE else "")
+    return aliases.get(lowered, lowered or "unknown_root")
 
 
 def _quarantined(path: Path) -> bool:

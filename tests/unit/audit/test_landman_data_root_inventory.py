@@ -53,3 +53,14 @@ def test_write_outputs_only_reports(tmp_path):
     assert json_path.name.endswith(".json")
     assert markdown_path.name.endswith(".md")
     assert sorted(path.suffix for path in output.iterdir()) == [".json", ".md"]
+
+
+def test_unlisted_root_has_nonempty_evidence_key(tmp_path):
+    (tmp_path / "unlisted_source" / "data").mkdir(parents=True)
+    document = scan_inventory(tmp_path, observed_at="2026-07-10T00:00:00Z")
+    row = next(
+        row
+        for row in document["rows"]
+        if row["root_path"].endswith("unlisted_source/data")
+    )
+    assert row["evidence_key"] == "unlisted_source"
