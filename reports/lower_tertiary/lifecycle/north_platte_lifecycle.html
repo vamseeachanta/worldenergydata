@@ -284,6 +284,7 @@
     <div id="f-wells"></div>
     <div id="f-assets"></div>
     <div id="f-concept"></div>
+    <div id="f-arch"></div>
     <div id="f-landman"></div>
 
     <div class="body">
@@ -589,6 +590,10 @@ const FIELD = {
     "fdp_href": null,
     "fdp_issue": 962
   },
+  "architecture": {
+    "svg": null,
+    "pending_issue": 962
+  },
   "provenance": "Basis: in-repo YAML (superseded TotalEnergies pre-FID case) reconciled against current public record. North Platte was discovered 2012 (Cobalt/Total, Garden Banks). TotalEnergies (then 60% op, Equinor 40%) withdrew Feb 2022; Shell bought 51% and took operatorship from Equinor (49%), redesigned and renamed the project \"Sparta.\" Shell took FID Dec 2023; first oil projected 2028 (left blank — not yet producing). Water depth ~4,265 ft, subsalt Wilcox, newbuild semisubmersible FPU (8 subsea wells) with ~90,000 boe/d peak (~75 mbopd oil plateau; GOR 1100 scf/bbl from YAML). LOW-CONFIDENCE: capex — YAML's $6B reflects the abandoned TotalEnergies ~$5-7B concept, not Shell's simplified Sparta scope (not publicly disclosed), so not available; opex and projected COP year not publicly defensible.",
   "norms": [
     {
@@ -687,6 +692,25 @@ if (FIELD.concept) {
     `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
     + `<h3 style="margin:0 0 6px;font-size:15px">Concept &amp; development</h3>`
     + `<p style="margin:0;font-size:13px;color:var(--muted)">${bits}${ms} · ${fdp}</p></section>`;
+}
+
+// Architecture drawing panel (#969). Inline plan-view SVG for the 3 authored
+// concepts (cascade_chinook/julia/stones), else a placeholder linking the
+// FDP-authoring issue. The SVG is injected verbatim (same string the sidecar
+// carries — identity gate).
+if (FIELD.architecture) {
+  const A = FIELD.architecture;
+  let body;
+  if (A.svg) {
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture &mdash; ${A.caption || ""}</h3>`
+      + `<div style="overflow:auto;max-width:100%">${A.svg}</div>`;
+  } else {
+    const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;
+    body = `<h3 style="margin:0 0 6px;font-size:15px">Architecture</h3>`
+      + `<p style="margin:0;font-size:13px;color:var(--muted)"><a href="${iss}" style="color:var(--muted)">&mdash; field architecture pending</a></p>`;
+  }
+  $("f-arch").innerHTML =
+    `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">${body}</section>`;
 }
 
 // Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,

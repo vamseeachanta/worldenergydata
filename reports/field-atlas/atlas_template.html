@@ -401,6 +401,21 @@ function renderField(x, f){
       + (C.milestone ? row(C.milestone.label, esc(C.milestone.value)) : "")
       + row("FDP", fdp) + `</table></div>`;
   }
+  // Architecture drawing card (#969): inline plan-view SVG when the field has an
+  // authored concept, else a muted placeholder linking the FDP-authoring issue.
+  // The SVG string is injected verbatim (identity-gate-safe; never a file href).
+  let arch = "";
+  if (f.architecture) {
+    const A = f.architecture;
+    if (A.svg) {
+      arch = `<div class="xcardlet"><div class="xh">Architecture — ${esc(A.caption || "")}</div>`
+        + `<div style="overflow:auto;max-width:100%">${A.svg}</div></div>`;
+    } else {
+      const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${A.pending_issue}`;
+      arch = `<div class="xcardlet"><div class="xh">Architecture</div>`
+        + `<p style="margin:0;font-size:13px"><a href="${iss}" style="color:var(--muted)">— field architecture pending</a></p></div>`;
+    }
+  }
   show(`
     <div class="xtitle">${esc(f.name)}
       <span class="badge rich">${esc(f.statusLabel)}</span>
@@ -412,7 +427,7 @@ function renderField(x, f){
     <div class="xmets">${mets}</div>
     <div class="xcols">
       <div class="xcardlet"><div class="xh">Host &amp; field facts</div><table>${facts}</table></div>
-      ${concept}${perf}${resv}${uw}${landman}
+      ${concept}${arch}${perf}${resv}${uw}${landman}
     </div>
     <div class="xacts">${acts.join("")}</div>
     ${wellsNote}

@@ -46,6 +46,8 @@ _TOKENS = (
 )
 _SITE = "https://vamseeachanta.github.io/worldenergydata"
 _ROLLOUT_ISSUE = "https://github.com/vamseeachanta/worldenergydata/issues/948"
+# FDP-authoring backlog for the 7 concept-less LT fields (#759 → #962).
+_FDP_ISSUE = "https://github.com/vamseeachanta/worldenergydata/issues/962"
 _CHROME = (
     os.environ.get("CHROME")
     or shutil.which("google-chrome")
@@ -111,6 +113,9 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   .ph{{background:var(--soft);border:1px dashed var(--teal);border-radius:10px;padding:12px 14px;
       font-size:13px;line-height:1.5;color:var(--ink)}}
   .ph a{{color:var(--navy);font-weight:700}}
+  .arch{{border:1px solid var(--line);border-radius:11px;padding:12px 14px;text-align:center}}
+  .arch svg{{max-width:100%;height:auto}}
+  .arch .cap{{font-size:11px;color:var(--muted);margin-top:6px;text-align:left}}
   table.lease{{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}}
   table.lease th{{text-align:left;color:var(--muted);font-size:10.5px;text-transform:uppercase;
                  letter-spacing:.5px;border-bottom:1px solid var(--line);padding:4px 6px}}
@@ -130,6 +135,8 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   <p class="sub">{operator} &middot; {region}</p>
   {chips}
   <div class="mets">{mets}</div>
+  <h2>Field architecture</h2>
+  {architecture}
   <h2>Performance snapshot</h2>
   {perf}
   <h2>Lease &amp; landman</h2>
@@ -215,6 +222,24 @@ def _perf(field: dict) -> str:
     return f'<div class="snap">{body}</div>'
 
 
+def _architecture(field: dict) -> str:
+    """Inline plan-view SVG for an authored field, else an issue-linked
+    placeholder (#969). The SVG string comes verbatim from the Explorer payload
+    (rendered once by the poster builder), so it is identity-gate-consistent and
+    already PDF-portable (no pattern/clip-path/filter/mask)."""
+    arch = field.get("architecture") or {}
+    svg = arch.get("svg")
+    if not svg:
+        return (
+            '<div class="ph">A to-scale field architecture drawing is pending &mdash; '
+            "this field has no committed development-concept geometry yet. Tracked in "
+            f'<a href="{_FDP_ISSUE}">#962</a>.</div>'
+        )
+    caption = arch.get("caption") or ""
+    cap = f'<div class="cap">Plan view &middot; {html.escape(caption)}</div>' if caption else ""
+    return f'<div class="arch">{svg}{cap}</div>'
+
+
 def _lease(field: dict) -> str:
     lm = field.get("landman") or {}
     leases = lm.get("leases") or []
@@ -265,6 +290,7 @@ def render_field_html(fid: str, field: dict) -> str:
         region=html.escape(field.get("region") or "—"),
         chips=_chips(field),
         mets=_metrics(field),
+        architecture=_architecture(field),
         perf=_perf(field),
         lease=_lease(field),
         provenance=html.escape(field.get("provenance") or "—"),
