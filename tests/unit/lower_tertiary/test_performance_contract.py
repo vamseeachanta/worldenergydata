@@ -217,9 +217,9 @@ def test_eur_is_curated_reserves():
     # decline-fit sum (#973). null where no credible public figure exists.
     perf = _load_perf()
     for fid, expected in CURATED_EUR.items():
-        assert perf[fid]["eur_mmbbl"] == expected, (
-            f"{fid}: eur_mmbbl {perf[fid]['eur_mmbbl']} != curated {expected}"
-        )
+        assert (
+            perf[fid]["eur_mmbbl"] == expected
+        ), f"{fid}: eur_mmbbl {perf[fid]['eur_mmbbl']} != curated {expected}"
         # Provenance is mandatory for a client-facing reserve number.
         assert perf[fid]["eur_source"], f"{fid}: missing eur_source"
         conf = perf[fid]["eur_confidence"]
@@ -246,9 +246,9 @@ def test_no_inflated_declinefit_eur_leaks():
     # The audited-inflated decline-fit sums must not appear as eur anywhere.
     inflated = {1117, 1324, 1577, 998, 509, 256, 92}
     for fid, rec in _load_perf().items():
-        assert rec["eur_mmbbl"] not in inflated, (
-            f"{fid}: decline-fit EUR {rec['eur_mmbbl']} leaked"
-        )
+        assert (
+            rec["eur_mmbbl"] not in inflated
+        ), f"{fid}: decline-fit EUR {rec['eur_mmbbl']} leaked"
 
 
 @unit
