@@ -24,7 +24,7 @@ This projection re-packages already-committed Field Explorer (#939) analysis res
 
 | role | path | sha256 | bytes | generated_by | source issue |
 | --- | --- | --- | --- | --- | --- |
-| field_detail | `reports/lower_tertiary/lifecycle/_explorer.json` | `355d8734fbb626fc…` | 108573 | `scripts/lower_tertiary/build_lifecycle_posters.py` | 946 |
+| field_detail | `reports/lower_tertiary/lifecycle/_explorer.json` | `fc79569c7417d2b7…` | 109412 | `scripts/lower_tertiary/build_lifecycle_posters.py` | 946 |
 | global_funnel | `reports/field-atlas/_atlas_feed.json` | `50e039377705d8ee…` | 602153 | `scripts/field_atlas/build_atlas_feed.py` | 947 |
 
 ## Record counts

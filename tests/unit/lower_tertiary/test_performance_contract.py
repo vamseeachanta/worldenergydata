@@ -59,6 +59,22 @@ REQUIRED_KEYS = {
     # (not full-cycle) NPV; every field declares its basis + surfacing status.
     "economics_basis",
     "economics_status",
+    # Curated reserves (#973): eur_mmbbl is now published/booked recoverable
+    # reserves (not the ~2-6.6x-inflated decline-fit sum); each declares source.
+    "eur_source",
+    "eur_confidence",
+}
+
+# Curated recoverable EUR (MMbbl) from config/lt_field_reserves.yml (#973).
+# null where no credible public recoverable figure exists (must show pending).
+CURATED_EUR = {
+    "jack_st_malo": 500,
+    "stones": 250,
+    "big_foot": 200,
+    "anchor": 440,
+    "shenandoah": 332,
+    "julia": None,
+    "cascade_chinook": None,
 }
 
 # Above this life-to-date breakeven ($/bbl) the metric is not client-credible
@@ -133,7 +149,7 @@ def test_jack_st_malo_anchor_values():
     assert jsm["display"] == "Jack St Malo"
     assert jsm["wells"] == 24
     assert jsm["cum_oil_mmbbl"] == 438.8
-    assert jsm["eur_mmbbl"] == 1117
+    assert jsm["eur_mmbbl"] == 500  # curated (Chevron 500+), not decline-fit 1117
     assert jsm["npv_mm"] == -804.5
     assert jsm["breakeven_wti"] == 79.0
     assert jsm["sens_mm_per_dollar"] == 52.3
@@ -193,6 +209,46 @@ def test_jack_st_malo_surfaces_with_status():
     assert jsm["economics_status"] == "surfaced"
     assert jsm["npv_mm"] == -804.5
     assert jsm["breakeven_wti"] == 79.0
+
+
+@unit
+def test_eur_is_curated_reserves():
+    # eur_mmbbl must be the curated published reserve, not the inflated
+    # decline-fit sum (#973). null where no credible public figure exists.
+    perf = _load_perf()
+    for fid, expected in CURATED_EUR.items():
+        assert perf[fid]["eur_mmbbl"] == expected, (
+            f"{fid}: eur_mmbbl {perf[fid]['eur_mmbbl']} != curated {expected}"
+        )
+        # Provenance is mandatory for a client-facing reserve number.
+        assert perf[fid]["eur_source"], f"{fid}: missing eur_source"
+        conf = perf[fid]["eur_confidence"]
+        if expected is None:
+            assert conf == "none", f"{fid}: pending EUR must be confidence=none"
+        else:
+            assert conf in {"high", "med_high"}, f"{fid}: weak confidence {conf}"
+
+
+@unit
+def test_null_eur_field_gated_on_breakeven_only():
+    # When curated EUR is null the cum/eur fraction can't be evaluated, so the
+    # gate falls back to the breakeven ceiling alone: Julia ($95) surfaces,
+    # Cascade/Chinook ($338) is withheld (#973).
+    perf = _load_perf()
+    assert perf["julia"]["eur_mmbbl"] is None
+    assert perf["julia"]["economics_status"] == "surfaced"
+    assert perf["cascade_chinook"]["eur_mmbbl"] is None
+    assert perf["cascade_chinook"]["economics_status"] == "early_life"
+
+
+@unit
+def test_no_inflated_declinefit_eur_leaks():
+    # The audited-inflated decline-fit sums must not appear as eur anywhere.
+    inflated = {1117, 1324, 1577, 998, 509, 256, 92}
+    for fid, rec in _load_perf().items():
+        assert rec["eur_mmbbl"] not in inflated, (
+            f"{fid}: decline-fit EUR {rec['eur_mmbbl']} leaked"
+        )
 
 
 @unit
