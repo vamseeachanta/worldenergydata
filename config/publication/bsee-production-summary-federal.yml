@@ -1,0 +1,158 @@
+# ABOUTME: FEDERAL (real-extract) publication config for the wed#927 BSEE run-ledger pilot.
+# ABOUTME: Pins a GENUINE public-domain BSEE OGOR-A 2024 slice -> PUBLIC / cc-by-4.0 / source_authority:BSEE.
+#
+# This is the SEPARATE, real-extract sibling of bsee-production-summary.yml. The
+# synthetic config stays PRIVATE / synthetic (the honest default). This config
+# sets publication.is_real_extract=true because its pinned snapshot is a committed
+# REAL public-domain BSEE OGOR-A extract (Green Canyon 478, 2024), so the MAJOR-1
+# gate (bsee_pilot.assert_federal_claim_allowed) PERMITS the federal claim and
+# visibility/license resolve to PUBLIC / cc-by-4.0 / BSEE.
+#
+# Provenance of the pinned slice (fully reproducible):
+#   parent bulk file : https://www.data.bsee.gov/Production/Files/ogora2024delimit.zip
+#   parent_zip_sha256: 63f1cbfa3351b067c49ef1c599b38691c4782f0e3e94ab6478eb1b83e981ebe1
+#   parent Last-Modified: Wed, 01 Jul 2026 10:46:30 GMT (BSEE)
+#   selection predicate: PRODUCTION_DATE year == 2024 AND AREA_CODE_BLOCK_NUM == "GC  478"
+#   transform (value-preserving): headerless positional OGOR-A 19-col -> the wed
+#     parser's 19-col header layout; numeric columns un-zero-padded; block key
+#     "GC  478" -> "GC478". No production value altered.
+#   committed slice  : examples/workflows/bsee-production-summary/ogora2024_GC478.csv
+#   snapshot_identity: 3c160686cb3a860010d049192f539f59ace24e727ebd0e5f3b80df35a8ea1960
+
+algorithm:
+  algorithm_id: "worldenergydata/bsee-production-summary"
+  semantic_version: "1.0.0"
+  clean_git_commit: "7b08d116ddc1b3d01b61a9b5b04e6a896e4dca9d"
+  input_schema_version: "bsee-ogor-a-1"
+  output_schema_version: "bsee-prod-summary-1"
+  environment:
+    python: "3.11"
+    assetutilities: "workflow_api-main"
+    worldenergydata: "bsee-production-summary-pilot"
+  execution_parameters:
+    analysis_type: "production"
+    runtime: "offline"
+  seed: 0
+
+# ---------------------------------------------------------------------------
+# Real-extract publication target. is_real_extract=true -> the MAJOR-1 gate
+# permits the federal claim; resolve_visibility derives PUBLIC + cc-by-4.0 + BSEE.
+# ---------------------------------------------------------------------------
+publication:
+  hf_repo: "aceengineer/worldenergydata-runs"
+  is_real_extract: true
+  synthetic_license: "synthetic-fixture-nonfederal"
+  federal_license: "cc-by-4.0"
+  federal_source_authority: "BSEE"
+  synthetic_source_authority: "worldenergydata-synthetic-fixture"
+  # CC-BY attribution string rendered on the federal report.
+  attribution: "BSEE Data Center, OGOR-A, data.bsee.gov"
+  # sha256 of the parent public-domain bulk file the slice was cut from.
+  parent_zip_sha256: "63f1cbfa3351b067c49ef1c599b38691c4782f0e3e94ab6478eb1b83e981ebe1"
+
+report_path: "docs/reports/bsee-production-summary-federal/index.html"
+
+# ---------------------------------------------------------------------------
+# Pinned REAL source snapshot: BSEE OGOR-A 2024, Green Canyon block 478.
+# snapshot_identity is the sha256 taken over the committed slice BYTES at run time.
+# ---------------------------------------------------------------------------
+snapshots:
+  gc478:
+    fixture: "examples/workflows/bsee-production-summary/ogora2024_GC478.csv"
+    vintage: "2024"                          # SOURCE vintage (OGOR-A 2024 annual)
+    retrieved_at: "2026-07-11T00:00:00Z"     # pinned once, at pin time
+    parent_zip_sha256: "63f1cbfa3351b067c49ef1c599b38691c4782f0e3e94ab6478eb1b83e981ebe1"
+    query:
+      area: "GC"
+      block: 478
+    schema:
+      - LEASE_NUMBER
+      - API_WELL_NUMBER
+      - COMPLETION_NAME
+      - PROD_DATE
+      - DAYS_ON_PROD
+      - OIL_PRODUCTION
+      - GAS_PRODUCTION
+      - WATER_PRODUCTION
+    # synthetic locator is unused under is_real_extract=true, kept for symmetry:
+    synthetic_public_locator:
+      uri: "synthetic://worldenergydata/bsee-pilot/gc-478"
+      version: "synthetic-2024"
+    # federal provenance — the REAL retrieval path + exact filter predicate:
+    federal_public_locator:
+      uri: "https://www.data.bsee.gov/Production/Files/ogora2024delimit.zip"
+      version: "2024"
+      selection_predicate: "PRODUCTION_DATE year == 2024 AND AREA_CODE_BLOCK_NUM == 'GC  478'"
+      parent_zip_sha256: "63f1cbfa3351b067c49ef1c599b38691c4782f0e3e94ab6478eb1b83e981ebe1"
+
+# ---------------------------------------------------------------------------
+# >=3 real variations (distinct producing-well subsets of the pinned slice) +
+# exactly 1 exact replay (of replay_variant). All variants read the SAME real
+# GC478 slice; only the api12 selection varies, so run_id/outputs differ.
+#   W1 = 608114068000 (SS001) — 12 months
+#   W2 = 608114068901 (SS002) — 12 months
+#   W3 = 608114078100 (SS006) —  5 months
+# ---------------------------------------------------------------------------
+variants:
+  - id: V1
+    workflow: "bsee-production-summary"
+    snapshot: gc478
+    group_label: "gc478_all_producing"
+    api12: ["608114068000", "608114068901", "608114078100"]
+  - id: V2
+    workflow: "bsee-production-summary"
+    snapshot: gc478
+    group_label: "gc478_ss001"
+    api12: ["608114068000"]
+  - id: V3
+    workflow: "bsee-production-summary"
+    snapshot: gc478
+    group_label: "gc478_ss001_ss002"
+    api12: ["608114068000", "608114068901"]
+replay_variant: V1
+
+# ---------------------------------------------------------------------------
+# Algorithm-scoped metric definitions (identical to the synthetic pilot's —
+# metric_id is WHOLE-PREFIX owned by algorithm_id).
+# ---------------------------------------------------------------------------
+metrics:
+  - metric_id: "worldenergydata/bsee-production-summary/total_oil_bbl"
+    definition_version: "1.0.0"
+    label: "Total oil produced"
+    meaning: "Sum of OIL_PRODUCTION over the selected API12 wells and months."
+    unit_or_dimension: "bbl"
+    data_type: "number"
+    derivation: "sum(OIL_PRODUCTION) over the pinned snapshot rows matching the selection"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_more_production"
+    quality_rule: "valid when every selected row has a non-null numeric OIL_PRODUCTION"
+  - metric_id: "worldenergydata/bsee-production-summary/producing_well_count"
+    definition_version: "1.0.0"
+    label: "Producing well count"
+    meaning: "Count of distinct API12 wells with production in the selection."
+    unit_or_dimension: "count"
+    data_type: "integer"
+    derivation: "cardinality of distinct API12 values in the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well production"
+    directionality: "none"
+    quality_rule: "valid when at least one selected well has production rows"
+  - metric_id: "worldenergydata/bsee-production-summary/cumulative_oil_mmbbl"
+    definition_version: "1.0.0"
+    label: "Cumulative oil"
+    meaning: "Total oil produced expressed in millions of barrels."
+    unit_or_dimension: "MMbbl"
+    data_type: "number"
+    derivation: "sum(OIL_PRODUCTION)/1e6 over the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_more_production"
+    quality_rule: "valid when total_oil_bbl is valid"
+  - metric_id: "worldenergydata/bsee-production-summary/peak_oil_rate_bopd"
+    definition_version: "1.0.0"
+    label: "Peak oil rate"
+    meaning: "Maximum monthly oil rate (OIL_PRODUCTION/DAYS_ON_PROD) across the selection."
+    unit_or_dimension: "bopd"
+    data_type: "number"
+    derivation: "max(OIL_PRODUCTION/DAYS_ON_PROD) over the selected snapshot rows"
+    applicability: "BSEE OGOR-A monthly per-well oil production"
+    directionality: "higher_is_higher_rate"
+    quality_rule: "valid when every selected row has DAYS_ON_PROD > 0"
