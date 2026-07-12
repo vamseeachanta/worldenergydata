@@ -198,21 +198,30 @@ def _perf(field: dict) -> str:
             return "&mdash;"
         return html.escape(f"{v}{suffix}")
 
+    # Economics are life-to-date (#971): withhold early-life fields as a labeled
+    # "n/a", lead with the credible LTD breakeven, show NPV as a captioned
+    # detail. `perf` values are already gated null upstream for early_life.
+    _early = perf.get("economics_status") == "early_life"
+    _na = "n/a &mdash; early life"
+    _be = (
+        _na
+        if _early
+        else (
+            "$" + str(perf.get("breakeven_wti"))
+            if perf.get("breakeven_wti") is not None
+            else "&mdash;"
+        )
+    )
+    _npv = _na if _early else _num(perf.get("npv_mm"), " $MM")
+
     cells = [
         (_num(perf.get("cum_oil_mmbbl")), "Cum. oil (MMbbl)"),
         (_num(perf.get("wells")), "Producing wells"),
         (_num(perf.get("avg_uptime_pct"), "%"), "Avg uptime"),
         (_num(perf.get("avg_decline_pct_yr"), "%/yr"), "Avg decline"),
         (_num(perf.get("eur_mmbbl")), "EUR (MMbbl)"),
-        (
-            (
-                "$" + str(perf.get("breakeven_wti"))
-                if perf.get("breakeven_wti") is not None
-                else "&mdash;"
-            ),
-            "Breakeven WTI",
-        ),
-        (_num(perf.get("npv_mm"), " $MM"), "NPV (V30)"),
+        (_be, "Breakeven WTI &middot; LTD @10%"),
+        (_npv, "NPV &middot; life-to-date @10%"),
         (_num(perf.get("interventions")), "Interventions"),
     ]
     body = "".join(

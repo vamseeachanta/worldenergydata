@@ -551,21 +551,15 @@ const FIELD = {
       "basis": "reservoir",
       "label": "HPHT"
     },
-    "decommissioning": {
-      "cost_musd": 80.0,
-      "host_type": "FPSO",
-      "confidence": "low",
-      "basis": "facility removal (not well P&A)",
-      "label": "Decommission ~$80M (FPSO base)"
-    }
+    "decommissioning": null
   },
   "landman": {
     "leases": [
       {
         "lease_num": "G17001",
-        "lease_name": "Stones",
-        "water_depth_ft": 9525,
-        "dev_system": "subsea15"
+        "lease_name": null,
+        "water_depth_ft": null,
+        "dev_system": null
       }
     ],
     "n_leases": 1,
@@ -604,9 +598,8 @@ const FIELD = {
     "fdp_issue": 962
   },
   "architecture": {
-    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"160\" height=\"240\" viewBox=\"0 0 160 240\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Stones</title>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"80.0\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"100.0\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"80.0\" y1=\"140.0\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"80.0\" y2=\"140.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"65.9\" y1=\"145.9\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"65.9\" y2=\"145.9\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"160.0\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"60.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"65.9\" y1=\"174.1\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"65.9\" y2=\"174.1\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"80.0\" y1=\"180.0\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"80.0\" y2=\"180.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"94.1\" y1=\"174.1\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"94.1\" y2=\"174.1\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"100.0\" y1=\"160.0\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"100.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"94.1\" y1=\"145.9\" x2=\"80.0\" y2=\"160.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"80.0\" y1=\"160.0\" x2=\"94.1\" y2=\"145.9\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"80.0\" y1=\"100.0\" x2=\"80.0\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"68.0\" y=\"152.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"72.8\" y1=\"167.2\" x2=\"72.8\" y2=\"172.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"77.6\" y1=\"167.2\" x2=\"77.6\" y2=\"172.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"82.4\" y1=\"167.2\" x2=\"82.4\" y2=\"172.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"87.2\" y1=\"167.2\" x2=\"87.2\" y2=\"172.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"95.0\" y=\"163.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"80.0\" y1=\"148.0\" x2=\"80.0\" y2=\"132.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"74.4\" y=\"144.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"76.0,134.8 84.0,139.6 84.0,134.8 76.0,139.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"76.0,138.8 84.0,143.6 84.0,138.8 76.0,143.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"91.0\" y=\"143.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"65.9\" y1=\"153.9\" x2=\"65.9\" y2=\"137.9\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"60.3\" y=\"149.9\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"61.9,140.7 69.9,145.5 69.9,140.7 61.9,145.5\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"61.9,144.7 69.9,149.5 69.9,144.7 61.9,149.5\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"76.9\" y=\"148.9\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"168.0\" x2=\"60.0\" y2=\"152.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"164.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,154.8 64.0,159.6 64.0,154.8 56.0,159.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,158.8 64.0,163.6 64.0,158.8 56.0,163.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"163.0\" font-family=\"sans-serif\" font-size=\"9\">XT 3</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"65.9\" y1=\"182.1\" x2=\"65.9\" y2=\"166.1\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"60.3\" y=\"178.1\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"61.9,168.9 69.9,173.7 69.9,168.9 61.9,173.7\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"61.9,172.9 69.9,177.7 69.9,172.9 61.9,177.7\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"76.9\" y=\"177.1\" font-family=\"sans-serif\" font-size=\"9\">XT 4</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"80.0\" y1=\"188.0\" x2=\"80.0\" y2=\"172.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"74.4\" y=\"184.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"76.0,174.8 84.0,179.6 84.0,174.8 76.0,179.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"76.0,178.8 84.0,183.6 84.0,178.8 76.0,183.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"91.0\" y=\"183.0\" font-family=\"sans-serif\" font-size=\"9\">XT 5</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"94.1\" y1=\"182.1\" x2=\"94.1\" y2=\"166.1\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"88.5\" y=\"178.1\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"90.1,168.9 98.1,173.7 98.1,168.9 90.1,173.7\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"90.1,172.9 98.1,177.7 98.1,172.9 90.1,177.7\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"105.1\" y=\"177.1\" font-family=\"sans-serif\" font-size=\"9\">XT 6</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"100.0\" y1=\"168.0\" x2=\"100.0\" y2=\"152.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"94.4\" y=\"164.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"96.0,154.8 104.0,159.6 104.0,154.8 96.0,159.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"96.0,158.8 104.0,163.6 104.0,158.8 96.0,163.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"111.0\" y=\"163.0\" font-family=\"sans-serif\" font-size=\"9\">XT 7</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"94.1\" y1=\"153.9\" x2=\"94.1\" y2=\"137.9\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"88.5\" y=\"149.9\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"90.1,140.7 98.1,145.5 98.1,140.7 90.1,145.5\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"90.1,144.7 98.1,149.5 98.1,144.7 90.1,149.5\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"105.1\" y=\"148.9\" font-family=\"sans-serif\" font-size=\"9\">XT 8</text>\n<g class=\"sym\"><title>FPSO</title><path d=\"M 64.0 92.0 L 91.2 92.0 L 96.0 100.0 L 91.2 108.0 L 64.0 108.0 Z\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\"/></g>\n<text x=\"99.0\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">FPSO</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"70.0,55.0 83.0,55.0 83.0,50.0 90.0,60.0 83.0,70.0 83.0,65.0 70.0,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"93.0\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"132\" y1=\"46\" x2=\"132\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"132,14 127,24 137,24\"/><text x=\"128\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"216\" x2=\"60\" y2=\"216\" stroke-width=\"2\"/><line x1=\"20\" y1=\"212\" x2=\"20\" y2=\"220\" stroke-width=\"2\"/><line x1=\"60\" y1=\"212\" x2=\"60\" y2=\"220\" stroke-width=\"2\"/><text x=\"20\" y=\"208\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n</svg>",
-    "source": "render_layout",
-    "caption": "Stones FPSO"
+    "svg": null,
+    "pending_issue": 962
   },
   "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease year and projected end-of-production unknown; no notable schedule-driving incident identified.",
   "norms": [
@@ -659,13 +652,15 @@ const FIELD = {
   "performance": {
     "avg_decline_pct_yr": 21.4,
     "avg_uptime_pct": 76.9,
-    "breakeven_wti": 165.0,
+    "breakeven_wti": null,
     "cum_oil_mmbbl": 89.0,
     "display": "Stones",
+    "economics_basis": "life_to_date_pretax_npv_at_10pct",
+    "economics_status": "early_life",
     "eur_mmbbl": 509,
     "interventions": 3,
-    "npv_mm": -1460.8,
-    "sens_mm_per_dollar": 14.9,
+    "npv_mm": null,
+    "sens_mm_per_dollar": null,
     "wells": 10
   }
 };
@@ -920,6 +915,13 @@ if (FIELD.performance) {
   const unit = (v, d, u) => v == null
     ? `<span class="mut">${DASH}</span>`
     : `${Number(v).toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d})}${u}`;
+  // Economics are life-to-date (#971): early-life fields are withheld as a
+  // labeled "n/a", and the credible LTD breakeven leads with the NPV shown as a
+  // captioned detail (not a bare headline number).
+  const early = p.economics_status === "early_life";
+  const econ = (v, d, u) => early
+    ? `<span class="mut">n/a — early life</span>`
+    : unit(v, d, u);
   const rows = [
     ["Benchmark wells", unit(p.wells, 0, "")],
     ["Cum oil", unit(p.cum_oil_mmbbl, 1, " MMbbl")],
@@ -927,9 +929,9 @@ if (FIELD.performance) {
     ["Avg uptime", unit(p.avg_uptime_pct, 1, "%")],
     ["Avg decline", unit(p.avg_decline_pct_yr, 1, "%/yr")],
     ["Interventions", unit(p.interventions, 0, "")],
-    ["NPV @10%", unit(p.npv_mm, 1, " $MM")],
-    ["WTI break-even", unit(p.breakeven_wti, 0, " $/bbl")],
-    ["NPV per +$1/bbl", unit(p.sens_mm_per_dollar, 1, " $MM")],
+    ["LTD breakeven WTI @10%", econ(p.breakeven_wti, 0, " $/bbl")],
+    ["NPV · life-to-date @10%", econ(p.npv_mm, 1, " $MM")],
+    ["NPV per +$1/bbl", econ(p.sens_mm_per_dollar, 1, " $MM")],
   ];
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;

@@ -205,6 +205,21 @@ def render_card(bundle: dict) -> str:
         "- `wells` — per-field roll-ups + 56 producing-well records.",
         "- `atlas` — global funnel: countries + deduped fields.",
         "",
+        "### Economics basis (read before using `performance.npv_mm` / "
+        "`performance.breakeven_wti`)",
+        "",
+        "Per-field economics are **life-to-date, pre-tax, 10%-discounted** "
+        "(`performance.economics_basis == \"life_to_date_pretax_npv_at_10pct\"`): the "
+        "full sunk capital is charged against only the oil produced **to date**, not "
+        "against full-cycle EUR. These are **not** full-cycle / sanctioned economics. "
+        "For a field early in its life that is legitimately deep-negative, so such "
+        "values are **withheld** — `npv_mm`, `breakeven_wti` and `sens_mm_per_dollar` "
+        "are `null` and `performance.economics_status == \"early_life\"`. Only fields "
+        "with `economics_status == \"surfaced\"` carry a client-credible life-to-date "
+        "number (and it may still be negative — an expected life-to-date artifact for "
+        "high-up-front-capital deepwater fields). A credible full-cycle recompute is "
+        "tracked in worldenergydata#973.",
+        "",
         "All non-finite floats (NaN/Infinity) are sanitized to `null` for strict-JSON "
         "and HF-viewer compatibility.",
         "",

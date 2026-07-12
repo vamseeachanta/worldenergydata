@@ -27024,6 +27024,10 @@
   },
   "fields": {
     "anchor": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2045,
@@ -27115,16 +27119,16 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea20",
-            "lease_name": "Anchor",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G31751",
-            "water_depth_ft": 5080
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea20",
-            "lease_name": "Anchor",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G31752",
-            "water_depth_ft": 5080
+            "water_depth_ft": null
           }
         ],
         "n_leases": 2,
@@ -27240,13 +27244,15 @@
       "performance": {
         "avg_decline_pct_yr": 0.0,
         "avg_uptime_pct": 88.1,
-        "breakeven_wti": 380.0,
+        "breakeven_wti": null,
         "cum_oil_mmbbl": 18.6,
         "display": "Anchor",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
         "eur_mmbbl": 998,
         "interventions": 0,
-        "npv_mm": -1586.9,
-        "sens_mm_per_dollar": 5.1,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
         "wells": 3
       },
       "provenance": "Primary facts (operator, working interests, capex $5.6B, plateau 75 mbopd, GOR 1100 scf/bbl, opex $15/boe, first oil 2024-08, data through 2024-12-31) from in-repo anchor.yml. Life-cycle dates corroborated by public sources: discovery well Anchor-2 drilled 2014 (Green Canyon 807, ~5,180 ft), FID December 2019 (~$5.7B sanction), first oil August 2024 — world's first 20,000-psi HPHT deepwater development on a semisubmersible FPU, Lower Tertiary Wilcox play. Working interests (Chevron 62.5% / Equinor 25% / TotalEnergies 12.5%) per YAML; note older Offshore Technology page still lists pre-Equinor split (Chevron 62.86% / Total 37.14%). water depth ~5,180 (block-level estimate). projected end-of-production and lease year not confidently sourced; no notable incident.",
@@ -27310,6 +27316,10 @@
       ]
     },
     "big_foot": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2040,
@@ -27409,10 +27419,10 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "dry",
-            "lease_name": "Big Foot",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G16942",
-            "water_depth_ft": 5190
+            "water_depth_ft": null
           }
         ],
         "n_leases": 1,
@@ -27528,13 +27538,15 @@
       "performance": {
         "avg_decline_pct_yr": 17.2,
         "avg_uptime_pct": 88.2,
-        "breakeven_wti": 153.0,
+        "breakeven_wti": null,
         "cum_oil_mmbbl": 78.7,
         "display": "Big Foot",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
         "eur_mmbbl": 1324,
         "interventions": 6,
-        "npv_mm": -989.0,
-        "sens_mm_per_dollar": 12.1,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
         "wells": 8
       },
       "provenance": "Data: big_foot.yml + Chevron public disclosures + BSEE (dates to be reconciled in #375)",
@@ -27552,13 +27564,7 @@
         "tvd_ft": null
       },
       "risk": {
-        "decommissioning": {
-          "basis": "facility removal (not well P&A)",
-          "confidence": "modeled",
-          "cost_musd": 43.2,
-          "host_type": "Mini-TLP",
-          "label": "Decommission ~$43.2M"
-        },
+        "decommissioning": null,
         "hpht": null
       },
       "spans": [
@@ -27601,6 +27607,10 @@
       ]
     },
     "cascade_chinook": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2035,
@@ -27688,16 +27698,16 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea15",
-            "lease_name": "Cascade",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G16965",
-            "water_depth_ft": 8200
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "Chinook",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G16997",
-            "water_depth_ft": 8900
+            "water_depth_ft": null
           }
         ],
         "n_leases": 2,
@@ -27808,13 +27818,15 @@
       "performance": {
         "avg_decline_pct_yr": 35.9,
         "avg_uptime_pct": 94.6,
-        "breakeven_wti": 338.0,
+        "breakeven_wti": null,
         "cum_oil_mmbbl": 39.7,
         "display": "Cascade Chinook",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
         "eur_mmbbl": 92,
         "interventions": 0,
-        "npv_mm": -1480.5,
-        "sens_mm_per_dollar": 5.5,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
         "wells": 3
       },
       "provenance": "Life-cycle dates and ownership from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. IMPORTANT: two YAML values were overridden as demonstrably wrong vs. well-documented public record — YAML first oil \"2021-08\" corrected to 2012-02 (Cascade first oil Feb 2012, Chinook Sep 2012; BW Pioneer was the first FPSO in the US GoM), and YAML operator/WI \"TotalEnergies 60% / Equinor 40%\" corrected to current MP Gulf of Mexico LLC (Murphy EXPRO 80% operator, Petrobras America 20%; originally Petrobras-operated with Total 33.33% in Chinook). LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
@@ -27863,6 +27875,10 @@
       ]
     },
     "jack_st_malo": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2035,
@@ -27956,40 +27972,40 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea15",
-            "lease_name": "St Malo",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G17015",
-            "water_depth_ft": 6820
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "St Malo",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G17016",
-            "water_depth_ft": 6820
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "St Malo",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G18745",
-            "water_depth_ft": 6820
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "St Malo",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G18753",
-            "water_depth_ft": 6820
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "St Malo",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G20394",
-            "water_depth_ft": 6820
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea15",
-            "lease_name": "Jack",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G21245",
-            "water_depth_ft": 7240
+            "water_depth_ft": null
           }
         ],
         "n_leases": 6,
@@ -28108,6 +28124,8 @@
         "breakeven_wti": 79.0,
         "cum_oil_mmbbl": 438.8,
         "display": "Jack St Malo",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "surfaced",
         "eur_mmbbl": 1117,
         "interventions": 6,
         "npv_mm": -804.5,
@@ -28129,13 +28147,7 @@
         "tvd_ft": 26500
       },
       "risk": {
-        "decommissioning": {
-          "basis": "facility removal (not well P&A)",
-          "confidence": "low",
-          "cost_musd": 80.0,
-          "host_type": "FPU/FPS",
-          "label": "Decommission ~$80M (FPSO base)"
-        },
+        "decommissioning": null,
         "hpht": {
           "basis": "reservoir",
           "class": "HPHT",
@@ -28181,6 +28193,11 @@
       ]
     },
     "julia": {
+      "architecture": {
+        "caption": "Julia subsea tieback",
+        "source": "render_layout",
+        "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"185\" height=\"1380\" viewBox=\"0 0 185 1380\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Julia (Lower Tertiary)</title>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"101.3\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"77.3\" y1=\"1280.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"77.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1280.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1280.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"60.0\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"125.3\" y1=\"1320.0\" x2=\"125.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"125.3\" y1=\"1300.0\" x2=\"125.3\" y2=\"1320.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"94.6\" y1=\"1310.0\" x2=\"77.3\" y2=\"1300.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"77.3\" y1=\"1300.0\" x2=\"94.6\" y2=\"1310.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"101.3\" y1=\"100.0\" x2=\"101.3\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"65.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"70.1\" y1=\"1307.2\" x2=\"70.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"74.9\" y1=\"1307.2\" x2=\"74.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"79.7\" y1=\"1307.2\" x2=\"79.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"84.5\" y1=\"1307.2\" x2=\"84.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"92.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"113.3\" y=\"1292.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"118.1\" y1=\"1307.2\" x2=\"118.1\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"122.9\" y1=\"1307.2\" x2=\"122.9\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"127.7\" y1=\"1307.2\" x2=\"127.7\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"132.5\" y1=\"1307.2\" x2=\"132.5\" y2=\"1312.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"140.3\" y=\"1303.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"77.3\" y1=\"1288.0\" x2=\"77.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"71.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"73.3,1274.8 81.3,1279.6 81.3,1274.8 73.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"73.3,1278.8 81.3,1283.6 81.3,1278.8 73.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"88.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1318.0\" x2=\"60.0\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1304.8 64.0,1309.6 64.0,1304.8 56.0,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1308.8 64.0,1313.6 64.0,1308.8 56.0,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 3</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"94.6\" y1=\"1318.0\" x2=\"94.6\" y2=\"1302.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"89.0\" y=\"1314.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"90.6,1304.8 98.6,1309.6 98.6,1304.8 90.6,1309.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"90.6,1308.8 98.6,1313.6 98.6,1308.8 90.6,1313.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"105.6\" y=\"1313.0\" font-family=\"sans-serif\" font-size=\"9\">XT 5</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1288.0\" x2=\"125.3\" y2=\"1272.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1284.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1274.8 129.3,1279.6 129.3,1274.8 121.3,1279.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1278.8 129.3,1283.6 129.3,1278.8 121.3,1283.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1283.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"125.3\" y1=\"1328.0\" x2=\"125.3\" y2=\"1312.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"119.7\" y=\"1324.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"121.3,1314.8 129.3,1319.6 129.3,1314.8 121.3,1319.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"121.3,1318.8 129.3,1323.6 129.3,1318.8 121.3,1323.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"136.3\" y=\"1323.0\" font-family=\"sans-serif\" font-size=\"9\">XT 4</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"85.3\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"93.3\" y1=\"88.8\" x2=\"93.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"109.3\" y1=\"88.8\" x2=\"109.3\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"120.3\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"91.3,55.0 104.3,55.0 104.3,50.0 111.3,60.0 104.3,70.0 104.3,65.0 91.3,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"114.3\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"157\" y1=\"46\" x2=\"157\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"157,14 152,24 162,24\"/><text x=\"153\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1356\" x2=\"60\" y2=\"1356\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1352\" x2=\"20\" y2=\"1360\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1352\" x2=\"60\" y2=\"1360\" stroke-width=\"2\"/><text x=\"20\" y=\"1348\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n</svg>"
+      },
       "assetsHref": null,
       "axis": {
         "end": 2040,
@@ -28279,10 +28296,10 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "tieback15",
-            "lease_name": "Julia",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G20351",
-            "water_depth_ft": 7335
+            "water_depth_ft": null
           }
         ],
         "n_leases": 1,
@@ -28396,6 +28413,8 @@
         "breakeven_wti": 95.0,
         "cum_oil_mmbbl": 77.5,
         "display": "Julia",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "surfaced",
         "eur_mmbbl": 256,
         "interventions": 0,
         "npv_mm": -482.8,
@@ -28460,6 +28479,10 @@
       ]
     },
     "kaskida": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2040,
@@ -28546,16 +28569,16 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea20",
-            "lease_name": "Kaskida",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G19555",
-            "water_depth_ft": 5860
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea20",
-            "lease_name": "Kaskida",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G25792",
-            "water_depth_ft": 5860
+            "water_depth_ft": null
           }
         ],
         "n_leases": 2,
@@ -28692,6 +28715,10 @@
       ]
     },
     "north_platte": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2035,
@@ -28777,16 +28804,16 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea20",
-            "lease_name": "North Platte",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G30876",
-            "water_depth_ft": 5840
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea20",
-            "lease_name": "North Platte",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G32460",
-            "water_depth_ft": 4230
+            "water_depth_ft": null
           }
         ],
         "n_leases": 2,
@@ -28927,6 +28954,10 @@
       ]
     },
     "shenandoah": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2045,
@@ -29019,16 +29050,16 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea20",
-            "lease_name": "Shenandoah",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G25232",
-            "water_depth_ft": 5840
+            "water_depth_ft": null
           },
           {
-            "dev_system": "subsea20",
-            "lease_name": "Shenandoah",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G31938",
-            "water_depth_ft": 5800
+            "water_depth_ft": null
           }
         ],
         "n_leases": 2,
@@ -29139,13 +29170,15 @@
       "performance": {
         "avg_decline_pct_yr": 5.4,
         "avg_uptime_pct": 80.2,
-        "breakeven_wti": 376.0,
+        "breakeven_wti": null,
         "cum_oil_mmbbl": 21.2,
         "display": "Shenandoah",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
         "eur_mmbbl": 1577,
         "interventions": 1,
-        "npv_mm": -991.3,
-        "sens_mm_per_dollar": 3.2,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
         "wells": 4
       },
       "provenance": "Base facts (operator, capex, plateau, GOR, data through) from in-repo YAML; discovery 2009 (Anadarko Shenandoah-1, WR52), FID/sanction Aug 2021 (Beacon+Navitas), and actual first oil (first of 4 wells online 25 Jul 2025; ramped to 100 kbopd plateau Oct 2025) from public sources — first oil corrected to 2025-07 vs YAML's placeholder 2025-10. Current WI (Beacon 31% op / Navitas 49% / HEQ 20%) post-2021 restructuring. CAPEX 1.8 is YAML-stated and largely reflects pre-development E&A spend (LOW CONFIDENCE for full development cost); OPEX and projected end-of-production, not available (not defensibly sourced); water depth ~5,800 ft.",
@@ -29209,6 +29242,10 @@
       ]
     },
     "stones": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": "assets/stones_assets.html",
       "axis": {
         "end": 2040,
@@ -29301,10 +29338,10 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea15",
-            "lease_name": "Stones",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G17001",
-            "water_depth_ft": 9525
+            "water_depth_ft": null
           }
         ],
         "n_leases": 1,
@@ -29410,13 +29447,15 @@
       "performance": {
         "avg_decline_pct_yr": 21.4,
         "avg_uptime_pct": 76.9,
-        "breakeven_wti": 165.0,
+        "breakeven_wti": null,
         "cum_oil_mmbbl": 89.0,
         "display": "Stones",
+        "economics_basis": "life_to_date_pretax_npv_at_10pct",
+        "economics_status": "early_life",
         "eur_mmbbl": 509,
         "interventions": 3,
-        "npv_mm": -1460.8,
-        "sens_mm_per_dollar": 14.9,
+        "npv_mm": null,
+        "sens_mm_per_dollar": null,
         "wells": 10
       },
       "provenance": "Capex ($3.8bn), plateau (50 mbopd), GOR (850 scf/bbl), opex ($15/boe), first oil (2016-09) and status from in-repo stones.yml (Shell FPSO development config). Discovery (2005), FID/sanction (May 2013, Shell 100% owner-operator), Walker Ridge Block 508, ~9,500 ft water depth, and Turritella/Stones FPSO host (world's deepest FPSO) confirmed via Offshore Technology, Offshore Magazine, and NS Energy public sources. lease year and projected end-of-production unknown; no notable schedule-driving incident identified.",
@@ -29434,13 +29473,7 @@
         "tvd_ft": 26500
       },
       "risk": {
-        "decommissioning": {
-          "basis": "facility removal (not well P&A)",
-          "confidence": "low",
-          "cost_musd": 80.0,
-          "host_type": "FPSO",
-          "label": "Decommission ~$80M (FPSO base)"
-        },
+        "decommissioning": null,
         "hpht": {
           "basis": "reservoir",
           "class": "HPHT",
@@ -29478,6 +29511,10 @@
       ]
     },
     "tiber": {
+      "architecture": {
+        "pending_issue": 962,
+        "svg": null
+      },
       "assetsHref": null,
       "axis": {
         "end": 2040,
@@ -29555,10 +29592,10 @@
         "ingest_issue": 959,
         "leases": [
           {
-            "dev_system": "subsea20",
-            "lease_name": "Tiber",
+            "dev_system": null,
+            "lease_name": null,
             "lease_num": "G25782",
-            "water_depth_ft": 4130
+            "water_depth_ft": null
           }
         ],
         "n_leases": 1,
@@ -29696,11 +29733,11 @@
   "schema_version": "1.0.0",
   "sources": [
     {
-      "bytes": 100354,
+      "bytes": 108573,
       "generated_by": "scripts/lower_tertiary/build_lifecycle_posters.py",
       "path": "reports/lower_tertiary/lifecycle/_explorer.json",
       "role": "field_detail",
-      "sha256": "99171f138f79ec334743f550e5d298920824f71852cf6152cd40db17016246fe",
+      "sha256": "355d8734fbb626fcfc18cfbfa2fd82b1c1f39d23114cdeeb9778aff1a29bb561",
       "source_issue": 946
     },
     {

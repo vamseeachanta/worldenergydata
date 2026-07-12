@@ -29,6 +29,14 @@ CONTRACT_META = {
         "BSEE OGOR-A per-well benchmark + V30 cost model, "
         "life-to-date (not full-cycle)"
     ),
+    "economics_note": (
+        "npv_mm / breakeven_wti are LIFE-TO-DATE, pre-tax, 10%-discounted "
+        "(economics_basis=life_to_date_pretax_npv_at_10pct): full sunk capex "
+        "charged against oil produced to date, not full-cycle EUR. Fields early "
+        "in life are legitimately deep-negative, so their values are withheld "
+        "(economics_status=early_life -> null) rather than surfaced as absurd "
+        "numbers; a credible full-cycle recompute is tracked in #973."
+    ),
     "inputs": [
         "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv",
         "reports/lower_tertiary/field_economics_<slug>.md",
@@ -67,6 +75,62 @@ def _econ(field: str) -> dict:
     if m := _SENS.search(txt):
         out["sens_mm_per_dollar"] = _num(m.group(1))
     return out
+
+
+# --- Economics honesty gate (#971) ---------------------------------------
+# The joined economics is a LIFE-TO-DATE, pre-tax, 10%-discounted NPV that
+# charges 100% of a field's sunk capex against only the oil produced to date
+# (cum_oil), NOT against full-cycle EUR. For a field that has produced ~1-2% of
+# its ultimate recovery that yields a legitimately large negative NPV and a
+# breakeven far above any credible price deck. The numbers are arithmetically
+# correct but were mislabeled as full-cycle. Until a credible full-cycle
+# recompute lands (#973, gated on validating eur_mmbbl), we:
+#   1. label the metric as life-to-date (economics_basis), and
+#   2. surface it ONLY where it is client-credible; absurd early-life values are
+#      withheld (economics_status == "early_life") so every downstream surface
+#      renders "n/a — early life" instead of a scary artifact.
+# The gate is applied HERE, at the single source of the per-field contract, so
+# the poster / PDF / Explorer / HF projection all inherit the same suppression.
+ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
+# $/bbl. Above this the life-to-date breakeven is not client-credible (~2x the
+# realized ~$69 deck). Load-bearing: it withholds fields well past the EUR-
+# fraction floor whose breakeven is still absurd (e.g. Cascade/Chinook, Stones).
+CEILING_BREAKEVEN_WTI = 150.0
+# Surface only once a field has produced at least this fraction of its EUR.
+# NB eur_mmbbl is itself an unvalidated decline-fit extrapolation (#973); an
+# inflated EUR shrinks the fraction, so this floor errs toward MORE suppression
+# (conservative). The ceiling above does most of the work.
+MIN_EUR_FRACTION = 0.15
+
+
+def _gate_economics(agg: dict, econ: dict) -> dict:
+    """Apply the #971 life-to-date honesty gate to one field's economics.
+
+    Returns the surfaced economics keys plus an explicit basis/status. Values
+    are nulled (contract keys stay present) for withheld fields so consumers
+    render them as "n/a — early life". `sens_mm_per_dollar` is the derivative
+    of the same NPV, so it is withheld together with the level it describes.
+    """
+    npv = econ.get("npv_mm")
+    be = econ.get("breakeven_wti")
+    sens = econ.get("sens_mm_per_dollar")
+    eur = agg["eur"]
+    frac = agg["cum"] / eur if eur > 0 else 0.0
+    if npv is None or be is None:
+        status = "unavailable"
+    elif frac < MIN_EUR_FRACTION or be > CEILING_BREAKEVEN_WTI:
+        status = "early_life"
+    else:
+        status = "surfaced"
+    if status != "surfaced":
+        npv = be = sens = None
+    return {
+        "npv_mm": npv,
+        "breakeven_wti": be,
+        "sens_mm_per_dollar": sens,
+        "economics_basis": ECONOMICS_BASIS,
+        "economics_status": status,
+    }
 
 
 def _aggregate() -> dict[str, dict]:
@@ -116,39 +180,51 @@ def build() -> str:
         "from the per-field reports. Life-to-date on public data — not full-cycle",
         "sanctioned economics. Deterministic and reproducible.",
         "",
-        "| Field | Wells | Cum oil (MMbbl) | EUR (MMbbl) | Avg uptime % | Avg decline %/yr | Interventions | NPV @10% ($MM) | WTI break-even ($/bbl) | NPV per +$1/bbl ($MM) |",
+        "| Field | Wells | Cum oil (MMbbl) | EUR (MMbbl) | Avg uptime % | Avg decline %/yr | Interventions | NPV, LTD @10% ($MM) | LTD breakeven WTI ($/bbl) | NPV per +$1/bbl ($MM) |",
         "|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|",
     ]
     tot = {"wells": 0, "cum": 0.0, "eur": 0.0, "interv": 0, "npv": 0.0}
+    surfaced = 0
     for field, f in ordered:
-        e = _econ(field)
-        npv = e.get("npv_mm")
-        be = e.get("breakeven_wti")
-        sens = e.get("sens_mm_per_dollar")
+        g = _gate_economics(f, _econ(field))
+        npv, be, sens = g["npv_mm"], g["breakeven_wti"], g["sens_mm_per_dollar"]
+        if g["economics_status"] == "surfaced":
+            econ_cells = f"{npv:,.1f} | {be:,.0f} | {sens:.1f}"
+            surfaced += 1
+            tot["npv"] += npv
+        else:
+            # Withheld as early-life (or economics report absent): show n/a, not
+            # an absurd number, on every consumer of this row.
+            econ_cells = "n/a | n/a | n/a"
         lines.append(
             f"| {field} | {f['wells']} | {f['cum']:.1f} | {f['eur']:.0f} | "
             f"{avg(f['uptime']):.1f} | {avg(f['decline']):.1f} | {f['interv']} | "
-            f"{npv:,.1f} | {be:,.0f} | {sens:.1f} |"
-            if npv is not None and be is not None and sens is not None
-            else f"| {field} | {f['wells']} | {f['cum']:.1f} | {f['eur']:.0f} | "
-            f"{avg(f['uptime']):.1f} | {avg(f['decline']):.1f} | {f['interv']} | ? | ? | ? |"
+            f"{econ_cells} |"
         )
         tot["wells"] += f["wells"]
         tot["cum"] += f["cum"]
         tot["eur"] += f["eur"]
         tot["interv"] += f["interv"]
-        if npv is not None:
-            tot["npv"] += npv
+    # The portfolio economics cell is intentionally not a sum: with most fields
+    # withheld it would be a misleading fragment of the total. Em-dash it.
     lines.append(
         f"| **Portfolio** | **{tot['wells']}** | **{tot['cum']:.1f}** | **{tot['eur']:.0f}** "
-        f"| — | — | **{tot['interv']}** | **{tot['npv']:,.1f}** | — | — |"
+        f"| — | — | **{tot['interv']}** | — | — | — |"
     )
     lines += [
         "",
-        "**Reading it:** every field is NPV-negative at 10% life-to-date — the Lower",
-        "Tertiary's high up-front capital dominates. Break-even WTI shows how far",
-        "above the realized ~$69/bbl each field would need to clear zero; the",
-        "per-$1/bbl column is the exact NPV slope (NPV is affine in price).",
+        f"**Reading it:** economics are **life-to-date at 10%** on public BSEE data — "
+        f"they charge each field's full sunk capital against only the oil produced "
+        f"*so far*, not against full-cycle EUR. For fields early in life that is "
+        f"legitimately deep-negative, so those values are **withheld as early-life** "
+        f"(shown `n/a`); only {surfaced} of 7 fields have produced enough of their EUR "
+        f"and clear a credible breakeven to surface a life-to-date number. Those still "
+        f"read negative — the Lower Tertiary's high up-front capital, discounted "
+        f"against a long revenue tail, dominates at this point in life; the LTD "
+        f"breakeven shows how far above the realized ~$69/bbl the field would need to "
+        f"clear zero to date. A credible **full-cycle** recompute is deferred to #973 "
+        f"(gated on validating the decline-fit EUR). See per-field "
+        f"`field_economics_<slug>.md` for the full life-to-date derivation.",
         "",
         "_Source: `worldenergydata` BSEE OGOR-A + V30 cost model. Regenerate:_",
         "_`uv run python scripts/lower_tertiary/build_well_benchmark.py` then_",
@@ -166,7 +242,7 @@ def build_contract() -> str:
     fields = _aggregate()
     out: dict[str, dict] = {}
     for field, f in fields.items():
-        e = _econ(field)
+        gated = _gate_economics(f, _econ(field))
         out[_slug(field)] = {
             "display": field,
             "wells": f["wells"],
@@ -175,9 +251,7 @@ def build_contract() -> str:
             "avg_uptime_pct": round(_avg(f["uptime"]), 1),
             "avg_decline_pct_yr": round(_avg(f["decline"]), 1),
             "interventions": f["interv"],
-            "npv_mm": e.get("npv_mm"),
-            "breakeven_wti": e.get("breakeven_wti"),
-            "sens_mm_per_dollar": e.get("sens_mm_per_dollar"),
+            **gated,
         }
     payload = {"meta": CONTRACT_META, "fields": out}
     return json.dumps(payload, indent=2, sort_keys=True) + "\n"
