@@ -676,7 +676,9 @@ const FIELD = {
     "display": "Shenandoah",
     "economics_basis": "life_to_date_pretax_npv_at_10pct",
     "economics_status": "early_life",
-    "eur_mmbbl": 1577,
+    "eur_confidence": "high",
+    "eur_mmbbl": 332,
+    "eur_source": "332 MMbbl oil 2P (Netherland Sewell independent report, YE2023)",
     "interventions": 1,
     "npv_mm": null,
     "sens_mm_per_dollar": null,
@@ -941,10 +943,15 @@ if (FIELD.performance) {
   const econ = (v, d, u) => early
     ? `<span class="mut">n/a — early life</span>`
     : unit(v, d, u);
+  // EUR is curated published/booked recoverable reserves (#973), not the
+  // decline-fit extrapolation. null = no credible public figure -> pending.
+  const eurCell = p.eur_mmbbl == null
+    ? `<span class="mut">reserves pending (<a href="https://github.com/vamseeachanta/worldenergydata/issues/973">#973</a>)</span>`
+    : unit(p.eur_mmbbl, 0, " MMbbl") + (p.eur_confidence ? ` <span class="mut">(${p.eur_confidence})</span>` : "");
   const rows = [
     ["Benchmark wells", unit(p.wells, 0, "")],
     ["Cum oil", unit(p.cum_oil_mmbbl, 1, " MMbbl")],
-    ["EUR", unit(p.eur_mmbbl, 0, " MMbbl")],
+    ["EUR · recoverable reserves", eurCell],
     ["Avg uptime", unit(p.avg_uptime_pct, 1, "%")],
     ["Avg decline", unit(p.avg_decline_pct_yr, 1, "%/yr")],
     ["Interventions", unit(p.interventions, 0, "")],
@@ -954,7 +961,7 @@ if (FIELD.performance) {
   ];
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;
-  $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + V30 economics, life-to-date (not full-cycle)";
+  $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + V30 economics (life-to-date, not full-cycle); EUR = curated recoverable reserves (#973)";
 }
 
 if (FIELD.economics_href) {

@@ -213,13 +213,19 @@ def _perf(field: dict) -> str:
         )
     )
     _npv = _na if _early else _num(perf.get("npv_mm"), " $MM")
+    # EUR is curated recoverable reserves (#973); null = no public figure.
+    _eur = (
+        _num(perf.get("eur_mmbbl"))
+        if perf.get("eur_mmbbl") is not None
+        else "reserves pending"
+    )
 
     cells = [
         (_num(perf.get("cum_oil_mmbbl")), "Cum. oil (MMbbl)"),
         (_num(perf.get("wells")), "Producing wells"),
         (_num(perf.get("avg_uptime_pct"), "%"), "Avg uptime"),
         (_num(perf.get("avg_decline_pct_yr"), "%/yr"), "Avg decline"),
-        (_num(perf.get("eur_mmbbl")), "EUR (MMbbl)"),
+        (_eur, "EUR &middot; recoverable reserves"),
         (_be, "Breakeven WTI &middot; LTD @10%"),
         (_npv, "NPV &middot; life-to-date @10%"),
         (_num(perf.get("interventions")), "Interventions"),

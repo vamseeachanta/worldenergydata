@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.10"
-# dependencies = []
+# dependencies = ["pyyaml"]
 # ///
 """Build the Lower Tertiary FIELD-performance comparison (deterministic).
 
 Aggregates the per-well benchmark (`lt_well_benchmark_*.csv`) up to the field
 level and joins each field's economics (NPV @10%, WTI break-even, $/bbl
 sensitivity) parsed from the committed `field_economics_<slug>.md` reports.
-Pure stdlib; same inputs -> byte-identical output.
+`eur_mmbbl` is the CURATED published/booked recoverable reserve from
+`config/lt_field_reserves.yml` (#973) — NOT the ~2-6.6x-inflated decline-fit
+sum. Deterministic; same inputs -> byte-identical output.
 
     uv run python scripts/lower_tertiary/build_field_performance_comparison.py
 """
@@ -19,8 +21,11 @@ import json
 import re
 from pathlib import Path
 
+import yaml
+
 REPORTS = Path(__file__).resolve().parents[2] / "reports" / "lower_tertiary"
 BENCH = REPORTS / "lt_well_benchmark_lower_tertiary_2010_latest.csv"
+RESERVES = Path(__file__).resolve().parents[2] / "config" / "lt_field_reserves.yml"
 OUT = REPORTS / "lt_field_performance_comparison.md"
 CONTRACT = REPORTS / "lifecycle" / "_performance.json"
 
@@ -37,9 +42,16 @@ CONTRACT_META = {
         "(economics_status=early_life -> null) rather than surfaced as absurd "
         "numbers; a credible full-cycle recompute is tracked in #973."
     ),
+    "eur_note": (
+        "eur_mmbbl is CURATED published/booked recoverable reserves "
+        "(config/lt_field_reserves.yml, #973) with eur_source + eur_confidence "
+        "— NOT the decline-fit sum, which ran ~2-6.6x too high. null where no "
+        "credible public figure exists (eur_confidence=none)."
+    ),
     "inputs": [
         "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv",
         "reports/lower_tertiary/field_economics_<slug>.md",
+        "config/lt_field_reserves.yml",
     ],
     "regenerate": (
         "uv run python scripts/lower_tertiary/build_field_performance_comparison.py"
@@ -77,6 +89,18 @@ def _econ(field: str) -> dict:
     return out
 
 
+def _reserves() -> dict:
+    """Curated recoverable-reserves table (#973), keyed by canonical field id.
+
+    eur_mmbbl here is published/booked recoverable reserves (or None where no
+    credible public figure exists) — the AUTHORITATIVE full-cycle EUR, replacing
+    the ~2-6.6x-inflated decline-fit sum. See config/lt_field_reserves.yml.
+    """
+    return (yaml.safe_load(RESERVES.read_text(encoding="utf-8")) or {}).get(
+        "fields", {}
+    )
+
+
 # --- Economics honesty gate (#971) ---------------------------------------
 # The joined economics is a LIFE-TO-DATE, pre-tax, 10%-discounted NPV that
 # charges 100% of a field's sunk capex against only the oil produced to date
@@ -97,31 +121,30 @@ ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
 # fraction floor whose breakeven is still absurd (e.g. Cascade/Chinook, Stones).
 CEILING_BREAKEVEN_WTI = 150.0
 # Surface only once a field has produced at least this fraction of its EUR.
-# NB eur_mmbbl is itself an unvalidated decline-fit extrapolation (#973); an
-# inflated EUR shrinks the fraction, so this floor errs toward MORE suppression
-# (conservative). The ceiling above does most of the work.
+# Evaluated against the CURATED reserve (#973). When EUR is unknown (curated
+# null) the fraction can't be computed, so the breakeven ceiling governs alone.
 MIN_EUR_FRACTION = 0.15
 
 
-def _gate_economics(agg: dict, econ: dict) -> dict:
+def _gate_economics(cum: float, eur, econ: dict) -> dict:
     """Apply the #971 life-to-date honesty gate to one field's economics.
 
-    Returns the surfaced economics keys plus an explicit basis/status. Values
-    are nulled (contract keys stay present) for withheld fields so consumers
-    render them as "n/a — early life". `sens_mm_per_dollar` is the derivative
-    of the same NPV, so it is withheld together with the level it describes.
+    `eur` is the curated recoverable reserve (#973), possibly None. Returns the
+    surfaced economics keys plus an explicit basis/status. Values are nulled
+    (contract keys stay present) for withheld fields so consumers render them as
+    "n/a — early life". `sens_mm_per_dollar` is the derivative of the same NPV,
+    so it is withheld together with the level it describes.
     """
     npv = econ.get("npv_mm")
     be = econ.get("breakeven_wti")
     sens = econ.get("sens_mm_per_dollar")
-    eur = agg["eur"]
-    frac = agg["cum"] / eur if eur > 0 else 0.0
     if npv is None or be is None:
         status = "unavailable"
-    elif frac < MIN_EUR_FRACTION or be > CEILING_BREAKEVEN_WTI:
-        status = "early_life"
     else:
-        status = "surfaced"
+        over_ceiling = be > CEILING_BREAKEVEN_WTI
+        # Fraction test only when EUR is known; else the ceiling governs alone.
+        too_early = eur is not None and eur > 0 and cum / eur < MIN_EUR_FRACTION
+        status = "early_life" if (over_ceiling or too_early) else "surfaced"
     if status != "surfaced":
         npv = be = sens = None
     return {
@@ -168,6 +191,7 @@ def _avg(xs: list[float]) -> float:
 
 def build() -> str:
     fields = _aggregate()
+    reserves = _reserves()
     avg = _avg
 
     ordered = sorted(fields.items(), key=lambda kv: kv[1]["cum"], reverse=True)
@@ -186,8 +210,12 @@ def build() -> str:
     tot = {"wells": 0, "cum": 0.0, "eur": 0.0, "interv": 0, "npv": 0.0}
     surfaced = 0
     for field, f in ordered:
-        g = _gate_economics(f, _econ(field))
+        eur = reserves.get(_slug(field), {}).get("eur_mmbbl")
+        g = _gate_economics(f["cum"], eur, _econ(field))
         npv, be, sens = g["npv_mm"], g["breakeven_wti"], g["sens_mm_per_dollar"]
+        eur_cell = f"{eur:.0f}" if eur is not None else "pending"
+        if eur is not None:
+            tot["eur"] += eur
         if g["economics_status"] == "surfaced":
             econ_cells = f"{npv:,.1f} | {be:,.0f} | {sens:.1f}"
             surfaced += 1
@@ -197,34 +225,34 @@ def build() -> str:
             # an absurd number, on every consumer of this row.
             econ_cells = "n/a | n/a | n/a"
         lines.append(
-            f"| {field} | {f['wells']} | {f['cum']:.1f} | {f['eur']:.0f} | "
+            f"| {field} | {f['wells']} | {f['cum']:.1f} | {eur_cell} | "
             f"{avg(f['uptime']):.1f} | {avg(f['decline']):.1f} | {f['interv']} | "
             f"{econ_cells} |"
         )
         tot["wells"] += f["wells"]
         tot["cum"] += f["cum"]
-        tot["eur"] += f["eur"]
         tot["interv"] += f["interv"]
-    # The portfolio economics cell is intentionally not a sum: with most fields
+    # Portfolio EUR = sum of the curated reserves that ARE known (pending fields
+    # excluded). The economics cell is intentionally not a sum: with most fields
     # withheld it would be a misleading fragment of the total. Em-dash it.
     lines.append(
-        f"| **Portfolio** | **{tot['wells']}** | **{tot['cum']:.1f}** | **{tot['eur']:.0f}** "
+        f"| **Portfolio** | **{tot['wells']}** | **{tot['cum']:.1f}** | **{tot['eur']:.0f}+** "
         f"| — | — | **{tot['interv']}** | — | — | — |"
     )
     lines += [
         "",
-        f"**Reading it:** economics are **life-to-date at 10%** on public BSEE data — "
-        f"they charge each field's full sunk capital against only the oil produced "
-        f"*so far*, not against full-cycle EUR. For fields early in life that is "
-        f"legitimately deep-negative, so those values are **withheld as early-life** "
-        f"(shown `n/a`); only {surfaced} of 7 fields have produced enough of their EUR "
-        f"and clear a credible breakeven to surface a life-to-date number. Those still "
-        f"read negative — the Lower Tertiary's high up-front capital, discounted "
-        f"against a long revenue tail, dominates at this point in life; the LTD "
-        f"breakeven shows how far above the realized ~$69/bbl the field would need to "
-        f"clear zero to date. A credible **full-cycle** recompute is deferred to #973 "
-        f"(gated on validating the decline-fit EUR). See per-field "
-        f"`field_economics_<slug>.md` for the full life-to-date derivation.",
+        f"**Reading it:** **EUR is curated published/booked recoverable reserves** "
+        f"(operator & independent-auditor disclosures, `config/lt_field_reserves.yml`), "
+        f"NOT the decline-fit extrapolation — which ran ~2–6.6x too high (#973). Two "
+        f"fields with no public recoverable figure show `pending`. Economics are "
+        f"**life-to-date at 10%** on public BSEE data: full sunk capital charged against "
+        f"only the oil produced *so far*, not full-cycle EUR. Early-life fields are "
+        f"**withheld** (`n/a`); only {surfaced} of 7 surface a credible life-to-date "
+        f"number, and those still read negative — the Lower Tertiary's high up-front "
+        f"capital, discounted against a long revenue tail, dominates at this point in "
+        f"life. A credible **full-cycle** NPV projected to the curated reserves is the "
+        f"next step (#971 Tier 1). See per-field `field_economics_<slug>.md` for the "
+        f"life-to-date derivation.",
         "",
         "_Source: `worldenergydata` BSEE OGOR-A + V30 cost model. Regenerate:_",
         "_`uv run python scripts/lower_tertiary/build_well_benchmark.py` then_",
@@ -240,14 +268,19 @@ def build_contract() -> str:
     Benchmark-derived numbers rounded to the table's displayed precision;
     economics keys are nullable (None when the report regexes miss)."""
     fields = _aggregate()
+    reserves = _reserves()
     out: dict[str, dict] = {}
     for field, f in fields.items():
-        gated = _gate_economics(f, _econ(field))
+        res = reserves.get(_slug(field), {})
+        eur = res.get("eur_mmbbl")  # curated recoverable reserve, may be None
+        gated = _gate_economics(f["cum"], eur, _econ(field))
         out[_slug(field)] = {
             "display": field,
             "wells": f["wells"],
             "cum_oil_mmbbl": round(f["cum"], 1),
-            "eur_mmbbl": round(f["eur"]),
+            "eur_mmbbl": eur,
+            "eur_source": res.get("basis") or "reserves pending (#973)",
+            "eur_confidence": res.get("confidence", "none"),
             "avg_uptime_pct": round(_avg(f["uptime"]), 1),
             "avg_decline_pct_yr": round(_avg(f["decline"]), 1),
             "interventions": f["interv"],

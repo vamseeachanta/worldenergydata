@@ -1,0 +1,84 @@
+# Curated recoverable-reserves (EUR) for the Lower Tertiary / Wilcox fields.
+#
+# WHY THIS FILE EXISTS (worldenergydata#973):
+#   The decline-fit `eur_mmbbl` in the per-well benchmark is a curve
+#   extrapolation summed across wells with no reliability filter. Validated
+#   against operator disclosures it runs ~2x (floor) to ~6.6x too high — it is
+#   NOT a trustworthy basis for a full-cycle NPV. This file is the AUTHORITATIVE
+#   full-cycle EUR: published/booked recoverable reserves from operator and
+#   independent-auditor sources, each with provenance + a confidence grade.
+#
+#   Consumed by the full-cycle economics (#971 Tier 1). Fields with no credible
+#   public recoverable figure carry status: pending (eur_mmbbl: null) and must
+#   surface a visible "full-cycle pending published reserves" placeholder, never
+#   a fabricated number.
+#
+# UNITS: eur_mmbbl is recoverable oil in MMbbl. Operator disclosures are usually
+#   MMboe; these fields are oil-dominated (small gas share) so boe≈bbl to ~5-15%.
+#   `basis` records exactly what the source reported.
+
+meta:
+  issue: 973
+  purpose: >-
+    Curated recoverable-reserves basis for Lower Tertiary full-cycle economics,
+    replacing the ~2-6.6x-inflated decline-fit eur_mmbbl (see #973 audit).
+  review: "Values are third-party/operator disclosures; re-verify on restate."
+
+fields:
+  jack_st_malo:
+    eur_mmbbl: 500          # "more than 500 MMboe" combined Jack+St.Malo
+    basis: "500+ MMboe recoverable, combined development (original)"
+    confidence: high
+    source: "https://www.chevron.com/what-we-do/energy/oil-and-natural-gas/assets/jack-stmalo"
+    note: >-
+      Floor figure; St. Malo Stage-4 waterflood adds ~175 MMboe incremental, so
+      true ultimate is higher. Field has already produced ~439 MMbbl.
+
+  stones:
+    eur_mmbbl: 250          # Shell "250+ MMboe recoverable", Phase 1
+    basis: "250+ MMboe recoverable, Phase 1 (NOT the >2 Bboe in-place)"
+    confidence: med_high
+    source: "https://www.prnewswire.com/news-releases/shell-starts-production-at-stones-in-the-gulf-of-mexico-300322718.html"
+    note: "Do not confuse with ~2 Bboe resource in-place."
+
+  big_foot:
+    eur_mmbbl: 200          # Chevron factsheet "in excess of 200 MMboe"
+    basis: "200+ MMboe recoverable (Chevron factsheet)"
+    confidence: high
+    source: "https://www.chevron.com/-/media/chevron/projects/documents/BigFoot-Factsheet.pdf"
+    note: "Model decline-fit EUR (1324) is ~6.6x this — worst offender."
+
+  anchor:
+    eur_mmbbl: 440          # Chevron sanction PR "exceed 440 MMboe"
+    basis: "440+ MMboe recoverable (Chevron sanction press release, 2019)"
+    confidence: high
+    source: "https://www.chevron.com/newsroom/2019/q4/chevron-sanctions-anchor-project-in-the-deepwater-us-gulf-of-mexico"
+    note: "Matches the diagnosis's rumored ~440; model 998 is ~2.3x."
+
+  shenandoah:
+    eur_mmbbl: 332          # NSAI independent 2P oil reserve, field-level
+    basis: "332 MMbbl oil 2P (Netherland Sewell independent report, YE2023)"
+    confidence: high
+    source: "https://navitaspet.com/wp-content/uploads/2024/02/NSAI-Shenandoah-2023.pdf"
+    note: >-
+      Cleanest apples-to-apples (oil bbl, independent auditor). Whole hub
+      (incl. Monument + Shenandoah South) ~600 MMboe if a broader boundary is
+      intended. Model 1577 is ~4.7x the field 2P.
+
+  julia:
+    eur_mmbbl: null
+    status: pending
+    basis: "no published recoverable EUR (only ~6 Bbbl resource IN-PLACE, != EUR)"
+    confidence: none
+    source: "https://corporate.exxonmobil.com/news/news-releases/2016/0419_exxonmobil-starts-production-at-julia-oil-field-in-the-gulf-of-mexico"
+    note: "Surface 'full-cycle pending published reserves' placeholder, not a value."
+
+  cascade_chinook:
+    eur_mmbbl: null
+    status: pending
+    basis: "no field-specific published recoverable EUR; only play-wide figures"
+    confidence: none
+    source: "https://www.offshore-technology.com/projects/cascadechinook/"
+    note: >-
+      Fields underperformed (~40k vs 80k b/d capacity). Model 92 is low and
+      directionally consistent, but unfalsifiable from public data.
