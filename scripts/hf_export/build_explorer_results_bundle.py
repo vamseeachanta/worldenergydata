@@ -211,7 +211,7 @@ def render_card(bundle: dict) -> str:
         "Per-field economics are **life-to-date, pre-tax, 10%-discounted** "
         "(`performance.economics_basis == \"life_to_date_pretax_npv_at_10pct\"`): the "
         "full sunk capital is charged against only the oil produced **to date**, not "
-        "against full-cycle EUR. These are **not** full-cycle / sanctioned economics. "
+        "against full-cycle EUR. These are **not** full-cycle economics. "
         "For a field early in its life that is legitimately deep-negative, so such "
         "values are **withheld** — `npv_mm`, `breakeven_wti` and `sens_mm_per_dollar` "
         "are `null` and `performance.economics_status == \"early_life\"`. Only fields "
