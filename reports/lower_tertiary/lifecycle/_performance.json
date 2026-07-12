@@ -122,6 +122,6 @@
       "config/lt_field_reserves.yml"
     ],
     "regenerate": "uv run python scripts/lower_tertiary/build_field_performance_comparison.py",
-    "source": "BSEE OGOR-A per-well benchmark + V30 cost model, life-to-date (not full-cycle)"
+    "source": "BSEE OGOR-A per-well benchmark + cost model, life-to-date (not full-cycle)"
   }
 }

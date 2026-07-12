@@ -17,6 +17,10 @@ from worldenergydata.spain.production.cores_live import (
 )
 from worldenergydata.spain.production.cores_loader import GWH_TO_MCF, TONNES_TO_BBL
 
+# Cited operator-sourced Ayoluengo density factor accepted in 9f544b0c
+# (feat(spain): accept Ayoluengo operator density factor, Refs #807).
+AYOLUENGO_OPERATOR_BBL_PER_TONNE = 7.489986677157665
+
 
 class FixtureCoresLoader:
     """Duck-typed CORES loader returning normalized per-field monthly rows."""
@@ -173,9 +177,10 @@ def test_default_adapter_loads_committed_ayoluengo_fixture():
     assert set(out["source"]) == {"cores"}
     assert out["oil_bbl"].gt(0).any()
     audit = metadata["oil_conversion_audit"]
-    assert audit["coverage_status"] == "defaulted"
-    assert audit["defaulted_fields"] == ["Ayoluengo"]
-    assert audit["default_bbl_per_tonne"] == TONNES_TO_BBL
+    assert audit["coverage_status"] == "complete"
+    assert audit["used_fields"] == ["Ayoluengo"]
+    assert audit["defaulted_fields"] == []
+    assert audit["default_bbl_per_tonne"] is None
 
 
 def test_embedded_fixture_loader_exposes_default_density_metadata():
@@ -231,7 +236,9 @@ def test_adapter_accepts_live_cores_loader(tmp_path):
 
     assert list(out.columns) == list(STANDARD_COLUMNS)
     assert len(out) == 1
-    assert out.iloc[0]["oil_bbl"] == pytest.approx(2.0 * TONNES_TO_BBL)
+    assert out.iloc[0]["oil_bbl"] == pytest.approx(
+        2.0 * AYOLUENGO_OPERATOR_BBL_PER_TONNE
+    )
     assert out.iloc[0]["gas_mcf"] == pytest.approx(3.0 * GWH_TO_MCF)
     assert out.iloc[0]["source"] == "cores"
 
