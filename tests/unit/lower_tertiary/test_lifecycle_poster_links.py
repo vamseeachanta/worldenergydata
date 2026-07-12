@@ -91,7 +91,7 @@ def test_rendered_poster_has_hidden_economics_card_and_secondary_benchmark_chip(
     html = builder.render(builder.facts_to_field(_fact_by_id("big_foot")))
 
     assert 'id="f-economics-card" hidden' in html
-    assert "Field economics · V30 monthly cash-flow model" in html
+    assert "Field economics · monthly cash-flow model" in html
     assert "Open full economics" in html
     assert "Well benchmarking" in html
     assert "FIELD.economics_href" in html
