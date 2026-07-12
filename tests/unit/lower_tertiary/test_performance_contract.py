@@ -55,7 +55,21 @@ REQUIRED_KEYS = {
     "npv_mm",
     "breakeven_wti",
     "sens_mm_per_dollar",
+    # Economics honesty gate (#971): the joined economics is a life-to-date
+    # (not full-cycle) NPV; every field declares its basis + surfacing status.
+    "economics_basis",
+    "economics_status",
 }
+
+# Above this life-to-date breakeven ($/bbl) the metric is not client-credible
+# and is withheld (economics_status == "early_life"). Mirrors the emitter const.
+SURFACED_BREAKEVEN_CEILING = 150.0
+ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
+
+# Data-driven expectation (#971): only these two fields have produced enough of
+# their EUR and clear the breakeven ceiling to surface a credible life-to-date
+# number; the other five are withheld as early-life. Regression guard.
+SURFACED_IDS = {"jack_st_malo", "julia"}
 
 NUMERIC_OR_NULL = (
     "wells",
@@ -123,6 +137,62 @@ def test_jack_st_malo_anchor_values():
     assert jsm["npv_mm"] == -804.5
     assert jsm["breakeven_wti"] == 79.0
     assert jsm["sens_mm_per_dollar"] == 52.3
+
+
+@unit
+def test_economics_basis_and_status_present():
+    # Every field declares the life-to-date basis and a valid surfacing status.
+    for fid, rec in _load_perf().items():
+        assert rec["economics_basis"] == ECONOMICS_BASIS, fid
+        assert rec["economics_status"] in {
+            "surfaced",
+            "early_life",
+            "unavailable",
+        }, f"{fid}: bad status {rec['economics_status']!r}"
+
+
+@unit
+def test_surfaced_breakeven_under_ceiling():
+    # The sanity gate: a SURFACED (non-null) breakeven must be client-credible.
+    # NB gate the *surfaced/labeled* value — a life-to-date NPV is legitimately
+    # negative, so a "producing => positive NPV" gate would be wrong (#971).
+    for fid, rec in _load_perf().items():
+        if rec["economics_status"] != "surfaced":
+            continue
+        be = rec["breakeven_wti"]
+        assert be is not None, f"{fid}: surfaced but breakeven is null"
+        assert be <= SURFACED_BREAKEVEN_CEILING, (
+            f"{fid}: surfaced breakeven {be} exceeds ceiling "
+            f"{SURFACED_BREAKEVEN_CEILING}"
+        )
+
+
+@unit
+def test_early_life_fields_are_suppressed():
+    # Early-life fields withhold every economics *level* (npv, breakeven, and
+    # the sensitivity derived from the same suppressed NPV) as null.
+    for fid, rec in _load_perf().items():
+        if rec["economics_status"] != "early_life":
+            continue
+        for key in ("npv_mm", "breakeven_wti", "sens_mm_per_dollar"):
+            assert rec[key] is None, f"{fid}.{key} should be null when early_life"
+
+
+@unit
+def test_surfaced_set_is_exactly_expected():
+    perf = _load_perf()
+    surfaced = {
+        fid for fid, rec in perf.items() if rec["economics_status"] == "surfaced"
+    }
+    assert surfaced == SURFACED_IDS, f"surfaced set drifted: {surfaced}"
+
+
+@unit
+def test_jack_st_malo_surfaces_with_status():
+    jsm = _load_perf()["jack_st_malo"]
+    assert jsm["economics_status"] == "surfaced"
+    assert jsm["npv_mm"] == -804.5
+    assert jsm["breakeven_wti"] == 79.0
 
 
 @unit

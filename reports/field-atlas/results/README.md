@@ -24,7 +24,7 @@ This projection re-packages already-committed Field Explorer (#939) analysis res
 
 | role | path | sha256 | bytes | generated_by | source issue |
 | --- | --- | --- | --- | --- | --- |
-| field_detail | `reports/lower_tertiary/lifecycle/_explorer.json` | `99171f138f79ec33…` | 100354 | `scripts/lower_tertiary/build_lifecycle_posters.py` | 946 |
+| field_detail | `reports/lower_tertiary/lifecycle/_explorer.json` | `355d8734fbb626fc…` | 108573 | `scripts/lower_tertiary/build_lifecycle_posters.py` | 946 |
 | global_funnel | `reports/field-atlas/_atlas_feed.json` | `50e039377705d8ee…` | 602153 | `scripts/field_atlas/build_atlas_feed.py` | 947 |
 
 ## Record counts
@@ -43,6 +43,10 @@ This projection re-packages already-committed Field Explorer (#939) analysis res
 - `fields` — 10 Lower-Tertiary field payloads (metrics, economics, reservoir, risk/HPHT/decommission, landman, concept).
 - `wells` — per-field roll-ups + 56 producing-well records.
 - `atlas` — global funnel: countries + deduped fields.
+
+### Economics basis (read before using `performance.npv_mm` / `performance.breakeven_wti`)
+
+Per-field economics are **life-to-date, pre-tax, 10%-discounted** (`performance.economics_basis == "life_to_date_pretax_npv_at_10pct"`): the full sunk capital is charged against only the oil produced **to date**, not against full-cycle EUR. These are **not** full-cycle / sanctioned economics. For a field early in its life that is legitimately deep-negative, so such values are **withheld** — `npv_mm`, `breakeven_wti` and `sens_mm_per_dollar` are `null` and `performance.economics_status == "early_life"`. Only fields with `economics_status == "surfaced"` carry a client-credible life-to-date number (and it may still be negative — an expected life-to-date artifact for high-up-front-capital deepwater fields). A credible full-cycle recompute is tracked in worldenergydata#973.
 
 All non-finite floats (NaN/Infinity) are sanitized to `null` for strict-JSON and HF-viewer compatibility.
 

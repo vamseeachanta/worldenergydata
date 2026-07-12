@@ -563,21 +563,15 @@ const FIELD = {
   },
   "risk": {
     "hpht": null,
-    "decommissioning": {
-      "cost_musd": 43.2,
-      "host_type": "Mini-TLP",
-      "confidence": "modeled",
-      "basis": "facility removal (not well P&A)",
-      "label": "Decommission ~$43.2M"
-    }
+    "decommissioning": null
   },
   "landman": {
     "leases": [
       {
         "lease_num": "G16942",
-        "lease_name": "Big Foot",
-        "water_depth_ft": 5190,
-        "dev_system": "dry"
+        "lease_name": null,
+        "water_depth_ft": null,
+        "dev_system": null
       }
     ],
     "n_leases": 1,
@@ -680,13 +674,15 @@ const FIELD = {
   "performance": {
     "avg_decline_pct_yr": 17.2,
     "avg_uptime_pct": 88.2,
-    "breakeven_wti": 153.0,
+    "breakeven_wti": null,
     "cum_oil_mmbbl": 78.7,
     "display": "Big Foot",
+    "economics_basis": "life_to_date_pretax_npv_at_10pct",
+    "economics_status": "early_life",
     "eur_mmbbl": 1324,
     "interventions": 6,
-    "npv_mm": -989.0,
-    "sens_mm_per_dollar": 12.1,
+    "npv_mm": null,
+    "sens_mm_per_dollar": null,
     "wells": 8
   }
 };
@@ -941,6 +937,13 @@ if (FIELD.performance) {
   const unit = (v, d, u) => v == null
     ? `<span class="mut">${DASH}</span>`
     : `${Number(v).toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d})}${u}`;
+  // Economics are life-to-date (#971): early-life fields are withheld as a
+  // labeled "n/a", and the credible LTD breakeven leads with the NPV shown as a
+  // captioned detail (not a bare headline number).
+  const early = p.economics_status === "early_life";
+  const econ = (v, d, u) => early
+    ? `<span class="mut">n/a — early life</span>`
+    : unit(v, d, u);
   const rows = [
     ["Benchmark wells", unit(p.wells, 0, "")],
     ["Cum oil", unit(p.cum_oil_mmbbl, 1, " MMbbl")],
@@ -948,9 +951,9 @@ if (FIELD.performance) {
     ["Avg uptime", unit(p.avg_uptime_pct, 1, "%")],
     ["Avg decline", unit(p.avg_decline_pct_yr, 1, "%/yr")],
     ["Interventions", unit(p.interventions, 0, "")],
-    ["NPV @10%", unit(p.npv_mm, 1, " $MM")],
-    ["WTI break-even", unit(p.breakeven_wti, 0, " $/bbl")],
-    ["NPV per +$1/bbl", unit(p.sens_mm_per_dollar, 1, " $MM")],
+    ["LTD breakeven WTI @10%", econ(p.breakeven_wti, 0, " $/bbl")],
+    ["NPV · life-to-date @10%", econ(p.npv_mm, 1, " $MM")],
+    ["NPV per +$1/bbl", econ(p.sens_mm_per_dollar, 1, " $MM")],
   ];
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;
