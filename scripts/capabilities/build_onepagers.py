@@ -49,13 +49,13 @@ _LOGO = """<svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-lab
 SPECS: list[dict] = [
     # ---- sections (one per left-nav menu item) ----
     dict(id="sec-economics", kind="section", title="Field economics & benchmarking",
-         std="BSEE OGOR-A · sanctioned V30 golden baseline", path="capabilities/#economics",
-         blurb="Per-well, per-block and per-field NPV / MIRR / IRR for the seven Lower-Tertiary "
-               "deepwater fields, computed from public BSEE production filings and sanctioned "
-               "against a frozen V30 baseline that a CI test re-checks on every change.",
+         std="BSEE OGOR-A · life-to-date, public data", path="capabilities/#economics",
+         blurb="Per-well, per-block and per-field NPV (@10%) and breakeven WTI for the seven "
+               "Lower-Tertiary deepwater fields, computed from public BSEE production filings — "
+               "life-to-date, not full-cycle — and regression-guarded by a CI test on every change.",
          figures=[("7", "deepwater fields"), ("158", "producing wells"), ("685.0", "MMbbl cum. oil")],
          bullets=["Life-to-date cashflow, NPV timeline and breakeven per field",
-                  "Price sensitivity (dNPV/dWTI) and MIRR, reproducible to the cent",
+                  "Price sensitivity (dNPV/dWTI), reproducible to the cent",
                   "Portfolio roll-up plus cross-field well benchmarking (2010–latest)"]),
     dict(id="sec-wells", kind="section", title="Well operations",
          std="BSEE Well Activity Reports · directional surveys", path="capabilities/#wells",
@@ -83,38 +83,38 @@ SPECS: list[dict] = [
          bullets=["Cross-database fatality / foundering / hatch breakdowns",
                   "IMO GISIS casualties by severity, vessel type and flag state (1900–2025)",
                   "Mooring-fatigue screening anchored to real BSEE failure incidents"]),
-    dict(id="sec-validation", kind="section", title="Sanctioned figures & provenance",
-         std="frozen golden baselines · CI-guarded", path="capabilities/#validation",
-         blurb="Every published number traces to a public regulatory filing; the sanctioned "
-               "economics reproduce a frozen reference baseline, CI-guarded so a result can "
-               "never silently drift from the model it claims.",
-         figures=[("V30", "golden baseline"), ("CI", "regression-guarded"), ("100%", "source-traceable")],
-         bullets=["Sanctioned-baseline vs data-derived clearly labelled on every figure",
+    dict(id="sec-validation", kind="section", title="Verified figures & provenance",
+         std="source-traceable · CI-guarded", path="capabilities/#validation",
+         blurb="Every published number traces to a public regulatory filing; the economics are "
+               "regression-guarded by CI so a result can never silently drift from the method it "
+               "claims.",
+         figures=[("BSEE", "public source"), ("CI", "regression-guarded"), ("100%", "source-traceable")],
+         bullets=["Every figure labelled with its source and any data limits",
                   "Deterministic, stdlib-only static build — identical for everyone, every time",
                   "Where data is incomplete, each page says so rather than guessing"]),
     # ---- works (one per live card) ----
     *[dict(id=f"economics-{slug}", kind="work", title=f"{name} field economics",
-           std="BSEE OGOR-A · sanctioned V30", path=f"economics-{slug}.html",
+           std="BSEE OGOR-A · life-to-date, public data", path=f"economics-{slug}.html",
            blurb=f"Per-well stackup, NPV timeline and critical-operations detail for the {name} "
-                 "Lower-Tertiary deepwater field, sanctioned against the frozen V30 baseline.",
-           figures=[], bullets=["Per-well and field-level NPV, MIRR, IRR and cashflow",
+                 "Lower-Tertiary deepwater field, life-to-date on public BSEE data (not full-cycle).",
+           figures=[], bullets=["Per-well and field-level NPV (@10%), breakeven WTI and cashflow",
                                  "NPV timeline with drilling/completion operation markers",
-                                 "Reproducible to the sanctioned V30 golden baseline"])
+                                 "Deterministic and regression-guarded by CI on every change"])
       for slug, name in [("anchor", "Anchor"), ("big_foot", "Big Foot"),
                          ("cascade_chinook", "Cascade–Chinook"), ("jack_st_malo", "Jack / St. Malo"),
                          ("julia", "Julia"), ("shenandoah", "Shenandoah"), ("stones", "Stones")]],
     dict(id="portfolio", kind="work", title="Lower-Tertiary portfolio summary",
          std="field-by-field roll-up", path="portfolio.html",
          blurb="The whole Lower-Tertiary play at a glance, aggregated from the per-field "
-               "sanctioned V30 economics.",
+               "economics.",
          figures=[("7", "fields"), ("158", "wells"), ("685.0", "MMbbl")],
          bullets=["Side-by-side NPV and production across all seven fields",
-                  "Inherits each field's sanctioned figures and data limits"]),
+                  "Inherits each field's figures and data limits"]),
     dict(id="benchmark", kind="work", title="Well benchmarking",
          std="BSEE OGOR-A · 2010–latest", path="benchmark.html",
          blurb="Cross-field per-well performance benchmarking over the Lower-Tertiary play.",
          figures=[], bullets=["Normalized cumulative and rate comparisons across fields",
-                              "Same frozen data window as the V30 economics"]),
+                              "Same data window as the field economics"]),
     dict(id="completion", kind="work", title="Drilling & completion days",
          std="BSEE Well Activity Reports", path="completion/",
          blurb="WAR-derived drilling and completion durations across the Lower-Tertiary "
@@ -243,7 +243,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 # NOTE: the field-economics pages are intentionally NOT mapped to a workflow. The
 # underlying `fdas-field-npv` registry workflow exists and is locally runnable, but
 # it is deliberately EXCLUDED from Deckhand's public routing on PII grounds
-# (deckhand#513), so the bot will not run it. The sanctioned economics are already
+# (deckhand#513), so the bot will not run it. The economics are already
 # published as static reports, so their honest API is a GET of the report — we do
 # not advertise a POST the platform won't serve.
 WORKFLOW_MAP: dict[str, str] = {
@@ -258,13 +258,13 @@ _BOT = "https://t.me/the_deckhand_bot"
 # a workflow-API run. Keyed by spec id; works without a prompt fall back to a
 # generic ask built from the title.
 PROMPTS: dict[str, str] = {
-    "economics-anchor": "Run the sanctioned V30 field economics for Anchor — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-big_foot": "Run the sanctioned V30 field economics for Big Foot — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-cascade_chinook": "Run the sanctioned V30 field economics for Cascade–Chinook — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-jack_st_malo": "Run the sanctioned V30 field economics for Jack / St. Malo — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-julia": "Run the sanctioned V30 field economics for Julia — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-shenandoah": "Run the sanctioned V30 field economics for Shenandoah — per-well NPV, MIRR and the breakeven WTI.",
-    "economics-stones": "Run the sanctioned V30 field economics for Stones — per-well NPV, MIRR and the breakeven WTI.",
+    "economics-anchor": "Run the field economics for Anchor — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-big_foot": "Run the field economics for Big Foot — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-cascade_chinook": "Run the field economics for Cascade–Chinook — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-jack_st_malo": "Run the field economics for Jack / St. Malo — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-julia": "Run the field economics for Julia — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-shenandoah": "Run the field economics for Shenandoah — per-well NPV (@10%) and the breakeven WTI.",
+    "economics-stones": "Run the field economics for Stones — per-well NPV (@10%) and the breakeven WTI.",
     "portfolio": "Give me the Lower-Tertiary portfolio economics roll-up across all seven fields.",
     "benchmark": "Benchmark Lower-Tertiary well performance across fields from 2010 to latest.",
     "completion": "Show drilling and completion days for the Lower-Tertiary fields, with medians by field.",
