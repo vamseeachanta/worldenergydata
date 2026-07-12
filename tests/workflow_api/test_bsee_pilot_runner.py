@@ -12,15 +12,18 @@ import json
 from pathlib import Path
 
 import pytest
-
 from assetutilities.workflow_api import identity, inputs
+
 from worldenergydata.workflow_api import bsee_pilot as P
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-GOLDEN = REPO_ROOT / "tests" / "workflow_api" / "goldens" / "bsee_production_summary.json"
+GOLDEN = (
+    REPO_ROOT / "tests" / "workflow_api" / "goldens" / "bsee_production_summary.json"
+)
 
 
 # --- AC1: resource-intel snapshot provenance --------------------------------
+
 
 def test_snapshot_descriptor_records_provenance(pilot_config):
     v = pilot_config["variants"][0]
@@ -38,6 +41,7 @@ def test_snapshot_descriptor_records_provenance(pilot_config):
 
 
 # --- AC1/AC4: pinned admission passes; run-timestamp-only vintage rejected ---
+
 
 def test_snapshot_pinned_admission_passes(pilot_config):
     v = pilot_config["variants"][0]
@@ -74,6 +78,7 @@ def test_runtime_data_as_of_is_not_source_vintage(pilot_config):
 
 # --- AC2: >=3 meaningful variations + exactly 1 exact replay ----------------
 
+
 def test_at_least_three_variations_plus_one_replay(pilot_summary):
     run_ids = pilot_summary["run_ids"]
     assert set(run_ids) == {"V1", "V2", "V3"}
@@ -88,8 +93,11 @@ def test_at_least_three_variations_plus_one_replay(pilot_summary):
 
 # --- AC3: exact replay -> same run_id + output equality ----------------------
 
+
 def test_exact_replay_same_run_id_and_equality(pilot_config):
-    v = next(v for v in pilot_config["variants"] if v["id"] == pilot_config["replay_variant"])
+    v = next(
+        v for v in pilot_config["variants"] if v["id"] == pilot_config["replay_variant"]
+    )
     a = P.build_projection_for_variant(pilot_config, v)
     b = P.build_projection_for_variant(pilot_config, v)
     assert a["run_id"] == b["run_id"]
@@ -111,10 +119,13 @@ def test_data_as_of_structurally_excluded_from_equality(pilot_config):
     assert "data_as_of" not in json.dumps(e1.result)
     # so two runs are equal by result_hash regardless of the wall-clock stamp
     e2 = run_workflow("bsee-production-summary")
-    assert e1.determinism["result_hash"] == e2.determinism["result_hash"]  # equality holds
+    assert (
+        e1.determinism["result_hash"] == e2.determinism["result_hash"]
+    )  # equality holds
 
 
 # --- AC3/AC9: an equality mismatch blocks publication ------------------------
+
 
 def test_equality_mismatch_blocks_publication(pilot_config):
     from assetutilities.workflow_api.publication import promotion as promotion_mod
@@ -125,7 +136,10 @@ def test_equality_mismatch_blocks_publication(pilot_config):
     from assetutilities.workflow_api.publication.ledger import Ledger
 
     m = promotion_mod.PromotionMachine(
-        entry["projection"], hf_port=InMemoryHfPort(), ledger=Ledger(), egress=P.make_egress()
+        entry["projection"],
+        hf_port=InMemoryHfPort(),
+        ledger=Ledger(),
+        egress=P.make_egress(),
     )
     m.validate()
     with pytest.raises(identity.OutputMismatchError):
@@ -135,18 +149,20 @@ def test_equality_mismatch_blocks_publication(pilot_config):
 
 # --- AC4: inputs complete/canonical/hashed/schema-valid/replayable ----------
 
+
 def test_inputs_complete_canonical_hashed_schema_valid_replayable(pilot_config):
     v = pilot_config["variants"][0]
     d = P.build_snapshot_descriptor(pilot_config, v["snapshot"], v["api12"])
     rec = P.build_input_record(d, pilot_config)
-    assert rec["schema_version"]                       # schema-valid
+    assert rec["schema_version"]  # schema-valid
     assert rec["content_digest"] and len(rec["content_digest"]) == 64  # hashed
-    assert rec["replay_location"] in inputs.ALLOWED_REPLAY_LOCATIONS    # replayable
-    assert rec["snapshot_identity"] == d["snapshot_identity"]          # pinned/canonical
-    assert inputs.admission_reason(rec) is None                        # complete
+    assert rec["replay_location"] in inputs.ALLOWED_REPLAY_LOCATIONS  # replayable
+    assert rec["snapshot_identity"] == d["snapshot_identity"]  # pinned/canonical
+    assert inputs.admission_reason(rec) is None  # complete
 
 
 # --- AC2/AC5: reference determinism golden -----------------------------------
+
 
 def test_bsee_reference_golden(pilot_config):
     golden = json.loads(GOLDEN.read_text())

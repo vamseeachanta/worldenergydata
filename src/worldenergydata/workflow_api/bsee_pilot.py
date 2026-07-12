@@ -40,17 +40,17 @@ import tempfile
 from pathlib import Path
 
 import yaml
-
 from assetutilities.workflow_api import artifact, identity, inputs, metrics
 from assetutilities.workflow_api import output_contract as oc
 from assetutilities.workflow_api import report as report_mod
+from assetutilities.workflow_api.envelope import result_hash as _result_hash
 from assetutilities.workflow_api.publication import egress as egress_mod
 from assetutilities.workflow_api.publication import projection as projection_mod
 from assetutilities.workflow_api.publication import promotion as promotion_mod
 from assetutilities.workflow_api.publication.hf_port import InMemoryHfPort
 from assetutilities.workflow_api.publication.ledger import Ledger
 from assetutilities.workflow_api.runner import ResultLocator, extract_result
-from assetutilities.workflow_api.envelope import result_hash as _result_hash
+
 from worldenergydata.workflow_api import runner as R
 
 CONFIG_PATH = "config/publication/bsee-production-summary.yml"
@@ -71,6 +71,7 @@ class PilotError(RuntimeError):
 # ---------------------------------------------------------------------------
 # config
 # ---------------------------------------------------------------------------
+
 
 def repo_root() -> Path:
     return R._wed_repo_root()
@@ -96,6 +97,7 @@ def environment_digest(env: dict) -> str:
 # ---------------------------------------------------------------------------
 # source-snapshot descriptor + MAJOR-1 federal-claim gate
 # ---------------------------------------------------------------------------
+
 
 def build_snapshot_descriptor(config: dict, snapshot_key: str, api12: list) -> dict:
     """Build the pinned BSEE source-snapshot descriptor for a variant.
@@ -131,10 +133,10 @@ def build_snapshot_descriptor(config: dict, snapshot_key: str, api12: list) -> d
     }
     return {
         "snapshot_key": snapshot_key,
-        "fixture": snap["fixture"],            # repo-relative (provenance only)
-        "snapshot_identity": sha256,           # BINDING admission identity
-        "public_locator": public_locator,      # best-effort retrieval path (m4)
-        "vintage": snap["vintage"],            # SOURCE vintage, not run time
+        "fixture": snap["fixture"],  # repo-relative (provenance only)
+        "snapshot_identity": sha256,  # BINDING admission identity
+        "public_locator": public_locator,  # best-effort retrieval path (m4)
+        "vintage": snap["vintage"],  # SOURCE vintage, not run time
         "data_as_of": snap["vintage"],
         "retrieved_at": snap["retrieved_at"],  # pinned once, excluded from identity
         "source_authority": source_authority,
@@ -172,11 +174,13 @@ def resolve_visibility(config: dict) -> dict:
     pub = config["publication"]
     is_real = bool(pub["is_real_extract"])
     return {
-        "private": not is_real,   # synthetic -> PRIVATE HF repo
+        "private": not is_real,  # synthetic -> PRIVATE HF repo
         "public": is_real,
         "license": pub["federal_license"] if is_real else pub["synthetic_license"],
         "source_authority": (
-            pub["federal_source_authority"] if is_real else pub["synthetic_source_authority"]
+            pub["federal_source_authority"]
+            if is_real
+            else pub["synthetic_source_authority"]
         ),
         "is_real_extract": is_real,
     }
@@ -185,6 +189,7 @@ def resolve_visibility(config: dict) -> dict:
 # ---------------------------------------------------------------------------
 # input record (assetutilities inputs — Gate A admission)
 # ---------------------------------------------------------------------------
+
 
 def build_input_record(descriptor: dict, config: dict) -> dict:
     """A pinned ``dataset_snapshot`` input record admissible at Gate A.
@@ -214,6 +219,7 @@ def build_input_record(descriptor: dict, config: dict) -> dict:
 # ---------------------------------------------------------------------------
 # path-independent identity (MAJOR-2)
 # ---------------------------------------------------------------------------
+
 
 def identity_context(config: dict, input_record: dict) -> dict:
     """The declared clean context for :func:`identity.derive_run_identity`.
@@ -247,8 +253,10 @@ def derive_identity(config: dict, input_record: dict) -> dict:
 # workflow execution adapter (keeps the output bytes; the shared runner rmtree's)
 # ---------------------------------------------------------------------------
 
-def execute_variant(workflow_id: str, api12: list, group_label: str, snapshot_key: str,
-                    config: dict):
+
+def execute_variant(
+    workflow_id: str, api12: list, group_label: str, snapshot_key: str, config: dict
+):
     """Run the UNCHANGED wed workflow and return ``(payload, {basename: bytes})``.
 
     Reuses the shared runner's cfg builders + container-hash normalization; the
@@ -267,7 +275,10 @@ def execute_variant(workflow_id: str, api12: list, group_label: str, snapshot_ke
                 {
                     "label": group_label,
                     "api12": list(api12),
-                    "bottom_block": {"area": snap["query"]["area"], "number": snap["query"]["block"]},
+                    "bottom_block": {
+                        "area": snap["query"]["area"],
+                        "number": snap["query"]["block"],
+                    },
                     "bottom_lease": None,
                     "production": {"files": [fixture_name]},
                 }
@@ -281,7 +292,9 @@ def execute_variant(workflow_id: str, api12: list, group_label: str, snapshot_ke
     try:
         from worldenergydata.engine import engine
 
-        cfg_base = engine(cfg=copy.deepcopy(cfg), embed=True, root_folder=root, log_to_file=False)
+        cfg_base = engine(
+            cfg=copy.deepcopy(cfg), embed=True, root_folder=root, log_to_file=False
+        )
         payload, _warns = extract_result(cfg_base, locator, root)
         R._normalize_container_hashes(payload, cfg_base, root)  # canonical xlsx digest
         analysis = cfg_base.get("Analysis", {}) or {}
@@ -289,7 +302,9 @@ def execute_variant(workflow_id: str, api12: list, group_label: str, snapshot_ke
         out_bytes = {}
         for o in payload["outputs"]:
             p = os.path.join(results_dir, o["basename"])
-            out_bytes[o["basename"]] = open(p, "rb").read() if os.path.isfile(p) else None
+            out_bytes[o["basename"]] = (
+                open(p, "rb").read() if os.path.isfile(p) else None
+            )
         return payload, out_bytes
     finally:
         shutil.rmtree(root, ignore_errors=True)
@@ -298,6 +313,7 @@ def execute_variant(workflow_id: str, api12: list, group_label: str, snapshot_ke
 # ---------------------------------------------------------------------------
 # metrics (derived from the pinned snapshot bytes — path-independent)
 # ---------------------------------------------------------------------------
+
 
 def compute_metrics(fixture_bytes: bytes, api12: list) -> dict:
     """Algorithm-scoped metric VALUES over the selected wells (from snapshot bytes)."""
@@ -346,7 +362,9 @@ def build_metric_store(config: dict) -> tuple:
     return store, by_segment
 
 
-def build_metric_observations(run_id: str, algorithm_id: str, values: dict, defs: dict) -> list:
+def build_metric_observations(
+    run_id: str, algorithm_id: str, values: dict, defs: dict
+) -> list:
     obs = []
     for segment, value in values.items():
         definition = defs[segment]
@@ -369,6 +387,7 @@ def build_metric_observations(run_id: str, algorithm_id: str, values: dict, defs
 # ---------------------------------------------------------------------------
 # curated outputs + artifacts + object bytes
 # ---------------------------------------------------------------------------
+
 
 def _curated_label(basename: str) -> str:
     if any(basename.startswith(p) for p in _PRIMARY_BASENAMES):
@@ -402,7 +421,9 @@ def build_outputs(out_bytes: dict, config: dict):
         if not basename.endswith(_TEXT_SUFFIXES):
             continue
         media_type, native_format = _media_type(basename)
-        art = artifact.physical_artifact(blob, media_type=media_type, native_format=native_format)
+        art = artifact.physical_artifact(
+            blob, media_type=media_type, native_format=native_format
+        )
         artifacts.append(art)
         object_bytes[art["content_digest"]] = blob
         records.append(
@@ -421,9 +442,12 @@ def build_outputs(out_bytes: dict, config: dict):
 # per-variant assembly + promotion
 # ---------------------------------------------------------------------------
 
+
 def build_projection_for_variant(config: dict, variant: dict):
     """Assemble one variant's RunProjection (+ side data for the report)."""
-    descriptor = build_snapshot_descriptor(config, variant["snapshot"], variant["api12"])
+    descriptor = build_snapshot_descriptor(
+        config, variant["snapshot"], variant["api12"]
+    )
     assert_federal_claim_allowed(descriptor)  # MAJOR-1
     input_record = build_input_record(descriptor, config)
 
@@ -432,14 +456,21 @@ def build_projection_for_variant(config: dict, variant: dict):
     run_id = ident["run_id"]
 
     payload, out_bytes = execute_variant(
-        variant["workflow"], variant["api12"], variant["group_label"],
-        variant["snapshot"], config,
+        variant["workflow"],
+        variant["api12"],
+        variant["group_label"],
+        variant["snapshot"],
+        config,
     )
-    artifacts, output_records, object_bytes, xlsx_digest = build_outputs(out_bytes, config)
+    artifacts, output_records, object_bytes, xlsx_digest = build_outputs(
+        out_bytes, config
+    )
     output_equality = oc.output_equality_digest(output_records)
 
     store, defs = build_metric_store(config)
-    fixture_bytes = read_fixture_bytes(config["snapshots"][variant["snapshot"]]["fixture"])
+    fixture_bytes = read_fixture_bytes(
+        config["snapshots"][variant["snapshot"]]["fixture"]
+    )
     metric_values = compute_metrics(fixture_bytes, variant["api12"])
     observations = build_metric_observations(
         run_id, config["algorithm"]["algorithm_id"], metric_values, defs
@@ -481,13 +512,16 @@ def build_projection_for_variant(config: dict, variant: dict):
 def make_egress(env_tokens: dict | None = None) -> egress_mod.EgressGate:
     """Fail-closed egress gate. ``env_tokens`` values (if any) are scanned/redacted
     — the dry run passes none (no secret is ever in play in-memory)."""
-    return egress_mod.EgressGate(legal_deny_list=(), env_tokens=env_tokens or {},
-                                 external_validator=None)
+    return egress_mod.EgressGate(
+        legal_deny_list=(), env_tokens=env_tokens or {}, external_validator=None
+    )
 
 
 def promote(projection, *, hf_port, ledger, egress):
     """Drive one projection emitted -> ... -> accepted; return the accepted revision."""
-    m = promotion_mod.PromotionMachine(projection, hf_port=hf_port, ledger=ledger, egress=egress)
+    m = promotion_mod.PromotionMachine(
+        projection, hf_port=hf_port, ledger=ledger, egress=egress
+    )
     m.validate()
     m.replay(observed_output_equality=projection.output_equality_digest.get("digest"))
     m.render_draft()
@@ -507,6 +541,7 @@ def promote(projection, *, hf_port, ledger, egress):
 # rolling HTML report (one, in the source repo; mandatory Inputs + Outputs)
 # ---------------------------------------------------------------------------
 
+
 def _run_view(entry, revision):
     d = entry["descriptor"]
     return {
@@ -517,9 +552,15 @@ def _run_view(entry, revision):
             {"name": "source_authority", "value": d["source_authority"]},
             {"name": "public_locator", "value": d["public_locator"]["uri"]},
             {"name": "vintage", "value": d["vintage"]},
-            {"name": "snapshot_identity(sha256)", "value": d["snapshot_identity"][:16] + "..."},
-            {"name": "selection", "value": f"{d['selection']['area']}-{d['selection']['block']} "
-                                            f"api12={d['selection']['api12']}"},
+            {
+                "name": "snapshot_identity(sha256)",
+                "value": d["snapshot_identity"][:16] + "...",
+            },
+            {
+                "name": "selection",
+                "value": f"{d['selection']['area']}-{d['selection']['block']} "
+                f"api12={d['selection']['api12']}",
+            },
             {"name": "license", "value": d["license"]},
         ],
         "outputs": [
@@ -579,6 +620,7 @@ def render_rolling_report(config: dict, accepted: list, ledger) -> str:
 # top-level dry run
 # ---------------------------------------------------------------------------
 
+
 def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = False):
     """Execute the FULL dry-run pipeline (InMemoryHfPort by default) and return a
     summary. NO Hugging Face network, NO real publish.
@@ -592,7 +634,9 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
     entries = [build_projection_for_variant(config, v) for v in config["variants"]]
     accepted = []
     for entry in entries:
-        revision = promote(entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress)
+        revision = promote(
+            entry["projection"], hf_port=hf_port, ledger=ledger, egress=egress
+        )
         accepted.append((entry, revision))
 
     # exactly 1 exact replay (of replay_variant) — same run_id + output equality
@@ -600,7 +644,9 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
     base = next(e for e in entries if e["variant"]["id"] == replay_id)
     replay = build_projection_for_variant(config, base["variant"])
     if replay["run_id"] != base["run_id"]:
-        raise PilotError("exact replay resolved a DIFFERENT run_id — publication blocked")
+        raise PilotError(
+            "exact replay resolved a DIFFERENT run_id — publication blocked"
+        )
     identity.assert_output_equality(
         base["output_equality"]["digest"], replay["output_equality"]["digest"]
     )
@@ -614,8 +660,11 @@ def run_pilot(config: dict | None = None, *, hf_port=None, write_report: bool = 
     visibility = resolve_visibility(config)
     return {
         "run_ids": {e["variant"]["id"]: e["run_id"] for e in entries},
-        "replay": {"variant": replay_id, "run_id": replay["run_id"],
-                   "same_run_id": replay["run_id"] == base["run_id"]},
+        "replay": {
+            "variant": replay_id,
+            "run_id": replay["run_id"],
+            "same_run_id": replay["run_id"] == base["run_id"],
+        },
         "revisions": {e["variant"]["id"]: rev for e, rev in accepted},
         "accepted_count": len(accepted),
         "rejected_count": 0,
