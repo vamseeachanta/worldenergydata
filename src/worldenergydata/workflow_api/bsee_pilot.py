@@ -145,6 +145,9 @@ def build_snapshot_descriptor(config: dict, snapshot_key: str, api12: list) -> d
         "schema": list(snap["schema"]),
         "selection": selection,
         "is_real_extract": is_real,
+        # sha256 of the parent public-domain bulk file the REAL slice was cut from
+        # (None for the synthetic path); recorded for reproducible provenance.
+        "parent_zip_sha256": snap.get("parent_zip_sha256"),
     }
 
 
@@ -590,26 +593,49 @@ def render_rolling_report(config: dict, accepted: list, ledger) -> str:
         f"<tr><td>{e['variant']['id']}</td><td>{e['descriptor']['source_authority']}</td>"
         f"<td>{e['descriptor']['public_locator']['uri']}</td>"
         f"<td>{e['descriptor']['vintage']}</td>"
+        f"<td>{e['descriptor']['retrieved_at']}</td>"
         f"<td><code>{e['descriptor']['snapshot_identity'][:16]}...</code></td>"
         f"<td>{e['descriptor']['license']}</td>"
         f"<td>{'REAL' if e['descriptor']['is_real_extract'] else 'SYNTHETIC'}</td></tr>"
         for e, _ in accepted
     )
-    banner = (
-        "PUBLIC / cc-by-4.0 / source_authority:BSEE"
-        if visibility["public"]
-        else "PRIVATE / synthetic-derived (MAJOR-1: no federal BSEE claim on synthetic data)"
-    )
+    pub = config["publication"]
+    if visibility["public"]:
+        banner = "PUBLIC / cc-by-4.0 / source_authority:BSEE"
+        # CC-BY attribution + the parent-file digest the REAL slice was cut from.
+        first = accepted[0][0]["descriptor"] if accepted else {}
+        attribution = pub.get("attribution", "BSEE Data Center, OGOR-A, data.bsee.gov")
+        parent_zip = (
+            pub.get("parent_zip_sha256") or first.get("parent_zip_sha256") or ""
+        )
+        attribution_html = (
+            "<p><strong>Attribution (CC-BY-4.0):</strong> "
+            f"&ldquo;{attribution}&rdquo;. Public-domain U.S. federal data "
+            "redistributed under CC-BY-4.0 with attribution."
+            + (
+                f" <strong>Parent file sha256:</strong> <code>{parent_zip}</code>."
+                if parent_zip
+                else ""
+            )
+            + "</p>"
+        )
+    else:
+        banner = (
+            "PRIVATE / synthetic-derived "
+            "(MAJOR-1: no federal BSEE claim on synthetic data)"
+        )
+        attribution_html = ""
     return (
         "<!doctype html><html><head><meta charset='utf-8'>"
         f"<title>BSEE production-summary run ledger</title></head><body>"
         f"<h1>BSEE production-summary run ledger</h1>"
         f"<p><strong>HF dataset:</strong> {config['publication']['hf_repo']} "
         f"&mdash; <strong>visibility:</strong> {banner}</p>"
+        f"{attribution_html}"
         "<h2>Source snapshot provenance</h2>"
         "<table border='1'><thead><tr><th>variant</th><th>source_authority</th>"
-        "<th>public_locator</th><th>vintage</th><th>snapshot_identity</th>"
-        "<th>license</th><th>extract</th></tr></thead>"
+        "<th>public_locator</th><th>vintage</th><th>retrieved_at</th>"
+        "<th>snapshot_identity</th><th>license</th><th>extract</th></tr></thead>"
         f"<tbody>{provenance_rows}</tbody></table>"
         f"{fragment}"
         "</body></html>"
