@@ -272,7 +272,7 @@ wheels = [
 [[package]]
 name = "assetutilities"
 version = "0.1.1"
-source = { git = "https://github.com/vamseeachanta/assetutilities.git?branch=main#a27b2fa5efb0e24c2056f83345a9ad03a931a83f" }
+source = { git = "https://github.com/vamseeachanta/assetutilities.git?branch=main#f496f51b7f896a3cfed169c1ba1d689bb0889b6b" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "build" },
