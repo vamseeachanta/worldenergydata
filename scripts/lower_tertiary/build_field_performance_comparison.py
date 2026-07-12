@@ -31,7 +31,7 @@ CONTRACT = REPORTS / "lifecycle" / "_performance.json"
 
 CONTRACT_META = {
     "source": (
-        "BSEE OGOR-A per-well benchmark + V30 cost model, "
+        "BSEE OGOR-A per-well benchmark + cost model, "
         "life-to-date (not full-cycle)"
     ),
     "economics_note": (
@@ -202,7 +202,7 @@ def build() -> str:
         "All seven producing Lower Tertiary fields, side by side, from **public BSEE",
         "data**. Per-well benchmark aggregated to the field level; economics joined",
         "from the per-field reports. Life-to-date on public data — not full-cycle",
-        "sanctioned economics. Deterministic and reproducible.",
+        "economics. Deterministic and reproducible.",
         "",
         "| Field | Wells | Cum oil (MMbbl) | EUR (MMbbl) | Avg uptime % | Avg decline %/yr | Interventions | NPV, LTD @10% ($MM) | LTD breakeven WTI ($/bbl) | NPV per +$1/bbl ($MM) |",
         "|---|--:|--:|--:|--:|--:|--:|--:|--:|--:|",
@@ -254,7 +254,7 @@ def build() -> str:
         f"next step (#971 Tier 1). See per-field `field_economics_<slug>.md` for the "
         f"life-to-date derivation.",
         "",
-        "_Source: `worldenergydata` BSEE OGOR-A + V30 cost model. Regenerate:_",
+        "_Source: `worldenergydata` BSEE OGOR-A + cost model. Regenerate:_",
         "_`uv run python scripts/lower_tertiary/build_well_benchmark.py` then_",
         "_`uv run python scripts/lower_tertiary/build_field_performance_comparison.py`._",
         "",
