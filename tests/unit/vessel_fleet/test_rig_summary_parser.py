@@ -377,6 +377,83 @@ class TestSeadrillLayout:
         assert self.spec["CANTILEVER_REACH_FT"] == 100.0
 
 
+# Borr Drilling dotted-leader jackup layout (Thor) — dotted/ellipsis leaders,
+# kips-quoted displacement and deck loads.
+BORR_TEXT = """\
+Design / Generation ..................................... Keppel FELS Super B Class, Bigfoot
+Delivery ............................................................................................................ 2019
+Flag ................................................................................................................ Liberia
+Overall Dimensions ....................................... 247 ft long x 230 ft wide x 27 ft deep
+Legs .......................................................................... 3x 517 ft long, triangular truss
+Drafts .......................................................................................... 19 ft load line draft
+Load Line Displacement ................................................................. 41,625.45 kips
+Variable Deck ...................................... 9,700 kips elevated / 5,500 kips field transit
+Operating Water Depth .................................................................................. 400 ft
+Maximum Drilling Depth ........................................................................... 35,000 ft
+Cantilever/ Drill floor               75 ft / 15 ft Port & 15 ft Stbd
+"""
+
+# Newbuild variant (Forseti) — unicode-ellipsis leaders, MT-quoted loads,
+# transit-only draft, "(3) 554.7 ft." legs.
+BORR_NEWBUILD_TEXT = """\
+Design / Generation …………………………………………Friede & Goldman JU3000N
+Year Entered Service / Significant Upgrades …………………………………….. 2013
+Flag ………………………………………………………………...……...………….. Liberia
+Overall Dimensions .................................... ………231 ft long x 277 ft wide x 31 ft deep
+Legs …………………………………………...……………… (3) 554.7 ft. long, Triangular
+Drafts …………………………………………………………………………….. 19 ft transit
+Displacement…………………………………………………………………. 26,109.65 MT
+Variable Deck ........................ ………………………………………... 5,433 MT operating
+Operating Water Depth ............................................. 400 ft. designed / 400 ft. outfitted
+Maximum Drilling Depth .................................................................................. 35,000 ft
+"""
+
+
+class TestBorrLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(BORR_TEXT)
+
+    def test_dotted_leaders(self):
+        assert self.spec["YEAR_BUILT"] == 2019
+        assert self.spec["FLAG_STATE"] == "Liberia"
+        assert self.spec["RIG_DESIGN"] == "Keppel FELS Super B Class, Bigfoot"
+
+    def test_worded_dimensions(self):
+        assert self.spec["LOA_M"] == 75.3  # 247 ft
+        assert self.spec["BEAM_M"] == 70.1  # 230 ft
+        assert self.spec["DEPTH_M"] == 8.2  # 27 ft
+
+    def test_kips_conversions(self):
+        assert self.spec["DISPLACEMENT_TONNES"] == 18881  # 41,625.45 kips
+        assert self.spec["VARIABLE_DECK_LOAD_ST"] == 4850  # 9,700 kips elevated
+
+    def test_jackup_fields(self):
+        assert self.spec["LEG_LENGTH_FT"] == 517.0
+        assert self.spec["CANTILEVER_REACH_FT"] == 75.0
+        assert self.spec["WATER_DEPTH_RATING_FT"] == 400.0
+        assert self.spec["DRILLING_DEPTH_RATING_FT"] == 35000.0
+
+    def test_load_line_draft(self):
+        assert self.spec["DRAFT_M"] == 5.8  # 19 ft load line
+
+
+class TestBorrNewbuildVariant:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(BORR_NEWBUILD_TEXT)
+
+    def test_ellipsis_leaders_and_mt_loads(self):
+        assert self.spec["YEAR_BUILT"] == 2013  # via Year Entered Service
+        assert self.spec["DISPLACEMENT_TONNES"] == 26109.65  # vendor MT, as printed
+        assert self.spec["VARIABLE_DECK_LOAD_ST"] == 5989  # 5,433 MT
+
+    def test_parenthesized_legs(self):
+        assert self.spec["LEG_LENGTH_FT"] == 554.7  # "(3) 554.7 ft."
+
+    def test_transit_only_draft(self):
+        assert "DRAFT_M" not in self.spec
+        assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 19.0
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)

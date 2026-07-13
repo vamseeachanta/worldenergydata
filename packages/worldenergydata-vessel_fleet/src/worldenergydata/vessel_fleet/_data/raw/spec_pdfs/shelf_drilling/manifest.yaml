@@ -1,0 +1,130 @@
+# Provenance for committed Shelf Drilling spec PDFs — wed issue #995.
+# Retrieved from shelfdrilling.com/wp-content/uploads/ (public fleet pages).
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+contractor: Shelf Drilling Ltd
+files:
+  shelf-achiever.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2022/12/Shelf-Drilling-Achiever_Spec-Sheet-Dec-2022.pdf
+    sha256: a04185e13715f2f7542c5042cd1dd2c7f6cee44ec23b07d1273423f01676b2cb
+    text_layer: true
+  shelf-adriatic-i.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2018/11/Shelf-Drilling_Adriatic-I_Spec-Sheet-Nov-2018.pdf
+    sha256: 5d0b00d86f884f9e3d57d04e2bd34021180b67f406e0e245c91536f229fb5acd
+    text_layer: true
+  shelf-barsk.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/04/Shelf-Drilling-Barsk_Spec-Sheet-Apr-2024.pdf
+    sha256: 431bcaa40d78e10e673fe8c801bca74daeff11401de14e0346bb22b8aa8ccaa5
+    text_layer: true
+  shelf-ce-thornton.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2023/03/Shelf-Drilling_CE-Thornton_Spec-Sheet-Mar-2023.pdf
+    sha256: 2d9a75453609d991e206a87a0a2c2e625cac51892a7a173362a4c403e8916224
+    text_layer: true
+  shelf-chaophraya.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/01/Shelf-Drilling_Chaophraya_Spec-Sheet-Jan-2024.pdf
+    sha256: 389d87bfc763b3ac72418dd5e9961a7ff815cc063be573702ab60048728be3ef
+    text_layer: true
+  shelf-compact-driller.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2021/01/Shelf-Drilling_Compact-Driller_Spec-Sheet-Jan-2021.pdf
+    sha256: 923ba11ff1b3dca4677d466d5253e33615300c1e2a505facc25af50987cd59d2
+    text_layer: true
+  shelf-enterprise.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/10/Shelf-Drilling-Enterprise_Spec-Sheet-Oct-2024-10K-1.pdf
+    sha256: 84ab487cce67d9d23243ede91de4aae9ab0ba0754b29e90690d81c0d7aa555dd
+    text_layer: true
+  shelf-fg-mcclintock.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_FG-McClintock_Spec-Sheet-Jul-2018.pdf
+    sha256: 39a857822c65385de8ef1a14cee8b008c34ac67688c2d74310b4a533cda75803
+    text_layer: true
+  shelf-fortress.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2023/08/Shelf-Drilling-Fortress_Spec-Sheet-Aug-2023.pdf
+    sha256: b353c5e7491181cef39fe9c96bb13065cee4a589c1cad2516035784f7bf5f1de
+    text_layer: true
+  shelf-harvey-h-ward.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/08/Shelf-Drilling_Harvey-H-Ward_Spec-Sheet-Aug-2024-1.pdf
+    sha256: 401f396a500ea87109a013e8ba9d214bbcedd6d3ee6d6fc13f42b70972b5e208
+    text_layer: true
+  shelf-high-island-ii.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2022/04/Shelf-Drilling_High-Island-II_Spec-Sheet-Apr-2022.pdf
+    sha256: d3679da41caeea62c7769859c840bc25cd4c62a2dafd58d0f034ae8e32a7d60c
+    text_layer: true
+  shelf-high-island-iv.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2025/03/Shelf-Drilling_High-Island-IV_Spec-Sheet-Mar-2025.pdf
+    sha256: 6a083234a6c0645c1f82949b59faefbeff39d642acb44eccdddf338321033e2b
+    text_layer: true
+  shelf-high-island-ix.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2016/02/Shelf-Drilling_High-Island-IX_Spec-Sheet-February-2016.pdf
+    sha256: aea082eef7cca79bbc9b7a0f4096de5e07b1aca136032fb97ecfff006db93254
+    text_layer: true
+  shelf-high-island-v.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/11/Shelf-Drilling_High-Island-V_Spec-Sheet-November-2024.pdf
+    sha256: 6d42766995282b5ede1f0d7956b98294a23e329b2b805230ccead9be31dbaf39
+    text_layer: true
+  shelf-jt-angel.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2021/12/Shelf-Drilling_JT-Angel_Spec-Sheet-Dec-2021.pdf
+    sha256: de48e1cab46fe123e1673ff94015fe38807d4344a7073ae33b01160db472c8ca
+    text_layer: true
+  shelf-key-manhattan.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2019/03/Shelf-Drilling_Key-Manhattan_Spec-Sheet-Mar-2019.pdf
+    sha256: f046960752948b5f79b2709f6da1ce43e85e344a2fa473e75309882fc6b0fb12
+    text_layer: true
+  shelf-key-singapore.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_Key-Singapore_Spec-Sheet-Jul-2018.pdf
+    sha256: 699d5675d3b1f36e238effa8173108b564ec4ad17c1e5cc8bf01d7027aa456c0
+    text_layer: true
+  shelf-krathong.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/01/Shelf-Drilling_Krathong_Spec-Sheet-Jan-2024.pdf
+    sha256: 81e31e9adeadb90039bd54b3612ef399028d21747f082ba34f01d24c5530ebc4
+    text_layer: true
+  shelf-main-pass-iv.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2018/07/Shelf-Drilling_Main-Pass-IV_Spec-Sheet-Jul-2018.pdf
+    sha256: 5d1f28eab2fef3f041ede0538f0531773dd1b32f3c86e39bce26b5f1b79eaad4
+    text_layer: true
+  shelf-mentor.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2021/02/Shelf-Drilling_Mentor_Spec-Sheet-Feb-2021-10K.pdf
+    sha256: fafbe6b3468ed6aa2770b32096988be421379ebd0336478519317a4e322eaf5e
+    text_layer: true
+  shelf-odyssey.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2023/04/Shelf-Drilling-Odyssey_Spec-Sheet-Apr-2023.pdf
+    sha256: a852d6f003116e38206ec60f4c31d7ea9645c8188b0ff73702ffd00941640ca9
+    text_layer: true
+  shelf-parameswara.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2025/03/Shelf-Drilling_Parameswara_Spec-Sheet-Mar-2025.pdf
+    sha256: cd6f7f554f01c0d4978c466a01d500ce638fcdcf31bcbb3b6cbff8edf5a8ad64
+    text_layer: true
+  shelf-perseverance.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2024/08/Shelf-Drilling-Perseverance_Spec-Sheet-Aug-2024-1.pdf
+    sha256: 872e30428b7e23af9a8592a0bd7169a59008bdf3e33a31b38f69ec7441c3d27f
+    text_layer: true
+  shelf-resourceful.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2020/11/Shelf-Drilling_Resourceful_Spec-Sheet-Nov-2020.pdf
+    sha256: b3dde8eb13a0540f43f3bb9cb47376ea3586222d24d2b66ae5518180ac18eb96
+    text_layer: true
+  shelf-ron-tappmeyer.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2023/01/Shelf-Drilling_Ron-Tappmeyer_Spec-Sheet-Jan-2023-1.pdf
+    sha256: 54c0dd47e29c923186884e8071c91cac3a7d3a03b29e22b15aaa882b0c92c080
+    text_layer: true
+  shelf-scepter.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2020/07/Shelf-Drilling_Scepter_Spec-Sheet-Jul-2020-10K.pdf
+    sha256: ab56747ca59126a6e5eb764cce539b7c43a6eaf0cacd5ab9d7491ab611fec8f6
+    text_layer: true
+  shelf-tenacious.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2022/02/Shelf-Drilling_Tenacious_Spec-Sheet-Feb-2022-10K-F.pdf
+    sha256: 2189555fae73cd4fe2f8dbbec5cea2c54c34b408061e3a09d82949fddd56b872
+    text_layer: true
+  shelf-trident-16.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2017/09/Shelf-Drilling_Trident-16_Spec-Sheet-Sep-2017.pdf
+    sha256: 5d1095e779798bc035e10e06f45836cad93c6e82c954c5d7b068c991b221f264
+    text_layer: true
+  shelf-trident-xii.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2017/04/Shelf-Drilling_Trident-XII_Spec-Sheet-Apr-2017.pdf
+    sha256: 08f2dafa57f5b8956eec712ee08949804315745cbd3bc4eb91a176a0bfb17efc
+    text_layer: true
+  shelf-victory.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2022/07/Shelf-Drilling-Victory_Spec-Sheet-Mar-2024.pdf
+    sha256: b122b488b0660dfceef8afcefca115cf70d54bcb9b3688c372a08d1d5b2fef32
+    text_layer: true
+  shelf-winner.pdf:
+    url: https://www.shelfdrilling.com/wp-content/uploads/2023/08/Shelf-Drilling-Winner_Spec-Sheet-Aug-2023.pdf
+    sha256: 5e4275f1d468bc44cc41c6be5a82ee824f561ad2de9488ec3eda111e4d5c65b2
+    text_layer: true

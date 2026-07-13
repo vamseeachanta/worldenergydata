@@ -1,0 +1,467 @@
+# 'Ratings & Dimensions' extracted from Shelf Drilling jackup spec PDFs — wed issue #995 (epic #991).
+# Fleet: 31 jackups (Baker Marine Pacific 375, MLT 116-C/84, F&G L-780 MOD II,
+# KFELS N/Super B, CJ46 — ex-Transocean shallow-water fleet + newer units).
+#
+# extraction: text_parse -> parsers/rig_summary.py (Shelf dotted-leader profile).
+# Selection-critical jackup fields (legs, cantilever, water depth) covered 31/31;
+# VDL/hookload appear on ~half the sheets (prose wording varies) — omitted where absent.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Shelf Drilling Ltd
+issue: 995
+vessels:
+  Shelf Drilling Achiever:
+    pdf: shelf-achiever.pdf
+    rig_type: jack_up
+    rig_design: GustoMSC CJ46-X100-D
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2019
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 65.2
+      BEAM_M: 61.9
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 483.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3850
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 214 x 203 x 26
+  Adriatic I:
+    pdf: shelf-adriatic-i.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1981
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 60.0
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 200 x 26
+  Shelf Drilling Barsk:
+    pdf: shelf-barsk.pdf
+    rig_type: jack_up
+    rig_design: GustoMSC CJ70-X150-ST
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 492.0
+      LOA_M: 90.5
+      BEAM_M: 115.1
+      DEPTH_M: 12.0
+      LEG_LENGTH_FT: 703.0
+      CANTILEVER_REACH_FT: 110.0
+      VARIABLE_DECK_LOAD_ST: 7150
+      RAW_DIMENSIONS_FT: 296.9 x 377.6 x 39.4
+  C.E. Thornton:
+    pdf: shelf-ce-thornton.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 53-SC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1974
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 66.4
+      BEAM_M: 61.3
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 410.0
+      CANTILEVER_REACH_FT: 45.0
+      RAW_DIMENSIONS_FT: 218 x 201 x 26
+  Chaophraya:
+    pdf: shelf-chaophraya.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Super 116 E
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3850
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 206 x 26
+  Compact Driller:
+    pdf: shelf-compact-driller.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1992
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 410.0
+      CANTILEVER_REACH_FT: 45.0
+      RAW_DIMENSIONS_FT: 243 x 200 x 26
+  Shelf Drilling Enterprise:
+    pdf: shelf-enterprise.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine Pacific Class 375
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2007
+      WATER_DEPTH_RATING_FT: 375.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      LEG_LENGTH_FT: 506.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3750
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 28
+  F.G. McClintock:
+    pdf: shelf-fg-mcclintock.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 53-SC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1975
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 66.4
+      BEAM_M: 61.3
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 410.0
+      CANTILEVER_REACH_FT: 45.0
+      RAW_DIMENSIONS_FT: 218 x 201 x 26
+  Shelf Drilling Fortress:
+    pdf: shelf-fortress.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 400.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 555.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 7150
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
+  Harvey H. Ward:
+    pdf: shelf-harvey-h-ward.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman L-780 Model II
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1981
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 54.9
+      BEAM_M: 53.3
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 416.0
+      CANTILEVER_REACH_FT: 40.0
+      RAW_DIMENSIONS_FT: 180 x 175 x 25
+  High Island II:
+    pdf: shelf-high-island-ii.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 82-SD-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1979
+      WATER_DEPTH_RATING_FT: 270.0
+      LOA_M: 63.1
+      BEAM_M: 53.6
+      DEPTH_M: 6.1
+      LEG_LENGTH_FT: 394.0
+      CANTILEVER_REACH_FT: 47.0
+      RAW_DIMENSIONS_FT: 207 x 176 x 20
+  High Island IV:
+    pdf: shelf-high-island-iv.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 82-SD-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1980
+      WATER_DEPTH_RATING_FT: 270.0
+      LOA_M: 63.1
+      BEAM_M: 53.6
+      DEPTH_M: 6.1
+      LEG_LENGTH_FT: 394.0
+      CANTILEVER_REACH_FT: 47.0
+      HOOKLOAD_RATING_KIPS: 1000
+      RAW_DIMENSIONS_FT: 207 x 176 x 20
+  High Island IX:
+    pdf: shelf-high-island-ix.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 82-SD-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1983
+      WATER_DEPTH_RATING_FT: 250.0
+      LOA_M: 63.1
+      BEAM_M: 53.6
+      DEPTH_M: 6.1
+      LEG_LENGTH_FT: 360.0
+      CANTILEVER_REACH_FT: 40.0
+      RAW_DIMENSIONS_FT: 207 x 176 x 20
+  High Island V:
+    pdf: shelf-high-island-v.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 82-SD-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1981
+      WATER_DEPTH_RATING_FT: 270.0
+      LOA_M: 63.1
+      BEAM_M: 53.6
+      DEPTH_M: 6.1
+      LEG_LENGTH_FT: 394.0
+      CANTILEVER_REACH_FT: 40.0
+      HOOKLOAD_RATING_KIPS: 1000
+      RAW_DIMENSIONS_FT: 207 x 176 x 20
+  J.T. Angel:
+    pdf: shelf-jt-angel.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman L-780 Model II
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1982
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 54.9
+      BEAM_M: 53.3
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 416.0
+      CANTILEVER_REACH_FT: 40.0
+      HOOKLOAD_RATING_KIPS: 1044
+      RAW_DIMENSIONS_FT: 180 x 175 x 25
+  Key Manhattan:
+    pdf: shelf-key-manhattan.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1980
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 60.0
+      HOOKLOAD_RATING_KIPS: 1044
+      RAW_DIMENSIONS_FT: 243 x 200 x 26
+  Key Singapore:
+    pdf: shelf-key-singapore.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1982
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 55.0
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 200 x 26
+  Krathong:
+    pdf: shelf-krathong.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Super 116 E
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2017
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3850
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 206 x 26
+  Main Pass IV:
+    pdf: shelf-main-pass-iv.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman L-780-MOD II
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1982
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 54.9
+      BEAM_M: 53.3
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 416.0
+      CANTILEVER_REACH_FT: 40.0
+      RAW_DIMENSIONS_FT: 180 x 175 x 25
+  Shelf Drilling Mentor:
+    pdf: shelf-mentor.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Super 116-E
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2010
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 5000
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 206 x 26
+  Shelf Drilling Odyssey:
+    pdf: shelf-odyssey.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 400.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 555.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 5850
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
+  Parameswara:
+    pdf: shelf-parameswara.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine BMC 300 IC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1983
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 64.6
+      BEAM_M: 64.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 423.0
+      CANTILEVER_REACH_FT: 45.0
+      HOOKLOAD_RATING_KIPS: 1300
+      RAW_DIMENSIONS_FT: 212 x 210 x 26
+  Shelf Drilling Perseverance:
+    pdf: shelf-perseverance.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-2000E
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      WATER_DEPTH_RATING_FT: 400.0
+      LOA_M: 70.4
+      BEAM_M: 75.9
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 548.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 7000
+      RAW_DIMENSIONS_FT: 231 x 249 x 31
+  Shelf Drilling Resourceful:
+    pdf: shelf-resourceful.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Super 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 4000
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 243 x 206 x 26
+  Ron Tappmeyer:
+    pdf: shelf-ron-tappmeyer.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 116-C
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1978
+      WATER_DEPTH_RATING_FT: 300.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 410.0
+      CANTILEVER_REACH_FT: 45.0
+      HOOKLOAD_RATING_KIPS: 1000
+      RAW_DIMENSIONS_FT: 243 x 200 x 26
+  Shelf Drilling Scepter:
+    pdf: shelf-scepter.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      WATER_DEPTH_RATING_FT: 350.0
+      LOA_M: 75.0
+      BEAM_M: 66.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 486.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 4000
+      RAW_DIMENSIONS_FT: 246 x 218 x 25
+  Shelf Drilling Tenacious:
+    pdf: shelf-tenacious.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine Pacific Class 375
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2007
+      WATER_DEPTH_RATING_FT: 375.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      LEG_LENGTH_FT: 506.0
+      CANTILEVER_REACH_FT: 85.0
+      VARIABLE_DECK_LOAD_ST: 5000
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+  Trident 16:
+    pdf: shelf-trident-16.pdf
+    rig_type: jack_up
+    rig_design: Modec 300 C-38
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1982
+      WATER_DEPTH_RATING_FT: 300.0
+      LEG_LENGTH_FT: 405.0
+      CANTILEVER_REACH_FT: 45.0
+  Trident XII:
+    pdf: shelf-trident-xii.pdf
+    rig_type: jack_up
+    rig_design: BMC 300 IC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1982
+      WATER_DEPTH_RATING_FT: 300.0
+      LEG_LENGTH_FT: 429.5
+      CANTILEVER_REACH_FT: 45.0
+  Shelf Drilling Victory:
+    pdf: shelf-victory.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine Pacific Class 375
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      WATER_DEPTH_RATING_FT: 375.0
+      LOA_M: 73.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      LEG_LENGTH_FT: 506.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3750
+      HOOKLOAD_RATING_KIPS: 1600
+      RAW_DIMENSIONS_FT: 239.8 x 224.4 x 28
+  Shelf Drilling Winner:
+    pdf: shelf-winner.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 400.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 555.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 7150
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
