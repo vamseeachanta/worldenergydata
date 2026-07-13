@@ -1,0 +1,75 @@
+# Provenance for committed Seadrill rig-spec PDFs — wed issue #994.
+# Retrieved from seadrill.com/wp-content/uploads/ (public fleet pages).
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+contractor: Seadrill Limited
+files:
+  sevan-louisiana.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/Sevan_Louisiana.pdf
+    sha256: e12f5ebc931fde67264a8323b96225dfc4da6ee1a9299f255e3673effff73187
+    text_layer: true
+  sonangol-libongos.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/SONANGOL_LIBONGOS.pdf
+    sha256: 664bc5a938a2df3dfba26aeebef8b50d128cc23da2d9982e91bf6ab832cc6365
+    text_layer: true
+  sonangol-quenguela.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/SONANGOL_QUENGUELA.pdf
+    sha256: 9c9ae4240d4fb0e087b4f7e3f47347f08fa97f94b6725964fe4adc45dffec938
+    text_layer: true
+  west-aquarius.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Aquarius-V3.pdf
+    sha256: e1af9d423cfe1af531f91fc3cc83d30a44486bb2301c8ff965792bb953b3dc2b
+    text_layer: true
+  west-auriga.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/11/2024-10-West_Auriga.pdf
+    sha256: 9a3b6e2ffdea335fd41b7f966abebb2d9fe08f1fb668ad44f56ec330875ed94f
+    text_layer: true
+  west-capella.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2025/02/2025-02-West_Capella-V2.pdf
+    sha256: cb0af2f7adc795b7dba80beefb8633725b13b1222754bd91bc01c1c7df9b2d74
+    text_layer: true
+  west-carina.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/11/2024-09-West_Carina.pdf
+    sha256: 50bc37318f6ee55bd053b951a3a8721ee5885a6a6432aae9e47ebace4e5d3eb0
+    text_layer: true
+  west-eclipse.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Eclipse.v1.pdf
+    sha256: c3f541ca55c0c406d61cb63a09e38005d4662e5af5eb16dd301d46bcb2b50fd3
+    text_layer: true
+  west-elara.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Elara.pdf
+    sha256: 4e7c752f96553ffb4ff7981f56e2c3cc8fe3d3cc8dab46376c1d9417d0552c94
+    committed: false  # 5.9 MB exceeds the repo 5 MB file limit; fetch from url (sha verifies)
+    text_layer: true
+  west-gemini.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Gemini.pdf
+    sha256: 206a4678de2dcd5e11d37f0c4877e1cc575bfd05078344ef879445760c5a5277
+    text_layer: true
+  west-jupiter.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/2024-01_West_Jupiter.pdf
+    sha256: d07a69839ea4ef4902a405df124ad45b9c0efc7d6b0100d0eea33db85a4756d6
+    text_layer: true
+  west-neptune.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2025/07/2025-05-West_Neptune.pdf
+    sha256: bc90948e37c45e74b8f9dbe2608d139019a2560b71e798956eb19b726534d4e1
+    text_layer: true
+  west-phoenix.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Phoenix-1.pdf
+    sha256: 67a1e7b1e0ad02e04637030319ca73f7e16c1e32447b20cac89485867ca4e2a5
+    text_layer: true
+  west-polaris.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2025/07/2025-05-West_Polaris.pdf
+    sha256: ee6bd7d67a6140c3579f7ed9f1596c7b1db8c2f3b033f693975dbdadc22e2917
+    text_layer: true
+  west-saturn.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/West_Saturn.1.pdf
+    sha256: 5f052eef34810cd5aecddff5b405348a25a585eb191744becd0fd1ec64d3cd93
+    text_layer: true
+  west-tellus.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/01/2024-01_West_Tellus.pdf
+    sha256: eb747e62d019f0d3e15372655d28f69ed1875b2ea77eb75382d67a1ae33b901c
+    text_layer: true
+  west-vela.pdf:
+    url: https://www.seadrill.com/wp-content/uploads/2024/11/2024-10-West_Vela.pdf
+    sha256: bba7a8350c4251a830db46135387259e5e18fb3bdbdb37daf2bc88772332c579
+    text_layer: true

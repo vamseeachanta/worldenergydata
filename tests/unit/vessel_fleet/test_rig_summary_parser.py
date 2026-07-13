@@ -325,6 +325,58 @@ class TestValarisLayout:
         assert "Keppel FELS" in self.spec["RIG_DESIGN"]
 
 
+# Seadrill same-line table layout (West Elara jackup) — wide-gap label/value
+# pairs, loads in short tons, jackup legs/spud cans/cantilever.
+SEADRILL_TEXT = """\
+GENERAL (U.S.)                                                     DRILLING PACKAGE
+
+Built                             2011 Jurong Shipyard, Singapore  Derrick             1,100 st
+
+Design                            Gusto MSC CJ70-X150              Cantilever Envelope             100 ft x 65 ft
+
+Flag/Class                        Norway / DNV                     Top Drive           SENSE 1,000 st
+
+Dimensions                        290 ft x 320 ft x 39 ft          Drawworks           SENSE 5,600 hp 935 st
+
+Draft                             24 ft (loadline)                 Rotary Table        49.5 in
+
+Displacement                      43,000 st (at loadline)          Tubular Handling    HMH RNX
+
+Variable Load                     4,400 st transit / 11,000 st drilling
+
+Legs                              3 x 673 ft / 581 ft usable
+
+Spud Cans                         75 ft
+"""
+
+
+class TestSeadrillLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(SEADRILL_TEXT)
+
+    def test_general(self):
+        assert self.spec["YEAR_BUILT"] == 2011
+        assert self.spec["FLAG_STATE"] == "Norway"
+        assert self.spec["RIG_DESIGN"] == "Gusto MSC CJ70-X150"  # column-clean
+
+    def test_three_part_dimensions(self):
+        assert self.spec["LOA_M"] == 88.4  # 290 ft
+        assert self.spec["BEAM_M"] == 97.5  # 320 ft
+        assert self.spec["DEPTH_M"] == 11.9  # 39 ft
+
+    def test_loadline_draft_and_st_displacement(self):
+        assert self.spec["DRAFT_M"] == 7.3  # 24 ft (loadline)
+        assert self.spec["DISPLACEMENT_TONNES"] == 39009  # 43,000 st
+
+    def test_vdl_drilling_value(self):
+        assert self.spec["VARIABLE_DECK_LOAD_ST"] == 11000  # drilling, not transit
+
+    def test_jackup_fields(self):
+        assert self.spec["LEG_LENGTH_FT"] == 673.0  # "3 x 673 ft" -> per-leg
+        assert self.spec["SPUD_CAN_DIAMETER_FT"] == 75.0
+        assert self.spec["CANTILEVER_REACH_FT"] == 100.0
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)

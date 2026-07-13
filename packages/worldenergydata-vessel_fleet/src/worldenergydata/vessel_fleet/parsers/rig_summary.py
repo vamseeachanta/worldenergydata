@@ -181,6 +181,111 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     for field, value in _parse_valaris_layout(text).items():
         out.setdefault(field, value)
 
+    # Seadrill same-line table layout — same fill-the-gaps merge.
+    for field, value in _parse_seadrill_layout(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_seadrill_layout(text: str) -> dict[str, Any]:
+    """Parse the Seadrill 'GENERAL (U.S.)' same-line table layout.
+
+    Label and value share a line, separated by a wide gap; a metric duplicate
+    block follows the U.S. block (first match wins, so U.S. values are used)::
+
+        Built                2014 Samsung, South Korea
+        Dimensions           748 ft x 137 ft            (jackups add x depth)
+        Draft                27.9 ft (transit) 39.4 ft (operating)
+        Variable Load        18,150 st (transit) 22,000 st (drilling)
+        Legs                 3 x 673 ft / 581 ft usable
+
+    Loads/displacement are quoted in short tons.
+    """
+    out: dict[str, Any] = {}
+
+    built = re.search(r"^\s*Built\s{2,}(\d{4})\b", text, re.MULTILINE)
+    if built:
+        out["YEAR_BUILT"] = int(built.group(1))
+
+    design = re.search(r"^\s*Design\s{2,}(.+?)(?:\s{3,}|\s*$)", text, re.MULTILINE)
+    if design:
+        out["RIG_DESIGN"] = design.group(1).strip()
+
+    flag = re.search(r"^\s*Flag/Class\s{2,}([A-Za-z ]+?)\s*/", text, re.MULTILINE)
+    if flag:
+        out["FLAG_STATE"] = flag.group(1).strip()
+
+    dims = re.search(
+        rf"^\s*Dimensions\s{{2,}}({_NUM_TIGHT})\s*ft\s*x\s*({_NUM_TIGHT})\s*ft"
+        rf"(?:\s*x\s*({_NUM_TIGHT})\s*ft)?",
+        text,
+        re.MULTILINE,
+    )
+    if dims:
+        loa_ft = _clean_number(dims.group(1))
+        beam_ft = _clean_number(dims.group(2))
+        out["LOA_M"] = _ft_to_m(loa_ft)
+        out["BEAM_M"] = _ft_to_m(beam_ft)
+        out["RAW_DIMENSIONS_FT"] = f"{loa_ft:g} x {beam_ft:g}"
+        if dims.group(3):
+            depth_ft = _clean_number(dims.group(3))
+            out["DEPTH_M"] = _ft_to_m(depth_ft)
+            out["RAW_DIMENSIONS_FT"] += f" x {depth_ft:g}"
+
+    draft_line = re.search(r"^\s*Draft\s{2,}([^\n]+)", text, re.MULTILINE)
+    if draft_line:
+        line = draft_line.group(1)
+        operating = re.search(
+            rf"({_NUM_TIGHT})\s*ft\s*\((?:operating|loadline)\)", line, re.IGNORECASE
+        )
+        transit = re.search(rf"({_NUM_TIGHT})\s*ft\s*\(transit\)", line, re.IGNORECASE)
+        if operating:
+            op_ft = _clean_number(operating.group(1))
+            out["DRAFT_M"] = _ft_to_m(op_ft)
+            out["RAW_DRAFT_OPERATING_FT"] = op_ft
+        if transit:
+            out["RAW_DRAFT_TRANSIT_FT"] = _clean_number(transit.group(1))
+
+    displacement = re.search(
+        rf"^\s*Displacement\s{{2,}}({_NUM_TIGHT})\s*st\b", text, re.MULTILINE
+    )
+    if displacement:
+        value = _clean_number(displacement.group(1))
+        if value is not None:
+            out["DISPLACEMENT_TONNES"] = round(value / SHORT_TONS_PER_TONNE)
+
+    vdl_line = re.search(r"^\s*Variable\s+Load\s{2,}([^\n]+)", text, re.MULTILINE)
+    if vdl_line:
+        line = vdl_line.group(1)
+        drilling = re.search(
+            rf"({_NUM_TIGHT})\s*st\s*\(?drilling\)?", line, re.IGNORECASE
+        )
+        any_st = re.search(rf"({_NUM_TIGHT})\s*st\b", line, re.IGNORECASE)
+        pick = drilling or any_st
+        if pick:
+            value = _clean_number(pick.group(1))
+            if value is not None:
+                out["VARIABLE_DECK_LOAD_ST"] = round(value)
+
+    legs = re.search(
+        rf"^\s*Legs\s{{2,}}(?:\d+\s*x\s*)?({_NUM_TIGHT})\s*ft", text, re.MULTILINE
+    )
+    if legs:
+        out["LEG_LENGTH_FT"] = _clean_number(legs.group(1))
+
+    spud = re.search(rf"^\s*Spud\s+Cans\s{{2,}}({_NUM_TIGHT})\s*ft", text, re.MULTILINE)
+    if spud:
+        out["SPUD_CAN_DIAMETER_FT"] = _clean_number(spud.group(1))
+
+    cantilever = re.search(
+        rf"Cantilever\s+Envelope\s{{2,}}({_NUM_TIGHT})\s*ft\s*x\s*({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE,
+    )
+    if cantilever:
+        out["CANTILEVER_REACH_FT"] = _clean_number(cantilever.group(1))
+
     return out
 
 
@@ -426,9 +531,10 @@ def _parse_spec_sheet_layout(text: str) -> dict[str, Any]:
     if year:
         out["YEAR_BUILT"] = int(year.group(1))
 
-    design = re.search(r"^Design\s{2,}(.+?)\s*$", text, re.MULTILINE)
+    # Stop at a 3+ space gap — other layouts put a second column on the line.
+    design = re.search(r"^\s*Design\s{2,}(.+?)(?:\s{3,}|\s*$)", text, re.MULTILINE)
     if design:
-        out["RIG_DESIGN"] = re.sub(r"\s{2,}", " ", design.group(1)).strip()
+        out["RIG_DESIGN"] = design.group(1).strip()
 
     deck = re.search(
         rf"Main\s+Deck\s+({_NUM})\s*ft\s*\(({_NUM})\s*m\)\s*Long\s*x\s*"

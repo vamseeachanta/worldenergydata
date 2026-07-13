@@ -1,0 +1,324 @@
+# 'Ratings & Dimensions' extracted from Seadrill rig-spec PDFs — wed issue #994 (epic #991).
+# Fleet: 12 drillships (Samsung 10000/12000 designs, incl. 2 Sonangol-owned
+# Seadrill-managed), 4 semis (incl. cylindrical Sevan 650), 1 CJ70 jackup.
+#
+# extraction: text_parse -> parsers/rig_summary.py (Seadrill same-line profile);
+# text_parse_manual_dims -> cylindrical hull; single-diameter dims transcribed (2026-07-13).
+# Sheets carry U.S. + metric blocks; imperial parsed, DISPLACEMENT from the vendor metric block
+# where printed. Loads in short tons.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Seadrill Limited
+issue: 994
+vessels:
+  West Auriga:
+    pdf: west-auriga.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Capella:
+    pdf: west-capella.pdf
+    rig_type: drillship
+    rig_design: Samsung 10,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 20040
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Carina:
+    pdf: west-carina.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Gemini:
+    pdf: west-gemini.pdf
+    rig_type: drillship
+    rig_design: Samsung 10,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2010
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 20040
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Jupiter:
+    pdf: west-jupiter.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Neptune:
+    pdf: west-neptune.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Polaris:
+    pdf: west-polaris.pdf
+    rig_type: drillship
+    rig_design: Samsung 10,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 20040
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Saturn:
+    pdf: west-saturn.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Tellus:
+    pdf: west-tellus.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  West Vela:
+    pdf: west-vela.pdf
+    rig_type: drillship
+    rig_design: Samsung 12,000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37500.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 87700.0
+      VARIABLE_DECK_LOAD_ST: 22000
+      RAW_DIMENSIONS_FT: 748 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+  Sonangol Libongos:
+    pdf: sonangol-libongos.pdf
+    rig_type: drillship
+    rig_design: DSME e-Smart
+    owner: Sonangol E.P. (Seadrill-managed)
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2015
+      FLAG_STATE: Bahamas
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 237.7
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 41948.0
+      VARIABLE_DECK_LOAD_ST: 27500
+      RAW_DIMENSIONS_FT: 780 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 29.0
+  Sonangol Quenguela:
+    pdf: sonangol-quenguela.pdf
+    rig_type: drillship
+    rig_design: DSME e-Smart
+    owner: Sonangol E.P. (Seadrill-managed)
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2015
+      FLAG_STATE: Bahamas
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 237.7
+      BEAM_M: 41.8
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 41948.0
+      VARIABLE_DECK_LOAD_ST: 27500
+      RAW_DIMENSIONS_FT: 780 x 137
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 29.0
+  West Aquarius:
+    pdf: west-aquarius.pdf
+    rig_type: semi_submersible
+    rig_design: GVA 7500
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 34500.0
+      LOA_M: 116.7
+      BEAM_M: 95.7
+      DRAFT_M: 23.0
+      DISPLACEMENT_TONNES: 55000.0
+      VARIABLE_DECK_LOAD_ST: 7150
+      RAW_DIMENSIONS_FT: 383 x 314
+      RAW_DRAFT_OPERATING_FT: 75.4
+      RAW_DRAFT_TRANSIT_FT: 32.5
+  West Eclipse:
+    pdf: west-eclipse.pdf
+    rig_type: semi_submersible
+    rig_design: Friede & Goldman ExD Millenium
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 121.0
+      BEAM_M: 90.8
+      DRAFT_M: 16.8
+      DISPLACEMENT_TONNES: 46400.0
+      VARIABLE_DECK_LOAD_ST: 7716
+      RAW_DIMENSIONS_FT: 397 x 298
+      RAW_DRAFT_OPERATING_FT: 55.0
+      RAW_DRAFT_TRANSIT_FT: 27.0
+  West Phoenix:
+    pdf: west-phoenix.pdf
+    rig_type: semi_submersible
+    rig_design: Moss Maritime CS50 MkII
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 29500.0
+      LOA_M: 82.9
+      BEAM_M: 72.5
+      DRAFT_M: 23.5
+      DISPLACEMENT_TONNES: 54000.0
+      VARIABLE_DECK_LOAD_ST: 9881
+      RAW_DIMENSIONS_FT: 272 x 238
+      RAW_DRAFT_OPERATING_FT: 77.1
+      RAW_DRAFT_TRANSIT_FT: 32.5
+  Sevan Louisiana:
+    pdf: sevan-louisiana.pdf
+    rig_type: semi_submersible
+    rig_design: Sevan 650
+    extraction: text_parse_manual_dims
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Panama
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 99.1
+      BEAM_M: 99.1
+      DRAFT_M: 12.5
+      DISPLACEMENT_TONNES: 58000.0
+      VARIABLE_DECK_LOAD_ST: 16500
+      RAW_DIMENSIONS_FT: 325 diameter
+      RAW_DRAFT_OPERATING_FT: 41.0
+      RAW_DRAFT_TRANSIT_FT: 32.8
+  West Elara:
+    pdf: west-elara.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ70-X150
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Norway
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 88.4
+      BEAM_M: 97.5
+      DEPTH_M: 11.9
+      DRAFT_M: 7.3
+      DISPLACEMENT_TONNES: 39100.0
+      LEG_LENGTH_FT: 673.0
+      SPUD_CAN_DIAMETER_FT: 75.0
+      CANTILEVER_REACH_FT: 100.0
+      VARIABLE_DECK_LOAD_ST: 11000
+      RAW_DIMENSIONS_FT: 290 x 320 x 39
+      RAW_DRAFT_OPERATING_FT: 24.0
