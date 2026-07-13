@@ -184,3 +184,20 @@ def test_registry_keys_match_reports_dirs(bp):
         assert (
             reports / name
         ).is_dir(), f"DOMAINS key {name!r} has no reports/{name}/ dir"
+
+
+def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
+    # C10 (workspace-hub#3485 / #3494, decision A): the /capabilities/ OVERVIEW page
+    # redirects to the single canonical surface (aceengineer.com/capabilities) instead
+    # of carrying divergent capability copy that could figure-drift or cannibalize SEO.
+    # This guards against the divergent overview creeping back in.
+    bp.build_capabilities({})
+    out = bp.PUBLIC / "capabilities" / "index.html"
+    assert out.exists()
+    html = out.read_text()
+    assert 'rel="canonical"' in html
+    assert "https://www.aceengineer.com/capabilities/" in html
+    assert 'http-equiv="refresh"' in html
+    assert 'content="noindex, follow"' in html
+    # the old hand-authored overview copy must not return to this page
+    assert "Capability Showcase" not in html
