@@ -1,0 +1,899 @@
+# 'Ratings & Dimensions' extracted from Valaris rig-spec PDFs — wed issue #993 (epic #991).
+# Fleet: 13 drillships (DS-4..DS-18: GustoMSC P10,000 + Samsung GF12000), 1 moored
+# semi (MS-1, ex Atwood Osprey), 31 jackups (KFELS Super A/B, N-Class, LeTourneau).
+# Former names: ENSCO <same number> / ROWAN <same name> (2019 merger rebrand).
+#
+# extraction: text_parse -> parsers/rig_summary.py (Valaris sidebar profile) over the committed PDF.
+# All *_M values converted from feet (1 dp); RAW_* keys preserve imperial source values.
+# Jackup loads quoted in lbs on the sheets -> kips. VDL captured only when a unit is printed.
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+owner: Valaris Limited
+issue: 993
+vessels:
+  VALARIS DS-18:
+    pdf: valaris-ds-18.pdf
+    rig_type: drillship
+    rig_design: GustoMSC P10,000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-18]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.2
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 69900.0
+      MOONPOOL_LENGTH_M: 22.4
+      MOONPOOL_WIDTH_M: 12.8
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.1
+      RAW_DEPTH_FT: 59.6
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 73.5 x 42
+  VALARIS DS-17:
+    pdf: valaris-ds-17.pdf
+    rig_type: drillship
+    rig_design: GustoMSC P10,000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-17]
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.2
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 69900.0
+      MOONPOOL_LENGTH_M: 22.4
+      MOONPOOL_WIDTH_M: 12.8
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.1
+      RAW_DEPTH_FT: 59.6
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 73.5 x 42
+  VALARIS DS-16:
+    pdf: valaris-ds-16.pdf
+    rig_type: drillship
+    rig_design: GustoMSC P10,000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-16]
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.2
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 69900.0
+      MOONPOOL_LENGTH_M: 22.4
+      MOONPOOL_WIDTH_M: 12.8
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.1
+      RAW_DEPTH_FT: 59.6
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 73.5 x 42
+  VALARIS DS-15:
+    pdf: valaris-ds-15.pdf
+    rig_type: drillship
+    rig_design: GustoMSC P10,000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-15]
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.2
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 69900.0
+      MOONPOOL_LENGTH_M: 22.4
+      MOONPOOL_WIDTH_M: 12.8
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.1
+      RAW_DEPTH_FT: 59.6
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 73.5 x 42
+  VALARIS DS-14:
+    pdf: valaris-ds-14.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Double-Hull DP Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-14]
+    specs:
+      YEAR_BUILT: 2020
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 237.7
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 11.9
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 9.5
+      MOONPOOL_WIDTH_M: 22.1
+      RAW_LENGTH_FT: 780.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_MOONPOOL_FT: 31.2 x 72.6
+  VALARIS DS-13:
+    pdf: valaris-ds-13.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Double-Hull DP Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-13]
+    specs:
+      YEAR_BUILT: 2019
+      WATER_DEPTH_RATING_FT: 12000.0
+      LOA_M: 237.7
+      BEAM_M: 41.8
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 6.8
+      MOONPOOL_WIDTH_M: 3.0
+      VARIABLE_DECK_LOAD_ST: 25353
+      RAW_LENGTH_FT: 780.0
+      RAW_BREADTH_FT: 137.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_MOONPOOL_FT: 22.15 x 9.75
+  VALARIS DS-12:
+    pdf: valaris-ds-12.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Double-Hull DP Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-12]
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 237.7
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 11.9
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 9.5
+      MOONPOOL_WIDTH_M: 22.1
+      VARIABLE_DECK_LOAD_ST: 25353
+      RAW_LENGTH_FT: 780.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_MOONPOOL_FT: 31.2 x 72.6
+  VALARIS DS-11:
+    pdf: valaris-ds-11.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Double-Hull DP Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-11]
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 237.7
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 11.9
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 9.5
+      MOONPOOL_WIDTH_M: 22.1
+      VARIABLE_DECK_LOAD_ST: 25353
+      RAW_LENGTH_FT: 780.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_MOONPOOL_FT: 31.2 x 72.6
+  VALARIS DS-10:
+    pdf: valaris-ds-10.pdf
+    rig_type: drillship
+    rig_design: SAMSUNG GF12000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-10]
+    specs:
+      YEAR_BUILT: 2017
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.0
+      BEAM_M: 38.0
+      DEPTH_M: 18.5
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 77000.0
+      MOONPOOL_LENGTH_M: 12.8
+      MOONPOOL_WIDTH_M: 24.8
+      VARIABLE_DECK_LOAD_ST: 24251
+      RAW_LENGTH_FT: 754.6
+      RAW_BREADTH_FT: 124.7
+      RAW_DEPTH_FT: 60.7
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 42 x 81.37
+  VALARIS DS-9:
+    pdf: valaris-ds-9.pdf
+    rig_type: drillship
+    rig_design: SAMSUNG GF12000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-9]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.0
+      BEAM_M: 38.0
+      DEPTH_M: 18.5
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 78463.0
+      MOONPOOL_LENGTH_M: 12.8
+      MOONPOOL_WIDTH_M: 24.8
+      RAW_LENGTH_FT: 754.5
+      RAW_BREADTH_FT: 124.6
+      RAW_DEPTH_FT: 60.7
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 42 x 81.37
+  VALARIS DS-8:
+    pdf: valaris-ds-8.pdf
+    rig_type: drillship
+    rig_design: SAMSUNG GF12000 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-8]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.0
+      BEAM_M: 38.0
+      DEPTH_M: 18.5
+      DRAFT_M: 11.0
+      MOONPOOL_LENGTH_M: 12.8
+      MOONPOOL_WIDTH_M: 24.8
+      RAW_LENGTH_FT: 754.5
+      RAW_BREADTH_FT: 124.6
+      RAW_DEPTH_FT: 60.7
+      RAW_DRAFT_OPERATING_FT: 36.1
+      RAW_MOONPOOL_FT: 42 x 81.37
+  VALARIS DS-7:
+    pdf: valaris-ds-7.pdf
+    rig_type: drillship
+    rig_design: ABS A1-E Samsung 96K Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-7]
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      RAW_LENGTH_FT: 748.1
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.3
+      RAW_MOONPOOL_FT: 84 x 41
+  VALARIS DS-4:
+    pdf: valaris-ds-4.pdf
+    rig_type: drillship
+    rig_design: Samsung A1E DPS 3 Drillship
+    extraction: text_parse
+    aliases: [ENSCO DS-4]
+    specs:
+      YEAR_BUILT: 2010
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 12.5
+      MOONPOOL_WIDTH_M: 25.6
+      VARIABLE_DECK_LOAD_ST: 22046
+      RAW_LENGTH_FT: 751.3
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.3
+      RAW_MOONPOOL_FT: 41 x 84
+  VALARIS MS-1:
+    pdf: valaris-ms-1.pdf
+    rig_type: semi_submersible
+    rig_design: F&G ExD Millenium Semi Submersible
+    extraction: text_parse
+    aliases: [ATWOOD OSPREY, ENSCO MS-1]
+    specs:
+      YEAR_BUILT: 2011
+      WATER_DEPTH_RATING_FT: 8200.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      MOONPOOL_LENGTH_M: 42.7
+      MOONPOOL_WIDTH_M: 10.4
+      RAW_MOONPOOL_FT: 140 x 34
+  VALARIS Norway:
+    pdf: valaris-norway.pdf
+    rig_type: jack_up
+    rig_design: KFELS N-Class
+    extraction: text_parse
+    aliases: [ROWAN NORWAY]
+    specs:
+      YEAR_BUILT: 2011
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 80.5
+      BEAM_M: 88.1
+      DEPTH_M: 10.7
+      LEG_LENGTH_FT: 568.0
+      CANTILEVER_REACH_FT: 75.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1200
+      RAW_LENGTH_FT: 264.0
+      RAW_BREADTH_FT: 289.0
+      RAW_DEPTH_FT: 35.0
+  VALARIS Stavanger:
+    pdf: valaris-stavanger.pdf
+    rig_type: jack_up
+    rig_design: KFELS N-Class
+    extraction: text_parse
+    aliases: [ROWAN STAVANGER]
+    specs:
+      YEAR_BUILT: 2011
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 80.5
+      BEAM_M: 88.1
+      DEPTH_M: 10.7
+      LEG_LENGTH_FT: 568.0
+      CANTILEVER_REACH_FT: 75.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1200
+      RAW_LENGTH_FT: 264.0
+      RAW_BREADTH_FT: 289.0
+      RAW_DEPTH_FT: 35.0
+  VALARIS Viking:
+    pdf: valaris-viking.pdf
+    rig_type: jack_up
+    rig_design: KFELS N-Class
+    extraction: text_parse
+    aliases: [ROWAN VIKING]
+    specs:
+      YEAR_BUILT: 2010
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 80.5
+      BEAM_M: 88.1
+      DEPTH_M: 10.7
+      LEG_LENGTH_FT: 600.0
+      CANTILEVER_REACH_FT: 75.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1200
+      RAW_LENGTH_FT: 264.0
+      RAW_BREADTH_FT: 289.0
+      RAW_DEPTH_FT: 35.0
+  VALARIS 250:
+    pdf: valaris-ju-250.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies Super Gorilla XL Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 250]
+    specs:
+      YEAR_BUILT: 2003
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 93.3
+      BEAM_M: 91.4
+      DEPTH_M: 11.0
+      LEG_LENGTH_FT: 645.0
+      CANTILEVER_REACH_FT: 100.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 306.0
+      RAW_BREADTH_FT: 300.0
+      RAW_DEPTH_FT: 36.0
+  VALARIS 249:
+    pdf: valaris-ju-249.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies Super Gorilla Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 249]
+    specs:
+      YEAR_BUILT: 2001
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 93.3
+      BEAM_M: 91.4
+      DEPTH_M: 11.0
+      LEG_LENGTH_FT: 607.0
+      CANTILEVER_REACH_FT: 100.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 306.0
+      RAW_BREADTH_FT: 300.0
+      RAW_DEPTH_FT: 36.0
+  VALARIS 248:
+    pdf: valaris-ju-248.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies Super Gorilla Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 248]
+    specs:
+      YEAR_BUILT: 2000
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 93.3
+      BEAM_M: 91.4
+      DEPTH_M: 11.0
+      LEG_LENGTH_FT: 607.0
+      CANTILEVER_REACH_FT: 100.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 306.0
+      RAW_BREADTH_FT: 300.0
+      RAW_DEPTH_FT: 36.0
+  VALARIS 148:
+    pdf: valaris-ju-148.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies Super 116E-PB Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 148]
+    specs:
+      YEAR_BUILT: 2013
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 93.0
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_LENGTH_FT: 305.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 147:
+    pdf: valaris-ju-147.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies Super 116E-PB Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 147]
+    specs:
+      YEAR_BUILT: 2012
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 146:
+    pdf: valaris-ju-146.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies EXL (Super 116E) Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 146]
+    specs:
+      YEAR_BUILT: 2011
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 444.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 144:
+    pdf: valaris-ju-144.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies EXL (Super 116E) Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 144]
+    specs:
+      YEAR_BUILT: 2010
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 511.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 143:
+    pdf: valaris-ju-143.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies EXL (Super 116E) Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 143]
+    specs:
+      YEAR_BUILT: 2011
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 477.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 141:
+    pdf: valaris-ju-141.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Super 116E Jackup
+    extraction: text_parse
+    aliases: [ENSCO 141]
+    specs:
+      YEAR_BUILT: 2016
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 444.0
+      CANTILEVER_REACH_FT: 70.0
+      SETBACK_CAPACITY_KIPS: 750
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 140:
+    pdf: valaris-ju-140.pdf
+    rig_type: jack_up
+    extraction: text_parse
+    aliases: [ENSCO 140]
+    specs:
+      YEAR_BUILT: 2016
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 444.0
+      CANTILEVER_REACH_FT: 70.0
+      SETBACK_CAPACITY_KIPS: 750
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 123:
+    pdf: valaris-ju-123.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS, Ultra-Enhanced Super ‘A’ Class
+    extraction: text_parse
+    aliases: [ENSCO 123]
+    specs:
+      YEAR_BUILT: 2019
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 75.0
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 540.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1450
+      RAW_LENGTH_FT: 246.0
+      RAW_BREADTH_FT: 250.0
+      RAW_DEPTH_FT: 31.0
+  VALARIS 122:
+    pdf: valaris-ju-122.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS, Ultra-Enhanced Super ‘A’ Class
+    extraction: text_parse
+    aliases: [ENSCO 122]
+    specs:
+      YEAR_BUILT: 2013
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 75.0
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 540.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1450
+      RAW_LENGTH_FT: 246.0
+      RAW_BREADTH_FT: 250.0
+      RAW_DEPTH_FT: 31.0
+  VALARIS 121:
+    pdf: valaris-ju-121.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS, Ultra-Enhanced Super ‘A’ Class
+    extraction: text_parse
+    aliases: [ENSCO 121]
+    specs:
+      YEAR_BUILT: 2014
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 75.0
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 540.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1450
+      RAW_LENGTH_FT: 246.0
+      RAW_BREADTH_FT: 250.0
+      RAW_DEPTH_FT: 31.0
+  VALARIS 120:
+    pdf: valaris-ju-120.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS, Ultra-Enhanced Super ‘A’ Class
+    extraction: text_parse
+    aliases: [ENSCO 120]
+    specs:
+      YEAR_BUILT: 2013
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 75.0
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      LEG_LENGTH_FT: 540.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1450
+      RAW_LENGTH_FT: 246.0
+      RAW_BREADTH_FT: 250.0
+      RAW_DEPTH_FT: 31.0
+  VALARIS 118:
+    pdf: valaris-ju-118.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies 240-C Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 118]
+    specs:
+      YEAR_BUILT: 2012
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 69.5
+      BEAM_M: 67.1
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 491.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 228.0
+      RAW_BREADTH_FT: 220.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 117:
+    pdf: valaris-ju-117.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies 240-C Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 117]
+    specs:
+      YEAR_BUILT: 2009
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 69.5
+      BEAM_M: 67.1
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 536.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 228.0
+      RAW_BREADTH_FT: 220.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 116:
+    pdf: valaris-ju-116.pdf
+    rig_type: jack_up
+    rig_design: LeTourneau Technologies 240-C Class Jackup
+    extraction: text_parse
+    aliases: [ENSCO 116]
+    specs:
+      YEAR_BUILT: 2008
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 69.5
+      BEAM_M: 67.1
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 491.0
+      CANTILEVER_REACH_FT: 80.0
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 1000
+      RAW_LENGTH_FT: 228.0
+      RAW_BREADTH_FT: 220.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 115:
+    pdf: valaris-ju-115.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine Pacific Independent Leg Jackup
+    extraction: text_parse
+    aliases: [ENSCO 115]
+    specs:
+      YEAR_BUILT: 2013
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 899
+      RAW_LENGTH_FT: 236.5
+      RAW_BREADTH_FT: 224.4
+      RAW_DEPTH_FT: 27.8
+  VALARIS 111:
+    pdf: valaris-ju-111.pdf
+    rig_type: jack_up
+    rig_design: KFELS Mod V Enhanced Deepwater Independent Leg Jackup
+    extraction: text_parse
+    aliases: [ENSCO 111]
+    specs:
+      YEAR_BUILT: 2003
+      DRILLING_DEPTH_RATING_FT: 36000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 750
+      RAW_LENGTH_FT: 234.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 110:
+    pdf: valaris-ju-110.pdf
+    rig_type: jack_up
+    rig_design: KFELS MOD V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 110]
+    specs:
+      YEAR_BUILT: 2015
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 234.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 109:
+    pdf: valaris-ju-109.pdf
+    rig_type: jack_up
+    rig_design: KFELS MOD V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 109]
+    specs:
+      YEAR_BUILT: 2008
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 66.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 486.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1210
+      RAW_LENGTH_FT: 246.0
+      RAW_BREADTH_FT: 218.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 108:
+    pdf: valaris-ju-108.pdf
+    rig_type: jack_up
+    rig_design: KFELS MOD V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 108]
+    specs:
+      YEAR_BUILT: 2007
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 234.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 107:
+    pdf: valaris-ju-107.pdf
+    rig_type: jack_up
+    rig_design: KFELS MOD V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 107]
+    specs:
+      YEAR_BUILT: 2006
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 234.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 106:
+    pdf: valaris-ju-106.pdf
+    rig_type: jack_up
+    rig_design: KFELS MOD V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 106]
+    specs:
+      YEAR_BUILT: 2005
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 900
+      RAW_LENGTH_FT: 234.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 104:
+    pdf: valaris-ju-104.pdf
+    rig_type: jack_up
+    rig_design: KFELS Mod V Jackup
+    extraction: text_parse
+    aliases: [ENSCO 104]
+    specs:
+      YEAR_BUILT: 2002
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 68.6
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 450
+      RAW_LENGTH_FT: 225.0
+      RAW_BREADTH_FT: 208.0
+      RAW_DEPTH_FT: 25.0
+  VALARIS 92:
+    pdf: valaris-ju-92.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau Technologies 116-C Jackup
+    extraction: text_parse
+    aliases: [ENSCO 92]
+    specs:
+      YEAR_BUILT: 1982
+      DRILLING_DEPTH_RATING_FT: 25000.0
+      LOA_M: 74.1
+      BEAM_M: 61.0
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 343.0
+      CANTILEVER_REACH_FT: 45.0
+      HOOKLOAD_RATING_KIPS: 1000
+      SETBACK_CAPACITY_KIPS: 450
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 200.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 76:
+    pdf: valaris-ju-76.pdf
+    rig_type: jack_up
+    rig_design: MLT Super 116-C Jackup
+    extraction: text_parse
+    aliases: [ENSCO 76]
+    specs:
+      YEAR_BUILT: 1999
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 74.1
+      BEAM_M: 62.8
+      DEPTH_M: 7.9
+      LEG_LENGTH_FT: 411.0
+      CANTILEVER_REACH_FT: 65.0
+      HOOKLOAD_RATING_KIPS: 2
+      SETBACK_CAPACITY_KIPS: 600
+      RAW_LENGTH_FT: 243.0
+      RAW_BREADTH_FT: 206.0
+      RAW_DEPTH_FT: 26.0
+  VALARIS 72:
+    pdf: valaris-ju-72.pdf
+    rig_type: jack_up
+    rig_design: Hitachi K1025N Jack Up
+    extraction: text_parse
+    aliases: [ENSCO 72]
+    specs:
+      YEAR_BUILT: 1981
+      DRILLING_DEPTH_RATING_FT: 25000.0
+      LOA_M: 70.1
+      BEAM_M: 76.2
+      DEPTH_M: 7.0
+      LEG_LENGTH_FT: 343.8
+      CANTILEVER_REACH_FT: 62.0
+      HOOKLOAD_RATING_KIPS: 2
+      SETBACK_CAPACITY_KIPS: 602
+      RAW_LENGTH_FT: 230.0
+      RAW_BREADTH_FT: 250.0
+      RAW_DEPTH_FT: 23.0

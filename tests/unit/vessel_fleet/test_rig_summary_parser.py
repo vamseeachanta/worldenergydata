@@ -271,6 +271,60 @@ class TestTransoceanLayout:
         assert spec["HOOKLOAD_RATING_KIPS"] == 2000  # Hookload Capacity variant
 
 
+# Valaris sidebar layout — label on its own line, value 1-2 lines below AT THE
+# SAME COLUMN (body text interleaves); jackup loads in lbs.
+VALARIS_JACKUP_TEXT = """\
+  VALARIS 120
+                                       Keppel FELS, Ultra-Enhanced Super 'A' Class • Year in Service: 2013
+
+   CAPACITIES                                                            PRIMARY RIG
+      Rotary Load:                       Potable Water:
+                                                                           CHARACTERISTICS
+      2,500,000 lbs                      3,500 bbl                         Max. Deployed Leg Length:
+      Setback Load:                      Drill Water:                      471ft
+      1,450,000 lbs                      25,179 bbl
+                                                                           Leg Length:
+                                                                           540ft
+
+                                                                           Hull Length:
+                                                                           246ft
+
+                                                                           Hull Width:
+                                                                           250ft
+                                                                           Maximum Drilling Depth:
+      Woolslayer 160ft x 32ft x 35ft     Varco TDS-8SA, 750t
+                                                                           40,000ft
+                                                                           Hook Load:
+                                                                           2,500,000 lbs
+                                                                           Cantilever Skid Out:
+                                                                           80ft
+"""
+
+
+class TestValarisLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(VALARIS_JACKUP_TEXT)
+
+    def test_column_aware_value_matching(self):
+        # 40,000ft sits two lines under its label with derrick dims
+        # ("160ft x 32ft x 35ft") interleaved at a different column.
+        assert self.spec["DRILLING_DEPTH_RATING_FT"] == 40000.0
+
+    def test_jackup_fields(self):
+        assert self.spec["LEG_LENGTH_FT"] == 540.0  # not Max. Deployed 471
+        assert self.spec["CANTILEVER_REACH_FT"] == 80.0
+        assert self.spec["LOA_M"] == 75.0  # Hull Length 246 ft
+        assert self.spec["BEAM_M"] == 76.2  # Hull Width 250 ft
+
+    def test_lbs_loads_to_kips(self):
+        assert self.spec["HOOKLOAD_RATING_KIPS"] == 2500
+        assert self.spec["SETBACK_CAPACITY_KIPS"] == 1450
+
+    def test_subtitle_year_and_design(self):
+        assert self.spec["YEAR_BUILT"] == 2013
+        assert "Keppel FELS" in self.spec["RIG_DESIGN"]
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)

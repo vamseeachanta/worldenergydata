@@ -1,0 +1,186 @@
+# Provenance for committed Valaris rig-spec PDFs — wed issue #993.
+# Retrieved from valaris.com/files/doc_rigspecs/rigspecs2022/ (public fleet pages).
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+contractor: Valaris Limited
+files:
+  valaris-ds-10.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-10.pdf
+    sha256: 1283856df0e77145aeb6c5e54761565d705e4c3c71423470e32884e01d537885
+    text_layer: true
+  valaris-ds-11.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-11.pdf
+    sha256: b64c9ef5f624694b70619313d2871f2cba552c31297757646be2145a570ade0e
+    text_layer: true
+  valaris-ds-12.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-12.pdf
+    sha256: 70bf1b81a14730bbf0edf72d7af7bfee9e85c03f2fdc7cc0a00bfd7fa2da4c95
+    text_layer: true
+  valaris-ds-13.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-13.pdf
+    sha256: 7380da6b0fc0f83a32d4dd12dbe0ccfffef85674282ed0c909e506b73c62f958
+    text_layer: true
+  valaris-ds-14.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-14.pdf
+    sha256: 18f6b0fb5060d8c35dd517abca7ec7bc38b128a111b310688c9a0bd9956256b8
+    text_layer: true
+  valaris-ds-15.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-15.pdf
+    sha256: 26b46d53b63cedcad05059d810bc10cc3f647d29f2e0ec109e635ce5cb0291c8
+    text_layer: true
+  valaris-ds-16.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-16.pdf
+    sha256: db9ba90e9d5b5074aae11b4769c51013977ae64cfcc86b126e523b7d825559b3
+    text_layer: true
+  valaris-ds-17.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-17.pdf
+    sha256: 231ba4fcdd353a3c9a7a570896455dde75e4fe3851bb7895a42bbd62fcb74c58
+    text_layer: true
+  valaris-ds-18.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-18.pdf
+    sha256: 08ab0f2d1c3effb548210d6721d67eebbf7a161914324c3b7cea5aa07f54b413
+    text_layer: true
+  valaris-ds-4.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-4.pdf
+    sha256: edf1583d02ab2e4878f6cc090429f8c62264bc4ff27921556a677b44e283d606
+    text_layer: true
+  valaris-ds-7.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-7.pdf
+    sha256: 1ae532a8a39faabab5af5a8014258b2c6530d56d0ba00dae2f28a7da58b3d4f5
+    text_layer: true
+  valaris-ds-8.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-8.pdf
+    sha256: a8d5fa41dbac65de3845abcc47366e0d21908181c989337ec32902acb96e0745
+    text_layer: true
+  valaris-ds-9.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-DS-9.pdf
+    sha256: 67622001cd2ef37191a5a979782d6317e8274c1f58179bd9dd8e48ff9c445489
+    text_layer: true
+  valaris-ju-104.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-104.pdf
+    sha256: ad643638edcd2e3894dc396604d87d9b7e2f8fc88175409e9faba8b2f9d5e576
+    text_layer: true
+  valaris-ju-106.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-106.pdf
+    sha256: e76d0aa73a3517e6baf1953e6a502a86cd882ec854f068fecd11b4b23c5d378f
+    text_layer: true
+  valaris-ju-107.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-107.pdf
+    sha256: 72df62e200ee0ef76740fcdfaafcc4a6ad3c3af5b1e98bad7fade8a89d49caac
+    text_layer: true
+  valaris-ju-108.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-108.pdf
+    sha256: b601b3d7c083dd3543de82c1d8a0c3674cda4d1ca8d1b59d3dd74d325f65c52c
+    text_layer: true
+  valaris-ju-109.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-109.pdf
+    sha256: 3c342e99db8d326c3127f8dc83c286d01b5cbd78de041c638b4c51e3e456d106
+    text_layer: true
+  valaris-ju-110.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-110.pdf
+    sha256: dabc80298ac8e7a22a731a0ff51b55ff4eddb036b56f0d112442d12d2a1c21a1
+    text_layer: true
+  valaris-ju-111.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-111.pdf
+    sha256: 669693c85b03223c5c19b66ce0853d0ad6e5bd7ce6458c52c39d657166fcbd82
+    text_layer: true
+  valaris-ju-115.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-115.pdf
+    sha256: 05e41c71c379970636b9374dd0b70b1d2d7ffd0b60823b256a0132d5066f4177
+    text_layer: true
+  valaris-ju-116.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-116.pdf
+    sha256: cb48f1a2463171c00545a07980a6ad7d775b78308e10530e52b8856d8a0cdddd
+    text_layer: true
+  valaris-ju-117.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-117.pdf
+    sha256: 8d1eb9ee053921f518f6bff7d236060d9f35edfdc1d8ca646adfafc29fbfbbfe
+    text_layer: true
+  valaris-ju-118.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-118.pdf
+    sha256: 968d82876d93b94e9446d2ee1b435a5a22f9de9e8772f453b4eabb2dfdc603f5
+    text_layer: true
+  valaris-ju-120.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-120.pdf
+    sha256: 6379634f1490b3472701c06b70671d3630dd3b2f3cfea68d819047d7566098a1
+    text_layer: true
+  valaris-ju-121.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-121.pdf
+    sha256: 98a86c7d9d8e64bfbb049479a7b9045b30d5dde1034a2cd26c75be01bea7d43d
+    text_layer: true
+  valaris-ju-122.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-122.pdf
+    sha256: 431d5ca691266c6835272b56f091245382a22f8ef8c95b14d4fe58debff128b5
+    text_layer: true
+  valaris-ju-123.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-123.pdf
+    sha256: b39d23af62908d299578d4bd1bef5bae381a78c7968aa9b52e5caed363fdbe8e
+    text_layer: true
+  valaris-ju-140.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-140.pdf
+    sha256: 0ea20bdbd40b34157a347f32b7d05595b2c74a6472a4b3b279b3a9ce1799b646
+    text_layer: true
+  valaris-ju-141.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-141.pdf
+    sha256: 3a17013bda4910c32cc4fe297a81653523b717ed3ec827b2b88aed33a5769617
+    text_layer: true
+  valaris-ju-143.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-143.pdf
+    sha256: 1ea44445a521f674876e431294f2a43e1c731afb04475815bdf8c4f7af8e6d66
+    text_layer: true
+  valaris-ju-144.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-144.pdf
+    sha256: bdb7fd835704e8584fe7287c027133f4e2d586774d12f0cb64429fcdf7dd896f
+    text_layer: true
+  valaris-ju-146.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-146.pdf
+    sha256: d88e1692e23cb5c9400001cebf8033a64f1dbc3d926bb98b8fc9805f571cd2f9
+    text_layer: true
+  valaris-ju-147.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-147.pdf
+    sha256: cc57626a169db1a4169b9e20049d67d11d812c8f6dcc013ef8ea4106e05dd1c5
+    text_layer: true
+  valaris-ju-148.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-148.pdf
+    sha256: f008c0e8b997df8f51e0dbac5dd7c9037b839c125b8f98a742a08f56d8940ddc
+    text_layer: true
+  valaris-ju-248.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-248.pdf
+    sha256: 75bec179ae7ed6fef3bc8bca23c25a422f10bc0b78737fe1fdd7876d41058802
+    text_layer: true
+  valaris-ju-249.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-249.pdf
+    sha256: 3d7827101e888ebc520b787cc1a91c3db0eb3b31d5df764e4726eb36bda5d327
+    text_layer: true
+  valaris-ju-250.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-250.pdf
+    sha256: 87631991ae8db1da004da8fe397cbd6f8dc483c8d9d251b7aa53c05dca11a56d
+    text_layer: true
+  valaris-ju-72.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-72.pdf
+    sha256: 1b6f699c0182de80e38946ffaaa70131ab770aad9ad99218fc30341f3daafdc9
+    text_layer: true
+  valaris-ju-76.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-76.pdf
+    sha256: 0f8469d77fe22e7d5350454677b7cfa7f82b4b944f1d314ed8b4811b60f3b95f
+    text_layer: true
+  valaris-ju-92.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-JU-92.pdf
+    sha256: e26e542bd5e986785a670687b9253ffdf78aabdd7f08cc03f2977cca883db0c7
+    text_layer: true
+  valaris-ms-1.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-MS-1.pdf
+    sha256: 2417a5026f355ab215097506315d3afaf359f98beba49c73cedd3cc233a07b04
+    text_layer: true
+  valaris-norway.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-NORWAY.pdf
+    sha256: d3ee1845ac16fcd27595a9d67da5690729292336c70820c844daa1518387e134
+    text_layer: true
+  valaris-stavanger.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-STAVANGER.pdf
+    sha256: 1309468e89b9fa52f4b91c322c010cde623ee9d08db049c6fbccf27e1a3dc9dd
+    text_layer: true
+  valaris-viking.pdf:
+    url: https://www.valaris.com/files/doc_rigspecs/rigspecs2022/VALARIS-VIKING.pdf
+    sha256: 519e2c47b140a335a2a471ca60516a9290c9f6b003a3c176e3a29b7cf06d03ea
+    text_layer: true
