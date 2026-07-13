@@ -26,6 +26,9 @@ SHORT_TONS_PER_TONNE = 1.10231
 SHORT_TONS_PER_LONG_TON = 1.12
 
 _NUM = r"[\d][\d ,.]*"
+# No internal spaces — for layouts where adjacent columns can put two numbers
+# on one line and the spaced pattern would glue them together.
+_NUM_TIGHT = r"\d[\d,]*(?:\.\d+)?"
 
 
 def _clean_number(raw: str) -> Optional[float]:
@@ -91,26 +94,26 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     if design:
         out["RIG_DESIGN"] = re.sub(r"\s{2,}", " ", design.group(1)).strip()
 
-    water_ft = _search_number(rf"Water\s+Depth\s*:\s*({_NUM})\s*ft", text)
+    water_ft = _search_number(rf"Water\s+Depth\s*:[ \t]*({_NUM})\s*ft", text)
     if water_ft is not None:
         out["WATER_DEPTH_RATING_FT"] = water_ft
 
-    drill_ft = _search_number(rf"Drilling\s+Depth\s*:\s*({_NUM})\s*ft", text)
+    drill_ft = _search_number(rf"Drilling\s+Depth\s*:[ \t]*({_NUM})\s*ft", text)
     if drill_ft is not None:
         out["DRILLING_DEPTH_RATING_FT"] = drill_ft
 
     # Line-anchored so "Water Depth"/"Drilling Depth" never match.
-    loa_ft = _search_number(rf"^\s*Length\s*:\s*({_NUM})\s*ft", text)
+    loa_ft = _search_number(rf"^\s*Length\s*:[ \t]*({_NUM})\s*ft", text)
     if loa_ft is not None:
         out["LOA_M"] = _ft_to_m(loa_ft)
         out["RAW_LENGTH_FT"] = loa_ft
 
-    beam_ft = _search_number(rf"^\s*Breadth\s*:\s*({_NUM})\s*ft", text)
+    beam_ft = _search_number(rf"^\s*Breadth\s*:[ \t]*({_NUM})\s*ft", text)
     if beam_ft is not None:
         out["BEAM_M"] = _ft_to_m(beam_ft)
         out["RAW_BREADTH_FT"] = beam_ft
 
-    depth_ft = _search_number(rf"^\s*Depth\s*:\s*({_NUM})\s*ft", text)
+    depth_ft = _search_number(rf"^\s*Depth\s*:[ \t]*({_NUM})\s*ft", text)
     if depth_ft is not None:
         out["DEPTH_M"] = _ft_to_m(depth_ft)
         out["RAW_DEPTH_FT"] = depth_ft
@@ -128,7 +131,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
         out["RAW_DRAFT_TRANSIT_FT"] = transit_ft
 
     moonpool = re.search(
-        rf"Moonpool\s*:\s*({_NUM})\s*ft\s*x\s*({_NUM})\s*ft", text, re.IGNORECASE
+        rf"Moonpool\s*:[ \t]*({_NUM})\s*ft\s*x\s*({_NUM})\s*ft", text, re.IGNORECASE
     )
     if moonpool:
         mp_l = _clean_number(moonpool.group(1))
@@ -138,7 +141,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
         out["RAW_MOONPOOL_FT"] = f"{mp_l:g} x {mp_w:g}"
 
     vdl = re.search(
-        rf"Variable\s+Deck\s*(?:Load)?\s*:?\s*({_NUM})\s*(kips|ST|sT)",
+        rf"Variable\s+Deck\s*(?:Load)?\s*:?[ \t]*({_NUM})\s*(kips|ST|sT)",
         text,
         re.IGNORECASE,
     )
@@ -150,7 +153,9 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
                 value / KIPS_PER_SHORT_TON if unit == "kips" else value
             )
 
-    hook = re.search(rf"Hook\s+Load\s*:\s*({_NUM})\s*(kips|ST|sT)", text, re.IGNORECASE)
+    hook = re.search(
+        rf"Hook\s+Load\s*:[ \t]*({_NUM})\s*(kips|ST|sT)", text, re.IGNORECASE
+    )
     if hook:
         value = _clean_number(hook.group(1))
         if value is not None:
@@ -159,7 +164,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
                 value if unit == "kips" else value * KIPS_PER_SHORT_TON
             )
 
-    setback = _search_number(rf"Setback\s+Capacity\s*:\s*({_NUM})\s*kips", text)
+    setback = _search_number(rf"Setback\s+Capacity\s*:[ \t]*({_NUM})\s*kips", text)
     if setback is not None:
         out["SETBACK_CAPACITY_KIPS"] = setback
 
@@ -171,6 +176,133 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     # Transocean "RigSpecs" layout — same fill-the-gaps merge.
     for field, value in _parse_transocean_layout(text).items():
         out.setdefault(field, value)
+
+    # Valaris sidebar layout — same fill-the-gaps merge.
+    for field, value in _parse_valaris_layout(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_valaris_layout(text: str) -> dict[str, Any]:
+    """Parse the Valaris rig-spec sidebar layout.
+
+    Labels sit on their own line with the value on the next line (drillship
+    sheets omit the trailing colon, jackup sheets include it)::
+
+        Length Overall          |  Hull Length:
+        752ft                   |  246ft
+        Moonpool, Opening at Baseline
+        73.5ft x 42ft
+
+    Design and year come from the sheet subtitle
+    (``GustoMSC P10,000 Drillship • Year in Service: 2015``). Jackup hook /
+    setback loads are quoted in lbs (converted to kips). Variable Deck Load
+    is captured only when a unit is printed.
+    """
+    out: dict[str, Any] = {}
+
+    year = re.search(r"Year\s+in\s+Service:\s*(\d{4})", text, re.IGNORECASE)
+    if year:
+        out["YEAR_BUILT"] = int(year.group(1))
+
+    design = re.search(
+        r"^\s*(.{3,70}?)\s*[•·]\s*Year\s+in\s+Service", text, re.MULTILINE
+    )
+    if design:
+        out["RIG_DESIGN"] = re.sub(r"\s{2,}", " ", design.group(1)).strip()
+
+    def _next_line_number(label: str, unit: str = "ft") -> Optional[float]:
+        # pdftotext -layout preserves column positions, and body text
+        # interleaves with the sidebar: the value sits 1-2 lines below the
+        # label at (approximately) the SAME column. Match on column, not on
+        # line order, so derrick dimensions etc. in other columns are skipped.
+        for m in re.finditer(rf"{label}:?", text, re.IGNORECASE):
+            col = m.start() - (text.rfind("\n", 0, m.start()) + 1)
+            for line in text[m.end() :].split("\n")[1:3]:
+                for num in re.finditer(
+                    rf"({_NUM_TIGHT})\s*{unit}\b", line, re.IGNORECASE
+                ):
+                    if abs(num.start(1) - col) <= 8:
+                        return _clean_number(num.group(1))
+        return None
+
+    loa_ft = _next_line_number(r"(?:Length\s+Overall|Hull\s+Length)")
+    if loa_ft is not None:
+        out["LOA_M"] = _ft_to_m(loa_ft)
+        out["RAW_LENGTH_FT"] = loa_ft
+
+    beam_ft = _next_line_number(r"(?:Breadth|Hull\s+Width)")
+    if beam_ft is not None:
+        out["BEAM_M"] = _ft_to_m(beam_ft)
+        out["RAW_BREADTH_FT"] = beam_ft
+
+    depth_ft = _next_line_number(r"(?:Depth\s+at\s+Side|Hull\s+Depth)")
+    if depth_ft is not None:
+        out["DEPTH_M"] = _ft_to_m(depth_ft)
+        out["RAW_DEPTH_FT"] = depth_ft
+
+    draft_ft = _next_line_number(r"Draft\s*\(Max\.?\s*Operating\)")
+    if draft_ft is not None:
+        out["DRAFT_M"] = _ft_to_m(draft_ft)
+        out["RAW_DRAFT_OPERATING_FT"] = draft_ft
+
+    displacement = _next_line_number("Displacement", unit="MT")
+    if displacement is not None:
+        out["DISPLACEMENT_TONNES"] = displacement
+
+    water_ft = _next_line_number(r"Rated\s+Max\.?\s+Water\s+Depth")
+    if water_ft is not None:
+        out["WATER_DEPTH_RATING_FT"] = water_ft
+
+    drill_ft = _next_line_number(r"Max(?:imum|\.)?\s+Drilling\s+Depth")
+    if drill_ft is not None:
+        out["DRILLING_DEPTH_RATING_FT"] = drill_ft
+
+    leg_ft = _next_line_number(r"(?<!Deployed )Leg\s+Length")
+    if leg_ft is not None:
+        out["LEG_LENGTH_FT"] = leg_ft
+
+    cantilever_ft = _next_line_number(r"Cantilever\s+Skid\s+Out")
+    if cantilever_ft is not None:
+        out["CANTILEVER_REACH_FT"] = cantilever_ft
+
+    moonpool = re.search(
+        rf"Moonpool[^\n]*\n[^\n]*?({_NUM_TIGHT})\s*ft\.?\s*x\s*({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE,
+    )
+    if moonpool:
+        mp_l = _clean_number(moonpool.group(1))
+        mp_w = _clean_number(moonpool.group(2))
+        out["MOONPOOL_LENGTH_M"] = _ft_to_m(mp_l)
+        out["MOONPOOL_WIDTH_M"] = _ft_to_m(mp_w)
+        out["RAW_MOONPOOL_FT"] = f"{mp_l:g} x {mp_w:g}"
+
+    hook_lbs = _next_line_number(r"Hook\s+Load", unit="lbs")
+    if hook_lbs is not None:
+        out["HOOKLOAD_RATING_KIPS"] = round(hook_lbs / 1000)
+
+    setback_lbs = _next_line_number(r"Setback\s+Load", unit="lbs")
+    if setback_lbs is not None:
+        out["SETBACK_CAPACITY_KIPS"] = round(setback_lbs / 1000)
+
+    vdl = re.search(
+        rf"Variable\s+Deck\s+Load:?[ \t]*\n[^\n]*?({_NUM_TIGHT})\s*(kips|MT|ST|LT)\b",
+        text,
+        re.IGNORECASE,
+    )
+    if vdl:
+        value = _clean_number(vdl.group(1))
+        if value is not None:
+            unit = vdl.group(2).upper()
+            factor = {
+                "KIPS": 1 / KIPS_PER_SHORT_TON,
+                "MT": SHORT_TONS_PER_TONNE,
+                "LT": SHORT_TONS_PER_LONG_TON,
+                "ST": 1.0,
+            }[unit]
+            out["VARIABLE_DECK_LOAD_ST"] = round(value * factor)
 
     return out
 
