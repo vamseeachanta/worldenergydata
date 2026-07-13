@@ -1,0 +1,20 @@
+# Provenance for committed saipem spec PDFs — wed issue #996.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+files:
+  saipem-12000.pdf:
+    url: https://www.saipem.com/sites/default/files/2023-01/Saipem_12000.pdf
+    sha256: d9fd5535ecc51ce486cad75843255358a62add3108faf203682a8fbe4d8b7fab
+    text_layer: true
+  saipem-santorini.pdf:
+    url: https://www.saipem.com/sites/default/files/2023-02/Santorini.pdf
+    sha256: e1bcfe4b7f9c4323263ed93107ab19295ca5ae68782258239847c8e43d109cd5
+    text_layer: true
+  saipem-scarabeo-8.pdf:
+    url: https://www.saipem.com/sites/default/files/2023-01/Scarabeo8.pdf
+    sha256: 450a078adbf9ea36c722ddacfa1489d59a832daeffb1f7096624aa5d7e19c1fa
+    text_layer: true
+  saipem-scarabeo-9.pdf:
+    url: https://www.saipem.com/sites/default/files/2018-12/1613Scarabeo9.pdf
+    sha256: d20488a81958f927fe46e9eed719e4ca76fb55e6b2b2212db14f5d7cc7079c95
+    text_layer: true

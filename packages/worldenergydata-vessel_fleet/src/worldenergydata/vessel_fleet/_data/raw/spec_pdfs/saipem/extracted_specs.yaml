@@ -1,0 +1,64 @@
+# Saipem offshore drilling fleet specs — wed issue #996 (epic #991).
+# 2 ultra-deepwater drillships + 2 harsh-environment semis.
+#
+# extraction: manual_transcription — Saipem's sheets are a column-collapsed
+# marketing layout (0 fields machine-parse; a profile would be overfit for 4
+# rigs). Values transcribed from the committed PDFs, 2026-07-13. Build years
+# are NOT stated on the sheets -> omitted (unknown != qualified).
+# Perro Negro jackup fleet not yet scouted (low spec visibility) — gap noted
+# on the issue.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Saipem S.p.A.
+issue: 996
+vessels:
+  Saipem 12000:
+    pdf: saipem-12000.pdf
+    rig_type: drillship
+    rig_design: 6th Generation Ultra Deepwater Drillship (Samsung 10000)
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000
+      HOOKLOAD_RATING_KIPS: 2000  # static hook load 2,000,000 lbs
+      QUARTERS_CAPACITY: 200
+      DUAL_ACTIVITY: true  # main + aux rigs, dual crown-mounted compensators
+      CRANE_MAIN_CAPACITY_T: 85  # four NOV knuckle-boom, 85 mt
+  Santorini:
+    pdf: saipem-santorini.pdf
+    rig_type: drillship
+    rig_design: 7th Generation Ultra Deepwater Drillship
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      QUARTERS_CAPACITY: 215
+      DUAL_ACTIVITY: true  # two NOV TDX-1250 top drives (main + aux)
+  Scarabeo 8:
+    pdf: saipem-scarabeo-8.pdf
+    rig_type: semi_submersible
+    rig_design: Moss Maritime CS50 MkII, winterized (DNV WINTERIZATION BASIC)
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 1969.0  # 600 m moored/thruster-assisted (lower bound; DP rating value not legible on sheet)
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      HOOKLOAD_RATING_KIPS: 2000  # 2,000,000 lbs main rig (aux 1,000,000)
+      QUARTERS_CAPACITY: 140
+      DUAL_ACTIVITY: true  # MAIN + AUX rigs
+  Scarabeo 9:
+    pdf: saipem-scarabeo-9.pdf
+    rig_type: semi_submersible
+    rig_design: Frigstad D90, DP3 column-stabilized (Bosphorus-passable)
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 12000.0
+      # DRILLING_DEPTH omitted: sheet claims "up to 50,000 ft below rotary" —
+      # implausible vs the class (commonly 35,000 ft); ambiguous vendor claim.
+      HOOKLOAD_RATING_KIPS: 2000  # 2,000,000 lbs static, main and aux
+      QUARTERS_CAPACITY: 200
+      DUAL_ACTIVITY: true

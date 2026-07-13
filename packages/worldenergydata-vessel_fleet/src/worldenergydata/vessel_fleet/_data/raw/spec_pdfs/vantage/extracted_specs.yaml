@@ -1,0 +1,75 @@
+# Vantage Drilling fleet specs — wed issue #996 (epic #991).
+# 2 Vantage-owned ultra-deepwater drillships + 2 ADES-owned, Vantage-managed
+# BMC 375 jackups (per-entry owner override; DEDUPE RISK: if ADES is ever
+# ingested as its own contractor, Topaz Driller / Soehanah must be reconciled
+# against these records).
+#
+# extraction: manual_transcription — same-line table close to the Seadrill
+# profile but with distinct labels (Hull Length/Hull Breadth/Transit Draft/
+# Maximum Setback [MT]); 4 rigs -> manual, transcribed 2026-07-13.
+# MT loads converted: VDL -> short tons; setback -> kips. Build years and
+# quarters not stated on the sheets -> omitted.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Vantage Drilling International
+issue: 996
+vessels:
+  Platinum Explorer:
+    pdf: vantage-plx.pdf
+    rig_type: drillship
+    rig_design: DSME 10,000 Ultra Deepwater Drillship
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0  # hull length 781 ft
+      BEAM_M: 42.1  # hull breadth 138 ft
+      VARIABLE_DECK_LOAD_ST: 22046  # 20,000 MT
+      SETBACK_CAPACITY_KIPS: 2205  # 1,000 MT
+      CRANE_MAIN_CAPACITY_T: 85  # 3 x Liebherr BOS 4200-85
+      RAW_DRAFT_TRANSIT_FT: 27.8
+  Tungsten Explorer:
+    pdf: vantage-tux.pdf
+    rig_type: drillship
+    rig_design: DSME 12,000 Ultra Deepwater Drillship
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 12000.0  # designed (11,000 ft outfitted)
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.1
+      VARIABLE_DECK_LOAD_ST: 22046
+      SETBACK_CAPACITY_KIPS: 2205
+      MPD_CAPABLE: true  # sheet documents MPD capability
+      RAW_DRAFT_TRANSIT_FT: 27.8
+  Topaz Driller:
+    pdf: vantage-tod.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine BMC 375
+    owner: ADES (Vantage-managed)
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 375.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.9  # hull 236 ft
+      BEAM_M: 68.3  # hull 224 ft
+      CANTILEVER_REACH_FT: 75.0  # envelope 75 ft x 30 ft
+      VARIABLE_DECK_LOAD_ST: 3749  # 3,401 MT drilling (2,268 transit)
+      SETBACK_CAPACITY_KIPS: 900  # 408 MT
+      RAW_DRAFT_TRANSIT_FT: 19.5
+  Soehanah:
+    pdf: vantage-soh.pdf
+    rig_type: jack_up
+    rig_design: Baker Marine BMC 375
+    owner: ADES (Vantage-managed)
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 375.0
+      DRILLING_DEPTH_RATING_FT: 25000.0
+      LOA_M: 72.1  # hull 236.5 ft
+      BEAM_M: 68.4  # hull 224.4 ft
+      LEG_LENGTH_FT: 434.0  # below hull, max
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3699  # 3,356 MT drilling
+      SETBACK_CAPACITY_KIPS: 648  # 294 MT
+      RAW_DRAFT_TRANSIT_FT: 19.5

@@ -1,0 +1,20 @@
+# Provenance for committed vantage spec PDFs — wed issue #996.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+files:
+  vantage-plx.pdf:
+    url: https://vantagedrilling.com/wp-content/uploads/2025/10/PLX-Short-Spec-v25.pdf
+    sha256: 1f69c9445add74623f1399b9e87c87c012beb0079eafa7b1d256c518e1e1498f
+    text_layer: true
+  vantage-soh.pdf:
+    url: https://vantagedrilling.com/wp-content/uploads/2025/10/SOH-TSS-PDF-v25.pdf
+    sha256: 07eba18e92e2c715a7993a4eff06492e7dc3ed2c6a39fa013e9aebdbb14cc0d1
+    text_layer: true
+  vantage-tod.pdf:
+    url: https://vantagedrilling.com/wp-content/uploads/2025/10/TOD-TSS-PDF-v25-rev1.pdf
+    sha256: d8632195d045e27ed80e4dc61aba67bc69bd5bdd6a447dc5b6171d382a2c1100
+    text_layer: true
+  vantage-tux.pdf:
+    url: https://vantagedrilling.com/wp-content/uploads/2025/10/TUX-Short-Spec-v25.pdf
+    sha256: c2c3405158baa13ab75a77e8c6022aee8ee2cb90dbd074201202e2028ab57718
+    text_layer: true

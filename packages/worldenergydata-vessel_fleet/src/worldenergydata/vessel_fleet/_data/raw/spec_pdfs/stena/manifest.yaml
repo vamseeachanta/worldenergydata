@@ -1,0 +1,29 @@
+# Provenance for committed Stena Drilling spec PDFs — wed issue #996.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+contractor: Stena Drilling Ltd
+files:
+  stena-carron.pdf:
+    url: https://stenadrilling.s3.eu-west-2.amazonaws.com/Tech+Spec+Sheets/Technical+Specification+Sheet+-+Stena+Carron+(21+Dec+2020).pdf
+    sha256: 410c3cc4914d877b0809cf92841d33e75568a152045dbbb4b04f0502af652b40
+    text_layer: true
+  stena-don.pdf:
+    url: https://stenadrilling.s3.eu-west-2.amazonaws.com/Tech+Spec+Sheets/Technical+Specification+Sheet+-+Stena+Don+(19.01.2021).pdf
+    sha256: fbc499cfcc3d927cd05f10518fec488595b875ca08e3f4e9116ddcbe97d73a0e
+    text_layer: true
+  stena-drillmax.pdf:
+    url: https://stenadrilling.s3.eu-west-2.amazonaws.com/Tech+Spec+Sheets/Technical+Specification+Sheet+-+Stena+DrillMAX+(21+Dec+2020).pdf
+    sha256: 395e121168c2561d133e6a4b178c298cdec61e67bfcfc458dc032ef665934344
+    text_layer: true
+  stena-evolution.pdf:
+    url: https://stenadrilling.b-cdn.net/PDF%20documents/Stena%20Evo%20Tech%20sheet%20300322.pdf
+    sha256: 346aefb3ba49157ffc0616720d7c7ad78c493053aa97b8a8ce12dbaffc54eb7a
+    text_layer: true
+  stena-forth.pdf:
+    url: https://stenadrilling.s3.eu-west-2.amazonaws.com/Tech+Spec+Sheets/Technical+Specification+Sheet+-+Stena+Forth+(21+Dec+2020).pdf
+    sha256: 7786a99e74941b8bced574270e0e28cfeca8d220d64452ed0d08c9072465860f
+    text_layer: true
+  stena-icemax.pdf:
+    url: https://stenadrilling.s3.eu-west-2.amazonaws.com/Tech+Spec+Sheets/Technical+Specification+Sheet+-+Stena+IceMAX+(21+Dec+2020).pdf
+    sha256: 384afbefb0b763582f53bee85128136881b7a66ecfd79656ce0e5175a8244104
+    text_layer: true
