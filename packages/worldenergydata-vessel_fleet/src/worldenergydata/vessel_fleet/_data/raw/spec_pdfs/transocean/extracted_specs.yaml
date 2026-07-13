@@ -34,6 +34,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 29.5
       RAW_MOONPOOL_FT: 114.83 x 31.49
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 454.0
   Deepwater Asgard:
     pdf: deepwater-asgard.pdf
     rig_type: drillship
@@ -57,6 +61,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 29.5
       RAW_MOONPOOL_FT: 82 x 33.5
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 249.5
   Deepwater Atlas:
     pdf: deepwater-atlas.pdf
     rig_type: drillship
@@ -79,6 +87,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 38.05
       RAW_DRAFT_TRANSIT_FT: 26.3
       RAW_MOONPOOL_FT: 91.86 x 35.43
+      QUARTERS_CAPACITY: 220
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 300.0
   Deepwater Conqueror:
     pdf: deepwater-conqueror.pdf
     rig_type: drillship
@@ -101,6 +113,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 31
+      QUARTERS_CAPACITY: 240
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 165.0
   Deepwater Corcovado:
     pdf: deepwater-corcovado.pdf
     rig_type: drillship
@@ -122,6 +138,10 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 205
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.3
   Deepwater Invictus:
     pdf: deepwater-invictus.pdf
     rig_type: drillship
@@ -144,6 +164,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 33.5
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 249.5
   Deepwater Mykonos:
     pdf: deepwater-mykonos.pdf
     rig_type: drillship
@@ -164,6 +188,9 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 205
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 85.3
   Deepwater Orion:
     pdf: deepwater-orion.pdf
     rig_type: drillship
@@ -187,6 +214,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 38.0
       RAW_DRAFT_TRANSIT_FT: 38.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 200
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 84.4
   Deepwater Pontus:
     pdf: deepwater-pontus.pdf
     rig_type: drillship
@@ -208,6 +238,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 31
+      QUARTERS_CAPACITY: 200
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 165.1
   Deepwater Poseidon:
     pdf: deepwater-poseidon.pdf
     rig_type: drillship
@@ -229,6 +262,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 31
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 165.1
   Deepwater Proteus:
     pdf: deepwater-proteus.pdf
     rig_type: drillship
@@ -250,6 +287,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 31
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 165.1
   Deepwater Skyros:
     pdf: deepwater-skyros.pdf
     rig_type: drillship
@@ -271,6 +312,9 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2500
       RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 215
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 100.0
   Deepwater Thalassa:
     pdf: deepwater-thalassa.pdf
     rig_type: drillship
@@ -292,6 +336,10 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 29.0
       RAW_MOONPOOL_FT: 82 x 31
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 165.1
   Deepwater Titan:
     pdf: deepwater-titan.pdf
     rig_type: drillship
@@ -315,6 +363,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 38.05
       RAW_DRAFT_TRANSIT_FT: 26.3
       RAW_MOONPOOL_FT: 92 x 29.5
+      QUARTERS_CAPACITY: 220
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 300.0
   Dhirubhai Deepwater KG1:
     pdf: dhirubhai-deepwater-kg1.pdf
     rig_type: drillship
@@ -336,6 +387,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 200.0
   Dhirubhai Deepwater KG2:
     pdf: dhirubhai-deepwater-kg2.pdf
     rig_type: drillship
@@ -358,6 +411,7 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 180
   Ocean Rig Apollo:
     pdf: ocean-rig-apollo.pdf
     rig_type: drillship
@@ -421,6 +475,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 37.7
       RAW_DRAFT_TRANSIT_FT: 37.7
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 215
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 99.8
   Petrobras 10000:
     pdf: petrobras-10000.pdf
     rig_type: drillship
@@ -444,6 +501,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 199
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 199.6
   Transocean Barents:
     pdf: transocean-barents.pdf
     rig_type: semi_submersible
@@ -465,6 +525,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 75.0
       RAW_DRAFT_TRANSIT_FT: 31.0
       RAW_MOONPOOL_FT: 33.7 x 75.5
+      QUARTERS_CAPACITY: 140
+      DUAL_ACTIVITY: true
   Transocean Enabler:
     pdf: transocean-enabler.pdf
     rig_type: semi_submersible
@@ -484,6 +546,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 82.5
       RAW_DRAFT_TRANSIT_FT: 76.0
       RAW_MOONPOOL_FT: 33.8 x 29.5
+      QUARTERS_CAPACITY: 130
+      CRANE_MAIN_CAPACITY_T: 150.0
   Transocean Encourage:
     pdf: transocean-encourage.pdf
     rig_type: semi_submersible
@@ -503,6 +567,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 82.5
       RAW_DRAFT_TRANSIT_FT: 76.0
       RAW_MOONPOOL_FT: 33.8 x 29.5
+      QUARTERS_CAPACITY: 130
+      CRANE_MAIN_CAPACITY_T: 150.0
   Transocean Endurance:
     pdf: transocean-endurance.pdf
     rig_type: semi_submersible
@@ -522,6 +588,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 82.5
       RAW_DRAFT_TRANSIT_FT: 76.0
       RAW_MOONPOOL_FT: 33.8 x 29.5
+      QUARTERS_CAPACITY: 140
+      CRANE_MAIN_CAPACITY_T: 150.0
   Transocean Equinox:
     pdf: transocean-equinox.pdf
     rig_type: semi_submersible
@@ -540,6 +608,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 82.5
       RAW_DRAFT_TRANSIT_FT: 76.0
       RAW_MOONPOOL_FT: 33.8 x 29.5
+      QUARTERS_CAPACITY: 140
+      CRANE_MAIN_CAPACITY_T: 150.0
   Transocean Norge:
     pdf: transocean-norge.pdf
     rig_type: semi_submersible
@@ -559,6 +629,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 77.0
       RAW_DRAFT_TRANSIT_FT: 36.0
       RAW_MOONPOOL_FT: 91 x 29.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 275.0
   Transocean Spitsbergen:
     pdf: transocean-spitsbergen.pdf
     rig_type: semi_submersible
@@ -580,3 +652,6 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 75.0
       RAW_DRAFT_TRANSIT_FT: 31.0
       RAW_MOONPOOL_FT: 34 x 75
+
+      QUARTERS_CAPACITY: 140
+      DUAL_ACTIVITY: true

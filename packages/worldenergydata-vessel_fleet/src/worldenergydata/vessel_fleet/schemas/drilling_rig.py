@@ -92,6 +92,13 @@ class DrillingRigSchema(BaseVesselSchema):
     LAST_AREA_CODE: Optional[str] = None
     LAST_BLOCK_NUMBER: Optional[str] = None
 
+    # Equipment-level capabilities (#1006)
+    MPD_CAPABLE: Optional[bool] = None
+    DUAL_ACTIVITY: Optional[bool] = None
+    QUARTERS_CAPACITY: Optional[int] = None
+    CRANE_MAIN_CAPACITY_T: Optional[float] = None
+    GENERATION: Optional[str] = None
+
     # Flag
     IS_OFFSHORE: Optional[bool] = None
 
@@ -112,6 +119,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "LAST_BLOCK_NUMBER",
         "HULL_FORM_TYPE",
         "HULL_LIBRARY_REF",
+        "GENERATION",
         mode="before",
     )
     @classmethod
@@ -153,6 +161,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "VCG_M",
         "MAST_HEIGHT_FT",
         "SETBACK_CAPACITY_KIPS",
+        "CRANE_MAIN_CAPACITY_T",
         mode="before",
     )
     @classmethod
@@ -199,6 +208,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "VCG_M",
         "MAST_HEIGHT_FT",
         "SETBACK_CAPACITY_KIPS",
+        "CRANE_MAIN_CAPACITY_T",
     )
     @classmethod
     def _validate_non_negative_rig_floats(cls, v: Optional[float]) -> Optional[float]:
@@ -207,7 +217,11 @@ class DrillingRigSchema(BaseVesselSchema):
         return v
 
     @field_validator(
-        "MUD_PUMP_COUNT", "WELLS_DRILLED_COUNT", "COLUMN_COUNT", mode="before"
+        "MUD_PUMP_COUNT",
+        "WELLS_DRILLED_COUNT",
+        "COLUMN_COUNT",
+        "QUARTERS_CAPACITY",
+        mode="before",
     )
     @classmethod
     def _coerce_rig_int_fields(cls, v: object) -> object:

@@ -195,6 +195,65 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     for field, value in _parse_shelf_layout(text).items():
         out.setdefault(field, value)
 
+    # Cross-layout equipment capabilities (#1006) — same fill-the-gaps merge.
+    for field, value in _parse_equipment(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_equipment(text: str) -> dict[str, Any]:
+    """Extract equipment-level capabilities common to all sheet layouts (#1006).
+
+    - QUARTERS_CAPACITY: "Quarters Capacity: 230" / "Accommodation ... 220
+      persons" variants.
+    - MPD_CAPABLE / DUAL_ACTIVITY: set to True only on positive mention;
+      absent otherwise (unknown != false — a sheet that doesn't mention MPD
+      proves nothing).
+    - CRANE_MAIN_CAPACITY_T: the largest tonnage found on crane-labelled
+      lines (st converted to tonnes; T/mt taken as tonnes). Derrick and
+      tensioner lines are never scanned.
+    """
+    out: dict[str, Any] = {}
+
+    quarters = re.search(
+        rf"(?:Quarters\s*(?:Capacity)?\s*:?|Accommodations?\s*:?)"
+        rf"[ \t.…]*\n?[ \t]*({_NUM_TIGHT})\s*(?:persons|people|POB)?\b",
+        text,
+        re.IGNORECASE,
+    )
+    if quarters:
+        value = _clean_number(quarters.group(1))
+        # Plausibility window: crew capacity, not a load or a year.
+        if value is not None and 20 <= value <= 400:
+            out["QUARTERS_CAPACITY"] = int(value)
+
+    if re.search(r"\bMPD\b|managed[- ]pressure", text, re.IGNORECASE):
+        out["MPD_CAPABLE"] = True
+
+    if re.search(r"dual[- ](?:activity|derrick)|dual bottleneck", text, re.IGNORECASE):
+        out["DUAL_ACTIVITY"] = True
+
+    best_t: Optional[float] = None
+    for line in text.split("\n"):
+        if not re.search(r"crane", line, re.IGNORECASE):
+            continue
+        # Column collapse can merge adjacent equipment onto a crane line —
+        # skip derrick/tensioner/tree-trolley content, and cap at 600 t
+        # (largest observed real crane: 595 T gantry).
+        if re.search(r"derrick|tensioner|trolley|tree", line, re.IGNORECASE):
+            continue
+        for m in re.finditer(rf"({_NUM_TIGHT})\s*(sT|st|mt|MT|T)\b", line):
+            value = _clean_number(m.group(1))
+            if value is None or not (5 <= value <= 600):
+                continue
+            unit = m.group(2).lower()
+            tonnes = value * 0.907185 if unit == "st" else value
+            if best_t is None or tonnes > best_t:
+                best_t = tonnes
+    if best_t is not None:
+        out["CRANE_MAIN_CAPACITY_T"] = round(best_t, 1)
+
     return out
 
 

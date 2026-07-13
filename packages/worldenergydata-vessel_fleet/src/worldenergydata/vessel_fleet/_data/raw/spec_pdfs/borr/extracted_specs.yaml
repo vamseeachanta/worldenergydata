@@ -51,6 +51,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 234 x 208 x 25
       RAW_DRAFT_OPERATING_FT: 16.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 70.0
   Arabia III:
     pdf: borr-arabia-iii.pdf
     rig_type: jack_up
@@ -65,6 +67,8 @@ vessels:
       LEG_LENGTH_FT: 525.0
       VARIABLE_DECK_LOAD_ST: 4104
       HOOKLOAD_RATING_KIPS: 2000
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 70.0
   Bestla:
     pdf: borr-bestla.pdf
     rig_type: jack_up
@@ -83,6 +87,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 230 x 223 x 31
       RAW_DRAFT_TRANSIT_FT: 18.0
+      QUARTERS_CAPACITY: 110
+      CRANE_MAIN_CAPACITY_T: 80.0
   Forseti:
     pdf: borr-forseti.pdf
     rig_type: jack_up
@@ -101,6 +107,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2500
       RAW_DIMENSIONS_FT: 231 x 277 x 31
       RAW_DRAFT_TRANSIT_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 150.0
   Freyja:
     pdf: borr-freyja.pdf
     rig_type: jack_up
@@ -119,6 +127,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2500
       RAW_DIMENSIONS_FT: 231 x 277 x 31
       RAW_DRAFT_TRANSIT_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 150.0
   Galar:
     pdf: borr-galar.pdf
     rig_type: jack_up
@@ -140,6 +150,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 45.4
   Gerd:
     pdf: borr-gerd.pdf
     rig_type: jack_up
@@ -161,6 +173,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   Gersemi:
     pdf: borr-gersemi.pdf
     rig_type: jack_up
@@ -182,6 +196,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 45.4
   Grid:
     pdf: borr-grid.pdf
     rig_type: jack_up
@@ -203,6 +219,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   Groa:
     pdf: borr-groa.pdf
     rig_type: jack_up
@@ -224,6 +242,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   Gunnlod:
     pdf: borr-gunnlod.pdf
     rig_type: jack_up
@@ -245,6 +265,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   Hild:
     pdf: borr-hild.pdf
     rig_type: jack_up
@@ -263,6 +285,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 3992
       RAW_DIMENSIONS_FT: 246 x 218 x 25
       RAW_DRAFT_OPERATING_FT: 17.0
+      QUARTERS_CAPACITY: 150
   Idun:
     pdf: borr-idun.pdf
     rig_type: jack_up
@@ -283,6 +306,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 246 x 226 x 25
       RAW_DRAFT_OPERATING_FT: 18.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 61.0
   Joro:
     pdf: borr-joro.pdf
     rig_type: jack_up
@@ -301,6 +326,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 230 x 223 x 31
       RAW_DRAFT_TRANSIT_FT: 18.0
+      QUARTERS_CAPACITY: 110
+      CRANE_MAIN_CAPACITY_T: 80.0
   Mist:
     pdf: borr-mist.pdf
     rig_type: jack_up
@@ -321,6 +348,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 246 x 226 x 25
       RAW_DRAFT_OPERATING_FT: 18.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 61.0
   Natt:
     pdf: borr-natt.pdf
     rig_type: jack_up
@@ -341,6 +370,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   Njord:
     pdf: borr-njord.pdf
     rig_type: jack_up
@@ -361,6 +392,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 45.4
   Norve:
     pdf: borr-norve.pdf
     rig_type: jack_up
@@ -382,6 +415,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
       RAW_DRAFT_OPERATING_FT: 19.5
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.7
   Odin:
     pdf: borr-odin.pdf
     rig_type: jack_up
@@ -403,6 +438,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 246 x 226 x 25
       RAW_DRAFT_OPERATING_FT: 18.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 55.3
   Prospector 1:
     pdf: borr-prospector-1.pdf
     rig_type: jack_up
@@ -486,6 +523,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 246 x 226 x 27
       RAW_DRAFT_OPERATING_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 68.9
   Sif:
     pdf: borr-sif.pdf
     rig_type: jack_up
@@ -504,6 +543,8 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 5893
       HOOKLOAD_RATING_KIPS: 2500
       RAW_DIMENSIONS_FT: 231 x 277 x 31
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 75.0
   Skald:
     pdf: borr-skald.pdf
     rig_type: jack_up
@@ -524,6 +565,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 246 x 226 x 27
       RAW_DRAFT_OPERATING_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 68.9
   Thor:
     pdf: borr-thor.pdf
     rig_type: jack_up
@@ -544,6 +587,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 247 x 230 x 27
       RAW_DRAFT_OPERATING_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 65.0
   Vali:
     pdf: borr-vali.pdf
     rig_type: jack_up
@@ -564,6 +609,8 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 246 x 226 x 27
       RAW_DRAFT_OPERATING_FT: 19.0
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 68.9
   Var:
     pdf: borr-var.pdf
     rig_type: jack_up
@@ -584,3 +631,6 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000
       RAW_DIMENSIONS_FT: 246 x 226 x 27
       RAW_DRAFT_OPERATING_FT: 19.0
+
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 68.9

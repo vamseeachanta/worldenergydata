@@ -26,6 +26,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 3850
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 214 x 203 x 26
+      QUARTERS_CAPACITY: 120
   Adriatic I:
     pdf: shelf-adriatic-i.pdf
     rig_type: jack_up
@@ -41,6 +42,7 @@ vessels:
       CANTILEVER_REACH_FT: 60.0
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 200 x 26
+      QUARTERS_CAPACITY: 120
   Shelf Drilling Barsk:
     pdf: shelf-barsk.pdf
     rig_type: jack_up
@@ -56,6 +58,9 @@ vessels:
       CANTILEVER_REACH_FT: 110.0
       VARIABLE_DECK_LOAD_ST: 7150
       RAW_DIMENSIONS_FT: 296.9 x 377.6 x 39.4
+      QUARTERS_CAPACITY: 140
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 14.0
   C.E. Thornton:
     pdf: shelf-ce-thornton.pdf
     rig_type: jack_up
@@ -70,6 +75,7 @@ vessels:
       LEG_LENGTH_FT: 410.0
       CANTILEVER_REACH_FT: 45.0
       RAW_DIMENSIONS_FT: 218 x 201 x 26
+      QUARTERS_CAPACITY: 113
   Chaophraya:
     pdf: shelf-chaophraya.pdf
     rig_type: jack_up
@@ -86,6 +92,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 3850
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 206 x 26
+      QUARTERS_CAPACITY: 160
   Compact Driller:
     pdf: shelf-compact-driller.pdf
     rig_type: jack_up
@@ -100,6 +107,7 @@ vessels:
       LEG_LENGTH_FT: 410.0
       CANTILEVER_REACH_FT: 45.0
       RAW_DIMENSIONS_FT: 243 x 200 x 26
+      QUARTERS_CAPACITY: 146
   Shelf Drilling Enterprise:
     pdf: shelf-enterprise.pdf
     rig_type: jack_up
@@ -115,6 +123,8 @@ vessels:
       CANTILEVER_REACH_FT: 70.0
       VARIABLE_DECK_LOAD_ST: 3750
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 28
+      QUARTERS_CAPACITY: 150
+      CRANE_MAIN_CAPACITY_T: 50.0
   F.G. McClintock:
     pdf: shelf-fg-mcclintock.pdf
     rig_type: jack_up
@@ -129,6 +139,7 @@ vessels:
       LEG_LENGTH_FT: 410.0
       CANTILEVER_REACH_FT: 45.0
       RAW_DIMENSIONS_FT: 218 x 201 x 26
+      QUARTERS_CAPACITY: 110
   Shelf Drilling Fortress:
     pdf: shelf-fortress.pdf
     rig_type: jack_up
@@ -144,6 +155,9 @@ vessels:
       CANTILEVER_REACH_FT: 75.0
       VARIABLE_DECK_LOAD_ST: 7150
       RAW_DIMENSIONS_FT: 231 x 277 x 31
+      QUARTERS_CAPACITY: 148
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 12.0
   Harvey H. Ward:
     pdf: shelf-harvey-h-ward.pdf
     rig_type: jack_up
@@ -158,6 +172,7 @@ vessels:
       LEG_LENGTH_FT: 416.0
       CANTILEVER_REACH_FT: 40.0
       RAW_DIMENSIONS_FT: 180 x 175 x 25
+      QUARTERS_CAPACITY: 108
   High Island II:
     pdf: shelf-high-island-ii.pdf
     rig_type: jack_up
@@ -172,6 +187,7 @@ vessels:
       LEG_LENGTH_FT: 394.0
       CANTILEVER_REACH_FT: 47.0
       RAW_DIMENSIONS_FT: 207 x 176 x 20
+      QUARTERS_CAPACITY: 99
   High Island IV:
     pdf: shelf-high-island-iv.pdf
     rig_type: jack_up
@@ -187,6 +203,7 @@ vessels:
       CANTILEVER_REACH_FT: 47.0
       HOOKLOAD_RATING_KIPS: 1000
       RAW_DIMENSIONS_FT: 207 x 176 x 20
+      QUARTERS_CAPACITY: 110
   High Island IX:
     pdf: shelf-high-island-ix.pdf
     rig_type: jack_up
@@ -201,6 +218,7 @@ vessels:
       LEG_LENGTH_FT: 360.0
       CANTILEVER_REACH_FT: 40.0
       RAW_DIMENSIONS_FT: 207 x 176 x 20
+      QUARTERS_CAPACITY: 100
   High Island V:
     pdf: shelf-high-island-v.pdf
     rig_type: jack_up
@@ -216,6 +234,7 @@ vessels:
       CANTILEVER_REACH_FT: 40.0
       HOOKLOAD_RATING_KIPS: 1000
       RAW_DIMENSIONS_FT: 207 x 176 x 20
+      QUARTERS_CAPACITY: 103
   J.T. Angel:
     pdf: shelf-jt-angel.pdf
     rig_type: jack_up
@@ -231,6 +250,7 @@ vessels:
       CANTILEVER_REACH_FT: 40.0
       HOOKLOAD_RATING_KIPS: 1044
       RAW_DIMENSIONS_FT: 180 x 175 x 25
+      QUARTERS_CAPACITY: 112
   Key Manhattan:
     pdf: shelf-key-manhattan.pdf
     rig_type: jack_up
@@ -246,6 +266,7 @@ vessels:
       CANTILEVER_REACH_FT: 60.0
       HOOKLOAD_RATING_KIPS: 1044
       RAW_DIMENSIONS_FT: 243 x 200 x 26
+      QUARTERS_CAPACITY: 101
   Key Singapore:
     pdf: shelf-key-singapore.pdf
     rig_type: jack_up
@@ -261,6 +282,7 @@ vessels:
       CANTILEVER_REACH_FT: 55.0
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 200 x 26
+      QUARTERS_CAPACITY: 120
   Krathong:
     pdf: shelf-krathong.pdf
     rig_type: jack_up
@@ -277,6 +299,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 3850
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 206 x 26
+      QUARTERS_CAPACITY: 160
   Main Pass IV:
     pdf: shelf-main-pass-iv.pdf
     rig_type: jack_up
@@ -291,6 +314,7 @@ vessels:
       LEG_LENGTH_FT: 416.0
       CANTILEVER_REACH_FT: 40.0
       RAW_DIMENSIONS_FT: 180 x 175 x 25
+      QUARTERS_CAPACITY: 92
   Shelf Drilling Mentor:
     pdf: shelf-mentor.pdf
     rig_type: jack_up
@@ -307,6 +331,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 5000
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 206 x 26
+      QUARTERS_CAPACITY: 120
   Shelf Drilling Odyssey:
     pdf: shelf-odyssey.pdf
     rig_type: jack_up
@@ -322,6 +347,9 @@ vessels:
       CANTILEVER_REACH_FT: 75.0
       VARIABLE_DECK_LOAD_ST: 5850
       RAW_DIMENSIONS_FT: 231 x 277 x 31
+      QUARTERS_CAPACITY: 150
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 12.0
   Parameswara:
     pdf: shelf-parameswara.pdf
     rig_type: jack_up
@@ -337,6 +365,7 @@ vessels:
       CANTILEVER_REACH_FT: 45.0
       HOOKLOAD_RATING_KIPS: 1300
       RAW_DIMENSIONS_FT: 212 x 210 x 26
+      QUARTERS_CAPACITY: 120
   Shelf Drilling Perseverance:
     pdf: shelf-perseverance.pdf
     rig_type: jack_up
@@ -352,6 +381,8 @@ vessels:
       CANTILEVER_REACH_FT: 75.0
       VARIABLE_DECK_LOAD_ST: 7000
       RAW_DIMENSIONS_FT: 231 x 249 x 31
+      QUARTERS_CAPACITY: 120
+      MPD_CAPABLE: true
   Shelf Drilling Resourceful:
     pdf: shelf-resourceful.pdf
     rig_type: jack_up
@@ -368,6 +399,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 4000
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 243 x 206 x 26
+      QUARTERS_CAPACITY: 118
   Ron Tappmeyer:
     pdf: shelf-ron-tappmeyer.pdf
     rig_type: jack_up
@@ -383,6 +415,7 @@ vessels:
       CANTILEVER_REACH_FT: 45.0
       HOOKLOAD_RATING_KIPS: 1000
       RAW_DIMENSIONS_FT: 243 x 200 x 26
+      QUARTERS_CAPACITY: 116
   Shelf Drilling Scepter:
     pdf: shelf-scepter.pdf
     rig_type: jack_up
@@ -398,6 +431,7 @@ vessels:
       CANTILEVER_REACH_FT: 70.0
       VARIABLE_DECK_LOAD_ST: 4000
       RAW_DIMENSIONS_FT: 246 x 218 x 25
+      QUARTERS_CAPACITY: 150
   Shelf Drilling Tenacious:
     pdf: shelf-tenacious.pdf
     rig_type: jack_up
@@ -414,6 +448,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 5000
       HOOKLOAD_RATING_KIPS: 1500
       RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      QUARTERS_CAPACITY: 150
   Trident 16:
     pdf: shelf-trident-16.pdf
     rig_type: jack_up
@@ -424,6 +459,7 @@ vessels:
       WATER_DEPTH_RATING_FT: 300.0
       LEG_LENGTH_FT: 405.0
       CANTILEVER_REACH_FT: 45.0
+      QUARTERS_CAPACITY: 140
   Trident XII:
     pdf: shelf-trident-xii.pdf
     rig_type: jack_up
@@ -434,6 +470,7 @@ vessels:
       WATER_DEPTH_RATING_FT: 300.0
       LEG_LENGTH_FT: 429.5
       CANTILEVER_REACH_FT: 45.0
+      QUARTERS_CAPACITY: 112
   Shelf Drilling Victory:
     pdf: shelf-victory.pdf
     rig_type: jack_up
@@ -450,6 +487,7 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 3750
       HOOKLOAD_RATING_KIPS: 1600
       RAW_DIMENSIONS_FT: 239.8 x 224.4 x 28
+      QUARTERS_CAPACITY: 120
   Shelf Drilling Winner:
     pdf: shelf-winner.pdf
     rig_type: jack_up
@@ -465,3 +503,6 @@ vessels:
       CANTILEVER_REACH_FT: 75.0
       VARIABLE_DECK_LOAD_ST: 7150
       RAW_DIMENSIONS_FT: 231 x 277 x 31
+
+      QUARTERS_CAPACITY: 150
+      MPD_CAPABLE: true
