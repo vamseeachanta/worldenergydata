@@ -1,0 +1,20 @@
+# Provenance for committed cosl spec PDFs — wed issue #996.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+files:
+  cosl-innovator.pdf:
+    url: https://www.cosl.no/s/EDOCS-356124-v1-COSLInnovator_Brief.PDF
+    sha256: 28567bee31afb87b7e6ac69378739954ebbe0ae9533571c6c07d7c7c8bc49bee
+    text_layer: true
+  cosl-pioneer.pdf:
+    url: https://www.cosl.no/s/EDOCS-356125-v1-COSLPioneer_Brief.PDF
+    sha256: 3da261f1946f31254ba894bd510863abe9c7a8211cd5606e830970bd82b31f9e
+    text_layer: true
+  cosl-promoter.pdf:
+    url: https://www.cosl.no/s/EDOCS-356810-NY-COSLPromoter_Brief.PDF
+    sha256: 108ff01e6275237b7c5323952f53e1348a32cc6750356a9101e4265c5496edda
+    text_layer: true
+  cosl-prospector.pdf:
+    url: https://www.cosl.no/s/edocs-338974-v1-cosl_prospector_brief.pdf
+    sha256: 3e8cb5144b918f6762b073f3bb1a2b1559e365c3a0e9427cd411e8f410f49e84
+    text_layer: true

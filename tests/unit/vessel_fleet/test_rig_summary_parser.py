@@ -501,6 +501,80 @@ class TestEquipmentExtraction:
         assert spec["QUARTERS_CAPACITY"] == 220
 
 
+# Stena Drilling dotted-leader layout (Carron class) — UPPERCASE labels,
+# metric-first with imperial parentheses; Don semi variant differences.
+STENA_TEXT = """\
+RIG TYPE / DESIGN.................... Dynamically Positioned, Harsh Environment DP3 Drillship
+YEAR ENTERED SERVICE / ........
+SIGNIFICANT UPGRADES........... August 2008 / N/A
+FLAG......................................... United Kingdom (UK)
+DIMENSIONS ............................ 228 m (Long) x 42m (Wide) x 19m (moulded depth)
+DRAFTS..................................... 12m (39.4 ft) operating / 8.5m (27.9 ft) transit
+ACCOMODATION...................... 180, upgradeable to 220
+VARIABLE DECK (OPERATING)... 20,000Mt @12m
+MAXIMUM WATER DEPTH ....... 3,000m designed / 3,000m outfitted
+                            10,000 ft designed / 10,000 ft outfitted
+MAXIMUM DRILLING DEPTH .... 10,700m / 35,104 ft
+MAST........................................ NOV Dual Hoisting and Drilling Tower
+HOOKLOAD CAPACITY .............. [MAIN] 1000st static hookload (2,000,000 lbs)
+MOONPOOL ............................. 84ft x 41ft (25.60m x 12.48m)
+with full Managed Pressure Drilling (MPD) capabilities
+"""
+
+STENA_DON_TEXT = """\
+RIG TYPE / DESIGN.................... Harsh Environment POSMOOR ATAR Twin Pontoon, 6 columns CS30 Semi-
+YEAR ENTERED SERVICE /
+SIGNIFICANT UPGRADES........... 2001 / 2015 - Mid Life Upgrade
+FLAG.......................................... United Kingdom (UK)                             Systems
+DIMENSIONS............................. 95.5 m (Long) x 81.0m (Wide)
+DRAFTS...................................... 21.5m operating / 11.5-12m transit
+MAXIMUM WATER DEPTH ....... 650m / 2132ft
+HOOKLOAD CAPACITY .............. 750 short ton (680 metric ton)
+MOONPOOL ................            70ft x 23ft (21.50 m x 7.00m)
+"""
+
+
+class TestStenaLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(STENA_TEXT)
+
+    def test_metric_first_dimensions(self):
+        assert self.spec["LOA_M"] == 228.0
+        assert self.spec["BEAM_M"] == 42.0
+        assert self.spec["DEPTH_M"] == 19.0
+
+    def test_drafts_with_imperial_parens(self):
+        assert self.spec["DRAFT_M"] == 12.0
+        assert self.spec["RAW_DRAFT_OPERATING_FT"] == 39.4
+        assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 27.9
+
+    def test_water_depth_from_ft_continuation_line(self):
+        assert self.spec["WATER_DEPTH_RATING_FT"] == 10000.0
+
+    def test_year_from_upgrades_line(self):
+        assert self.spec["YEAR_BUILT"] == 2008
+
+    def test_loads_and_moonpool(self):
+        assert self.spec["HOOKLOAD_RATING_KIPS"] == 2000  # 1000 st main
+        assert self.spec["VARIABLE_DECK_LOAD_ST"] == 22046  # 20,000 Mt
+        assert self.spec["MOONPOOL_LENGTH_M"] == 25.6  # metric parenthetical
+        assert self.spec["MOONPOOL_WIDTH_M"] == 12.5
+
+    def test_equipment_flags(self):
+        assert self.spec["MPD_CAPABLE"] is True
+        assert self.spec["DUAL_ACTIVITY"] is True  # Dual Hoisting tower
+        assert self.spec["QUARTERS_CAPACITY"] == 180  # lower bound
+
+    def test_don_semi_variant(self):
+        spec = parse_rig_summary_text(STENA_DON_TEXT)
+        assert spec["LOA_M"] == 95.5  # two-part dimensions, no depth
+        assert "DEPTH_M" not in spec
+        assert spec["WATER_DEPTH_RATING_FT"] == 2132.0  # same-line m/ft form
+        assert spec["HOOKLOAD_RATING_KIPS"] == 1500  # 750 short ton
+        assert spec["FLAG_STATE"] == "United Kingdom (UK)"  # column bleed cut
+        assert spec["YEAR_BUILT"] == 2001
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)

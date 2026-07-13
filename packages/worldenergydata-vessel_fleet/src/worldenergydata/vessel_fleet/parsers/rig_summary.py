@@ -195,9 +195,129 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     for field, value in _parse_shelf_layout(text).items():
         out.setdefault(field, value)
 
+    # Stena dotted-leader layout — same fill-the-gaps merge.
+    for field, value in _parse_stena_layout(text).items():
+        out.setdefault(field, value)
+
     # Cross-layout equipment capabilities (#1006) — same fill-the-gaps merge.
     for field, value in _parse_equipment(text).items():
         out.setdefault(field, value)
+
+    return out
+
+
+def _parse_stena_layout(text: str) -> dict[str, Any]:
+    """Parse the Stena Drilling technical-specification layout.
+
+    Dotted-leader UPPERCASE labels (collapsed by ``_normalize``), metric-first
+    values with imperial in parentheses::
+
+        DIMENSIONS            228 m (Long) x 42m (Wide) x 19m (moulded depth)
+        DRAFTS                12m (39.4 ft) operating / 8.5m (27.9 ft) transit
+        MAXIMUM WATER DEPTH   3,000m designed / 3,000m outfitted
+                              10,000 ft designed / 10,000 ft outfitted
+        HOOKLOAD CAPACITY     [MAIN] 1000st static hookload (2,000,000 lbs)
+        MOONPOOL              84ft x 41ft (25.60m x 12.48m)
+
+    The semi variant (Stena Don) drops the ft parentheses and quotes water
+    depth as ``650m / 2132ft`` on one line — both forms are handled.
+    """
+    out: dict[str, Any] = {}
+
+    design = re.search(
+        r"RIG\s+TYPE\s*/\s*DESIGN\s{2,}(.+?)(?:\s{3,}|\s*$)", text, re.MULTILINE
+    )
+    if design:
+        out["RIG_DESIGN"] = design.group(1).strip().rstrip("-").strip()
+
+    year = re.search(
+        r"SIGNIFICANT\s+UPGRADES\s{2,}(?:[A-Za-z]+\s+)?(\d{4})", text, re.IGNORECASE
+    )
+    if year:
+        out["YEAR_BUILT"] = int(year.group(1))
+
+    flag = re.search(
+        r"^\s*FLAG\s{2,}([A-Za-z][A-Za-z ()]*?)(?:\s{3,}|\s*$)", text, re.MULTILINE
+    )
+    if flag:
+        out["FLAG_STATE"] = flag.group(1).strip()
+
+    dims = re.search(
+        rf"DIMENSIONS\s{{2,}}({_NUM_TIGHT})\s*m\s*\(Long\)\s*x\s*"
+        rf"({_NUM_TIGHT})\s*m\s*\(Wide\)(?:\s*x\s*({_NUM_TIGHT})\s*m)?",
+        text,
+        re.IGNORECASE,
+    )
+    if dims:
+        out["LOA_M"] = round(_clean_number(dims.group(1)), 1)
+        out["BEAM_M"] = round(_clean_number(dims.group(2)), 1)
+        if dims.group(3):
+            out["DEPTH_M"] = round(_clean_number(dims.group(3)), 1)
+
+    drafts = re.search(
+        rf"DRAFTS\s{{2,}}({_NUM_TIGHT})\s*m\s*(?:\(({_NUM_TIGHT})\s*ft\)\s*)?operating\s*/\s*"
+        rf"({_NUM_TIGHT})(?:-{_NUM_TIGHT})?\s*m\s*(?:\(({_NUM_TIGHT})\s*ft\)\s*)?transit",
+        text,
+        re.IGNORECASE,
+    )
+    if drafts:
+        out["DRAFT_M"] = round(_clean_number(drafts.group(1)), 1)
+        if drafts.group(2):
+            out["RAW_DRAFT_OPERATING_FT"] = _clean_number(drafts.group(2))
+        if drafts.group(4):
+            out["RAW_DRAFT_TRANSIT_FT"] = _clean_number(drafts.group(4))
+
+    vdl = re.search(
+        rf"VARIABLE\s+DECK(?:\s+LOAD)?\s*(?:\(OPERATING\))?\s{{2,}}({_NUM_TIGHT})\s*Mt\b",
+        text,
+        re.IGNORECASE,
+    )
+    if vdl:
+        value = _clean_number(vdl.group(1))
+        if value is not None:
+            out["VARIABLE_DECK_LOAD_ST"] = round(value * SHORT_TONS_PER_TONNE)
+
+    water = re.search(
+        rf"MAXIMUM\s+WATER\s+DEPTH\s{{2,}}({_NUM_TIGHT})\s*m\s*"
+        rf"(?:designed(?:[^\n]*\n){{1,2}}\s*({_NUM_TIGHT})\s*ft|/\s*({_NUM_TIGHT})\s*ft)",
+        text,
+        re.IGNORECASE,
+    )
+    if water:
+        ft = _clean_number(water.group(2) or water.group(3))
+        if ft is not None:
+            out["WATER_DEPTH_RATING_FT"] = ft
+
+    drilling = re.search(
+        rf"MAXIMUM\s+DRILLING\s+DEPTH\s{{2,}}({_NUM_TIGHT})\s*m\s*/\s*({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE,
+    )
+    if drilling:
+        out["DRILLING_DEPTH_RATING_FT"] = _clean_number(drilling.group(2))
+
+    hook = re.search(
+        rf"HOOKLOAD\s+CAPACITY\s{{2,}}(?:\[MAIN\]\s*)?({_NUM_TIGHT})\s*(?:st\b|short\s+ton)",
+        text,
+        re.IGNORECASE,
+    )
+    if hook:
+        value = _clean_number(hook.group(1))
+        if value is not None:
+            out["HOOKLOAD_RATING_KIPS"] = round(value * KIPS_PER_SHORT_TON)
+
+    moonpool = re.search(
+        rf"MOONPOOL\s{{2,}}({_NUM_TIGHT})\s*ft\s*x\s*({_NUM_TIGHT})\s*ft\s*"
+        rf"\(({_NUM_TIGHT})\s*m\s*x\s*({_NUM_TIGHT})\s*m\)",
+        text,
+        re.IGNORECASE,
+    )
+    if moonpool:
+        mp_l_ft = _clean_number(moonpool.group(1))
+        mp_w_ft = _clean_number(moonpool.group(2))
+        out["MOONPOOL_LENGTH_M"] = round(_clean_number(moonpool.group(3)), 1)
+        out["MOONPOOL_WIDTH_M"] = round(_clean_number(moonpool.group(4)), 1)
+        out["RAW_MOONPOOL_FT"] = f"{mp_l_ft:g} x {mp_w_ft:g}"
 
     return out
 
@@ -217,8 +337,8 @@ def _parse_equipment(text: str) -> dict[str, Any]:
     out: dict[str, Any] = {}
 
     quarters = re.search(
-        rf"(?:Quarters\s*(?:Capacity)?\s*:?|Accommodations?\s*:?)"
-        rf"[ \t.…]*\n?[ \t]*({_NUM_TIGHT})\s*(?:persons|people|POB)?\b",
+        rf"(?:Quarters\s*(?:Capacity)?\s*:?|Accom+odations?\s*:?)"  # vendor sheets misspell it
+        rf"[ \t.…]*\n?[ \t]*(\d{{2,3}})\b\s*(?:persons|people|POB)?",
         text,
         re.IGNORECASE,
     )
@@ -231,7 +351,9 @@ def _parse_equipment(text: str) -> dict[str, Any]:
     if re.search(r"\bMPD\b|managed[- ]pressure", text, re.IGNORECASE):
         out["MPD_CAPABLE"] = True
 
-    if re.search(r"dual[- ](?:activity|derrick)|dual bottleneck", text, re.IGNORECASE):
+    if re.search(
+        r"dual[- ](?:activity|derrick|hoisting)|dual bottleneck", text, re.IGNORECASE
+    ):
         out["DUAL_ACTIVITY"] = True
 
     best_t: Optional[float] = None
