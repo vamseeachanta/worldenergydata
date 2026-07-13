@@ -57,6 +57,8 @@ def _ft_to_m(value_ft: Optional[float]) -> Optional[float]:
 
 def _normalize(text: str) -> str:
     """Collapse extraction artifacts so field regexes can be simple."""
+    # Dotted/ellipsis leaders ("Flag ...…… Liberia") -> plain wide gap
+    text = re.sub(r"[.…]{2,}|…", "  ", text)
     # "12 ,000" / "137 ,8" -> "12,000" / "137,8"
     text = re.sub(r"(\d)\s+([,.])\s*(\d)", r"\1\2\3", text)
     # "84 ftx 41" -> "84 ft x 41"
@@ -185,6 +187,193 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     for field, value in _parse_seadrill_layout(text).items():
         out.setdefault(field, value)
 
+    # Borr dotted-leader layout — same fill-the-gaps merge.
+    for field, value in _parse_borr_layout(text).items():
+        out.setdefault(field, value)
+
+    # Shelf Drilling dotted-leader layout — same fill-the-gaps merge.
+    for field, value in _parse_shelf_layout(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_shelf_layout(text: str) -> dict[str, Any]:
+    """Parse the Shelf Drilling jackup spec-sheet layout (post dot-collapse)::
+
+        Year Built / Last Upgrade      2008/2023
+        Hull Dimensions                239.8 ft. x 224.4 ft. x 28 ft.
+        Legs (3)                       506 ft. long triangular legs
+        Cantilever Envelope            70 ft. by 30 ft.
+        Max Variable Load (drilling)   Approx. 7,500 kips*
+
+    Derrick hookload appears in prose ("static hook load capacity
+    1,600,000 lbs."). Loads in kips/lbs.
+    """
+    out: dict[str, Any] = {}
+
+    year = re.search(
+        r"Year\s+Built\s*/\s*Last\s+Upgrade\s{2,}(\d{4})", text, re.IGNORECASE
+    )
+    if year:
+        out["YEAR_BUILT"] = int(year.group(1))
+
+    dims = re.search(
+        rf"Hull\s+Dimensions\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*x\s*"
+        rf"({_NUM_TIGHT})\s*ft\.?\s*x\s*({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE,
+    )
+    if dims:
+        loa_ft = _clean_number(dims.group(1))
+        beam_ft = _clean_number(dims.group(2))
+        depth_ft = _clean_number(dims.group(3))
+        out["LOA_M"] = _ft_to_m(loa_ft)
+        out["BEAM_M"] = _ft_to_m(beam_ft)
+        out["DEPTH_M"] = _ft_to_m(depth_ft)
+        out["RAW_DIMENSIONS_FT"] = f"{loa_ft:g} x {beam_ft:g} x {depth_ft:g}"
+
+    legs = re.search(
+        rf"^\s*Legs\s*(?:\(\d+\))?\s{{2,}}({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if legs:
+        out["LEG_LENGTH_FT"] = _clean_number(legs.group(1))
+
+    cantilever = re.search(
+        rf"Cantilever\s+Envelope\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*(?:x|by)\s*"
+        rf"({_NUM_TIGHT})\s*ft",
+        text,
+        re.IGNORECASE,
+    )
+    if cantilever:
+        out["CANTILEVER_REACH_FT"] = _clean_number(cantilever.group(1))
+
+    vdl = re.search(
+        rf"Max\.?\s+Variable\s+Load[^\n]*?\s{{2,}}(?:Approx\.?\s*)?({_NUM_TIGHT})\s*kips",
+        text,
+        re.IGNORECASE,
+    )
+    if vdl:
+        value = _clean_number(vdl.group(1))
+        if value is not None:
+            out["VARIABLE_DECK_LOAD_ST"] = round(value / KIPS_PER_SHORT_TON)
+
+    hook = re.search(
+        rf"hook\s+load\s+capacity\s+(?:of\s+)?({_NUM_TIGHT})\s*lbs",
+        text,
+        re.IGNORECASE,
+    )
+    if hook:
+        value = _clean_number(hook.group(1))
+        if value is not None:
+            out["HOOKLOAD_RATING_KIPS"] = round(value / 1000)
+
+    return out
+
+
+def _parse_borr_layout(text: str) -> dict[str, Any]:
+    """Parse the Borr Drilling dotted-leader jackup layout.
+
+    Dotted leaders are collapsed to wide gaps by ``_normalize`` first::
+
+        Delivery                2019
+        Overall Dimensions      247 ft long x 230 ft wide x 27 ft deep
+        Drafts                  19 ft load line draft
+        Load Line Displacement  41,625.45 kips
+        Variable Deck           9,700 kips elevated / 5,500 kips field transit
+        Cantilever              75 ft reach aft of transom
+
+    Displacement and deck loads are quoted in kips (converted).
+    """
+    out: dict[str, Any] = {}
+
+    delivery = re.search(r"^\s*Delivery\s{2,}(\d{4})\b", text, re.MULTILINE)
+    if delivery:
+        out["YEAR_BUILT"] = int(delivery.group(1))
+
+    dims = re.search(
+        rf"Overall\s+Dimensions\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*long\s*x\s*"
+        rf"({_NUM_TIGHT})\s*ft\.?\s*wide\s*x\s*({_NUM_TIGHT})\s*ft\.?\s*deep",
+        text,
+        re.IGNORECASE,
+    )
+    if dims:
+        loa_ft = _clean_number(dims.group(1))
+        beam_ft = _clean_number(dims.group(2))
+        depth_ft = _clean_number(dims.group(3))
+        out["LOA_M"] = _ft_to_m(loa_ft)
+        out["BEAM_M"] = _ft_to_m(beam_ft)
+        out["DEPTH_M"] = _ft_to_m(depth_ft)
+        out["RAW_DIMENSIONS_FT"] = f"{loa_ft:g} x {beam_ft:g} x {depth_ft:g}"
+
+    draft = re.search(
+        rf"^\s*Drafts?\s{{2,}}({_NUM_TIGHT})\s*ft\.?\s*(?:at\s+)?(load\s*line|transit)",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if draft:
+        draft_ft = _clean_number(draft.group(1))
+        if "transit" in draft.group(2).lower():
+            out["RAW_DRAFT_TRANSIT_FT"] = draft_ft
+        else:
+            out["DRAFT_M"] = _ft_to_m(draft_ft)
+            out["RAW_DRAFT_OPERATING_FT"] = draft_ft
+
+    displacement = re.search(
+        rf"^\s*(?:Load\s+Line\s+)?Displacement\s{{2,}}({_NUM_TIGHT})\s*(kips|MT)",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if displacement:
+        value = _clean_number(displacement.group(1))
+        if value is not None:
+            if displacement.group(2).lower() == "kips":
+                value = value / KIPS_PER_SHORT_TON / SHORT_TONS_PER_TONNE
+            out["DISPLACEMENT_TONNES"] = round(value)
+
+    vdl = re.search(
+        rf"^\s*Variable\s+Deck\s{{2,}}({_NUM_TIGHT})\s*(kips|MT)\s*(?:elevated|operating)",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if vdl:
+        value = _clean_number(vdl.group(1))
+        if value is not None:
+            factor = (
+                1 / KIPS_PER_SHORT_TON
+                if vdl.group(2).lower() == "kips"
+                else SHORT_TONS_PER_TONNE
+            )
+            out["VARIABLE_DECK_LOAD_ST"] = round(value * factor)
+
+    water_ft = _search_number(
+        rf"Operating\s+Water\s+Depth\s{{2,}}({_NUM_TIGHT})\s*ft", text
+    )
+    if water_ft is not None:
+        out["WATER_DEPTH_RATING_FT"] = water_ft
+
+    # "75 ft reach aft of transom" / "75 ft / 15 ft Port & 15 ft Stbd" —
+    # the first ft value on the Cantilever line is the aft reach.
+    cantilever = re.search(
+        rf"^\s*Cantilever[^\n]*?\s{{2,}}({_NUM_TIGHT})\s*ft\b",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if cantilever:
+        out["CANTILEVER_REACH_FT"] = _clean_number(cantilever.group(1))
+
+    hook = re.search(
+        rf"^\s*Hookload\s+Capacity\s{{2,}}({_NUM_TIGHT})\s*lbs",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if hook:
+        value = _clean_number(hook.group(1))
+        if value is not None:
+            out["HOOKLOAD_RATING_KIPS"] = round(value / 1000)
+
     return out
 
 
@@ -269,7 +458,9 @@ def _parse_seadrill_layout(text: str) -> dict[str, Any]:
                 out["VARIABLE_DECK_LOAD_ST"] = round(value)
 
     legs = re.search(
-        rf"^\s*Legs\s{{2,}}(?:\d+\s*x\s*)?({_NUM_TIGHT})\s*ft", text, re.MULTILINE
+        rf"^\s*Legs\s{{2,}}(?:\(?\d+\)?\s*x?\s*)?({_NUM_TIGHT})\s*ft",
+        text,
+        re.MULTILINE,
     )
     if legs:
         out["LEG_LENGTH_FT"] = _clean_number(legs.group(1))

@@ -1,0 +1,122 @@
+# Provenance for committed Borr Drilling spec PDFs — wed issue #995.
+# Retrieved from api.borrdrilling.com/wp-content/uploads/ (public fleet pages).
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+contractor: Borr Drilling Limited
+files:
+  borr-arabia-i.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Arabia-I.pdf
+    sha256: 7e009102945acaf49359c27c87da839ede4c36070f9920dd5dbdf12a0b63cf6f
+    text_layer: false
+  borr-arabia-ii.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Arabia-II.pdf
+    sha256: 613d5e96c900100dccb44a99ff577bac779b38b76a36d66be4468101440da1d5
+    text_layer: true
+  borr-arabia-iii.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Arabia-III.pdf
+    sha256: 70d673d291758789a8f44e3063167dd41ab9ee701b710ae2683c988c81f41368
+    text_layer: true
+  borr-bestla.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Bestla-1.pdf
+    sha256: 283d8f84110f2b87193ad9429f7ac0ffd8ff89f17badac8f9dba31fc3ea6968b
+    text_layer: true
+  borr-forseti.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Forseti-1.pdf
+    sha256: eb2bdac97019c3a2cc2ec7fe04eeaca30014071abdc75b7d131f9c3cab148fe5
+    text_layer: true
+  borr-freyja.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Freyja-1.pdf
+    sha256: 943cf6c7d833b6058508d81e0fe731d6c0aabec4636a79b2f99d30830744b0ad
+    text_layer: true
+  borr-galar.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Galar.pdf
+    sha256: 0416711d8efde2912e3513600633e158e062d447bc723077fb6c9f16fc54c7ef
+    text_layer: true
+  borr-gerd.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Gerd-2.pdf
+    sha256: b9aaad1be123f518afb5c59fe2deffd785aeb4b68da7597e6b879ce3ea3fb732
+    text_layer: true
+  borr-gersemi.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Gersemi.pdf
+    sha256: 3f812c2a59d093bab5dac99e752f6391d7d3c49cf98df7d83c4c119e0e07ef6d
+    text_layer: true
+  borr-grid.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Grid.pdf
+    sha256: 27ce06630966a1058596e9a34e341b0d20cc93ac9738e4c2224690df65e05459
+    text_layer: true
+  borr-groa.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Groa-1.pdf
+    sha256: f621dd1e165cf7cf924201ee18e3343a161150b312634763afa202c01ba95001
+    text_layer: true
+  borr-gunnlod.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Gunnlod.pdf
+    sha256: 1eadf89e4cc2ce3fce3fc22871252772ddfddc6fdae7cda57b799dd305e870eb
+    text_layer: true
+  borr-hild.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Hild.pdf
+    sha256: 48a091cbf3deb14e0f0aa27c85075116574a63dd03fe85337ed92718926cf570
+    text_layer: true
+  borr-idun.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Idun.pdf
+    sha256: 59b9c3e9d7541e0a1449e0195ce773d902a6169b034e7268e97120b4851c140b
+    text_layer: true
+  borr-joro.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Joro-1.pdf
+    sha256: 9702528dabcae7d3e4476202af42419b8e8627b633e27cb1579bf41b48aab7ab
+    text_layer: true
+  borr-mist.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Mist.pdf
+    sha256: 7069e85f672ea2118719df16583c5ee8550f449ad5ce1ab6675706f4c22470a5
+    text_layer: true
+  borr-natt.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Natt-1-1.pdf
+    sha256: 444b35d4c07ebb20a4cee03b8b04333c2597ef097c9466054845f6ab0e7a2c1b
+    text_layer: true
+  borr-njord.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Njord.pdf
+    sha256: 6f5b739152585ebb23b7875cd7c970d1ee78a9a5f1bf1e2198143eae9777d63b
+    text_layer: true
+  borr-norve.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Borr-Drilling-Norve-1.pdf
+    sha256: 7d15dde2df50a5a16dae16109d81e618fe1b15518106debd42d9804fa284af87
+    text_layer: true
+  borr-odin.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Odin.pdf
+    sha256: a19ff65e0f45fdf2cc00450d83a0defb2f4ef74a62af6f303840cf3db68a5643
+    text_layer: true
+  borr-prospector-1.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Prospector-1.pdf
+    sha256: d112e63db72c8c99d7797319daab1eda2a0b78b5b3ecb4af7700f6f125b4a327
+    text_layer: false
+  borr-prospector-5.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Prospector-5.pdf
+    sha256: ad5b604023e9e8b34492f3bd83962d6f079de42658436aca53670b044751749d
+    text_layer: false
+  borr-ran.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Ran.pdf
+    sha256: 76e33173a6b4f56819052eecc26cb149dea1c940c42d3ff8addc7bba40feb41e
+    text_layer: false
+  borr-saga.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Saga-1.pdf
+    sha256: 2801d12901a45fc65b96b36de50777b7e2009022d3fc2bebeb2de7389623f786
+    text_layer: true
+  borr-sif.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2026/01/Borr-Drilling-Sif-1.pdf
+    sha256: eccf481657dcda3f37f7ff775cac171db9b2077cfc9f18e87183f8424dae6690
+    text_layer: true
+  borr-skald.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Skald-1.pdf
+    sha256: ba479df0c574f6caa7a9150ccdf29a521449ca7920903b331514df3d0f1d22f0
+    text_layer: true
+  borr-thor.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Thor-Dec-2025.pdf
+    sha256: 79ef86ff622f6ed43719c5a69f22c011ea1793ce839346c9673a921427c895d2
+    text_layer: true
+  borr-vali.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Vali-1.pdf
+    sha256: 1389b3d22080668937de8d48b8ce273458bd301af4ced4b9f9a8b29431073b30
+    text_layer: true
+  borr-var.pdf:
+    url: https://api.borrdrilling.com/wp-content/uploads/2024/08/Short-Specification-Var-Dec-2025.pdf
+    sha256: 9c2f5437fc135cd3d6bf5af5f61a930073e3a0b554c38f9a63aa2b0094949a0e
+    text_layer: true

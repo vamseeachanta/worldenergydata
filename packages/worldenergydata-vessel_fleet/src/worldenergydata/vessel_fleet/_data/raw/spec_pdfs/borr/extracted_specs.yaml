@@ -1,0 +1,586 @@
+# 'Ratings & Dimensions' extracted from Borr Drilling jackup spec PDFs — wed issue #995 (epic #991).
+# Fleet: 29 modern jackups (KFELS Super A/B/B-Bigfoot/N, PPL Pacific Class 400,
+# Gusto CJ46/CJ50, F&G JU2000E). All jack_up.
+#
+# extraction: text_parse          -> parsers/rig_summary.py (Borr dotted-leader profile)
+# extraction: image_transcription -> print-to-PDF scans; transcribed from 100-dpi renders (2026-07-13)
+# Displacement/Variable Deck quoted in kips (or MT on newbuild sheets) -> tonnes / short tons.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+owner: Borr Drilling Limited
+issue: 995
+vessels:
+  Arabia I:
+    pdf: borr-arabia-i.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS B Class
+    extraction: image_transcription
+    specs:
+      YEAR_BUILT: 2020
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      DRAFT_M: 5.0
+      DISPLACEMENT_TONNES: 14823
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3425
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 234 x 208 x 25
+      RAW_DRAFT_OPERATING_FT: 16.5
+  Arabia II:
+    pdf: borr-arabia-ii.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS B Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2019
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 71.3
+      BEAM_M: 63.4
+      DEPTH_M: 7.6
+      DRAFT_M: 5.0
+      DISPLACEMENT_TONNES: 14823
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3425
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 234 x 208 x 25
+      RAW_DRAFT_OPERATING_FT: 16.5
+  Arabia III:
+    pdf: borr-arabia-iii.pdf
+    rig_type: jack_up
+    rig_design: KFELS Super A
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      DISPLACEMENT_TONNES: 23503
+      LEG_LENGTH_FT: 525.0
+      VARIABLE_DECK_LOAD_ST: 4104
+      HOOKLOAD_RATING_KIPS: 2000
+  Bestla:
+    pdf: borr-bestla.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ50 X 100 MC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 70.1
+      BEAM_M: 68.0
+      DEPTH_M: 9.4
+      DISPLACEMENT_TONNES: 21530
+      LEG_LENGTH_FT: 480.0
+      VARIABLE_DECK_LOAD_ST: 5725
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 230 x 223 x 31
+      RAW_DRAFT_TRANSIT_FT: 18.0
+  Forseti:
+    pdf: borr-forseti.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      DISPLACEMENT_TONNES: 26109.65
+      LEG_LENGTH_FT: 554.7
+      VARIABLE_DECK_LOAD_ST: 5989
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
+      RAW_DRAFT_TRANSIT_FT: 19.0
+  Freyja:
+    pdf: borr-freyja.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      DISPLACEMENT_TONNES: 26109.65
+      LEG_LENGTH_FT: 554.7
+      VARIABLE_DECK_LOAD_ST: 5943
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
+      RAW_DRAFT_TRANSIT_FT: 19.0
+  Galar:
+    pdf: borr-galar.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2017
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19883
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3749
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Gerd:
+    pdf: borr-gerd.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Vanuatu
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19886
+      LEG_LENGTH_FT: 533.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3749
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Gersemi:
+    pdf: borr-gersemi.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19888
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3748
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Grid:
+    pdf: borr-grid.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19892
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4104
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Groa:
+    pdf: borr-groa.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Vanuatu
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19888
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3749
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Gunnlod:
+    pdf: borr-gunnlod.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19888
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3974
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Hild:
+    pdf: borr-hild.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class
+    extraction: text_parse
+    specs:
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 66.4
+      DEPTH_M: 7.6
+      DRAFT_M: 5.2
+      DISPLACEMENT_TONNES: 16513
+      LEG_LENGTH_FT: 514.0
+      CANTILEVER_REACH_FT: 70.0
+      VARIABLE_DECK_LOAD_ST: 3992
+      RAW_DIMENSIONS_FT: 246 x 218 x 25
+      RAW_DRAFT_OPERATING_FT: 17.0
+  Idun:
+    pdf: borr-idun.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Bigfoot Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 7.6
+      DRAFT_M: 5.5
+      DISPLACEMENT_TONNES: 17414
+      LEG_LENGTH_FT: 486.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4600
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 246 x 226 x 25
+      RAW_DRAFT_OPERATING_FT: 18.0
+  Joro:
+    pdf: borr-joro.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ50 X 100 MC
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 70.1
+      BEAM_M: 68.0
+      DEPTH_M: 9.4
+      DISPLACEMENT_TONNES: 22389
+      LEG_LENGTH_FT: 480.0
+      VARIABLE_DECK_LOAD_ST: 5225
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 230 x 223 x 31
+      RAW_DRAFT_TRANSIT_FT: 18.0
+  Mist:
+    pdf: borr-mist.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Bigfoot Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 7.6
+      DRAFT_M: 5.5
+      DISPLACEMENT_TONNES: 17414
+      LEG_LENGTH_FT: 486.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4600
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 246 x 226 x 25
+      RAW_DRAFT_OPERATING_FT: 18.0
+  Natt:
+    pdf: borr-natt.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19892
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3748
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Njord:
+    pdf: borr-njord.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2019
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19885
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3748
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Norve:
+    pdf: borr-norve.pdf
+    rig_type: jack_up
+    rig_design: PPL Pacific Class 400
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Vanuatu
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      DEPTH_M: 8.5
+      DRAFT_M: 5.9
+      DISPLACEMENT_TONNES: 19889
+      LEG_LENGTH_FT: 532.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 3748
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 236.5 x 224.4 x 27.9
+      RAW_DRAFT_OPERATING_FT: 19.5
+  Odin:
+    pdf: borr-odin.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super “B” Bigfoot Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 7.6
+      DRAFT_M: 5.5
+      DISPLACEMENT_TONNES: 18940
+      LEG_LENGTH_FT: 486.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4600
+      HOOKLOAD_RATING_KIPS: 1500
+      RAW_DIMENSIONS_FT: 246 x 226 x 25
+      RAW_DRAFT_OPERATING_FT: 18.0
+  Prospector 1:
+    pdf: borr-prospector-1.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU2000E
+    extraction: image_transcription
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Vanuatu
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      DRAFT_M: 6.7
+      DISPLACEMENT_TONNES: 22994
+      LEG_LENGTH_FT: 547.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4150
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 231 x 250 x 31
+      RAW_DRAFT_OPERATING_FT: 21.9
+  Prospector 5:
+    pdf: borr-prospector-5.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU2000E
+    extraction: image_transcription
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Vanuatu
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 76.2
+      DEPTH_M: 9.4
+      DRAFT_M: 6.7
+      DISPLACEMENT_TONNES: 22994
+      LEG_LENGTH_FT: 547.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4960
+      HOOKLOAD_RATING_KIPS: 2200
+      RAW_DIMENSIONS_FT: 231 x 250 x 31
+      RAW_DRAFT_OPERATING_FT: 21.9
+  Ran:
+    pdf: borr-ran.pdf
+    rig_type: jack_up
+    rig_design: KFELS Super A
+    extraction: image_transcription
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 70.7
+      DEPTH_M: 9.4
+      DRAFT_M: 6.7
+      DISPLACEMENT_TONNES: 23520
+      LEG_LENGTH_FT: 525.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4104
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 246 x 232 x 31
+      RAW_DRAFT_OPERATING_FT: 22.0
+  Saga:
+    pdf: borr-saga.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class Bigfoot
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 8.2
+      DRAFT_M: 5.8
+      DISPLACEMENT_TONNES: 18381
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4850
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 246 x 226 x 27
+      RAW_DRAFT_OPERATING_FT: 19.0
+  Sif:
+    pdf: borr-sif.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU3000N
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 84.4
+      DEPTH_M: 9.4
+      DISPLACEMENT_TONNES: 26110
+      LEG_LENGTH_FT: 554.7
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 5893
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 231 x 277 x 31
+  Skald:
+    pdf: borr-skald.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class Bigfoot
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 8.2
+      DRAFT_M: 5.8
+      DISPLACEMENT_TONNES: 18381
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4850
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 246 x 226 x 27
+      RAW_DRAFT_OPERATING_FT: 19.0
+  Thor:
+    pdf: borr-thor.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class, Bigfoot
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2019
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.3
+      BEAM_M: 70.1
+      DEPTH_M: 8.2
+      DRAFT_M: 5.8
+      DISPLACEMENT_TONNES: 18881
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4850
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 247 x 230 x 27
+      RAW_DRAFT_OPERATING_FT: 19.0
+  Vali:
+    pdf: borr-vali.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class Bigfoot
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2024
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 8.2
+      DRAFT_M: 5.8
+      DISPLACEMENT_TONNES: 18381
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4850
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 246 x 226 x 27
+      RAW_DRAFT_OPERATING_FT: 19.0
+  Var:
+    pdf: borr-var.pdf
+    rig_type: jack_up
+    rig_design: Keppel FELS Super B Class Bigfoot
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2024
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 75.0
+      BEAM_M: 68.9
+      DEPTH_M: 8.2
+      DRAFT_M: 5.8
+      DISPLACEMENT_TONNES: 18381
+      LEG_LENGTH_FT: 517.0
+      CANTILEVER_REACH_FT: 75.0
+      VARIABLE_DECK_LOAD_ST: 4850
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 246 x 226 x 27
+      RAW_DRAFT_OPERATING_FT: 19.0
