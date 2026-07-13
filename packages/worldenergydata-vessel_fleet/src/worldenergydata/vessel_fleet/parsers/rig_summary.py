@@ -168,6 +168,110 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     for field, value in _parse_spec_sheet_layout(text).items():
         out.setdefault(field, value)
 
+    # Transocean "RigSpecs" layout — same fill-the-gaps merge.
+    for field, value in _parse_transocean_layout(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_transocean_layout(text: str) -> dict[str, Any]:
+    """Parse the Transocean deepwater.com RigSpecs layout.
+
+    Compound lines with metric equivalents in parentheses::
+
+        Design / Generation   Jurong Espadon JE3T Ultra Deepwater Drillship
+        Dimensions            817 ft. (249 m) x 139.4 ft. (42.5 m) x 64 ft. (19.5 m) Depth
+        Drafts                Maximum Operating 38.05 ft. (11.6 m) / Transit 26.3 ft. (8 m)
+        Displacement          103,066 st (93,500 mt) (Loadline)
+        Moonpool              92ft (28m) length x 29.5ft (9m) width
+        Gross Hook Loads      (Main) 1,700 st. (1,542 mt) capacity
+
+    Metric values are taken from the parentheses; loads quoted in short tons.
+    """
+    out: dict[str, Any] = {}
+
+    year = re.search(
+        r"Year\s+Entered\s+Service\s*/?[^0-9]*(\d{4})", text, re.IGNORECASE
+    )
+    if year:
+        out["YEAR_BUILT"] = int(year.group(1))
+
+    design = re.search(
+        r"Design\s*/\s*Generation\s{2,}(.+?)(?:\s{3,}|$)", text, re.MULTILINE
+    )
+    if design:
+        out["RIG_DESIGN"] = re.sub(r"\s{2,}", " ", design.group(1)).strip()
+
+    flag = re.search(r"^\s*Flag\s{2,}([A-Za-z][A-Za-z ]+?)\s*$", text, re.MULTILINE)
+    if flag:
+        out["FLAG_STATE"] = flag.group(1).strip()
+
+    dims = re.search(
+        rf"Dimensions\s+({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\.?\)\s*(?:long|LOA)?\s*x\s*"
+        rf"({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\.?\)\s*(?:wide|beam)?"
+        rf"(?:\s*x\s*({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\.?\))?",
+        text,
+        re.IGNORECASE,
+    )
+    if dims:
+        out["LOA_M"] = round(_clean_number(dims.group(2)), 1)
+        out["BEAM_M"] = round(_clean_number(dims.group(4)), 1)
+        raw = f"{_clean_number(dims.group(1)):g} x {_clean_number(dims.group(3)):g}"
+        if dims.group(5):
+            out["DEPTH_M"] = round(_clean_number(dims.group(6)), 1)
+            raw += f" x {_clean_number(dims.group(5)):g}"
+        out["RAW_DIMENSIONS_FT"] = raw
+
+    drafts = re.search(
+        rf"Drafts\s+[^0-9]*({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\)[^/]*/"
+        rf"[^0-9]*({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\)",
+        text,
+        re.IGNORECASE,
+    )
+    if drafts:
+        out["DRAFT_M"] = round(_clean_number(drafts.group(2)), 1)
+        out["RAW_DRAFT_OPERATING_FT"] = _clean_number(drafts.group(1))
+        out["RAW_DRAFT_TRANSIT_FT"] = _clean_number(drafts.group(3))
+
+    displacement = re.search(
+        rf"Displacement\s+({_NUM})\s*st\s*\(({_NUM})\s*mt\)", text, re.IGNORECASE
+    )
+    if displacement:
+        out["DISPLACEMENT_TONNES"] = _clean_number(displacement.group(2))
+
+    water_ft = _search_number(rf"Maximum\s+Water\s+Depth\s*({_NUM})\s*ft", text)
+    if water_ft is not None:
+        out["WATER_DEPTH_RATING_FT"] = water_ft
+
+    drill_ft = _search_number(rf"Maximum\s+Drilling\s+Depth\s*({_NUM})\s*ft", text)
+    if drill_ft is not None:
+        out["DRILLING_DEPTH_RATING_FT"] = drill_ft
+
+    moonpool = re.search(
+        rf"Moonpool\s+({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\.?\)\s*"
+        rf"(?:length|Fwd\s+to\s+Aft)?\s*x\s*"
+        rf"({_NUM})\s*ft\.?\s*\(({_NUM})\s*m\.?\)",
+        text,
+        re.IGNORECASE,
+    )
+    if moonpool:
+        out["MOONPOOL_LENGTH_M"] = round(_clean_number(moonpool.group(2)), 1)
+        out["MOONPOOL_WIDTH_M"] = round(_clean_number(moonpool.group(4)), 1)
+        out["RAW_MOONPOOL_FT"] = (
+            f"{_clean_number(moonpool.group(1)):g} x {_clean_number(moonpool.group(3)):g}"
+        )
+
+    hook = re.search(
+        rf"(?:Gross\s+Hook\s+Loads?|Hookload\s+Capacity)\s*\(Main\)\s*({_NUM})\s*st",
+        text,
+        re.IGNORECASE,
+    )
+    if hook:
+        value = _clean_number(hook.group(1))
+        if value is not None:
+            out["HOOKLOAD_RATING_KIPS"] = round(value * KIPS_PER_SHORT_TON)
+
     return out
 
 
