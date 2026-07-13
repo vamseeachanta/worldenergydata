@@ -1,5 +1,6 @@
 # 'Ratings & Dimensions' extracted from Noble rig-summary PDFs — wed issue #987.
-# Samsung 96K drillship class (ex Maersk V-class + ex Pacific Drilling hulls).
+# Noble fleet: 31 rigs — drillships (Samsung 96K, Gusto P10000, Samsung 12000,
+# Globetrotter), semis (DSS21, Victory, ExD, CS60E, Bingo 3000), CJ70/CJ50 jackups.
 #
 # extraction: text_parse         -> parsers/rig_summary.py over the committed PDF;
 #                                    regenerate with scripts/vessel_fleet/ingest_noble_spec_pdfs.py --reparse
@@ -15,6 +16,8 @@ issue: 987
 vessels:
   Noble Valiant:
     pdf: noble-valiant.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: text_parse
     aliases: [MAERSK VALIANT]
     specs:
@@ -39,6 +42,8 @@ vessels:
       RAW_MOONPOOL_FT: 84 x 41
   Noble Venturer:
     pdf: noble-venturer.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: image_transcription
     aliases: [MAERSK VENTURER]
     specs:
@@ -63,6 +68,8 @@ vessels:
       RAW_MOONPOOL_FT: 84 x 41
   Noble Viking:
     pdf: noble-viking.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: text_parse
     aliases: [MAERSK VIKING]
     specs:
@@ -87,6 +94,8 @@ vessels:
       RAW_MOONPOOL_FT: 84 x 41
   Noble Voyager:
     pdf: noble-voyager.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: image_transcription
     aliases: [MAERSK VOYAGER]
     specs:
@@ -111,6 +120,8 @@ vessels:
       RAW_MOONPOOL_FT: 84 x 41
   Noble Faye Kozack:
     pdf: noble-faye-kozack.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: text_parse
     aliases: [PACIFIC KHAMSIN]  # renamed 2022; IMO 9623324
     specs:
@@ -133,6 +144,8 @@ vessels:
       RAW_MOONPOOL_FT: 84 x 41
   Noble Stanley Lafosse:
     pdf: noble-stanley-lafosse.pdf
+    rig_type: drillship
+    rig_design: Ship shaped, Samsung 96K
     extraction: text_parse
     aliases: [PACIFIC SHARAV]  # renamed 2022; IMO 9623336
     specs:
@@ -152,3 +165,539 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 115 x 41
+  Noble BlackHawk:
+    pdf: noble-blackhawk.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    aliases: [DIAMOND OCEAN BLACKHAWK, OCEAN BLACKHAWK]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.7
+      BEAM_M: 36.0
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 70459.0
+      MOONPOOL_LENGTH_M: 22.2
+      MOONPOOL_WIDTH_M: 9.8
+      VARIABLE_DECK_LOAD_ST: 24300
+      RAW_MAIN_DECK_FT: 757 x 118
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_MOONPOOL_FT: 73 x 32
+  Noble BlackHornet:
+    pdf: noble-blackhornet.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    aliases: [DIAMOND OCEAN BLACKHORNET, OCEAN BLACKHORNET]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.7
+      BEAM_M: 36.0
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 70459.0
+      MOONPOOL_LENGTH_M: 22.2
+      MOONPOOL_WIDTH_M: 9.8
+      VARIABLE_DECK_LOAD_ST: 24300
+      RAW_MAIN_DECK_FT: 757 x 118
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_MOONPOOL_FT: 73 x 32
+  Noble BlackLion:
+    pdf: noble-blacklion.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    aliases: [DIAMOND OCEAN BLACKLION, OCEAN BLACKLION]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.7
+      BEAM_M: 36.0
+      DISPLACEMENT_TONNES: 70459.0
+      MOONPOOL_LENGTH_M: 22.2
+      MOONPOOL_WIDTH_M: 9.8
+      VARIABLE_DECK_LOAD_ST: 24300
+      RAW_MAIN_DECK_FT: 757 x 118
+      RAW_MOONPOOL_FT: 73 x 32
+  Noble BlackRhino:
+    pdf: noble-blackrhino.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    aliases: [DIAMOND OCEAN BLACKRHINO, OCEAN BLACKRHINO]
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 230.7
+      BEAM_M: 36.0
+      DRAFT_M: 11.0
+      DISPLACEMENT_TONNES: 70459.0
+      MOONPOOL_LENGTH_M: 22.2
+      MOONPOOL_WIDTH_M: 9.8
+      VARIABLE_DECK_LOAD_ST: 24300
+      RAW_MAIN_DECK_FT: 757 x 118
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_MOONPOOL_FT: 73 x 32
+  Noble Bob Douglas:
+    pdf: noble-bob-douglas.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.6
+      DRAFT_M: 11.0
+      MOONPOOL_LENGTH_M: 35.1
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 3500.0
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.0
+      RAW_DEPTH_FT: 61.0
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_DRAFT_TRANSIT_FT: 36.0
+      RAW_MOONPOOL_FT: 115 x 41
+  Noble Don Taylor:
+    pdf: noble-don-taylor.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.6
+      DRAFT_M: 11.0
+      MOONPOOL_LENGTH_M: 35.1
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 3500.0
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.0
+      RAW_DEPTH_FT: 61.0
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_DRAFT_TRANSIT_FT: 36.0
+      RAW_MOONPOOL_FT: 115 x 41
+  Noble Sam Croft:
+    pdf: noble-sam-croft.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.6
+      DRAFT_M: 11.0
+      MOONPOOL_LENGTH_M: 35.1
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 3500.0
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.0
+      RAW_DEPTH_FT: 61.0
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_DRAFT_TRANSIT_FT: 36.0
+      RAW_MOONPOOL_FT: 115 x 41
+  Noble Tom Madden:
+    pdf: noble-tom-madden.pdf
+    rig_type: drillship
+    rig_design: Gusto P10000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 229.2
+      BEAM_M: 36.0
+      DEPTH_M: 18.6
+      DRAFT_M: 11.0
+      MOONPOOL_LENGTH_M: 35.1
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 3500.0
+      RAW_LENGTH_FT: 752.0
+      RAW_BREADTH_FT: 118.0
+      RAW_DEPTH_FT: 61.0
+      RAW_DRAFT_OPERATING_FT: 36.0
+      RAW_DRAFT_TRANSIT_FT: 36.0
+      RAW_MOONPOOL_FT: 115 x 41
+  Noble Gerry de Souza:
+    pdf: noble-gerry-de-souza.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000 Double Hull
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Globetrotter I:
+    pdf: noble-globetrotter-i.pdf
+    rig_type: drillship
+    rig_design: Globetrotter Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 189.0
+      BEAM_M: 32.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      MOONPOOL_LENGTH_M: 27.1
+      MOONPOOL_WIDTH_M: 11.3
+      VARIABLE_DECK_LOAD_ST: 22730
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2100.0
+      RAW_LENGTH_FT: 620.0
+      RAW_BREADTH_FT: 105.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 39.0
+      RAW_MOONPOOL_FT: 89 x 37
+  Noble Globetrotter II:
+    pdf: noble-globetrotter-ii.pdf
+    rig_type: drillship
+    rig_design: Globetrotter Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 189.0
+      BEAM_M: 32.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      MOONPOOL_LENGTH_M: 27.1
+      MOONPOOL_WIDTH_M: 11.3
+      VARIABLE_DECK_LOAD_ST: 22730
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2100.0
+      RAW_LENGTH_FT: 620.0
+      RAW_BREADTH_FT: 105.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 39.0
+      RAW_MOONPOOL_FT: 89 x 37
+  Noble Courage:
+    pdf: noble-courage.pdf
+    rig_type: semi_submersible
+    rig_design: F&G ExD Millennium
+    extraction: text_parse
+    aliases: [OCEAN COURAGE]
+    specs:
+      YEAR_BUILT: 2009
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 74.4
+      BEAM_M: 74.4
+      DRAFT_M: 18.0
+      DISPLACEMENT_TONNES: 46700.0
+      MOONPOOL_LENGTH_M: 41.3
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 8929
+      RAW_MAIN_DECK_FT: 244.2 x 244.2
+      RAW_DRAFT_OPERATING_FT: 59.0
+      RAW_MOONPOOL_FT: 135.6 x 29.5
+  Noble Endeavor:
+    pdf: noble-endeavor.pdf
+    rig_type: semi_submersible
+    rig_design: Odeco Victory
+    extraction: text_parse
+    aliases: [OCEAN ENDEAVOR, DIAMOND OCEAN ENDEAVOR]
+    specs:
+      YEAR_BUILT: 1975
+      WATER_DEPTH_RATING_FT: 8000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 93.3
+      BEAM_M: 93.3
+      DRAFT_M: 22.7
+      DISPLACEMENT_TONNES: 42570.0
+      MOONPOOL_LENGTH_M: 27.7
+      MOONPOOL_WIDTH_M: 7.6
+      VARIABLE_DECK_LOAD_ST: 6614
+      RAW_MAIN_DECK_FT: 306 x 306
+      RAW_DRAFT_OPERATING_FT: 74.6
+      RAW_MOONPOOL_FT: 91 x 25
+  Noble GreatWhite:
+    pdf: noble-greatwhite.pdf
+    rig_type: semi_submersible
+    rig_design: Moss CS60E
+    extraction: text_parse
+    aliases: [OCEAN GREATWHITE]
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 9840.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 96.1
+      BEAM_M: 77.8
+      DRAFT_M: 23.5
+      DISPLACEMENT_TONNES: 68375.0
+      MOONPOOL_LENGTH_M: 29.1
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 8267
+      RAW_MAIN_DECK_FT: 315 x 255
+      RAW_DRAFT_OPERATING_FT: 77.0
+      RAW_MOONPOOL_FT: 95 x 29.5
+  Ocean Apex:
+    pdf: ocean-apex.pdf
+    rig_type: semi_submersible
+    rig_design: Enhanced Victory Class
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 6000.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 110.0
+      BEAM_M: 97.5
+      DRAFT_M: 23.2
+      MOONPOOL_LENGTH_M: 24.6
+      MOONPOOL_WIDTH_M: 22.0
+      VARIABLE_DECK_LOAD_ST: 7840
+      RAW_MAIN_DECK_FT: 361 x 320
+      RAW_DRAFT_OPERATING_FT: 76.0
+      RAW_MOONPOOL_FT: 80.7 x 72
+  Noble Patriot:
+    pdf: noble-patriot.pdf
+    rig_type: semi_submersible
+    rig_design: Trosvik Bingo 3000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 1983
+      WATER_DEPTH_RATING_FT: 1476.0
+      DRILLING_DEPTH_RATING_FT: 20000.0
+      LOA_M: 75.0
+      BEAM_M: 63.0
+      DRAFT_M: 23.5
+      DISPLACEMENT_TONNES: 33010.0
+      MOONPOOL_LENGTH_M: 6.1
+      MOONPOOL_WIDTH_M: 21.9
+      VARIABLE_DECK_LOAD_ST: 3858
+      RAW_MAIN_DECK_FT: 246 x 206.6
+      RAW_DRAFT_OPERATING_FT: 77.0
+      RAW_MOONPOOL_FT: 20 x 72
+  Noble Deliverer:
+    pdf: noble-deliverer.pdf
+    rig_type: semi_submersible
+    rig_design: DSS21-DPS2
+    extraction: text_parse
+    aliases: [MAERSK DELIVERER]
+    specs:
+      YEAR_BUILT: 2008
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 117.0
+      BEAM_M: 78.0
+      DEPTH_M: 19.0
+      DRAFT_M: 20.5
+      MOONPOOL_LENGTH_M: 33.0
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 11480
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 384.0
+      RAW_BREADTH_FT: 256.0
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 67.3
+      RAW_DRAFT_TRANSIT_FT: 31.8
+      RAW_MOONPOOL_FT: 108.3 x 29.5
+  Noble Developer:
+    pdf: noble-developer.pdf
+    rig_type: semi_submersible
+    rig_design: DSS21-DPS2
+    extraction: text_parse
+    aliases: [MAERSK DEVELOPER]
+    specs:
+      YEAR_BUILT: 2008
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 117.0
+      BEAM_M: 78.0
+      DEPTH_M: 19.0
+      DRAFT_M: 20.5
+      MOONPOOL_LENGTH_M: 33.0
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 11480
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 384.0
+      RAW_BREADTH_FT: 256.0
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 67.3
+      RAW_DRAFT_TRANSIT_FT: 31.8
+      RAW_MOONPOOL_FT: 108.3 x 29.5
+  Noble Discoverer:
+    pdf: noble-discoverer.pdf
+    rig_type: semi_submersible
+    rig_design: DSS21-DPS2
+    extraction: text_parse
+    aliases: [MAERSK DISCOVERER]
+    specs:
+      YEAR_BUILT: 2009
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 117.0
+      BEAM_M: 78.0
+      DEPTH_M: 19.0
+      DRAFT_M: 20.5
+      VARIABLE_DECK_LOAD_ST: 11480
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 384.0
+      RAW_BREADTH_FT: 256.0
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 67.3
+      RAW_DRAFT_TRANSIT_FT: 31.8
+  Noble Innovator:
+    pdf: noble-innovator.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ 70 - 150 MC
+    extraction: text_parse
+    aliases: [MAERSK INNOVATOR]
+    specs:
+      YEAR_BUILT: 2003
+      FLAG_STATE: Danish
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 88.7
+      BEAM_M: 102.4
+      DEPTH_M: 12.0
+      VARIABLE_DECK_LOAD_ST: 14330
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 1804.0
+      RAW_LENGTH_FT: 291.0
+      RAW_BREADTH_FT: 336.0
+      RAW_DEPTH_FT: 39.4
+  Noble Integrator:
+    pdf: noble-integrator.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ70 X150 MD
+    extraction: text_parse
+    aliases: [MAERSK INTEGRATOR]
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 88.7
+      BEAM_M: 105.5
+      DEPTH_M: 12.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2280.0
+      RAW_LENGTH_FT: 291.0
+      RAW_BREADTH_FT: 346.0
+      RAW_DEPTH_FT: 39.4
+  Noble Interceptor:
+    pdf: noble-interceptor.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ70 X150 MD
+    extraction: text_parse
+    aliases: [MAERSK INTERCEPTOR]
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 88.7
+      BEAM_M: 105.2
+      DEPTH_M: 12.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2280.0
+      RAW_LENGTH_FT: 291.0
+      RAW_BREADTH_FT: 345.0
+      RAW_DEPTH_FT: 39.4
+  Noble Intrepid:
+    pdf: noble-intrepid.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ70 X150 MD
+    extraction: text_parse
+    aliases: [MAERSK INTREPID]
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 88.7
+      BEAM_M: 105.2
+      DEPTH_M: 12.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2280.0
+      RAW_LENGTH_FT: 291.0
+      RAW_BREADTH_FT: 345.0
+      RAW_DEPTH_FT: 39.4
+  Noble Invincible:
+    pdf: noble-invincible.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ70 X150 MD
+    extraction: text_parse
+    aliases: [MAERSK INVINCIBLE]
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 492.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 88.7
+      BEAM_M: 105.2
+      DEPTH_M: 12.0
+      HOOKLOAD_RATING_KIPS: 2000
+      SETBACK_CAPACITY_KIPS: 2270.0
+      RAW_LENGTH_FT: 291.0
+      RAW_BREADTH_FT: 345.0
+      RAW_DEPTH_FT: 39.4
+  Noble Resolve:
+    pdf: noble-resolve.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ50 X100 MC
+    extraction: text_parse
+    aliases: [MAERSK RESOLVE]
+    specs:
+      YEAR_BUILT: 2009
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 70.1
+      BEAM_M: 68.0
+      DEPTH_M: 9.5
+      VARIABLE_DECK_LOAD_ST: 4950
+      HOOKLOAD_RATING_KIPS: 1500
+      SETBACK_CAPACITY_KIPS: 1320.0
+      RAW_LENGTH_FT: 230.0
+      RAW_BREADTH_FT: 223.0
+      RAW_DEPTH_FT: 31.2

@@ -28,3 +28,103 @@ files:
     url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Stanley-Lafosse-Rig-Summary.pdf
     sha256: b5cca655f021d7ef11d427ac2d2323bf0bc271d1a2982b948c09183d44882e54
     text_layer: true
+  noble-blackhawk.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-BlackHawk-Rig-Summary.pdf
+    sha256: b994ee08a158f163d783944e217a9822c79beb4ea143821e4ce9a8ca97b361eb
+    text_layer: true
+  noble-blackhornet.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-BlackHornet-Rig-Summary.pdf
+    sha256: 719aae8166770e8b2e529b63278ea61047c0c7eb5bc0564d3876a12dd59fd22b
+    text_layer: true
+  noble-blacklion.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-BlackLion-Rig-Summary.pdf
+    sha256: 81023ca204efac53e460c6f030227bf0b2675a47ae22f5c5983cadbc1a0f82af
+    text_layer: true
+  noble-blackrhino.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/ocean-blackrhino-specification-sheet-revised.pdf
+    sha256: 53f1db8fd30114b0b51a63031c799af2345818dcb5230a4f6655293ed41e7386
+    text_layer: true
+  noble-bob-douglas.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Bob-Douglas-Rig-Summary.pdf
+    sha256: e13daed9eb3deaa6d9f01c95105b1960cbd009d60df88f947b9cfa9d314e1771
+    text_layer: true
+  noble-courage.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/ocean-courage-specification-sheet-revised.pdf
+    sha256: 7f91931a9d68858097826f76cf25f3903c83040e36492a45395218be0904f5ed
+    text_layer: true
+  noble-deliverer.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Deliverer-Rig-Summary.pdf
+    sha256: 71200bcaf56b246b03d92e2b54eda3b312e2544ebc28c74a42255b1d2354ef86
+    text_layer: true
+  noble-developer.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Developer-Rig-Summary.pdf
+    sha256: a277f2ded4d17f187b8ef75f4c31a07eb95983ef4f317656a35bd8d907ebc2fb
+    text_layer: true
+  noble-discoverer.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Discoverer-Rig-Summary.pdf
+    sha256: d912d2d85be3eaa3ab68b2670f0b0f9cce02dd41588e86233279ae9e4f37e49e
+    text_layer: true
+  noble-don-taylor.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Don-Taylor-Rig-Summary.pdf
+    sha256: 9dca38a4be1deb3dfbd21bb28d5c86e0982c95a6f2dc089556f294b4e2d8ba56
+    text_layer: true
+  noble-endeavor.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Endeavor-Rig-Summary.pdf
+    sha256: c099c7a0bc6537cf17679b8ba4123e74c949ac0565ed08a078afc4fd93cfa3b2
+    text_layer: true
+  noble-gerry-de-souza.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Gerry-de-Souza-Rig-Summary.pdf
+    sha256: 0203c4ef3ec1f5308a9f8656255c79f8f0014daca48f494b8bcd974bee7aaddd
+    text_layer: true
+  noble-globetrotter-i.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-GlobetrotterI.pdf
+    sha256: b23f3c486a0d7229b565d18ffabebaf2ab96880747bbceb21ef2441d820677fb
+    text_layer: true
+  noble-globetrotter-ii.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-GlobetrotterII.pdf
+    sha256: 67a3ca7f2506aaa20d9fe5900559321927648bc88cbaf564b2861c445b6fdd7e
+    text_layer: true
+  noble-greatwhite.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/greatwhite-specification-sheet-revised.pdf
+    sha256: d9610cbea4e9ab0728d1e004e8c71d271aa38f389a5355e7c6c6d064025e05d8
+    text_layer: true
+  noble-innovator.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Innovator-Rig-Summary.pdf
+    sha256: 4344afd0c7261a2ee33916dba129bd4fe018f52bfb88233e48cd3d36bffb69ec
+    text_layer: true
+  noble-integrator.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Integrator-Rig-Summary.pdf
+    sha256: 2da361db86b54b8d59a2a75fde7897d0cf20c9b88c2dd13895481b89b9a1a611
+    text_layer: true
+  noble-interceptor.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Interceptor-Rig-Summary.pdf
+    sha256: 5ea3f8ccc2df67618a39e5711f6417eba95ffc422cb13c1f5db20a24895b6570
+    text_layer: true
+  noble-intrepid.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Intrepid-Rig-Summary.pdf
+    sha256: b86731ae2fcb2b85d9b4d48cd961d55fdb0929f248c23e01a97524cd38b2d379
+    text_layer: true
+  noble-invincible.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/invincible.pdf
+    sha256: 9f00d44ef5fb830f46f2e982d6aefbfb1d44c2495ec270ff34ec8140b004ae28
+    text_layer: true
+  noble-patriot.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/patriot-specification-sheet-revised.pdf
+    sha256: 6c8ab5f710b8021ceaeacd40b886f1ba05495489a2fee42c28fb2bfb68463640
+    text_layer: true
+  noble-resolve.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_fleet/2024/01/resolve.pdf
+    sha256: 2feb251238bda8c75e7c4a511b178fbe4ed854af1fc1e5c14f791f0860cafc34
+    text_layer: true
+  noble-sam-croft.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/Rig-Details-Noble-Sam-Croft.pdf
+    sha256: 06039e3f5a3682675a623304e32751076a8e4cb224035a6d7e062aecd0482978
+    text_layer: true
+  noble-tom-madden.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Tom-Madden-Rig-Summary.pdf
+    sha256: 55c22f8ed2ca965ed854dfb5774c8e9f0bdf604805318e14594038841b573b68
+    text_layer: true
+  ocean-apex.pdf:
+    url: https://s201.q4cdn.com/439848451/files/doc_downloads/fleet/2024/08/apex-specification-sheet-revised.pdf
+    sha256: c10ffef42730ea03bca794a9c0184533f8e57d02d693b5833f84d00f6404dfd6
+    text_layer: true

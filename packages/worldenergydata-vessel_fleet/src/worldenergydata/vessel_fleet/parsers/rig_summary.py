@@ -22,6 +22,8 @@ from typing import Any, Optional
 
 FT_TO_M = 0.3048
 KIPS_PER_SHORT_TON = 2.0  # 1 short ton = 2,000 lb; 1 kip = 1,000 lb
+SHORT_TONS_PER_TONNE = 1.10231
+SHORT_TONS_PER_LONG_TON = 1.12
 
 _NUM = r"[\d][\d ,.]*"
 
@@ -79,7 +81,7 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     if year:
         out["YEAR_BUILT"] = int(year.group(1))
 
-    flag = re.search(r"^Flag\s*:\s*([A-Za-z][A-Za-z ]+?)\s*$", text, re.MULTILINE)
+    flag = re.search(r"^\s*Flag\s*:\s*([A-Za-z][A-Za-z ]+?)\s*$", text, re.MULTILINE)
     if flag:
         out["FLAG_STATE"] = flag.group(1).strip()
 
@@ -98,17 +100,17 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
         out["DRILLING_DEPTH_RATING_FT"] = drill_ft
 
     # Line-anchored so "Water Depth"/"Drilling Depth" never match.
-    loa_ft = _search_number(rf"^Length\s*:\s*({_NUM})\s*ft", text)
+    loa_ft = _search_number(rf"^\s*Length\s*:\s*({_NUM})\s*ft", text)
     if loa_ft is not None:
         out["LOA_M"] = _ft_to_m(loa_ft)
         out["RAW_LENGTH_FT"] = loa_ft
 
-    beam_ft = _search_number(rf"^Breadth\s*:\s*({_NUM})\s*ft", text)
+    beam_ft = _search_number(rf"^\s*Breadth\s*:\s*({_NUM})\s*ft", text)
     if beam_ft is not None:
         out["BEAM_M"] = _ft_to_m(beam_ft)
         out["RAW_BREADTH_FT"] = beam_ft
 
-    depth_ft = _search_number(rf"^Depth\s*:\s*({_NUM})\s*ft", text)
+    depth_ft = _search_number(rf"^\s*Depth\s*:\s*({_NUM})\s*ft", text)
     if depth_ft is not None:
         out["DEPTH_M"] = _ft_to_m(depth_ft)
         out["RAW_DEPTH_FT"] = depth_ft
@@ -160,5 +162,102 @@ def parse_rig_summary_text(text: str) -> dict[str, Any]:
     setback = _search_number(rf"Setback\s+Capacity\s*:\s*({_NUM})\s*kips", text)
     if setback is not None:
         out["SETBACK_CAPACITY_KIPS"] = setback
+
+    # Ex-Diamond Offshore "specification sheet" layout (no colons, metric in
+    # parentheses) — fills anything the Rig Summary block didn't provide.
+    for field, value in _parse_spec_sheet_layout(text).items():
+        out.setdefault(field, value)
+
+    return out
+
+
+def _parse_spec_sheet_layout(text: str) -> dict[str, Any]:
+    """Parse the ex-Diamond 'specification sheet' layout.
+
+    Labels have no colon separator and imperial values carry the metric
+    equivalent in parentheses, e.g.::
+
+        Main Deck                757ft (230.73m) Long x 118ft (35.96m) Wide
+        Draft                    36ft (11.0m) Operating
+        Moonpool                 73 ft x 32ft (22.25m x 9.75m)
+        Variable Deck Load       22,045 MT Operating
+
+    Metric values are taken from the parentheses where printed.
+    """
+    out: dict[str, Any] = {}
+
+    year = re.search(r"Year\s+Entered\s+Service\s+(\d{4})", text, re.IGNORECASE)
+    if year:
+        out["YEAR_BUILT"] = int(year.group(1))
+
+    design = re.search(r"^Design\s{2,}(.+?)\s*$", text, re.MULTILINE)
+    if design:
+        out["RIG_DESIGN"] = re.sub(r"\s{2,}", " ", design.group(1)).strip()
+
+    deck = re.search(
+        rf"Main\s+Deck\s+({_NUM})\s*ft\s*\(({_NUM})\s*m\)\s*Long\s*x\s*"
+        rf"({_NUM})\s*ft\s*\(({_NUM})\s*m\)\s*Wide",
+        text,
+        re.IGNORECASE,
+    )
+    if deck:
+        # Main-deck envelope; ~LOA x beam for ship shapes.
+        out["LOA_M"] = round(_clean_number(deck.group(2)), 1)
+        out["BEAM_M"] = round(_clean_number(deck.group(4)), 1)
+        out["RAW_MAIN_DECK_FT"] = (
+            f"{_clean_number(deck.group(1)):g} x {_clean_number(deck.group(3)):g}"
+        )
+
+    draft = re.search(
+        rf"^Draft\s+({_NUM})\s*ft\s*\(({_NUM})\s*m\)\s*(Operating|Drilling)",
+        text,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if draft:
+        out["DRAFT_M"] = round(_clean_number(draft.group(2)), 1)
+        out["RAW_DRAFT_OPERATING_FT"] = _clean_number(draft.group(1))
+
+    displacement = re.search(rf"Displacement\s+({_NUM})\s*MT", text, re.IGNORECASE)
+    if displacement:
+        out["DISPLACEMENT_TONNES"] = _clean_number(displacement.group(1))
+
+    vdl = re.search(
+        rf"Variable\s+Deck\s+Load\s+({_NUM})\s*(MT|LT|ST)", text, re.IGNORECASE
+    )
+    if vdl:
+        value = _clean_number(vdl.group(1))
+        if value is not None:
+            unit = vdl.group(2).upper()
+            factor = {
+                "MT": SHORT_TONS_PER_TONNE,
+                "LT": SHORT_TONS_PER_LONG_TON,
+                "ST": 1.0,
+            }[unit]
+            out["VARIABLE_DECK_LOAD_ST"] = round(value * factor)
+
+    water_ft = _search_number(rf"Water\s+Depth\s+({_NUM})\s*ft", text)
+    if water_ft is not None:
+        out["WATER_DEPTH_RATING_FT"] = water_ft
+
+    drill_ft = _search_number(rf"Drilling\s+Depth\s+({_NUM})\s*ft", text)
+    if drill_ft is not None:
+        out["DRILLING_DEPTH_RATING_FT"] = drill_ft
+
+    moonpool = re.search(
+        rf"Moonpool\s+({_NUM})\s*ft\.?\s*x\s*({_NUM})\s*ft\.?\s*"
+        rf"(?:\(({_NUM})\s*m\s*x\s*({_NUM})\s*m\))?",
+        text,
+        re.IGNORECASE,
+    )
+    if moonpool:
+        mp_l_ft = _clean_number(moonpool.group(1))
+        mp_w_ft = _clean_number(moonpool.group(2))
+        if moonpool.group(3):  # metric printed on the sheet
+            out["MOONPOOL_LENGTH_M"] = round(_clean_number(moonpool.group(3)), 1)
+            out["MOONPOOL_WIDTH_M"] = round(_clean_number(moonpool.group(4)), 1)
+        else:
+            out["MOONPOOL_LENGTH_M"] = _ft_to_m(mp_l_ft)
+            out["MOONPOOL_WIDTH_M"] = _ft_to_m(mp_w_ft)
+        out["RAW_MOONPOOL_FT"] = f"{mp_l_ft:g} x {mp_w_ft:g}"
 
     return out
