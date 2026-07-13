@@ -41,6 +41,7 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 230
   Noble Venturer:
     pdf: noble-venturer.pdf
     rig_type: drillship
@@ -93,6 +94,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 230
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble Voyager:
     pdf: noble-voyager.pdf
     rig_type: drillship
@@ -143,6 +146,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 200
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble Stanley Lafosse:
     pdf: noble-stanley-lafosse.pdf
     rig_type: drillship
@@ -166,6 +171,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 115 x 41
+      QUARTERS_CAPACITY: 200
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble BlackHawk:
     pdf: noble-blackhawk.pdf
     rig_type: drillship
@@ -186,6 +193,10 @@ vessels:
       RAW_MAIN_DECK_FT: 757 x 118
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_MOONPOOL_FT: 73 x 32
+      QUARTERS_CAPACITY: 210
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 595.0
   Noble BlackHornet:
     pdf: noble-blackhornet.pdf
     rig_type: drillship
@@ -206,6 +217,10 @@ vessels:
       RAW_MAIN_DECK_FT: 757 x 118
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_MOONPOOL_FT: 73 x 32
+      QUARTERS_CAPACITY: 210
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 595.0
   Noble BlackLion:
     pdf: noble-blacklion.pdf
     rig_type: drillship
@@ -224,6 +239,10 @@ vessels:
       VARIABLE_DECK_LOAD_ST: 24300
       RAW_MAIN_DECK_FT: 757 x 118
       RAW_MOONPOOL_FT: 73 x 32
+      QUARTERS_CAPACITY: 210
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble BlackRhino:
     pdf: noble-blackrhino.pdf
     rig_type: drillship
@@ -244,6 +263,10 @@ vessels:
       RAW_MAIN_DECK_FT: 757 x 118
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_MOONPOOL_FT: 73 x 32
+      QUARTERS_CAPACITY: 210
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble Bob Douglas:
     pdf: noble-bob-douglas.pdf
     rig_type: drillship
@@ -269,6 +292,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_DRAFT_TRANSIT_FT: 36.0
       RAW_MOONPOOL_FT: 115 x 41
+      QUARTERS_CAPACITY: 210
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Don Taylor:
     pdf: noble-don-taylor.pdf
     rig_type: drillship
@@ -294,6 +319,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_DRAFT_TRANSIT_FT: 36.0
       RAW_MOONPOOL_FT: 115 x 41
+      QUARTERS_CAPACITY: 210
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Sam Croft:
     pdf: noble-sam-croft.pdf
     rig_type: drillship
@@ -319,6 +346,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_DRAFT_TRANSIT_FT: 36.0
       RAW_MOONPOOL_FT: 115 x 41
+      QUARTERS_CAPACITY: 210
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Tom Madden:
     pdf: noble-tom-madden.pdf
     rig_type: drillship
@@ -344,6 +373,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 36.0
       RAW_DRAFT_TRANSIT_FT: 36.0
       RAW_MOONPOOL_FT: 115 x 41
+      QUARTERS_CAPACITY: 210
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Gerry de Souza:
     pdf: noble-gerry-de-souza.pdf
     rig_type: drillship
@@ -366,6 +397,9 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 28.0
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   Noble Globetrotter I:
     pdf: noble-globetrotter-i.pdf
     rig_type: drillship
@@ -391,6 +425,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 39.0
       RAW_MOONPOOL_FT: 89 x 37
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 100.0
   Noble Globetrotter II:
     pdf: noble-globetrotter-ii.pdf
     rig_type: drillship
@@ -416,6 +452,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_DRAFT_TRANSIT_FT: 39.0
       RAW_MOONPOOL_FT: 89 x 37
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 100.0
   Noble Courage:
     pdf: noble-courage.pdf
     rig_type: semi_submersible
@@ -435,6 +473,8 @@ vessels:
       RAW_MAIN_DECK_FT: 244.2 x 244.2
       RAW_DRAFT_OPERATING_FT: 59.0
       RAW_MOONPOOL_FT: 135.6 x 29.5
+      QUARTERS_CAPACITY: 164
+      MPD_CAPABLE: true
   Noble Endeavor:
     pdf: noble-endeavor.pdf
     rig_type: semi_submersible
@@ -455,6 +495,8 @@ vessels:
       RAW_MAIN_DECK_FT: 306 x 306
       RAW_DRAFT_OPERATING_FT: 74.6
       RAW_MOONPOOL_FT: 91 x 25
+      QUARTERS_CAPACITY: 140
+      CRANE_MAIN_CAPACITY_T: 90.0
   Noble GreatWhite:
     pdf: noble-greatwhite.pdf
     rig_type: semi_submersible
@@ -475,6 +517,7 @@ vessels:
       RAW_MAIN_DECK_FT: 315 x 255
       RAW_DRAFT_OPERATING_FT: 77.0
       RAW_MOONPOOL_FT: 95 x 29.5
+      QUARTERS_CAPACITY: 180
   Ocean Apex:
     pdf: ocean-apex.pdf
     rig_type: semi_submersible
@@ -493,6 +536,8 @@ vessels:
       RAW_MAIN_DECK_FT: 361 x 320
       RAW_DRAFT_OPERATING_FT: 76.0
       RAW_MOONPOOL_FT: 80.7 x 72
+      QUARTERS_CAPACITY: 140
+      MPD_CAPABLE: true
   Noble Patriot:
     pdf: noble-patriot.pdf
     rig_type: semi_submersible
@@ -512,6 +557,8 @@ vessels:
       RAW_MAIN_DECK_FT: 246 x 206.6
       RAW_DRAFT_OPERATING_FT: 77.0
       RAW_MOONPOOL_FT: 20 x 72
+      QUARTERS_CAPACITY: 120
+      CRANE_MAIN_CAPACITY_T: 50.0
   Noble Deliverer:
     pdf: noble-deliverer.pdf
     rig_type: semi_submersible
@@ -538,6 +585,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 67.3
       RAW_DRAFT_TRANSIT_FT: 31.8
       RAW_MOONPOOL_FT: 108.3 x 29.5
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Developer:
     pdf: noble-developer.pdf
     rig_type: semi_submersible
@@ -563,6 +612,8 @@ vessels:
       RAW_DRAFT_OPERATING_FT: 67.3
       RAW_DRAFT_TRANSIT_FT: 31.8
       RAW_MOONPOOL_FT: 108.3 x 29.5
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Discoverer:
     pdf: noble-discoverer.pdf
     rig_type: semi_submersible
@@ -586,6 +637,8 @@ vessels:
       RAW_DEPTH_FT: 62.3
       RAW_DRAFT_OPERATING_FT: 67.3
       RAW_DRAFT_TRANSIT_FT: 31.8
+      QUARTERS_CAPACITY: 180
+      CRANE_MAIN_CAPACITY_T: 165.0
   Noble Innovator:
     pdf: noble-innovator.pdf
     rig_type: jack_up
@@ -606,6 +659,7 @@ vessels:
       RAW_LENGTH_FT: 291.0
       RAW_BREADTH_FT: 336.0
       RAW_DEPTH_FT: 39.4
+      QUARTERS_CAPACITY: 120
   Noble Integrator:
     pdf: noble-integrator.pdf
     rig_type: jack_up
@@ -625,6 +679,7 @@ vessels:
       RAW_LENGTH_FT: 291.0
       RAW_BREADTH_FT: 346.0
       RAW_DEPTH_FT: 39.4
+      QUARTERS_CAPACITY: 150
   Noble Interceptor:
     pdf: noble-interceptor.pdf
     rig_type: jack_up
@@ -644,6 +699,7 @@ vessels:
       RAW_LENGTH_FT: 291.0
       RAW_BREADTH_FT: 345.0
       RAW_DEPTH_FT: 39.4
+      QUARTERS_CAPACITY: 150
   Noble Intrepid:
     pdf: noble-intrepid.pdf
     rig_type: jack_up
@@ -663,6 +719,7 @@ vessels:
       RAW_LENGTH_FT: 291.0
       RAW_BREADTH_FT: 345.0
       RAW_DEPTH_FT: 39.4
+      QUARTERS_CAPACITY: 150
   Noble Invincible:
     pdf: noble-invincible.pdf
     rig_type: jack_up
@@ -682,6 +739,7 @@ vessels:
       RAW_LENGTH_FT: 291.0
       RAW_BREADTH_FT: 345.0
       RAW_DEPTH_FT: 39.4
+      QUARTERS_CAPACITY: 179
   Noble Resolve:
     pdf: noble-resolve.pdf
     rig_type: jack_up
@@ -702,3 +760,5 @@ vessels:
       RAW_LENGTH_FT: 230.0
       RAW_BREADTH_FT: 223.0
       RAW_DEPTH_FT: 31.2
+
+      QUARTERS_CAPACITY: 120

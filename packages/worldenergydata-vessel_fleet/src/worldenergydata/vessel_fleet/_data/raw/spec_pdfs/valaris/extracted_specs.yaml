@@ -33,6 +33,7 @@ vessels:
       RAW_DEPTH_FT: 59.6
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 73.5 x 42
+      CRANE_MAIN_CAPACITY_T: 20.0
   VALARIS DS-17:
     pdf: valaris-ds-17.pdf
     rig_type: drillship
@@ -55,6 +56,7 @@ vessels:
       RAW_DEPTH_FT: 59.6
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 73.5 x 42
+      CRANE_MAIN_CAPACITY_T: 20.0
   VALARIS DS-16:
     pdf: valaris-ds-16.pdf
     rig_type: drillship
@@ -77,6 +79,7 @@ vessels:
       RAW_DEPTH_FT: 59.6
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 73.5 x 42
+      CRANE_MAIN_CAPACITY_T: 270.0
   VALARIS DS-15:
     pdf: valaris-ds-15.pdf
     rig_type: drillship
@@ -99,6 +102,7 @@ vessels:
       RAW_DEPTH_FT: 59.6
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 73.5 x 42
+      CRANE_MAIN_CAPACITY_T: 270.0
   VALARIS DS-14:
     pdf: valaris-ds-14.pdf
     rig_type: drillship
@@ -121,6 +125,7 @@ vessels:
       RAW_DEPTH_FT: 62.3
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_MOONPOOL_FT: 31.2 x 72.6
+      CRANE_MAIN_CAPACITY_T: 250.0
   VALARIS DS-13:
     pdf: valaris-ds-13.pdf
     rig_type: drillship
@@ -143,6 +148,7 @@ vessels:
       RAW_DEPTH_FT: 62.0
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_MOONPOOL_FT: 22.15 x 9.75
+      CRANE_MAIN_CAPACITY_T: 250.0
   VALARIS DS-12:
     pdf: valaris-ds-12.pdf
     rig_type: drillship
@@ -166,6 +172,7 @@ vessels:
       RAW_DEPTH_FT: 62.3
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_MOONPOOL_FT: 31.2 x 72.6
+      CRANE_MAIN_CAPACITY_T: 250.0
   VALARIS DS-11:
     pdf: valaris-ds-11.pdf
     rig_type: drillship
@@ -189,6 +196,7 @@ vessels:
       RAW_DEPTH_FT: 62.3
       RAW_DRAFT_OPERATING_FT: 39.0
       RAW_MOONPOOL_FT: 31.2 x 72.6
+      CRANE_MAIN_CAPACITY_T: 250.0
   VALARIS DS-10:
     pdf: valaris-ds-10.pdf
     rig_type: drillship
@@ -212,6 +220,7 @@ vessels:
       RAW_DEPTH_FT: 60.7
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 42 x 81.37
+      CRANE_MAIN_CAPACITY_T: 480.0
   VALARIS DS-9:
     pdf: valaris-ds-9.pdf
     rig_type: drillship
@@ -234,6 +243,8 @@ vessels:
       RAW_DEPTH_FT: 60.7
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 42 x 81.37
+      QUARTERS_CAPACITY: 200
+      CRANE_MAIN_CAPACITY_T: 440.0
   VALARIS DS-8:
     pdf: valaris-ds-8.pdf
     rig_type: drillship
@@ -255,6 +266,8 @@ vessels:
       RAW_DEPTH_FT: 60.7
       RAW_DRAFT_OPERATING_FT: 36.1
       RAW_MOONPOOL_FT: 42 x 81.37
+      QUARTERS_CAPACITY: 200
+      CRANE_MAIN_CAPACITY_T: 440.0
   VALARIS DS-7:
     pdf: valaris-ds-7.pdf
     rig_type: drillship
@@ -277,6 +290,8 @@ vessels:
       RAW_DEPTH_FT: 62.3
       RAW_DRAFT_OPERATING_FT: 39.3
       RAW_MOONPOOL_FT: 84 x 41
+      QUARTERS_CAPACITY: 200
+      CRANE_MAIN_CAPACITY_T: 440.0
   VALARIS DS-4:
     pdf: valaris-ds-4.pdf
     rig_type: drillship
@@ -313,6 +328,7 @@ vessels:
       MOONPOOL_LENGTH_M: 42.7
       MOONPOOL_WIDTH_M: 10.4
       RAW_MOONPOOL_FT: 140 x 34
+      CRANE_MAIN_CAPACITY_T: 125.0
   VALARIS Norway:
     pdf: valaris-norway.pdf
     rig_type: jack_up
@@ -389,6 +405,7 @@ vessels:
       RAW_LENGTH_FT: 306.0
       RAW_BREADTH_FT: 300.0
       RAW_DEPTH_FT: 36.0
+      QUARTERS_CAPACITY: 118
   VALARIS 249:
     pdf: valaris-ju-249.pdf
     rig_type: jack_up
@@ -538,6 +555,7 @@ vessels:
       RAW_LENGTH_FT: 243.0
       RAW_BREADTH_FT: 206.0
       RAW_DEPTH_FT: 26.0
+      QUARTERS_CAPACITY: 140
   VALARIS 140:
     pdf: valaris-ju-140.pdf
     rig_type: jack_up
@@ -574,6 +592,7 @@ vessels:
       RAW_LENGTH_FT: 246.0
       RAW_BREADTH_FT: 250.0
       RAW_DEPTH_FT: 31.0
+      QUARTERS_CAPACITY: 145
   VALARIS 122:
     pdf: valaris-ju-122.pdf
     rig_type: jack_up
@@ -612,6 +631,7 @@ vessels:
       RAW_LENGTH_FT: 246.0
       RAW_BREADTH_FT: 250.0
       RAW_DEPTH_FT: 31.0
+      QUARTERS_CAPACITY: 150
   VALARIS 120:
     pdf: valaris-ju-120.pdf
     rig_type: jack_up
@@ -631,6 +651,7 @@ vessels:
       RAW_LENGTH_FT: 246.0
       RAW_BREADTH_FT: 250.0
       RAW_DEPTH_FT: 31.0
+      QUARTERS_CAPACITY: 150
   VALARIS 118:
     pdf: valaris-ju-118.pdf
     rig_type: jack_up
@@ -669,6 +690,7 @@ vessels:
       RAW_LENGTH_FT: 228.0
       RAW_BREADTH_FT: 220.0
       RAW_DEPTH_FT: 26.0
+      QUARTERS_CAPACITY: 120
   VALARIS 116:
     pdf: valaris-ju-116.pdf
     rig_type: jack_up
@@ -707,6 +729,7 @@ vessels:
       RAW_LENGTH_FT: 236.5
       RAW_BREADTH_FT: 224.4
       RAW_DEPTH_FT: 27.8
+      QUARTERS_CAPACITY: 150
   VALARIS 111:
     pdf: valaris-ju-111.pdf
     rig_type: jack_up
@@ -726,6 +749,7 @@ vessels:
       RAW_LENGTH_FT: 234.0
       RAW_BREADTH_FT: 208.0
       RAW_DEPTH_FT: 25.0
+      CRANE_MAIN_CAPACITY_T: 25.8
   VALARIS 110:
     pdf: valaris-ju-110.pdf
     rig_type: jack_up
@@ -745,6 +769,7 @@ vessels:
       RAW_LENGTH_FT: 234.0
       RAW_BREADTH_FT: 208.0
       RAW_DEPTH_FT: 25.0
+      QUARTERS_CAPACITY: 140
   VALARIS 109:
     pdf: valaris-ju-109.pdf
     rig_type: jack_up
@@ -764,6 +789,7 @@ vessels:
       RAW_LENGTH_FT: 246.0
       RAW_BREADTH_FT: 218.0
       RAW_DEPTH_FT: 25.0
+      QUARTERS_CAPACITY: 120
   VALARIS 108:
     pdf: valaris-ju-108.pdf
     rig_type: jack_up
@@ -783,6 +809,7 @@ vessels:
       RAW_LENGTH_FT: 234.0
       RAW_BREADTH_FT: 208.0
       RAW_DEPTH_FT: 25.0
+      QUARTERS_CAPACITY: 120
   VALARIS 107:
     pdf: valaris-ju-107.pdf
     rig_type: jack_up
@@ -821,6 +848,7 @@ vessels:
       RAW_LENGTH_FT: 234.0
       RAW_BREADTH_FT: 208.0
       RAW_DEPTH_FT: 25.0
+      QUARTERS_CAPACITY: 120
   VALARIS 104:
     pdf: valaris-ju-104.pdf
     rig_type: jack_up
@@ -840,6 +868,7 @@ vessels:
       RAW_LENGTH_FT: 225.0
       RAW_BREADTH_FT: 208.0
       RAW_DEPTH_FT: 25.0
+      QUARTERS_CAPACITY: 120
   VALARIS 92:
     pdf: valaris-ju-92.pdf
     rig_type: jack_up

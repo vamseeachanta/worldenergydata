@@ -29,6 +29,9 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Capella:
     pdf: west-capella.pdf
     rig_type: drillship
@@ -47,6 +50,10 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 180
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   West Carina:
     pdf: west-carina.pdf
     rig_type: drillship
@@ -65,6 +72,9 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Gemini:
     pdf: west-gemini.pdf
     rig_type: drillship
@@ -83,6 +93,10 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   West Jupiter:
     pdf: west-jupiter.pdf
     rig_type: drillship
@@ -101,6 +115,9 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Neptune:
     pdf: west-neptune.pdf
     rig_type: drillship
@@ -119,6 +136,9 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Polaris:
     pdf: west-polaris.pdf
     rig_type: drillship
@@ -137,6 +157,10 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   West Saturn:
     pdf: west-saturn.pdf
     rig_type: drillship
@@ -155,6 +179,9 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Tellus:
     pdf: west-tellus.pdf
     rig_type: drillship
@@ -173,6 +200,10 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 85.0
   West Vela:
     pdf: west-vela.pdf
     rig_type: drillship
@@ -191,6 +222,8 @@ vessels:
       RAW_DIMENSIONS_FT: 748 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 27.9
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
   Sonangol Libongos:
     pdf: sonangol-libongos.pdf
     rig_type: drillship
@@ -210,6 +243,9 @@ vessels:
       RAW_DIMENSIONS_FT: 780 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 29.0
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   Sonangol Quenguela:
     pdf: sonangol-quenguela.pdf
     rig_type: drillship
@@ -229,6 +265,9 @@ vessels:
       RAW_DIMENSIONS_FT: 780 x 137
       RAW_DRAFT_OPERATING_FT: 39.4
       RAW_DRAFT_TRANSIT_FT: 29.0
+      QUARTERS_CAPACITY: 200
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
   West Aquarius:
     pdf: west-aquarius.pdf
     rig_type: semi_submersible
@@ -247,6 +286,9 @@ vessels:
       RAW_DIMENSIONS_FT: 383 x 314
       RAW_DRAFT_OPERATING_FT: 75.4
       RAW_DRAFT_TRANSIT_FT: 32.5
+      QUARTERS_CAPACITY: 180
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 80.0
   West Eclipse:
     pdf: west-eclipse.pdf
     rig_type: semi_submersible
@@ -265,6 +307,9 @@ vessels:
       RAW_DIMENSIONS_FT: 397 x 298
       RAW_DRAFT_OPERATING_FT: 55.0
       RAW_DRAFT_TRANSIT_FT: 27.0
+      QUARTERS_CAPACITY: 164
+      MPD_CAPABLE: true
+      CRANE_MAIN_CAPACITY_T: 100.0
   West Phoenix:
     pdf: west-phoenix.pdf
     rig_type: semi_submersible
@@ -283,6 +328,10 @@ vessels:
       RAW_DIMENSIONS_FT: 272 x 238
       RAW_DRAFT_OPERATING_FT: 77.1
       RAW_DRAFT_TRANSIT_FT: 32.5
+      QUARTERS_CAPACITY: 128
+      MPD_CAPABLE: true
+      DUAL_ACTIVITY: true
+      CRANE_MAIN_CAPACITY_T: 80.0
   Sevan Louisiana:
     pdf: sevan-louisiana.pdf
     rig_type: semi_submersible

@@ -71,7 +71,40 @@ _CURATED_FIELDS = (
     "MAST_HEIGHT_FT",
     "WALKING_SYSTEM",
     "SUPER_SPEC",
+    "MPD_CAPABLE",
+    "DUAL_ACTIVITY",
+    "QUARTERS_CAPACITY",
+    "CRANE_MAIN_CAPACITY_T",
 )
+
+
+def _derive_generation(record: dict) -> str | None:
+    """Heuristic rig generation from vendor-stated capability (#1006).
+
+    Floater generations track water-depth capability and vintage:
+    >=10,000 ft designed + delivered 2013+ -> 7th (20k-ready era);
+    >=10,000 ft, 2005-2012 -> 6th; 5,000-9,999 ft -> 5th; below -> 4th or
+    earlier. Land rigs: SUPER_SPEC flag -> "super-spec". Heuristic only —
+    a derived label, never a vendor value (not drift-checked).
+    """
+    rig_type = record.get("RIG_TYPE")
+    if rig_type == "land_rig":
+        return "super-spec" if record.get("SUPER_SPEC") else None
+    if rig_type not in ("drillship", "semi_submersible"):
+        return None
+    water = record.get("WATER_DEPTH_RATING_FT")
+    year = record.get("YEAR_BUILT")
+    if not water:
+        return None
+    if water >= 10_000:
+        if year and year >= 2013:
+            return "7th"
+        if year and year >= 2005:
+            return "6th"
+        return "6th" if year is None else "5th"
+    if water >= 5_000:
+        return "5th"
+    return "4th or earlier"
 
 
 def _match_key(name: str) -> str:
@@ -119,6 +152,9 @@ def write_raw_source(
         for field in _CURATED_FIELDS:
             if field in entry["specs"]:
                 record[field] = entry["specs"][field]
+        generation = _derive_generation(record)
+        if generation:
+            record["GENERATION"] = generation
         records.append(record)
 
     store = ParquetStore(base_dir=data_dir / "raw/spec_pdf_dimensions")

@@ -454,6 +454,53 @@ class TestBorrNewbuildVariant:
         assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 19.0
 
 
+# Equipment-capability extraction (#1006) — verbatim excerpts from committed
+# PDFs across layouts.
+EQUIPMENT_TEXT = """\
+Quarters              230
+MPD & HPHT             Equipped for MPD and HPHT operations
+Derrick                Dual dynamic derrick 210 ft (64 m) clear internal working
+Cranes               Three (3) 110st (100mt) knuckle boom cranes at 65.6 ft. (20m)
+Gantry Crane with two (2) x 330st (300mt) main hoist and two
+Tree Handling         One (1) 1102st (1000mt) Combined Xmas Tree Trolley and
+Riser Tensioner /      (16) NOV DWRT-225-50; 225 kips/ea crane wire
+"""
+
+EQUIPMENT_ACCOMMODATION_TEXT = """\
+Accommodation                                                            220 persons
+Station Keeping      Kongsberg DP3
+"""
+
+
+class TestEquipmentExtraction:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(EQUIPMENT_TEXT)
+
+    def test_quarters(self):
+        assert self.spec["QUARTERS_CAPACITY"] == 230
+
+    def test_mpd_positive_mention_only(self):
+        assert self.spec["MPD_CAPABLE"] is True
+        no_mpd = parse_rig_summary_text(EQUIPMENT_ACCOMMODATION_TEXT)
+        assert "MPD_CAPABLE" not in no_mpd  # unknown != false
+
+    def test_dual_activity(self):
+        # "Dual dynamic derrick" does not qualify; needs dual-activity/derrick
+        spec = parse_rig_summary_text("Derrick   Dual Activity NOV bottleneck")
+        assert spec["DUAL_ACTIVITY"] is True
+
+    def test_crane_max_excludes_trolley_and_tensioner(self):
+        # The 330 st / (300 mt) gantry beats the 110 st deck cranes — the
+        # vendor's own metric value (300 mt) wins over the st conversion.
+        # The 1102 st Xmas-tree trolley and the tensioner "crane wire" line
+        # are excluded.
+        assert self.spec["CRANE_MAIN_CAPACITY_T"] == 300.0
+
+    def test_accommodation_variant(self):
+        spec = parse_rig_summary_text(EQUIPMENT_ACCOMMODATION_TEXT)
+        assert spec["QUARTERS_CAPACITY"] == 220
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)
