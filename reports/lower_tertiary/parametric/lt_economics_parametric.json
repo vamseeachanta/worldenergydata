@@ -1,0 +1,904 @@
+{
+  "sweep_name": "lt_economics_sweep_v1",
+  "schema_version": "1.0.0",
+  "provenance": {
+    "code_revision": "af2482fd842d94e6af4a2090f149a7b37d74f1c7",
+    "config_path": "config/parametric/lt_economics_sweep.yml",
+    "config_sha256": "8ffad4993409296413dad017b330c83e2185df2c58e2d985998f2accb9ff70b7",
+    "data_source": "BSEE OGOR-A pickled .bin DataFrames (zip archives absent in checkout)",
+    "end_date": "2026-04-30",
+    "model": "worldenergydata.lower_tertiary.v30_financial_reproducer.build_field_npv_timeline",
+    "economics_basis": "life_to_date_pretax_npv",
+    "gating": "economics withheld in CSV unless baseline economics_status == 'surfaced' (#971/#976)"
+  },
+  "verification": {
+    "field": "Julia",
+    "wti_price_multiplier": 0.9,
+    "delta_usd": 0.0,
+    "ok": true
+  },
+  "baseline_match": [
+    {
+      "field": "jack_st_malo",
+      "baseline_npv_mm": -804.5,
+      "parametric_npv_mm_at_1x_r0": -804.5,
+      "delta_mm": 0.0,
+      "economics_status": "surfaced"
+    },
+    {
+      "field": "stones",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -1460.8,
+      "delta_mm": null,
+      "economics_status": "early_life"
+    },
+    {
+      "field": "julia",
+      "baseline_npv_mm": -482.8,
+      "parametric_npv_mm_at_1x_r0": -482.8,
+      "delta_mm": 0.0,
+      "economics_status": "surfaced"
+    },
+    {
+      "field": "big_foot",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -989.0,
+      "delta_mm": null,
+      "economics_status": "early_life"
+    },
+    {
+      "field": "cascade_chinook",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -1580.0,
+      "delta_mm": null,
+      "economics_status": "early_life"
+    },
+    {
+      "field": "anchor",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -1586.9,
+      "delta_mm": null,
+      "economics_status": "early_life"
+    },
+    {
+      "field": "shenandoah",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -991.3,
+      "delta_mm": null,
+      "economics_status": "early_life"
+    },
+    {
+      "field": "buckskin",
+      "baseline_npv_mm": null,
+      "parametric_npv_mm_at_1x_r0": -989.7,
+      "delta_mm": null,
+      "economics_status": "unlisted"
+    }
+  ],
+  "fields": {
+    "jack_st_malo": {
+      "display": "Jack St Malo",
+      "input_set": "v30",
+      "economics_status": "surfaced",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 1.1108,
+        "0.1": 1.2421,
+        "0.125": 1.4318
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1485.2,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1007.3,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -529.5,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -51.6,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": 426.2,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1469.0,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1136.8,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -804.5,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -472.2,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -139.9,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -1350.9,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -1137.1,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -923.3,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -709.5,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -495.7,
+          "economics_status": "surfaced"
+        }
+      ]
+    },
+    "stones": {
+      "display": "Stones",
+      "input_set": "v30",
+      "economics_status": "early_life",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 2.2802,
+        "0.1": 2.4674,
+        "0.125": 2.7218
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1989.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1855.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1720.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -1586.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -1451.9,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1659.9,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1560.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -1460.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -1361.2,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -1261.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -1327.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -1258.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -1189.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -1120.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -1051.4,
+          "economics_status": "early_life"
+        }
+      ]
+    },
+    "julia": {
+      "display": "Julia",
+      "input_set": "v30",
+      "economics_status": "surfaced",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 1.3094,
+        "0.1": 1.4201,
+        "0.125": 1.5702
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -747.8,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -601.0,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -454.2,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -307.4,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -160.6,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -712.7,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -597.8,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -482.8,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -367.9,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -252.9,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -658.0,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -572.5,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -487.1,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -401.7,
+          "economics_status": "surfaced"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -316.3,
+          "economics_status": "surfaced"
+        }
+      ]
+    },
+    "big_foot": {
+      "display": "Big Foot",
+      "input_set": "v30",
+      "economics_status": "early_life",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 1.9235,
+        "0.1": 2.1579,
+        "0.125": 2.5084
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1319.4,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1202.0,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1084.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -967.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -849.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1159.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1074.4,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -989.0,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -903.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -818.2,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -989.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -931.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -873.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -815.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -757.9,
+          "economics_status": "early_life"
+        }
+      ]
+    },
+    "cascade_chinook": {
+      "display": "Cascade Chinook",
+      "input_set": "v30",
+      "economics_status": "early_life",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 4.016,
+        "0.1": 4.4454,
+        "0.125": 5.0491
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1981.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1920.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1858.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -1796.9,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -1735.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1671.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1625.9,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -1580.0,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -1534.2,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -1488.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -1366.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -1334.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -1302.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -1270.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -1238.2,
+          "economics_status": "early_life"
+        }
+      ]
+    },
+    "anchor": {
+      "display": "Anchor",
+      "input_set": "v30",
+      "economics_status": "early_life",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 5.2422,
+        "0.1": 5.518,
+        "0.125": 5.905
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1922.4,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1879.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1835.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -1792.5,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -1749.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1657.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1622.0,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -1586.9,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -1551.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -1516.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -1388.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -1361.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -1334.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -1307.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -1279.9,
+          "economics_status": "early_life"
+        }
+      ]
+    },
+    "shenandoah": {
+      "display": "Shenandoah",
+      "input_set": "v30",
+      "economics_status": "early_life",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 4.8948,
+        "0.1": 5.4511,
+        "0.125": 6.3262
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1258.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1227.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1196.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -1166.1,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -1135.4,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1035.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1013.6,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -991.3,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -969.0,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -946.8,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -829.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -814.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -799.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -784.7,
+          "economics_status": "early_life"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -769.7,
+          "economics_status": "early_life"
+        }
+      ]
+    },
+    "buckskin": {
+      "display": "Buckskin",
+      "input_set": "v50_kc",
+      "economics_status": "unlisted",
+      "discount_rate_base": 0.1,
+      "breakeven_multiplier_by_rate": {
+        "0.08": 1.7546,
+        "0.1": 1.9211,
+        "0.125": 2.1588
+      },
+      "grid": [
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.08,
+          "npv_musd": -1327.9,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.08,
+          "npv_musd": -1188.8,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.08,
+          "npv_musd": -1049.7,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.08,
+          "npv_musd": -910.6,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.08,
+          "npv_musd": -771.5,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.1,
+          "npv_musd": -1204.6,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.1,
+          "npv_musd": -1097.1,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.1,
+          "npv_musd": -989.7,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.1,
+          "npv_musd": -882.3,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.1,
+          "npv_musd": -774.8,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 0.8,
+          "discount_rate": 0.125,
+          "npv_musd": -1065.6,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 0.9,
+          "discount_rate": 0.125,
+          "npv_musd": -987.2,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.0,
+          "discount_rate": 0.125,
+          "npv_musd": -908.8,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.1,
+          "discount_rate": 0.125,
+          "npv_musd": -830.4,
+          "economics_status": "unlisted"
+        },
+        {
+          "wti_price_multiplier": 1.2,
+          "discount_rate": 0.125,
+          "npv_musd": -751.9,
+          "economics_status": "unlisted"
+        }
+      ]
+    }
+  }
+}
