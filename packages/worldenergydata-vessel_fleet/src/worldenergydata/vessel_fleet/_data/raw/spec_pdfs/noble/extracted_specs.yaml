@@ -1,0 +1,154 @@
+# 'Ratings & Dimensions' extracted from Noble rig-summary PDFs — wed issue #987.
+# Samsung 96K drillship class (ex Maersk V-class + ex Pacific Drilling hulls).
+#
+# extraction: text_parse         -> parsers/rig_summary.py over the committed PDF;
+#                                    regenerate with scripts/vessel_fleet/ingest_noble_spec_pdfs.py --reparse
+# extraction: image_transcription -> PDF is an image-only scan; values transcribed
+#                                    manually from a 150-dpi page render (2026-07-12)
+#
+# All *_M values are metres (1 decimal, from feet); RAW_* keys preserve the
+# imperial source values verbatim for review. Loads: VARIABLE_DECK_LOAD_ST in
+# short tons, HOOKLOAD/SETBACK in kips (main hoist).
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+issue: 987
+vessels:
+  Noble Valiant:
+    pdf: noble-valiant.pdf
+    extraction: text_parse
+    aliases: [MAERSK VALIANT]
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Venturer:
+    pdf: noble-venturer.pdf
+    extraction: image_transcription
+    aliases: [MAERSK VENTURER]
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Singapore
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Viking:
+    pdf: noble-viking.pdf
+    extraction: text_parse
+    aliases: [MAERSK VIKING]
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Voyager:
+    pdf: noble-voyager.pdf
+    extraction: image_transcription
+    aliases: [MAERSK VOYAGER]
+    specs:
+      YEAR_BUILT: 2015
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500  # sheet quotes 1,250 sT on main hoist
+      SETBACK_CAPACITY_KIPS: 2645.0
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.8
+      RAW_DEPTH_FT: 62.3
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 27.9
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Faye Kozack:
+    pdf: noble-faye-kozack.pdf
+    extraction: text_parse
+    aliases: [PACIFIC KHAMSIN]  # renamed 2022; IMO 9623324
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 41.8  # her sheet rounds breadth to 137 ft (sisters: 137.8 ft)
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 24250
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Noble Stanley Lafosse:
+    pdf: noble-stanley-lafosse.pdf
+    extraction: text_parse
+    aliases: [PACIFIC SHARAV]  # renamed 2022; IMO 9623336
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 41.8
+      DEPTH_M: 18.9
+      DRAFT_M: 11.9
+      MOONPOOL_LENGTH_M: 35.1  # 115 ft — extended vs sisters' 84 ft; per her own sheet
+      MOONPOOL_WIDTH_M: 12.5
+      RAW_LENGTH_FT: 748.0
+      RAW_BREADTH_FT: 137.0
+      RAW_DEPTH_FT: 62.0
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 115 x 41
