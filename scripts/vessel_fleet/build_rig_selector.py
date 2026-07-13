@@ -41,6 +41,9 @@ _COLUMNS = [
     ("CANTILEVER_REACH_FT", "Cantilever (ft)"),
     ("VARIABLE_DECK_LOAD_ST", "VDL (st)"),
     ("HOOKLOAD_RATING_KIPS", "Hookload (kips)"),
+    ("DRAWWORKS_HP", "Drawworks (HP)"),
+    ("WALKING_SYSTEM", "Walking"),
+    ("IS_OFFSHORE", "Offshore"),
     ("DATA_SOURCE_URL", "Spec sheet"),
 ]
 
@@ -62,6 +65,7 @@ def build(out_dir: Path) -> Path:
         "drillships": int((fleet["RIG_TYPE"] == "drillship").sum()),
         "semis": int((fleet["RIG_TYPE"] == "semi_submersible").sum()),
         "jackups": int((fleet["RIG_TYPE"] == "jack_up").sum()),
+        "land": int((fleet["RIG_TYPE"] == "land_rig").sum()),
         "retrieved": "2026-07-13",
         "owners": summary.index.dropna().tolist(),
     }
@@ -84,10 +88,10 @@ _TEMPLATE = """<!DOCTYPE html>
 <title>Drilling Rig Selector — vendor spec database</title>
 <style>
 :root { --surface:#fcfcfa; --panel:#f2f1ec; --ink:#1a1a19; --ink2:#5c5b54; --line:#d8d6cd;
-        --ds:#2a78d6; --ss:#1baf7a; --ju:#eda100; }
+        --ds:#2a78d6; --ss:#1baf7a; --ju:#eda100; --lr:#008300; }
 @media (prefers-color-scheme: dark) {
   :root { --surface:#1a1a19; --panel:#242422; --ink:#ffffff; --ink2:#c3c2b7; --line:#3a3936;
-          --ds:#3987e5; --ss:#199e70; --ju:#c98500; }
+          --ds:#3987e5; --ss:#199e70; --ju:#c98500; --lr:#008300; }
 }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--surface); color:var(--ink);
@@ -132,9 +136,14 @@ footer { color:var(--ink2); font-size:12px; margin:14px 0; }
 specification (provenance linked per rig). Filter to shortlist; click headers to sort.</p>
 <div class="tiles" id="tiles"></div>
 <div class="filters">
+  <label>Onshore / offshore
+    <select id="f-shore"><option value="">All</option><option value="offshore">Offshore</option>
+    <option value="onshore">Onshore</option></select>
+  </label>
   <label>Rig type
     <select id="f-type"><option value="">All</option><option value="drillship">Drillship</option>
-    <option value="semi_submersible">Semisubmersible</option><option value="jack_up">Jackup</option></select>
+    <option value="semi_submersible">Semisubmersible</option><option value="jack_up">Jackup</option>
+    <option value="land_rig">Land rig</option></select>
   </label>
   <label>Contractor <input id="f-owner" type="text" placeholder="contains…"></label>
   <label>Min water depth (ft) <input id="f-wd" type="number" min="0" step="500"></label>
@@ -147,6 +156,7 @@ specification (provenance linked per rig). Filter to shortlist; click headers to
   <span><i style="background:var(--ds)"></i>Drillship</span>
   <span><i style="background:var(--ss)"></i>Semisubmersible</span>
   <span><i style="background:var(--ju)"></i>Jackup</span>
+  <span><i style="background:var(--lr)"></i>Land rig</span>
   <span style="margin-left:auto">Water depth rating vs hookload — rigs whose sheet states both values</span>
 </div>
 <div id="chartwrap"></div>
@@ -167,17 +177,19 @@ const COLS = [
  ["MOONPOOL_LENGTH_M","Moonpool L (m)"],["MOONPOOL_WIDTH_M","Moonpool W (m)"],
  ["LEG_LENGTH_FT","Legs (ft)"],["CANTILEVER_REACH_FT","Cantilever (ft)"],
  ["VARIABLE_DECK_LOAD_ST","VDL (st)"],["HOOKLOAD_RATING_KIPS","Hookload (kips)"],
+ ["DRAWWORKS_HP","Drawworks (HP)"],["WALKING_SYSTEM","Walking"],
  ["DATA_SOURCE_URL","Spec sheet"]];
-const TYPECOL = {drillship:"var(--ds)", semi_submersible:"var(--ss)", jack_up:"var(--ju)"};
-const TYPELBL = {drillship:"Drillship", semi_submersible:"Semi", jack_up:"Jackup"};
+const TYPECOL = {drillship:"var(--ds)", semi_submersible:"var(--ss)", jack_up:"var(--ju)", land_rig:"var(--lr)"};
+const TYPELBL = {drillship:"Drillship", semi_submersible:"Semi", jack_up:"Jackup", land_rig:"Land rig"};
 let sortKey = "WATER_DEPTH_RATING_FT", sortDir = -1;
 
 document.getElementById("tiles").innerHTML = [
   ["Rigs", STATS.rigs], ["Contractors", STATS.contractors], ["Drillships", STATS.drillships],
-  ["Semis", STATS.semis], ["Jackups", STATS.jackups]
+  ["Semis", STATS.semis], ["Jackups", STATS.jackups], ["Land classes", STATS.land]
 ].map(([k,v]) => `<div class="tile"><b>${v}</b><span>${k}</span></div>`).join("");
 
 function filters() {
+  const sh = document.getElementById("f-shore").value;
   const t = document.getElementById("f-type").value;
   const o = document.getElementById("f-owner").value.toLowerCase();
   const wd = +document.getElementById("f-wd").value || 0;
@@ -185,6 +197,7 @@ function filters() {
   const mp = +document.getElementById("f-mp").value || 0;
   const lg = +document.getElementById("f-leg").value || 0;
   return DATA.filter(r =>
+    (!sh || (sh === "onshore" ? r.IS_OFFSHORE === false : r.IS_OFFSHORE !== false)) &&
     (!t || r.RIG_TYPE === t) &&
     (!o || (r.OWNER||"").toLowerCase().includes(o)) &&
     (!wd || (r.WATER_DEPTH_RATING_FT||0) >= wd) &&
@@ -197,6 +210,7 @@ function fmt(v, col) {
   if (col === "DATA_SOURCE_URL") return `<a href="${v}" target="_blank" rel="noopener">PDF</a>`;
   if (col === "RIG_TYPE") return `<span class="type" style="background:${TYPECOL[v]}"></span>${TYPELBL[v]||v}`;
   if (col === "YEAR_BUILT") return String(Math.round(v));
+  if (col === "WALKING_SYSTEM") return v === true ? "\u2714" : "";
   if (typeof v === "number") return Number.isInteger(v) ? v.toLocaleString() : v.toLocaleString(undefined,{maximumFractionDigits:1});
   return v;
 }
@@ -251,7 +265,7 @@ function chart(rows) {
     c.addEventListener("mouseleave", () => tip.style.display = "none");
   });
 }
-["f-type","f-owner","f-wd","f-hook","f-mp","f-leg"].forEach(id =>
+["f-shore","f-type","f-owner","f-wd","f-hook","f-mp","f-leg"].forEach(id =>
   document.getElementById(id).addEventListener("input", render));
 render();
 </script>
