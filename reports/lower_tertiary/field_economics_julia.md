@@ -2,37 +2,37 @@
 
 **Development:** Julia (tieback15) &middot; **Lease:** G20351 &middot; **First oil:** 2016-03-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04
 
 ## Summary
 
-On public BSEE production + cost data, **Julia** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-482.8 M** (frozen V30 sanctioned reference $-530.6 M).
+On public BSEE production + cost data, **Julia** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-482.8 M**.
 
 - **77.5 MMbbl** oil produced from **4 producing wells** (**9 total wellbores**), generating **$5,168 M** gross revenue.
 - A **high-capex, deepwater** signature: **$2,725 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
 - The cumulative-NPV path bottomed at **$-1,154.1 M** in **2017** and has since recovered **$+671.3 M** as production paid back capital.
 
-> **LATEST run.** The NPV timeline is built from the V30 cashflow model extended through the latest available BSEE OGOR-A month (`build_field_npv_timeline(dev, end_date=...)`). The terminal cumulative NPV reflects the extended window and therefore differs from the frozen V30 sanctioned value (shown for reference below). The frozen V30 baseline (`golden_baseline_v30.yml`) is unchanged.
+> Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
 
 ---
 
 ## NPV Timeline
 
-Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-482.8 M** (frozen V30 reference: $-530.6 M; delta +47.8 M).
+Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-482.8 M**.
 
 Cumulative NPV path (by year): `██████▇▇▁▁▁▁▁▂▃▄▄▅▅`  _start $-76M → trough $-1,154M (2017) → latest $-483M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
-| 2008 | -76.8 | -75.8 | Drilling (spud): JU102 |
+| 2008 | -76.8 | -75.8 | Drilling (spud): JU102<br>Temporary abandonment: JU102 (608124003300) |
 | 2009 | 0.0 | -75.8 |  |
 | 2010 | 0.0 | -75.8 |  |
 | 2011 | 0.0 | -75.8 |  |
 | 2012 | 0.0 | -75.8 |  |
 | 2013 | 0.0 | -75.8 |  |
-| 2014 | -92.8 | -125.5 | Drilling (spud): DC101 |
+| 2014 | -92.8 | -125.5 | Drilling (spud): DC101<br>Temporary abandonment: DC101 (608124009400) |
 | 2015 | -164.0 | -204.8 | Drilling (spud): JU102<br>Completion: JU102 (608124003301)<br>Drilling (spud): JU103 |
-| 2016 | -1,931.3 | -1,099.6 | Drilling (spud): JU104<br>Well online (first production): API 608124003301<br>Completion: DC101 (608124009400)<br>Well online (first production): API 608124009400<br>Drilling (spud): JU105 |
+| 2016 | -1,931.3 | -1,099.6 | Plug & abandon: JU103 (608124010200)<br>Drilling (spud): JU104<br>Temporary abandonment: JU104 (608124010800)<br>Well online (first production): API 608124003301<br>Completion: DC101 (608124009400)<br>Well online (first production): API 608124009400<br>Drilling (spud): JU105 |
 | 2017 | -132.9 | -1,154.1 | Drilling (spud): JU105<br>Completion: JU104 (608124010800)<br>Well online (first production): API 608124010800 |
 | 2018 | 242.4 | -1,064.1 |  |
 | 2019 | 59.3 | -1,043.3 | Drilling (spud): JU106 |
@@ -49,11 +49,15 @@ Cumulative NPV path (by year): `██████▇▇▁▁▁▁▁▂▃▄
 | Date | Operation | Well | Cumulative NPV at event ($MM) |
 |------|-----------|------|------------------------------:|
 | 2008-02-17 | Drilling (spud) | JU102 | -10.4 |
+| 2008-06-22 | Temporary abandonment | JU102 (608124003300) | -75.8 |
 | 2014-07-10 | Drilling (spud) | DC101 | -85.4 |
+| 2014-11-02 | Temporary abandonment | DC101 (608124009400) | -125.5 |
 | 2015-01-20 | Drilling (spud) | JU102 | -130.5 |
 | 2015-04-05 | Completion | JU102 (608124003301) | -140.7 |
 | 2015-10-21 | Drilling (spud) | JU103 | -153.1 |
+| 2016-02-07 | Plug & abandon | JU103 (608124010200) | -322.8 |
 | 2016-02-13 | Drilling (spud) | JU104 | -322.8 |
+| 2016-02-21 | Temporary abandonment | JU104 (608124010800) | -322.8 |
 | 2016-03-01 | Well online (first production) | API 608124003301 | -1,053.0 |
 | 2016-04-04 | Completion | DC101 (608124009400) | -1,076.1 |
 | 2016-05-01 | Well online (first production) | API 608124009400 | -1,097.1 |
@@ -116,36 +120,26 @@ _Julia status: the current demo render (`scripts/bsee/demo_well_path_julia.py`) 
 
 ## Financial Summary
 
-**Latest window (2000-09 -> 2026-04) vs frozen V30 reference.** D&C and facilities are one-time capital already incurred, so they are unchanged from V30; revenue, royalty and opex scale with the additional production.
-
-| Metric | Latest | Frozen V30 (reference) |
-|--------|------:|------:|
-| **NPV @ 10%** | **$-482.8 M** | $-530.6 M |
-| Revenue | $5,168.4 M | $4,715.2 M |
-| Oil produced (MMbbl) | 77.5 | 70.9 |
-
-_Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil from `latest_baseline.yml` (regenerated through 2026-04). A full latest component breakdown (royalty/opex split) is not recomputed here — the frozen V30 breakdown below is the audited source-of-record._
-
-### Frozen V30 reference (audited source-of-record)
+Life-to-date field economics on public BSEE data (2000-09 -> 2026-04). D&C and facilities are one-time capital already incurred; revenue, royalty and opex accrue with production.
 
 | Metric | Value |
 |--------|------:|
-| Revenue | $4,715.1 M |
-| Royalty | $884.1 M |
-| Variable opex | $425.6 M |
-| Fixed opex | $693.8 M |
+| Revenue | $5,168.4 M |
+| Royalty | $969.1 M |
+| Variable opex | $464.9 M |
+| Fixed opex | $762.5 M |
 | D&C cost | $1,349.6 M |
 | Facilities cost | $1,375.0 M |
-| Net cashflow (undiscounted) | $-12.9 M |
-| **NPV @ 10%** | **$-530.6 M** |
-| MIRR (annual) | 6.31% |
+| Net cashflow (undiscounted) | $247.4 M |
+| **NPV @ 10%** | **$-482.8 M** |
+| MIRR (annual) | 6.91% |
 | Producers | 4 |
 | Injectors | 0 |
 | Wellbores | 9 |
 
-_Return metric: **MIRR** is the sanctioned return measure for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
+_Return metric: **MIRR** is the return measure used for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
 
-_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+_Source-of-record: public BSEE OGOR-A production, drilling and WAR records, run through the field cashflow model._
 
 ---
 
@@ -169,7 +163,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 - **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
 - **Explore the full play.** Julia is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
-- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through the sanctioned V30 cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → V30 NPV) is reproducible end-to-end and reconciles to the frozen golden baseline.
+- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:
 
   ```bash
@@ -178,5 +172,4 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
   # 2. regenerate this report (latest window is the default;
   #    leases are auto-derived for the field)
   uv run python scripts/lower_tertiary/generate_field_economics_report.py --dev Julia
-  # frozen V30 reference report: add --frozen
   ```

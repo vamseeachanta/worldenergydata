@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Regenerate the field-economics report for every producing Lower Tertiary
-field, on both the LATEST window (auto-detected newest OGOR-A month) and the
-FROZEN V30 reference window.
+"""Regenerate the single field-economics report for every producing Lower
+Tertiary field, on the latest window (auto-detected newest OGOR-A month) with
+the verified first-oil corrections applied.
 
 One process loops over all fields so the heavy package import / .bin-loader
 patch / latest-month detection are paid once, not per field. Each field's
@@ -9,7 +9,6 @@ leases are auto-derived (multi-lease fields handled).
 
 Usage:
     uv run python scripts/lower_tertiary/regenerate_all_field_reports.py
-    uv run python scripts/lower_tertiary/regenerate_all_field_reports.py --latest-only
 """
 
 from __future__ import annotations
@@ -26,6 +25,9 @@ from worldenergydata.lower_tertiary import (  # noqa: E402
     v30_financial_reproducer as _fin,
 )
 from worldenergydata.lower_tertiary import v30_reproducer as _rep  # noqa: E402
+from worldenergydata.lower_tertiary.latest_runner import (  # noqa: E402
+    FIRST_OIL_CORRECTIONS,
+)
 
 
 def _install_batch_caches() -> None:
@@ -135,11 +137,6 @@ def _terminal_npv(report_md: str) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--latest-only",
-        action="store_true",
-        help="Skip the frozen-V30 reports; generate only the latest window.",
-    )
-    parser.add_argument(
         "--fields",
         nargs="+",
         default=None,
@@ -160,25 +157,25 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(flush=True)
 
-    windows = [("latest", latest_end, "")]
-    if not args.latest_only:
-        windows.append(("frozen V30", None, "_v30"))
-
     results: list[tuple[str, str, str, str]] = []  # field, window, status, detail
     for dev in fields:
-        for win_name, end_date, suffix in windows:
-            label = f"{dev} [{win_name}]"
-            try:
-                report = gen.build_report(dev, None, end_date=end_date)
-                out = REPORTS_DIR / f"field_economics_{_slug(dev)}{suffix}.md"
-                out.write_text(report, encoding="utf-8")
-                npv = _terminal_npv(report)
-                results.append((dev, win_name, "OK", f"NPV {npv} -> {out.name}"))
-                print(f"  OK   {label:<34} NPV {npv}", flush=True)
-            except Exception as exc:  # noqa: BLE001 - want a per-field summary
-                results.append((dev, win_name, "FAIL", str(exc)))
-                print(f"  FAIL {label:<34} {exc}", flush=True)
-                traceback.print_exc()
+        label = f"{dev} [latest]"
+        try:
+            report = gen.build_report(
+                dev,
+                None,
+                end_date=latest_end,
+                first_oil_overrides=FIRST_OIL_CORRECTIONS,
+            )
+            out = REPORTS_DIR / f"field_economics_{_slug(dev)}.md"
+            out.write_text(report, encoding="utf-8")
+            npv = _terminal_npv(report)
+            results.append((dev, "latest", "OK", f"NPV {npv} -> {out.name}"))
+            print(f"  OK   {label:<34} NPV {npv}", flush=True)
+        except Exception as exc:  # noqa: BLE001 - want a per-field summary
+            results.append((dev, "latest", "FAIL", str(exc)))
+            print(f"  FAIL {label:<34} {exc}", flush=True)
+            traceback.print_exc()
 
     print()
     print("=== SUMMARY ===")

@@ -44,12 +44,12 @@ def test_v50_batch_regenerator_includes_buckskin():
 
 
 def test_buckskin_v50_report_is_published():
-    path = REPORTS_DIR / "field_economics_buckskin_v50.md"
-    assert path.exists(), "Buckskin V50 economics report must be published"
+    path = REPORTS_DIR / "field_economics_buckskin.md"
+    assert path.exists(), "Buckskin economics report must be published"
     md = path.read_text(encoding="utf-8")
 
     assert "# Buckskin Field Economics Report" in md
-    assert "**Data window:** 2000-09 -> 2026-04 (latest V50-KC recompute)" in md
+    assert "**Data window:** 2000-09 -> 2026-04" in md
     assert re.search(r"\| \*\*NPV @ 10%\*\* \| \*\*\$-?[0-9,]+\.[0-9] M\*\* \|", md)
 
 
@@ -72,33 +72,18 @@ def test_pages_builder_indexes_buckskin_v50_report():
         for slug, path in build_pages._lower_tertiary_economics_reports()
     }
 
-    assert reports["buckskin"] == "field_economics_buckskin_v50.md"
+    assert reports["buckskin"] == "field_economics_buckskin.md"
 
 
-def test_capabilities_validation_section_links_key_validation_reports():
+def test_capabilities_page_redirects_to_canonical_hub():
+    # C10 (workspace-hub#3494, decision A): the worldenergydata capabilities OVERVIEW is now
+    # a redirect stub to the single canonical surface (aceengineer.com/capabilities). The
+    # former in-page "validation" section is intentionally gone; the deep validation reports
+    # it linked (wo-april-2026-validation, completion/verification, fdas-revision-comparison,
+    # economics-buckskin) still exist as standalone pages. This guards the redirect + that the
+    # divergent overview copy does not creep back. (Repairs the regression from the C10 stub.)
     html = CAPABILITIES_PAGE.read_text(encoding="utf-8")
-    validation_section = html.split('<section class="chan" id="validation">', 1)[1]
-    validation_section = validation_section.split("</section>", 1)[0]
-
-    assert "four linked reports" in validation_section
-    assert "../wo-april-2026-validation.html" in validation_section
-    assert "../completion/verification.html" in validation_section
-    assert "../fdas-revision-comparison.html" in validation_section
-    assert "../economics-buckskin.html" in validation_section
-
-
-def test_capabilities_validation_table_links_fdas_revision_comparison_row():
-    html = CAPABILITIES_PAGE.read_text(encoding="utf-8")
-    validation_section = html.split('<section class="chan" id="validation">', 1)[1]
-    validation_section = validation_section.split("</section>", 1)[0]
-    table_body = validation_section.split("<tbody>", 1)[1].split("</tbody>", 1)[0]
-
-    expected_row = (
-        '<tr><td><a href="../fdas-revision-comparison.html">'
-        "FDAS revision comparison</a></td>"
-        "<td>V50-vs-wed D&amp;C + component economics</td>"
-        '<td class="val">D&amp;C Δ=0; 40 component rows verified</td>'
-        '<td class="pub">2026-04 wed-latest reconciliation</td></tr>'
-    )
-
-    assert expected_row in table_body
+    assert 'rel="canonical"' in html
+    assert "https://www.aceengineer.com/capabilities/" in html
+    assert 'http-equiv="refresh"' in html
+    assert 'id="validation"' not in html

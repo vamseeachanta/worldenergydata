@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""ABOUTME: Regenerate all V50 per-field economics reports in one process.
-ABOUTME: Loads OGOR once (lru_cache shared) and writes field_economics_<dev>_v50.md.
+"""ABOUTME: Regenerate all per-field economics reports in one process.
+ABOUTME: Loads OGOR once (shared) and writes the single field_economics_<dev>.md.
 
-V50 = latest OGOR-A window + verified first-oil corrections, matching
-golden_baseline_v50.yml. Frozen V30 reports (*_v30.md) are untouched.
+Each report is the single result = latest OGOR-A window + verified first-oil
+corrections (internally the "V50" computation, matching golden_baseline_v50.yml).
 """
 
 from __future__ import annotations
@@ -52,7 +52,7 @@ def main() -> None:
             input_set="v50_kc" if dev == "Buckskin" else "v30",
         )
         slug = dev.lower().replace(" ", "_").replace("/", "_")
-        path = out_dir / f"field_economics_{slug}_v50.md"
+        path = out_dir / f"field_economics_{slug}.md"
         path.write_text(md, encoding="utf-8")
         print(f"  wrote {path.name}")
 
