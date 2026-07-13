@@ -54,6 +54,7 @@ _CURATED_FIELDS = (
     "BEAM_M",
     "DEPTH_M",
     "DRAFT_M",
+    "DISPLACEMENT_TONNES",
     "MOONPOOL_LENGTH_M",
     "MOONPOOL_WIDTH_M",
     "VARIABLE_DECK_LOAD_ST",
@@ -95,8 +96,8 @@ def write_raw_source(extraction: dict, data_dir: Path, urls: dict[str, str]) -> 
             "VESSEL_NAME": vessel_name,
             "VESSEL_CATEGORY": "drilling_rig",
             "OWNER": "Noble Corporation plc",
-            "RIG_TYPE": "drillship",
-            "RIG_DESIGN": "Ship shaped, Samsung 96K",
+            "RIG_TYPE": entry.get("rig_type", "drillship"),
+            "RIG_DESIGN": entry.get("rig_design"),
             "DATA_SOURCE": "contractor_spec_pdf",
             "DATA_SOURCE_URL": urls.get(entry["pdf"]),
             "DIMENSION_CONFIDENCE": "measured",
@@ -151,9 +152,32 @@ def apply_to_curated(extraction: dict, data_dir: Path, urls: dict[str, str]) -> 
     return updated
 
 
+def _extract_text(pdf_path: Path) -> str:
+    """Extract PDF text the same way the YAML SSOT was produced.
+
+    The extracted_specs.yaml values come from ``pdftotext -layout`` (poppler),
+    whose column-preserving output the parser regexes are tuned to. Fall back
+    to pdfplumber only when poppler is absent — expect layout-driven drift.
+    """
+    import shutil
+    import subprocess
+
+    if shutil.which("pdftotext"):
+        result = subprocess.run(
+            ["pdftotext", "-layout", str(pdf_path), "-"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout
+    logger.warning("pdftotext not found; using pdfplumber (drift likely)")
+    from worldenergydata.vessel_fleet.parsers.pdf import extract_text_from_pdf
+
+    return extract_text_from_pdf(str(pdf_path))
+
+
 def reparse_report(extraction: dict, data_dir: Path) -> int:
     """Re-extract text-layer PDFs and report drift vs the YAML SSOT."""
-    from worldenergydata.vessel_fleet.parsers.pdf import extract_text_from_pdf
     from worldenergydata.vessel_fleet.parsers.rig_summary import (
         parse_rig_summary_text,
     )
@@ -164,7 +188,7 @@ def reparse_report(extraction: dict, data_dir: Path) -> int:
         if entry["extraction"] != "text_parse":
             logger.info("%s: image transcription — skipped", vessel_name)
             continue
-        text = extract_text_from_pdf(str(pdf_dir / entry["pdf"]))
+        text = _extract_text(pdf_dir / entry["pdf"])
         parsed = parse_rig_summary_text(text)
         for field in _CURATED_FIELDS:
             expected = entry["specs"].get(field)

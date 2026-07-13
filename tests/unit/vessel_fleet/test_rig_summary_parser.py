@@ -137,3 +137,87 @@ class TestVoyagerUnits:
         spec = parse_rig_summary_text(VOYAGER_TEXT)
         assert "LOA_M" not in spec
         assert "YEAR_BUILT" not in spec
+
+
+# Ex-Diamond Offshore "specification sheet" layout (Noble BlackHawk et al.) —
+# no colon separators, metric equivalents in parentheses, loads in MT.
+BLACKHAWK_TEXT = """\
+ OCEAN BLACKHAWK
+                         GENERAL DESCRIPTION
+Design                   Gusto P10,000 DW
+Year Entered Service     2015
+Main Deck                757ft (230.73m) Long x 118ft (35.96m) Wide
+Draft                    36ft (11.0m) Operating
+Displacement             70,459 MT Operating
+Variable Deck Load       22,045 MT Operating
+Water Depth              12,000ft (3,658m) - designed
+Drilling Depth           40,000ft (12,192m)
+Moonpool                 73 ft x 32ft (22.25m x 9.75m)
+"""
+
+# Noble Patriot — moonpool without the metric parenthetical, VDL in MT with
+# no space before the unit.
+PATRIOT_TEXT = """\
+Main Deck                246ft (75m) Long x 206.6ft (63m) Wide
+Draft                    77ft (23.5m) Drilling, 36ft (10m) Transit
+Variable Deck Load       3,500MT Drilling / 3500MT Transit
+Moonpool                  20 ft. x 72 ft
+"""
+
+# DSS21 semis (Noble Deliverer) — Rig Summary layout but labels are indented.
+DELIVERER_TEXT = """\
+ Length :             384 ft
+ Breadth :            256 ft
+ Draft (Operating /   67.3 ft / 31.8 ft
+ Moonpool:            108.3 ft x 29.5 ft
+ Variable Deck        22,960 kips
+"""
+
+
+class TestSpecSheetLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(BLACKHAWK_TEXT)
+
+    def test_metric_taken_from_parentheses(self):
+        assert self.spec["LOA_M"] == 230.7
+        assert self.spec["BEAM_M"] == 36.0
+        assert self.spec["DRAFT_M"] == 11.0
+        assert self.spec["MOONPOOL_LENGTH_M"] == 22.2  # 22.25m printed
+        assert self.spec["MOONPOOL_WIDTH_M"] == 9.8
+
+    def test_year_and_displacement(self):
+        assert self.spec["YEAR_BUILT"] == 2015
+        assert self.spec["DISPLACEMENT_TONNES"] == 70459.0
+
+    def test_vdl_metric_tons_to_short_tons(self):
+        assert self.spec["VARIABLE_DECK_LOAD_ST"] == 24300  # 22,045 MT
+
+    def test_depth_ratings(self):
+        assert self.spec["WATER_DEPTH_RATING_FT"] == 12000.0
+        assert self.spec["DRILLING_DEPTH_RATING_FT"] == 40000.0
+
+
+class TestPatriotVariants:
+    def test_moonpool_without_metric_parenthetical(self):
+        spec = parse_rig_summary_text(PATRIOT_TEXT)
+        assert spec["MOONPOOL_LENGTH_M"] == 6.1  # 20 ft, converted
+        assert spec["MOONPOOL_WIDTH_M"] == 21.9  # 72 ft
+
+    def test_vdl_no_space_before_unit(self):
+        spec = parse_rig_summary_text(PATRIOT_TEXT)
+        assert spec["VARIABLE_DECK_LOAD_ST"] == 3858  # 3,500 MT
+
+    def test_drilling_draft_variant(self):
+        spec = parse_rig_summary_text(PATRIOT_TEXT)
+        assert spec["DRAFT_M"] == 23.5
+
+
+class TestIndentedLabels:
+    def test_dss21_indented_dimensions(self):
+        spec = parse_rig_summary_text(DELIVERER_TEXT)
+        assert spec["LOA_M"] == 117.0  # 384 ft
+        assert spec["BEAM_M"] == 78.0  # 256 ft
+        assert spec["DRAFT_M"] == 20.5  # 67.3 ft operating
+        assert spec["MOONPOOL_LENGTH_M"] == 33.0  # 108.3 ft
+        assert spec["MOONPOOL_WIDTH_M"] == 9.0  # 29.5 ft
+        assert spec["VARIABLE_DECK_LOAD_ST"] == 11480  # 22,960 kips
