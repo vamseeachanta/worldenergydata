@@ -99,7 +99,7 @@ def write_raw_source(
         record = {
             "VESSEL_NAME": vessel_name,
             "VESSEL_CATEGORY": "drilling_rig",
-            "OWNER": extraction.get("owner"),
+            "OWNER": entry.get("owner") or extraction.get("owner"),
             "RIG_TYPE": entry.get("rig_type", "drillship"),
             "RIG_DESIGN": entry.get("rig_design"),
             "DATA_SOURCE": "contractor_spec_pdf",
@@ -192,7 +192,15 @@ def reparse_report(extraction: dict, data_dir: Path, contractor: str) -> int:
         if entry["extraction"] != "text_parse":
             logger.info("%s: image transcription — skipped", vessel_name)
             continue
-        text = _extract_text(pdf_dir / entry["pdf"])
+        pdf_path = pdf_dir / entry["pdf"]
+        if not pdf_path.exists():
+            # e.g. manifest `committed: false` (repo file-size limit) —
+            # fetch from the manifest url to include it in the check.
+            logger.warning(
+                "%s: PDF not committed (%s) — skipped", vessel_name, entry["pdf"]
+            )
+            continue
+        text = _extract_text(pdf_path)
         parsed = parse_rig_summary_text(text)
         for field in _CURATED_FIELDS:
             expected = entry["specs"].get(field)
