@@ -1,0 +1,30 @@
+# Provenance for committed Noble rig-summary PDFs — wed issue #987.
+# Retrieved from noblecorp.com (public investor fleet pages).
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+contractor: Noble Corporation plc
+files:
+  noble-valiant.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/03/Noble-Valiant-Rig-Summary.pdf
+    sha256: 7284ea02a1135913656426e1416140965dccdc1029441957f9fb32d163d4d38d
+    text_layer: true
+  noble-venturer.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/03/Noble-Venturer-Rig-Summary.pdf
+    sha256: 19d672bcda25e8458d5bee8b3caa903226b7012738ab647164aa35a100555220
+    text_layer: false  # image-only scan; specs transcribed manually from page render
+  noble-viking.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/03/Noble-Viking-Rig-Summary.pdf
+    sha256: 616a2f0e4a9762732153ee9039df70ce6f6245e6077a20e263b6fcaa10ae4a96
+    text_layer: true
+  noble-voyager.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/03/Noble-Voyager-Rig-Summary.pdf
+    sha256: 34fab7724cdb6cd0261b7dcec8e86578f9a85b9244ac4471a46c2fb1656a4a3b
+    text_layer: false  # image-only scan; specs transcribed manually from page render
+  noble-faye-kozack.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Faye-Kozack-Rig-Summary.pdf
+    sha256: 840c125c2a3cd5e9447f095878371615b2e1457324322199c86685e8e91b6d3a
+    text_layer: true
+  noble-stanley-lafosse.pdf:
+    url: https://noblecorp.com/wp-content/uploads/2026/05/Noble-Stanley-Lafosse-Rig-Summary.pdf
+    sha256: b5cca655f021d7ef11d427ac2d2323bf0bc271d1a2982b948c09183d44882e54
+    text_layer: true
