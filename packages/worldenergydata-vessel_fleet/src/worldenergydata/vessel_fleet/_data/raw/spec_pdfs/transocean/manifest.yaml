@@ -1,0 +1,114 @@
+# Provenance for committed Transocean RigSpecs PDFs — wed issue #992.
+# Retrieved from deepwater.com/documents/RigSpecs/ (public fleet pages).
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+contractor: Transocean Ltd
+files:
+  deepwater-aquila.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Aquila.pdf
+    sha256: a3f4e8b4d8a2ff8ada89214012874cfbdc2de77a77b829015de37b09878463ab
+    text_layer: true
+  deepwater-asgard.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Asgard.pdf
+    sha256: fdb8422dd113c9189d1c49206a5a7e1e71a2725625279584cad926fc9e7093e0
+    text_layer: true
+  deepwater-atlas.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Atlas.pdf
+    sha256: ec746613e93c60232a8f2c6884546a0200721bec6bbeddd172815e70fd7795f7
+    text_layer: true
+  deepwater-conqueror.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Conqueror.pdf
+    sha256: 30db0479a37d5466aa3b21e0365d8ac067aeb973763060b1664e4f22d2698a4e
+    text_layer: true
+  deepwater-corcovado.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Corcovado.pdf
+    sha256: 0dbbe70a15e4f1493eaf5c33f9fc8d648a93008ea8855137c463d5e8aa3989cf
+    text_layer: true
+  deepwater-invictus.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Invictus.pdf
+    sha256: b8d9aaf5f9a25a3e3af1c97f1933ab66f591fcba7760ec5e266b624210eeb5f9
+    text_layer: true
+  deepwater-mykonos.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Mykonos.pdf
+    sha256: 170190b5da426698ffe87b5333cbbe2c54bfd22e466c058cb9c79f058c41a640
+    text_layer: true
+  deepwater-orion.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Orion.pdf
+    sha256: 8e9c22c74191415d7cb71eb78760fbf3f0b8c2444d7c740dfd7089b577355f71
+    text_layer: true
+  deepwater-pontus.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Pontus.pdf
+    sha256: 0aa9f3a52fc4521978cbc6ad69a11da30df63597597471eb070f726514a0c2a9
+    text_layer: true
+  deepwater-poseidon.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Poseidon.pdf
+    sha256: 643f34bad190acbd4d45addb709e86ecf2b336327a38b934e40ea530ce674984
+    text_layer: true
+  deepwater-proteus.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Proteus.pdf
+    sha256: 9e4653ad181cdc0bc878fe798bbef08e5f0221e4167e0f0dee5a22079cdcd8ef
+    text_layer: true
+  deepwater-skyros.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Skyros.pdf
+    sha256: 39d9fa145c21e0a02a1a72284b06608487cab1d0920df45faddf76a26e6a222b
+    text_layer: true
+  deepwater-thalassa.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Thalassa.pdf
+    sha256: c35498e313b4048d193502646893a47f8d75c6f52a5d428f4c918c539ceeb087
+    text_layer: true
+  deepwater-titan.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Deepwater%20Titan.pdf
+    sha256: 3fa74896e7b9dca6666e3c9e9f28de17834e077620b9d0411560c43186840f1e
+    text_layer: true
+  dhirubhai-deepwater-kg1.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Dhirubhai%20Deepwater%20KG1.pdf
+    sha256: af92e7053bc7125f23e9c5d12cbd96d0c7d6d87ce5146fb1d87adebee7d2dbf2
+    text_layer: true
+  dhirubhai-deepwater-kg2.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Dhirubhai%20Deepwater%20KG2.pdf
+    sha256: b83ff540ac36ae4a1fa21a8c193a8027a18cdd6bdd151ecf1e7f02b96dd9bd31
+    text_layer: true
+  ocean-rig-apollo.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Ocean%20Rig%20Apollo.pdf
+    sha256: 902d053deb7c8e0af4e7f3c00c36b1533f6764e8adb58ca576af9f36b76ca00e
+    text_layer: true
+  ocean-rig-athena.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Ocean%20Rig%20Athena.pdf
+    sha256: d46350e22e12a2bb3c91b14913a8afab51c70f89ce101b2340730fce588a4ff3
+    text_layer: true
+  ocean-rig-mylos.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Ocean%20Rig%20Mylos.pdf
+    sha256: 7e953d7d3d31a98502859486e46ff469db4370ce6ea809e009fbb0577af64cbb
+    text_layer: true
+  petrobras-10000.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Petrobras%2010000.pdf
+    sha256: aaafc0cd387c0f60b2c9e2b1adee89f24149a4647f63ef95bbc51c815a48b865
+    text_layer: true
+  transocean-barents.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Barents.pdf
+    sha256: 59d17436cd7da00db0e9b3e0b2f3e0276b5f629079f3f7caeca8b1132ffef2fd
+    text_layer: true
+  transocean-enabler.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Enabler.pdf
+    sha256: d829990ef4bf93ee0c6ae091b6c8aeae89709a2e1df1b7e88036a525734ecc5c
+    text_layer: true
+  transocean-encourage.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Encourage.pdf
+    sha256: cede2c6ee41c137c8e4ccf2ae070221ce901859fd96ae3944da4e43fb0201521
+    text_layer: true
+  transocean-endurance.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Endurance.pdf
+    sha256: 97174477f7f2fff2f856ad12d7d26cc0745623c463bbb665134a89c4a82db719
+    text_layer: true
+  transocean-equinox.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Equinox.pdf
+    sha256: 2ecabd847ca31a65a570f7e832f8480d2c17ec7b1b5155461648ed4cc8de019b
+    text_layer: true
+  transocean-norge.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Norge.pdf
+    sha256: 381cda8080e3d11a2c0924eec681c01c0be7659c673f26e9bce5a9255db7ed25
+    text_layer: true
+  transocean-spitsbergen.pdf:
+    url: https://www.deepwater.com/documents/RigSpecs/Transocean%20Spitsbergen.pdf
+    sha256: 62878f9bc53a66407b4cc69ef1e36e44ad5d4244520b25505f6d6ffacabe4aa4
+    text_layer: true

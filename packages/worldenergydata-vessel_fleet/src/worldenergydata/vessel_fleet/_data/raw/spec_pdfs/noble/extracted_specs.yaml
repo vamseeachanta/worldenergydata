@@ -12,6 +12,7 @@
 # short tons, HOOKLOAD/SETBACK in kips (main hoist).
 retrieved: '2026-07-12'
 source_family: contractor_rig_summary_pdf
+owner: Noble Corporation plc
 issue: 987
 vessels:
   Noble Valiant:

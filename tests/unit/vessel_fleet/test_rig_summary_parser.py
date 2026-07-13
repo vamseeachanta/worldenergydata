@@ -212,6 +212,65 @@ class TestPatriotVariants:
         assert spec["DRAFT_M"] == 23.5
 
 
+# Transocean deepwater.com "RigSpecs" layout (Deepwater Titan) — compound
+# Dimensions/Drafts lines, metric in parentheses, loads in short tons.
+TITAN_TEXT = """\
+Design / Generation                Jurong Espadon JE3T Ultra Deepwater Drillship
+Year Entered Service / Significant Upgrades                                2023
+Flag                                                           Marshall Islands
+Dimensions              817 ft. (249 m) x 139.4 ft. (42.5 m) x 64 ft. (19.5 m) Depth
+Drafts               Maximum Operating 38.05 ft. (11.6 m) / Transit 26.3 ft. (8 m)
+Displacement                                     103,066 st (93,500 mt) (Loadline)
+Maximum Water Depth 12,000 ft (3,657.6 m) designed / 8,000 ft (2,438 m) outfitted
+Maximum Drilling Depth                                         40,000 ft (12,192 m)
+Gross Hook Loads     (Main) 1,700 st. (1,542 mt) capacity
+Moonpool              92ft (28m) length x 29.5ft (9m) width
+"""
+
+# Transocean semi variant (Spitsbergen): worded Dimensions, "m." with dot,
+# no third dimension.
+SPITSBERGEN_TEXT = """\
+  Design / Generation                                    Aker H-6e Semi-submersible
+  Dimensions                    295 ft. (90 m) long x 230 ft. (70 m) wide (main deck)
+  Drafts                                 75 ft. (24 m) operating / 31 ft. (9.5 m) Transit
+  Hookload Capacity (Main) 1,000 st (908 mt) capacity
+  Moonpool             34 ft. (10.3 m) x 75 ft. (23 m.) Outfitted with skid rails.
+"""
+
+
+class TestTransoceanLayout:
+    def setup_method(self):
+        self.spec = parse_rig_summary_text(TITAN_TEXT)
+
+    def test_dimensions_metric(self):
+        assert self.spec["LOA_M"] == 249.0
+        assert self.spec["BEAM_M"] == 42.5
+        assert self.spec["DEPTH_M"] == 19.5
+
+    def test_drafts_and_displacement(self):
+        assert self.spec["DRAFT_M"] == 11.6
+        assert self.spec["RAW_DRAFT_TRANSIT_FT"] == 26.3
+        assert self.spec["DISPLACEMENT_TONNES"] == 93500.0
+
+    def test_moonpool_and_hook(self):
+        assert self.spec["MOONPOOL_LENGTH_M"] == 28.0
+        assert self.spec["MOONPOOL_WIDTH_M"] == 9.0
+        assert self.spec["HOOKLOAD_RATING_KIPS"] == 3400  # 1,700 st
+
+    def test_general(self):
+        assert self.spec["YEAR_BUILT"] == 2023
+        assert self.spec["FLAG_STATE"] == "Marshall Islands"
+        assert self.spec["WATER_DEPTH_RATING_FT"] == 12000.0
+
+    def test_semi_variant(self):
+        spec = parse_rig_summary_text(SPITSBERGEN_TEXT)
+        assert spec["LOA_M"] == 90.0  # worded "long x ... wide", 2 dims only
+        assert spec["BEAM_M"] == 70.0
+        assert "DEPTH_M" not in spec
+        assert spec["MOONPOOL_WIDTH_M"] == 23.0  # "(23 m.)" with dot
+        assert spec["HOOKLOAD_RATING_KIPS"] == 2000  # Hookload Capacity variant
+
+
 class TestIndentedLabels:
     def test_dss21_indented_dimensions(self):
         spec = parse_rig_summary_text(DELIVERER_TEXT)

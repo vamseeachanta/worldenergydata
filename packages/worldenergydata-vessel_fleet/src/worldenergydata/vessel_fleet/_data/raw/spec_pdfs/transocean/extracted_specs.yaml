@@ -1,0 +1,582 @@
+# 'Ratings & Dimensions' extracted from Transocean RigSpecs PDFs — wed issue #992 (epic #991).
+# Fleet: 20 drillships (Espadon, DSME 12000/10000, Samsung, Enterprise-class heritage)
+# + 7 harsh-environment semis (Aker H-6e, Moss CS60/Cat-D).
+#
+# extraction: text_parse             -> parsers/rig_summary.py (Transocean profile) over the committed PDF
+# extraction: text_parse_manual_dims -> PDF text layer corrupted at the Dimensions line;
+#                                       dims transcribed from the rendered sheet (2026-07-12)
+#
+# All *_M values are metres taken from the sheets' printed metric equivalents;
+# RAW_* keys preserve imperial source values. HOOKLOAD converted st -> kips.
+retrieved: '2026-07-12'
+source_family: contractor_rig_summary_pdf
+owner: Transocean Ltd
+issue: 992
+vessels:
+  Deepwater Aquila:
+    pdf: deepwater-aquila.pdf
+    rig_type: drillship
+    rig_design: DSME Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2023
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.4
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      MOONPOOL_LENGTH_M: 35.0
+      MOONPOOL_WIDTH_M: 9.7
+      VARIABLE_DECK_LOAD_ST: 26455
+      HOOKLOAD_RATING_KIPS: 2800
+      RAW_DIMENSIONS_FT: 782.1 x 137.8 x 62.3
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 29.5
+      RAW_MOONPOOL_FT: 114.83 x 31.49
+  Deepwater Asgard:
+    pdf: deepwater-asgard.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 10.0
+      VARIABLE_DECK_LOAD_ST: 22636
+      HOOKLOAD_RATING_KIPS: 2800
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.4
+      RAW_DRAFT_TRANSIT_FT: 29.5
+      RAW_MOONPOOL_FT: 82 x 33.5
+  Deepwater Atlas:
+    pdf: deepwater-atlas.pdf
+    rig_type: drillship
+    rig_design: Jurong Espadon JE3T Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2022
+      FLAG_STATE: Marshall Islands                             switchboard
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 249.0
+      BEAM_M: 42.5
+      DEPTH_M: 19.5
+      DRAFT_M: 11.6
+      MOONPOOL_LENGTH_M: 28.0
+      MOONPOOL_WIDTH_M: 10.8
+      VARIABLE_DECK_LOAD_ST: 24250
+      HOOKLOAD_RATING_KIPS: 3400
+      RAW_DIMENSIONS_FT: 816.6 x 139.4 x 64
+      RAW_DRAFT_OPERATING_FT: 38.05
+      RAW_DRAFT_TRANSIT_FT: 26.3
+      RAW_MOONPOOL_FT: 91.86 x 35.43
+  Deepwater Conqueror:
+    pdf: deepwater-conqueror.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 103500.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 9.4
+      VARIABLE_DECK_LOAD_ST: 25353
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 31
+  Deepwater Corcovado:
+    pdf: deepwater-corcovado.pdf
+    rig_type: drillship
+    rig_design: Enhanced Samsung 10000
+    extraction: text_parse
+    aliases: [OCEAN RIG CORCOVADO]
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Liberia
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_MOONPOOL_FT: 84 x 41
+  Deepwater Invictus:
+    pdf: deepwater-invictus.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2014
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 10.0
+      VARIABLE_DECK_LOAD_ST: 22636
+      HOOKLOAD_RATING_KIPS: 2800
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 33.5
+  Deepwater Mykonos:
+    pdf: deepwater-mykonos.pdf
+    rig_type: drillship
+    rig_design: Enhanced Samsung 10000
+    extraction: text_parse
+    aliases: [OCEAN RIG MYKONOS]
+    specs:
+      YEAR_BUILT: 2011
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_MOONPOOL_FT: 84 x 41
+  Deepwater Orion:
+    pdf: deepwater-orion.pdf
+    rig_type: drillship
+    rig_design: Enhanced Samsung 10000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2011
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 26.0
+      MOONPOOL_WIDTH_M: 12.0
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 748 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 38.0
+      RAW_DRAFT_TRANSIT_FT: 38.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Deepwater Pontus:
+    pdf: deepwater-pontus.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2017
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.8
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 9.5
+      VARIABLE_DECK_LOAD_ST: 25346
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 31
+  Deepwater Poseidon:
+    pdf: deepwater-poseidon.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2018
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.8
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 9.5
+      VARIABLE_DECK_LOAD_ST: 25346
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 31
+  Deepwater Proteus:
+    pdf: deepwater-proteus.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.8
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 9.5
+      VARIABLE_DECK_LOAD_ST: 25346
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 31
+  Deepwater Skyros:
+    pdf: deepwater-skyros.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000
+    extraction: text_parse
+    aliases: [OCEAN RIG SKYROS]
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_MOONPOOL_FT: 84 x 41
+  Deepwater Thalassa:
+    pdf: deepwater-thalassa.pdf
+    rig_type: drillship
+    rig_design: DSME 12000 Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 238.0
+      BEAM_M: 42.0
+      DEPTH_M: 18.9
+      DRAFT_M: 11.8
+      DISPLACEMENT_TONNES: 104000.0
+      MOONPOOL_LENGTH_M: 25.0
+      MOONPOOL_WIDTH_M: 9.5
+      VARIABLE_DECK_LOAD_ST: 25346
+      RAW_DIMENSIONS_FT: 781 x 138 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 29.0
+      RAW_MOONPOOL_FT: 82 x 31
+  Deepwater Titan:
+    pdf: deepwater-titan.pdf
+    rig_type: drillship
+    rig_design: Jurong Espadon JE3T Ultra Deepwater Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2023
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 249.0
+      BEAM_M: 42.5
+      DEPTH_M: 19.5
+      DRAFT_M: 11.6
+      DISPLACEMENT_TONNES: 93500.0
+      MOONPOOL_LENGTH_M: 28.0
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 25353
+      HOOKLOAD_RATING_KIPS: 3400
+      RAW_DIMENSIONS_FT: 817 x 139.4 x 64
+      RAW_DRAFT_OPERATING_FT: 38.05
+      RAW_DRAFT_TRANSIT_FT: 26.3
+      RAW_MOONPOOL_FT: 92 x 29.5
+  Dhirubhai Deepwater KG1:
+    pdf: dhirubhai-deepwater-kg1.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000 double hull 6th generation DP Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      RAW_DIMENSIONS_FT: 748 x 137 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Dhirubhai Deepwater KG2:
+    pdf: dhirubhai-deepwater-kg2.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000 double hull 6th generation DP Drillship
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2010
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 12.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      RAW_DIMENSIONS_FT: 748 x 137 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Ocean Rig Apollo:
+    pdf: ocean-rig-apollo.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000
+    extraction: text_parse_manual_dims
+    specs:
+      YEAR_BUILT: 2015
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_MOONPOOL_FT: 84 x 41
+  Ocean Rig Athena:
+    pdf: ocean-rig-athena.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000
+    extraction: text_parse_manual_dims
+    specs:
+      YEAR_BUILT: 2015
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_MOONPOOL_FT: 84 x 41
+  Ocean Rig Mylos:
+    pdf: ocean-rig-mylos.pdf
+    rig_type: drillship
+    rig_design: Samsung 12000
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2013
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 228.0
+      BEAM_M: 42.0
+      DEPTH_M: 19.0
+      DRAFT_M: 11.5
+      DISPLACEMENT_TONNES: 96000.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2500
+      RAW_DIMENSIONS_FT: 748 x 137.8 x 62.3
+      RAW_DRAFT_OPERATING_FT: 37.7
+      RAW_DRAFT_TRANSIT_FT: 37.7
+      RAW_MOONPOOL_FT: 84 x 41
+  Petrobras 10000:
+    pdf: petrobras-10000.pdf
+    rig_type: drillship
+    rig_design: Samsung 10,000 Double Hull
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      FLAG_STATE: Marshall Islands
+      WATER_DEPTH_RATING_FT: 12000.0
+      DRILLING_DEPTH_RATING_FT: 37000.0
+      LOA_M: 228.0
+      BEAM_M: 41.7
+      DEPTH_M: 18.8
+      DRAFT_M: 11.8
+      DISPLACEMENT_TONNES: 97999.0
+      MOONPOOL_LENGTH_M: 25.6
+      MOONPOOL_WIDTH_M: 12.5
+      VARIABLE_DECK_LOAD_ST: 22046
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 748 x 137 x 62
+      RAW_DRAFT_OPERATING_FT: 39.0
+      RAW_DRAFT_TRANSIT_FT: 28.0
+      RAW_MOONPOOL_FT: 84 x 41
+  Transocean Barents:
+    pdf: transocean-barents.pdf
+    rig_type: semi_submersible
+    rig_design: Aker H-6e Semi-submersible
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 90.0
+      BEAM_M: 70.0
+      DRAFT_M: 24.0
+      DISPLACEMENT_TONNES: 64500.0
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 23.0
+      VARIABLE_DECK_LOAD_ST: 6945
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 295 x 230
+      RAW_DRAFT_OPERATING_FT: 75.0
+      RAW_DRAFT_TRANSIT_FT: 31.0
+      RAW_MOONPOOL_FT: 33.7 x 75.5
+  Transocean Enabler:
+    pdf: transocean-enabler.pdf
+    rig_type: semi_submersible
+    rig_design: GVA 4000 NCS
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 1640.0
+      DRILLING_DEPTH_RATING_FT: 27887.0
+      LOA_M: 116.0
+      BEAM_M: 97.0
+      DRAFT_M: 25.1
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 7165
+      RAW_DIMENSIONS_FT: 380.5 x 318.2
+      RAW_DRAFT_OPERATING_FT: 82.5
+      RAW_DRAFT_TRANSIT_FT: 76.0
+      RAW_MOONPOOL_FT: 33.8 x 29.5
+  Transocean Encourage:
+    pdf: transocean-encourage.pdf
+    rig_type: semi_submersible
+    rig_design: GVA 4000 NCS
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2016
+      WATER_DEPTH_RATING_FT: 1640.0
+      DRILLING_DEPTH_RATING_FT: 27887.0
+      LOA_M: 116.0
+      BEAM_M: 97.0
+      DRAFT_M: 25.1
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 6749
+      RAW_DIMENSIONS_FT: 380.5 x 318.2
+      RAW_DRAFT_OPERATING_FT: 82.5
+      RAW_DRAFT_TRANSIT_FT: 76.0
+      RAW_MOONPOOL_FT: 33.8 x 29.5
+  Transocean Endurance:
+    pdf: transocean-endurance.pdf
+    rig_type: semi_submersible
+    rig_design: GVA 4000 NCS
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2015
+      WATER_DEPTH_RATING_FT: 1640.0
+      DRILLING_DEPTH_RATING_FT: 27887.0
+      LOA_M: 116.0
+      BEAM_M: 97.0
+      DRAFT_M: 25.1
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 5512
+      RAW_DIMENSIONS_FT: 380.5 x 318.2
+      RAW_DRAFT_OPERATING_FT: 82.5
+      RAW_DRAFT_TRANSIT_FT: 76.0
+      RAW_MOONPOOL_FT: 33.8 x 29.5
+  Transocean Equinox:
+    pdf: transocean-equinox.pdf
+    rig_type: semi_submersible
+    rig_design: GVA 4000 NCS
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2015
+      DRILLING_DEPTH_RATING_FT: 27887.0
+      LOA_M: 116.0
+      BEAM_M: 97.0
+      DRAFT_M: 25.1
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 5512
+      RAW_DIMENSIONS_FT: 380.5 x 318.2
+      RAW_DRAFT_OPERATING_FT: 82.5
+      RAW_DRAFT_TRANSIT_FT: 76.0
+      RAW_MOONPOOL_FT: 33.8 x 29.5
+  Transocean Norge:
+    pdf: transocean-norge.pdf
+    rig_type: semi_submersible
+    rig_design: Moss Maritime CS60 / 6th Generation
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2019
+      DRILLING_DEPTH_RATING_FT: 40000.0
+      LOA_M: 122.6
+      BEAM_M: 94.2
+      DRAFT_M: 23.5
+      DISPLACEMENT_TONNES: 76981.0
+      MOONPOOL_LENGTH_M: 27.8
+      MOONPOOL_WIDTH_M: 9.0
+      VARIABLE_DECK_LOAD_ST: 8267
+      RAW_DIMENSIONS_FT: 402 x 309
+      RAW_DRAFT_OPERATING_FT: 77.0
+      RAW_DRAFT_TRANSIT_FT: 36.0
+      RAW_MOONPOOL_FT: 91 x 29.5
+  Transocean Spitsbergen:
+    pdf: transocean-spitsbergen.pdf
+    rig_type: semi_submersible
+    rig_design: Aker H-6e Semi-submersible
+    extraction: text_parse
+    specs:
+      YEAR_BUILT: 2009
+      WATER_DEPTH_RATING_FT: 10000.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 90.0
+      BEAM_M: 70.0
+      DRAFT_M: 22.8
+      DISPLACEMENT_TONNES: 64500.0
+      MOONPOOL_LENGTH_M: 10.3
+      MOONPOOL_WIDTH_M: 23.0
+      VARIABLE_DECK_LOAD_ST: 7165
+      HOOKLOAD_RATING_KIPS: 2000
+      RAW_DIMENSIONS_FT: 295 x 230
+      RAW_DRAFT_OPERATING_FT: 75.0
+      RAW_DRAFT_TRANSIT_FT: 31.0
+      RAW_MOONPOOL_FT: 34 x 75
