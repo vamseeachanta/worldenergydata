@@ -2,48 +2,48 @@
 
 **Development:** Stones (subsea15) &middot; **Lease:** G17001 &middot; **First oil:** 2016-09-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest); frozen V30 reference NPV = -$530.6M
+**Data window:** 2000-09 -> 2026-04
 
 ## Summary
 
-On public BSEE production + cost data, **Stones** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,460.8 M** (frozen V30 sanctioned reference $-1,479.5 M).
+On public BSEE production + cost data, **Stones** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-1,460.8 M**.
 
 - **89.0 MMbbl** oil produced from **10 producing wells** (**22 total wellbores**), generating **$5,947 M** gross revenue.
 - A **high-capex, deepwater** signature: **$6,232 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
 - The cumulative-NPV path bottomed at **$-1,907.4 M** in **2017** and has since recovered **$+446.6 M** as production paid back capital.
 
-> **LATEST run.** The NPV timeline is built from the V30 cashflow model extended through the latest available BSEE OGOR-A month (`build_field_npv_timeline(dev, end_date=...)`). The terminal cumulative NPV reflects the extended window and therefore differs from the frozen V30 sanctioned value (shown for reference below). The frozen V30 baseline (`golden_baseline_v30.yml`) is unchanged.
+> Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
 
 ---
 
 ## NPV Timeline
 
-Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,460.8 M** (frozen V30 reference: $-1,479.5 M; delta +18.7 M).
+Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-1,460.8 M**.
 
 Cumulative NPV path (by year): `█▇▇▇▇▇▇▇▇▇▆▅▁▁▁▁▁▁▂▂▂▂▂`  _start $-1M → trough $-1,907M (2017) → latest $-1,461M_
 
 | Year | Net Cashflow ($MM) | Cumulative NPV ($MM) | Critical Operations |
 |------|-------------------:|---------------------:|---------------------|
 | 2004 | -0.8 | -0.8 | Drilling (spud): 001 |
-| 2005 | -54.4 | -54.5 |  |
+| 2005 | -54.4 | -54.5 | Temporary abandonment: 001 (608124001500) |
 | 2006 | 0.0 | -54.5 | Drilling (spud): 002 |
 | 2007 | 0.0 | -54.5 |  |
 | 2008 | 0.0 | -54.5 |  |
 | 2009 | 0.0 | -54.5 |  |
 | 2010 | 0.0 | -54.5 |  |
 | 2011 | 0.0 | -54.5 |  |
-| 2012 | -98.4 | -101.8 | Drilling (spud): 001 |
+| 2012 | -98.4 | -101.8 | Drilling (spud): 001<br>Temporary abandonment: 001 (608124007700) |
 | 2013 | -41.6 | -119.5 | Drilling (spud): 004 |
-| 2014 | -435.2 | -292.0 | Drilling (spud): 005<br>Drilling (spud): SN105 |
-| 2015 | -735.2 | -561.2 | Drilling (spud): SN109<br>Drilling (spud): 009<br>Drilling (spud): SN208<br>Drilling (spud): 008<br>Completion: SN109 (608124009900)<br>Completion: SN105 (608124009500) |
-| 2016 | -4,008.5 | -1,874.9 | Drilling (spud): 011<br>Sidetrack: 011 (608124011000)<br>Drilling (spud): SN110<br>Well online (first production): API 608124009500<br>Well online (first production): API 608124009900<br>Completion: SN110 (608124011001)<br>Well online (first production): API 608124011001<br>Drilling (spud): SN206 |
-| 2017 | -101.2 | -1,907.4 | Completion: SN208 (608124010400)<br>Drilling (spud): SN207<br>Well online (first production): API 608124010400<br>Completion: SN207 (608124011700)<br>Well online (first production): API 608124011700<br>Completion: SN206 (608124011200) |
+| 2014 | -435.2 | -292.0 | Plug & abandon: 004 (608124008700)<br>Drilling (spud): 005<br>Plug & abandon: 005 (608124009201)<br>Drilling (spud): SN105 |
+| 2015 | -735.2 | -561.2 | Temporary abandonment: SN105 (608124009500)<br>Drilling (spud): SN109<br>Temporary abandonment: SN109 (608124009900)<br>Drilling (spud): 009<br>Temporary abandonment: SN208 (608124010400)<br>Drilling (spud): SN208<br>Temporary abandonment: 008 (608124010500)<br>Drilling (spud): 008<br>Completion: SN109 (608124009900)<br>Completion: SN105 (608124009500) |
+| 2016 | -4,008.5 | -1,874.9 | Plug & abandon: 008 (608124010500)<br>Drilling (spud): 011<br>Sidetrack: 011 (608124011000)<br>Drilling (spud): SN110<br>Well online (first production): API 608124009500<br>Well online (first production): API 608124009900<br>Completion: SN110 (608124011001)<br>Well online (first production): API 608124011001<br>Drilling (spud): SN206<br>Plug & abandon: 009 (608124010300) |
+| 2017 | -101.2 | -1,907.4 | Completion: SN208 (608124010400)<br>Drilling (spud): SN207<br>Well online (first production): API 608124010400<br>Completion: SN207 (608124011700)<br>Well online (first production): API 608124011700<br>Completion: SN206 (608124011200)<br>Plug & abandon: 001 (608124007700)<br>Plug & abandon: 001 (608124001500)<br>Plug & abandon: 002 (608124002200) |
 | 2018 | 190.1 | -1,855.9 | Drilling (spud): SN213<br>Completion: SN213 (608124012300)<br>Well online (first production): API 608124012300 |
-| 2019 | 254.3 | -1,791.8 | Drilling (spud): SN115 |
+| 2019 | 254.3 | -1,791.8 | Temporary abandonment: SN110 (608124011001)<br>Drilling (spud): SN115 |
 | 2020 | 10.2 | -1,790.2 | Completion: SN115 (608124012900)<br>Well online (first production): API 608124012900<br>Drilling (spud): SN216 |
-| 2021 | 374.8 | -1,713.3 | Completion: SN216 (608124013400)<br>Well online (first production): API 608124013400<br>Drilling (spud): SN114 |
+| 2021 | 374.8 | -1,713.3 | Completion: SN216 (608124013400)<br>Well online (first production): API 608124013400<br>Plug & abandon: SN208 (608124010400)<br>Plug & abandon: SN110 (608124011001)<br>Drilling (spud): SN114 |
 | 2022 | 627.7 | -1,595.3 | Sidetrack: SN114 (608124013700)<br>Drilling (spud): SN114<br>Completion: SN114 (608124013701)<br>Well online (first production): API 608124013701<br>Drilling (spud): SN219 |
-| 2023 | 359.8 | -1,534.0 | Sidetrack: SN219 (608124014300)<br>Drilling (spud): SN219<br>Completion: SN219 (608124014301)<br>Well online (first production): API 608124014301 |
+| 2023 | 359.8 | -1,534.0 | Temporary abandonment: SN219 (608124014300)<br>Sidetrack: SN219 (608124014300)<br>Drilling (spud): SN219<br>Completion: SN219 (608124014301)<br>Well online (first production): API 608124014301 |
 | 2024 | 296.5 | -1,487.7 | Workover: SN213 (608124012300) |
 | 2025 | 143.8 | -1,467.3 | Workover: SN115 (608124012900)<br>Workover: SN114 (608124013701) |
 | 2026 | 49.5 | -1,460.8 |  |
@@ -53,18 +53,27 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▇▇▇▆▅▁▁▁▁
 | Date | Operation | Well | Cumulative NPV at event ($MM) |
 |------|-----------|------|------------------------------:|
 | 2004-12-31 | Drilling (spud) | 001 | -0.8 |
+| 2005-03-13 | Temporary abandonment | 001 (608124001500) | -54.5 |
 | 2006-08-02 | Drilling (spud) | 002 | -54.5 |
 | 2012-06-20 | Drilling (spud) | 001 | -58.8 |
+| 2012-11-11 | Temporary abandonment | 001 (608124007700) | -101.8 |
 | 2013-11-10 | Drilling (spud) | 004 | -109.0 |
+| 2014-01-19 | Plug & abandon | 004 (608124008700) | -125.9 |
 | 2014-02-15 | Drilling (spud) | 005 | -130.6 |
 | 2014-04-01 | Drilling (spud) | 005 | -148.7 |
+| 2014-06-15 | Plug & abandon | 005 (608124009201) | -165.3 |
 | 2014-07-24 | Drilling (spud) | SN105 | -167.9 |
+| 2015-02-08 | Temporary abandonment | SN105 (608124009500) | -330.1 |
 | 2015-03-18 | Drilling (spud) | SN109 | -353.1 |
+| 2015-07-19 | Temporary abandonment | SN109 (608124009900) | -446.3 |
 | 2015-08-01 | Drilling (spud) | 009 | -472.2 |
+| 2015-08-05 | Temporary abandonment | SN208 (608124010400) | -472.2 |
 | 2015-08-07 | Drilling (spud) | SN208 | -472.2 |
+| 2015-08-11 | Temporary abandonment | 008 (608124010500) | -472.2 |
 | 2015-08-12 | Drilling (spud) | 008 | -472.2 |
 | 2015-08-23 | Completion | SN109 (608124009900) | -472.2 |
 | 2015-10-18 | Completion | SN105 (608124009500) | -525.4 |
+| 2016-02-07 | Plug & abandon | 008 (608124010500) | -595.8 |
 | 2016-05-12 | Drilling (spud) | 011 | -660.2 |
 | 2016-08-14 | Sidetrack | 011 (608124011000) | -793.0 |
 | 2016-08-16 | Drilling (spud) | SN110 | -793.0 |
@@ -73,27 +82,35 @@ Cumulative NPV path (by year): `█▇▇▇▇▇▇▇▇▇▆▅▁▁▁▁
 | 2016-09-11 | Completion | SN110 (608124011001) | -1,840.3 |
 | 2016-12-01 | Well online (first production) | API 608124011001 | -1,874.9 |
 | 2016-12-08 | Drilling (spud) | SN206 | -1,874.9 |
+| 2016-12-11 | Plug & abandon | 009 (608124010300) | -1,874.9 |
 | 2017-02-19 | Completion | SN208 (608124010400) | -1,900.7 |
 | 2017-04-02 | Drilling (spud) | SN207 | -1,914.0 |
 | 2017-05-01 | Well online (first production) | API 608124010400 | -1,928.2 |
 | 2017-06-11 | Completion | SN207 (608124011700) | -1,923.6 |
 | 2017-08-01 | Well online (first production) | API 608124011700 | -1,919.2 |
 | 2017-08-27 | Completion | SN206 (608124011200) | -1,919.2 |
+| 2017-10-22 | Plug & abandon | 001 (608124007700) | -1,916.2 |
+| 2017-10-22 | Plug & abandon | 001 (608124001500) | -1,916.2 |
+| 2017-10-23 | Plug & abandon | 002 (608124002200) | -1,916.2 |
 | 2018-04-06 | Drilling (spud) | SN213 | -1,899.6 |
 | 2018-06-24 | Completion | SN213 (608124012300) | -1,897.1 |
 | 2018-09-01 | Well online (first production) | API 608124012300 | -1,885.7 |
+| 2019-06-14 | Temporary abandonment | SN110 (608124011001) | -1,813.4 |
 | 2019-10-22 | Drilling (spud) | SN115 | -1,790.8 |
 | 2020-05-03 | Completion | SN115 (608124012900) | -1,806.2 |
 | 2020-06-01 | Well online (first production) | API 608124012900 | -1,810.8 |
 | 2020-12-09 | Drilling (spud) | SN216 | -1,790.2 |
 | 2021-03-07 | Completion | SN216 (608124013400) | -1,780.8 |
 | 2021-05-01 | Well online (first production) | API 608124013400 | -1,773.2 |
+| 2021-05-16 | Plug & abandon | SN208 (608124010400) | -1,773.2 |
+| 2021-05-30 | Plug & abandon | SN110 (608124011001) | -1,773.2 |
 | 2021-08-17 | Drilling (spud) | SN114 | -1,740.5 |
 | 2022-01-30 | Sidetrack | SN114 (608124013700) | -1,704.4 |
 | 2022-02-04 | Drilling (spud) | SN114 | -1,694.4 |
 | 2022-03-13 | Completion | SN114 (608124013701) | -1,681.7 |
 | 2022-05-01 | Well online (first production) | API 608124013701 | -1,670.0 |
 | 2022-12-19 | Drilling (spud) | SN219 | -1,595.3 |
+| 2023-02-05 | Temporary abandonment | SN219 (608124014300) | -1,587.1 |
 | 2023-02-12 | Sidetrack | SN219 (608124014300) | -1,587.1 |
 | 2023-02-14 | Drilling (spud) | SN219 | -1,587.1 |
 | 2023-03-12 | Completion | SN219 (608124014301) | -1,582.2 |
@@ -163,36 +180,26 @@ _They are intentionally **not linked yet**: the geometry render must first be co
 
 ## Financial Summary
 
-**Latest window (2000-09 -> 2026-04) vs frozen V30 reference.** D&C and facilities are one-time capital already incurred, so they are unchanged from V30; revenue, royalty and opex scale with the additional production.
-
-| Metric | Latest | Frozen V30 (reference) |
-|--------|------:|------:|
-| **NPV @ 10%** | **$-1,460.8 M** | $-1,479.5 M |
-| Revenue | $5,946.6 M | $5,582.4 M |
-| Oil produced (MMbbl) | 89.0 | 83.7 |
-
-_Latest NPV from `build_field_npv_timeline(dev, end_date)`; latest revenue/oil from `latest_baseline.yml` (regenerated through 2026-04). A full latest component breakdown (royalty/opex split) is not recomputed here — the frozen V30 breakdown below is the audited source-of-record._
-
-### Frozen V30 reference (audited source-of-record)
+Life-to-date field economics on public BSEE data (2000-09 -> 2026-04). D&C and facilities are one-time capital already incurred; revenue, royalty and opex accrue with production.
 
 | Metric | Value |
 |--------|------:|
-| Revenue | $5,582.4 M |
-| Royalty | $1,046.7 M |
-| Variable opex | $334.6 M |
-| Fixed opex | $1,275.0 M |
+| Revenue | $5,946.6 M |
+| Royalty | $1,115.0 M |
+| Variable opex | $356.2 M |
+| Fixed opex | $1,412.5 M |
 | D&C cost | $2,081.6 M |
 | Facilities cost | $4,150.0 M |
-| Net cashflow (undiscounted) | $-3,305.5 M |
-| **NPV @ 10%** | **$-1,479.5 M** |
-| MIRR (annual) | 2.70% |
+| Net cashflow (undiscounted) | $-3,168.6 M |
+| **NPV @ 10%** | **$-1,460.8 M** |
+| MIRR (annual) | 3.19% |
 | Producers | 10 |
 | Injectors | 2 |
 | Wellbores | 22 |
 
-_Return metric: **MIRR** is the sanctioned return measure for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
+_Return metric: **MIRR** is the return measure used for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
 
-_Source-of-record: `config/analysis/lower_tertiary/golden_baseline_v30.yml`. NPV reproduced within golden-baseline tolerance by `worldenergydata.lower_tertiary.v30_financial_reproducer`._
+_Source-of-record: public BSEE OGOR-A production, drilling and WAR records, run through the field cashflow model._
 
 ---
 
@@ -216,7 +223,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 - **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
 - **Explore the full play.** Stones is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
-- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through the sanctioned V30 cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → V30 NPV) is reproducible end-to-end and reconciles to the frozen golden baseline.
+- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:
 
   ```bash
@@ -225,5 +232,4 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
   # 2. regenerate this report (latest window is the default;
   #    leases are auto-derived for the field)
   uv run python scripts/lower_tertiary/generate_field_economics_report.py --dev Stones
-  # frozen V30 reference report: add --frozen
   ```

@@ -88,27 +88,17 @@ LOWER_TERTIARY_FIELD_NAMES = {
 
 def _field_economics_slug(path: Path) -> str:
     name = path.name
-    for suffix in ("_v30.md", "_v50.md"):
-        if name.startswith("field_economics_") and name.endswith(suffix):
-            return name[len("field_economics_") : -len(suffix)]
+    if name.startswith("field_economics_") and name.endswith(".md"):
+        return name[len("field_economics_") : -len(".md")]
     raise ValueError(f"Unsupported field economics report name: {name}")
 
 
 def _lower_tertiary_economics_reports() -> list[tuple[str, Path]]:
-    """Prefer sanctioned V30 field reports; add V50-only fields such as Buckskin."""
+    """One unlabelled field-economics report per field (single result)."""
     reports_dir = REPORTS / "lower_tertiary"
     selected: list[tuple[str, Path]] = []
-    seen: set[str] = set()
-    for md in sorted(reports_dir.glob("field_economics_*_v30.md")):
-        slug = _field_economics_slug(md)
-        selected.append((slug, md))
-        seen.add(slug)
-    for md in sorted(reports_dir.glob("field_economics_*_v50.md")):
-        slug = _field_economics_slug(md)
-        if slug in seen:
-            continue
-        selected.append((slug, md))
-        seen.add(slug)
+    for md in sorted(reports_dir.glob("field_economics_*.md")):
+        selected.append((_field_economics_slug(md), md))
     return selected
 
 
@@ -485,7 +475,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     if drill_src.exists():
         shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
 
-    # --- Economics pages (V30 by default; V50-only fields fall back to V50) ---
+    # --- Economics pages (one unlabelled result per field) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
     fields = []  # (slug, display, page_filename, npv_str, npv_value)
     for slug, md in _lower_tertiary_economics_reports():
@@ -500,37 +490,23 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
         except ValueError:
             npv_val = 0.0
         fname = f"economics-{slug}.html"
-        is_v50 = md.name.endswith("_v50.md")
-        model_label = (
-            "the latest V50-KC recompute"
-            if is_v50
-            else "the sanctioned V30 financial model"
-        )
         (PUBLIC / fname).write_text(
             page(
                 f"{display} Field Economics",
-                f"Per-well and field-level NPV from {model_label}.",
+                "Per-well and field-level NPV from public BSEE data.",
                 md_to_html(text),
                 provenance=(
-                    "Computed by the V30 cashflow model with the opt-in V50-KC "
-                    "lease/D&C input set; Buckskin has no frozen V30 row."
-                    if is_v50
-                    else "Computed by the V30 cashflow model "
-                    "(<code>build_field_npv_timeline</code>), which reuses the same "
-                    "monthly cashflow and trimmed-discount formula as "
-                    "<code>reproduce_v30_financials</code>. Terminal NPV reconciles to "
-                    "the sanctioned V30 baseline."
+                    "Computed by a monthly cashflow model "
+                    "(<code>build_field_npv_timeline</code>) over public BSEE "
+                    "OGOR-A production and drilling records, life-to-date through "
+                    "the latest available OGOR-A month."
                 ),
                 data_limits=(
-                    "The NPV shown is a V50-KC recompute because the frozen V30 "
-                    "baseline does not include Buckskin. Operation markers are "
-                    "annotations only and do not feed the cashflow model."
-                    if is_v50
-                    else "The NPV shown is the <strong>sanctioned V30 model truth, "
-                    "presented as-is</strong> &mdash; not reframed as value-positive. "
-                    "Every Lower-Tertiary field here is NPV-negative at a 10% discount "
-                    "rate life-to-date. Operation markers (drilling/completion dates) "
-                    "are annotations only and do not feed the cashflow model."
+                    "The NPV shown is the <strong>model truth, presented as-is</strong> "
+                    "&mdash; not reframed as value-positive. Every Lower-Tertiary field "
+                    "here is NPV-negative at a 10% discount rate life-to-date. Operation "
+                    "markers (drilling/completion dates) are annotations only and do not "
+                    "feed the cashflow model."
                 ),
                 route_key="economics",
                 route_ctx={"field_slug": slug, "field_name": _html_unescape(display)},

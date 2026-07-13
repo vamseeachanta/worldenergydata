@@ -44,12 +44,12 @@ def test_v50_batch_regenerator_includes_buckskin():
 
 
 def test_buckskin_v50_report_is_published():
-    path = REPORTS_DIR / "field_economics_buckskin_v50.md"
-    assert path.exists(), "Buckskin V50 economics report must be published"
+    path = REPORTS_DIR / "field_economics_buckskin.md"
+    assert path.exists(), "Buckskin economics report must be published"
     md = path.read_text(encoding="utf-8")
 
     assert "# Buckskin Field Economics Report" in md
-    assert "**Data window:** 2000-09 -> 2026-04 (latest V50-KC recompute)" in md
+    assert "**Data window:** 2000-09 -> 2026-04" in md
     assert re.search(r"\| \*\*NPV @ 10%\*\* \| \*\*\$-?[0-9,]+\.[0-9] M\*\* \|", md)
 
 
@@ -72,7 +72,7 @@ def test_pages_builder_indexes_buckskin_v50_report():
         for slug, path in build_pages._lower_tertiary_economics_reports()
     }
 
-    assert reports["buckskin"] == "field_economics_buckskin_v50.md"
+    assert reports["buckskin"] == "field_economics_buckskin.md"
 
 
 def test_capabilities_validation_section_links_key_validation_reports():

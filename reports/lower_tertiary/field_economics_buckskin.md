@@ -2,23 +2,23 @@
 
 **Development:** Buckskin (tieback20) &middot; **Lease:** 6 leases (G25806, G25813, G25814, G25815, G25823, G32650) &middot; **First oil:** 2018-08-01 &middot; **Discount rate:** 10% annual
 
-**Data window:** 2000-09 -> 2026-04 (latest V50-KC recompute)
+**Data window:** 2000-09 -> 2026-04
 
 ## Summary
 
-On public BSEE production + cost data, **Buckskin** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-989.7 M** (V50-KC recompute; no frozen V30 Buckskin row).
+On public BSEE production + cost data, **Buckskin** is **NPV-negative at 10%** life-to-date: terminal cumulative NPV **$-989.7 M**.
 
 - **72.9 MMbbl** oil produced from **4 producing wells** (**25 total wellbores**), generating **$5,116 M** gross revenue.
 - A **high-capex, deepwater** signature: **$4,062 M** of one-time D&C + facilities capital is the dominant driver of the NPV.
 - The cumulative-NPV path bottomed at **$-1,661.8 M** in **2018** and has since recovered **$+672.1 M** as production paid back capital.
 
-> **V50-KC run.** The NPV timeline is built from the V30 cashflow model using the opt-in Keathley Canyon V50 lease and D&C inputs (`leases_v21_kc.csv`, `drilling_and_completion_days_v21_kc.csv`) through the latest available BSEE OGOR-A month. The frozen V30 baseline has no Buckskin row and remains unchanged.
+> Generated from public BSEE OGOR-A production and drilling/WAR records run through a monthly cashflow + trimmed-discount model (`build_field_npv_timeline`), covering field life through the latest available BSEE OGOR-A month. The NPV timeline below is an additive presentation layer over that model; it does not alter the computed final NPV.
 
 ---
 
 ## NPV Timeline
 
-Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-989.7 M** (V50-KC recompute; no frozen V30 Buckskin reference).
+Cumulative discounted NPV evolution over field life, with critical well operations annotated. Terminal cumulative NPV = **$-989.7 M**.
 
 Cumulative NPV path (by year): `█▇▇▇▇▆▆▆▆▆▁▁▁▂▂▃▃▄▄`  _start $-129M → trough $-1,662M (2018) → latest $-990M_
 
@@ -115,7 +115,7 @@ SS004       -78.1 M  ▓▓▓▓
 | KC  829 | 64.54 | 88.6% |
 | KC  830 | 8.34 | 11.4% |
 
-_Block scope: 2 OGOR blocks present; per-block oil shares shown. Per-block NPV would require a block-level cost split (gap: shared facilities/D&C are field-level in V30, not block-tagged)._
+_Block scope: 2 OGOR blocks present; per-block oil shares shown. Per-block NPV would require a block-level cost split (gap: shared facilities/D&C are field-level, not block-tagged)._
 
 _The stackup covers the 4 producing wells. The field's 25 total wellbores also include appraisal and sidetrack/re-drill bores; their drilling & completion capital is part of the shared cost allocated pro-rata (it is not attributed to a single producer)._
 
@@ -136,17 +136,7 @@ _They are intentionally **not linked yet**: the geometry render must first be co
 
 ## Financial Summary
 
-**V50-KC latest window (2000-09 -> 2026-04).** Buckskin uses the opt-in KC lease/D&C input set; frozen V30 has no Buckskin row.
-
-| Metric | Latest V50-KC | Frozen V30 |
-|--------|------:|------:|
-| **NPV @ 10%** | **$-989.7 M** | n/a |
-| Revenue | $5,115.6 M | n/a |
-| Oil produced (MMbbl) | 72.9 | n/a |
-
-_Latest NPV, revenue and oil are recomputed from the V50-KC input set; window through 2026-04._
-
-### V50-KC component breakdown
+Life-to-date field economics on public BSEE data (2000-09 -> 2026-04). D&C and facilities are one-time capital already incurred; revenue, royalty and opex accrue with production.
 
 | Metric | Value |
 |--------|------:|
@@ -163,9 +153,9 @@ _Latest NPV, revenue and oil are recomputed from the V50-KC input set; window th
 | Injectors | 0 |
 | Wellbores | 25 |
 
-_Return metric: **MIRR** is the sanctioned return measure for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
+_Return metric: **MIRR** is the return measure used for these developments, not IRR. Deepwater Lower-Tertiary cashflows are heavily front-loaded (large D&C + facilities outflows, then a long production tail), so the net-cashflow sign changes more than once and the IRR polynomial can have multiple — or no — real roots; MIRR (single reinvestment/finance rate at the 10% discount rate) is well-defined and unambiguous. NPV @ 10% remains the primary value metric._
 
-_Source-of-record for this recompute: `leases_v21_kc.csv` + `drilling_and_completion_days_v21_kc.csv` + BSEE OGOR-A `.bin`; the frozen V30 baseline has no Buckskin row._
+_Source-of-record for this field: `leases_v21_kc.csv` + `drilling_and_completion_days_v21_kc.csv` + BSEE OGOR-A `.bin` production._
 
 ---
 
@@ -189,7 +179,7 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
 
 - **Get a tailored analysis.** Want this for your own assets — a different field, a custom price deck, sensitivities, or a partner-level working-interest view? **AceEngineer** builds traceable field economics from public data. Contact **vamsee.achanta@aceengineer.com** to scope an engagement.
 - **Explore the full play.** Buckskin is one of **10 Lower Tertiary (Wilcox) fields** covered by this model. Regenerate any field with `--dev <Field>`, or ask for the **portfolio economics report** for the whole-play NPV view (Jack/St. Malo, Stones, Big Foot, Anchor, Cascade/Chinook, and more).
-- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through the sanctioned V30 cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → V30 NPV) is reproducible end-to-end and reconciles to the frozen golden baseline.
+- **See the methodology.** Every number here traces to **public BSEE OGOR-A production + drilling/WAR records** run through a transparent cashflow model — no black box. The pipeline (BSEE public data → parsed `.bin` → NPV) is reproducible end-to-end.
 - **Run it yourself.** Refresh the data and regenerate this report:
 
   ```bash
@@ -198,5 +188,4 @@ _Exact, not sampled: NPV is affine in a uniform price multiplier (revenue and ro
   # 2. regenerate this report (latest window is the default;
   #    leases are auto-derived for the field)
   uv run python scripts/lower_tertiary/generate_field_economics_report.py --dev Buckskin
-  # frozen V30 reference report: add --frozen
   ```
