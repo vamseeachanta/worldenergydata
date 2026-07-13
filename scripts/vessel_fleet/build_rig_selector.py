@@ -43,6 +43,11 @@ _COLUMNS = [
     ("HOOKLOAD_RATING_KIPS", "Hookload (kips)"),
     ("DRAWWORKS_HP", "Drawworks (HP)"),
     ("WALKING_SYSTEM", "Walking"),
+    ("GENERATION", "Gen"),
+    ("MPD_CAPABLE", "MPD"),
+    ("DUAL_ACTIVITY", "Dual activity"),
+    ("CRANE_MAIN_CAPACITY_T", "Crane (t)"),
+    ("QUARTERS_CAPACITY", "Quarters"),
     ("IS_OFFSHORE", "Offshore"),
     ("DATA_SOURCE_URL", "Spec sheet"),
 ]
@@ -150,6 +155,14 @@ specification (provenance linked per rig). Filter to shortlist; click headers to
   <label>Min hookload (kips) <input id="f-hook" type="number" min="0" step="100"></label>
   <label>Min moonpool length (m) <input id="f-mp" type="number" min="0" step="1"></label>
   <label>Min leg length (ft) <input id="f-leg" type="number" min="0" step="10"></label>
+  <label>Generation
+    <select id="f-gen"><option value="">All</option><option value="7th">7th</option>
+    <option value="6th">6th</option><option value="5th">5th</option>
+    <option value="super-spec">Super-spec (land)</option></select>
+  </label>
+  <label>Min quarters <input id="f-poB" type="number" min="0" step="10"></label>
+  <label style="flex-direction:row;align-items:center;gap:6px">
+    <input id="f-mpd" type="checkbox" style="width:auto"> MPD equipped</label>
   <span class="count" id="count"></span>
 </div>
 <div class="legend">
@@ -178,6 +191,8 @@ const COLS = [
  ["LEG_LENGTH_FT","Legs (ft)"],["CANTILEVER_REACH_FT","Cantilever (ft)"],
  ["VARIABLE_DECK_LOAD_ST","VDL (st)"],["HOOKLOAD_RATING_KIPS","Hookload (kips)"],
  ["DRAWWORKS_HP","Drawworks (HP)"],["WALKING_SYSTEM","Walking"],
+ ["GENERATION","Gen"],["MPD_CAPABLE","MPD"],["DUAL_ACTIVITY","Dual activity"],
+ ["CRANE_MAIN_CAPACITY_T","Crane (t)"],["QUARTERS_CAPACITY","Quarters"],
  ["DATA_SOURCE_URL","Spec sheet"]];
 const TYPECOL = {drillship:"var(--ds)", semi_submersible:"var(--ss)", jack_up:"var(--ju)", land_rig:"var(--lr)"};
 const TYPELBL = {drillship:"Drillship", semi_submersible:"Semi", jack_up:"Jackup", land_rig:"Land rig"};
@@ -196,6 +211,9 @@ function filters() {
   const hk = +document.getElementById("f-hook").value || 0;
   const mp = +document.getElementById("f-mp").value || 0;
   const lg = +document.getElementById("f-leg").value || 0;
+  const gen = document.getElementById("f-gen").value;
+  const poB = +document.getElementById("f-poB").value || 0;
+  const mpd = document.getElementById("f-mpd").checked;
   return DATA.filter(r =>
     (!sh || (sh === "onshore" ? r.IS_OFFSHORE === false : r.IS_OFFSHORE !== false)) &&
     (!t || r.RIG_TYPE === t) &&
@@ -203,14 +221,18 @@ function filters() {
     (!wd || (r.WATER_DEPTH_RATING_FT||0) >= wd) &&
     (!hk || (r.HOOKLOAD_RATING_KIPS||0) >= hk) &&
     (!mp || (r.MOONPOOL_LENGTH_M||0) >= mp) &&
-    (!lg || (r.LEG_LENGTH_FT||0) >= lg));
+    (!lg || (r.LEG_LENGTH_FT||0) >= lg) &&
+    (!gen || r.GENERATION === gen) &&
+    (!poB || (r.QUARTERS_CAPACITY||0) >= poB) &&
+    (!mpd || r.MPD_CAPABLE === true));
 }
 function fmt(v, col) {
   if (v === null || v === undefined) return "";
   if (col === "DATA_SOURCE_URL") return `<a href="${v}" target="_blank" rel="noopener">PDF</a>`;
   if (col === "RIG_TYPE") return `<span class="type" style="background:${TYPECOL[v]}"></span>${TYPELBL[v]||v}`;
   if (col === "YEAR_BUILT") return String(Math.round(v));
-  if (col === "WALKING_SYSTEM") return v === true ? "\u2714" : "";
+  if (col === "WALKING_SYSTEM" || col === "MPD_CAPABLE" || col === "DUAL_ACTIVITY")
+    return v === true ? "\u2714" : "";
   if (typeof v === "number") return Number.isInteger(v) ? v.toLocaleString() : v.toLocaleString(undefined,{maximumFractionDigits:1});
   return v;
 }
@@ -265,7 +287,7 @@ function chart(rows) {
     c.addEventListener("mouseleave", () => tip.style.display = "none");
   });
 }
-["f-shore","f-type","f-owner","f-wd","f-hook","f-mp","f-leg"].forEach(id =>
+["f-shore","f-type","f-owner","f-wd","f-hook","f-mp","f-leg","f-gen","f-poB","f-mpd"].forEach(id =>
   document.getElementById(id).addEventListener("input", render));
 render();
 </script>

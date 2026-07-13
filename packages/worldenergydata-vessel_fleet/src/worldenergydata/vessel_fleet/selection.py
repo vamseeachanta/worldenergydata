@@ -36,6 +36,8 @@ _MIN_CRITERIA = {
     "min_leg_length_ft": "LEG_LENGTH_FT",
     "min_cantilever_ft": "CANTILEVER_REACH_FT",
     "min_year_built": "YEAR_BUILT",
+    "min_crane_t": "CRANE_MAIN_CAPACITY_T",
+    "min_quarters": "QUARTERS_CAPACITY",
 }
 
 _DISPLAY_COLUMNS = [
@@ -57,6 +59,11 @@ _DISPLAY_COLUMNS = [
     "VARIABLE_DECK_LOAD_ST",
     "HOOKLOAD_RATING_KIPS",
     "SETBACK_CAPACITY_KIPS",
+    "GENERATION",
+    "MPD_CAPABLE",
+    "DUAL_ACTIVITY",
+    "CRANE_MAIN_CAPACITY_T",
+    "QUARTERS_CAPACITY",
     "DRAWWORKS_HP",
     "MUD_PUMP_COUNT",
     "WALKING_SYSTEM",
@@ -85,6 +92,8 @@ def filter_rigs(
     rig_type: Optional[str] = None,
     owner_contains: Optional[str] = None,
     design_contains: Optional[str] = None,
+    mpd: Optional[bool] = None,
+    dual_activity: Optional[bool] = None,
     **criteria: float,
 ) -> pd.DataFrame:
     """Shortlist rigs meeting every given criterion.
@@ -108,6 +117,12 @@ def filter_rigs(
         result = result[
             result["RIG_DESIGN"].str.contains(design_contains, case=False, na=False)
         ]
+    if mpd:
+        result = result[
+            result["MPD_CAPABLE"] == True
+        ]  # noqa: E712 — unknown != qualified
+    if dual_activity:
+        result = result[result["DUAL_ACTIVITY"] == True]  # noqa: E712
     for key, minimum in criteria.items():
         column = _MIN_CRITERIA[key]
         result = result[result[column].notna() & (result[column] >= minimum)]
