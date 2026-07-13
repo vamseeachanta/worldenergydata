@@ -1,0 +1,19 @@
+# Provenance for committed onshore rig-class spec documents — wed issue #997.
+retrieved: '2026-07-13'
+source_family: contractor_rig_summary_pdf
+contractor: multiple (per-entry owner)
+files:
+  hp-flexrig-fleet.pdf:
+    url: https://www.hpinc.com/wp-content/uploads/2025/08/FlexRig-Fleet.pdf
+    sha256: 4000b14e03db9dc81cd244dbcaca70bafe629872dcce00edda954a1079798c19
+    text_layer: true
+  nabors-pace-x800.pdf:
+    url: https://nabors.com/wp-content/uploads/2021/11/PACEX800_Brch_ONLINE.pdf
+    sha256: b6e45ef80c41e69c4ff04d0e22a095701c703e6550b4ca04c889e5c9920c912d
+    text_layer: true
+  precision-st-1500-iadc.pdf:
+    url: https://iadc.org/wp-content/uploads/2020/08/2020_Super_Triple_1500HP.pdf  # IADC mirror; precisiondrilling.com brochure link 404s
+    sha256: 910c439e8e6112a440648d2c1de489b83658fc4aefe0fa3814c8601435a83adc
+    text_layer: true
+# Patterson-UTI APEX classes: no spec PDF published — values transcribed from
+# https://patenergy.com/services/apex-fleet (per-entry url), retrieved 2026-07-13.

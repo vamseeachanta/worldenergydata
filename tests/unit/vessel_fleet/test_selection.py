@@ -84,6 +84,25 @@ class TestCompareRigs:
             selection.compare_rigs(fleet, ["No Such Rig"])
 
 
+class TestLandRigs:
+    def test_land_classes_loaded(self, fleet):
+        land = fleet[fleet["RIG_TYPE"] == "land_rig"]
+        assert len(land) >= 10
+        assert not land["IS_OFFSHORE"].any()
+
+    def test_super_spec_hookload_floor(self, fleet):
+        result = selection.filter_rigs(
+            fleet, rig_type="land_rig", min_hookload_kips=1000
+        )
+        names = set(result["VESSEL_NAME"])
+        assert "H&P FlexRig3W Arabia" in names  # 1,000,000 lb mast
+        assert "Nabors PACE-X800" not in names  # 600 kip lower-bound variant
+
+    def test_walking_rigs_have_field(self, fleet):
+        land = fleet[fleet["RIG_TYPE"] == "land_rig"]
+        assert land["WALKING_SYSTEM"].notna().all()
+
+
 class TestFleetSummary:
     def test_summary_totals(self, fleet):
         summary = selection.fleet_summary(fleet)

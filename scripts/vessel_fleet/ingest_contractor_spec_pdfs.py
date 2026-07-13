@@ -65,6 +65,12 @@ _CURATED_FIELDS = (
     "VARIABLE_DECK_LOAD_ST",
     "HOOKLOAD_RATING_KIPS",
     "SETBACK_CAPACITY_KIPS",
+    "DRAWWORKS_HP",
+    "MUD_PUMP_COUNT",
+    "MUD_PUMP_HP",
+    "MAST_HEIGHT_FT",
+    "WALKING_SYSTEM",
+    "SUPER_SPEC",
 )
 
 
@@ -106,9 +112,9 @@ def write_raw_source(
             "RIG_TYPE": entry.get("rig_type", "drillship"),
             "RIG_DESIGN": entry.get("rig_design"),
             "DATA_SOURCE": "contractor_spec_pdf",
-            "DATA_SOURCE_URL": urls.get(entry["pdf"]),
+            "DATA_SOURCE_URL": urls.get(entry.get("pdf")) or entry.get("url"),
             "DIMENSION_CONFIDENCE": "measured",
-            "IS_OFFSHORE": True,
+            "IS_OFFSHORE": entry.get("is_offshore", True),
         }
         for field in _CURATED_FIELDS:
             if field in entry["specs"]:
@@ -145,7 +151,7 @@ def apply_to_curated(extraction: dict, data_dir: Path, urls: dict[str, str]) -> 
                 record[field] = entry["specs"][field]
         record["DIMENSION_CONFIDENCE"] = "measured"
         if not record.get("DATA_SOURCE_URL"):
-            record["DATA_SOURCE_URL"] = urls.get(entry["pdf"])
+            record["DATA_SOURCE_URL"] = urls.get(entry.get("pdf")) or entry.get("url")
         updated += 1
         logger.info(
             "Updated %s (moonpool %.1f x %.1f m)",
