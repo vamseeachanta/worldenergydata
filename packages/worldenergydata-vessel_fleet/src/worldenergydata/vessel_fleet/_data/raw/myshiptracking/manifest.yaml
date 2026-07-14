@@ -1,0 +1,118 @@
+files:
+  imo-8324567.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 5ba8c8b8c9cbc56a0f224ba64f454b65d6d47cf17eb902b1577b78432483c137
+    url: https://www.myshiptracking.com/vessels/seawell-mmsi-232159000-imo-8324567
+  imo-8767123.html.gz:
+    retrieved: '2026-07-13'
+    sha256: b52c32449ed448c033249aa40a0ea232b7346edb968148130248ba15863c6ae4
+    url: https://www.myshiptracking.com/vessels/q4000-mmsi-369550000-imo-8767123
+  imo-8772104.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 33c549befe09a2dfb9c94ca69b074c064b10a5ba53b1a4888a8551b423b839bc
+    url: https://www.myshiptracking.com/vessels/q5000-mmsi-311000240-imo-8772104
+  imo-9203227.html.gz:
+    retrieved: '2026-07-13'
+    sha256: edc3470b9b4900a0e3b08f22f01fb4845d08175a481e087dbbed102ce00d4319
+    url: https://www.myshiptracking.com/vessels/ocean-intervention-mmsi-366614000-imo-9203227
+  imo-9232125.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 23f9828a8abc4e0208a14cf937f1965a2b70808a58ed8279f3fb74a40053cdf3
+    url: https://www.myshiptracking.com/vessels/ocean-intervention-ii-mmsi-338759000-imo-9232125
+  imo-9249520.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 82db9ba997e72f2f52b8f333edc2a5c4e328060d807227baf1cf7986723db1e0
+    url: https://www.myshiptracking.com/vessels/island-frontier-mmsi-258866000-imo-9249520
+  imo-9356189.html.gz:
+    retrieved: '2026-07-13'
+    sha256: f99713087b9e79e1702bac8732af815701de48aeb477918e21bf45fbd6c23735
+    url: https://www.myshiptracking.com/vessels/vanguard-mmsi-259121000-imo-9356189
+  imo-9372755.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 9de00ad51afad7d213a930bce913e7155d8b6e4b87d1da213be24b5a6e770b80
+    url: https://www.myshiptracking.com/vessels/island-wellserver-mmsi-257202000-imo-9372755
+  imo-9387217.html.gz:
+    retrieved: '2026-07-13'
+    sha256: faa7df8d82344668dbc9fd00cb880527ae237e17741fea5d1eb4759c9943f068
+    url: https://www.myshiptracking.com/vessels/skandi-acergy-mmsi-257691000-imo-9387217
+  imo-9387229.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 61f58314836037d529d06b38e708f198bcdcb62412d20505c1ebec479a10ffe8
+    url: https://www.myshiptracking.com/vessels/akofs-seafarer-mmsi-257089550-imo-9387229
+  imo-9390678.html.gz:
+    retrieved: '2026-07-13'
+    sha256: d96f6234d903e06b72cf0301c5d9b75b1dbdfb7740a1cf481f1746498ab65f64
+    url: https://www.myshiptracking.com/vessels/island-constructor-mmsi-259749000-imo-9390678
+  imo-9421996.html.gz:
+    retrieved: '2026-07-13'
+    sha256: b4cd31075de3c1f8901b9a295bb9510661aae2e23b5e5763a958856d1bcc59f6
+    url: https://www.myshiptracking.com/vessels/well-enhancer-mmsi-235062421-imo-9421996
+  imo-9423437.html.gz:
+    retrieved: '2026-07-13'
+    sha256: baa1f0509427111b8d602091041e7eac2b713b76c8b7e6b504ac5fb599c9a332
+    url: https://www.myshiptracking.com/vessels/akofs-santos-mmsi-710005865-imo-9423437
+  imo-9431642.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 3c6acf521fa8fed60b520ed59a084dc9d351a7b02f205c0ffeb2da558e740973
+    url: https://www.myshiptracking.com/vessels/skandi-constructor-mmsi-257220000-imo-9431642
+  imo-9435478.html.gz:
+    retrieved: '2026-07-13'
+    sha256: a3eb1f31a7cb9def08763e27fbc3413a6ece0babf470963b457c95a17ba3d81b
+    url: https://www.myshiptracking.com/vessels/aker-wayfarer-mmsi-710006322-imo-9435478
+  imo-9460095.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 174fe3903173600bc2454d759d33aa989c6f7d74521c8c2d485bd2392a166e65
+    url: https://www.myshiptracking.com/vessels/island-intervention-mmsi-710008574-imo-9460095
+  imo-9581277.html.gz:
+    retrieved: '2026-07-13'
+    sha256: ed1a742bbaf6fed972a66e00c04d48ca1187dd05fff44facc0298e27cee4db7f
+    url: https://www.myshiptracking.com/vessels/intervention-mmsi-338413000-imo-9581277
+  imo-9581291.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 9956a852562ecd75d2a1a80fef7857ec609d93240791d2f4ef83233eb3def132
+    url: https://www.myshiptracking.com/vessels/juanita-candies-mmsi-338064000-imo-9581291
+  imo-9670640.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 01c3e4ce5f5a712398d8fed59c7a8dc5fc1e50949492631d689407d13fd362f2
+    url: https://www.myshiptracking.com/vessels/brandon-bordelon-mmsi-367697440-imo-9670640
+  imo-9682045.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 46ba5080bc76e79a3c2716ae753f4a50ae4552d9bdb555e3feecb8ba9b27d23d
+    url: https://www.myshiptracking.com/vessels/island-performer-mmsi-577305000-imo-9682045
+  imo-9687459.html.gz:
+    retrieved: '2026-07-13'
+    sha256: b8e45a7c5ebb30a7ca18ad9f96c611c8527f3d71d4f2ab987e885afa29840b37
+    url: https://www.myshiptracking.com/vessels/skandi-africa-mmsi-311000369-imo-9687459
+  imo-9710359.html.gz:
+    retrieved: '2026-07-13'
+    sha256: ca5fa8ff2ed355cd38aa131fd0e1c83d5b76a06b1bc960b8548b585f76585a19
+    url: https://www.myshiptracking.com/vessels/q7000-mmsi-311000594-imo-9710359
+  imo-9721786.html.gz:
+    retrieved: '2026-07-13'
+    sha256: af58d773354c37c2c326a21ca1361e3e5c84d890f8eab70bc45e9b35959b38d7
+    url: https://www.myshiptracking.com/vessels/island-venture-mmsi-577358000-imo-9721786
+  imo-9733167.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 5458d06f4bd1b0e522fb98f45faf52e23a2dad7af1424d299e5b76107c761b43
+    url: https://www.myshiptracking.com/vessels/ocean-evolution-mmsi-338293000-imo-9733167
+  imo-9733454.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 33c59122f8879b9cc735003bd8fc0bafab72f3b4c5a9d5b715b281f8aa2506fc
+    url: https://www.myshiptracking.com/vessels/siem-helix-1-mmsi-311000363-imo-9733454
+  imo-9733466.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 09f844472467a8a3b1dc786ae5ef95156c71c568ca27674b115f3bacef4d1c0b
+    url: https://www.myshiptracking.com/vessels/siem-helix-2-mmsi-311000364-imo-9733466
+  imo-9743057.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 08caf4f565c52728a66a4a3a5d53802308b06612e5dfe49d7a6934d4dc8f66fa
+    url: https://www.myshiptracking.com/vessels/blue-sea-mmsi-338798000-imo-9743057
+  imo-9766877.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 217f7a4e163c53681b0c6e5b7f087e149a2f404ebc9b64f88c9ccb76114a0742
+    url: https://www.myshiptracking.com/vessels/normand-superior-mmsi-257911000-imo-9766877
+  imo-9817121.html.gz:
+    retrieved: '2026-07-13'
+    sha256: 6b6fe5454e3daed5f0506d5a0a5556e5a949f9d9c11d818ec712b2ab3b564064
+    url: https://www.myshiptracking.com/vessels/skandi-vinland-mmsi-316033737-imo-9817121
+source_family: ais_particulars_page
