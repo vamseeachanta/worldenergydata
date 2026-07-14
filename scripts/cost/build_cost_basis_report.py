@@ -35,7 +35,7 @@ from __future__ import annotations
 import html as _html
 import sys
 from collections import Counter
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -46,7 +46,6 @@ from worldenergydata.cost.timeseries.back_allocation import (  # noqa: E402
     DevelopmentType,
     LifecycleStage,
     allocate_project,
-    reconcile_drilling,
 )
 from worldenergydata.cost.timeseries.dataset import (  # noqa: E402
     SANCTIONED_CSV,
@@ -63,11 +62,9 @@ from worldenergydata.cost.timeseries.normalization import (  # noqa: E402
 from worldenergydata.cost.timeseries.schema import (  # noqa: E402
     CostComponent,
     CostObservation,
-    FigureType,
     Provenance,
 )
 from worldenergydata.cost.timeseries.series import (  # noqa: E402
-    FIXTURE_LENS,
     MARKET_RATE_LENS,
     annual_means,
 )
