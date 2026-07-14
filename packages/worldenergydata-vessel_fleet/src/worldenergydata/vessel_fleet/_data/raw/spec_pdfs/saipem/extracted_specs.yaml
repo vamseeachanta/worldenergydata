@@ -62,3 +62,99 @@ vessels:
       HOOKLOAD_RATING_KIPS: 2000  # 2,000,000 lbs static, main and aux
       QUARTERS_CAPACITY: 200
       DUAL_ACTIVITY: true
+  Perro Negro 4:
+    pdf: perro-negro-4.pdf
+    rig_type: jack_up
+    rig_design: Marathon LeTourneau 150-44C
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 1979
+      WATER_DEPTH_RATING_FT: 150.0
+      DRILLING_DEPTH_RATING_FT: 16000.0
+      LOA_M: 45.0  # hull length; sheet beam 53 m
+      BEAM_M: 53.0
+      HOOKLOAD_RATING_KIPS: 700
+      QUARTERS_CAPACITY: 73
+      CANTILEVER_REACH_FT: 35.0  # skid aft 0-35 ft
+  Perro Negro 7:
+    pdf: perro-negro-7.pdf
+    rig_type: jack_up
+    rig_design: Baker Pacific Class 375
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 375.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 72.1
+      BEAM_M: 68.4
+      HOOKLOAD_RATING_KIPS: 1500
+      QUARTERS_CAPACITY: 120
+      CRANE_MAIN_CAPACITY_T: 20.6  # 1 x BMC 900, 22.7 st
+  Perro Negro 8:
+    pdf: perro-negro-8.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ46-X100D
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 350.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 62.0
+      BEAM_M: 65.25
+      HOOKLOAD_RATING_KIPS: 1500
+      QUARTERS_CAPACITY: 120
+      CANTILEVER_REACH_FT: 50.0  # 1,240 t combined load up to 50 ft outreach
+      CRANE_MAIN_CAPACITY_T: 49.9  # 3 x Favelle Favco, 55 st
+  Perro Negro 9:
+    pdf: perro-negro-9.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ46-X100-D
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 375.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 65.25
+      BEAM_M: 62.0
+      HOOKLOAD_RATING_KIPS: 1500
+      QUARTERS_CAPACITY: 124
+      CANTILEVER_REACH_FT: 70.0  # drilling envelope 70 x 40 ft
+  Perro Negro 10:
+    pdf: perro-negro-10.pdf
+    rig_type: jack_up
+    rig_design: Gusto MSC CJ46-X100-D
+    extraction: manual_transcription
+    specs:
+      WATER_DEPTH_RATING_FT: 375.0
+      DRILLING_DEPTH_RATING_FT: 30000.0
+      LOA_M: 65.25
+      BEAM_M: 62.0
+      HOOKLOAD_RATING_KIPS: 1500
+      QUARTERS_CAPACITY: 124
+      CANTILEVER_REACH_FT: 70.0  # drilling envelope 70 x 40 ft
+  Perro Negro 11:
+    pdf: perro-negro-11.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-2000E
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2014  # "delivered later 2014"
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0
+      LOA_M: 70.4
+      BEAM_M: 75.8
+      HOOKLOAD_RATING_KIPS: 2000
+      QUARTERS_CAPACITY: 150
+      CANTILEVER_REACH_FT: 75.0  # drilling envelope 75 x 30 ft
+  Perro Negro 13:
+    pdf: perro-negro-13.pdf
+    rig_type: jack_up
+    rig_design: Friede & Goldman JU-2000E
+    extraction: manual_transcription
+    specs:
+      YEAR_BUILT: 2019  # "delivered later 2019"
+      WATER_DEPTH_RATING_FT: 400.0
+      DRILLING_DEPTH_RATING_FT: 35000.0  # sheet's metric "(9,100 m)" is inconsistent; ft kept
+      LOA_M: 70.4
+      BEAM_M: 76.0
+      DEPTH_M: 9.45  # hull depth
+      HOOKLOAD_RATING_KIPS: 2100
+      QUARTERS_CAPACITY: 138
+      CANTILEVER_REACH_FT: 75.0  # skid aft 0-75 ft; envelope 75 x 30 ft
