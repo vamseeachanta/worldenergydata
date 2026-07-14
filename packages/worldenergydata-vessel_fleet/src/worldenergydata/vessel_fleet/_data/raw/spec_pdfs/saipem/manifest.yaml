@@ -18,3 +18,32 @@ files:
     url: https://www.saipem.com/sites/default/files/2018-12/1613Scarabeo9.pdf
     sha256: d20488a81958f927fe46e9eed719e4ca76fb55e6b2b2212db14f5d7cc7079c95
     text_layer: true
+  perro-negro-4.pdf:
+    url: https://www.saipem.com/sites/default/files/2024-02/spm_spm_PERRO4_1.pdf
+    sha256: b936a2279ff29097fedebeb6b2eab97b29643cd197e8275db7981914c8285097
+    text_layer: true
+  perro-negro-7.pdf:
+    url: https://www.saipem.com/sites/default/files/2023-11/PERRO_NEGRO_7.pdf
+    sha256: 8febbe5e77a98385562fe00a30f8c90c6ac3c1723f33504793e16bffb0284c73
+    text_layer: true
+  perro-negro-8.pdf:
+    url: https://www.saipem.com/sites/default/files/2023-11/PERRO_NEGRO_8.pdf
+    sha256: bcb8acbc38463938dfb95618714caf14196138ecba03302338505f6414732c6f
+    text_layer: true
+  perro-negro-9.pdf:
+    url: https://www.saipem.com/sites/default/files/2024-04/Perro_Negro_9.pdf
+    sha256: ae7e0f06c0c5f6988787851c3bb9a384a094e22b88852c424cbcf66dfe914329
+    text_layer: true
+  perro-negro-10.pdf:
+    url: https://www.saipem.com/sites/default/files/2024-04/Perro_Negro_10.pdf
+    sha256: 69bb09fd93044697f2c756088f057f6835c10ddfeb3a26719234b2366a33e6b1
+    text_layer: true
+  perro-negro-11.pdf:
+    url: https://www.saipem.com/sites/default/files/2026-04/PERRO_NEGRO_11_DATASHEET_0.pdf
+    sha256: 757195c34ef8a9d906345319c5f90f0db216afa5c28b3cf1dbe14160d17a8ee8
+    text_layer: true
+  perro-negro-13.pdf:
+    url: https://www.saipem.com/sites/default/files/2026-04/PERRO_NEGRO_13_DATASHEET_0.pdf
+    sha256: c457a014c139c119fa88ca31a7e9155ff4c59a6df6a9fa16d310bcfc1fefef7a
+    text_layer: true
+# Perro Negro 12: fleet page returns 403 and no public datasheet found (newbuild) — excluded.
