@@ -6,6 +6,17 @@
 #   python3 scripts/generate_data_catalog.py --report
 
 modules:
+  cost:
+    source_base_url: https://fred.stlouisfed.org
+    license: "Mixed — FRED/BLS/EIA public domain; day-rate and project figures are cited quotations from public operator filings, press releases and trade press (fair use; every row carries source_url + quoted_text)"
+    default_update_frequency: quarterly
+    datasets:
+      cost_component_timeseries:
+        source_url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL
+        notes: "Reference series (CPI/PPI/Brent/WTI) auto-fetched from FRED. Rig/vessel day rates are hand-curated from Transocean/Valaris fleet status reports, Tidewater/GulfMark 10-Ks, Bourbon and Seabrokers — each row carries SOURCE_URL and QUOTED_TEXT. Refresh: scripts/cost/seed_cost_timeseries.py"
+      sanctioned_projects:
+        source_url: https://corporate.exxonmobil.com/news/news-releases
+        notes: "Operator FID press releases (ExxonMobil Guyana, Equinor, TotalEnergies, Santos, INPEX) plus OGJ/JPT/World Oil where operator sites block fetchers. Refresh on every deepwater FID."
   bsee:
     source_base_url: https://www.data.bsee.gov
     license: "US Government Public Domain"

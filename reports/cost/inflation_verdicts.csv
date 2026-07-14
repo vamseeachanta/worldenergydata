@@ -1,0 +1,6 @@
+COMPONENT,BASIS,START_YEAR,END_YEAR,N_YEARS,NOMINAL_CAGR_PCT,DEFLATOR_CAGR_PCT,REAL_CAGR_PCT,EXCESS_CAGR_PCT,VERDICT
+rig_day_rate_drillship,cpi,2004,2026,13,5.249,2.570,2.611,2.679,OUTPACED CPI by 2.7 pp/yr
+rig_day_rate_semi,cpi,2004,2025,11,2.906,2.571,0.326,0.335,TRACKED CPI (within +/-0.5 pp/yr)
+rig_day_rate_jackup,cpi,2004,2026,7,3.892,2.570,1.289,1.322,OUTPACED CPI by 1.3 pp/yr
+vessel_day_rate_osv_psv,cpi,2000,2025,26,6.735,2.535,4.096,4.200,OUTPACED CPI by 4.2 pp/yr
+vessel_day_rate_ahts,cpi,2001,2016,16,6.648,2.049,4.507,4.599,OUTPACED CPI by 4.6 pp/yr
