@@ -88,6 +88,14 @@ class DevelopmentType(str, Enum):
     NEW_HOST_SEMI = "new_host_semi"
     NEW_HOST_SPAR = "new_host_spar"
     NEW_HOST_TLP = "new_host_tlp"
+    #: Fixed steel jacket / gravity-base platform. Added because the sanctioned
+    #: project research surfaced four real developments (Clair Ridge, Leviathan,
+    #: Tyra, Johan Sverdrup P2) that are fixed platforms and fit NONE of the
+    #: floating-host types. Forcing them into NEW_HOST_TLP would have silently
+    #: applied a floating-host stage split to a bottom-founded structure — the
+    #: economics of which are genuinely different (no mooring, no riser system,
+    #: heavier fabrication+install share, and typically platform-drilled wells).
+    NEW_HOST_FIXED = "new_host_fixed"
     UNKNOWN = "unknown"
 
 
@@ -245,6 +253,33 @@ STAGE_SHARE_PRIORS: dict[DevelopmentType, StageShares] = {
         },
         rationale="TLP host, typically dry-tree. Similar structure to a spar.",
         reference_well_count=8.0,
+    ),
+    DevelopmentType.NEW_HOST_FIXED: StageShares(
+        mid={
+            LifecycleStage.DRILL: 0.24,
+            LifecycleStage.COMPLETE: 0.12,
+            LifecycleStage.SURF: 0.14,
+            LifecycleStage.HOST: 0.34,
+            LifecycleStage.INSTALL: 0.10,
+            LifecycleStage.HOOKUP: 0.06,
+        },
+        band={
+            LifecycleStage.DRILL: 0.08,
+            LifecycleStage.COMPLETE: 0.05,
+            LifecycleStage.SURF: 0.06,
+            LifecycleStage.HOST: 0.10,
+            LifecycleStage.INSTALL: 0.05,
+            LifecycleStage.HOOKUP: 0.03,
+        },
+        rationale=(
+            "Fixed steel jacket / gravity-base platform (Clair Ridge, Tyra, "
+            "Johan Sverdrup P2 class). Relative to a floater: HOST and INSTALL "
+            "take a larger share (heavy jacket fabrication and a heavy-lift "
+            "install campaign), while SURF takes less — wells are frequently "
+            "drilled from the platform itself rather than tied back subsea, so "
+            "there is less flowline and no riser/mooring system to buy."
+        ),
+        reference_well_count=12.0,
     ),
 }
 

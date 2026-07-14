@@ -28,6 +28,32 @@ modules:
 
   # ── US OFFSHORE ────────────────────────────────────────────────────────────
 
+  - id: cost
+    name: "Cost Basis Time-Series"
+    package: "worldenergydata.cost"
+    region: [global, gulf_of_mexico, north_sea, guyana, brazil, west_africa]
+    domain: [economics, drilling, subsea, field_economics]
+    data_types:
+      - rig_day_rates
+      - vessel_day_rates
+      - cost_indices
+      - sanctioned_project_costs
+      - inflation_deflators
+    key_classes:
+      - CostObservation
+      - SanctionedProject
+      - Deflator
+      - FitResult
+      - ProjectAllocation
+    status: beta
+    entry_point: "from worldenergydata.cost.timeseries import CostObservation, CostComponent"
+    notes: "Living cost-basis time-series (#844): sourced rig/vessel day rates and cost indices 2000-2026, dual-basis (CPI + UCCI) inflation normalization, sanctioned-project back-allocation to lifecycle stages, and fitted trend curves. Every figure carries a citation; unsourced cells are explicit TODO rows, never estimates."
+    in_scheduler: false
+    public_cli: false
+    catalog_status: full
+    capability_source: manifest
+    related_wrk: []
+
   - id: bsee
     name: "BSEE Gulf of Mexico"
     package: "worldenergydata.bsee"

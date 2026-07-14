@@ -149,11 +149,42 @@ revised (Mad Dog 2 being the canonical example), record **both** figures with da
 Proprietary to S&P Global. There is no public endpoint. Only scattered values
 quoted in press releases, conference decks and academic papers are sourceable.
 
+**Oil & Gas Journal is the single most productive source** — it is not paywalled,
+it fetches cleanly, and it reprinted UCCI/UOCI levels every quarter. Most of the
+24 sourced anchors came from OGJ. A systematic crawl of its construction-cost
+article series is the cheapest way to extend this series.
+
 Consequently the UCCI deflator is **anchor-and-interpolate**: sourced anchor years
 carry their citation, gap years are linearly interpolated and flagged, and the
 series is **never extrapolated beyond its anchors**. Outside the anchor range, the
-UCCI-real series is simply not published. That is the honest answer and the code
-enforces it (`build_deflator` raises rather than silently substituting CPI).
+UCCI-real series is simply not published. `build_deflator` raises rather than
+silently substituting CPI.
+
+#### The 2014–2018 blackout — do not try to bridge it
+There is **no sourceable UCCI or UOCI level for any quarter in 2014, 2015, 2016,
+2017 or 2018.** IHS stopped issuing the free press releases that carried the
+numbers after 2013; OGJ only resumed printing levels in 2019. The sourced record
+therefore jumps from **229 (Q3 2013)** straight to **182.6 (Q3 2019)**.
+
+That gap contains the two most important events in the entire series — the 2014
+peak and the 2016 crash. A straight line across it would glide smoothly from 229
+to 183, erase both, and look entirely plausible. So `MAX_INTERPOLATION_SPAN = 3`
+**refuses to bridge it**, and the UCCI-real series is simply not published for
+those years. *"We don't know what sector costs did in 2016"* is the true answer.
+
+Two priors that were **checked and found unsupported** — do not let them back in:
+* "UCCI recovered to the 220s in 2014" — **not confirmed** by any sourceable value.
+* "UCCI fell to the 160s in 2016–17" — **not supported**; the 160s never appear
+  for UCCI in any sourced year.
+
+Also note a genuine **source conflict in UOCI 2009**: OGJ (June 2009) puts Q1-2009
+at **187**; OGJ (Dec 2009) says the index "rose 1% ... to **168**" by Q3. These are
+irreconcilable — most likely an IHS revision/rebasing in H2 2009. Both are recorded
+with a conflict flag. **Do not interpolate across 2009 for UOCI.**
+
+The fastest route to closing the blackout is **Asmar & Patel (2025), SSRN** — an
+academic reconstruction of the UCCI series (and a companion UOCI paper). Behind
+Cloudflare; needs institutional or manual access.
 
 ---
 

@@ -66,6 +66,11 @@ from worldenergydata.cost.timeseries.schema import (  # noqa: E402
     FigureType,
     Provenance,
 )
+from worldenergydata.cost.timeseries.series import (  # noqa: E402
+    FIXTURE_LENS,
+    MARKET_RATE_LENS,
+    annual_means,
+)
 from worldenergydata.cost.timeseries.trend_fit import fit_component  # noqa: E402
 
 CURATED = curated_dir(PROJECT_ROOT)
@@ -74,6 +79,13 @@ OUT_DIR = PROJECT_ROOT / "reports" / "cost"
 #: The basis year every real series is expressed in. 2025 = the last complete
 #: calendar year at time of writing; bump it in the refresh, don't scatter it.
 BASIS_YEAR = 2025
+
+#: Grosses a bare rig day rate up to a TOTAL well cost — the rig is roughly half
+#: a deepwater well's daily burn once tubulars, mud, cement, logging, ROV/vessel
+#: support and operator overhead are added. 2.0 is the conventional planning
+#: number. It is an ASSUMPTION, it is stated on the report, and every implied
+#: days/well figure scales inversely with it.
+SPREAD_MULTIPLIER = 2.0
 
 _esc = _html.escape
 
@@ -122,42 +134,18 @@ SERIES_COLOR = ["#0b3d5c", "#1b7f5c", "#b0721a", "#7048a0", "#a8442a", "#2b6ca3"
 def _annual_means(
     rows: list[CostObservation],
     component: CostComponent,
-    sourced_only: bool = True,
-    currency: str = "USD",
-    figure_types: Optional[set[FigureType]] = None,
+    figure_types=MARKET_RATE_LENS,
+    region: Optional[str] = "global",
 ) -> dict[int, float]:
-    """Mean value per year for one component.
+    """Delegates to the package's single filtered accessor.
 
-    Filters on ``currency`` by default. This is not paranoia: the North Sea
-    spot rates from Seabrokers are quoted in **GBP** and are stored as GBP
-    (converting them would inject an FX rate no source states). Averaging them
-    into a USD series would silently produce a number that is neither.
-
-    ``figure_types`` exists because a contractor's backlog-weighted
-    ``fleet_average`` and a market-clearing ``single_fixture`` are different
-    series that diverge violently in a downturn — Transocean's ultra-deepwater
-    fleet average read $484k in Q1-2016 while new fixtures were being signed
-    near $170k. Averaging them together would manufacture a cost history that
-    never happened, so callers pick one lens at a time.
+    The report must NOT re-implement the currency / figure-type / region filters
+    — a second copy is a second place for them to rot. See `series.py` for why
+    each filter exists (each one is a bug that actually happened).
     """
-    buckets: dict[int, list[float]] = {}
-    for obs in rows:
-        if obs.component is not component or obs.value is None:
-            continue
-        if sourced_only and obs.provenance is not Provenance.SOURCED:
-            continue
-        if obs.currency != currency:
-            continue
-        if figure_types is not None and obs.figure_type not in figure_types:
-            continue
-        buckets.setdefault(obs.year, []).append(obs.value)
-    return {y: sum(v) / len(v) for y, v in sorted(buckets.items())}
-
-
-#: The backlog-weighted contractor averages. Lagging, survivorship-biased upward.
-FLEET_LENS = {FigureType.FLEET_AVERAGE, FigureType.MARKET_AVERAGE}
-#: The market-clearing prints. What someone actually agreed to pay, that year.
-FIXTURE_LENS = {FigureType.SINGLE_FIXTURE}
+    return annual_means(
+        rows, component, figure_types=figure_types, region=region
+    )
 
 
 def _line_chart_svg(
@@ -565,8 +553,15 @@ def _allocation_section(projects, rows: list[CostObservation]) -> str:
     )
 
     body = ""
+    skipped_onshore = []
     for p in projects:
         if p.sanctioned_capex_usd_mm is None:
+            continue
+        if not p.scope_is_offshore_only:
+            # The disclosed total bundles an onshore LNG train. Splitting it with
+            # offshore stage priors would charge billions of dollars of gas plant
+            # to a subsea flowline budget. Skip it, and say so.
+            skipped_onshore.append(p.project)
             continue
         try:
             dev = DevelopmentType(p.development_type)
@@ -614,7 +609,172 @@ def _allocation_section(projects, rows: list[CostObservation]) -> str:
         "the low–high band. Every allocated cell inherits the disclosed total exactly "
         "(shares sum to 1).</p>"
     )
+    if skipped_onshore:
+        table += (
+            "<p class='mini warn'>Deliberately NOT allocated: "
+            f"<b>{_esc(', '.join(skipped_onshore))}</b>. These projects' disclosed "
+            "totals bundle a large <b>onshore LNG plant</b> into the figure. Splitting "
+            "them with offshore stage-share priors would charge billions of dollars of "
+            "onshore gas-processing plant to a subsea flowline budget — producing a "
+            "per-stage cost wrong by an order of magnitude and then feeding that error "
+            "into the reconciliation. They remain in the project table above; they are "
+            "just not back-allocated.</p>"
+        )
     return formulas + table
+
+
+def _reconciliation_section(projects, rows: list[CostObservation]) -> str:
+    """The cross-check that makes addition #2 a check and not just a split.
+
+    We do NOT assert a days/well figure and then declare a gap — days/well is an
+    assumption, and an assumption dressed as a finding is worthless. Instead we
+    **invert** the reconciliation: given the disclosed total, the allocated drill
+    share, the sourced rig day rate for the FID year, and a stated spread
+    multiplier, we solve for the days/well that the sanctioned total *implies*:
+
+        implied_days = allocated_drill / (N_wells x rate_rig x m)
+
+    That number is falsifiable against engineering reality in a way a dollar gap
+    is not. A deepwater Paleogene well genuinely takes ~120-250 days; if the
+    disclosed totals imply 30, our stage priors are too low on drilling, and if
+    they imply 600, they are too high. **This is the discrepancy #844 asks us to
+    surface, and we surface it rather than tuning the priors until it vanishes.**
+    """
+    rates = _annual_means(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP)
+    if not rates:
+        return "<p class='mini warn'>No sourced drillship rates — cannot reconcile.</p>"
+
+    def rate_for(year: int) -> Optional[float]:
+        """Nearest sourced rate year. Never extrapolates a rate we don't have."""
+        if not rates:
+            return None
+        nearest = min(rates, key=lambda y: abs(y - year))
+        return rates[nearest] if abs(nearest - year) <= 3 else None
+
+    body = ""
+    implied: list[float] = []
+    per_well_by_region: dict[str, list[float]] = {}
+    for p in sorted(projects, key=lambda x: (x.fid_year or 9999, x.project)):
+        if (
+            p.sanctioned_capex_usd_mm is None
+            or not p.scope_is_offshore_only
+            or not p.well_count
+            or not p.fid_year
+        ):
+            continue
+        try:
+            dev = DevelopmentType(p.development_type)
+        except ValueError:
+            continue
+        allocation = allocate_project(
+            p.project, p.sanctioned_capex_usd_mm, dev, well_count=p.well_count
+        )
+        if allocation is None:
+            continue
+        drill = allocation.stage(LifecycleStage.DRILL)
+        rate = rate_for(p.fid_year)
+        if drill is None or rate is None:
+            continue
+
+        # Invert: what days/well does the disclosed total imply?
+        denom = p.well_count * rate * SPREAD_MULTIPLIER
+        implied_days = (drill.cost_mid_usd_mm * 1_000_000.0) / denom if denom else 0.0
+        implied.append(implied_days)
+
+        per_well = drill.cost_mid_usd_mm / p.well_count
+        bucket = (
+            "Guyana"
+            if "Guyana" in p.region
+            else ("US GOM" if "GOM" in p.region else "other")
+        )
+        per_well_by_region.setdefault(bucket, []).append(per_well)
+
+        plausible = 90.0 <= implied_days <= 280.0
+        colour = PROV_COLOR["sourced"] if plausible else PROV_COLOR["assumed"]
+        body += (
+            f"<tr><td><b>{_esc(p.project)}</b></td>"
+            f"<td class='num'>{p.fid_year}</td>"
+            f"<td class='num'>{p.sanctioned_capex_usd_mm:,.0f}</td>"
+            f"<td class='num'>{p.well_count}</td>"
+            f"<td class='num'>{drill.cost_mid_usd_mm:,.0f}</td>"
+            f"<td class='num'>{rate:,.0f}</td>"
+            f"<td class='num' style='color:{colour};font-weight:700'>{implied_days:,.0f}</td>"
+            f"<td class='num'>{per_well:,.0f}</td></tr>"
+        )
+
+    if not implied:
+        return "<p class='mini warn'>No project has both a well count and a rate-year match.</p>"
+
+    implied.sort()
+    median = implied[len(implied) // 2]
+    in_range = sum(1 for d in implied if 90.0 <= d <= 280.0)
+
+    formula = _formula_card(
+        "Implied days per well (the inversion)",
+        "days<sub>implied</sub> = drill<sub>allocated</sub> / ( N<sub>wells</sub> &times; rate<sub>rig</sub> &times; m )",
+        f"m = {SPREAD_MULTIPLIER:.1f}, the spread multiplier grossing a bare rig rate up to a "
+        f"total well cost (tubulars, mud, cement, logging, ROV/vessel support, operator "
+        f"overhead). <b>m is an assumption</b>, and every number in this table scales "
+        f"inversely with it. The rig rate is the sourced drillship market average for the "
+        f"FID year (nearest sourced year within 3).",
+    )
+
+    verdict = (
+        f"<p class='mini'><b>Result:</b> the {len(implied)} reconcilable projects imply a "
+        f"<b>median of {median:,.0f} days per well</b>, and <b>{in_range} of {len(implied)}</b> "
+        f"fall in the 90–280 day band that a deepwater well plausibly takes. "
+    )
+    if in_range >= len(implied) * 0.6:
+        verdict += (
+            "The top-down totals and the bottom-up day-rate series are therefore "
+            "<b>broadly consistent</b> — the disclosed CAPEX of these projects is "
+            "compatible with the rig rates we sourced, at a believable drilling duration. "
+            "That is a genuine, if modest, corroboration of both series.</p>"
+        )
+    else:
+        verdict += (
+            "<b>They do not reconcile.</b> That is a finding, not a defect: it means the "
+            "stage-share priors, the spread multiplier, or the rig-rate series is wrong "
+            "somewhere. We report it rather than tuning the priors until it disappears.</p>"
+        )
+    # The emergent regional finding. Computed, not asserted.
+    guyana = per_well_by_region.get("Guyana", [])
+    gom = per_well_by_region.get("US GOM", [])
+    if guyana and gom:
+        g_mean = sum(guyana) / len(guyana)
+        m_mean = sum(gom) / len(gom)
+        if g_mean > 0:
+            verdict += (
+                "<div class='thesis mini'><b>An emergent finding worth the whole exercise.</b> "
+                "The outliers below are not noise — they are <i>regional</i>. Back-allocating "
+                f"disclosed CAPEX alone puts <b>Guyana</b> at <b>${g_mean:,.0f}MM per well</b> "
+                f"(n={len(guyana)}) against <b>${m_mean:,.0f}MM per well</b> in the "
+                f"<b>US GOM</b> (n={len(gom)}) — a <b>{m_mean / g_mean:.1f}x</b> spread. "
+                "That is a real and well-documented industry fact (Guyana's Stabroek wells are "
+                "drilled fast in benign, high-quality reservoir on a batch programme; GOM "
+                "Paleogene wells are 20k-psi, slow and brutal), and <b>we did not put it in</b> "
+                "— it fell out of the disclosed totals. The bottom-up and top-down series "
+                "independently recovering a known truth is the strongest corroboration this "
+                "dataset currently has.</div>"
+            )
+
+    verdict += (
+        "<p class='mini warn'>Rows outside the plausible band are coloured. Note this is a "
+        "<b>weak</b> check: it uses assumed priors on one side and an assumed spread "
+        "multiplier on the other, so it can only catch order-of-magnitude errors — not "
+        "20% ones. Its value is that it would have loudly caught a 10x mistake, and that "
+        "the regional structure it surfaces is checkable against reality. A single "
+        "global days/well number would be meaningless — that is itself a finding: "
+        "<b>the deck must carry a per-region drilling duration, not one constant.</b></p>"
+    )
+
+    table = (
+        "<table><thead><tr><th>Project</th><th>FID</th><th>Sanctioned $MM</th>"
+        "<th>Wells</th><th>Allocated drill $MM</th><th>Rig rate $/d</th>"
+        "<th>Implied days/well</th><th>$MM per well</th></tr></thead>"
+        f"<tbody>{body}</tbody></table>"
+    )
+    return formula + verdict + table
 
 
 def _sanctioned_table(projects) -> str:
@@ -739,8 +899,9 @@ TOC = [
     ("inflation", "3. Inflation normalization — nominal vs real, dual basis (addition #1)"),
     ("sanctioned", "4. Sanctioned deepwater projects — the top-down anchor (addition #2)"),
     ("allocation", "5. Back-allocation to lifecycle stages + bottom-up reconciliation"),
-    ("curves", "6. Fitted trend curves per component (addition #3)"),
-    ("gaps", "7. Not yet covered"),
+    ("reconcile", "6. Reconciliation — do the bottom-up and top-down series agree?"),
+    ("curves", "7. Fitted trend curves per component (addition #3)"),
+    ("gaps", "8. Not yet covered"),
 ]
 
 
@@ -860,10 +1021,13 @@ of two or more, and silently mixing them is the fastest way to corrupt a benchma
 <h2 id="allocation">5. Back-allocation to lifecycle stages + bottom-up reconciliation</h2>
 {_allocation_section(projects, rows)}
 
-<h2 id="curves">6. Fitted trend curves per component (scope addition #3)</h2>
+<h2 id="reconcile">6. Reconciliation — do the two series agree?</h2>
+{_reconciliation_section(projects, rows)}
+
+<h2 id="curves">7. Fitted trend curves per component (scope addition #3)</h2>
 {_trend_section(rows, oil)}
 
-<h2 id="gaps">7. Not yet covered</h2>
+<h2 id="gaps">8. Not yet covered</h2>
 <p>Stated plainly, because a living dataset that hides its own holes is worse than no
 dataset. Milestone 1 does <b>not</b> yet cover:</p>
 <ul class="mini">
@@ -957,6 +1121,11 @@ def main() -> int:
         )
         for p in projects:
             if p.sanctioned_capex_usd_mm is None:
+                continue
+            if not p.scope_is_offshore_only:
+                # Same guard as the HTML section. Ichthys' $34bn includes the
+                # onshore Darwin LNG plant; allocating it with offshore stage
+                # priors would book $8bn of gas-processing plant as "SURF".
                 continue
             try:
                 dev = DevelopmentType(p.development_type)

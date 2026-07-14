@@ -30,8 +30,14 @@ from worldenergydata.cost.timeseries.schema import (
     CostComponent,
     CostObservation,
     DisclosureConfidence,
+    FigureType,
     Provenance,
     SourcePriority,
+)
+from worldenergydata.cost.timeseries.series import (
+    FIXTURE_LENS,
+    MARKET_RATE_LENS,
+    annual_means,
 )
 from worldenergydata.cost.timeseries.trend_fit import (
     MIN_POINTS_FOR_FIT,
@@ -42,11 +48,15 @@ from worldenergydata.cost.timeseries.trend_fit import (
 
 
 def _sourced(year: int, component: CostComponent, value: float) -> CostObservation:
+    # figure_type is REQUIRED for a row to survive `annual_means`' default lens
+    # filter. A row with no figure_type cannot be placed on either side of the
+    # fleet-average/fixture distinction, so it is correctly excluded.
     return CostObservation(
         year=year,
         component=component,
         value=value,
         unit="usd_per_day",
+        figure_type=FigureType.FLEET_AVERAGE,
         provenance=Provenance.SOURCED,
         source_title="test source",
         source_url="https://example.com/report",
@@ -90,21 +100,58 @@ def test_to_real_returns_none_rather_than_extrapolating() -> None:
     assert to_real(100.0, from_year=1995, basis_year=2020, deflator=deflator) is None
 
 
-def test_ucci_deflator_interpolates_gaps_and_flags_them() -> None:
+def test_ucci_deflator_interpolates_short_gaps_and_flags_them() -> None:
     """UCCI is proprietary and only anchor years are sourceable."""
     anchors = [
         _sourced(2000, CostComponent.INDEX_UCCI, 100.0),
-        _sourced(2005, CostComponent.INDEX_UCCI, 150.0),
+        _sourced(2004, CostComponent.INDEX_UCCI, 140.0),  # 3-year gap: bridgeable
     ]
     deflator = build_deflator(anchors, DeflatorBasis.UCCI)
     assert deflator.values[2000] == 100.0
-    assert deflator.values[2005] == 150.0
+    assert deflator.values[2004] == 140.0
     # linear across the gap
     assert deflator.values[2002] == pytest.approx(120.0)
     # ...and every gap year is flagged as inferred
-    assert deflator.interpolated_years == frozenset({2001, 2002, 2003, 2004})
+    assert deflator.interpolated_years == frozenset({2001, 2002, 2003})
     # anchors themselves are not flagged
     assert 2000 not in deflator.interpolated_years
+    assert deflator.unbridged_gaps == ()
+
+
+def test_ucci_deflator_refuses_to_bridge_a_wide_gap() -> None:
+    """The real one: sourced UCCI jumps 2013 -> 2019 with nothing in between.
+
+    A straight line across those six years would glide smoothly from 229 to 183
+    and, in doing so, erase the 2014 peak and the 2016 crash — the two most
+    important events in the series — while looking entirely plausible. We refuse.
+    Those years are simply not deflatable, and the dataset says so.
+    """
+    anchors = [
+        _sourced(2013, CostComponent.INDEX_UCCI, 229.0),
+        _sourced(2019, CostComponent.INDEX_UCCI, 182.6),
+    ]
+    deflator = build_deflator(anchors, DeflatorBasis.UCCI)
+
+    for year in (2014, 2015, 2016, 2017, 2018):
+        assert not deflator.covers(year), f"{year} must NOT be silently interpolated"
+        assert to_real(100.0, year, 2019, deflator) is None
+
+    assert deflator.unbridged_gaps == ((2013, 2019),)
+    assert "NOT BRIDGED" in deflator.source_note
+
+
+def test_ucci_deflator_averages_multiple_anchors_in_one_year() -> None:
+    """Quarterly prints land as separate rows; the annual anchor is their mean.
+
+    Regression: a dict comprehension keyed on year kept whichever row happened
+    to be last in file order. A value that depends on sort order is not a value.
+    """
+    anchors = [
+        _sourced(2012, CostComponent.INDEX_UCCI, 227.0),  # Q1
+        _sourced(2012, CostComponent.INDEX_UCCI, 230.0),  # Q3
+    ]
+    deflator = build_deflator(anchors, DeflatorBasis.UCCI)
+    assert deflator.values[2012] == pytest.approx(228.5)
 
 
 def test_ucci_deflator_never_extrapolates_beyond_its_anchors() -> None:
@@ -373,3 +420,132 @@ def test_reconciliation_declines_without_a_disclosed_well_count() -> None:
         )
         is None
     )
+
+
+# ---------------------------------------------------------------------------
+# The honesty filters (series.py)
+#
+# These are regression tests for three real bugs found while building the v1
+# dataset. Each one produced a confident, plausible, WRONG number. They are the
+# reason `annual_means` filters by default rather than on request.
+# ---------------------------------------------------------------------------
+
+
+def _obs(
+    year: int,
+    component: CostComponent,
+    value: float,
+    *,
+    currency: str = "USD",
+    figure_type: FigureType = FigureType.FLEET_AVERAGE,
+    region: str = "global",
+) -> CostObservation:
+    return CostObservation(
+        year=year,
+        component=component,
+        value=value,
+        unit="usd_per_day",
+        currency=currency,
+        figure_type=figure_type,
+        region=region,
+        provenance=Provenance.SOURCED,
+        source_title="test source",
+        source_url="https://example.com/r",
+        page_reference="p.1",
+        quoted_text=f"{year}: {value}",
+        accessed_date=date(2026, 7, 14),
+        confidence=DisclosureConfidence.HIGH,
+        source_priority=SourcePriority.SEC_FILING,
+    )
+
+
+def test_annual_means_excludes_other_currencies() -> None:
+    """The GBP North Sea spot rates must never be averaged in as dollars.
+
+    Regression: they were, and the AHTS series came out claiming day rates had
+    beaten CPI by 8.2 pp/yr — an artifact of reading GBP 47,017 as $47,017.
+    """
+    rows = [
+        _obs(2016, CostComponent.VESSEL_DAY_RATE_AHTS, 13_522.0, currency="USD"),
+        _obs(2025, CostComponent.VESSEL_DAY_RATE_AHTS, 47_017.0, currency="GBP"),
+    ]
+    means = annual_means(rows, CostComponent.VESSEL_DAY_RATE_AHTS)
+    assert means == {2016: 13_522.0}
+    assert 2025 not in means  # the GBP row must not appear in a USD series
+
+
+def test_annual_means_does_not_blend_fleet_averages_with_fixtures() -> None:
+    """A backlog-weighted average and a market-clearing fixture are not the same series.
+
+    In Q1-2016 Transocean's ultra-deepwater fleet average read $484k while its
+    own new fixtures were signing at $170k. Averaging those to $327k describes
+    a market that did not exist in any year.
+    """
+    rows = [
+        _obs(2016, CostComponent.RIG_DAY_RATE_DRILLSHIP, 484_000.0,
+             figure_type=FigureType.FLEET_AVERAGE),
+        _obs(2016, CostComponent.RIG_DAY_RATE_DRILLSHIP, 170_000.0,
+             figure_type=FigureType.SINGLE_FIXTURE),
+    ]
+    fleet = annual_means(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP,
+                         figure_types=MARKET_RATE_LENS)
+    fixture = annual_means(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP,
+                           figure_types=FIXTURE_LENS)
+    assert fleet == {2016: 484_000.0}
+    assert fixture == {2016: 170_000.0}
+    # and emphatically NOT the blend
+    assert fleet[2016] != pytest.approx(327_000.0)
+
+
+def test_annual_means_does_not_mix_regions() -> None:
+    """A single regional row must not anchor an otherwise-global series.
+
+    Regression: the AHTS series carried exactly one Gulf-of-Mexico row (a
+    point-in-time March-2000 figure at a regional trough). Unfiltered, it became
+    the FIRST point of the window and anchored a 26-year growth rate to a number
+    not comparable with its endpoint.
+    """
+    rows = [
+        _obs(2000, CostComponent.VESSEL_DAY_RATE_AHTS, 3_660.0, region="GOM"),
+        _obs(2001, CostComponent.VESSEL_DAY_RATE_AHTS, 5_149.0, region="global"),
+        _obs(2016, CostComponent.VESSEL_DAY_RATE_AHTS, 13_522.0, region="global"),
+    ]
+    means = annual_means(rows, CostComponent.VESSEL_DAY_RATE_AHTS, region="global")
+    assert min(means) == 2001  # not 2000 — the GOM row is excluded
+    assert 2000 not in means
+
+
+def test_annual_means_excludes_non_sourced_rows() -> None:
+    """A fitted value must never become an input to a fit. That is circular."""
+    rows = [
+        _obs(2020, CostComponent.RIG_DAY_RATE_SEMI, 300_000.0),
+        CostObservation(
+            year=2021,
+            component=CostComponent.RIG_DAY_RATE_SEMI,
+            value=999_000.0,
+            unit="usd_per_day",
+            figure_type=FigureType.FLEET_AVERAGE,
+            provenance=Provenance.FITTED,
+            notes="fitted — must not feed back into the fit",
+        ),
+    ]
+    means = annual_means(rows, CostComponent.RIG_DAY_RATE_SEMI)
+    assert means == {2020: 300_000.0}
+
+
+def test_inflation_verdict_applies_the_filters_by_default() -> None:
+    """End-to-end: the GBP row must not extend the verdict window."""
+    rows = _cpi_rows(2000, 2026, rate=0.02)
+    rows += [
+        _obs(2001, CostComponent.VESSEL_DAY_RATE_AHTS, 5_149.0),
+        _obs(2016, CostComponent.VESSEL_DAY_RATE_AHTS, 13_522.0),
+        # a GBP row in a later year — must be ignored, not treated as the endpoint
+        _obs(2025, CostComponent.VESSEL_DAY_RATE_AHTS, 47_017.0, currency="GBP"),
+    ]
+    deflator = build_deflator(rows, DeflatorBasis.CPI)
+    verdict = compare_against_inflation(
+        rows, deflator, CostComponent.VESSEL_DAY_RATE_AHTS, basis_year=2025
+    )
+    assert verdict is not None
+    assert verdict.end_year == 2016  # NOT 2025
+    assert verdict.end_nominal == 13_522.0

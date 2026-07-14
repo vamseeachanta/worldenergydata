@@ -47,8 +47,10 @@ from enum import Enum
 from typing import Optional
 
 from worldenergydata.cost.timeseries.schema import CostComponent, CostObservation
+from worldenergydata.cost.timeseries.series import MARKET_RATE_LENS, annual_means
 
 __all__ = [
+    "MAX_INTERPOLATION_SPAN",
     "DeflatorBasis",
     "Deflator",
     "build_deflator",
@@ -79,6 +81,9 @@ class Deflator:
     values: dict[int, float]
     interpolated_years: frozenset[int]
     source_note: str
+    #: (left_anchor, right_anchor) pairs whose gap was too wide to bridge. The
+    #: years strictly between them are NOT in `values` and cannot be deflated.
+    unbridged_gaps: tuple[tuple[int, int], ...] = ()
 
     @property
     def min_year(self) -> int:
@@ -92,22 +97,52 @@ class Deflator:
         return year in self.values
 
 
-def _interpolate_gaps(anchors: dict[int, float]) -> tuple[dict[int, float], set[int]]:
+#: The longest gap we will bridge by linear interpolation, in years.
+#:
+#: This constant is doing real work. The sourced UCCI record has an anchor at
+#: 2013 (229) and its next at 2019 (182.6) — and *nothing in between*, because
+#: IHS stopped publishing free index levels after 2013 and OGJ only resumed
+#: printing them in 2019. A naive straight line across that gap would glide
+#: smoothly from 229 to 183 and, in doing so, would erase the 2014 peak and the
+#: 2016 crash — the two most important events in the entire series. It would
+#: also look completely plausible.
+#:
+#: A five-year interpolation across a known structural break is not a estimate;
+#: it is a fabrication with a trend line drawn through it. So we cap the span.
+#: Gaps longer than this are left UNCOVERED, and the UCCI-real series is simply
+#: not published for those years. "We don't know what happened to sector costs
+#: in 2016" is the true answer, and the dataset is allowed to say it.
+MAX_INTERPOLATION_SPAN = 3
+
+
+def _interpolate_gaps(
+    anchors: dict[int, float],
+    max_span: int = MAX_INTERPOLATION_SPAN,
+) -> tuple[dict[int, float], set[int], list[tuple[int, int]]]:
     """Linearly interpolate between anchor years. Never extrapolates.
 
-    Returns ``(values, interpolated_years)``. Years outside ``[min, max]`` of
-    the anchors are simply absent — that is the "we don't know" answer, and it
-    is deliberate.
+    Returns ``(values, interpolated_years, unbridged_gaps)``.
+
+    * Years outside ``[min, max]`` of the anchors are absent — we do not
+      extrapolate a deflator.
+    * Gaps wider than ``max_span`` are **left unbridged** and reported in
+      ``unbridged_gaps`` as ``(left_anchor, right_anchor)`` pairs, so the caller
+      can say out loud which years it cannot deflate. See ``MAX_INTERPOLATION_SPAN``.
     """
     if not anchors:
-        return {}, set()
+        return {}, set(), []
     known = sorted(anchors)
     values: dict[int, float] = dict(anchors)
     interpolated: set[int] = set()
+    unbridged: list[tuple[int, int]] = []
 
     for left, right in zip(known, known[1:]):
         span = right - left
         if span <= 1:
+            continue
+        if span - 1 > max_span:
+            # Too wide to bridge honestly. Leave the years out entirely.
+            unbridged.append((left, right))
             continue
         rise = anchors[right] - anchors[left]
         for offset in range(1, span):
@@ -115,7 +150,7 @@ def _interpolate_gaps(anchors: dict[int, float]) -> tuple[dict[int, float], set[
             values[year] = anchors[left] + rise * (offset / span)
             interpolated.add(year)
 
-    return values, interpolated
+    return values, interpolated, unbridged
 
 
 def build_deflator(
@@ -133,18 +168,23 @@ def build_deflator(
         if basis is DeflatorBasis.CPI
         else CostComponent.INDEX_UCCI
     )
-    anchors = {
-        obs.year: obs.value
-        for obs in observations
-        if obs.component is component and obs.value is not None
-    }
+    # Average within a year. UCCI anchors arrive as *quarterly* prints (e.g. both
+    # Q1-2012 = 227 and Q3-2012 = 230 are separately sourced), so a dict
+    # comprehension keyed on year would silently keep whichever row happened to
+    # come last in file order — a value that depends on sort order is not a value.
+    buckets: dict[int, list[float]] = {}
+    for obs in observations:
+        if obs.component is component and obs.value is not None:
+            buckets.setdefault(obs.year, []).append(obs.value)
+    anchors = {year: sum(v) / len(v) for year, v in buckets.items()}
+
     if not anchors:
         raise ValueError(
             f"no {component.value} rows available — cannot build the {basis.value} "
             "deflator. Refusing to substitute a different index silently."
         )
 
-    values, interpolated = _interpolate_gaps(anchors)
+    values, interpolated, unbridged = _interpolate_gaps(anchors)
 
     if basis is DeflatorBasis.CPI:
         note = (
@@ -153,18 +193,30 @@ def build_deflator(
         )
     else:
         note = (
-            f"IHS/S&P Upstream Capital Costs Index. Proprietary — built from "
-            f"{len(anchors)} publicly sourced anchor year(s) "
-            f"({min(anchors)}–{max(anchors)}) with linear interpolation across "
-            f"{len(interpolated)} gap year(s). NOT extrapolated beyond the anchor "
-            "range: outside it, UCCI-real is not published."
+            f"IHS/S&P Upstream Capital Costs Index (2000=100). Proprietary, with no "
+            f"public endpoint — built from {len(anchors)} publicly sourced anchor "
+            f"year(s) spanning {min(anchors)}–{max(anchors)}, with linear "
+            f"interpolation across {len(interpolated)} gap year(s). Quarterly prints "
+            f"within a year are averaged. NOT extrapolated beyond the anchor range."
         )
+        if unbridged:
+            gaps_txt = "; ".join(
+                f"{left + 1}–{right - 1} (between anchors {left} and {right})"
+                for left, right in unbridged
+            )
+            note += (
+                f" NOT BRIDGED — gaps wider than {MAX_INTERPOLATION_SPAN} years are "
+                f"left uncovered rather than interpolated, because a straight line "
+                f"across them would erase real structural breaks: {gaps_txt}. "
+                f"UCCI-real is not published for those years."
+            )
 
     return Deflator(
         basis=basis,
         values=values,
         interpolated_years=frozenset(interpolated),
         source_note=note,
+        unbridged_gaps=tuple(unbridged),
     )
 
 
@@ -277,6 +329,9 @@ def compare_against_inflation(
     deflator: Deflator,
     component: CostComponent,
     basis_year: int,
+    currency: str = "USD",
+    figure_types: Optional[frozenset] = MARKET_RATE_LENS,
+    region: Optional[str] = "global",
 ) -> Optional[InflationVerdict]:
     """Answer #844's headline question for one component.
 
@@ -287,23 +342,25 @@ def compare_against_inflation(
     Returns ``None`` when there are fewer than two sourced points — one point
     cannot have a trend, and asserting one from a single observation would be
     exactly the kind of invention this dataset exists to avoid.
+
+    The default lens is ``MARKET_RATE_LENS`` (contractor/market averages), and
+    the default currency is USD. Both defaults exist to stop the two silent
+    corruptions described in ``series.py``. A caller who wants the leading-edge
+    story passes ``figure_types=FIXTURE_LENS`` and gets a *separate* verdict —
+    never a blended one.
     """
-    series = sorted(
-        (
-            obs
-            for obs in observations
-            if obs.component is component
-            and obs.value is not None
-            and obs.provenance.value == "sourced"
-        ),
-        key=lambda o: o.year,
+    # Goes through `annual_means`, which filters on currency AND figure type.
+    # Both matter: without the currency filter the GBP North Sea spot rates get
+    # averaged in as dollars, and without the figure-type filter a contractor's
+    # lagging backlog average gets averaged with a leading-edge fixture. Either
+    # one produces a confident, plausible, wrong verdict. See series.py.
+    annual = annual_means(
+        observations,
+        component,
+        currency=currency,
+        figure_types=figure_types,
+        region=region,
     )
-    # Collapse duplicate years (multiple fixtures in one year) to their mean, so
-    # a year with 5 quotes does not outvote a year with 1 when we pick endpoints.
-    by_year: dict[int, list[float]] = {}
-    for obs in series:
-        by_year.setdefault(obs.year, []).append(obs.value)  # type: ignore[arg-type]
-    annual = {year: sum(v) / len(v) for year, v in by_year.items()}
 
     if len(annual) < 2:
         return None

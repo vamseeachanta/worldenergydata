@@ -177,6 +177,19 @@ class SanctionedProject:
     source_priority: SourcePriority
     notes: Optional[str] = None
 
+    #: False when the disclosed CAPEX bundles in major NON-offshore scope —
+    #: typically an onshore LNG train (Ichthys' $34bn includes the Darwin LNG
+    #: plant; Scarborough's $12bn includes Pluto Train 2).
+    #:
+    #: Such a total MUST NOT be back-allocated with offshore stage-share priors.
+    #: Splitting a $34bn integrated LNG project into "drill / SURF / host /
+    #: install" would attribute billions of dollars of onshore gas-processing
+    #: plant to a subsea flowline budget, produce a per-stage cost that is wrong
+    #: by an order of magnitude, and then feed that error straight into the
+    #: bottom-up reconciliation — corrupting the one independent check this
+    #: dataset has. `allocate_projects` skips these, loudly.
+    scope_is_offshore_only: bool = True
+
     def __post_init__(self) -> None:
         if self.sanctioned_capex_usd_mm is not None and not self.capex_basis:
             raise ValueError(
@@ -222,6 +235,7 @@ SANCTIONED_CSV_COLUMNS: tuple[str, ...] = (
     "confidence",
     "source_priority",
     "notes",
+    "scope_is_offshore_only",
 )
 
 
@@ -293,6 +307,9 @@ def read_sanctioned_csv(path: Path) -> list[SanctionedProject]:
                     confidence=DisclosureConfidence(record["CONFIDENCE"]),
                     source_priority=SourcePriority(record["SOURCE_PRIORITY"]),
                     notes=_blank_to_none(record["NOTES"]),
+                    scope_is_offshore_only=(
+                        record.get("SCOPE_IS_OFFSHORE_ONLY", "True").strip() != "False"
+                    ),
                 )
             )
     return out

@@ -55,6 +55,7 @@ from typing import Callable, Optional
 import numpy as np
 
 from worldenergydata.cost.timeseries.schema import CostComponent, CostObservation
+from worldenergydata.cost.timeseries.series import MARKET_RATE_LENS, annual_means
 
 __all__ = [
     "FunctionalForm",
@@ -121,22 +122,25 @@ def _adjusted(r2: float, n: int, k: int) -> float:
 
 
 def _annual_means(
-    observations: list[CostObservation], component: CostComponent
+    observations: list[CostObservation],
+    component: CostComponent,
+    currency: str = "USD",
+    figure_types: Optional[frozenset] = MARKET_RATE_LENS,
+    region: Optional[str] = "global",
 ) -> dict[int, float]:
-    """Collapse sourced rows for one component to one value per year.
+    """Delegates to :func:`series.annual_means`, which applies the honesty filters.
 
-    Multiple fixtures in a year are averaged, so a heavily-reported year does
-    not dominate the fit purely by having been written about more.
+    Fitting a curve through a series that mixes GBP with USD, or a lagging
+    backlog average with a leading-edge fixture, yields a curve with a
+    respectable R-squared that describes nothing real. See ``series.py``.
     """
-    buckets: dict[int, list[float]] = {}
-    for obs in observations:
-        if (
-            obs.component is component
-            and obs.value is not None
-            and obs.provenance.value == "sourced"
-        ):
-            buckets.setdefault(obs.year, []).append(obs.value)
-    return {year: sum(v) / len(v) for year, v in sorted(buckets.items())}
+    return annual_means(
+        observations,
+        component,
+        currency=currency,
+        figure_types=figure_types,
+        region=region,
+    )
 
 
 def fit_component(
