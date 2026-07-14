@@ -71,7 +71,9 @@ def _sourced(year: int, component: CostComponent, value: float) -> CostObservati
 def _cpi_rows(start: int, end: int, start_value: float = 100.0, rate: float = 0.02):
     """A synthetic CPI series growing at a constant `rate`."""
     return [
-        _sourced(year, CostComponent.INDEX_CPI, start_value * (1 + rate) ** (year - start))
+        _sourced(
+            year, CostComponent.INDEX_CPI, start_value * (1 + rate) ** (year - start)
+        )
         for year in range(start, end + 1)
     ]
 
@@ -270,14 +272,27 @@ def test_fit_prefers_the_oil_linked_form_when_the_series_tracks_oil() -> None:
     assert the fitter picks the oil-linked form. This is the #844 'cycle driver'
     finding, mechanised.
     """
-    oil = {2000: 30.0, 2001: 25.0, 2002: 25.0, 2003: 29.0, 2004: 38.0,
-           2005: 55.0, 2006: 65.0, 2007: 72.0, 2008: 97.0, 2009: 62.0,
-           2010: 80.0, 2011: 111.0}
+    oil = {
+        2000: 30.0,
+        2001: 25.0,
+        2002: 25.0,
+        2003: 29.0,
+        2004: 38.0,
+        2005: 55.0,
+        2006: 65.0,
+        2007: 72.0,
+        2008: 97.0,
+        2009: 62.0,
+        2010: 80.0,
+        2011: 111.0,
+    }
     rows = [
         _sourced(year, CostComponent.RIG_DAY_RATE_DRILLSHIP, 50_000.0 + 4_000.0 * price)
         for year, price in oil.items()
     ]
-    fit = fit_component(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, oil_price_by_year=oil)
+    fit = fit_component(
+        rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, oil_price_by_year=oil
+    )
     assert fit is not None
     assert fit.form is FunctionalForm.OIL_LINKED
     assert fit.coefficients["b"] == pytest.approx(4_000.0, rel=1e-6)
@@ -305,14 +320,27 @@ def test_predict_returns_none_when_an_oil_linked_curve_lacks_its_input() -> None
     # the oil-linked one (both R²=1) and the fitter would rightly prefer the
     # simpler form — which would make this test about tie-breaking rather than
     # about the missing-input guard it is meant to cover.
-    oil = {2000: 30.0, 2001: 25.0, 2002: 25.0, 2003: 29.0, 2004: 38.0,
-           2005: 55.0, 2006: 65.0, 2007: 72.0, 2008: 97.0, 2009: 62.0,
-           2010: 80.0, 2011: 111.0}
+    oil = {
+        2000: 30.0,
+        2001: 25.0,
+        2002: 25.0,
+        2003: 29.0,
+        2004: 38.0,
+        2005: 55.0,
+        2006: 65.0,
+        2007: 72.0,
+        2008: 97.0,
+        2009: 62.0,
+        2010: 80.0,
+        2011: 111.0,
+    }
     rows = [
         _sourced(year, CostComponent.RIG_DAY_RATE_DRILLSHIP, 50_000.0 + 4_000.0 * price)
         for year, price in oil.items()
     ]
-    fit = fit_component(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, oil_price_by_year=oil)
+    fit = fit_component(
+        rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, oil_price_by_year=oil
+    )
     assert fit is not None and fit.form is FunctionalForm.OIL_LINKED
     # 2050 oil price is unknown -> the curve has no input -> no prediction.
     assert predict(fit, 2050, oil_price_by_year=oil) is None
@@ -380,7 +408,11 @@ def test_disclosed_shares_override_the_priors_and_carry_no_band() -> None:
         rationale="operator disclosed the split",
     )
     allocation = allocate_project(
-        "Disclosed", 1_000.0, DevelopmentType.NEW_HOST_SEMI, well_count=99, shares=shares
+        "Disclosed",
+        1_000.0,
+        DevelopmentType.NEW_HOST_SEMI,
+        well_count=99,
+        shares=shares,
     )
     assert allocation is not None
     assert allocation.shares_are_disclosed
@@ -482,15 +514,25 @@ def test_annual_means_does_not_blend_fleet_averages_with_fixtures() -> None:
     a market that did not exist in any year.
     """
     rows = [
-        _obs(2016, CostComponent.RIG_DAY_RATE_DRILLSHIP, 484_000.0,
-             figure_type=FigureType.FLEET_AVERAGE),
-        _obs(2016, CostComponent.RIG_DAY_RATE_DRILLSHIP, 170_000.0,
-             figure_type=FigureType.SINGLE_FIXTURE),
+        _obs(
+            2016,
+            CostComponent.RIG_DAY_RATE_DRILLSHIP,
+            484_000.0,
+            figure_type=FigureType.FLEET_AVERAGE,
+        ),
+        _obs(
+            2016,
+            CostComponent.RIG_DAY_RATE_DRILLSHIP,
+            170_000.0,
+            figure_type=FigureType.SINGLE_FIXTURE,
+        ),
     ]
-    fleet = annual_means(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP,
-                         figure_types=MARKET_RATE_LENS)
-    fixture = annual_means(rows, CostComponent.RIG_DAY_RATE_DRILLSHIP,
-                           figure_types=FIXTURE_LENS)
+    fleet = annual_means(
+        rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, figure_types=MARKET_RATE_LENS
+    )
+    fixture = annual_means(
+        rows, CostComponent.RIG_DAY_RATE_DRILLSHIP, figure_types=FIXTURE_LENS
+    )
     assert fleet == {2016: 484_000.0}
     assert fixture == {2016: 170_000.0}
     # and emphatically NOT the blend
