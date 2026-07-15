@@ -28,6 +28,7 @@ surface contrast — do not swap hexes casually.
 
 from __future__ import annotations
 
+import csv
 import html as _html
 import math
 import sys
@@ -365,6 +366,69 @@ def _capex_per_well_groups(projects) -> list[tuple[str, list[tuple[str, float]]]
     return [(k, sorted(v, key=lambda t: t[1])) for k, v in groups]
 
 
+def _outturn_finding() -> str:
+    """A finding card: sanctioned vs final cost, from the revision-trails table.
+
+    Pure sourced data — each point is an operator/regulator statement. Shows the
+    computable full trails (a sanction and a final in one currency) sorted by
+    overrun, so the reader sees directly that a single FID number is not a cost
+    basis.
+    """
+    try:
+        with open(
+            CURATED / "cost_revision_trails.csv", newline="", encoding="utf-8"
+        ) as fh:
+            rows = list(csv.DictReader(fh))
+    except FileNotFoundError:
+        return ""
+    # collect sanction + final per (project, currency)
+    by_key: dict[tuple[str, str], dict] = {}
+    for r in rows:
+        try:
+            v = float(r["VALUE_MM"])
+        except (ValueError, KeyError):
+            continue
+        key = (r["PROJECT"], r["CURRENCY"])
+        d = by_key.setdefault(key, {})
+        if r["KIND"] == "sanction_estimate" and "s" not in d:
+            d["s"] = v
+        elif r["KIND"] in ("final_outturn", "final_forecast"):
+            if "f" not in d or r["KIND"] == "final_outturn":
+                d["f"] = v
+    trails = []
+    for (proj, ccy), d in by_key.items():
+        if "s" in d and "f" in d and d["s"] > 0:
+            trails.append((proj, ccy, d["s"], d["f"], d["f"] / d["s"]))
+    if not trails:
+        return ""
+    trails.sort(key=lambda t: t[4], reverse=True)
+    body = "".join(
+        f"<tr><td>{_esc(p)}</td><td>{_esc(c)}</td>"
+        f"<td class='num'>{s:,.0f}</td><td class='num'>{f:,.0f}</td>"
+        f"<td class='num'><strong>{(m - 1) * 100:+.0f}%</strong></td></tr>"
+        for p, c, s, f, m in trails
+    )
+    lo, hi = trails[-1], trails[0]
+    return (
+        '<div class="card finding"><h3>A single FID number is not a cost basis</h3>'
+        "<p>Where operators and regulators disclosed a full trail — sanction "
+        "estimate through to final outturn — the projects that finished on their "
+        "FID number are the exception. The spread runs from "
+        f"<strong>{(lo[4] - 1) * 100:+.0f}%</strong> ({_esc(lo[0])}) to "
+        f"<strong>{(hi[4] - 1) * 100:+.0f}%</strong> ({_esc(hi[0])}), and the "
+        "direction is not uniform: mid-caps and re-scoped brownfields came in "
+        "under, integrated-LNG megaprojects ran over. Every figure below is an "
+        "operator or regulator statement (currencies are never mixed).</p>"
+        '<div class="tscroll"><table><thead><tr><th>Project</th><th>Ccy</th>'
+        "<th>Sanction (MM)</th><th>Final (MM)</th><th>Δ</th></tr></thead>"
+        f"<tbody>{body}</tbody></table></div>"
+        '<p class="mini muted">Consequence for the deck: it must carry the '
+        "outturn <em>distribution</em>, not a point estimate. Full dated trails "
+        "with citations: "
+        '<a href="https://github.com/vamseeachanta/worldenergydata/blob/main/data/modules/cost/curated/cost_revision_trails.csv" rel="noopener">cost_revision_trails.csv</a>.</p></div>'
+    )
+
+
 ASSUMPTIONS = [
     (
         "A1",
@@ -374,6 +438,11 @@ ASSUMPTIONS = [
         "by the authoring run itself as the dataset's weak point.",
         "Splitting project totals into per-stage costs (the stage_allocations "
         "table and everything downstream of it).",
+        "Now has evidence: the contract-award reconciliation tests every prior "
+        "it can. No sourced award exceeds its stage's band; the full-scope SURF "
+        "anchors land in-band (Suriname) or just below (Guyana). The priors are "
+        "corroborated where testable and contradicted nowhere — see the "
+        '<a href="https://raw.githack.com/vamseeachanta/worldenergydata/main/reports/cost/a1_evidence_pack.html" rel="noopener">A1 evidence pack</a>.',
     ),
     (
         "A2",
@@ -381,6 +450,7 @@ ASSUMPTIONS = [
         "Which yardstick is the default 'real' basis — general CPI or the "
         "sector index UCCI. This page shows CPI; UCCI is computed and available.",
         "Every real-terms number and every OUTPACED/LAGGED verdict.",
+        None,
     ),
     (
         "A3",
@@ -389,6 +459,7 @@ ASSUMPTIONS = [
         "never by drawing a line across a blackout (the UCCI 2014–18 gap stays "
         "open until this is approved).",
         "Any figure for a year without a direct source.",
+        None,
     ),
     (
         "A4",
@@ -397,17 +468,26 @@ ASSUMPTIONS = [
         "(section 3). Turning that into the model means region-specific "
         "days-per-well instead of one global constant.",
         "The FDAS time-varying deck (#651) — the first consumer of this dataset.",
+        "Corroborated independently: the award reconciliation found SURF share "
+        "also varies by region (Guyana below band, Suriname in-band) — the same "
+        "regional signal, from a different measurement.",
     ),
 ]
 
 
 def _assumption_cards() -> str:
     cards = []
-    for code, name, what, touches in ASSUMPTIONS:
+    for code, name, what, touches, evidence in ASSUMPTIONS:
+        ev = (
+            f'<p class="mini aevid"><strong>Evidence:</strong> {evidence}</p>'
+            if evidence
+            else ""
+        )
         cards.append(
             f'<div class="acard"><div class="acode">{code}</div>'
             f"<h3>{_esc(name)}</h3><p>{_esc(what)}</p>"
             f'<p class="mini"><strong>What it would touch:</strong> {_esc(touches)}</p>'
+            f"{ev}"
             f'<p class="astat">⏳ awaiting approval — decision recorded on '
             f'<a href="https://github.com/vamseeachanta/worldenergydata/issues/1017" '
             f'rel="noopener">issue #1017</a></p></div>'
@@ -472,6 +552,8 @@ overflow-x:auto;white-space:nowrap}
  var(--assumed);border-radius:10px;padding:14px 16px}
 .acode{font-size:12px;font-weight:700;color:var(--assumed);letter-spacing:.06em}
 .astat{font-size:12.5px;color:var(--muted)}
+.aevid{border-left:3px solid var(--sourced);padding-left:9px;margin-top:8px}
+.aevid a{color:var(--s1)}
 .acard a{color:var(--s1)}
 ol.seq{margin:8px 0 0 22px}
 ol.seq li{margin:5px 0}
@@ -483,6 +565,7 @@ font-size:12.5px;border-top:1px solid var(--rule)}
 def main() -> int:
     rows = read_timeseries_csv(CURATED / TIMESERIES_CSV)
     projects = read_sanctioned_csv(CURATED / SANCTIONED_CSV)
+    outturn_finding = _outturn_finding()
 
     rig_chart = _line_chart(
         [(n, annual_means(rows, c), col) for c, n, col in RIG_SERIES],
@@ -637,6 +720,7 @@ the same fact. Consequence for the model: per-region drilling durations
 faster than CPI over their sourced windows, while semi-sub rates tracked CPI
 and drillships sit in between. Cost escalation is not uniform across
 components — a single inflation factor would misprice the mix.</p></div>
+{outturn_finding}
 </section>
 
 <section id="assumptions"><h2>5 · Assumptions register — nothing above uses these</h2>
