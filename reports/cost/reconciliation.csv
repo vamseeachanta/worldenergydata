@@ -37,12 +37,15 @@ stage_anchor,Sangomar Phase 1,complete (Subsea Integration Alliance),11.9%,prior
 stage_anchor,Yellowtail,complete (TechnipFMC),5.0%,prior 6-16%,below_band (floor)
 stage_anchor,Yellowtail,complete (TechnipFMC),0.8%,prior 6-16%,below_band (floor)
 stage_anchor,Yellowtail,host (SBM Offshore),23.2%,prior 20-40%,in_band (floor)
-outturn,Martin Linge (ex-Hild),NOK sanction->final,x2.46,25600->63000,
+outturn,Martin Linge (ex-Hild),NOK sanction->final,x2.00,31500->63000,
+outturn,Goliat,NOK sanction->final,x1.79,28000->50000,
 outturn,Gorgon (incl. Jansz-Io),USD sanction->final,x1.46,37000->54000,
 outturn,Tyra Redevelopment,DKK sanction->final,x1.29,21000->27000,
 outturn,Sangomar Phase 1,USD sanction->final,x1.19,4200->5000,
+outturn,Aasta Hansteen,NOK sanction->final,x1.17,32000->37500,
 outturn,Mariner,USD sanction->final,x1.10,7000->7700,
 outturn,Jubilee Phase 1,USD sanction->final,x1.05,3150->3300,
 outturn,TEN (Tweneboa-Enyenra-Ntomme),USD sanction->final,x1.00,4000->4000,
 outturn,Peregrino Phase 2,USD sanction->final,x0.86,3500->3000,
 outturn,Kraken,USD sanction->final,x0.78,3200->2500,
+outturn,Johan Sverdrup Phase 1,NOK sanction->final,x0.67,123000->83000,
