@@ -29,6 +29,7 @@ ASSET_CLASSES = {
 AWARD_BASES = {
     "point",
     "band",
+    "range",
     "combined",
     "backlog",
     "lease_contract",

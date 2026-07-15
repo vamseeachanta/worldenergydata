@@ -1,15 +1,32 @@
 CHECK,PROJECT,DETAIL,VALUE,REFERENCE,VERDICT
+coverage,Martin Linge (ex-Hild),3 valued / 1 not-public awards,62%+,gross $4200MM,
+coverage,Kaombo,3 valued / 1 not-public awards,49%+,gross $16000MM,
 coverage,GranMorgu (Block 58),4 valued / 1 not-public awards,45%+,gross $10500MM,
+coverage,Culzean,3 valued / 1 not-public awards,35%+,gross $4500MM,
 coverage,Liza Phase 2,2 valued / 3 not-public awards,33%+,gross $6000MM,
 coverage,Yellowtail,3 valued / 2 not-public awards,29%+,gross $10000MM,
+coverage,Rosebank Phase 1,2 valued / 1 not-public awards,22%+,gross $3800MM,
+coverage,Moho Nord (incl. Phase 1bis),3 valued / 1 not-public awards,21%+,gross $10000MM,
 coverage,Bacalhau Phase 1,3 valued / 2 not-public awards,20%+,gross $8000MM,
 coverage,Payara,2 valued / 3 not-public awards,19%+,gross $9000MM,
+coverage,Mariner,3 valued / 1 not-public awards,15%+,gross $7000MM,
 coverage,Anchor,1 valued / 7 not-public awards,15%+,gross $5700MM,
+coverage,Zinia Phase 2,1 valued / 1 not-public awards,12%+,gross $1200MM,
 coverage,Liza Phase 1,1 valued / 4 not-public awards,12%+,gross $4400MM,
+coverage,Tiber-Guadalupe,1 valued / 1 not-public awards,12%+,gross $5000MM,
 coverage,Sangomar Phase 1,1 valued / 2 not-public awards,12%+,gross $4200MM,
+coverage,Hammerhead,2 valued / 1 not-public awards,11%+,gross $6800MM,
 coverage,Barossa,2 valued / 1 not-public awards,10%+,gross $3600MM,
+coverage,Whiptail,2 valued / 1 not-public awards,10%+,gross $12700MM,
 coverage,Kaskida,2 valued / 2 not-public awards,10%+,gross $5000MM,
+coverage,Uaru,2 valued / 2 not-public awards,8%+,gross $12700MM,
+coverage,Mafumeira Sul,1 valued / 2 not-public awards,6%+,gross $5600MM,
 coverage,Ballymore,2 valued / 1 not-public awards,4%+,gross $1600MM,
+coverage,Jack/St. Malo (initial phase),1 valued / 2 not-public awards,3%+,gross $7500MM,
+coverage,Shenzi,1 valued / 0 not-public awards,2%+,gross $4400MM,
+coverage,Big Foot,1 valued / 0 not-public awards,1%+,gross $4000MM,
+coverage,Kraken,1 valued / 1 not-public awards,1%+,gross $3200MM,
+coverage,Stampede,0 valued / 2 not-public awards,0%+,gross $6000MM,
 partner_net,Liza Phase 1,Hess 30.0% net $955,implied gross $3183,disclosed $4400,implied below gross — net likely excludes a scope element (e.g. FPSO)
 partner_net,Liza Phase 2,Hess 30.0% net $1600,implied gross $5333,disclosed $6000,implied below gross — net likely excludes a scope element (e.g. FPSO)
 partner_net,Payara,Hess 30.0% net $1800,implied gross $6000,disclosed $9000,implied below gross — net likely excludes a scope element (e.g. FPSO)
@@ -22,25 +39,54 @@ stage_anchor,Bacalhau Phase 1,surf (Subsea7 (Subsea Integration Alliance)),9.4%,
 stage_anchor,Ballymore,install (Subsea 7),3.1%,prior 6-16%,below_band (floor)
 stage_anchor,Barossa,complete (TechnipFMC),2.1%,prior 6-16%,below_band (floor)
 stage_anchor,Barossa,surf (Subsea 7),8.3%,prior 16-32%,below_band (floor)
+stage_anchor,Big Foot,surf (GE Oil & Gas),1.1%,prior 12-26%,below_band (floor)
+stage_anchor,Culzean,drill (Maersk Drilling (Highlander jack-up)),9.3%,prior 16-32%,below_band (floor)
+stage_anchor,Culzean,host (Sembcorp Marine (SMOE)),22.2%,prior 24-44%,below_band (floor)
+stage_anchor,Culzean,surf (Subsea 7),3.3%,prior 8-20%,below_band
 stage_anchor,GranMorgu (Block 58),complete (TechnipFMC),9.5%,prior 6-16%,in_band (floor)
 stage_anchor,GranMorgu (Block 58),drill (Noble Corporation),7.2%,prior 14-30%,below_band (floor)
 stage_anchor,GranMorgu (Block 58),host (Technip Energies),10.0%,prior 20-40%,below_band (floor)
 stage_anchor,GranMorgu (Block 58),surf (Saipem),18.1%,prior 16-32%,in_band
+stage_anchor,Hammerhead,complete (TechnipFMC),3.7%,prior 6-16%,below_band (floor)
+stage_anchor,Hammerhead,surf (Saipem),7.4%,prior 16-32%,below_band
+stage_anchor,Jack/St. Malo (initial phase),complete (Cameron (OneSubsea)),3.1%,prior 8-18%,below_band (floor)
+stage_anchor,Kaombo,drill (Ocean Rig (drillship Skyros)),8.1%,prior 14-30%,below_band (floor)
+stage_anchor,Kaombo,host (Saipem),18.8%,prior 20-40%,below_band (floor)
+stage_anchor,Kaombo,surf (Technip / Heerema alliance),21.9%,prior 16-32%,in_band
 stage_anchor,Kaskida,complete (TechnipFMC),5.0%,prior 8-18%,below_band (floor)
 stage_anchor,Kaskida,drill (Transocean),4.6%,prior 17-35%,below_band (floor)
 stage_anchor,Liza Phase 1,host (SBM Offshore),12.2%,prior 20-40%,below_band (floor)
 stage_anchor,Liza Phase 2,host (SBM Offshore),21.0%,prior 20-40%,in_band (floor)
 stage_anchor,Liza Phase 2,surf (Saipem),11.7%,prior 16-32%,below_band
+stage_anchor,Mafumeira Sul,surf (Saipem (Petromar JV)),5.8%,prior 8-20%,below_band
+stage_anchor,Mariner,drill (Noble Corporation (Lloyd Noble CJ70 jack-up)),9.4%,prior 16-32%,below_band (floor)
+stage_anchor,Mariner,drill (Odfjell Drilling),3.5%,prior 16-32%,below_band (floor)
+stage_anchor,Mariner,surf (Subsea 7),2.4%,prior 8-20%,below_band
+stage_anchor,Martin Linge (ex-Hild),drill (Maersk Drilling (Intrepid jack-up)),13.1%,prior 16-32%,below_band (floor)
+stage_anchor,Martin Linge (ex-Hild),host (Technip + Samsung consortium),29.8%,prior 24-44%,in_band (floor)
+stage_anchor,Martin Linge (ex-Hild),surf (Subsea 7),19.0%,prior 8-20%,in_band
+stage_anchor,Moho Nord (incl. Phase 1bis),host (Hyundai Heavy Industries),13.0%,prior 20-38%,below_band (floor)
+stage_anchor,Moho Nord (incl. Phase 1bis),host (Hyundai Heavy Industries),7.0%,prior 20-38%,below_band (floor)
 stage_anchor,Payara,complete (TechnipFMC),5.6%,prior 6-16%,below_band (floor)
 stage_anchor,Payara,host (SBM Offshore),13.7%,prior 20-40%,below_band (floor)
+stage_anchor,Rosebank Phase 1,complete (TechnipFMC),13.2%,prior 6-16%,in_band (floor)
+stage_anchor,Rosebank Phase 1,drill (Odfjell Drilling (Deepsea Atlantic)),8.6%,prior 14-30%,below_band (floor)
 stage_anchor,Sangomar Phase 1,complete (Subsea Integration Alliance),11.9%,prior 6-16%,in_band (floor)
+stage_anchor,Shenzi,surf (Technip),1.7%,prior 12-26%,below_band
+stage_anchor,Tiber-Guadalupe,complete (TechnipFMC),12.0%,prior 8-18%,in_band (floor)
+stage_anchor,Uaru,complete (TechnipFMC),3.9%,prior 6-16%,below_band (floor)
+stage_anchor,Uaru,surf (Saipem),3.9%,prior 16-32%,below_band (floor)
+stage_anchor,Whiptail,complete (TechnipFMC),3.9%,prior 6-16%,below_band (floor)
+stage_anchor,Whiptail,surf (Saipem),5.9%,prior 16-32%,below_band (floor)
 stage_anchor,Yellowtail,complete (TechnipFMC),5.0%,prior 6-16%,below_band (floor)
 stage_anchor,Yellowtail,complete (TechnipFMC),0.8%,prior 6-16%,below_band (floor)
 stage_anchor,Yellowtail,host (SBM Offshore),23.2%,prior 20-40%,in_band (floor)
+stage_anchor,Zinia Phase 2,surf (Subsea 7),12.5%,prior 21-39%,below_band (floor)
 outturn,Martin Linge (ex-Hild),NOK sanction->final,x2.00,31500->63000,
 outturn,Goliat,NOK sanction->final,x1.79,28000->50000,
 outturn,Gorgon (incl. Jansz-Io),USD sanction->final,x1.46,37000->54000,
 outturn,Tyra Redevelopment,DKK sanction->final,x1.29,21000->27000,
+outturn,Big Foot,USD sanction->final,x1.27,4000->5100,
 outturn,Sangomar Phase 1,USD sanction->final,x1.19,4200->5000,
 outturn,Aasta Hansteen,NOK sanction->final,x1.17,32000->37500,
 outturn,Mariner,USD sanction->final,x1.10,7000->7700,
