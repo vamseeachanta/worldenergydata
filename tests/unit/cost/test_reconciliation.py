@@ -77,8 +77,13 @@ def test_yellowtail_partner_reconciles_below_gross_via_fpso_exclusion():
 def test_outturn_spread_spans_under_and_over():
     outs = {o.project: o for o in compute_outturn(CURATED)}
     assert outs["Kraken"].multiplier < 1.0  # came in under
+    assert (
+        outs["Johan Sverdrup Phase 1"].multiplier < 0.75
+    )  # NOK, biggest under-run (~33% under)
     assert outs["Gorgon (incl. Jansz-Io)"].multiplier > 1.4  # ran well over
-    assert outs["Martin Linge (ex-Hild)"].multiplier > 2.0  # NOK, worst overrun
+    assert (
+        outs["Martin Linge (ex-Hild)"].multiplier >= 2.0
+    )  # NOK, worst overrun (PDO 31.5 -> 63bn)
 
 
 def test_reconcile_rollup_is_populated():
