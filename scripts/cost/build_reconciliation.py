@@ -219,14 +219,18 @@ assumed stage-share split?</strong></p>
 <h2 style="margin-top:0">Verdict: the priors are corroborated where testable, and contradicted nowhere.</h2>
 <p><strong>{len(above)} of {len(rec.stage_anchors)}</strong> award anchors exceed their stage's
 prior band (i.e. none do). Of the <strong>{len(full)}</strong> anchors that are full-scope explicit
-awards — the only ones that genuinely test a prior — <strong>{len(in_band_full)}</strong> land
-inside the band and the rest sit just below it. The other {len(floors)} anchors are
-<em>floors</em> (band low-bounds, single-rig backlogs, FPSO hull buyouts) that under-represent
-their stage by construction, so their below-band position is expected and carries no signal.</p>
-<p class="mini muted">The one full-scope anchor below band — Guyana Liza Phase 2 SURF at 11.7%
-vs a 16–32% prior, against Suriname GranMorgu SURF at 18.1% (in-band) — is itself a finding:
-SURF share varies by region (short benign Guyana flowline runs vs long Suriname ones), echoing
-the per-region argument behind decision A4. It argues for a regional SURF prior, not a wrong one.</p>
+EPCI awards — the only ones that genuinely test a prior — the three largest by value all land
+<strong>inside</strong> the band (Kaombo, Martin Linge and GranMorgu SURF EPCIs, $0.8–3.5bn each),
+and none lands above it. The other {len(floors)} anchors are <em>floors</em> (band/range low-bounds,
+single-rig backlogs, FPSO hull buyouts, component supplies) that under-represent their stage by
+construction, so their below-band position carries no signal.</p>
+<p class="mini muted">The below-band full-scope anchors cluster by <em>development architecture</em>,
+not error: SURF share is structurally small on platform and dry-tree developments (Shenzi TLP 1.7%,
+Mariner/Culzean fixed-platform 2–3%, whose wells are mostly platform-drilled) and larger on
+subsea-to-FPSO developments — where the in-band anchors sit. Guyana's SURF (Liza 2 at 11.7%) also
+runs below Suriname's (GranMorgu 18.1%): short benign flowline runs vs long ones. Both patterns say
+the split should key on architecture and region — which the priors already do by development type —
+rather than that any prior is wrong.</p>
 </div>
 
 <h2>1 · Award coverage vs sanctioned gross</h2>

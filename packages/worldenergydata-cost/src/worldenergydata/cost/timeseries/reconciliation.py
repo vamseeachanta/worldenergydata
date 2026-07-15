@@ -51,7 +51,8 @@ ASSET_TO_STAGE: dict[str, LifecycleStage] = {
 
 # Award VALUE_BASIS values that represent a real, capex-comparable project cost.
 # Everything else (not_public, lease_contract, midstream, combined) is excluded.
-_CAPEX_COMPARABLE = {"point", "band", "backlog"}
+# `range` is a press-disclosed low/high (not a contractor band); its LOW bound counts.
+_CAPEX_COMPARABLE = {"point", "band", "backlog", "range"}
 
 
 def _read(curated: Path, name: str) -> list[dict]:
@@ -213,14 +214,20 @@ def _anchor_is_lower_bound(award: dict) -> bool:
       stage, which also carries topsides fab, integration and lease-capitalized
       cost).
 
-    A ``surf`` or ``complete`` award booked as a ``point`` value is the full
-    EPCI scope, so it is genuine evidence and returns False.
+    A ``surf`` or ``complete`` award booked as a ``point`` value is genuine
+    evidence ONLY if it is a whole-package EPCI (the scope names EPCI/EPIC/SURF),
+    not a single component (a riser tensioner, a pump, one umbilical) that would
+    understate the stage just like a floor.
     """
-    if award["VALUE_BASIS"] == "band":
+    if award["VALUE_BASIS"] in ("band", "range"):
         return True
     if award["ASSET_CLASS"] in ("drilling_rig", "production_hub"):
         return True
-    return False
+    scope = award["SCOPE_DESC"].upper()
+    full_package = ("EPCI", "EPIC", "EPCIC", "EPSCI", "SURF")
+    if any(marker in scope for marker in full_package):
+        return False
+    return True
 
 
 def compute_stage_anchors(curated: Path) -> list[StageAnchor]:

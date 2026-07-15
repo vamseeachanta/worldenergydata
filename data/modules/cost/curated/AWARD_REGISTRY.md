@@ -10,9 +10,9 @@ tranche-1 award research. Where `sanctioned_projects.csv` is the *top-down* tota
 *bottom-up* decomposition — who was paid to build which asset — so the reconciliation harness (E5)
 can compare the two and report the residual.
 
-## `contract_awards.csv` — 58 rows, 12 projects (27 carry a value or band)
+## `contract_awards.csv` — 110 rows, 28 projects (E2 tranche 1 + E3 tranche 2)
 
-One row per public award, classed `production_hub / sps / surf / installation / drilling_rig / other`.
+One row per public award, classed `production_hub / sps / surf / installation / drilling_rig / other`. E3 (#1026) added tranche-2 awards for 17 more projects (Guyana later phases, West Africa, North Sea, GoM legacy); best-covered now: Martin Linge 62%, Kaombo 49%, GranMorgu 45%.
 
 **A band is a sourced range, never a point.** Contractors disclose award size in named tiers, and
 we record the tier's *published definition* as `VALUE_LOW_MM`/`VALUE_HIGH_MM` plus the `BAND_WORD`:

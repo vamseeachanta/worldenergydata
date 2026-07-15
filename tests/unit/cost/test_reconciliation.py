@@ -33,10 +33,15 @@ def test_lease_and_midstream_excluded_from_coverage():
     assert cov["Kaskida"].coverage_low_pct < 30
 
 
-def test_granmorgu_has_highest_coverage():
+def test_top_coverage_is_well_documented():
     cov = compute_coverage(CURATED)
-    assert cov[0].project == "GranMorgu (Block 58)"
-    assert cov[0].coverage_low_pct >= 40
+    by = {c.project: c for c in cov}
+    # The best-documented projects clear 45% of gross in valued awards.
+    assert cov[0].coverage_low_pct >= 45
+    # GranMorgu remains a strong anchor (Saipem's explicit $1.9bn SURF drives it).
+    assert by["GranMorgu (Block 58)"].coverage_low_pct >= 40
+    # Kaombo (E3) is now among the best-covered — Saipem FPSO + Technip/Heerema SURF.
+    assert by["Kaombo"].coverage_low_pct >= 45
 
 
 def test_no_award_anchor_exceeds_its_prior_band():
