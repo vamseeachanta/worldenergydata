@@ -257,6 +257,22 @@ def test_work_package_retains_required_assets() -> None:
         )
 
 
+def test_required_asset_quantity_is_positive_integer_or_explicit_unknown() -> None:
+    from worldenergydata.cost.timeseries.cost_map_schema import RequiredAsset
+
+    assert RequiredAsset(asset_type="subsea_tree", quantity=38).quantity == 38
+    assert (
+        RequiredAsset(asset_type="subsea_tree", quantity="unknown").quantity
+        == "unknown"
+    )
+    for invalid_quantity in (None, 0, -1, "", "unproven", "38", True, 1.5):
+        with pytest.raises(ValidationError):
+            RequiredAsset(
+                asset_type="subsea_tree",
+                quantity=invalid_quantity,
+            )
+
+
 def test_work_package_rejects_empty_opaque_identity_suffixes() -> None:
     from worldenergydata.cost.timeseries.cost_map_schema import (
         RequiredAsset,

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -51,7 +51,7 @@ class RequiredAsset(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     asset_type: str = Field(min_length=1)
-    quantity: int = Field(gt=0)
+    quantity: Annotated[int, Field(strict=True, gt=0)] | Literal["unknown"]
 
 
 class WorkPackageRequirement(BaseModel):
