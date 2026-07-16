@@ -90,6 +90,24 @@ def test_status_axes_support_linked_scope_bundle_and_exclusion_independently() -
     assert full.bundle_group_id is None
 
 
+def test_counting_reasons_cannot_masquerade_across_dispositions() -> None:
+    from worldenergydata.cost.timeseries.cost_map_schema import CostMapStatus
+
+    common = dict(link_resolution="linked", scope_coverage="partial")
+    with pytest.raises(ValidationError, match="invalid reason for excluded"):
+        CostMapStatus(
+            **common,
+            counting_disposition="excluded",
+            counting_reason="overlap_avoidance",
+        )
+    with pytest.raises(ValidationError, match="invalid reason for overlap"):
+        CostMapStatus(
+            **common,
+            counting_disposition="overlap",
+            counting_reason="out_of_scope",
+        )
+
+
 def test_bundled_link_stores_requirement_ids_without_money_duplication() -> None:
     from worldenergydata.cost.timeseries.cost_map_schema import AwardRequirementLink
 
@@ -108,6 +126,26 @@ def test_bundled_link_stores_requirement_ids_without_money_duplication() -> None
             commercial_amount_id="awd-subsea-001",
             monetary_amount=Decimal("500"),
         )
+
+
+def test_award_requirement_link_rejects_invalid_opaque_ids() -> None:
+    from worldenergydata.cost.timeseries.cost_map_schema import AwardRequirementLink
+
+    common = dict(
+        award_id="awd-subsea-001",
+        requirement_ids=("req-flowline-001",),
+        commercial_amount_id="awd-subsea-001",
+    )
+    with pytest.raises(ValidationError, match="award_id must use prefix awd-"):
+        AwardRequirementLink(**{**common, "award_id": "award-subsea-001"})
+    with pytest.raises(ValidationError, match="requirement_ids must use prefix req-"):
+        AwardRequirementLink(**{**common, "requirement_ids": ("",)})
+    with pytest.raises(ValidationError, match="requirement_ids must use prefix req-"):
+        AwardRequirementLink(**{**common, "requirement_ids": ("prj-field-001",)})
+    with pytest.raises(
+        ValidationError, match="commercial_amount_id must equal award_id"
+    ):
+        AwardRequirementLink(**{**common, "commercial_amount_id": "awd-commercial-002"})
 
 
 def test_invalid_opaque_id_prefix_fails_closed() -> None:
@@ -145,7 +183,10 @@ def test_tombstoned_identity_remains_addressable_and_cannot_be_active() -> None:
 
 
 def test_native_currency_bases_and_source_precision_survive_round_trip() -> None:
-    from worldenergydata.cost.timeseries.cost_map_schema import MoneyInterval, PriceBasis
+    from worldenergydata.cost.timeseries.cost_map_schema import (
+        MoneyInterval,
+        PriceBasis,
+    )
 
     interval = MoneyInterval(
         currency="NOK",
@@ -243,4 +284,44 @@ def test_floor_ceiling_and_open_range_retain_open_sides() -> None:
             bound_type="open_range",
             low_value=Decimal("10"),
             high_value=Decimal("20"),
+        )
+
+
+def test_value_basis_and_bound_type_must_be_compatible() -> None:
+    from worldenergydata.cost.timeseries.cost_map_schema import MoneyInterval
+
+    common = dict(
+        currency="USD",
+        price_basis="nominal",
+        basis_year=2025,
+        ownership_basis="gross",
+        scope_basis="award",
+        capex_basis="contract_value",
+        source_precision="USD 1 million",
+    )
+    with pytest.raises(ValidationError, match="incompatible with value_basis point"):
+        MoneyInterval(
+            **common,
+            value_basis="point",
+            bound_type="closed_range",
+            low_value=Decimal("10"),
+            high_value=Decimal("20"),
+        )
+    with pytest.raises(ValidationError, match="incompatible with value_basis range"):
+        MoneyInterval(
+            **common,
+            value_basis="range",
+            bound_type="point",
+            low_value=Decimal("10"),
+            high_value=Decimal("10"),
+        )
+    with pytest.raises(
+        ValidationError, match="incompatible with value_basis not_public"
+    ):
+        MoneyInterval(
+            **common,
+            value_basis="not_public",
+            bound_type="point",
+            low_value=Decimal("10"),
+            high_value=Decimal("10"),
         )
