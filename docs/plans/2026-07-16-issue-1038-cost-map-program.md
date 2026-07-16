@@ -45,7 +45,7 @@ The epic will coordinate one versioned accounting contract and a gated execution
 - Arithmetic will fail closed on currency, price-basis, ownership, scope, phase, and capex-basis incompatibility.
 - A bundled award will be represented once and linked many-to-many; it will never be copied into multiple additive rows.
 - Every reconciliation will expose included, excluded, overlapping, unallocated, residual, and unreconciled amounts.
-- Money arithmetic will use `Decimal` quantized to USD 0.01MM. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
+- Money arithmetic will use exact `Decimal` at retained source precision and will never convert currencies. Published point values will quantize only at serialization to 0.01 million units of their native currency using `ROUND_HALF_EVEN`; interval lows will round outward with `ROUND_FLOOR` and highs with `ROUND_CEILING`; positive allocation shares will use `ROUND_FLOOR` plus largest remainder at that same output quantum. The manifest will pin currency, source scale, output quantum, rounding mode, and boundary. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
 - Top-down uncertainty will use reviewed joint scenario share vectors whose nonnegative shares each sum to 1.0. Component envelopes will be minima/maxima across whole-project scenarios; independent marginal bands from `back_allocation.py` will not be summed. Quantized allocations will conserve each total through a deterministic largest-remainder rule, ordered by fractional remainder then stable requirement ID.
 
 ## Planned Execution Sequence
@@ -56,7 +56,7 @@ The epic will coordinate one versioned accounting contract and a gated execution
 4. #1043 will train only after synthesis and historical feature availability are defined.
 5. #1044 will compare the completed outputs to frozen FDAS workbooks and generate the integrated decision surface.
 6. #1017 will remain outside the execution graph until the owner separately authorizes circulation.
-7. Each producing child will emit a manifest containing `contract_version`, schema hash, input hashes, producer commit, and generated-at policy; each consumer will fail closed unless its required version/hash preflight passes.
+7. Each producing child will emit a manifest with one common required envelope: `contract_version`, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes. Each consumer will name the exact upstream path/version/hash and fail closed on a missing or mismatched field.
 
 ## Pseudocode
 

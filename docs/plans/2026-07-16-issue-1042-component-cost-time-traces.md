@@ -22,6 +22,7 @@
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/project_trace.py` |
 | Create | `scripts/cost/build_project_cost_traces.py` |
 | Create | `tests/unit/cost/test_project_cost_trace.py` |
+| Extend | `data/modules/cost/curated/cost_event_identity.csv` |
 | Generate | `reports/cost/project_cost_events.csv` |
 | Generate | `reports/cost/project_cost_traces.html` |
 | Generate | `data/modules/cost/derived/project_trace_contract_manifest.json` |
@@ -32,8 +33,8 @@ An ordered, provenance-preserving event model and generated trace for every empi
 
 ## Planned Tasks and TDD Order
 
-1. A preflight RED test will require #1040 manifest v2.
-2. Event RED tests will define stable event identity, observed-date interval, precision, type, component link, range, currency, basis, provenance, confidence, and `validation_group_id`.
+1. A preflight RED test will require the exact `data/modules/cost/derived/cost_map_contract_manifest.v2.json` common envelope and matching version/schema/input hashes.
+2. Event RED tests will define stable event identity, an effective/observed-date interval, a separate source-publication/availability interval, precision for both, type, component link, range, currency, basis, provenance, confidence, and `validation_group_id`. Unknown availability will remain displayable but will be ineligible as a historical model feature.
 3. Adapters will normalize rows without altering values; the collapsed Sangomar midpoint will be migrated to its disclosed $4,900–5,200MM range instead of parsed from notes at runtime.
 4. Deduplication will use controlled event identity and will surface conflicting duplicates rather than choose one silently.
 5. Evidenced order will be a partial order over date intervals. A separate stable display key will sort unresolved ties without claiming chronology.
@@ -44,6 +45,8 @@ An ordered, provenance-preserving event model and generated trace for every empi
 ## TDD Test List
 
 - `test_trace_retains_original_date_precision`
+- `test_effective_date_and_source_availability_are_independent`
+- `test_unknown_source_availability_is_ineligible_for_historical_features`
 - `test_events_order_deterministically_at_mixed_precision`
 - `test_display_tie_break_does_not_claim_evidenced_chronology`
 - `test_duplicate_identity_deduplicates_and_conflict_surfaces`
@@ -68,12 +71,14 @@ An ordered, provenance-preserving event model and generated trace for every empi
 - [ ] Optional normalization will require explicit method metadata and will never overwrite nominal observations.
 - [ ] HTML and CSV outputs will state exact project/event coverage and regenerate deterministically.
 - [ ] Manifest v3-trace will pin event schema, source hashes, precision policy, and output hashes.
+- [ ] The trace manifest will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
 ```text
 assert preflight(manifest_v2)
-event.interval = precision_to_interval(raw_date)
+event.effective_interval = precision_to_interval(raw_effective_date)
+event.available_interval = precision_to_interval(source_published_or_first_available_date)
 event_order(a,b) only when a.interval.end < b.interval.start
 display_order = stable_key(interval.start, precision, event_id)  # presentation only
 preserve native amount/range and confidence; never accumulate award as spend
@@ -86,7 +91,7 @@ Live enumeration at `090228fb` verified 34 month-precision and 15 year-precision
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_project_cost_trace.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Serialization will use stable display ordering, Decimal, locale `C`, UTC/injected time, escaping, safe URLs, and two-build SHA equality. Legal/de-identification scans, T3 review, issue comment, exact v2/trace-manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
+Every literal TDD Test List node will run individually in `tests/unit/cost/test_project_cost_trace.py`; the first exact command will end `test_project_cost_trace.py::test_trace_retains_original_date_precision -xq`, and every later TDD-ledger row will spell out its listed literal node ID with the same base flags. Nodes will be introduced in listed order, one slice at a time. Each node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Serialization will use stable display ordering, exact Decimal with manifest-pinned serialization rounding, locale `C`, UTC/injected time, escaping, safe URLs, and two-build SHA equality. Legal/de-identification scans, T3 review, issue comment, exact v2/trace-manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

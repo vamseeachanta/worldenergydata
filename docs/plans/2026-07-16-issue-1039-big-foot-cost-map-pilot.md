@@ -89,6 +89,7 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 - [ ] The HTML and CSV outputs will regenerate deterministically.
 - [ ] The owner will explicitly approve or revise the pilot contract before #1040 starts.
 - [ ] The approved manifest will freeze schema/input hashes, controlled IDs, scenario vectors, and source-safe workbook fields.
+- [ ] Manifest v1 will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
@@ -107,7 +108,7 @@ Live CSV enumeration, workbook cell inspection, `sha256sum`, completion reconcil
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_cost_map_schema.py tests/unit/cost/test_big_foot_cost_map.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Serialization will use stable ordering, `Decimal`, locale `C`, UTC, injected `SOURCE_DATE_EPOCH`, HTML escaping, and http(s)-only links; two clean builds must have identical SHA-256 hashes. The legal scan, deny-list/de-identification scan, T3 code/artifact review, issue comment, manifest preflight, and cleanup audit will all pass before close. Workbook core metadata will not be published. No email, external send, or stakeholder circulation will occur.
+Each literal node name in the TDD Test List will be introduced one at a time and recorded in a TDD ledger. For example, the first schema slice will run exactly `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_cost_map_schema.py::test_big_foot_requirements_cover_dry_tree_tlp_architecture -xq`; every later ledger row will spell out its literal node ID, with schema/identity nodes in `test_cost_map_schema.py` and Big Foot data/reconciliation/report nodes in `test_big_foot_cost_map.py`. No later test file will be collected before its slice begins. Every node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Serialization will use stable ordering, exact `Decimal`, locale `C`, UTC, injected `SOURCE_DATE_EPOCH`, HTML escaping, and http(s)-only links; two clean builds must have identical SHA-256 hashes. The legal scan, deny-list/de-identification scan, T3 code/artifact review, issue comment, manifest preflight, and cleanup audit will all pass before close. Workbook core metadata will not be published. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

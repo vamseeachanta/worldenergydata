@@ -38,7 +38,7 @@ A two-way synthesis API and report in which eligible bottom-up asset/work-packag
 ## Planned Tasks and TDD Order
 
 1. A preflight RED test will require #1040 manifest v2 and its exact schema/input hashes.
-2. Interval RED tests will define closed/open bounds, Decimal quantization, addition, subtraction `[Tlo-Ehi, Thi-Elo]`, zero crossing, and coverage denominators.
+2. Interval RED tests will define closed/open bounds, exact Decimal addition/subtraction, serialization-only quantization, subtraction `[Tlo-Ehi, Thi-Elo]`, zero crossing, general interval division, and coverage denominators.
 3. Eligibility RED tests will fail closed unless currency, price basis, ownership, phase, scope, and `capex_basis` match the target total.
 4. Ledger RED tests will prove that link/scope/value/evidence fields cannot influence arithmetic except through counting disposition. Included rows without a recognized overlap group will key uniqueness by `award_id`; recognized overlap rows will require an explicit `overlap_group_id`, and one award identity will contribute at most once.
 5. Bottom-up synthesis will compute eligible subtotal interval, target interval, residual, coverage, and residual percentage without midpoint laundering. `residual = total - eligible observed`; `unallocated = top-down amount left unmapped to a requirement`; `unreconciled_variance = total - allocated - unallocated` after deterministic quantization. These fields will never be aliases.
@@ -65,13 +65,14 @@ A two-way synthesis API and report in which eligible bottom-up asset/work-packag
 
 ## Acceptance Criteria
 
-- [ ] Every included project will show total, eligible subtotal, exclusions, overlaps, unallocated amount, unreconciled variance, and residual percentage interval `[Rlo/Thi, Rhi/Tlo]` when `Tlo > 0`; otherwise the percentage will be unavailable while the residual interval remains present.
+- [ ] Every included project will show total, eligible subtotal, exclusions, overlaps, unallocated amount, unreconciled variance, and residual percentage computed as `min/max({Rlo/Tlo, Rlo/Thi, Rhi/Tlo, Rhi/Thi})` when `Tlo > 0`; otherwise the percentage will be unavailable while the residual interval remains present.
 - [ ] Bottom-up arithmetic will fail closed on incompatible bases.
 - [ ] Top-down values will retain uncertainty and inferred status.
 - [ ] Combined, lease, midstream, not-public, and overlapping scopes will not inflate totals.
 - [ ] Every displayed total will reconcile exactly within a documented decimal tolerance or show an unreconciled variance.
 - [ ] The HTML cost map will provide bidirectional drill-down and provenance.
 - [ ] Manifest v3 will pin the synthesis schema, inputs, Decimal policy, scenario set, and output hashes.
+- [ ] Manifest v3 will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
@@ -81,7 +82,7 @@ eligible = group_once(rows where counting == included, by overlap_group_id else 
 E = interval_sum(eligible); T = compatible_project_total
 residual = [T.low - E.high, T.high - E.low]
 coverage = [E.low / T.high, E.high / T.low] if T.low > 0 else unavailable
-residual_pct = [residual.low / T.high, residual.high / T.low] if T.low > 0 else unavailable
+residual_pct = interval_divide(residual, T) if T.low > 0 else unavailable
 for scenario in joint_scenarios: assert sum(shares) == 1; largest_remainder_allocate(T)
 assert unreconciled_variance == 0 within declared Decimal tolerance
 emit data/modules/cost/derived/cost_synthesis_manifest.v3.json
@@ -93,7 +94,7 @@ Inspection at `090228fb` verified that `back_allocation.py` is 479 lines and its
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_cost_synthesis.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Stable ordering, Decimal formatting, locale `C`, UTC/injected build time, escaping, safe URLs, and two-build SHA equality will govern outputs. Legal/de-identification scans, T3 code/artifact review, issue comment, exact v2/v3 manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
+Every literal TDD Test List node will run individually in `tests/unit/cost/test_cost_synthesis.py`; the first exact command will end `test_cost_synthesis.py::test_cost_envelope_rejects_low_above_high -xq`, and every later TDD-ledger row will spell out its listed literal node ID with the same base flags. Nodes will be introduced in listed order, one slice at a time. Each node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Stable ordering, exact Decimal arithmetic with manifest-pinned serialization rounding, locale `C`, UTC/injected build time, escaping, safe URLs, and two-build SHA equality will govern outputs. Legal/de-identification scans, T3 code/artifact review, issue comment, exact v2/v3 manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

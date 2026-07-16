@@ -24,6 +24,7 @@
 | Extend | `data/modules/cost/curated/award_asset_links.csv` |
 | Extend | `data/modules/cost/curated/cost_project_identity.csv` |
 | Extend | `data/modules/cost/curated/cost_award_identity.csv` |
+| Extend | `data/modules/cost/curated/cost_requirement_identity.csv` |
 | Create | `data/modules/cost/derived/award_accounting_normalized.csv` |
 | Generate | `data/modules/cost/derived/cost_map_contract_manifest.v2.json` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/asset_requirements.py` |
@@ -75,6 +76,7 @@ An empirically complete project → requirement → award decision surface using
 - [ ] Native value-basis, currency, and provenance semantics will remain unchanged.
 - [ ] HTML and machine-readable outputs will regenerate without hand edits.
 - [ ] Manifest v2 will pin schema/input hashes and will be the fail-closed handoff to #1041/#1042.
+- [ ] Manifest v2 will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
@@ -93,7 +95,7 @@ Live-table enumeration and header inspection at `090228fb` verified that the awa
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_asset_requirements.py tests/unit/cost/test_award_asset_linkage.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Builders will use stable ordering, `Decimal`, locale `C`, UTC, injected build time, escaping, safe URLs, and two-run SHA equality. Legal/de-identification scans, T3 code/artifact review, issue comment, exact v1/v2 manifest verification, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
+Each literal requirement node will run alone in `tests/unit/cost/test_asset_requirements.py`; each identity/linkage/coverage/report node will run alone in `tests/unit/cost/test_award_asset_linkage.py`, using the exact base `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts=''` plus the literal file/node ID and `-xq`. Tests will be introduced one slice at a time, not collected before their slice. Every node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Builders will use stable ordering, exact `Decimal`, locale `C`, UTC, injected build time, escaping, safe URLs, and two-run SHA equality. Legal/de-identification scans, T3 code/artifact review, issue comment, exact v1/v2 manifest verification, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

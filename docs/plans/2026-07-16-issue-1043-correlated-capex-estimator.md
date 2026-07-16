@@ -42,8 +42,8 @@ An interpretable, uncertainty-bounded estimator for compatible undisclosed proje
 3. Dataset tests will separate `feature_as_of_date`, `training_cutoff`, `prediction_date`, and `evaluation_label_date`. Features and fitted targets available after their cutoffs will be rejected; a later observed outcome may be revealed only as an untouched evaluation label after prediction. Synthetic/allocated/modeled targets and incompatible currency/basis/scope/ownership rows will be excluded. Floors/ceilings/ranges will use censored/range-aware fitting or be excluded; they will never become points.
 4. Normalization will retain nominal values and will use only an owner-approved public deflator mapping recorded in the manifest; proposed candidates are CPI for total CAPEX and PPI drilling/support/machinery for mapped component classes. Until approved, the normalized lane will fail closed. Index vintage will be bounded by prediction date. Every standards- or index-derived constant will emit the repository-required `Citation` sidecar (`code_id`, revision/vintage, source, and applicability); calculation will fail closed when that citation is absent.
 5. A deterministic cohort selector will segment architecture first and will require at least eight observed compatible training projects per fitted fold and at least twenty untouched outer predictions to assess interval calibration. Smaller validation sets will return `non_estimable` rather than claim calibrated coverage.
-6. Untouched outer project-group or rolling-origin folds will measure performance. Cohort selection, preprocessing, tuning, and model selection will occur only inside outer training partitions; interval calibration will be cross-fitted/group-separated.
-7. The bounded nonlinear alternative will be `HistGradientBoostingRegressor` over a fixed manifest grid (`max_leaf_nodes={3,5}`, `learning_rate={0.03,0.1}`, `max_iter={100,300}`, `l2_regularization={0.1,1.0}`, fixed seed). It will replace the log-linear baseline only if outer median absolute error improves by at least 10% without degrading 80% interval coverage. Publication will require median APE ≤50%, empirical 80% interval coverage between 70% and 90%, and an exact-binomial 95% confidence interval containing 0.80; otherwise the cohort will be `non_estimable`.
+6. Untouched outer project-group or rolling-origin folds will measure the complete predeclared selection procedure exactly once. Cohort selection, preprocessing, tuning, family selection, and interval calibration will occur only in group-separated inner folds inside each outer training partition; no outer score will feed any choice.
+7. The bounded nonlinear candidate will be `HistGradientBoostingRegressor` over a fixed manifest grid (`max_leaf_nodes={3,5}`, `learning_rate={0.03,0.1}`, `max_iter={100,300}`, `l2_regularization={0.1,1.0}`, fixed seed). Inner validation will select it over the log-linear baseline only if inner median absolute error improves by at least 10% without degrading inner 80% interval coverage. The resulting locked selection procedure will then face outer evaluation. Publication will require outer median APE ≤50%, empirical outer 80% interval coverage between 70% and 90%, and an exact-binomial 95% confidence interval containing 0.80; otherwise the cohort will be `non_estimable`.
 8. For direct `[Dlo,Dhi]` and bottom-up `[Blo,Bhi]`, relation will be `overlap` when intervals intersect, `direct_above` when `Dlo > Bhi`, `bottom_up_above` when `Blo > Dhi`, and `indeterminate` when either bound is open/unavailable. Shared evidence/dependence will be disclosed and midpoint substitution forbidden.
 9. The report and model manifest will expose provenance, comparables, features, missingness, model hash, errors, thresholds, and failure cases.
 
@@ -78,15 +78,17 @@ An interpretable, uncertainty-bounded estimator for compatible undisclosed proje
 - [ ] Direct and asset-level estimates will reconcile or expose variance.
 - [ ] Report and backtest outputs will regenerate deterministically.
 - [ ] The model manifest will pin training IDs, source/feature cutoffs, normalization series, folds, thresholds, model hash, and output hashes.
+- [ ] The model manifest will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
 ```text
 assert preflight(synthesis_manifest, trace_manifest)
-records = observed compatible targets disclosed by prediction_date
-outer_split(records, group=validation_group_id or rolling_origin):
-    select cohort/preprocess/tune/calibrate only on outer_train
-    score untouched outer_test
+train_records = compatible targets with disclosure_date <= training_cutoff
+evaluation_labels = later outcomes hidden until after prediction
+outer_split(train_records, evaluation_labels, group=validation_group_id or rolling_origin):
+    inner_select cohort/preprocess/family/tune/calibrate only on outer_train
+    score locked procedure once on untouched outer_test/evaluation_labels
 if n_train_per_fold < 8 or n_outer_predictions < 20 or thresholds fail: non_estimable
 compare direct_interval vs bottom_up_interval without midpoint substitution
 ```
@@ -97,7 +99,7 @@ Inspection at `090228fb` verified 29 synthetic calibration-offset records, manda
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_capex_estimator_dataset.py tests/unit/cost/test_capex_estimator.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Deterministic serialization, escaped/safe report content, Citation-sidecar enforcement, legal/de-identification scans, T3 code/artifact review, issue comment, exact synthesis/trace-manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
+Dataset/schema/leakage nodes will run individually in `tests/unit/cost/test_capex_estimator_dataset.py`; fitting/selection/calibration/report nodes will run individually in `tests/unit/cost/test_capex_estimator.py`, using the exact base `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts=''`, the literal listed node ID, and `-xq`. Nodes will be introduced one slice at a time. Each node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Deterministic serialization, escaped/safe report content, Citation-sidecar enforcement, legal/de-identification scans, T3 code/artifact review, issue comment, exact synthesis/trace-manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

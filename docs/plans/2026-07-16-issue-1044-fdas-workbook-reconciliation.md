@@ -49,7 +49,7 @@ A deterministic, read-only workbook inventory and component crosswalk, a project
 3. A reviewed crosswalk will map workbook host, SURF, drilling, completion, pump, dry-system, installation, OPEX, and other fields to approved components, including one-to-many/unmapped statuses.
 4. A ten-row project crosswalk will enumerate `Stones`, `Cascade Chinook`, `Julia`, `Anchor`, `Jack St Malo`, `Kaskida`, `Tiber`, `Shenandoah`, `North Platte`, and `Big Foot`; each row will carry identity relationship, scope relationship, evidence, and comparison eligibility.
 5. Reconciliation will preserve disclosed, award-derived/mapped, modeled/allocated, workbook-assumption, and variance lanes.
-6. Variance classification and resolution will be separate. For workbook interval `W=[Wlo,Whi]` and comparison interval `C=[Clo,Chi]`, variance will be `[Wlo-Chi, Whi-Clo]`. With materiality `M=max($25MM, 1% of the compatible workbook total)` and persisted denominator, the result will be definitely immaterial only when `Vlo >= -M and Vhi <= M`, definitely material only when `Vhi < -M or Vlo > M`, and `uncertain_materiality` otherwise. Zero-crossing and open bounds will remain explicit; midpoint substitution is forbidden. Unsupported, missing-evidence, or uncertain material differences will fail closed.
+6. Variance classification and resolution will be separate. Before subtraction, a compatibility key will require exact agreement on native currency, nominal/real and basis year, ownership, project phase/scope, `capex_basis` (CAPEX and OPEX never mix), component aggregation, time window, and approved normalization vintage; incompatible pairs will be reported but not subtracted. The proposed threshold `M=max($25MM, 1% of the compatible workbook total)` will remain owner-gated until this plan is approved, and its denominator/evidence will be persisted. For compatible `W=[Wlo,Whi]` and `C=[Clo,Chi]`, variance will be `[Wlo-Chi, Whi-Clo]`: definitely immaterial only when `Vlo >= -M and Vhi <= M`, definitely material only when `Vhi < -M or Vlo > M`, and `uncertain_materiality` otherwise. Zero-crossing/open bounds remain explicit; midpoint substitution is forbidden. Unsupported, missing-evidence, or uncertain material differences will fail closed.
 7. Monthly/annual and component/total sums will be tested independently; formula and cached-value modes will be explicit, including synthetic formula fixtures because the frozen V30 financial workbook has no formulas.
 8. The report manifest will allowlist publishable workbook fields and exclude core metadata/personal identifiers, raw private paths, formulas outside the allowlist, and unescaped text.
 9. The final HTML will provide portfolio summary, project drill-down, both cost-map directions, traces, backtests, workbook comparisons, and provenance legend.
@@ -67,6 +67,8 @@ A deterministic, read-only workbook inventory and component crosswalk, a project
 - `test_monthly_component_sums_reconcile_to_expected_total`
 - `test_assumption_vintages_remain_separate`
 - `test_variance_classifier_uses_closed_vocabulary`
+- `test_incompatible_currency_basis_scope_capex_or_time_is_not_subtracted`
+- `test_materiality_threshold_requires_owner_approved_manifest_policy`
 - `test_unexplained_material_variance_fails_closed`
 - `test_interval_variance_and_zero_crossing_materiality_are_explicit`
 - `test_uncertain_materiality_fails_closed_without_midpoint`
@@ -86,11 +88,14 @@ A deterministic, read-only workbook inventory and component crosswalk, a project
 - [ ] The integrated HTML and CSV will regenerate deterministically.
 - [ ] The report will state that circulation remains owner-gated under #1017.
 - [ ] The final manifest will pin upstream manifests, workbook hashes/schemas, crosswalk hashes, materiality policy, allowlist, and output hashes.
+- [ ] The final manifest will carry the common envelope: contract version, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes.
 
 ## Pseudocode
 
 ```text
-assert preflight(manifest_v3_synthesis, manifest_v3_trace, estimator_manifest)
+assert preflight(data/modules/cost/derived/cost_synthesis_manifest.v3.json,
+                 data/modules/cost/derived/project_trace_contract_manifest.json,
+                 data/modules/cost/derived/capex_estimator_manifest.json)
 assert workbook_hashes_and_schemas_match_manifest
 for each of 10 workbook projects: require identity + scope + eligibility evidence
 for each used cost cell: require component mapping or explicit exclusion
@@ -106,7 +111,7 @@ render only allowlisted escaped fields; emit final manifest
 
 ## Implementation and Closeout Gates
 
-The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_fdas_cost_crosswalk.py tests/unit/cost/test_fdas_workbook_reconciliation.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Source workbooks must remain byte-identical. Stable ordering, Decimal, locale `C`, UTC/injected time, escaping, safe URLs, allowlisted fields, and two-build SHA equality will govern outputs. Legal/deny-list/de-identification scans, T3 code/artifact review, issue comment, exact upstream manifest verification, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
+Workbook inventory/crosswalk nodes will run individually in `tests/unit/cost/test_fdas_cost_crosswalk.py`; compatibility/variance/report nodes will run individually in `tests/unit/cost/test_fdas_workbook_reconciliation.py`, using the exact base `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts=''`, the literal listed node ID, and `-xq`. Nodes will be introduced one slice at a time. Each node will record behavior-relevant RED, identical-command minimal GREEN, refactor, and unchanged-command GREEN. Source workbooks must remain byte-identical. Stable ordering, exact Decimal with manifest-pinned serialization rounding, locale `C`, UTC/injected time, escaping, safe URLs, allowlisted fields, and two-build SHA equality will govern outputs. Legal/deny-list/de-identification scans, T3 code/artifact review, issue comment, exact upstream manifest verification, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 
