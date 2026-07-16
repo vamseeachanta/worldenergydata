@@ -1,6 +1,6 @@
 # Plan for #1039: Big Foot end-to-end asset cost-map pilot
 
-> **Status:** plan-review
+> **Status:** plan-approved
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1039

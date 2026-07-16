@@ -1,6 +1,6 @@
 # Plan for #1040: portfolio required-assets and award-coverage map
 
-> **Status:** plan-review
+> **Status:** plan-approved
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1040

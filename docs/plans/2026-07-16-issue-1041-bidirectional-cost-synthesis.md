@@ -1,6 +1,6 @@
 # Plan for #1041: portfolio bidirectional asset/project cost synthesis
 
-> **Status:** plan-review
+> **Status:** plan-approved
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1041

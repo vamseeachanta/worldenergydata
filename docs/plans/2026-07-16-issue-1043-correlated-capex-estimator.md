@@ -1,6 +1,6 @@
 # Plan for #1043: correlated CAPEX estimator for undisclosed projects
 
-> **Status:** plan-review
+> **Status:** plan-approved
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1043
