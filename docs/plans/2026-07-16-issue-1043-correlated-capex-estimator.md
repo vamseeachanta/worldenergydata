@@ -1,13 +1,13 @@
 # Plan for #1043: correlated CAPEX estimator for undisclosed projects
 
-> **Status:** draft
+> **Status:** plan-review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1043
 > **Blocked by:** #1041 and #1042
 > **Client:** N/A
 > **Lane:** lane:codex
-> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final artifacts PENDING
+> **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
 
 ## Resource Intelligence Summary
 

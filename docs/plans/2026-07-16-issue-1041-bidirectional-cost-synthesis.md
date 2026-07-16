@@ -1,13 +1,13 @@
 # Plan for #1041: portfolio bidirectional asset/project cost synthesis
 
-> **Status:** draft
+> **Status:** plan-review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1041
 > **Blocked by:** #1040
 > **Client:** N/A
 > **Lane:** lane:codex
-> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final artifacts PENDING
+> **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
 
 ## Resource Intelligence Summary
 
@@ -38,7 +38,7 @@ A two-way synthesis API and report in which eligible bottom-up asset/work-packag
 ## Planned Tasks and TDD Order
 
 1. A preflight RED test will require #1040 manifest v2 and its exact schema/input hashes.
-2. Interval RED tests will define closed/open bounds, exact Decimal addition/subtraction, serialization-only quantization, subtraction `[Tlo-Ehi, Thi-Elo]`, zero crossing, general interval division, and coverage denominators.
+2. Interval RED tests will define closed/open bounds, exact Decimal addition/subtraction, serialization-only quantization, subtraction `[Tlo-Ehi, Thi-Elo]`, zero crossing, general interval division, and coverage denominators. Division by a strictly positive interval will evaluate all finite endpoint combinations in the extended reals; open endpoints will propagate openness, an unbounded positive denominator will contribute an open zero reciprocal bound, and any denominator containing zero will yield unavailable.
 3. Eligibility RED tests will fail closed unless currency, price basis, ownership, phase, scope, and `capex_basis` match the target total.
 4. Ledger RED tests will prove that link/scope/value/evidence fields cannot influence arithmetic except through counting disposition. Included rows without a recognized overlap group will key uniqueness by `award_id`; recognized overlap rows will require an explicit `overlap_group_id`, and one award identity will contribute at most once.
 5. Bottom-up synthesis will compute eligible subtotal interval, target interval, residual, coverage, and residual percentage without midpoint laundering. `residual = total - eligible observed`; `unallocated = top-down amount left unmapped to a requirement`; `unreconciled_variance = total - allocated - unallocated` after deterministic quantization. These fields will never be aliases.

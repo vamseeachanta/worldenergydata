@@ -1,13 +1,13 @@
 # Plan for #1044: FDAS workbook reconciliation and integrated cost-map report
 
-> **Status:** draft
+> **Status:** plan-review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1044
 > **Blocked by:** #1041, #1042, and #1043
 > **Client:** N/A
 > **Lane:** lane:codex
-> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final artifacts PENDING
+> **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
 
 ## Resource Intelligence Summary
 
@@ -94,7 +94,7 @@ A deterministic, read-only workbook inventory and component crosswalk, a project
 
 ```text
 assert preflight(data/modules/cost/derived/cost_synthesis_manifest.v3.json,
-                 data/modules/cost/derived/project_trace_contract_manifest.json,
+                 data/modules/cost/derived/project_trace_contract_manifest.v3.json,
                  data/modules/cost/derived/capex_estimator_manifest.json)
 assert workbook_hashes_and_schemas_match_manifest
 for each of 10 workbook projects: require identity + scope + eligibility evidence

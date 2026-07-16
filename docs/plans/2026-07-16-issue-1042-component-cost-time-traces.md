@@ -1,13 +1,13 @@
 # Plan for #1042: project component-cost time traces
 
-> **Status:** draft
+> **Status:** plan-review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1042
 > **Blocked by:** #1040
 > **Client:** N/A
 > **Lane:** lane:codex
-> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final artifacts PENDING
+> **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
 
 ## Resource Intelligence Summary
 
@@ -25,7 +25,7 @@
 | Extend | `data/modules/cost/curated/cost_event_identity.csv` |
 | Generate | `reports/cost/project_cost_events.csv` |
 | Generate | `reports/cost/project_cost_traces.html` |
-| Generate | `data/modules/cost/derived/project_trace_contract_manifest.json` |
+| Generate | `data/modules/cost/derived/project_trace_contract_manifest.v3.json` |
 
 ## Deliverable
 

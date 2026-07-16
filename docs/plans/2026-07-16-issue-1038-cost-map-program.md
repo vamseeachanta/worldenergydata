@@ -1,12 +1,12 @@
 # Plan for #1038: bidirectional asset-to-project cost-map program
 
-> **Status:** draft
+> **Status:** plan-review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1038
 > **Client:** N/A
 > **Lane:** lane:claude
-> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final Claude/Codex/Gemini artifacts PENDING
+> **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
 
 ## Resource Intelligence Summary
 
@@ -45,7 +45,7 @@ The epic will coordinate one versioned accounting contract and a gated execution
 - Arithmetic will fail closed on currency, price-basis, ownership, scope, phase, and capex-basis incompatibility.
 - A bundled award will be represented once and linked many-to-many; it will never be copied into multiple additive rows.
 - Every reconciliation will expose included, excluded, overlapping, unallocated, residual, and unreconciled amounts.
-- Money arithmetic will use exact `Decimal` at retained source precision and will never convert currencies. Published point values will quantize only at serialization to 0.01 million units of their native currency using `ROUND_HALF_EVEN`; interval lows will round outward with `ROUND_FLOOR` and highs with `ROUND_CEILING`; positive allocation shares will use `ROUND_FLOOR` plus largest remainder at that same output quantum. The manifest will pin currency, source scale, output quantum, rounding mode, and boundary. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
+- Money arithmetic will use exact `Decimal` at retained source precision and will never convert currencies. Published point values will quantize only at serialization to 0.01 million units of their native currency using `ROUND_HALF_EVEN`; interval lows will round outward with `ROUND_FLOOR` and highs with `ROUND_CEILING`; positive allocation shares will use `ROUND_FLOOR` plus largest remainder at that same output quantum. The manifest will pin currency, source scale, output quantum, rounding mode, and boundary. Eligible monetary contributions will be nonnegative. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when `Elo >= 0` and denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
 - Top-down uncertainty will use reviewed joint scenario share vectors whose nonnegative shares each sum to 1.0. Component envelopes will be minima/maxima across whole-project scenarios; independent marginal bands from `back_allocation.py` will not be summed. Quantized allocations will conserve each total through a deterministic largest-remainder rule, ordered by fractional remainder then stable requirement ID.
 
 ## Planned Execution Sequence
@@ -72,6 +72,10 @@ if any preflight/review/legal/cleanup gate fails: stop without label advancement
 ## Attested Evidence — 2026-07-16
 
 `wc`/CSV enumeration, workbook inspection with `openpyxl`, `sha256sum`, targeted `rg`, live `gh issue view`, and the cost-unit baseline were run at commit `090228fb`. The exact passing baseline command was `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest tests/unit/cost/ -q --noconftest -o addopts='' --ignore tests/unit/cost/test_field_integration.py --ignore tests/unit/cost/test_proxy_comparison.py --deselect tests/unit/cost/test_disclosure_analytics.py::TestLowerTertiaryDeferralInvariant`; it returned `164 passed, 2 deselected`. These three exclusions are pre-existing and will remain named rather than being reported as a clean unrestricted suite. R1 review independently reverified the corpus counts, Big Foot rows, D&C totals, V30 total, and workbook hashes. This issue will make no runtime-failure claim, so defect reproduction is N/A.
+
+## Adversarial Review Summary
+
+Codex R1 and R2 returned MAJOR and drove three hardening waves. The required R3 closure was performed inline and returned APPROVE. Independent Claude review then returned MINOR; all three minor findings were patched. Gemini CLI was unavailable and is recorded explicitly, so T3 degraded to the available two-provider evidence. No MAJOR finding remains; implementation is still blocked pending user approval.
 
 ## TDD Test List
 
