@@ -12,6 +12,10 @@ from pydantic import ValidationError
 
 ROOT = Path(__file__).resolve().parents[3]
 CURATED = ROOT / "data/modules/cost/curated"
+MONEY_NARRATIVE_PATTERN = re.compile(
+    r"(?:\$\s*\d|\bUSD\s*[\d$]|\b\d+(?:\.\d+)?\s*(?:MM|million|bn|billion)\b)",
+    re.IGNORECASE,
+)
 
 
 def _rows(name: str) -> list[dict[str, str]]:
@@ -28,6 +32,12 @@ def _resolve_locator(source_table: str, locator: str) -> dict[str, str]:
     ]
     assert len(matches) == 1, (source_table, locator, len(matches))
     return matches[0]
+
+
+def _resolve_embedded_locator(locator: str) -> tuple[str, dict[str, str]]:
+    source_table, separator, predicates = locator.partition(":")
+    assert separator == ":"
+    return source_table, _resolve_locator(source_table, predicates)
 
 
 def test_big_foot_requirements_cover_dry_tree_tlp_architecture() -> None:
@@ -185,6 +195,59 @@ def test_every_big_foot_award_has_one_resolution_status() -> None:
         )
 
 
+def test_award_link_narratives_are_money_free() -> None:
+    for value in ("$45", "USD 45", "45MM", "45 million", "4bn"):
+        assert MONEY_NARRATIVE_PATTERN.search(value)
+    assert MONEY_NARRATIVE_PATTERN.search("component floor") is None
+    for row in _rows("award_asset_links.csv"):
+        assert MONEY_NARRATIVE_PATTERN.search(row["NOTES"]) is None
+
+
+def test_requirement_and_link_evidence_matches_live_source_rows() -> None:
+    provenance_columns = {
+        "sanctioned_projects.csv": "SOURCE_PRIORITY",
+        "contract_awards.csv": "PROVENANCE",
+    }
+    for fixture, narrative_field in (
+        ("project_asset_requirements.csv", "EVIDENCE_NOTE"),
+        ("award_asset_links.csv", "NOTES"),
+    ):
+        for row in _rows(fixture):
+            source_table, source = _resolve_embedded_locator(row["SOURCE_LOCATOR"])
+            assert row["SOURCE_URL"] == source["SOURCE_URL"]
+            assert row["SOURCE_PROVENANCE"] == source[provenance_columns[source_table]]
+            assert row[narrative_field]
+
+    live_awards = [
+        row for row in _rows("contract_awards.csv") if row["PROJECT"] == "Big Foot"
+    ]
+    identity_sources = {
+        row["OPAQUE_ID"]: _resolve_locator(
+            row["SOURCE_TABLE"], row["SOURCE_RECORD_LOCATOR"]
+        )
+        for row in _rows("cost_award_identity.csv")
+    }
+    identity_keys = {
+        award_id: (row["AWARD_YEAR"], row["CONTRACTOR"])
+        for award_id, row in identity_sources.items()
+    }
+    assert identity_keys == {
+        "awd-000001": ("2011", "GE Oil & Gas"),
+        "awd-000002": ("2009", "Enbridge"),
+    }
+    assert set(identity_keys.values()) == {
+        (row["AWARD_YEAR"], row["CONTRACTOR"]) for row in live_awards
+    }
+    assert len(identity_keys) == len(live_awards) == 2
+    for link in _rows("award_asset_links.csv"):
+        _, link_source = _resolve_embedded_locator(link["SOURCE_LOCATOR"])
+        identity_source = identity_sources[link["AWARD_ID"]]
+        assert (link_source["AWARD_YEAR"], link_source["CONTRACTOR"]) == (
+            identity_source["AWARD_YEAR"],
+            identity_source["CONTRACTOR"],
+        )
+
+
 def test_big_foot_curated_registry_has_exactly_two_awards_and_zero_not_public() -> None:
     source_rows = [
         row for row in _rows("contract_awards.csv") if row["PROJECT"] == "Big Foot"
@@ -280,6 +343,8 @@ def test_missing_host_award_remains_an_explicit_coverage_gap() -> None:
     host = next(row for row in requirements if row["WORK_PACKAGE"] == "host/TLP")
     assert host["REQUIREMENT_ID"] == "req-000001"
     assert host["QUANTITY"] == "unknown"
+    assert "no public host award" in host["EVIDENCE_NOTE"].lower()
+    assert "coverage gap" in host["EVIDENCE_NOTE"].lower()
     linked_requirement_ids = {
         requirement_id
         for row in _rows("award_asset_links.csv")
