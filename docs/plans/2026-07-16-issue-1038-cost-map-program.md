@@ -4,8 +4,9 @@
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1038
-> **Lane:** Claude orchestration; Codex child execution
-> **Review artifacts:** `scripts/review/results/2026-07-16-plan-1038-1044-claude.md` | `scripts/review/results/2026-07-16-plan-1038-1044-codex.md` | `scripts/review/results/2026-07-16-plan-1038-1044-gemini.md`
+> **Client:** N/A
+> **Lane:** lane:claude
+> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final Claude/Codex/Gemini artifacts PENDING
 
 ## Resource Intelligence Summary
 
@@ -23,28 +24,29 @@
 |---|---|
 | Program plan | `docs/plans/2026-07-16-issue-1038-cost-map-program.md` |
 | Human review packet | `docs/reports/2026-07-16-issues-1038-1044-cost-map-plan.html` |
-| Shared domain contract | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map_schema.py` |
 | Existing observation contract | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/schema.py` |
 | Existing reconciliation | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/reconciliation.py` |
 | Existing allocation priors | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/back_allocation.py` |
-| Contract tests | `tests/unit/cost/test_cost_map_schema.py` |
 | Child plans | `docs/plans/2026-07-16-issue-1039-*.md` through `2026-07-16-issue-1044-*.md` |
 
 ## Deliverable
 
-The epic will establish one versioned accounting contract and a gated execution sequence for requirements, award linkage, bidirectional synthesis, dated traces, correlated estimation, and FDAS reconciliation. It will not itself authorize child implementation.
+The epic will coordinate one versioned accounting contract and a gated execution sequence for requirements, award linkage, bidirectional synthesis, dated traces, correlated estimation, and FDAS reconciliation. It will own no implementation file; #1039 will produce the first contract manifest. The epic will not itself authorize child implementation.
 
 ## Shared Contract to Freeze
 
 - Canonical keys will identify project, phase, asset/work package, award, source event, and model vintage without rewriting source labels.
 - Amounts will carry `currency`, `price_basis`, `basis_year`, `ownership_basis`, `scope_basis`, `capex_basis`, lower/upper values, and provenance.
 - Value bases will preserve the full existing vocabulary: `point`, `range`, `band`, `backlog`, `not_public`, `lease_contract`, `combined`, and `midstream`.
-- Evidence status will distinguish `disclosed`, `award_derived`, `allocated`, `modeled`, `assumed`, `todo`, and `not_public`.
-- Linkage status will distinguish `linked`, `partial`, `bundled`, `overlap`, `unlinked`, and `ambiguous`; `not_public` will remain an orthogonal value basis, not a linkage outcome.
+- Evidence provenance will distinguish `disclosed`, `award_derived`, `allocated`, `modeled`, `assumed`, and `todo`.
+- Link resolution will distinguish only `linked`, `unlinked`, and `ambiguous`; scope coverage will independently distinguish `full`, `partial`, and `bundled`.
+- Counting disposition will independently distinguish `included`, `excluded`, and `overlap`, with a closed reason vocabulary. `not_public` will remain a value basis/availability result.
 - Stable `project_id`, `award_id`, `requirement_id`, and `event_id` fields will preserve many-to-many lineage without using mutable display labels as keys.
 - Arithmetic will fail closed on currency, price-basis, ownership, scope, phase, and capex-basis incompatibility.
 - A bundled award will be represented once and linked many-to-many; it will never be copied into multiple additive rows.
 - Every reconciliation will expose included, excluded, overlapping, unallocated, residual, and unreconciled amounts.
+- Money arithmetic will use `Decimal` quantized to USD 0.01MM. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
+- Top-down uncertainty will use reviewed joint scenario share vectors whose nonnegative shares each sum to 1.0. Component envelopes will be minima/maxima across whole-project scenarios; independent marginal bands from `back_allocation.py` will not be summed.
 
 ## Planned Execution Sequence
 
@@ -54,6 +56,22 @@ The epic will establish one versioned accounting contract and a gated execution 
 4. #1043 will train only after synthesis and historical feature availability are defined.
 5. #1044 will compare the completed outputs to frozen FDAS workbooks and generate the integrated decision surface.
 6. #1017 will remain outside the execution graph until the owner separately authorizes circulation.
+7. Each producing child will emit a manifest containing `contract_version`, schema hash, input hashes, producer commit, and generated-at policy; each consumer will fail closed unless its required version/hash preflight passes.
+
+## Pseudocode
+
+```text
+#1039 -> manifest v1 + owner approval
+#1040 preflight(v1) -> manifest v2
+parallel(#1041 preflight(v2), #1042 preflight(v2))
+#1043 preflight(#1041, #1042) -> validated model manifest
+#1044 preflight(all upstream manifests) -> read-only workbook reconciliation
+if any preflight/review/legal/cleanup gate fails: stop without label advancement
+```
+
+## Attested Evidence — 2026-07-16
+
+`wc`/CSV enumeration, workbook inspection with `openpyxl`, `sha256sum`, targeted `rg`, live `gh issue view`, and the cost-unit baseline were run at commit `090228fb`; the baseline result was `164 passed, 2 deselected`. R1 review independently reverified the corpus counts, Big Foot rows, D&C totals, V30 total, and workbook hashes. This issue will make no runtime-failure claim, so defect reproduction is N/A.
 
 ## TDD Test List
 
@@ -78,6 +96,7 @@ The epic will establish one versioned accounting contract and a gated execution 
 - [ ] Generated HTML will be the human-facing default; machine-readable outputs will remain reproducible.
 - [ ] Every implemented child will receive T3 adversarial artifact/code review and an issue summary before close.
 - [ ] No email, external send, workbook overwrite, or self-merge will occur.
+- [ ] Each child will use RED → minimal GREEN → refactor cycles, will run `scripts/legal/legal-sanity-scan.sh`, will receive T3 code/artifact review, will comment its issue, and will pass the pre-completion cleanup audit before close.
 
 ## Risks and Decisions Reserved for the Owner
 

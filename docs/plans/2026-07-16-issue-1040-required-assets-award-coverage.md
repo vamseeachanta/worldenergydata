@@ -5,7 +5,9 @@
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1040
 > **Blocked by:** owner-approved #1039 contract
-> **Review artifacts:** `scripts/review/results/2026-07-16-plan-1038-1044-{claude,codex,gemini}.md`
+> **Client:** N/A
+> **Lane:** lane:codex
+> **Review artifacts:** R1 Codex MAJOR: `scripts/review/results/2026-07-16-plan-1038-1044-codex-r1.md`; final artifacts PENDING
 
 ## Resource Intelligence Summary
 
@@ -20,6 +22,10 @@
 |---|---|
 | Extend | `data/modules/cost/curated/project_asset_requirements.csv` |
 | Extend | `data/modules/cost/curated/award_asset_links.csv` |
+| Extend | `data/modules/cost/curated/cost_project_identity.csv` |
+| Extend | `data/modules/cost/curated/cost_award_identity.csv` |
+| Create | `data/modules/cost/derived/award_accounting_normalized.csv` |
+| Generate | `data/modules/cost/derived/cost_map_contract_manifest.json` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/asset_requirements.py` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/award_linkage.py` |
 | Create | `scripts/cost/build_asset_award_coverage.py` |
@@ -34,12 +40,13 @@ An empirically complete project → requirement → award decision surface using
 
 ## Planned Tasks and TDD Order
 
-1. Contract tests will load the owner-approved taxonomy and reject silent new enum values.
-2. Architecture rules will produce minimum requirement sets for tieback, FPSO, semi, spar, TLP/dry-tree, fixed platform, and unknown architectures.
-3. Overrides will record project-specific quantities and exceptions with provenance; rules will never manufacture quantities.
-4. Award linkage will resolve stable source award IDs and cost-project IDs through an explicit crosswalk; it will support many-to-many bundled scope while preserving one monetary award identity.
-5. Coverage will enumerate all live sanctioned projects and awards, record `requirements_unknown` where evidence is insufficient, and report exact counts at build time.
-6. Generated outputs will show required asset, quantity/evidence, linked award, contractor/value basis, resolution, exclusion, and provenance.
+1. Contract preflight tests will require the owner-approved v1 manifest/hash and reject silent enum or identity drift.
+2. RED migration tests will require native amount/currency, bound type, price vintage, ownership, phase/scope, `capex_basis`, and conversion provenance. Rows whose source lacks those facts will carry `unknown` and remain excluded from arithmetic; the legacy GranMorgu conversion will fail closed until resourced.
+3. Architecture rules will produce minimum requirement sets for tieback, FPSO, semi, spar, TLP/dry-tree, fixed platform, and unknown architectures.
+4. Overrides will record project-specific quantities and exceptions with provenance; rules will never manufacture quantities.
+5. Award linkage will resolve stable source award IDs and cost-project IDs through an explicit crosswalk; `validation_group_id` will bind aliases/phases/derived rows for later grouped validation.
+6. Coverage will enumerate all live sanctioned projects and awards, record `requirements_unknown` where evidence is insufficient, and report exact counts at build time.
+7. Generated outputs and manifest v2 will expose normalized accounting eligibility and the exact contract consumed by downstream issues.
 
 ## TDD Test List
 
@@ -50,6 +57,9 @@ An empirically complete project → requirement → award decision surface using
 - `test_every_source_award_has_a_stable_identity`
 - `test_bundled_award_links_many_to_many_without_value_copy`
 - `test_award_linkage_preserves_all_value_basis_values`
+- `test_missing_native_currency_or_capex_basis_fails_closed_for_arithmetic`
+- `test_legacy_conversion_without_fx_provenance_is_excluded`
+- `test_alias_phase_and_derived_rows_share_validation_group_id`
 - `test_not_public_counts_as_scope_evidence_not_value_coverage`
 - `test_every_live_project_and_award_is_visited_once`
 - `test_requirement_and_value_coverage_are_independent`
@@ -64,6 +74,26 @@ An empirically complete project → requirement → award decision surface using
 - [ ] Coverage percentages will state numerator, denominator, exclusions, and live baseline date.
 - [ ] Native value-basis, currency, and provenance semantics will remain unchanged.
 - [ ] HTML and machine-readable outputs will regenerate without hand edits.
+- [ ] Manifest v2 will pin schema/input hashes and will be the fail-closed handoff to #1041/#1042.
+
+## Pseudocode
+
+```text
+assert preflight(manifest_v1)
+RED accounting-row tests -> migrate source facts or explicit unknown
+for each project_id: derive requirements or requirements_unknown
+for each award_id: resolve project_id; link requirements many-to-many
+count scope coverage independently from monetary eligibility
+emit normalized rows + manifest v2
+```
+
+## Attested Evidence — 2026-07-16
+
+Live-table enumeration and header inspection at `090228fb` verified that the award table lacks currency and structured accounting bases. This feature will address that gap; no runtime defect is alleged, so reproduction is N/A.
+
+## Implementation and Closeout Gates
+
+Each slice will demonstrate RED then GREEN. Builders will use stable ordering, `Decimal`, locale `C`, UTC, injected build time, escaping, safe URLs, and two-run SHA equality. Legal/de-identification scans, T3 code/artifact review, issue comment, v1/v2 manifest verification, and cleanup audit will pass before close.
 
 ## Out of Scope
 
