@@ -1,0 +1,5 @@
+OPAQUE_ID,ENTITY_KIND,DISPLAY_LABEL,STATE,ACTIVE,ALIASES,VALIDATION_GROUP_ID,SOURCE_TABLE,SOURCE_RECORD_LOCATOR,TOMBSTONED_BY_ID,MIGRATION_NOTE
+evt-000001,event,Big Foot GE award event,active,true,,vg-cost-map-pilot-000001,contract_awards.csv,PROJECT=Big Foot|AWARD_YEAR=2011|CONTRACTOR=GE Oil & Gas,,
+evt-000002,event,Big Foot Enbridge award event,active,true,,vg-cost-map-pilot-000001,contract_awards.csv,PROJECT=Big Foot|AWARD_YEAR=2009|CONTRACTOR=Enbridge,,
+evt-000003,event,Big Foot sanction event,active,true,,vg-cost-map-pilot-000001,cost_revision_trails.csv,PROJECT=Big Foot|STATEMENT_DATE=2010|KIND=sanction_estimate,,
+evt-000004,event,Big Foot outturn event,active,true,,vg-cost-map-pilot-000001,cost_revision_trails.csv,PROJECT=Big Foot|STATEMENT_DATE=2018|KIND=final_outturn,,
