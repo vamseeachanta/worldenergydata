@@ -257,6 +257,24 @@ def test_work_package_retains_required_assets() -> None:
         )
 
 
+def test_work_package_rejects_empty_opaque_identity_suffixes() -> None:
+    from worldenergydata.cost.timeseries.cost_map_schema import (
+        RequiredAsset,
+        WorkPackageRequirement,
+    )
+
+    common = dict(
+        requirement_id="req-subsea-001",
+        project_id="prj-field-001",
+        work_package="subsea production system",
+        required_assets=(RequiredAsset(asset_type="subsea_tree", quantity=1),),
+    )
+    with pytest.raises(ValidationError, match="requirement_id must use prefix req-"):
+        WorkPackageRequirement(**{**common, "requirement_id": "req-"})
+    with pytest.raises(ValidationError, match="project_id must use prefix prj-"):
+        WorkPackageRequirement(**{**common, "project_id": "prj-"})
+
+
 def test_floor_ceiling_and_open_range_retain_open_sides() -> None:
     from worldenergydata.cost.timeseries.cost_map_schema import MoneyInterval
 

@@ -66,9 +66,9 @@ class WorkPackageRequirement(BaseModel):
 
     @model_validator(mode="after")
     def _validate_ids(self) -> "WorkPackageRequirement":
-        if not self.requirement_id.startswith("req-"):
+        if not _has_opaque_prefix(self.requirement_id, "req-"):
             raise ValueError("requirement_id must use prefix req-")
-        if not self.project_id.startswith("prj-"):
+        if not _has_opaque_prefix(self.project_id, "prj-"):
             raise ValueError("project_id must use prefix prj-")
         return self
 
