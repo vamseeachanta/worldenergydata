@@ -11,8 +11,8 @@
 
 ## Resource Intelligence Summary
 
-- The four curated tables will already contain dated sanction/FID rows, awards, partner/project statements, and revision/outturn points with differing time precision and confidence.
-- `cost_component_timeseries.csv` will provide market component and index observations, but these will remain contextual lanes unless an explicit method links them to a project event.
+- The four curated tables contain dated sanction/FID rows, awards, partner/project statements, and revision/outturn points with differing time precision and confidence.
+- `cost_component_timeseries.csv` provides market component and index observations, but these will remain contextual lanes unless an explicit method links them to a project event.
 - Missing years, not-public awards, and delayed source visibility will be meaningful findings. The trace will remain event-based and will not invent annual observations.
 
 ## Artifact Map
@@ -86,7 +86,7 @@ Live enumeration at `090228fb` verified 34 month-precision and 15 year-precision
 
 ## Implementation and Closeout Gates
 
-Every adapter/behavior will demonstrate RED then GREEN. Serialization will use stable display ordering, Decimal, locale `C`, UTC/injected time, escaping, safe URLs, and two-build SHA equality. Legal/de-identification scans, T3 review, issue comment, manifest preflight, and cleanup audit will pass before close.
+The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_project_cost_trace.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Serialization will use stable display ordering, Decimal, locale `C`, UTC/injected time, escaping, safe URLs, and two-build SHA equality. Legal/de-identification scans, T3 review, issue comment, exact v2/trace-manifest preflight, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

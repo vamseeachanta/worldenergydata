@@ -11,10 +11,10 @@
 
 ## Resource Intelligence Summary
 
-- The live sanctioned-project table will expose development type, host type, well count, SURF length, water depth, and scope notes needed to infer requirements, but missing quantities must remain explicit unknowns.
-- The live award registry will retain coarse `production_hub`, `sps`, `surf`, `installation`, `drilling_rig`, and `other` classes and the full value-basis vocabulary. This issue will link and deepen those records rather than duplicate them.
+- The live sanctioned-project table exposes development type, host type, well count, SURF length, water depth, and scope notes needed to infer requirements, but missing quantities must remain explicit unknowns.
+- The live award registry retains coarse `production_hub`, `sps`, `surf`, `installation`, `drilling_rig`, and `other` classes and the full value-basis vocabulary. This issue will link and deepen those records rather than duplicate them.
 - `field_development` already contains concept, layout, graph, host-enrichment, and symbol vocabularies. The cost requirements layer will consume compatible concepts but will remain in the cost package so cost provenance and accounting are not coupled to visualization code.
-- `config/fields.yml` will resolve Big Foot and other registered fields but will not cover the full 80-project cost portfolio. The approved pilot will therefore freeze a cost-project identity/crosswalk surface rather than assume field-registry completeness.
+- `config/fields.yml` resolves Big Foot and other registered fields but does not cover the full 80-project cost portfolio. The approved pilot will therefore freeze a cost-project identity/crosswalk surface rather than assume field-registry completeness.
 
 ## Artifact Map
 
@@ -25,7 +25,7 @@
 | Extend | `data/modules/cost/curated/cost_project_identity.csv` |
 | Extend | `data/modules/cost/curated/cost_award_identity.csv` |
 | Create | `data/modules/cost/derived/award_accounting_normalized.csv` |
-| Generate | `data/modules/cost/derived/cost_map_contract_manifest.json` |
+| Generate | `data/modules/cost/derived/cost_map_contract_manifest.v2.json` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/asset_requirements.py` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/award_linkage.py` |
 | Create | `scripts/cost/build_asset_award_coverage.py` |
@@ -41,10 +41,10 @@ An empirically complete project → requirement → award decision surface using
 ## Planned Tasks and TDD Order
 
 1. Contract preflight tests will require the owner-approved v1 manifest/hash and reject silent enum or identity drift.
-2. RED migration tests will require native amount/currency, bound type, price vintage, ownership, phase/scope, `capex_basis`, and conversion provenance. Rows whose source lacks those facts will carry `unknown` and remain excluded from arithmetic; the legacy GranMorgu conversion will fail closed until resourced.
+2. RED migration tests will require native amount/currency, an orthogonal `bound_type` (`point|floor|ceiling|closed_range|open_range`), price vintage, ownership, phase/scope, `capex_basis`, and conversion provenance. Rows whose source lacks those facts will carry `unknown` and remain excluded from arithmetic; the legacy GranMorgu conversion will fail closed until resourced.
 3. Architecture rules will produce minimum requirement sets for tieback, FPSO, semi, spar, TLP/dry-tree, fixed platform, and unknown architectures.
 4. Overrides will record project-specific quantities and exceptions with provenance; rules will never manufacture quantities.
-5. Award linkage will resolve stable source award IDs and cost-project IDs through an explicit crosswalk; `validation_group_id` will bind aliases/phases/derived rows for later grouped validation.
+5. Award linkage will resolve controlled opaque source-award and cost-project IDs through the four v1 identity registries and an explicit crosswalk. IDs will not derive from row order or mutable content; corrections will preserve them, tombstones will prevent reuse, and collision/foreign-key/split-merge checks will fail closed. `validation_group_id` will bind aliases/phases/derived rows for later grouped validation.
 6. Coverage will enumerate all live sanctioned projects and awards, record `requirements_unknown` where evidence is insufficient, and report exact counts at build time.
 7. Generated outputs and manifest v2 will expose normalized accounting eligibility and the exact contract consumed by downstream issues.
 
@@ -68,7 +68,7 @@ An empirically complete project → requirement → award decision surface using
 ## Acceptance Criteria
 
 - [ ] Every live project will receive requirements or `requirements_unknown`.
-- [ ] Every live award will resolve to linked, partial, bundled, overlap, unlinked, or ambiguous while retaining its independent value basis, including `not_public`.
+- [ ] Every live award will carry independent axes: link resolution (`linked|unlinked|ambiguous`), scope coverage (`unknown|none|partial|full`), bundle topology (`bundle_group_id` or unbundled), counting disposition (`included|excluded|overlap` plus reason), and value basis including `not_public`.
 - [ ] Architecture-specific systems and quantities will be evidence-backed.
 - [ ] The build will print and persist the exact project/award set it visited.
 - [ ] Coverage percentages will state numerator, denominator, exclusions, and live baseline date.
@@ -93,7 +93,7 @@ Live-table enumeration and header inspection at `090228fb` verified that the awa
 
 ## Implementation and Closeout Gates
 
-Each slice will demonstrate RED then GREEN. Builders will use stable ordering, `Decimal`, locale `C`, UTC, injected build time, escaping, safe URLs, and two-run SHA equality. Legal/de-identification scans, T3 code/artifact review, issue comment, v1/v2 manifest verification, and cleanup audit will pass before close.
+The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_asset_requirements.py tests/unit/cost/test_award_asset_linkage.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Builders will use stable ordering, `Decimal`, locale `C`, UTC, injected build time, escaping, safe URLs, and two-run SHA equality. Legal/de-identification scans, T3 code/artifact review, issue comment, exact v1/v2 manifest verification, and cleanup audit will pass before close. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 

@@ -11,10 +11,10 @@
 ## Resource Intelligence Summary
 
 - The program will extend the four curated tables in `data/modules/cost/curated/`: 80 sanctioned projects (67 with disclosed USD CAPEX), 110 awards across 29 projects, 19 project cost statements across 11 projects, and 49 revision-trail points across 21 projects at the planning baseline.
-- `timeseries.reconciliation` will already distinguish capex-comparable award bases, coverage, partner-net checks, award stage anchors, and sanction-to-outturn evidence. `timeseries.back_allocation` will already expose six lifecycle stages and architecture-specific, banded priors.
-- `CostObservation` will already enforce sourced/fitted/allocated/assumed/TODO provenance and native-currency semantics. The new work will preserve, not weaken, those contracts.
+- Current `timeseries.reconciliation` distinguishes capex-comparable award bases, coverage, partner-net checks, award stage anchors, and sanction-to-outturn evidence. Current `timeseries.back_allocation` exposes six lifecycle stages and architecture-specific, banded priors.
+- Current `CostObservation` enforces sourced/fitted/allocated/assumed/TODO provenance and native-currency semantics. The new work will preserve, not weaken, those contracts.
 - The frozen FDAS references will be `lease_assumptions.xlsx`, `financial_project_summary.xlsx`, and `drilling_and_completion_days.xlsx` under `docs/modules/bsee/analysis/production/FDAS_V30/`.
-- Big Foot will provide a useful tracer bullet because the live corpus will contain a $4,000MM sanction total, a $5,100MM outturn point, one $45MM point award, one excluded $200MM midstream award, major award-coverage gaps, and 3,033 observed drilling/completion days.
+- Big Foot provides a useful tracer bullet because the live corpus contains a $4,000MM sanction total, a $5,100MM outturn point, one $45MM point award, one excluded $200MM midstream award, major award-coverage gaps, and 3,033 observed drilling/completion days.
 - No external engineering standard will govern the accounting model. The authoritative inputs will be cited disclosures, the accepted pilot contract, the repository provenance rules, and explicit empirical validation. Stakeholder circulation will remain paused under #1017.
 - Generated coverage metadata will replace hand-maintained counts in decision surfaces because the current curated Markdown summaries will lag the live CSVs.
 
@@ -37,16 +37,16 @@ The epic will coordinate one versioned accounting contract and a gated execution
 
 - Canonical keys will identify project, phase, asset/work package, award, source event, and model vintage without rewriting source labels.
 - Amounts will carry `currency`, `price_basis`, `basis_year`, `ownership_basis`, `scope_basis`, `capex_basis`, lower/upper values, and provenance.
-- Value bases will preserve the full existing vocabulary: `point`, `range`, `band`, `backlog`, `not_public`, `lease_contract`, `combined`, and `midstream`.
-- Evidence provenance will distinguish `disclosed`, `award_derived`, `allocated`, `modeled`, `assumed`, and `todo`.
-- Link resolution will distinguish only `linked`, `unlinked`, and `ambiguous`; scope coverage will independently distinguish `full`, `partial`, and `bundled`.
+- Value bases will preserve the full existing vocabulary: `point`, `range`, `band`, `backlog`, `not_public`, `lease_contract`, `combined`, and `midstream`. A separate `bound_type` field will distinguish `point`, `floor`, `ceiling`, `closed_range`, and `open_range`; availability/basis and mathematical bounds will not be conflated.
+- Evidence derivation will distinguish `disclosed`, `award_derived`, `allocated`, `modeled`, `assumed`, and `todo`; independent source provenance/confidence fields will retain `operator`, `regulator`, `partner`, `trade_press`, and other approved source tiers without relabeling.
+- Link resolution will distinguish only `linked`, `unlinked`, and `ambiguous`; scope coverage will independently distinguish `unknown`, `none`, `partial`, and `full`; bundle topology will use a separate `bundle_group_id`/`is_bundled` field.
 - Counting disposition will independently distinguish `included`, `excluded`, and `overlap`, with a closed reason vocabulary. `not_public` will remain a value basis/availability result.
-- Stable `project_id`, `award_id`, `requirement_id`, and `event_id` fields will preserve many-to-many lineage without using mutable display labels as keys.
+- Stable `project_id`, `award_id`, `requirement_id`, and `event_id` fields will use controlled opaque identifiers (for example `prj-0001` and `awd-0001`) assigned from four versioned identity registries. They will never derive from row position or mutable content; alias, phase, and source-label corrections will preserve the identifier. IDs will be monotonically issued, tombstoned rather than reused, and covered by collision, foreign-key, merge/split migration, and `validation_group_id` checks.
 - Arithmetic will fail closed on currency, price-basis, ownership, scope, phase, and capex-basis incompatibility.
 - A bundled award will be represented once and linked many-to-many; it will never be copied into multiple additive rows.
 - Every reconciliation will expose included, excluded, overlapping, unallocated, residual, and unreconciled amounts.
 - Money arithmetic will use `Decimal` quantized to USD 0.01MM. For total interval `T=[Tlo,Thi]` and eligible interval `E=[Elo,Ehi]`, residual will be `[Tlo-Ehi, Thi-Elo]`; coverage will be `[Elo/Thi, Ehi/Tlo]` when denominators are positive, otherwise unavailable. Open bounds and zero-crossing residuals will remain explicit.
-- Top-down uncertainty will use reviewed joint scenario share vectors whose nonnegative shares each sum to 1.0. Component envelopes will be minima/maxima across whole-project scenarios; independent marginal bands from `back_allocation.py` will not be summed.
+- Top-down uncertainty will use reviewed joint scenario share vectors whose nonnegative shares each sum to 1.0. Component envelopes will be minima/maxima across whole-project scenarios; independent marginal bands from `back_allocation.py` will not be summed. Quantized allocations will conserve each total through a deterministic largest-remainder rule, ordered by fractional remainder then stable requirement ID.
 
 ## Planned Execution Sequence
 
@@ -71,7 +71,7 @@ if any preflight/review/legal/cleanup gate fails: stop without label advancement
 
 ## Attested Evidence — 2026-07-16
 
-`wc`/CSV enumeration, workbook inspection with `openpyxl`, `sha256sum`, targeted `rg`, live `gh issue view`, and the cost-unit baseline were run at commit `090228fb`; the baseline result was `164 passed, 2 deselected`. R1 review independently reverified the corpus counts, Big Foot rows, D&C totals, V30 total, and workbook hashes. This issue will make no runtime-failure claim, so defect reproduction is N/A.
+`wc`/CSV enumeration, workbook inspection with `openpyxl`, `sha256sum`, targeted `rg`, live `gh issue view`, and the cost-unit baseline were run at commit `090228fb`. The exact passing baseline command was `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest tests/unit/cost/ -q --noconftest -o addopts='' --ignore tests/unit/cost/test_field_integration.py --ignore tests/unit/cost/test_proxy_comparison.py --deselect tests/unit/cost/test_disclosure_analytics.py::TestLowerTertiaryDeferralInvariant`; it returned `164 passed, 2 deselected`. These three exclusions are pre-existing and will remain named rather than being reported as a clean unrestricted suite. R1 review independently reverified the corpus counts, Big Foot rows, D&C totals, V30 total, and workbook hashes. This issue will make no runtime-failure claim, so defect reproduction is N/A.
 
 ## TDD Test List
 

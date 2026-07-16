@@ -11,11 +11,11 @@
 
 ## Resource Intelligence Summary
 
-- `sanctioned_projects.csv` will identify Big Foot as a dry-tree extended TLP with an on-board rig, a $4,000MM 2010 sanction basis, and 2018 first oil.
-- `cost_revision_trails.csv` will provide the $4,000MM sanction and $5,100MM final/outturn observations in separate dated rows.
-- `contract_awards.csv` will provide exactly two current Big Foot rows: a $45MM riser-tensioner point award and a $200MM midstream export system that must be excluded from Chevron project CAPEX. Host design/hull references will remain research leads outside the curated registry and will therefore appear as award-coverage gaps unless separately imported through a sourced issue.
-- `drilling_and_completion_days.xlsx` and the deterministic completion report will provide 38 Big Foot wellbores and 3,033 D&C days. Big Foot will be WED-only in the current World Oil comparison, so that workbook comparison will require explicit status rather than a forced match.
-- The frozen FDAS assumption workbook will provide the legacy dry-system cost representation to crosswalk, not disclosure evidence.
+- `sanctioned_projects.csv` identifies Big Foot as a dry-tree extended TLP with an on-board rig, a $4,000MM 2010 sanction basis, and 2018 first oil.
+- `cost_revision_trails.csv` provides the $4,000MM sanction and $5,100MM final/outturn observations in separate dated rows.
+- `contract_awards.csv` provides exactly two current Big Foot rows: a 2009 $45MM riser-tensioner point award and a $200MM midstream export system that must be excluded from Chevron project CAPEX. Host design/hull references remain research leads outside the curated registry and will therefore appear as award-coverage gaps unless separately imported through a sourced issue.
+- `drilling_and_completion_days.xlsx` and the deterministic completion report provide 38 Big Foot wellbores and 3,033 D&C days. Big Foot is WED-only in the current World Oil comparison, so that workbook comparison will require explicit status rather than a forced match.
+- The frozen FDAS assumption workbook provides the legacy dry-system cost representation to crosswalk, not disclosure evidence.
 
 ## Artifact Map
 
@@ -26,7 +26,9 @@
 | Create | `data/modules/cost/curated/award_asset_links.csv` |
 | Create | `data/modules/cost/curated/cost_project_identity.csv` |
 | Create | `data/modules/cost/curated/cost_award_identity.csv` |
-| Create | `data/modules/cost/curated/cost_map_contract_manifest.json` |
+| Create | `data/modules/cost/curated/cost_requirement_identity.csv` |
+| Create | `data/modules/cost/curated/cost_event_identity.csv` |
+| Create | `data/modules/cost/curated/cost_map_contract_manifest.v1.json` |
 | Create | `data/modules/cost/curated/fdas_project_cost_crosswalk.csv` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map.py` |
 | Create | `scripts/cost/build_big_foot_cost_map.py` |
@@ -42,13 +44,13 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 ## Planned Tasks and TDD Order
 
 1. Tests will first pin immutable amount/basis, requirement, award-link, and reconciliation models.
-2. RED tests will require controlled, immutable project/award/requirement/event IDs and independent link-resolution, scope-coverage, value-basis, evidence, and counting fields before fixtures are added.
+2. RED tests will require controlled opaque project/award/requirement/event IDs in four versioned registries, assigned monotonically rather than derived from row order or mutable content, plus independent link-resolution, scope-coverage, bundle topology, value-basis, bound-type, evidence, and counting fields. Alias/phase corrections will preserve IDs; deleted/merged IDs will be tombstoned and never reused; collisions, broken foreign keys, and unrecorded split/merge migrations will fail closed.
 3. The requirements fixture will enumerate host/TLP, dry trees and wells, drilling/completion, riser/tensioner, export, installation/hookup, controls, and explicit unknown quantities with citations or evidence notes.
 4. Linkage tests will classify every live Big Foot award and will prove that the midstream export award cannot enter project CAPEX.
 5. Bottom-up tests will sum only eligible non-overlapping values and will retain unavailable items in scope coverage.
 6. Top-down tests will allocate the $4,000MM sanction and $5,100MM outturn as separate evidence scenarios through reviewed joint TLP share vectors; every scenario will conserve its total and remain `allocated`.
 7. Timeline tests will use precision-bearing date intervals. They will order the 2009 award before the 2010 sanction, represent a revised estimate as unavailable, and retain the 2018 low-confidence outturn without inventing a 2015 monetary event.
-8. Workbook-crosswalk tests will map the actual V30 summary categories—host, SURF, booster pump, water-injection pump/facility, dry-well system, drilling, completion, and OPEX—without treating workbook cells as disclosure; installation/hookup will remain explicitly unmapped where the workbook has no separate category.
+8. Workbook-crosswalk tests will map the actual V30 summary categories—host, SURF, booster pump, water-injection pump/facility, dry-well system, drilling, completion, and OPEX—without treating workbook cells as disclosure. Development CAPEX will be `2730.0 + 965.6 + 821.7 = 4517.3MM`; OPEX will remain a separate basis lane and will never enter that total. Installation/hookup will remain explicitly unmapped where the workbook has no separate category.
 9. The builder will emit manifest v1, deterministic CSV/HTML, and a decision checklist; the owner will accept or revise the proposed contract and manifest before #1040 starts.
 
 ## TDD Test List
@@ -61,7 +63,7 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 - `test_midstream_export_is_excluded_from_project_capex`
 - `test_riser_tensioner_point_award_is_a_component_floor`
 - `test_bundled_link_contributes_value_once`
-- `test_status_axes_support_linked_midstream_excluded_and_linked_not_public`
+- `test_synthetic_status_axis_fixture_supports_linked_midstream_excluded_and_linked_not_public`
 - `test_missing_host_awards_reduce_scope_and_value_coverage`
 - `test_bottom_up_subtotal_preserves_included_excluded_overlap_and_residual`
 - `test_sanction_and_outturn_reconcile_as_distinct_total_bases`
@@ -105,7 +107,7 @@ Live CSV enumeration, workbook cell inspection, `sha256sum`, completion reconcil
 
 ## Implementation and Closeout Gates
 
-Every slice will run a named failing test before the smallest data/code change and the same test after GREEN. Serialization will use stable ordering, `Decimal`, locale `C`, UTC, injected `SOURCE_DATE_EPOCH`, HTML escaping, and http(s)-only links; two clean builds must have identical SHA-256 hashes. The legal scan, deny-list/de-identification scan, T3 code/artifact review, issue comment, manifest preflight, and cleanup audit will all pass before close. Workbook core metadata will not be published.
+The executable slice command will be `PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 uv run --extra test python -m pytest -p no:cacheprovider --noconftest -o addopts='' tests/unit/cost/test_cost_map_schema.py tests/unit/cost/test_big_foot_cost_map.py -xq`. Each slice will record a behavior-relevant nonzero RED, run the identical command after minimal GREEN, refactor, and run it unchanged again. Serialization will use stable ordering, `Decimal`, locale `C`, UTC, injected `SOURCE_DATE_EPOCH`, HTML escaping, and http(s)-only links; two clean builds must have identical SHA-256 hashes. The legal scan, deny-list/de-identification scan, T3 code/artifact review, issue comment, manifest preflight, and cleanup audit will all pass before close. Workbook core metadata will not be published. No email, external send, or stakeholder circulation will occur.
 
 ## Out of Scope
 
