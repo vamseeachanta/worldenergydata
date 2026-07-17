@@ -6,11 +6,11 @@
       "awd-000002"
     ],
     "events": [
+      "evt-000001",
       "evt-000002",
       "evt-000003",
-      "evt-000001",
-      "evt-000005",
-      "evt-000004"
+      "evt-000004",
+      "evt-000005"
     ],
     "projects": [
       "prj-000001"
@@ -106,22 +106,30 @@
       "sha256": "af6fd0be89eb97932c89416a0a24a538a0d7a9e2093e187c69322a23e300c466"
     },
     {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
+      "sha256": "8ad4a3106421b048e62e55499d00dc9ff1df7c4308228f4baf6106864dc35bb4"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
+      "sha256": "d988242365cb2801a98ea46abb19a35bb0f6e16bd68d82fca1486d56e77420c3"
+    },
+    {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/project_trace.py",
       "sha256": "5b78e7d24b096bf10e11ec4246ecd49477766eb318c13da8e0e8683c7e98db34"
     },
     {
       "path": "scripts/cost/build_big_foot_cost_map.py",
-      "sha256": "d7eecfee0b835420dfd534d81fa94887707dbdca25c93e32dbad90ea0fb0bf4d"
+      "sha256": "3b7a4856cc700270f32134377814e8321c73dd017bb2caad858bc97664aa89b9"
     }
   ],
   "outputs": [
     {
       "path": "reports/cost/big_foot_cost_map.html",
-      "sha256": "d1dac173a3c71989924744d8ce787f12de354a27e0f441eb1f261bf89e255e32"
+      "sha256": "f541c0f8b5bd1d54d67baed2c56b0d70df3122641c20730bc1e1ef22a2135768"
     },
     {
       "path": "reports/cost/big_foot_cost_map_reconciliation.csv",
-      "sha256": "9115db7e0d947d07de9a23fcdfa6debb9c48ba79c0bf6e943aa40ba0c219d211"
+      "sha256": "5dac47bc797105ab8823dc142658224f12f446568f4a4971a2452c01c5db6e97"
     }
   ],
   "owner_decision": {
@@ -141,10 +149,10 @@
   },
   "producer": {
     "builder_path": "scripts/cost/build_big_foot_cost_map.py",
-    "builder_sha256": "d7eecfee0b835420dfd534d81fa94887707dbdca25c93e32dbad90ea0fb0bf4d",
-    "commit": "fdf2885cb573b0adf4dbc636235e6f33a33f6307",
+    "builder_sha256": "3b7a4856cc700270f32134377814e8321c73dd017bb2caad858bc97664aa89b9",
+    "commit": "6eae97254417a7a75af6c4ad8b87b959716a3eab",
     "commit_policy": "exact_builder_containing_commit",
-    "tool_version": "1.1.0"
+    "tool_version": "1.2.0"
   },
   "scenarios": [
     {
