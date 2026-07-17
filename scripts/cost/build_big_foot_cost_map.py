@@ -344,7 +344,6 @@ def build_outputs(
     output_root: Path,
     source_date_epoch: int,
     producer_commit: str,
-    producer_executable_attestation: dict[str, str] | None = None,
     before_final_hash: Callable[[], None] | None = None,
     before_publish: Callable[[Path], None] | None = None,
 ) -> None:
@@ -352,9 +351,7 @@ def build_outputs(
         raise ValueError("nonnegative SOURCE_DATE_EPOCH is required")
     with c_locale():
         frozen = snapshot(repo_root)
-        validate_producer(
-            repo_root, producer_commit, frozen, producer_executable_attestation
-        )
+        validate_producer(repo_root, producer_commit, frozen)
         context = build_context(frozen)
         rows = _rows(context)
         with TemporaryDirectory() as directory:

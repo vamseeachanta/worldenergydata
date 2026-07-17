@@ -11,7 +11,6 @@ import shutil
 import subprocess
 from contextlib import contextmanager
 from decimal import Decimal
-from functools import partial
 from hashlib import sha256
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
@@ -117,32 +116,30 @@ def snapshot(root: Path) -> dict[str, bytes]:
     return {path: (root / path).read_bytes() for path in INPUT_PATHS}
 
 
-def validate_producer(
-    root: Path,
-    commit: str,
-    frozen: dict[str, bytes],
-    producer_executable_attestation: dict[str, str] | None = None,
-) -> None:
+def _git_output(root: Path, arguments: list[str], message: str) -> bytes:
+    try:
+        return subprocess.run(
+            ["git", *arguments],
+            cwd=root,
+            check=True,
+            capture_output=True,
+        ).stdout
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ValueError(message) from error
+
+
+def validate_producer(root: Path, commit: str, frozen: dict[str, bytes]) -> None:
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("producer commit must be full 40-hex")
-    git = partial(subprocess.run, cwd=root, check=True, capture_output=True)
-    try:
-        git(["git", "cat-file", "-e", f"{commit}^{{commit}}"])
-    except subprocess.CalledProcessError as error:
-        shallow = git(["git", "rev-parse", "--is-shallow-repository"]).stdout.strip()
-        if shallow != b"true":
-            raise ValueError("producer commit must exist") from error
-        expected = {
-            path: digest(frozen[path]) for path in INPUT_PATHS if path.endswith(".py")
-        }
-        if producer_executable_attestation != expected:
-            raise ValueError("producer executable attestation must be exact") from error
-        return
+    _git_output(
+        root, ["cat-file", "-e", f"{commit}^{{commit}}"], "producer commit must exist"
+    )
     for path in (item for item in INPUT_PATHS if item.endswith(".py")):
-        try:
-            blob = git(["git", "show", f"{commit}:{path}"]).stdout
-        except subprocess.CalledProcessError as error:
-            raise ValueError("producer commit must contain every executable") from error
+        blob = _git_output(
+            root,
+            ["show", f"{commit}:{path}"],
+            "producer commit must contain every executable",
+        )
         if blob != frozen[path]:
             raise ValueError(f"producer executable blob does not match current {path}")
 

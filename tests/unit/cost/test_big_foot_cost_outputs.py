@@ -5,13 +5,17 @@ from __future__ import annotations
 import csv
 import hashlib
 import importlib.util
+import inspect
 import json
 import shutil
 import subprocess
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
+
+from tests.unit.cost import test_big_foot_cost_output_hardening as hardening
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDER_PATH = ROOT / "scripts/cost/build_big_foot_cost_map.py"
@@ -354,13 +358,24 @@ def test_owner_decision_and_external_send_remain_pending(source_repo, tmp_path) 
     )
 
 
+def test_production_has_no_attestation_bypass_and_normalizes_git_errors(
+    monkeypatch,
+) -> None:
+    builder = _builder()
+    parameters = inspect.signature(builder.build_outputs).parameters
+    assert "producer_executable_attestation" not in parameters
+    values = iter(("head", "base pr-head"))
+    monkeypatch.setitem(hardening.__dict__, "_git", lambda *args: next(values))
+    assert hardening.trusted_artifact_commit(ROOT) == "pr-head"
+    module = importlib.import_module("worldenergydata.cost.timeseries.evidence_pack")
+    monkeypatch.setattr(module.subprocess, "run", Mock(side_effect=OSError))
+    with pytest.raises(ValueError, match="producer commit must exist"):
+        builder.validate_producer(ROOT, "0" * 40, {})
+
+
 def test_checked_in_outputs_regenerate_from_manifest_producer() -> None:
     manifest = json.loads((ROOT / MANIFEST_REL).read_text(encoding="utf-8"))
-    executable = {
-        item["path"]: item["sha256"]
-        for item in manifest["inputs"]
-        if item["path"].endswith(".py")
-    }
+    hardening.hydrate_trusted_producer_history(ROOT, manifest["producer"]["commit"])
     output = ROOT / ".superpowers/sdd/checked-output"
     if output.exists():
         shutil.rmtree(output)
@@ -370,7 +385,6 @@ def test_checked_in_outputs_regenerate_from_manifest_producer() -> None:
             output_root=output,
             source_date_epoch=manifest["generated_at"]["epoch"],
             producer_commit=manifest["producer"]["commit"],
-            producer_executable_attestation=executable,
         )
         assert all(
             (output / path).read_bytes() == (ROOT / path).read_bytes()

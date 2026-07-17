@@ -1,5 +1,4 @@
 import csv
-import hashlib
 import importlib.util
 import locale
 import shutil
@@ -23,6 +22,38 @@ def _builder():
     return module
 
 
+def _git(root: Path, *arguments: str) -> str:
+    try:
+        return subprocess.check_output(["git", *arguments], cwd=root, text=True).strip()
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise ValueError("trusted producer history unavailable") from error
+
+
+def _has_commit(root: Path, commit: str) -> bool:
+    try:
+        _git(root, "cat-file", "-e", f"{commit}^{{commit}}")
+        return True
+    except ValueError:
+        return False
+
+
+def trusted_artifact_commit(root: Path) -> str:
+    head = _git(root, "rev-parse", "HEAD")
+    parents = _git(root, "show", "-s", "--format=%P", "HEAD").split()
+    return parents[1] if len(parents) == 2 else head
+
+
+def hydrate_trusted_producer_history(root: Path, producer: str) -> None:
+    artifact = trusted_artifact_commit(root)
+    if not _has_commit(root, producer):
+        if _git(root, "rev-parse", "--is-shallow-repository") != "true":
+            raise ValueError("unavailable producer requires a shallow repository")
+        _git(root, "fetch", "--no-tags", "--unshallow", "origin", artifact)
+    if not _has_commit(root, producer):
+        raise ValueError("producer commit remains unavailable")
+    _git(root, "merge-base", "--is-ancestor", producer, artifact)
+
+
 @pytest.fixture()
 def source_repo(tmp_path: Path) -> tuple[Path, str]:
     root = tmp_path / "repo"
@@ -30,21 +61,12 @@ def source_repo(tmp_path: Path) -> tuple[Path, str]:
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(ROOT / relative, target)
-    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
-    subprocess.run(
-        ["git", "config", "user.email", "test@example.com"], cwd=root, check=True
-    )
-    subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
-    subprocess.run(["git", "add", "."], cwd=root, check=True)
-    subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
-    commit = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=root,
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout.strip()
-    return root, commit
+    _git(root, "init", "-q")
+    _git(root, "config", "user.email", "test@example.com")
+    _git(root, "config", "user.name", "Test")
+    _git(root, "add", ".")
+    _git(root, "commit", "-qm", "fixture")
+    return root, _git(root, "rev-parse", "HEAD")
 
 
 def _rewrite(path: Path, mutate) -> None:
@@ -147,59 +169,40 @@ def test_producer_commit_pins_every_executable_helper(
     root, commit = source_repo
     path = root / relative
     path.write_bytes(path.read_bytes() + b"\n# dirty mutation\n")
-    attestation = {
-        item: hashlib.sha256((root / item).read_bytes()).hexdigest()
-        for item in _builder().INPUT_PATHS
-        if item.endswith(".py")
-    }
-    options = {"producer_executable_attestation": attestation}
     with pytest.raises(ValueError, match="executable blob does not match"):
-        _generate(root, tmp_path / "mismatch", commit, **options)
+        _generate(root, tmp_path / "mismatch", commit)
 
 
-def test_shallow_checkout_requires_exact_executable_attestation(
-    source_repo, tmp_path
+def test_shallow_checkout_hydrates_only_trusted_producer_history(
+    source_repo, tmp_path: Path
 ) -> None:
     origin, producer = source_repo
-    marker = origin / "unrelated.txt"
-    marker.write_text("second commit\n", encoding="utf-8")
-    subprocess.run(["git", "add", marker.name], cwd=origin, check=True)
-    subprocess.run(["git", "commit", "-qm", "unrelated"], cwd=origin, check=True)
+    hydrate_trusted_producer_history(origin, producer)
+    (origin / "unrelated.txt").write_text("unrelated\n", encoding="utf-8")
+    _git(origin, "add", "unrelated.txt")
+    _git(origin, "commit", "-qm", "unrelated")
+    baseline = tmp_path / "baseline"
+    _generate(origin, baseline, producer)
+    untrusted = tmp_path / "untrusted"
+    _git(tmp_path, "clone", "-q", "--depth", "1", origin.as_uri(), str(untrusted))
+    _git(untrusted, "remote", "remove", "origin")
+    with pytest.raises(ValueError, match="trusted producer history"):
+        hydrate_trusted_producer_history(untrusted, producer)
     root = tmp_path / "shallow"
-    subprocess.run(
-        ["git", "clone", "-q", "--depth", "1", origin.as_uri(), str(root)],
-        check=True,
+    _git(tmp_path, "clone", "-q", "--depth", "1", origin.as_uri(), str(root))
+    assert not _has_commit(root, producer)
+    hydrate_trusted_producer_history(root, producer)
+    hydrated = tmp_path / "hydrated"
+    _generate(root, hydrated, producer)
+    assert all(
+        (baseline / item).read_bytes() == (hydrated / item).read_bytes()
+        for item in (HTML, CSV, MANIFEST)
     )
-    executable = [path for path in _builder().INPUT_PATHS if path.endswith(".py")]
-    attestation = {
-        path: hashlib.sha256((root / path).read_bytes()).hexdigest()
-        for path in executable
-    }
-
-    def generate(name, value):
-        _generate(
-            root, tmp_path / name, producer, producer_executable_attestation=value
-        )
-
-    assert (root / ".git/shallow").is_file()
-    generate("valid", attestation)
-    invalid = [
-        {key: value for key, value in attestation.items() if key != executable[0]},
-        {**attestation, "extra.py": "0" * 64},
-        {**attestation, executable[0]: "0" * 64},
-    ]
-    (root / executable[1]).write_bytes((root / executable[1]).read_bytes() + b"dirty")
-    invalid.append(attestation)
-    for index, candidate in enumerate(invalid):
-        with pytest.raises(ValueError, match="attestation"):
-            generate(f"invalid-{index}", candidate)
+    fake = "0" * 40
+    with pytest.raises(ValueError):
+        hydrate_trusted_producer_history(origin, fake)
     with pytest.raises(ValueError, match="producer commit must exist"):
-        _generate(
-            origin,
-            tmp_path / "non-shallow",
-            "0" * 40,
-            producer_executable_attestation=attestation,
-        )
+        _generate(root, tmp_path / "fabricated", fake)
 
 
 def test_build_restores_process_locale_on_success_and_failure(
