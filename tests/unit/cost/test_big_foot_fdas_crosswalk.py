@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+from collections import Counter
 from decimal import Decimal
 from pathlib import Path
 
@@ -188,15 +189,21 @@ def test_drilling_range_citation_resolves_big_foot_rows_and_days() -> None:
 
 
 def test_crosswalk_pins_native_units_and_currencies() -> None:
+    located_rows = [row for row in _rows() if row["WORKBOOK_CELL"]]
+    locator_counts = Counter(
+        (row["WORKBOOK_FILE"], row["WORKBOOK_CELL"]) for row in located_rows
+    )
     located = {
         (row["WORKBOOK_FILE"], row["WORKBOOK_CELL"]): (
             row["VALUE_UNIT"],
             row["CURRENCY"],
         )
-        for row in _rows()
-        if row["WORKBOOK_CELL"]
+        for row in located_rows
     }
 
+    assert locator_counts == Counter(
+        {locator: 1 for locator in EXPECTED_UNITS_AND_CURRENCIES}
+    )
     assert located == EXPECTED_UNITS_AND_CURRENCIES
 
 
