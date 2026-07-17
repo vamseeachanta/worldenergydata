@@ -41,6 +41,10 @@ class ObservedContribution:
     counting_disposition: Literal["included", "excluded", "overlap"]
     value_basis: str = "point"
 
+    def __post_init__(self) -> None:
+        if self.amount is not None and self.amount.low < 0:
+            raise ValueError("negative monetary contribution")
+
     @classmethod
     def point(cls, **values: Any) -> ObservedContribution:
         value = values.pop("value")
@@ -88,6 +92,23 @@ class AllocationBand:
     confidence: Literal["low"] = "low"
 
 
+@dataclass(frozen=True)
+class AwardReference:
+    award_id: str
+    additive: bool
+
+
+@dataclass(frozen=True)
+class JointScenario:
+    scenario_id: str
+    shares: dict[str, Decimal]
+    derivation: str = "assumed"
+    status: str = "proposed"
+    confidence: str = "low"
+    reuse_allowed: bool = False
+    rationale: str = "Big Foot TLP pilot joint allocation; not a disclosure"
+
+
 class BandedAllocations(dict[str, AllocationBand]):
     additive = False
 
@@ -98,7 +119,7 @@ class BigFootEvidence:
     linked_requirement_ids: tuple[str, ...]
     contributions: tuple[ObservedContribution, ...]
     target_basis: ComparisonBasis
-    amount_by_requirement: dict[str, ClosedInterval]
+    award_references_by_requirement: dict[str, tuple[AwardReference, ...]]
 
 
 @dataclass(frozen=True)
@@ -108,6 +129,11 @@ class TargetReconciliation:
     target_kind: str
     target_basis: str
     target_vintage: str
+    currency: str
+    provenance: str
+    confidence: str
+    source_title: str
+    source_url: str
     accounting: BottomUpReconciliation
 
 
@@ -121,9 +147,9 @@ def _shares(values: str) -> dict[str, Decimal]:
 
 
 BIG_FOOT_JOINT_SCENARIOS = {
-    "reference": _shares("0.29 0.06 0.12 0.22 0.06 0.07 0.12 0.06"),
-    "host_heavy": _shares("0.38 0.05 0.10 0.17 0.05 0.06 0.13 0.06"),
-    "well_heavy": _shares("0.20 0.08 0.15 0.28 0.07 0.08 0.09 0.05"),
+    "reference": JointScenario("reference", _shares("0.29 0.06 0.12 0.22 0.06 0.07 0.12 0.06")),
+    "host_heavy": JointScenario("host_heavy", _shares("0.38 0.05 0.10 0.17 0.05 0.06 0.13 0.06")),
+    "well_heavy": JointScenario("well_heavy", _shares("0.20 0.08 0.15 0.28 0.07 0.08 0.09 0.05")),
 }
 
 
@@ -154,9 +180,7 @@ def _award_key(locator: str) -> tuple[str, str]:
     return fields["AWARD_YEAR"], fields["CONTRACTOR"]
 
 
-def _contribution_from_link(
-    link: dict[str, str], source: dict[str, str], target: ComparisonBasis
-) -> ObservedContribution:
+def _contribution_from_link(link: dict[str, str], source: dict[str, str], target: ComparisonBasis) -> ObservedContribution:
     value = Decimal(source["VALUE_LOW_MM"])
     included = link["COUNTING_DISPOSITION"] == "included"
     ownership = "gross" if included else "third_party"
@@ -174,6 +198,15 @@ def _contribution_from_link(
     )
 
 
+def requirement_award_references(rows: tuple[ObservedContribution, ...]) -> dict[str, tuple[AwardReference, ...]]:
+    references: dict[str, list[AwardReference]] = {}
+    for row in rows:
+        reference = AwardReference(row.award_id, len(row.requirement_ids) == 1)
+        for requirement_id in row.requirement_ids:
+            references.setdefault(requirement_id, []).append(reference)
+    return {key: tuple(value) for key, value in references.items()}
+
+
 def load_big_foot_evidence(data_root: Path | None = None) -> BigFootEvidence:
     root = data_root or _find_data_root()
     requirements = _read_csv(root / "project_asset_requirements.csv")
@@ -186,17 +219,10 @@ def load_big_foot_evidence(data_root: Path | None = None) -> BigFootEvidence:
         _contribution_from_link(link, sources[_award_key(link["SOURCE_LOCATOR"])], target)
         for link in links
     )
-    amount_by_requirement = {
-        requirement_id: row.amount
-        for row in contributions
-        if row.counting_disposition == "included" and row.amount is not None
-        for requirement_id in row.requirement_ids
-    }
     requirement_ids = tuple(row["REQUIREMENT_ID"] for row in requirements)
-    linked_ids = tuple(sorted(rid for row in contributions
-                              for rid in row.requirement_ids))
-    return BigFootEvidence(requirement_ids, linked_ids, contributions, target,
-                           amount_by_requirement)
+    linked_ids = tuple(sorted(rid for row in contributions for rid in row.requirement_ids))
+    references = requirement_award_references(contributions)
+    return BigFootEvidence(requirement_ids, linked_ids, contributions, target, references)
 
 
 def _event_key(locator: str) -> tuple[str, str]:
@@ -220,41 +246,44 @@ def _load_big_foot_events(data_root: Path) -> tuple[dict[str, str], ...]:
     return tuple(rows)
 
 
-def reconcile_big_foot_targets(
-    data_root: Path | None = None,
-) -> dict[str, TargetReconciliation]:
+def reconcile_big_foot_targets(data_root: Path | None = None) -> dict[str, TargetReconciliation]:
     root = data_root or _find_data_root()
     evidence = load_big_foot_evidence(root)
-    results = {}
-    for event in _load_big_foot_events(root):
-        event_id = event["OPAQUE_ID"]
-        target = Decimal(event["VALUE_MM"])
-        accounting = reconcile_bottom_up(
-            target,
-            evidence.target_basis,
-            evidence.contributions,
-            target_event_id=event_id,
-        )
-        results[event_id] = TargetReconciliation(
-            event_id, target, event["KIND"], event["BASIS"],
-            event["STATEMENT_DATE"], accounting)
-    return results
+    rows = _load_big_foot_events(root)
+    return {row["OPAQUE_ID"]: reconcile_target_event(row, evidence) for row in rows}
 
 
-def _validate_mapping(target: ComparisonBasis, row: ObservedContribution) -> None:
-    if row.comparison_basis is None:
-        raise ValueError("comparison_basis mapping is required")
+def reconcile_target_event(event: dict[str, str], evidence: BigFootEvidence) -> TargetReconciliation:
+    basis = evidence.target_basis
+    if event["CURRENCY"] != basis.currency:
+        raise ValueError("incompatible target currency")
+    markers = ("real", "constant-money", "constant money")
+    if any(marker in event["BASIS"].lower() for marker in markers):
+        raise ValueError("incompatible target price basis")
+    event_id, target = event["OPAQUE_ID"], Decimal(event["VALUE_MM"])
+    accounting = reconcile_bottom_up(
+        target, basis, evidence.contributions, target_event_id=event_id
+    )
+    return TargetReconciliation(
+        event_id, target, event["KIND"], event["BASIS"], event["STATEMENT_DATE"],
+        event["CURRENCY"], event["PROVENANCE"], event["CONFIDENCE"],
+        event["SOURCE_TITLE"], event["SOURCE_URL"], accounting)
+
+
+def _validate_contribution(target: ComparisonBasis, row: ObservedContribution) -> None:
     for field in ("currency", "price_basis"):
         if getattr(row.source_basis, field) != getattr(target, field):
             raise ValueError(f"incompatible source {field}")
+    if row.counting_disposition == "excluded":
+        return
+    if row.comparison_basis is None:
+        raise ValueError("comparison_basis mapping is required")
     for field in _BASIS_FIELDS:
         if getattr(row.comparison_basis, field) != getattr(target, field):
             raise ValueError(f"incompatible {field}")
 
 
-def _dedupe_contributions(
-    rows: tuple[ObservedContribution, ...],
-) -> dict[str, ObservedContribution]:
+def _dedupe_contributions(rows: tuple[ObservedContribution, ...]) -> dict[str, ObservedContribution]:
     unique = {}
     for row in rows:
         prior = unique.get(row.award_id)
@@ -274,15 +303,11 @@ def _sum_intervals(rows: tuple[ObservedContribution, ...]) -> ClosedInterval:
     return ClosedInterval(low, high)
 
 
-def interval_residual(
-    target: ClosedInterval, eligible: ClosedInterval
-) -> ClosedInterval:
+def interval_residual(target: ClosedInterval, eligible: ClosedInterval) -> ClosedInterval:
     return ClosedInterval(target.low - eligible.high, target.high - eligible.low)
 
 
-def _ratio_envelope(
-    numerator: ClosedInterval, denominator: ClosedInterval
-) -> ClosedInterval | None:
+def _ratio_envelope(numerator: ClosedInterval, denominator: ClosedInterval) -> ClosedInterval | None:
     if denominator.low <= 0:
         return None
     values = tuple(
@@ -293,9 +318,7 @@ def _ratio_envelope(
     return ClosedInterval(min(values), max(values))
 
 
-def compute_interval_metrics(
-    target: ClosedInterval, eligible: ClosedInterval
-) -> IntervalMetrics:
+def compute_interval_metrics(target: ClosedInterval, eligible: ClosedInterval) -> IntervalMetrics:
     residual = interval_residual(target, eligible)
     return IntervalMetrics(
         residual,
@@ -304,26 +327,19 @@ def compute_interval_metrics(
     )
 
 
-def reconcile_top_down(
-    *,
-    total: Decimal,
-    allocations: dict[str, Decimal],
-    unallocated: Decimal,
-    bottom_up_residual: Decimal,
-    quantum: Decimal = Decimal("0.01"),
-) -> TopDownAccounting:
+def reconcile_top_down(*, total: Decimal, allocations: dict[str, Decimal], unallocated: Decimal, bottom_up_residual: Decimal) -> TopDownAccounting:
     allocated = sum(allocations.values(), Decimal("0"))
-    variance = (total - allocated - unallocated).quantize(quantum)
+    variance = total - allocated - unallocated
     return TopDownAccounting(bottom_up_residual, unallocated, variance)
 
 
-def largest_remainder_allocate(
-    total: Decimal,
-    shares: dict[str, Decimal],
-    quantum: Decimal = Decimal("0.01"),
-) -> dict[str, Decimal]:
-    if total < 0 or quantum <= 0 or any(share < 0 for share in shares.values()):
-        raise ValueError("total, quantum, and shares must be nonnegative")
+def largest_remainder_allocate(total: Decimal, shares: dict[str, Decimal], quantum: Decimal = Decimal("0.01")) -> dict[str, Decimal]:
+    if quantum <= 0:
+        raise ValueError("quantum must be positive")
+    if total < 0 or any(share < 0 for share in shares.values()):
+        raise ValueError("total and shares must be nonnegative")
+    if total % quantum:
+        raise ValueError("total must be quantum-aligned")
     if sum(shares.values(), Decimal("0")) != Decimal("1.00"):
         raise ValueError("scenario shares must sum exactly to 1.00")
     raw = {requirement_id: total * share for requirement_id, share in shares.items()}
@@ -336,13 +352,15 @@ def largest_remainder_allocate(
     ranked = sorted(raw, key=lambda key: (-(raw[key] - allocated[key]), key))
     for requirement_id in ranked[:units]:
         allocated[requirement_id] += quantum
+    if sum(allocated.values(), Decimal("0")) != total:
+        raise ValueError("allocation failed to conserve total")
     return {key: allocated[key] for key in sorted(allocated)}
 
 
 def allocate_big_foot_bands(total: Decimal) -> BandedAllocations:
     allocations = tuple(
-        largest_remainder_allocate(total, shares)
-        for shares in BIG_FOOT_JOINT_SCENARIOS.values()
+        largest_remainder_allocate(total, scenario.shares)
+        for scenario in BIG_FOOT_JOINT_SCENARIOS.values()
     )
     return BandedAllocations({
         requirement_id: AllocationBand(
@@ -353,14 +371,7 @@ def allocate_big_foot_bands(total: Decimal) -> BandedAllocations:
     })
 
 
-def reconcile_bottom_up(
-    target_total: Decimal | ClosedInterval,
-    target_basis: ComparisonBasis,
-    contributions: tuple[ObservedContribution, ...],
-    *,
-    evidence_vintage: str = "current_registry",
-    target_event_id: str | None = None,
-) -> BottomUpReconciliation:
+def reconcile_bottom_up(target_total: Decimal | ClosedInterval, target_basis: ComparisonBasis, contributions: tuple[ObservedContribution, ...], *, evidence_vintage: str = "current_registry", target_event_id: str | None = None) -> BottomUpReconciliation:
     target = (
         target_total
         if isinstance(target_total, ClosedInterval)
@@ -368,8 +379,7 @@ def reconcile_bottom_up(
     )
     unique = _dedupe_contributions(contributions)
     for row in unique.values():
-        if row.counting_disposition == "included":
-            _validate_mapping(target_basis, row)
+        _validate_contribution(target_basis, row)
     grouped = {
         disposition: tuple(
             row
@@ -382,16 +392,7 @@ def reconcile_bottom_up(
     excluded = _sum_intervals(grouped["excluded"])
     overlap = _sum_intervals(grouped["overlap"])
     metrics = compute_interval_metrics(target, eligible)
-    return BottomUpReconciliation(
-        eligible,
-        excluded,
-        overlap,
-        metrics.residual,
-        metrics.coverage,
-        metrics.residual_percentage,
-        evidence_vintage,
-        target_event_id,
-        tuple(
-            sorted(row.award_id for row in unique.values() if row.amount is None)
-        ),
-    )
+    unavailable = tuple(sorted(row.award_id for row in unique.values() if row.amount is None))
+    return BottomUpReconciliation(eligible, excluded, overlap, metrics.residual,
+                                  metrics.coverage, metrics.residual_percentage,
+                                  evidence_vintage, target_event_id, unavailable)

@@ -6,19 +6,9 @@ import pytest
 
 
 def test_bottom_up_rejects_incompatible_currency_basis_scope_or_ownership():
-    from worldenergydata.cost.timeseries.cost_map import (
-        ComparisonBasis,
-        ObservedContribution,
-        reconcile_bottom_up,
-    )
+    from worldenergydata.cost.timeseries.cost_map import ComparisonBasis, ObservedContribution, reconcile_bottom_up
 
-    target = ComparisonBasis(
-        currency="USD",
-        price_basis="nominal",
-        ownership_basis="gross",
-        scope_basis="project",
-        capex_basis="project_capex",
-    )
+    target = ComparisonBasis("USD", "nominal", "gross", "project", "project_capex")
     changes = {
         "currency": "NOK",
         "price_basis": "real",
@@ -49,6 +39,17 @@ def test_bottom_up_rejects_incompatible_currency_basis_scope_or_ownership():
             counting_disposition="included",
         )
         with pytest.raises(ValueError, match=field):
+            reconcile_bottom_up(Decimal("4000"), target, (row,))
+    for disposition in ("excluded", "overlap"):
+        row = ObservedContribution.point(
+            award_id=f"awd-{disposition}",
+            requirement_ids=("req-000005",),
+            value=Decimal("10"),
+            source_basis=ComparisonBasis("EUR", "real", "gross", "component", "component_capex"),
+            comparison_basis=target if disposition == "overlap" else None,
+            counting_disposition=disposition,
+        )
+        with pytest.raises(ValueError, match="currency"):
             reconcile_bottom_up(Decimal("4000"), target, (row,))
 
 
@@ -81,6 +82,21 @@ def test_bundled_link_contributes_value_once():
     )
     with pytest.raises(ValueError, match="conflicting duplicate award_id"):
         reconcile_bottom_up(Decimal("4000"), basis, (bundled, conflicting))
+    from worldenergydata.cost.timeseries.cost_map import requirement_award_references
+
+    references = requirement_award_references((bundled,))
+    assert references["req-000004"][0].additive is False
+    assert references["req-000005"][0].additive is False
+    assert not hasattr(references["req-000004"][0], "amount")
+    with pytest.raises(ValueError, match="negative"):
+        ObservedContribution.point(
+            award_id="awd-negative",
+            requirement_ids=("req-000005",),
+            value=Decimal("-1"),
+            source_basis=basis,
+            comparison_basis=basis,
+            counting_disposition="included",
+        )
 
 
 def test_synthetic_status_axis_fixture_supports_linked_midstream_excluded_and_linked_not_public():
@@ -109,10 +125,21 @@ def test_synthetic_status_axis_fixture_supports_linked_midstream_excluded_and_li
         comparison_basis=None,
         counting_disposition="excluded",
     )
-    result = reconcile_bottom_up(Decimal("4000"), target, (midstream, undisclosed))
+    overlap = ObservedContribution.point(
+        award_id="awd-overlap",
+        requirement_ids=("req-000005",),
+        value=Decimal("10"),
+        source_basis=target,
+        comparison_basis=target,
+        counting_disposition="overlap",
+    )
+    result = reconcile_bottom_up(
+        Decimal("4000"), target, (midstream, undisclosed, overlap)
+    )
 
     assert result.excluded == result.excluded.__class__(Decimal("200"), Decimal("200"))
     assert result.not_public_awards == ("awd-undisclosed",)
+    assert result.overlap.low == result.overlap.high == Decimal("10")
 
 
 def test_bottom_up_subtotal_preserves_included_excluded_overlap_and_residual():
@@ -133,7 +160,7 @@ def test_bottom_up_subtotal_preserves_included_excluded_overlap_and_residual():
     assert result.excluded == ClosedInterval(Decimal("200"), Decimal("200"))
     assert result.overlap == ClosedInterval(Decimal("0"), Decimal("0"))
     assert result.residual == ClosedInterval(Decimal("3955"), Decimal("3955"))
-    assert "req-000001" not in evidence.amount_by_requirement
+    assert "req-000001" not in evidence.award_references_by_requirement
 
 
 def test_interval_residual_uses_outward_endpoint_arithmetic():
@@ -173,10 +200,21 @@ def test_residual_unallocated_and_unreconciled_are_distinct():
     assert accounting.residual == Decimal("55.00")
     assert accounting.unallocated == Decimal("35.00")
     assert accounting.unreconciled_variance == Decimal("5.00")
+    exact = reconcile_top_down(
+        total=Decimal("1.004"),
+        allocations={"req-1": Decimal("1.000")},
+        unallocated=Decimal("0"),
+        bottom_up_residual=Decimal("0"),
+    )
+    assert exact.unreconciled_variance == Decimal("0.004")
 
 
 def test_sanction_and_outturn_reconcile_as_distinct_total_bases():
-    from worldenergydata.cost.timeseries.cost_map import reconcile_big_foot_targets
+    from worldenergydata.cost.timeseries.cost_map import (
+        load_big_foot_evidence,
+        reconcile_big_foot_targets,
+        reconcile_target_event,
+    )
 
     results = reconcile_big_foot_targets()
 
@@ -185,6 +223,31 @@ def test_sanction_and_outturn_reconcile_as_distinct_total_bases():
     assert results["evt-000003"].accounting.residual.low == Decimal("3955")
     assert results["evt-000004"].target == Decimal("5100")
     assert results["evt-000004"].accounting.residual.low == Decimal("5055")
+    outturn = results["evt-000004"]
+    assert (outturn.currency, outturn.provenance, outturn.confidence) == (
+        "USD",
+        "trade_press",
+        "low",
+    )
+    assert outturn.source_title and outturn.source_url.startswith("https://")
+    evidence = load_big_foot_evidence()
+    drift = {
+        "OPAQUE_ID": "evt-drift",
+        "VALUE_MM": "100",
+        "CURRENCY": "EUR",
+        "KIND": "sanction_estimate",
+        "BASIS": "real constant-money project cost",
+        "STATEMENT_DATE": "2020",
+        "PROVENANCE": "operator",
+        "CONFIDENCE": "high",
+        "SOURCE_TITLE": "Synthetic drift",
+        "SOURCE_URL": "https://example.com/drift",
+    }
+    with pytest.raises(ValueError, match="currency"):
+        reconcile_target_event(drift, evidence)
+    drift["CURRENCY"] = "USD"
+    with pytest.raises(ValueError, match="price basis"):
+        reconcile_target_event(drift, evidence)
 
 
 def test_current_evidence_vintage_is_not_backdated_to_sanction():
@@ -207,9 +270,16 @@ def test_each_joint_allocation_scenario_sums_exactly_to_project_total():
 
     assert tuple(BIG_FOOT_JOINT_SCENARIOS) == ("reference", "host_heavy", "well_heavy")
     for total in (Decimal("4000"), Decimal("5100")):
-        for shares in BIG_FOOT_JOINT_SCENARIOS.values():
-            assert sum(shares.values(), Decimal("0")) == Decimal("1.00")
-            allocations = largest_remainder_allocate(total, shares)
+        for scenario in BIG_FOOT_JOINT_SCENARIOS.values():
+            assert sum(scenario.shares.values(), Decimal("0")) == Decimal("1.00")
+            assert (
+                scenario.derivation,
+                scenario.status,
+                scenario.confidence,
+                scenario.reuse_allowed,
+            ) == ("assumed", "proposed", "low", False)
+            assert scenario.rationale
+            allocations = largest_remainder_allocate(total, scenario.shares)
             assert sum(allocations.values(), Decimal("0")) == total
             accounting = reconcile_top_down(
                 total=total,
@@ -233,6 +303,14 @@ def test_largest_remainder_uses_stable_requirement_id_ties():
         "req-000001": Decimal("0.02"),
         "req-000002": Decimal("0.01"),
     }
+    with pytest.raises(ValueError, match="quantum-aligned"):
+        largest_remainder_allocate(
+            Decimal("1.00"),
+            {"req-1": Decimal("0.50"), "req-2": Decimal("0.50")},
+            Decimal("0.03"),
+        )
+    with pytest.raises(ValueError, match="positive"):
+        largest_remainder_allocate(Decimal("1.00"), {"req-1": Decimal("1.00")}, Decimal("0"))
 
 
 def test_top_down_allocations_are_banded_and_marked_allocated():
