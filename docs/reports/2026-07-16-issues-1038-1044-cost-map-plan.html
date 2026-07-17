@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cost-map program plans — issues 1038–1044</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1220; --panel:#121d31; --ink:#e7eef9; --muted:#9eb0c8; --line:#29405f; --blue:#63b3ed; --gold:#f6c85f; --green:#68d391; }
+    * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 system-ui,sans-serif }
+    main { max-width:1120px; margin:auto; padding:48px 24px 80px } h1 { font-size:clamp(2rem,5vw,4rem); line-height:1; margin:.2em 0 }
+    h2 { margin-top:2.2rem } a { color:var(--blue) } .eyebrow,.meta { color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-size:.8rem }
+    .callout { border-left:4px solid var(--gold); background:var(--panel); padding:18px 22px; margin:28px 0 }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px }
+    article { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px }
+    article h3 { margin:.2rem 0 .6rem } .gate { color:var(--gold) } .parallel { color:var(--green) }
+    table { width:100%; border-collapse:collapse; background:var(--panel) } th,td { text-align:left; padding:12px; border-bottom:1px solid var(--line); vertical-align:top }
+    code { color:#b9dcff } footer { color:var(--muted); margin-top:48px }
+  </style>
+</head>
+<body><main>
+  <div class="eyebrow">Plan-review packet · 16 July 2026</div>
+  <h1>Asset costs ↔ project CAPEX</h1>
+  <p class="meta">Seven issue plans · native currency · provenance retained · no circulation</p>
+  <div class="callout"><strong>Decision boundary.</strong> The Big Foot tracer bullet will freeze the taxonomy and accounting contract. Portfolio scaling will wait for explicit owner approval of that pilot contract. None of these plans authorizes implementation or email circulation.</div>
+
+  <h2>Execution graph</h2>
+  <div class="grid">
+    <article><div class="meta">Contract</div><h3><a href="../plans/2026-07-16-issue-1039-big-foot-cost-map-pilot.md">#1039 Big Foot pilot</a></h3><p>Requirements → awards → component costs → sanction/outturn totals → timeline → FDAS cross-check.</p><p class="gate">Owner gate after pilot</p></article>
+    <article><div class="meta">Scale</div><h3><a href="../plans/2026-07-16-issue-1040-required-assets-award-coverage.md">#1040 Asset/award map</a></h3><p>Portfolio requirements, many-to-many award linkage, and separate scope/value coverage.</p></article>
+    <article><div class="meta">Parallel lane A</div><h3><a href="../plans/2026-07-16-issue-1041-bidirectional-cost-synthesis.md">#1041 Cost synthesis</a></h3><p>Bottom-up eligible contributions and top-down uncertain allocations.</p><p class="parallel">May run beside #1042</p></article>
+    <article><div class="meta">Parallel lane B</div><h3><a href="../plans/2026-07-16-issue-1042-component-cost-time-traces.md">#1042 Time traces</a></h3><p>Event histories without interpolation, silent FX, or nominal/real laundering.</p><p class="parallel">May run beside #1041</p></article>
+    <article><div class="meta">Inference</div><h3><a href="../plans/2026-07-16-issue-1043-correlated-capex-estimator.md">#1043 CAPEX estimator</a></h3><p>Observed-only training, project-group validation, empirical intervals, and fail-closed non-estimable results.</p></article>
+    <article><div class="meta">Consumer proof</div><h3><a href="../plans/2026-07-16-issue-1044-fdas-workbook-reconciliation.md">#1044 FDAS reconciliation</a></h3><p>Read-only V30 workbook inventory, component crosswalk, classified variance, and integrated report.</p></article>
+  </div>
+
+  <h2>Shared accounting contract</h2>
+  <table><thead><tr><th>Dimension</th><th>Rule</th></tr></thead><tbody>
+    <tr><td>Evidence</td><td>Disclosed, award-derived, allocated, modeled, assumed, TODO, and not-public will remain distinct.</td></tr>
+    <tr><td>Money</td><td>Currency, nominal/real basis, basis year, ownership, scope, phase, and <code>capex_basis</code> must match before addition.</td></tr>
+    <tr><td>Ranges</td><td>Point, range, band, backlog, lease, combined, midstream, and not-public semantics will be preserved.</td></tr>
+    <tr><td>Overlap</td><td>One commercial award may link to many assets but will contribute monetary value at most once.</td></tr>
+    <tr><td>Residual</td><td>Included, excluded, overlap, unallocated, residual, and unreconciled values will be visible.</td></tr>
+    <tr><td>Model</td><td>Comparable cohort, feature vintage, validation error, and prediction interval will accompany every estimate; insufficient cohorts will return non-estimable.</td></tr>
+  </tbody></table>
+
+  <h2>Planning baseline</h2>
+  <p>80 projects; 67 with disclosed USD CAPEX; 110 awards across 29 projects; 19 project-cost statements across 11 projects; 49 revision events across 21 projects. Build outputs will recompute these counts because narrative documentation can lag the CSVs.</p>
+  <p>Program plan: <a href="../plans/2026-07-16-issue-1038-cost-map-program.md">#1038 bidirectional asset-to-project cost map</a>.</p>
+  <footer>Planning artifact only. Source workbooks will remain read-only. Stakeholder circulation remains owner-gated under #1017.</footer>
+</main></body></html>

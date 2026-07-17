@@ -1,0 +1,271 @@
+{
+  "contract_version": "1.0.0",
+  "controlled_ids": {
+    "awards": [
+      "awd-000001",
+      "awd-000002"
+    ],
+    "events": [
+      "evt-000001",
+      "evt-000002",
+      "evt-000003",
+      "evt-000004",
+      "evt-000005"
+    ],
+    "projects": [
+      "prj-000001"
+    ],
+    "requirements": [
+      "req-000001",
+      "req-000002",
+      "req-000003",
+      "req-000004",
+      "req-000005",
+      "req-000006",
+      "req-000007",
+      "req-000008"
+    ]
+  },
+  "decimal_policy": {
+    "allocation_rounding": "largest_remainder",
+    "arithmetic": "Decimal",
+    "inverse_rounding": "outward",
+    "output_quantum": "0.01 USD MM",
+    "rounding_boundary": "output_only",
+    "source_scale": "native"
+  },
+  "generated_at": {
+    "epoch": 1700000000,
+    "locale": "C",
+    "policy": "SOURCE_DATE_EPOCH",
+    "utc": "2023-11-14T22:13:20Z"
+  },
+  "inputs": [
+    {
+      "path": "config/analysis/lower_tertiary/fields/big_foot.yml",
+      "sha256": "605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e"
+    },
+    {
+      "path": "data/modules/cost/curated/award_asset_links.csv",
+      "sha256": "2064ee7b514613b87d2e67aa6eb2e8eba6e7261a7b29cd7e2d57ffc150a7c70f"
+    },
+    {
+      "path": "data/modules/cost/curated/contract_awards.csv",
+      "sha256": "7a5769b36f87a3d5a4290d165f338ce829d13d00b83cacdc81e8a639b5496dc1"
+    },
+    {
+      "path": "data/modules/cost/curated/cost_award_identity.csv",
+      "sha256": "bdddddc35623f8296d9f37baf35a93b45ef600df9f8c80c4f493ca75531360e2"
+    },
+    {
+      "path": "data/modules/cost/curated/cost_event_identity.csv",
+      "sha256": "fc7d2b388b56a6c63242d860244ca64a39437b15c1e8f87ab277af25945065ec"
+    },
+    {
+      "path": "data/modules/cost/curated/cost_project_identity.csv",
+      "sha256": "b8848a968b8d5b2d38bc18dbabfdc6c03f81c7f903fb6d6f9fa24cfca725d6bd"
+    },
+    {
+      "path": "data/modules/cost/curated/cost_requirement_identity.csv",
+      "sha256": "acdaa530a1ba1659e933420a1132cbab089c73270524b1efee84b379967c0c6d"
+    },
+    {
+      "path": "data/modules/cost/curated/cost_revision_trails.csv",
+      "sha256": "6e339cc7f4a8590e8b31eb76f087cb35af26843bfaf1433fba231073b07d290b"
+    },
+    {
+      "path": "data/modules/cost/curated/fdas_project_cost_crosswalk.csv",
+      "sha256": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236"
+    },
+    {
+      "path": "data/modules/cost/curated/project_asset_requirements.csv",
+      "sha256": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80"
+    },
+    {
+      "path": "data/modules/cost/curated/sanctioned_projects.csv",
+      "sha256": "f938afc20d9aa3e173686e74dfda4ba19c4d41ccc1a3ae36b03b4074202807bb"
+    },
+    {
+      "path": "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx",
+      "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
+    },
+    {
+      "path": "docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx",
+      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04"
+    },
+    {
+      "path": "docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx",
+      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map.py",
+      "sha256": "fd23acf96e30abfcecb90b98a498607345aa1bd7ce154d1558d59741a0c9e87c"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map_schema.py",
+      "sha256": "af6fd0be89eb97932c89416a0a24a538a0d7a9e2093e187c69322a23e300c466"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
+      "sha256": "bbef7d50ff8ba90c5b2b1af9b3e2bcfd3998308d720a77978f4b2c09799371f5"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
+      "sha256": "6f29fae7a443d8d8ff19927da6f0c8743895ee14dd4da5500de0dbbbbf7d59af"
+    },
+    {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/project_trace.py",
+      "sha256": "5b78e7d24b096bf10e11ec4246ecd49477766eb318c13da8e0e8683c7e98db34"
+    },
+    {
+      "path": "scripts/cost/build_big_foot_cost_map.py",
+      "sha256": "1c97155bca9a57aadc0e1dd51feb8ba4986340df286fc69cd3aff014e92dc2fa"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "reports/cost/big_foot_cost_map.html",
+      "sha256": "f541c0f8b5bd1d54d67baed2c56b0d70df3122641c20730bc1e1ef22a2135768"
+    },
+    {
+      "path": "reports/cost/big_foot_cost_map_reconciliation.csv",
+      "sha256": "5312315baa7dc59233910dc093cb5c1515b1b71c2e91d383fd85ebfea1959a35"
+    }
+  ],
+  "owner_decision": {
+    "items": [
+      "taxonomy",
+      "accounting",
+      "scenarios",
+      "portfolio reuse"
+    ],
+    "status": "pending"
+  },
+  "policies": {
+    "email": "not_sent",
+    "external_send": "pending_owner_authorization",
+    "reuse_allowed": false,
+    "workbooks": "read_only"
+  },
+  "producer": {
+    "builder_path": "scripts/cost/build_big_foot_cost_map.py",
+    "builder_sha256": "1c97155bca9a57aadc0e1dd51feb8ba4986340df286fc69cd3aff014e92dc2fa",
+    "commit": "80b6560a947af49057dd4bbc7364b88ad8867db3",
+    "commit_policy": "exact_builder_containing_commit",
+    "tool_version": "1.2.0"
+  },
+  "scenarios": [
+    {
+      "confidence": "low",
+      "derivation": "assumed",
+      "reuse_allowed": false,
+      "scenario_id": "reference",
+      "shares": {
+        "req-000001": "0.29",
+        "req-000002": "0.06",
+        "req-000003": "0.12",
+        "req-000004": "0.22",
+        "req-000005": "0.06",
+        "req-000006": "0.07",
+        "req-000007": "0.12",
+        "req-000008": "0.06"
+      },
+      "status": "proposed"
+    },
+    {
+      "confidence": "low",
+      "derivation": "assumed",
+      "reuse_allowed": false,
+      "scenario_id": "host_heavy",
+      "shares": {
+        "req-000001": "0.38",
+        "req-000002": "0.05",
+        "req-000003": "0.10",
+        "req-000004": "0.17",
+        "req-000005": "0.05",
+        "req-000006": "0.06",
+        "req-000007": "0.13",
+        "req-000008": "0.06"
+      },
+      "status": "proposed"
+    },
+    {
+      "confidence": "low",
+      "derivation": "assumed",
+      "reuse_allowed": false,
+      "scenario_id": "well_heavy",
+      "shares": {
+        "req-000001": "0.20",
+        "req-000002": "0.08",
+        "req-000003": "0.15",
+        "req-000004": "0.28",
+        "req-000005": "0.07",
+        "req-000006": "0.08",
+        "req-000007": "0.09",
+        "req-000008": "0.05"
+      },
+      "status": "proposed"
+    }
+  ],
+  "schema": {
+    "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map_schema.py",
+    "sha256": "af6fd0be89eb97932c89416a0a24a538a0d7a9e2093e187c69322a23e300c466"
+  },
+  "workbooks": [
+    {
+      "allowlisted_cells": [
+        "Sheet1!A17:L54"
+      ],
+      "extraction": {
+        "library": "openpyxl",
+        "mode": "read_only,data_only",
+        "version": "3.1.5"
+      },
+      "file": "drilling_and_completion_days.xlsx",
+      "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
+    },
+    {
+      "allowlisted_cells": [
+        "Project_Summary!E3",
+        "Project_Summary!F3",
+        "Project_Summary!G3",
+        "Project_Summary!H3",
+        "Project_Summary!I3",
+        "Project_Summary!J3",
+        "Project_Summary!K3",
+        "Project_Summary!L3",
+        "Project_Summary!M3",
+        "Project_Summary!P3",
+        "Project_Summary!Q3"
+      ],
+      "extraction": {
+        "library": "openpyxl",
+        "mode": "read_only,data_only",
+        "version": "3.1.5"
+      },
+      "file": "financial_project_summary.xlsx",
+      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04"
+    },
+    {
+      "allowlisted_cells": [
+        "assumptions!D10",
+        "assumptions!D12",
+        "assumptions!D13",
+        "assumptions!D15",
+        "assumptions!D16",
+        "assumptions!D17",
+        "assumptions!D36",
+        "assumptions!D37",
+        "assumptions!D38",
+        "assumptions!D9"
+      ],
+      "extraction": {
+        "library": "openpyxl",
+        "mode": "read_only,data_only",
+        "version": "3.1.5"
+      },
+      "file": "lease_assumptions.xlsx",
+      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407"
+    }
+  ]
+}

@@ -96,6 +96,13 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#809](https://github.com/vamseeachanta/worldenergydata/issues/809) | [spain-cores-refresh-job](2026-07-05-issue-809-spain-cores-refresh-job.md) | plan-review | 2026-07-05 |
 | [#810](https://github.com/vamseeachanta/worldenergydata/issues/810) | [spain-cores-field-development-report](2026-07-05-issue-810-spain-cores-field-development-report.md) | plan-approved | 2026-07-05 |
 | [#847](https://github.com/vamseeachanta/worldenergydata/issues/847) | [boem-reserves-discovery-ingest](2026-07-06-issue-847-boem-reserves-discovery-ingest.md) | plan-approved | 2026-07-06 |
+| [#1038](https://github.com/vamseeachanta/worldenergydata/issues/1038) | [cost-map-program](2026-07-16-issue-1038-cost-map-program.md) | plan-approved | 2026-07-16 |
+| [#1039](https://github.com/vamseeachanta/worldenergydata/issues/1039) | [big-foot-cost-map-pilot](2026-07-16-issue-1039-big-foot-cost-map-pilot.md) | plan-approved | 2026-07-16 |
+| [#1040](https://github.com/vamseeachanta/worldenergydata/issues/1040) | [required-assets-award-coverage](2026-07-16-issue-1040-required-assets-award-coverage.md) | plan-approved | 2026-07-16 |
+| [#1041](https://github.com/vamseeachanta/worldenergydata/issues/1041) | [bidirectional-cost-synthesis](2026-07-16-issue-1041-bidirectional-cost-synthesis.md) | plan-approved | 2026-07-16 |
+| [#1042](https://github.com/vamseeachanta/worldenergydata/issues/1042) | [component-cost-time-traces](2026-07-16-issue-1042-component-cost-time-traces.md) | plan-approved | 2026-07-16 |
+| [#1043](https://github.com/vamseeachanta/worldenergydata/issues/1043) | [correlated-capex-estimator](2026-07-16-issue-1043-correlated-capex-estimator.md) | plan-approved | 2026-07-16 |
+| [#1044](https://github.com/vamseeachanta/worldenergydata/issues/1044) | [fdas-workbook-reconciliation](2026-07-16-issue-1044-fdas-workbook-reconciliation.md) | plan-approved | 2026-07-16 |
 
 ## Closed / superseded plans
 
