@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import csv
-from decimal import Decimal
 import hashlib
+from decimal import Decimal
 from pathlib import Path
 
 
@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[3]
 CURATED = ROOT / "data/modules/cost/curated"
 FDAS = ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
 CROSSWALK = CURATED / "fdas_project_cost_crosswalk.csv"
+ABSOLUTE_PATH_PREFIXES = ("/home/", "/mnt/")  # abs-path-allowed
 EXPECTED_COLUMNS = (
     "PROJECT_ID",
     "WORKBOOK_FILE",
@@ -75,6 +76,26 @@ ALLOWLISTED_COST_CELLS = {
         "D38",
     },
 }
+EXPECTED_UNITS_AND_CURRENCIES = {
+    **{
+        ("financial_project_summary.xlsx", cell): ("USD", "USD")
+        for cell in ALLOWLISTED_COST_CELLS["financial_project_summary.xlsx"]
+    },
+    ("lease_assumptions.xlsx", "D9"): ("USD MM/day", "USD"),
+    ("lease_assumptions.xlsx", "D10"): ("USD MM", "USD"),
+    ("lease_assumptions.xlsx", "D12"): ("USD MM/well", "USD"),
+    ("lease_assumptions.xlsx", "D13"): ("USD MM/producer", "USD"),
+    ("lease_assumptions.xlsx", "D15"): ("USD MM/facility", "USD"),
+    ("lease_assumptions.xlsx", "D16"): ("USD/bbl", "USD"),
+    ("lease_assumptions.xlsx", "D17"): ("USD MM/year", "USD"),
+    ("lease_assumptions.xlsx", "D36"): ("USD MM/pump", "USD"),
+    ("lease_assumptions.xlsx", "D37"): ("USD MM/pump", "USD"),
+    ("lease_assumptions.xlsx", "D38"): ("USD MM/pump", "USD"),
+    ("drilling_and_completion_days.xlsx", "Sheet1!A17:L54"): (
+        "wellbore rows; drilling days; completion days",
+        "",
+    ),
+}
 
 
 def _rows() -> list[dict[str, str]]:
@@ -88,13 +109,11 @@ def _digest(path: Path) -> str:
 
 def test_frozen_big_foot_workbook_fingerprints() -> None:
     rows = _rows()
-    published = {
-        row["WORKBOOK_FILE"]: row["WORKBOOK_SHA256"]
-        for row in rows
-        if row["WORKBOOK_FILE"]
-    }
 
-    assert published == FROZEN_HASHES
+    assert {row["WORKBOOK_FILE"] for row in rows} == set(FROZEN_HASHES)
+    assert all(
+        row["WORKBOOK_SHA256"] == FROZEN_HASHES[row["WORKBOOK_FILE"]] for row in rows
+    )
     assert {name: _digest(FDAS / name) for name in FROZEN_HASHES} == FROZEN_HASHES
 
 
@@ -120,7 +139,7 @@ def test_big_foot_crosswalk_covers_every_allowlisted_cost_cell() -> None:
         assert (
             set(filter(None, row["REQUIREMENT_IDS"].split("|"))) <= known_requirements
         )
-        if row["WORKBOOK_CELL"]:
+        if row["WORKBOOK_ROLE"] not in {"coverage_gap", "fingerprint_reference"}:
             assert row["WORKBOOK_CELL"] in ALLOWLISTED_COST_CELLS[row["WORKBOOK_FILE"]]
             assert row["REQUIREMENT_IDS"] or row["MAPPING_STATUS"] in {
                 "unmapped",
@@ -141,6 +160,45 @@ def test_big_foot_crosswalk_covers_every_allowlisted_cost_cell() -> None:
             cell: Decimal(str(sheet[cell].value)) for cell in cells
         }
         workbook.close()
+
+
+def test_drilling_range_citation_resolves_big_foot_rows_and_days() -> None:
+    from openpyxl import load_workbook
+
+    references = [
+        row for row in _rows() if row["WORKBOOK_ROLE"] == "fingerprint_reference"
+    ]
+    assert len(references) == 1
+    assert references[0]["WORKBOOK_SHEET"] == "Sheet1"
+    assert references[0]["WORKBOOK_CELL"] == "Sheet1!A17:L54"
+
+    workbook = load_workbook(
+        FDAS / "drilling_and_completion_days.xlsx", read_only=True, data_only=True
+    )
+    rows = list(
+        workbook["Sheet1"].iter_rows(
+            min_row=17, max_row=54, min_col=1, max_col=12, values_only=True
+        )
+    )
+    workbook.close()
+
+    assert len(rows) == 38
+    assert {row[0] for row in rows} == {"Big Foot"}
+    assert sum(row[7] or 0 for row in rows) == 1207
+    assert sum(row[8] or 0 for row in rows) == 1826
+
+
+def test_crosswalk_pins_native_units_and_currencies() -> None:
+    located = {
+        (row["WORKBOOK_FILE"], row["WORKBOOK_CELL"]): (
+            row["VALUE_UNIT"],
+            row["CURRENCY"],
+        )
+        for row in _rows()
+        if row["WORKBOOK_CELL"]
+    }
+
+    assert located == EXPECTED_UNITS_AND_CURRENCIES
 
 
 def test_workbook_values_are_assumptions_not_disclosures() -> None:
@@ -256,7 +314,10 @@ def test_workbook_core_metadata_is_not_published() -> None:
         for token in ("author", "creator", "modified_by", "lastprinted", "metadata")
     )
     assert not any(
-        "/home/" in value or "/mnt/" in value for row in rows for value in row.values()
+        prefix in value
+        for row in rows
+        for value in row.values()
+        for prefix in ABSOLUTE_PATH_PREFIXES
     )
 
 
