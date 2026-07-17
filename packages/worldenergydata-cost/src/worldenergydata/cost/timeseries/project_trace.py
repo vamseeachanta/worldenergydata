@@ -1,5 +1,3 @@
-"""Precision-bearing project cost events built from curated evidence."""
-
 from __future__ import annotations
 
 import calendar
@@ -8,10 +6,13 @@ from datetime import date
 from decimal import Decimal
 from pathlib import Path
 from typing import Literal
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from worldenergydata.cost.timeseries.cost_map_schema import Evidence, MoneyInterval
+
+_PILOT_GROUP = "vg-cost-map-pilot-000001"
 
 
 def _has_id(value: str | None, prefix: str) -> bool:
@@ -19,8 +20,6 @@ def _has_id(value: str | None, prefix: str) -> bool:
 
 
 class DateInterval(BaseModel):
-    """An exact date interval retaining the precision supplied by its source."""
-
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     start: date
@@ -76,8 +75,6 @@ class DateInterval(BaseModel):
 
 
 class CostEvent(BaseModel):
-    """One evidenced project-cost observation or explicit no-value finding."""
-
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     event_id: str
@@ -99,6 +96,10 @@ class CostEvent(BaseModel):
     def historical_feature_eligible(self) -> bool:
         return self.source_available_date is not None
 
+    @property
+    def sort_key(self) -> tuple[date, date, str]:
+        return self.effective_date.start, self.effective_date.end, self.event_id
+
     @model_validator(mode="after")
     def _validate_event(self) -> "CostEvent":
         if not _has_id(self.event_id, "evt-"):
@@ -116,8 +117,9 @@ class CostEvent(BaseModel):
             raise ValueError("non-award events must not carry award or requirement IDs")
         elif self.lane != "total":
             raise ValueError("project estimate events must remain in the total lane")
-        if not self.evidence.source_url.startswith(("http://", "https://")):
-            raise ValueError("source URL must use http(s)")
+        parsed_url = urlparse(self.evidence.source_url)
+        if parsed_url.scheme not in {"http", "https"} or not parsed_url.netloc:
+            raise ValueError("source URL must use http(s) with a nonempty http host")
         if self.event_type == "revision_unavailable" and self.money is not None:
             raise ValueError("revision_unavailable must not carry monetary data")
         if self.event_type != "revision_unavailable" and self.money is None:
@@ -128,29 +130,7 @@ class CostEvent(BaseModel):
 
 
 def order_events(events: tuple[CostEvent, ...]) -> tuple[CostEvent, ...]:
-    return tuple(
-        sorted(
-            events,
-            key=lambda event: (
-                event.effective_date.start,
-                event.effective_date.end,
-                event.event_id,
-            ),
-        )
-    )
-
-
-def monetary_events(events: tuple[CostEvent, ...]) -> tuple[CostEvent, ...]:
-    return tuple(event for event in events if event.money is not None)
-
-
-def group_events_by_lane(
-    events: tuple[CostEvent, ...],
-) -> dict[str, tuple[CostEvent, ...]]:
-    return {
-        lane: tuple(event for event in events if event.lane == lane)
-        for lane in ("total", "component", "schedule")
-    }
+    return tuple(sorted(events, key=lambda event: event.sort_key))
 
 
 def _find_data_root() -> Path:
@@ -166,13 +146,14 @@ def _read_csv(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(stream))
 
 
-def _locator_fields(locator: str) -> dict[str, str]:
-    return dict(part.split("=", 1) for part in locator.split("|"))
-
-
-def _resolve_source(root: Path, identity: dict[str, str]) -> dict[str, str]:
-    fields = _locator_fields(identity["SOURCE_RECORD_LOCATOR"])
-    rows = _read_csv(root / identity["SOURCE_TABLE"])
+def _resolve_locator(root: Path, table: str, locator: str) -> dict[str, str]:
+    prefix = f"{table}:"
+    if locator.startswith(prefix):
+        locator = locator[len(prefix) :]
+    elif ":" in locator:
+        raise ValueError("source locator table does not match expected table")
+    fields = dict(part.split("=", 1) for part in locator.split("|"))
+    rows = _read_csv(root / table)
     matches = [
         row
         for row in rows
@@ -181,6 +162,12 @@ def _resolve_source(root: Path, identity: dict[str, str]) -> dict[str, str]:
     if len(matches) != 1:
         raise ValueError("event source locator must resolve uniquely")
     return matches[0]
+
+
+def _resolve_source(root: Path, identity: dict[str, str]) -> dict[str, str]:
+    return _resolve_locator(
+        root, identity["SOURCE_TABLE"], identity["SOURCE_RECORD_LOCATOR"]
+    )
 
 
 def _active_ids(root: Path, filename: str) -> set[str]:
@@ -220,17 +207,19 @@ def _validate_foreign_keys(root: Path) -> None:
             raise ValueError("broken requirement foreign key")
 
 
-def _validate_trace(events: tuple[CostEvent, ...]) -> None:
+def _validate_trace(events: tuple[CostEvent, ...], project_id: str) -> None:
     if len({event.event_id for event in events}) != len(events):
         raise ValueError("conflicting duplicate event identity")
+    if any(event.project_id != project_id for event in events):
+        raise ValueError("broken event project foreign key")
     for lane in ("total", "component", "schedule"):
-        currencies = {
-            event.money.currency
+        bases = {
+            (event.money.currency, event.money.price_basis)
             for event in events
             if event.lane == lane and event.money is not None
         }
-        if len(currencies) > 1:
-            raise ValueError("mixed currencies in trace lane")
+        if len(bases) > 1:
+            raise ValueError("mixed currency or price basis in trace lane")
 
 
 def _money(
@@ -241,10 +230,11 @@ def _money(
     scope: str,
     capex: str,
     basis_year: int,
+    currency: str = "USD",
 ) -> MoneyInterval:
     amount = Decimal(value)
     return MoneyInterval(
-        currency="USD",
+        currency=currency,
         price_basis="nominal",
         basis_year=basis_year,
         ownership_basis=ownership,
@@ -282,31 +272,34 @@ def _single_match(
     return matches[0]
 
 
-def _award_event(
-    identity: dict[str, str],
-    row: dict[str, str],
-    root: Path,
-) -> CostEvent:
+def _award_fields(
+    identity: dict[str, str], row: dict[str, str], root: Path
+) -> dict[str, object]:
     locator = identity["SOURCE_RECORD_LOCATOR"]
-    awards = _read_csv(root / "cost_award_identity.csv")
     award = _single_match(
-        awards, "SOURCE_RECORD_LOCATOR", locator, "broken award foreign key"
+        _read_csv(root / "cost_award_identity.csv"),
+        "SOURCE_RECORD_LOCATOR",
+        locator,
+        "broken award foreign key",
     )
-    links = _read_csv(root / "award_asset_links.csv")
     link = _single_match(
-        links, "AWARD_ID", award["OPAQUE_ID"], "broken award-link foreign key"
+        _read_csv(root / "award_asset_links.csv"),
+        "AWARD_ID",
+        award["OPAQUE_ID"],
+        "broken award-link foreign key",
     )
+    link_source = _resolve_locator(root, "contract_awards.csv", link["SOURCE_LOCATOR"])
+    if link_source != row:
+        raise ValueError("award source locators disagree")
     included = link["COUNTING_DISPOSITION"] == "included"
-    return CostEvent(
-        event_id=identity["OPAQUE_ID"],
-        event_type="award",
-        lane="component",
-        project_id=link["PROJECT_ID"],
-        award_id=award["OPAQUE_ID"],
-        requirement_id=link["REQUIREMENT_IDS"],
-        effective_date=DateInterval.from_text(row["AWARD_YEAR"]),
-        source_available_date=None,
-        money=_money(
+    return {
+        "event_type": "award",
+        "lane": "component",
+        "project_id": link["PROJECT_ID"],
+        "award_id": award["OPAQUE_ID"],
+        "requirement_id": link["REQUIREMENT_IDS"],
+        "effective_date": DateInterval.from_text(row["AWARD_YEAR"]),
+        "money": _money(
             row["VALUE_LOW_MM"],
             value_basis=row["VALUE_BASIS"],
             ownership="gross" if included else "third_party",
@@ -314,62 +307,61 @@ def _award_event(
             capex="component_capex" if included else "non_capex",
             basis_year=int(row["AWARD_YEAR"]),
         ),
-        evidence=Evidence(
+        "evidence": Evidence(
             derivation=link["EVIDENCE_DERIVATION"],
             source_provenance=link["SOURCE_PROVENANCE"],
             source_url=link["SOURCE_URL"],
-            source_locator=link["SOURCE_LOCATOR"],
+            source_locator=f"contract_awards.csv:{locator}",
             confidence=link["CONFIDENCE"],
         ),
-        source_title=row["SOURCE_TITLE"],
-        validation_group_id=identity["VALIDATION_GROUP_ID"],
-    )
+    }
 
 
-def _revision_event(identity: dict[str, str], row: dict[str, str]) -> CostEvent:
+def _event_from_source(
+    identity: dict[str, str], row: dict[str, str], root: Path, project_id: str
+) -> CostEvent:
+    table = identity["SOURCE_TABLE"]
     locator = identity["SOURCE_RECORD_LOCATOR"]
+    if table == "contract_awards.csv":
+        fields = _award_fields(identity, row, root)
+    elif table == "cost_revision_trails.csv":
+        fields = {
+            "event_type": row["KIND"],
+            "lane": "total",
+            "project_id": project_id,
+            "award_id": None,
+            "requirement_id": None,
+            "effective_date": DateInterval.from_text(row["STATEMENT_DATE"]),
+            "money": _money(
+                row["VALUE_MM"],
+                value_basis="point",
+                ownership="gross",
+                scope="project",
+                capex="project_capex",
+                basis_year=int(row["STATEMENT_DATE"][:4]),
+                currency=row["CURRENCY"],
+            ),
+            "evidence": _evidence(row, f"{table}:{locator}"),
+        }
+    else:
+        if "May-2015 tendon failure" not in row["NOTES"]:
+            raise ValueError("unavailable revision month is not evidenced")
+        fields = {
+            "event_type": "revision_unavailable",
+            "lane": "total",
+            "project_id": project_id,
+            "award_id": None,
+            "requirement_id": None,
+            "effective_date": DateInterval.from_text("2015-05"),
+            "money": None,
+            "evidence": _evidence(row, f"{table}:{locator}", derivation="todo"),
+        }
     return CostEvent(
         event_id=identity["OPAQUE_ID"],
-        event_type=row["KIND"],
-        lane="total",
-        project_id="prj-000001",
-        award_id=None,
-        requirement_id=None,
-        effective_date=DateInterval.from_text(row["STATEMENT_DATE"]),
         source_available_date=None,
-        money=_money(
-            row["VALUE_MM"],
-            value_basis="point",
-            ownership="gross",
-            scope="project",
-            capex="project_capex",
-            basis_year=int(row["STATEMENT_DATE"][:4]),
-        ),
-        evidence=_evidence(row, f"cost_revision_trails.csv:{locator}"),
         source_title=row["SOURCE_TITLE"],
         validation_group_id=identity["VALIDATION_GROUP_ID"],
-    )
-
-
-def _unavailable_event(identity: dict[str, str], row: dict[str, str]) -> CostEvent:
-    if "May-2015 tendon failure" not in row["NOTES"]:
-        raise ValueError("unavailable revision month is not evidenced")
-    locator = identity["SOURCE_RECORD_LOCATOR"]
-    return CostEvent(
-        event_id=identity["OPAQUE_ID"],
-        event_type="revision_unavailable",
-        lane="total",
-        project_id="prj-000001",
-        award_id=None,
-        requirement_id=None,
-        effective_date=DateInterval.from_text("2015-05"),
-        source_available_date=None,
-        money=None,
-        evidence=_evidence(
-            row, f"sanctioned_projects.csv:{locator}", derivation="todo"
-        ),
-        source_title=row["SOURCE_TITLE"],
-        validation_group_id=identity["VALIDATION_GROUP_ID"],
+        **fields,
     )
 
 
@@ -378,22 +370,30 @@ def build_big_foot_trace(data_root: Path | None = None) -> tuple[CostEvent, ...]
     identities = _read_csv(root / "cost_event_identity.csv")
     _validate_event_identities(identities)
     _validate_foreign_keys(root)
+    projects = [
+        row
+        for row in _read_csv(root / "cost_project_identity.csv")
+        if row["VALIDATION_GROUP_ID"] == _PILOT_GROUP
+        and row["STATE"] == "active"
+        and row["ACTIVE"] == "true"
+    ]
+    project = _single_match(
+        projects, "ENTITY_KIND", "project", "pilot project ambiguous"
+    )
+    project_source = _resolve_source(root, project)
     identities = [
         row
         for row in identities
-        if row["DISPLAY_LABEL"].startswith("Big Foot")
+        if row["VALIDATION_GROUP_ID"] == _PILOT_GROUP
         and row["STATE"] == "active"
         and row["ACTIVE"] == "true"
     ]
     events = []
     for identity in identities:
         source = _resolve_source(root, identity)
-        if identity["SOURCE_TABLE"] == "contract_awards.csv":
-            events.append(_award_event(identity, source, root))
-        elif identity["SOURCE_TABLE"] == "cost_revision_trails.csv":
-            events.append(_revision_event(identity, source))
-        else:
-            events.append(_unavailable_event(identity, source))
+        if source.get("PROJECT") != project_source["PROJECT"]:
+            continue
+        events.append(_event_from_source(identity, source, root, project["OPAQUE_ID"]))
     ordered = order_events(tuple(events))
-    _validate_trace(ordered)
+    _validate_trace(ordered, project["OPAQUE_ID"])
     return ordered

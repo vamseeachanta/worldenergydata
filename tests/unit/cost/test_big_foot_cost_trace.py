@@ -53,7 +53,7 @@ def _event(**changes):
 def _copy_curated(tmp_path: Path) -> Path:
     source = Path("data/modules/cost/curated")
     target = tmp_path / "curated"
-    target.parent.mkdir(parents=True)
+    target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(source, target)
     return target
 
@@ -178,24 +178,23 @@ def test_missing_years_are_not_interpolated() -> None:
 
 
 def test_big_foot_trace_has_no_invented_2015_monetary_event() -> None:
-    from worldenergydata.cost.timeseries.project_trace import (
-        build_big_foot_trace,
-        monetary_events,
-    )
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
 
     assert all(
         event.effective_date.start.year != 2015
-        for event in monetary_events(build_big_foot_trace())
+        for event in build_big_foot_trace()
+        if event.money is not None
     )
 
 
 def test_big_foot_trace_preserves_component_and_total_lanes() -> None:
-    from worldenergydata.cost.timeseries.project_trace import (
-        build_big_foot_trace,
-        group_events_by_lane,
-    )
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
 
-    lanes = group_events_by_lane(build_big_foot_trace())
+    trace = build_big_foot_trace()
+    lanes = {
+        lane: tuple(event for event in trace if event.lane == lane)
+        for lane in ("component", "total")
+    }
 
     assert [event.event_id for event in lanes["component"]] == [
         "evt-000002",
@@ -237,3 +236,84 @@ def test_trace_rejects_conflicting_duplicate_identity_or_broken_foreign_key(
     _rewrite(link_path, links)
     with pytest.raises(ValueError, match="broken requirement foreign key"):
         build_big_foot_trace(broken_root)
+
+
+def test_trace_rejects_mixed_native_revision_currency(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
+
+    root = _copy_curated(tmp_path)
+    path = root / "cost_revision_trails.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    outturn = next(
+        row
+        for row in rows
+        if row["PROJECT"] == "Big Foot" and row["KIND"] == "final_outturn"
+    )
+    outturn["CURRENCY"] = "EUR"
+    _rewrite(path, rows)
+
+    with pytest.raises(ValueError, match="mixed currency or price basis"):
+        build_big_foot_trace(root)
+
+
+def test_project_identity_propagates_to_every_event(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
+
+    root = _copy_curated(tmp_path)
+    project_path = root / "cost_project_identity.csv"
+    projects = list(csv.DictReader(project_path.open(encoding="utf-8")))
+    projects[0]["OPAQUE_ID"] = "prj-pilot-renamed"
+    _rewrite(project_path, projects)
+    link_path = root / "award_asset_links.csv"
+    links = list(csv.DictReader(link_path.open(encoding="utf-8")))
+    for link in links:
+        link["PROJECT_ID"] = "prj-pilot-renamed"
+    _rewrite(link_path, links)
+
+    assert {event.project_id for event in build_big_foot_trace(root)} == {
+        "prj-pilot-renamed"
+    }
+
+
+def test_award_link_locator_must_resolve_same_live_award(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
+
+    root = _copy_curated(tmp_path)
+    path = root / "award_asset_links.csv"
+    links = list(csv.DictReader(path.open(encoding="utf-8")))
+    links[0]["SOURCE_LOCATOR"] = (
+        "contract_awards.csv:PROJECT=Big Foot|AWARD_YEAR=2009|CONTRACTOR=Enbridge"
+    )
+    _rewrite(path, links)
+
+    with pytest.raises(ValueError, match="award source locators disagree"):
+        build_big_foot_trace(root)
+
+
+def test_trace_membership_ignores_mutable_display_labels(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.project_trace import build_big_foot_trace
+
+    root = _copy_curated(tmp_path)
+    path = root / "cost_event_identity.csv"
+    identities = list(csv.DictReader(path.open(encoding="utf-8")))
+    for identity in identities:
+        identity["DISPLAY_LABEL"] = f"Renamed {identity['OPAQUE_ID']}"
+    _rewrite(path, identities)
+
+    assert [event.event_id for event in build_big_foot_trace(root)] == [
+        "evt-000002",
+        "evt-000003",
+        "evt-000001",
+        "evt-000005",
+        "evt-000004",
+    ]
+
+
+@pytest.mark.parametrize(
+    "url", ["https://", "http://", "relative/path", "javascript:x"]
+)
+def test_trace_rejects_source_urls_without_http_host(url: str) -> None:
+    evidence = _event().evidence.model_copy(update={"source_url": url})
+
+    with pytest.raises(ValueError, match="http host"):
+        _event(evidence=evidence)
