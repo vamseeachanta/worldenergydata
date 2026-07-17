@@ -143,6 +143,23 @@ def test_producer_commit_must_contain_exact_builder(source_repo, tmp_path) -> No
         _generate(root, tmp_path / "mismatch", commit)
 
 
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
+        "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
+    ],
+)
+def test_producer_commit_pins_every_executable_helper(
+    source_repo, tmp_path, relative
+) -> None:
+    root, commit = source_repo
+    path = root / relative
+    path.write_bytes(path.read_bytes() + b"\n# dirty mutation\n")
+    with pytest.raises(ValueError, match="executable blob does not match"):
+        _generate(root, tmp_path / "mismatch", commit)
+
+
 def test_build_restores_process_locale_on_success_and_failure(
     source_repo, tmp_path
 ) -> None:
@@ -181,6 +198,99 @@ def test_failed_staged_build_preserves_all_preexisting_outputs(
     assert {
         relative: (output / relative).read_bytes() for relative in sentinels
     } == sentinels
+
+
+def test_fdas_coverage_gap_is_source_derived_and_unique(source_repo, tmp_path) -> None:
+    root, commit = source_repo
+    output = tmp_path / "gap"
+    _generate(root, output, commit)
+    rows = list(csv.DictReader((output / CSV).open(encoding="utf-8", newline="")))
+    gaps = [row for row in rows if row["row_kind"] == "fdas_gap"]
+    assert len(gaps) == 1
+    assert gaps[0] == {
+        **{field: "" for field in gaps[0]},
+        "accounting_view": "fdas_development_capex",
+        "direction": "project_to_asset",
+        "row_kind": "fdas_gap",
+        "additive": "false",
+        "project_id": "prj-000001",
+        "requirement_id": "req-000007",
+        "currency": "USD",
+        "price_basis": "nominal",
+        "ownership_basis": "gross",
+        "scope_basis": "project",
+        "capex_basis": "project_capex",
+        "value_basis": "not_public",
+        "evidence_derivation": "assumed",
+        "source_provenance": "workbook_assumption",
+        "counting_disposition": "excluded",
+        "mapping_status": "unmapped",
+        "source_identity": "FDAS_V30:installation/hookup",
+        "source_locator": "financial_project_summary.xlsx:Project_Summary",
+        "assumption_vintage": "FDAS_V30",
+        "comparison_eligibility": "ineligible",
+    }
+
+
+def _sentinel_outputs(output: Path) -> dict[Path, bytes]:
+    sentinels = {HTML: b"old-html", CSV: b"old-csv", MANIFEST: b"old-manifest"}
+    for relative, content in sentinels.items():
+        path = output / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+    return sentinels
+
+
+def _assert_transaction_clean(output: Path, sentinels: dict[Path, bytes]) -> None:
+    assert {
+        relative: (output / relative).read_bytes() for relative in sentinels
+    } == sentinels
+    assert not list(output.rglob("*.tmp")) and not list(output.rglob("*.bak"))
+
+
+def test_partial_temp_copy_failure_preserves_all_finals(
+    source_repo, tmp_path, monkeypatch
+) -> None:
+    root, commit = source_repo
+    output, sentinels = (
+        tmp_path / "partial-copy",
+        _sentinel_outputs(tmp_path / "partial-copy"),
+    )
+    module = importlib.import_module("worldenergydata.cost.timeseries.evidence_pack")
+    original = module.shutil.copyfile
+
+    def partial_then_raise(source, target):
+        Path(target).write_bytes(b"partial")
+        raise OSError("simulated partial temp copy")
+
+    monkeypatch.setattr(module.shutil, "copyfile", partial_then_raise)
+    with pytest.raises(OSError, match="partial temp copy"):
+        _generate(root, output, commit)
+    monkeypatch.setattr(module.shutil, "copyfile", original)
+    _assert_transaction_clean(output, sentinels)
+
+
+def test_replace_failure_rolls_back_every_final(
+    source_repo, tmp_path, monkeypatch
+) -> None:
+    root, commit = source_repo
+    output, sentinels = tmp_path / "replace", _sentinel_outputs(tmp_path / "replace")
+    module = importlib.import_module("worldenergydata.cost.timeseries.evidence_pack")
+    original = module.os.replace
+    calls = 0
+
+    def fail_second_replace(source, target):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("simulated replace failure")
+        return original(source, target)
+
+    monkeypatch.setattr(module.os, "replace", fail_second_replace)
+    with pytest.raises(OSError, match="replace failure"):
+        _generate(root, output, commit)
+    monkeypatch.setattr(module.os, "replace", original)
+    _assert_transaction_clean(output, sentinels)
 
 
 def test_csv_trace_preserves_dates_bases_and_controlled_vocabularies(

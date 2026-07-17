@@ -45,8 +45,11 @@ from worldenergydata.cost.timeseries.evidence_pack import (
 )
 from worldenergydata.cost.timeseries.evidence_pack_render import (
     canonical_manifest,
+    fdas_gap_row,
+    fixed_fields,
     manifest_payload,
     render_html,
+    select_fields,
 )
 
 safe_url = validate_url
@@ -57,31 +60,22 @@ INPUT_PATHS = EVIDENCE_INPUT_PATHS
 _row = csv_row
 
 
-def _select(source: dict, spec: str) -> dict:
-    pairs = (item.split(":", 1) for item in spec.split())
-    return {target: source[origin] for target, origin in pairs}
-
-
-def _fixed(spec: str) -> dict:
-    return dict(item.split("=", 1) for item in spec.split())
-
-
-OBSERVED = _fixed(
+OBSERVED = fixed_fields(
     "direction=project_to_asset row_kind=observed_component value_basis=point mapping_status=mapped"
 )
-AGGREGATE = _fixed(
+AGGREGATE = fixed_fields(
     "direction=project_to_asset row_kind=aggregate_reconciliation additive=false unallocated_mm=0 unreconciled_variance_mm=0 counting_disposition=aggregate"
 )
-SCENARIO = _fixed(
+SCENARIO = fixed_fields(
     "direction=project_to_asset row_kind=scenario_allocation additive=true value_basis=point evidence_derivation=allocated source_provenance=assumed confidence=low counting_disposition=included mapping_status=mapped unallocated_mm=0 unreconciled_variance_mm=0 scenario_status=proposed reuse_allowed=false rounding_policy=largest_remainder_0.01_USD_MM"
 )
-INVERSE = _fixed(
+INVERSE = fixed_fields(
     "direction=asset_to_project row_kind=implied_project_total additive=false currency=USD price_basis=nominal ownership_basis=gross scope_basis=project capex_basis=project_capex value_basis=range evidence_derivation=allocated source_provenance=assumed confidence=low counting_disposition=overlap mapping_status=mapped scenario_status=proposed reuse_allowed=false rounding_policy=outward_0.01_USD_MM"
 )
-FDAS_COMMON = _fixed(
+FDAS_COMMON = fixed_fields(
     "direction=project_to_asset value_basis=point comparison_eligibility=ineligible rounding_policy=native_USD_divided_by_1000000"
 )
-TRACE_COMMON = _fixed(
+TRACE_COMMON = fixed_fields(
     "accounting_view=trace direction=project_to_asset row_kind=trace_event additive=false counting_disposition=trace_only"
 )
 
@@ -97,7 +91,7 @@ def _award_rows(context: dict) -> list[dict[str, str]]:
             rows.append(
                 _row(
                     **OBSERVED,
-                    **_select(
+                    **select_fields(
                         award,
                         "project_id:PROJECT_ID requirement_id:REQUIREMENT_IDS award_id:AWARD_ID basis_year:BASIS_YEAR evidence_derivation:EVIDENCE_DERIVATION source_provenance:SOURCE_PROVENANCE confidence:CONFIDENCE counting_disposition:COUNTING_DISPOSITION source_identity:AWARD_ID source_locator:SOURCE_LOCATOR",
                     ),
@@ -190,7 +184,7 @@ def _reverse_rows(awards: list[dict[str, str]]) -> list[dict[str, str]]:
         rows.append(
             _row(
                 **INVERSE,
-                **_select(
+                **select_fields(
                     award,
                     "project_id:PROJECT_ID award_id:AWARD_ID basis_year:BASIS_YEAR source_identity:AWARD_ID source_locator:SOURCE_LOCATOR",
                 ),
@@ -204,16 +198,15 @@ def _reverse_rows(awards: list[dict[str, str]]) -> list[dict[str, str]]:
     return rows
 
 
-def _fdas_rows(
-    additive: list[dict[str, str]], opex: list[dict[str, str]]
-) -> list[dict[str, str]]:
+def _fdas_rows(context: dict) -> list[dict[str, str]]:
+    additive, opex = context["fdas_additive"], context["fdas_opex"]
     rows = []
     for source in additive + opex:
         value = Decimal(source["WORKBOOK_VALUE"]) / Decimal("1000000")
         rows.append(
             _row(
                 **FDAS_COMMON,
-                **_select(
+                **select_fields(
                     source,
                     "project_id:PROJECT_ID requirement_id:REQUIREMENT_IDS currency:CURRENCY price_basis:PRICE_BASIS ownership_basis:OWNERSHIP_BASIS scope_basis:SCOPE_BASIS capex_basis:CAPEX_BASIS evidence_derivation:EVIDENCE_DERIVATION source_provenance:SOURCE_PROVENANCE counting_disposition:COUNTING_DISPOSITION mapping_status:MAPPING_STATUS assumption_vintage:ASSUMPTION_VINTAGE",
                 ),
@@ -228,7 +221,12 @@ def _fdas_rows(
                 source_locator=f"{source['WORKBOOK_SHEET']}!{source['WORKBOOK_CELL']}",
             )
         )
-    return rows + [_fdas_total(rows)]
+    gaps = [
+        row for row in context["fdas_all"] if row["WORKBOOK_ROLE"] == "coverage_gap"
+    ]
+    if len(gaps) != 1:
+        raise ValueError("FDAS coverage gap must resolve uniquely")
+    return rows + [_fdas_total(rows), fdas_gap_row(gaps[0])]
 
 
 def _fdas_total(rows: list[dict[str, str]]) -> dict[str, str]:
@@ -294,7 +292,7 @@ def _rows(context: dict) -> list[dict[str, str]]:
         _award_rows(context)
         + _scenario_rows(context)
         + _reverse_rows(context["awards"])
-        + _fdas_rows(context["fdas_additive"], context["fdas_opex"])
+        + _fdas_rows(context)
         + _trace_rows(context["trace"])
     )
 

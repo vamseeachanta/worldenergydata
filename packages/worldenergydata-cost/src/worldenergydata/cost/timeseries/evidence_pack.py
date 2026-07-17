@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import io
 import locale
+import os
 import re
 import shutil
 import subprocess
@@ -12,7 +13,7 @@ from contextlib import contextmanager
 from decimal import Decimal
 from hashlib import sha256
 from pathlib import Path
-from tempfile import TemporaryDirectory
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 from typing import Iterator
 from urllib.parse import urlsplit
 
@@ -125,16 +126,20 @@ def validate_producer(root: Path, commit: str, frozen: dict[str, bytes]) -> None
             check=True,
             capture_output=True,
         )
-        blob = subprocess.run(
-            ["git", "show", f"{commit}:{BUILDER_REL}"],
-            cwd=root,
-            check=True,
-            capture_output=True,
-        ).stdout
     except subprocess.CalledProcessError as error:
-        raise ValueError("producer commit must exist and contain builder") from error
-    if digest(blob) != digest(frozen[BUILDER_REL]):
-        raise ValueError("producer builder blob does not match current builder")
+        raise ValueError("producer commit must exist") from error
+    for path in (item for item in INPUT_PATHS if item.endswith(".py")):
+        try:
+            blob = subprocess.run(
+                ["git", "show", f"{commit}:{path}"],
+                cwd=root,
+                check=True,
+                capture_output=True,
+            ).stdout
+        except subprocess.CalledProcessError as error:
+            raise ValueError("producer commit must contain every executable") from error
+        if blob != frozen[path]:
+            raise ValueError(f"producer executable blob does not match current {path}")
 
 
 def _exact_ids(
@@ -331,25 +336,60 @@ def c_locale() -> Iterator[None]:
         locale.setlocale(locale.LC_ALL, previous)
 
 
-def publish_transactionally(stage: Path, output: Path) -> None:
-    paths = (HTML_REL, CSV_REL, MANIFEST_REL)
-    previous = {
-        relative: (output / relative).read_bytes()
-        for relative in paths
-        if (output / relative).exists()
-    }
-    published: list[Path] = []
+def _temporary_neighbor(target: Path, suffix: str) -> Path:
+    stream = NamedTemporaryFile(
+        dir=target.parent,
+        prefix=f".{target.name}.",
+        suffix=suffix,
+        delete=False,
+    )
+    stream.close()
+    return Path(stream.name)
+
+
+def _prepare_publication(
+    stage: Path, output: Path, paths: tuple[Path, ...]
+) -> tuple[dict[Path, Path], dict[Path, Path]]:
+    prepared: dict[Path, Path] = {}
+    backups: dict[Path, Path] = {}
     try:
         for relative in paths:
             target = output / relative
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(stage / relative, target)
-            published.append(relative)
+            prepared[relative] = _temporary_neighbor(target, ".tmp")
+            shutil.copyfile(stage / relative, prepared[relative])
+            if target.exists():
+                backups[relative] = _temporary_neighbor(target, ".bak")
+                shutil.copyfile(target, backups[relative])
     except Exception:
-        for relative in published:
-            target = output / relative
-            if relative in previous:
-                target.write_bytes(previous[relative])
-            else:
-                target.unlink(missing_ok=True)
+        for path in (*prepared.values(), *backups.values()):
+            path.unlink(missing_ok=True)
         raise
+    return prepared, backups
+
+
+def _restore_publication(
+    output: Path, replaced: list[Path], backups: dict[Path, Path]
+) -> None:
+    for relative in reversed(replaced):
+        target = output / relative
+        if relative in backups:
+            os.replace(backups[relative], target)
+        else:
+            target.unlink(missing_ok=True)
+
+
+def publish_transactionally(stage: Path, output: Path) -> None:
+    paths = (HTML_REL, CSV_REL, MANIFEST_REL)
+    prepared, backups = _prepare_publication(stage, output, paths)
+    replaced: list[Path] = []
+    try:
+        for relative in paths:
+            os.replace(prepared[relative], output / relative)
+            replaced.append(relative)
+    except Exception:
+        _restore_publication(output, replaced, backups)
+        raise
+    finally:
+        for path in (*prepared.values(), *backups.values()):
+            path.unlink(missing_ok=True)

@@ -22,8 +22,38 @@ from worldenergydata.cost.timeseries.evidence_pack import (
     INPUT_PATHS,
     PROJECT_IDS,
     REQUIREMENT_IDS,
+    csv_row,
     digest,
 )
+
+
+def select_fields(source: dict, spec: str) -> dict:
+    pairs = (item.split(":", 1) for item in spec.split())
+    return {target: source[origin] for target, origin in pairs}
+
+
+def fixed_fields(spec: str) -> dict:
+    return dict(item.split("=", 1) for item in spec.split())
+
+
+def fdas_gap_row(source: dict[str, str]) -> dict[str, str]:
+    fields = {
+        target: source[origin]
+        for target, origin in (
+            item.split(":", 1)
+            for item in "project_id:PROJECT_ID requirement_id:REQUIREMENT_IDS currency:CURRENCY price_basis:PRICE_BASIS ownership_basis:OWNERSHIP_BASIS scope_basis:SCOPE_BASIS capex_basis:CAPEX_BASIS evidence_derivation:EVIDENCE_DERIVATION source_provenance:SOURCE_PROVENANCE counting_disposition:COUNTING_DISPOSITION mapping_status:MAPPING_STATUS assumption_vintage:ASSUMPTION_VINTAGE comparison_eligibility:COMPARISON_ELIGIBILITY".split()
+        )
+    }
+    return csv_row(
+        **fields,
+        accounting_view="fdas_development_capex",
+        direction="project_to_asset",
+        row_kind="fdas_gap",
+        additive="false",
+        value_basis="not_public",
+        source_identity=f"FDAS_V30:{source['WORKBOOK_CATEGORY']}",
+        source_locator=f"{source['WORKBOOK_FILE']}:{source['WORKBOOK_SHEET']}",
+    )
 
 
 def _esc(value: object) -> str:
