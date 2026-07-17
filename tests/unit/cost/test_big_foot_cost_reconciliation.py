@@ -220,8 +220,10 @@ def test_sanction_and_outturn_reconcile_as_distinct_total_bases():
 
     assert tuple(results) == ("evt-000003", "evt-000004")
     assert results["evt-000003"].target == Decimal("4000")
+    assert results["evt-000003"].target_basis == "gross project cost at Dec-2010 sanction"
     assert results["evt-000003"].accounting.residual.low == Decimal("3955")
     assert results["evt-000004"].target == Decimal("5100")
+    assert results["evt-000004"].target_basis == "final gross project cost at first oil (Nov 2018), +28% vs FID"
     assert results["evt-000004"].accounting.residual.low == Decimal("5055")
     outturn = results["evt-000004"]
     assert (outturn.currency, outturn.provenance, outturn.confidence) == (
@@ -246,8 +248,14 @@ def test_sanction_and_outturn_reconcile_as_distinct_total_bases():
     with pytest.raises(ValueError, match="currency"):
         reconcile_target_event(drift, evidence)
     drift["CURRENCY"] = "USD"
-    with pytest.raises(ValueError, match="price basis"):
-        reconcile_target_event(drift, evidence)
+    for basis in (
+        "real constant-money project cost",
+        "inflation-adjusted 2020 dollars",
+        "mystery basis",
+    ):
+        drift["BASIS"] = basis
+        with pytest.raises(ValueError, match="price basis"):
+            reconcile_target_event(drift, evidence)
 
 
 def test_current_evidence_vintage_is_not_backdated_to_sanction():

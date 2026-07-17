@@ -151,6 +151,7 @@ BIG_FOOT_JOINT_SCENARIOS = {
     "host_heavy": JointScenario("host_heavy", _shares("0.38 0.05 0.10 0.17 0.05 0.06 0.13 0.06")),
     "well_heavy": JointScenario("well_heavy", _shares("0.20 0.08 0.15 0.28 0.07 0.08 0.09 0.05")),
 }
+_TARGET_BASES = {("evt-000003", "sanction_estimate"): "gross project cost at Dec-2010 sanction", ("evt-000004", "final_outturn"): "final gross project cost at first oil (Nov 2018), +28% vs FID"}
 
 
 def _find_data_root() -> Path:
@@ -257,8 +258,8 @@ def reconcile_target_event(event: dict[str, str], evidence: BigFootEvidence) -> 
     basis = evidence.target_basis
     if event["CURRENCY"] != basis.currency:
         raise ValueError("incompatible target currency")
-    markers = ("real", "constant-money", "constant money")
-    if any(marker in event["BASIS"].lower() for marker in markers):
+    key = event["OPAQUE_ID"], event["KIND"]
+    if _TARGET_BASES.get(key) != event["BASIS"]:
         raise ValueError("incompatible target price basis")
     event_id, target = event["OPAQUE_ID"], Decimal(event["VALUE_MM"])
     accounting = reconcile_bottom_up(
