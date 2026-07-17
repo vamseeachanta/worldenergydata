@@ -7,7 +7,6 @@ import hashlib
 from decimal import Decimal
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[3]
 CURATED = ROOT / "data/modules/cost/curated"
 FDAS = ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
