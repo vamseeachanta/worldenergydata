@@ -1,5 +1,3 @@
-"""Fail-closed deterministic Big Foot evidence-pack contract."""
-
 from __future__ import annotations
 
 import csv
@@ -364,13 +362,20 @@ def test_production_has_no_attestation_bypass_and_normalizes_git_errors(
     builder = _builder()
     parameters = inspect.signature(builder.build_outputs).parameters
     assert "producer_executable_attestation" not in parameters
-    values = iter(("head", "base pr-head"))
-    monkeypatch.setitem(hardening.__dict__, "_git", lambda *args: next(values))
-    assert hardening.trusted_artifact_commit(ROOT) == "pr-head"
     module = importlib.import_module("worldenergydata.cost.timeseries.evidence_pack")
     monkeypatch.setattr(module.subprocess, "run", Mock(side_effect=OSError))
     with pytest.raises(ValueError, match="producer commit must exist"):
         builder.validate_producer(ROOT, "0" * 40, {})
+
+
+def test_producer_commit_must_contain_exact_builder(source_repo, tmp_path) -> None:
+    root, commit = _clone(source_repo, tmp_path)
+    with pytest.raises(ValueError, match="40-hex"):
+        _generate(root, tmp_path / "short", commit[:8])
+    builder = root / _builder().BUILDER_REL
+    builder.write_bytes(builder.read_bytes() + b"\n")
+    with pytest.raises(ValueError, match="blob does not match"):
+        _generate(root, tmp_path / "mismatch", commit)
 
 
 def test_checked_in_outputs_regenerate_from_manifest_producer() -> None:

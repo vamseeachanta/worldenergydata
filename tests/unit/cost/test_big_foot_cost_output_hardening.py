@@ -39,7 +39,10 @@ def _has_commit(root: Path, commit: str) -> bool:
 
 def trusted_artifact_commit(root: Path) -> str:
     head = _git(root, "rev-parse", "HEAD")
-    parents = _git(root, "show", "-s", "--format=%P", "HEAD").split()
+    raw = _git(root, "cat-file", "-p", "HEAD")
+    parents = [line[7:] for line in raw.splitlines() if line.startswith("parent ")]
+    if any(len(parent) != 40 for parent in parents):
+        raise ValueError("malformed parent commit")
     return parents[1] if len(parents) == 2 else head
 
 
@@ -152,20 +155,8 @@ def test_input_fingerprints_fail_closed_on_workbook_and_toctou(
         _generate(root, tmp_path / "race", commit, before_final_hash=mutate)
 
 
-def test_producer_commit_must_contain_exact_builder(source_repo, tmp_path) -> None:
-    root, commit = source_repo
-    with pytest.raises(ValueError, match="40-hex"):
-        _generate(root, tmp_path / "short", commit[:8])
-    builder = root / _builder().BUILDER_REL
-    builder.write_bytes(builder.read_bytes() + b"\n")
-    with pytest.raises(ValueError, match="blob does not match"):
-        _generate(root, tmp_path / "mismatch", commit)
-
-
 @pytest.mark.parametrize("relative", _builder().INPUT_PATHS[1:3])
-def test_producer_commit_pins_every_executable_helper(
-    source_repo, tmp_path, relative
-) -> None:
+def test_git_commit_pins_executable_helpers(source_repo, tmp_path, relative) -> None:
     root, commit = source_repo
     path = root / relative
     path.write_bytes(path.read_bytes() + b"\n# dirty mutation\n")
@@ -173,14 +164,22 @@ def test_producer_commit_pins_every_executable_helper(
         _generate(root, tmp_path / "mismatch", commit)
 
 
-def test_shallow_checkout_hydrates_only_trusted_producer_history(
-    source_repo, tmp_path: Path
-) -> None:
-    origin, producer = source_repo
+def test_trusted_hydration_from_shallow_pr_merge(source_repo, tmp_path: Path) -> None:
+    origin, _ = source_repo
+    main = _git(origin, "branch", "--show-current")
+    _git(origin, "checkout", "-qb", "feature")
+
+    def commit(name: str) -> str:
+        (origin / name).write_text(f"{name}\n", encoding="utf-8")
+        _git(origin, "add", name)
+        _git(origin, "commit", "-qm", name)
+        return _git(origin, "rev-parse", "HEAD")
+
+    producer = commit("producer.txt")
     hydrate_trusted_producer_history(origin, producer)
-    (origin / "unrelated.txt").write_text("unrelated\n", encoding="utf-8")
-    _git(origin, "add", "unrelated.txt")
-    _git(origin, "commit", "-qm", "unrelated")
+    artifact = commit("artifact.txt")
+    _git(origin, "checkout", "-q", main)
+    _git(origin, "merge", "--no-ff", "-qm", "synthetic PR", "feature")
     baseline = tmp_path / "baseline"
     _generate(origin, baseline, producer)
     untrusted = tmp_path / "untrusted"
@@ -191,6 +190,8 @@ def test_shallow_checkout_hydrates_only_trusted_producer_history(
     root = tmp_path / "shallow"
     _git(tmp_path, "clone", "-q", "--depth", "1", origin.as_uri(), str(root))
     assert not _has_commit(root, producer)
+    assert _git(root, "show", "-s", "--format=%P", "HEAD") == ""
+    assert trusted_artifact_commit(root) == artifact
     hydrate_trusted_producer_history(root, producer)
     hydrated = tmp_path / "hydrated"
     _generate(root, hydrated, producer)
