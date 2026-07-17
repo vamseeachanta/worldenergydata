@@ -4,16 +4,17 @@ from __future__ import annotations
 
 import csv
 import importlib.util
-from pathlib import Path
+import locale
 import shutil
 import subprocess
+from pathlib import Path
 
 import pytest
-
 
 ROOT = Path(__file__).resolve().parents[3]
 HTML = Path("reports/cost/big_foot_cost_map.html")
 CSV = Path("reports/cost/big_foot_cost_map_reconciliation.csv")
+MANIFEST = Path("data/modules/cost/curated/cost_map_contract_manifest.v1.json")
 
 
 def _builder():
@@ -140,3 +141,104 @@ def test_producer_commit_must_contain_exact_builder(source_repo, tmp_path) -> No
     builder.write_bytes(builder.read_bytes() + b"\n")
     with pytest.raises(ValueError, match="blob does not match"):
         _generate(root, tmp_path / "mismatch", commit)
+
+
+def test_build_restores_process_locale_on_success_and_failure(
+    source_repo, tmp_path
+) -> None:
+    root, commit = source_repo
+    original = locale.setlocale(locale.LC_ALL)
+    _generate(root, tmp_path / "ok", commit)
+    assert locale.setlocale(locale.LC_ALL) == original
+
+    source = root / "data/modules/cost/curated/project_asset_requirements.csv"
+
+    def mutate() -> None:
+        source.write_bytes(source.read_bytes() + b"\n")
+
+    with pytest.raises(RuntimeError, match="input changed"):
+        _generate(root, tmp_path / "bad-locale", commit, before_final_hash=mutate)
+    assert locale.setlocale(locale.LC_ALL) == original
+    assert "café".encode("utf-8").decode("utf-8") == "café"
+
+
+def test_failed_staged_build_preserves_all_preexisting_outputs(
+    source_repo, tmp_path
+) -> None:
+    root, commit = source_repo
+    output = tmp_path / "published"
+    sentinels = {HTML: b"old-html", CSV: b"old-csv", MANIFEST: b"old-manifest"}
+    for relative, content in sentinels.items():
+        path = output / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+
+    def corrupt(stage: Path) -> None:
+        (stage / CSV).write_bytes(b"raced")
+
+    with pytest.raises(RuntimeError, match="staged output changed"):
+        _generate(root, output, commit, before_publish=corrupt)
+    assert {
+        relative: (output / relative).read_bytes() for relative in sentinels
+    } == sentinels
+
+
+def test_csv_trace_preserves_dates_bases_and_controlled_vocabularies(
+    source_repo, tmp_path
+) -> None:
+    root, commit = source_repo
+    output = tmp_path / "trace"
+    _generate(root, output, commit)
+    rows = list(csv.DictReader((output / CSV).open(encoding="utf-8", newline="")))
+    trace = [row for row in rows if row["row_kind"] == "trace_event"]
+    assert [(row["effective_date"], row["date_precision"]) for row in trace] == [
+        ("2009", "year"),
+        ("2010", "year"),
+        ("2011", "year"),
+        ("2015-05", "month"),
+        ("2018", "year"),
+    ]
+    assert {row["price_basis"] for row in trace if row["value_low_mm"]} == {"nominal"}
+    monetary_totals = [
+        row for row in trace if row["lane"] == "total" and row["value_low_mm"]
+    ]
+    assert {row["ownership_basis"] for row in monetary_totals} == {"gross"}
+    assert {row["scope_basis"] for row in monetary_totals} == {"project"}
+    assert {row["capex_basis"] for row in monetary_totals} == {"project_capex"}
+    assert {row["date_precision"] for row in trace} <= {"year", "month", "day"}
+    assert {row["price_basis"] for row in rows if row["price_basis"]} <= {
+        "nominal",
+        "real",
+    }
+
+
+def test_whitespace_urls_and_csv_formula_prefixes_fail_closed(
+    source_repo, tmp_path
+) -> None:
+    builder = _builder()
+    for value in (
+        "https://example.com/a b",
+        "https://example.com/a\tb",
+        "https://example.com/a\u00a0b",
+    ):
+        assert builder.safe_url(value) is None
+    root, commit = source_repo
+    links = root / "data/modules/cost/curated/award_asset_links.csv"
+    _rewrite(
+        links,
+        lambda rows: next(
+            row for row in rows if row["AWARD_ID"] == "awd-000001"
+        ).update({"SOURCE_LOCATOR": '=WEBSERVICE("https://example.com")'}),
+    )
+    with pytest.raises(ValueError, match="CSV formula prefix"):
+        _generate(root, tmp_path / "formula", commit)
+
+
+def test_controlled_identity_cardinality_drift_fails_closed(
+    source_repo, tmp_path
+) -> None:
+    root, commit = source_repo
+    requirements = root / "data/modules/cost/curated/project_asset_requirements.csv"
+    _rewrite(requirements, lambda rows: rows.pop())
+    with pytest.raises(ValueError, match="controlled requirement IDs"):
+        _generate(root, tmp_path / "missing", commit)

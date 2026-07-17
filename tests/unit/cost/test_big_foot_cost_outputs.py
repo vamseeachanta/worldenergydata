@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import csv
-from decimal import Decimal
 import hashlib
 import importlib.util
 import json
-from pathlib import Path
 import shutil
 import subprocess
+from decimal import Decimal
+from pathlib import Path
 
 import pytest
-
 
 ROOT = Path(__file__).resolve().parents[3]
 BUILDER_PATH = ROOT / "scripts/cost/build_big_foot_cost_map.py"
