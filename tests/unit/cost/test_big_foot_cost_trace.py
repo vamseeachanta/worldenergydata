@@ -281,9 +281,9 @@ def test_award_link_locator_must_resolve_same_live_award(tmp_path: Path) -> None
     root = _copy_curated(tmp_path)
     path = root / "award_asset_links.csv"
     links = list(csv.DictReader(path.open(encoding="utf-8")))
-    links[0]["SOURCE_LOCATOR"] = (
-        "contract_awards.csv:PROJECT=Big Foot|AWARD_YEAR=2009|CONTRACTOR=Enbridge"
-    )
+    links[0][
+        "SOURCE_LOCATOR"
+    ] = "contract_awards.csv:PROJECT=Big Foot|AWARD_YEAR=2009|CONTRACTOR=Enbridge"
     _rewrite(path, links)
 
     with pytest.raises(ValueError, match="award source locators disagree"):

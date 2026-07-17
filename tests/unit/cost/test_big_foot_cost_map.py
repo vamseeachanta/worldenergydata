@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 import csv
-from pathlib import Path
 import re
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
-
 
 ROOT = Path(__file__).resolve().parents[3]
 CURATED = ROOT / "data/modules/cost/curated"
@@ -71,9 +70,7 @@ def test_big_foot_requirements_cover_dry_tree_tlp_architecture() -> None:
             project_id=row["PROJECT_ID"],
             work_package=row["WORK_PACKAGE"],
             required_assets=(
-                RequiredAsset(
-                    asset_type=row["ASSET_TYPE"], quantity=row["QUANTITY"]
-                ),
+                RequiredAsset(asset_type=row["ASSET_TYPE"], quantity=row["QUANTITY"]),
             ),
         )
         assert requirement.project_id == "prj-000001"
@@ -89,9 +86,9 @@ def test_unknown_quantity_is_valid_but_unproven_number_is_not() -> None:
     assert {row["QUANTITY"] for row in rows} == {"unknown"}
     assert by_package["wells"]["QUANTITY"] == "unknown"
     assert by_package["dry trees"]["QUANTITY"] == "unknown"
-    assert RequiredAsset(asset_type="development well", quantity="unknown").quantity == (
-        "unknown"
-    )
+    assert RequiredAsset(
+        asset_type="development well", quantity="unknown"
+    ).quantity == ("unknown")
     with pytest.raises(ValidationError):
         RequiredAsset(asset_type="development well", quantity="38")
 
@@ -133,9 +130,7 @@ def test_identity_registries_use_stable_monotonic_opaque_ids() -> None:
 def test_identity_registry_foreign_keys_resolve() -> None:
     projects = {row["OPAQUE_ID"] for row in _rows("cost_project_identity.csv")}
     awards = {row["OPAQUE_ID"] for row in _rows("cost_award_identity.csv")}
-    requirements = {
-        row["OPAQUE_ID"] for row in _rows("cost_requirement_identity.csv")
-    }
+    requirements = {row["OPAQUE_ID"] for row in _rows("cost_requirement_identity.csv")}
     requirement_rows = _rows("project_asset_requirements.csv")
     assert {row["REQUIREMENT_ID"] for row in requirement_rows} == requirements
     assert {row["PROJECT_ID"] for row in requirement_rows} <= projects
@@ -168,10 +163,7 @@ def test_every_big_foot_award_has_one_resolution_status() -> None:
     assert [row["AWARD_ID"] for row in links] == award_ids
     assert sorted(row["AWARD_ID"] for row in links) == sorted(award_ids)
     assert len({row["AWARD_ID"] for row in links}) == len(links)
-    assert not (
-        {"VALUE_LOW_MM", "VALUE_HIGH_MM", "AMOUNT", "CURRENCY"}
-        & set(links[0])
-    )
+    assert not ({"VALUE_LOW_MM", "VALUE_HIGH_MM", "AMOUNT", "CURRENCY"} & set(links[0]))
     for row in links:
         AwardRequirementLink(
             award_id=row["AWARD_ID"],
@@ -282,7 +274,9 @@ def test_thirty_eight_wellbores_does_not_fill_blank_sanctioned_well_count() -> N
     header = rows[0]
     records = [dict(zip(header, row)) for row in rows[1:]]
     big_foot_wellbores = [
-        row for row in records if row["LEASE_NAME"] == "Big Foot" and row["API_WELL_NUMBER"]
+        row
+        for row in records
+        if row["LEASE_NAME"] == "Big Foot" and row["API_WELL_NUMBER"]
     ]
     assert len(big_foot_wellbores) == 38
     sanctioned = next(

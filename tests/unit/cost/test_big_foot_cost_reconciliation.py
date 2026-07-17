@@ -6,7 +6,11 @@ import pytest
 
 
 def test_bottom_up_rejects_incompatible_currency_basis_scope_or_ownership():
-    from worldenergydata.cost.timeseries.cost_map import ComparisonBasis, ObservedContribution, reconcile_bottom_up
+    from worldenergydata.cost.timeseries.cost_map import (
+        ComparisonBasis,
+        ObservedContribution,
+        reconcile_bottom_up,
+    )
 
     target = ComparisonBasis("USD", "nominal", "gross", "project", "project_capex")
     changes = {
@@ -45,7 +49,9 @@ def test_bottom_up_rejects_incompatible_currency_basis_scope_or_ownership():
             award_id=f"awd-{disposition}",
             requirement_ids=("req-000005",),
             value=Decimal("10"),
-            source_basis=ComparisonBasis("EUR", "real", "gross", "component", "component_capex"),
+            source_basis=ComparisonBasis(
+                "EUR", "real", "gross", "component", "component_capex"
+            ),
             comparison_basis=target if disposition == "overlap" else None,
             counting_disposition=disposition,
         )
@@ -175,7 +181,9 @@ def test_interval_residual_uses_outward_endpoint_arithmetic():
     )
 
     assert metrics.residual == ClosedInterval(Decimal("-10"), Decimal("30"))
-    assert metrics.coverage == ClosedInterval(Decimal("80") / Decimal("110"), Decimal("100") / Decimal("90"))
+    assert metrics.coverage == ClosedInterval(
+        Decimal("80") / Decimal("110"), Decimal("100") / Decimal("90")
+    )
     endpoint_ratios = (
         Decimal("-10") / Decimal("90"),
         Decimal("-10") / Decimal("110"),
@@ -220,10 +228,15 @@ def test_sanction_and_outturn_reconcile_as_distinct_total_bases():
 
     assert tuple(results) == ("evt-000003", "evt-000004")
     assert results["evt-000003"].target == Decimal("4000")
-    assert results["evt-000003"].target_basis == "gross project cost at Dec-2010 sanction"
+    assert (
+        results["evt-000003"].target_basis == "gross project cost at Dec-2010 sanction"
+    )
     assert results["evt-000003"].accounting.residual.low == Decimal("3955")
     assert results["evt-000004"].target == Decimal("5100")
-    assert results["evt-000004"].target_basis == "final gross project cost at first oil (Nov 2018), +28% vs FID"
+    assert (
+        results["evt-000004"].target_basis
+        == "final gross project cost at first oil (Nov 2018), +28% vs FID"
+    )
     assert results["evt-000004"].accounting.residual.low == Decimal("5055")
     outturn = results["evt-000004"]
     assert (outturn.currency, outturn.provenance, outturn.confidence) == (
@@ -295,7 +308,11 @@ def test_each_joint_allocation_scenario_sums_exactly_to_project_total():
                 unallocated=Decimal("0"),
                 bottom_up_residual=total - Decimal("45"),
             )
-            assert accounting.unallocated == accounting.unreconciled_variance == Decimal("0")
+            assert (
+                accounting.unallocated
+                == accounting.unreconciled_variance
+                == Decimal("0")
+            )
 
 
 def test_largest_remainder_uses_stable_requirement_id_ties():
@@ -318,7 +335,9 @@ def test_largest_remainder_uses_stable_requirement_id_ties():
             Decimal("0.03"),
         )
     with pytest.raises(ValueError, match="positive"):
-        largest_remainder_allocate(Decimal("1.00"), {"req-1": Decimal("1.00")}, Decimal("0"))
+        largest_remainder_allocate(
+            Decimal("1.00"), {"req-1": Decimal("1.00")}, Decimal("0")
+        )
 
 
 def test_top_down_allocations_are_banded_and_marked_allocated():
