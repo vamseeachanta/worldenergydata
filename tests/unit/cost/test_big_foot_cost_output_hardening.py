@@ -1,8 +1,5 @@
-"""Mutation and producer-provenance tests for the Big Foot evidence pack."""
-
-from __future__ import annotations
-
 import csv
+import hashlib
 import importlib.util
 import locale
 import shutil
@@ -143,21 +140,66 @@ def test_producer_commit_must_contain_exact_builder(source_repo, tmp_path) -> No
         _generate(root, tmp_path / "mismatch", commit)
 
 
-@pytest.mark.parametrize(
-    "relative",
-    [
-        "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
-        "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
-    ],
-)
+@pytest.mark.parametrize("relative", _builder().INPUT_PATHS[1:3])
 def test_producer_commit_pins_every_executable_helper(
     source_repo, tmp_path, relative
 ) -> None:
     root, commit = source_repo
     path = root / relative
     path.write_bytes(path.read_bytes() + b"\n# dirty mutation\n")
+    attestation = {
+        item: hashlib.sha256((root / item).read_bytes()).hexdigest()
+        for item in _builder().INPUT_PATHS
+        if item.endswith(".py")
+    }
+    options = {"producer_executable_attestation": attestation}
     with pytest.raises(ValueError, match="executable blob does not match"):
-        _generate(root, tmp_path / "mismatch", commit)
+        _generate(root, tmp_path / "mismatch", commit, **options)
+
+
+def test_shallow_checkout_requires_exact_executable_attestation(
+    source_repo, tmp_path
+) -> None:
+    origin, producer = source_repo
+    marker = origin / "unrelated.txt"
+    marker.write_text("second commit\n", encoding="utf-8")
+    subprocess.run(["git", "add", marker.name], cwd=origin, check=True)
+    subprocess.run(["git", "commit", "-qm", "unrelated"], cwd=origin, check=True)
+    root = tmp_path / "shallow"
+    subprocess.run(
+        ["git", "clone", "-q", "--depth", "1", origin.as_uri(), str(root)],
+        check=True,
+    )
+    executable = [path for path in _builder().INPUT_PATHS if path.endswith(".py")]
+    attestation = {
+        path: hashlib.sha256((root / path).read_bytes()).hexdigest()
+        for path in executable
+    }
+
+    def generate(name, value):
+        _generate(
+            root, tmp_path / name, producer, producer_executable_attestation=value
+        )
+
+    assert (root / ".git/shallow").is_file()
+    generate("valid", attestation)
+    invalid = [
+        {key: value for key, value in attestation.items() if key != executable[0]},
+        {**attestation, "extra.py": "0" * 64},
+        {**attestation, executable[0]: "0" * 64},
+    ]
+    (root / executable[1]).write_bytes((root / executable[1]).read_bytes() + b"dirty")
+    invalid.append(attestation)
+    for index, candidate in enumerate(invalid):
+        with pytest.raises(ValueError, match="attestation"):
+            generate(f"invalid-{index}", candidate)
+    with pytest.raises(ValueError, match="producer commit must exist"):
+        _generate(
+            origin,
+            tmp_path / "non-shallow",
+            "0" * 40,
+            producer_executable_attestation=attestation,
+        )
 
 
 def test_build_restores_process_locale_on_success_and_failure(

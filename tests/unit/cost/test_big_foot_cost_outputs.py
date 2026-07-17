@@ -356,6 +356,11 @@ def test_owner_decision_and_external_send_remain_pending(source_repo, tmp_path) 
 
 def test_checked_in_outputs_regenerate_from_manifest_producer() -> None:
     manifest = json.loads((ROOT / MANIFEST_REL).read_text(encoding="utf-8"))
+    executable = {
+        item["path"]: item["sha256"]
+        for item in manifest["inputs"]
+        if item["path"].endswith(".py")
+    }
     output = ROOT / ".superpowers/sdd/checked-output"
     if output.exists():
         shutil.rmtree(output)
@@ -365,6 +370,7 @@ def test_checked_in_outputs_regenerate_from_manifest_producer() -> None:
             output_root=output,
             source_date_epoch=manifest["generated_at"]["epoch"],
             producer_commit=manifest["producer"]["commit"],
+            producer_executable_attestation=executable,
         )
         assert all(
             (output / path).read_bytes() == (ROOT / path).read_bytes()

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import os
 from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from pathlib import Path
@@ -210,9 +211,9 @@ def _fdas_rows(context: dict) -> list[dict[str, str]]:
                     source,
                     "project_id:PROJECT_ID requirement_id:REQUIREMENT_IDS currency:CURRENCY price_basis:PRICE_BASIS ownership_basis:OWNERSHIP_BASIS scope_basis:SCOPE_BASIS capex_basis:CAPEX_BASIS evidence_derivation:EVIDENCE_DERIVATION source_provenance:SOURCE_PROVENANCE counting_disposition:COUNTING_DISPOSITION mapping_status:MAPPING_STATUS assumption_vintage:ASSUMPTION_VINTAGE",
                 ),
-                accounting_view="fdas_development_capex"
-                if source in additive
-                else "fdas_opex",
+                accounting_view=(
+                    "fdas_development_capex" if source in additive else "fdas_opex"
+                ),
                 row_kind="fdas_assumption" if source in additive else "fdas_opex",
                 additive=str(source in additive).lower(),
                 value_low_mm=value,
@@ -330,8 +331,6 @@ def _validate_rendered(stage: Path, expected_rows: list[dict[str, str]]) -> None
         actual_rows = list(reader)
         if tuple(reader.fieldnames or ()) != CSV_FIELDS:
             raise RuntimeError("staged CSV schema mismatch")
-    import json
-
     manifest = json.loads((stage / MANIFEST_REL).read_text(encoding="utf-8"))
     if not html.startswith("<!doctype html>") or actual_rows != expected_rows:
         raise RuntimeError("staged output semantic validation failed")
@@ -345,6 +344,7 @@ def build_outputs(
     output_root: Path,
     source_date_epoch: int,
     producer_commit: str,
+    producer_executable_attestation: dict[str, str] | None = None,
     before_final_hash: Callable[[], None] | None = None,
     before_publish: Callable[[Path], None] | None = None,
 ) -> None:
@@ -352,7 +352,9 @@ def build_outputs(
         raise ValueError("nonnegative SOURCE_DATE_EPOCH is required")
     with c_locale():
         frozen = snapshot(repo_root)
-        validate_producer(repo_root, producer_commit, frozen)
+        validate_producer(
+            repo_root, producer_commit, frozen, producer_executable_attestation
+        )
         context = build_context(frozen)
         rows = _rows(context)
         with TemporaryDirectory() as directory:
