@@ -107,7 +107,7 @@
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
-      "sha256": "dd0c3ac2200fd829899c9fa41ada367559bd5b825a1680ee0f2f8af7888fde25"
+      "sha256": "c7b639dc6165259e7c245ffa520cae870053e8c54266fbebef6afeb4be28e06e"
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
@@ -119,7 +119,7 @@
     },
     {
       "path": "scripts/cost/build_big_foot_cost_map.py",
-      "sha256": "f0e7330ff3425c97bf056c69d73e98f7ccf2abf6703ddfcb0b1b3907c21a63b1"
+      "sha256": "629b331096838d9aec786f31e255185c01f177c5797a122f11ed7122527fdfbd"
     }
   ],
   "outputs": [
@@ -149,8 +149,8 @@
   },
   "producer": {
     "builder_path": "scripts/cost/build_big_foot_cost_map.py",
-    "builder_sha256": "f0e7330ff3425c97bf056c69d73e98f7ccf2abf6703ddfcb0b1b3907c21a63b1",
-    "commit": "fa172c6a2844b841940472def2cc264b932231e7",
+    "builder_sha256": "629b331096838d9aec786f31e255185c01f177c5797a122f11ed7122527fdfbd",
+    "commit": "361a5f3fac48469b54abcdb38f8641fc9dacc93a",
     "commit_policy": "exact_builder_containing_commit",
     "tool_version": "1.2.0"
   },
