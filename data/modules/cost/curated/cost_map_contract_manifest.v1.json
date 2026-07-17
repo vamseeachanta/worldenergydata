@@ -6,11 +6,11 @@
       "awd-000002"
     ],
     "events": [
-      "evt-000001",
       "evt-000002",
       "evt-000003",
-      "evt-000004",
-      "evt-000005"
+      "evt-000001",
+      "evt-000005",
+      "evt-000004"
     ],
     "projects": [
       "prj-000001"
@@ -36,6 +36,7 @@
   },
   "generated_at": {
     "epoch": 1700000000,
+    "locale": "C",
     "policy": "SOURCE_DATE_EPOCH",
     "utc": "2023-11-14T22:13:20Z"
   },
@@ -101,18 +102,26 @@
       "sha256": "fd23acf96e30abfcecb90b98a498607345aa1bd7ce154d1558d59741a0c9e87c"
     },
     {
+      "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map_schema.py",
+      "sha256": "af6fd0be89eb97932c89416a0a24a538a0d7a9e2093e187c69322a23e300c466"
+    },
+    {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/project_trace.py",
       "sha256": "5b78e7d24b096bf10e11ec4246ecd49477766eb318c13da8e0e8683c7e98db34"
+    },
+    {
+      "path": "scripts/cost/build_big_foot_cost_map.py",
+      "sha256": "d7eecfee0b835420dfd534d81fa94887707dbdca25c93e32dbad90ea0fb0bf4d"
     }
   ],
   "outputs": [
     {
       "path": "reports/cost/big_foot_cost_map.html",
-      "sha256": "0e9470319ac028893acc03c5c2345bbc14127e5644e7af8efe8f377f43de7a78"
+      "sha256": "d1dac173a3c71989924744d8ce787f12de354a27e0f441eb1f261bf89e255e32"
     },
     {
       "path": "reports/cost/big_foot_cost_map_reconciliation.csv",
-      "sha256": "2270f2b3318f50d1ee8984a2b56ff6c5544276886910ae155bb459f906f03a4f"
+      "sha256": "9115db7e0d947d07de9a23fcdfa6debb9c48ba79c0bf6e943aa40ba0c219d211"
     }
   ],
   "owner_decision": {
@@ -127,13 +136,15 @@
   "policies": {
     "email": "not_sent",
     "external_send": "pending_owner_authorization",
+    "reuse_allowed": false,
     "workbooks": "read_only"
   },
   "producer": {
-    "commit": "1edd85039f245e62a8331e9fbc21a6f8d39c3dcc",
-    "commit_policy": "injected_source_revision",
-    "tool": "build_big_foot_cost_map.py",
-    "version": "1.0.0"
+    "builder_path": "scripts/cost/build_big_foot_cost_map.py",
+    "builder_sha256": "d7eecfee0b835420dfd534d81fa94887707dbdca25c93e32dbad90ea0fb0bf4d",
+    "commit": "fdf2885cb573b0adf4dbc636235e6f33a33f6307",
+    "commit_policy": "exact_builder_containing_commit",
+    "tool_version": "1.1.0"
   },
   "scenarios": [
     {
@@ -207,17 +218,17 @@
     },
     {
       "allowlisted_cells": [
-        "E3",
-        "F3",
-        "G3",
-        "H3",
-        "I3",
-        "J3",
-        "K3",
-        "L3",
-        "M3",
-        "P3",
-        "Q3"
+        "Project_Summary!E3",
+        "Project_Summary!F3",
+        "Project_Summary!G3",
+        "Project_Summary!H3",
+        "Project_Summary!I3",
+        "Project_Summary!J3",
+        "Project_Summary!K3",
+        "Project_Summary!L3",
+        "Project_Summary!M3",
+        "Project_Summary!P3",
+        "Project_Summary!Q3"
       ],
       "extraction": {
         "library": "openpyxl",
@@ -229,16 +240,16 @@
     },
     {
       "allowlisted_cells": [
-        "D10",
-        "D12",
-        "D13",
-        "D15",
-        "D16",
-        "D17",
-        "D36",
-        "D37",
-        "D38",
-        "D9"
+        "assumptions!D10",
+        "assumptions!D12",
+        "assumptions!D13",
+        "assumptions!D15",
+        "assumptions!D16",
+        "assumptions!D17",
+        "assumptions!D36",
+        "assumptions!D37",
+        "assumptions!D38",
+        "assumptions!D9"
       ],
       "extraction": {
         "library": "openpyxl",
