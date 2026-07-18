@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Big Foot manifest-lineage hotfix design</title>
+  <style>
+    body { font: 16px/1.55 system-ui, sans-serif; margin: 2rem auto; max-width: 60rem; padding: 0 1rem; color: #17212b; }
+    h1, h2 { line-height: 1.2; }
+    code { background: #eef2f5; padding: .1rem .25rem; }
+    .decision { border-left: .3rem solid #176b45; padding: .6rem 1rem; background: #edf8f2; }
+    .warning { border-left: .3rem solid #9a6700; padding: .6rem 1rem; background: #fff8df; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccd4dc; padding: .55rem; text-align: left; vertical-align: top; }
+  </style>
+</head>
+<body>
+  <h1>Big Foot manifest-lineage hotfix design</h1>
+  <p><strong>Issue:</strong> <a href="https://github.com/vamseeachanta/worldenergydata/issues/1039">worldenergydata #1039</a><br>
+  <strong>Follow-on:</strong> <a href="https://github.com/vamseeachanta/worldenergydata/issues/1048">worldenergydata #1048</a><br>
+  <strong>Design approval:</strong> user-approved 2026-07-18; written-spec approval remains pending.</p>
+
+  <h2>Problem</h2>
+  <p>Manifest v1 records feature commit <code>80b6560a947af49057dd4bbc7364b88ad8867db3</code> as its producer. PR #1049 was squash-merged to <code>main</code> as <code>66ce9d6808492a01f6a7cac60415304bcc6e6ef5</code>. The feature commit is not an ancestor of the durable <code>main</code> lineage, so a clean depth-one checkout cannot satisfy the existing producer-ancestry contract. The checked-output regeneration test consequently fails on Python 3.10, 3.11, and 3.12.</p>
+  <p>The previous <code>main</code> run already contained unrelated capability-index, logging, repository-structure, workflow-API, and Python 3.10 compatibility failures. This design will address only the new cost-specific producer-lineage regression.</p>
+
+  <h2>Decision</h2>
+  <div class="decision">
+    <p>The hotfix will preserve production's fail-closed Git commit and executable-blob validation. It will republish manifest v1 with durable producer commit <code>66ce9d6808492a01f6a7cac60415304bcc6e6ef5</code>, whose executable blobs match the published evidence pack and which remains an ancestor of subsequent <code>main</code> commits.</p>
+  </div>
+
+  <h2>Alternatives considered</h2>
+  <table>
+    <thead><tr><th>Approach</th><th>Disposition</th><th>Reason</th></tr></thead>
+    <tbody>
+      <tr><td>Pin the durable squash commit and add a squash-lineage regression.</td><td>Selected</td><td>Repairs the published manifest without weakening provenance or changing production code.</td></tr>
+      <tr><td>Fetch the orphaned feature SHA and relax the ancestry check.</td><td>Rejected</td><td>Would convert repository provenance into acceptance of an unreachable caller-selected commit.</td></tr>
+      <tr><td>Change the repository to merge commits.</td><td>Rejected</td><td>Would be systemic, would not repair the existing manifest, and belongs outside this hotfix.</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Change boundary</h2>
+  <p>The implementation will modify only:</p>
+  <ul>
+    <li><code>tests/unit/cost/test_big_foot_cost_output_hardening.py</code>, to model durable producer lineage through a squash merge and deleted feature branch;</li>
+    <li><code>data/modules/cost/curated/cost_map_contract_manifest.v1.json</code>, to record the durable producer commit and refreshed canonical manifest hash state if regeneration requires it.</li>
+  </ul>
+  <p>The implementation will not modify production helpers, curated accounting rows, HTML or CSV semantics, source workbooks, workbook metadata, email state, or external-circulation policy. If deterministic regeneration shows that HTML or CSV bytes would change, the hotfix will stop and return to plan review.</p>
+
+  <h2>Data and trust flow</h2>
+  <ol>
+    <li>The test harness will resolve the artifact commit from the current checkout.</li>
+    <li>For a shallow checkout, it will hydrate history only from configured <code>origin</code>.</li>
+    <li>The manifest producer will have to exist as a real Git commit and be an ancestor of the artifact commit.</li>
+    <li>Production validation will compare every executable input byte-for-byte with the producer's Git blobs.</li>
+    <li>The builder will regenerate HTML, CSV, and manifest bytes; checked artifacts will have to match exactly.</li>
+  </ol>
+
+  <h2>Test design</h2>
+  <p>The existing failing checked-output regeneration test will provide the initial RED evidence from the post-merge <code>main</code> run. A focused regression will then construct a complete local origin with:</p>
+  <ol>
+    <li>a durable base commit containing the executable inputs;</li>
+    <li>a feature branch with an artifact commit;</li>
+    <li>a squash commit on the default branch;</li>
+    <li>the feature branch deleted before a depth-one clone;</li>
+    <li>the durable base commit used as producer.</li>
+  </ol>
+  <p>The regression will require history hydration, ancestry validation, and byte-identical regeneration to pass. It will also retain rejection coverage for fabricated producers, missing origin, dirty executable inputs, and non-ancestor producer commits.</p>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>The checked-in manifest producer will be a real ancestor of the current durable <code>main</code> lineage.</li>
+    <li>A depth-one main-like checkout will regenerate the checked HTML, CSV, and manifest byte-identically.</li>
+    <li>The existing production validation API and fail-closed behavior will remain unchanged.</li>
+    <li>The three source workbook SHA-256 values will remain unchanged.</li>
+    <li>The focused cost tests, formatting, lint, legal scan, and adversarial review will pass.</li>
+    <li>The PR will use <code>Refs #1039</code>; #1039 will close only after merge verification.</li>
+    <li>No email, external circulation, workbook mutation, or unrelated full-suite debt remediation will occur.</li>
+  </ul>
+
+  <h2>Generalized follow-on</h2>
+  <p>Issue #1048 will retain the broader design question: how deterministic manifests should identify producers across squash, rebase, shallow checkout, and branch-deletion workflows. This hotfix will not pre-empt that systemic contract.</p>
+</body>
+</html>
