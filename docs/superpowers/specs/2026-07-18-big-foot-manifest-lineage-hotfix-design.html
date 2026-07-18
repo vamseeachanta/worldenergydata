@@ -42,7 +42,7 @@
   <h2>Change boundary</h2>
   <p>The implementation will modify only:</p>
   <ul>
-    <li><code>tests/unit/cost/test_big_foot_cost_output_hardening.py</code>, to model durable producer lineage through a squash merge and deleted feature branch;</li>
+    <li><code>tests/unit/cost/test_big_foot_cost_lineage.py</code>, a focused lineage regression file that will model a squash merge, branch deletion, durable-producer success, and real-Git rejection attacks without exceeding the existing hardening file's 400-line limit;</li>
     <li><code>data/modules/cost/curated/cost_map_contract_manifest.v1.json</code>, to record the durable producer commit and refreshed canonical manifest hash state if regeneration requires it.</li>
   </ul>
   <p>The implementation will not modify production helpers, curated accounting rows, HTML or CSV semantics, source workbooks, workbook metadata, email state, or external-circulation policy. If deterministic regeneration shows that HTML or CSV bytes would change, the hotfix will stop and return to plan review.</p>
@@ -74,11 +74,11 @@
     <li>The existing production validation API and fail-closed behavior will remain unchanged.</li>
     <li>The three source workbook SHA-256 values will remain unchanged.</li>
     <li>The focused cost tests, formatting, lint, legal scan, and adversarial review will pass.</li>
-    <li>The PR will use <code>Refs #1039</code>; #1039 will close only after merge verification.</li>
+    <li>The PR will use <code>Refs #1039</code>; <a href="https://github.com/vamseeachanta/worldenergydata/issues/1039">#1039</a> will close only after merge verification.</li>
     <li>No email, external circulation, workbook mutation, or unrelated full-suite debt remediation will occur.</li>
   </ul>
 
   <h2>Generalized follow-on</h2>
-  <p>Issue #1048 will retain the broader design question: how deterministic manifests should identify producers across squash, rebase, shallow checkout, and branch-deletion workflows. This hotfix will not pre-empt that systemic contract.</p>
+  <p>Issue <a href="https://github.com/vamseeachanta/worldenergydata/issues/1048">#1048</a> will retain the broader design question: how deterministic manifests should identify producers across squash, rebase, shallow checkout, and branch-deletion workflows. This hotfix will not pre-empt that systemic contract.</p>
 </body>
 </html>
