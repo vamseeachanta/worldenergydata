@@ -150,7 +150,7 @@
   "producer": {
     "builder_path": "scripts/cost/build_big_foot_cost_map.py",
     "builder_sha256": "1c97155bca9a57aadc0e1dd51feb8ba4986340df286fc69cd3aff014e92dc2fa",
-    "commit": "80b6560a947af49057dd4bbc7364b88ad8867db3",
+    "commit": "66ce9d6808492a01f6a7cac60415304bcc6e6ef5",
     "commit_policy": "exact_builder_containing_commit",
     "tool_version": "1.2.0"
   },
