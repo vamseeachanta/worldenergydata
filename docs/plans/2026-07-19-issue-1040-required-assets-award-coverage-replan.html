@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Issue 1040 replan — portfolio required assets and award coverage</title>
+  <style>
+    :root { color-scheme: light; --ink:#17202a; --muted:#5d6d7e; --line:#d5d8dc; --paper:#fff; --wash:#f4f6f7; --accent:#145a32; --warn:#922b21; }
+    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1100px; margin:32px auto; padding:40px; background:var(--paper); box-shadow:0 4px 24px #0001; }
+    h1,h2,h3 { line-height:1.2; } h1 { margin-top:0; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3rem; margin-top:2rem; }
+    code { background:#eef2f3; padding:.1rem .25rem; border-radius:3px; } pre { overflow:auto; background:#17202a; color:#f8f9f9; padding:1rem; }
+    table { border-collapse:collapse; width:100%; font-size:.94rem; } th,td { border:1px solid var(--line); padding:.55rem; text-align:left; vertical-align:top; } th { background:#eaf2f8; }
+    .meta,.decision,.blocker { padding:1rem 1.2rem; border-left:5px solid var(--accent); background:#eafaf1; }
+    .blocker { border-color:var(--warn); background:#fdedec; } .muted { color:var(--muted); } li { margin:.35rem 0; }
+  </style>
+</head>
+<body><main>
+  <h1>Plan for #1040: portfolio required-assets and award-coverage map</h1>
+  <div class="meta">
+    <strong>Status:</strong> plan-review · <strong>Complexity:</strong> T3 · <strong>Date:</strong> 2026-07-19<br>
+    <strong>Issue:</strong> <a href="https://github.com/vamseeachanta/worldenergydata/issues/1040">github.com/vamseeachanta/worldenergydata/issues/1040</a><br>
+    <strong>Base:</strong> <code>5b2cf22</code> · <strong>Lane:</strong> <code>lane:codex</code>
+  </div>
+
+  <h2>Why this replan exists</h2>
+  <div class="blocker"><strong>The 2026-07-16 plan must not be implemented.</strong> It would extend five files whose bytes are pinned by the v1 manifest while also requiring that v1 preflight to remain green. The live v1 manifest also records owner reuse as pending/false, the award locator collides on two Moho Nord rows, and the proposed v2 publication omitted the durable post-squash producer step.</div>
+  <p>This plan will preserve the Big Foot v1 pack byte-for-byte and build the portfolio contract in a v2 namespace. It will use the live baselines of 80 unique sanctioned projects and 110 awards across 29 projects. Counts will be recomputed at build time; they will not be treated as timeless constants.</p>
+
+  <h2>Owner decision required at approval</h2>
+  <div class="decision">
+    Approval of this plan will authorize reuse of the v1 <strong>taxonomy and accounting semantics</strong> for the #1040 portfolio contract: stable opaque identities, independent link/scope/bundle/counting axes, native-currency preservation, exact intervals, the complete <code>VALUE_BASIS</code> vocabulary, provenance tiers, and <code>not_public</code> as a positive finding. It will also authorize portfolio reuse of those semantics.<br><br>
+    Approval will <strong>not</strong> authorize reuse of the v1 allocation scenarios or assumed shares. It will not authorize currency conversion, modeled costs, email, external circulation, or workbook writes. Existing workbooks will remain read-only and out of scope for #1040.
+  </div>
+  <p>The decision will be recorded as a machine-readable v2 input with independent fields for <code>taxonomy</code>, <code>accounting</code>, <code>portfolio_reuse</code>, and <code>allocation_scenarios</code>, each limited to <code>approved|deferred|rejected</code>. The first three will be <code>approved</code>; allocation scenarios will be <code>deferred</code>. Required evidence fields will be <code>approver</code>, exact <code>approval_quote</code>, UTC <code>approved_at</code>, <code>issue_url</code>, <code>issue_comment_url</code>, <code>approved_plan_path</code>, and <code>approved_plan_sha256</code>. Before implementation, the main session will use authenticated <code>gh issue view</code> output to verify the recording comment and will restore the local marker only from the explicit user instruction. Unit tests will verify internal consistency and exact hashes; they will not claim cryptographic proof of who authored an external comment. The v1 manifest will not be edited.</p>
+
+  <h2>Resource intelligence and invariants</h2>
+  <ul>
+    <li>The live project table has 80 unique projects across exactly six development types: <code>subsea_tieback</code>, <code>new_host_fpso</code>, <code>new_host_fixed</code>, <code>new_host_semi</code>, <code>new_host_tlp</code>, and <code>new_host_spar</code>.</li>
+    <li>The award table has 110 rows and eight value bases: <code>point</code>, <code>range</code>, <code>band</code>, <code>backlog</code>, <code>not_public</code>, <code>lease_contract</code>, <code>combined</code>, and <code>midstream</code>.</li>
+    <li>The v1 pilot covers 1 project identity, 2 award identities, and 8 requirements. Existing schema and interval primitives will be reused without weakening their validation.</li>
+    <li>The source award table has no immutable source key or currency/accounting columns. Two Moho Nord / 2013 / Hyundai / production-hub rows collide until scope is included.</li>
+    <li>The canonical v1 manifest SHA-256 is independently pinned as <code>f5dc2fce6c0ee376d577f8dcebb70511c756bd28264744600dc018deab5fcf9e</code>. A preflight will verify that trust root first, then verify every path listed in its <code>inputs</code>, <code>outputs</code>, and closed executable producer set. It will also require producer ancestry and exact executable blobs. Changing both an artifact and its embedded manifest hash will therefore fail.</li>
+  </ul>
+
+  <h2>Versioned artifact map</h2>
+  <table><thead><tr><th>Action</th><th>Path</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_reuse_decision.v2.json</code></td><td>Explicit owner decision; scenarios remain deferred.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_project_source_crosswalk.v2.csv</code></td><td>Curated project source keys bound to canonical source rows.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_project_identity.v2.csv</code></td><td>80-project registry preserving <code>prj-000001</code>.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_award_source_crosswalk.v2.csv</code></td><td>Persisted source keys and exact locators, including scope discriminator.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_award_identity.v2.csv</code></td><td>110-award registry preserving <code>awd-000001..2</code>.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_identity_migrations.v2.csv</code></td><td>Append-only locator corrections, tombstones, replacements, and split/merge dispositions.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_requirement_rules.v2.csv</code></td><td>Approved architecture-to-work-package rules and rule evidence.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_requirement_overrides.v2.csv</code></td><td>Evidence-backed composite-host and project exceptions.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_requirement_identity.v2.csv</code></td><td>Stable requirement keys/IDs preserving <code>req-000001..8</code>.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_project_requirement_summary.v2.csv</code></td><td>Exactly one requirements-derived/unknown result per project.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_project_requirements.v2.csv</code></td><td>Zero or more evidence-backed requirement rows per project.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_award_scope_crosswalk.v2.csv</code></td><td>Per-award evidence-backed scope classification; coarse classes provide candidates only.</td></tr>
+    <tr><td>Create</td><td><code>data/modules/cost/curated/portfolio_award_counting_decisions.v2.csv</code></td><td>Per-award fail-closed counting disposition and evidence.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_award_requirement_links.v2.csv</code></td><td>Money-free many-to-many links and independent status axes.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_award_resolution.v2.csv</code></td><td>Exactly one linked/unlinked/ambiguous resolution summary per source award.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_award_accounting.v2.csv</code></td><td>Lossless source values plus explicit arithmetic eligibility.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_asset_award_coverage.v2.csv</code></td><td>Machine-readable portfolio decision surface.</td></tr>
+    <tr><td>Generate</td><td><code>data/modules/cost/derived/portfolio_cost_map_manifest.v2.json</code></td><td>Ordered hashes and durable producer lineage.</td></tr>
+    <tr><td>Generate</td><td><code>reports/cost/portfolio_asset_award_coverage.v2.html</code></td><td>Human-facing project/requirement/award coverage matrix.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_schema.py</code></td><td>Frozen v2 row models and enums; v1 schema remains unchanged.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_identity.py</code></td><td>Crosswalk, lifecycle, and live-set closure.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_requirements.py</code></td><td>Rule/override precedence and unknown results.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_linkage.py</code></td><td>Per-award resolution and money-free edges.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_accounting.py</code></td><td>Raw accounting shape and eligibility-gated interval conversion.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_render.py</code></td><td>Deterministic CSV/HTML rendering.</td></tr>
+    <tr><td>Create</td><td><code>packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/portfolio_manifest.py</code></td><td>Trust-root, closed executable set, hydration, and manifest validation.</td></tr>
+    <tr><td>Create</td><td><code>scripts/cost/build_portfolio_asset_award_coverage.py</code></td><td>Transactional builder with injected time and producer.</td></tr>
+    <tr><td>Create</td><td><code>tests/unit/cost/test_portfolio_identity.py</code>, <code>test_portfolio_requirements.py</code>, <code>test_portfolio_linkage.py</code>, <code>test_portfolio_accounting.py</code>, <code>test_portfolio_render.py</code>, <code>test_portfolio_lineage.py</code>, <code>test_portfolio_structure.py</code></td><td>Literal TDD nodes and structural/security contracts.</td></tr>
+  </tbody></table>
+  <p>Implementation will be divided across schema, identity, requirement, linkage, accounting, rendering, and manifest modules. No module will exceed 400 lines and no function will exceed 50 lines.</p>
+
+  <h2>Exact v2 contracts</h2>
+  <h3>Required schemas and set invariants</h3>
+  <table><thead><tr><th>Surface</th><th>Required fields and constraints</th></tr></thead><tbody>
+    <tr><td>Decision JSON</td><td><code>contract_version</code>; four statuses limited to <code>approved|deferred|rejected</code>; approver/quote/time/comment URL; approved plan path/SHA. Canonical JSON uses UTF-8, sorted keys, LF, two-space indent, terminal newline, and <code>additionalProperties=false</code>.</td></tr>
+    <tr><td>Project source crosswalk</td><td><code>source_project_key</code> PK independent of locator content; canonical JSON locator containing the exact source project name; locator SHA-256; full source-row SHA-256; active flag. Active locator/row set equals the 80 sanctioned-project rows one-to-one.</td></tr>
+    <tr><td>Project identity</td><td><code>project_id</code> PK; curated <code>source_project_key</code> unique FK; display label; state <code>active|tombstoned</code>; Boolean active consistent with state; aliases as canonical JSON string array; nonempty validation group; created source hash; migration note. Active-key set equals the crosswalk key set.</td></tr>
+    <tr><td>Award source crosswalk</td><td><code>source_award_key</code> PK independent of locator content; canonical JSON locator with exactly five named UTF-8 strings; locator SHA-256; source row hash; active flag. Active locator set equals the 110 source rows.</td></tr>
+    <tr><td>Award identity</td><td><code>award_id</code> PK; <code>source_award_key</code> unique FK; state <code>active|tombstoned</code>; consistent Boolean active; nonempty validation group; Boolean no-reuse marker; migration note.</td></tr>
+    <tr><td>Identity migration</td><td><code>migration_id</code> PK; entity kind; opaque ID; old/new canonical locator JSON and hashes; disposition <code>correction|tombstone|replacement|split_rejected|merge_rejected</code>; reason; provenance; effective date; replacement ID nullable.</td></tr>
+    <tr><td>Requirement rule</td><td><code>rule_id</code> PK; rule version; development type; work-package slug; asset type/unit; derivation <code>disclosed|award_derived|assumed</code>; nonempty provenance/source URL/locator; confidence <code>high|medium|low</code>; active.</td></tr>
+    <tr><td>Requirement override</td><td><code>override_id</code> PK; project ID FK; operation <code>add|remove|replace</code>; rule/lane; derivation <code>disclosed|award_derived|assumed</code>; nonempty provenance; confidence <code>high|medium|low</code>; rationale; active. Conflict key is SHA-256 of canonical JSON <code>{project_id, work_package_slug, rule_version}</code> and is unique among active rows.</td></tr>
+    <tr><td>Requirement identity</td><td><code>requirement_id</code> PK; curated <code>source_requirement_key</code> unique and content-independent; canonical JSON locator of project ID + work-package slug; locator hash; state/active; validation group; no-reuse marker; migration note. The identity migration ledger governs correction/tombstone/split/merge behavior and preserves <code>req-000001..8</code>.</td></tr>
+    <tr><td>Project requirement summary</td><td>Exactly one row per project ID: result <code>requirements_derived|requirements_unknown</code>; active requirement count; development type; rule version; evidence/provenance/confidence; source hash/date; reason when unknown.</td></tr>
+    <tr><td>Project requirement</td><td><code>requirement_id</code> PK; project ID FK; rule/override FK; work package; asset type; quantity <code>positive integer|unknown</code>; unit; evidence fields. Zero rows are allowed only when the separate project summary says <code>requirements_unknown</code>.</td></tr>
+    <tr><td>Award scope crosswalk</td><td><code>source_award_key</code> FK; <code>source_scope_component_id</code> PK; component ordinal/count; exact source component text; candidate lane; resolution <code>confirmed|rejected|ambiguous</code>; source locator/quote-or-paraphrase; nonempty provenance; confidence <code>high|medium|low</code>. Every award will enumerate at least one source-scope component; <code>ASSET_CLASS</code> alone cannot confirm an edge.</td></tr>
+    <tr><td>Award counting decision</td><td>Exactly one row per source award: disposition <code>unknown|included|excluded|overlap</code>; reason <code>unknown_basis|out_of_scope|duplicate|superseded|non_capex|overlap_avoidance</code>; <code>capex_basis</code>; overlap group nullable; evidence derivation/provenance/confidence. Unknown <code>capex_basis</code> requires disposition/reason <code>unknown/unknown_basis</code>; scope linkage or numeric disclosure never implies inclusion.</td></tr>
+    <tr><td>Link edge</td><td><code>link_edge_id</code> PK; award/project/requirement FKs; bundle group nullable; evidence fields. Zero or more edges per award; no money fields.</td></tr>
+    <tr><td>Award resolution</td><td>Exactly one row per source award: award/project IDs; <code>linked|unlinked|ambiguous</code>; <code>unknown|none|partial|full</code>; bundle group; <code>unknown|included|excluded|overlap</code>; controlled reason; edge count.</td></tr>
+    <tr><td>Raw accounting</td><td>Exactly one row per source award: raw low/high strings; source value basis; amount availability; derived bound shape or invalid; currency/price/ownership/scope/<code>capex_basis</code>; conversion status <code>not_performed|source_disclosed|legacy_unverified</code>; arithmetic eligibility; exclusion reason <code>missing_currency|missing_price_basis|missing_ownership_basis|missing_scope_basis|missing_capex_basis|incompatible_value_basis|non_capex|combined_unallocated|lease_opex_mixed|backlog_non_capex|not_public|invalid_bounds</code>; provenance.</td></tr>
+    <tr><td>Coverage</td><td>Source hash/date; project/award/requirement IDs; requirement status; resolution axes; disclosed-value flag; arithmetic-eligible flag; numerator, denominator, exclusion count/reasons. Source-key set equality is mandatory; many-to-many edge count is not source visitation count.</td></tr>
+    <tr><td>Manifest</td><td>Canonical JSON envelope with version/schema hash; lexicographically path-sorted curated/source input hashes; lexicographically path-sorted closed Python executable set and hashes; lexicographically path-sorted output hashes; C locale; UTC policy; Decimal policy; producer commit/path/hash/policy; decision hash; baseline counts/date/source hashes. Arrays that represent ordered paths reject duplicate or unsorted entries.</td></tr>
+  </tbody></table>
+
+  <h3>Coverage formulas</h3>
+  <p>Let <code>P</code> be the set of project summaries with <code>requirements_derived</code>; projects with <code>requirements_unknown</code> will be reported separately and excluded from, never silently added to, the requirement denominator. Let <code>R</code> be the set of active requirements belonging to <code>P</code>. Let <code>A</code> be the exact source-award-key set.</p>
+  <ul>
+    <li><strong>Requirement scope coverage:</strong> <code>|{r in R: at least one confirmed link edge targets r}| / |R|</code>.</li>
+    <li><strong>Award resolution coverage:</strong> <code>|{a in A: resolution(a)=linked}| / |A|</code>; ambiguous and unlinked counts will be separate.</li>
+    <li><strong>Disclosed-value coverage:</strong> <code>|{r in R: a confirmed edge reaches an award with a numeric raw amount}| / |R|</code>. <code>not_public</code> contributes scope evidence but not this numerator.</li>
+    <li><strong>Arithmetic-eligible coverage:</strong> <code>|{r in R: a confirmed edge reaches an arithmetic-eligible award}| / |R|</code>. It is distinct from disclosed-value coverage and may legitimately be zero.</li>
+    <li>Each numerator is a set of requirement or award IDs, so bundles and multiple awards cannot double-count. If a denominator is zero, the serialized percentage will be null with <code>denominator_zero</code>, never zero or 100%. Every surface will persist numerator, denominator, unknown/excluded count, and exclusion reasons.</li>
+  </ul>
+  <h3>Stable source identity</h3>
+  <p>Opaque project/award/source keys will be curated once and persisted; they will not be computed from row order or mutable locator content. The award crosswalk will bind each key to canonical JSON containing the exact five locator fields <code>PROJECT</code>, <code>AWARD_YEAR</code>, <code>CONTRACTOR</code>, <code>ASSET_CLASS</code>, and <code>SCOPE_DESC</code>; JSON encoding will use sorted keys, UTF-8, and no delimiter concatenation. That locator is unique for the current 110 rows. Later corrections will retain the key and opaque ID through the append-only migration ledger; deleted identities will be tombstoned and never reused. Tests will preserve existing Big Foot IDs and reject collisions, split/merge ambiguity, missing foreign keys, and key reuse.</p>
+
+  <h3>Architecture requirement rules</h3>
+  <table><thead><tr><th>Development type</th><th>Minimum work-package lanes</th></tr></thead><tbody>
+    <tr><td><code>subsea_tieback</code></td><td>wells; drilling/completion; subsea production system; flowlines/risers; umbilicals/controls; host tie-in; installation/hookup</td></tr>
+    <tr><td><code>new_host_fpso</code></td><td>host/FPSO; wells; drilling/completion; subsea production system; flowlines/risers; umbilicals/controls; mooring; export/offloading; installation/hookup</td></tr>
+    <tr><td><code>new_host_fixed</code></td><td>fixed host; wells; drilling/completion; production systems; controls; export; installation/hookup</td></tr>
+    <tr><td><code>new_host_semi</code></td><td>semi host; wells; drilling/completion; subsea production system; flowlines/risers; umbilicals/controls; mooring; export; installation/hookup</td></tr>
+    <tr><td><code>new_host_tlp</code></td><td>TLP host; wells; drilling/completion; production trees; tendons/mooring; risers/tensioners; controls; export; installation/hookup</td></tr>
+    <tr><td><code>new_host_spar</code></td><td>spar host; wells; drilling/completion; production trees; risers; mooring; controls; export; installation/hookup</td></tr>
+    <tr><td>missing or unsupported</td><td><code>requirements_unknown</code> only; no silent completion</td></tr>
+  </tbody></table>
+  <p>Rules will create requirement lanes, not quantities. Every rule will state whether it is disclosed, award-derived, or an owner-approved low-confidence architecture assumption; an assumed rule will never be relabeled as project-disclosed evidence. Unsupported inference will produce <code>requirements_unknown</code>. <code>WELL_COUNT</code> may populate the wells quantity only when disclosed in the sanctioned-project row. Other missing quantities will remain <code>unknown</code>. Project-specific additions or removals—including composite hosts such as Kikeh—will require a curated override with precedence over the base rule, provenance, confidence, and rationale.</p>
+
+  <h3>Award linkage</h3>
+  <p>Coarse <code>ASSET_CLASS</code> values will provide candidate lanes only; they will never confirm a link or scope coverage. A curated per-award scope edge must cite the exact source scope before a requirement link becomes <code>confirmed</code>. Otherwise the award will remain explicitly ambiguous or unlinked. Negative tests will cover live counterexamples: an <code>sps</code> riser-only award, an <code>other</code> drilling award, an <code>other</code> export award, and an <code>installation</code> award bundling SURF/control scope. Bundled scope will link once to multiple requirements through one award ID and one bundle group; value will never be copied.</p>
+  <p>For each award, let <code>S</code> be its curated source-scope-component set and <code>C</code> the components with at least one confirmed requirement edge. Scope coverage will be <code>full</code> when <code>|S|&gt;0</code> and <code>C=S</code>; <code>partial</code> when <code>0&lt;|C|&lt;|S|</code>; <code>none</code> when <code>|C|=0</code> and every component is rejected; and <code>unknown</code> when any unresolved component is ambiguous and no component is confirmed. Link-resolution precedence will be: <code>ambiguous</code> if project resolution or any source component is ambiguous; otherwise <code>linked</code> if at least one edge is confirmed; otherwise <code>unlinked</code>. Counting disposition will come only from the curated counting-decision row and may remain <code>unknown</code>.</p>
+
+  <h3>Accounting normalization</h3>
+  <p>The raw v2 accounting model will remain separate from the v1 <code>MoneyInterval</code>. Every row will preserve <code>VALUE_LOW_MM</code>, <code>VALUE_HIGH_MM</code>, and the original eight-value <code>VALUE_BASIS</code>. Amount availability will be <code>none|low_only|high_only|both_equal|both_unequal</code>; a representable raw bound shape will be <code>point|floor|ceiling|closed_range</code>, otherwise <code>invalid</code>. This source has no endpoint-inclusivity field, so raw v2 will not claim <code>open_range</code>. Rows with no amount will carry no interval. An eligible v1-compatible <code>MoneyInterval</code> may be created only after all required accounting facts and source-basis compatibility pass.</p>
+  <table><thead><tr><th>Source value basis</th><th>Coverage/counting rule</th><th>Bound compatibility and arithmetic</th></tr></thead><tbody>
+    <tr><td><code>point</code></td><td>Disclosed value when numeric.</td><td><code>both_equal → point</code>; every other shape is invalid/ineligible pending sourced correction.</td></tr>
+    <tr><td><code>range</code>, <code>band</code></td><td>Disclosed interval; never midpoint.</td><td>low-only floor; high-only ceiling; unequal both closed range; equal both invalid unless source is corrected to point.</td></tr>
+    <tr><td><code>not_public</code></td><td>Scope evidence; not disclosed-value coverage.</td><td>No amount and no interval; arithmetic ineligible.</td></tr>
+    <tr><td><code>combined</code></td><td>Disclosed only when numeric; excluded from project component arithmetic unless allocation is later sourced.</td><td>Shape may be recorded but arithmetic is ineligible for #1040.</td></tr>
+    <tr><td><code>backlog</code></td><td>Disclosed commercial value; separate from CAPEX coverage.</td><td>Shape may be recorded; arithmetic ineligible because <code>capex_basis</code> is unknown/non-comparable.</td></tr>
+    <tr><td><code>lease_contract</code></td><td>Disclosed commercial value; excluded from CAPEX coverage.</td><td>Shape may be recorded; arithmetic ineligible because lease/operate scope mixes CAPEX/OPEX.</td></tr>
+    <tr><td><code>midstream</code></td><td>Disclosed when numeric; counting disposition excluded/non-CAPEX.</td><td>Shape may be recorded; project-CAPEX arithmetic ineligible.</td></tr>
+  </tbody></table>
+  <p>The GranMorgu Noble row will remain raw <code>point</code> with unequal 753/1050 bounds, receive <code>bound_shape=invalid</code>, and remain ineligible pending a sourced correction; it will not be silently rewritten as a range. The current source also lacks structured currency, price basis/year, ownership basis, phase/scope basis, and <code>capex_basis</code>. Those fields will therefore be explicit <code>unknown</code>, and all current rows will remain <code>arithmetic_eligible=false</code>. No prose parsing, FX conversion, or assumption will upgrade eligibility. Disclosed-value coverage and arithmetic eligibility will remain separate axes.</p>
+
+  <h2>TDD execution batches</h2>
+  <ol>
+    <li><strong>Contract guard and identity closure.</strong> Nodes <code>test_v1_external_trust_root_and_closed_producer</code>, <code>test_owner_decision_requires_exact_approval_evidence</code>, <code>test_project_identity_set_equals_live_projects</code>, <code>test_award_identity_set_equals_live_awards</code>, <code>test_moho_locator_collision_is_resolved_by_curated_keys</code>, and <code>test_identity_correction_preserves_id_and_tombstone_prevents_reuse</code> will go RED first. GREEN will create only the decision, crosswalk, migration ledger, and 80/110 v2 identity registries.</li>
+    <li><strong>Requirement tracer then portfolio expansion.</strong> Nodes <code>test_unsupported_architecture_returns_requirements_unknown</code>, <code>test_subsea_tieback_emits_exact_rule_lanes</code>, <code>test_missing_quantity_remains_unknown</code>, <code>test_rule_provenance_remains_distinct_from_project_evidence</code>, <code>test_composite_host_requires_override</code>, and <code>test_all_live_projects_have_one_summary</code> will define rule/override precedence and all 80 project summaries.</li>
+    <li><strong>Award linkage.</strong> Nodes <code>test_asset_class_only_never_confirms_scope</code>, <code>test_live_coarse_class_counterexamples_fail_closed</code>, <code>test_confirmed_scope_creates_money_free_edges</code>, <code>test_bundle_links_many_without_value_copy</code>, <code>test_each_award_has_one_resolution_summary</code>, and <code>test_award_source_key_set_equality</code> will define zero-or-more edges but exactly one resolution and one accounting row per source award.</li>
+    <li><strong>Accounting and coverage.</strong> Nodes <code>test_all_value_basis_and_amount_shape_combinations</code>, <code>test_granmorgu_point_range_anomaly_is_invalid</code>, <code>test_not_public_is_scope_evidence_without_interval</code>, <code>test_missing_currency_and_capex_basis_block_money_interval</code>, <code>test_non_capex_value_bases_are_excluded</code>, and <code>test_coverage_denominators_and_exclusions_are_explicit</code> will cover the exact matrix above.</li>
+    <li><strong>Rendering and publication.</strong> Nodes <code>test_html_and_csv_escape_untrusted_cells</code>, <code>test_csv_formula_prefixes_are_neutralized</code>, <code>test_unsafe_urls_fail_closed</code>, <code>test_two_clean_builds_have_identical_hashes</code>, <code>test_depth_one_squash_checkout_hydrates_durable_producer</code>, <code>test_missing_origin_fails_closed</code>, <code>test_fabricated_producer_fails_closed</code>, <code>test_orphaned_producer_fails_closed</code>, and <code>test_existing_nonancestor_producer_fails_closed</code> will require C locale, UTC/injected time, ordered hashes, transactional writes, and two-run equality. Each hostile lineage node will create a fresh repository and assert exact terminal errors, one-parent squash topology, deleted feature ref, depth one, initial producer absence, and post-hydration state.</li>
+  </ol>
+  <p>Each batch will receive a defect-hunting review checkpoint before the next batch begins. Tests will be introduced one behavior at a time: behavior-relevant RED, identical-command minimal GREEN, refactor, unchanged-command GREEN.</p>
+
+  <h2>Two-stage durable publication</h2>
+  <ol>
+    <li>PR1 will contain only code, tests, curated v2 inputs, the superseded/revised plan, and review evidence. It will check in none of the eight derived outputs. Tests will render all outputs into temporary directories. T3 code review, CI, issue comment, and cleanup audit will pass before merge.</li>
+    <li>After PR1 is squash-merged, its exact <code>PR1_SQUASH_SHA</code> will be recorded. A publication branch from that commit will regenerate the final outputs with <code>producer.commit=PR1_SQUASH_SHA</code>. Before writing, it will verify that main has not changed any curated input or closed executable blob relative to that producer; relevant drift will stop for replan.</li>
+    <li>PR2 will modify only <code>portfolio_project_requirement_summary.v2.csv</code>, <code>portfolio_project_requirements.v2.csv</code>, <code>portfolio_award_requirement_links.v2.csv</code>, <code>portfolio_award_accounting.v2.csv</code>, <code>portfolio_award_resolution.v2.csv</code>, <code>portfolio_asset_award_coverage.v2.csv</code>, <code>portfolio_cost_map_manifest.v2.json</code>, and <code>portfolio_asset_award_coverage.v2.html</code>, plus its artifact-review records. It will receive independent T3 artifact review, CI, issue comment, and cleanup audit.</li>
+    <li>The v2 lineage validator will support a depth-one real-Git checkout: when history is absent, it will fetch/unshallow the trusted <code>origin/main</code> artifact history—not request an arbitrary producer SHA—then require the recorded producer to appear as an ancestor of the pinned artifact commit. It will validate the builder plus every imported schema/identity/requirement/linkage/accounting/render/manifest blob at that producer. Tests will reject missing origin, fabricated SHA, orphan, existing nonancestor, dirty helper, and mismatched executable-set cases.</li>
+    <li>#1040 will not close until PR2 is merged and a fresh main CI run reproduces the final manifest and outputs exactly.</li>
+  </ol>
+
+  <h2>Verification commands</h2>
+  <pre>NODE=tests/unit/cost/test_portfolio_identity.py::test_v1_external_trust_root_and_closed_producer
+PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+uv run --extra test python -m pytest -p no:cacheprovider --noconftest \
+-o addopts='' "$NODE" -xq
+
+uv run black --check &lt;changed-python-paths&gt;
+uv run isort --check-only &lt;changed-python-paths&gt;
+uv run ruff check &lt;changed-python-paths&gt;
+uv run python -m pytest tests/unit/cost/test_portfolio_structure.py -xq
+PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+uv run --extra test python -m pytest -p no:cacheprovider --noconftest \
+-o addopts='' tests/unit/cost/test_portfolio_*.py -q
+scripts/legal/legal-sanity-scan.sh
+git diff --check
+git status --short</pre>
+  <p>The literal <code>NODE</code> will change to each named node above; RED and GREEN will use the identical command. <code>test_portfolio_structure.py</code> will parse the changed Python AST and fail when a module exceeds 400 physical lines or a function/method span exceeds 50 physical lines. The closeout will also run the complete cost-domain tests, two clean regenerations with matching SHA-256 values, exact live-set recounts, T3 code/artifact review, CI on both PRs, issue summary comment after each merge, and the repository cleanup audit.</p>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>All v1 manifest-controlled bytes will remain unchanged and reproducible.</li>
+    <li>Every live project and award will be visited exactly once; persisted counts will include source hash and baseline date.</li>
+    <li>Every project will have evidence-backed requirement lanes or explicit <code>requirements_unknown</code>; missing quantities will remain unknown.</li>
+    <li>Every award will have a stable identity and linked, unlinked, or ambiguous result, with scope/value/counting/bundle axes independent.</li>
+    <li>All eight value bases will retain their semantics. Missing currency and <code>capex_basis</code> will fail closed for arithmetic.</li>
+    <li>Generated CSV/HTML will state requirement coverage separately from disclosed-value coverage and arithmetic eligibility.</li>
+    <li>The final v2 manifest will point to a reachable durable main producer and will reproduce exactly.</li>
+    <li>No email, external circulation, FX conversion, modeled cost, scenario-share reuse, or workbook mutation will occur.</li>
+  </ul>
+
+  <h2>Out of scope</h2>
+  <p>Asset-cost allocation, bottom-up/top-down synthesis, correlated CAPEX modeling, time traces, FX conversion, and workbook reconciliation will remain owned by #1041–#1044. #1040 will create the auditable requirement/award coverage substrate only.</p>
+
+  <p class="muted">This plan will become executable only after T3 adversarial plan review is closed and the user explicitly approves both the plan and the owner decision above. No agent may restore <code>status:plan-approved</code> without that human approval.</p>
+</main></body></html>
