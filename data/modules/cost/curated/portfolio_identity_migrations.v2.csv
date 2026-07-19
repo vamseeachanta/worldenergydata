@@ -1,0 +1,1 @@
+migration_id,entity_kind,opaque_id,source_key,old_locator_json,old_locator_sha256,new_locator_json,new_locator_sha256,disposition,reason,provenance,effective_date,replacement_id

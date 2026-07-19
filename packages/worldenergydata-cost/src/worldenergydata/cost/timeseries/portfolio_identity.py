@@ -5,11 +5,12 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import dataclass
+from datetime import date
 from hashlib import sha256
 from pathlib import Path
-from typing import Iterable, TypeVar
+from typing import Iterable, Literal, TypeVar
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 from worldenergydata.cost.timeseries.portfolio_schema import (
     AwardIdentity,
@@ -31,6 +32,24 @@ AWARD_CROSSWALK = Path(
 AWARD_IDENTITIES = Path("data/modules/cost/curated/portfolio_award_identity.v2.csv")
 REQUIREMENT_IDENTITIES = Path(
     "data/modules/cost/curated/portfolio_requirement_identity.v2.csv"
+)
+MIGRATION_LEDGER = Path(
+    "data/modules/cost/curated/portfolio_identity_migrations.v2.csv"
+)
+MIGRATION_FIELDS = (
+    "migration_id",
+    "entity_kind",
+    "opaque_id",
+    "source_key",
+    "old_locator_json",
+    "old_locator_sha256",
+    "new_locator_json",
+    "new_locator_sha256",
+    "disposition",
+    "reason",
+    "provenance",
+    "effective_date",
+    "replacement_id",
 )
 AWARD_LOCATOR_FIELDS = (
     "PROJECT",
@@ -55,6 +74,78 @@ class AwardIdentityResult:
     identities: tuple[AwardIdentity, ...]
     source_sha256: str
     projects_without_awards: int
+
+
+class IdentityState(BaseModel):
+    """Minimal immutable state needed to validate identity transitions."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    entity_kind: Literal["project", "award", "requirement"]
+    opaque_id: str
+    source_key: str
+    locator_json: str
+    state: Literal["active", "tombstoned"]
+    active: bool
+    no_reuse: bool
+
+
+class IdentityMigration(BaseModel):
+    """Append-only evidence for one identity binding transition."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    migration_id: str
+    entity_kind: Literal["project", "award", "requirement"]
+    opaque_id: str
+    source_key: str
+    old_locator_json: str
+    old_locator_sha256: str
+    new_locator_json: str | None
+    new_locator_sha256: str | None
+    disposition: Literal[
+        "correction",
+        "tombstone",
+        "replacement",
+        "split_rejected",
+        "merge_rejected",
+    ]
+    reason: str
+    provenance: str
+    effective_date: date
+    replacement_id: str | None
+
+    @field_validator("old_locator_sha256", "new_locator_sha256")
+    @classmethod
+    def _require_hash(cls, value: str | None) -> str | None:
+        if value is not None and len(value) != 64:
+            raise ValueError("migration locator hash must be 64-hex")
+        return value
+
+    @model_validator(mode="after")
+    def _require_evidence(self) -> "IdentityMigration":
+        if not self.reason or not self.provenance:
+            raise ValueError("migration requires reason and provenance")
+        if self.disposition == "correction" and None in (
+            self.new_locator_json,
+            self.new_locator_sha256,
+        ):
+            raise ValueError("correction requires a new binding")
+        if self.disposition == "tombstone" and any(
+            value is not None
+            for value in (self.new_locator_json, self.new_locator_sha256)
+        ):
+            raise ValueError("tombstone cannot create a new binding")
+        if self.disposition in ("split_rejected", "merge_rejected") and any(
+            value is not None
+            for value in (
+                self.new_locator_json,
+                self.new_locator_sha256,
+                self.replacement_id,
+            )
+        ):
+            raise ValueError("rejected split or merge cannot change a binding")
+        return self
 
 
 def canonical_json(value: object) -> str:
@@ -236,3 +327,55 @@ def validate_requirement_identities(root: Path) -> tuple[RequirementIdentity, ..
     }:
         raise ValueError("requirement identity seed must preserve v1 IDs")
     return identities
+
+
+def validate_identity_transition(
+    before: IdentityState,
+    after: IdentityState,
+    migration: IdentityMigration,
+) -> IdentityState:
+    """Fail closed unless one curated migration explains the exact transition."""
+
+    if before.state == "tombstoned":
+        raise ValueError("tombstoned identity cannot be reused")
+    if (before.opaque_id, before.source_key) != (after.opaque_id, after.source_key):
+        raise ValueError("opaque ID and source key must remain reserved")
+    expected_identity = (before.entity_kind, before.opaque_id, before.source_key)
+    migration_identity = (
+        migration.entity_kind,
+        migration.opaque_id,
+        migration.source_key,
+    )
+    if migration_identity != expected_identity:
+        raise ValueError("migration identity does not match current binding")
+    if migration.old_locator_json != before.locator_json or (
+        migration.old_locator_sha256 != digest_text(before.locator_json)
+    ):
+        raise ValueError("migration old binding does not match current locator")
+    if migration.disposition == "correction":
+        if after.state != "active" or after.locator_json != migration.new_locator_json:
+            raise ValueError("correction terminal binding mismatch")
+        if migration.new_locator_sha256 != digest_text(after.locator_json):
+            raise ValueError("correction new locator hash mismatch")
+    elif migration.disposition == "tombstone":
+        if after.state != "tombstoned" or after.active or not after.no_reuse:
+            raise ValueError("tombstone must preserve identity and prevent reuse")
+    elif migration.disposition in ("split_rejected", "merge_rejected"):
+        if after != before:
+            raise ValueError("rejected split or merge must preserve current binding")
+    else:
+        raise ValueError("identity transition disposition fails closed")
+    return after
+
+
+def validate_identity_migration_ledger(root: Path) -> tuple[IdentityMigration, ...]:
+    """Read the append-only ledger without exposing a rewrite operation."""
+
+    with (root / MIGRATION_LEDGER).open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        if tuple(reader.fieldnames or ()) != MIGRATION_FIELDS:
+            raise ValueError("identity migration ledger header mismatch")
+        rows = list(reader)
+    migrations = tuple(IdentityMigration.model_validate(row) for row in rows)
+    _unique((row.migration_id for row in migrations), "duplicate migration ID")
+    return migrations

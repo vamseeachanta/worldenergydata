@@ -220,3 +220,136 @@ def test_requirement_registry_seeds_exact_v1_big_foot_ids() -> None:
         "marine_riser_tensioner",
         "wells",
     }
+
+
+def test_identity_correction_preserves_id_and_tombstone_prevents_reuse() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        IdentityMigration,
+        IdentityState,
+        canonical_json,
+        digest_text,
+        validate_identity_transition,
+    )
+
+    old_locator = canonical_json({"PROJECT": "Old label"})
+    new_locator = canonical_json({"PROJECT": "Corrected label"})
+    before = IdentityState(
+        entity_kind="project",
+        opaque_id="prj-000001",
+        source_key="src-prj-000001",
+        locator_json=old_locator,
+        state="active",
+        active=True,
+        no_reuse=True,
+    )
+    corrected = before.model_copy(update={"locator_json": new_locator})
+    correction = IdentityMigration(
+        migration_id="mig-000001",
+        entity_kind="project",
+        opaque_id=before.opaque_id,
+        source_key=before.source_key,
+        old_locator_json=old_locator,
+        old_locator_sha256=digest_text(old_locator),
+        new_locator_json=new_locator,
+        new_locator_sha256=digest_text(new_locator),
+        disposition="correction",
+        reason="source label corrected",
+        provenance="curated_source",
+        effective_date="2026-07-19",
+        replacement_id=None,
+    )
+    assert validate_identity_transition(before, corrected, correction) == corrected
+
+    changed_id = corrected.model_copy(update={"opaque_id": "prj-000002"})
+    with pytest.raises(
+        ValueError, match="opaque ID and source key must remain reserved"
+    ):
+        validate_identity_transition(before, changed_id, correction)
+
+    tombstoned = corrected.model_copy(
+        update={"state": "tombstoned", "active": False, "no_reuse": True}
+    )
+    tombstone = IdentityMigration(
+        migration_id="mig-000002",
+        entity_kind="project",
+        opaque_id=corrected.opaque_id,
+        source_key=corrected.source_key,
+        old_locator_json=new_locator,
+        old_locator_sha256=digest_text(new_locator),
+        new_locator_json=None,
+        new_locator_sha256=None,
+        disposition="tombstone",
+        reason="source row removed",
+        provenance="curated_source",
+        effective_date="2026-07-19",
+        replacement_id=None,
+    )
+    assert validate_identity_transition(corrected, tombstoned, tombstone) == tombstoned
+
+    reused = tombstoned.model_copy(
+        update={"state": "active", "active": True, "locator_json": old_locator}
+    )
+    with pytest.raises(ValueError, match="tombstoned identity cannot be reused"):
+        validate_identity_transition(tombstoned, reused, correction)
+
+
+def test_identity_split_and_merge_migrations_fail_closed() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        IdentityMigration,
+        IdentityState,
+        canonical_json,
+        digest_text,
+        validate_identity_transition,
+    )
+
+    locator = canonical_json({"PROJECT": "Big Foot"})
+    state = IdentityState(
+        entity_kind="project",
+        opaque_id="prj-000001",
+        source_key="src-prj-000001",
+        locator_json=locator,
+        state="active",
+        active=True,
+        no_reuse=True,
+    )
+    rejected = IdentityMigration(
+        migration_id="mig-000003",
+        entity_kind="project",
+        opaque_id=state.opaque_id,
+        source_key=state.source_key,
+        old_locator_json=locator,
+        old_locator_sha256=digest_text(locator),
+        new_locator_json=None,
+        new_locator_sha256=None,
+        disposition="split_rejected",
+        reason="one source row cannot allocate two identities",
+        provenance="curation_review",
+        effective_date="2026-07-19",
+        replacement_id=None,
+    )
+    assert validate_identity_transition(state, state, rejected) == state
+
+    split = state.model_copy(update={"source_key": "src-prj-000002"})
+    with pytest.raises(
+        ValueError, match="opaque ID and source key must remain reserved"
+    ):
+        validate_identity_transition(state, split, rejected)
+
+
+def test_checked_in_migration_ledger_is_append_only_and_empty(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        MIGRATION_LEDGER,
+        validate_identity_migration_ledger,
+    )
+
+    assert validate_identity_migration_ledger(ROOT) == ()
+
+    target = tmp_path / MIGRATION_LEDGER
+    target.parent.mkdir(parents=True)
+    target.write_text(
+        (ROOT / MIGRATION_LEDGER).read_text(encoding="utf-8").rstrip("\n")
+        + ",unreviewed_field\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="identity migration ledger header mismatch"):
+        validate_identity_migration_ledger(tmp_path)
