@@ -5,13 +5,27 @@ from __future__ import annotations
 import csv
 import json
 from dataclasses import dataclass
-from datetime import date
 from hashlib import sha256
 from pathlib import Path
-from typing import Iterable, Literal, TypeVar
+from typing import Iterable, TypeVar
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import BaseModel
 
+from worldenergydata.cost.timeseries.portfolio_identity_contract import (  # noqa: F401
+    validate_identity_contract,
+)
+from worldenergydata.cost.timeseries.portfolio_identity_lifecycle import (  # noqa: F401
+    MIGRATION_FIELDS,
+    MIGRATION_LEDGER,
+    IdentityMigration,
+    IdentityState,
+    digest_text,
+    validate_identity_migration_ledger,
+    validate_identity_transition,
+)
+from worldenergydata.cost.timeseries.portfolio_identity_update import (  # noqa: F401
+    validate_identity_update,
+)
 from worldenergydata.cost.timeseries.portfolio_schema import (
     AwardIdentity,
     AwardSourceBinding,
@@ -33,23 +47,57 @@ AWARD_IDENTITIES = Path("data/modules/cost/curated/portfolio_award_identity.v2.c
 REQUIREMENT_IDENTITIES = Path(
     "data/modules/cost/curated/portfolio_requirement_identity.v2.csv"
 )
-MIGRATION_LEDGER = Path(
-    "data/modules/cost/curated/portfolio_identity_migrations.v2.csv"
+PROJECT_SOURCE_FIELDS = (
+    "source_project_key",
+    "locator_json",
+    "locator_sha256",
+    "source_row_sha256",
+    "active",
 )
-MIGRATION_FIELDS = (
-    "migration_id",
-    "entity_kind",
-    "opaque_id",
-    "source_key",
-    "old_locator_json",
-    "old_locator_sha256",
-    "new_locator_json",
-    "new_locator_sha256",
-    "disposition",
-    "reason",
-    "provenance",
-    "effective_date",
-    "replacement_id",
+PROJECT_IDENTITY_FIELDS = (
+    "project_id",
+    "source_project_key",
+    "display_label",
+    "state",
+    "active",
+    "aliases_json",
+    "validation_group_id",
+    "created_source_sha256",
+    "migration_note",
+    "no_reuse",
+)
+AWARD_SOURCE_FIELDS = (
+    "source_award_key",
+    "locator_json",
+    "locator_sha256",
+    "source_row_sha256",
+    "active",
+)
+AWARD_IDENTITY_FIELDS = (
+    "award_id",
+    "source_award_key",
+    "project_id",
+    "display_label",
+    "state",
+    "active",
+    "aliases_json",
+    "validation_group_id",
+    "created_source_sha256",
+    "migration_note",
+    "no_reuse",
+)
+REQUIREMENT_IDENTITY_FIELDS = (
+    "requirement_id",
+    "source_requirement_key",
+    "project_id",
+    "work_package_slug",
+    "locator_json",
+    "locator_sha256",
+    "state",
+    "active",
+    "validation_group_id",
+    "no_reuse",
+    "migration_note",
 )
 AWARD_LOCATOR_FIELDS = (
     "PROJECT",
@@ -76,84 +124,40 @@ class AwardIdentityResult:
     projects_without_awards: int
 
 
-class IdentityState(BaseModel):
-    """Minimal immutable state needed to validate identity transitions."""
-
-    model_config = ConfigDict(frozen=True, extra="forbid")
-
-    entity_kind: Literal["project", "award", "requirement"]
-    opaque_id: str
-    source_key: str
-    locator_json: str
-    state: Literal["active", "tombstoned"]
-    active: bool
-    no_reuse: bool
-
-
-class IdentityMigration(BaseModel):
-    """Append-only evidence for one identity binding transition."""
-
-    model_config = ConfigDict(frozen=True, extra="forbid")
-
-    migration_id: str
-    entity_kind: Literal["project", "award", "requirement"]
-    opaque_id: str
-    source_key: str
-    old_locator_json: str
-    old_locator_sha256: str
-    new_locator_json: str | None
-    new_locator_sha256: str | None
-    disposition: Literal[
-        "correction",
-        "tombstone",
-        "replacement",
-        "split_rejected",
-        "merge_rejected",
-    ]
-    reason: str
-    provenance: str
-    effective_date: date
-    replacement_id: str | None
-
-    @field_validator("old_locator_sha256", "new_locator_sha256")
-    @classmethod
-    def _require_hash(cls, value: str | None) -> str | None:
-        if value is not None and len(value) != 64:
-            raise ValueError("migration locator hash must be 64-hex")
-        return value
-
-    @model_validator(mode="after")
-    def _require_evidence(self) -> "IdentityMigration":
-        if not self.reason or not self.provenance:
-            raise ValueError("migration requires reason and provenance")
-        if self.disposition == "correction" and None in (
-            self.new_locator_json,
-            self.new_locator_sha256,
-        ):
-            raise ValueError("correction requires a new binding")
-        if self.disposition == "tombstone" and any(
-            value is not None
-            for value in (self.new_locator_json, self.new_locator_sha256)
-        ):
-            raise ValueError("tombstone cannot create a new binding")
-        if self.disposition in ("split_rejected", "merge_rejected") and any(
-            value is not None
-            for value in (
-                self.new_locator_json,
-                self.new_locator_sha256,
-                self.replacement_id,
-            )
-        ):
-            raise ValueError("rejected split or merge cannot change a binding")
-        return self
-
-
 def canonical_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
 
 
-def digest_text(value: str) -> str:
-    return sha256(value.encode("utf-8")).hexdigest()
+BIG_FOOT_AWARD_LOCATORS = {
+    "awd-000001": canonical_json(
+        {
+            "PROJECT": "Big Foot",
+            "AWARD_YEAR": "2011",
+            "CONTRACTOR": "GE Oil & Gas",
+            "ASSET_CLASS": "surf",
+            "SCOPE_DESC": "Largest TLP push-up marine riser tensioner systems",
+        }
+    ),
+    "awd-000002": canonical_json(
+        {
+            "PROJECT": "Big Foot",
+            "AWARD_YEAR": "2009",
+            "CONTRACTOR": "Enbridge",
+            "ASSET_CLASS": "other",
+            "SCOPE_DESC": "Oil export pipeline / gathering system",
+        }
+    ),
+}
+BIG_FOOT_REQUIREMENTS = {
+    "req-000001": "host_tlp",
+    "req-000002": "dry_trees",
+    "req-000003": "wells",
+    "req-000004": "drilling_completion",
+    "req-000005": "marine_riser_tensioner",
+    "req-000006": "export",
+    "req-000007": "installation_hookup",
+    "req-000008": "controls",
+}
 
 
 def _rows(path: Path) -> list[dict[str, str]]:
@@ -161,8 +165,17 @@ def _rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(stream))
 
 
-def _models(path: Path, model: type[ModelT]) -> tuple[ModelT, ...]:
-    return tuple(model.model_validate(row) for row in _rows(path))
+def _models(
+    path: Path,
+    model: type[ModelT],
+    fields: tuple[str, ...],
+    label: str,
+) -> tuple[ModelT, ...]:
+    with path.open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        if tuple(reader.fieldnames or ()) != fields:
+            raise ValueError(f"{label} header mismatch")
+        return tuple(model.model_validate(row) for row in reader)
 
 
 def _unique(values: Iterable[str], message: str) -> None:
@@ -189,7 +202,7 @@ def _validate_project_sources(
     for binding in sources:
         if digest_text(binding.locator_json) != binding.locator_sha256:
             raise ValueError("project locator hash mismatch")
-        if (
+        if binding.active and (
             digest_text(canonical_json(live[binding.locator_json]))
             != binding.source_row_sha256
         ):
@@ -204,25 +217,32 @@ def _validate_project_identities(
     _unique(
         (row.source_project_key for row in identities), "duplicate project source FK"
     )
-    if {row.source_project_key for row in identities if row.active} != set(
-        source_by_key
-    ):
+    active_sources = {key for key, row in source_by_key.items() if row.active}
+    if {row.source_project_key for row in identities if row.active} != active_sources:
         raise ValueError("project identity set does not equal source bindings")
     for identity in identities:
         source = source_by_key[identity.source_project_key]
         label = json.loads(source.locator_json)["PROJECT"]
         if identity.display_label != label:
             raise ValueError("project identity label mismatch")
-        if identity.created_source_sha256 != source.source_row_sha256:
-            raise ValueError("project identity source hash mismatch")
 
 
 def validate_project_identities(root: Path) -> ProjectIdentityResult:
     """Prove one stable active identity exists for each live project row."""
 
     live = _live_project_rows(root)
-    sources = _models(root / PROJECT_CROSSWALK, ProjectSourceBinding)
-    identities = _models(root / PROJECT_IDENTITIES, ProjectIdentity)
+    sources = _models(
+        root / PROJECT_CROSSWALK,
+        ProjectSourceBinding,
+        PROJECT_SOURCE_FIELDS,
+        "project source binding",
+    )
+    identities = _models(
+        root / PROJECT_IDENTITIES,
+        ProjectIdentity,
+        PROJECT_IDENTITY_FIELDS,
+        "project identity",
+    )
     _validate_project_sources(sources, live)
     _validate_project_identities(identities, sources)
     big_foot = next(row for row in identities if row.display_label == "Big Foot")
@@ -263,11 +283,24 @@ def _validate_award_sources(
     for binding in sources:
         if digest_text(binding.locator_json) != binding.locator_sha256:
             raise ValueError("award locator hash mismatch")
-        if (
+        if binding.active and (
             digest_text(canonical_json(live[binding.locator_json]))
             != binding.source_row_sha256
         ):
             raise ValueError("award source row hash mismatch")
+
+
+def _validate_pilot_awards(
+    identities: tuple[AwardIdentity, ...],
+    source_by_key: dict[str, AwardSourceBinding],
+) -> None:
+    identity_by_id = {row.award_id: row for row in identities}
+    actual = {
+        award_id: source_by_key[identity_by_id[award_id].source_award_key].locator_json
+        for award_id in BIG_FOOT_AWARD_LOCATORS
+    }
+    if actual != BIG_FOOT_AWARD_LOCATORS:
+        raise ValueError("Big Foot award identity must remain stable")
 
 
 def validate_award_identities(root: Path) -> AwardIdentityResult:
@@ -276,24 +309,43 @@ def validate_award_identities(root: Path) -> AwardIdentityResult:
     projects = validate_project_identities(root)
     project_by_label = {row.display_label: row for row in projects.identities}
     live = _live_award_rows(root)
-    sources = _models(root / AWARD_CROSSWALK, AwardSourceBinding)
-    identities = _models(root / AWARD_IDENTITIES, AwardIdentity)
+    sources = _models(
+        root / AWARD_CROSSWALK,
+        AwardSourceBinding,
+        AWARD_SOURCE_FIELDS,
+        "award source binding",
+    )
+    identities = _models(
+        root / AWARD_IDENTITIES,
+        AwardIdentity,
+        AWARD_IDENTITY_FIELDS,
+        "award identity",
+    )
     _validate_award_sources(sources, live)
     source_by_key = {row.source_award_key: row for row in sources}
     _unique((row.award_id for row in identities), "duplicate award ID")
     _unique((row.source_award_key for row in identities), "duplicate award source FK")
-    if {row.source_award_key for row in identities if row.active} != set(source_by_key):
+    active_sources = {key for key, row in source_by_key.items() if row.active}
+    if {row.source_award_key for row in identities if row.active} != active_sources:
         raise ValueError("award identity set does not equal source bindings")
+    _validate_pilot_awards(identities, source_by_key)
     for identity in identities:
         source = source_by_key[identity.source_award_key]
         locator = json.loads(source.locator_json)
         project = project_by_label[locator["PROJECT"]]
         if identity.project_id != project.project_id:
             raise ValueError("award project identity mismatch")
-        if identity.created_source_sha256 != source.source_row_sha256:
-            raise ValueError("award identity source hash mismatch")
+        expected_label = " / ".join(
+            locator[field] for field in ("PROJECT", "AWARD_YEAR", "CONTRACTOR")
+        )
+        if identity.display_label != expected_label:
+            raise ValueError("award identity label mismatch")
+        if identity.validation_group_id != project.validation_group_id:
+            raise ValueError("award validation group must match project")
     source_sha = sha256((root / AWARD_SOURCE).read_bytes()).hexdigest()
-    award_projects = {json.loads(row.locator_json)["PROJECT"] for row in sources}
+    award_projects = {
+        json.loads(row.locator_json)["PROJECT"] for row in sources if row.active
+    }
     return AwardIdentityResult(
         sources,
         identities,
@@ -305,7 +357,12 @@ def validate_award_identities(root: Path) -> AwardIdentityResult:
 def validate_requirement_identities(root: Path) -> tuple[RequirementIdentity, ...]:
     """Validate the exact eight v1 Big Foot requirement identities."""
 
-    identities = _models(root / REQUIREMENT_IDENTITIES, RequirementIdentity)
+    identities = _models(
+        root / REQUIREMENT_IDENTITIES,
+        RequirementIdentity,
+        REQUIREMENT_IDENTITY_FIELDS,
+        "requirement identity",
+    )
     _unique((row.requirement_id for row in identities), "duplicate requirement ID")
     _unique(
         (row.source_requirement_key for row in identities),
@@ -322,60 +379,20 @@ def validate_requirement_identities(root: Path) -> tuple[RequirementIdentity, ..
             raise ValueError("requirement locator mismatch")
         if digest_text(identity.locator_json) != identity.locator_sha256:
             raise ValueError("requirement locator hash mismatch")
-    if {row.requirement_id for row in identities} != {
-        f"req-{number:06d}" for number in range(1, 9)
-    }:
-        raise ValueError("requirement identity seed must preserve v1 IDs")
+    mapping = {row.requirement_id: row for row in identities}
+    actual = {
+        key: (
+            row.source_requirement_key,
+            row.project_id,
+            row.work_package_slug,
+            row.validation_group_id,
+        )
+        for key, row in mapping.items()
+    }
+    expected = {
+        key: (f"src-req-{key[-6:]}", "prj-000001", slug, "vg-cost-map-pilot-000001")
+        for key, slug in BIG_FOOT_REQUIREMENTS.items()
+    }
+    if actual != expected:
+        raise ValueError("requirement identity meaning must remain stable")
     return identities
-
-
-def validate_identity_transition(
-    before: IdentityState,
-    after: IdentityState,
-    migration: IdentityMigration,
-) -> IdentityState:
-    """Fail closed unless one curated migration explains the exact transition."""
-
-    if before.state == "tombstoned":
-        raise ValueError("tombstoned identity cannot be reused")
-    if (before.opaque_id, before.source_key) != (after.opaque_id, after.source_key):
-        raise ValueError("opaque ID and source key must remain reserved")
-    expected_identity = (before.entity_kind, before.opaque_id, before.source_key)
-    migration_identity = (
-        migration.entity_kind,
-        migration.opaque_id,
-        migration.source_key,
-    )
-    if migration_identity != expected_identity:
-        raise ValueError("migration identity does not match current binding")
-    if migration.old_locator_json != before.locator_json or (
-        migration.old_locator_sha256 != digest_text(before.locator_json)
-    ):
-        raise ValueError("migration old binding does not match current locator")
-    if migration.disposition == "correction":
-        if after.state != "active" or after.locator_json != migration.new_locator_json:
-            raise ValueError("correction terminal binding mismatch")
-        if migration.new_locator_sha256 != digest_text(after.locator_json):
-            raise ValueError("correction new locator hash mismatch")
-    elif migration.disposition == "tombstone":
-        if after.state != "tombstoned" or after.active or not after.no_reuse:
-            raise ValueError("tombstone must preserve identity and prevent reuse")
-    elif migration.disposition in ("split_rejected", "merge_rejected"):
-        if after != before:
-            raise ValueError("rejected split or merge must preserve current binding")
-    else:
-        raise ValueError("identity transition disposition fails closed")
-    return after
-
-
-def validate_identity_migration_ledger(root: Path) -> tuple[IdentityMigration, ...]:
-    """Read the append-only ledger without exposing a rewrite operation."""
-
-    with (root / MIGRATION_LEDGER).open(encoding="utf-8", newline="") as stream:
-        reader = csv.DictReader(stream)
-        if tuple(reader.fieldnames or ()) != MIGRATION_FIELDS:
-            raise ValueError("identity migration ledger header mismatch")
-        rows = list(reader)
-    migrations = tuple(IdentityMigration.model_validate(row) for row in rows)
-    _unique((row.migration_id for row in migrations), "duplicate migration ID")
-    return migrations

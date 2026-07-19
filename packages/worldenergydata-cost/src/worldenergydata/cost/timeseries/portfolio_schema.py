@@ -21,9 +21,13 @@ REVIEWED_PLAN_COMMIT = "5ba42c170099fb5632ccbf054ef974f1f1d429da"
 REVIEWED_PLAN_SHA256 = (
     "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91"
 )
-APPROVED_PLAN_COMMIT = "e8feae4e8f01d99aff95ded09216b6a8efc7b186"
-APPROVED_PLAN_SHA256 = (
+PUBLISHED_PLAN_COMMIT = "e8feae4e8f01d99aff95ded09216b6a8efc7b186"
+PUBLISHED_PLAN_SHA256 = (
     "9a0eb6dba27bcc58f2b82af991d482b0651a702174a5f4cad0bd93915ec5e5f9"
+)
+REVIEWED_PLAN_REF = "refs/heads/chore/1040-plan-hotfix"
+APPROVAL_MARKER_SHA256 = (
+    "31c608d00af652668721295ca4bdaf4425210e45551f44beffc9f96c39444488"
 )
 APPROVED_AT = datetime(2026, 7, 19, 11, 54, 1, tzinfo=timezone.utc)
 APPROVAL_QUOTE = (
@@ -43,6 +47,12 @@ APPROVAL_MARKER_TEXT = (
 )
 
 
+def _require_sha256(value: str) -> str:
+    if re.fullmatch(r"[0-9a-f]{64}", value) is None:
+        raise ValueError("SHA-256 must be lowercase 64-hex")
+    return value
+
+
 class ApprovalEvidence(BaseModel):
     """Traceable record of the explicit human approval gate."""
 
@@ -55,9 +65,10 @@ class ApprovalEvidence(BaseModel):
     issue_comment_url: str
     approved_plan_path: str
     reviewed_plan_commit: str
+    reviewed_plan_ref: str
     reviewed_plan_sha256: str
-    approved_plan_commit: str
-    approved_plan_sha256: str
+    published_plan_commit: str
+    published_plan_sha256: str
 
     @field_validator("approved_at")
     @classmethod
@@ -66,14 +77,14 @@ class ApprovalEvidence(BaseModel):
             raise ValueError("approved_at must be UTC")
         return value
 
-    @field_validator("reviewed_plan_commit", "approved_plan_commit")
+    @field_validator("reviewed_plan_commit", "published_plan_commit")
     @classmethod
     def _require_commit(cls, value: str) -> str:
         if re.fullmatch(r"[0-9a-f]{40}", value) is None:
             raise ValueError("commit must be full 40-hex")
         return value
 
-    @field_validator("reviewed_plan_sha256", "approved_plan_sha256")
+    @field_validator("reviewed_plan_sha256", "published_plan_sha256")
     @classmethod
     def _require_sha256(cls, value: str) -> str:
         if re.fullmatch(r"[0-9a-f]{64}", value) is None:
@@ -112,6 +123,11 @@ class ProjectSourceBinding(BaseModel):
             raise ValueError("invalid source project key")
         return value
 
+    @field_validator("locator_sha256", "source_row_sha256")
+    @classmethod
+    def _require_hash(cls, value: str) -> str:
+        return _require_sha256(value)
+
 
 class ProjectIdentity(BaseModel):
     """Persistent project identity independent of mutable source content."""
@@ -140,6 +156,11 @@ class ProjectIdentity(BaseModel):
     @classmethod
     def _require_source_key(cls, value: str) -> str:
         return ProjectSourceBinding._require_source_key(value)
+
+    @field_validator("created_source_sha256")
+    @classmethod
+    def _require_hash(cls, value: str) -> str:
+        return _require_sha256(value)
 
     @field_validator("aliases_json")
     @classmethod
@@ -180,6 +201,11 @@ class AwardSourceBinding(BaseModel):
             raise ValueError("invalid source award key")
         return value
 
+    @field_validator("locator_sha256", "source_row_sha256")
+    @classmethod
+    def _require_hash(cls, value: str) -> str:
+        return _require_sha256(value)
+
 
 class AwardIdentity(BaseModel):
     """Persistent award identity linked to one persistent project."""
@@ -214,6 +240,11 @@ class AwardIdentity(BaseModel):
     @classmethod
     def _require_project_id(cls, value: str) -> str:
         return ProjectIdentity._require_project_id(value)
+
+    @field_validator("created_source_sha256")
+    @classmethod
+    def _require_hash(cls, value: str) -> str:
+        return _require_sha256(value)
 
     @field_validator("aliases_json")
     @classmethod
@@ -265,6 +296,11 @@ class RequirementIdentity(BaseModel):
     def _require_project_id(cls, value: str) -> str:
         return ProjectIdentity._require_project_id(value)
 
+    @field_validator("locator_sha256")
+    @classmethod
+    def _require_hash(cls, value: str) -> str:
+        return _require_sha256(value)
+
     @model_validator(mode="after")
     def _validate_lifecycle(self) -> "RequirementIdentity":
         if self.active != (self.state == "active"):
@@ -287,9 +323,10 @@ def _validate_exact_evidence(decision: PortfolioReuseDecision) -> None:
         "issue_comment_url": COMMENT_URL,
         "approved_plan_path": APPROVED_PLAN_PATH,
         "reviewed_plan_commit": REVIEWED_PLAN_COMMIT,
+        "reviewed_plan_ref": REVIEWED_PLAN_REF,
         "reviewed_plan_sha256": REVIEWED_PLAN_SHA256,
-        "approved_plan_commit": APPROVED_PLAN_COMMIT,
-        "approved_plan_sha256": APPROVED_PLAN_SHA256,
+        "published_plan_commit": PUBLISHED_PLAN_COMMIT,
+        "published_plan_sha256": PUBLISHED_PLAN_SHA256,
     }
     for field, value in expected.items():
         if getattr(decision.approval, field) != value:
@@ -307,13 +344,29 @@ def _git(root: Path, *arguments: str) -> bytes:
         raise ValueError("approved plan history unavailable") from error
 
 
-def _validate_approved_plan_blob(root: Path, approval: ApprovalEvidence) -> None:
-    commit = approval.approved_plan_commit
-    _git(root, "cat-file", "-e", f"{commit}^{{commit}}")
-    _git(root, "merge-base", "--is-ancestor", commit, "HEAD")
-    blob = _git(root, "show", f"{commit}:{approval.approved_plan_path}")
-    if sha256(blob).hexdigest() != approval.approved_plan_sha256:
-        raise ValueError("approved plan blob hash mismatch")
+def _validate_plan_blobs(root: Path, approval: ApprovalEvidence) -> None:
+    reviewed_ref = (
+        f"refs/remotes/origin/{approval.reviewed_plan_ref.removeprefix('refs/heads/')}"
+    )
+    _git(root, "cat-file", "-e", f"{approval.reviewed_plan_commit}^{{commit}}")
+    _git(
+        root, "merge-base", "--is-ancestor", approval.reviewed_plan_commit, reviewed_ref
+    )
+    reviewed = _git(
+        root, "show", f"{approval.reviewed_plan_commit}:{approval.approved_plan_path}"
+    )
+    if sha256(reviewed).hexdigest() != approval.reviewed_plan_sha256:
+        raise ValueError("reviewed plan blob hash mismatch")
+
+    published = approval.published_plan_commit
+    _git(root, "cat-file", "-e", f"{published}^{{commit}}")
+    _git(root, "merge-base", "--is-ancestor", published, "HEAD")
+    blob = _git(root, "show", f"{published}:{approval.approved_plan_path}")
+    marker = _git(root, "show", f"{published}:{APPROVAL_MARKER}")
+    if sha256(blob).hexdigest() != approval.published_plan_sha256:
+        raise ValueError("published plan blob hash mismatch")
+    if sha256(marker).hexdigest() != APPROVAL_MARKER_SHA256:
+        raise ValueError("published approval marker hash mismatch")
 
 
 def validate_decision_evidence(payload: object, marker: str) -> PortfolioReuseDecision:
@@ -339,5 +392,5 @@ def validate_owner_decision(root: Path) -> PortfolioReuseDecision:
         decision.allocation_scenarios,
     ) != ("approved", "approved", "approved", "deferred"):
         raise ValueError("owner decision does not match approved scope")
-    _validate_approved_plan_blob(root, decision.approval)
+    _validate_plan_blobs(root, decision.approval)
     return decision

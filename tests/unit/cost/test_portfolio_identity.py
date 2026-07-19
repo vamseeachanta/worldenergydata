@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import csv
 import json
 import shutil
+import subprocess
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
@@ -13,6 +15,35 @@ import pytest
 ROOT = Path(__file__).resolve().parents[3]
 V1_MANIFEST = Path("data/modules/cost/curated/cost_map_contract_manifest.v1.json")
 V1_MANIFEST_SHA256 = "f5dc2fce6c0ee376d577f8dcebb70511c756bd28264744600dc018deab5fcf9e"
+IDENTITY_INPUTS = (
+    "sanctioned_projects.csv",
+    "portfolio_project_source_crosswalk.v2.csv",
+    "portfolio_project_identity.v2.csv",
+    "contract_awards.csv",
+    "portfolio_award_source_crosswalk.v2.csv",
+    "portfolio_award_identity.v2.csv",
+)
+
+
+def _copy_identity_inputs(target_root: Path) -> Path:
+    curated = target_root / "data/modules/cost/curated"
+    curated.mkdir(parents=True)
+    for name in IDENTITY_INPUTS:
+        shutil.copy2(ROOT / "data/modules/cost/curated" / name, curated / name)
+    return curated
+
+
+def _read_csv(path: Path) -> tuple[list[dict[str, str]], tuple[str, ...]]:
+    with path.open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        return list(reader), tuple(reader.fieldnames or ())
+
+
+def _write_csv(path: Path, fields: tuple[str, ...], rows: list[dict[str, str]]) -> None:
+    with path.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def test_v1_external_trust_root_and_closed_producer(tmp_path: Path) -> None:
@@ -63,7 +94,7 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
         "and portfolio reuse; keep allocation scenarios deferred; proceed with PR1 "
         "TDD implementation."
     )
-    assert decision.approval.approved_plan_sha256 == (
+    assert decision.approval.published_plan_sha256 == (
         "9a0eb6dba27bcc58f2b82af991d482b0651a702174a5f4cad0bd93915ec5e5f9"
     )
     assert decision.approval.reviewed_plan_sha256 == (
@@ -80,7 +111,7 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
         PortfolioReuseDecision.model_validate(payload)
 
     payload.pop("unreviewed_authority")
-    payload["approval"]["approved_plan_commit"] = "a" * 64
+    payload["approval"]["published_plan_commit"] = "a" * 64
     with pytest.raises(ValidationError, match="commit must be full 40-hex"):
         PortfolioReuseDecision.model_validate(payload)
 
@@ -92,6 +123,20 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
         validate_decision_evidence(
             decision.model_dump(mode="json"), APPROVAL_MARKER_TEXT + "Revoked: true\n"
         )
+
+
+def test_reviewed_plan_is_authenticated_without_main_ancestry() -> None:
+    from worldenergydata.cost.timeseries.portfolio_schema import validate_owner_decision
+
+    decision = validate_owner_decision(ROOT)
+    reviewed = decision.approval.reviewed_plan_commit
+    published = decision.approval.published_plan_commit
+    relationship = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", reviewed, published],
+        cwd=ROOT,
+        check=False,
+    )
+    assert relationship.returncode == 1
 
 
 def test_project_identity_set_equals_live_projects() -> None:
@@ -109,6 +154,18 @@ def test_project_identity_set_equals_live_projects() -> None:
     big_foot = next(row for row in result.identities if row.display_label == "Big Foot")
     assert big_foot.project_id == "prj-000001"
     assert big_foot.source_project_key == "src-prj-000001"
+
+
+def test_identity_contract_closes_genesis_80_110_8() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        validate_identity_contract,
+    )
+
+    contract = validate_identity_contract(ROOT)
+    assert len(contract.projects.identities) == 80
+    assert len(contract.awards.identities) == 110
+    assert len(contract.requirements) == 8
+    assert contract.migrations == ()
 
 
 def test_award_identity_set_equals_live_awards() -> None:
@@ -137,11 +194,52 @@ def test_award_identity_set_equals_live_awards() -> None:
     }
     assert ("Big Foot / 2011 / GE Oil & Gas", "awd-000001") in pilot
     assert ("Big Foot / 2009 / Enbridge", "awd-000002") in pilot
+    source_by_key = {row.source_award_key: row for row in result.sources}
+    locator_by_id = {
+        row.award_id: json.loads(source_by_key[row.source_award_key].locator_json)
+        for row in result.identities
+    }
+    assert locator_by_id["awd-000001"]["CONTRACTOR"] == "GE Oil & Gas"
+    assert locator_by_id["awd-000001"]["AWARD_YEAR"] == "2011"
+    assert locator_by_id["awd-000002"]["CONTRACTOR"] == "Enbridge"
+    assert locator_by_id["awd-000002"]["AWARD_YEAR"] == "2009"
+
+
+def test_big_foot_award_ids_are_bound_to_exact_source_awards(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        AWARD_IDENTITIES,
+        validate_award_identities,
+    )
+
+    _copy_identity_inputs(tmp_path)
+    rows, fields = _read_csv(tmp_path / AWARD_IDENTITIES)
+    ge = next(row for row in rows if row["award_id"] == "awd-000001")
+    enbridge = next(row for row in rows if row["award_id"] == "awd-000002")
+    for field in ("source_award_key", "created_source_sha256"):
+        ge[field], enbridge[field] = enbridge[field], ge[field]
+    _write_csv(tmp_path / AWARD_IDENTITIES, fields, rows)
+    with pytest.raises(ValueError, match="Big Foot award identity must remain stable"):
+        validate_award_identities(tmp_path)
+
+
+def test_award_identity_label_and_group_match_project(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        AWARD_IDENTITIES,
+        validate_award_identities,
+    )
+
+    _copy_identity_inputs(tmp_path)
+    rows, fields = _read_csv(tmp_path / AWARD_IDENTITIES)
+    row = next(
+        item for item in rows if item["award_id"] not in {"awd-000001", "awd-000002"}
+    )
+    row["display_label"] = "self-authored false label"
+    _write_csv(tmp_path / AWARD_IDENTITIES, fields, rows)
+    with pytest.raises(ValueError, match="award identity label mismatch"):
+        validate_award_identities(tmp_path)
 
 
 def test_moho_locator_collision_is_resolved_by_curated_keys(tmp_path: Path) -> None:
-    import csv
-
     from worldenergydata.cost.timeseries.portfolio_identity import (
         AWARD_CROSSWALK,
         validate_award_identities,
@@ -163,21 +261,8 @@ def test_moho_locator_collision_is_resolved_by_curated_keys(tmp_path: Path) -> N
         "EPC integrated TLP (14,600 t hull + topsides), Congo's first TLP",
     }
 
-    paths = (
-        "sanctioned_projects.csv",
-        "portfolio_project_source_crosswalk.v2.csv",
-        "portfolio_project_identity.v2.csv",
-        "contract_awards.csv",
-        "portfolio_award_source_crosswalk.v2.csv",
-        "portfolio_award_identity.v2.csv",
-    )
-    curated = tmp_path / "data/modules/cost/curated"
-    curated.mkdir(parents=True)
-    for name in paths:
-        shutil.copy2(ROOT / "data/modules/cost/curated" / name, curated / name)
-    with (tmp_path / AWARD_CROSSWALK).open(encoding="utf-8", newline="") as stream:
-        rows = list(csv.DictReader(stream))
-        fields = tuple(rows[0])
+    _copy_identity_inputs(tmp_path)
+    rows, fields = _read_csv(tmp_path / AWARD_CROSSWALK)
     target = next(
         row for row in rows if row["source_award_key"] == moho[0].source_award_key
     )
@@ -187,13 +272,31 @@ def test_moho_locator_collision_is_resolved_by_curated_keys(tmp_path: Path) -> N
         locator, ensure_ascii=False, separators=(",", ":"), sort_keys=True
     )
     target["locator_sha256"] = sha256(target["locator_json"].encode()).hexdigest()
-    with (tmp_path / AWARD_CROSSWALK).open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
+    _write_csv(tmp_path / AWARD_CROSSWALK, fields, rows)
     with pytest.raises(
         ValueError, match="award locator must contain exact five fields"
     ):
+        validate_award_identities(tmp_path)
+
+
+def test_duplicate_complete_moho_locator_fails_closed(tmp_path: Path) -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        AWARD_CROSSWALK,
+        validate_award_identities,
+    )
+
+    _copy_identity_inputs(tmp_path)
+    rows, fields = _read_csv(tmp_path / AWARD_CROSSWALK)
+    moho = [
+        row
+        for row in rows
+        if json.loads(row["locator_json"])["PROJECT"] == "Moho Nord (incl. Phase 1bis)"
+        and json.loads(row["locator_json"])["CONTRACTOR"] == "Hyundai Heavy Industries"
+    ]
+    moho[1]["locator_json"] = moho[0]["locator_json"]
+    moho[1]["locator_sha256"] = moho[0]["locator_sha256"]
+    _write_csv(tmp_path / AWARD_CROSSWALK, fields, rows)
+    with pytest.raises(ValueError, match="duplicate award locator"):
         validate_award_identities(tmp_path)
 
 
@@ -210,146 +313,73 @@ def test_requirement_registry_seeds_exact_v1_big_foot_ids() -> None:
         f"src-req-{number:06d}" for number in range(1, 9)
     }
     assert {row.project_id for row in identities} == {"prj-000001"}
-    assert {row.work_package_slug for row in identities} == {
-        "controls",
-        "drilling_completion",
-        "dry_trees",
-        "export",
-        "host_tlp",
-        "installation_hookup",
-        "marine_riser_tensioner",
-        "wells",
+    assert {row.requirement_id: row.work_package_slug for row in identities} == {
+        "req-000001": "host_tlp",
+        "req-000002": "dry_trees",
+        "req-000003": "wells",
+        "req-000004": "drilling_completion",
+        "req-000005": "marine_riser_tensioner",
+        "req-000006": "export",
+        "req-000007": "installation_hookup",
+        "req-000008": "controls",
     }
 
 
-def test_identity_correction_preserves_id_and_tombstone_prevents_reuse() -> None:
+def test_requirement_ids_are_bound_to_exact_v1_meanings(tmp_path: Path) -> None:
     from worldenergydata.cost.timeseries.portfolio_identity import (
-        IdentityMigration,
-        IdentityState,
-        canonical_json,
-        digest_text,
-        validate_identity_transition,
+        REQUIREMENT_IDENTITIES,
+        validate_requirement_identities,
     )
 
-    old_locator = canonical_json({"PROJECT": "Old label"})
-    new_locator = canonical_json({"PROJECT": "Corrected label"})
-    before = IdentityState(
-        entity_kind="project",
-        opaque_id="prj-000001",
-        source_key="src-prj-000001",
-        locator_json=old_locator,
-        state="active",
-        active=True,
-        no_reuse=True,
+    curated = _copy_identity_inputs(tmp_path)
+    source = ROOT / REQUIREMENT_IDENTITIES
+    shutil.copy2(source, curated / source.name)
+    rows, fields = _read_csv(tmp_path / REQUIREMENT_IDENTITIES)
+    host = next(row for row in rows if row["requirement_id"] == "req-000001")
+    trees = next(row for row in rows if row["requirement_id"] == "req-000002")
+    swapped = (
+        "source_requirement_key",
+        "work_package_slug",
+        "locator_json",
+        "locator_sha256",
     )
-    corrected = before.model_copy(update={"locator_json": new_locator})
-    correction = IdentityMigration(
-        migration_id="mig-000001",
-        entity_kind="project",
-        opaque_id=before.opaque_id,
-        source_key=before.source_key,
-        old_locator_json=old_locator,
-        old_locator_sha256=digest_text(old_locator),
-        new_locator_json=new_locator,
-        new_locator_sha256=digest_text(new_locator),
-        disposition="correction",
-        reason="source label corrected",
-        provenance="curated_source",
-        effective_date="2026-07-19",
-        replacement_id=None,
-    )
-    assert validate_identity_transition(before, corrected, correction) == corrected
-
-    changed_id = corrected.model_copy(update={"opaque_id": "prj-000002"})
+    for field in swapped:
+        host[field], trees[field] = trees[field], host[field]
+    _write_csv(tmp_path / REQUIREMENT_IDENTITIES, fields, rows)
     with pytest.raises(
-        ValueError, match="opaque ID and source key must remain reserved"
+        ValueError, match="requirement identity meaning must remain stable"
     ):
-        validate_identity_transition(before, changed_id, correction)
-
-    tombstoned = corrected.model_copy(
-        update={"state": "tombstoned", "active": False, "no_reuse": True}
-    )
-    tombstone = IdentityMigration(
-        migration_id="mig-000002",
-        entity_kind="project",
-        opaque_id=corrected.opaque_id,
-        source_key=corrected.source_key,
-        old_locator_json=new_locator,
-        old_locator_sha256=digest_text(new_locator),
-        new_locator_json=None,
-        new_locator_sha256=None,
-        disposition="tombstone",
-        reason="source row removed",
-        provenance="curated_source",
-        effective_date="2026-07-19",
-        replacement_id=None,
-    )
-    assert validate_identity_transition(corrected, tombstoned, tombstone) == tombstoned
-
-    reused = tombstoned.model_copy(
-        update={"state": "active", "active": True, "locator_json": old_locator}
-    )
-    with pytest.raises(ValueError, match="tombstoned identity cannot be reused"):
-        validate_identity_transition(tombstoned, reused, correction)
+        validate_requirement_identities(tmp_path)
 
 
-def test_identity_split_and_merge_migrations_fail_closed() -> None:
+def test_identity_csv_headers_are_exactly_enforced(tmp_path: Path) -> None:
     from worldenergydata.cost.timeseries.portfolio_identity import (
-        IdentityMigration,
-        IdentityState,
-        canonical_json,
-        digest_text,
-        validate_identity_transition,
+        AWARD_IDENTITIES,
+        validate_award_identities,
     )
 
-    locator = canonical_json({"PROJECT": "Big Foot"})
-    state = IdentityState(
-        entity_kind="project",
-        opaque_id="prj-000001",
-        source_key="src-prj-000001",
-        locator_json=locator,
-        state="active",
-        active=True,
-        no_reuse=True,
-    )
-    rejected = IdentityMigration(
-        migration_id="mig-000003",
-        entity_kind="project",
-        opaque_id=state.opaque_id,
-        source_key=state.source_key,
-        old_locator_json=locator,
-        old_locator_sha256=digest_text(locator),
-        new_locator_json=None,
-        new_locator_sha256=None,
-        disposition="split_rejected",
-        reason="one source row cannot allocate two identities",
-        provenance="curation_review",
-        effective_date="2026-07-19",
-        replacement_id=None,
-    )
-    assert validate_identity_transition(state, state, rejected) == state
-
-    split = state.model_copy(update={"source_key": "src-prj-000002"})
-    with pytest.raises(
-        ValueError, match="opaque ID and source key must remain reserved"
-    ):
-        validate_identity_transition(state, split, rejected)
+    _copy_identity_inputs(tmp_path)
+    path = tmp_path / AWARD_IDENTITIES
+    lines = path.read_text(encoding="utf-8").splitlines()
+    lines[0] += ",unreviewed_field"
+    lines[1] += ",value"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="award identity header mismatch"):
+        validate_award_identities(tmp_path)
 
 
-def test_checked_in_migration_ledger_is_append_only_and_empty(tmp_path: Path) -> None:
-    from worldenergydata.cost.timeseries.portfolio_identity import (
-        MIGRATION_LEDGER,
-        validate_identity_migration_ledger,
-    )
+def test_identity_hashes_require_lowercase_hex() -> None:
+    from pydantic import ValidationError
 
-    assert validate_identity_migration_ledger(ROOT) == ()
+    from worldenergydata.cost.timeseries.portfolio_schema import ProjectSourceBinding
 
-    target = tmp_path / MIGRATION_LEDGER
-    target.parent.mkdir(parents=True)
-    target.write_text(
-        (ROOT / MIGRATION_LEDGER).read_text(encoding="utf-8").rstrip("\n")
-        + ",unreviewed_field\n",
-        encoding="utf-8",
-    )
-    with pytest.raises(ValueError, match="identity migration ledger header mismatch"):
-        validate_identity_migration_ledger(tmp_path)
+    with pytest.raises(ValidationError, match="SHA-256 must be lowercase 64-hex"):
+        ProjectSourceBinding.model_validate(
+            {
+                "source_project_key": "src-prj-000001",
+                "locator_json": '{"PROJECT":"Big Foot"}',
+                "locator_sha256": "A" * 64,
+                "source_row_sha256": "0" * 64,
+                "active": True,
+            }
+        )
