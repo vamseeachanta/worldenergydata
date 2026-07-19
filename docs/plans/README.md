@@ -99,7 +99,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#1038](https://github.com/vamseeachanta/worldenergydata/issues/1038) | [cost-map-program](2026-07-16-issue-1038-cost-map-program.md) | plan-approved | 2026-07-16 |
 | [#1039](https://github.com/vamseeachanta/worldenergydata/issues/1039) | [big-foot-cost-map-pilot](2026-07-16-issue-1039-big-foot-cost-map-pilot.md) | implemented | 2026-07-16 |
 | [#1039](https://github.com/vamseeachanta/worldenergydata/issues/1039) | [manifest-lineage-hotfix](2026-07-18-issue-1039-manifest-lineage-hotfix.md) | implemented | 2026-07-18 |
-| [#1040](https://github.com/vamseeachanta/worldenergydata/issues/1040) | [required-assets-award-coverage](2026-07-16-issue-1040-required-assets-award-coverage.md) | plan-approved | 2026-07-16 |
+| [#1040](https://github.com/vamseeachanta/worldenergydata/issues/1040) | [required-assets-award-coverage-replan](2026-07-19-issue-1040-required-assets-award-coverage-replan.html) | plan-approved | 2026-07-19 |
 | [#1041](https://github.com/vamseeachanta/worldenergydata/issues/1041) | [bidirectional-cost-synthesis](2026-07-16-issue-1041-bidirectional-cost-synthesis.md) | plan-approved | 2026-07-16 |
 | [#1042](https://github.com/vamseeachanta/worldenergydata/issues/1042) | [component-cost-time-traces](2026-07-16-issue-1042-component-cost-time-traces.md) | plan-approved | 2026-07-16 |
 | [#1043](https://github.com/vamseeachanta/worldenergydata/issues/1043) | [correlated-capex-estimator](2026-07-16-issue-1043-correlated-capex-estimator.md) | plan-approved | 2026-07-16 |

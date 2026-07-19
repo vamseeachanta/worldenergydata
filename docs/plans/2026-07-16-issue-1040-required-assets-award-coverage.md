@@ -1,6 +1,6 @@
 # Plan for #1040: portfolio required-assets and award-coverage map
 
-> **Status:** plan-approved
+> **Status:** superseded after discovery-first review
 > **Complexity:** T3
 > **Date:** 2026-07-16
 > **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/1040
@@ -8,6 +8,8 @@
 > **Client:** N/A
 > **Lane:** lane:codex
 > **Review artifacts:** Codex R1/R2 MAJOR patched; Codex R3 inline APPROVE; Claude final MINOR patched; Gemini UNAVAILABLE — see `scripts/review/results/2026-07-16-plan-1038-1044-*.md`
+
+> **Superseded by:** `2026-07-19-issue-1040-required-assets-award-coverage-replan.html`. Discovery on 2026-07-19 found that this version would mutate v1 hash-pinned inputs while requiring the v1 preflight to remain valid. It is retained as approval history and must not be implemented.
 
 ## Resource Intelligence Summary
 
