@@ -36,11 +36,20 @@ def squashed_repo(tmp_path: Path) -> tuple[Path, Path, Path, str, str, str]:
     hardening._git(origin, "checkout", "-q", main)
     hardening._git(origin, "merge", "--squash", "feature")
     hardening._git(origin, "commit", "-qm", "synthetic squash")
+    squash = hardening._git(origin, "rev-parse", "HEAD")
+    assert hardening._git(origin, "show", "-s", "--format=%P", squash) == producer
     hardening._git(origin, "branch", "-D", "feature")
     baseline = tmp_path / "baseline"
     hardening._generate(origin, baseline, producer)
     root = tmp_path / "shallow"
     hardening._git(tmp_path, "clone", "-q", "--depth", "1", origin.as_uri(), str(root))
+    assert hardening._git(root, "rev-parse", "--is-shallow-repository") == "true"
+    assert hardening._git(root, "rev-parse", "HEAD") == squash
+    assert hardening._git(root, "show", "-s", "--format=%P", "HEAD") == ""
+    assert not hardening._has_commit(root, producer)
+    assert not hardening._has_commit(root, orphan)
+    refs = hardening._git(origin, "for-each-ref", "--format=%(refname)", "refs/heads")
+    assert "refs/heads/feature" not in refs.splitlines()
     return origin, root, baseline, producer, orphan, nonancestor
 
 
@@ -61,11 +70,13 @@ def test_durable_producer_survives_squash_and_missing_origin(
     )
 
 
-def test_orphaned_and_fabricated_producers_reject(squashed_repo) -> None:
+@pytest.mark.parametrize("producer_kind", ("orphan", "fabricated"))
+def test_unavailable_producer_rejects(squashed_repo, producer_kind: str) -> None:
     _, root, _, _, orphan, _ = squashed_repo
-    for producer in (orphan, "f" * 40):
-        with pytest.raises(ValueError):
-            hardening.hydrate_trusted_producer_history(root, producer)
+    producer = orphan if producer_kind == "orphan" else "f" * 40
+    with pytest.raises(ValueError, match="producer commit remains unavailable"):
+        hardening.hydrate_trusted_producer_history(root, producer)
+    assert hardening._git(root, "rev-parse", "--is-shallow-repository") == "false"
 
 
 def test_existing_nonancestor_producer_rejects(squashed_repo) -> None:
