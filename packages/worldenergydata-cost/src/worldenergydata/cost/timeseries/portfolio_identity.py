@@ -16,6 +16,7 @@ from worldenergydata.cost.timeseries.portfolio_schema import (
     AwardSourceBinding,
     ProjectIdentity,
     ProjectSourceBinding,
+    RequirementIdentity,
 )
 
 PROJECT_SOURCE = Path("data/modules/cost/curated/sanctioned_projects.csv")
@@ -28,6 +29,9 @@ AWARD_CROSSWALK = Path(
     "data/modules/cost/curated/portfolio_award_source_crosswalk.v2.csv"
 )
 AWARD_IDENTITIES = Path("data/modules/cost/curated/portfolio_award_identity.v2.csv")
+REQUIREMENT_IDENTITIES = Path(
+    "data/modules/cost/curated/portfolio_requirement_identity.v2.csv"
+)
 AWARD_LOCATOR_FIELDS = (
     "PROJECT",
     "AWARD_YEAR",
@@ -205,3 +209,30 @@ def validate_award_identities(root: Path) -> AwardIdentityResult:
         source_sha,
         len(projects.identities) - len(award_projects),
     )
+
+
+def validate_requirement_identities(root: Path) -> tuple[RequirementIdentity, ...]:
+    """Validate the exact eight v1 Big Foot requirement identities."""
+
+    identities = _models(root / REQUIREMENT_IDENTITIES, RequirementIdentity)
+    _unique((row.requirement_id for row in identities), "duplicate requirement ID")
+    _unique(
+        (row.source_requirement_key for row in identities),
+        "duplicate source requirement key",
+    )
+    _unique((row.locator_json for row in identities), "duplicate requirement locator")
+    for identity in identities:
+        locator = json.loads(identity.locator_json)
+        expected = {
+            "PROJECT_ID": identity.project_id,
+            "WORK_PACKAGE_SLUG": identity.work_package_slug,
+        }
+        if locator != expected or canonical_json(locator) != identity.locator_json:
+            raise ValueError("requirement locator mismatch")
+        if digest_text(identity.locator_json) != identity.locator_sha256:
+            raise ValueError("requirement locator hash mismatch")
+    if {row.requirement_id for row in identities} != {
+        f"req-{number:06d}" for number in range(1, 9)
+    }:
+        raise ValueError("requirement identity seed must preserve v1 IDs")
+    return identities

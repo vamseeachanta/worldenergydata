@@ -195,3 +195,28 @@ def test_moho_locator_collision_is_resolved_by_curated_keys(tmp_path: Path) -> N
         ValueError, match="award locator must contain exact five fields"
     ):
         validate_award_identities(tmp_path)
+
+
+def test_requirement_registry_seeds_exact_v1_big_foot_ids() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        validate_requirement_identities,
+    )
+
+    identities = validate_requirement_identities(ROOT)
+    assert {row.requirement_id for row in identities} == {
+        f"req-{number:06d}" for number in range(1, 9)
+    }
+    assert {row.source_requirement_key for row in identities} == {
+        f"src-req-{number:06d}" for number in range(1, 9)
+    }
+    assert {row.project_id for row in identities} == {"prj-000001"}
+    assert {row.work_package_slug for row in identities} == {
+        "controls",
+        "drilling_completion",
+        "dry_trees",
+        "export",
+        "host_tlp",
+        "installation_hookup",
+        "marine_riser_tensioner",
+        "wells",
+    }

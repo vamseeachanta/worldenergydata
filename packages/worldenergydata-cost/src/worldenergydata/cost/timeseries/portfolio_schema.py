@@ -229,6 +229,57 @@ class AwardIdentity(BaseModel):
         return self
 
 
+class RequirementIdentity(BaseModel):
+    """Persistent requirement identity seeded from the v1 pilot."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    requirement_id: str
+    source_requirement_key: str
+    project_id: str
+    work_package_slug: str
+    locator_json: str
+    locator_sha256: str
+    state: Literal["active", "tombstoned"]
+    active: bool
+    validation_group_id: str
+    no_reuse: bool
+    migration_note: str
+
+    @field_validator("requirement_id")
+    @classmethod
+    def _require_requirement_id(cls, value: str) -> str:
+        if re.fullmatch(r"req-[0-9]{6}", value) is None:
+            raise ValueError("invalid requirement ID")
+        return value
+
+    @field_validator("source_requirement_key")
+    @classmethod
+    def _require_source_key(cls, value: str) -> str:
+        if re.fullmatch(r"src-req-[0-9]{6}", value) is None:
+            raise ValueError("invalid source requirement key")
+        return value
+
+    @field_validator("project_id")
+    @classmethod
+    def _require_project_id(cls, value: str) -> str:
+        return ProjectIdentity._require_project_id(value)
+
+    @model_validator(mode="after")
+    def _validate_lifecycle(self) -> "RequirementIdentity":
+        if self.active != (self.state == "active"):
+            raise ValueError("requirement state and active flag disagree")
+        if (
+            not self.no_reuse
+            or not self.work_package_slug
+            or not self.validation_group_id
+        ):
+            raise ValueError(
+                "requirement identity requires no-reuse and nonempty labels"
+            )
+        return self
+
+
 def _validate_exact_evidence(decision: PortfolioReuseDecision) -> None:
     expected = {
         "approval_quote": APPROVAL_QUOTE,
