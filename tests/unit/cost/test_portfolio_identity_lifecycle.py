@@ -2,13 +2,33 @@
 
 from __future__ import annotations
 
-import csv
-import json
-import shutil
 from pathlib import Path
 
 import pytest
 
+from tests.unit.cost.test_portfolio_identity_support import (
+    ROOT,
+)
+from tests.unit.cost.test_portfolio_identity_support import (
+    append_migration as _append_migration,
+)
+from tests.unit.cost.test_portfolio_identity_support import (
+    copy_contract as _copy_contract,
+)
+from tests.unit.cost.test_portfolio_identity_support import find_row as _find
+from tests.unit.cost.test_portfolio_identity_support import migration as _migration
+from tests.unit.cost.test_portfolio_identity_support import (
+    project_binding as _project_binding,
+)
+from tests.unit.cost.test_portfolio_identity_support import read_csv as _read
+from tests.unit.cost.test_portfolio_identity_support import (
+    replace_appomattox as _replace_appomattox,
+)
+from tests.unit.cost.test_portfolio_identity_support import (
+    reverse_rows as _reverse_rows,
+)
+from tests.unit.cost.test_portfolio_identity_support import state as _state
+from tests.unit.cost.test_portfolio_identity_support import write_csv as _write
 from worldenergydata.cost.timeseries.portfolio_identity import (
     AWARD_CROSSWALK,
     AWARD_IDENTITIES,
@@ -17,7 +37,7 @@ from worldenergydata.cost.timeseries.portfolio_identity import (
     PROJECT_CROSSWALK,
     PROJECT_IDENTITIES,
     PROJECT_SOURCE,
-    IdentityMigration,
+    REQUIREMENT_IDENTITIES,
     IdentityState,
     canonical_json,
     digest_text,
@@ -25,151 +45,6 @@ from worldenergydata.cost.timeseries.portfolio_identity import (
     validate_identity_transition,
     validate_identity_update,
 )
-
-ROOT = Path(__file__).resolve().parents[3]
-CURATED = Path("data/modules/cost/curated")
-CONTRACT_FILES = (
-    "sanctioned_projects.csv",
-    "portfolio_project_source_crosswalk.v2.csv",
-    "portfolio_project_identity.v2.csv",
-    "contract_awards.csv",
-    "portfolio_award_source_crosswalk.v2.csv",
-    "portfolio_award_identity.v2.csv",
-    "portfolio_requirement_identity.v2.csv",
-    "portfolio_identity_migrations.v2.csv",
-)
-
-
-def _copy_contract(target: Path) -> Path:
-    curated = target / CURATED
-    curated.mkdir(parents=True)
-    for name in CONTRACT_FILES:
-        shutil.copy2(ROOT / CURATED / name, curated / name)
-    return target
-
-
-def _read(path: Path) -> tuple[list[dict[str, str]], tuple[str, ...]]:
-    with path.open(encoding="utf-8", newline="") as stream:
-        reader = csv.DictReader(stream)
-        return list(reader), tuple(reader.fieldnames or ())
-
-
-def _write(path: Path, fields: tuple[str, ...], rows: list[dict[str, str]]) -> None:
-    with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def _append_migration(root: Path, row: dict[str, str]) -> None:
-    path = root / MIGRATION_LEDGER
-    rows, fields = _read(path)
-    rows.append(row)
-    _write(path, fields, rows)
-
-
-def _reverse_rows(path: Path) -> None:
-    rows, fields = _read(path)
-    _write(path, fields, list(reversed(rows)))
-
-
-def _find(rows: list[dict[str, str]], field: str, value: str) -> dict[str, str]:
-    return next(row for row in rows if row[field] == value)
-
-
-def _project_binding(rows: list[dict[str, str]], label: str) -> dict[str, str]:
-    return next(
-        row for row in rows if json.loads(row["locator_json"])["PROJECT"] == label
-    )
-
-
-def _replace_appomattox(root: Path) -> tuple[str, str]:
-    source_rows, source_fields = _read(root / PROJECT_SOURCE)
-    source = _find(source_rows, "PROJECT", "Appomattox")
-    source["PROJECT"] = "Appomattox successor"
-    _write(root / PROJECT_SOURCE, source_fields, source_rows)
-
-    bindings, binding_fields = _read(root / PROJECT_CROSSWALK)
-    old_binding = _project_binding(bindings, "Appomattox")
-    old_binding["active"] = "false"
-    locator = canonical_json({"PROJECT": "Appomattox successor"})
-    new_key = "src-prj-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-    row_hash = digest_text(canonical_json(source))
-    bindings.append(
-        dict(
-            source_project_key=new_key,
-            locator_json=locator,
-            locator_sha256=digest_text(locator),
-            source_row_sha256=row_hash,
-            active="true",
-        )
-    )
-    _write(root / PROJECT_CROSSWALK, binding_fields, bindings)
-
-    identities, identity_fields = _read(root / PROJECT_IDENTITIES)
-    old = _find(identities, "source_project_key", old_binding["source_project_key"])
-    old.update(state="tombstoned", active="false")
-    new_id = "prj-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-    identities.append(
-        dict(
-            old,
-            project_id=new_id,
-            source_project_key=new_key,
-            display_label="Appomattox successor",
-            state="active",
-            active="true",
-            created_source_sha256=row_hash,
-        )
-    )
-    _write(root / PROJECT_IDENTITIES, identity_fields, identities)
-    migration = _migration(
-        "replacement",
-        old_binding["locator_json"],
-        locator,
-        old["project_id"],
-        old_binding["source_project_key"],
-        new_id,
-    )
-    _append_migration(root, migration.model_dump(mode="json"))
-    return old["project_id"], new_id
-
-
-def _state(locator: str, *, state: str = "active") -> IdentityState:
-    return IdentityState(
-        entity_kind="project",
-        opaque_id="prj-000001",
-        source_key="src-prj-000001",
-        locator_json=locator,
-        state=state,
-        active=state == "active",
-        no_reuse=True,
-    )
-
-
-def _migration(
-    disposition: str,
-    old_locator: str,
-    new_locator: str | None = None,
-    opaque_id: str = "prj-000001",
-    source_key: str = "src-prj-000001",
-    replacement_id: str | None = None,
-    entity_kind: str = "project",
-) -> IdentityMigration:
-    return IdentityMigration(
-        migration_id=f"mig-{disposition}",
-        entity_kind=entity_kind,
-        opaque_id=opaque_id,
-        source_key=source_key,
-        old_locator_json=old_locator,
-        old_locator_sha256=digest_text(old_locator),
-        new_locator_json=new_locator,
-        new_locator_sha256=digest_text(new_locator) if new_locator else None,
-        disposition=disposition,
-        reason="curated identity lifecycle test",
-        provenance="curation_review",
-        effective_date="2026-07-19",
-        replacement_id=replacement_id,
-    )
 
 
 def test_identity_correction_preserves_source_key_and_opaque_id() -> None:
@@ -233,7 +108,6 @@ def test_csv_correction_preserves_key_id_and_created_hash(tmp_path: Path) -> Non
     source = _find(source_rows, "PROJECT", "Appomattox")
     source["PROJECT"] = "Appomattox corrected"
     _write(after / PROJECT_SOURCE, source_fields, source_rows)
-
     bindings, binding_fields = _read(after / PROJECT_CROSSWALK)
     binding = _project_binding(bindings, "Appomattox")
     old_locator = binding["locator_json"]
@@ -242,7 +116,6 @@ def test_csv_correction_preserves_key_id_and_created_hash(tmp_path: Path) -> Non
     binding["locator_sha256"] = digest_text(new_locator)
     binding["source_row_sha256"] = digest_text(canonical_json(source))
     _write(after / PROJECT_CROSSWALK, binding_fields, bindings)
-
     identities, identity_fields = _read(after / PROJECT_IDENTITIES)
     identity = _find(identities, "source_project_key", binding["source_project_key"])
     created_hash = identity["created_source_sha256"]
@@ -254,6 +127,8 @@ def test_csv_correction_preserves_key_id_and_created_hash(tmp_path: Path) -> Non
         new_locator,
         identity["project_id"],
         binding["source_project_key"],
+        old_source_hash=created_hash,
+        new_source_hash=binding["source_row_sha256"],
     )
     _append_migration(after, migration.model_dump(mode="json"))
 
@@ -273,12 +148,10 @@ def test_csv_tombstone_removes_live_row_but_reserves_identity(tmp_path: Path) ->
     source_rows, source_fields = _read(after / PROJECT_SOURCE)
     source_rows = [row for row in source_rows if row["PROJECT"] != "Appomattox"]
     _write(after / PROJECT_SOURCE, source_fields, source_rows)
-
     bindings, binding_fields = _read(after / PROJECT_CROSSWALK)
     binding = _project_binding(bindings, "Appomattox")
     binding["active"] = "false"
     _write(after / PROJECT_CROSSWALK, binding_fields, bindings)
-
     identities, identity_fields = _read(after / PROJECT_IDENTITIES)
     identity = _find(identities, "source_project_key", binding["source_project_key"])
     identity.update(state="tombstoned", active="false")
@@ -288,6 +161,7 @@ def test_csv_tombstone_removes_live_row_but_reserves_identity(tmp_path: Path) ->
         binding["locator_json"],
         opaque_id=identity["project_id"],
         source_key=binding["source_project_key"],
+        old_source_hash=binding["source_row_sha256"],
     )
     _append_migration(after, migration.model_dump(mode="json"))
 
@@ -313,7 +187,6 @@ def test_csv_award_tombstone_is_replayed_by_public_update_validator(
     source_rows, source_fields = _read(after / AWARD_SOURCE)
     removed = source_rows.pop(0)
     _write(after / AWARD_SOURCE, source_fields, source_rows)
-
     locator = canonical_json(
         {
             field: removed[field]
@@ -340,6 +213,7 @@ def test_csv_award_tombstone_is_replayed_by_public_update_validator(
         opaque_id=identity["award_id"],
         source_key=binding["source_award_key"],
         entity_kind="award",
+        old_source_hash=binding["source_row_sha256"],
     )
     _append_migration(after, migration.model_dump(mode="json"))
 
@@ -373,16 +247,43 @@ def test_source_and_registry_row_reordering_preserves_identity_mapping(
 ) -> None:
     before = _copy_contract(tmp_path / "before")
     after = _copy_contract(tmp_path / "after")
-    for path in (PROJECT_SOURCE, PROJECT_CROSSWALK, PROJECT_IDENTITIES):
+    for path in (
+        PROJECT_SOURCE,
+        PROJECT_CROSSWALK,
+        PROJECT_IDENTITIES,
+        AWARD_SOURCE,
+        AWARD_CROSSWALK,
+        AWARD_IDENTITIES,
+        REQUIREMENT_IDENTITIES,
+    ):
         _reverse_rows(after / path)
     result = validate_identity_update(before, after)
     before_map = {
-        row.source_project_key: row.project_id
-        for row in result.before_projects.identities
+        "project": {
+            row.source_project_key: row.project_id
+            for row in result.before_projects.identities
+        },
+        "award": {
+            row.source_award_key: row.award_id
+            for row in result.before_awards.identities
+        },
+        "requirement": {
+            row.source_requirement_key: row.requirement_id
+            for row in result.before_requirements
+        },
     }
     after_map = {
-        row.source_project_key: row.project_id
-        for row in result.after_projects.identities
+        "project": {
+            row.source_project_key: row.project_id
+            for row in result.after_projects.identities
+        },
+        "award": {
+            row.source_award_key: row.award_id for row in result.after_awards.identities
+        },
+        "requirement": {
+            row.source_requirement_key: row.requirement_id
+            for row in result.after_requirements
+        },
     }
     assert after_map == before_map
 

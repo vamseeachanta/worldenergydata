@@ -93,6 +93,7 @@ REQUIREMENT_IDENTITY_FIELDS = (
     "work_package_slug",
     "locator_json",
     "locator_sha256",
+    "created_locator_sha256",
     "state",
     "active",
     "validation_group_id",
@@ -305,7 +306,6 @@ def _validate_pilot_awards(
 
 def validate_award_identities(root: Path) -> AwardIdentityResult:
     """Prove one stable active identity exists for each live award row."""
-
     projects = validate_project_identities(root)
     project_by_label = {row.display_label: row for row in projects.identities}
     live = _live_award_rows(root)
@@ -335,6 +335,8 @@ def validate_award_identities(root: Path) -> AwardIdentityResult:
         project = project_by_label[locator["PROJECT"]]
         if identity.project_id != project.project_id:
             raise ValueError("award project identity mismatch")
+        if identity.active and not project.active:
+            raise ValueError("active award project foreign key must be active")
         expected_label = " / ".join(
             locator[field] for field in ("PROJECT", "AWARD_YEAR", "CONTRACTOR")
         )
@@ -350,7 +352,7 @@ def validate_award_identities(root: Path) -> AwardIdentityResult:
         sources,
         identities,
         source_sha,
-        len(projects.identities) - len(award_projects),
+        sum(row.active for row in projects.identities) - len(award_projects),
     )
 
 
@@ -393,6 +395,6 @@ def validate_requirement_identities(root: Path) -> tuple[RequirementIdentity, ..
         key: (f"src-req-{key[-6:]}", "prj-000001", slug, "vg-cost-map-pilot-000001")
         for key, slug in BIG_FOOT_REQUIREMENTS.items()
     }
-    if actual != expected:
+    if {key: actual.get(key) for key in expected} != expected:
         raise ValueError("requirement identity meaning must remain stable")
     return identities

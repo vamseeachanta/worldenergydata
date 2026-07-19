@@ -12,7 +12,9 @@ PACKAGE = ROOT / "packages/worldenergydata-cost/src/worldenergydata/cost/timeser
 def _portfolio_python_paths() -> tuple[Path, ...]:
     production = tuple(PACKAGE.glob("portfolio_*.py"))
     tests = tuple((ROOT / "tests/unit/cost").glob("test_portfolio_*.py"))
-    return tuple(sorted((*production, *tests)))
+    builder = ROOT / "scripts/cost/build_portfolio_asset_award_coverage.py"
+    entrypoints = (builder,) if builder.exists() else ()
+    return tuple(sorted((*production, *tests, *entrypoints)))
 
 
 def test_portfolio_python_structure() -> None:

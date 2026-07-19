@@ -12,38 +12,23 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-DECISION_PATH = Path("data/modules/cost/curated/portfolio_reuse_decision.v2.json")
-APPROVAL_MARKER = Path(".planning/plan-approved/1040.md")
-APPROVED_PLAN_PATH = (
-    "docs/plans/2026-07-19-issue-1040-required-assets-award-coverage-replan.html"
-)
-REVIEWED_PLAN_COMMIT = "5ba42c170099fb5632ccbf054ef974f1f1d429da"
-REVIEWED_PLAN_SHA256 = (
-    "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91"
-)
-PUBLISHED_PLAN_COMMIT = "e8feae4e8f01d99aff95ded09216b6a8efc7b186"
-PUBLISHED_PLAN_SHA256 = (
-    "9a0eb6dba27bcc58f2b82af991d482b0651a702174a5f4cad0bd93915ec5e5f9"
-)
-REVIEWED_PLAN_REF = "refs/heads/chore/1040-plan-hotfix"
-APPROVAL_MARKER_SHA256 = (
-    "31c608d00af652668721295ca4bdaf4425210e45551f44beffc9f96c39444488"
-)
-APPROVED_AT = datetime(2026, 7, 19, 11, 54, 1, tzinfo=timezone.utc)
-APPROVAL_QUOTE = (
-    "Approved: #1040 revised plan at 5ba42c1; authorize taxonomy, accounting, "
-    "and portfolio reuse; keep allocation scenarios deferred; proceed with PR1 "
-    "TDD implementation."
-)
-ISSUE_URL = "https://github.com/vamseeachanta/worldenergydata/issues/1040"
-COMMENT_URL = ISSUE_URL + "#issuecomment-5015609061"
-APPROVAL_MARKER_TEXT = (
-    "Approved by: user\n"
-    f'Approval: "{APPROVAL_QUOTE}"\n'
-    "Recorded by: Codex on the user's explicit instruction\n"
-    "Date: 2026-07-19\n"
-    f"Approved plan commit: {REVIEWED_PLAN_COMMIT}\n"
-    f"Issue: {ISSUE_URL}\n"
+from worldenergydata.cost.timeseries.portfolio_approval import (
+    APPROVAL_MARKER,
+    APPROVAL_MARKER_SHA256,
+    APPROVAL_MARKER_TEXT,
+    APPROVAL_QUOTE,
+    APPROVED_AT,
+    APPROVED_PLAN_PATH,
+    COMMENT_URL,
+    DECISION_PATH,
+    ISSUE_URL,
+    PUBLISHED_PLAN_COMMIT,
+    PUBLISHED_PLAN_SHA256,
+    PUBLISHED_TRUST_REF,
+    REVIEWED_PLAN_COMMIT,
+    REVIEWED_PLAN_REF,
+    REVIEWED_PLAN_SHA256,
+    REVIEWED_TRUST_REF,
 )
 
 
@@ -271,6 +256,7 @@ class RequirementIdentity(BaseModel):
     work_package_slug: str
     locator_json: str
     locator_sha256: str
+    created_locator_sha256: str
     state: Literal["active", "tombstoned"]
     active: bool
     validation_group_id: str
@@ -296,7 +282,7 @@ class RequirementIdentity(BaseModel):
     def _require_project_id(cls, value: str) -> str:
         return ProjectIdentity._require_project_id(value)
 
-    @field_validator("locator_sha256")
+    @field_validator("locator_sha256", "created_locator_sha256")
     @classmethod
     def _require_hash(cls, value: str) -> str:
         return _require_sha256(value)
@@ -345,21 +331,30 @@ def _git(root: Path, *arguments: str) -> bytes:
 
 
 def _validate_plan_blobs(root: Path, approval: ApprovalEvidence) -> None:
-    reviewed_ref = (
-        f"refs/remotes/origin/{approval.reviewed_plan_ref.removeprefix('refs/heads/')}"
+    _git(
+        root,
+        "fetch",
+        "--no-tags",
+        "origin",
+        f"+{approval.reviewed_plan_ref}:{REVIEWED_TRUST_REF}",
+        f"+refs/heads/main:{PUBLISHED_TRUST_REF}",
     )
     _git(root, "cat-file", "-e", f"{approval.reviewed_plan_commit}^{{commit}}")
     _git(
-        root, "merge-base", "--is-ancestor", approval.reviewed_plan_commit, reviewed_ref
+        root,
+        "merge-base",
+        "--is-ancestor",
+        approval.reviewed_plan_commit,
+        REVIEWED_TRUST_REF,
     )
     reviewed = _git(
         root, "show", f"{approval.reviewed_plan_commit}:{approval.approved_plan_path}"
     )
     if sha256(reviewed).hexdigest() != approval.reviewed_plan_sha256:
         raise ValueError("reviewed plan blob hash mismatch")
-
     published = approval.published_plan_commit
     _git(root, "cat-file", "-e", f"{published}^{{commit}}")
+    _git(root, "merge-base", "--is-ancestor", published, PUBLISHED_TRUST_REF)
     _git(root, "merge-base", "--is-ancestor", published, "HEAD")
     blob = _git(root, "show", f"{published}:{approval.approved_plan_path}")
     marker = _git(root, "show", f"{published}:{APPROVAL_MARKER}")

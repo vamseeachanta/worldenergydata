@@ -11,7 +11,7 @@
     "published_plan_commit": "e8feae4e8f01d99aff95ded09216b6a8efc7b186",
     "published_plan_sha256": "9a0eb6dba27bcc58f2b82af991d482b0651a702174a5f4cad0bd93915ec5e5f9",
     "reviewed_plan_commit": "5ba42c170099fb5632ccbf054ef974f1f1d429da",
-    "reviewed_plan_ref": "refs/heads/chore/1040-plan-hotfix",
+    "reviewed_plan_ref": "refs/pull/1052/head",
     "reviewed_plan_sha256": "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91"
   },
   "contract_version": "portfolio-reuse-decision.v2",

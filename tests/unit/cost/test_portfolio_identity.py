@@ -139,6 +139,13 @@ def test_reviewed_plan_is_authenticated_without_main_ancestry() -> None:
     assert relationship.returncode == 1
 
 
+def test_reviewed_plan_uses_immutable_pull_request_ref() -> None:
+    from worldenergydata.cost.timeseries.portfolio_schema import validate_owner_decision
+
+    decision = validate_owner_decision(ROOT)
+    assert decision.approval.reviewed_plan_ref == "refs/pull/1052/head"
+
+
 def test_project_identity_set_equals_live_projects() -> None:
     from worldenergydata.cost.timeseries.portfolio_identity import (
         validate_project_identities,

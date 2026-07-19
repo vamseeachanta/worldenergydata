@@ -21,8 +21,10 @@ MIGRATION_FIELDS = (
     "source_key",
     "old_locator_json",
     "old_locator_sha256",
+    "old_source_row_sha256",
     "new_locator_json",
     "new_locator_sha256",
+    "new_source_row_sha256",
     "disposition",
     "reason",
     "provenance",
@@ -68,8 +70,10 @@ class IdentityMigration(BaseModel):
     source_key: str
     old_locator_json: str
     old_locator_sha256: str
+    old_source_row_sha256: str
     new_locator_json: str | None
     new_locator_sha256: str | None
+    new_source_row_sha256: str | None
     disposition: Literal[
         "correction",
         "tombstone",
@@ -83,13 +87,22 @@ class IdentityMigration(BaseModel):
     replacement_id: str | None
 
     @field_validator(
-        "new_locator_json", "new_locator_sha256", "replacement_id", mode="before"
+        "new_locator_json",
+        "new_locator_sha256",
+        "new_source_row_sha256",
+        "replacement_id",
+        mode="before",
     )
     @classmethod
     def _empty_is_none(cls, value: object) -> object:
         return None if value == "" else value
 
-    @field_validator("old_locator_sha256", "new_locator_sha256")
+    @field_validator(
+        "old_locator_sha256",
+        "old_source_row_sha256",
+        "new_locator_sha256",
+        "new_source_row_sha256",
+    )
     @classmethod
     def _require_hash(cls, value: str | None) -> str | None:
         if value is not None and re.fullmatch(r"[0-9a-f]{64}", value) is None:
@@ -103,11 +116,23 @@ class IdentityMigration(BaseModel):
         if self.disposition == "correction" and None in (
             self.new_locator_json,
             self.new_locator_sha256,
+            self.new_source_row_sha256,
         ):
             raise ValueError("correction requires a new binding")
+        if self.disposition == "replacement" and None in (
+            self.new_locator_json,
+            self.new_locator_sha256,
+            self.new_source_row_sha256,
+            self.replacement_id,
+        ):
+            raise ValueError("replacement requires a complete new binding")
         if self.disposition == "tombstone" and any(
             value is not None
-            for value in (self.new_locator_json, self.new_locator_sha256)
+            for value in (
+                self.new_locator_json,
+                self.new_locator_sha256,
+                self.new_source_row_sha256,
+            )
         ):
             raise ValueError("tombstone cannot create a new binding")
         return self
@@ -172,6 +197,7 @@ def validate_identity_transition(
             for value in (
                 migration.new_locator_json,
                 migration.new_locator_sha256,
+                migration.new_source_row_sha256,
                 migration.replacement_id,
             )
         ):
