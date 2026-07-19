@@ -46,7 +46,9 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
     from pydantic import ValidationError
 
     from worldenergydata.cost.timeseries.portfolio_schema import (
+        APPROVAL_MARKER_TEXT,
         PortfolioReuseDecision,
+        validate_decision_evidence,
         validate_owner_decision,
     )
 
@@ -61,6 +63,9 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
         "TDD implementation."
     )
     assert decision.approval.approved_plan_sha256 == (
+        "9a0eb6dba27bcc58f2b82af991d482b0651a702174a5f4cad0bd93915ec5e5f9"
+    )
+    assert decision.approval.reviewed_plan_sha256 == (
         "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91"
     )
     assert decision.approval.approved_at == datetime(
@@ -77,3 +82,29 @@ def test_owner_decision_requires_exact_approval_evidence() -> None:
     payload["approval"]["approved_plan_commit"] = "a" * 64
     with pytest.raises(ValidationError, match="commit must be full 40-hex"):
         PortfolioReuseDecision.model_validate(payload)
+
+    payload = decision.model_dump(mode="json")
+    payload["approval"]["approval_quote"] = "Approved: something else"
+    with pytest.raises(ValueError, match="approval evidence mismatch: approval_quote"):
+        validate_decision_evidence(payload, APPROVAL_MARKER_TEXT)
+    with pytest.raises(ValueError, match="approval marker does not exactly match"):
+        validate_decision_evidence(
+            decision.model_dump(mode="json"), APPROVAL_MARKER_TEXT + "Revoked: true\n"
+        )
+
+
+def test_project_identity_set_equals_live_projects() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        validate_project_identities,
+    )
+
+    result = validate_project_identities(ROOT)
+    assert len(result.sources) == 80
+    assert len(result.identities) == 80
+    assert {row.display_label for row in result.identities} == result.live_labels
+    assert {row.source_project_key for row in result.identities} == {
+        row.source_project_key for row in result.sources
+    }
+    big_foot = next(row for row in result.identities if row.display_label == "Big Foot")
+    assert big_foot.project_id == "prj-000001"
+    assert big_foot.source_project_key == "src-prj-000001"

@@ -33,24 +33,6 @@ def _git(root: Path, *arguments: str) -> bytes:
         raise ValueError("trusted producer history unavailable") from error
 
 
-def _has_commit(root: Path, commit: str) -> bool:
-    try:
-        _git(root, "cat-file", "-e", f"{commit}^{{commit}}")
-        return True
-    except ValueError:
-        return False
-
-
-def _hydrate_main_history(root: Path, commit: str) -> None:
-    if _has_commit(root, commit):
-        return
-    if _git(root, "rev-parse", "--is-shallow-repository").strip() != b"true":
-        raise ValueError("producer commit remains unavailable")
-    _git(root, "fetch", "--no-tags", "--unshallow", "origin", "main")
-    if not _has_commit(root, commit):
-        raise ValueError("producer commit remains unavailable")
-
-
 def _validate_hash_rows(root: Path, rows: list[dict[str, str]]) -> None:
     seen: set[str] = set()
     for row in rows:
@@ -66,7 +48,7 @@ def _validate_producer(root: Path, manifest: dict[str, Any]) -> None:
     commit = manifest["producer"]["commit"]
     if re.fullmatch(r"[0-9a-f]{40}", commit) is None:
         raise ValueError("producer commit must be full 40-hex")
-    _hydrate_main_history(root, commit)
+    _git(root, "cat-file", "-e", f"{commit}^{{commit}}")
     _git(root, "merge-base", "--is-ancestor", commit, "HEAD")
     executable_rows = [row for row in manifest["inputs"] if row["path"].endswith(".py")]
     for row in executable_rows:
