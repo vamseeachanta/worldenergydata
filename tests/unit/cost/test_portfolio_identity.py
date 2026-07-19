@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
 
@@ -39,3 +40,40 @@ def test_v1_external_trust_root_and_closed_producer(tmp_path: Path) -> None:
     tampered.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="v1 manifest trust root mismatch"):
         validate_v1_contract(tmp_path)
+
+
+def test_owner_decision_requires_exact_approval_evidence() -> None:
+    from pydantic import ValidationError
+
+    from worldenergydata.cost.timeseries.portfolio_schema import (
+        PortfolioReuseDecision,
+        validate_owner_decision,
+    )
+
+    decision = validate_owner_decision(ROOT)
+    assert decision.taxonomy == "approved"
+    assert decision.accounting == "approved"
+    assert decision.portfolio_reuse == "approved"
+    assert decision.allocation_scenarios == "deferred"
+    assert decision.approval.approval_quote == (
+        "Approved: #1040 revised plan at 5ba42c1; authorize taxonomy, accounting, "
+        "and portfolio reuse; keep allocation scenarios deferred; proceed with PR1 "
+        "TDD implementation."
+    )
+    assert decision.approval.approved_plan_sha256 == (
+        "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91"
+    )
+    assert decision.approval.approved_at == datetime(
+        2026, 7, 19, 11, 54, 1, tzinfo=timezone.utc
+    )
+    assert decision.approval.issue_comment_url.endswith("#issuecomment-5015609061")
+
+    payload = decision.model_dump(mode="json")
+    payload["unreviewed_authority"] = True
+    with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+        PortfolioReuseDecision.model_validate(payload)
+
+    payload.pop("unreviewed_authority")
+    payload["approval"]["approved_plan_commit"] = "a" * 64
+    with pytest.raises(ValidationError, match="commit must be full 40-hex"):
+        PortfolioReuseDecision.model_validate(payload)

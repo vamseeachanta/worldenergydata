@@ -1,0 +1,17 @@
+{
+  "accounting": "approved",
+  "allocation_scenarios": "deferred",
+  "approval": {
+    "approval_quote": "Approved: #1040 revised plan at 5ba42c1; authorize taxonomy, accounting, and portfolio reuse; keep allocation scenarios deferred; proceed with PR1 TDD implementation.",
+    "approved_at": "2026-07-19T11:54:01Z",
+    "approved_plan_commit": "5ba42c170099fb5632ccbf054ef974f1f1d429da",
+    "approved_plan_path": "docs/plans/2026-07-19-issue-1040-required-assets-award-coverage-replan.html",
+    "approved_plan_sha256": "c1d7a43004f1eb18f054fa9bd82642f0141a15b593f7ca0deecd039de1274f91",
+    "approver": "user",
+    "issue_comment_url": "https://github.com/vamseeachanta/worldenergydata/issues/1040#issuecomment-5015609061",
+    "issue_url": "https://github.com/vamseeachanta/worldenergydata/issues/1040"
+  },
+  "contract_version": "portfolio-reuse-decision.v2",
+  "portfolio_reuse": "approved",
+  "taxonomy": "approved"
+}
