@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
@@ -108,3 +109,89 @@ def test_project_identity_set_equals_live_projects() -> None:
     big_foot = next(row for row in result.identities if row.display_label == "Big Foot")
     assert big_foot.project_id == "prj-000001"
     assert big_foot.source_project_key == "src-prj-000001"
+
+
+def test_award_identity_set_equals_live_awards() -> None:
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        validate_award_identities,
+    )
+
+    result = validate_award_identities(ROOT)
+    assert result.source_sha256 == (
+        "7a5769b36f87a3d5a4290d165f338ce829d13d00b83cacdc81e8a639b5496dc1"
+    )
+    assert len(result.sources) == 110
+    assert len(result.identities) == 110
+    assert len({row.source_award_key for row in result.sources}) == 110
+    assert len({row.award_id for row in result.identities}) == 110
+    assert {row.source_award_key for row in result.identities} == {
+        row.source_award_key for row in result.sources
+    }
+    assert len({row.project_id for row in result.identities}) == 29
+    assert result.projects_without_awards == 51
+
+    pilot = {
+        (row.display_label, row.award_id)
+        for row in result.identities
+        if row.project_id == "prj-000001"
+    }
+    assert ("Big Foot / 2011 / GE Oil & Gas", "awd-000001") in pilot
+    assert ("Big Foot / 2009 / Enbridge", "awd-000002") in pilot
+
+
+def test_moho_locator_collision_is_resolved_by_curated_keys(tmp_path: Path) -> None:
+    import csv
+
+    from worldenergydata.cost.timeseries.portfolio_identity import (
+        AWARD_CROSSWALK,
+        validate_award_identities,
+    )
+
+    result = validate_award_identities(ROOT)
+    moho = [
+        row
+        for row in result.sources
+        if json.loads(row.locator_json)["PROJECT"] == "Moho Nord (incl. Phase 1bis)"
+        and json.loads(row.locator_json)["AWARD_YEAR"] == "2013"
+        and json.loads(row.locator_json)["CONTRACTOR"] == "Hyundai Heavy Industries"
+    ]
+    assert len(moho) == 2
+    assert len({row.source_award_key for row in moho}) == 2
+    assert len({row.locator_sha256 for row in moho}) == 2
+    assert {json.loads(row.locator_json)["SCOPE_DESC"] for row in moho} == {
+        "EPC Likouf FPU (62,000 t, 100 kbopd)",
+        "EPC integrated TLP (14,600 t hull + topsides), Congo's first TLP",
+    }
+
+    paths = (
+        "sanctioned_projects.csv",
+        "portfolio_project_source_crosswalk.v2.csv",
+        "portfolio_project_identity.v2.csv",
+        "contract_awards.csv",
+        "portfolio_award_source_crosswalk.v2.csv",
+        "portfolio_award_identity.v2.csv",
+    )
+    curated = tmp_path / "data/modules/cost/curated"
+    curated.mkdir(parents=True)
+    for name in paths:
+        shutil.copy2(ROOT / "data/modules/cost/curated" / name, curated / name)
+    with (tmp_path / AWARD_CROSSWALK).open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+        fields = tuple(rows[0])
+    target = next(
+        row for row in rows if row["source_award_key"] == moho[0].source_award_key
+    )
+    locator = json.loads(target["locator_json"])
+    locator.pop("SCOPE_DESC")
+    target["locator_json"] = json.dumps(
+        locator, ensure_ascii=False, separators=(",", ":"), sort_keys=True
+    )
+    target["locator_sha256"] = sha256(target["locator_json"].encode()).hexdigest()
+    with (tmp_path / AWARD_CROSSWALK).open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    with pytest.raises(
+        ValueError, match="award locator must contain exact five fields"
+    ):
+        validate_award_identities(tmp_path)

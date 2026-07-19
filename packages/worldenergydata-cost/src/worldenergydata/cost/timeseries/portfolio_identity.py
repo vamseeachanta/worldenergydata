@@ -12,6 +12,8 @@ from typing import Iterable, TypeVar
 from pydantic import BaseModel
 
 from worldenergydata.cost.timeseries.portfolio_schema import (
+    AwardIdentity,
+    AwardSourceBinding,
     ProjectIdentity,
     ProjectSourceBinding,
 )
@@ -21,6 +23,18 @@ PROJECT_CROSSWALK = Path(
     "data/modules/cost/curated/portfolio_project_source_crosswalk.v2.csv"
 )
 PROJECT_IDENTITIES = Path("data/modules/cost/curated/portfolio_project_identity.v2.csv")
+AWARD_SOURCE = Path("data/modules/cost/curated/contract_awards.csv")
+AWARD_CROSSWALK = Path(
+    "data/modules/cost/curated/portfolio_award_source_crosswalk.v2.csv"
+)
+AWARD_IDENTITIES = Path("data/modules/cost/curated/portfolio_award_identity.v2.csv")
+AWARD_LOCATOR_FIELDS = (
+    "PROJECT",
+    "AWARD_YEAR",
+    "CONTRACTOR",
+    "ASSET_CLASS",
+    "SCOPE_DESC",
+)
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
@@ -29,6 +43,14 @@ class ProjectIdentityResult:
     sources: tuple[ProjectSourceBinding, ...]
     identities: tuple[ProjectIdentity, ...]
     live_labels: frozenset[str]
+
+
+@dataclass(frozen=True)
+class AwardIdentityResult:
+    sources: tuple[AwardSourceBinding, ...]
+    identities: tuple[AwardIdentity, ...]
+    source_sha256: str
+    projects_without_awards: int
 
 
 def canonical_json(value: object) -> str:
@@ -116,4 +138,70 @@ def validate_project_identities(root: Path) -> ProjectIdentityResult:
         raise ValueError("Big Foot project identity must remain stable")
     return ProjectIdentityResult(
         sources, identities, frozenset(row["PROJECT"] for row in live.values())
+    )
+
+
+def _live_award_rows(root: Path) -> dict[str, dict[str, str]]:
+    rows = _rows(root / AWARD_SOURCE)
+    live = {
+        canonical_json({field: row[field] for field in AWARD_LOCATOR_FIELDS}): row
+        for row in rows
+    }
+    if len(live) != len(rows):
+        raise ValueError("live award locator collision")
+    return live
+
+
+def _validate_award_sources(
+    sources: tuple[AwardSourceBinding, ...], live: dict[str, dict[str, str]]
+) -> None:
+    _unique((row.source_award_key for row in sources), "duplicate source award key")
+    _unique((row.locator_json for row in sources), "duplicate award locator")
+    for binding in sources:
+        locator = json.loads(binding.locator_json)
+        if set(locator) != set(AWARD_LOCATOR_FIELDS):
+            raise ValueError("award locator must contain exact five fields")
+        if canonical_json(locator) != binding.locator_json:
+            raise ValueError("award locator must use canonical JSON")
+    if {row.locator_json for row in sources if row.active} != set(live):
+        raise ValueError("award source binding set does not equal live awards")
+    for binding in sources:
+        if digest_text(binding.locator_json) != binding.locator_sha256:
+            raise ValueError("award locator hash mismatch")
+        if (
+            digest_text(canonical_json(live[binding.locator_json]))
+            != binding.source_row_sha256
+        ):
+            raise ValueError("award source row hash mismatch")
+
+
+def validate_award_identities(root: Path) -> AwardIdentityResult:
+    """Prove one stable active identity exists for each live award row."""
+
+    projects = validate_project_identities(root)
+    project_by_label = {row.display_label: row for row in projects.identities}
+    live = _live_award_rows(root)
+    sources = _models(root / AWARD_CROSSWALK, AwardSourceBinding)
+    identities = _models(root / AWARD_IDENTITIES, AwardIdentity)
+    _validate_award_sources(sources, live)
+    source_by_key = {row.source_award_key: row for row in sources}
+    _unique((row.award_id for row in identities), "duplicate award ID")
+    _unique((row.source_award_key for row in identities), "duplicate award source FK")
+    if {row.source_award_key for row in identities if row.active} != set(source_by_key):
+        raise ValueError("award identity set does not equal source bindings")
+    for identity in identities:
+        source = source_by_key[identity.source_award_key]
+        locator = json.loads(source.locator_json)
+        project = project_by_label[locator["PROJECT"]]
+        if identity.project_id != project.project_id:
+            raise ValueError("award project identity mismatch")
+        if identity.created_source_sha256 != source.source_row_sha256:
+            raise ValueError("award identity source hash mismatch")
+    source_sha = sha256((root / AWARD_SOURCE).read_bytes()).hexdigest()
+    award_projects = {json.loads(row.locator_json)["PROJECT"] for row in sources}
+    return AwardIdentityResult(
+        sources,
+        identities,
+        source_sha,
+        len(projects.identities) - len(award_projects),
     )

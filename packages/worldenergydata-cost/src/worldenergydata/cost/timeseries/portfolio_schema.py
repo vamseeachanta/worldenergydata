@@ -162,6 +162,73 @@ class ProjectIdentity(BaseModel):
         return self
 
 
+class AwardSourceBinding(BaseModel):
+    """Stable curated key bound to one canonical award source row."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    source_award_key: str
+    locator_json: str
+    locator_sha256: str
+    source_row_sha256: str
+    active: bool
+
+    @field_validator("source_award_key")
+    @classmethod
+    def _require_source_key(cls, value: str) -> str:
+        if re.fullmatch(r"src-awd-(?:00000[12]|[0-9a-f]{32})", value) is None:
+            raise ValueError("invalid source award key")
+        return value
+
+
+class AwardIdentity(BaseModel):
+    """Persistent award identity linked to one persistent project."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    award_id: str
+    source_award_key: str
+    project_id: str
+    display_label: str
+    state: Literal["active", "tombstoned"]
+    active: bool
+    aliases_json: str
+    validation_group_id: str
+    created_source_sha256: str
+    migration_note: str
+    no_reuse: bool
+
+    @field_validator("award_id")
+    @classmethod
+    def _require_award_id(cls, value: str) -> str:
+        if re.fullmatch(r"awd-(?:00000[12]|[0-9a-f]{32})", value) is None:
+            raise ValueError("invalid award ID")
+        return value
+
+    @field_validator("source_award_key")
+    @classmethod
+    def _require_source_key(cls, value: str) -> str:
+        return AwardSourceBinding._require_source_key(value)
+
+    @field_validator("project_id")
+    @classmethod
+    def _require_project_id(cls, value: str) -> str:
+        return ProjectIdentity._require_project_id(value)
+
+    @field_validator("aliases_json")
+    @classmethod
+    def _require_canonical_aliases(cls, value: str) -> str:
+        return ProjectIdentity._require_canonical_aliases(value)
+
+    @model_validator(mode="after")
+    def _validate_lifecycle(self) -> "AwardIdentity":
+        if self.active != (self.state == "active"):
+            raise ValueError("award state and active flag disagree")
+        if not self.no_reuse or not self.display_label or not self.validation_group_id:
+            raise ValueError("award identity requires no-reuse and nonempty labels")
+        return self
+
+
 def _validate_exact_evidence(decision: PortfolioReuseDecision) -> None:
     expected = {
         "approval_quote": APPROVAL_QUOTE,
