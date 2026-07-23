@@ -47,5 +47,5 @@ def pilot_summary(pilot_config):
     """The full dry-run pipeline result (InMemoryHfPort, no HF network)."""
     from worldenergydata.workflow_api import bsee_pilot as P
 
-    with quiet_logging():                      # chatty engine; session fixtures
+    with quiet_logging():  # chatty engine; session fixtures
         return P.run_pilot(config=pilot_config, write_report=False)
