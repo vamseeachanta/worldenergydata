@@ -147,6 +147,7 @@ temporary_exceptions:
       - reports/capabilities/api/portfolio.json
       - reports/capabilities/api/well-path.html
       - reports/capabilities/api/well-path.json
+      - reports/capabilities/assets/tokens.css
       - reports/capabilities/index.html
       - reports/capabilities/pdf/benchmark.pdf
       - reports/capabilities/pdf/completion.pdf
@@ -175,7 +176,38 @@ temporary_exceptions:
       - reports/capabilities/pdf/sec-wells.pdf
       - reports/capabilities/pdf/well-path.pdf
       - reports/completion/index.html
+      - reports/completion/verification.html
       - reports/compliance/module_compliance_report.json
+      - reports/cost/a1_evidence_pack.html
+      - reports/cost/big_foot_cost_map.html
+      - reports/cost/big_foot_cost_map_reconciliation.csv
+      - reports/cost/cost_basis_timeseries.html
+      - reports/cost/cost_timeseries_presentation.html
+      - reports/cost/inflation_verdicts.csv
+      - reports/cost/reconciliation.csv
+      - reports/cost/stage_allocations.csv
+      - reports/field-atlas/onepagers/field-anchor.html
+      - reports/field-atlas/onepagers/field-anchor.pdf
+      - reports/field-atlas/onepagers/field-big_foot.html
+      - reports/field-atlas/onepagers/field-big_foot.pdf
+      - reports/field-atlas/onepagers/field-cascade_chinook.html
+      - reports/field-atlas/onepagers/field-cascade_chinook.pdf
+      - reports/field-atlas/onepagers/field-jack_st_malo.html
+      - reports/field-atlas/onepagers/field-jack_st_malo.pdf
+      - reports/field-atlas/onepagers/field-julia.html
+      - reports/field-atlas/onepagers/field-julia.pdf
+      - reports/field-atlas/onepagers/field-kaskida.html
+      - reports/field-atlas/onepagers/field-kaskida.pdf
+      - reports/field-atlas/onepagers/field-north_platte.html
+      - reports/field-atlas/onepagers/field-north_platte.pdf
+      - reports/field-atlas/onepagers/field-shenandoah.html
+      - reports/field-atlas/onepagers/field-shenandoah.pdf
+      - reports/field-atlas/onepagers/field-stones.html
+      - reports/field-atlas/onepagers/field-stones.pdf
+      - reports/field-atlas/onepagers/field-tiber.html
+      - reports/field-atlas/onepagers/field-tiber.pdf
+      - reports/field-atlas/results/README.md
+      - reports/field-atlas/results/explorer_results_bundle.json
       - reports/field_analysis_report.html
       - reports/field_benchmark/_facts.json
       - reports/field_benchmark/index.html
@@ -314,6 +346,16 @@ temporary_exceptions:
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
       - reports/gtm/2026-05-04-fdas-field-development-economics.html
       - reports/gtm/2026-05-04-gtm-production-decline-forecast.html
+      - reports/gtm/decommissioning-market-outlook-2026-07-05.html
+      - reports/gtm/decommissioning-market-outlook-2026-07-05.json
+      - reports/gtm/decommissioning-market-outlook-2026-07-05.md
+      - reports/gtm/decommissioning_market_outlook.py
+      - reports/gtm/seasonal-intervention-risk-windows-2026-07-05.html
+      - reports/gtm/seasonal-intervention-risk-windows-2026-07-05.json
+      - reports/gtm/seasonal-intervention-risk-windows-2026-07-05.md
+      - reports/gtm/seasonal_intervention_risk_windows.py
+      - reports/hse/drilling-hse-patterns-2026-07-05.html
+      - reports/hse/drilling-hse-patterns-2026-07-05.json
       - reports/hse/intervention-hse-patterns-2026-05-18-explore.json
       - reports/hse/intervention-hse-patterns-2026-05-18.md
       - reports/hse/mooring-fatigue-grounded-card.html
@@ -323,6 +365,8 @@ temporary_exceptions:
       - reports/lower_tertiary/anchor_npv_stackup.html
       - reports/lower_tertiary/big_foot_npv_stackup.html
       - reports/lower_tertiary/cascade_chinook_npv_stackup.html
+      - reports/lower_tertiary/fdas_revision_comparison.md
+      - reports/lower_tertiary/fdas_v50_roy_project_summary.csv
       - reports/lower_tertiary/field_economics_anchor.md
       - reports/lower_tertiary/field_economics_big_foot.md
       - reports/lower_tertiary/field_economics_buckskin.md
@@ -338,11 +382,6 @@ temporary_exceptions:
       - reports/lower_tertiary/lifecycle/_facts.json
       - reports/lower_tertiary/lifecycle/_norms.json
       - reports/lower_tertiary/lifecycle/_performance.json
-      - reports/lower_tertiary/lifecycle/norms/drill.html
-      - reports/lower_tertiary/lifecycle/norms/complete.html
-      - reports/lower_tertiary/lifecycle/norms/produce.html
-      - reports/lower_tertiary/lifecycle/norms/workover.html
-      - reports/lower_tertiary/lifecycle/norms/abandon.html
       - reports/lower_tertiary/lifecycle/anchor_lifecycle.html
       - reports/lower_tertiary/lifecycle/big_foot_lifecycle.html
       - reports/lower_tertiary/lifecycle/cascade_chinook_lifecycle.html
@@ -351,6 +390,11 @@ temporary_exceptions:
       - reports/lower_tertiary/lifecycle/julia_lifecycle.html
       - reports/lower_tertiary/lifecycle/kaskida_lifecycle.html
       - reports/lower_tertiary/lifecycle/lifecycle_template.html
+      - reports/lower_tertiary/lifecycle/norms/abandon.html
+      - reports/lower_tertiary/lifecycle/norms/complete.html
+      - reports/lower_tertiary/lifecycle/norms/drill.html
+      - reports/lower_tertiary/lifecycle/norms/produce.html
+      - reports/lower_tertiary/lifecycle/norms/workover.html
       - reports/lower_tertiary/lifecycle/north_platte_lifecycle.html
       - reports/lower_tertiary/lifecycle/shenandoah_lifecycle.html
       - reports/lower_tertiary/lifecycle/stones_lifecycle.html
@@ -358,12 +402,15 @@ temporary_exceptions:
       - reports/lower_tertiary/lt_field_performance_comparison.md
       - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
       - reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.md
+      - reports/lower_tertiary/parametric/lt_economics_parametric.csv
+      - reports/lower_tertiary/parametric/lt_economics_parametric.json
       - reports/lower_tertiary/portfolio_economics.html
       - reports/lower_tertiary/shenandoah_npv_stackup.html
       - reports/lower_tertiary/stones_npv_stackup.html
       - reports/lower_tertiary/v30_repeatability_report.md
       - reports/lower_tertiary/v30_v50_brief.html
       - reports/lower_tertiary/v30_vs_v50_comparison.md
+      - reports/lower_tertiary/wo-april-2026-validation.md
       - reports/lower_tertiary/wrk010_latest_data_report.md
       - reports/lower_tertiary_field_summary.html
       - reports/lower_tertiary_field_summary.md
@@ -395,6 +442,7 @@ temporary_exceptions:
       - reports/modules/marketing/marketing_brochure_well_production_dashboard.md
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft.html
       - reports/modules/marketing/reference_hurricane_mooring_safety_infographic_prior_draft_stats.json
+      - reports/rig-selector/index.html
       - reports/subsea/subsea_manifold_market_intelligence.md
       # Life-cycle insights front doors + hub (issues #775/#776/#777/#779)
       - reports/capabilities/insights.html

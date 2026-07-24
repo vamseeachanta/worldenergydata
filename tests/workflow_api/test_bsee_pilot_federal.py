@@ -50,9 +50,10 @@ def federal_config():
 
 
 @pytest.fixture(scope="session")
-def federal_summary(federal_config):
+def federal_summary(federal_config, quiet_logging_cm):
     """Full federal dry-run (InMemoryHfPort, NO HF network, NO real publish)."""
-    return P.run_pilot(config=federal_config, write_report=False)
+    with quiet_logging_cm():  # chatty engine; see conftest note
+        return P.run_pilot(config=federal_config, write_report=False)
 
 
 # --- the committed slice IS the pinned real extract (reproducible identity) ---
