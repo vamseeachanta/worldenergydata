@@ -561,6 +561,32 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
+    # --- World Oil April 2026 per-well D&C listing (matrix drill-down) ---
+    perwell_md = REPORTS / "lower_tertiary" / "wo-april-2026-per-well-dc.md"
+    if perwell_md.exists():
+        (PUBLIC / "wo-april-2026-per-well-dc.html").write_text(
+            page(
+                "World Oil April 2026 — Per-Well D&C Days",
+                "Bore-by-bore drilling and completion days behind the "
+                "field-level reconciliation matrix: 253 wellbores, 11 "
+                "developments, producer and sidetrack markers.",
+                _toc(perwell_md.read_text(encoding="utf-8"))
+                + md_to_html(perwell_md.read_text(encoding="utf-8")),
+                provenance=(
+                    "Per-bore rows come verbatim from the canonical extractor "
+                    "output (BSEE WAR vintage 2026-02-19); producer markers "
+                    "join from the OGOR-A well benchmark by API12."
+                ),
+                data_limits=(
+                    "Completion days count all post-TD rig time, including "
+                    "recompletions and well servicing (#846); producer markers "
+                    "cover the seven core LT fields only, so Buckskin bores "
+                    "carry no marker."
+                ),
+            ),
+            encoding="utf-8",
+        )
+
     # --- FDAS revision comparison (V30 -> V50 -> wed) page ---
     rev_md = REPORTS / "lower_tertiary" / "fdas_revision_comparison.md"
     if rev_md.exists():
@@ -1077,6 +1103,14 @@ def build_index() -> None:
             "<h3>World Oil Article Validation &rarr;</h3>"
             "<p>QA/QC of the April 2026 Lower-Tertiary article against the "
             "BSEE-derived model &mdash; reconciliation, errata, and change log.</p></a>"
+        )
+    if (PUBLIC / "wo-april-2026-per-well-dc.html").exists():
+        cards.append(
+            '<a class="card" href="wo-april-2026-per-well-dc.html">'
+            "<h3>Per-Well D&amp;C Days Listing &rarr;</h3>"
+            "<p>Bore-by-bore drilling and completion days behind the "
+            "reconciliation matrix &mdash; 253 wellbores across 11 "
+            "developments.</p></a>"
         )
     if (PUBLIC / "fdas-revision-comparison.html").exists():
         cards.append(

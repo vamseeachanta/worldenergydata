@@ -39,7 +39,7 @@ The article's four tables **are this repository's FDAS V30 model output**: `fina
 
 ## 3. Field-level D&C reconciliation (Table 1)
 
-> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html). The table below reconciles our extraction against the **article as published**.
+> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html). The table below reconciles our extraction against the **article as published**. For the bore-by-bore drill-down behind every row (spud, TD date, drilling/completion split, producer and sidetrack markers), see the [per-well D&C days listing](https://vamseeachanta.github.io/worldenergydata/wo-april-2026-per-well-dc.html).
 
 Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)) vs the article, total D&C days:
 
