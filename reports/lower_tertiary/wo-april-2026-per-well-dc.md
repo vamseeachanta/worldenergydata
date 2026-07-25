@@ -31,7 +31,40 @@ be audited bore by bore against the article's Table 1.
 
 Producer scope differs between the two counts: wed 56 spans the seven core LT fields **including Big Foot (8)** but has no markers for Buckskin; the article's 52 **excludes Big Foot** and includes Buckskin (4). A dash means no marker, which is a true zero for the pre-production developments (Kaskida, North Platte, Tiber) and a coverage gap for Buckskin.
 
-The drilling / completion split is the first troubleshooting lever the article's Table 1 cannot provide: the two accounting deltas above (Jack St Malo +119, Shenandoah +24) sit in the **completion** column — post-TD rig-day accounting, not drilling — while Buckskin's +52 is a recovered bore that the article's shelf-only extract missed.
+The drilling / completion split is the first troubleshooting lever the article's Table 1 cannot provide: the deltas above (Jack St Malo +119, Shenandoah +24, Buckskin +52) trace to late-arriving well data and open-ended post-TD completion accounting — never to a change in any bore's drilling days. The vintage diff below proves it.
+
+## Drilling-days resolution (frozen V30 → wed)
+
+Per-bore diff of the frozen V30 workbook against the wed extract (committed as `data/dc_vintage_diff.csv`), answering whether drilling days are stable across data vintages:
+
+- **Drilling days changed on 0 of 253 bores.** Once a bore reaches TD, its drilling-day count never moves — every bore populated in both vintages carries identical drilling days.
+- **7 bores are late data, not reclassification**: they sat in the frozen V30 workbook as zero-day placeholder rows (no spud/TD) and now carry real WAR days. These account for every apparent "drilling delta".
+- **Completion days are open-ended**: 5 long-TD'd bores accrued additional post-TD servicing days (+104 days) with zero drilling movement — the #846 accounting behaviour.
+- **36 bores exist only in wed**: all 25 Buckskin bores (the recovered development) and 11 zero-day sidetrack stubs (Anchor, North Platte).
+
+### Late-data bores (zero-day placeholders in frozen V30, real days now)
+
+| API12 | Development | Spud | Drilling added | Completion added |
+|---|---|---|---:|---:|
+| 608124006404 | Big Foot | 05/06/2025 | 28 | 123 |
+| 608124015400 | Jack St Malo | 09/13/2024 | 48 | 71 |
+| 608124015504 | Jack St Malo | 01/10/2025 | 68 | 47 |
+| 608124013900 | Shenandoah | 11/02/2022 | 86 | 115 |
+| 608124014000 | Shenandoah | 11/13/2022 | 28 | 19 |
+| 608124014001 | Shenandoah | 11/30/2023 | 2 | 22 |
+| 608124014003 | Shenandoah | 05/24/2024 | 9 | 100 |
+
+### Servicing accrual on long-TD'd bores (drilling unchanged)
+
+| API12 | Development | Spud | Completion days V30 → wed | Added |
+|---|---|---|---|---:|
+| 608124006603 | Big Foot | 02/12/2020 | 224 → 259 | +35 |
+| 608124006800 | Big Foot | 01/22/2013 | 164 → 210 | +46 |
+| 608124012300 | Stones | 04/06/2018 | 92 → 108 | +16 |
+| 608124012900 | Stones | 10/22/2019 | 51 → 56 | +5 |
+| 608124013701 | Stones | 02/04/2022 | 78 → 80 | +2 |
+
+**Implication for the matrix:** every difference against the article decomposes into (a) wells whose WAR data arrived after the article's extract and (b) open-ended post-TD completion accrual. Drilling days need no accounting decision — they are final as printed. The only open choice is the completion-day boundary rule ([#846](https://github.com/vamseeachanta/worldenergydata/issues/846)): where post-TD rig time stops counting as completion and becomes well servicing.
 
 ## Per-development listings
 
