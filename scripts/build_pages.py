@@ -561,6 +561,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
+    # --- World Oil April 2026 QA/QC report hub (committed self-contained page) ---
+    hub_html = REPORTS / "lower_tertiary" / "wo-april-2026-qaqc-hub.html"
+    if hub_html.exists():
+        shutil.copy2(hub_html, PUBLIC / "wo-april-2026-qaqc-hub.html")
+
     # --- World Oil April 2026 per-well D&C listing (matrix drill-down) ---
     perwell_md = REPORTS / "lower_tertiary" / "wo-april-2026-per-well-dc.md"
     if perwell_md.exists():
@@ -1096,6 +1101,14 @@ def build_index() -> None:
         cards.append(
             '<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
             "<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>"
+        )
+    if (PUBLIC / "wo-april-2026-qaqc-hub.html").exists():
+        cards.append(
+            '<a class="card" href="wo-april-2026-qaqc-hub.html">'
+            "<h3>D&amp;C Days QA/QC Hub &rarr;</h3>"
+            "<p>One entry point to the whole reconciliation &mdash; matrix, "
+            "per-well listing, drilling-days resolution, lineage, and "
+            "provenance, each badged by evidence weight.</p></a>"
         )
     if (PUBLIC / "wo-april-2026-validation.html").exists():
         cards.append(

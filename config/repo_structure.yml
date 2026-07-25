@@ -411,6 +411,7 @@ temporary_exceptions:
       - reports/lower_tertiary/v30_v50_brief.html
       - reports/lower_tertiary/v30_vs_v50_comparison.md
       - reports/lower_tertiary/wo-april-2026-per-well-dc.md
+      - reports/lower_tertiary/wo-april-2026-qaqc-hub.html
       - reports/lower_tertiary/wo-april-2026-validation.md
       - reports/lower_tertiary/wrk010_latest_data_report.md
       - reports/lower_tertiary_field_summary.html
