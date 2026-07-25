@@ -30,6 +30,7 @@ SOURCE_CSV = (
 BENCHMARK_CSV = (
     REPO / "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv"
 )
+VINTAGE_CSV = REPO / "reports/lower_tertiary/data/dc_vintage_diff.csv"
 OUT_MD = REPO / "reports/lower_tertiary/wo-april-2026-per-well-dc.md"
 
 # Lease-name → development grouping (matches the article's Table 1 rows).
@@ -157,7 +158,82 @@ def _fmt(n: int) -> str:
     return f"{n:,}"
 
 
-def build_markdown(devs: dict[str, list[dict]]) -> str:
+def load_vintage_diff() -> dict[str, list[dict]]:
+    """Group the frozen-V30 → wed per-bore diff rows by category."""
+    groups: dict[str, list[dict]] = {}
+    with VINTAGE_CSV.open(encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            groups.setdefault(row["category"], []).append(row)
+    return groups
+
+
+def _vintage_section(groups: dict[str, list[dict]]) -> list[str]:
+    changed = groups.get("drilling_changed", [])
+    late = groups.get("late_data", [])
+    servicing = groups.get("servicing_accrual", [])
+    wed_only = groups.get("wed_only", [])
+    buckskin = [r for r in wed_only if r["dev"] == "Buckskin"]
+    stubs = [r for r in wed_only if r["dev"] != "Buckskin"]
+    lines = [
+        "## Drilling-days resolution (frozen V30 → wed)",
+        "",
+        "Per-bore diff of the frozen V30 workbook against the wed extract"
+        " (committed as `data/dc_vintage_diff.csv`), answering whether drilling"
+        " days are stable across data vintages:",
+        "",
+        f"- **Drilling days changed on {len(changed)} of 253 bores.** Once a"
+        " bore reaches TD, its drilling-day count never moves — every bore"
+        " populated in both vintages carries identical drilling days.",
+        f"- **{len(late)} bores are late data, not reclassification**: they sat"
+        " in the frozen V30 workbook as zero-day placeholder rows (no spud/TD)"
+        " and now carry real WAR days. These account for every apparent"
+        ' "drilling delta".',
+        f"- **Completion days are open-ended**: {len(servicing)} long-TD'd"
+        " bores accrued additional post-TD servicing days"
+        f" (+{sum(int(r['d_compl']) for r in servicing)} days) with zero"
+        " drilling movement — the #846 accounting behaviour.",
+        f"- **{len(wed_only)} bores exist only in wed**:"
+        f" all {len(buckskin)} Buckskin bores (the recovered development) and"
+        f" {len(stubs)} zero-day sidetrack stubs (Anchor, North Platte).",
+        "",
+        "### Late-data bores (zero-day placeholders in frozen V30, real days now)",
+        "",
+        "| API12 | Development | Spud | Drilling added | Completion added |",
+        "|---|---|---|---:|---:|",
+    ]
+    for r in sorted(late, key=lambda r: (r["dev"], r["api12"])):
+        lines.append(
+            f"| {r['api12']} | {r['dev']} | {r['spud_wed']} |"
+            f" {r['d_drill']} | {r['d_compl']} |"
+        )
+    lines += [
+        "",
+        "### Servicing accrual on long-TD'd bores (drilling unchanged)",
+        "",
+        "| API12 | Development | Spud | Completion days V30 → wed | Added |",
+        "|---|---|---|---|---:|",
+    ]
+    for r in sorted(servicing, key=lambda r: (r["dev"], r["api12"])):
+        lines.append(
+            f"| {r['api12']} | {r['dev']} | {r['spud_wed']} |"
+            f" {r['compl_v30']} → {r['compl_wed']} | +{r['d_compl']} |"
+        )
+    lines += [
+        "",
+        "**Implication for the matrix:** every difference against the article"
+        " decomposes into (a) wells whose WAR data arrived after the article's"
+        " extract and (b) open-ended post-TD completion accrual. Drilling days"
+        " need no accounting decision — they are final as printed. The only"
+        " open choice is the completion-day boundary rule"
+        " ([#846](https://github.com/vamseeachanta/worldenergydata/issues/846)):"
+        " where post-TD rig time stops counting as completion and becomes well"
+        " servicing.",
+        "",
+    ]
+    return lines
+
+
+def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) -> str:
     order = sorted(devs, key=lambda d: (d == "Big Foot", d))  # article devs first
     lines = [
         "# World Oil April 2026 — per-well D&C days listing",
@@ -228,11 +304,14 @@ def build_markdown(devs: dict[str, list[dict]]) -> str:
         " coverage gap for Buckskin.",
         "",
         "The drilling / completion split is the first troubleshooting lever the"
-        " article's Table 1 cannot provide: the two accounting deltas above"
-        " (Jack St Malo +119, Shenandoah +24) sit in the **completion** column"
-        " — post-TD rig-day accounting, not drilling — while Buckskin's +52 is"
-        " a recovered bore that the article's shelf-only extract missed.",
+        " article's Table 1 cannot provide: the deltas above (Jack St Malo"
+        " +119, Shenandoah +24, Buckskin +52) trace to late-arriving well data"
+        " and open-ended post-TD completion accounting — never to a change in"
+        " any bore's drilling days. The vintage diff below proves it.",
         "",
+    ]
+    lines += _vintage_section(vintage)
+    lines += [
         "## Per-development listings",
         "",
     ]
@@ -280,7 +359,8 @@ def _anchor(title: str) -> str:
 
 def main() -> None:
     devs = load_bores()
-    OUT_MD.write_text(build_markdown(devs), encoding="utf-8")
+    vintage = load_vintage_diff()
+    OUT_MD.write_text(build_markdown(devs, vintage), encoding="utf-8")
     total = sum(b["drill"] + b["compl"] for bores in devs.values() for b in bores)
     bores_n = sum(len(bores) for bores in devs.values())
     print(f"wrote {OUT_MD} — {bores_n} bores, {total:,} D&C days")

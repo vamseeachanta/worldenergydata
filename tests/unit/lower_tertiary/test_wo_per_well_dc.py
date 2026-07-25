@@ -79,12 +79,45 @@ def test_producer_markers_join(devs):
     assert not any(b["producer"] for b in devs["Buckskin"])
 
 
-def test_committed_markdown_is_regenerable(mod, devs):
+@pytest.fixture(scope="module")
+def vintage(mod):
+    return mod.load_vintage_diff()
+
+
+def test_committed_markdown_is_regenerable(mod, devs, vintage):
     assert OUT_MD.exists(), "committed listing missing"
-    assert mod.build_markdown(devs) == OUT_MD.read_text(encoding="utf-8")
+    assert mod.build_markdown(devs, vintage) == OUT_MD.read_text(encoding="utf-8")
 
 
 def test_markdown_carries_matrix_numbers(devs):
     text = OUT_MD.read_text(encoding="utf-8")
     for needle in ("25,404", "12,436", "12,968", "| 73 | 73 |", "608124015504"):
+        assert needle in text, needle
+
+
+def test_drilling_days_stable_across_vintages(vintage):
+    """The drilling-days resolution: no bore's drilling count ever changes."""
+    assert "drilling_changed" not in vintage
+    total = sum(len(rows) for rows in vintage.values())
+    assert total == 253
+    assert len(vintage["late_data"]) == 7
+    assert len(vintage["servicing_accrual"]) == 5
+    assert len(vintage["wed_only"]) == 36
+    # Servicing accrual is completion-only by construction — assert anyway.
+    assert all(int(r["d_drill"]) == 0 for r in vintage["servicing_accrual"])
+
+
+def test_late_data_bores_include_846_suspects(vintage):
+    apis = {r["api12"] for r in vintage["late_data"]}
+    assert {"608124015400", "608124015504"} <= apis
+
+
+def test_markdown_carries_resolution_section(devs):
+    text = OUT_MD.read_text(encoding="utf-8")
+    for needle in (
+        "## Drilling-days resolution (frozen V30 → wed)",
+        "Drilling days changed on 0 of 253 bores.",
+        "Late-data bores",
+        "Servicing accrual on long-TD'd bores",
+    ):
         assert needle in text, needle
