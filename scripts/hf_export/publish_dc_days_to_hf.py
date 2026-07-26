@@ -67,10 +67,48 @@ def _load_listing_module():
     return module
 
 
+def _drilldown_extras() -> dict[str, dict]:
+    """Well-geometry columns the listing does not carry, keyed by API12.
+
+    The HF table is the data home for the drill-down surface, so it must hold
+    every column that surface renders — water depth, MD, TVD, mud weight —
+    plus the vintage category, rather than making consumers re-join CSVs.
+    """
+    import csv as _csv
+
+    src = (
+        REPO_ROOT
+        / "docs/modules/bsee/analysis/production/FDAS_V30"
+        / "drilling_and_completion_days_v21_kc.csv"
+    )
+    vin_path = REPO_ROOT / "reports/lower_tertiary/data/dc_vintage_diff.csv"
+    vintage = {
+        r["api12"]: r["category"]
+        for r in _csv.DictReader(vin_path.open(encoding="utf-8"))
+    }
+
+    def _num(raw):
+        raw = (raw or "").strip()
+        return float(raw) if raw else None
+
+    extras = {}
+    for r in _csv.DictReader(src.open(encoding="utf-8")):
+        api = r["API_WELL_NUMBER"].strip()
+        extras[api] = {
+            "water_depth_ft": _num(r["WATER_DEPTH"]),
+            "max_md_ft": _num(r["MAX_BH_TOTAL_MD"]),
+            "max_tvd_ft": _num(r["MAX_WELL_BORE_TVD"]),
+            "max_mud_ppg": _num(r["MAX_DRILL_FLUID_WGT"]),
+            "vintage_category": vintage.get(api),
+        }
+    return extras
+
+
 def build_tables() -> dict[str, pd.DataFrame]:
     mod = _load_listing_module()
     devs = mod.load_bores()
     vintage = mod.load_vintage_diff()
+    extras = _drilldown_extras()
 
     bore_rows = []
     summary_rows = []
@@ -92,6 +130,7 @@ def build_tables() -> dict[str, pd.DataFrame]:
                     "sidetrack": b["sidetrack"],
                     "producer": b["producer"],
                     "note": b["note"] or None,
+                    **extras.get(b["api12"], {}),
                 }
             )
         wo = mod.WO_ARTICLE.get(dev)
