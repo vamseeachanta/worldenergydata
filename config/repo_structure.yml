@@ -474,6 +474,7 @@ temporary_exceptions:
       - reports/lower_tertiary/data/all_fields_economics.json
       - reports/lower_tertiary/data/all_fields_wells.json
       - reports/lower_tertiary/data/dc_vintage_diff.csv
+      - reports/lower_tertiary/dc-drilldown.html
       - reports/lower_tertiary/data/julia_granular_economics.json
       - reports/lower_tertiary/data/julia_v30_reproduction.json
       - reports/lower_tertiary/data/julia_wells.json

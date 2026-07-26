@@ -561,6 +561,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
+    # --- D&C drill-down explorer (committed self-contained page) ---
+    drill_html = REPORTS / "lower_tertiary" / "dc-drilldown.html"
+    if drill_html.exists():
+        shutil.copy2(drill_html, PUBLIC / "dc-drilldown.html")
+
     # --- World Oil April 2026 QA/QC report hub (committed self-contained page) ---
     hub_html = REPORTS / "lower_tertiary" / "wo-april-2026-qaqc-hub.html"
     if hub_html.exists():
@@ -1101,6 +1106,13 @@ def build_index() -> None:
         cards.append(
             '<a class="card" href="portfolio.html"><h3>Portfolio Summary &rarr;</h3>'
             "<p>Field-by-field roll-up of the Lower-Tertiary play.</p></a>"
+        )
+    if (PUBLIC / "dc-drilldown.html").exists():
+        cards.append(
+            '<a class="card" href="dc-drilldown.html">'
+            "<h3>D&amp;C Drill-Down &rarr;</h3>"
+            "<p>Browse by field or OCS block, drill to any of 253 wellbores, "
+            "then to a single bore's full record and its engineering pages.</p></a>"
         )
     if (PUBLIC / "wo-april-2026-qaqc-hub.html").exists():
         cards.append(
