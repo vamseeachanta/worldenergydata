@@ -38,6 +38,25 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+# Drilling and completion days come from the shared war_rig_days module -- this
+# script no longer derives them (#1067/#1075). The bootstrap below makes the
+# import resolve from whichever checkout this file lives in, rather than from
+# whichever checkout happens to be editable-installed in the active venv. The
+# script is invoked by subprocess with cwd set to its own directory and no
+# PYTHONPATH, so relying on the install would silently bind a worktree run to
+# a different tree's copy of the module.
+_REPO_ROOT = Path(__file__).resolve().parents[6]
+for _pkg in ("packages/worldenergydata-bsee/src", "packages/worldenergydata-core/src", "src"):
+    _p = str(_REPO_ROOT / _pkg)
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from worldenergydata.bsee.analysis.war_rig_days import (  # noqa: E402
+    BASIS_DRL_COM,
+    PRESET_BASES,
+    rig_days_by_bore,
+)
+
 pd.options.mode.copy_on_write = True
 DATE_FMT_OUT = "%m/%d/%Y"
 
@@ -70,7 +89,11 @@ def autodiscover_args(cwd):
     war_main = find_one(["mv_war_main.txt", "mv_war_main_*.txt"], cwd)
     war_bore = find_one(["mv_war_boreholes_view.txt", "mv_war_boreholes_view_*.txt"], cwd)
     war_remarks = find_one(["mv_war_main_prop_remark.txt", "mv_war_main_prop_remark_*.txt"], cwd)
-    return leases, war_main, war_bore, war_remarks
+    # mv_war_main_prop carries WELL_ACTIVITY_CD and is the reason days can be
+    # attributed to drilling vs completion at all. Discovered after the remark
+    # patterns so the longer "…_prop_remark…" name cannot be matched here.
+    war_prop = find_one(["mv_war_main_prop.txt", "mv_war_main_prop_[!r]*.txt"], cwd)
+    return leases, war_main, war_bore, war_remarks, war_prop
 
 # ------------------ Loaders ------------------
 def load_leases(path):
@@ -132,6 +155,45 @@ def load_war_main(path):
     })
     return out
 
+def load_war_prop(path):
+    """SN_WAR -> WELL_ACTIVITY_CD, the activity attribution for each WAR week."""
+    if str(path).lower().endswith(".bin"):
+        df = pd.read_pickle(path)
+    else:
+        df = pd.read_csv(path, encoding="ISO-8859-1", on_bad_lines="skip", low_memory=False)
+    C = {c.upper(): c for c in df.columns}
+
+    sn = C.get("SN_WAR")
+    code = C.get("WELL_ACTIVITY_CD")
+    if not sn or not code:
+        raise ValueError(
+            "mv_war_main_prop must include SN_WAR and WELL_ACTIVITY_CD; "
+            f"found columns: {', '.join(sorted(C))[:200]}"
+        )
+
+    return pd.DataFrame({
+        "SN_WAR": pd.to_numeric(df[sn], errors="coerce"),
+        "WELL_ACTIVITY_CD": df[code],
+    }).dropna(subset=["SN_WAR"])
+
+
+def infer_prop_path(remarks_path):
+    """mv_war_main_prop sits beside mv_war_main_prop_remark in every BSEE drop.
+
+    Callers predating the activity-code basis pass only the remarks file, so
+    infer its sibling rather than failing on an argument that did not exist
+    when they were written. Returns None if the sibling is absent -- the
+    caller reports that as a missing required input rather than proceeding
+    without an activity attribution.
+    """
+    if not remarks_path:
+        return None
+    p = Path(remarks_path)
+    name = p.name.replace("_prop_remark", "_prop")
+    candidate = p.with_name(name)
+    return str(candidate) if candidate.exists() else None
+
+
 def load_boreholes(path):
     if str(path).lower().endswith(".bin"):
         df = pd.read_pickle(path)
@@ -185,17 +247,10 @@ def load_remarks(path):
     df["TEXT_REMARK"] = df["TEXT_REMARK"].astype(str)
     return df
 
-# ------------------ Completion logic ------------------
-COMPLETION_KEYWORDS = [
-    "log","logging","core","coring","rft","mdt",
-    "run completion","install completion","frac","perforate","perf",
-    "test","well test","flow test","cleanup","pack","packer",
-    "acid","stimulation","liner hanger","toe"
-]
-
-def is_completion_text(t):
-    t = str(t).lower()
-    return any(k in t for k in COMPLETION_KEYWORDS)
+# ------------------ Remarks-derived narrative fields ------------------
+# COMPLETION_KEYWORDS / is_completion_text lived here and were dead: nothing
+# called them, and completion days were never derived from remark text despite
+# comments in this file saying so. Removed with the day derivation itself.
 
 def extract_max_mud_weight(texts):
     mx = np.nan
@@ -209,54 +264,27 @@ def extract_max_mud_weight(texts):
                 pass
     return mx
 
-def derive_completion_days(td, remarks_for_api):
+def last_activity_and_mud_weight(remarks_for_api):
+    """Narrative fields from the remarks join: last activity date, max mud weight.
+
+    This function used to also return completion days, counted as every
+    distinct rig-day at or after TD with no activity filter and no right
+    bound -- so a workover a decade later was billed as completion. Worse,
+    it was fed by a LEFT JOIN on remarks, so a WAR week carrying no remark
+    text contributed zero completion days while still contributing to
+    drilling. Days now come from war_rig_days; only the narrative survives.
     """
-    Simplified rule per user request:
-      - After TD, ALL rig-on-well days for the same API count as completion.
-      - Ignore FO; completion can extend past FO on subsea wells.
-      - NO text/keyword filtering, NO 365-day cap, NO gap cutoff beyond data itself.
-      - Use SN_WAR-joined rows (with WAR_START_DT..WAR_END_DT) to count DISTINCT active days >= TD.
-      - Preserve mud-weight extraction from TEXT_REMARK.
-    Returns: (completion_days:int, last_activity_timestamp:Timestamp, max_mud_weight:float|nan)
-    """
-    if pd.isna(td) or remarks_for_api.empty:
-        return 0, pd.NaT, np.nan
+    if remarks_for_api.empty:
+        return pd.NaT, np.nan
 
     r = remarks_for_api.copy()
-
-    # Coerce date columns
-    for col in ["WAR_START_DT","WAR_END_DT"]:
+    for col in ("WAR_START_DT", "WAR_END_DT"):
         if col in r.columns:
             r[col] = pd.to_datetime(r[col], errors="coerce")
 
-    # Build the set of distinct active days from WAR intervals
-    dates = []
-    for _, row in r.iterrows():
-        s = row.get("WAR_START_DT", pd.NaT)
-        e = row.get("WAR_END_DT", pd.NaT)
-        if pd.isna(s) and pd.isna(e):
-            continue
-        if pd.isna(s): s = e
-        if pd.isna(e): e = s
-        try:
-            rng = pd.date_range(s.normalize(), e.normalize(), freq="D")
-            dates.append(rng)
-        except Exception:
-            continue
+    ends = r["WAR_END_DT"].dropna() if "WAR_END_DT" in r.columns else pd.Series(dtype="datetime64[ns]")
+    last = ends.max() if len(ends) else pd.NaT
 
-    if not dates:
-        return 0, pd.NaT, np.nan
-
-    all_days = pd.DatetimeIndex(np.unique(np.concatenate(dates)))
-    # Only count days after (and including) TD
-    td_day = pd.to_datetime(td).normalize()
-    all_days = all_days[all_days >= td_day]
-    if len(all_days) == 0:
-        return 0, pd.NaT, np.nan
-
-    last = pd.to_datetime(all_days.max())
-
-    # Preserve mud-weight extraction from remarks (if available in the script)
     mw = np.nan
     if "TEXT_REMARK" in r.columns:
         try:
@@ -264,26 +292,12 @@ def derive_completion_days(td, remarks_for_api):
         except Exception:
             mw = np.nan
 
-    return int(len(all_days)), last, mw
+    return last, mw
 
-def union_days(intervals):
-    if not intervals:
-        return 0
-    iv = sorted([(s.normalize(), e.normalize()) for s,e in intervals if pd.notna(s) and pd.notna(e)])
-    if not iv:
-        return 0
-    merged = []
-    cs, ce = iv[0]
-    for s,e in iv[1:]:
-        if s <= ce:
-            if e > ce:
-                ce = e
-        else:
-            merged.append((cs, ce))
-            cs, ce = s, e
-    merged.append((cs, ce))
-    total = sum((e - s).days for s,e in merged)
-    return int(total)
+# union_days() lived here. It failed to merge back-to-back WAR weeks (Jan 1-7
+# plus Jan 8-14 summed to 12 days, not 14) and counted exclusively while
+# completion counted inclusively. Both are fixed in war_rig_days.union_days,
+# which merges adjacency and normalises to midnight before counting.
 
 # ------------------ Main ------------------
 def main():
@@ -292,23 +306,31 @@ def main():
     parser.add_argument("--war-main", default=None)
     parser.add_argument("--war-boreholes", default=None)
     parser.add_argument("--war-remarks", default=None)
+    parser.add_argument("--war-prop", default=None,
+                        help="mv_war_main_prop (WELL_ACTIVITY_CD). Inferred from "
+                             "--war-remarks when omitted.")
+    parser.add_argument("--basis", default=BASIS_DRL_COM.label, choices=sorted(PRESET_BASES),
+                        help="Which activity codes constitute drilling and completion.")
     parser.add_argument("--out", default="drilling_and_completion_days.xlsx")  # updated filename
     args = parser.parse_args()
 
     cwd = os.getcwd()
 
     # Auto-discover if not provided
-    leases_path, war_main_path, war_bore_path, war_remarks_path = autodiscover_args(cwd)
+    (leases_path, war_main_path, war_bore_path,
+     war_remarks_path, war_prop_path) = autodiscover_args(cwd)
     args.leases = args.leases or leases_path
     args.war_main = args.war_main or war_main_path
     args.war_boreholes = args.war_boreholes or war_bore_path
     args.war_remarks = args.war_remarks or war_remarks_path
+    args.war_prop = args.war_prop or war_prop_path or infer_prop_path(args.war_remarks)
 
     missing = [name for name, path in [
         ("leases", args.leases),
         ("war-main", args.war_main),
         ("war-boreholes", args.war_boreholes),
-        ("war-remarks", args.war_remarks)
+        ("war-remarks", args.war_remarks),
+        ("war-prop", args.war_prop),
     ] if not path or not os.path.exists(path)]
     if missing:
         raise SystemExit(f"Missing required inputs: {', '.join(missing)}. "
@@ -337,32 +359,44 @@ def main():
     base["LEASE_NAME"] = base["LEASE_NAME"].fillna(base["LEASE_NAME_LEASE"])
     base["WATER_DEPTH"] = np.where(base["LEASE_WATER_DEPTH"].notna(), base["LEASE_WATER_DEPTH"], base["WATER_DEPTH"])
 
-    # Drilling days (gap-adjust if >250)
-    naive = (base["TOTAL_DEPTH_DATE"] - base["WELL_SPUD_DATE"]).dt.days
-    base["DRILLING_DAYS"] = naive.fillna(0).astype(int)
-    long_mask = base["DRILLING_DAYS"] > 250
-    if long_mask.any():
-        for idx in base.index[long_mask]:
-            api = base.at[idx,"API_WELL_NUMBER"]
-            spud = base.at[idx,"WELL_SPUD_DATE"]
-            td = base.at[idx,"TOTAL_DEPTH_DATE"]
-            rapi = sn[sn["API_WELL_NUMBER"]==api]
-            if rapi.empty or pd.isna(spud) or pd.isna(td):
-                continue
-            rapi = rapi.dropna(subset=["WAR_START_DT","WAR_END_DT"]).copy()
-            rapi = rapi[(rapi["WAR_END_DT"]>=spud) & (rapi["WAR_START_DT"]<=td)]
-            intervals = [(max(spud, s), min(td, e)) for s,e in zip(rapi["WAR_START_DT"], rapi["WAR_END_DT"]) if pd.notna(s) and pd.notna(e)]
-            if intervals:
-                base.at[idx,"DRILLING_DAYS"] = union_days(intervals)
+    # Drilling and completion days from WAR activity codes.
+    #
+    # Both were previously derived here: drilling as a calendar spud->TD span
+    # (switching to a WAR union above an undocumented 250-day threshold), and
+    # completion as every rig-day after TD forever, fed by a remarks join so
+    # WARs lacking a remark contributed nothing. Neither measured rig time.
+    # The shared module replaces both; the 250-day branch is gone rather than
+    # retuned, because it was an artifact of the wrong basis.
+    basis = PRESET_BASES[args.basis]
+    war_for_days = wm[["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]].merge(
+        load_war_prop(args.war_prop), on="SN_WAR", how="inner"
+    )
+    days = rig_days_by_bore(
+        war_for_days, basis=basis, population=list(base["API_WELL_NUMBER"])
+    ).rename(columns={
+        "api12": "API_WELL_NUMBER",
+        "drilling_days": "DRILLING_DAYS",
+        "completion_days": "COMPLETION_DAYS",
+        "pnd_days": "PND_DAYS",
+        "days_status": "DAYS_STATUS",
+        "basis": "BASIS",
+    })
+    base = base.merge(
+        days[["API_WELL_NUMBER", "DRILLING_DAYS", "COMPLETION_DAYS",
+              "PND_DAYS", "DAYS_STATUS", "BASIS"]],
+        on="API_WELL_NUMBER", how="left",
+    )
 
-    # Completion days via remarks text
+    # Remarks still supply the narrative fields, but no longer any day count.
     comp_rows = []
     for api, grp in base.groupby("API_WELL_NUMBER"):
-        td = grp["TOTAL_DEPTH_DATE"].iloc[0]
-        rapi = rk[rk["API_WELL_NUMBER"]==api]
-        d, last, ppg = derive_completion_days(td, rapi)
-        comp_rows.append((api,d,last,ppg))
-    comp_df = pd.DataFrame(comp_rows, columns=["API_WELL_NUMBER","COMPLETION_DAYS","LAST_COMPLETION_ACTIVITY","MAX_DRILL_FLUID_WGT"])
+        rapi = rk[rk["API_WELL_NUMBER"] == api]
+        last, ppg = last_activity_and_mud_weight(rapi)
+        comp_rows.append((api, last, ppg))
+    comp_df = pd.DataFrame(
+        comp_rows,
+        columns=["API_WELL_NUMBER", "LAST_COMPLETION_ACTIVITY", "MAX_DRILL_FLUID_WGT"],
+    )
     base = base.merge(comp_df, on="API_WELL_NUMBER", how="left")
 
     # Sort and output
@@ -376,11 +410,19 @@ def main():
         "WELL_NAME":            base["WELL_NAME"],
         "WELL_SPUD_DATE":       base["WELL_SPUD_DATE"].dt.strftime(DATE_FMT_OUT),
         "TOTAL_DEPTH_DATE":     base["TOTAL_DEPTH_DATE"].dt.strftime(DATE_FMT_OUT),
+        # No fillna(0) on either column. A bore with no WAR coverage is not a
+        # bore that took zero days, and rendering it as 0 is what made 38 of
+        # 253 bores indistinguishable from genuine zero-day results.
         "DRILLING_DAYS":        base["DRILLING_DAYS"].astype("Int64"),
-        "COMPLETION_DAYS":      base["COMPLETION_DAYS"].fillna(0).astype("Int64"),
+        "COMPLETION_DAYS":      base["COMPLETION_DAYS"].astype("Int64"),
+        "PND_DAYS":             base["PND_DAYS"].astype("Int64"),
         "MAX_BH_TOTAL_MD":      base["MAX_BH_TOTAL_MD"],
         "MAX_WELL_BORE_TVD":    base["MAX_WELL_BORE_TVD"],
         "MAX_DRILL_FLUID_WGT":  base["MAX_DRILL_FLUID_WGT"],
+        # Every row states the rule that produced it, so no consumer can mix
+        # two bases without noticing.
+        "DAYS_STATUS":          base["DAYS_STATUS"],
+        "BASIS":                base["BASIS"],
     })
 
     with pd.ExcelWriter(args.out, engine="openpyxl") as xw:
