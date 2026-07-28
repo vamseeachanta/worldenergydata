@@ -405,6 +405,7 @@ temporary_exceptions:
       - reports/lower_tertiary/parametric/lt_economics_parametric.csv
       - reports/lower_tertiary/parametric/lt_economics_parametric.json
       - reports/lower_tertiary/portfolio_economics.html
+      - reports/lower_tertiary/roy-rig-days-validation.html
       - reports/lower_tertiary/shenandoah_npv_stackup.html
       - reports/lower_tertiary/stones_npv_stackup.html
       - reports/lower_tertiary/v30_repeatability_report.md
@@ -478,6 +479,7 @@ temporary_exceptions:
       - reports/lower_tertiary/data/julia_granular_economics.json
       - reports/lower_tertiary/data/julia_v30_reproduction.json
       - reports/lower_tertiary/data/julia_wells.json
+      - reports/lower_tertiary/data/roy_rig_days_qa.csv
       - reports/lower_tertiary/lifecycle/assets/stones_assets.html
       - reports/lower_tertiary/lifecycle/wells/_wells.json
       - reports/lower_tertiary/lifecycle/wells/_wells_overrides.json

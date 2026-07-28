@@ -363,12 +363,18 @@ class WellAPI12:
 
         api12_analysis["Rigs"] = rig_str
 
+        # Written unconditionally: it carries days_status/basis, which is
+        # exactly the payload a consumer needs when there are no days.
+        api12_analysis["rigdays_by_milestone"] = json.dumps(rig_days_from_milestone)
+
         if api12_war_days is not None:
             api12_analysis["rigdays_by_war"] = json.dumps(api12_war_days)
-            api12_analysis["rigdays_by_milestone"] = json.dumps(rig_days_from_milestone)
             api12_analysis["Drilling Days"] = api12_war_days.get("DRL", 0)
             api12_analysis["Completion Days"] = api12_war_days.get("COM", 0)
         else:
+            # WAR reports no activity for this bore.  Null, not zero: a
+            # fabricated 0 is indistinguishable from a genuine one.
+            api12_analysis["rigdays_by_war"] = None
             api12_analysis["rigdays_dict"] = None
             api12_analysis["Drilling Days"] = None
             api12_analysis["Completion Days"] = None
@@ -382,11 +388,12 @@ class WellAPI12:
             drilling_footage_ft = None
         api12_analysis.loc[df_row, "drilling_footage_ft"] = drilling_footage_ft
 
-        if drilling_footage_ft is not None:
+        # Null drilling days (no WAR coverage) and zero footage both leave the
+        # rate undefined rather than raising or reporting a made-up number.
+        drilling_days_value = api12_analysis["Drilling Days"].iloc[df_row]
+        if drilling_footage_ft and pd.notna(drilling_days_value):
             drilling_days_per_10000_ft = round(
-                api12_analysis["Drilling Days"].iloc[df_row]
-                / drilling_footage_ft
-                * 10000,
+                drilling_days_value / drilling_footage_ft * 10000,
                 1,
             )
         else:

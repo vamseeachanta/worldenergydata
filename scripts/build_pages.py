@@ -566,6 +566,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     if drill_html.exists():
         shutil.copy2(drill_html, PUBLIC / "dc-drilldown.html")
 
+    # --- Rig-day basis validation against owner anchors (self-contained) ---
+    roy_qa_html = REPORTS / "lower_tertiary" / "roy-rig-days-validation.html"
+    if roy_qa_html.exists():
+        shutil.copy2(roy_qa_html, PUBLIC / "roy-rig-days-validation.html")
+
     # --- World Oil April 2026 QA/QC report hub (committed self-contained page) ---
     hub_html = REPORTS / "lower_tertiary" / "wo-april-2026-qaqc-hub.html"
     if hub_html.exists():
@@ -1136,6 +1141,14 @@ def build_index() -> None:
             "<p>Bore-by-bore drilling and completion days behind the "
             "reconciliation matrix &mdash; 253 wellbores across 11 "
             "developments.</p></a>"
+        )
+    if (PUBLIC / "roy-rig-days-validation.html").exists():
+        cards.append(
+            '<a class="card" href="roy-rig-days-validation.html">'
+            "<h3>Rig-Day Basis Validation &rarr;</h3>"
+            "<p>The WAR activity-code basis checked against the domain owner's "
+            "own hand-worked figures &mdash; every anchor found, its delta, and "
+            "an explicit account of what remains unvalidated.</p></a>"
         )
     if (PUBLIC / "fdas-revision-comparison.html").exists():
         cards.append(

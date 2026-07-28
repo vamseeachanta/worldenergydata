@@ -16,6 +16,8 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_METHOD_1,
     STATUS_COVERED,
     STATUS_NO_ACTIVITY,
+    STATUS_NO_ACTIVITY_CODED,
+    normalize_api12,
     rig_days_by_bore,
     rig_days_by_well,
     union_days,
@@ -199,6 +201,102 @@ class TestApi10Collapse:
         assert wells["war_days_additive"] == 28  # 14 + 14
         assert wells["war_days_total"] == 21  # Jan 1 -> Jan 21
         assert wells["overlap_days"] == 7  # one straddling week
+
+
+class TestAbsentActivityIsNotZero:
+    """A bore in WAR with no week coded to an activity has no evidence for it."""
+
+    @staticmethod
+    def _war(code):
+        return pd.DataFrame(
+            {
+                "API_WELL_NUMBER": [REFERENCE_API12],
+                "WAR_START_DT": ["2020-01-05"],
+                "WAR_END_DT": ["2020-01-11"],
+                "WELL_ACTIVITY_CD": [code],
+            }
+        )
+
+    def test_no_drilling_week_yields_null_not_zero(self):
+        # Only a workover week. Reporting 0 would assert the rig drilled this
+        # bore in no days; the truth is that WAR carries no drilling record
+        # for it, typically because the drilling predates WAR reporting.
+        row = rig_days_by_bore(self._war("WO")).squeeze()
+
+        assert pd.isna(row["drilling_days"])
+        assert row["drilling_days_status"] == STATUS_NO_ACTIVITY_CODED
+        assert row["days_status"] == STATUS_COVERED  # the bore *is* covered
+
+    def test_no_completion_week_yields_null_not_zero(self):
+        row = rig_days_by_bore(self._war("DRL")).squeeze()
+
+        assert int(row["drilling_days"]) == 7
+        assert pd.isna(row["completion_days"])
+        assert row["completion_days_status"] == STATUS_NO_ACTIVITY_CODED
+
+    def test_absent_activity_is_distinguishable_from_absent_coverage(self):
+        # The two nulls must not be confusable: one bore is in WAR without a
+        # drilling week, the other is not in WAR at all.
+        absent = "999999999999"
+        frame = rig_days_by_bore(
+            self._war("WO"), population=[REFERENCE_API12, absent]
+        ).set_index("api12")
+
+        assert frame.loc[REFERENCE_API12, "drilling_days_status"] == (
+            STATUS_NO_ACTIVITY_CODED
+        )
+        assert frame.loc[absent, "drilling_days_status"] == STATUS_NO_ACTIVITY
+        assert pd.isna(frame.loc[REFERENCE_API12, "drilling_days"])
+        assert pd.isna(frame.loc[absent, "drilling_days"])
+
+    def test_totals_are_unaffected_because_nulls_skip(self, war):
+        # Sums skip NA, and the bores concerned contributed 0 before, so
+        # switching them to null moves no development total.
+        frame = rig_days_by_bore(war)
+        assert int(frame["drilling_days"].sum()) == OWNER_DRL_DAYS
+
+
+class TestApiNormalization:
+    """A float-typed API column must not read as absent WAR coverage."""
+
+    def test_float_typed_api_still_matches_the_population(self):
+        # Concatenating heterogeneous WAR members widens API_WELL_NUMBER to
+        # float64, which stringifies as "608124009500.0".  Before this was
+        # handled, every bore fell out of the population match and came back
+        # null -- reported as no_war_activity, so a dtype mismatch was
+        # indistinguishable from a genuine coverage gap.
+        war = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": [608124009500.0, 608124009500.0],
+                "WAR_START_DT": ["2014-01-01", "2014-01-08"],
+                "WAR_END_DT": ["2014-01-07", "2014-01-14"],
+                "WELL_ACTIVITY_CD": ["DRL", "DRL"],
+            }
+        )
+        row = rig_days_by_bore(war, population=[REFERENCE_API12]).squeeze()
+
+        assert row["days_status"] == STATUS_COVERED
+        assert row["api12"] == REFERENCE_API12
+        assert int(row["drilling_days"]) == 14
+
+    def test_normalization_is_symmetric_across_both_sides_of_the_match(self):
+        war = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": ["608124009500"],
+                "WAR_START_DT": ["2014-01-01"],
+                "WAR_END_DT": ["2014-01-07"],
+                "WELL_ACTIVITY_CD": ["DRL"],
+            }
+        )
+        # float-typed population, string-typed WAR
+        row = rig_days_by_bore(war, population=[608124009500.0]).squeeze()
+        assert row["days_status"] == STATUS_COVERED
+        assert int(row["drilling_days"]) == 7
+
+    def test_int_typed_api_is_unaffected(self):
+        assert list(normalize_api12([608124009500])) == ["608124009500"]
+        assert list(normalize_api12(["608124009500"])) == ["608124009500"]
+        assert list(normalize_api12([608124009500.0])) == ["608124009500"]
 
 
 class TestInputContract:

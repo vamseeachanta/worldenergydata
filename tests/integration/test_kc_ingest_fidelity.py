@@ -7,11 +7,29 @@ Keathley Canyon leases (``leases_v21_kc.csv``).
 
 Two fidelity anchors pin that ingest:
 
-* **Anchor** must reproduce the frozen V30 workbook exactly (821 drilling /
-  1,004 completion days) — proving the ``.bin`` code path is bit-for-bit
-  faithful to the canonical extraction on an already-matched field.
-* **Buckskin** must land at 25 bores / 2,056 D&C days — the recovered field
-  the shelf-only extract dropped (World Oil April 2026 article: 24 / 2,004).
+* **Anchor** — 731 drilling / 399 completion days.
+* **Buckskin** — 25 bores / 1,171 D&C days.
+
+.. note:: These values changed with the basis (#1075).
+
+   They previously read 821 / 1,004 and 2,056, reproducing the frozen V30
+   workbook. Those were *reproducibility* pins: they asserted that the ``.bin``
+   code path reproduced an earlier extraction, not that either was correct.
+   Both encoded the calendar spud-to-TD rule, in which drilling days measure
+   elapsed time rather than rig time and completion days accrue after TD
+   without bound.
+
+   Days now come from ``war_rig_days`` on BSEE WAR activity codes, so these
+   pins *had* to move; leaving them would have pinned the defect. They are
+   updated here deliberately, in the same commit as the basis change, and not
+   weakened — each still asserts an exact figure. The direction is uniform
+   (every development falls, −35.3% overall) and the cause is documented in
+   #1063.
+
+   Note these anchors remain *reproducibility* pins against our own output.
+   The only external check on the basis is well 608124009500, covered by
+   ``tests/unit/bsee/analysis/test_war_rig_days.py`` against the domain
+   owner's hand-worked numbers.
 
 Runs the real extractor against the real share; skipped when /mnt/ace is not
 mounted (e.g., CI).
@@ -95,9 +113,10 @@ def test_leases_file_is_v20_plus_buckskin():
 
 @requires_share
 def test_anchor_reproduces_frozen_v30_exactly(extract):
+    # Was 821 / 1,004 on the calendar basis; see the module docstring.
     anchor = _dev(extract, "Anchor")
-    assert int(anchor["DRILLING_DAYS"].sum()) == 821
-    assert int(anchor["COMPLETION_DAYS"].sum()) == 1004
+    assert int(anchor["DRILLING_DAYS"].sum()) == 731
+    assert int(anchor["COMPLETION_DAYS"].sum()) == 399
 
 
 @requires_share
@@ -105,7 +124,10 @@ def test_buckskin_recovered(extract):
     buckskin = _dev(extract, "Buckskin")
     assert buckskin["API_WELL_NUMBER"].nunique() == 25
     dc = int(buckskin["DRILLING_DAYS"].sum() + buckskin["COMPLETION_DAYS"].sum())
-    assert dc == 2056  # World Oil April 2026 article: 24 bores / 2,004 D&C
+    # Was 2,056 on the calendar basis. The World Oil April 2026 article's
+    # 24 bores / 2,004 D&C is not an independent check on this figure --
+    # that table is itself this repository's model output.
+    assert dc == 1171
 
 
 @requires_share

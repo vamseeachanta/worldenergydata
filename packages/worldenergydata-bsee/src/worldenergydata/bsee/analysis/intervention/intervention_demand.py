@@ -26,11 +26,11 @@ the size of what is *not* captured stays visible; the module never silently
 buckets a depth-null row or fabricates a duration.
 
 The rig-day count reuses the ``(end - start).days + 1`` inclusive-day
-convention from :class:`worldenergydata.bsee.analysis.well_rig_days.WellRigDays`.
-That class itself does not fit here — it is per-API12, needs a ``cfg`` plus
-spud/total-depth milestone dates, and merges the WAR-property table to compute
-NPT — whereas this module aggregates raw WAR durations across the whole table
-by band, so only the day-count convention is shared.
+convention from :func:`worldenergydata.bsee.analysis.war_rig_days.union_days`.
+The full module does not fit here — it resolves days per API12 against an
+activity code, and needs the WAR-property table joined in to do so — whereas
+this module aggregates raw WAR durations across the whole table by band,
+regardless of activity. Only the day-count convention is shared.
 
 Aggregation functions are pure (operate on already-loaded DataFrames, fully
 unit-testable on synthetic frames). I/O is confined to ``load_war`` and
@@ -94,7 +94,7 @@ def _record_rig_days(start: object, end: object) -> tuple[int, bool]:
     """Rig-days for one WAR record and whether the value is an end-date FLOOR.
 
     Inclusive-day convention (``(end - start).days + 1``) shared with
-    :class:`well_rig_days.WellRigDays`. When the end date is missing, zero-span,
+    :mod:`war_rig_days`. When the end date is missing, zero-span,
     negative (data error), or unparseable, the record contributes a FLOOR of one
     rig-day — we know the activity occurred but not its true span. The second
     return value is ``True`` whenever the floor fallback was used.
@@ -281,7 +281,7 @@ def summarize(
             "war_source": "BSEE war/mv_war_main.bin (well-activity reports)",
             "rig_day_convention": (
                 "(WAR_END_DT - WAR_START_DT).days + 1, inclusive; shared with "
-                "well_rig_days.WellRigDays"
+                "war_rig_days.union_days"
             ),
             "band_scheme_ft": dict(BAND_LABELS),
             "issue": "worldenergydata#630 (epic #591)",

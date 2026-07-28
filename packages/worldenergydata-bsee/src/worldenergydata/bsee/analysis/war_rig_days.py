@@ -60,6 +60,7 @@ __all__ = [
     "BASIS_DRL_COM_PND",
     "BASIS_METHOD_1",
     "PRESET_BASES",
+    "normalize_api12",
     "union_days",
     "rig_days_by_bore",
     "rig_days_by_well",
@@ -69,6 +70,13 @@ __all__ = [
 # activity at all -- distinct from a genuine zero, and never rendered as 0.
 STATUS_COVERED = "war_covered"
 STATUS_NO_ACTIVITY = "no_war_activity"
+
+#: The bore appears in WAR, but no week is coded to the activity being asked
+#: about. That is an absence of evidence, not a measurement of zero: a bore
+#: whose drilling predates WAR reporting shows only its later plugging weeks,
+#: and "drilled in 0 days" is false. Corpus-wide this is the majority case for
+#: drilling, so the day value is null and the reason is stated.
+STATUS_NO_ACTIVITY_CODED = "no_activity_coded"
 
 _REQUIRED_COLUMNS = (
     "API_WELL_NUMBER",
@@ -164,6 +172,20 @@ def union_days(intervals) -> int:
     return int(total)
 
 
+def normalize_api12(values) -> pd.Series:
+    """Coerce an API well number column to its canonical 12-digit string form.
+
+    A numeric API column stringifies with a float tail -- ``608124009500.0`` --
+    which matches no population entry. Because a non-match is reported as
+    "this bore has no WAR activity", the failure is silent and total: every
+    bore comes back null and the result looks like a coverage gap rather than
+    a dtype mismatch. Callers reach this legitimately, since concatenating
+    heterogeneous WAR members widens the column to float64.
+    """
+    s = pd.Series(values).astype(str).str.strip()
+    return s.str.replace(r"\.0+$", "", regex=True)
+
+
 def _prepare(war: pd.DataFrame) -> pd.DataFrame:
     missing = [c for c in _REQUIRED_COLUMNS if c not in war.columns]
     if missing:
@@ -175,7 +197,7 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
 
     out = pd.DataFrame(
         {
-            "api12": war["API_WELL_NUMBER"].astype(str).str.strip(),
+            "api12": normalize_api12(war["API_WELL_NUMBER"]),
             "activity_cd": war["WELL_ACTIVITY_CD"].astype(str).str.strip().str.upper(),
             # format="mixed": WAR bounds arrive as a mix of "YYYY-MM-DD
             # HH:MM:SS" and bare dates depending on the vintage of the return.
@@ -192,6 +214,19 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
 def _days_for(group: pd.DataFrame, codes) -> int:
     sub = group[group["activity_cd"].isin(codes)]
     return union_days(zip(sub["start"], sub["end"]))
+
+
+def _days_and_status(group: pd.DataFrame, codes):
+    """Days coded to ``codes``, or (null, no_activity_coded) if none are.
+
+    Returning 0 here would assert that the rig spent no days on the activity,
+    which the data does not support -- WAR simply carries nothing coded to it
+    for this bore. The caller gets a null and a reason instead.
+    """
+    sub = group[group["activity_cd"].isin(codes)]
+    if sub.empty:
+        return pd.NA, STATUS_NO_ACTIVITY_CODED
+    return union_days(zip(sub["start"], sub["end"])), STATUS_COVERED
 
 
 def rig_days_by_bore(
@@ -219,9 +254,7 @@ def rig_days_by_bore(
         # Restrict before grouping: the raw WAR frame spans every well BSEE
         # has ever reported, and grouping all of them to keep a few hundred
         # dominates the runtime.
-        prepared = prepared[
-            prepared["api12"].isin({str(a).strip() for a in population})
-        ]
+        prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
 
     rows = []
     for api12, group in prepared.groupby("api12", sort=True):
@@ -229,18 +262,26 @@ def rig_days_by_bore(
             code: union_days(zip(sub["start"], sub["end"]))
             for code, sub in group.groupby("activity_cd", sort=True)
         }
+        drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
+        completion_days, completion_status = _days_and_status(
+            group, basis.completion_codes
+        )
         rows.append(
             {
                 "api12": api12,
                 "api10": api12[:10],
                 "bore_suffix": api12[10:],
-                "drilling_days": _days_for(group, basis.drilling_codes),
-                "completion_days": _days_for(group, basis.completion_codes),
+                "drilling_days": drilling_days,
+                "completion_days": completion_days,
+                # pnd_days stays numeric: it is a diagnostic breakdown of the
+                # weeks we do hold, not a claim about the bore's history.
                 "pnd_days": by_code.get("PND", 0),
                 "war_days_total": union_days(zip(group["start"], group["end"])),
                 "war_weeks": int(len(group)),
                 "days_by_code": by_code,
                 "days_status": STATUS_COVERED,
+                "drilling_days_status": drilling_status,
+                "completion_days_status": completion_status,
             }
         )
 
@@ -264,13 +305,15 @@ _BORE_COLUMNS = [
     "war_weeks",
     "days_by_code",
     "days_status",
+    "drilling_days_status",
+    "completion_days_status",
 ]
 
 _DAY_COLUMNS = ("drilling_days", "completion_days", "pnd_days", "war_days_total")
 
 
 def _apply_population(frame: pd.DataFrame, population) -> pd.DataFrame:
-    wanted = [str(a).strip() for a in population]
+    wanted = list(normalize_api12(population))
     frame = frame[frame["api12"].isin(set(wanted))]
 
     absent = sorted(set(wanted) - set(frame["api12"]))
@@ -289,6 +332,8 @@ def _apply_population(frame: pd.DataFrame, population) -> pd.DataFrame:
             "war_weeks": 0,
             "days_by_code": [{} for _ in absent],
             "days_status": STATUS_NO_ACTIVITY,
+            "drilling_days_status": STATUS_NO_ACTIVITY,
+            "completion_days_status": STATUS_NO_ACTIVITY,
         },
         columns=_BORE_COLUMNS,
     )
@@ -308,9 +353,7 @@ def rig_days_by_well(
     """
     prepared = _prepare(war)
     if population is not None:
-        prepared = prepared[
-            prepared["api12"].isin({str(a).strip() for a in population})
-        ]
+        prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
     bores = rig_days_by_bore(war, basis=basis, population=population)
 
     covered = bores[bores["days_status"].eq(STATUS_COVERED)]
@@ -330,13 +373,19 @@ def rig_days_by_well(
     prepared = prepared.assign(api10=prepared["api12"].str[:10])
     unions = []
     for api10, group in prepared.groupby("api10", sort=True):
+        drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
+        completion_days, completion_status = _days_and_status(
+            group, basis.completion_codes
+        )
         unions.append(
             {
                 "api10": api10,
-                "drilling_days": _days_for(group, basis.drilling_codes),
-                "completion_days": _days_for(group, basis.completion_codes),
+                "drilling_days": drilling_days,
+                "completion_days": completion_days,
                 "pnd_days": _days_for(group, {"PND"}),
                 "war_days_total": union_days(zip(group["start"], group["end"])),
+                "drilling_days_status": drilling_status,
+                "completion_days_status": completion_status,
             }
         )
 

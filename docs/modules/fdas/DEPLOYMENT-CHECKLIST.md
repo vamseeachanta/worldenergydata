@@ -82,14 +82,13 @@ ROYALTY_RATE: ✓
 **Files Created:**
 - `src/worldenergydata/modules/fdas/data/production.py` (285 lines)
 
-**Drilling Timeline Extraction:**
-- [x] DrillingTimelineExtractor class
-- [x] Gap-adjusted campaign identification
-- [x] Monthly drilling days calculation
-- [x] Completion activity classification (40+ keywords)
+**Drilling Timeline Extraction:** REMOVED (#1075, epic #1063)
+- [x] `DrillingTimelineExtractor` deleted — calendar `(td - spud)` span that
+      fabricated 60 days when TD was missing; no production caller
+- [x] Superseded by `worldenergydata.bsee.analysis.war_rig_days`
 
-**Files Created:**
-- `src/worldenergydata/modules/fdas/data/drilling.py` (310 lines)
+**Files Removed:**
+- `packages/worldenergydata-fdas/src/worldenergydata/fdas/data/drilling.py`
 
 ---
 
