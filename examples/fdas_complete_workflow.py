@@ -39,7 +39,6 @@ from src.worldenergydata.modules.fdas import (
 
 from src.worldenergydata.modules.fdas.data import (
     ProductionProcessor,
-    DrillingTimelineExtractor,
 )
 
 from src.worldenergydata.modules.fdas.analysis import (

@@ -227,25 +227,29 @@ cumulative = processor.calculate_cumulative_production(by='DEV_NAME')
 stats = processor.get_production_statistics(by='DEV_NAME')
 ```
 
-#### `DrillingTimelineExtractor`
-Extract drilling and completion timelines.
+#### `DrillingTimelineExtractor` — REMOVED (#1075)
+
+Deleted. It derived drilling days as a calendar `(td - spud)` span and
+fabricated a 60-day duration when TD was missing (plus a flat 30-day completion
+estimate) — the defect class epic #1063 exists to remove.
+
+Use the single shared implementation in the **bsee** package instead:
 
 ```python
-from worldenergydata.fdas.data import DrillingTimelineExtractor
-
-extractor = DrillingTimelineExtractor(well_data)
-
-timeline = extractor.extract_timeline(
-    development_name='ANCHOR',
-    gap_months=3  # Treat gaps > 3 months as separate campaigns
+from worldenergydata.bsee.analysis.war_rig_days import (
+    BASIS_DRL_COM,
+    rig_days_by_bore,
 )
 
-# Timeline contains:
-# - drilling_monthly: Dict[str, float] (drilling days by month)
-# - completion_monthly: Dict[str, int] (well completions by month)
-# - first_spud: datetime
-# - last_completion: datetime
+# API12-grain: drilling_days, completion_days, pnd_days, days_status, basis
+days = rig_days_by_bore(war_df, basis=BASIS_DRL_COM)
 ```
+
+Wellbores with no WAR coverage come back as `days_status == "no_war_activity"`,
+never as a fabricated number. fdas itself does not import this module —
+`worldenergydata-bsee` depends on `worldenergydata-fdas`, so the reverse import
+would close a dependency cycle (ADR 0001). Assemble the timeline on the bsee
+side and pass it to `CashflowEngine.generate_monthly_cashflow`.
 
 ### Cashflow Analysis
 
@@ -392,10 +396,7 @@ from worldenergydata.fdas import (
     CashflowEngine,
     calculate_all_metrics
 )
-from worldenergydata.fdas.data import (
-    ProductionProcessor,
-    DrillingTimelineExtractor
-)
+from worldenergydata.fdas.data import ProductionProcessor
 from pathlib import Path
 import numpy as np
 
@@ -416,9 +417,10 @@ wells = dev_data['wells']
 processor = ProductionProcessor(production)
 monthly_production = processor.aggregate_monthly(by='DEV_NAME')
 
-# 5. Extract drilling timeline
-extractor = DrillingTimelineExtractor(wells)
-timeline = extractor.extract_timeline('ANCHOR')
+# 5. Drilling timeline — build via bsee war_rig_days (fdas cannot import bsee).
+#    Use an empty timeline when there is no WAR coverage; CashflowEngine warns
+#    rather than silently fabricating drilling CAPEX.
+timeline = {"drilling_monthly": {}}
 
 # 6. Generate cashflows
 water_depth = wells['WATER_DEPTH'].mean()

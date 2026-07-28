@@ -28,10 +28,6 @@ from worldenergydata.fdas.core.financial import (
     calculate_npv,
     excel_like_mirr,
 )
-from worldenergydata.fdas.data.drilling import (
-    CompletionActivityClassifier,
-    DrillingTimelineExtractor,
-)
 from worldenergydata.fdas.data.production import (
     ProductionProcessor,
     aggregate_monthly_production,
@@ -82,23 +78,12 @@ class TestEndToEndWorkflow:
         return pd.DataFrame(data)
 
     @pytest.fixture
-    def sample_well_activity(self):
-        """Create sample well activity data"""
-        data = {
-            "API_WELL_NUMBER": ["608054011700"],
-            "SPUD_DATE": [datetime(2023, 6, 1)],
-            "TD_DATE": [datetime(2023, 8, 15)],
-            "COMPLETION_DATE": [datetime(2023, 11, 30)],
-        }
-        return pd.DataFrame(data)
-
-    @pytest.fixture
     def assumptions_manager(self):
         """Create assumptions manager with defaults"""
         return AssumptionsManager()
 
     def test_complete_analysis_workflow(
-        self, sample_production_data, sample_well_activity, assumptions_manager
+        self, sample_production_data, assumptions_manager
     ):
         """Test complete workflow: data → cashflow → metrics"""
 
@@ -109,12 +94,13 @@ class TestEndToEndWorkflow:
         assert len(monthly_prod) == 12
         assert "MONTHLY_OIL_BBL" in monthly_prod.columns
 
-        # Step 2: Extract drilling timeline
-        extractor = DrillingTimelineExtractor(sample_well_activity)
-        timeline = extractor.extract_well_timeline("608054011700")
-
-        assert timeline["drilling_days"] > 0
-        assert timeline["spud_date"] is not None
+        # Step 2: Drilling timeline.
+        # fdas no longer derives rig days itself (#1075, epic #1063): the old
+        # calendar-span extractor fabricated 60 days whenever TD was missing.
+        # Rig days now come from worldenergydata.bsee.analysis.war_rig_days and
+        # are passed IN, so this pipeline test supplies the timeline explicitly
+        # -- exactly as the real callers (sodir/brazil_anp reference chains) do.
+        timeline = {"drilling_monthly": {}}
 
         # Step 3: Generate cashflow
         engine = CashflowEngine(assumptions_manager, "subsea20")
@@ -158,23 +144,6 @@ class TestEndToEndWorkflow:
             == sample_production_data["OIL_VOLUME"].sum()
         )
 
-    def test_drilling_timeline_extraction(self, sample_well_activity):
-        """Test drilling timeline extraction workflow"""
-
-        extractor = DrillingTimelineExtractor(sample_well_activity)
-
-        # Single well timeline
-        timeline = extractor.extract_well_timeline("608054011700")
-
-        assert timeline["api_well_number"] == "608054011700"
-        assert timeline["drilling_days"] == 75  # June 1 to Aug 15
-        assert timeline["completion_days"] > 0
-
-        # Verify monthly allocation
-        assert len(timeline["drilling_monthly"]) > 0
-        total_days = sum(timeline["drilling_monthly"].values())
-        assert total_days == timeline["drilling_days"]
-
     def test_cashflow_calculations(self, assumptions_manager):
         """Test cashflow calculation components"""
 
@@ -213,23 +182,6 @@ class TestEndToEndWorkflow:
         assert classify_dev_system_by_depth(400) == "dry"
         assert classify_dev_system_by_depth(5000) == "subsea15"
         assert classify_dev_system_by_depth(7500) == "subsea20"
-
-    def test_activity_classification(self):
-        """Test completion activity classification"""
-
-        classifier = CompletionActivityClassifier()
-
-        # Test keyword matching
-        assert (
-            classifier.classify_activity("Perforated 15,000-15,500ft") == "completion"
-        )
-        assert classifier.classify_activity("Drilling at 10,000ft") == "drilling"
-        assert classifier.classify_activity("Running production test") == "testing"
-        assert classifier.classify_activity("Random remark") == "unknown"
-
-        # Test mud weight extraction
-        mud_weight = classifier.extract_mud_weight("Drilling with 12.5 ppg mud")
-        assert mud_weight == 12.5
 
     def test_financial_metrics_calculation(self):
         """Test financial metrics from cashflow"""
@@ -287,21 +239,6 @@ class TestDataValidation:
 
         with pytest.raises(ProductionProcessingError):
             ProductionProcessor(bad_data)
-
-    def test_missing_drilling_columns(self):
-        """Test handling of missing drilling data"""
-        from worldenergydata.fdas.data.drilling import DrillingDataError
-
-        # Missing SPUD_DATE
-        bad_data = pd.DataFrame(
-            {
-                "API_WELL_NUMBER": ["123"],
-                # Missing SPUD_DATE
-            }
-        )
-
-        with pytest.raises(DrillingDataError):
-            DrillingTimelineExtractor(bad_data)
 
     def test_empty_production_data(self):
         """Test handling of empty production data"""
