@@ -9,6 +9,7 @@ from loguru import logger
 
 from worldenergydata.bsee.data.apm_data import APMData
 from worldenergydata.bsee.data.sources.bin.api_data import APIData
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
 from worldenergydata.common.data_resolver import get_module_data_safe
 
 _BSEE_BIN = str(get_module_data_safe("bsee") / "bin")
@@ -95,12 +96,10 @@ class WellData:
         ]
 
         api12_well_data = pd.read_csv(api12_metadata["file_name"])
-        api12_eWellEORRawData = eWellEORRawData_df[
-            eWellEORRawData_df["API_WELL_NUMBER"] == api12
-        ].copy()
-        api12_eWellWARRawData_mv_war_main = eWellWARRawData_mv_war_main_df[
-            eWellWARRawData_mv_war_main_df["API_WELL_NUMBER"] == api12
-        ].copy()
+        api12_eWellEORRawData = select_by_api(eWellEORRawData_df, api12).copy()
+        api12_eWellWARRawData_mv_war_main = select_by_api(
+            eWellWARRawData_mv_war_main_df, api12
+        ).copy()
         # api12_eWellWARRawData_mv_war_main_prop = eWellWARRawData_mv_war_main_prop_df[eWellWARRawData_mv_war_main_prop_df['API_WELL_NUMBER'] == api12].copy()  # noqa: E501
 
         Borehole_apd_df = self.get_Borehole_apd_for_all_wells(
@@ -169,7 +168,7 @@ class WellData:
 
         # Filter dataframes by API12 which are not empty
         for key, df in datasets.items():
-            filtered_df = df[df["API_WELL_NUMBER"] == api12].copy()
+            filtered_df = select_by_api(df, api12).copy()
             data[key] = filtered_df
 
         # Handling api12_eWellWARRawData_mv_war_main_prop separately since it
@@ -197,9 +196,7 @@ class WellData:
         return self.Borehole_apd_df
 
     def get_Borehole_apd_for_api12(self, cfg, Borehole_apd_df, api12):
-        api12_Borehole_apd = Borehole_apd_df[
-            Borehole_apd_df["API_WELL_NUMBER"] == api12
-        ].copy()
+        api12_Borehole_apd = select_by_api(Borehole_apd_df, api12).copy()
 
         return api12_Borehole_apd
 

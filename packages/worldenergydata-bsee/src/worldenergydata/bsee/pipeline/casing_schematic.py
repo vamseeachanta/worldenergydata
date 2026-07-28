@@ -15,6 +15,8 @@ from xml.sax.saxutils import escape
 
 import pandas as pd
 
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
+
 logger = logging.getLogger(__name__)
 
 
@@ -98,7 +100,7 @@ def load_well_casing(api12: str, tubulars_path: Path) -> list[CasingString]:
         return []
 
     # Filter to the requested well
-    df = df[df["API_WELL_NUMBER"] == api12]
+    df = select_by_api(df, api12)
     if df.empty:
         return []
 

@@ -11,6 +11,7 @@ from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 from loguru import logger
 
 from worldenergydata.bsee.analysis.well_rig_days import WellRigDays
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
 
 wwy = WorkingWithYAML()
 transform = Transform()
@@ -215,7 +216,7 @@ class WellAPI12:
         file = os.path.join(library_path, "dsptsdelimit.bin")
         survey_df = pd.read_pickle(file)
 
-        api12_survey_df = survey_df[survey_df["API_WELL_NUMBER"] == API12_num].copy()
+        api12_survey_df = select_by_api(survey_df, API12_num).copy()
         if api12_survey_df.empty:
             logger.warning(f"No survey data found for API12: {API12_num}")
             return

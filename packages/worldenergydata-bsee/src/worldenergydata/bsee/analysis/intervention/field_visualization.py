@@ -13,6 +13,8 @@ from pathlib import Path
 import pandas as pd
 import plotly.graph_objects as go
 
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
+
 # -- Color palette for activity categories ------------------------------------
 
 _ACTIVITY_COLORS: dict[str, str] = {
@@ -296,14 +298,14 @@ class FieldVisualizationModule:
         # Check borehole data first
         bh_row = None
         if self._borehole is not None and "API_WELL_NUMBER" in self._borehole.columns:
-            match = self._borehole[self._borehole["API_WELL_NUMBER"] == api]
+            match = select_by_api(self._borehole, api)
             if not match.empty:
                 bh_row = match.iloc[0]
 
         # Check enriched data
         enr_row = None
         if "API_WELL_NUMBER" in self._enriched.columns:
-            match = self._enriched[self._enriched["API_WELL_NUMBER"] == api]
+            match = select_by_api(self._enriched, api)
             if not match.empty:
                 enr_row = match.iloc[0]
 
