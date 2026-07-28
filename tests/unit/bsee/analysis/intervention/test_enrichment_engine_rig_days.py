@@ -139,20 +139,24 @@ def test_only_drilling_coded_weeks_count_towards_drilling_days():
     assert out["DRILLING_DAYS"].iloc[0] == 7.0
 
 
-def test_covered_bore_with_no_drilling_week_is_zero_but_labelled_distinctly():
+def test_covered_bore_with_no_drilling_week_is_null_not_zero():
     """In WAR, but no drilling-coded week.
 
-    The basis says 0, so 0 is emitted -- but it is labelled
-    ``no_drilling_activity`` rather than plain ``war_covered`` so that a
-    consumer averaging DRILLING_DAYS can tell it from a well that really was
-    drilled in zero days.  On the full corpus this is 54% of covered bores.
+    Emitting 0 here would assert the rig drilled this bore in no days, which
+    is false for the common case: a bore drilled before WAR reporting shows
+    only its later plugging or workover weeks. WAR carries no drilling
+    evidence, so the value is null and the reason is stated. On the full
+    corpus this is 54% of covered bores, so a 0 would badly skew any mean.
     """
     api = ["608124009500"]
     activity = pd.DataFrame([_war_week(1, api[0], "2020-01-05", "2020-01-11", "WO")])
     _, out = _enrich(_war_rows(api), _borehole_rows(api), activity)
 
-    assert out["DRILLING_DAYS"].iloc[0] == 0.0
+    assert pd.isna(out["DRILLING_DAYS"].iloc[0])
     assert out["DRILLING_DAYS_STATUS"].iloc[0] == STATUS_NO_DRILLING
+    # float64 with NaN, not the nullable Float64 dtype -- comprehensive_analyzer
+    # feeds this column to np.nanpercentile, which rejects the latter.
+    assert out["DRILLING_DAYS"].dtype == "float64"
 
 
 def test_a_drilled_bore_is_labelled_covered():

@@ -22,6 +22,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_DRL_COM,
     STATUS_COVERED,
     STATUS_NO_ACTIVITY,
+    STATUS_NO_ACTIVITY_CODED,
     Basis,
     rig_days_by_bore,
 )
@@ -66,15 +67,16 @@ SOURCE_DIRECT = "war_frame"
 SOURCE_SN_WAR_JOIN = "sn_war_self_join"
 SOURCE_UNAVAILABLE = "unavailable"
 
-# A third state the shared module does not model: the bore *is* in WAR, but
-# none of its weeks carry a drilling code, so drilling_days comes back 0.
-# On the full BSEE corpus that is 14,657 of 27,033 covered bores (54%) --
-# the WAR corpus is dominated by TA/PA/WO returns, and a bore drilled before
-# WAR reporting began appears with only its later plugging weeks.  The 0 is
-# kept (it is what the basis says) but is labelled distinctly so a consumer
-# averaging DRILLING_DAYS can tell a real zero-day well from an unobserved
-# one.  See the #1075 report: flipping these to null is a live question.
-STATUS_NO_DRILLING = "no_drilling_activity"
+# The bore *is* in WAR, but none of its weeks carry a drilling code. On the
+# full BSEE corpus that is 14,657 of 27,033 covered bores (54%) -- the corpus
+# is dominated by TA/PA/WO returns, and a bore drilled before WAR reporting
+# began appears with only its later plugging weeks.
+#
+# This state is now modelled by the shared module, which emits null rather
+# than 0: "drilled in zero days" is false for most of these, and a 0 would
+# skew every mean computed over the column. Aliased rather than redefined so
+# there is one vocabulary for it across the codebase.
+STATUS_NO_DRILLING = STATUS_NO_ACTIVITY_CODED
 
 
 def _resolve_war_activity(
@@ -255,17 +257,23 @@ class ActivityEnrichmentEngine:
         covered = days[days["days_status"].eq(STATUS_COVERED)]
 
         # .map leaves NaN for every bore absent from the covered set, which is
-        # exactly the "null, never 0" rule for uncovered bores.
-        bh["DRILLING_DAYS"] = api12.map(
-            dict(zip(covered["api12"], covered["drilling_days"]))
+        # exactly the "null, never 0" rule for uncovered bores. to_numeric
+        # rather than .astype(float): the module emits pd.NA for a bore whose
+        # WAR record carries no drilling-coded week, and NAType will not cast
+        # to float64. float64-with-NaN is required downstream -- comprehensive
+        # _analyzer feeds this column to np.nanpercentile, which rejects the
+        # nullable Float64 dtype.
+        bh["DRILLING_DAYS"] = pd.to_numeric(
+            api12.map(dict(zip(covered["api12"], covered["drilling_days"]))),
+            errors="coerce",
         ).astype(float)
-        status = api12.map(dict(zip(days["api12"], days["days_status"]))).fillna(
-            STATUS_NO_ACTIVITY
-        )
-        bh["DRILLING_DAYS_STATUS"] = status.mask(
-            status.eq(STATUS_COVERED) & bh["DRILLING_DAYS"].eq(0),
-            STATUS_NO_DRILLING,
-        )
+
+        # The status comes from the module rather than being re-derived from a
+        # zero here: "no drilling week coded" is now a value the module states
+        # outright, and a zero is no longer the signal for it.
+        bh["DRILLING_DAYS_STATUS"] = api12.map(
+            dict(zip(days["api12"], days["drilling_days_status"]))
+        ).fillna(STATUS_NO_ACTIVITY)
         return bh
 
     def _join_borehole(self, df: pd.DataFrame) -> pd.DataFrame:

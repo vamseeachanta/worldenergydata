@@ -16,6 +16,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_METHOD_1,
     STATUS_COVERED,
     STATUS_NO_ACTIVITY,
+    STATUS_NO_ACTIVITY_CODED,
     normalize_api12,
     rig_days_by_bore,
     rig_days_by_well,
@@ -200,6 +201,59 @@ class TestApi10Collapse:
         assert wells["war_days_additive"] == 28  # 14 + 14
         assert wells["war_days_total"] == 21  # Jan 1 -> Jan 21
         assert wells["overlap_days"] == 7  # one straddling week
+
+
+class TestAbsentActivityIsNotZero:
+    """A bore in WAR with no week coded to an activity has no evidence for it."""
+
+    @staticmethod
+    def _war(code):
+        return pd.DataFrame(
+            {
+                "API_WELL_NUMBER": [REFERENCE_API12],
+                "WAR_START_DT": ["2020-01-05"],
+                "WAR_END_DT": ["2020-01-11"],
+                "WELL_ACTIVITY_CD": [code],
+            }
+        )
+
+    def test_no_drilling_week_yields_null_not_zero(self):
+        # Only a workover week. Reporting 0 would assert the rig drilled this
+        # bore in no days; the truth is that WAR carries no drilling record
+        # for it, typically because the drilling predates WAR reporting.
+        row = rig_days_by_bore(self._war("WO")).squeeze()
+
+        assert pd.isna(row["drilling_days"])
+        assert row["drilling_days_status"] == STATUS_NO_ACTIVITY_CODED
+        assert row["days_status"] == STATUS_COVERED  # the bore *is* covered
+
+    def test_no_completion_week_yields_null_not_zero(self):
+        row = rig_days_by_bore(self._war("DRL")).squeeze()
+
+        assert int(row["drilling_days"]) == 7
+        assert pd.isna(row["completion_days"])
+        assert row["completion_days_status"] == STATUS_NO_ACTIVITY_CODED
+
+    def test_absent_activity_is_distinguishable_from_absent_coverage(self):
+        # The two nulls must not be confusable: one bore is in WAR without a
+        # drilling week, the other is not in WAR at all.
+        absent = "999999999999"
+        frame = rig_days_by_bore(
+            self._war("WO"), population=[REFERENCE_API12, absent]
+        ).set_index("api12")
+
+        assert frame.loc[REFERENCE_API12, "drilling_days_status"] == (
+            STATUS_NO_ACTIVITY_CODED
+        )
+        assert frame.loc[absent, "drilling_days_status"] == STATUS_NO_ACTIVITY
+        assert pd.isna(frame.loc[REFERENCE_API12, "drilling_days"])
+        assert pd.isna(frame.loc[absent, "drilling_days"])
+
+    def test_totals_are_unaffected_because_nulls_skip(self, war):
+        # Sums skip NA, and the bores concerned contributed 0 before, so
+        # switching them to null moves no development total.
+        frame = rig_days_by_bore(war)
+        assert int(frame["drilling_days"].sum()) == OWNER_DRL_DAYS
 
 
 class TestApiNormalization:

@@ -71,6 +71,13 @@ __all__ = [
 STATUS_COVERED = "war_covered"
 STATUS_NO_ACTIVITY = "no_war_activity"
 
+#: The bore appears in WAR, but no week is coded to the activity being asked
+#: about. That is an absence of evidence, not a measurement of zero: a bore
+#: whose drilling predates WAR reporting shows only its later plugging weeks,
+#: and "drilled in 0 days" is false. Corpus-wide this is the majority case for
+#: drilling, so the day value is null and the reason is stated.
+STATUS_NO_ACTIVITY_CODED = "no_activity_coded"
+
 _REQUIRED_COLUMNS = (
     "API_WELL_NUMBER",
     "WAR_START_DT",
@@ -209,6 +216,19 @@ def _days_for(group: pd.DataFrame, codes) -> int:
     return union_days(zip(sub["start"], sub["end"]))
 
 
+def _days_and_status(group: pd.DataFrame, codes):
+    """Days coded to ``codes``, or (null, no_activity_coded) if none are.
+
+    Returning 0 here would assert that the rig spent no days on the activity,
+    which the data does not support -- WAR simply carries nothing coded to it
+    for this bore. The caller gets a null and a reason instead.
+    """
+    sub = group[group["activity_cd"].isin(codes)]
+    if sub.empty:
+        return pd.NA, STATUS_NO_ACTIVITY_CODED
+    return union_days(zip(sub["start"], sub["end"])), STATUS_COVERED
+
+
 def rig_days_by_bore(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
@@ -242,18 +262,26 @@ def rig_days_by_bore(
             code: union_days(zip(sub["start"], sub["end"]))
             for code, sub in group.groupby("activity_cd", sort=True)
         }
+        drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
+        completion_days, completion_status = _days_and_status(
+            group, basis.completion_codes
+        )
         rows.append(
             {
                 "api12": api12,
                 "api10": api12[:10],
                 "bore_suffix": api12[10:],
-                "drilling_days": _days_for(group, basis.drilling_codes),
-                "completion_days": _days_for(group, basis.completion_codes),
+                "drilling_days": drilling_days,
+                "completion_days": completion_days,
+                # pnd_days stays numeric: it is a diagnostic breakdown of the
+                # weeks we do hold, not a claim about the bore's history.
                 "pnd_days": by_code.get("PND", 0),
                 "war_days_total": union_days(zip(group["start"], group["end"])),
                 "war_weeks": int(len(group)),
                 "days_by_code": by_code,
                 "days_status": STATUS_COVERED,
+                "drilling_days_status": drilling_status,
+                "completion_days_status": completion_status,
             }
         )
 
@@ -277,6 +305,8 @@ _BORE_COLUMNS = [
     "war_weeks",
     "days_by_code",
     "days_status",
+    "drilling_days_status",
+    "completion_days_status",
 ]
 
 _DAY_COLUMNS = ("drilling_days", "completion_days", "pnd_days", "war_days_total")
@@ -302,6 +332,8 @@ def _apply_population(frame: pd.DataFrame, population) -> pd.DataFrame:
             "war_weeks": 0,
             "days_by_code": [{} for _ in absent],
             "days_status": STATUS_NO_ACTIVITY,
+            "drilling_days_status": STATUS_NO_ACTIVITY,
+            "completion_days_status": STATUS_NO_ACTIVITY,
         },
         columns=_BORE_COLUMNS,
     )
@@ -341,13 +373,19 @@ def rig_days_by_well(
     prepared = prepared.assign(api10=prepared["api12"].str[:10])
     unions = []
     for api10, group in prepared.groupby("api10", sort=True):
+        drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
+        completion_days, completion_status = _days_and_status(
+            group, basis.completion_codes
+        )
         unions.append(
             {
                 "api10": api10,
-                "drilling_days": _days_for(group, basis.drilling_codes),
-                "completion_days": _days_for(group, basis.completion_codes),
+                "drilling_days": drilling_days,
+                "completion_days": completion_days,
                 "pnd_days": _days_for(group, {"PND"}),
                 "war_days_total": union_days(zip(group["start"], group["end"])),
+                "drilling_days_status": drilling_status,
+                "completion_days_status": completion_status,
             }
         )
 
