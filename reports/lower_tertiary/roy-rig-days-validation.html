@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owner Anchors &mdash; WAR Rig-Day Validation</title>
+<style>
+  :root {
+    --bg: #eaeff2; --surface: #ffffff; --surface-2: #f3f7f9;
+    --ink: #0e2733; --ink-soft: #48606b; --ink-faint: #7c929c;
+    --line: #d8e3e8; --line-strong: #c3d3da;
+    --accent: #0e7c8b; --accent-strong: #0a5f6c; --accent-wash: #e2f0f2;
+    --ok: #2e8b6f; --ok-wash: #e2f1ec; --warn: #b3781a; --warn-wash: #f6ecdb;
+    --bad: #b4544a; --bad-wash: #f6e5e3; --hold: #647680; --hold-wash: #eaeef0;
+    --shadow: 0 1px 2px rgba(14,39,51,.06), 0 8px 24px -12px rgba(14,39,51,.18);
+    --radius: 14px;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #081820; --surface: #0e2732; --surface-2: #12303c;
+      --ink: #e6eef1; --ink-soft: #9fb4bd; --ink-faint: #6b8290;
+      --line: #1e3a47; --line-strong: #274653;
+      --accent: #3fbfd0; --accent-strong: #6fd4e2; --accent-wash: #10323d;
+      --ok: #4fc79f; --ok-wash: #10322a; --warn: #e0a94a; --warn-wash: #33280f;
+      --bad: #e08078; --bad-wash: #351c1a; --hold: #8ea4ae; --hold-wash: #17272f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eaeff2; --surface: #ffffff; --surface-2: #f3f7f9;
+    --ink: #0e2733; --ink-soft: #48606b; --ink-faint: #7c929c;
+    --line: #d8e3e8; --line-strong: #c3d3da;
+    --accent: #0e7c8b; --accent-strong: #0a5f6c; --accent-wash: #e2f0f2;
+    --ok: #2e8b6f; --ok-wash: #e2f1ec; --warn: #b3781a; --warn-wash: #f6ecdb;
+    --bad: #b4544a; --bad-wash: #f6e5e3; --hold: #647680; --hold-wash: #eaeef0;
+    --shadow: 0 1px 2px rgba(14,39,51,.06), 0 8px 24px -12px rgba(14,39,51,.18);
+  }
+  :root[data-theme="dark"] {
+    --bg: #081820; --surface: #0e2732; --surface-2: #12303c;
+    --ink: #e6eef1; --ink-soft: #9fb4bd; --ink-faint: #6b8290;
+    --line: #1e3a47; --line-strong: #274653;
+    --accent: #3fbfd0; --accent-strong: #6fd4e2; --accent-wash: #10323d;
+    --ok: #4fc79f; --ok-wash: #10322a; --warn: #e0a94a; --warn-wash: #33280f;
+    --bad: #e08078; --bad-wash: #351c1a; --hold: #8ea4ae; --hold-wash: #17272f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .7rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0;
+  }
+
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+  }
+  .site-inner { display: flex; align-items: center; gap: 20px; height: 60px; }
+  .wordmark { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+  .wordmark .glyph { width: 22px; height: 22px; flex: none; }
+  nav.capability { margin-left: auto; display: flex; gap: 2px; flex-wrap: wrap; align-items: center; }
+  nav.capability a {
+    font-family: var(--mono); font-size: .78rem; text-decoration: none;
+    color: var(--ink-soft); padding: 6px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  nav.capability a:hover { background: var(--surface-2); color: var(--ink); }
+  nav.capability a.active { background: var(--accent-wash); color: var(--accent-strong); font-weight: 600; }
+  nav.capability a.ext::after { content: " \2197"; color: var(--ink-faint); }
+  nav.capability a:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .crumb { font-family: var(--mono); font-size: .74rem; color: var(--ink-faint); padding: 18px 0 0; }
+  .crumb a { text-decoration: none; }
+  .crumb a:hover { color: var(--accent); }
+  .crumb .sep { padding: 0 8px; opacity: .6; }
+
+  .hero { padding: 22px 0 30px; }
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.05rem); line-height: 1.05;
+    letter-spacing: -.025em; margin: 12px 0 14px; text-wrap: balance; font-weight: 700;
+  }
+  .hero .lede { font-size: 1.14rem; color: var(--ink-soft); max-width: 62ch; margin: 0 0 20px; }
+  .disposition {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--bad-wash); color: var(--bad);
+    border: 1px solid color-mix(in srgb, var(--bad) 32%, transparent);
+    border-radius: 999px; padding: 7px 15px 7px 12px;
+    font-family: var(--mono); font-size: .78rem; font-weight: 600;
+  }
+  .disposition .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 20%, transparent); }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 22px; }
+  .facts div { font-size: .86rem; color: var(--ink-soft); }
+  .facts span { font-family: var(--mono); color: var(--ink); }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 40px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 16px 14px; box-shadow: var(--shadow);
+  }
+  .tile .k { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .tile .v { font-size: 1.72rem; font-weight: 700; letter-spacing: -.02em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .tile .v small { font-size: .9rem; font-weight: 600; color: var(--ink-soft); margin-left: 2px; }
+  .tile .sub { font-size: .78rem; color: var(--ink-soft); margin-top: 2px; }
+  .tile .v.ok { color: var(--ok); } .tile .v.accent { color: var(--accent); }
+  .tile .v.warn { color: var(--warn); } .tile .v.bad { color: var(--bad); }
+
+  .sec { margin: 46px 0 0; }
+  .sec-head h2 { font-size: 1.5rem; letter-spacing: -.02em; margin: 6px 0 4px; }
+  .sec-note { font-size: .92rem; color: var(--ink-soft); max-width: 72ch; margin: 0 0 20px; }
+  .sec p { font-size: .94rem; color: var(--ink-soft); max-width: 72ch; }
+  .sec p strong, .sec li strong { color: var(--ink); }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 22px; box-shadow: var(--shadow); margin: 18px 0;
+  }
+  .panel h3 { margin: 0 0 6px; font-size: 1.05rem; letter-spacing: -.01em; }
+  .panel ul { margin: 8px 0 0; padding-left: 18px; }
+  .panel li { font-size: .9rem; color: var(--ink-soft); margin-bottom: 6px; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); background: var(--surface-2); position: sticky; top: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+  td.wrap-cell { white-space: normal; min-width: 22ch; color: var(--ink-soft); font-size: .82rem; }
+  tbody tr:last-child td { border-bottom: none; }
+  tr.tierhead td { background: var(--surface-2); font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent-strong); }
+  tr.total td { font-weight: 700; background: var(--surface-2); }
+  code { font-family: var(--mono); font-size: .84em; }
+
+  .badge {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px; font-weight: 600; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent;
+  }
+  .badge .d { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.ok { color: var(--ok); background: var(--ok-wash); border-color: color-mix(in srgb, var(--ok) 26%, transparent); }
+  .badge.warn { color: var(--warn); background: var(--warn-wash); border-color: color-mix(in srgb, var(--warn) 26%, transparent); }
+  .badge.bad { color: var(--bad); background: var(--bad-wash); border-color: color-mix(in srgb, var(--bad) 26%, transparent); }
+  .badge.hold { color: var(--hold); background: var(--hold-wash); border-color: color-mix(in srgb, var(--hold) 26%, transparent); }
+  .badge.idx { color: var(--accent-strong); background: var(--accent-wash); border-color: color-mix(in srgb, var(--accent) 26%, transparent); }
+
+  .callout { border-left: 3px solid var(--warn); background: var(--warn-wash); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 18px 0; }
+  .callout.bad { border-left-color: var(--bad); background: var(--bad-wash); }
+  .callout.ok { border-left-color: var(--ok); background: var(--ok-wash); }
+  .callout p { margin: 0; font-size: .9rem; color: var(--ink); max-width: none; }
+  .callout p + p { margin-top: 8px; }
+
+  .askgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 16px; }
+  .ask { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+  .ask .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+  .ask h4 { margin: 0; font-size: 1rem; letter-spacing: -.01em; }
+  .ask p { margin: 0; font-size: .88rem; color: var(--ink-soft); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 22px 0 0; padding: 16px 18px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; }
+  .legend .item { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--ink-soft); }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; }
+
+  .timeline svg { width: 100%; height: auto; display: block; }
+
+  footer.site { margin: 56px 0 40px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .84rem; }
+  footer.site .row { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; justify-content: space-between; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site a:hover { text-decoration: underline; }
+  .note { margin-top: 14px; font-size: .78rem; color: var(--ink-faint); font-family: var(--mono); }
+
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } .askgrid { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { nav.capability { display: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap site-inner">
+    <span class="wordmark"><svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1.6"/><path d="M2 14c2.6 0 2.6-3 5.2-3s2.6 3 5.2 3 2.6-3 5.2-3 2.6 3 4.2 3" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M2 18c2.6 0 2.6-2 5.2-2s2.6 2 5.2 2 2.6-2 5.2-2 2.6 2 4.2 2" stroke="var(--accent)" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".5"/></svg>AceEngineer</span>
+    <nav class="capability" aria-label="Rig-days validation navigation">
+      <a href="#" class="active">Owner anchors</a>
+      <a href="wo-april-2026-qaqc-hub.html">QA/QC hub</a>
+      <a href="wo-april-2026-validation.html">Matrix</a>
+      <a href="wo-april-2026-per-well-dc.html">Per-well</a>
+      <a href="dc-drilldown.html">Drill-down</a>
+      <a href="https://github.com/vamseeachanta/worldenergydata/issues/1063" class="ext">#1063</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+<div class="crumb"><a href="index.html">Reports</a><span class="sep">&#9656;</span><a href="wo-april-2026-qaqc-hub.html">D&amp;C Days QA/QC</a><span class="sep">&#9656;</span><span>Owner anchors</span></div>
+<section class="hero">
+  <p class="eyebrow">BSEE WAR activity codes &middot; epic #1063 &middot; Stones (WR 508)</p>
+  <h1>Does the WAR rig-day basis agree with the owner?</h1>
+  <p class="lede">Every reference figure the domain owner has given us for rig days, recomputed
+  on the new <code>war_rig_days</code> basis, with the disagreement quantified. The headline is
+  not the agreement &mdash; it is the <em>coverage</em>: how little of the 22-bore Stones
+  population any owner figure actually reaches.</p>
+  <span class="disposition"><span class="dot"></span>Not a broader QA &mdash; the independent
+  evidence base is still one wellbore</span>
+  <div class="facts">
+    <div>Basis <span>DRL_COM &middot; inclusive &middot; adjacency-merged</span></div>
+    <div>Population <span>22 bores &middot; 18 wells</span></div>
+    <div>Reference figures found <span>19</span></div>
+    <div>Wellbores an owner figure reaches <span>1 of 22</span></div>
+  </div>
+</section>
+<section class="tiles" aria-label="Agreement at a glance">
+  <div class="tile"><div class="k">Independent anchors</div>
+    <div class="v bad">9</div>
+    <div class="sub">all on one bore &mdash; 608124009500</div></div>
+  <div class="tile"><div class="k">Exact agreement</div>
+    <div class="v ok">4<small>/8</small></div>
+    <div class="sub">checkable hand-worked figures; 3 more within one WAR week</div></div>
+  <div class="tile"><div class="k">Bore coverage</div>
+    <div class="v bad">1<small>/22</small></div>
+    <div class="sub">Stones bores with any owner day figure</div></div>
+  <div class="tile"><div class="k">Change we are proposing</div>
+    <div class="v warn">-946<small>d</small></div>
+    <div class="sub">Stones D&amp;C, WAR basis vs published</div></div>
+</section>
+<section class="sec" id="verdict">
+  <div class="sec-head"><p class="eyebrow">1 &middot; The verdict</p>
+  <h2>No. This is not a more established QA.</h2></div>
+  <p class="sec-note">The repository contains 19 reference figures bearing on rig
+  days, 13 of them
+  attributable to the owner. Sorted by what they can actually prove, they collapse to a single
+  wellbore.</p>
+  <div class="callout bad">
+    <p><strong>The independent evidence base is unchanged: one wellbore, 608124009500
+    (Stones SN105).</strong> It is the only bore the owner worked through by hand, from the raw
+    WAR record, without running any code of ours. Every other owner figure is either the output
+    of his own extractor &mdash; which encodes the calendar spud&rarr;TD definition the new basis
+    is replacing &mdash; or a World Oil table that was itself built from this repository's model
+    output, and so cannot independently confirm anything about it.</p>
+    <p>The 22-bore Stones list <em>is</em> owner-supplied and does widen the <strong>population</strong>
+    we can compute over. It does not widen the population we can <strong>check</strong>. Twenty-one
+    of the twenty-two bores below are computed-only and are labelled as such.</p>
+  </div>
+  <div class="callout ok">
+    <p><strong>What did strengthen.</strong> On the one bore we can check, the new basis lands
+    materially closer to the owner's hand count than the number we publish today: he counted
+    <strong>93</strong> completion days from the daily remarks; the WAR basis gives
+    <strong>94</strong> for the same post-re-entry rig period
+    (2015-10-15 &rarr; 2016-01-16), against
+    <strong>152</strong> on the currently published basis.
+    That is a 1-day gap replacing a
+    59-day one.</p>
+  </div>
+</section>
+<section class="sec" id="ledger">
+  <div class="sec-head"><p class="eyebrow">2 &middot; Every owner figure we could find</p>
+  <h2>The anchor ledger</h2></div>
+  <p class="sec-note">Grouped by evidence tier. Every row cites the committed file it came from;
+  none of these numbers were reconstructed, inferred or rounded to improve agreement. Where we
+  cannot compute the same quantity, the row says so rather than substituting a proxy.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Subject</th><th>Figure</th><th>Source</th><th class="num">Owner</th><th class="num">Ours</th><th class="num">&Delta;</th><th>Agreement</th><th>How we compute it</th></tr></thead><tbody>
+<tr class="tierhead"><td colspan="8">Owner, hand-worked from the raw WAR record &mdash; Can validate the new basis.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Spud date</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">2014-07-24</td><td class="num">2014-07-24</td><td class="num">—</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">WAR WELL_ACTV_START_DT &middot; Identifies the record set, not the day rule.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Total-depth date</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">2014-12-26</td><td class="num">2014-12-26</td><td class="num">—</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">WAR TOTAL_DEPTH_DATE &middot; Identifies the record set, not the day rule.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Total measured depth</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">31225 <span style="color:var(--ink-faint)">ft</span></td><td class="num">31225</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">max DRILLING_MD &middot; Physical attribute — confirms we read the same records.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>True vertical depth</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">28307 <span style="color:var(--ink-faint)">ft</span></td><td class="num">28306</td><td class="num">-1</td><td><span class="badge warn"><span class="d"></span>within rounding</span></td><td class="wrap-cell">max DRILLING_TVD &middot; Physical attribute — confirms we read the same records.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Max mud weight</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">14.0 <span style="color:var(--ink-faint)">ppg</span></td><td class="num">14</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">max DRILL_FLUID_WGT &middot; Physical attribute — confirms we read the same records.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Bottom-hole pressure</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">20607 <span style="color:var(--ink-faint)">psi</span></td><td class="num">n/a</td><td class="num">—</td><td><span class="badge hold"><span class="d"></span>not checkable</span></td><td class="wrap-cell">no such column in WAR &middot; No bottom-hole-pressure column exists on mv_war_main or mv_war_main_prop — not checkable from WAR.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Drilling days (his milestone rule)</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td><td class="num">155 <span style="color:var(--ink-faint)">d</span></td><td class="num">151</td><td class="num">-4</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">WAR DRL, merged &middot; Calendar TD − spud, exclusive. Compared against WAR DRL.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Completion days (his remark count)</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L39"><code>rig_days_by_milestone.md:39</code></a></td><td class="num">93 <span style="color:var(--ink-faint)">d</span></td><td class="num">94</td><td class="num">+1</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">TA stub + COM from the re-entry &middot; &quot;93 days of date column&quot; — distinct daily remark dates after the rig returned on 2015-10-15.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>D&amp;C days total</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L41"><code>rig_days_by_milestone.md:41</code></a></td><td class="num">248 <span style="color:var(--ink-faint)">d</span></td><td class="num">245</td><td class="num">-3</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">DRL + post-re-entry &middot; His own addition, 155 + 93.</td></tr>
+<tr class="tierhead"><td colspan="8">Owner-shipped script output (his rule, our data) &mdash; Measures the size of the change, not its correctness — it encodes the calendar definition the new basis replaces.</td></tr>
+<tr><td>Stones field</td><td>Wellbores</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx"><code>financial_project_summary.xlsx</code></a></td><td class="num">22</td><td class="num">22</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">bores with WAR coverage &middot; Population, not a day count — the one owner figure that covers all 22 bores.</td></tr>
+<tr><td>Stones field</td><td>Total drilling days</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx"><code>financial_project_summary.xlsx</code></a></td><td class="num">1457 <span style="color:var(--ink-faint)">d</span></td><td class="num">1105</td><td class="num">-352</td><td><span class="badge bad"><span class="d"></span>materially different</span></td><td class="wrap-cell">Σ WAR DRL over 22 bores &middot; Owner&#x27;s calendar spud→TD rule, summed over 22 bores.</td></tr>
+<tr><td>Stones field</td><td>Total completion days</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx"><code>financial_project_summary.xlsx</code></a></td><td class="num">1145 <span style="color:var(--ink-faint)">d</span></td><td class="num">574</td><td class="num">-571</td><td><span class="badge bad"><span class="d"></span>materially different</span></td><td class="wrap-cell">Σ WAR COM over 22 bores &middot; Owner&#x27;s post-TD segment rule, summed over 22 bores.</td></tr>
+<tr><td>Stones field</td><td>World Oil Table 1 D&amp;C days</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/scripts/lower_tertiary/build_wo_per_well_dc.py#L56"><code>build_wo_per_well_dc.py:56</code></a></td><td class="num">2625 <span style="color:var(--ink-faint)">d</span></td><td class="num">1679</td><td class="num">-946</td><td><span class="badge bad"><span class="d"></span>materially different</span></td><td class="wrap-cell">Σ WAR DRL+COM over 22 bores &middot; Owner-tabulated, but the article&#x27;s tables are this repository&#x27;s own model output — circular, see §5.</td></tr>
+<tr class="tierhead"><td colspan="8">Held in the repo, authorship not established &mdash; Reported for completeness. Not counted as owner evidence.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Drilling days (milestone, inclusive)</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L21"><code>rig_days_summary.md:21</code></a></td><td class="num">156 <span style="color:var(--ink-faint)">d</span></td><td class="num">151</td><td class="num">-5</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">WAR DRL, merged &middot; Not an independent anchor: 156 = 155 + 1, the same figure under the inclusive convention (proved in §4).</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Rig days by WAR — DRL</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L18"><code>rig_days_summary.md:18</code></a></td><td class="num">151 <span style="color:var(--ink-faint)">d</span></td><td class="num">151</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">WAR DRL, merged</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Rig days by WAR — PND</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L18"><code>rig_days_summary.md:18</code></a></td><td class="num">49 <span style="color:var(--ink-faint)">d</span></td><td class="num">49</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">WAR PND, merged</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Rig days by WAR — COM</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L18"><code>rig_days_summary.md:18</code></a></td><td class="num">87 <span style="color:var(--ink-faint)">d</span></td><td class="num">91</td><td class="num">+4</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">WAR COM, merged &middot; See §3 — a 4-day TA/COM boundary reallocation.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Rig days by WAR — TA</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L18"><code>rig_days_summary.md:18</code></a></td><td class="num">21 <span style="color:var(--ink-faint)">d</span></td><td class="num">17</td><td class="num">-4</td><td><span class="badge warn"><span class="d"></span>within one WAR week</span></td><td class="wrap-cell">WAR TA, merged &middot; See §3 — a 4-day TA/COM boundary reallocation.</td></tr>
+<tr><td>608124009500 · Stones SN105</td><td>Rig days by WAR — all codes</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L18"><code>rig_days_summary.md:18</code></a></td><td class="num">308 <span style="color:var(--ink-faint)">d</span></td><td class="num">308</td><td class="num">0</td><td><span class="badge ok"><span class="d"></span>exact</span></td><td class="wrap-cell">all codes, merged &middot; Sum of the four code figures.</td></tr>
+</tbody></table></div>
+  <div class="legend" aria-label="Agreement legend">
+    <span class="eyebrow" style="align-self:center">Agreement</span>
+    <span class="item"><span class="sw" style="background:var(--ok)"></span>exact &mdash; identical to the day</span>
+    <span class="item"><span class="sw" style="background:var(--warn)"></span>within one WAR week &mdash; |&Delta;| &le; 7 d, inside the reporting quantum</span>
+    <span class="item"><span class="sw" style="background:var(--warn)"></span>within rounding &mdash; non-day measurement, |&Delta;| &lt; 0.1%</span>
+    <span class="item"><span class="sw" style="background:var(--bad)"></span>materially different &mdash; |&Delta;| &gt; 7 d</span>
+    <span class="item"><span class="sw" style="background:var(--hold)"></span>not checkable from WAR</span>
+  </div>
+</section>
+<section class="sec" id="reallocation">
+  <div class="sec-head"><p class="eyebrow">3 &middot; The one disagreement in the by-code split</p>
+  <h2>A 4-day TA&harr;COM reallocation, and why</h2></div>
+  <p class="sec-note">The by-code figures held in <code>rig_days_summary.md</code> are
+  <code>DRL 151, PND 49, COM 87, TA 21</code>. We reproduce
+  <code>DRL 151, PND 49, COM 91, TA 17</code> &mdash;
+  two codes exact, the total exact at 308, and exactly four days moved from TA to COM.
+  It is a boundary-placement difference, not a counting difference.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>SN_WAR</th><th>Week start</th><th>Week end</th><th class="num">Days</th><th>Code</th><th>Attribution</th></tr></thead><tbody>
+<tr><td><code>-264094</code></td><td>2015-02-01</td><td>2015-02-07</td><td class="num">7</td><td><code>PND</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-264847</code></td><td>2015-02-08</td><td>2015-02-14</td><td class="num">7</td><td><code>TA</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-265082</code></td><td>2015-02-15</td><td>2015-02-21</td><td class="num">7</td><td><code>TA</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-277427</code></td><td>2015-10-15</td><td>2015-10-17</td><td class="num">3</td><td><code>TA</code></td><td class="wrap-cell">3-day partial return &mdash; the rig comes back on location</td></tr>
+<tr><td><code>-277474</code></td><td>2015-10-18</td><td>2015-10-24</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell">our TA&rarr;COM boundary</td></tr>
+<tr><td><code>-277786</code></td><td>2015-10-25</td><td>2015-10-31</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-278055</code></td><td>2015-11-01</td><td>2015-11-07</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-278336</code></td><td>2015-11-08</td><td>2015-11-14</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-278618</code></td><td>2015-11-15</td><td>2015-11-21</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-278896</code></td><td>2015-11-22</td><td>2015-11-28</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-279118</code></td><td>2015-11-29</td><td>2015-12-05</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-279412</code></td><td>2015-12-06</td><td>2015-12-12</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-279773</code></td><td>2015-12-13</td><td>2015-12-19</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-280045</code></td><td>2015-12-20</td><td>2015-12-26</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-280285</code></td><td>2015-12-27</td><td>2016-01-02</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-280494</code></td><td>2016-01-03</td><td>2016-01-09</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+<tr><td><code>-280852</code></td><td>2016-01-10</td><td>2016-01-16</td><td class="num">7</td><td><code>COM</code></td><td class="wrap-cell"></td></tr>
+</tbody></table></div>
+  <p>The well is temporarily abandoned in February 2015 and the rig does not return until
+  <strong>2015-10-15</strong>. That return is reported as a <strong>3-day partial
+  WAR week</strong> (2015-10-15&ndash;2015-10-17) &mdash; the only place
+  in the well's entire record where an activity-code change does not fall on a Sunday week
+  boundary. We take
+  the code change at the WAR record boundary, so COM begins <code>2015-10-18</code>.
+  The 87/21 split is reproduced exactly, and only, if that boundary is placed four days later at
+  <code>2015-10-22</code>: TA then runs a nominal full week
+  (14 + 7 = 21) and COM runs 2015-10-22&ndash;2016-01-16 = 87 days.</p>
+  <div class="callout">
+    <p><strong>Provenance caveat on this anchor.</strong> The <code>{"COM": 87, ...}</code>
+    block sits under a <em>&ldquo;Summary and Way Forward&rdquo;</em> heading that follows the
+    owner's signature and ends by asking <em>him</em> which completion method to adopt &mdash; so
+    on the committed record it reads as <strong>our</strong> summary put to him, not his own
+    output. We therefore file it as repo-legacy, not owner evidence. It also cannot be reproduced
+    from the WAR rows this repository holds under any convention we tested (inclusive, exclusive,
+    merged or unmerged), because the committed extract
+    <code>war_data_608124009500.csv</code> is byte-consistent with the current WAR tables and
+    puts the code change at 2015-10-18. Confirming authorship is
+    <a href="#asks">ask 1</a>.</p>
+  </div>
+</section>
+<section class="sec" id="calendar">
+  <div class="sec-head"><p class="eyebrow">4 &middot; Two definitions, one well</p>
+  <h2>Calendar milestone (155 / 156) vs WAR DRL (151)</h2></div>
+  <p class="sec-note">The owner's drilling rule is calendar: <em>&ldquo;I have been taking the spud
+  date &ndash; the td date as drilling days.&rdquo;</em> Spud 07/24/2014, TD 12/26/2014.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Statement</th><th>Source</th><th class="num">Days</th><th>Arithmetic</th></tr></thead>
+    <tbody>
+      <tr><td>Drilling days</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_by_milestone.md#L16"><code>rig_days_by_milestone.md:16</code></a></td>
+        <td class="num">155</td><td>TD &minus; spud, <strong>exclusive</strong> = 155</td></tr>
+      <tr><td>Drilling days</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md#L21"><code>rig_days_summary.md:21</code></a></td>
+        <td class="num">156</td><td>TD &minus; spud <strong>+ 1</strong>, the stated formula = 156</td></tr>
+      <tr><td>Published extract</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days_v21_kc.csv"><code>drilling_and_completion_days_v21_kc.csv</code></a></td>
+        <td class="num">155</td><td>the exclusive convention, as shipped</td></tr>
+      <tr class="total"><td>WAR DRL, this basis</td><td>merged DRL weeks
+        2014-07-23 &rarr; 2014-12-20</td>
+        <td class="num">151</td><td>inclusive over the merged span</td></tr>
+    </tbody></table></div>
+  <p><strong>The 155/156 pair is one figure, not two.</strong> 156 = 155 + 1 exactly; the two
+  documents state the same milestone under the exclusive and inclusive conventions. That halves
+  the apparent anchor count and is why the ledger files 156 as repo-legacy.</p>
+  <p><strong>The 4-day gap to WAR DRL is the reporting quantum, not an error.</strong>
+  The last DRL week ends 2014-12-20; TD is reached 12/26/2014, which falls inside the
+  following week &mdash; and that week is returned as <code>PND</code>, not <code>DRL</code>. The
+  calendar rule charges the whole TD week to drilling; the WAR rule charges it to whatever code the
+  operator filed. On a continuously drilled well the two differ by at most one WAR week. <strong>On a
+  suspended or batch-drilled well they diverge without bound</strong>: the calendar rule keeps
+  counting through months of rig-off-well time, the WAR rule does not. That is the entire reason
+  #1063 exists, and it is exactly why agreement on this one continuously-drilled well cannot be
+  read as agreement on the population.</p>
+</section>
+<section class="sec" id="coverage">
+  <div class="sec-head"><p class="eyebrow">5 &middot; Coverage</p>
+  <h2>What we can compute vs what we can check</h2></div>
+  <p class="sec-note">All 22 bores on the owner's Stones list carry WAR activity and are
+  computable on the new basis. Exactly one of them carries an owner figure to check against.
+  The rest are shown so the change is visible &mdash; <strong>they are not validated</strong>.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>API12</th><th>Well</th><th class="num">WAR DRL</th><th class="num">WAR COM</th><th class="num">WAR D&amp;C</th><th class="num">PND</th><th class="num">TA</th><th class="num">Published DRL</th><th class="num">Published COM</th><th class="num">&Delta; D&amp;C</th><th>Owner figure?</th></tr></thead><tbody>
+<tr><td><code>608124001500</code></td><td>001</td><td class="num">72</td><td class="num">0</td><td class="num">72</td><td class="num">0</td><td class="num">47</td><td class="num">69</td><td class="num">52</td><td class="num">-49</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124002200</code></td><td>002</td><td class="num">7</td><td class="num">0</td><td class="num">7</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">13</td><td class="num">-6</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124007700</code></td><td>001</td><td class="num">119</td><td class="num">0</td><td class="num">119</td><td class="num">24</td><td class="num">26</td><td class="num">123</td><td class="num">49</td><td class="num">-53</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124008700</code></td><td>004</td><td class="num">70</td><td class="num">0</td><td class="num">70</td><td class="num">9</td><td class="num">0</td><td class="num">71</td><td class="num">24</td><td class="num">-25</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124009200</code></td><td>005</td><td class="num">38</td><td class="num">0</td><td class="num">38</td><td class="num">7</td><td class="num">0</td><td class="num">39</td><td class="num">4</td><td class="num">-5</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124009201</code></td><td>005</td><td class="num">77</td><td class="num">0</td><td class="num">77</td><td class="num">0</td><td class="num">0</td><td class="num">81</td><td class="num">12</td><td class="num">-16</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124009500</code></td><td>SN105</td><td class="num">151</td><td class="num">91</td><td class="num">242</td><td class="num">49</td><td class="num">17</td><td class="num">155</td><td class="num">152</td><td class="num">-65</td><td><span class="badge ok"><span class="d"></span>hand-worked</span></td></tr>
+<tr><td><code>608124009900</code></td><td>SN109</td><td class="num">70</td><td class="num">51</td><td class="num">121</td><td class="num">56</td><td class="num">6</td><td class="num">79</td><td class="num">101</td><td class="num">-59</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124010300</code></td><td>009</td><td class="num">6</td><td class="num">0</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">10</td><td class="num">-5</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124010400</code></td><td>SN208</td><td class="num">71</td><td class="num">77</td><td class="num">148</td><td class="num">14</td><td class="num">49</td><td class="num">88</td><td class="num">117</td><td class="num">-57</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124010500</code></td><td>008</td><td class="num">3</td><td class="num">0</td><td class="num">3</td><td class="num">0</td><td class="num">5</td><td class="num">1</td><td class="num">15</td><td class="num">-13</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124011000</code></td><td>011</td><td class="num">75</td><td class="num">0</td><td class="num">75</td><td class="num">21</td><td class="num">0</td><td class="num">77</td><td class="num">24</td><td class="num">-26</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124011001</code></td><td>SN110</td><td class="num">7</td><td class="num">76</td><td class="num">83</td><td class="num">21</td><td class="num">26</td><td class="num">23</td><td class="num">112</td><td class="num">-52</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124011200</code></td><td>SN206</td><td class="num">63</td><td class="num">61</td><td class="num">124</td><td class="num">7</td><td class="num">0</td><td class="num">78</td><td class="num">67</td><td class="num">-21</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124011700</code></td><td>SN207</td><td class="num">56</td><td class="num">32</td><td class="num">88</td><td class="num">14</td><td class="num">0</td><td class="num">62</td><td class="num">40</td><td class="num">-14</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124012300</code></td><td>SN213</td><td class="num">38</td><td class="num">34</td><td class="num">72</td><td class="num">42</td><td class="num">0</td><td class="num">39</td><td class="num">108</td><td class="num">-75</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124012900</code></td><td>SN115</td><td class="num">42</td><td class="num">41</td><td class="num">83</td><td class="num">16</td><td class="num">0</td><td class="num">184</td><td class="num">56</td><td class="num">-157</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124013400</code></td><td>SN216</td><td class="num">35</td><td class="num">40</td><td class="num">75</td><td class="num">8</td><td class="num">0</td><td class="num">80</td><td class="num">48</td><td class="num">-53</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124013700</code></td><td>SN114</td><td class="num">49</td><td class="num">0</td><td class="num">49</td><td class="num">7</td><td class="num">0</td><td class="num">156</td><td class="num">17</td><td class="num">-124</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124013701</code></td><td>SN114</td><td class="num">7</td><td class="num">45</td><td class="num">52</td><td class="num">35</td><td class="num">0</td><td class="num">4</td><td class="num">80</td><td class="num">-32</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124014300</code></td><td>SN219</td><td class="num">49</td><td class="num">0</td><td class="num">49</td><td class="num">8</td><td class="num">7</td><td class="num">45</td><td class="num">17</td><td class="num">-13</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr><td><code>608124014301</code></td><td>SN219</td><td class="num">0</td><td class="num">26</td><td class="num">26</td><td class="num">28</td><td class="num">0</td><td class="num">2</td><td class="num">50</td><td class="num">-26</td><td><span class="badge hold"><span class="d"></span>none</span></td></tr>
+<tr class="total"><td colspan="2">Stones &mdash; 22 bores</td><td class="num">1,105</td><td class="num">574</td><td class="num">1,679</td><td class="num">366</td><td class="num">183</td><td class="num">1,457</td><td class="num">1,168</td><td class="num">-946</td><td>1 of 22</td></tr>
+</tbody></table></div>
+  <p>Against the owner's own V30 field totals
+  (<code>1,457</code> drilling,
+  <code>1,145</code> completion) the WAR basis returns
+  1,105 and
+  574. Both gaps are large, both are expected
+  by construction, and <strong>neither is evidence either way</strong>: his totals are his
+  calendar rule summed over the same bores, so the difference measures the definition change,
+  not its correctness. Note also that the published extract totals
+  1,168 completion days against the
+  1,145 in his shipped workbook &mdash; a
+  +23-day
+  divergence that predates this basis change and is tracked as
+  <a href="https://github.com/vamseeachanta/worldenergydata/issues/846">#846</a>.</p>
+  <div class="callout">
+    <p><strong>The World Oil Table 1 anchor is circular.</strong> Stones prints
+    2,625 D&amp;C days there, and the owner tabulated that table &mdash; but
+    the validation page records that <em>&ldquo;the article's four tables are this repository's
+    FDAS V30 model output&rdquo;</em>. Comparing our numbers to it compares our numbers to
+    themselves. It is a useful measure of how far published figures will move
+    (-946 days for Stones); it is not a check.</p>
+  </div>
+</section>
+<section class="sec" id="grain">
+  <div class="sec-head"><p class="eyebrow">6 &middot; Grain</p>
+  <h2>Wellbore (API12) vs well (API10)</h2></div>
+  <p class="sec-note">Three of the eighteen Stones wells carry a sidetrack. Rolling those up by
+  summing per-bore days double-counts the single WAR week that reports both bores across the
+  sidetrack transition; the module unions instead.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>API10</th><th>Bores</th><th class="num">All WAR days (union)</th><th class="num">All WAR days (summed)</th><th class="num">Double-counted</th><th class="num">D&amp;C (union)</th><th class="num">D&amp;C (summed)</th></tr></thead><tbody>
+<tr><td><code>6081240110</code></td><td>2 bore(s): 00,01</td><td class="num">233</td><td class="num">240</td><td class="num">7</td><td class="num">158</td><td class="num">158</td></tr>
+<tr><td><code>6081240137</code></td><td>2 bore(s): 00,01</td><td class="num">175</td><td class="num">182</td><td class="num">7</td><td class="num">101</td><td class="num">101</td></tr>
+<tr><td><code>6081240143</code></td><td>2 bore(s): 00,01</td><td class="num">117</td><td class="num">124</td><td class="num">7</td><td class="num">75</td><td class="num">75</td></tr>
+</tbody></table></div>
+  <p>Seven days per sidetrack boundary, every time. On <em>these</em> three wells the
+  double-counted week happens to be filed under a non-D&amp;C code, so the D&amp;C columns are
+  unaffected and the two roll-ups agree &mdash; which is precisely why the defect is easy to
+  miss. Where the straddling week is filed <code>DRL</code> or <code>COM</code>, summing
+  over-reports D&amp;C by a full week per sidetrack. Both grains are published so a consumer
+  can never pick the wrong one by accident.</p>
+</section>
+<section class="sec" id="caveats">
+  <div class="sec-head"><p class="eyebrow">7 &middot; Caveats that apply to every number above</p>
+  <h2>What a WAR-derived day count cannot resolve</h2></div>
+  <div class="panel">
+    <h3>&plusmn;7-day quantization</h3>
+    <p>A WAR is a <em>weekly</em> return (Form BSEE-0133 under 30 CFR 250.743; Sunday 00:00 to
+    Saturday 23:59) carrying one activity code for the whole week. A phase boundary can therefore
+    only ever be located to within one week. Every figure on this page &mdash; ours and the
+    owner's &mdash; inherits a &plusmn;7-day uncertainty at each code transition, which is why the
+    ledger treats |&Delta;| &le; 7 as within-quantum rather than as agreement.</p>
+  </div>
+  <div class="panel">
+    <h3>Coverage floor of the WAR feed</h3>
+    <p>The WAR tables in this checkout run 1988-04 to 2026-02,
+    but density is not uniform: only 867 returns exist before
+    1998, and the first month carrying more than fifty is 1997-10.
+    A bore that spudded before then will under-report, silently.
+    Stones is unaffected &mdash; its earliest spud is 2004-12-31 &mdash; but the
+    same basis applied to older Gulf inventory is not safe without a per-bore coverage check.
+    (Note: we found <strong>no</strong> April-2004 step in this feed; see the
+    <a href="#asks">corrections</a> note.)</p>
+  </div>
+  <div class="panel">
+    <h3><code>PND</code> is undefined</h3>
+    <p>BSEE publishes no code list for <code>WELL_ACTIVITY_CD</code>; the table we hold is the
+    BOREHOLE_STAT_CD list, and its own note reads <em>&ldquo;PND means we guessed it as
+    unknown.&rdquo;</em> PND runs to 366 days across
+    these 22 bores &mdash; more than the
+    574 completion days the DRL_COM basis
+    reports, and <em>excluded</em> from the D&amp;C total on that basis. Fold it into completion
+    instead and Stones D&amp;C moves from 1,679 to
+    2,045 days. It is therefore never merged
+    silently into either bucket; it is carried in its own column and a basis includes it
+    explicitly or not at all. Until BSEE confirms its meaning
+    (<a href="https://github.com/vamseeachanta/worldenergydata/issues/1065">#1065</a>), any basis that includes or excludes PND is a choice, not
+    a fact.</p>
+  </div>
+</section>
+<section class="sec" id="asks">
+  <div class="sec-head"><p class="eyebrow">8 &middot; The most useful output of this exercise</p>
+  <h2>What we need from the owner to settle it</h2></div>
+  <p class="sec-note">Ranked by how much each would move the evidence base. The first three are
+  cheap for him and would take the independent anchor count from one bore to a population.</p>
+  <div class="askgrid">
+    <div class="ask"><div class="top"><h4>1 &middot; Hand-worked completion counts for 5&ndash;10 more bores</h4>
+      <span class="badge bad"><span class="d"></span>decisive</span></div>
+      <p>The same exercise he did for 608124009500 &mdash; count the distinct daily remark dates
+      after TD &mdash; on a handful of <em>deliberately varied</em> bores: one continuously drilled,
+      one suspended mid-drilling, one batch-drilled, one sidetracked, one with a late recompletion.
+      Five bores chosen that way settles more than fifty chosen at random.</p></div>
+    <div class="ask"><div class="top"><h4>2 &middot; Authorship of the by-WAR split</h4>
+      <span class="badge bad"><span class="d"></span>decisive</span></div>
+      <p>Did he produce <code>{"COM": 87, "DRL": 151, "PND": 49, "TA": 21}</code>, or did we?
+      If his, we have a second independent anchor and a 4-day boundary rule to reconcile. If ours,
+      the ledger's repo-legacy tier is empty and the evidence base is thinner still. One sentence
+      from him decides which.</p></div>
+    <div class="ask"><div class="top"><h4>3 &middot; The completion-method decision he asked us for</h4>
+      <span class="badge warn"><span class="d"></span>blocking</span></div>
+      <p><code>rig_days_summary.md</code> ends by asking us to pick among his three completion
+      methods and marks method 3 preferred. That question is still open, and it is upstream of
+      every completion number on this page. Answering it &mdash; or having him confirm the WAR
+      code basis supersedes all three &mdash; is <a href="https://github.com/vamseeachanta/worldenergydata/issues/1064">#1064</a>.</p></div>
+    <div class="ask"><div class="top"><h4>4 &middot; A rig-contract or daily-report cross-check on one well</h4>
+      <span class="badge warn"><span class="d"></span>high value</span></div>
+      <p>Anything outside BSEE &mdash; a rig day-rate invoice, an operator DDR, a spud-to-rig-release
+      date pair &mdash; for even one Lower Tertiary well. Every anchor we hold is derived from the
+      same WAR feed, so none of them can detect a systematic bias in that feed. One external
+      source breaks the circularity.</p></div>
+    <div class="ask"><div class="top"><h4>5 &middot; Julia JU102 (608124003301)</h4>
+      <span class="badge hold"><span class="d"></span>cheap</span></div>
+      <p>He supplied parsed remarks for this bore but never a day count from them. The raw material
+      for a second hand-worked anchor is already committed
+      (<code>api_608124003301_remarks_parsed.xlsx</code>, 32 weeks) &mdash; it needs only his
+      count.</p></div>
+    <div class="ask"><div class="top"><h4>6 &middot; What <code>PND</code> means</h4>
+      <span class="badge hold"><span class="d"></span>via BSEE</span></div>
+      <p>Not his to answer, but he has the BSEE relationships. PND is the single largest
+      unattributed block in the Stones record.</p></div>
+  </div>
+  <div class="callout">
+    <p><strong>Corrections to the brief this page was built from.</strong> (a) The
+    <code>{"COM": 87, ...}</code> split and <code>rig_days_by_WAR.md</code> are <em>not</em>
+    demonstrably owner-authored &mdash; both sit in our voice, and the latter closes
+    <em>&ldquo;This is how <u>we</u> can calculate&hellip;&rdquo;</em>. (b) There is no April-2004
+    eWell step in this feed; monthly returns rise smoothly through 2003&ndash;2005, and the real
+    floor is 1997-10. (c) <code>rig_days_by_milestone.md</code> carries two owner figures the brief
+    did not list &mdash; completion = 93 days and D&amp;C = 248 &mdash; and they are the most
+    valuable anchors in the repository.</p>
+  </div>
+</section>
+  <footer class="site">
+    <div class="row">
+      <span>Owner-anchor validation &mdash; WAR activity-code rig days &middot; epic #1063</span>
+      <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/scripts/lower_tertiary/build_roy_rig_days_qa.py">Generator &amp; provenance &#8599;</a>
+    </div>
+    <p class="note">// self-contained &mdash; no external assets. Regenerate with
+    <code>build_roy_rig_days_qa.py --refresh --war-dir &lt;dir&gt;</code>; subtotals pinned by
+    tests/unit/lower_tertiary/test_roy_rig_days_qa.py</p>
+  </footer>
+</div>
+</body>
+</html>
