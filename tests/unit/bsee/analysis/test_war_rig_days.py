@@ -16,6 +16,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_METHOD_1,
     STATUS_COVERED,
     STATUS_NO_ACTIVITY,
+    normalize_api12,
     rig_days_by_bore,
     rig_days_by_well,
     union_days,
@@ -199,6 +200,49 @@ class TestApi10Collapse:
         assert wells["war_days_additive"] == 28  # 14 + 14
         assert wells["war_days_total"] == 21  # Jan 1 -> Jan 21
         assert wells["overlap_days"] == 7  # one straddling week
+
+
+class TestApiNormalization:
+    """A float-typed API column must not read as absent WAR coverage."""
+
+    def test_float_typed_api_still_matches_the_population(self):
+        # Concatenating heterogeneous WAR members widens API_WELL_NUMBER to
+        # float64, which stringifies as "608124009500.0".  Before this was
+        # handled, every bore fell out of the population match and came back
+        # null -- reported as no_war_activity, so a dtype mismatch was
+        # indistinguishable from a genuine coverage gap.
+        war = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": [608124009500.0, 608124009500.0],
+                "WAR_START_DT": ["2014-01-01", "2014-01-08"],
+                "WAR_END_DT": ["2014-01-07", "2014-01-14"],
+                "WELL_ACTIVITY_CD": ["DRL", "DRL"],
+            }
+        )
+        row = rig_days_by_bore(war, population=[REFERENCE_API12]).squeeze()
+
+        assert row["days_status"] == STATUS_COVERED
+        assert row["api12"] == REFERENCE_API12
+        assert int(row["drilling_days"]) == 14
+
+    def test_normalization_is_symmetric_across_both_sides_of_the_match(self):
+        war = pd.DataFrame(
+            {
+                "API_WELL_NUMBER": ["608124009500"],
+                "WAR_START_DT": ["2014-01-01"],
+                "WAR_END_DT": ["2014-01-07"],
+                "WELL_ACTIVITY_CD": ["DRL"],
+            }
+        )
+        # float-typed population, string-typed WAR
+        row = rig_days_by_bore(war, population=[608124009500.0]).squeeze()
+        assert row["days_status"] == STATUS_COVERED
+        assert int(row["drilling_days"]) == 7
+
+    def test_int_typed_api_is_unaffected(self):
+        assert list(normalize_api12([608124009500])) == ["608124009500"]
+        assert list(normalize_api12(["608124009500"])) == ["608124009500"]
+        assert list(normalize_api12([608124009500.0])) == ["608124009500"]
 
 
 class TestInputContract:
