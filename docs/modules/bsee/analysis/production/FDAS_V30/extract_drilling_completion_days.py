@@ -368,9 +368,23 @@ def main():
     # The shared module replaces both; the 250-day branch is gone rather than
     # retuned, because it was an artifact of the wrong basis.
     basis = PRESET_BASES[args.basis]
+    # LEFT, not inner. mv_war_main_prop does not cover every SN_WAR in
+    # mv_war_main -- 2,030 weeks on the 2026-02-19 vintage, 280 of them inside
+    # this population. An inner join discarded them silently, and for 38 bores
+    # that was EVERY week they have, so a bore with 32 weeks of recorded rig
+    # presence was published as having no WAR activity at all. Those weeks are
+    # unattributed, not absent; war_rig_days carries them as coverage and
+    # excludes them from every activity total. See #1120.
+    prop = load_war_prop(args.war_prop)
     war_for_days = wm[["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]].merge(
-        load_war_prop(args.war_prop), on="SN_WAR", how="inner"
+        prop, on="SN_WAR", how="left"
     )
+    unattributed = int(war_for_days["WELL_ACTIVITY_CD"].isna().sum())
+    if unattributed:
+        print(
+            f"  {unattributed} of {len(war_for_days)} WAR weeks carry no activity "
+            f"code; counted as coverage, excluded from activity totals."
+        )
     days = rig_days_by_bore(
         war_for_days, basis=basis, population=list(base["API_WELL_NUMBER"])
     ).rename(columns={
