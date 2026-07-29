@@ -79,6 +79,7 @@ __all__ = [
     "PRESET_BASES",
     "DEFAULT_PHASES",
     "STATUS_COVERED_UNATTRIBUTED",
+    "MAX_PLAUSIBLE_SPAN_DAYS",
     "normalize_api12",
     "union_days",
     "rig_days_by_bore",
@@ -102,6 +103,17 @@ STATUS_NO_ACTIVITY_CODED = "no_activity_coded"
 #: Distinct from ``no_war_activity``, which asserts BSEE holds nothing at all --
 #: a claim we must not make about a bore with 32 reported weeks. See #1120.
 STATUS_COVERED_UNATTRIBUTED = "war_covered_no_activity_code"
+
+#: A WAR return longer than this is treated as a source-data defect and FLAGGED
+#: (never dropped -- discarding it would lose genuine coverage on a guess).
+#:
+#: Set from the measured distribution, not intuition. WAR is a weekly document
+#: (30 CFR 250.743) and the feed agrees: median 7.0 days across 363,786 rows.
+#: 286 rows exceed 14 days and 30 exceed a year, topping out at 4,024 -- e.g.
+#: "4/30/1991 -> 5/6/2001", transparently a mistyped year, whose successor
+#: return resumes in 2001. A 90-day bound clears every plausible return
+#: (including partial and amended filings) while catching that class.
+MAX_PLAUSIBLE_SPAN_DAYS = 90
 
 _REQUIRED_COLUMNS = (
     "API_WELL_NUMBER",
@@ -268,15 +280,48 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
         other=None,
     )
     out = out.dropna(subset=["start", "end"])
+
     # A return whose end precedes its start is malformed. Dropping it here --
     # rather than inside union_days -- keeps "no valid interval" distinguishable
     # from "zero days", so a reversed week cannot be published as a bore that
     # was drilled in no time at all. The real WAR feed contains spans down to
     # -7 days, so this is reachable. See #1114.
-    return out[out["end"] >= out["start"]]
+    #
+    # Rejected rows are COUNTED, not merely discarded. A silent drop is the
+    # defect this module exists to remove: it reduces a total while leaving the
+    # result looking complete. The count travels to the caller as
+    # war_weeks_rejected.
+    reversed_mask = out["end"] < out["start"]
+    out = out.assign(span_rejected=reversed_mask, span_implausible=False)
+
+    # Implausibly long returns are FLAGGED, not dropped. A WAR return is a
+    # weekly document (30 CFR 250.743), and the measured distribution agrees:
+    # median 7.0 days over 363,786 rows. But 286 rows exceed 14 days and 30
+    # exceed a year, topping out at 4,024 -- e.g. a return reading
+    # "4/30/1991 -> 5/6/2001", transparently a typo for 1991, whose successor
+    # resumes in 2001.
+    #
+    # These are source-data defects, not computation errors, and dropping them
+    # would discard genuine coverage on a guess. The bound below is set from
+    # that distribution rather than intuition: long enough that no plausible
+    # return is flagged, short enough to catch a mistyped year.
+    span_days = (out["end"] - out["start"]).dt.days
+    out["span_implausible"] = span_days > MAX_PLAUSIBLE_SPAN_DAYS
+
+    # Rejected rows stay in the frame so they can be counted per bore. Callers
+    # must take intervals from valid rows only -- see _valid().
+    return out
+
+
+def _valid(group: pd.DataFrame) -> pd.DataFrame:
+    """Rows whose interval is usable. Rejected rows remain for counting only."""
+    if "span_rejected" not in group.columns:
+        return group
+    return group[~group["span_rejected"]]
 
 
 def _days_for(group: pd.DataFrame, codes) -> int:
+    group = _valid(group)
     sub = group[group["activity_cd"].isin(codes)]
     return union_days(zip(sub["start"], sub["end"]))
 
@@ -441,7 +486,18 @@ def rig_days_by_bore(
         prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
 
     rows = []
-    for api12, group in prepared.groupby("api12", sort=True):
+    for api12, full_group in prepared.groupby("api12", sort=True):
+        # Rejected rows are counted from the FULL group, then excluded from
+        # every interval computation. Counting after filtering would make the
+        # rejection invisible, which is the defect this reporting exists to fix.
+        rejected = int(full_group["span_rejected"].sum())
+        implausible = int(
+            full_group.loc[~full_group["span_rejected"], "span_implausible"].sum()
+        )
+        group = _valid(full_group)
+        if group.empty:
+            # Every row malformed: no usable interval, but the rows existed.
+            continue
         by_code = {
             code: union_days(zip(sub["start"], sub["end"]))
             for code, sub in group.groupby("activity_cd", sort=True, dropna=True)
@@ -472,6 +528,8 @@ def rig_days_by_bore(
             "days_by_code": by_code,
             "days_status": coverage_status,
             "war_weeks_unattributed": int(len(unattributed)),
+            "war_weeks_rejected": rejected,
+            "war_weeks_implausible": implausible,
             "drilling_days_status": drilling_status,
             "completion_days_status": completion_status,
             "rig_days_by_rig": _days_by_rig(group),
@@ -533,6 +591,8 @@ def _absent_rows(rows, population, phases) -> list:
             "war_days_total": pd.NA,
             "war_weeks": 0,
             "war_weeks_unattributed": 0,
+            "war_weeks_rejected": 0,
+            "war_weeks_implausible": 0,
             "days_by_code": {},
             "days_status": STATUS_NO_ACTIVITY,
             "drilling_days_status": STATUS_NO_ACTIVITY,
@@ -557,6 +617,8 @@ _BORE_COLUMNS = [
     "war_days_total",
     "war_weeks",
     "war_weeks_unattributed",
+    "war_weeks_rejected",
+    "war_weeks_implausible",
     "days_by_code",
     "days_status",
     "drilling_days_status",
@@ -620,7 +682,9 @@ def rig_days_by_well(
         .reset_index()
     )
 
-    prepared = prepared.assign(api10=prepared["api12"].str[:10])
+    # Malformed rows must not reach the well-grain union either. _days_and_status
+    # guards itself, but war_days_total below zips the group directly.
+    prepared = _valid(prepared).assign(api10=lambda d: d["api12"].str[:10])
     unions = []
     for api10, group in prepared.groupby("api10", sort=True):
         drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
