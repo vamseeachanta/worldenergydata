@@ -1,8 +1,23 @@
 """Tests for war_rig_days -- the single WAR activity-code rig-day implementation.
 
-The anchor test reproduces the domain owner's own published totals for well
-608124009500 (a Stones well) from the WAR extract committed alongside this
-repo, so the basis is validated in CI without the ~370 MB raw WAR download.
+The reference tests reproduce a per-code breakdown for well 608124009500 (a
+Stones well) from the WAR extract committed alongside this repo, so the
+computation is pinned in CI without the ~370 MB raw WAR download.
+
+.. warning:: These are REPRODUCIBILITY pins, not external validation.
+
+   They were previously described as reproducing "the domain owner's own
+   published totals".  That attribution was wrong and is withdrawn: the line
+   they match sits under a "Summary and Way Forward" heading in
+   ``rig_days_summary.md`` that is addressed *to* the owner, asking him to
+   choose a completion method -- so it is most likely our own output.  Matching
+   it demonstrates that the module is stable, not that the basis is right.
+
+   The owner's own figures for this well are 155 drilling days and 93
+   completion days (``rig_days_by_milestone.md``), both on a calendar/remark
+   basis rather than activity codes.  Those are the genuinely independent
+   anchors, and they are checked on the validation page rather than here.
+   See #1064.
 """
 
 from pathlib import Path
@@ -27,13 +42,15 @@ REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE = REPO_ROOT / "docs/modules/bsee/analysis/rig_days/war_data_608124009500.csv"
 REFERENCE_API12 = "608124009500"
 
-# rig_days_summary.md records, for this well: {"COM": 87, "DRL": 151,
-# "PND": 49, "TA": 21}.  DRL, PND and the 308-day total reproduce exactly.
-# COM/TA differ by 4 days in a compensating pair because one WAR week
-# straddles the COM -> TA code change; the total is therefore unaffected.
-OWNER_DRL_DAYS = 151
-OWNER_PND_DAYS = 49
-OWNER_TOTAL_DAYS = 308
+# rig_days_summary.md:18 records, for this well: {"COM": 87, "DRL": 151,
+# "PND": 49, "TA": 21}.  Authorship of that line cannot be established and it
+# is most likely ours -- see the module docstring.  DRL, PND and the 308-day
+# total reproduce exactly; COM/TA differ by 4 days as a compensating pair
+# because one WAR week straddles the COM -> TA code change, leaving the total
+# unaffected.
+LEGACY_DRL_DAYS = 151
+LEGACY_PND_DAYS = 49
+LEGACY_TOTAL_DAYS = 308
 
 
 @pytest.fixture(scope="module")
@@ -96,27 +113,27 @@ class TestUnionDays:
         assert union_days(weeks) == 49
 
 
-class TestOwnerReferenceWell:
-    """The acceptance criterion from #1063: reproduce the owner's numbers."""
+class TestLegacyReferenceLine:
+    """Reproducibility pin against rig_days_summary.md:18 -- not validation."""
 
-    def test_drilling_days_match_owner_exactly(self, war):
+    def test_drilling_days_match_legacy_line_exactly(self, war):
         bores = rig_days_by_bore(war, basis=BASIS_DRL_COM)
         row = bores.loc[bores["api12"].eq(REFERENCE_API12)].squeeze()
-        assert int(row["drilling_days"]) == OWNER_DRL_DAYS
+        assert int(row["drilling_days"]) == LEGACY_DRL_DAYS
 
-    def test_pnd_days_match_owner_exactly(self, war):
+    def test_pnd_days_match_legacy_line_exactly(self, war):
         bores = rig_days_by_bore(war, basis=BASIS_DRL_COM)
         row = bores.loc[bores["api12"].eq(REFERENCE_API12)].squeeze()
-        assert int(row["pnd_days"]) == OWNER_PND_DAYS
+        assert int(row["pnd_days"]) == LEGACY_PND_DAYS
 
-    def test_total_war_days_match_owner_exactly(self, war):
+    def test_total_war_days_match_legacy_line_exactly(self, war):
         bores = rig_days_by_bore(war, basis=BASIS_DRL_COM)
         row = bores.loc[bores["api12"].eq(REFERENCE_API12)].squeeze()
-        assert int(row["war_days_total"]) == OWNER_TOTAL_DAYS
+        assert int(row["war_days_total"]) == LEGACY_TOTAL_DAYS
 
     def test_com_and_ta_differ_only_as_a_compensating_pair(self, war):
         # One WAR week straddles the COM -> TA transition, so our split is
-        # COM 91 / TA 17 against the owner's 87 / 21.  Pin the invariant that
+        # COM 91 / TA 17 against the legacy line's 87 / 21.  Pin the invariant that
         # matters -- the pair sums to the same 108 days -- rather than the
         # arbitrary side of the boundary the straddling week lands on.
         bores = rig_days_by_bore(war, basis=BASIS_DRL_COM)
@@ -124,7 +141,7 @@ class TestOwnerReferenceWell:
         com = row["days_by_code"].get("COM", 0)
         ta = row["days_by_code"].get("TA", 0)
         assert com + ta == 87 + 21
-        assert abs(com - 87) <= 7  # within one WAR week of the owner's split
+        assert abs(com - 87) <= 7  # within one WAR week of the legacy split
 
 
 class TestBasisIsAlwaysDeclared:
@@ -147,7 +164,7 @@ class TestBasisIsAlwaysDeclared:
     def test_pnd_is_reported_separately_under_every_basis(self, war):
         for basis in (BASIS_DRL_COM, BASIS_DRL_COM_PND, BASIS_METHOD_1):
             frame = rig_days_by_bore(war, basis=basis)
-            assert int(frame.squeeze()["pnd_days"]) == OWNER_PND_DAYS
+            assert int(frame.squeeze()["pnd_days"]) == LEGACY_PND_DAYS
 
 
 class TestPopulationCoverage:
@@ -181,7 +198,7 @@ class TestApi10Collapse:
         row = wells.squeeze()
         assert row["n_bores"] == 1
         assert row["overlap_days"] == 0
-        assert row["war_days_total"] == OWNER_TOTAL_DAYS
+        assert row["war_days_total"] == LEGACY_TOTAL_DAYS
 
     def test_sidetrack_boundary_week_is_not_double_counted(self):
         # Two bores of one well whose WAR weeks abut across the sidetrack.
@@ -253,7 +270,7 @@ class TestAbsentActivityIsNotZero:
         # Sums skip NA, and the bores concerned contributed 0 before, so
         # switching them to null moves no development total.
         frame = rig_days_by_bore(war)
-        assert int(frame["drilling_days"].sum()) == OWNER_DRL_DAYS
+        assert int(frame["drilling_days"].sum()) == LEGACY_DRL_DAYS
 
 
 class TestApiNormalization:

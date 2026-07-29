@@ -19,9 +19,26 @@ every published number:
 
 ``INCLUSIVE`` day counting
     A WAR week runs Sunday 00:00 to Saturday 23:59 and is *seven* days, so a
-    span is ``(end - start).days + 1``.  This is the convention under which
-    the domain owner's own published totals for well 608124009500 reproduce
-    (DRL 151, PND 49, total 308); see the fixture test.
+    span is ``(end - start).days + 1``.  The justification is the reporting
+    cadence itself: a week that is seven days long must count as seven, and
+    ``(end - start).days`` yields six.
+
+    .. warning:: An earlier version of this docstring justified the convention
+       by saying it reproduced "the domain owner's own published totals for
+       well 608124009500 (DRL 151, PND 49, total 308)".  **That attribution was
+       wrong and is withdrawn.**  Those totals sit in
+       ``docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md`` under a
+       "Summary and Way Forward" heading that is addressed *to* the owner --
+       it asks him to choose a completion method -- so it is most likely our
+       own output, not his.  Reproducing it validated nothing.
+
+       The owner's own figure for that well is **155** drilling days
+       (``rig_days_by_milestone.md``), which is a calendar span counted
+       *exclusively*: spud 2014-07-24 to TD 2014-12-26 is 155 days exclusive,
+       156 inclusive.  So his practice points the other way, on a different
+       basis.  The convention here stands on the reporting-cadence argument
+       above and is ours to defend; it is not ratified by the owner.  See
+       #1064 and #1072.
 
 Adjacency merging
     Consecutive WAR weeks (Jan 1-7 then Jan 8-14) describe *continuous* rig
