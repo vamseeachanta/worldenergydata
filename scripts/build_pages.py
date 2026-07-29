@@ -571,6 +571,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     if roy_qa_html.exists():
         shutil.copy2(roy_qa_html, PUBLIC / "roy-rig-days-validation.html")
 
+    # --- BSEE WAR activity-code definitions (self-contained, #1065) ---
+    codes_html = REPORTS / "lower_tertiary" / "war-activity-codes.html"
+    if codes_html.exists():
+        shutil.copy2(codes_html, PUBLIC / "war-activity-codes.html")
+
     # --- World Oil April 2026 QA/QC report hub (committed self-contained page) ---
     hub_html = REPORTS / "lower_tertiary" / "wo-april-2026-qaqc-hub.html"
     if hub_html.exists():
@@ -1149,6 +1154,15 @@ def build_index() -> None:
             "<p>The WAR activity-code basis checked against the domain owner's "
             "own hand-worked figures &mdash; every anchor found, its delta, and "
             "an explicit account of what remains unvalidated.</p></a>"
+        )
+    if (PUBLIC / "war-activity-codes.html").exists():
+        cards.append(
+            '<a class="card" href="war-activity-codes.html">'
+            "<h3>BSEE WAR Activity Codes &rarr;</h3>"
+            "<p>What BSEE publishes for the code behind every drilling-day "
+            "number, what we inferred, and what is unknown &mdash; the "
+            "definitions page, with no meaning shown for an undocumented "
+            "code.</p></a>"
         )
     if (PUBLIC / "fdas-revision-comparison.html").exists():
         cards.append(

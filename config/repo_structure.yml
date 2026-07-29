@@ -480,6 +480,9 @@ temporary_exceptions:
       - reports/lower_tertiary/data/julia_v30_reproduction.json
       - reports/lower_tertiary/data/julia_wells.json
       - reports/lower_tertiary/data/roy_rig_days_qa.csv
+      # BSEE WAR activity-code definitions page (#1065)
+      - reports/lower_tertiary/war-activity-codes.html
+      - reports/lower_tertiary/data/war_activity_code_frequency.csv
       - reports/lower_tertiary/lifecycle/assets/stones_assets.html
       - reports/lower_tertiary/lifecycle/wells/_wells.json
       - reports/lower_tertiary/lifecycle/wells/_wells_overrides.json
