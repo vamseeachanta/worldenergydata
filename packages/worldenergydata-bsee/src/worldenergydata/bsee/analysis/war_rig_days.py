@@ -77,6 +77,7 @@ __all__ = [
     "BASIS_DRL_COM_PND",
     "BASIS_METHOD_1",
     "PRESET_BASES",
+    "DEFAULT_PHASES",
     "normalize_api12",
     "union_days",
     "rig_days_by_bore",
@@ -237,6 +238,15 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
             "end": _parse_war_date(war["WAR_END_DT"]),
         }
     )
+    # Optional passengers, carried only when the caller supplied them. Absent
+    # columns must not fabricate a value -- a bore whose feed lacks RIG_NAME has
+    # unattributed days, which is different from days attributed to no rig.
+    for source, target in (
+        ("RIG_NAME", "rig_name"),
+        ("DRILL_FLUID_WGT", "drill_fluid_wgt"),
+    ):
+        if source in war.columns:
+            out[target] = war[source].values
     out = out[out["activity_cd"].ne("") & out["activity_cd"].ne("NAN")]
     out = out.dropna(subset=["start", "end"])
     # A return whose end precedes its start is malformed. Dropping it here --
@@ -252,6 +262,95 @@ def _days_for(group: pd.DataFrame, codes) -> int:
     return union_days(zip(sub["start"], sub["end"]))
 
 
+def _reject_colliding_phases(phases) -> None:
+    """Refuse a phase whose generated columns would shadow an existing one.
+
+    ``phases={"drilling": ...}`` generates ``drilling_days``, overwriting the
+    basis-derived drilling days with the phase's codes -- so a caller asking
+    for an extra bucket would silently replace a core measurement, and the
+    frame would carry two columns of the same name. ``pnd`` collides the same
+    way. Raising is the only safe response: the shadowed value looks entirely
+    plausible.
+    """
+    reserved = set(_BORE_COLUMNS) | {"basis"}
+    seen: dict = {}
+    for phase in phases:
+        for suffix in ("_days", "_days_status"):
+            column = f"{phase}{suffix}"
+            if column in reserved:
+                raise ValueError(
+                    f"phase {phase!r} would generate column {column!r}, which "
+                    "already exists and would be silently overwritten. Choose "
+                    "a different phase name."
+                )
+            if column in seen:
+                raise ValueError(
+                    f"phases {seen[column]!r} and {phase!r} both generate "
+                    f"column {column!r}."
+                )
+            seen[column] = phase
+
+
+def _days_by_rig(group: pd.DataFrame) -> dict:
+    """Days attributed to each rig that reported on this bore.
+
+    Ported from the legacy ``ONGFDComponents`` (#1112), which is the only place
+    that carried rig attribution. Rebuilt on the union basis: the legacy code
+    summed per-rig interval days, double-counting any overlap.
+
+    Rigs are kept as structured identities rather than a joined display string,
+    so a consumer can attribute days rather than parse text. A row with no rig
+    name is grouped under ``None`` -- absent attribution, not a rig called
+    "unknown". A bore whose feed carries no rig column at all also yields
+    ``{None: days}``, so unattributed duration has one encoding rather than two.
+
+    Identities are matched on stripped, case-folded text, because ``"ENSCO 1"``
+    and ``" ensco 1 "`` are one rig and counting them separately would credit
+    the same days twice. The first spelling seen is kept for display.
+
+    .. note:: ``sum(...values())`` does **not** equal ``war_days_total`` and is
+       not meant to. Two rigs genuinely working overlapping weeks are each
+       credited; this is a per-rig credit, not a partition of calendar coverage.
+    """
+    intervals = list(zip(group["start"], group["end"]))
+    if "rig_name" not in group.columns:
+        return {None: union_days(intervals)}
+
+    buckets: dict = {}
+    display: dict = {}
+    for (start, end), raw in zip(intervals, group["rig_name"]):
+        if pd.isna(raw):
+            key = None
+        else:
+            text = str(raw).strip()
+            key = text.casefold() or None
+        if key is not None:
+            display.setdefault(key, text)
+        buckets.setdefault(key, []).append((start, end))
+
+    return {
+        (display[k] if k is not None else None): union_days(v)
+        for k, v in buckets.items()
+    }
+
+
+def _max_drill_fluid_wgt(group: pd.DataFrame):
+    """Heaviest drilling fluid reported on this bore, in ppg.
+
+    Ported from the legacy ``ONGFDComponents`` (#1112). A wellbore
+    characteristic, not a duration -- it travels here because this is where the
+    WAR rows are already assembled.
+
+    Returns null, never 0, when nothing was reported: a bore with no recorded
+    fluid weight is not a bore drilled on water.
+    """
+    if "drill_fluid_wgt" not in group.columns:
+        return pd.NA
+    values = pd.to_numeric(group["drill_fluid_wgt"], errors="coerce").dropna()
+    values = values[values > 0]
+    return float(values.max()) if len(values) else pd.NA
+
+
 def _days_and_status(group: pd.DataFrame, codes):
     """Days coded to ``codes``, or (null, no_activity_coded) if none are.
 
@@ -265,10 +364,38 @@ def _days_and_status(group: pd.DataFrame, codes):
     return union_days(zip(sub["start"], sub["end"])), STATUS_COVERED
 
 
+#: Additional activity phases emitted alongside drilling and completion.
+#:
+#: Ported from the legacy ``ONGFDComponents`` (#1112), which measured sidetrack
+#: and abandonment as separate phases. That capability was real and is absent
+#: from the drilling/completion split; the legacy *arithmetic* was not ported,
+#: because it inferred days from gaps between WAR reports.
+#:
+#: Temporary and permanent abandonment stay separate. They are different
+#: operational outcomes, and collapsing them would discard the distinction the
+#: legacy code was careful to keep.
+#:
+#: Every code here has ``provenance: unknown`` or ``published_other_domain`` in
+#: ``war_activity_codes.yml`` -- the phase name is our reading of the token, not
+#: a BSEE definition. See #1065.
+#:
+#: .. warning:: Phase columns are **not additive with basis columns**. Under
+#:    ``BASIS_METHOD_1`` completion includes ``TA``, so the same days appear in
+#:    both ``completion_days`` and ``temp_abandonment_days``. Nothing sums them
+#:    internally, and a consumer must not either: they answer different
+#:    questions over the same weeks.
+DEFAULT_PHASES: dict[str, frozenset[str]] = {
+    "sidetrack": frozenset({"ST"}),
+    "temp_abandonment": frozenset({"TA"}),
+    "perm_abandonment": frozenset({"PA"}),
+}
+
+
 def rig_days_by_bore(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
     population: "list[str] | None" = None,
+    phases: "dict[str, frozenset[str]] | None" = None,
 ) -> pd.DataFrame:
     """Rig-days per API12 wellbore.
 
@@ -285,6 +412,8 @@ def rig_days_by_bore(
         activity are emitted with null days and ``days_status`` of
         ``no_war_activity``, so absent coverage is never mistaken for zero.
     """
+    phases = DEFAULT_PHASES if phases is None else phases
+    _reject_colliding_phases(phases)
     prepared = _prepare(war)
     if population is not None:
         # Restrict before grouping: the raw WAR frame spans every well BSEE
@@ -302,32 +431,91 @@ def rig_days_by_bore(
         completion_days, completion_status = _days_and_status(
             group, basis.completion_codes
         )
-        rows.append(
-            {
-                "api12": api12,
-                "api10": api12[:10],
-                "bore_suffix": api12[10:],
-                "drilling_days": drilling_days,
-                "completion_days": completion_days,
-                # pnd_days stays numeric: it is a diagnostic breakdown of the
-                # weeks we do hold, not a claim about the bore's history.
-                "pnd_days": by_code.get("PND", 0),
-                "war_days_total": union_days(zip(group["start"], group["end"])),
-                "war_weeks": int(len(group)),
-                "days_by_code": by_code,
-                "days_status": STATUS_COVERED,
-                "drilling_days_status": drilling_status,
-                "completion_days_status": completion_status,
-            }
-        )
+        row = {
+            "api12": api12,
+            "api10": api12[:10],
+            "bore_suffix": api12[10:],
+            "drilling_days": drilling_days,
+            "completion_days": completion_days,
+            # pnd_days stays numeric: it is a diagnostic breakdown of the
+            # weeks we do hold, not a claim about the bore's history.
+            "pnd_days": by_code.get("PND", 0),
+            "war_days_total": union_days(zip(group["start"], group["end"])),
+            "war_weeks": int(len(group)),
+            "days_by_code": by_code,
+            "days_status": STATUS_COVERED,
+            "drilling_days_status": drilling_status,
+            "completion_days_status": completion_status,
+            "rig_days_by_rig": _days_by_rig(group),
+            "max_drill_fluid_wgt": _max_drill_fluid_wgt(group),
+        }
+        for phase, codes in phases.items():
+            days, status = _days_and_status(group, codes)
+            row[f"{phase}_days"] = days
+            row[f"{phase}_days_status"] = status
+        rows.append(row)
 
-    frame = pd.DataFrame(rows, columns=_BORE_COLUMNS)
+    # Phase columns are configurable, so the schema is built rather than fixed.
+    # Passing a fixed `columns=` list would SILENTLY DROP every phase key --
+    # pd.DataFrame ignores dict keys absent from an explicit column list.
+    columns = list(_BORE_COLUMNS)
+    for phase in phases:
+        columns += [f"{phase}_days", f"{phase}_days_status"]
 
     if population is not None:
-        frame = _apply_population(frame, population)
+        # Build covered and uncovered rows into ONE frame. Concatenating an
+        # all-NA filler frame instead raises a pandas FutureWarning about
+        # dtype determination, and would change dtypes under a later pandas.
+        rows += _absent_rows(rows, population, phases)
+
+    frame = pd.DataFrame(rows, columns=columns)
+    if population is not None:
+        frame = frame.sort_values("api12")
+
+    # Mixing real values with pd.NA leaves an `object` column, so a consumer
+    # gets Python ints from one call and objects from another depending only on
+    # whether any bore was uncovered. Pin the nullable types instead.
+    day_columns = ["drilling_days", "completion_days", "pnd_days", "war_days_total"]
+    day_columns += [f"{phase}_days" for phase in phases]
+    for column in day_columns:
+        frame[column] = frame[column].astype("Int64")
+    frame["max_drill_fluid_wgt"] = frame["max_drill_fluid_wgt"].astype("Float64")
 
     frame["basis"] = basis.describe()
     return frame.reset_index(drop=True)
+
+
+def _absent_rows(rows, population, phases) -> list:
+    """Filler rows for requested bores that WAR says nothing about.
+
+    Null days with ``no_war_activity`` -- absent coverage, never a zero.
+    """
+    present = {r["api12"] for r in rows}
+    absent = sorted(set(normalize_api12(population)) - present)
+
+    filler = []
+    for api12 in absent:
+        row = {
+            "api12": api12,
+            "api10": api12[:10],
+            "bore_suffix": api12[10:],
+            "drilling_days": pd.NA,
+            "completion_days": pd.NA,
+            "pnd_days": pd.NA,
+            "war_days_total": pd.NA,
+            "war_weeks": 0,
+            "days_by_code": {},
+            "days_status": STATUS_NO_ACTIVITY,
+            "drilling_days_status": STATUS_NO_ACTIVITY,
+            "completion_days_status": STATUS_NO_ACTIVITY,
+            "rig_days_by_rig": {},
+            "max_drill_fluid_wgt": pd.NA,
+        }
+        for phase in phases:
+            row[f"{phase}_days"] = pd.NA
+            row[f"{phase}_days_status"] = STATUS_NO_ACTIVITY
+        filler.append(row)
+    return filler
 
 
 _BORE_COLUMNS = [
@@ -343,37 +531,17 @@ _BORE_COLUMNS = [
     "days_status",
     "drilling_days_status",
     "completion_days_status",
+    "rig_days_by_rig",
+    "max_drill_fluid_wgt",
 ]
 
 _DAY_COLUMNS = ("drilling_days", "completion_days", "pnd_days", "war_days_total")
 
 
-def _apply_population(frame: pd.DataFrame, population) -> pd.DataFrame:
-    wanted = list(normalize_api12(population))
-    frame = frame[frame["api12"].isin(set(wanted))]
-
-    absent = sorted(set(wanted) - set(frame["api12"]))
-    if not absent:
-        return frame
-
-    filler = pd.DataFrame(
-        {
-            "api12": absent,
-            "api10": [a[:10] for a in absent],
-            "bore_suffix": [a[10:] for a in absent],
-            "drilling_days": pd.NA,
-            "completion_days": pd.NA,
-            "pnd_days": pd.NA,
-            "war_days_total": pd.NA,
-            "war_weeks": 0,
-            "days_by_code": [{} for _ in absent],
-            "days_status": STATUS_NO_ACTIVITY,
-            "drilling_days_status": STATUS_NO_ACTIVITY,
-            "completion_days_status": STATUS_NO_ACTIVITY,
-        },
-        columns=_BORE_COLUMNS,
-    )
-    return pd.concat([frame, filler], ignore_index=True).sort_values("api12")
+# _apply_population() lived here. Superseded by _absent_rows(), which builds
+# covered and uncovered bores into a single frame instead of concatenating an
+# all-NA filler -- that concat raised a pandas FutureWarning and would have
+# changed result dtypes on a later pandas.
 
 
 def rig_days_by_well(
