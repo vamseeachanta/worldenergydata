@@ -140,7 +140,8 @@ codes:
       42.6%, PA 50.1%), the longest median remark of any code (923 chars), the
       highest BOP rate (53.9%), and the deepest mean DRILLING_MD (16,622 ft,
       highest of all twelve). DSI/TA/PA own the SUSPEND / NO ACTIVITY language;
-      PND does not. Young code — 0% before 2001, ramping from 2002 (eWell era).
+      PND does not. Comparatively young: first WAR week 1999, against 1988-1997
+      for the codes that predate the eWell era.
       Median run of 1 week, sits mid-drilling (mean position 0.39), opens 2,135 wells.
     impact: >-
       Materially moves published economics. If PND is active rig time, excluding
@@ -181,7 +182,7 @@ codes:
   - code: null
     label: null
     provenance: unknown
-    evidence: "882 rows, all 1997-2001 — pre-eWell."
+    evidence: "882 rows spanning WAR weeks 1997-2002; 581 wellbores."
     role: unknown
 
 # Codes whose meaning must be obtained from BSEE before any basis relying on them
