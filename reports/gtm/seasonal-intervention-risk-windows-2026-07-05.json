@@ -7,7 +7,7 @@
       416
     ],
     "title": "Seasonal intervention risk windows \u2014 hurricane season x WAR x operations",
-    "generated_at": "2026-07-06T02:37:46Z",
+    "generated_at": "2026-07-29T13:47:20Z",
     "date": "2026-07-05",
     "descriptive_only": true,
     "statistical_significance_claimed": false
@@ -199,16 +199,22 @@
       "ST": 1
     },
     "activity_meaning": {
-      "DRL": "Drilling",
-      "COM": "Completion",
-      "PA": "Plug & abandon (P&A)",
-      "TA": "Temporary abandonment",
-      "PND": "Pending / sidetrack-bypass",
-      "WO": "Workover",
-      "RC": "Recompletion",
-      "ST": "Sidetrack",
-      "BP": "Bypass"
+      "DRL": "Drilling Active",
+      "COM": "Borehole Completed",
+      "TA": "Temporarily Abandoned",
+      "PA": "Permanently Abandoned",
+      "ST": "Borehole Side Tracked",
+      "DSI": "Drilling Suspended"
     },
+    "activity_meaning_provenance": "BSEE wording for BOREHOLE_STAT_CD, a different published domain; its reuse as a WAR activity code is our inference, not a BSEE statement. BSEE publishes no WELL_ACTIVITY_CD domain (#1065).",
+    "activity_undocumented": [
+      "WO",
+      "CHZ",
+      "PND",
+      "MPF",
+      "REC",
+      "TBK"
+    ],
     "activity_season_split": {
       "PA": {
         "in_season": 11,

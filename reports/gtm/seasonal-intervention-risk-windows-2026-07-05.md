@@ -61,16 +61,16 @@
 
 | Activity | Meaning | In season | Off season | Total |
 |---|---|---:|---:|---:|
-| `COM` | Completion | 21 | 33 | 54 |
-| `DRL` | Drilling | 28 | 22 | 50 |
-| `PA` | Plug & abandon (P&A) | 11 | 10 | 21 |
-| `TA` | Temporary abandonment | 2 | 16 | 18 |
-| `PND` | Pending / sidetrack-bypass | 0 | 12 | 12 |
+| `COM` | Borehole Completed | 21 | 33 | 54 |
+| `DRL` | Drilling Active | 28 | 22 | 50 |
+| `PA` | Permanently Abandoned | 11 | 10 | 21 |
+| `TA` | Temporarily Abandoned | 2 | 16 | 18 |
+| `PND` |  | 0 | 12 | 12 |
 | `CHZ` |  | 8 | 3 | 11 |
-| `WO` | Workover | 0 | 6 | 6 |
+| `WO` |  | 0 | 6 | 6 |
 | `REC` |  | 1 | 2 | 3 |
 | `(blank)` |  | 0 | 1 | 1 |
-| `ST` | Sidetrack | 0 | 1 | 1 |
+| `ST` | Borehole Side Tracked | 0 | 1 | 1 |
 
 ## Lower-risk operating windows (read-through)
 
@@ -105,4 +105,4 @@ PYTHONPATH=src python3 reports/gtm/seasonal_intervention_risk_windows.py
 ```
 Deterministic: emits the `.json` sidecar (all figures), this `.md`, and the `.html`. Every number above is in the JSON.
 
-*Generated 2026-07-06T02:37:46Z · data as of 2026-07-05 · aggregate-only.*
+*Generated 2026-07-29T13:47:20Z · data as of 2026-07-05 · aggregate-only.*
