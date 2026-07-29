@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BSEE WAR Activity Codes &mdash; Published, Inferred, Unknown</title>
+<style>
+  :root {
+    --bg: #eaeff2; --surface: #ffffff; --surface-2: #f3f7f9;
+    --ink: #0e2733; --ink-soft: #48606b; --ink-faint: #7c929c;
+    --line: #d8e3e8; --line-strong: #c3d3da;
+    --accent: #0e7c8b; --accent-strong: #0a5f6c; --accent-wash: #e2f0f2;
+    --ok: #2e8b6f; --ok-wash: #e2f1ec; --warn: #b3781a; --warn-wash: #f6ecdb;
+    --bad: #b4544a; --bad-wash: #f6e5e3; --hold: #647680; --hold-wash: #eaeef0;
+    --shadow: 0 1px 2px rgba(14,39,51,.06), 0 8px 24px -12px rgba(14,39,51,.18);
+    --radius: 14px;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #081820; --surface: #0e2732; --surface-2: #12303c;
+      --ink: #e6eef1; --ink-soft: #9fb4bd; --ink-faint: #6b8290;
+      --line: #1e3a47; --line-strong: #274653;
+      --accent: #3fbfd0; --accent-strong: #6fd4e2; --accent-wash: #10323d;
+      --ok: #4fc79f; --ok-wash: #10322a; --warn: #e0a94a; --warn-wash: #33280f;
+      --bad: #e08078; --bad-wash: #351c1a; --hold: #8ea4ae; --hold-wash: #17272f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eaeff2; --surface: #ffffff; --surface-2: #f3f7f9;
+    --ink: #0e2733; --ink-soft: #48606b; --ink-faint: #7c929c;
+    --line: #d8e3e8; --line-strong: #c3d3da;
+    --accent: #0e7c8b; --accent-strong: #0a5f6c; --accent-wash: #e2f0f2;
+    --ok: #2e8b6f; --ok-wash: #e2f1ec; --warn: #b3781a; --warn-wash: #f6ecdb;
+    --bad: #b4544a; --bad-wash: #f6e5e3; --hold: #647680; --hold-wash: #eaeef0;
+    --shadow: 0 1px 2px rgba(14,39,51,.06), 0 8px 24px -12px rgba(14,39,51,.18);
+  }
+  :root[data-theme="dark"] {
+    --bg: #081820; --surface: #0e2732; --surface-2: #12303c;
+    --ink: #e6eef1; --ink-soft: #9fb4bd; --ink-faint: #6b8290;
+    --line: #1e3a47; --line-strong: #274653;
+    --accent: #3fbfd0; --accent-strong: #6fd4e2; --accent-wash: #10323d;
+    --ok: #4fc79f; --ok-wash: #10322a; --warn: #e0a94a; --warn-wash: #33280f;
+    --bad: #e08078; --bad-wash: #351c1a; --hold: #8ea4ae; --hold-wash: #17272f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: .7rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0;
+  }
+
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+  }
+  .site-inner { display: flex; align-items: center; gap: 20px; height: 60px; }
+  .wordmark { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+  .wordmark .glyph { width: 22px; height: 22px; flex: none; }
+  nav.capability { margin-left: auto; display: flex; gap: 2px; flex-wrap: wrap; align-items: center; }
+  nav.capability a {
+    font-family: var(--mono); font-size: .78rem; text-decoration: none;
+    color: var(--ink-soft); padding: 6px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  nav.capability a:hover { background: var(--surface-2); color: var(--ink); }
+  nav.capability a.active { background: var(--accent-wash); color: var(--accent-strong); font-weight: 600; }
+  nav.capability a.ext::after { content: " \2197"; color: var(--ink-faint); }
+  nav.capability a:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .crumb { font-family: var(--mono); font-size: .74rem; color: var(--ink-faint); padding: 18px 0 0; }
+  .crumb a { text-decoration: none; }
+  .crumb a:hover { color: var(--accent); }
+  .crumb .sep { padding: 0 8px; opacity: .6; }
+
+  .hero { padding: 22px 0 30px; }
+  .hero h1 {
+    font-size: clamp(2.1rem, 5vw, 3.05rem); line-height: 1.05;
+    letter-spacing: -.025em; margin: 12px 0 14px; text-wrap: balance; font-weight: 700;
+  }
+  .hero .lede { font-size: 1.14rem; color: var(--ink-soft); max-width: 64ch; margin: 0 0 20px; }
+  .disposition {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--bad-wash); color: var(--bad);
+    border: 1px solid color-mix(in srgb, var(--bad) 32%, transparent);
+    border-radius: 999px; padding: 7px 15px 7px 12px;
+    font-family: var(--mono); font-size: .78rem; font-weight: 600;
+  }
+  .disposition .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 20%, transparent); }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 22px; }
+  .facts div { font-size: .86rem; color: var(--ink-soft); }
+  .facts span { font-family: var(--mono); color: var(--ink); }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 40px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 16px 14px; box-shadow: var(--shadow);
+  }
+  .tile .k { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
+  .tile .v { font-size: 1.72rem; font-weight: 700; letter-spacing: -.02em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .tile .v small { font-size: .9rem; font-weight: 600; color: var(--ink-soft); margin-left: 2px; }
+  .tile .sub { font-size: .78rem; color: var(--ink-soft); margin-top: 2px; }
+  .tile .v.ok { color: var(--ok); } .tile .v.accent { color: var(--accent); }
+  .tile .v.warn { color: var(--warn); } .tile .v.bad { color: var(--bad); }
+  .tile .v.hold { color: var(--hold); }
+
+  .sec { margin: 46px 0 0; scroll-margin-top: 76px; }
+  .sec-head h2 { font-size: 1.5rem; letter-spacing: -.02em; margin: 6px 0 4px; }
+  .sec-note { font-size: .92rem; color: var(--ink-soft); max-width: 74ch; margin: 0 0 20px; }
+  .sec p { font-size: .94rem; color: var(--ink-soft); max-width: 74ch; }
+  .sec p strong, .sec li strong { color: var(--ink); }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 20px 22px; box-shadow: var(--shadow); margin: 18px 0;
+  }
+  .panel h3 { margin: 0 0 6px; font-size: 1.05rem; letter-spacing: -.01em; }
+  .panel p { margin: 6px 0 0; font-size: .9rem; color: var(--ink-soft); max-width: 74ch; }
+  .panel ul { margin: 8px 0 0; padding-left: 18px; }
+  .panel li { font-size: .9rem; color: var(--ink-soft); margin-bottom: 6px; }
+
+  /* --- the three provenance tiers ------------------------------------- */
+  .tierkey { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 8px 0 8px; }
+  .tk { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  .tk::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+  .tk.pub::before { background: var(--accent); }
+  .tk.inf::before { background: repeating-linear-gradient(180deg, var(--warn) 0 6px, transparent 6px 10px); }
+  .tk.unk::before { background: repeating-linear-gradient(180deg, var(--hold) 0 3px, transparent 3px 9px); opacity: .8; }
+  .tk.unk { background: var(--surface-2); border-style: dashed; }
+  .tk h4 { margin: 0 0 4px; font-size: .98rem; letter-spacing: -.01em; }
+  .tk .n { font-family: var(--mono); font-size: 1.5rem; font-weight: 700; letter-spacing: -.02em; }
+  .tk.pub .n { color: var(--accent); } .tk.inf .n { color: var(--warn); } .tk.unk .n { color: var(--hold); }
+  .tk p { margin: 6px 0 0; font-size: .84rem; color: var(--ink-soft); }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); margin: 16px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); background: var(--surface-2); white-space: nowrap; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+  td.wrap-cell { min-width: 26ch; color: var(--ink-soft); font-size: .82rem; }
+  td.code { white-space: nowrap; font-family: var(--mono); font-weight: 700; }
+  tbody tr:last-child td { border-bottom: none; }
+  code { font-family: var(--mono); font-size: .84em; }
+
+  tr.tierhead td { background: var(--surface-2); padding: 12px; }
+  tr.tierhead .th-t { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; }
+  tr.tierhead .th-r { font-size: .82rem; color: var(--ink-soft); margin-top: 2px; max-width: 92ch; }
+  tr.t-pub .th-t, tr.t-pub td.code { color: var(--accent-strong); }
+  tr.t-inf .th-t { color: var(--warn); }
+  tr.t-unk .th-t { color: var(--hold); }
+
+  tr.t-pub td:first-child { border-left: 4px solid var(--accent); }
+  tr.t-inf td:first-child { border-left: 4px dashed var(--warn); }
+  tr.t-unk td:first-child { border-left: 4px dotted var(--hold); }
+  tr.t-unk { background: color-mix(in srgb, var(--hold-wash) 55%, transparent); }
+  tr.t-unk td.meaning {
+    background: repeating-linear-gradient(45deg,
+      transparent 0 6px,
+      color-mix(in srgb, var(--hold) 14%, transparent) 6px 12px);
+  }
+  td.meaning .lbl { font-weight: 600; color: var(--ink); }
+  td.meaning .forfield { display: block; font-family: var(--mono); font-size: .68rem; color: var(--ink-faint); margin-top: 2px; }
+  td.meaning { min-width: 20ch; }
+  .never { display: block; font-size: .72rem; color: var(--ink-faint); margin-top: 4px; font-style: italic; }
+  .settle { display: block; margin-top: 6px; font-family: var(--mono); font-size: .72rem; color: var(--accent-strong); }
+  .settle.none { color: var(--ink-faint); font-style: italic; }
+
+  .badge {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; text-transform: uppercase;
+    padding: 4px 9px; border-radius: 999px; font-weight: 600; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent;
+  }
+  .badge .d { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.ok { color: var(--ok); background: var(--ok-wash); border-color: color-mix(in srgb, var(--ok) 26%, transparent); }
+  .badge.warn { color: var(--warn); background: var(--warn-wash); border-color: color-mix(in srgb, var(--warn) 26%, transparent); }
+  .badge.bad { color: var(--bad); background: var(--bad-wash); border-color: color-mix(in srgb, var(--bad) 26%, transparent); }
+  .badge.hold { color: var(--hold); background: var(--hold-wash); border-color: color-mix(in srgb, var(--hold) 26%, transparent); }
+  .badge.idx { color: var(--accent-strong); background: var(--accent-wash); border-color: color-mix(in srgb, var(--accent) 26%, transparent); }
+
+  .callout { border-left: 3px solid var(--warn); background: var(--warn-wash); border-radius: 0 10px 10px 0; padding: 14px 18px; margin: 18px 0; }
+  .callout.bad { border-left-color: var(--bad); background: var(--bad-wash); }
+  .callout.ok { border-left-color: var(--ok); background: var(--ok-wash); }
+  .callout.hold { border-left-color: var(--hold); background: var(--hold-wash); }
+  .callout p { margin: 0; font-size: .9rem; color: var(--ink); max-width: none; }
+  .callout p + p { margin-top: 8px; }
+
+  .inference-box {
+    border: 2px dashed color-mix(in srgb, var(--bad) 45%, transparent);
+    background: var(--bad-wash); border-radius: var(--radius);
+    padding: 16px 18px; margin: 18px 0;
+  }
+  .inference-box .stamp {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
+    text-transform: uppercase; font-weight: 700; color: var(--bad);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .inference-box p { margin: 8px 0 0; font-size: .9rem; color: var(--ink); max-width: none; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 22px 0 0; padding: 16px 18px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; }
+  .legend .item { display: flex; align-items: center; gap: 8px; font-size: .82rem; color: var(--ink-soft); }
+  .legend .sw { width: 10px; height: 10px; border-radius: 3px; }
+  .legend .sw.hatch { background: repeating-linear-gradient(45deg, transparent 0 3px, var(--hold) 3px 6px); border: 1px solid var(--hold); }
+
+  footer.site { margin: 56px 0 40px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .84rem; }
+  footer.site .row { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; justify-content: space-between; }
+  footer.site a { color: var(--accent); text-decoration: none; }
+  footer.site a:hover { text-decoration: underline; }
+  .note { margin-top: 14px; font-size: .78rem; color: var(--ink-faint); font-family: var(--mono); }
+
+  @media (max-width: 900px) { .tiles { grid-template-columns: repeat(2, 1fr); } .tierkey { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { nav.capability { display: none; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="site">
+  <div class="wrap site-inner">
+    <span class="wordmark"><svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="21" height="21" rx="4" stroke="var(--accent)" stroke-width="1.6"/><path d="M2 14c2.6 0 2.6-3 5.2-3s2.6 3 5.2 3 2.6-3 5.2-3 2.6 3 4.2 3" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M2 18c2.6 0 2.6-2 5.2-2s2.6 2 5.2 2 2.6-2 5.2-2 2.6 2 4.2 2" stroke="var(--accent)" stroke-width="1.2" fill="none" stroke-linecap="round" opacity=".5"/></svg>AceEngineer</span>
+    <nav class="capability" aria-label="WAR activity-code definitions navigation">
+      <a href="#" class="active">Activity codes</a>
+      <a href="wo-april-2026-qaqc-hub.html">QA/QC hub</a>
+      <a href="roy-rig-days-validation.html">Basis</a>
+      <a href="wo-april-2026-validation.html">Matrix</a>
+      <a href="https://github.com/vamseeachanta/worldenergydata/issues/1065" class="ext">#1065</a>
+      <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml" class="ext">Definitions YAML</a>
+    </nav>
+  </div>
+</header>
+<div class="wrap">
+<div class="crumb"><a href="index.html">Reports</a><span class="sep">&#9656;</span><a href="wo-april-2026-qaqc-hub.html">D&amp;C Days QA/QC</a><span class="sep">&#9656;</span><span>WAR activity codes</span></div>
+<section class="hero">
+  <p class="eyebrow">BSEE <code>WELL_ACTIVITY_CD</code> &middot; issue #1065 &middot;
+  WAR vintage 2026-02-19</p>
+  <h1>BSEE publishes no <code>WELL_ACTIVITY_CD</code> domain at all.</h1>
+  <p class="lede">Every drilling-day number this repository publishes rests on a
+  twelve-value activity code in BSEE's Well Activity Reports. <strong>Not one of those
+  twelve values has a published definition for this field.</strong> This page states,
+  code by code, what BSEE actually publishes, what we inferred, and what nobody knows
+  &mdash; and links each claim to its source so you can check it rather than trust it.</p>
+  <span class="disposition"><span class="dot"></span>0 of 12 codes defined by
+  BSEE for <code>WELL_ACTIVITY_CD</code></span>
+  <div class="facts">
+    <div>Field <span>WELL_ACTIVITY_CD</span></div>
+    <div>Table <span>mv_war_main_prop</span></div>
+    <div>Rows <span>361,756</span></div>
+    <div>Surfaces checked <span>5 &middot; all negative</span></div>
+    <div>Retrieved <span>2026-07-28</span></div>
+  </div>
+</section>
+<section class="tiles" aria-label="Provenance at a glance">
+  <div class="tile"><div class="k">Published for this field</div>
+    <div class="v bad">0<small>/12</small></div>
+    <div class="sub">no BSEE domain exists for <code>WELL_ACTIVITY_CD</code></div></div>
+  <div class="tile"><div class="k">Reuse inferred</div>
+    <div class="v warn">6</div>
+    <div class="sub">published for <code>BOREHOLE_STAT_CD</code>; the reuse is ours</div></div>
+  <div class="tile"><div class="k">Unknown</div>
+    <div class="v hold">6</div>
+    <div class="sub">no meaning published, so none shown &mdash; plus 882 rows
+    carrying no code at all</div></div>
+  <div class="tile"><div class="k">Rows on an unknown code</div>
+    <div class="v bad">16.1<small>%</small></div>
+    <div class="sub">58,229 of 361,756 wellbore-weeks</div></div>
+</section>
+<section class="sec" id="how-to-read">
+  <div class="sec-head"><p class="eyebrow">How to read this page</p>
+  <h2>Three tiers, and they are not interchangeable</h2></div>
+  <p class="sec-note">Every statement on this page sits in exactly one of three tiers.
+  The tier is carried by colour, by border style and by the words on the row &mdash; a
+  reader who only skims should still never mistake an inference for a published fact.</p>
+  <div class="tierkey">
+    <div class="tk pub">
+      <p class="eyebrow" style="color:var(--accent-strong)">Tier 1 &middot; solid teal</p>
+      <h4>Published by BSEE</h4>
+      <div class="n">12</div>
+      <p>BSEE's own words, for <code>BOREHOLE_STAT_CD</code>, quoted verbatim from its
+      field-values page. This is the only definitional material BSEE publishes anywhere
+      near this data.</p>
+    </div>
+    <div class="tk inf">
+      <p class="eyebrow" style="color:var(--warn)">Tier 2 &middot; dashed amber</p>
+      <h4>Reuse inferred</h4>
+      <div class="n">6</div>
+      <p>The token is published &mdash; for a different field. Reading it the same way in
+      <code>WELL_ACTIVITY_CD</code> is <strong>our inference</strong>, corroborated by
+      remark text and shown on every row. BSEE has never confirmed it.</p>
+    </div>
+    <div class="tk unk">
+      <p class="eyebrow" style="color:var(--hold)">Tier 3 &middot; dotted grey, hatched</p>
+      <h4>Unknown</h4>
+      <div class="n">6</div>
+      <p>BSEE publishes nothing. The meaning cell is hatched and empty on purpose. You get
+      the observed evidence and what would settle it &mdash; never a guess dressed as a
+      definition. A thirteenth row covers the 882 wellbore-weeks that carry no
+      code at all.</p>
+    </div>
+  </div>
+</section>
+<section class="sec" id="negative">
+  <div class="sec-head"><p class="eyebrow">1 &middot; The headline, made auditable</p>
+  <h2>Where we looked for a published domain, and what we found</h2></div>
+  <p class="sec-note">&ldquo;BSEE publishes nothing&rdquo; is a claim about absence, and
+  absence is only credible if you can see where somebody looked. These are the
+  5 surfaces checked on 2026-07-28. Each links to the
+  surface itself, so the negative result is reproducible in a browser rather than taken on
+  trust.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Surface checked</th><th>What it turned out to be</th><th>Go and check</th></tr></thead><tbody>
+<tr><td><strong>eWell WAR Field Definitions</strong></td><td class="wrap-cell">23 rows, SN_WAR through BOTM_BLOCK_NUM. WELL_ACTIVITY_CD absent.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=eWellWARFields">open &#8599;</a></td></tr>
+<tr><td><strong>eWellWARRawData.zip</strong></td><td class="wrap-cell">8 .txt data members, no readme, no layout, no code table.</td><td><a href="https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip">open &#8599;</a></td></tr>
+<tr><td><strong>Form BSEE-0133 (Well Activity Report)</strong></td><td class="wrap-cell">STATUS column carries no legend; no instruction sheet enumerates codes.</td><td><a href="https://www.bsee.gov/sites/bsee.gov/files/form-0133-exp-2017.pdf">open &#8599;</a></td></tr>
+<tr><td><strong>30 CFR 250.743</strong></td><td class="wrap-cell">Prescribes narrative content and weekly cadence; no code vocabulary.</td><td><a href="https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-G/subject-group-ECFRa4d25de54b283e6/section-250.743">open &#8599;</a></td></tr>
+<tr><td><strong>ONRR Appendix H</strong></td><td class="wrap-cell">Different domain — reuses DRL/DSI/TA with OGOR-A production-month meanings; no PND.</td><td><a href="https://onrr.gov/document/MPRH-Appendix-H.pdf">open &#8599;</a></td></tr>
+<tr><td colspan="3" style="background:var(--bad-wash);color:var(--bad);font-weight:600">Result on every surface: no <code>WELL_ACTIVITY_CD</code> domain. 5 of 5 negative.</td></tr>
+</tbody></table></div>
+  <p><code>WELL_ACTIVITY_CD</code> exists only inside the raw dump
+  (<code>mv_war_main_prop</code>). BSEE ships no layout file, no readme and no
+  code table with it, and the field is absent from the eWell WAR field-definitions grid
+  that documents its 23 siblings. It is an undocumented internal column exposed by a raw
+  data release &mdash; which is not a criticism of BSEE, but it is a fact every consumer
+  of these numbers needs to know.</p>
+</section>
+<section class="sec" id="published">
+  <div class="sec-head"><p class="eyebrow">2 &middot; Tier 1</p>
+  <h2>What BSEE <em>does</em> publish: <code>BOREHOLE_STAT_CD</code></h2></div>
+  <p class="sec-note">One relevant domain is published, at
+  <a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">data.bsee.gov borehole field values &#8599;</a>. It is a
+  <strong>borehole status</strong> list, not an activity list, and this repository
+  previously carried it in a directory named for the WAR field &mdash; which is how a
+  borehole-status table came to be presented as the WAR activity vocabulary.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Code</th><th>BSEE's definition, verbatim</th><th>Appears in WAR?</th></tr></thead><tbody>
+<tr class="t-pub"><td class="code">APD</td><td class="wrap-cell" style="color:var(--ink)">Application for permit to drill</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+<tr class="t-pub"><td class="code">AST</td><td class="wrap-cell" style="color:var(--ink)">Approved Sidetrack</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+<tr class="t-pub"><td class="code">BP</td><td class="wrap-cell" style="color:var(--ink)">Bypass</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+<tr class="t-pub"><td class="code">CNL</td><td class="wrap-cell" style="color:var(--ink)">Borehole is cancelled. The request to drill the well is cancelled after the APD or sundry has been approved</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+<tr class="t-pub"><td class="code">COM</td><td class="wrap-cell" style="color:var(--ink)">Borehole Completed</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">CT</td><td class="wrap-cell" style="color:var(--ink)">Core Test Well</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+<tr class="t-pub"><td class="code">DRL</td><td class="wrap-cell" style="color:var(--ink)">Drilling Active</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">DSI</td><td class="wrap-cell" style="color:var(--ink)">Drilling Suspended</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">PA</td><td class="wrap-cell" style="color:var(--ink)">Permanently Abandoned</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">ST</td><td class="wrap-cell" style="color:var(--ink)">Borehole Side Tracked</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">TA</td><td class="wrap-cell" style="color:var(--ink)">Temporarily Abandoned</td><td><span class="badge warn"><span class="d"></span>yes &mdash; reuse inferred</span></td></tr>
+<tr class="t-pub"><td class="code">VCW</td><td class="wrap-cell" style="color:var(--ink)">Volume Chamber Well</td><td><span class="badge hold"><span class="d"></span>never</span></td></tr>
+</tbody></table></div>
+  <div class="callout">
+    <p><strong>This is a BOREHOLE STATUS domain, not an activity domain. Six WELL_ACTIVITY_CD tokens (WO, CHZ, PND, MPF, REC, TBK) do not appear in it at all, and six published borehole codes never appear in WAR.</strong></p>
+    <p>The six that never appear in WAR are
+    <code>APD</code>, <code>AST</code>, <code>BP</code>, <code>CNL</code>, <code>CT</code>, <code>VCW</code>. The six WAR tokens absent
+    from this list are
+    <code>WO</code>, <code>PND</code>, <code>CHZ</code>, <code>MPF</code>, <code>REC</code>, <code>TBK</code>. Half the
+    observed WAR vocabulary is outside the borehole-status domain entirely: they are
+    related domains, not the same domain, and the published list must not be presented as
+    the WAR list.</p>
+  </div>
+</section>
+<section class="sec" id="codes">
+  <div class="sec-head"><p class="eyebrow">3 &middot; Tiers 2 and 3</p>
+  <h2>The 12 codes observed in <code>WELL_ACTIVITY_CD</code></h2></div>
+  <p class="sec-note">Frequencies are the whole corpus &mdash; 361,756 wellbore-week
+  rows of <code>mv_war_main_prop</code>, WAR vintage 2026-02-19,
+  recomputed by this page's generator and cached at
+  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/reports/lower_tertiary/data/war_activity_code_frequency.csv"><code>war_activity_code_frequency.csv</code></a>. Every row links to its line in the definitions
+  artifact. A blank-code row is included because 882 rows carry no value at all.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Code</th><th>Meaning for <code>WELL_ACTIVITY_CD</code></th><th class="num">Rows</th><th class="num">% of rows</th><th class="num">Wellbores</th><th>Observed evidence</th><th>Source</th></tr></thead><tbody>
+<tr class="tierhead t-inf"><td colspan="7"><div class="th-t">Reuse inferred — the token is published, but for a different field &middot; 6 codes</div><div class="th-r">BSEE defines these six tokens for BOREHOLE_STAT_CD. That WELL_ACTIVITY_CD reuses them with the same meaning is our reading of the evidence, not a BSEE statement.</div></td></tr>
+<tr class="t-inf"><td class="code"><code>TA</code></td><td class="meaning"><span class="lbl">Temporarily Abandoned</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">102,889</td><td class="num">28.44%</td><td class="num">13,661</td><td class="wrap-cell">39.7% &#x27;NO ACTIVITY&#x27;; 42.6% carry no rig name.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L64"><code>war_activity_codes.yml:64</code></a></td></tr>
+<tr class="t-inf"><td class="code"><code>PA</code></td><td class="meaning"><span class="lbl">Permanently Abandoned</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">88,805</td><td class="num">24.55%</td><td class="num">15,728</td><td class="wrap-cell">40.3% &#x27;NO ACTIVITY&#x27;, 4.3% &#x27;P&amp;A&#x27;; 50.1% carry no rig name.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L72"><code>war_activity_codes.yml:72</code></a></td></tr>
+<tr class="t-inf"><td class="code"><code>DRL</code></td><td class="meaning"><span class="lbl">Drilling Active</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">56,345</td><td class="num">15.58%</td><td class="num">12,376</td><td class="wrap-cell">69.8% of DRL remarks contain &#x27;DRILL&#x27;; 0.7% lack a rig name.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L48"><code>war_activity_codes.yml:48</code></a></td></tr>
+<tr class="t-inf"><td class="code"><code>COM</code></td><td class="meaning"><span class="lbl">Borehole Completed</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">46,010</td><td class="num">12.72%</td><td class="num">9,685</td><td class="wrap-cell">24.5% &#x27;COMPLET&#x27;, 9.8% &#x27;FRAC&#x27;, 7.5% &#x27;GRAVEL PACK&#x27; — highest of any code.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L56"><code>war_activity_codes.yml:56</code></a></td></tr>
+<tr class="t-inf"><td class="code"><code>ST</code></td><td class="meaning"><span class="lbl">Borehole Side Tracked</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">6,416</td><td class="num">1.77%</td><td class="num">5,907</td><td class="wrap-cell">17.7% &#x27;SIDETRACK&#x27; — 6x any other code; 80% occur at the end of a well&#x27;s sequence.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L80"><code>war_activity_codes.yml:80</code></a></td></tr>
+<tr class="t-inf"><td class="code"><code>DSI</code></td><td class="meaning"><span class="lbl">Drilling Suspended</span><span class="forfield">BSEE wording, for <code>BOREHOLE_STAT_CD</code></span></td><td class="num">2,180</td><td class="num">0.60%</td><td class="num">665</td><td class="wrap-cell">32.3% &#x27;SUSPEND&#x27;, 7.3% &#x27;NO OPERATION&#x27; — both highest of any code.</td><td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">boreholeFields &#8599;</a><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L88"><code>war_activity_codes.yml:88</code></a></td></tr>
+<tr class="tierhead t-unk"><td colspan="7"><div class="th-t">Unknown — BSEE publishes nothing, so this page shows no meaning &middot; 6 codes + 1 blank-code row</div><div class="th-r">No BSEE domain contains these tokens. The meaning column is empty by design — filling it in is what created #1065.</div></td></tr>
+<tr class="t-unk"><td class="code"><code>WO</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">26,150</td><td class="num">7.23%</td><td class="num">4,844</td><td class="wrap-cell">26.3% &#x27;TUBING&#x27;, 19.5% &#x27;PRODUC&#x27;, 8.1% &#x27;COIL&#x27;. BSEE&#x27;s APM primary-op list has a WORKOVER value, but not this token. <span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L98"><code>war_activity_codes.yml:98</code></a></td></tr>
+<tr class="t-unk"><td class="code"><code>CHZ</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">19,822</td><td class="num">5.48%</td><td class="num">3,139</td><td class="wrap-cell"><span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L130"><code>war_activity_codes.yml:130</code></a></td></tr>
+<tr class="t-unk"><td class="code"><code>PND</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">8,826</td><td class="num">2.44%</td><td class="num">3,815</td><td class="wrap-cell">PND weeks are the busiest in the file: only 6.1% lack a rig name (vs TA 42.6%, PA 50.1%), the longest median remark of any code (923 chars), the highest BOP rate (53.9%), and the deepest mean DRILLING_MD (16,622 ft, highest of all twelve). DSI/TA/PA own the SUSPEND / NO ACTIVITY language; PND does not. Young code — 0% before 2001, ramping from 2002 (eWell era). Median run of 1 week, sits mid-drilling (mean position 0.39), opens 2,135 wells. <span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L105"><code>war_activity_codes.yml:105</code></a></td></tr>
+<tr class="t-unk"><td class="code"><code>MPF</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">2,212</td><td class="num">0.61%</td><td class="num">597</td><td class="wrap-cell"><span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L135"><code>war_activity_codes.yml:135</code></a></td></tr>
+<tr class="t-unk"><td class="code"><code>REC</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">1,028</td><td class="num">0.28%</td><td class="num">307</td><td class="wrap-cell"><span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L140"><code>war_activity_codes.yml:140</code></a></td></tr>
+<tr class="t-unk"><td class="code"><em>(blank)</em></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">882</td><td class="num">0.24%</td><td class="num">581</td><td class="wrap-cell">882 rows, all 1997-2001 — pre-eWell. <span class="settle none">no token was filed &mdash; nothing to define</span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L151"><code>war_activity_codes.yml:151</code></a></td></tr>
+<tr class="t-unk"><td class="code"><code>TBK</code></td><td class="meaning"><span class="badge hold"><span class="d"></span>no meaning published</span><span class="never">nothing published &mdash; nothing shown</span></td><td class="num">191</td><td class="num">0.05%</td><td class="num">64</td><td class="wrap-cell"><span class="settle"><a href="#ask">BSEE TDM would settle it &#8595;</a></span></td><td><span style="color:var(--ink-faint)">no BSEE source</span><br><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L146"><code>war_activity_codes.yml:146</code></a></td></tr>
+</tbody></table></div>
+  <div class="legend" aria-label="Provenance legend">
+    <span class="eyebrow" style="align-self:center">Provenance</span>
+    <span class="item"><span class="sw" style="background:var(--accent)"></span>Published by BSEE &mdash; solid teal rule</span>
+    <span class="item"><span class="sw" style="background:var(--warn)"></span>Reuse inferred &mdash; dashed amber rule, on every row</span>
+    <span class="item"><span class="sw hatch"></span>Unknown &mdash; dotted grey rule, hatched meaning cell, no meaning shown</span>
+  </div>
+</section>
+<section class="sec" id="pnd">
+  <div class="sec-head"><p class="eyebrow">4 &middot; The one that moves published economics</p>
+  <h2><code>PND</code> &mdash; everything we have, and no definition</h2></div>
+  <p class="sec-note">PND is 2.44% of all WAR wellbore-weeks and touches
+  3,815 wellbores. It is the only undocumented code whose treatment
+  changes numbers we publish, so it gets its own section &mdash; and that section still
+  does not tell you what it means, because <strong>BSEE has not said</strong>.</p>
+
+  <div class="panel">
+    <h3>Observed evidence</h3>
+    <p>PND weeks are the busiest in the file: only 6.1% lack a rig name (vs TA 42.6%, PA 50.1%), the longest median remark of any code (923 chars), the highest BOP rate (53.9%), and the deepest mean DRILLING_MD (16,622 ft, highest of all twelve). DSI/TA/PA own the SUSPEND / NO ACTIVITY language; PND does not. Young code — 0% before 2001, ramping from 2002 (eWell era). Median run of 1 week, sits mid-drilling (mean position 0.39), opens 2,135 wells.</p>
+  </div>
+  <div class="panel">
+    <h3>Why it matters to published numbers</h3>
+    <p>Materially moves published economics. If PND is active rig time, excluding it from completion understates. PND = 4,713 days against COM&#x27;s 5,298 on the published 253-bore population.</p>
+  </div>
+  <div class="panel">
+    <h3>How often it actually occurs</h3>
+    <p>2.44% of all WAR rows corpus-wide — NOT the 20-45% previously cited. Only 14% of wellbores use PND at all; among those, median 14.3% of that well&#x27;s weeks, p90 40%. Rare fleet-wide, concentrated where it appears.</p>
+  </div>
+
+  <div class="inference-box">
+    <span class="stamp"><span class="badge bad"><span class="d"></span>inference</span>
+    Not a definition &mdash; do not cite this as one</span>
+    <p>Best reading: a &quot;pending / status not yet determined&quot; residual dropdown option applied to weeks of real, rig-attended activity. NOT an idle or suspended code. This is inference; BSEE publishes nothing.</p>
+    <p><strong>This paragraph is the reading of engineers looking at remark text, rig
+    names and depths.</strong> BSEE publishes no meaning for <code>PND</code>. Nothing in
+    this box may be used as a definition, mirrored into a code table, or shipped as a
+    label &mdash; that is exactly how <code>PND | PENDING/UNKNOWN</code> entered this
+    repository with its uncertainty flag stripped off
+    (<a href="https://github.com/vamseeachanta/worldenergydata/issues/1065">#1065</a>).</p>
+  </div>
+
+  <p>The row for <code>PND</code> in the table above therefore shows
+  <em>no meaning published</em>, and it will keep showing that until
+  <a href="#ask">BSEE answers</a>. Source of record:
+  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml#L105"><code>war_activity_codes.yml:105</code></a>.</p>
+</section>
+<section class="sec" id="ask">
+  <div class="sec-head"><p class="eyebrow">5 &middot; What would settle it</p>
+  <h2>One open query to BSEE &mdash; and it must cover the whole domain</h2></div>
+  <p class="sec-note">No amount of further analysis of our own copy of the data can turn
+  an inference into a definition. Only the data steward can.</p>
+  <div class="panel">
+    <h3>Outstanding query</h3>
+    <ul>
+      <li><strong>To</strong> &mdash; <code>TDM@bsee.gov</code>
+      (BSEE Technical Data Management)</li>
+      <li><strong>Ask</strong> &mdash; The full WELL_ACTIVITY_CD domain, not PND alone.</li>
+      <li><strong>Codes</strong> &mdash; <code>WO</code>, <code>CHZ</code>, <code>PND</code>, <code>MPF</code>, <code>REC</code>, <code>TBK</code>
+      (58,229 rows, 16.1% of the corpus)</li>
+      <li><strong>Tracked as</strong> &mdash;
+      <a href="https://github.com/vamseeachanta/worldenergydata/issues/1065">#1065</a></li>
+    </ul>
+  </div>
+  <div class="callout bad">
+    <p><strong>Do not ask about <code>PND</code> alone.</strong> The issue was raised about
+    PND because PND showed up in a rig-day total, but PND is 2.44% of
+    rows and the other five undocumented codes together are
+    13.66%. A reply that
+    defines only PND leaves the larger hole open and would let this page be quietly
+    retired while most of the vocabulary is still undocumented.</p>
+  </div>
+  <div class="callout hold">
+    <p><strong>Cheaper avenue, still untried.</strong> BSEE's own eWell WAR report viewer
+    renders a <code>STATUS</code> cell per report. If that cell spells the status out
+    rather than printing the token, it is a published answer available today &mdash; but
+    it renders through an image pipeline, so it needs one manual browser check on a report
+    known to carry an undocumented code. Until somebody does that, or TDM replies, tier 3
+    stays empty.</p>
+  </div>
+</section>
+<section class="sec" id="source">
+  <div class="sec-head"><p class="eyebrow">6 &middot; Follow it to source</p>
+  <h2>Everything on this page, and where it comes from</h2></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>What</th><th>Where</th><th>Why you'd open it</th></tr></thead>
+    <tbody>
+      <tr><td>Definitions artifact</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml"><code>war_activity_codes.yml</code></a></td>
+        <td class="wrap-cell">The single source for these codes. Code imports it; this
+        page is generated from it; nothing else may hold a second copy.</td></tr>
+      <tr><td>Observed frequency</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/reports/lower_tertiary/data/war_activity_code_frequency.csv"><code>war_activity_code_frequency.csv</code></a></td>
+        <td class="wrap-cell">Row, percentage and wellbore counts per code, recomputed
+        from the raw WAR tables at WAR vintage 2026-02-19.</td></tr>
+      <tr><td>Generator</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/scripts/lower_tertiary/build_war_activity_codes.py"><code>build_war_activity_codes.py</code></a></td>
+        <td class="wrap-cell">Builds this page. Refuses to run if any
+        <code>unknown</code> row acquires a label.</td></tr>
+      <tr><td>Pins</td><td><a href="https://github.com/vamseeachanta/worldenergydata/blob/main/tests/unit/lower_tertiary/test_war_activity_codes.py"><code>test_war_activity_codes.py</code></a></td>
+        <td class="wrap-cell">Asserts the page is byte-regenerable, self-contained, and
+        that no unknown code renders a meaning.</td></tr>
+      <tr class="t-pub"><td>BSEE borehole field values</td>
+        <td><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields">data.bsee.gov &#8599;</a></td>
+        <td class="wrap-cell">The tier-1 source, quoted verbatim in &sect;2.</td></tr>
+      <tr><td>Issue</td><td><a href="https://github.com/vamseeachanta/worldenergydata/issues/1065">#1065</a></td>
+        <td class="wrap-cell">The open question and the BSEE query.</td></tr>
+    </tbody></table></div>
+</section>
+  <footer class="site">
+    <div class="row">
+      <span>BSEE WAR activity codes &mdash; what is published, what is inferred,
+      what is unknown &middot; issue #1065</span>
+      <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/scripts/lower_tertiary/build_war_activity_codes.py">Generator &amp; provenance &#8599;</a>
+    </div>
+    <p class="note">// self-contained &mdash; no external assets. Generated from
+    war_activity_codes.yml; regenerate with
+    <code>build_war_activity_codes.py</code>; pinned by
+    tests/unit/lower_tertiary/test_war_activity_codes.py</p>
+  </footer>
+</div>
+</body>
+</html>

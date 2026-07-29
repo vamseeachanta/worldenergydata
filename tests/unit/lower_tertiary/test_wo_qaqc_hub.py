@@ -49,6 +49,7 @@ def test_relative_links_point_at_published_pages():
         "wo-april-2026-validation.html",
         "wo-april-2026-per-well-dc.html",
         "roy-rig-days-validation.html",
+        "war-activity-codes.html",
         "fdas-revision-comparison.html",
         "completion/verification.html",
     }
