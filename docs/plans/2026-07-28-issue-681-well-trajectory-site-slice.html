@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Issue 681 plan — 3D well-trajectory publication slice</title>
+  <style>
+    :root { color-scheme: light; --ink:#17202a; --muted:#5d6d7e; --line:#d5d8dc; --paper:#fff; --wash:#f4f6f7; --accent:#145a32; --warn:#922b21; }
+    body { margin:0; background:var(--wash); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1100px; margin:32px auto; padding:40px; background:var(--paper); box-shadow:0 4px 24px #0001; }
+    h1,h2,h3 { line-height:1.2; } h1 { margin-top:0; } h2 { border-bottom:1px solid var(--line); padding-bottom:.3rem; margin-top:2rem; }
+    code { background:#eef2f3; padding:.1rem .25rem; border-radius:3px; } pre { overflow:auto; background:#17202a; color:#f8f9f9; padding:1rem; }
+    table { border-collapse:collapse; width:100%; font-size:.94rem; } th,td { border:1px solid var(--line); padding:.55rem; text-align:left; vertical-align:top; } th { background:#eaf2f8; }
+    .meta,.decision,.blocker { padding:1rem 1.2rem; border-left:5px solid var(--accent); background:#eafaf1; }
+    .blocker { border-color:var(--warn); background:#fdedec; } .muted { color:var(--muted); } li { margin:.35rem 0; }
+  </style>
+</head>
+<body><main>
+  <h1>Plan for #681: 3D well-trajectory publication slice</h1>
+  <div class="meta">
+    <strong>Status:</strong> draft · <strong>Complexity:</strong> T3 · <strong>Date:</strong> 2026-07-28<br>
+    <strong>Issue:</strong> <a href="https://github.com/vamseeachanta/worldenergydata/issues/681">github.com/vamseeachanta/worldenergydata/issues/681</a><br>
+    <strong>Client:</strong> N/A · <strong>Lane:</strong> <code>lane:codex</code> · <strong>Execution:</strong> parallel-worktree
+  </div>
+
+  <h2>Deliverable</h2>
+  <p>This slice will publish a small, real BSEE directional-survey set from
+  <code>worldenergydata</code> to a canonical AceEngineer website demo. WED will
+  normalize regulator MD/inclination/azimuth stations, derive TVD/north/east and
+  dogleg severity by minimum curvature, and write a schema-versioned JSON artifact.
+  The website will render that artifact as an interactive 3D trajectory with its
+  existing vendored Plotly bundle. The existing cross-repo content-sync route will
+  remain the only publication mechanism.</p>
+  <div class="blocker"><strong>Approval boundary:</strong> implementation will not
+  begin until adversarial plan review returns no MAJOR findings and the user
+  explicitly approves this plan. No push or PR will occur under the task constraint.</div>
+
+  <h2>Resource intelligence summary</h2>
+  <h3>Evidence</h3>
+  <ul>
+    <li>WED exposes BSEE <code>dsptsdelimit.ZIP</code> through
+    <code>url_registry.py</code> and parses 13 station fields in
+    <code>well_data.py</code>. Live local regulator files include a 134 MB ZIP and
+    434 MB pickle.</li>
+    <li><code>WellAPI12.prepare_well_paths</code>,
+    <code>WellAPI12.process_survey_xyz</code>, and
+    <code>WellAPI12.export_well_paths</code> form the current processing path.
+    <code>well_path_export.py</code> defines schema 1.0 JSON plus Plotly/Three.js
+    consumers.</li>
+    <li>The dependency-light exporter uses algebraically correct interval
+    displacement but clamps dogleg to <code>1e-6</code>; the production path uses
+    a build/turn approximation for DLS. The legacy core helper passes DLS rather
+    than interval dogleg into the RF calculation and will not be reused.</li>
+    <li>The published worked example at
+    <a href="https://www.drillingformulas.com/minimum-curvature-method/">DrillingFormulas,
+    “Minimum Curvature Method”</a> specifies stations
+    3500 ft/15°/20° and 3600 ft/25°/45°, with interval outputs north 27.22 ft,
+    east 19.45 ft, and TVD 94.01 ft. The equations will also be checked against
+    the public USGS minimum-curvature description.</li>
+    <li>NM OCD anonymous FTP and its 30,513-byte data dictionary are reachable.
+    The current export catalog provides well-level location, directional status,
+    total TVD, and depth fields, but no station table and no inclination or azimuth
+    field. NM data therefore cannot support a non-fabricated trajectory in this
+    slice.</li>
+    <li>AceEngineer website <code>config/content-sync.yaml</code> copies WED
+    <code>reports/bsee/*.{html,json}</code> into
+    <code>dist/demos/energy/</code>. <code>scripts/daily-update.sh</code> currently
+    syncs before <code>npm run build</code>, while <code>build.js</code> removes
+    <code>dist/</code>; the build therefore erases synchronized artifacts.</li>
+    <li>Canonical website demos use <code>content/demos/*.html</code>, shared
+    head/nav/footer includes, and local
+    <code>assets/js/plotly-2.32.0.min.js</code>. The repo has no
+    <code>_assets/brand.css</code>, <code>data-theme</code> convention, or
+    hard-coded-brand-token guard.</li>
+  </ul>
+  <p><strong>Reproduction proofs (2026-07-28):</strong> FTP directory listings and
+  data-dictionary strings show no station/inclination/azimuth export; WED file
+  inventory shows the live BSEE survey binaries; website build inspection shows
+  <code>emptyDir(DIST)</code> after the current sync step. The shared-drive search
+  will be recorded as unavailable after stale-index warnings and a bounded timeout;
+  no drive artifact will be treated as evidence.</p>
+
+  <h2>Coordinate and calculation contract</h2>
+  <ul>
+    <li>Input inclination will be degrees from vertical. Input azimuth will be
+    clockwise degrees from grid north. MD and all derived displacements will use
+    feet for the BSEE artifact.</li>
+    <li>Output north will be positive grid north, east will be positive grid east,
+    and TVD will be positive down from the first station. The Plotly z-axis will be
+    reversed only at render time; stored TVD will remain positive down.</li>
+    <li>For interval dogleg <code>DL</code> in radians,
+    <code>RF = 2 / DL × tan(DL / 2)</code>. For
+    <code>|DL| ≤ 1e-12</code>, RF will equal the analytic limit 1.0.</li>
+    <li>DLS will equal <code>degrees(DL) × 100 / ΔMD</code> in degrees/100 ft.
+    Duplicate or decreasing MD, non-finite values, inclination outside 0–180°, and
+    azimuth outside 0–360° will fail closed. A one-station survey will be valid but
+    non-renderable as a trajectory.</li>
+    <li>Regulator TVD will be retained as optional <code>reported_tvd</code> evidence
+    but will never replace <code>derived_tvd</code>. Tests will cover null and
+    contradictory reported TVD.</li>
+  </ul>
+
+  <h2>Versioned artifact map</h2>
+  <table><thead><tr><th>Repo</th><th>Action</th><th>Path</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td>WED</td><td>Create</td><td><code>packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/trajectory.py</code></td><td>Validated station normalizer and single minimum-curvature implementation.</td></tr>
+    <tr><td>WED</td><td>Modify</td><td><code>packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py</code></td><td>Route the production survey path through the normalized calculation without trusting supplied TVD.</td></tr>
+    <tr><td>WED</td><td>Modify</td><td><code>packages/worldenergydata-bsee/src/worldenergydata/bsee/visualization/well_path_export.py</code></td><td>Emit schema 2.0 station names and provenance while preserving the schema-1 helper boundary where required.</td></tr>
+    <tr><td>WED</td><td>Create</td><td><code>scripts/bsee/publish_well_trajectories.py</code></td><td>Build a deterministic, explicit-API thin public artifact from real BSEE surveys.</td></tr>
+    <tr><td>WED</td><td>Generate</td><td><code>reports/bsee/well_trajectories.v2.json</code></td><td>Public schema-2.0 artifact for a small real BSEE sample, labeled by API only.</td></tr>
+    <tr><td>WED</td><td>Create/modify</td><td><code>tests/unit/bsee/analysis/test_trajectory.py</code>, <code>tests/unit/bsee/visualization/test_well_path_export.py</code></td><td>Worked-example, validation, null-TVD, frame/sign, schema, and real-sample contract tests.</td></tr>
+    <tr><td>Website</td><td>Create</td><td><code>content/demos/well-trajectories-3d.html</code></td><td>Canonical shared-layout demo using local Plotly and same-origin synchronized JSON.</td></tr>
+    <tr><td>Website</td><td>Modify</td><td><code>content/demos/index.html</code></td><td>Link the public trajectory demo.</td></tr>
+    <tr><td>Website</td><td>Modify</td><td><code>scripts/daily-update.sh</code></td><td>Build before synchronization so WED artifacts survive.</td></tr>
+    <tr><td>Website</td><td>Modify</td><td><code>tests/js/demo-links.test.js</code>, <code>tests/python/test_content_sync.py</code></td><td>Reject CDN use, verify JSON contract/path, and prove post-build sync persistence.</td></tr>
+  </tbody></table>
+  <p>Implementation will use new branches in both repos. Because the website’s
+  primary checkout is on another clean content branch, website changes will use a
+  separate worktree based on <code>main</code>. Digitalmodel will remain read-only.</p>
+
+  <h2>Schema 2.0 contract</h2>
+  <pre>{
+  "schema_version": "2.0",
+  "units": {"depth": "ft", "dls": "deg/100ft"},
+  "coordinate_system": {
+    "horizontal": "field-relative grid north/east",
+    "vertical": "TVD positive down",
+    "azimuth": "clockwise from grid north"
+  },
+  "source": {"authority": "BSEE", "dataset": "dsptsdelimit", "url": "..."},
+  "wells": [{
+    "well_id": "API12",
+    "stations": [{
+      "md": 0.0, "inclination": 0.0, "azimuth": 0.0,
+      "derived_tvd": 0.0, "north": 0.0, "east": 0.0,
+      "dls": 0.0, "reported_tvd": null
+    }]
+  }]
+}</pre>
+  <p>Schema validation will require finite numbers, strictly increasing MD,
+  deterministic well/station ordering, explicit units and frame metadata, and no
+  external/client identifiers. The checked-in artifact will contain only public
+  BSEE station data and regulator API identifiers.</p>
+
+  <h2>TDD execution</h2>
+  <ol>
+    <li><strong>Math RED:</strong>
+    <code>test_published_minimum_curvature_example</code>,
+    <code>test_zero_dogleg_uses_exact_ratio_factor_limit</code>,
+    <code>test_due_east_hold_changes_east_not_north</code>, and
+    <code>test_dls_is_degrees_per_100ft</code> will fail against the current
+    implementation.</li>
+    <li><strong>Normalizer RED:</strong> tests will reject unsorted/duplicate MD,
+    non-finite inputs, and invalid angles; tests will prove derived TVD is populated
+    when reported TVD is null and remains authoritative when reported TVD differs.</li>
+    <li><strong>Artifact RED:</strong> tests will freeze schema 2.0 keys, units,
+    coordinate frame, public source metadata, deterministic ordering, explicit API
+    selection, and absence of synthetic labels.</li>
+    <li><strong>Website RED:</strong> tests will require the local Plotly asset,
+    reject CDN URLs, verify the demo link and same-origin JSON URL, and run a
+    build-then-sync fixture proving <code>dist/demos/energy/well_trajectories.v2.json</code>
+    survives.</li>
+    <li><strong>GREEN/refactor:</strong> the minimal code for each node will follow
+    its failing test. Focused suites will run between files. Cross-repo end-to-end
+    validation will build WED JSON, build the site, run content sync, serve
+    <code>dist/</code>, and verify the page and artifact return HTTP 200.</li>
+  </ol>
+
+  <h2>Visualization behavior</h2>
+  <p>The page will draw one <code>scatter3d</code> line per well with East, North,
+  and positive-down TVD axes. Hover text will show well ID, MD, inclination,
+  azimuth, derived TVD, reported TVD when present, north/east, and DLS. A well
+  selector and reset-view control will update the same JSON-backed traces. The full
+  station set will remain in the JSON; the visualization will not subsample without
+  labeling that behavior.</p>
+
+  <h2>Verification commands</h2>
+  <pre># WED (repo venv; never uv run)
+PYTHONPATH='packages/worldenergydata-bsee/src:packages/worldenergydata-core/src' \
+  .venv/bin/python -m pytest tests/unit/bsee/analysis/test_trajectory.py \
+  tests/unit/bsee/visualization/test_well_path_export.py -q
+.venv/bin/python scripts/bsee/publish_well_trajectories.py
+
+# Website (repo-native Node; permitted Python interpreter for sync tests)
+npm test -- --runInBand tests/js/demo-links.test.js
+/mnt/local-analysis/digitalmodel/.venv/bin/python -m pytest \
+  tests/python/test_content_sync.py -q
+npm run build
+/mnt/local-analysis/digitalmodel/.venv/bin/python scripts/content_sync.py
+
+# Both repos
+scripts/legal/legal-sanity-scan.sh
+git diff --check</pre>
+
+  <h2>Acceptance criteria</h2>
+  <ul>
+    <li>The published worked example will reproduce north 27.22 ft, east 19.45 ft,
+    and interval TVD 94.01 ft within stated rounding tolerance.</li>
+    <li>Every output station will contain input MD/inclination/azimuth plus derived
+    TVD/north/east/DLS, including when regulator TVD is null.</li>
+    <li>The checked-in schema-2.0 JSON will be generated deterministically from a
+    small, explicit set of real BSEE survey stations and will contain no fabricated
+    well data or field/name assertion.</li>
+    <li>The AceEngineer demo will use canonical content includes, local Plotly, no
+    external CDN, explicit units/frame text, and the synchronized WED JSON.</li>
+    <li>The established build/sync workflow will leave both page and JSON under
+    <code>dist/</code>; a local HTTP smoke test will return 200 for both.</li>
+    <li>Focused WED and website tests, legal scans, diff checks, T3 code review, and
+    the pre-completion cleanup audit will pass before completion is claimed.</li>
+    <li>Each touched repo will have a new local branch and a conventional commit.
+    No push, PR, or digitalmodel modification will occur.</li>
+  </ul>
+
+  <h2>Out of scope and production gap</h2>
+  <ul>
+    <li>NM OCD well headers, completion history, and production will not be joined
+    to a trajectory because its current FTP contract lacks station inclination and
+    azimuth.</li>
+    <li>Texas RRC scanned-PDF extraction/OCR, the open Julia lease/name repair,
+    Three.js repair, whole-BSEE publication, scheduler automation, and production
+    deployment will remain separate work.</li>
+    <li>The thin artifact will demonstrate a reproducible public path, not a daily
+    nationwide trajectory feed. Production readiness will still require source
+    freshness policy, incremental refresh, broader sample/identity QA, artifact
+    size controls, monitoring, and deployment verification.</li>
+  </ul>
+
+  <h2>Adversarial review summary</h2>
+  <p>PENDING. Reviewers will default to non-approval and will specifically hunt for
+  formula/frame errors, misuse of NM header data, fabricated identity, schema drift,
+  build/sync ordering gaps, CDN leakage, cross-repo branch conflicts, and tests that
+  validate only generated output rather than independent expected values.</p>
+</main></body></html>
