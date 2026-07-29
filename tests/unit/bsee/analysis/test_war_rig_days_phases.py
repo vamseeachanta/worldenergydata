@@ -14,6 +14,7 @@ supports, which is the defect class this whole module exists to remove.
 """
 
 import pandas as pd
+import pytest
 
 from worldenergydata.bsee.analysis.war_rig_days import (
     DEFAULT_PHASES,
@@ -120,11 +121,13 @@ class TestRigAttribution:
         ).squeeze()
         assert frame["rig_days_by_rig"] == {None: 7}
 
-    def test_absent_column_yields_no_attribution_rather_than_a_guess(self):
+    def test_absent_column_yields_unattributed_days_not_an_empty_map(self):
+        # An empty map would lose the days entirely. The duration is real and
+        # known; only its attribution is missing, which is what None records.
         frame = rig_days_by_bore(
             war([[API, "2024-01-01", "2024-01-07", "DRL"]])
         ).squeeze()
-        assert frame["rig_days_by_rig"] == {}
+        assert frame["rig_days_by_rig"] == {None: 7}
 
 
 class TestDrillFluidWeight:
@@ -175,3 +178,65 @@ class TestNoRegression:
         assert int(frame["drilling_days"]) == 7
         assert int(frame["completion_days"]) == 7
         assert int(frame["war_days_total"]) == 14
+
+
+class TestAdversarialReviewFindings:
+    """Regressions for defects found by adversarial review of this port."""
+
+    def test_a_phase_cannot_shadow_a_core_column(self):
+        # phases={"drilling": ...} generated drilling_days and silently
+        # replaced the basis-derived measurement with the phase's codes.
+
+        with pytest.raises(ValueError, match="silently overwritten"):
+            rig_days_by_bore(
+                war([[API, "2024-01-01", "2024-01-07", "DRL"]]),
+                phases={"drilling": frozenset({"TA"})},
+            )
+
+    def test_pnd_is_also_protected(self):
+
+        with pytest.raises(ValueError, match="silently overwritten"):
+            rig_days_by_bore(
+                war([[API, "2024-01-01", "2024-01-07", "COM"]]),
+                phases={"pnd": frozenset({"COM"})},
+            )
+
+    def test_rig_identities_differing_only_by_case_or_space_are_one_rig(self):
+        # Two spellings created two identities, crediting the same days twice.
+        frame = rig_days_by_bore(
+            war(
+                [
+                    [API, "2024-01-01", "2024-01-07", "DRL", "ENSCO 1"],
+                    [API, "2024-01-01", "2024-01-07", "DRL", " ensco 1 "],
+                ],
+                columns=COLUMNS + ["RIG_NAME"],
+            )
+        ).squeeze()
+        assert frame["rig_days_by_rig"] == {"ENSCO 1": 7}
+
+    def test_unattributed_duration_has_one_encoding(self):
+        # A missing column yielded {} while a null value yielded {None: 7}.
+        no_column = rig_days_by_bore(
+            war([[API, "2024-01-01", "2024-01-07", "DRL"]])
+        ).squeeze()
+        null_value = rig_days_by_bore(
+            war(
+                [[API, "2024-01-01", "2024-01-07", "DRL", None]],
+                columns=COLUMNS + ["RIG_NAME"],
+            )
+        ).squeeze()
+        assert no_column["rig_days_by_rig"] == {None: 7}
+        assert null_value["rig_days_by_rig"] == {None: 7}
+
+    def test_day_dtypes_are_stable_whether_or_not_a_bore_is_uncovered(self):
+        # Mixing values with pd.NA left an object column, so the dtype depended
+        # on whether any requested bore happened to be uncovered.
+        covered = rig_days_by_bore(war([[API, "2024-01-01", "2024-01-07", "DRL"]]))
+        mixed = rig_days_by_bore(
+            war([[API, "2024-01-01", "2024-01-07", "DRL"]]),
+            population=[API, "999999999999"],
+        )
+        assert covered["drilling_days"].dtype == "Int64"
+        assert mixed["drilling_days"].dtype == "Int64"
+        assert mixed["sidetrack_days"].dtype == "Int64"
+        assert mixed["max_drill_fluid_wgt"].dtype == "Float64"

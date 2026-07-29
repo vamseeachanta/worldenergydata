@@ -262,6 +262,35 @@ def _days_for(group: pd.DataFrame, codes) -> int:
     return union_days(zip(sub["start"], sub["end"]))
 
 
+def _reject_colliding_phases(phases) -> None:
+    """Refuse a phase whose generated columns would shadow an existing one.
+
+    ``phases={"drilling": ...}`` generates ``drilling_days``, overwriting the
+    basis-derived drilling days with the phase's codes -- so a caller asking
+    for an extra bucket would silently replace a core measurement, and the
+    frame would carry two columns of the same name. ``pnd`` collides the same
+    way. Raising is the only safe response: the shadowed value looks entirely
+    plausible.
+    """
+    reserved = set(_BORE_COLUMNS) | {"basis"}
+    seen: dict = {}
+    for phase in phases:
+        for suffix in ("_days", "_days_status"):
+            column = f"{phase}{suffix}"
+            if column in reserved:
+                raise ValueError(
+                    f"phase {phase!r} would generate column {column!r}, which "
+                    "already exists and would be silently overwritten. Choose "
+                    "a different phase name."
+                )
+            if column in seen:
+                raise ValueError(
+                    f"phases {seen[column]!r} and {phase!r} both generate "
+                    f"column {column!r}."
+                )
+            seen[column] = phase
+
+
 def _days_by_rig(group: pd.DataFrame) -> dict:
     """Days attributed to each rig that reported on this bore.
 
@@ -272,15 +301,37 @@ def _days_by_rig(group: pd.DataFrame) -> dict:
     Rigs are kept as structured identities rather than a joined display string,
     so a consumer can attribute days rather than parse text. A row with no rig
     name is grouped under ``None`` -- absent attribution, not a rig called
-    "unknown".
+    "unknown". A bore whose feed carries no rig column at all also yields
+    ``{None: days}``, so unattributed duration has one encoding rather than two.
+
+    Identities are matched on stripped, case-folded text, because ``"ENSCO 1"``
+    and ``" ensco 1 "`` are one rig and counting them separately would credit
+    the same days twice. The first spelling seen is kept for display.
+
+    .. note:: ``sum(...values())`` does **not** equal ``war_days_total`` and is
+       not meant to. Two rigs genuinely working overlapping weeks are each
+       credited; this is a per-rig credit, not a partition of calendar coverage.
     """
+    intervals = list(zip(group["start"], group["end"]))
     if "rig_name" not in group.columns:
-        return {}
-    out = {}
-    for rig, sub in group.groupby(group["rig_name"].fillna("__none__"), sort=True):
-        key = None if rig == "__none__" else str(rig)
-        out[key] = union_days(zip(sub["start"], sub["end"]))
-    return out
+        return {None: union_days(intervals)}
+
+    buckets: dict = {}
+    display: dict = {}
+    for (start, end), raw in zip(intervals, group["rig_name"]):
+        if pd.isna(raw):
+            key = None
+        else:
+            text = str(raw).strip()
+            key = text.casefold() or None
+        if key is not None:
+            display.setdefault(key, text)
+        buckets.setdefault(key, []).append((start, end))
+
+    return {
+        (display[k] if k is not None else None): union_days(v)
+        for k, v in buckets.items()
+    }
 
 
 def _max_drill_fluid_wgt(group: pd.DataFrame):
@@ -327,6 +378,12 @@ def _days_and_status(group: pd.DataFrame, codes):
 #: Every code here has ``provenance: unknown`` or ``published_other_domain`` in
 #: ``war_activity_codes.yml`` -- the phase name is our reading of the token, not
 #: a BSEE definition. See #1065.
+#:
+#: .. warning:: Phase columns are **not additive with basis columns**. Under
+#:    ``BASIS_METHOD_1`` completion includes ``TA``, so the same days appear in
+#:    both ``completion_days`` and ``temp_abandonment_days``. Nothing sums them
+#:    internally, and a consumer must not either: they answer different
+#:    questions over the same weeks.
 DEFAULT_PHASES: dict[str, frozenset[str]] = {
     "sidetrack": frozenset({"ST"}),
     "temp_abandonment": frozenset({"TA"}),
@@ -356,6 +413,7 @@ def rig_days_by_bore(
         ``no_war_activity``, so absent coverage is never mistaken for zero.
     """
     phases = DEFAULT_PHASES if phases is None else phases
+    _reject_colliding_phases(phases)
     prepared = _prepare(war)
     if population is not None:
         # Restrict before grouping: the raw WAR frame spans every well BSEE
@@ -413,6 +471,15 @@ def rig_days_by_bore(
     frame = pd.DataFrame(rows, columns=columns)
     if population is not None:
         frame = frame.sort_values("api12")
+
+    # Mixing real values with pd.NA leaves an `object` column, so a consumer
+    # gets Python ints from one call and objects from another depending only on
+    # whether any bore was uncovered. Pin the nullable types instead.
+    day_columns = ["drilling_days", "completion_days", "pnd_days", "war_days_total"]
+    day_columns += [f"{phase}_days" for phase in phases]
+    for column in day_columns:
+        frame[column] = frame[column].astype("Int64")
+    frame["max_drill_fluid_wgt"] = frame["max_drill_fluid_wgt"].astype("Float64")
 
     frame["basis"] = basis.describe()
     return frame.reset_index(drop=True)
