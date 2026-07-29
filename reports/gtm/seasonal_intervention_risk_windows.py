@@ -80,17 +80,45 @@ SOURCES = [
 #   packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml
 # loaded via worldenergydata.bsee.analysis.war_activity_codes.activity_labels().
 # It is not imported here only because this script is deliberately stdlib-only.
+#
+# Mirrored by hand because of that constraint, and pinned by
+# tests/unit/gtm/test_seasonal_intervention_codes.py, which fails if this
+# drifts from the canonical artifact. A hand-copy without a test is how the
+# previous version of this table came to assert three separate falsehoods:
+#
+#   - "RC": "Recompletion" and "BP": "Bypass" -- NEITHER CODE EXISTS in
+#     mv_war_main_prop. The real recompletion token is REC. So the published
+#     legend implied zero recompletions while the same artifact reported three
+#     REC records it could not explain.
+#   - "PND": "Pending / sidetrack-bypass" -- an invented meaning. BSEE
+#     publishes no definition for PND; our own note records that it was
+#     guessed. See #1065.
+#   - REC, CHZ and the blank code carried data but no legend entry at all.
+#
+# Only the six tokens BSEE publishes -- for BOREHOLE_STAT_CD, a *different*
+# domain whose reuse here is our inference -- carry a meaning. The rest are
+# named and left unglossed, because a reader is better served by a bare code
+# than by a confident guess.
 ACTIVITY_MEANING = {
-    "DRL": "Drilling",
-    "COM": "Completion",
-    "PA": "Plug & abandon (P&A)",
-    "TA": "Temporary abandonment",
-    "PND": "Pending / sidetrack-bypass",
-    "WO": "Workover",
-    "RC": "Recompletion",
-    "ST": "Sidetrack",
-    "BP": "Bypass",
+    "DRL": "Drilling Active",
+    "COM": "Borehole Completed",
+    "TA": "Temporarily Abandoned",
+    "PA": "Permanently Abandoned",
+    "ST": "Borehole Side Tracked",
+    "DSI": "Drilling Suspended",
 }
+
+#: Codes observed in WAR for which BSEE publishes no meaning in any domain.
+#: Rendered as the bare token. Never glossed. See #1065.
+ACTIVITY_UNDOCUMENTED = ["WO", "CHZ", "PND", "MPF", "REC", "TBK"]
+
+#: What the six meanings above actually are, carried into the payload so a
+#: reader is not left thinking BSEE defines this field. It does not.
+ACTIVITY_MEANING_PROVENANCE = (
+    "BSEE wording for BOREHOLE_STAT_CD, a different published domain; its "
+    "reuse as a WAR activity code is our inference, not a BSEE statement. "
+    "BSEE publishes no WELL_ACTIVITY_CD domain (#1065)."
+)
 
 # ----------------------------------------------------------------------------
 # ASSUMPTIONS (NOT data) — public-knowledge hurricane-season calendar only.
@@ -262,6 +290,8 @@ def compute():
             },
             "by_activity": dict(sorted(by_activity.items(), key=lambda x: -x[1])),
             "activity_meaning": ACTIVITY_MEANING,
+            "activity_meaning_provenance": ACTIVITY_MEANING_PROVENANCE,
+            "activity_undocumented": ACTIVITY_UNDOCUMENTED,
             "activity_season_split": act_split,
         },
         "overlay": {
