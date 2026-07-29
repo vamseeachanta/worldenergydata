@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 
 from worldenergydata.bsee.analysis.uptime import compute_uptime
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
 from worldenergydata.lower_tertiary import ops_timeline
 from worldenergydata.lower_tertiary.wti_prices import load_extended_wti_prices
 
@@ -387,7 +388,7 @@ def run_well_benchmark(cfg: BenchmarkConfig) -> pd.DataFrame:
     rows: list[dict] = []
     for _, w in wells.iterrows():
         api = w["API_WELL_NUMBER"]
-        ogor_well = ogor[ogor["API_WELL_NUMBER"] == api]
+        ogor_well = select_by_api(ogor, api)
         if ogor_well.empty:
             continue
         row = benchmark_well(

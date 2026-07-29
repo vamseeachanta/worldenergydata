@@ -27,6 +27,8 @@ from typing import Any, Dict, Iterable, Optional, Union
 
 import pandas as pd
 
+from worldenergydata.bsee.data.utils.api_well_normalizer import api_matches
+
 
 class ProductionQuery:
     """Query BSEE production data with optional filters.
@@ -233,7 +235,7 @@ class WellsQuery:
         mask = pd.Series(True, index=df.index)
 
         if api_number is not None and "API_WELL_NUMBER" in df.columns:
-            mask &= df["API_WELL_NUMBER"] == api_number
+            mask &= api_matches(df["API_WELL_NUMBER"], api_number)
 
         if field is not None:
             # Parse "MC 778" → area_code="MC", block="778"

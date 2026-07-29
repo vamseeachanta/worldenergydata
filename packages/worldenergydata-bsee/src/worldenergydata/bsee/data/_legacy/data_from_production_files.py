@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from assetutilities.common.yml_utilities import WorkingWithYAML  # noqa
 
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
 from worldenergydata.common.logging import get_logger
 
 logger = get_logger(__name__)
@@ -58,7 +59,7 @@ class DataFromFiles:
                         continue
 
                     # Find matching rows for the current api12
-                    matching_rows = df[df["API_WELL_NUMBER"] == api12]
+                    matching_rows = select_by_api(df, api12)
 
                     if not matching_rows.empty:
                         # Move 'API_WELL_NUMBER' column to the first position

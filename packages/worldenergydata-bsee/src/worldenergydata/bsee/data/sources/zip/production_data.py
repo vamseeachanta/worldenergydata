@@ -9,6 +9,7 @@ from assetutilities.modules.zip_utilities.zip_files_to_dataframe import ZipFiles
 from loguru import logger
 
 from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
+from worldenergydata.bsee.data.utils.api_well_normalizer import select_by_api
 
 
 class GetProdDataFromZip:
@@ -236,7 +237,7 @@ class GetProdDataFromZip:
                 )
                 continue
 
-            matching_rows = df[df["API_WELL_NUMBER"] == api12]
+            matching_rows = select_by_api(df, api12)
 
             if not matching_rows.empty:
                 columns = ["API_WELL_NUMBER"] + [
@@ -321,7 +322,7 @@ class GetProdDataFromZip:
         # Filter the DataFrame based on the API12 value
         api12_dataframes = {}
         for api12 in api12_array:
-            df_api12 = df_api12_array[df_api12_array["API_WELL_NUMBER"] == api12].copy()
+            df_api12 = select_by_api(df_api12_array, api12).copy()
             api12_dataframes[api12] = df_api12
 
         return api12_dataframes
