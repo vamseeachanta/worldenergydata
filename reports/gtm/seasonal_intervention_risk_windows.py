@@ -74,7 +74,7 @@ SOURCES = [
 #     particular is not "sidetrack-bypass" or anything else -- it is unknown.
 #   * "RC" and "BP" are not real: neither token appears anywhere in
 #     mv_war_main_prop. The actual twelve are DRL COM TA PA ST DSI WO CHZ PND
-#     MPF REC TBK (plus 882 null rows, 1997-2001).
+#     MPF REC TBK (plus 882 null rows, 1997-2002).
 #
 # The canonical, provenance-tiered source is
 #   packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml

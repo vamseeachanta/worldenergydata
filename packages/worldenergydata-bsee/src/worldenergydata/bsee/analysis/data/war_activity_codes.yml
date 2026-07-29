@@ -18,7 +18,12 @@ meta:
   data_vintage: "2026-02-19"
   retrieved: "2026-07-28"
   issue: 1065
-  published_domain_exists: false
+  # "Not found in the surfaces below, as of `retrieved`" -- which is what the
+  # evidence supports. It is not a claim that no BSEE publication anywhere
+  # defines this field; we cannot demonstrate a universal negative, and this
+  # artifact exists precisely to stop confident statements outrunning their
+  # evidence. Treat it as: nobody has found one, and here is where we looked.
+  published_domain_found: false
   # Surfaces checked for a published WELL_ACTIVITY_CD domain. All negative.
   searched:
     - name: eWell WAR Field Definitions

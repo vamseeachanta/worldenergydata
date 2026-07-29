@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import functools
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Optional
 
 _DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -78,12 +79,41 @@ def load_activity_codes(path: Optional[Path] = None) -> dict[str, Any]:
     surface searched for a published domain), ``borehole_stat_cd``, ``codes``
     and ``outstanding_query`` -- so callers can cite provenance, not just
     labels.
+
+    Fails loudly on an empty, truncated or structurally incomplete file. A
+    missing file and malformed YAML already raised, but a *syntactically valid*
+    truncation -- ``meta`` alone, or the first few code rows -- previously
+    yielded a partial mapping with no error, which would publish a
+    complete-looking page with codes silently missing. Every code observed in
+    the feed must be present or the artifact is not canonical.
     """
     import yaml
 
     target = Path(path) if path is not None else _CODES_YML
     with open(target, "r", encoding="utf-8") as fh:
-        return yaml.safe_load(fh) or {}
+        document = yaml.safe_load(fh) or {}
+
+    rows = document.get("codes")
+    if not rows:
+        raise ValueError(
+            f"{target} contains no 'codes' section. The definitions artifact is "
+            "empty or truncated; refusing to return a partial mapping."
+        )
+
+    seen = [r.get("code") for r in rows]
+    duplicates = {c for c in seen if c is not None and seen.count(c) > 1}
+    if duplicates:
+        raise ValueError(f"{target} defines duplicate codes: {sorted(duplicates)}")
+
+    for row in rows:
+        if "provenance" not in row:
+            raise ValueError(
+                f"{target}: code {row.get('code')!r} has no 'provenance'. Every "
+                "row must state whether its meaning is published, inferred or "
+                "unknown."
+            )
+
+    return document
 
 
 def _code_rows() -> list[dict[str, Any]]:
@@ -94,7 +124,7 @@ def _code_rows() -> list[dict[str, Any]]:
 def activity_codes() -> frozenset[str]:
     """Every non-null ``WELL_ACTIVITY_CD`` token observed in the WAR corpus.
 
-    The null code (882 pre-eWell rows, 1997-2001) is deliberately excluded --
+    The null code (882 rows, WAR weeks 1997-2002) is deliberately excluded --
     it is a missing value, not a token.
     """
     return frozenset(
@@ -109,12 +139,34 @@ def activity_labels() -> dict[str, str]:
     Codes whose provenance is ``unknown`` are absent from this mapping by
     design.  Callers should render the bare code for them (``.get(code, code)``)
     rather than substituting a guess.
+
+    The filter is on **provenance**, not on the label being populated. Filtering
+    on ``label is not None`` would mean a single future edit -- adding a label
+    to an undocumented row while leaving its provenance alone -- silently
+    published a guess as a definition. An inconsistent row raises instead, so
+    the artifact cannot drift into asserting something BSEE has not published.
+
+    Returns a read-only view: this is cached, and a caller mutating the mapping
+    in place would poison every later reader.
     """
-    return {
-        str(row["code"]): str(row["label"])
-        for row in _code_rows()
-        if row.get("code") is not None and row.get("label") is not None
-    }
+    labels = {}
+    for row in _code_rows():
+        code = row.get("code")
+        if code is None:
+            continue
+        label = row.get("label")
+        if row.get("provenance") == PROVENANCE_UNKNOWN:
+            if label is not None:
+                raise ValueError(
+                    f"activity code {code!r} has provenance 'unknown' but carries "
+                    f"the label {label!r}. Nothing may attach a meaning to a code "
+                    "BSEE has not published; correct the provenance or drop the "
+                    "label in war_activity_codes.yml."
+                )
+            continue
+        if label is not None:
+            labels[str(code)] = str(label)
+    return MappingProxyType(labels)
 
 
 @functools.lru_cache(maxsize=1)

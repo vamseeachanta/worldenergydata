@@ -33,7 +33,7 @@ WAR_FIXTURES = (
 )
 
 # Observed in mv_war_main_prop (2026-02-19 vintage, 361,756 rows). The null code
-# (882 rows, all 1997-2001, pre-eWell) is carried in the YAML as a `code: null`
+# (882 rows, WAR weeks 1997-2002) is carried in the YAML as a `code: null`
 # row but is a missing value rather than a token, so it is not in this set.
 CORPUS_CODES = {
     "DRL",
@@ -71,7 +71,7 @@ class TestYamlIsWellFormed:
         # The headline finding. If this ever flips to True, every `unknown`
         # row below is up for revision -- and only then.
         meta = load_activity_codes()["meta"]
-        assert meta["published_domain_exists"] is False
+        assert meta["published_domain_found"] is False
         # ...with the surfaces that were checked, so the claim is auditable.
         assert len(meta["searched"]) >= 5
 
@@ -218,3 +218,70 @@ class TestBackwardsCompatibility:
         assert set(WAR_ACTIVITY_LABELS) == set(by_code)
         for code, shown in WAR_ACTIVITY_LABELS.items():
             assert by_code[code]["legacy_display_label"] == shown
+
+
+class TestTheInvariantIsEnforcedNotJustDocumented:
+    """Adversarial-review regressions: the loader must refuse, not trust.
+
+    The generator already refuses to render a meaning for an undocumented code.
+    These pin the same rule one layer down, because a rule enforced in only one
+    place is a rule that erodes the first time someone edits the other place.
+    """
+
+    def test_a_label_on_an_unknown_row_raises_rather_than_publishing(self, tmp_path):
+        # The failure this prevents: an editor adds `label: Pending` to PND but
+        # leaves `provenance: unknown`, and the guess ships as a definition.
+        import yaml
+
+        from worldenergydata.bsee.analysis import war_activity_codes as mod
+
+        doc = yaml.safe_load(mod.codes_yaml_path().read_text(encoding="utf-8"))
+        for row in doc["codes"]:
+            if row.get("provenance") == mod.PROVENANCE_UNKNOWN and row.get("code"):
+                row["label"] = "Pending"
+                break
+
+        poisoned = tmp_path / "poisoned.yml"
+        poisoned.write_text(yaml.safe_dump(doc), encoding="utf-8")
+
+        # Point the module's default path at the poisoned file. Calling
+        # load_activity_codes(poisoned) would NOT work: the loader is cached
+        # per-argument, so the no-arg call inside activity_labels() would miss
+        # that cache entry and read the real artifact instead.
+        original = mod._CODES_YML
+        mod._CODES_YML = poisoned
+        mod.load_activity_codes.cache_clear()
+        mod.activity_labels.cache_clear()
+        try:
+            with pytest.raises(ValueError, match="provenance 'unknown'"):
+                mod.activity_labels()
+        finally:
+            mod._CODES_YML = original
+            mod.load_activity_codes.cache_clear()
+            mod.activity_labels.cache_clear()
+
+    def test_a_truncated_artifact_raises_rather_than_returning_a_partial_map(
+        self, tmp_path
+    ):
+        # A syntactically valid file carrying only `meta` previously yielded an
+        # empty mapping, which would publish a complete-looking page with codes
+        # silently missing.
+        from worldenergydata.bsee.analysis import war_activity_codes as mod
+
+        truncated = tmp_path / "truncated.yml"
+        truncated.write_text("meta:\n  field: WELL_ACTIVITY_CD\n", encoding="utf-8")
+
+        mod.load_activity_codes.cache_clear()
+        try:
+            with pytest.raises(ValueError, match="no 'codes' section"):
+                mod.load_activity_codes(truncated)
+        finally:
+            mod.load_activity_codes.cache_clear()
+
+    def test_the_label_mapping_cannot_be_mutated_by_a_caller(self):
+        # It is cached, so an in-place edit would poison every later reader.
+        from worldenergydata.bsee.analysis import war_activity_codes as mod
+
+        labels = mod.activity_labels()
+        with pytest.raises(TypeError):
+            labels["PND"] = "Pending"
