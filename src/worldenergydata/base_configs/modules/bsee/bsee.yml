@@ -40,6 +40,19 @@ parameters:
       bin: data/modules/bsee/bin/war
     
   max_allowed_npt: 90
+  # BSEE's published BOREHOLE_STAT_CD domain
+  # (https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields), used only
+  # to decorate loaded well rows with a human-readable status.
+  #
+  # NOT the WAR WELL_ACTIVITY_CD vocabulary -- different domain, do not use this
+  # list to interpret WAR activity codes. The canonical WAR definitions, with
+  # provenance, live in:
+  #   packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml
+  #
+  # The trailing PND entry is a LOCAL addition, not a BSEE row: BSEE publishes no
+  # meaning for PND in any domain. Its qualifier was silently dropped here
+  # ("PENDING/UNKNOWN" -> "PENDING"), turning a hedge into a fact; restored under
+  # issue #1065.
   borehole_codes:
     [
         {
@@ -88,7 +101,7 @@ parameters:
         },
         {
             "BOREHOLE_STAT_CD": "PND",
-            "BOREHOLE_STAT_DESC": "PENDING"
+            "BOREHOLE_STAT_DESC": "PENDING/UNKNOWN"
         }
 
     ]

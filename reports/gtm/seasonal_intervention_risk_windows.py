@@ -65,6 +65,21 @@ SOURCES = [
 ]
 
 # Activity-code grouping for intervention-type read (BSEE WELL_ACTIVITY_CD).
+#
+# NOT A DEFINITION SOURCE (#1065). This dict is a frozen copy kept only so this
+# dated, pure-stdlib report reproduces byte-for-byte; it is known to be wrong in
+# two ways and must not be copied forward:
+#   * It attaches meanings to codes BSEE has never defined. WO, PND, CHZ, MPF,
+#     REC and TBK have NO published meaning in any BSEE domain; "PND" in
+#     particular is not "sidetrack-bypass" or anything else -- it is unknown.
+#   * "RC" and "BP" are not real: neither token appears anywhere in
+#     mv_war_main_prop. The actual twelve are DRL COM TA PA ST DSI WO CHZ PND
+#     MPF REC TBK (plus 882 null rows, 1997-2001).
+#
+# The canonical, provenance-tiered source is
+#   packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml
+# loaded via worldenergydata.bsee.analysis.war_activity_codes.activity_labels().
+# It is not imported here only because this script is deliberately stdlib-only.
 ACTIVITY_MEANING = {
     "DRL": "Drilling",
     "COM": "Completion",

@@ -199,6 +199,18 @@ dsptsdelimit
 
 # BoreHole COdes
 
+> **Borehole *status* codes, not WAR activity codes.** This is BSEE's published
+> `BOREHOLE_STAT_CD` domain. It is **not** the `WELL_ACTIVITY_CD` vocabulary used
+> by the Well Activity Reports, and must not be used to interpret WAR activity
+> codes. The canonical WAR definitions — with per-code provenance, and `null`
+> labels for the six codes BSEE has never defined — live in
+> `packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml`.
+>
+> The `PND` row below is a **local addition, not a BSEE row**, and its uncertainty
+> qualifier was silently dropped when this table was copied (`PENDING/UNKNOWN` →
+> `PENDING`). Restored under
+> [#1065](https://github.com/vamseeachanta/worldenergydata/issues/1065).
+
 | BOREHOLE_STAT_CD | BOREHOLE_STAT_DESC |
 |------------------|--------------------|
 | APD              | APPLICATION FOR PERMIT TO DRILL |
@@ -212,13 +224,15 @@ dsptsdelimit
 | ST               | BOREHOLE SIDETRACKED |
 | TA               | TEMPORARILY ABANDONED |
 | VCW              | VOLUME CHAMBER WELL |
-| PND              | PENDING |
+| PND              | PENDING/UNKNOWN (local addition — BSEE publishes no meaning for PND) |
 
-{APD: APPLICATION FOR PERMIT TO DRILL, AST: APPROVED SIDETRACK, CNL: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED., COM: BOREHOLE COMPLETED, CT: CORE TEST WELL, DRL: DRILLING ACTIVE, DSI: DRILLING SUSPENDED, PA: PERMANENTLY ABANDONED, ST: BOREHOLE SIDETRACKED, TA: TEMPORARILY ABANDONED, VCW: VOLUME CHAMBER WELL, PND: PENDING}
+{APD: APPLICATION FOR PERMIT TO DRILL, AST: APPROVED SIDETRACK, CNL: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED., COM: BOREHOLE COMPLETED, CT: CORE TEST WELL, DRL: DRILLING ACTIVE, DSI: DRILLING SUSPENDED, PA: PERMANENTLY ABANDONED, ST: BOREHOLE SIDETRACKED, TA: TEMPORARILY ABANDONED, VCW: VOLUME CHAMBER WELL, PND: PENDING/UNKNOWN}
 
 Roy,
 
 Do you know what these codes mean in terms of operations?
+(Still outstanding — the ask to BSEE is the full `WELL_ACTIVITY_CD` domain, not
+`PND` alone. Counts below are WAR activity codes, not borehole statuses.)
 
 "COM": 14, "DRL": 72, "PND": 42, "ST": 7, "TA": 42}
 {"COM": 97, "DRL": 116, "TA": 47}
