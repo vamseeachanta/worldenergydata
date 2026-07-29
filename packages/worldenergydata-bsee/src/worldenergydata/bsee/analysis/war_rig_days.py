@@ -203,6 +203,23 @@ def normalize_api12(values) -> pd.Series:
     return s.str.replace(r"\.0+$", "", regex=True)
 
 
+def _parse_war_date(values) -> pd.Series:
+    """Parse a WAR bound to a timestamp, tolerating the dtypes the feed uses.
+
+    ``format="mixed"`` because bounds arrive as a mix of ``"YYYY-MM-DD
+    HH:MM:SS"`` and bare dates depending on the vintage of the return.
+
+    Numeric columns are stringified first. Passed as integers, pandas reads
+    them as **nanoseconds since the epoch**, so ``20240101`` silently becomes
+    1970-01-01 and a seven-day week measures one day. As a string it parses to
+    the intended date. WAR dates are never epoch offsets.
+    """
+    s = pd.Series(values)
+    if pd.api.types.is_numeric_dtype(s):
+        s = s.astype("Int64").astype(str).replace({"<NA>": None})
+    return pd.to_datetime(s, errors="coerce", format="mixed")
+
+
 def _prepare(war: pd.DataFrame) -> pd.DataFrame:
     missing = [c for c in _REQUIRED_COLUMNS if c not in war.columns]
     if missing:
@@ -216,16 +233,18 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
         {
             "api12": normalize_api12(war["API_WELL_NUMBER"]),
             "activity_cd": war["WELL_ACTIVITY_CD"].astype(str).str.strip().str.upper(),
-            # format="mixed": WAR bounds arrive as a mix of "YYYY-MM-DD
-            # HH:MM:SS" and bare dates depending on the vintage of the return.
-            "start": pd.to_datetime(
-                war["WAR_START_DT"], errors="coerce", format="mixed"
-            ),
-            "end": pd.to_datetime(war["WAR_END_DT"], errors="coerce", format="mixed"),
+            "start": _parse_war_date(war["WAR_START_DT"]),
+            "end": _parse_war_date(war["WAR_END_DT"]),
         }
     )
     out = out[out["activity_cd"].ne("") & out["activity_cd"].ne("NAN")]
-    return out.dropna(subset=["start", "end"])
+    out = out.dropna(subset=["start", "end"])
+    # A return whose end precedes its start is malformed. Dropping it here --
+    # rather than inside union_days -- keeps "no valid interval" distinguishable
+    # from "zero days", so a reversed week cannot be published as a bore that
+    # was drilled in no time at all. The real WAR feed contains spans down to
+    # -7 days, so this is reachable. See #1114.
+    return out[out["end"] >= out["start"]]
 
 
 def _days_for(group: pd.DataFrame, codes) -> int:
@@ -373,16 +392,32 @@ def rig_days_by_well(
         prepared = prepared[prepared["api12"].isin(set(normalize_api12(population)))]
     bores = rig_days_by_bore(war, basis=basis, population=population)
 
-    covered = bores[bores["days_status"].eq(STATUS_COVERED)]
+    # Group over ALL requested bores, not just covered ones. Restricting to
+    # covered bores dropped an uncovered bore's well from the output entirely,
+    # even though the bore itself was correctly reported at API12 grain -- and
+    # raised KeyError when every requested bore was uncovered.
+    def _sum_or_null(s):
+        # min_count=1: an all-null group must stay null. pandas sums an all-NA
+        # group to 0, which would restate "we do not know this bore's drilling
+        # days" as "this bore was drilled in zero days" -- the exact confusion
+        # days_status exists to prevent.
+        return s.sum(min_count=1)
+
     additive = (
-        covered.groupby("api10")
+        bores.groupby("api10")
         .agg(
             n_bores=("api12", "count"),
+            # min_count=1 keeps an all-null group null, but a group of
+            # [7, <null>] still sums to 7 -- pandas needs only one valid value.
+            # So an additive total over a partially covered well is a LOWER
+            # BOUND, not an exact figure. n_bores_covered makes that visible
+            # instead of leaving the consumer to assume completeness.
+            n_bores_covered=("days_status", lambda s: int(s.eq(STATUS_COVERED).sum())),
             bore_suffixes=("bore_suffix", lambda s: ",".join(sorted(s))),
-            drilling_days_additive=("drilling_days", "sum"),
-            completion_days_additive=("completion_days", "sum"),
-            pnd_days_additive=("pnd_days", "sum"),
-            war_days_additive=("war_days_total", "sum"),
+            drilling_days_additive=("drilling_days", _sum_or_null),
+            completion_days_additive=("completion_days", _sum_or_null),
+            pnd_days_additive=("pnd_days", _sum_or_null),
+            war_days_additive=("war_days_total", _sum_or_null),
         )
         .reset_index()
     )
@@ -406,8 +441,29 @@ def rig_days_by_well(
             }
         )
 
-    frame = additive.merge(pd.DataFrame(unions), on="api10", how="left")
+    union_frame = pd.DataFrame(unions, columns=_UNION_COLUMNS)
+    frame = additive.merge(union_frame, on="api10", how="left")
     frame["overlap_days"] = frame["war_days_additive"] - frame["war_days_total"]
-    frame["days_status"] = STATUS_COVERED
+    # A well with no covered bore has no union row; it is uncovered, not a well
+    # whose bores took zero days.
+    frame["days_status"] = (
+        frame["war_days_total"]
+        .notna()
+        .map({True: STATUS_COVERED, False: STATUS_NO_ACTIVITY})
+    )
     frame["basis"] = basis.describe()
     return frame
+
+
+#: Declared explicitly so an empty ``unions`` list still merges on ``api10``
+#: instead of raising KeyError -- reachable whenever every requested bore is
+#: uncovered.
+_UNION_COLUMNS = [
+    "api10",
+    "drilling_days",
+    "completion_days",
+    "pnd_days",
+    "war_days_total",
+    "drilling_days_status",
+    "completion_days_status",
+]
