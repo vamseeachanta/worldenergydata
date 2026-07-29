@@ -78,6 +78,7 @@ __all__ = [
     "BASIS_METHOD_1",
     "PRESET_BASES",
     "DEFAULT_PHASES",
+    "STATUS_COVERED_UNATTRIBUTED",
     "normalize_api12",
     "union_days",
     "rig_days_by_bore",
@@ -95,6 +96,12 @@ STATUS_NO_ACTIVITY = "no_war_activity"
 #: and "drilled in 0 days" is false. Corpus-wide this is the majority case for
 #: drilling, so the day value is null and the reason is stated.
 STATUS_NO_ACTIVITY_CODED = "no_activity_coded"
+
+#: The bore has WAR weeks, but NOT ONE of them carries an activity code. BSEE
+#: holds a record of the rig being there; what is missing is the attribution.
+#: Distinct from ``no_war_activity``, which asserts BSEE holds nothing at all --
+#: a claim we must not make about a bore with 32 reported weeks. See #1120.
+STATUS_COVERED_UNATTRIBUTED = "war_covered_no_activity_code"
 
 _REQUIRED_COLUMNS = (
     "API_WELL_NUMBER",
@@ -247,7 +254,19 @@ def _prepare(war: pd.DataFrame) -> pd.DataFrame:
     ):
         if source in war.columns:
             out[target] = war[source].values
-    out = out[out["activity_cd"].ne("") & out["activity_cd"].ne("NAN")]
+    # A week with no activity code is UNATTRIBUTED, not absent. Dropping it
+    # here would erase real coverage: on the 2026-02-19 feed, 2,030 WAR weeks
+    # carry no row in mv_war_main_prop, and for 38 bores in the published
+    # population that is *every* week they have -- up to 32 weeks of recorded
+    # rig presence that would be reported as "no WAR activity". BSEE holds
+    # those weeks; what is missing is the attribution. Keep them, exclude them
+    # from every activity total, and let the caller see them. See #1120.
+    out["activity_cd"] = out["activity_cd"].where(
+        out["activity_cd"].ne("")
+        & out["activity_cd"].ne("NAN")
+        & out["activity_cd"].ne("NONE"),
+        other=None,
+    )
     out = out.dropna(subset=["start", "end"])
     # A return whose end precedes its start is malformed. Dropping it here --
     # rather than inside union_days -- keeps "no valid interval" distinguishable
@@ -425,8 +444,16 @@ def rig_days_by_bore(
     for api12, group in prepared.groupby("api12", sort=True):
         by_code = {
             code: union_days(zip(sub["start"], sub["end"]))
-            for code, sub in group.groupby("activity_cd", sort=True)
+            for code, sub in group.groupby("activity_cd", sort=True, dropna=True)
         }
+        unattributed = group[group["activity_cd"].isna()]
+        # A bore whose every week lacks a code is covered-but-unattributed, not
+        # uncovered. Saying otherwise discards real reported rig presence.
+        coverage_status = (
+            STATUS_COVERED_UNATTRIBUTED
+            if len(unattributed) == len(group)
+            else STATUS_COVERED
+        )
         drilling_days, drilling_status = _days_and_status(group, basis.drilling_codes)
         completion_days, completion_status = _days_and_status(
             group, basis.completion_codes
@@ -443,7 +470,8 @@ def rig_days_by_bore(
             "war_days_total": union_days(zip(group["start"], group["end"])),
             "war_weeks": int(len(group)),
             "days_by_code": by_code,
-            "days_status": STATUS_COVERED,
+            "days_status": coverage_status,
+            "war_weeks_unattributed": int(len(unattributed)),
             "drilling_days_status": drilling_status,
             "completion_days_status": completion_status,
             "rig_days_by_rig": _days_by_rig(group),
@@ -504,6 +532,7 @@ def _absent_rows(rows, population, phases) -> list:
             "pnd_days": pd.NA,
             "war_days_total": pd.NA,
             "war_weeks": 0,
+            "war_weeks_unattributed": 0,
             "days_by_code": {},
             "days_status": STATUS_NO_ACTIVITY,
             "drilling_days_status": STATUS_NO_ACTIVITY,
@@ -527,6 +556,7 @@ _BORE_COLUMNS = [
     "pnd_days",
     "war_days_total",
     "war_weeks",
+    "war_weeks_unattributed",
     "days_by_code",
     "days_status",
     "drilling_days_status",
