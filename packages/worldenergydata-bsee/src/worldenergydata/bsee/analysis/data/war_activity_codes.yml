@@ -1,0 +1,193 @@
+# BSEE WAR activity codes — the single canonical definition source.
+#
+# THE HEADLINE: BSEE publishes NO code list for WELL_ACTIVITY_CD. Not one of the
+# twelve codes below has a published definition *for this field*. Six of them
+# reuse tokens from a different, published domain (BOREHOLE_STAT_CD); that reuse
+# is our inference, corroborated by remark text, not a BSEE statement. The other
+# six are undocumented anywhere.
+#
+# This file is the ONLY place these codes are defined. Code imports it; docs and
+# published pages are generated from it. A second hand-maintained copy is how the
+# uncertainty flag on PND was previously lost in mirroring (#1065).
+#
+# RULE: never attach a meaning to a row whose provenance is `unknown`.
+
+meta:
+  field: WELL_ACTIVITY_CD
+  source_table: mv_war_main_prop
+  data_vintage: "2026-02-19"
+  retrieved: "2026-07-28"
+  issue: 1065
+  published_domain_exists: false
+  # Surfaces checked for a published WELL_ACTIVITY_CD domain. All negative.
+  searched:
+    - name: eWell WAR Field Definitions
+      url: https://www.data.bsee.gov/Main/HtmlPage.aspx?page=eWellWARFields
+      result: "23 rows, SN_WAR through BOTM_BLOCK_NUM. WELL_ACTIVITY_CD absent."
+    - name: eWellWARRawData.zip
+      url: https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip
+      result: "8 .txt data members, no readme, no layout, no code table."
+    - name: Form BSEE-0133 (Well Activity Report)
+      result: "STATUS column carries no legend; no instruction sheet enumerates codes."
+    - name: 30 CFR 250.743
+      result: "Prescribes narrative content and weekly cadence; no code vocabulary."
+    - name: ONRR Appendix H
+      result: "Different domain — reuses DRL/DSI/TA with OGOR-A production-month meanings; no PND."
+
+# The one official BSEE list, which our repo previously mislabelled as the
+# WELL_ACTIVITY_CD domain.
+borehole_stat_cd:
+  published: true
+  url: https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields
+  note: >-
+    This is a BOREHOLE STATUS domain, not an activity domain. Six WELL_ACTIVITY_CD
+    tokens (WO, CHZ, PND, MPF, REC, TBK) do not appear in it at all, and six
+    published borehole codes never appear in WAR.
+
+# ---------------------------------------------------------------------------
+# READING THE ROWS
+#
+#   label
+#       The AUTHORITATIVE statement of what the code means. `null` means we do
+#       not know, and null is a finding, not a gap to be filled in later.
+#
+#   legacy_display_label
+#       NOT a definition. This is the pre-existing UI string that
+#       ``ops_timeline.WAR_ACTIVITY_LABELS`` has emitted since before this file
+#       existed. It is recorded here for ONE reason: a downstream consumer
+#       (``lower_tertiary.well_benchmark``) selects interventions by matching
+#       these exact strings, so changing them would silently move published
+#       numbers. For any row whose provenance is `unknown` this string is a
+#       guess somebody typed; it carries ZERO evidentiary weight and must never
+#       be cited as the meaning of the code. `label: null` is what we know.
+# ---------------------------------------------------------------------------
+
+codes:
+  - code: DRL
+    label: Drilling Active
+    legacy_display_label: Drilling
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "69.8% of DRL remarks contain 'DRILL'; 0.7% lack a rig name."
+    role: drilling
+
+  - code: COM
+    label: Borehole Completed
+    legacy_display_label: "Completion"
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "24.5% 'COMPLET', 9.8% 'FRAC', 7.5% 'GRAVEL PACK' — highest of any code."
+    role: completion
+
+  - code: TA
+    label: Temporarily Abandoned
+    legacy_display_label: "Temporary abandonment"
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "39.7% 'NO ACTIVITY'; 42.6% carry no rig name."
+    role: abandonment
+
+  - code: PA
+    label: Permanently Abandoned
+    legacy_display_label: "Plug & abandon"
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "40.3% 'NO ACTIVITY', 4.3% 'P&A'; 50.1% carry no rig name."
+    role: abandonment
+
+  - code: ST
+    label: Borehole Side Tracked
+    legacy_display_label: "Sidetrack"
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "17.7% 'SIDETRACK' — 6x any other code; 80% occur at the end of a well's sequence."
+    role: sidetrack
+
+  - code: DSI
+    label: Drilling Suspended
+    legacy_display_label: "Drilling suspended"
+    provenance: published_other_domain
+    published_in: BOREHOLE_STAT_CD
+    reuse_inferred: true
+    evidence: "32.3% 'SUSPEND', 7.3% 'NO OPERATION' — both highest of any code."
+    role: suspension
+
+  # --- Undocumented in any BSEE domain. Do not attach a meaning. ---
+
+  - code: WO
+    label: null
+    legacy_display_label: "Workover"
+    provenance: unknown
+    inference: "Consistent with workover, but the token WO is not published."
+    evidence: "26.3% 'TUBING', 19.5% 'PRODUC', 8.1% 'COIL'. BSEE's APM primary-op list has a WORKOVER value, but not this token."
+    role: unknown
+
+  - code: PND
+    label: null
+    legacy_display_label: "Pending / suspended"
+    provenance: unknown
+    inference: >-
+      Best reading: a "pending / status not yet determined" residual dropdown
+      option applied to weeks of real, rig-attended activity. NOT an idle or
+      suspended code. This is inference; BSEE publishes nothing.
+    evidence: >-
+      PND weeks are the busiest in the file: only 6.1% lack a rig name (vs TA
+      42.6%, PA 50.1%), the longest median remark of any code (923 chars), the
+      highest BOP rate (53.9%), and the deepest mean DRILLING_MD (16,622 ft,
+      highest of all twelve). DSI/TA/PA own the SUSPEND / NO ACTIVITY language;
+      PND does not. Young code — 0% before 2001, ramping from 2002 (eWell era).
+      Median run of 1 week, sits mid-drilling (mean position 0.39), opens 2,135 wells.
+    impact: >-
+      Materially moves published economics. If PND is active rig time, excluding
+      it from completion understates. PND = 4,713 days against COM's 5,298 on the
+      published 253-bore population.
+    frequency_note: >-
+      2.44% of all WAR rows corpus-wide — NOT the 20-45% previously cited. Only
+      14% of wellbores use PND at all; among those, median 14.3% of that well's
+      weeks, p90 40%. Rare fleet-wide, concentrated where it appears.
+    role: unknown
+    blocks_issue: 1065
+
+  - code: CHZ
+    label: null
+    legacy_display_label: "Casing/Hole repair"
+    provenance: unknown
+    role: unknown
+
+  - code: MPF
+    label: null
+    legacy_display_label: "Multi-phase / facility work"
+    provenance: unknown
+    role: unknown
+
+  - code: REC
+    label: null
+    legacy_display_label: "Recompletion"
+    provenance: unknown
+    inference: "Remarks consistent with recompletion; token not published."
+    role: unknown
+
+  - code: TBK
+    label: null
+    legacy_display_label: "Test / tubing work"
+    provenance: unknown
+    role: unknown
+
+  - code: null
+    label: null
+    provenance: unknown
+    evidence: "882 rows, all 1997-2001 — pre-eWell."
+    role: unknown
+
+# Codes whose meaning must be obtained from BSEE before any basis relying on them
+# can be ratified. Larger than PND alone: WO + CHZ + MPF + REC + TBK are 13.6% of
+# rows, PND a further 2.4%.
+outstanding_query:
+  contact: TDM@bsee.gov
+  ask: "The full WELL_ACTIVITY_CD domain, not PND alone."
+  codes: [WO, CHZ, PND, MPF, REC, TBK]

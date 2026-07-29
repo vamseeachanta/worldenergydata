@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from worldenergydata.bsee.analysis import war_activity_codes as _war_activity_codes
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.lower_tertiary import v30_reproducer
 
@@ -55,21 +56,23 @@ OGOR_COLUMNS = [
     "UNIT_ALOC_SUFFIX",
 ]
 
-# WAR activity-code -> human label. Source: BSEE Well Activity Report codes.
-WAR_ACTIVITY_LABELS = {
-    "DRL": "Drilling",
-    "COM": "Completion",
-    "WO": "Workover",
-    "REC": "Recompletion",
-    "ST": "Sidetrack",
-    "CHZ": "Casing/Hole repair",
-    "TA": "Temporary abandonment",
-    "PA": "Plug & abandon",
-    "PND": "Pending / suspended",
-    "DSI": "Drilling suspended",
-    "MPF": "Multi-phase / facility work",
-    "TBK": "Test / tubing work",
-}
+# WAR activity-code -> display string, derived from the canonical definition
+# file ``bsee/analysis/data/war_activity_codes.yml`` (#1065).
+#
+# PROVENANCE CORRECTION: this dict previously carried the comment "Source: BSEE
+# Well Activity Report codes". That was false. BSEE publishes NO code list for
+# ``WELL_ACTIVITY_CD``; six of these twelve tokens are borrowed from the
+# separate, published ``BOREHOLE_STAT_CD`` domain (an inference of ours), and
+# six -- WO, PND, CHZ, MPF, REC, TBK -- are undocumented anywhere.
+#
+# These are therefore DISPLAY strings and not definitions. They are preserved
+# verbatim because ``lower_tertiary.well_benchmark`` selects interventions by
+# matching this exact text, so editing them would silently move published
+# intervention counts. For what a code actually means -- including which ones
+# have no defensible meaning at all -- use
+# ``worldenergydata.bsee.analysis.war_activity_codes.activity_labels()``, which
+# omits the undocumented codes rather than guessing at them.
+WAR_ACTIVITY_LABELS = dict(_war_activity_codes.LEGACY_DISPLAY_LABELS)
 
 # Activity codes that constitute a "critical operation" that moves field value:
 #   - first production of a well (well-added) -> derived from OGOR, not WAR
