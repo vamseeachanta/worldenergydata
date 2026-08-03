@@ -10,6 +10,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from tests.performance_lifecycle_support import assert_performance_tracker_lifecycle
 from worldenergydata.testing.performance import (
     PerformanceAnalyzer,
     PerformanceDashboard,
@@ -355,10 +356,12 @@ class TestPerformanceIntegration:
         result = sum(range(1000000))
         assert result > 0
 
-    def test_performance_tracking_active(self):
-        """Test that performance tracking is active."""
-        # This test verifies the pytest plugin is working
-        assert True
+    def test_performance_tracking_active(self, tmp_path):
+        """Test lazy collection and real-session performance tracking."""
+        assert_performance_tracker_lifecycle(
+            tmp_path,
+            Path(__file__).resolve().parents[1],
+        )
 
 
 # Performance benchmark fixtures
