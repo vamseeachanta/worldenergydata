@@ -30,6 +30,7 @@ import pandas as pd
 from worldenergydata.production.unified.cross_basin import (
     _DISCOUNT_RATE,
     compare_peak_rates,
+    fiscal_regime_source,
     fiscal_sensitivity,
 )
 from worldenergydata.production.unified.query import (
@@ -247,9 +248,26 @@ def build_benchmark(
 
     concept_mix = concept_mix_by_region(depth_by_field) if depth_by_field else {}
 
+    # Region-level status. "real"/"seed" mirror the row-level provenance of the
+    # regions that produced rows; "screening-only" marks a region that IS
+    # registered in the router but whose adapter returned nothing — it is in
+    # scope for screening, not backed by ingested production. Row-level
+    # provenance stays strictly real/seed: screening-only regions have no rows.
+    region_status: dict[str, str] = dict(provenance)
+    for region in skipped_empty:
+        region_status[str(region)] = "screening-only"
+
+    # Whether each region's published royalty/tax figures come from its own
+    # regime or from the generic placeholder default (#831).
+    fiscal_regime_sources = {
+        str(region): fiscal_regime_source(str(region)) for region in regions
+    }
+
     return {
         "rows": rows,
         "provenance": provenance,
+        "region_status": region_status,
+        "fiscal_regime_source": fiscal_regime_sources,
         "generated_regions": generated_regions,
         "skipped_empty": skipped_empty,
         "concept_mix": concept_mix,
@@ -292,6 +310,7 @@ tr:last-child td{border-bottom:none}
 .concept{margin-top:34px}
 .concept h2{font-size:18px;color:var(--navy);border-left:4px solid var(--teal);padding-left:12px}
 .skip{margin-top:24px;color:var(--muted);font-size:13px}
+.prov-summary{margin-top:14px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--ink)}
 footer{margin-top:40px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:16px}
 a.back{color:var(--teal);font-weight:700}
 """
@@ -386,10 +405,42 @@ def render_benchmark_html(benchmark: dict) -> str:
     skip_html = ""
     if skipped:
         skip_html = (
-            '<p class="skip">Regions skipped (adapter returned no rows — no '
-            "fabricated economics emitted): <strong>"
+            '<p class="skip">Screening-only regions (registered, but the adapter '
+            "returned no rows — no fabricated economics emitted): <strong>"
             + html.escape(", ".join(skipped))
             + "</strong></p>"
+        )
+
+    # Computed real/seed/screening-only split. Every count and name below is
+    # derived from the benchmark dict — never hard-coded — because the real-row
+    # coverage moves as adapters gain ingested data (#807, #842).
+    status = benchmark.get("region_status") or {}
+    by_status: dict[str, list[str]] = {}
+    for region, state in sorted(status.items()):
+        by_status.setdefault(state, []).append(str(region))
+    real_names = by_status.get("real", [])
+    seed_names = by_status.get("seed", [])
+    screening_names = by_status.get("screening-only", [])
+
+    def _names(names: list[str]) -> str:
+        return html.escape(", ".join(names)) if names else "none"
+
+    summary_html = ""
+    if status:
+        summary_html = (
+            '<p class="prov-summary"><strong>Data status:</strong> '
+            "{total} regions — <strong>{n_real} real</strong> ({real}), "
+            "<strong>{n_seed} illustrative seed</strong> ({seed}), "
+            "<strong>{n_scr} screening-only</strong> — registered with no "
+            "ingested production yet ({scr}).</p>".format(
+                total=len(status),
+                n_real=len(real_names),
+                real=_names(real_names),
+                n_seed=len(seed_names),
+                seed=_names(seed_names),
+                n_scr=len(screening_names),
+                scr=_names(screening_names),
+            )
         )
 
     generated = ", ".join(benchmark.get("generated_regions", [])) or "—"
@@ -421,6 +472,7 @@ def render_benchmark_html(benchmark: dict) -> str:
     only, excluding all capital expenditure</strong> — it is a backward-looking
     cash-flow proxy, not a forward-looking investment NPV.
   </div>
+  {summary_html}
   <table>
     <thead>
       <tr>
