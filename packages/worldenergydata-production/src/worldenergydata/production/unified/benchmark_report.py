@@ -13,6 +13,29 @@ seed row can never render as real. Empty-data regions are SKIPPED with a
 warning (never a fabricated zero row, the #715-B1 lesson); fields with no depth
 bucket as "unknown" (depth never fabricated). Fiscal coefficients are
 simplified public approximations — NOT legal or financial advice.
+
+Regenerating
+------------
+The artifacts under ``reports/field_benchmark/`` are GENERATED. Never hand-edit
+them — an edit is silently reverted by the next regeneration. Rebuild with::
+
+    python -m worldenergydata.production.unified.benchmark_report
+
+which rewrites ``reports/field_benchmark/index.html`` and ``_facts.json``.
+It is CI-safe: the default ``RegionRouter`` resolves to fixture/mock adapters,
+so no 300MB BSEE binary and no network access are needed. Re-run it and
+re-commit both files whenever:
+
+* a region adapter gains real data or its fixtures change (#807 Spain per-field
+  density, #842 Keathley Canyon ingest are the expected triggers),
+* a region is added to or removed from ``RegionRouter``, or
+* ``cross_basin._FISCAL_REGIMES`` changes.
+
+The artifact went stale exactly this way once already: Australia was registered
+in the router after the artifact was last generated and so was missing from the
+published benchmark until #831. To check for staleness, regenerate into a temp
+directory and diff against the committed files — they should match apart from
+``meta.generated_utc``.
 """
 
 from __future__ import annotations
@@ -523,9 +546,11 @@ _ILLUSTRATIVE_DEPTHS_FT: dict[str, dict[str, Optional[float]]] = {
 def generate_report(output_dir: Optional[Path] = None) -> dict:
     """Generate the benchmark report artifacts (``index.html`` + ``_facts.json``).
 
-    Uses the default ``RegionRouter`` (mock adapters), so it runs in CI without
-    the 300MB BSEE binary.  Every region resolves to synthetic data and is
-    therefore badged as seed.
+    Uses the default ``RegionRouter`` (fixture/mock adapters), so it runs in CI
+    without the 300MB BSEE binary.  Regions badge ``real`` only when every one
+    of their source tags is in the :data:`_REAL_SOURCES` allowlist; everything
+    else badges ``seed``, and a registered region whose adapter returns no rows
+    is reported ``screening-only`` rather than being fabricated as zero rows.
 
     Args:
         output_dir: Target directory.  Defaults to
