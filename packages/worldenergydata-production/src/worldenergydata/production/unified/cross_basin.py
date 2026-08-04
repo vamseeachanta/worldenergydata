@@ -57,10 +57,46 @@ _FISCAL_REGIMES: dict[str, dict] = {
         "tax_rate": 0.15,  # federal + NL provincial
         "govt_take": 0.35,
     },
+    "spain": {
+        "royalty_rate": 0.02,  # Ley 8/2015 hydrocarbon extraction levy (~1-4%)
+        "tax_rate": 0.30,  # special IS rate for hydrocarbon E&P (Ley 27/2014 art. 29)
+        "govt_take": 0.32,
+    },
+    "australia": {
+        "royalty_rate": 0.0,  # offshore Commonwealth waters: PRRT, no ad-valorem royalty
+        "tax_rate": 0.58,  # PRRT 40% + 30% company tax (PRRT deductible), combined
+        "govt_take": 0.58,
+    },
+}
+
+# Applied when a region has no entry in _FISCAL_REGIMES. Named (rather than
+# inlined at the call site) so that the fallback is observable via
+# :func:`fiscal_regime_source` instead of silently masquerading as a
+# country-specific result — spain published a placeholder take for months (#831).
+_GENERIC_DEFAULT_REGIME: dict[str, float] = {
+    "royalty_rate": 0.15,
+    "tax_rate": 0.25,
+    "govt_take": 0.40,
 }
 
 _DISCOUNT_RATE = 0.10  # 10 % annual for NPV
 _BBL_TO_USD_DEFAULT = 80.0  # default oil price used when caller passes None
+
+
+def fiscal_regime_source(region: str) -> str:
+    """Report whether a region's fiscal regime is country-specific or a default.
+
+    Args:
+        region: Region key as it appears in the production data.
+
+    Returns:
+        ``"country-specific"`` when the region has its own entry in
+        :data:`_FISCAL_REGIMES`, otherwise ``"generic-default"`` — meaning the
+        published royalty/tax/government-take figures come from
+        :data:`_GENERIC_DEFAULT_REGIME` and are a placeholder, not that
+        country's actual regime.
+    """
+    return "country-specific" if region in _FISCAL_REGIMES else "generic-default"
 
 
 def compare_peak_rates(result: ProductionResult) -> pd.DataFrame:
@@ -169,10 +205,7 @@ def fiscal_sensitivity(
     monthly_rate = _DISCOUNT_RATE / 12.0
 
     for (region, field), group in df.groupby(["region", "field_name"]):
-        regime = _FISCAL_REGIMES.get(
-            region,
-            {"royalty_rate": 0.15, "tax_rate": 0.25, "govt_take": 0.40},
-        )
+        regime = _FISCAL_REGIMES.get(region, _GENERIC_DEFAULT_REGIME)
         royalty_rate = regime["royalty_rate"]
         tax_rate = regime["tax_rate"]
 

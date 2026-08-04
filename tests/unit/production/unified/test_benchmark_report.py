@@ -95,6 +95,13 @@ def _seed_rows():
     ]
 
 
+def _brazil_seed_rows():
+    return [
+        _row("brazil", "Lula", 2020, 1, 8_800_000, "anp_mock"),
+        _row("brazil", "Lula", 2020, 2, 8_100_000, "anp_mock"),
+    ]
+
+
 def _make_result(rows):
     q = ProductionQuery(regions=["x"])
     data = pd.DataFrame(rows) if rows else pd.DataFrame(columns=list(STANDARD_COLUMNS))
@@ -289,3 +296,95 @@ def test_discount_rate_mismatch_raises():
     router = _FakeRouter({"gom": _FakeAdapter("gom", _real_rows())})
     with pytest.raises(ValueError, match="discount_rate"):
         build_benchmark(["gom"], router=router, discount_rate=0.15)
+
+
+# ---------------------------------------------------------------------------
+# Region status vocabulary + fiscal regime provenance (#831)
+# ---------------------------------------------------------------------------
+
+
+def _status_bench():
+    """gom real, ncs seed, australia registered-but-empty (screening-only)."""
+    router = _FakeRouter(
+        {
+            "gom": _FakeAdapter("gom", _real_rows()),
+            "ncs": _FakeAdapter("ncs", _seed_rows()),
+            "australia": _FakeAdapter("australia", []),
+        }
+    )
+    return build_benchmark(["gom", "ncs", "australia"], router=router)
+
+
+class TestRegionStatus:
+    """A registered region whose adapter has no data must be visibly
+    distinguishable from an illustrative-seed region (#831)."""
+
+    def test_empty_region_is_screening_only(self):
+        assert _status_bench()["region_status"]["australia"] == "screening-only"
+
+    def test_real_region_status_is_real(self):
+        assert _status_bench()["region_status"]["gom"] == "real"
+
+    def test_seed_region_status_is_seed(self):
+        assert _status_bench()["region_status"]["ncs"] == "seed"
+
+    def test_region_status_covers_every_requested_region(self):
+        assert sorted(_status_bench()["region_status"]) == [
+            "australia",
+            "gom",
+            "ncs",
+        ]
+
+    def test_row_level_provenance_vocabulary_is_unchanged(self):
+        """screening-only is a REGION status only; it must never leak into
+        row-level provenance, which stays real/seed."""
+        bench = _status_bench()
+        assert {r["provenance"] for r in bench["rows"]} == {"real", "seed"}
+
+    def test_fiscal_regime_source_map_is_emitted(self):
+        assert _status_bench()["fiscal_regime_source"]["gom"] == "country-specific"
+
+    def test_fiscal_regime_source_covers_skipped_regions(self):
+        assert (
+            _status_bench()["fiscal_regime_source"]["australia"] == "country-specific"
+        )
+
+
+class TestRenderedStatusSummary:
+    """The rendered page must state the real/seed/screening-only split, so a
+    reader cannot mistake a 1-real-of-9 benchmark for ingested data (#831)."""
+
+    def test_summary_names_the_screening_only_region(self):
+        html_out = render_benchmark_html(_status_bench())
+        assert "australia" in html_out.split('class="prov-summary"')[1]
+
+    def test_summary_reports_the_real_count(self):
+        html_out = render_benchmark_html(_status_bench())
+        summary = html_out.split('class="prov-summary"')[1].split("</p>")[0]
+        assert "1 real" in summary
+
+    def test_summary_reports_the_screening_only_count(self):
+        html_out = render_benchmark_html(_status_bench())
+        summary = html_out.split('class="prov-summary"')[1].split("</p>")[0]
+        assert "1 screening-only" in summary
+
+    def test_summary_reports_the_seed_count(self):
+        html_out = render_benchmark_html(_status_bench())
+        summary = html_out.split('class="prov-summary"')[1].split("</p>")[0]
+        assert "1 illustrative seed" in summary
+
+    def test_summary_counts_are_computed_not_hardcoded(self):
+        """Two seed regions must render as 2, proving the count is derived."""
+        router = _FakeRouter(
+            {
+                "ncs": _FakeAdapter("ncs", _seed_rows()),
+                "brazil": _FakeAdapter("brazil", _brazil_seed_rows()),
+            }
+        )
+        bench = build_benchmark(["ncs", "brazil"], router=router)
+        summary = (
+            render_benchmark_html(bench)
+            .split('class="prov-summary"')[1]
+            .split("</p>")[0]
+        )
+        assert "2 illustrative seed" in summary
