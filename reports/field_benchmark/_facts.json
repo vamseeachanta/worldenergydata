@@ -1,5 +1,11 @@
 {
   "concept_mix": {
+    "australia": {
+      "dry": 0,
+      "subsea15": 0,
+      "subsea20": 0,
+      "unknown": 4
+    },
     "brazil": {
       "dry": 0,
       "subsea15": 0,
@@ -55,6 +61,18 @@
       "unknown": 4
     }
   },
+  "fiscal_regime_source": {
+    "australia": "country-specific",
+    "brazil": "country-specific",
+    "canada": "country-specific",
+    "eia_us": "country-specific",
+    "gom": "country-specific",
+    "mexico": "country-specific",
+    "ncs": "country-specific",
+    "spain": "country-specific",
+    "texas": "country-specific",
+    "ukcs": "country-specific"
+  },
   "generated_regions": [
     "brazil",
     "canada",
@@ -68,11 +86,23 @@
   ],
   "meta": {
     "discount_rate": 0.1,
-    "generated_utc": "2026-07-05T00:24:50Z",
+    "generated_utc": "2026-08-04T11:15:38Z",
     "n_rows": 28,
     "oil_price_usd": 70.0
   },
   "provenance": {
+    "brazil": "seed",
+    "canada": "seed",
+    "eia_us": "seed",
+    "gom": "seed",
+    "mexico": "seed",
+    "ncs": "seed",
+    "spain": "real",
+    "texas": "seed",
+    "ukcs": "seed"
+  },
+  "region_status": {
+    "australia": "screening-only",
     "brazil": "seed",
     "canada": "seed",
     "eia_us": "seed",
@@ -117,26 +147,26 @@
       "region": "brazil"
     },
     {
-      "disc_posttax_cf_usd": 15498170402.0,
+      "disc_posttax_cf_usd": 1026147434.0,
       "field_name": "Hibernia",
       "govt_take": 32.0,
-      "peak_oil_bbl": 6200000.0,
+      "peak_oil_bbl": 3900000.0,
       "provenance": "seed",
       "region": "canada"
     },
     {
-      "disc_posttax_cf_usd": 5977331678.0,
+      "disc_posttax_cf_usd": 111407603.0,
       "field_name": "Terra Nova",
       "govt_take": 32.0,
-      "peak_oil_bbl": 2400000.0,
+      "peak_oil_bbl": 1200000.0,
       "provenance": "seed",
       "region": "canada"
     },
     {
-      "disc_posttax_cf_usd": 4694687923.0,
+      "disc_posttax_cf_usd": 91494281.0,
       "field_name": "White Rose",
       "govt_take": 32.0,
-      "peak_oil_bbl": 1900000.0,
+      "peak_oil_bbl": 980000.0,
       "provenance": "seed",
       "region": "canada"
     },
@@ -253,10 +283,10 @@
       "region": "ncs"
     },
     {
-      "disc_posttax_cf_usd": 21974289.0,
+      "disc_posttax_cf_usd": 24162163.0,
       "field_name": "Ayoluengo",
-      "govt_take": 36.25,
-      "peak_oil_bbl": 101175.99,
+      "govt_take": 31.4,
+      "peak_oil_bbl": 103384.29,
       "provenance": "real",
       "region": "spain"
     },
@@ -309,5 +339,7 @@
       "region": "ukcs"
     }
   ],
-  "skipped_empty": []
+  "skipped_empty": [
+    "australia"
+  ]
 }
