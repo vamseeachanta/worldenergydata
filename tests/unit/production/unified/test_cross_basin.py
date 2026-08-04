@@ -4,8 +4,11 @@ import pandas as pd
 import pytest
 
 from worldenergydata.production.unified.cross_basin import (
+    _FISCAL_REGIMES,
+    _GENERIC_DEFAULT_REGIME,
     compare_cumulative_eur,
     compare_peak_rates,
+    fiscal_regime_source,
     fiscal_sensitivity,
 )
 from worldenergydata.production.unified.query import ProductionQuery, ProductionResult
@@ -242,3 +245,63 @@ class TestFiscalSensitivity:
         ncs_pct = df[df["region"] == "ncs"]["effective_govt_take_pct"].values[0]
         gom_pct = df[df["region"] == "gom"]["effective_govt_take_pct"].values[0]
         assert ncs_pct > gom_pct
+
+
+# ---------------------------------------------------------------------------
+# Fiscal-regime coverage (#831)
+# ---------------------------------------------------------------------------
+
+
+class TestFiscalRegimeCoverage:
+    """Every routed region must resolve to a country-specific fiscal regime.
+
+    Spain and Australia were silently falling through to the generic default
+    (royalty 0.15 / tax 0.25), so Spain's published government take was a
+    placeholder rather than its actual regime (#831).
+    """
+
+    def test_spain_has_country_specific_regime(self):
+        assert _FISCAL_REGIMES["spain"]["tax_rate"] == 0.30
+
+    def test_australia_has_country_specific_regime(self):
+        assert _FISCAL_REGIMES["australia"]["tax_rate"] == 0.58
+
+    def test_unknown_region_reports_generic_default(self):
+        assert fiscal_regime_source("nowhereland") == "generic-default"
+
+    def test_spain_reports_country_specific(self):
+        assert fiscal_regime_source("spain") == "country-specific"
+
+    def test_generic_default_regime_is_a_named_constant(self):
+        assert _GENERIC_DEFAULT_REGIME["royalty_rate"] == 0.15
+
+    def test_every_routed_region_has_a_country_specific_regime(self):
+        """Guard against recurrence: a new region must not silently inherit
+        the generic default the way spain and australia did."""
+        from worldenergydata.production.unified.router import RegionRouter
+
+        missing = [
+            region
+            for region in RegionRouter().list_regions()
+            if fiscal_regime_source(region) != "country-specific"
+        ]
+        assert missing == []
+
+    def test_spain_effective_govt_take_uses_its_own_regime(self):
+        """0.02 royalty + 0.30 tax on the remainder = 31.4%, NOT the 36.25%
+        the generic default produced."""
+        rows = [
+            {
+                "region": "spain",
+                "field_name": "Ayoluengo",
+                "year": 2020,
+                "month": 1,
+                "oil_bbl": 10_000.0,
+                "gas_mcf": 0.0,
+                "water_bbl": 0.0,
+                "condensate_bbl": 0.0,
+                "source": "cores",
+            }
+        ]
+        df = fiscal_sensitivity(_make_result(rows), oil_price_usd=70.0)
+        assert round(float(df["effective_govt_take_pct"].values[0]), 2) == 31.40
