@@ -14,7 +14,7 @@ pyyaml
 # Web scraping
 bs4
 requests
-scrapy==2.16.0
+scrapy==2.17.0
 selenium
 
 # Plotting and visualization
