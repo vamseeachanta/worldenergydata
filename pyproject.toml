@@ -101,7 +101,7 @@ dependencies = [
     "scipy>=1.11.0,<2.0",
     # Visualization
     "plotly>=5.18.0,<6.0",
-    "dash>=2.14.0,<3.0",
+    "dash>=4.4.1,<5.0",
     "seaborn>=0.13.0,<1.0",
     # HTTP client
     "httpx>=0.25.0,<1.0",
