@@ -40,6 +40,10 @@ def validate_records_file_name(value: str) -> str:
         or value in {"", ".", ".."}
         or "/" in value
         or "\\" in value
+<<<<<<< HEAD
+=======
+        or "\x00" in value
+>>>>>>> b803c579f6e48cb4198d76b08e111e88a2fe700e
         or not value.endswith(".json")
     )
     if invalid:

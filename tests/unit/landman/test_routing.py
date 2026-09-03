@@ -164,7 +164,19 @@ def test_source_config_is_immutable_and_requires_exactly_one_source():
 
 @pytest.mark.parametrize(
     "records_file",
+<<<<<<< HEAD
     ["", ".", "..", "nested/records.json", r"C:\private\records.json", "records.txt"],
+=======
+    [
+        "",
+        ".",
+        "..",
+        "nested/records.json",
+        r"C:\private\records.json",
+        "bad\x00.json",
+        "records.txt",
+    ],
+>>>>>>> b803c579f6e48cb4198d76b08e111e88a2fe700e
 )
 def test_source_config_rejects_invalid_custom_file_syntax(records_file):
     with pytest.raises(LandmanError) as caught:
