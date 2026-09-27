@@ -5,8 +5,8 @@ Given an engineering failure mode, pull real precedent incidents from the public
 HSE corpus and return "2 latest + 2 highest-severity", each stamped with source +
 data vintage so freshness/staleness is transparent (never hidden).
 
-Purpose: an additional Deckhand demo stream — every digitalmodel engineering
-analysis ships with real-world precedent. Numbers persuade engineers; real
+Purpose: every digitalmodel engineering analysis ships with real-world
+precedent. Numbers persuade engineers; real
 incidents persuade decision-makers.
 
 Pilot failure mode: mooring fatigue (matches digitalmodel #796 parametric pilot).

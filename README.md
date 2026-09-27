@@ -2,14 +2,7 @@
 
 > *Everyday complex engineering — made deterministically simple.*
 
-> **Part of the Deckhand API — the API for real-world work.**
-> The public-domain datasets and analyses in this repo feed **Deckhand API paths** (field economics,
-> well benchmarking, basin/decom intel): one call (`POST /api/run`) returns a **standards-traceable
-> HTML report URL** — deterministic, built on real code and public federal data (same input, same
-> output, every time).
-> Live API paths → https://aceengineer.com/api-catalog.html · API reference: deckhand `docs/deckhand/API.md`
->
-> **Explore the capabilities** → https://vamseeachanta.github.io/worldenergydata/capabilities/ — every live surface with a 1-page PDF, a self-contained workflow-API call, and a ready-to-run starting prompt.
+> **Capabilities** → https://vamseeachanta.github.io/worldenergydata/capabilities/ — every published analysis surface with a 1-page PDF summary.
 
 A comprehensive Python data library and analysis platform for the energy industry, providing integrated access to public energy data sources with built-in economic evaluation, safety analysis, and production forecasting tools.
 

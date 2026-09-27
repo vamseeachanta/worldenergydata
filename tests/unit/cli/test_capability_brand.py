@@ -1,7 +1,6 @@
 """Tracked brand tokens as the single source for the capability generator (#908).
 
-Both one-pager templates (PDF + interactive API) previously duplicated the same
-:root token block. They now read it from one tracked file,
+The one-pager template reads its :root token block from one tracked file,
 reports/capabilities/assets/tokens.css, so the navy/teal identity lives in one
 editable place that non-generated pages can also link. Byte-identical output.
 """
@@ -36,5 +35,5 @@ def test_generator_reads_tracked_tokens():
     assert mod._TOKENS == _TOKENS.read_text(encoding="utf-8").strip()
     # and a rendered page carries the resolved tokens
     spec = next(s for s in mod.SPECS if s.get("kind") == "work")
-    html = mod._render_api_html(spec, mod._api_envelope(spec))
+    html = mod._render_html(spec)
     assert ":root{--navy:#0B3D91" in html

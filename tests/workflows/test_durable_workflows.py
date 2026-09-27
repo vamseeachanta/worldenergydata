@@ -164,7 +164,7 @@ def test_module_help_uses_typer_cli():
 
 # --------------------------------------------------------------------------- #
 # Versioned-routing schema (schema_version 2): optional algorithm-version triple
-# per row. Guards the multi-version case so Deckhand can resolve a pinned
+# per row. Guards the multi-version case so a caller can resolve a pinned
 # `<repo>:<id>@N` or the latest-stable default unambiguously.
 # --------------------------------------------------------------------------- #
 _VERSION_STATUSES = {"stable", "deprecated", "experimental", "retired"}
