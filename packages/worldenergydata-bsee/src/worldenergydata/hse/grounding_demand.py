@@ -9,8 +9,7 @@ ranked list of coverage gaps. A request for a mode we don't have — or one whos
 corpus is too thin to fill 2-latest + 2-severe — is the gold: it names the next
 ``FAILURE_MODES`` entry to add (feeding the coverage child #488).
 
-Mirrors the deckhand demand-signal pattern (deckhand#368): read the signal, rank
-into priority tiers, emit markdown.
+Demand-signal pattern: read the signal, rank into priority tiers, emit markdown.
 
 Flow::
 
