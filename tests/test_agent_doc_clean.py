@@ -6,10 +6,9 @@ conflict blocks committed into agent docs. First seen in .claude/docs/agents.md
 (commit 7493f543, resolved via issue #414); recurred 2026-06 in
 .claude/skills/bsee-data-extractor/SKILL.md (resolved via #467/#468).
 
-The claude-flow-era agents.md this test originally guarded was archived to
-.claude/_archive/claude-flow-era/ in the 2026-06-11 provider rework
-(workspace-hub#3040), so the guard now covers every live agent-doc surface
-instead of that single file. Archived content is exempt by design.
+The claude-flow-era agents.md this test originally guarded was archived in the
+2026-06-11 provider rework (workspace-hub#3040) and later removed from the repo,
+so the guard now covers every live agent-doc surface instead of that single file.
 
 Refs: worldenergydata#414, worldenergydata#467, workspace-hub#2719,
 workspace-hub#3040.
