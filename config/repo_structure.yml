@@ -26,7 +26,6 @@ allowed_roots:
   - .gemini
   - .git-commands
   - .github
-  - .github_workflows_backup
   - .planning
   - .slash-commands
 
@@ -34,9 +33,7 @@ allowed_roots:
   - AGENTS.md
   - CLAUDE.md
   - .command-registry.json
-  - coverage.json
   - .coveragerc
-  - .coverage_report.json
   - .flake8
   - .gitattributes
   - .gitignore
@@ -80,20 +77,6 @@ generated_artifact_roots:
   - test_output
 
 temporary_exceptions:
-  logs:
-    category: durable-evidence
-    owner: worldenergydata maintainers
-    review_date: "2026-06-30"
-    follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
-    justification: Tracked scheduler log JSON files are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
-    allowed_paths:
-      - logs/dashboard_audit.jsonl
-      - logs/scheduler/20260325_214434_eia_us_refresh.json
-      - logs/scheduler/20260325_214511_bsee_refresh.json
-      - logs/scheduler/20260325_214601_sodir_refresh.json
-      - logs/scheduler/20260325_214643_brazil_anp_refresh.json
-      - logs/scheduler/20260325_214746_ukcs_refresh.json
-      - logs/scheduler/20260325_214826_metocean_refresh.json
   reports:
     category: durable-evidence
     owner: worldenergydata maintainers
