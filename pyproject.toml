@@ -149,7 +149,7 @@ test = [
     "factory-boy>=3.3.3",
     "psutil>=5.9.0",
     "responses>=0.24.0",
-    "hypothesis>=6.100.0",
+    "hypothesis>=6.164.0",
 ]
 docs = [
     "sphinx>=6.0",
@@ -578,7 +578,7 @@ docs = [
 ]
 dev = [
     "faker>=37.8.0",
-    "hypothesis>=6.141.1",
+    "hypothesis>=6.164.0",
     "mypy>=1.18.2",
     "numpy-financial>=1.0.0",
     "pytest-asyncio>=1.2.0",
