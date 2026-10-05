@@ -3,8 +3,8 @@
 Parse active hook/CI wiring; archived scanner libraries are not active gates.
 """
 
-from pathlib import Path
 import unittest
+from pathlib import Path
 
 import yaml
 
