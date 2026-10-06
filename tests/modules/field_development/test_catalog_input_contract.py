@@ -1,12 +1,16 @@
 """Negative contracts for identity/source/parent linkage (issue 1144)."""
 
-import copy
 import hashlib
 import json
 from pathlib import Path
 
 import pytest
-from test_catalog_integration import api, inputs, write_json
+from test_catalog_integration import api as fixture_api
+from test_catalog_integration import inputs as fixture_inputs
+from test_catalog_integration import write_json
+
+api = fixture_api
+inputs = fixture_inputs
 
 
 def replace_table(inputs, table, rows):
@@ -225,3 +229,17 @@ def test_reader_requires_matching_parent_fingerprint(api, inputs):
         api.validation.validate_links(
             bundle, {e["entity_id"] for e in bundle["entities"]}, {"s1"}
         )
+
+
+def test_validation_helpers_obey_source_size_contract():
+    import ast
+
+    directory = (
+        Path(__file__).resolve().parents[3] / "src/worldenergydata/field_development"
+    )
+    for path in directory.glob("catalog_validation*.py"):
+        source = path.read_text(encoding="utf-8")
+        assert len(source.splitlines()) <= 400, path.name
+        for node in ast.walk(ast.parse(source)):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                assert node.end_lineno - node.lineno + 1 <= 50, (path.name, node.name)

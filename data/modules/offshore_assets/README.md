@@ -16,6 +16,12 @@ matrix. Output must be outside the original snapshot. Original input bytes
 are verified against their manifest; generated outputs receive deterministic
 hashes. `catalog_integration.read_bundle(path)` verifies output hashes and
 reads registry, crosswalk, legacy ledger, relationships and scoped evidence.
+The writer validates serialized readback before creating a new destination and
+rejects existing destinations. The manifest is written last. Gate-file JSON
+rejects duplicate keys and non-finite numbers; optional raw gate-file digests
+remain separate from normalized decision digests. Accepted crosswalk rows retain
+their candidate-bound decision records on export and readback. Recorded signoff
+is evidence metadata, not authenticated publication authority.
 
 The reader contract is described in `catalog_integration_schema.json`.
 Preview outputs are local drafts and must not be staged as public data.

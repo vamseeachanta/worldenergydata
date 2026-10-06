@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+import math
 import re
 from pathlib import Path
 
@@ -33,7 +34,20 @@ def strict_json(raw):
             result[key] = value
         return result
 
-    return json.loads(raw.decode("utf-8"), object_pairs_hook=unique_pairs)
+    def finite_number(value):
+        number = float(value)
+        require(math.isfinite(number), "non-finite JSON number")
+        return number
+
+    def reject_constant(value):
+        raise ValueError("non-finite JSON constant: " + value)
+
+    return json.loads(
+        raw.decode("utf-8"),
+        object_pairs_hook=unique_pairs,
+        parse_float=finite_number,
+        parse_constant=reject_constant,
+    )
 
 
 def csv_input(raw):
@@ -50,10 +64,7 @@ def csv_input(raw):
     return header, rows
 
 
-def pinned_inputs(snapshot, legacy_csv, parent_csv, validate):
-    snapshot = Path(snapshot)
-    manifest_raw = (snapshot / "manifest.json").read_bytes()
-    manifest = strict_json(manifest_raw)
+def snapshot_pins(manifest):
     require(isinstance(manifest, dict), "invalid snapshot manifest type")
     require(
         isinstance(manifest.get("dataset_id"), str)
@@ -71,7 +82,10 @@ def pinned_inputs(snapshot, legacy_csv, parent_csv, validate):
         "duplicate or invalid snapshot pin",
     )
     require(all(Path(n).name == n for n in names), "unsafe snapshot pin")
-    pins = {p["path"]: p for p in entries}
+    return {p["path"]: p for p in entries}
+
+
+def pinned_tables(snapshot, pins):
     tables, hashes = {}, {}
     for table in TABLES:
         name = table + ".json"
@@ -98,6 +112,15 @@ def pinned_inputs(snapshot, legacy_csv, parent_csv, validate):
             len(tables[table]) == pin["record_count"], "input count mismatch: " + name
         )
         hashes[name] = digest
+    return tables, hashes
+
+
+def pinned_inputs(snapshot, legacy_csv, parent_csv, validate):
+    snapshot = Path(snapshot)
+    manifest_raw = (snapshot / "manifest.json").read_bytes()
+    manifest = strict_json(manifest_raw)
+    pins = snapshot_pins(manifest)
+    tables, hashes = pinned_tables(snapshot, pins)
     legacy_raw, parent_raw = (
         Path(legacy_csv).read_bytes(),
         Path(parent_csv).read_bytes(),

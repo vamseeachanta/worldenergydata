@@ -12,6 +12,15 @@
     "output_hashes": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
     "decision_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "eligibility_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "gate_input_sha256": {
+      "type": "object",
+      "description": "Optional raw CLI gate-file byte digests; separate from normalized semantic decision digests and not authentication.",
+      "properties": {
+        "match_decisions": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "eligibility": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    },
     "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
     "entity_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}
   },

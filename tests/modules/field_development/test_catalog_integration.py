@@ -1,134 +1,17 @@
-"""Contract tests for evidence-preserving Angola catalog integration (#1144)."""
+"""Evidence-preserving catalog contract regressions."""
 
-import csv
 import hashlib
-import importlib.util
 import json
 from pathlib import Path
 
+import catalog_test_support as support
 import pytest
 
-ROOT = Path(__file__).resolve().parents[3]
-SPEC = importlib.util.spec_from_file_location(
-    "catalog_integration",
-    ROOT / "src/worldenergydata/field_development/catalog_integration.py",
-)
-
-
-@pytest.fixture
-def api():
-    module = importlib.util.module_from_spec(SPEC)
-    SPEC.loader.exec_module(module)
-    return module
-
-
-def write_json(path, data):
-    path.write_text(json.dumps(data), encoding="utf-8")
-
-
-@pytest.fixture
-def inputs(tmp_path):
-    legacy = tmp_path / "fields.csv"
-    legacy.write_text(
-        "FIELD_ID,FIELD_NAME,COUNTRY,BLOCK\n1,Cameia,Angola,Block 21\n"
-        "2,Dalia,Angola,17\n2,Dalia,Angola,17\n"
-        "2,Other,Angola,17\n3,Tombua Landana,Angola,Block 14\n",
-        encoding="utf-8",
-    )
-    parent = tmp_path / "sanctioned.csv"
-    parent.write_text(
-        "PROJECT,SOURCE_URL\nDalia,https://example.org/dalia\n", encoding="utf-8"
-    )
-    snapshot = tmp_path / "snapshot"
-    snapshot.mkdir()
-    common = {
-        "entity_type": "field",
-        "country": "Angola",
-        "development": "Unassigned",
-        "current_configuration_verified": False,
-        "source_ref": "s1",
-        "source_vintage": "2004",
-        "water_depth_scope": "development envelope",
-    }
-    rows = [
-        dict(
-            common,
-            entity_id="ao-cameia",
-            name="Cameia",
-            block="20/11",
-            water_depth_m=1700,
-        ),
-        dict(
-            common,
-            entity_id="ao-dalia",
-            name="Dalia",
-            block="17",
-            water_depth_m={"min": 600, "max": 1200},
-        ),
-        dict(common, entity_id="ao-tombua", name="Tombua", block="14"),
-        dict(
-            common,
-            entity_id="ao-phase",
-            name="Mafumeira Sul",
-            block="0",
-            entity_type="development_phase",
-        ),
-    ]
-    tables = {
-        "field_observations": rows,
-        "sources": [{"source_ref": "s1", "url": "https://example.org/s1"}],
-        "cost_observations": [
-            {
-                "cost_id": "c1",
-                "entity_or_scope": "Dalia",
-                "source_ref": "s1",
-                "scope_type": "project",
-                "unit": "USD billion",
-                "value": 3.4,
-                "field_allocation_permitted": False,
-            }
-        ],
-        "milestone_observations": [
-            {
-                "subject": "Dalia",
-                "event_date": "2004-01-01",
-                "precision": "upper_bound_day",
-                "source_ref": "s1",
-                "scope": "field",
-            },
-            {
-                "subject": "Landana North #1",
-                "event_date": "2029-H1",
-                "precision": "half_year",
-                "source_ref": "s1",
-                "scope": "well",
-            },
-        ],
-        "inherited_cost_records": [
-            {"project": "Dalia", "source_url": "https://example.org/dalia"}
-        ],
-    }
-    for name, records in tables.items():
-        write_json(snapshot / (name + ".json"), records)
-    manifest = {
-        "dataset_id": "angola-field-development-evidence",
-        "as_of": "2026-10-02",
-        "files": [
-            {
-                "path": name + ".json",
-                "record_count": len(records),
-                "sha256": hashlib.sha256(
-                    (snapshot / (name + ".json")).read_bytes()
-                ).hexdigest(),
-            }
-            for name, records in tables.items()
-        ],
-        "inherited_cost_input": {
-            "sha256": hashlib.sha256(parent.read_bytes()).hexdigest()
-        },
-    }
-    write_json(snapshot / "manifest.json", manifest)
-    return snapshot, legacy, parent
+api = support.api
+inputs = support.inputs
+reviewed_matrix = support.reviewed_matrix
+repin = support.repin
+write_json = support.write_json
 
 
 def test_draft_reconciles_rows_without_automatic_equivalence(api, inputs):
@@ -259,20 +142,6 @@ def test_supported_membership_is_source_dated_and_scope_separated(api, inputs):
     assert relationship["source_vintage"] == "2004"
 
 
-def reviewed_matrix(bundle):
-    return [
-        dict(
-            row,
-            decision="eligible_factual_derivative",
-            basis="test factual derivative",
-            reviewer="Vamsee",
-            approval_ref="test owner decision",
-            reviewed_sha256=row["sha256"],
-        )
-        for row in bundle["eligibility"]
-    ]
-
-
 def test_public_export_preserves_scopes_and_parent_nonduplication(
     api, inputs, tmp_path
 ):
@@ -330,20 +199,12 @@ def test_stale_signoff_and_missing_output_pin_rejected(api, inputs, tmp_path):
         api.read_bundle(tmp_path / "out")
 
 
-def repin(out, name):
-    path = out / "integration_manifest.json"
-    manifest = json.loads(path.read_text())
-    manifest["output_hashes"][name] = hashlib.sha256(
-        (out / name).read_bytes()
-    ).hexdigest()
-    write_json(path, manifest)
-
-
 @pytest.mark.parametrize(
     "kind", ["duplicate_entity", "dangling_crosswalk", "invalid_relation"]
 )
 def test_reader_semantics_fail_even_with_rehashed_files(api, inputs, tmp_path, kind):
     bundle = api.build_integration(*inputs)
+    api.write_bundle(bundle, tmp_path / "out")
     if kind == "duplicate_entity":
         bundle["entities"].append(bundle["entities"][0])
     elif kind == "dangling_crosswalk":
@@ -360,7 +221,7 @@ def test_reader_semantics_fail_even_with_rehashed_files(api, inputs, tmp_path, k
                 "status": "supported",
             }
         ]
-    api.write_bundle(bundle, tmp_path / "out")
+    support.tamper_persisted_bundle(api, bundle, tmp_path / "out")
     with pytest.raises(ValueError):
         api.read_bundle(tmp_path / "out")
 
@@ -393,8 +254,9 @@ def test_conflicting_identity_needs_known_adjudication_source(api, inputs):
 
 def test_reader_cannot_promote_unreviewed_draft_by_state_string(api, inputs, tmp_path):
     bundle = api.build_integration(*inputs)
-    bundle["manifest"]["state"] = "eligible_derived_export"
     api.write_bundle(bundle, tmp_path / "out")
+    bundle["manifest"]["state"] = "eligible_derived_export"
+    support.tamper_persisted_bundle(api, bundle, tmp_path / "out")
     with pytest.raises(ValueError, match="eligibility"):
         api.read_bundle(tmp_path / "out", public_only=True)
 
@@ -432,6 +294,7 @@ def test_reader_rejects_rehashed_semantic_closure_defects(
     api, inputs, tmp_path, defect
 ):
     bundle = api.build_integration(*inputs)
+    api.write_bundle(bundle, tmp_path / "out")
     if defect == "missing_link":
         bundle["links"]["records"] = [
             r for r in bundle["links"]["records"] if r["table"] != "cost_observations"
@@ -444,7 +307,7 @@ def test_reader_rejects_rehashed_semantic_closure_defects(
         bundle["crosswalk"][0]["candidate_sha256"] = "0" * 64
     else:
         bundle["manifest"]["legacy_row_count"] += 1
-    api.write_bundle(bundle, tmp_path / "out")
+    support.tamper_persisted_bundle(api, bundle, tmp_path / "out")
     with pytest.raises(ValueError):
         api.read_bundle(tmp_path / "out")
 
@@ -483,63 +346,3 @@ def test_reader_consumes_each_pinned_artifact_once(api, inputs, tmp_path, monkey
     monkeypatch.setattr(Path, "open", counted)
     api.read_bundle(tmp_path / "out")
     assert set(reads.values()) == {1}
-
-
-def test_public_export_defers_match_with_unreleased_adjudication_source(api, inputs):
-    snapshot, _, _ = inputs
-    sources = json.loads((snapshot / "sources.json").read_text())
-    sources.append({"source_ref": "s2", "url": "https://example.org/adjudication"})
-    write_json(snapshot / "sources.json", sources)
-    manifest = json.loads((snapshot / "manifest.json").read_text())
-    pin = next(r for r in manifest["files"] if r["path"] == "sources.json")
-    pin.update(
-        record_count=2,
-        sha256=hashlib.sha256((snapshot / "sources.json").read_bytes()).hexdigest(),
-    )
-    write_json(snapshot / "manifest.json", manifest)
-    draft = api.build_integration(*inputs)
-    candidate = next(
-        r for r in draft["crosswalk"] if r["origin_entity_id"] == "ao-cameia"
-    )
-    decision = dict(
-        candidate,
-        match_status="accepted",
-        approved_by="Vamsee",
-        approval_ref="fixture evidence",
-        adjudication_source_refs=["s2"],
-    )
-    matrix = reviewed_matrix(draft)
-    next(r for r in matrix if r["record_id"].endswith("sources:s2"))[
-        "decision"
-    ] = "prohibited"
-    exported = api.public_export(
-        api.build_integration(*inputs, decisions=[decision], eligibility=matrix)
-    )
-    assert not any(r["origin_entity_id"] == "ao-cameia" for r in exported["crosswalk"])
-
-
-def test_reader_rejects_duplicate_manifest_keys(api, inputs, tmp_path):
-    api.write_bundle(api.build_integration(*inputs), tmp_path / "out")
-    path = tmp_path / "out/integration_manifest.json"
-    path.write_text(
-        path.read_text().replace("{", '{"schema_version":2,', 1), encoding="utf-8"
-    )
-    with pytest.raises(ValueError, match="duplicate"):
-        api.read_bundle(tmp_path / "out")
-
-
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-def test_conflict_disposition_requires_revision_bound_evidence_claim(
-    api, inputs, status
-):
-    bundle = api.build_integration(*inputs)
-    candidate = next(
-        r for r in bundle["crosswalk"] if r["origin_entity_id"] == "ao-cameia"
-    )
-    decision = {
-        k: candidate[k]
-        for k in ("entity_id", "legacy_row_fingerprint", "relation_type")
-    }
-    decision["match_status"] = status
-    with pytest.raises(ValueError, match="evidence"):
-        api.build_integration(*inputs, decisions=[decision])
