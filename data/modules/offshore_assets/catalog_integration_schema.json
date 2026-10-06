@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Catalog integration manifest version 1",
+  "type": "object",
+  "required": ["dataset_id", "schema_version", "state", "readiness", "input_hashes", "output_hashes", "counts", "entity_counts", "decision_sha256", "eligibility_sha256"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "dataset_id": {"const": "angola-field-development-evidence"},
+    "state": {"enum": ["local_draft_not_for_publication", "eligible_derived_export"]},
+    "readiness": {"const": "partial_research_only"},
+    "input_hashes": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "output_hashes": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}},
+    "decision_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "eligibility_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "entity_counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}}
+  },
+  "$defs": {
+    "entity_type": {"enum": ["field", "development", "phase", "block", "area", "host", "well", "contract_bundle"]},
+    "match_status": {"enum": ["accepted", "pending", "conflicting", "rejected"]},
+    "relation_type": {"enum": ["same_entity", "constituent_of", "phase_of"]},
+    "predicate": {"enum": ["part_of", "phase_of", "located_in", "hosted_by"]},
+    "date_precision": {"enum": ["day", "month", "year", "range", "unknown", "upper_bound_day", "half_year"]},
+    "fingerprint": {
+      "description": "SHA-256 of UTF-8 compact JSON array in pinned original CSV header order; parsed cell strings unnormalized; identical groups retain multiplicity. Legacy FIELD_ID is informational."
+    }
+  }
+}
