@@ -407,7 +407,9 @@ class PerformanceDatabase:
                 df["success_rate"] = (
                     df["total_passes"] / df["total_runs"] * 100
                 ).round(2)
-                df["last_run_timestamp"] = pd.to_datetime(df["last_run_timestamp"], format="ISO8601")
+                df["last_run_timestamp"] = pd.to_datetime(
+                    df["last_run_timestamp"], format="ISO8601"
+                )
 
             return df
 
