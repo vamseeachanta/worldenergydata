@@ -1,4 +1,4 @@
-"""Asserts that live agent instruction docs (root CLAUDE.md + the .claude tree)
+"""Asserts that live agent instruction docs (root AGENTS.md + the .claude tree)
 exist and are free of git merge-conflict markers.
 
 Filed as durable enforcement against a recurring failure mode: unresolved
@@ -9,6 +9,8 @@ conflict blocks committed into agent docs. First seen in .claude/docs/agents.md
 The claude-flow-era agents.md this test originally guarded was archived in the
 2026-06-11 provider rework (workspace-hub#3040) and later removed from the repo,
 so the guard now covers every live agent-doc surface instead of that single file.
+Root CLAUDE.md was removed in #1131 (AGENTS.md is canonical), so the root
+adapter checked here is AGENTS.md.
 
 Refs: worldenergydata#414, worldenergydata#467, workspace-hub#2719,
 workspace-hub#3040.
@@ -21,7 +23,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CLAUDE_DIR = REPO_ROOT / ".claude"
-ROOT_ADAPTER = REPO_ROOT / "CLAUDE.md"
+ROOT_ADAPTER = REPO_ROOT / "AGENTS.md"
 NESTED_POINTER = CLAUDE_DIR / "CLAUDE.md"
 
 # `<<<<<<< ` / `>>>>>>> ` always carry a trailing space + ref label in real
