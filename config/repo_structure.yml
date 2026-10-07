@@ -26,7 +26,6 @@ allowed_roots:
   - .gemini
   - .git-commands
   - .github
-  - .github_workflows_backup
   - .planning
   - .slash-commands
 
@@ -34,9 +33,7 @@ allowed_roots:
   - AGENTS.md
   - CLAUDE.md
   - .command-registry.json
-  - coverage.json
   - .coveragerc
-  - .coverage_report.json
   - .flake8
   - .gitattributes
   - .gitignore
@@ -80,20 +77,6 @@ generated_artifact_roots:
   - test_output
 
 temporary_exceptions:
-  logs:
-    category: durable-evidence
-    owner: worldenergydata maintainers
-    review_date: "2026-06-30"
-    follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
-    justification: Tracked scheduler log JSON files are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
-    allowed_paths:
-      - logs/dashboard_audit.jsonl
-      - logs/scheduler/20260325_214434_eia_us_refresh.json
-      - logs/scheduler/20260325_214511_bsee_refresh.json
-      - logs/scheduler/20260325_214601_sodir_refresh.json
-      - logs/scheduler/20260325_214643_brazil_anp_refresh.json
-      - logs/scheduler/20260325_214746_ukcs_refresh.json
-      - logs/scheduler/20260325_214826_metocean_refresh.json
   reports:
     category: durable-evidence
     owner: worldenergydata maintainers
@@ -105,48 +88,6 @@ temporary_exceptions:
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
-      - reports/capabilities/api/benchmark.html
-      - reports/capabilities/api/benchmark.json
-      - reports/capabilities/api/completion.html
-      - reports/capabilities/api/completion.json
-      - reports/capabilities/api/economics-anchor.html
-      - reports/capabilities/api/economics-anchor.json
-      - reports/capabilities/api/economics-big_foot.html
-      - reports/capabilities/api/economics-big_foot.json
-      - reports/capabilities/api/economics-cascade_chinook.html
-      - reports/capabilities/api/economics-cascade_chinook.json
-      - reports/capabilities/api/economics-jack_st_malo.html
-      - reports/capabilities/api/economics-jack_st_malo.json
-      - reports/capabilities/api/economics-julia.html
-      - reports/capabilities/api/economics-julia.json
-      - reports/capabilities/api/economics-shenandoah.html
-      - reports/capabilities/api/economics-shenandoah.json
-      - reports/capabilities/api/economics-stones.html
-      - reports/capabilities/api/economics-stones.json
-      - reports/capabilities/api/fd-bsee-matched.html
-      - reports/capabilities/api/fd-bsee-matched.json
-      - reports/capabilities/api/fd-playbook.html
-      - reports/capabilities/api/fd-playbook.json
-      - reports/capabilities/api/fd-portfolio.html
-      - reports/capabilities/api/fd-portfolio.json
-      - reports/capabilities/api/fd-showcase.html
-      - reports/capabilities/api/fd-showcase.json
-      - reports/capabilities/api/imo.html
-      - reports/capabilities/api/imo.json
-      - reports/capabilities/api/mooring.html
-      - reports/capabilities/api/mooring.json
-      - reports/capabilities/api/ms-exec.html
-      - reports/capabilities/api/ms-exec.json
-      - reports/capabilities/api/ms-fatality.html
-      - reports/capabilities/api/ms-fatality.json
-      - reports/capabilities/api/ms-foundering.html
-      - reports/capabilities/api/ms-foundering.json
-      - reports/capabilities/api/ms-hatch.html
-      - reports/capabilities/api/ms-hatch.json
-      - reports/capabilities/api/portfolio.html
-      - reports/capabilities/api/portfolio.json
-      - reports/capabilities/api/well-path.html
-      - reports/capabilities/api/well-path.json
       - reports/capabilities/assets/tokens.css
       - reports/capabilities/index.html
       - reports/capabilities/pdf/benchmark.pdf
