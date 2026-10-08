@@ -32,7 +32,7 @@ class TestExecutionRecord:
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for storage."""
         data = asdict(self)
-        data["timestamp"] = self.timestamp.isoformat()
+        data["timestamp"] = self.timestamp.isoformat(timespec="microseconds")
         if self.tags:
             data["tags"] = json.dumps(self.tags)
         return data
@@ -212,7 +212,7 @@ class PerformanceDatabase:
                 (
                     1 if record.status == "passed" else 0,
                     1 if record.status == "failed" else 0,
-                    record.timestamp.isoformat(),
+                    record.timestamp.isoformat(timespec="microseconds"),
                     record.status,
                     record.test_name,
                 ),
@@ -234,7 +234,7 @@ class PerformanceDatabase:
                     record.duration,
                     record.duration,
                     record.duration,
-                    record.timestamp.isoformat(),
+                    record.timestamp.isoformat(timespec="microseconds"),
                     record.status,
                 ),
             )
@@ -301,7 +301,7 @@ class PerformanceDatabase:
             df = pd.read_sql_query(query, conn, params=(test_name, limit))
 
             if not df.empty:
-                df["timestamp"] = pd.to_datetime(df["timestamp"])
+                df["timestamp"] = pd.to_datetime(df["timestamp"], format="ISO8601")
 
             return df
 
@@ -407,7 +407,9 @@ class PerformanceDatabase:
                 df["success_rate"] = (
                     df["total_passes"] / df["total_runs"] * 100
                 ).round(2)
-                df["last_run_timestamp"] = pd.to_datetime(df["last_run_timestamp"])
+                df["last_run_timestamp"] = pd.to_datetime(
+                    df["last_run_timestamp"], format="ISO8601"
+                )
 
             return df
 
