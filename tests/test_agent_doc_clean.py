@@ -1,4 +1,4 @@
-"""Asserts that live agent instruction docs (root CLAUDE.md + the .claude tree)
+"""Asserts that live agent instruction docs (root AGENTS.md + the .claude tree)
 exist and are free of git merge-conflict markers.
 
 Filed as durable enforcement against a recurring failure mode: unresolved
@@ -10,8 +10,11 @@ The claude-flow-era agents.md this test originally guarded was archived in the
 2026-06-11 provider rework (workspace-hub#3040) and later removed from the repo,
 so the guard now covers every live agent-doc surface instead of that single file.
 
-Refs: worldenergydata#414, worldenergydata#467, workspace-hub#2719,
-workspace-hub#3040.
+The root CLAUDE.md adapter was retired in worldenergydata#1131; AGENTS.md is the
+canonical root agent contract, so the existence check targets it instead.
+
+Refs: worldenergydata#414, worldenergydata#467, worldenergydata#1131,
+workspace-hub#2719, workspace-hub#3040.
 """
 
 from __future__ import annotations
@@ -21,7 +24,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CLAUDE_DIR = REPO_ROOT / ".claude"
-ROOT_ADAPTER = REPO_ROOT / "CLAUDE.md"
+ROOT_CONTRACT = REPO_ROOT / "AGENTS.md"
 NESTED_POINTER = CLAUDE_DIR / "CLAUDE.md"
 
 # `<<<<<<< ` / `>>>>>>> ` always carry a trailing space + ref label in real
@@ -31,7 +34,7 @@ CONFLICT_MARKER_PATTERN = re.compile(r"^(<<<<<<< |>>>>>>> )", re.MULTILINE)
 
 
 def _live_agent_docs() -> list[Path]:
-    docs = [ROOT_ADAPTER]
+    docs = [ROOT_CONTRACT]
     if CLAUDE_DIR.is_dir():
         docs.extend(
             p for p in sorted(CLAUDE_DIR.rglob("*.md")) if "_archive" not in p.parts
@@ -40,8 +43,8 @@ def _live_agent_docs() -> list[Path]:
 
 
 def test_adapter_docs_exist():
-    """Root adapter and the nested .claude pointer must both exist."""
-    assert ROOT_ADAPTER.is_file(), f"{ROOT_ADAPTER} missing"
+    """Root AGENTS.md contract and the nested .claude pointer must both exist."""
+    assert ROOT_CONTRACT.is_file(), f"{ROOT_CONTRACT} missing"
     assert NESTED_POINTER.is_file(), f"{NESTED_POINTER} missing"
 
 
