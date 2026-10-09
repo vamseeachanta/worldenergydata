@@ -138,6 +138,8 @@ class TestModuleSchemas:
             with open(schema_path) as f:
                 data = yaml.safe_load(f)
             for ds in data.get("datasets", []):
+                if ds.get("contract_only"):
+                    continue  # contract entries have no committed data to size
                 for field in required:
                     assert field in ds, (
                         f"{schema_path} dataset '{ds.get('name', '?')}': "
@@ -198,7 +200,7 @@ class TestColumnSchemas:
 
     def test_csv_datasets_have_row_count(self):
         for module_name, ds in self._all_datasets():
-            if ds.get("format") == "csv":
+            if ds.get("format") == "csv" and not ds.get("contract_only"):
                 assert (
                     "row_count" in ds and ds["row_count"] is not None
                 ), f"{module_name}/{ds['name']}: CSV dataset missing row_count"

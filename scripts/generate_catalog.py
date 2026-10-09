@@ -534,6 +534,22 @@ def _resolve_external_root(cli_value: str | None) -> Path | None:
     return None
 
 
+def _preserve_contract_entries(schema: dict[str, Any], schema_path: Path) -> None:
+    """Carry hand-authored ``contract_only`` entries across regeneration.
+
+    These describe tables whose data is not committed (no file to scan), so the
+    scanner cannot rediscover them.
+    """
+    if not schema_path.exists():
+        return
+    with open(schema_path, encoding="utf-8") as fh:
+        previous = yaml.safe_load(fh) or {}
+    seen = {d.get("path") for d in schema.get("datasets", [])}
+    for ds in previous.get("datasets", []):
+        if ds.get("contract_only") and ds.get("path") not in seen:
+            schema["datasets"].append(ds)
+
+
 def generate_catalog(
     root: Path,
     module_filter: str | None = None,
@@ -583,6 +599,7 @@ def generate_catalog(
 
         use_osha = osha_dict if name == "hse" else None
         schema = scan_module(mp, root, external_mod_path=ext_mp, osha_dict=use_osha)
+        _preserve_contract_entries(schema, mp / "schema.yaml")
         mods[name] = schema
         if not dry_run and mp.is_relative_to(root):
             sp = mp / "schema.yaml"
