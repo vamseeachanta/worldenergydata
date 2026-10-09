@@ -74,11 +74,19 @@ def test_conflict_disposition_requires_revision_bound_evidence_claim(
         api.build_integration(*inputs, decisions=[decision])
 
 
+def test_fixture_csv_inputs_are_platform_independent_bytes(inputs):
+    """Frozen digests below hash these inputs; CRLF on Windows would fork them."""
+    _, legacy, parent = inputs
+    for path in (legacy, parent):
+        assert b"\r" not in path.read_bytes(), path.name
+
+
 @pytest.mark.parametrize(
     "public, expected",
     [
-        (False, "b38604b6ac8d42ca2056569ae5e276e2b962861ad644facc48aa6b27b30f1966"),
-        (True, "1792252710b4c0a1be644ecd59b628fe211b1506eb8290265a27923fdfc7ef2f"),
+        # Digests of LF-only fixture inputs (identical on Linux CI and Windows).
+        (False, "91cb744aa1a1316ee070bffeb2e43a5b178c6a9f8d6da66b8b13c86feb3fb189"),
+        (True, "9c43c96d11f427c9190aaa7eaf555caa2552d082cfd41d1180303749efe1e401"),
     ],
 )
 def test_frozen_catalog_bytes_survive_module_refactoring(
