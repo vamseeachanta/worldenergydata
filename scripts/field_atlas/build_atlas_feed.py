@@ -25,7 +25,10 @@ Stdlib-only by the deploy-parity convention (#850).
 
 from __future__ import annotations
 
+import argparse
 import csv
+import hashlib
+import importlib.util
 import json
 import re
 import sys
@@ -111,7 +114,11 @@ def _field_entry(r: dict) -> dict:
     }
 
 
-def build() -> dict:
+def build(integration: dict | None = None) -> dict:
+    if integration is not None:
+        expected = integration.get("manifest", {}).get("input_hashes", {}).get("legacy_catalog")
+        if expected != hashlib.sha256(FIELDS_CSV.read_bytes()).hexdigest():
+            raise ValueError("extension legacy catalog digest differs from the atlas input")
     catalog = list(csv.DictReader(FIELDS_CSV.open(newline="", encoding="utf-8")))
     roster = json.loads(ROSTER.read_text())
     statuses = load_scorecard(SCORECARD)
@@ -139,11 +146,12 @@ def build() -> dict:
         [e["name"] for e in roster], gom_rows
     )
 
-    fields = [
-        _field_entry(r)
+    pairs = [
+        (r, _field_entry(r))
         for r in catalog
         if not (r["US_GOM_FLAG"].strip() and id(r) in suppressed)
     ]
+    fields = [entry for _, entry in pairs]
     fields.sort(key=lambda e: (e["country"], e["name"]))
 
     gom_tail = sum(1 for e in fields if e["gom"])
@@ -162,24 +170,61 @@ def build() -> dict:
     if roster_unmatched:
         print(f"  roster names with NO catalog row: {roster_unmatched}")
 
+    extension_counts = None
+    if integration is not None:
+        from catalog_extension import extend_fields
+        fields, extension_counts = extend_fields(pairs, integration, _row_fingerprint)
+        fields.sort(key=lambda e: (e["country"], e["name"]))
+
     return {
         "meta": {
             "generated_by": "scripts/field_atlas/build_atlas_feed.py",
             "issue": 947,
             "source": "data/modules/offshore_assets/curated/fields.csv",
+            **({"catalog_extension": {"schema_version": 1, **extension_counts}}
+               if extension_counts is not None else {}),
         },
         "countries": countries,
         "fields": fields,
     }
 
 
+def _row_fingerprint(row: dict) -> str:
+    payload = json.dumps(list(row.values()), separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def main():
-    feed = build()
-    OUT.write_text(json.dumps(feed, indent=1, ensure_ascii=False) + "\n")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--catalog-extension", type=Path)
+    parser.add_argument("--research-preview", action="store_true")
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    if args.research_preview and (not args.output or args.output.resolve() == OUT.resolve()):
+        parser.error("research preview requires an explicit output outside the default public feed")
+    if args.research_preview and not args.catalog_extension:
+        parser.error("research preview requires a catalog extension")
+    integration = _load_extension(args.catalog_extension, not args.research_preview)
+    feed = build(integration)
+    if integration is not None:
+        feed["meta"]["catalog_extension"]["state"] = integration["manifest"]["state"]
+    output = args.output or OUT
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(feed, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     print(
-        f"  wrote {OUT.name}  ({len(feed['countries'])} countries, "
+        f"  wrote {output.name}  ({len(feed['countries'])} countries, "
         f"{len(feed['fields'])} fields)"
     )
+
+
+def _load_extension(directory: Path | None, public_only: bool):
+    if directory is None:
+        return None
+    source = PROJECT_ROOT / "src/worldenergydata/field_development/catalog_integration.py"
+    spec = importlib.util.spec_from_file_location("catalog_integration", source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.read_bundle(directory, public_only=public_only)
 
 
 if __name__ == "__main__":

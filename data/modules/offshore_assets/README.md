@@ -1,5 +1,37 @@
 # Offshore Assets — Global O&G Fields, Facilities & Rigs Reference
 
+## Angola evidence extension
+
+Issue [1144](https://github.com/vamseeachanta/worldenergydata/issues/1144) adds an
+optional evidence extension reader without changing `curated/fields.csv` or
+the legacy facility joins. The importer preserves namespaced research IDs,
+typed development/phase/block/well scopes, source vintages, depth envelopes,
+milestone date bounds and cost bases. Shared legacy IDs remain informational.
+Exact names and compatible blocks produce pending candidates; equivalence
+requires an owner decision pinned to the candidate digest.
+
+Run `scripts/field_development/integrate_angola_catalog.py --snapshot <snapshot>
+--output <local-preview>` to generate a local draft and publication decision
+matrix. Output must be outside the original snapshot. Original input bytes
+are verified against their manifest; generated outputs receive deterministic
+hashes. `catalog_integration.read_bundle(path)` verifies output hashes and
+reads registry, crosswalk, legacy ledger, relationships and scoped evidence.
+The writer validates serialized readback before creating a new destination and
+rejects existing destinations. The manifest is written last. Gate-file JSON
+rejects duplicate keys and non-finite numbers; optional raw gate-file digests
+remain separate from normalized decision digests. Accepted crosswalk rows retain
+their candidate-bound decision records on export and readback. Recorded signoff
+is evidence metadata, not authenticated publication authority.
+
+The reader contract is described in `catalog_integration_schema.json`.
+Preview outputs are local drafts and must not be staged as public data.
+`--public-export --eligibility <owner-reviewed-matrix>` filters the complete
+dependency closure. Missing or stale eligibility decisions defer records;
+an empty entity export fails. Public readers use `public_only=True`.
+Inherited costs reference their existing parent rows rather than add new
+cost observations. The extension does not establish national completeness,
+verified current configuration, engineering suitability or field allocation.
+
 Normalized, worldenergydata-native reference tables covering global oil & gas
 **fields**, **production facilities**, **host vessels**, **drilling rigs** and
 **jackups**. Re-expressed in clean relational tables from a legacy reference
