@@ -41,10 +41,13 @@ def inputs(tmp_path):
         "2,Dalia,Angola,17\n2,Dalia,Angola,17\n"
         "2,Other,Angola,17\n3,Tombua Landana,Angola,Block 14\n",
         encoding="utf-8",
+        newline="\n",  # LF on every OS: frozen catalog digests hash these bytes
     )
     parent = tmp_path / "sanctioned.csv"
     parent.write_text(
-        "PROJECT,SOURCE_URL\nDalia,https://example.org/dalia\n", encoding="utf-8"
+        "PROJECT,SOURCE_URL\nDalia,https://example.org/dalia\n",
+        encoding="utf-8",
+        newline="\n",
     )
     snapshot = tmp_path / "snapshot"
     snapshot.mkdir()
