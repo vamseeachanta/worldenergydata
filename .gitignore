@@ -332,3 +332,6 @@ public/
 # artifact; exempt it from the global `results/` runtime-output ignore above.
 !reports/field-atlas/results/
 !reports/field-atlas/results/**
+
+# Third-party vessel-fleet source PDFs use WORLDENERGYDATA_SPEC_PDF_ROOT (#1151).
+**/_data/raw/spec_pdfs/**/*.pdf

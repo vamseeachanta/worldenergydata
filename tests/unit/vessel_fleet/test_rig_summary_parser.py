@@ -1,7 +1,7 @@
 """Tests for the Noble rig-summary text parser.
 
 Fixtures are verbatim excerpts of pdftotext/pdfplumber output from the
-committed spec PDFs (_data/raw/spec_pdfs/noble/), including their real
+contractor spec PDFs (WORLDENERGYDATA_SPEC_PDF_ROOT/noble/), including their real
 extraction quirks — do not "fix" the fixture strings.
 """
 
@@ -584,3 +584,50 @@ class TestIndentedLabels:
         assert spec["MOONPOOL_LENGTH_M"] == 33.0  # 108.3 ft
         assert spec["MOONPOOL_WIDTH_M"] == 9.0  # 29.5 ft
         assert spec["VARIABLE_DECK_LOAD_ST"] == 11480  # 22,960 kips
+
+
+class TestExternalSpecPdfs:
+    """Optional native PDF extraction coverage; text fixtures above always run."""
+
+    def test_valiant_pdf(self):
+        text = self._pdf_text("noble-valiant.pdf")
+        parsed = parse_rig_summary_text(text)
+        assert parsed["YEAR_BUILT"] == 2013
+        assert parsed["MOONPOOL_LENGTH_M"] == 25.6
+
+    def test_blackhawk_pdf(self):
+        text = self._pdf_text("noble-blackhawk.pdf")
+        parsed = parse_rig_summary_text(text)
+        assert parsed["YEAR_BUILT"] == 2015
+        assert parsed["LOA_M"] == 230.7
+
+    @staticmethod
+    def _pdf_text(filename):
+        import hashlib
+        import shutil
+        import subprocess
+        from pathlib import Path
+
+        import pytest
+        import yaml
+
+        from worldenergydata.vessel_fleet.spec_pdf_root import resolve_spec_pdf_root
+
+        pdf = resolve_spec_pdf_root() / "noble" / filename
+        if not pdf.is_file():
+            pytest.skip(f"Spec PDF absent: {pdf}; set WORLDENERGYDATA_SPEC_PDF_ROOT")
+        if not shutil.which("pdftotext"):
+            pytest.skip("Native spec-PDF extraction requires pdftotext (poppler)")
+        repo = Path(__file__).resolve().parents[3]
+        manifest = repo / (
+            "packages/worldenergydata-vessel_fleet/src/worldenergydata/"
+            "vessel_fleet/_data/raw/spec_pdfs/noble/manifest.yaml"
+        )
+        expected = yaml.safe_load(manifest.read_text())["files"][filename]["sha256"]
+        assert hashlib.sha256(pdf.read_bytes()).hexdigest() == expected
+        return subprocess.run(
+            ["pdftotext", "-layout", str(pdf), "-"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout

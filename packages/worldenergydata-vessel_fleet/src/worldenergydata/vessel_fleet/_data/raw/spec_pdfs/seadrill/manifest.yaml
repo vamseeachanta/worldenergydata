@@ -1,4 +1,7 @@
-# Provenance for committed Seadrill rig-spec PDFs — wed issue #994.
+# Provenance for Seadrill rig-spec PDFs — wed issue #994.
+# PDF relocation target: WORLDENERGYDATA_SPEC_PDF_ROOT/<contractor>/ (wed issue #1151).
+# Originals remain tracked until the copy-and-verify migration completes.
+# Default root: /mnt/ace/worldenergydata/data/modules/vessel_fleet/raw/spec_pdfs
 # Retrieved from seadrill.com/wp-content/uploads/ (public fleet pages).
 retrieved: '2026-07-13'
 source_family: contractor_rig_summary_pdf

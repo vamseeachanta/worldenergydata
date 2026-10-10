@@ -14,7 +14,11 @@ curated store. Owner comes from the YAML ``owner:`` key.
 ``--reparse`` re-extracts ``extraction: text_parse`` PDFs through
 parsers.rig_summary and reports drift against the YAML instead of applying
 (review loop; the YAML stays the SSOT — image-only or manually-patched
-entries are skipped).
+entries are skipped). PDFs resolve from WORLDENERGYDATA_SPEC_PDF_ROOT or
+/mnt/ace/worldenergydata/data/modules/vessel_fleet/raw/spec_pdfs. YAML inputs
+and curated outputs continue to resolve from --data-dir. Incomplete PDF
+availability or hash mismatch exits 3 (takes precedence over drift); extraction
+failure exits 4; drift exits 1; a complete check without drift exits 0.
 
 Usage:
     python scripts/vessel_fleet/ingest_contractor_spec_pdfs.py --contractor <name> [--reparse]
@@ -23,6 +27,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import logging
 import re
 import sys
@@ -35,6 +40,10 @@ _PROJECT_ROOT = _SCRIPT_DIR.parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT / "src"))
 sys.path.insert(0, str(_PROJECT_ROOT / "packages/worldenergydata-vessel_fleet/src"))
 
+from worldenergydata.vessel_fleet.spec_pdf_root import (  # noqa: E402
+    SPEC_PDF_ROOT_ENV,
+    resolve_spec_pdf_root,
+)
 from worldenergydata.vessel_fleet.storage.parquet import ParquetStore
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -225,25 +234,43 @@ def _extract_text(pdf_path: Path) -> str:
     return extract_text_from_pdf(str(pdf_path))
 
 
+class SpecPdfUnavailableError(FileNotFoundError):
+    """The required original is absent or does not match its manifest."""
+
+
+def _pdf_problem(pdf_path: Path, expected_hash: str | None) -> str | None:
+    if not pdf_path.is_file():
+        return str(pdf_path)
+    if hashlib.sha256(pdf_path.read_bytes()).hexdigest() != expected_hash:
+        return f"{pdf_path} (sha256 mismatch or missing manifest digest)"
+    return None
+
+
 def reparse_report(extraction: dict, data_dir: Path, contractor: str) -> int:
     """Re-extract text-layer PDFs and report drift vs the YAML SSOT."""
     from worldenergydata.vessel_fleet.parsers.rig_summary import (
         parse_rig_summary_text,
     )
 
-    pdf_dir = data_dir / f"raw/spec_pdfs/{contractor}"
+    pdf_dir = resolve_spec_pdf_root() / contractor
+    manifest_path = data_dir / f"raw/spec_pdfs/{contractor}/manifest.yaml"
+    manifest = (
+        yaml.safe_load(manifest_path.read_text()) if manifest_path.is_file() else {}
+    )
+    hashes = {
+        name: meta.get("sha256") for name, meta in manifest.get("files", {}).items()
+    }
+    missing = []
     drift = 0
     for vessel_name, entry in extraction["vessels"].items():
         if entry["extraction"] != "text_parse":
             logger.info("%s: image transcription — skipped", vessel_name)
             continue
         pdf_path = pdf_dir / entry["pdf"]
-        if not pdf_path.exists():
-            # e.g. manifest `committed: false` (repo file-size limit) —
-            # fetch from the manifest url to include it in the check.
-            logger.warning(
-                "%s: PDF not committed (%s) — skipped", vessel_name, entry["pdf"]
-            )
+        problem = _pdf_problem(pdf_path, hashes.get(entry["pdf"]))
+        if problem:
+            missing.append(problem)
+            logger.warning("%s: source PDF unavailable (%s)", vessel_name, problem)
             continue
         text = _extract_text(pdf_path)
         parsed = parse_rig_summary_text(text)
@@ -255,7 +282,12 @@ def reparse_report(extraction: dict, data_dir: Path, contractor: str) -> int:
                     "%s.%s drift: yaml=%r parsed=%r", vessel_name, field, expected, got
                 )
                 drift += 1
-    logger.info("Reparse complete: %d drifting fields", drift)
+    logger.info("Reparse checked available PDFs: %d drifting fields", drift)
+    if missing:
+        raise SpecPdfUnavailableError(
+            f"Spec PDFs absent or unverified: {', '.join(missing)}; set {SPEC_PDF_ROOT_ENV} "
+            "to a root containing <contractor>/<file>.pdf. Reparse is incomplete."
+        )
     return drift
 
 
@@ -264,7 +296,7 @@ def main() -> int:
     parser.add_argument(
         "--contractor",
         default="noble",
-        help="contractor directory under _data/raw/spec_pdfs/",
+        help="contractor subdirectory in the PDF root and repo raw/spec_pdfs YAML directory",
     )
     parser.add_argument("--data-dir", default=str(_DEFAULT_DATA_DIR))
     parser.add_argument(
@@ -275,11 +307,18 @@ def main() -> int:
     args = parser.parse_args()
     data_dir = Path(args.data_dir)
 
-    extraction = load_extraction(data_dir, args.contractor)
-
     if args.reparse:
-        return 1 if reparse_report(extraction, data_dir, args.contractor) else 0
+        try:
+            extraction = load_extraction(data_dir, args.contractor)
+            return 1 if reparse_report(extraction, data_dir, args.contractor) else 0
+        except SpecPdfUnavailableError as exc:
+            logger.error("%s", exc)
+            return 3
+        except Exception as exc:
+            logger.error("Spec-PDF reparse failed (%s): %s", type(exc).__name__, exc)
+            return 4
 
+    extraction = load_extraction(data_dir, args.contractor)
     urls = load_manifest_urls(data_dir, args.contractor)
     n_raw = write_raw_source(extraction, data_dir, urls, args.contractor)
     n_curated = apply_to_curated(extraction, data_dir, urls)

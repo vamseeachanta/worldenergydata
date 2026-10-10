@@ -176,7 +176,9 @@ specification (provenance linked per rig). Filter to shortlist; click headers to
 <div class="tablewrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
 <footer>Sources: official contractor rig spec sheets (Noble, Transocean, Valaris, Seadrill,
 Borr Drilling, Shelf Drilling), retrieved 2026-07-12/13 — sha256-manifested under
-<code>_data/raw/spec_pdfs/</code>. Blank cells: value not stated on the vendor sheet.
+<code>_data/raw/spec_pdfs/</code> (YAML manifests and extracted parameters).
+Original PDFs resolve from <code>WORLDENERGYDATA_SPEC_PDF_ROOT</code>.
+Blank cells: value not stated on the vendor sheet.
 worldenergydata #998.</footer>
 </main>
 <div id="tip"></div>

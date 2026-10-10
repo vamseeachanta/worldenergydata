@@ -1,4 +1,7 @@
-# Provenance for committed onshore rig-class spec documents — wed issue #997.
+# Provenance for onshore rig-class spec documents — wed issue #997.
+# PDF relocation target: WORLDENERGYDATA_SPEC_PDF_ROOT/<contractor>/ (wed issue #1151).
+# Originals remain tracked until the copy-and-verify migration completes.
+# Default root: /mnt/ace/worldenergydata/data/modules/vessel_fleet/raw/spec_pdfs
 retrieved: '2026-07-13'
 source_family: contractor_rig_summary_pdf
 contractor: multiple (per-entry owner)
