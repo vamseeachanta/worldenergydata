@@ -1,13 +1,12 @@
 import json
 
 import pytest
+from fixture_paths import EXAMPLE_DIR, FIXTURE
 
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.federal_acreage import FederalAcreage
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider
 from worldenergydata.federal_acreage.report import write_outputs
-
-FIXTURE = "examples/workflows/federal-acreage-evidence/fixture_records.json"
 
 
 def test_fixture_and_version(tmp_path):
@@ -15,7 +14,7 @@ def test_fixture_and_version(tmp_path):
     records, sources = provider.records_for_tract(provider.tract)
     assert len(records) == 6
     assert sources[0].kind == "fixture"
-    payload = json.loads(open(FIXTURE).read())
+    payload = json.loads(FIXTURE.read_text())
     payload["schema_version"] = "wrong"
     path = tmp_path / "wrong.json"
     path.write_text(json.dumps(payload))
@@ -42,7 +41,7 @@ def test_router(tmp_path):
     cfg = dict(
         data=dict(source="fixture", file="fixture_records.json"),
         Analysis=dict(
-            analysis_root_folder="examples/workflows/federal-acreage-evidence",
+            analysis_root_folder=str(EXAMPLE_DIR),
             result_folder=str(tmp_path),
         ),
         meta=dict(label="pilot"),
@@ -52,3 +51,12 @@ def test_router(tmp_path):
     cfg["data"]["source"] = "live"
     with pytest.raises(ValueError):
         FederalAcreage().router(cfg)
+
+
+def test_fixture_uses_repository_licence():
+    provider = FixtureRecordProvider(FIXTURE)
+    _, sources = provider.records_for_tract(provider.tract)
+    assert sources[0].license_note == (
+        "Synthetic authored fixture distributed under the repository licence (MIT); "
+        "no live MLRS records or title evidence."
+    )

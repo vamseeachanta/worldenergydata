@@ -1,13 +1,12 @@
 import json
 
 import pytest
+from fixture_paths import FIXTURE
 from pydantic import ValidationError
 
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.models import SourcedValue, TractOfInterest
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider
-
-FIXTURE = "examples/workflows/federal-acreage-evidence/fixture_records.json"
 
 
 def test_tract_validation():
@@ -50,13 +49,21 @@ def test_schema_shape_round_trip():
     )
     assert set(payload["acreage"]) == set(expected)
     for key, value in expected.items():
+        derived = key == "no_record_acres"
         assert payload["acreage"][key] == dict(
             value=value,
             status="available",
             source_id=(
-                "tract-input" if key == "gross_area_acres" else "fixture-mlrs-synthetic"
+                "tract-input"
+                if key == "gross_area_acres"
+                else "derived-no-record" if derived else "fixture-mlrs-synthetic"
             ),
-            note=None,
+            note=(
+                "derived: tract gross area minus federal-record coverage; "
+                "not a federal-record value"
+                if derived
+                else None
+            ),
         )
         assert isinstance(payload["acreage"][key]["value"], float)
     assert type(result).model_validate_json(result.model_dump_json()) == result

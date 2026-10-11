@@ -1,10 +1,9 @@
 import pytest
+from fixture_paths import FIXTURE
 
 from worldenergydata.federal_acreage.evidence import evaluate
 from worldenergydata.federal_acreage.models import FederalLandRecord
 from worldenergydata.federal_acreage.provider import FixtureRecordProvider
-
-FIXTURE = "examples/workflows/federal-acreage-evidence/fixture_records.json"
 
 
 def run(records=None):
@@ -97,3 +96,18 @@ def test_clean_full_coverage_and_determinism():
     assert result.screening_status == "evidence_complete"
     assert result.acreage.no_record_acres.value == 0
     assert result == run(records)
+
+
+def test_no_record_area_is_explicitly_derived():
+    result = run()
+    item = result.acreage.no_record_acres
+    assert item.value == 40
+    assert item.source_id == "derived-no-record"
+    assert item.note == (
+        "derived: tract gross area minus federal-record coverage; "
+        "not a federal-record value"
+    )
+    source = next(s for s in result.sources if s.source_id == item.source_id)
+    assert source.dataset == "Derived from tract-input and fixture-mlrs-synthetic"
+    assert result.acreage.gross_area_acres.source_id == "tract-input"
+    assert result.acreage.gross_area_acres.note is None

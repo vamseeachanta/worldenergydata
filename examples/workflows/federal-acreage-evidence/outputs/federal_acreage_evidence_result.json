@@ -53,8 +53,8 @@
     "no_record_acres": {
       "value": 40.0,
       "status": "available",
-      "source_id": "fixture-mlrs-synthetic",
-      "note": null
+      "source_id": "derived-no-record",
+      "note": "derived: tract gross area minus federal-record coverage; not a federal-record value"
     }
   },
   "records": [
@@ -282,7 +282,7 @@
       "kind": "fixture",
       "url": null,
       "retrieved_at": "2026-07-10T00:00:00Z",
-      "license_note": "Synthetic authored fixture; no live MLRS records or title evidence. CC0-1.0."
+      "license_note": "Synthetic authored fixture distributed under the repository licence (MIT); no live MLRS records or title evidence."
     },
     {
       "source_id": "tract-input",
@@ -291,6 +291,14 @@
       "url": null,
       "retrieved_at": "2026-07-10T00:00:00Z",
       "license_note": "Caller-supplied screening geometry."
+    },
+    {
+      "source_id": "derived-no-record",
+      "dataset": "Derived from tract-input and fixture-mlrs-synthetic",
+      "kind": "fixture",
+      "url": null,
+      "retrieved_at": "2026-07-10T00:00:00Z",
+      "license_note": "Derived from listed source references."
     }
   ],
   "data_as_of": "2026-07-10T00:00:00Z"

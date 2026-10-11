@@ -2,10 +2,11 @@
 
 import re
 from collections.abc import Iterable
+from datetime import date
 from html import escape
 from pathlib import Path
 
-from .models import AcreageEvidenceResult
+from .models import AcreageEvidenceResult, SourcedValue
 
 CSS = """
 body{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#172b39}
@@ -18,7 +19,19 @@ th,td{text-align:left;padding:.6rem;border-bottom:1px solid #ccd6df;vertical-ali
 
 
 def text(value: object) -> str:
-    return escape("unavailable" if value is None else str(value), quote=True)
+    if value is None:
+        value = "not stated"
+    elif isinstance(value, list):
+        value = ", ".join(str(item) for item in value)
+    elif isinstance(value, date):
+        value = value.isoformat()
+    return escape(str(value), quote=True)
+
+
+def _sourced_area(item: SourcedValue) -> str:
+    if item.value is not None:
+        return f"{item.value:.3f}"
+    return f"unavailable ({item.status}: {item.note})"
 
 
 def _table(headers: list[str], rows: Iterable[Iterable[object]], caption: str) -> str:
@@ -36,7 +49,7 @@ def _acreage(result: AcreageEvidenceResult) -> str:
     rows, bars = [], []
     for key in type(result.acreage).model_fields:
         item = getattr(result.acreage, key)
-        value = "unavailable" if item.value is None else f"{item.value:.3f}"
+        value = _sourced_area(item)
         rows.append([key, value, item.status, item.source_id, item.note])
         if (
             key in {"leased_acres", "expired_or_nonleased_acres", "no_record_acres"}
@@ -65,8 +78,8 @@ def _records(result: AcreageEvidenceResult) -> str:
             r.public_lessee,
             r.public_operator,
             f"{r.area.value:.3f} {r.area.unit}",
-            r.area_acres.model_dump(),
-            r.intersect_acres.model_dump(),
+            _sourced_area(r.area_acres),
+            _sourced_area(r.intersect_acres),
             r.source_id,
             r.retrieved_at.isoformat(),
         ]

@@ -120,7 +120,10 @@ def _provenance(
 ) -> tuple[list[SourceRef], datetime, str]:
     if not sources or len({s.source_id for s in sources}) != len(sources):
         raise ValueError("Unique source references are required")
-    if any(s.source_id in {"tract-input", "federal-record-rollup"} for s in sources):
+    if any(
+        s.source_id in {"tract-input", "federal-record-rollup", "derived-no-record"}
+        for s in sources
+    ):
         raise ValueError("Reserved source reference")
     sources = sorted(sources, key=lambda s: s.source_id)
     as_of = min(s.retrieved_at for s in sources)
@@ -168,8 +171,14 @@ def _rollup(
         federal_record_coverage_acres=available(len(coverage) * 40.0, source),
         leased_acres=available(len(leased) * 40.0, source),
         expired_or_nonleased_acres=available(len(nonleased) * 40.0, source),
-        no_record_acres=available(
-            tract.gross_area_acres - len(coverage) * 40.0, source
+        no_record_acres=SourcedValue(
+            value=tract.gross_area_acres - len(coverage) * 40.0,
+            status="available",
+            source_id="derived-no-record",
+            note=(
+                "derived: tract gross area minus federal-record coverage; "
+                "not a federal-record value"
+            ),
         ),
     )
     if uncertain or leased & nonleased:
@@ -235,6 +244,16 @@ def evaluate(
         tract, records, sources
     )
     acreage = _rollup(tract, coverage, leased, nonleased, uncertain, rollup_source)
+    if acreage.no_record_acres.value is not None:
+        refs.append(
+            SourceRef(
+                source_id="derived-no-record",
+                dataset="Derived from tract-input and " + rollup_source,
+                kind=refs[-1].kind,
+                retrieved_at=as_of,
+                license_note="Derived from listed source references.",
+            )
+        )
     reasons = ["exceptions_present"] if exceptions else []
     status: Literal["evidence_complete", "evidence_partial", "evidence_blocked"]
     if not coverage:

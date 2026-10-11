@@ -3,7 +3,8 @@
 Run `uv run python -m worldenergydata examples/workflows/federal-acreage-evidence/input.yml`.
 The workflow writes a self-contained HTML report and a JSON twin from the same
 validated result. No live data is downloaded. The fixture is authored synthetic
-data with a fixed retrieval date and licence note in its `SourceRef`.
+data distributed under the repository licence (MIT), with a fixed retrieval date
+and licence note in its `SourceRef`; it contains no live records or title evidence.
 
 The fictional tract uses the New Mexico Principal Meridian naming convention;
 it does not establish a pilot jurisdiction or represent a real prospect.
@@ -18,7 +19,9 @@ R4 has missing geometry. R5's 16.1874 hectares converts to 39.999937 acres,
 within the 0.5-acre tolerance. R6 emits a 40-acre overlap exception.
 
 The result is `evidence_partial`: three exceptions and 40 acres without records.
-Every numerical acreage value carries provenance. Unknown lease status or
+Every numerical acreage value carries provenance. No-record acreage is derived
+from tract gross area minus federal-record coverage, rather than a federal-record
+value; its source names both inputs. Unknown lease status or
 conflicting units produce explicit ambiguity markers rather than a fabricated
 split. No usable intersecting records produces `evidence_blocked`.
 
