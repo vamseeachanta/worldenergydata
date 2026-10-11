@@ -14,7 +14,7 @@ Hand-derived acreage: eight tract cells give 320 acres. R1 covers four cells,
 R2 two, R5 one, and R6 repeats one R1 cell. The coverage union has seven cells
 (280 acres), the active lease union five (200 acres), expired leases two
 (80 acres), and the uncovered cell one (40 acres). R3 is outside the tract;
-R4 has missing geometry. R5's 16.1874 hectares converts to 39.999915 acres,
+R4 has missing geometry. R5's 16.1874 hectares converts to 39.999937 acres,
 within the 0.5-acre tolerance. R6 emits a 40-acre overlap exception.
 
 The result is `evidence_partial`: three exceptions and 40 acres without records.
