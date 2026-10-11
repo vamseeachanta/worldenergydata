@@ -1,0 +1,80 @@
+{
+  "source_id": "bsee-data-center",
+  "edition": 2023,
+  "source_page": "https://www.data.bsee.gov/Main/GandG.aspx",
+  "source_last_updated": "2026-06-16",
+  "as_of": "2024-01-01",
+  "files": [
+    {
+      "file": "atlas-2023.zip",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:03:16+00:00",
+      "sha256": "3ff97c222f277c7b1939c2767e3c810b7b1661d63b10b7a9afefbc91d5a72108",
+      "size_bytes": 16068282,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "downloaded_archive"
+    },
+    {
+      "file": "atlas-2023.accdb",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:03:49+00:00",
+      "sha256": "fd74b1e40b6b8fdc66e8840b5afdd8842f8fbea9f97f341ab934983be879cbd3",
+      "size_bytes": 36438016,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "extracted_from_archive"
+    },
+    {
+      "file": "atlas-2023.xlsx",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:03:38+00:00",
+      "sha256": "9ec547e7442ec64f41e65cdb37790b5734bc30a9904eed1d1b675fd48f952ae9",
+      "size_bytes": 6548767,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "extracted_from_archive"
+    },
+    {
+      "file": "2023sands.csv",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:04:19+00:00",
+      "sha256": "7af23f24dc9b7fff221a68ee2b8a5428c4ff87ca98fe0438f184f43afbe3c1cd",
+      "size_bytes": 6452925,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "MDB Tools CSV export of Access table",
+      "export_format": "MDB Tools 1.0.0, explicit four-digit date/time years",
+      "exported_at_utc": "2026-10-11T18:14:24+00:00"
+    },
+    {
+      "file": "2023plays.csv",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:04:19+00:00",
+      "sha256": "b4a79e30a517d2ea0b83ac5ca3e2eaf92b834e3c6624b2a38fae49f7bad0b234",
+      "size_bytes": 8492,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "MDB Tools CSV export of Access table",
+      "export_format": "MDB Tools 1.0.0, explicit four-digit date/time years",
+      "exported_at_utc": "2026-10-11T18:14:24+00:00"
+    },
+    {
+      "file": "2023chronozones.csv",
+      "source_url": "https://www.data.bsee.gov/GGStudies/Files/2023%20Atlas%20Update.zip",
+      "retrieved_at_utc": "2026-10-11T18:04:19+00:00",
+      "sha256": "6291e555885f46821eb338fb5dd0f33996727d499afcc53745ac4ede6cc432cc",
+      "size_bytes": 1481,
+      "terms_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+      "terms": "Source disclaimer: working database; errors may exist; not a legal document; not for navigational use. No explicit reuse licence is stated on the download page.",
+      "relationship": "MDB Tools CSV export of Access table",
+      "export_format": "MDB Tools 1.0.0, explicit four-digit date/time years",
+      "exported_at_utc": "2026-10-11T18:14:24+00:00"
+    }
+  ],
+  "row_counts": {
+    "2023sands": 13434,
+    "2023plays": 119,
+    "2023chronozones": 50
+  }
+}

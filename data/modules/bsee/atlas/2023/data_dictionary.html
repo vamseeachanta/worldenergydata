@@ -1,0 +1,104 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>BSEE Atlas 2023 dictionary</title><h1>BSEE Atlas 2023 data dictionary</h1>
+<p>Source ID: bsee-data-center. Edition 2023; sand data as of January 1, 2024. Source page updated June 16, 2026. CSV headers below are the actual Access table exports; web aliases and Excel headers differ. Source types are obtained with MDB Tools 1.0.0 mdb-schema (PostgreSQL representation).</p>
+<p>Identifiers remain strings, including leading zeros in PLAY_NUM/PLAY_NUMBER and WELLAPI. Numeric cells are finite numbers. Empty source cells become null; all source columns are nullable. Access date/time cells exported as YYYY-MM-DD HH:MM:SS (explicit four-digit export) become ISO date/time strings without an invented timezone or century pivot. SN_FORMSAND is numeric in Access; SAND_NAME and CSV row numbers accompany every sand citation.</p>
+<p>BOEM_FIELD is the source field code, PLAY_NUM joins to PLAY_NUMBER, CHRONOZONE joins to BOEM_CHRONOZONE. No lease column exists in 2023sands; WELLAPI is a discovery-well identifier, not a lease. BOEM_FIELD is not assumed to be a verified named-field area-block crosswalk.</p>
+<h2>2023sands</h2>
+<p><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=2023sands">Official column definitions and units</a></p>
+<table><tr><th>Actual column</th><th>Source SQL type</th><th>Loader type</th></tr>
+<tr><td>SN_FORMSAND</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SAND_NAME</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>SDDATE</td><td>TIMESTAMP WITHOUT TIME ZONE</td><td>datetime</td></tr>
+<tr><td>SDYEAR</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SDDATEH</td><td>TIMESTAMP WITHOUT TIME ZONE</td><td>datetime</td></tr>
+<tr><td>SDYEARH</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>WELLAPI</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>BOEM_FIELD</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FCLASS</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FSTAT</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FSTRUC</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FTRAP1</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FTRAP2</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>FDDATE</td><td>TIMESTAMP WITHOUT TIME ZONE</td><td>datetime</td></tr>
+<tr><td>FDYEAR</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>EIAID</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAREA</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>SAND</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_NUM</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_NAME</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>POOL_NAME</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>CHRONOZONE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_TYPE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>SD_TYPE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>WDEP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORIGINAL OIL</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORIGINAL GAS</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORIGINAL BOE</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>CUM OIL</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>CUM GAS</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>CUM BOE</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>OIL RESERVES</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GAS RESERVES</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>BOE RESERVES</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SS</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>THK</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>TAREA</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>TVOL</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>OTHK</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>OAREA</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>OVOL</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GTHK</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GVOL</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>DRIVE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>RESTYP</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>POROSITY</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SW</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>PERMEABILITY</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>PI</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>TI</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SDPG</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SDTG</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>RSI</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>YIELD</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>PROP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GOR</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SPGR</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>API</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>BGI</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>BOI</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>RECO_AF</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>RECG_AF</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>OIP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GIP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORF</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORECO</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORECG</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>ORP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GRF</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GRECO</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GRECG</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>GRP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>NCNT</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>UCNT</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>SCNT</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>TCNT</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>BHCOMP</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>LAT</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+<tr><td>LONG</td><td>DOUBLE PRECISION</td><td>number</td></tr>
+</table><p>Table: 2023sands export schema. Units follow the linked BSEE definitions; the attribution does not calculate reserves or other physical quantities.</p>
+<h2>2023plays</h2>
+<p><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=2023plays">Official column definitions and units</a></p>
+<table><tr><th>Actual column</th><th>Source SQL type</th><th>Loader type</th></tr>
+<tr><td>CHRONOZONE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_TYPE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_NUMBER</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>PLAY_NAME_DESCRIPTION</td><td>VARCHAR (255)</td><td>string</td></tr>
+</table><p>Table: 2023plays export schema. Units follow the linked BSEE definitions; the attribution does not calculate reserves or other physical quantities.</p>
+<h2>2023chronozones</h2>
+<p><a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=2023chronozones">Official column definitions and units</a></p>
+<table><tr><th>Actual column</th><th>Source SQL type</th><th>Loader type</th></tr>
+<tr><td>BOEM_CHRONOZONE</td><td>VARCHAR (255)</td><td>string</td></tr>
+<tr><td>CHRONOZONE_DESCRIPTION</td><td>VARCHAR (255)</td><td>string</td></tr>
+</table><p>Table: 2023chronozones export schema. Units follow the linked BSEE definitions; the attribution does not calculate reserves or other physical quantities.</p>
+<h2>Derived attribution criteria, version 1</h2><p>attributed requires an explicit verified canonical-ID to BOEM_FIELD crosswalk and one consistent play. ambiguous retains candidates for block-only associations, shared roster blocks, multiple plays, absent lookups or inconsistent lookup codes. unmatched records no_sand_rows_for_area_block, no_sand_rows_for_verified_boem_field or missing_parseable_area_block. No verified field-code crosswalk is available for the production run, so candidate results cannot be used as verified roster backfill. Canonical IDs are supplied only through config/fields.yml; unknown IDs remain null.</p>
+<p>Licence/terms: the download page states no explicit reuse licence. Its <a href="https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer">disclaimer</a> describes a working database with possible errors and excludes legal and navigational use. The manifest preserves that statement without asserting an additional licence.</p></html>

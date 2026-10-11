@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Atlas ingest review</title>
+<h1>Atlas ingest verification</h1><p>Date: 2026-10-11. Destination: public draft pull request. Review coverage: independent Codex plan and code review. Final code verdict: APPROVE. Claude review remains pending before owner merge.</p>
+<p>The ingest is verified against 13,434 sands, 119 plays and 50 chronozones. The derived table contains 103 null-play Gulf fields: 0 verified attributions, 90 ambiguous candidate associations and 13 unmatched entries. Candidate values require a verified named-field crosswalk before roster backfill. The source-stated disclaimer and lack of explicit download-page licence are retained in the manifest.</p>
+<p>Checks: 8 new offline tests and 23 existing registry tests passed with sockets disabled. Touched-file Black, isort, flake8, mypy and Bandit checks passed. The full repository suite was not run. Source/export digest readback passed. Raw files remain outside Git. The roster, funnel, dependency manifests and agent harness are unchanged.</p>
+<p>Public disclosure review: source table extracts, derived JSON, schema and provenance contain public-source field/geology identifiers. No private documents, physical machine identifiers, credentials or local storage locations are included. Independent secret-pattern inspection is applied to the staged artifact set. The inherited Git hook location is absent; configuration is preserved and no hook coverage is claimed.</p>
+<table><tr><th>Reviewed artifact</th><th>SHA-256</th></tr>
+<tr><td>packages/worldenergydata-bsee/src/worldenergydata/bsee/atlas.py</td><td>f9ab2669ad1a670b9b1564fd8a40f0bd9ef60fff8756db8fe20a13d8359b7ce3</td></tr>
+<tr><td>packages/worldenergydata-bsee/src/worldenergydata/bsee/atlas_fetch.py</td><td>c6c9bca74735fe4b0ab4de5daecf65e6e7454b1f3f46e3e191fa3dbe53686cbd</td></tr>
+<tr><td>scripts/bsee/fetch_sands_atlas.py</td><td>340d369abdd12c206611ef45e439ade4181bdf50672a6b688eb269c527392fc1</td></tr>
+<tr><td>tests/unit/bsee/data/test_atlas.py</td><td>87636b89f3d3a176fd893bcc2a39dba905f1fdf3d77c0ced12bc0550bb065438</td></tr>
+<tr><td>tests/unit/bsee/data/test_atlas_fetch.py</td><td>ce53e7fdd2888e6d2c3fcc8069399bff4a193fc339485fe2db671a09af335b6d</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/schema.json</td><td>a6ee541be8e7a83c69b65ab7461ce1e88adec68d882f24ebd0e28bed689ad73a</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/manifest.json</td><td>80f707bcf7554a113699467b88294bd402feb9f52228c279d46eb96a28a92a3d</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/field_attribution.json</td><td>90f2bdfffb48494203f553835150dac3a61669118eb51d401263bfc795a1e44d</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/README.md</td><td>c8580b49f243b753942905a6cda786f33e064a571e9947abaf1890395553b44c</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/data_dictionary.html</td><td>fd8adb617fadc877b3d0799bb265f4365ed66f10a0b15fb7fd340ef0d4acdc41</td></tr>
+<tr><td>data/modules/bsee/atlas/2023/freshness.json</td><td>f2dbf811c36517759e1df72cc6a2d5bb71bed7f05a954c39365a9b875d1b16be</td></tr>
+<tr><td>tests/fixtures/bsee/atlas_2023/provenance.json</td><td>1e6cf32204187a73b24cfbca870eedaac7cf8cc13ce2b87221b8e2fdadc1350e</td></tr>
+<tr><td>tests/fixtures/bsee/atlas_2023/2023sands.csv</td><td>8dfbfbfaddb0e96dd59b48e63c628295d6cc8f7ff1cab9a6ba9035c35ba4604e</td></tr>
+<tr><td>tests/fixtures/bsee/atlas_2023/2023plays.csv</td><td>aca81924b54486688d63906ef010ef54a1a47b2607d076a575338c7f59e3a9b4</td></tr>
+<tr><td>tests/fixtures/bsee/atlas_2023/2023chronozones.csv</td><td>7e89d5012b59e7f9ac97a1de577bcd53dc6f0b18b22dd0b7e0cf057515c9ae9d</td></tr>
+<tr><td>.claude/rules/public-table-ingest.md</td><td>492c04918bbb483f784992a8e73b9e5357c6e513cc97ca7e33b69d8dfc4efa3a</td></tr>
+</table><p>Table: frozen code-review artifact digests. Changes to these bytes require renewed review.</p>
+<p>Expected retained residue: raw packages, original and four-digit-year exports, local extraction tools, review packets and test/cache artifacts on the data disk. The existing shared stash and other job worktrees are preserved. No temporary-directory cleanup or deletion is performed.</p></html>
