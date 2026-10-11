@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "source_id": "boem_gom_bathymetry",
+      "endpoint": "west_meters_geotiff_zip",
+      "filename": "BOEM_Bathymetry_West_meters_tiff.zip",
+      "source_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_West_meters_tiff.zip",
+      "issue_size_bytes": 513392333,
+      "size_bytes": 513392333,
+      "head": {
+        "status": 200,
+        "size_bytes": 513392333,
+        "content_type": "application/zip",
+        "checked_at_utc": "2026-10-11T18:06:16.950250+00:00",
+        "matches_issue_size": true
+      },
+      "license": "US Government public domain (BOEM)",
+      "retrieval_date_utc": null,
+      "sha256": null,
+      "sha256_reason": "not yet fetched",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "published-2024-09-25",
+      "readiness_status": "unverified",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic"
+    },
+    {
+      "source_id": "boem_gom_bathymetry",
+      "endpoint": "east_meters_geotiff_zip",
+      "filename": "BOEM_Bathymetry_East_meters_tiff.zip",
+      "source_url": "https://www.boem.gov/sites/default/files/Bathymetry/BOEM_Bathymetry_East_meters_tiff.zip",
+      "issue_size_bytes": 509191783,
+      "size_bytes": 509191783,
+      "head": {
+        "status": 200,
+        "size_bytes": 509191783,
+        "content_type": "application/zip",
+        "checked_at_utc": "2026-10-11T18:06:17.206575+00:00",
+        "matches_issue_size": true
+      },
+      "license": "US Government public domain (BOEM)",
+      "retrieval_date_utc": null,
+      "sha256": null,
+      "sha256_reason": "not yet fetched",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "published-2024-09-25",
+      "readiness_status": "unverified",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.boem.gov/oil-gas-energy/mapping-and-data/map-gallery/northern-gom-deepwater-bathymetry-grid-3d-seismic"
+    },
+    {
+      "source_id": "gebco_global_bathymetry",
+      "endpoint": "global_grid_zip",
+      "filename": "gebco_2024.zip",
+      "source_url": "https://www.bodc.ac.uk/data/open_download/gebco/gebco_2024/zip/",
+      "issue_size_bytes": 4267373073,
+      "size_bytes": 7466018396,
+      "head": {
+        "status": 200,
+        "size_bytes": 7466018396,
+        "content_type": "application/octet-stream",
+        "checked_at_utc": "2026-10-11T18:06:19.067781+00:00",
+        "matches_issue_size": false
+      },
+      "license": "Public domain (GEBCO grid is placed in the public domain; attribution requested)",
+      "retrieval_date_utc": null,
+      "sha256": null,
+      "sha256_reason": "not yet fetched",
+      "units": "m",
+      "vertical_convention": "elevation_positive_up",
+      "source_version": "2024",
+      "readiness_status": "unavailable",
+      "rights_evidence": "existing terrain catalog and linked source issue; no new licence qualification",
+      "canonical_url": "https://www.gebco.net/data_and_products/gridded_bathymetry_data/",
+      "limitation": "HEAD size differs from issue; download blocked pending release/source reconciliation"
+    }
+  ]
+}
