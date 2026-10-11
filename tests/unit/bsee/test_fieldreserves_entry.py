@@ -1,0 +1,94 @@
+"""Offline entry-point checks with synthetic ZIPs and provenance."""
+
+import importlib.util
+import json
+import urllib.request
+from pathlib import Path
+
+import pytest
+
+from tests.unit.bsee.test_fieldreserves_loader import FIXTURES, archive, history_archive
+from worldenergydata.bsee.fieldreserves_fetch import (
+    BASE,
+    DISCLAIMER,
+    emit_manifest,
+    record,
+)
+
+ROOT = Path(__file__).parents[3]
+spec = importlib.util.spec_from_file_location(
+    "fieldreserves_entry", ROOT / "scripts/bsee/fetch_fieldreserves_family.py"
+)
+entry = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(entry)
+
+
+@pytest.fixture(autouse=True)
+def offline(monkeypatch):
+    def denied(*args, **kwargs):
+        raise AssertionError("live network forbidden")
+
+    monkeypatch.setattr(urllib.request.OpenerDirector, "open", denied)
+
+
+def cache(root):
+    records = []
+    for name, body in [
+        ("2023 Hist.zip", history_archive()),
+        (
+            "mastproddelimit.zip",
+            archive(
+                "mastproddelimit.txt", (FIXTURES / "synthetic_master.csv").read_bytes()
+            ),
+        ),
+    ]:
+        (root / name).write_bytes(body)
+        records.append(
+            record(
+                BASE + "/FieldReserves/Files/" + name.replace(" ", "%20"),
+                body,
+                "2026-10-11T00:00:00Z",
+            )
+        )
+    (root / "manifest.json").write_text(emit_manifest(records, terms=DISCLAIMER))
+
+
+def test_cached_entry_emits_schema_and_complete_rows(tmp_path):
+    cache(tmp_path)
+    assert entry.curate_cache(tmp_path) == {"history": 3, "production_master": 2}
+    data = json.loads((tmp_path / "schema.json").read_text())
+    assert data["history"]["FIELD_NAME_CODE"] == "string"
+    assert data["monthly"]["status"] == "fetch_only"
+    assert (tmp_path / "curated_history.csv").read_text().count("\n") == 4
+
+
+def test_cached_entry_rejects_tampered_original(tmp_path):
+    cache(tmp_path)
+    (tmp_path / "2023 Hist.zip").write_bytes(b"tampered synthetic")
+    with pytest.raises(ValueError, match="digest/size"):
+        entry.curate_cache(tmp_path)
+
+
+def test_cached_entry_rejects_wrong_origin(tmp_path):
+    cache(tmp_path)
+    path = tmp_path / "manifest.json"
+    path.write_text(path.read_text().replace(BASE, "https://other.gov"))
+    with pytest.raises(ValueError, match="provenance"):
+        entry.curate_cache(tmp_path)
+
+
+def test_later_source_failure_leaves_no_partial_curated_output(tmp_path):
+    cache(tmp_path)
+    (tmp_path / "mastproddelimit.zip").write_bytes(b"tampered synthetic")
+    with pytest.raises(ValueError, match="digest/size"):
+        entry.curate_cache(tmp_path)
+    assert not list(tmp_path.glob("curated_*.csv"))
+
+
+def test_existing_schema_preserved_before_any_writes(tmp_path):
+    cache(tmp_path)
+    (tmp_path / "schema.json").write_text("preserved synthetic schema")
+    with pytest.raises(FileExistsError):
+        entry.curate_cache(tmp_path)
+    assert (tmp_path / "schema.json").read_text() == "preserved synthetic schema"
+    assert not list(tmp_path.glob("curated_*.csv"))

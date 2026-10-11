@@ -1,0 +1,66 @@
+{
+  "data_kind": "live-retrieval-metadata",
+  "records": [
+    {
+      "retrieved_utc": "2026-10-11T20:17:37.739170Z",
+      "sha256": "26e79a765d202cda76c230e4db7dd81f4588a2d63fb5c341521b8a615a3d7b8c",
+      "size_bytes": 21033,
+      "source_url": "https://www.data.boem.gov/robots.txt"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:10.188001Z",
+      "sha256": "2e77757d7c92f4652eaca11891165e2e0a9a75cf55a8ef52753d6d5dc3dfb037",
+      "size_bytes": 26209,
+      "source_url": "https://www.data.boem.gov/Main/HtmlPage.aspx?page=Disclaimer"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:13.717906Z",
+      "sha256": "abb62e9247508a87bf07d1206f5814b7ac1a8fb19bb174120d88306d199a4ef4",
+      "size_bytes": 86726,
+      "source_url": "https://www.data.boem.gov/Main/HtmlPage.aspx?page=estimated2023"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:16.245481Z",
+      "sha256": "058a03f7607a7a1023a9fc1b1963626936149bc526ab7b49fe4bf2a55227ca98",
+      "size_bytes": 51369,
+      "source_url": "https://www.data.boem.gov/Main/FieldReserves.aspx"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:19.563681Z",
+      "sha256": "73f40ee3a418f1b560be8174dddd784d1887c7798827d37c0eb7efb954999457",
+      "size_bytes": 9196732,
+      "source_url": "https://www.data.boem.gov/FieldReserves/Files/2023%20FldMoPro.zip"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:22.799712Z",
+      "sha256": "1e0de3013b1ffd338cd0b08237738bee865c976eb144d3ae83cc9d7e7108056b",
+      "size_bytes": 5477852,
+      "source_url": "https://www.data.boem.gov/FieldReserves/Files/2023%20Hist.zip"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:25.412151Z",
+      "sha256": "37cd0059b8f742555a8a631911cb834d6ff0178bf1ac9bf87e0e163b3cacb063",
+      "size_bytes": 150568,
+      "source_url": "https://www.data.boem.gov/FieldReserves/Files/mastproddelimit.zip"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:18:28.953122Z",
+      "sha256": "be33a6de08f7f4ea7252de134d2f8818fbba489a464949f993a714b3f1e82c03",
+      "size_bytes": 57936,
+      "source_url": "https://www.data.boem.gov/FieldReserves/Files/appendbdelimit.zip"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:12:08.092869Z",
+      "sha256": "c90f3fad5c4d550aa7af2961a8c304277c95bddcb193487670eb630f514415cd",
+      "size_bytes": 28537,
+      "source_url": "https://www.data.boem.gov/Main/HtmlPage.aspx?page=fieldNames2"
+    },
+    {
+      "retrieved_utc": "2026-10-11T20:12:40.524211Z",
+      "sha256": "1693482f710553cc5bcb797890d1e4268ca1021c612c2000d6ec5fafbb8bb4ab",
+      "size_bytes": 27384,
+      "source_url": "https://www.data.boem.gov/Main/HtmlPage.aspx?page=appendixB"
+    }
+  ],
+  "terms": "This data is not for navigational use."
+}
