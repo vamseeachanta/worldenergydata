@@ -1,4 +1,5 @@
 """Offline NOPTA contracts; all well values below are synthetic."""
+
 import copy
 import io
 import json
@@ -20,6 +21,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "nopta_synthetic.json"
 def offline(monkeypatch):
     def deny(*args, **kwargs):
         raise AssertionError("network forbidden in offline tests")
+
     monkeypatch.setattr(nw, "open_request", deny)
     monkeypatch.setattr(nw.time, "sleep", lambda seconds: None)
     monkeypatch.setattr(nw, "access_preflight", lambda: [])
@@ -56,7 +58,8 @@ def test_paging_and_query_limits(sample, monkeypatch):
 
     def fetch(url, **kwargs):
         seen.append(url)
-        return json.dumps(sample["pages"][len(seen)-1]).encode()
+        return json.dumps(sample["pages"][len(seen) - 1]).encode()
+
     monkeypatch.setattr(nw, "get_bytes", fetch)
     rows, evidence = nw.fetch_wells(sample["layer"], where="OBJECTID <= 5")
     assert len(rows) == 2
@@ -76,11 +79,15 @@ def test_page_cap_and_duplicate_ids_fail(sample, monkeypatch):
         nw.fetch_wells(sample["layer"])
 
 
-@pytest.mark.parametrize("url", [
-    "http://gis.spatial.nopta.gov.au/gis/rest/services/Public/Wells/FeatureServer/0/query",
-    "https://example.org/query", nw.QUERY_URL + "?token=secret",
-    "https://user@gis.spatial.nopta.gov.au/gis/rest/services/Public/Wells/FeatureServer/0/query",
-])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "http://gis.spatial.nopta.gov.au/gis/rest/services/Public/Wells/FeatureServer/0/query",
+        "https://example.org/query",
+        nw.QUERY_URL + "?token=secret",
+        "https://x@gis.spatial.nopta.gov.au/gis/rest/services/Public/Wells/FeatureServer/0/query",
+    ],
+)
 def test_destination_rejected(url):
     with pytest.raises(ValueError):
         nw.get_bytes(url)
@@ -89,11 +96,13 @@ def test_destination_rejected(url):
 def test_response_cap_and_timeout(monkeypatch):
     class Response(io.BytesIO):
         status = 200
+
     seen = []
 
     def open_mock(request, timeout):
         seen.append(timeout)
         return Response(b"x" * 11)
+
     monkeypatch.setattr(nw, "open_request", open_mock)
     with pytest.raises(ValueError, match="byte cap"):
         nw.get_bytes(nw.QUERY_URL, max_bytes=10)
@@ -103,6 +112,7 @@ def test_response_cap_and_timeout(monkeypatch):
 def test_refusal_no_retry(monkeypatch):
     def refused(request, timeout):
         raise urllib.error.HTTPError(request.full_url, 429, "refused", {}, None)
+
     monkeypatch.setattr(nw, "open_request", refused)
     with pytest.raises(urllib.error.HTTPError):
         nw.get_bytes(nw.QUERY_URL)
@@ -110,12 +120,22 @@ def test_refusal_no_retry(monkeypatch):
 
 @pytest.mark.parametrize("unit,value,expected", [("m", 100, 100), ("ft", 100, 30.48)])
 def test_measured_preference(unit, value, expected):
-    well = {"well_identifier": "synthetic-1", "field_name": "Synthetic Field",
-            "water_depth": value, "water_depth_unit": unit,
-            "water_depth_datum": "synthetic sea level", "latitude": -20.0,
-            "longitude": 130.0, "spatial_reference": {"wkid": 4283}}
-    meta = {"field_name": "Synthetic Field", "well_identifier": "synthetic-1",
-            "water_depth_m": 78, "source": "synthetic fallback"}
+    well = {
+        "well_identifier": "synthetic-1",
+        "field_name": "Synthetic Field",
+        "water_depth": value,
+        "water_depth_unit": unit,
+        "water_depth_datum": "synthetic sea level",
+        "latitude": -20.0,
+        "longitude": 130.0,
+        "spatial_reference": {"wkid": 4283},
+    }
+    meta = {
+        "field_name": "Synthetic Field",
+        "well_identifier": "synthetic-1",
+        "water_depth_m": 78,
+        "source": "synthetic fallback",
+    }
     enriched = enrich_field_metadata(meta, [well])
     assert enriched["water_depth_m"] == pytest.approx(expected)
     assert enriched["value_origins"]["water_depth_m"] == "measured"
@@ -126,17 +146,34 @@ def test_measured_preference(unit, value, expected):
     assert "water_depth_m=measured" in concept.data_source
 
 
-@pytest.mark.parametrize("change", [
-    {"water_depth": None}, {"water_depth_unit": "unknown"},
-    {"water_depth_datum": None}, {"water_depth_datum": True},
-    {"water_depth_datum": 123}, {"water_depth_datum": "   "}, {"field_name": None},
-    {"field_name": "Another Field"}, {"water_depth": -1},
-])
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"water_depth": None},
+        {"water_depth_unit": "unknown"},
+        {"water_depth_datum": None},
+        {"water_depth_datum": True},
+        {"water_depth_datum": 123},
+        {"water_depth_datum": "   "},
+        {"field_name": None},
+        {"field_name": "Another Field"},
+        {"water_depth": -1},
+    ],
+)
 def test_unknown_or_unlinked_depth_keeps_default(change):
-    well = {"well_identifier": "synthetic-1", "field_name": "Synthetic Field",
-            "water_depth": 100, "water_depth_unit": "m", "water_depth_datum": "sea level"}
+    well = {
+        "well_identifier": "synthetic-1",
+        "field_name": "Synthetic Field",
+        "water_depth": 100,
+        "water_depth_unit": "m",
+        "water_depth_datum": "sea level",
+    }
     well.update(change)
-    meta = {"field_name": "Synthetic Field", "well_identifier": "synthetic-1", "water_depth_m": 78}
+    meta = {
+        "field_name": "Synthetic Field",
+        "well_identifier": "synthetic-1",
+        "water_depth_m": 78,
+    }
     result = enrich_field_metadata(meta, [well])
     assert result["water_depth_m"] == 78
     assert result["value_origins"]["water_depth_m"] == "default"
@@ -165,7 +202,9 @@ def test_schema_describes_normalized_rows(sample):
     assert schema["properties"]["water_depth_unit"]["enum"] == ["m", "ft", None]
 
 
-@pytest.mark.parametrize("robots", [b"User-agent: *\nDisallow: /", b"<html>challenge</html>"])
+@pytest.mark.parametrize(
+    "robots", [b"User-agent: *\nDisallow: /", b"<html>challenge</html>"]
+)
 def test_preflight_refuses_access(robots, monkeypatch):
     calls = []
 
@@ -183,8 +222,11 @@ def test_preflight_records_missing_robots_and_terms(monkeypatch):
     def response(url):
         if url == nw.ROBOTS_URL:
             raise urllib.error.HTTPError(url, 404, "missing", {}, None)
-        return ("All material on this  website is licensed under a Creative Commons "
-                "Attribution 4.0 International Licence").encode()
+        return (
+            "All material on this  website is licensed under a Creative Commons "
+            "Attribution 4.0 International Licence"
+        ).encode()
+
     monkeypatch.setattr(nw, "get_bytes", response)
     import hashlib
 
@@ -200,24 +242,42 @@ def test_preflight_records_missing_robots_and_terms(monkeypatch):
 
 def test_redirect_is_refused():
     with pytest.raises(ValueError, match="redirect"):
-        nw.NoRedirect().redirect_request(None, None, 302, "found", {}, "https://example.org")
+        nw.NoRedirect().redirect_request(
+            None, None, 302, "found", {}, "https://example.org"
+        )
 
 
 @pytest.mark.parametrize("name", [None, "", "   "])
 def test_missing_explicit_field_link_never_selects(name):
     meta = {"field_name": name, "well_identifier": "synthetic-1"}
-    well = {"field_name": name, "well_identifier": "synthetic-1", "latitude": -20,
-            "longitude": 130, "spatial_reference": {"wkid": 4283},
-            "water_depth": 100, "water_depth_unit": "m", "water_depth_datum": "sea level"}
+    well = {
+        "field_name": name,
+        "well_identifier": "synthetic-1",
+        "latitude": -20,
+        "longitude": 130,
+        "spatial_reference": {"wkid": 4283},
+        "water_depth": 100,
+        "water_depth_unit": "m",
+        "water_depth_datum": "sea level",
+    }
     result = enrich_field_metadata(meta, [well])
     assert result["water_depth_m"] is None
     assert result.get("latitude") is None
 
 
 def test_enrichment_is_idempotent_and_preserves_measured_origin():
-    meta = {"field_name": "Synthetic Field", "well_identifier": "synthetic-1", "water_depth_m": 78}
-    well = {"field_name": "Synthetic Field", "well_identifier": "synthetic-1",
-            "water_depth": 100, "water_depth_unit": "m", "water_depth_datum": "sea level"}
+    meta = {
+        "field_name": "Synthetic Field",
+        "well_identifier": "synthetic-1",
+        "water_depth_m": 78,
+    }
+    well = {
+        "field_name": "Synthetic Field",
+        "well_identifier": "synthetic-1",
+        "water_depth": 100,
+        "water_depth_unit": "m",
+        "water_depth_datum": "sea level",
+    }
     first = enrich_field_metadata(meta, [well])
     second = enrich_field_metadata(first, [])
     assert second == first
@@ -225,11 +285,14 @@ def test_enrichment_is_idempotent_and_preserves_measured_origin():
 
 
 def test_changed_terms_fail_closed(monkeypatch):
-    terms = ("All material on this  website is licensed under a Creative Commons "
-             "Attribution 4.0 International Licence. Automated access is forbidden.").encode()
+    terms = (
+        "All material on this  website is licensed under a Creative Commons "
+        "Attribution 4.0 International Licence. Automated access is forbidden."
+    ).encode()
     monkeypatch.setattr(
-        nw, "get_bytes",
-        lambda url: b"User-agent: *\nAllow: /" if url == nw.ROBOTS_URL else terms
+        nw,
+        "get_bytes",
+        lambda url: b"User-agent: *\nAllow: /" if url == nw.ROBOTS_URL else terms,
     )
     with pytest.raises(ValueError, match="terms changed"):
         ORIGINAL_PREFLIGHT()
@@ -239,6 +302,22 @@ def test_total_budget_bounds_transport(sample, monkeypatch):
     def transport(url, *, max_bytes=2_000_000):
         assert max_bytes == 1
         raise ValueError("response byte cap exceeded")
+
     monkeypatch.setattr(nw, "get_bytes", transport)
     with pytest.raises(ValueError, match="byte cap"):
         nw.fetch_wells(sample["layer"], max_total_bytes=1)
+
+
+def test_query_builder_preserves_source_columns_and_geometry_policy():
+    from urllib.parse import parse_qs, urlsplit
+
+    query = parse_qs(urlsplit(nw._query_url("OBJECTID <= 5", 2, 1)).query)
+    assert query == {
+        "f": ["json"],
+        "where": ["OBJECTID <= 5"],
+        "outFields": ["*"],
+        "returnGeometry": ["false"],
+        "orderByFields": ["OBJECTID"],
+        "resultOffset": ["2"],
+        "resultRecordCount": ["1"],
+    }
