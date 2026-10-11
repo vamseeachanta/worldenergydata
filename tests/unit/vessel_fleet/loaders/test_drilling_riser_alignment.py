@@ -9,8 +9,8 @@ import pandas as pd
 import pytest
 
 from worldenergydata.vessel_fleet.loaders.drilling_riser_loader import (
-    _DATA_DIR,
     DrillingRiserLoader,
+    _DATA_DIR,
 )
 
 CSV_NAME = "drilling_riser_components.csv"
@@ -56,7 +56,7 @@ def test_physical_line_number_after_quoted_newline(tmp_path: Path):
     (tmp_path / CSV_NAME).write_text(
         'COMPONENT_ID,DATA_SOURCE,NOTES\nA,public,"first\nsecond"\nB,public\n'
     )
-    with pytest.raises(ValueError, match="line 5.*expected 3.*actual 2"):
+    with pytest.raises(ValueError, match="line 4.*expected 3.*actual 2"):
         DrillingRiserLoader(tmp_path).load()
 
 
@@ -105,44 +105,81 @@ def test_canonical_provenance_populated():
     [
         (
             "RJ-21-75-BUOY",
-            {"OD_IN": 21.0, "LENGTH_FT": 75.0, "BUOYANCY_OD_IN": 49.0,
-             "PRESSURE_RATING_PSI": 5000.0, "DATA_SOURCE": "API 16R"},
+            {
+                "OD_IN": 21.0,
+                "LENGTH_FT": 75.0,
+                "BUOYANCY_OD_IN": 49.0,
+                "PRESSURE_RATING_PSI": 5000.0,
+                "DATA_SOURCE": "API 16R",
+            },
         ),
         (
             "BOP-SUB-18.75-20K",
-            {"BOP_TYPE": "subsea", "BORE_SIZE_IN": 18.75, "HEIGHT_FT": 38.0,
-             "ANNULAR_COUNT": 1, "SHEAR_RAM_COUNT": 2, "PIPE_RAM_COUNT": 3,
-             "CASING_SHEAR_RAM": True, "DATA_SOURCE": "API 16A / API 53"},
+            {
+                "BOP_TYPE": "subsea",
+                "BORE_SIZE_IN": 18.75,
+                "HEIGHT_FT": 38.0,
+                "ANNULAR_COUNT": 1,
+                "SHEAR_RAM_COUNT": 2,
+                "PIPE_RAM_COUNT": 3,
+                "CASING_SHEAR_RAM": True,
+                "DATA_SOURCE": "API 16A / API 53",
+            },
         ),
         (
             "LMRP-18.75-15K",
-            {"BORE_SIZE_IN": 18.75, "HEIGHT_FT": 18.0, "ANNULAR_COUNT": 1,
-             "CONNECTOR_TYPE": "H-4 collet", "DATA_SOURCE": "API 16R / API 53"},
+            {
+                "BORE_SIZE_IN": 18.75,
+                "HEIGHT_FT": 18.0,
+                "ANNULAR_COUNT": 1,
+                "CONNECTOR_TYPE": "H-4 collet",
+                "DATA_SOURCE": "API 16R / API 53",
+            },
         ),
         (
             "TJ-21-50",
-            {"STROKE_FT": 50.0, "OUTER_BARREL_LENGTH_FT": 65.0,
-             "INNER_BARREL_LENGTH_FT": 45.0, "DATA_SOURCE": "API 16R"},
+            {
+                "STROKE_FT": 50.0,
+                "OUTER_BARREL_LENGTH_FT": 65.0,
+                "INNER_BARREL_LENGTH_FT": 45.0,
+                "DATA_SOURCE": "API 16R",
+            },
         ),
         (
             "FJ-UPPER-21",
-            {"MAX_ANGLE_DEG": 10.0, "STIFFNESS_FT_KIP_PER_DEG": 15.0,
-             "POSITION": "upper", "DATA_SOURCE": "API 16R"},
+            {
+                "MAX_ANGLE_DEG": 10.0,
+                "STIFFNESS_FT_KIP_PER_DEG": 15.0,
+                "POSITION": "upper",
+                "DATA_SOURCE": "API 16R",
+            },
         ),
         (
             "FJ-LOWER-21",
-            {"MAX_ANGLE_DEG": 10.0, "STIFFNESS_FT_KIP_PER_DEG": 20.0,
-             "POSITION": "lower", "DATA_SOURCE": "API 16R"},
+            {
+                "MAX_ANGLE_DEG": 10.0,
+                "STIFFNESS_FT_KIP_PER_DEG": 20.0,
+                "POSITION": "lower",
+                "DATA_SOURCE": "API 16R",
+            },
         ),
         (
             "FJ-UPPER-18.75",
-            {"MAX_ANGLE_DEG": 10.0, "STIFFNESS_FT_KIP_PER_DEG": 12.0,
-             "POSITION": "upper", "DATA_SOURCE": "API 16R"},
+            {
+                "MAX_ANGLE_DEG": 10.0,
+                "STIFFNESS_FT_KIP_PER_DEG": 12.0,
+                "POSITION": "upper",
+                "DATA_SOURCE": "API 16R",
+            },
         ),
         (
             "FJ-LOWER-18.75",
-            {"MAX_ANGLE_DEG": 10.0, "STIFFNESS_FT_KIP_PER_DEG": 18.0,
-             "POSITION": "lower", "DATA_SOURCE": "API 16R"},
+            {
+                "MAX_ANGLE_DEG": 10.0,
+                "STIFFNESS_FT_KIP_PER_DEG": 18.0,
+                "POSITION": "lower",
+                "DATA_SOURCE": "API 16R",
+            },
         ),
     ],
 )
@@ -163,8 +200,11 @@ def test_type_specific_anchors(component_id: str, anchors: dict):
         ("riser_joint", slice(15, 29), ["OD_IN", "LENGTH_FT"]),
         ("bop", slice(22, 29), ["BORE_SIZE_IN", "HEIGHT_FT", "PIPE_RAM_COUNT"]),
         ("lmrp", slice(19, 28), ["BORE_SIZE_IN", "HEIGHT_FT", "ANNULAR_COUNT"]),
-        ("telescopic_joint", slice(15, 25),
-         ["STROKE_FT", "OUTER_BARREL_LENGTH_FT", "INNER_BARREL_LENGTH_FT"]),
+        (
+            "telescopic_joint",
+            slice(15, 25),
+            ["STROKE_FT", "OUTER_BARREL_LENGTH_FT", "INNER_BARREL_LENGTH_FT"],
+        ),
         ("flex_joint", slice(15, 22), ["MAX_ANGLE_DEG", "STIFFNESS_FT_KIP_PER_DEG"]),
     ],
 )
@@ -179,3 +219,16 @@ def test_every_row_follows_type_layout(kind, empty_columns, numeric_columns):
     if kind == "flex_joint":
         assert df["POSITION"].isin(["upper", "lower"]).all()
         assert df.iloc[:, 25:29].isna().all().all()
+
+
+@pytest.mark.parametrize(
+    "content,line_number",
+    [
+        ('"unterminated\n', 1),
+        ('COMPONENT_ID,DATA_SOURCE,NOTES\nA,public,"unterminated\n', 2),
+    ],
+)
+def test_malformed_quotes_raise_value_error(tmp_path, content, line_number):
+    (tmp_path / CSV_NAME).write_text(content)
+    with pytest.raises(ValueError, match=rf"Malformed CSV at line {line_number}"):
+        DrillingRiserLoader(tmp_path).load()
