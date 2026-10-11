@@ -61,7 +61,9 @@ def test_csv_headers_match_writer(api, inputs, contract):
     for name in CSV_NAMES:
         header = files[name].decode("utf-8").split("\n", 1)[0].split(",")
         declared = [c["name"] for c in contract[name]["columns"]]
-        required = [c["name"] for c in contract[name]["columns"] if not c.get("optional")]
+        required = [
+            c["name"] for c in contract[name]["columns"] if not c.get("optional")
+        ]
         assert declared == sorted(declared), name
         assert set(required) <= set(header) <= set(declared), name
 
@@ -72,9 +74,15 @@ def test_enums_match_code_and_json_schema(api, contract, json_schema):
         ("entity_registry.csv", "entity_type"): set(api.TYPES),
         ("entity_relationships.csv", "date_precision"): set(api.PRECISIONS),
         ("entity_relationships.csv", "predicate"): set(defs["predicate"]["enum"]),
-        ("legacy_entity_crosswalk.csv", "match_status"): set(defs["match_status"]["enum"]),
-        ("legacy_entity_crosswalk.csv", "relation_type"): set(defs["relation_type"]["enum"]),
-        ("integration_manifest.json", "state"): set(json_schema["properties"]["state"]["enum"]),
+        ("legacy_entity_crosswalk.csv", "match_status"): set(
+            defs["match_status"]["enum"]
+        ),
+        ("legacy_entity_crosswalk.csv", "relation_type"): set(
+            defs["relation_type"]["enum"]
+        ),
+        ("integration_manifest.json", "state"): set(
+            json_schema["properties"]["state"]["enum"]
+        ),
     }
     for (dataset, name), values in expected.items():
         assert set(column(contract, dataset, name)["enum"]) == values, (dataset, name)
