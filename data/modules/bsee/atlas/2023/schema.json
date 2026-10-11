@@ -5,7 +5,7 @@
       {
         "name": "SN_FORMSAND",
         "source_type": "DOUBLE PRECISION",
-        "type": "number",
+        "type": "identifier",
         "nullable": true
       },
       {

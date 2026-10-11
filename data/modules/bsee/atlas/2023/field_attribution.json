@@ -1,11 +1,11 @@
 {
   "edition": 2023,
   "manifest": "manifest.json",
-  "criteria_version": 1,
+  "criteria_version": 2,
   "input_sha256": {
     "reports/field-atlas/_roster.json": "b1d6efdefb1759c0274d08c73e606a4c4607c415b0f0098dde262cdb677c844b",
     "config/fields.yml": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
-    "data/modules/bsee/atlas/2023/schema.json": "a6ee541be8e7a83c69b65ab7461ce1e88adec68d882f24ebd0e28bed689ad73a"
+    "data/modules/bsee/atlas/2023/schema.json": "d4e12f631df178fdd81f6f95a5bb71cb09091f0fa698534f4147e18b93f93803"
   },
   "counts": {
     "attributed": 0,
@@ -20,6 +20,20 @@
         "GC254"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -59,7 +73,7 @@
       "sand_rows": [
         {
           "csv_row": 3430,
-          "sn_formsand": 413838.0,
+          "sn_formsand": "413838",
           "sand_name": "0582_GC254_CMAC10",
           "boem_field": "GC254",
           "play_number": "0582",
@@ -67,7 +81,7 @@
         },
         {
           "csv_row": 3431,
-          "sn_formsand": 413839.0,
+          "sn_formsand": "413839",
           "sand_name": "0582_GC254_CMAC20",
           "boem_field": "GC254",
           "play_number": "0582",
@@ -75,7 +89,7 @@
         },
         {
           "csv_row": 3432,
-          "sn_formsand": 104951.0,
+          "sn_formsand": "104951",
           "sand_name": "0982_GC254_GALT30",
           "boem_field": "GC254",
           "play_number": "0982",
@@ -83,7 +97,7 @@
         },
         {
           "csv_row": 3433,
-          "sn_formsand": 104952.0,
+          "sn_formsand": "104952",
           "sand_name": "0982_GC254_GALT40",
           "boem_field": "GC254",
           "play_number": "0982",
@@ -91,7 +105,7 @@
         },
         {
           "csv_row": 3434,
-          "sn_formsand": 104953.0,
+          "sn_formsand": "104953",
           "sand_name": "0982_GC254_GALT50",
           "boem_field": "GC254",
           "play_number": "0982",
@@ -99,7 +113,7 @@
         },
         {
           "csv_row": 3435,
-          "sn_formsand": 104954.0,
+          "sn_formsand": "104954",
           "sand_name": "0982_GC254_GALT60",
           "boem_field": "GC254",
           "play_number": "0982",
@@ -107,7 +121,7 @@
         },
         {
           "csv_row": 3436,
-          "sn_formsand": 104955.0,
+          "sn_formsand": "104955",
           "sand_name": "0982_GC254_GALT65",
           "boem_field": "GC254",
           "play_number": "0982",
@@ -115,7 +129,7 @@
         },
         {
           "csv_row": 3437,
-          "sn_formsand": 104956.0,
+          "sn_formsand": "104956",
           "sand_name": "1282_GC254_GALT70",
           "boem_field": "GC254",
           "play_number": "1282",
@@ -123,7 +137,7 @@
         },
         {
           "csv_row": 3438,
-          "sn_formsand": 104957.0,
+          "sn_formsand": "104957",
           "sand_name": "1282_GC254_GMARG10",
           "boem_field": "GC254",
           "play_number": "1282",
@@ -131,7 +145,7 @@
         },
         {
           "csv_row": 3439,
-          "sn_formsand": 413842.0,
+          "sn_formsand": "413842",
           "sand_name": "1282_GC254_GNEP10",
           "boem_field": "GC254",
           "play_number": "1282",
@@ -139,7 +153,7 @@
         },
         {
           "csv_row": 3440,
-          "sn_formsand": 104958.0,
+          "sn_formsand": "104958",
           "sand_name": "1282_GC254_TEXT10",
           "boem_field": "GC254",
           "play_number": "1282",
@@ -155,6 +169,20 @@
         "MC026"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -175,7 +203,7 @@
       "sand_rows": [
         {
           "csv_row": 5104,
-          "sn_formsand": 421747.0,
+          "sn_formsand": "421747",
           "sand_name": "1982_MC026_M57",
           "boem_field": "MC026",
           "play_number": "1982",
@@ -191,6 +219,20 @@
         "MC755"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -221,7 +263,7 @@
       "sand_rows": [
         {
           "csv_row": 5367,
-          "sn_formsand": 419362.0,
+          "sn_formsand": "419362",
           "sand_name": "1282_MC755_11300",
           "boem_field": "MC755",
           "play_number": "1282",
@@ -229,7 +271,7 @@
         },
         {
           "csv_row": 5368,
-          "sn_formsand": 414811.0,
+          "sn_formsand": "414811",
           "sand_name": "1282_MC755_12000",
           "boem_field": "MC755",
           "play_number": "1282",
@@ -237,7 +279,7 @@
         },
         {
           "csv_row": 5369,
-          "sn_formsand": 414813.0,
+          "sn_formsand": "414813",
           "sand_name": "1382_MC755_14200",
           "boem_field": "MC755",
           "play_number": "1382",
@@ -253,6 +295,20 @@
         "EC115"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -273,7 +329,7 @@
       "sand_rows": [
         {
           "csv_row": 693,
-          "sn_formsand": 421059.0,
+          "sn_formsand": "421059",
           "sand_name": "1361_EC115_IE",
           "boem_field": "EC115",
           "play_number": "1361",
@@ -289,6 +345,20 @@
         "GC112"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -309,7 +379,7 @@
       "sand_rows": [
         {
           "csv_row": 3336,
-          "sn_formsand": 415257.0,
+          "sn_formsand": "415257",
           "sand_name": "0982_GC112_S10A2",
           "boem_field": "GC112",
           "play_number": "0982",
@@ -317,7 +387,7 @@
         },
         {
           "csv_row": 3337,
-          "sn_formsand": 415290.0,
+          "sn_formsand": "415290",
           "sand_name": "0982_GC112_S10B",
           "boem_field": "GC112",
           "play_number": "0982",
@@ -325,7 +395,7 @@
         },
         {
           "csv_row": 3338,
-          "sn_formsand": 415387.0,
+          "sn_formsand": "415387",
           "sand_name": "0982_GC112_T",
           "boem_field": "GC112",
           "play_number": "0982",
@@ -341,6 +411,20 @@
         "MC429"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -361,7 +445,7 @@
       "sand_rows": [
         {
           "csv_row": 5286,
-          "sn_formsand": 414227.0,
+          "sn_formsand": "414227",
           "sand_name": "1382_MC429_A0",
           "boem_field": "MC429",
           "play_number": "1382",
@@ -369,7 +453,7 @@
         },
         {
           "csv_row": 5287,
-          "sn_formsand": 414228.0,
+          "sn_formsand": "414228",
           "sand_name": "1382_MC429_A1",
           "boem_field": "MC429",
           "play_number": "1382",
@@ -377,7 +461,7 @@
         },
         {
           "csv_row": 5288,
-          "sn_formsand": 421964.0,
+          "sn_formsand": "421964",
           "sand_name": "1382_MC429_A2",
           "boem_field": "MC429",
           "play_number": "1382",
@@ -385,7 +469,7 @@
         },
         {
           "csv_row": 5289,
-          "sn_formsand": 414237.0,
+          "sn_formsand": "414237",
           "sand_name": "1382_MC429_K1",
           "boem_field": "MC429",
           "play_number": "1382",
@@ -401,6 +485,20 @@
         "MC162"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -415,6 +513,20 @@
         "EW963"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -435,7 +547,7 @@
       "sand_rows": [
         {
           "csv_row": 2808,
-          "sn_formsand": 414642.0,
+          "sn_formsand": "414642",
           "sand_name": "0582_EW963_CRIS_S_L",
           "boem_field": "EW963",
           "play_number": "0582",
@@ -443,7 +555,7 @@
         },
         {
           "csv_row": 2809,
-          "sn_formsand": 414641.0,
+          "sn_formsand": "414641",
           "sand_name": "0582_EW963_CRIS_S_U",
           "boem_field": "EW963",
           "play_number": "0582",
@@ -459,6 +571,20 @@
         "GC243"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -479,7 +605,7 @@
       "sand_rows": [
         {
           "csv_row": 3411,
-          "sn_formsand": 417015.0,
+          "sn_formsand": "417015",
           "sand_name": "1382_GC243_AJ_2",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -487,7 +613,7 @@
         },
         {
           "csv_row": 3412,
-          "sn_formsand": 417016.0,
+          "sn_formsand": "417016",
           "sand_name": "1382_GC243_AK",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -495,7 +621,7 @@
         },
         {
           "csv_row": 3413,
-          "sn_formsand": 417017.0,
+          "sn_formsand": "417017",
           "sand_name": "1382_GC243_AL",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -503,7 +629,7 @@
         },
         {
           "csv_row": 3414,
-          "sn_formsand": 417019.0,
+          "sn_formsand": "417019",
           "sand_name": "1382_GC243_AM",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -511,7 +637,7 @@
         },
         {
           "csv_row": 3415,
-          "sn_formsand": 417020.0,
+          "sn_formsand": "417020",
           "sand_name": "1382_GC243_AN",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -519,7 +645,7 @@
         },
         {
           "csv_row": 3416,
-          "sn_formsand": 422057.0,
+          "sn_formsand": "422057",
           "sand_name": "1382_GC243_AS",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -527,7 +653,7 @@
         },
         {
           "csv_row": 3417,
-          "sn_formsand": 422058.0,
+          "sn_formsand": "422058",
           "sand_name": "1382_GC243_AT",
           "boem_field": "GC243",
           "play_number": "1382",
@@ -543,6 +669,20 @@
         "GC743"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -576,7 +716,7 @@
       "sand_rows": [
         {
           "csv_row": 3534,
-          "sn_formsand": 422064.0,
+          "sn_formsand": "422064",
           "sand_name": "9992_GC743_M20",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -584,7 +724,7 @@
         },
         {
           "csv_row": 3535,
-          "sn_formsand": 422063.0,
+          "sn_formsand": "422063",
           "sand_name": "9992_GC743_M25",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -592,7 +732,7 @@
         },
         {
           "csv_row": 3536,
-          "sn_formsand": 417068.0,
+          "sn_formsand": "417068",
           "sand_name": "9992_GC743_M54",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -600,7 +740,7 @@
         },
         {
           "csv_row": 3537,
-          "sn_formsand": 417067.0,
+          "sn_formsand": "417067",
           "sand_name": "9992_GC743_M55",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -608,7 +748,7 @@
         },
         {
           "csv_row": 3538,
-          "sn_formsand": 417066.0,
+          "sn_formsand": "417066",
           "sand_name": "9992_GC743_M57",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -616,7 +756,7 @@
         },
         {
           "csv_row": 3539,
-          "sn_formsand": 417065.0,
+          "sn_formsand": "417065",
           "sand_name": "9992_GC743_M60",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -624,7 +764,7 @@
         },
         {
           "csv_row": 3540,
-          "sn_formsand": 417064.0,
+          "sn_formsand": "417064",
           "sand_name": "9992_GC743_M72",
           "boem_field": "GC743",
           "play_number": "9992",
@@ -640,6 +780,20 @@
         "LL005"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -660,7 +814,7 @@
       "sand_rows": [
         {
           "csv_row": 5073,
-          "sn_formsand": 418951.0,
+          "sn_formsand": "418951",
           "sand_name": "1782_LL005_15850",
           "boem_field": "LL005",
           "play_number": "1782",
@@ -676,6 +830,20 @@
         "GB426"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -724,7 +892,7 @@
       "sand_rows": [
         {
           "csv_row": 3189,
-          "sn_formsand": 419327.0,
+          "sn_formsand": "419327",
           "sand_name": "0582_GB426_M1",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -732,7 +900,7 @@
         },
         {
           "csv_row": 3190,
-          "sn_formsand": 419326.0,
+          "sn_formsand": "419326",
           "sand_name": "0582_GB426_N0",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -740,7 +908,7 @@
         },
         {
           "csv_row": 3191,
-          "sn_formsand": 414318.0,
+          "sn_formsand": "414318",
           "sand_name": "0582_GB426_N1",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -748,7 +916,7 @@
         },
         {
           "csv_row": 3192,
-          "sn_formsand": 414748.0,
+          "sn_formsand": "414748",
           "sand_name": "0582_GB426_N3",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -756,7 +924,7 @@
         },
         {
           "csv_row": 3193,
-          "sn_formsand": 414320.0,
+          "sn_formsand": "414320",
           "sand_name": "0582_GB426_O1",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -764,7 +932,7 @@
         },
         {
           "csv_row": 3194,
-          "sn_formsand": 414970.0,
+          "sn_formsand": "414970",
           "sand_name": "0582_GB426_O2",
           "boem_field": "GB426",
           "play_number": "0582",
@@ -772,7 +940,7 @@
         },
         {
           "csv_row": 3195,
-          "sn_formsand": 416100.0,
+          "sn_formsand": "416100",
           "sand_name": "0982_GB426_P",
           "boem_field": "GB426",
           "play_number": "0982",
@@ -780,7 +948,7 @@
         },
         {
           "csv_row": 3196,
-          "sn_formsand": 414321.0,
+          "sn_formsand": "414321",
           "sand_name": "0982_GB426_Q",
           "boem_field": "GB426",
           "play_number": "0982",
@@ -788,7 +956,7 @@
         },
         {
           "csv_row": 3197,
-          "sn_formsand": 418371.0,
+          "sn_formsand": "418371",
           "sand_name": "1282_GB426_LR_T",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -796,7 +964,7 @@
         },
         {
           "csv_row": 3198,
-          "sn_formsand": 414322.0,
+          "sn_formsand": "414322",
           "sand_name": "1282_GB426_R",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -804,7 +972,7 @@
         },
         {
           "csv_row": 3199,
-          "sn_formsand": 420696.0,
+          "sn_formsand": "420696",
           "sand_name": "1282_GB426_R1",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -812,7 +980,7 @@
         },
         {
           "csv_row": 3200,
-          "sn_formsand": 421013.0,
+          "sn_formsand": "421013",
           "sand_name": "1282_GB426_R2",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -820,7 +988,7 @@
         },
         {
           "csv_row": 3201,
-          "sn_formsand": 420286.0,
+          "sn_formsand": "420286",
           "sand_name": "1282_GB426_R3",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -828,7 +996,7 @@
         },
         {
           "csv_row": 3202,
-          "sn_formsand": 414323.0,
+          "sn_formsand": "414323",
           "sand_name": "1282_GB426_S",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -836,7 +1004,7 @@
         },
         {
           "csv_row": 3203,
-          "sn_formsand": 421996.0,
+          "sn_formsand": "421996",
           "sand_name": "1282_GB426_S2",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -844,7 +1012,7 @@
         },
         {
           "csv_row": 3204,
-          "sn_formsand": 418226.0,
+          "sn_formsand": "418226",
           "sand_name": "1282_GB426_T",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -852,7 +1020,7 @@
         },
         {
           "csv_row": 3205,
-          "sn_formsand": 419846.0,
+          "sn_formsand": "419846",
           "sand_name": "1282_GB426_T0",
           "boem_field": "GB426",
           "play_number": "1282",
@@ -860,7 +1028,7 @@
         },
         {
           "csv_row": 3206,
-          "sn_formsand": 420958.0,
+          "sn_formsand": "420958",
           "sand_name": "1382_GB426_U",
           "boem_field": "GB426",
           "play_number": "1382",
@@ -876,6 +1044,20 @@
         "GC178"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -896,7 +1078,7 @@
       "sand_rows": [
         {
           "csv_row": 3365,
-          "sn_formsand": 418613.0,
+          "sn_formsand": "418613",
           "sand_name": "0382_GC178_TRIM_A",
           "boem_field": "GC178",
           "play_number": "0382",
@@ -912,6 +1094,20 @@
         "EB597"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -932,7 +1128,7 @@
       "sand_rows": [
         {
           "csv_row": 463,
-          "sn_formsand": 417112.0,
+          "sn_formsand": "417112",
           "sand_name": "0982_EB597_BS_58",
           "boem_field": "EB597",
           "play_number": "0982",
@@ -948,6 +1144,20 @@
         "MC698"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -968,7 +1178,7 @@
       "sand_rows": [
         {
           "csv_row": 5354,
-          "sn_formsand": 421368.0,
+          "sn_formsand": "421368",
           "sand_name": "2182_MC698_M55",
           "boem_field": "MC698",
           "play_number": "2182",
@@ -976,7 +1186,7 @@
         },
         {
           "csv_row": 5355,
-          "sn_formsand": 421370.0,
+          "sn_formsand": "421370",
           "sand_name": "2182_MC698_M56",
           "boem_field": "MC698",
           "play_number": "2182",
@@ -992,6 +1202,20 @@
         "GC282"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1012,7 +1236,7 @@
       "sand_rows": [
         {
           "csv_row": 3441,
-          "sn_formsand": 417208.0,
+          "sn_formsand": "417208",
           "sand_name": "0982_GC282_B4",
           "boem_field": "GC282",
           "play_number": "0982",
@@ -1020,7 +1244,7 @@
         },
         {
           "csv_row": 3442,
-          "sn_formsand": 417207.0,
+          "sn_formsand": "417207",
           "sand_name": "0982_GC282_B4UPPER",
           "boem_field": "GC282",
           "play_number": "0982",
@@ -1036,6 +1260,20 @@
         "GC158"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1075,7 +1313,7 @@
       "sand_rows": [
         {
           "csv_row": 3345,
-          "sn_formsand": 101307.0,
+          "sn_formsand": "101307",
           "sand_name": "0582_GC158_C1",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1083,7 +1321,7 @@
         },
         {
           "csv_row": 3346,
-          "sn_formsand": 101311.0,
+          "sn_formsand": "101311",
           "sand_name": "0582_GC158_D2",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1091,7 +1329,7 @@
         },
         {
           "csv_row": 3347,
-          "sn_formsand": 417357.0,
+          "sn_formsand": "417357",
           "sand_name": "0582_GC158_E1",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1099,7 +1337,7 @@
         },
         {
           "csv_row": 3348,
-          "sn_formsand": 417361.0,
+          "sn_formsand": "417361",
           "sand_name": "0582_GC158_E10",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1107,7 +1345,7 @@
         },
         {
           "csv_row": 3349,
-          "sn_formsand": 417348.0,
+          "sn_formsand": "417348",
           "sand_name": "0582_GC158_E2",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1115,7 +1353,7 @@
         },
         {
           "csv_row": 3350,
-          "sn_formsand": 417360.0,
+          "sn_formsand": "417360",
           "sand_name": "0582_GC158_E6",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1123,7 +1361,7 @@
         },
         {
           "csv_row": 3351,
-          "sn_formsand": 101312.0,
+          "sn_formsand": "101312",
           "sand_name": "0582_GC158_E9",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1131,7 +1369,7 @@
         },
         {
           "csv_row": 3352,
-          "sn_formsand": 417377.0,
+          "sn_formsand": "417377",
           "sand_name": "0582_GC158_G0",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1139,7 +1377,7 @@
         },
         {
           "csv_row": 3353,
-          "sn_formsand": 101314.0,
+          "sn_formsand": "101314",
           "sand_name": "0582_GC158_G1A",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1147,7 +1385,7 @@
         },
         {
           "csv_row": 3354,
-          "sn_formsand": 415340.0,
+          "sn_formsand": "415340",
           "sand_name": "0582_GC158_G2",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1155,7 +1393,7 @@
         },
         {
           "csv_row": 3355,
-          "sn_formsand": 415341.0,
+          "sn_formsand": "415341",
           "sand_name": "0582_GC158_G3",
           "boem_field": "GC158",
           "play_number": "0582",
@@ -1163,7 +1401,7 @@
         },
         {
           "csv_row": 3356,
-          "sn_formsand": 101316.0,
+          "sn_formsand": "101316",
           "sand_name": "0982_GC158_H2",
           "boem_field": "GC158",
           "play_number": "0982",
@@ -1171,7 +1409,7 @@
         },
         {
           "csv_row": 3357,
-          "sn_formsand": 415295.0,
+          "sn_formsand": "415295",
           "sand_name": "0982_GC158_J2",
           "boem_field": "GC158",
           "play_number": "0982",
@@ -1179,7 +1417,7 @@
         },
         {
           "csv_row": 3358,
-          "sn_formsand": 415296.0,
+          "sn_formsand": "415296",
           "sand_name": "0982_GC158_J4",
           "boem_field": "GC158",
           "play_number": "0982",
@@ -1187,7 +1425,7 @@
         },
         {
           "csv_row": 3359,
-          "sn_formsand": 417958.0,
+          "sn_formsand": "417958",
           "sand_name": "0982_GC158_SC14400",
           "boem_field": "GC158",
           "play_number": "0982",
@@ -1195,7 +1433,7 @@
         },
         {
           "csv_row": 3360,
-          "sn_formsand": 417960.0,
+          "sn_formsand": "417960",
           "sand_name": "1282_GC158_FFL15600",
           "boem_field": "GC158",
           "play_number": "1282",
@@ -1203,7 +1441,7 @@
         },
         {
           "csv_row": 3361,
-          "sn_formsand": 417959.0,
+          "sn_formsand": "417959",
           "sand_name": "1282_GC158_FFL15800",
           "boem_field": "GC158",
           "play_number": "1282",
@@ -1216,14 +1454,23 @@
       "name": "Buckskin",
       "field_id": "buckskin",
       "join_codes": [
-        "KC785",
-        "KC828",
-        "KC829",
-        "KC830",
-        "KC871",
         "KC872"
       ],
-      "join_basis": "area_block_candidate",
+      "join_basis": "confirmed_boem_field",
+      "evidence": {
+        "code_match": {
+          "value": true,
+          "source_field": "2023sands.BOEM_FIELD"
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": true,
+          "source_field": "2023xref_oper-comp.LEASE/AREA_CODE/BLOCK_NUMBER"
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1243,13 +1490,12 @@
         }
       ],
       "qualifiers": [
-        "inconsistent_lookup",
-        "unverified_field_identity"
+        "inconsistent_lookup"
       ],
       "sand_rows": [
         {
           "csv_row": 5058,
-          "sn_formsand": 422214.0,
+          "sn_formsand": "422214",
           "sand_name": "9991_KC872_WILCOX_1",
           "boem_field": "KC872",
           "play_number": "9991",
@@ -1257,7 +1503,7 @@
         },
         {
           "csv_row": 5059,
-          "sn_formsand": 421881.0,
+          "sn_formsand": "421881",
           "sand_name": "9991_KC872_WILCOX_1A",
           "boem_field": "KC872",
           "play_number": "9991",
@@ -1265,7 +1511,7 @@
         },
         {
           "csv_row": 5060,
-          "sn_formsand": 421882.0,
+          "sn_formsand": "421882",
           "sand_name": "9991_KC872_WILCOX_1B",
           "boem_field": "KC872",
           "play_number": "9991",
@@ -1273,7 +1519,7 @@
         },
         {
           "csv_row": 5061,
-          "sn_formsand": 421883.0,
+          "sn_formsand": "421883",
           "sand_name": "9991_KC872_WILCOX_2",
           "boem_field": "KC872",
           "play_number": "9991",
@@ -1289,6 +1535,20 @@
         "GC065"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1328,7 +1588,7 @@
       "sand_rows": [
         {
           "csv_row": 3317,
-          "sn_formsand": 415719.0,
+          "sn_formsand": "415719",
           "sand_name": "0582_GC065_08400",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1336,7 +1596,7 @@
         },
         {
           "csv_row": 3318,
-          "sn_formsand": 100011.0,
+          "sn_formsand": "100011",
           "sand_name": "0582_GC065_09000",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1344,7 +1604,7 @@
         },
         {
           "csv_row": 3319,
-          "sn_formsand": 100012.0,
+          "sn_formsand": "100012",
           "sand_name": "0582_GC065_10500",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1352,7 +1612,7 @@
         },
         {
           "csv_row": 3320,
-          "sn_formsand": 100110.0,
+          "sn_formsand": "100110",
           "sand_name": "0582_GC065_11130",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1360,7 +1620,7 @@
         },
         {
           "csv_row": 3321,
-          "sn_formsand": 100156.0,
+          "sn_formsand": "100156",
           "sand_name": "0582_GC065_H",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1368,7 +1628,7 @@
         },
         {
           "csv_row": 3322,
-          "sn_formsand": 100197.0,
+          "sn_formsand": "100197",
           "sand_name": "0582_GC065_H02",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1376,7 +1636,7 @@
         },
         {
           "csv_row": 3323,
-          "sn_formsand": 100199.0,
+          "sn_formsand": "100199",
           "sand_name": "0582_GC065_I03",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1384,7 +1644,7 @@
         },
         {
           "csv_row": 3324,
-          "sn_formsand": 415721.0,
+          "sn_formsand": "415721",
           "sand_name": "0582_GC065_I05",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1392,7 +1652,7 @@
         },
         {
           "csv_row": 3325,
-          "sn_formsand": 100298.0,
+          "sn_formsand": "100298",
           "sand_name": "0582_GC065_I10",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1400,7 +1660,7 @@
         },
         {
           "csv_row": 3326,
-          "sn_formsand": 414051.0,
+          "sn_formsand": "414051",
           "sand_name": "0582_GC065_I11",
           "boem_field": "GC065",
           "play_number": "0582",
@@ -1408,7 +1668,7 @@
         },
         {
           "csv_row": 3327,
-          "sn_formsand": 100356.0,
+          "sn_formsand": "100356",
           "sand_name": "0982_GC065_J",
           "boem_field": "GC065",
           "play_number": "0982",
@@ -1416,7 +1676,7 @@
         },
         {
           "csv_row": 3328,
-          "sn_formsand": 100589.0,
+          "sn_formsand": "100589",
           "sand_name": "1282_GC065_P01",
           "boem_field": "GC065",
           "play_number": "1282",
@@ -1432,6 +1692,20 @@
         "GB462"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1452,7 +1726,7 @@
       "sand_rows": [
         {
           "csv_row": 3207,
-          "sn_formsand": 420691.0,
+          "sn_formsand": "420691",
           "sand_name": "0582_GB462_12620",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1460,7 +1734,7 @@
         },
         {
           "csv_row": 3208,
-          "sn_formsand": 420564.0,
+          "sn_formsand": "420564",
           "sand_name": "0582_GB462_19500",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1468,7 +1742,7 @@
         },
         {
           "csv_row": 3209,
-          "sn_formsand": 420574.0,
+          "sn_formsand": "420574",
           "sand_name": "0582_GB462_DB_5A_LW",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1476,7 +1750,7 @@
         },
         {
           "csv_row": 3210,
-          "sn_formsand": 420571.0,
+          "sn_formsand": "420571",
           "sand_name": "0582_GB462_DB_5A_UP",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1484,7 +1758,7 @@
         },
         {
           "csv_row": 3211,
-          "sn_formsand": 420539.0,
+          "sn_formsand": "420539",
           "sand_name": "0582_GB462_LENTIC1_1A",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1492,7 +1766,7 @@
         },
         {
           "csv_row": 3212,
-          "sn_formsand": 420540.0,
+          "sn_formsand": "420540",
           "sand_name": "0582_GB462_LENTIC1_2A",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1500,7 +1774,7 @@
         },
         {
           "csv_row": 3213,
-          "sn_formsand": 420541.0,
+          "sn_formsand": "420541",
           "sand_name": "0582_GB462_LENTIC1_3A",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1508,7 +1782,7 @@
         },
         {
           "csv_row": 3214,
-          "sn_formsand": 421400.0,
+          "sn_formsand": "421400",
           "sand_name": "0582_GB462_N2",
           "boem_field": "GB462",
           "play_number": "0582",
@@ -1524,6 +1798,20 @@
         "MC876"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1544,7 +1832,7 @@
       "sand_rows": [
         {
           "csv_row": 5473,
-          "sn_formsand": 418946.0,
+          "sn_formsand": "418946",
           "sand_name": "1782_MC876_BLUE",
           "boem_field": "MC876",
           "play_number": "1782",
@@ -1552,7 +1840,7 @@
         },
         {
           "csv_row": 5474,
-          "sn_formsand": 418933.0,
+          "sn_formsand": "418933",
           "sand_name": "1782_MC876_GREEN",
           "boem_field": "MC876",
           "play_number": "1782",
@@ -1568,6 +1856,20 @@
         "MC029"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1599,7 +1901,7 @@
       "sand_rows": [
         {
           "csv_row": 5105,
-          "sn_formsand": 417295.0,
+          "sn_formsand": "417295",
           "sand_name": "0982_MC029_GLOB_ALT_1",
           "boem_field": "MC029",
           "play_number": "0982",
@@ -1607,7 +1909,7 @@
         },
         {
           "csv_row": 5106,
-          "sn_formsand": 417349.0,
+          "sn_formsand": "417349",
           "sand_name": "1382_MC029_10000",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1615,7 +1917,7 @@
         },
         {
           "csv_row": 5107,
-          "sn_formsand": 417320.0,
+          "sn_formsand": "417320",
           "sand_name": "1382_MC029_M83_5",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1623,7 +1925,7 @@
         },
         {
           "csv_row": 5108,
-          "sn_formsand": 417335.0,
+          "sn_formsand": "417335",
           "sand_name": "1382_MC029_M83_7",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1639,6 +1941,20 @@
         "MC029"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1670,7 +1986,7 @@
       "sand_rows": [
         {
           "csv_row": 5105,
-          "sn_formsand": 417295.0,
+          "sn_formsand": "417295",
           "sand_name": "0982_MC029_GLOB_ALT_1",
           "boem_field": "MC029",
           "play_number": "0982",
@@ -1678,7 +1994,7 @@
         },
         {
           "csv_row": 5106,
-          "sn_formsand": 417349.0,
+          "sn_formsand": "417349",
           "sand_name": "1382_MC029_10000",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1686,7 +2002,7 @@
         },
         {
           "csv_row": 5107,
-          "sn_formsand": 417320.0,
+          "sn_formsand": "417320",
           "sand_name": "1382_MC029_M83_5",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1694,7 +2010,7 @@
         },
         {
           "csv_row": 5108,
-          "sn_formsand": 417335.0,
+          "sn_formsand": "417335",
           "sand_name": "1382_MC029_M83_7",
           "boem_field": "MC029",
           "play_number": "1382",
@@ -1710,6 +2026,20 @@
         "GC299"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1730,7 +2060,7 @@
       "sand_rows": [
         {
           "csv_row": 3443,
-          "sn_formsand": 419986.0,
+          "sn_formsand": "419986",
           "sand_name": "0582_GC299_C_MAC",
           "boem_field": "GC299",
           "play_number": "0582",
@@ -1738,7 +2068,7 @@
         },
         {
           "csv_row": 3444,
-          "sn_formsand": 421857.0,
+          "sn_formsand": "421857",
           "sand_name": "0582_GC299_DISC_BRO",
           "boem_field": "GC299",
           "play_number": "0582",
@@ -1754,6 +2084,20 @@
         "GC680"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1774,7 +2118,7 @@
       "sand_rows": [
         {
           "csv_row": 3529,
-          "sn_formsand": 419003.0,
+          "sn_formsand": "419003",
           "sand_name": "1282_GC680_AMP_2",
           "boem_field": "GC680",
           "play_number": "1282",
@@ -1782,7 +2126,7 @@
         },
         {
           "csv_row": 3530,
-          "sn_formsand": 419004.0,
+          "sn_formsand": "419004",
           "sand_name": "1282_GC680_AMP_3",
           "boem_field": "GC680",
           "play_number": "1282",
@@ -1790,7 +2134,7 @@
         },
         {
           "csv_row": 3531,
-          "sn_formsand": 419005.0,
+          "sn_formsand": "419005",
           "sand_name": "1282_GC680_AMP_4",
           "boem_field": "GC680",
           "play_number": "1282",
@@ -1798,7 +2142,7 @@
         },
         {
           "csv_row": 3532,
-          "sn_formsand": 419006.0,
+          "sn_formsand": "419006",
           "sand_name": "1282_GC680_AMP_7",
           "boem_field": "GC680",
           "play_number": "1282",
@@ -1806,7 +2150,7 @@
         },
         {
           "csv_row": 3533,
-          "sn_formsand": 419007.0,
+          "sn_formsand": "419007",
           "sand_name": "1282_GC680_AMP_8",
           "boem_field": "GC680",
           "play_number": "1282",
@@ -1822,6 +2166,20 @@
         "GB244"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1852,7 +2210,7 @@
       "sand_rows": [
         {
           "csv_row": 3154,
-          "sn_formsand": 417614.0,
+          "sn_formsand": "417614",
           "sand_name": "1282_GB244_AMP_D",
           "boem_field": "GB244",
           "play_number": "1282",
@@ -1860,7 +2218,7 @@
         },
         {
           "csv_row": 3155,
-          "sn_formsand": 417615.0,
+          "sn_formsand": "417615",
           "sand_name": "1282_GB244_AMP_E",
           "boem_field": "GB244",
           "play_number": "1282",
@@ -1868,7 +2226,7 @@
         },
         {
           "csv_row": 3156,
-          "sn_formsand": 417617.0,
+          "sn_formsand": "417617",
           "sand_name": "1382_GB244_AMP_H",
           "boem_field": "GB244",
           "play_number": "1382",
@@ -1884,6 +2242,20 @@
         "DC004"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1904,7 +2276,7 @@
       "sand_rows": [
         {
           "csv_row": 394,
-          "sn_formsand": 420977.0,
+          "sn_formsand": "420977",
           "sand_name": "2182_DC004_BIG_HUM_A",
           "boem_field": "DC004",
           "play_number": "2182",
@@ -1912,7 +2284,7 @@
         },
         {
           "csv_row": 395,
-          "sn_formsand": 420978.0,
+          "sn_formsand": "420978",
           "sand_name": "2182_DC004_BIG_HUM_B",
           "boem_field": "DC004",
           "play_number": "2182",
@@ -1928,6 +2300,20 @@
         "DC134"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -1958,7 +2344,7 @@
       "sand_rows": [
         {
           "csv_row": 401,
-          "sn_formsand": 421365.0,
+          "sn_formsand": "421365",
           "sand_name": "1782_DC134_4100MS",
           "boem_field": "DC134",
           "play_number": "1782",
@@ -1966,7 +2352,7 @@
         },
         {
           "csv_row": 402,
-          "sn_formsand": 421371.0,
+          "sn_formsand": "421371",
           "sand_name": "1982_DC134_BIG_HUM",
           "boem_field": "DC134",
           "play_number": "1982",
@@ -1982,6 +2368,20 @@
         "GC646"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2012,7 +2412,7 @@
       "sand_rows": [
         {
           "csv_row": 3522,
-          "sn_formsand": 419186.0,
+          "sn_formsand": "419186",
           "sand_name": "0582_GC646_10650",
           "boem_field": "GC646",
           "play_number": "0582",
@@ -2020,7 +2420,7 @@
         },
         {
           "csv_row": 3523,
-          "sn_formsand": 419189.0,
+          "sn_formsand": "419189",
           "sand_name": "1282_GC646_10950",
           "boem_field": "GC646",
           "play_number": "1282",
@@ -2028,7 +2428,7 @@
         },
         {
           "csv_row": 3524,
-          "sn_formsand": 419190.0,
+          "sn_formsand": "419190",
           "sand_name": "1282_GC646_11130",
           "boem_field": "GC646",
           "play_number": "1282",
@@ -2044,6 +2444,20 @@
         "GC723"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -2058,6 +2472,20 @@
         "MC773"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2115,7 +2543,7 @@
       "sand_rows": [
         {
           "csv_row": 5374,
-          "sn_formsand": 421874.0,
+          "sn_formsand": "421874",
           "sand_name": "0982_MC773_MAUVE",
           "boem_field": "MC773",
           "play_number": "0982",
@@ -2123,7 +2551,7 @@
         },
         {
           "csv_row": 5375,
-          "sn_formsand": 421915.0,
+          "sn_formsand": "421915",
           "sand_name": "1282_MC773_LOW_ORANGE",
           "boem_field": "MC773",
           "play_number": "1282",
@@ -2131,7 +2559,7 @@
         },
         {
           "csv_row": 5376,
-          "sn_formsand": 421913.0,
+          "sn_formsand": "421913",
           "sand_name": "1282_MC773_MID_ORANGE",
           "boem_field": "MC773",
           "play_number": "1282",
@@ -2139,7 +2567,7 @@
         },
         {
           "csv_row": 5377,
-          "sn_formsand": 416395.0,
+          "sn_formsand": "416395",
           "sand_name": "1282_MC773_ORANGE",
           "boem_field": "MC773",
           "play_number": "1282",
@@ -2147,7 +2575,7 @@
         },
         {
           "csv_row": 5378,
-          "sn_formsand": 421912.0,
+          "sn_formsand": "421912",
           "sand_name": "1282_MC773_UP_ORANGE",
           "boem_field": "MC773",
           "play_number": "1282",
@@ -2155,7 +2583,7 @@
         },
         {
           "csv_row": 5379,
-          "sn_formsand": 420133.0,
+          "sn_formsand": "420133",
           "sand_name": "1282_MC773_VIOLET",
           "boem_field": "MC773",
           "play_number": "1282",
@@ -2163,7 +2591,7 @@
         },
         {
           "csv_row": 5380,
-          "sn_formsand": 416396.0,
+          "sn_formsand": "416396",
           "sand_name": "1382_MC773_BLUE",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2171,7 +2599,7 @@
         },
         {
           "csv_row": 5381,
-          "sn_formsand": 419843.0,
+          "sn_formsand": "419843",
           "sand_name": "1382_MC773_DARK_BROWN",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2179,7 +2607,7 @@
         },
         {
           "csv_row": 5382,
-          "sn_formsand": 418589.0,
+          "sn_formsand": "418589",
           "sand_name": "1382_MC773_GRAY",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2187,7 +2615,7 @@
         },
         {
           "csv_row": 5383,
-          "sn_formsand": 416382.0,
+          "sn_formsand": "416382",
           "sand_name": "1382_MC773_PINK",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2195,7 +2623,7 @@
         },
         {
           "csv_row": 5384,
-          "sn_formsand": 416397.0,
+          "sn_formsand": "416397",
           "sand_name": "1382_MC773_PURPLE",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2203,7 +2631,7 @@
         },
         {
           "csv_row": 5385,
-          "sn_formsand": 418593.0,
+          "sn_formsand": "418593",
           "sand_name": "1382_MC773_RED",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2211,7 +2639,7 @@
         },
         {
           "csv_row": 5386,
-          "sn_formsand": 419344.0,
+          "sn_formsand": "419344",
           "sand_name": "1382_MC773_SB2",
           "boem_field": "MC773",
           "play_number": "1382",
@@ -2219,7 +2647,7 @@
         },
         {
           "csv_row": 5387,
-          "sn_formsand": 419880.0,
+          "sn_formsand": "419880",
           "sand_name": "1782_MC773_GOLD",
           "boem_field": "MC773",
           "play_number": "1782",
@@ -2227,7 +2655,7 @@
         },
         {
           "csv_row": 5388,
-          "sn_formsand": 421302.0,
+          "sn_formsand": "421302",
           "sand_name": "2482_MC773_24650",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2235,7 +2663,7 @@
         },
         {
           "csv_row": 5389,
-          "sn_formsand": 420255.0,
+          "sn_formsand": "420255",
           "sand_name": "2482_MC773_25400",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2243,7 +2671,7 @@
         },
         {
           "csv_row": 5390,
-          "sn_formsand": 420256.0,
+          "sn_formsand": "420256",
           "sand_name": "2482_MC773_25550",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2251,7 +2679,7 @@
         },
         {
           "csv_row": 5391,
-          "sn_formsand": 420257.0,
+          "sn_formsand": "420257",
           "sand_name": "2482_MC773_25650",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2259,7 +2687,7 @@
         },
         {
           "csv_row": 5392,
-          "sn_formsand": 420261.0,
+          "sn_formsand": "420261",
           "sand_name": "2482_MC773_26950",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2267,7 +2695,7 @@
         },
         {
           "csv_row": 5393,
-          "sn_formsand": 420263.0,
+          "sn_formsand": "420263",
           "sand_name": "2482_MC773_27400",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2275,7 +2703,7 @@
         },
         {
           "csv_row": 5394,
-          "sn_formsand": 420264.0,
+          "sn_formsand": "420264",
           "sand_name": "2482_MC773_27500",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2283,7 +2711,7 @@
         },
         {
           "csv_row": 5395,
-          "sn_formsand": 420265.0,
+          "sn_formsand": "420265",
           "sand_name": "2482_MC773_27750",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2291,7 +2719,7 @@
         },
         {
           "csv_row": 5396,
-          "sn_formsand": 420266.0,
+          "sn_formsand": "420266",
           "sand_name": "2482_MC773_28100",
           "boem_field": "MC773",
           "play_number": "2482",
@@ -2307,6 +2735,20 @@
         "EB945"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2327,7 +2769,7 @@
       "sand_rows": [
         {
           "csv_row": 493,
-          "sn_formsand": 13641.0,
+          "sn_formsand": "13641",
           "sand_name": "0582_EB945_10300",
           "boem_field": "EB945",
           "play_number": "0582",
@@ -2343,6 +2785,20 @@
         "VK915"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2391,7 +2847,7 @@
       "sand_rows": [
         {
           "csv_row": 10314,
-          "sn_formsand": 412696.0,
+          "sn_formsand": "412696",
           "sand_name": "1382_VK915_7200",
           "boem_field": "VK915",
           "play_number": "1382",
@@ -2399,7 +2855,7 @@
         },
         {
           "csv_row": 10315,
-          "sn_formsand": 418127.0,
+          "sn_formsand": "418127",
           "sand_name": "1782_VK915_M66",
           "boem_field": "VK915",
           "play_number": "1782",
@@ -2407,7 +2863,7 @@
         },
         {
           "csv_row": 10316,
-          "sn_formsand": 421965.0,
+          "sn_formsand": "421965",
           "sand_name": "1982_VK915_M62",
           "boem_field": "VK915",
           "play_number": "1982",
@@ -2415,7 +2871,7 @@
         },
         {
           "csv_row": 10317,
-          "sn_formsand": 418221.0,
+          "sn_formsand": "418221",
           "sand_name": "1982_VK915_M64",
           "boem_field": "VK915",
           "play_number": "1982",
@@ -2423,7 +2879,7 @@
         },
         {
           "csv_row": 10318,
-          "sn_formsand": 412625.0,
+          "sn_formsand": "412625",
           "sand_name": "2182_VK915_M60",
           "boem_field": "VK915",
           "play_number": "2182",
@@ -2439,6 +2895,20 @@
         "GC244"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2469,7 +2939,7 @@
       "sand_rows": [
         {
           "csv_row": 3418,
-          "sn_formsand": 415082.0,
+          "sn_formsand": "415082",
           "sand_name": "0582_GC244_15350",
           "boem_field": "GC244",
           "play_number": "0582",
@@ -2477,7 +2947,7 @@
         },
         {
           "csv_row": 3419,
-          "sn_formsand": 413121.0,
+          "sn_formsand": "413121",
           "sand_name": "0582_GC244_A",
           "boem_field": "GC244",
           "play_number": "0582",
@@ -2485,7 +2955,7 @@
         },
         {
           "csv_row": 3420,
-          "sn_formsand": 413125.0,
+          "sn_formsand": "413125",
           "sand_name": "0582_GC244_D",
           "boem_field": "GC244",
           "play_number": "0582",
@@ -2493,7 +2963,7 @@
         },
         {
           "csv_row": 3421,
-          "sn_formsand": 413126.0,
+          "sn_formsand": "413126",
           "sand_name": "0582_GC244_E",
           "boem_field": "GC244",
           "play_number": "0582",
@@ -2501,7 +2971,7 @@
         },
         {
           "csv_row": 3422,
-          "sn_formsand": 415165.0,
+          "sn_formsand": "415165",
           "sand_name": "1382_GC244_J",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2509,7 +2979,7 @@
         },
         {
           "csv_row": 3423,
-          "sn_formsand": 421103.0,
+          "sn_formsand": "421103",
           "sand_name": "1382_GC244_K",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2517,7 +2987,7 @@
         },
         {
           "csv_row": 3424,
-          "sn_formsand": 421104.0,
+          "sn_formsand": "421104",
           "sand_name": "1382_GC244_L",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2525,7 +2995,7 @@
         },
         {
           "csv_row": 3425,
-          "sn_formsand": 421109.0,
+          "sn_formsand": "421109",
           "sand_name": "1382_GC244_LORIEN",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2533,7 +3003,7 @@
         },
         {
           "csv_row": 3426,
-          "sn_formsand": 421105.0,
+          "sn_formsand": "421105",
           "sand_name": "1382_GC244_M",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2541,7 +3011,7 @@
         },
         {
           "csv_row": 3427,
-          "sn_formsand": 421106.0,
+          "sn_formsand": "421106",
           "sand_name": "1382_GC244_O",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2549,7 +3019,7 @@
         },
         {
           "csv_row": 3428,
-          "sn_formsand": 421107.0,
+          "sn_formsand": "421107",
           "sand_name": "1382_GC244_P",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2557,7 +3027,7 @@
         },
         {
           "csv_row": 3429,
-          "sn_formsand": 421108.0,
+          "sn_formsand": "421108",
           "sand_name": "1382_GC244_Q",
           "boem_field": "GC244",
           "play_number": "1382",
@@ -2573,6 +3043,20 @@
         "GB367"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2593,7 +3077,7 @@
       "sand_rows": [
         {
           "csv_row": 3171,
-          "sn_formsand": 416670.0,
+          "sn_formsand": "416670",
           "sand_name": "0582_GB367_09500",
           "boem_field": "GB367",
           "play_number": "0582",
@@ -2601,7 +3085,7 @@
         },
         {
           "csv_row": 3172,
-          "sn_formsand": 415716.0,
+          "sn_formsand": "415716",
           "sand_name": "0582_GB367_10500",
           "boem_field": "GB367",
           "play_number": "0582",
@@ -2617,6 +3101,20 @@
         "MC607"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2665,7 +3163,7 @@
       "sand_rows": [
         {
           "csv_row": 5333,
-          "sn_formsand": 421777.0,
+          "sn_formsand": "421777",
           "sand_name": "1382_MC607_M89",
           "boem_field": "MC607",
           "play_number": "1382",
@@ -2673,7 +3171,7 @@
         },
         {
           "csv_row": 5334,
-          "sn_formsand": 415652.0,
+          "sn_formsand": "415652",
           "sand_name": "1782_MC607_16300",
           "boem_field": "MC607",
           "play_number": "1782",
@@ -2681,7 +3179,7 @@
         },
         {
           "csv_row": 5335,
-          "sn_formsand": 420240.0,
+          "sn_formsand": "420240",
           "sand_name": "2182_MC607_M55",
           "boem_field": "MC607",
           "play_number": "2182",
@@ -2689,7 +3187,7 @@
         },
         {
           "csv_row": 5336,
-          "sn_formsand": 420610.0,
+          "sn_formsand": "420610",
           "sand_name": "2182_MC607_M56_LWR",
           "boem_field": "MC607",
           "play_number": "2182",
@@ -2697,7 +3195,7 @@
         },
         {
           "csv_row": 5337,
-          "sn_formsand": 422128.0,
+          "sn_formsand": "422128",
           "sand_name": "2482_MC607_M51",
           "boem_field": "MC607",
           "play_number": "2482",
@@ -2713,6 +3211,20 @@
         "EW998"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2733,7 +3245,7 @@
       "sand_rows": [
         {
           "csv_row": 2820,
-          "sn_formsand": 420777.0,
+          "sn_formsand": "420777",
           "sand_name": "0982_EW998_14000",
           "boem_field": "EW998",
           "play_number": "0982",
@@ -2749,6 +3261,20 @@
         "EB579"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2769,7 +3295,7 @@
       "sand_rows": [
         {
           "csv_row": 461,
-          "sn_formsand": 417761.0,
+          "sn_formsand": "417761",
           "sand_name": "1982_EB579_M56",
           "boem_field": "EB579",
           "play_number": "1982",
@@ -2777,7 +3303,7 @@
         },
         {
           "csv_row": 462,
-          "sn_formsand": 417760.0,
+          "sn_formsand": "417760",
           "sand_name": "1982_EB579_M57",
           "boem_field": "EB579",
           "play_number": "1982",
@@ -2793,6 +3319,20 @@
         "VK1003"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2813,7 +3353,7 @@
       "sand_rows": [
         {
           "csv_row": 10234,
-          "sn_formsand": 419767.0,
+          "sn_formsand": "419767",
           "sand_name": "1982_VK1003_12400",
           "boem_field": "VK1003",
           "play_number": "1982",
@@ -2829,6 +3369,20 @@
         "MC427"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2859,7 +3413,7 @@
       "sand_rows": [
         {
           "csv_row": 5282,
-          "sn_formsand": 419579.0,
+          "sn_formsand": "419579",
           "sand_name": "1382_MC427_10740",
           "boem_field": "MC427",
           "play_number": "1382",
@@ -2867,7 +3421,7 @@
         },
         {
           "csv_row": 5283,
-          "sn_formsand": 419582.0,
+          "sn_formsand": "419582",
           "sand_name": "1382_MC427_12500",
           "boem_field": "MC427",
           "play_number": "1382",
@@ -2875,7 +3429,7 @@
         },
         {
           "csv_row": 5284,
-          "sn_formsand": 421875.0,
+          "sn_formsand": "421875",
           "sand_name": "1382_MC427_GREEN",
           "boem_field": "MC427",
           "play_number": "1382",
@@ -2883,7 +3437,7 @@
         },
         {
           "csv_row": 5285,
-          "sn_formsand": 421850.0,
+          "sn_formsand": "421850",
           "sand_name": "1982_MC427_TEX_W",
           "boem_field": "MC427",
           "play_number": "1982",
@@ -2899,6 +3453,20 @@
         "GB171"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -2919,7 +3487,7 @@
       "sand_rows": [
         {
           "csv_row": 3119,
-          "sn_formsand": 415311.0,
+          "sn_formsand": "415311",
           "sand_name": "1382_GB171_CM1",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2927,7 +3495,7 @@
         },
         {
           "csv_row": 3120,
-          "sn_formsand": 415312.0,
+          "sn_formsand": "415312",
           "sand_name": "1382_GB171_CM2",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2935,7 +3503,7 @@
         },
         {
           "csv_row": 3121,
-          "sn_formsand": 416098.0,
+          "sn_formsand": "416098",
           "sand_name": "1382_GB171_M0/M1",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2943,7 +3511,7 @@
         },
         {
           "csv_row": 3122,
-          "sn_formsand": 95779.0,
+          "sn_formsand": "95779",
           "sand_name": "1382_GB171_M1",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2951,7 +3519,7 @@
         },
         {
           "csv_row": 3123,
-          "sn_formsand": 415315.0,
+          "sn_formsand": "415315",
           "sand_name": "1382_GB171_M2",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2959,7 +3527,7 @@
         },
         {
           "csv_row": 3124,
-          "sn_formsand": 415317.0,
+          "sn_formsand": "415317",
           "sand_name": "1382_GB171_M3",
           "boem_field": "GB171",
           "play_number": "1382",
@@ -2975,6 +3543,20 @@
         "GC511"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -2989,6 +3571,20 @@
         "MC522"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3028,7 +3624,7 @@
       "sand_rows": [
         {
           "csv_row": 5304,
-          "sn_formsand": 418181.0,
+          "sn_formsand": "418181",
           "sand_name": "1782_MC522_13900",
           "boem_field": "MC522",
           "play_number": "1782",
@@ -3036,7 +3632,7 @@
         },
         {
           "csv_row": 5305,
-          "sn_formsand": 147785.0,
+          "sn_formsand": "147785",
           "sand_name": "1782_MC522_14700",
           "boem_field": "MC522",
           "play_number": "1782",
@@ -3044,7 +3640,7 @@
         },
         {
           "csv_row": 5306,
-          "sn_formsand": 418182.0,
+          "sn_formsand": "418182",
           "sand_name": "1782_MC522_15000",
           "boem_field": "MC522",
           "play_number": "1782",
@@ -3052,7 +3648,7 @@
         },
         {
           "csv_row": 5307,
-          "sn_formsand": 418183.0,
+          "sn_formsand": "418183",
           "sand_name": "1782_MC522_15150",
           "boem_field": "MC522",
           "play_number": "1782",
@@ -3060,7 +3656,7 @@
         },
         {
           "csv_row": 5308,
-          "sn_formsand": 147787.0,
+          "sn_formsand": "147787",
           "sand_name": "1982_MC522_16250",
           "boem_field": "MC522",
           "play_number": "1982",
@@ -3068,7 +3664,7 @@
         },
         {
           "csv_row": 5309,
-          "sn_formsand": 147792.0,
+          "sn_formsand": "147792",
           "sand_name": "2182_MC522_M55",
           "boem_field": "MC522",
           "play_number": "2182",
@@ -3084,6 +3680,20 @@
         "GC599"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3105,7 +3715,7 @@
       "sand_rows": [
         {
           "csv_row": 3504,
-          "sn_formsand": 421034.0,
+          "sn_formsand": "421034",
           "sand_name": "9992_GC599_M18",
           "boem_field": "GC599",
           "play_number": "9992",
@@ -3121,6 +3731,20 @@
         "GC339"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3169,7 +3793,7 @@
       "sand_rows": [
         {
           "csv_row": 3445,
-          "sn_formsand": 420627.0,
+          "sn_formsand": "420627",
           "sand_name": "0582_GC339_GM01",
           "boem_field": "GC339",
           "play_number": "0582",
@@ -3177,7 +3801,7 @@
         },
         {
           "csv_row": 3446,
-          "sn_formsand": 417908.0,
+          "sn_formsand": "417908",
           "sand_name": "0982_GC339_42B",
           "boem_field": "GC339",
           "play_number": "0982",
@@ -3185,7 +3809,7 @@
         },
         {
           "csv_row": 3447,
-          "sn_formsand": 417911.0,
+          "sn_formsand": "417911",
           "sand_name": "1282_GC339_45A",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3193,7 +3817,7 @@
         },
         {
           "csv_row": 3448,
-          "sn_formsand": 418001.0,
+          "sn_formsand": "418001",
           "sand_name": "1282_GC339_45B",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3201,7 +3825,7 @@
         },
         {
           "csv_row": 3449,
-          "sn_formsand": 417912.0,
+          "sn_formsand": "417912",
           "sand_name": "1282_GC339_45C",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3209,7 +3833,7 @@
         },
         {
           "csv_row": 3450,
-          "sn_formsand": 417913.0,
+          "sn_formsand": "417913",
           "sand_name": "1282_GC339_45D",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3217,7 +3841,7 @@
         },
         {
           "csv_row": 3451,
-          "sn_formsand": 417914.0,
+          "sn_formsand": "417914",
           "sand_name": "1282_GC339_45E",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3225,7 +3849,7 @@
         },
         {
           "csv_row": 3452,
-          "sn_formsand": 417915.0,
+          "sn_formsand": "417915",
           "sand_name": "1282_GC339_46A",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3233,7 +3857,7 @@
         },
         {
           "csv_row": 3453,
-          "sn_formsand": 417916.0,
+          "sn_formsand": "417916",
           "sand_name": "1282_GC339_46C",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3241,7 +3865,7 @@
         },
         {
           "csv_row": 3454,
-          "sn_formsand": 417917.0,
+          "sn_formsand": "417917",
           "sand_name": "1282_GC339_46D",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3249,7 +3873,7 @@
         },
         {
           "csv_row": 3455,
-          "sn_formsand": 417918.0,
+          "sn_formsand": "417918",
           "sand_name": "1282_GC339_47B",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3257,7 +3881,7 @@
         },
         {
           "csv_row": 3456,
-          "sn_formsand": 417919.0,
+          "sn_formsand": "417919",
           "sand_name": "1282_GC339_47C",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3265,7 +3889,7 @@
         },
         {
           "csv_row": 3457,
-          "sn_formsand": 417922.0,
+          "sn_formsand": "417922",
           "sand_name": "1282_GC339_48L",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3273,7 +3897,7 @@
         },
         {
           "csv_row": 3458,
-          "sn_formsand": 417957.0,
+          "sn_formsand": "417957",
           "sand_name": "1282_GC339_48M",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3281,7 +3905,7 @@
         },
         {
           "csv_row": 3459,
-          "sn_formsand": 421343.0,
+          "sn_formsand": "421343",
           "sand_name": "1282_GC339_49_5",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3289,7 +3913,7 @@
         },
         {
           "csv_row": 3460,
-          "sn_formsand": 417923.0,
+          "sn_formsand": "417923",
           "sand_name": "1282_GC339_50AB",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3297,7 +3921,7 @@
         },
         {
           "csv_row": 3461,
-          "sn_formsand": 417925.0,
+          "sn_formsand": "417925",
           "sand_name": "1282_GC339_50C",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3305,7 +3929,7 @@
         },
         {
           "csv_row": 3462,
-          "sn_formsand": 417926.0,
+          "sn_formsand": "417926",
           "sand_name": "1282_GC339_51A",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3313,7 +3937,7 @@
         },
         {
           "csv_row": 3463,
-          "sn_formsand": 417927.0,
+          "sn_formsand": "417927",
           "sand_name": "1282_GC339_51B",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3321,7 +3945,7 @@
         },
         {
           "csv_row": 3464,
-          "sn_formsand": 417928.0,
+          "sn_formsand": "417928",
           "sand_name": "1282_GC339_51C",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3329,7 +3953,7 @@
         },
         {
           "csv_row": 3465,
-          "sn_formsand": 417929.0,
+          "sn_formsand": "417929",
           "sand_name": "1282_GC339_51D",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3337,7 +3961,7 @@
         },
         {
           "csv_row": 3466,
-          "sn_formsand": 417930.0,
+          "sn_formsand": "417930",
           "sand_name": "1282_GC339_51E",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3345,7 +3969,7 @@
         },
         {
           "csv_row": 3467,
-          "sn_formsand": 417933.0,
+          "sn_formsand": "417933",
           "sand_name": "1282_GC339_QU_52A",
           "boem_field": "GC339",
           "play_number": "1282",
@@ -3353,7 +3977,7 @@
         },
         {
           "csv_row": 3468,
-          "sn_formsand": 417931.0,
+          "sn_formsand": "417931",
           "sand_name": "1382_GC339_54A",
           "boem_field": "GC339",
           "play_number": "1382",
@@ -3369,6 +3993,20 @@
         "MC800"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3389,7 +4027,7 @@
       "sand_rows": [
         {
           "csv_row": 5424,
-          "sn_formsand": 420378.0,
+          "sn_formsand": "420378",
           "sand_name": "1382_MC800_4600",
           "boem_field": "MC800",
           "play_number": "1382",
@@ -3397,7 +4035,7 @@
         },
         {
           "csv_row": 5425,
-          "sn_formsand": 420379.0,
+          "sn_formsand": "420379",
           "sand_name": "1382_MC800_4800",
           "boem_field": "MC800",
           "play_number": "1382",
@@ -3405,7 +4043,7 @@
         },
         {
           "csv_row": 5426,
-          "sn_formsand": 420434.0,
+          "sn_formsand": "420434",
           "sand_name": "1382_MC800_5200",
           "boem_field": "MC800",
           "play_number": "1382",
@@ -3421,6 +4059,20 @@
         "MC555"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -3435,6 +4087,20 @@
         "MC948"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3465,7 +4131,7 @@
       "sand_rows": [
         {
           "csv_row": 5491,
-          "sn_formsand": 420448.0,
+          "sn_formsand": "420448",
           "sand_name": "2182_MC948_24080",
           "boem_field": "MC948",
           "play_number": "2182",
@@ -3473,7 +4139,7 @@
         },
         {
           "csv_row": 5492,
-          "sn_formsand": 420454.0,
+          "sn_formsand": "420454",
           "sand_name": "2482_MC948_26590",
           "boem_field": "MC948",
           "play_number": "2482",
@@ -3489,6 +4155,20 @@
         "KC964"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3510,7 +4190,7 @@
       "sand_rows": [
         {
           "csv_row": 5069,
-          "sn_formsand": 420836.0,
+          "sn_formsand": "420836",
           "sand_name": "9992_KC964_PL_2",
           "boem_field": "KC964",
           "play_number": "9992",
@@ -3526,6 +4206,20 @@
         "EB759"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3546,7 +4240,7 @@
       "sand_rows": [
         {
           "csv_row": 492,
-          "sn_formsand": 417864.0,
+          "sn_formsand": "417864",
           "sand_name": "1982_EB759_MM2",
           "boem_field": "EB759",
           "play_number": "1982",
@@ -3562,6 +4256,20 @@
         "GC166"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -3576,6 +4284,20 @@
         "GC859"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3597,7 +4319,7 @@
       "sand_rows": [
         {
           "csv_row": 3548,
-          "sn_formsand": 420645.0,
+          "sn_formsand": "420645",
           "sand_name": "9992_GC859_M15B",
           "boem_field": "GC859",
           "play_number": "9992",
@@ -3613,6 +4335,20 @@
         "AC025"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3633,7 +4369,7 @@
       "sand_rows": [
         {
           "csv_row": 68,
-          "sn_formsand": 414636.0,
+          "sn_formsand": "414636",
           "sand_name": "0582_AC025_A",
           "boem_field": "AC025",
           "play_number": "0582",
@@ -3649,6 +4385,20 @@
         "EI147"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3679,7 +4429,7 @@
       "sand_rows": [
         {
           "csv_row": 1674,
-          "sn_formsand": 416639.0,
+          "sn_formsand": "416639",
           "sand_name": "1241_EI147_BUL1",
           "boem_field": "EI147",
           "play_number": "1241",
@@ -3687,7 +4437,7 @@
         },
         {
           "csv_row": 1675,
-          "sn_formsand": 416664.0,
+          "sn_formsand": "416664",
           "sand_name": "1361_EI147_14200",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3695,7 +4445,7 @@
         },
         {
           "csv_row": 1676,
-          "sn_formsand": 416665.0,
+          "sn_formsand": "416665",
           "sand_name": "1361_EI147_14300",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3703,7 +4453,7 @@
         },
         {
           "csv_row": 1677,
-          "sn_formsand": 413691.0,
+          "sn_formsand": "413691",
           "sand_name": "1361_EI147_BA1",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3711,7 +4461,7 @@
         },
         {
           "csv_row": 1678,
-          "sn_formsand": 414331.0,
+          "sn_formsand": "414331",
           "sand_name": "1361_EI147_BA3",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3719,7 +4469,7 @@
         },
         {
           "csv_row": 1679,
-          "sn_formsand": 45913.0,
+          "sn_formsand": "45913",
           "sand_name": "1361_EI147_BA9",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3727,7 +4477,7 @@
         },
         {
           "csv_row": 1680,
-          "sn_formsand": 416666.0,
+          "sn_formsand": "416666",
           "sand_name": "1361_EI147_BH7",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3735,7 +4485,7 @@
         },
         {
           "csv_row": 1681,
-          "sn_formsand": 418298.0,
+          "sn_formsand": "418298",
           "sand_name": "1361_EI147_CK_11",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3743,7 +4493,7 @@
         },
         {
           "csv_row": 1682,
-          "sn_formsand": 419780.0,
+          "sn_formsand": "419780",
           "sand_name": "1361_EI147_CK_14",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3751,7 +4501,7 @@
         },
         {
           "csv_row": 1683,
-          "sn_formsand": 412338.0,
+          "sn_formsand": "412338",
           "sand_name": "1361_EI147_CK1",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3759,7 +4509,7 @@
         },
         {
           "csv_row": 1684,
-          "sn_formsand": 419782.0,
+          "sn_formsand": "419782",
           "sand_name": "1361_EI147_CK10LW",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3767,7 +4517,7 @@
         },
         {
           "csv_row": 1685,
-          "sn_formsand": 419781.0,
+          "sn_formsand": "419781",
           "sand_name": "1361_EI147_CK10UP",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3775,7 +4525,7 @@
         },
         {
           "csv_row": 1686,
-          "sn_formsand": 412339.0,
+          "sn_formsand": "412339",
           "sand_name": "1361_EI147_CK2",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3783,7 +4533,7 @@
         },
         {
           "csv_row": 1687,
-          "sn_formsand": 45956.0,
+          "sn_formsand": "45956",
           "sand_name": "1361_EI147_CK3",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3791,7 +4541,7 @@
         },
         {
           "csv_row": 1688,
-          "sn_formsand": 45957.0,
+          "sn_formsand": "45957",
           "sand_name": "1361_EI147_CK4",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3799,7 +4549,7 @@
         },
         {
           "csv_row": 1689,
-          "sn_formsand": 46004.0,
+          "sn_formsand": "46004",
           "sand_name": "1361_EI147_TEX_X",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3807,7 +4557,7 @@
         },
         {
           "csv_row": 1690,
-          "sn_formsand": 416640.0,
+          "sn_formsand": "416640",
           "sand_name": "1361_EI147_TEX_X1",
           "boem_field": "EI147",
           "play_number": "1361",
@@ -3823,6 +4573,20 @@
         "GC416"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -3837,6 +4601,20 @@
         "MC383"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3857,7 +4635,7 @@
       "sand_rows": [
         {
           "csv_row": 5267,
-          "sn_formsand": 147540.0,
+          "sn_formsand": "147540",
           "sand_name": "1382_MC383_12080",
           "boem_field": "MC383",
           "play_number": "1382",
@@ -3873,6 +4651,20 @@
         "EI223"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -3887,6 +4679,20 @@
         "KC642"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -3901,6 +4707,20 @@
         "MC546"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -3940,7 +4760,7 @@
       "sand_rows": [
         {
           "csv_row": 5311,
-          "sn_formsand": 416457.0,
+          "sn_formsand": "416457",
           "sand_name": "1282_MC546_DSF9500_C",
           "boem_field": "MC546",
           "play_number": "1282",
@@ -3948,7 +4768,7 @@
         },
         {
           "csv_row": 5312,
-          "sn_formsand": 421349.0,
+          "sn_formsand": "421349",
           "sand_name": "1382_MC546_4800",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3956,7 +4776,7 @@
         },
         {
           "csv_row": 5313,
-          "sn_formsand": 421313.0,
+          "sn_formsand": "421313",
           "sand_name": "1382_MC546_DSF11600",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3964,7 +4784,7 @@
         },
         {
           "csv_row": 5314,
-          "sn_formsand": 420707.0,
+          "sn_formsand": "420707",
           "sand_name": "1382_MC546_DSF12200",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3972,7 +4792,7 @@
         },
         {
           "csv_row": 5315,
-          "sn_formsand": 415574.0,
+          "sn_formsand": "415574",
           "sand_name": "1382_MC546_DSF12400",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3980,7 +4800,7 @@
         },
         {
           "csv_row": 5316,
-          "sn_formsand": 421113.0,
+          "sn_formsand": "421113",
           "sand_name": "1382_MC546_DSF13000",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3988,7 +4808,7 @@
         },
         {
           "csv_row": 5317,
-          "sn_formsand": 415575.0,
+          "sn_formsand": "415575",
           "sand_name": "1382_MC546_DSF13600",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -3996,7 +4816,7 @@
         },
         {
           "csv_row": 5318,
-          "sn_formsand": 415577.0,
+          "sn_formsand": "415577",
           "sand_name": "1382_MC546_DSF14400",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -4004,7 +4824,7 @@
         },
         {
           "csv_row": 5319,
-          "sn_formsand": 415579.0,
+          "sn_formsand": "415579",
           "sand_name": "1382_MC546_DSF15200",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -4012,7 +4832,7 @@
         },
         {
           "csv_row": 5320,
-          "sn_formsand": 415580.0,
+          "sn_formsand": "415580",
           "sand_name": "1382_MC546_DSF15700",
           "boem_field": "MC546",
           "play_number": "1382",
@@ -4020,7 +4840,7 @@
         },
         {
           "csv_row": 5321,
-          "sn_formsand": 415581.0,
+          "sn_formsand": "415581",
           "sand_name": "1782_MC546_DSF17400",
           "boem_field": "MC546",
           "play_number": "1782",
@@ -4036,6 +4856,20 @@
         "GB602"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4066,7 +4900,7 @@
       "sand_rows": [
         {
           "csv_row": 3227,
-          "sn_formsand": 415596.0,
+          "sn_formsand": "415596",
           "sand_name": "0982_GB602_N",
           "boem_field": "GB602",
           "play_number": "0982",
@@ -4074,7 +4908,7 @@
         },
         {
           "csv_row": 3228,
-          "sn_formsand": 415597.0,
+          "sn_formsand": "415597",
           "sand_name": "1282_GB602_O",
           "boem_field": "GB602",
           "play_number": "1282",
@@ -4082,7 +4916,7 @@
         },
         {
           "csv_row": 3229,
-          "sn_formsand": 415598.0,
+          "sn_formsand": "415598",
           "sand_name": "1282_GB602_P2",
           "boem_field": "GB602",
           "play_number": "1282",
@@ -4090,7 +4924,7 @@
         },
         {
           "csv_row": 3230,
-          "sn_formsand": 421635.0,
+          "sn_formsand": "421635",
           "sand_name": "1282_GB602_P3",
           "boem_field": "GB602",
           "play_number": "1282",
@@ -4098,7 +4932,7 @@
         },
         {
           "csv_row": 3231,
-          "sn_formsand": 415599.0,
+          "sn_formsand": "415599",
           "sand_name": "1282_GB602_Q",
           "boem_field": "GB602",
           "play_number": "1282",
@@ -4106,7 +4940,7 @@
         },
         {
           "csv_row": 3232,
-          "sn_formsand": 415600.0,
+          "sn_formsand": "415600",
           "sand_name": "1282_GB602_R",
           "boem_field": "GB602",
           "play_number": "1282",
@@ -4122,6 +4956,20 @@
         "MC252"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4152,7 +5000,7 @@
       "sand_rows": [
         {
           "csv_row": 5199,
-          "sn_formsand": 417950.0,
+          "sn_formsand": "417950",
           "sand_name": "1382_MC252_10800",
           "boem_field": "MC252",
           "play_number": "1382",
@@ -4160,7 +5008,7 @@
         },
         {
           "csv_row": 5200,
-          "sn_formsand": 420814.0,
+          "sn_formsand": "420814",
           "sand_name": "2182_MC252_M56",
           "boem_field": "MC252",
           "play_number": "2182",
@@ -4176,6 +5024,20 @@
         "AC024"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4196,7 +5058,7 @@
       "sand_rows": [
         {
           "csv_row": 67,
-          "sn_formsand": 422130.0,
+          "sn_formsand": "422130",
           "sand_name": "0982_AC024_P1_10",
           "boem_field": "AC024",
           "play_number": "0982",
@@ -4212,6 +5074,20 @@
         "GB783"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4242,7 +5118,7 @@
       "sand_rows": [
         {
           "csv_row": 3243,
-          "sn_formsand": 415875.0,
+          "sn_formsand": "415875",
           "sand_name": "0582_GB783_B10",
           "boem_field": "GB783",
           "play_number": "0582",
@@ -4250,7 +5126,7 @@
         },
         {
           "csv_row": 3244,
-          "sn_formsand": 415877.0,
+          "sn_formsand": "415877",
           "sand_name": "0582_GB783_B20",
           "boem_field": "GB783",
           "play_number": "0582",
@@ -4258,7 +5134,7 @@
         },
         {
           "csv_row": 3245,
-          "sn_formsand": 415947.0,
+          "sn_formsand": "415947",
           "sand_name": "0582_GB783_B25",
           "boem_field": "GB783",
           "play_number": "0582",
@@ -4266,7 +5142,7 @@
         },
         {
           "csv_row": 3246,
-          "sn_formsand": 418528.0,
+          "sn_formsand": "418528",
           "sand_name": "0582_GB783_B30",
           "boem_field": "GB783",
           "play_number": "0582",
@@ -4274,7 +5150,7 @@
         },
         {
           "csv_row": 3247,
-          "sn_formsand": 418526.0,
+          "sn_formsand": "418526",
           "sand_name": "1282_GB783_C50",
           "boem_field": "GB783",
           "play_number": "1282",
@@ -4290,6 +5166,20 @@
         "SS349"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4329,7 +5219,7 @@
       "sand_rows": [
         {
           "csv_row": 9312,
-          "sn_formsand": 412734.0,
+          "sn_formsand": "412734",
           "sand_name": "0381_SS349_TRIM_A",
           "boem_field": "SS349",
           "play_number": "0381",
@@ -4337,7 +5227,7 @@
         },
         {
           "csv_row": 9313,
-          "sn_formsand": 422062.0,
+          "sn_formsand": "422062",
           "sand_name": "1281_SS349_M",
           "boem_field": "SS349",
           "play_number": "1281",
@@ -4345,7 +5235,7 @@
         },
         {
           "csv_row": 9314,
-          "sn_formsand": 421426.0,
+          "sn_formsand": "421426",
           "sand_name": "1281_SS349_N",
           "boem_field": "SS349",
           "play_number": "1281",
@@ -4353,7 +5243,7 @@
         },
         {
           "csv_row": 9315,
-          "sn_formsand": 413205.0,
+          "sn_formsand": "413205",
           "sand_name": "1381_SS349_O",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4361,7 +5251,7 @@
         },
         {
           "csv_row": 9316,
-          "sn_formsand": 413206.0,
+          "sn_formsand": "413206",
           "sand_name": "1381_SS349_P",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4369,7 +5259,7 @@
         },
         {
           "csv_row": 9317,
-          "sn_formsand": 414235.0,
+          "sn_formsand": "414235",
           "sand_name": "1381_SS349_Q",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4377,7 +5267,7 @@
         },
         {
           "csv_row": 9318,
-          "sn_formsand": 417639.0,
+          "sn_formsand": "417639",
           "sand_name": "1381_SS349_R",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4385,7 +5275,7 @@
         },
         {
           "csv_row": 9319,
-          "sn_formsand": 413207.0,
+          "sn_formsand": "413207",
           "sand_name": "1381_SS349_T2",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4393,7 +5283,7 @@
         },
         {
           "csv_row": 9320,
-          "sn_formsand": 422005.0,
+          "sn_formsand": "422005",
           "sand_name": "1381_SS349_V",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4401,7 +5291,7 @@
         },
         {
           "csv_row": 9321,
-          "sn_formsand": 417640.0,
+          "sn_formsand": "417640",
           "sand_name": "1381_SS349_X",
           "boem_field": "SS349",
           "play_number": "1381",
@@ -4417,6 +5307,20 @@
         "MP107"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4488,7 +5392,7 @@
       "sand_rows": [
         {
           "csv_row": 6040,
-          "sn_formsand": 414239.0,
+          "sn_formsand": "414239",
           "sand_name": "0941_MP107_2100",
           "boem_field": "MP107",
           "play_number": "0941",
@@ -4496,7 +5400,7 @@
         },
         {
           "csv_row": 6041,
-          "sn_formsand": 419738.0,
+          "sn_formsand": "419738",
           "sand_name": "1241_MP107_2300",
           "boem_field": "MP107",
           "play_number": "1241",
@@ -4504,7 +5408,7 @@
         },
         {
           "csv_row": 6042,
-          "sn_formsand": 163604.0,
+          "sn_formsand": "163604",
           "sand_name": "1361_MP107_3500",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4512,7 +5416,7 @@
         },
         {
           "csv_row": 6043,
-          "sn_formsand": 163684.0,
+          "sn_formsand": "163684",
           "sand_name": "1361_MP107_4100",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4520,7 +5424,7 @@
         },
         {
           "csv_row": 6044,
-          "sn_formsand": 163726.0,
+          "sn_formsand": "163726",
           "sand_name": "1361_MP107_4700",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4528,7 +5432,7 @@
         },
         {
           "csv_row": 6045,
-          "sn_formsand": 163762.0,
+          "sn_formsand": "163762",
           "sand_name": "1361_MP107_4900",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4536,7 +5440,7 @@
         },
         {
           "csv_row": 6046,
-          "sn_formsand": 418755.0,
+          "sn_formsand": "418755",
           "sand_name": "1361_MP107_5000",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4544,7 +5448,7 @@
         },
         {
           "csv_row": 6047,
-          "sn_formsand": 163778.0,
+          "sn_formsand": "163778",
           "sand_name": "1361_MP107_5100",
           "boem_field": "MP107",
           "play_number": "1361",
@@ -4552,7 +5456,7 @@
         },
         {
           "csv_row": 6048,
-          "sn_formsand": 163825.0,
+          "sn_formsand": "163825",
           "sand_name": "1761_MP107_5400",
           "boem_field": "MP107",
           "play_number": "1761",
@@ -4560,7 +5464,7 @@
         },
         {
           "csv_row": 6049,
-          "sn_formsand": 163834.0,
+          "sn_formsand": "163834",
           "sand_name": "1761_MP107_5500",
           "boem_field": "MP107",
           "play_number": "1761",
@@ -4568,7 +5472,7 @@
         },
         {
           "csv_row": 6050,
-          "sn_formsand": 418765.0,
+          "sn_formsand": "418765",
           "sand_name": "1761_MP107_FE",
           "boem_field": "MP107",
           "play_number": "1761",
@@ -4576,7 +5480,7 @@
         },
         {
           "csv_row": 6051,
-          "sn_formsand": 419375.0,
+          "sn_formsand": "419375",
           "sand_name": "1761_MP107_FU",
           "boem_field": "MP107",
           "play_number": "1761",
@@ -4584,7 +5488,7 @@
         },
         {
           "csv_row": 6052,
-          "sn_formsand": 419742.0,
+          "sn_formsand": "419742",
           "sand_name": "1961_MP107_6400",
           "boem_field": "MP107",
           "play_number": "1961",
@@ -4592,7 +5496,7 @@
         },
         {
           "csv_row": 6053,
-          "sn_formsand": 417862.0,
+          "sn_formsand": "417862",
           "sand_name": "1981_MP107_TEX_W1",
           "boem_field": "MP107",
           "play_number": "1981",
@@ -4600,7 +5504,7 @@
         },
         {
           "csv_row": 6054,
-          "sn_formsand": 163850.0,
+          "sn_formsand": "163850",
           "sand_name": "2181_MP107_BIG_HUM",
           "boem_field": "MP107",
           "play_number": "2181",
@@ -4616,6 +5520,20 @@
         "MP098"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4655,7 +5573,7 @@
       "sand_rows": [
         {
           "csv_row": 6011,
-          "sn_formsand": 163382.0,
+          "sn_formsand": "163382",
           "sand_name": "1361_MP098_3100",
           "boem_field": "MP098",
           "play_number": "1361",
@@ -4663,7 +5581,7 @@
         },
         {
           "csv_row": 6012,
-          "sn_formsand": 418347.0,
+          "sn_formsand": "418347",
           "sand_name": "1361_MP098_3800",
           "boem_field": "MP098",
           "play_number": "1361",
@@ -4671,7 +5589,7 @@
         },
         {
           "csv_row": 6013,
-          "sn_formsand": 418335.0,
+          "sn_formsand": "418335",
           "sand_name": "1361_MP098_4100",
           "boem_field": "MP098",
           "play_number": "1361",
@@ -4679,7 +5597,7 @@
         },
         {
           "csv_row": 6014,
-          "sn_formsand": 163385.0,
+          "sn_formsand": "163385",
           "sand_name": "1361_MP098_4200",
           "boem_field": "MP098",
           "play_number": "1361",
@@ -4687,7 +5605,7 @@
         },
         {
           "csv_row": 6015,
-          "sn_formsand": 163386.0,
+          "sn_formsand": "163386",
           "sand_name": "1361_MP098_4300",
           "boem_field": "MP098",
           "play_number": "1361",
@@ -4695,7 +5613,7 @@
         },
         {
           "csv_row": 6016,
-          "sn_formsand": 163387.0,
+          "sn_formsand": "163387",
           "sand_name": "1761_MP098_5100",
           "boem_field": "MP098",
           "play_number": "1761",
@@ -4703,7 +5621,7 @@
         },
         {
           "csv_row": 6017,
-          "sn_formsand": 418516.0,
+          "sn_formsand": "418516",
           "sand_name": "1981_MP098_9700",
           "boem_field": "MP098",
           "play_number": "1981",
@@ -4711,7 +5629,7 @@
         },
         {
           "csv_row": 6018,
-          "sn_formsand": 421251.0,
+          "sn_formsand": "421251",
           "sand_name": "1981_MP098_TEX_W5_A",
           "boem_field": "MP098",
           "play_number": "1981",
@@ -4719,7 +5637,7 @@
         },
         {
           "csv_row": 6019,
-          "sn_formsand": 421804.0,
+          "sn_formsand": "421804",
           "sand_name": "1981_MP098_TEX_W5_G",
           "boem_field": "MP098",
           "play_number": "1981",
@@ -4735,6 +5653,20 @@
         "GC608"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4755,7 +5687,7 @@
       "sand_rows": [
         {
           "csv_row": 3505,
-          "sn_formsand": 417187.0,
+          "sn_formsand": "417187",
           "sand_name": "1382_GC608_M_SERIES",
           "boem_field": "GC608",
           "play_number": "1382",
@@ -4771,6 +5703,20 @@
         "MC243"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4791,7 +5737,7 @@
       "sand_rows": [
         {
           "csv_row": 5189,
-          "sn_formsand": 419877.0,
+          "sn_formsand": "419877",
           "sand_name": "1282_MC243_5650",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4799,7 +5745,7 @@
         },
         {
           "csv_row": 5190,
-          "sn_formsand": 419878.0,
+          "sn_formsand": "419878",
           "sand_name": "1282_MC243_5900",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4807,7 +5753,7 @@
         },
         {
           "csv_row": 5191,
-          "sn_formsand": 411827.0,
+          "sn_formsand": "411827",
           "sand_name": "1282_MC243_8650",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4815,7 +5761,7 @@
         },
         {
           "csv_row": 5192,
-          "sn_formsand": 418024.0,
+          "sn_formsand": "418024",
           "sand_name": "1282_MC243_A_UPPER",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4823,7 +5769,7 @@
         },
         {
           "csv_row": 5193,
-          "sn_formsand": 420890.0,
+          "sn_formsand": "420890",
           "sand_name": "1282_MC243_A1B",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4831,7 +5777,7 @@
         },
         {
           "csv_row": 5194,
-          "sn_formsand": 420891.0,
+          "sn_formsand": "420891",
           "sand_name": "1282_MC243_A1C",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4839,7 +5785,7 @@
         },
         {
           "csv_row": 5195,
-          "sn_formsand": 416304.0,
+          "sn_formsand": "416304",
           "sand_name": "1282_MC243_A2",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4847,7 +5793,7 @@
         },
         {
           "csv_row": 5196,
-          "sn_formsand": 418016.0,
+          "sn_formsand": "418016",
           "sand_name": "1282_MC243_B2A",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4855,7 +5801,7 @@
         },
         {
           "csv_row": 5197,
-          "sn_formsand": 411826.0,
+          "sn_formsand": "411826",
           "sand_name": "1282_MC243_C2C3C5",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4863,7 +5809,7 @@
         },
         {
           "csv_row": 5198,
-          "sn_formsand": 411828.0,
+          "sn_formsand": "411828",
           "sand_name": "1282_MC243_E1",
           "boem_field": "MC243",
           "play_number": "1282",
@@ -4879,6 +5825,20 @@
         "MC211"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4909,7 +5869,7 @@
       "sand_rows": [
         {
           "csv_row": 5182,
-          "sn_formsand": 145215.0,
+          "sn_formsand": "145215",
           "sand_name": "1382_MC211_K60",
           "boem_field": "MC211",
           "play_number": "1382",
@@ -4917,7 +5877,7 @@
         },
         {
           "csv_row": 5183,
-          "sn_formsand": 145462.0,
+          "sn_formsand": "145462",
           "sand_name": "1782_MC211_M10",
           "boem_field": "MC211",
           "play_number": "1782",
@@ -4925,7 +5885,7 @@
         },
         {
           "csv_row": 5184,
-          "sn_formsand": 414685.0,
+          "sn_formsand": "414685",
           "sand_name": "1782_MC211_T13",
           "boem_field": "MC211",
           "play_number": "1782",
@@ -4933,7 +5893,7 @@
         },
         {
           "csv_row": 5185,
-          "sn_formsand": 414686.0,
+          "sn_formsand": "414686",
           "sand_name": "1782_MC211_T13A",
           "boem_field": "MC211",
           "play_number": "1782",
@@ -4949,6 +5909,20 @@
         "KC736"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -4963,6 +5937,20 @@
         "LL001"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -4983,7 +5971,7 @@
       "sand_rows": [
         {
           "csv_row": 5070,
-          "sn_formsand": 419211.0,
+          "sn_formsand": "419211",
           "sand_name": "1982_LL001_MM9_TOP",
           "boem_field": "LL001",
           "play_number": "1982",
@@ -4991,7 +5979,7 @@
         },
         {
           "csv_row": 5071,
-          "sn_formsand": 419214.0,
+          "sn_formsand": "419214",
           "sand_name": "1982_LL001_PURPLE_LOW",
           "boem_field": "LL001",
           "play_number": "1982",
@@ -4999,7 +5987,7 @@
         },
         {
           "csv_row": 5072,
-          "sn_formsand": 419213.0,
+          "sn_formsand": "419213",
           "sand_name": "1982_LL001_PURPLE_UP",
           "boem_field": "LL001",
           "play_number": "1982",
@@ -5015,6 +6003,20 @@
         "EW921"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5054,7 +6056,7 @@
       "sand_rows": [
         {
           "csv_row": 2785,
-          "sn_formsand": 415346.0,
+          "sn_formsand": "415346",
           "sand_name": "0982_EW921_BLK_WIDOW",
           "boem_field": "EW921",
           "play_number": "0982",
@@ -5062,7 +6064,7 @@
         },
         {
           "csv_row": 2786,
-          "sn_formsand": 90128.0,
+          "sn_formsand": "90128",
           "sand_name": "1282_EW921_H",
           "boem_field": "EW921",
           "play_number": "1282",
@@ -5070,7 +6072,7 @@
         },
         {
           "csv_row": 2787,
-          "sn_formsand": 90129.0,
+          "sn_formsand": "90129",
           "sand_name": "1282_EW921_K",
           "boem_field": "EW921",
           "play_number": "1282",
@@ -5078,7 +6080,7 @@
         },
         {
           "csv_row": 2788,
-          "sn_formsand": 422247.0,
+          "sn_formsand": "422247",
           "sand_name": "1382_EW921_13500",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5086,7 +6088,7 @@
         },
         {
           "csv_row": 2789,
-          "sn_formsand": 422249.0,
+          "sn_formsand": "422249",
           "sand_name": "1382_EW921_15000L",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5094,7 +6096,7 @@
         },
         {
           "csv_row": 2790,
-          "sn_formsand": 422248.0,
+          "sn_formsand": "422248",
           "sand_name": "1382_EW921_15000U",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5102,7 +6104,7 @@
         },
         {
           "csv_row": 2791,
-          "sn_formsand": 415356.0,
+          "sn_formsand": "415356",
           "sand_name": "1382_EW921_M",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5110,7 +6112,7 @@
         },
         {
           "csv_row": 2792,
-          "sn_formsand": 90130.0,
+          "sn_formsand": "90130",
           "sand_name": "1382_EW921_M2",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5118,7 +6120,7 @@
         },
         {
           "csv_row": 2793,
-          "sn_formsand": 90131.0,
+          "sn_formsand": "90131",
           "sand_name": "1382_EW921_P",
           "boem_field": "EW921",
           "play_number": "1382",
@@ -5134,6 +6136,20 @@
         "SS263"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5164,7 +6180,7 @@
       "sand_rows": [
         {
           "csv_row": 9213,
-          "sn_formsand": 292403.0,
+          "sn_formsand": "292403",
           "sand_name": "0361_SS263_1550",
           "boem_field": "SS263",
           "play_number": "0361",
@@ -5172,7 +6188,7 @@
         },
         {
           "csv_row": 9214,
-          "sn_formsand": 421061.0,
+          "sn_formsand": "421061",
           "sand_name": "1281_SS263_KP",
           "boem_field": "SS263",
           "play_number": "1281",
@@ -5188,6 +6204,20 @@
         "VK914"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5208,7 +6238,7 @@
       "sand_rows": [
         {
           "csv_row": 10313,
-          "sn_formsand": 414606.0,
+          "sn_formsand": "414606",
           "sand_name": "1982_VK914_SAND_A",
           "boem_field": "VK914",
           "play_number": "1982",
@@ -5224,6 +6254,20 @@
         "EB643"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5244,7 +6288,7 @@
       "sand_rows": [
         {
           "csv_row": 477,
-          "sn_formsand": 416736.0,
+          "sn_formsand": "416736",
           "sand_name": "0982_EB643_BS_45",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5252,7 +6296,7 @@
         },
         {
           "csv_row": 478,
-          "sn_formsand": 416079.0,
+          "sn_formsand": "416079",
           "sand_name": "0982_EB643_BS_56",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5260,7 +6304,7 @@
         },
         {
           "csv_row": 479,
-          "sn_formsand": 416080.0,
+          "sn_formsand": "416080",
           "sand_name": "0982_EB643_BS_57",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5268,7 +6312,7 @@
         },
         {
           "csv_row": 480,
-          "sn_formsand": 416074.0,
+          "sn_formsand": "416074",
           "sand_name": "0982_EB643_BS_58A",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5276,7 +6320,7 @@
         },
         {
           "csv_row": 481,
-          "sn_formsand": 416082.0,
+          "sn_formsand": "416082",
           "sand_name": "0982_EB643_BS_58B",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5284,7 +6328,7 @@
         },
         {
           "csv_row": 482,
-          "sn_formsand": 415757.0,
+          "sn_formsand": "415757",
           "sand_name": "0982_EB643_BS_60",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5292,7 +6336,7 @@
         },
         {
           "csv_row": 483,
-          "sn_formsand": 416101.0,
+          "sn_formsand": "416101",
           "sand_name": "0982_EB643_BS_61",
           "boem_field": "EB643",
           "play_number": "0982",
@@ -5308,6 +6352,20 @@
         "GC944"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5328,7 +6386,7 @@
       "sand_rows": [
         {
           "csv_row": 3549,
-          "sn_formsand": 422238.0,
+          "sn_formsand": "422238",
           "sand_name": "1782_GC944_M1",
           "boem_field": "GC944",
           "play_number": "1782",
@@ -5344,6 +6402,20 @@
         "GC823"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -5358,6 +6430,20 @@
         "GC385"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5378,7 +6464,7 @@
       "sand_rows": [
         {
           "csv_row": 3469,
-          "sn_formsand": 422167.0,
+          "sn_formsand": "422167",
           "sand_name": "0582_GC385_H2_H3",
           "boem_field": "GC385",
           "play_number": "0582",
@@ -5386,7 +6472,7 @@
         },
         {
           "csv_row": 3470,
-          "sn_formsand": 420409.0,
+          "sn_formsand": "420409",
           "sand_name": "0582_GC385_H4_H5",
           "boem_field": "GC385",
           "play_number": "0582",
@@ -5394,7 +6480,7 @@
         },
         {
           "csv_row": 3471,
-          "sn_formsand": 421489.0,
+          "sn_formsand": "421489",
           "sand_name": "0582_GC385_H6",
           "boem_field": "GC385",
           "play_number": "0582",
@@ -5402,7 +6488,7 @@
         },
         {
           "csv_row": 3472,
-          "sn_formsand": 421886.0,
+          "sn_formsand": "421886",
           "sand_name": "0582_GC385_SDE_1",
           "boem_field": "GC385",
           "play_number": "0582",
@@ -5410,7 +6496,7 @@
         },
         {
           "csv_row": 3473,
-          "sn_formsand": 422253.0,
+          "sn_formsand": "422253",
           "sand_name": "0582_GC385_SH",
           "boem_field": "GC385",
           "play_number": "0582",
@@ -5426,6 +6512,20 @@
         "VK786"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5456,7 +6556,7 @@
       "sand_rows": [
         {
           "csv_row": 10276,
-          "sn_formsand": 420139.0,
+          "sn_formsand": "420139",
           "sand_name": "1782_VK786_G",
           "boem_field": "VK786",
           "play_number": "1782",
@@ -5464,7 +6564,7 @@
         },
         {
           "csv_row": 10277,
-          "sn_formsand": 418061.0,
+          "sn_formsand": "418061",
           "sand_name": "2182_VK786_J0_5",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5472,7 +6572,7 @@
         },
         {
           "csv_row": 10278,
-          "sn_formsand": 416746.0,
+          "sn_formsand": "416746",
           "sand_name": "2182_VK786_J3",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5480,7 +6580,7 @@
         },
         {
           "csv_row": 10279,
-          "sn_formsand": 418062.0,
+          "sn_formsand": "418062",
           "sand_name": "2182_VK786_J3_5",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5488,7 +6588,7 @@
         },
         {
           "csv_row": 10280,
-          "sn_formsand": 416747.0,
+          "sn_formsand": "416747",
           "sand_name": "2182_VK786_J4",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5496,7 +6596,7 @@
         },
         {
           "csv_row": 10281,
-          "sn_formsand": 419463.0,
+          "sn_formsand": "419463",
           "sand_name": "2182_VK786_J6",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5504,7 +6604,7 @@
         },
         {
           "csv_row": 10282,
-          "sn_formsand": 413916.0,
+          "sn_formsand": "413916",
           "sand_name": "2182_VK786_MID_TEX_W",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5512,7 +6612,7 @@
         },
         {
           "csv_row": 10283,
-          "sn_formsand": 413915.0,
+          "sn_formsand": "413915",
           "sand_name": "2182_VK786_UP_TEX_W",
           "boem_field": "VK786",
           "play_number": "2182",
@@ -5528,6 +6628,20 @@
         "SE039"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -5542,6 +6656,20 @@
         "GC236"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5572,7 +6700,7 @@
       "sand_rows": [
         {
           "csv_row": 3405,
-          "sn_formsand": 415707.0,
+          "sn_formsand": "415707",
           "sand_name": "0982_GC236_A2",
           "boem_field": "GC236",
           "play_number": "0982",
@@ -5580,7 +6708,7 @@
         },
         {
           "csv_row": 3406,
-          "sn_formsand": 415789.0,
+          "sn_formsand": "415789",
           "sand_name": "0982_GC236_A3",
           "boem_field": "GC236",
           "play_number": "0982",
@@ -5588,7 +6716,7 @@
         },
         {
           "csv_row": 3407,
-          "sn_formsand": 415709.0,
+          "sn_formsand": "415709",
           "sand_name": "0982_GC236_A4U",
           "boem_field": "GC236",
           "play_number": "0982",
@@ -5596,7 +6724,7 @@
         },
         {
           "csv_row": 3408,
-          "sn_formsand": 415793.0,
+          "sn_formsand": "415793",
           "sand_name": "1282_GC236_A4L",
           "boem_field": "GC236",
           "play_number": "1282",
@@ -5604,7 +6732,7 @@
         },
         {
           "csv_row": 3409,
-          "sn_formsand": 415710.0,
+          "sn_formsand": "415710",
           "sand_name": "1282_GC236_A5",
           "boem_field": "GC236",
           "play_number": "1282",
@@ -5612,7 +6740,7 @@
         },
         {
           "csv_row": 3410,
-          "sn_formsand": 421783.0,
+          "sn_formsand": "421783",
           "sand_name": "1282_GC236_A6",
           "boem_field": "GC236",
           "play_number": "1282",
@@ -5628,6 +6756,20 @@
         "GC468"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5653,7 +6795,7 @@
       "sand_rows": [
         {
           "csv_row": 3483,
-          "sn_formsand": 419969.0,
+          "sn_formsand": "419969",
           "sand_name": "9992_GC468_GFF10",
           "boem_field": "GC468",
           "play_number": "9992",
@@ -5661,7 +6803,7 @@
         },
         {
           "csv_row": 3484,
-          "sn_formsand": 421884.0,
+          "sn_formsand": "421884",
           "sand_name": "9992_GC468_GFF39",
           "boem_field": "GC468",
           "play_number": "9992",
@@ -5669,7 +6811,7 @@
         },
         {
           "csv_row": 3485,
-          "sn_formsand": 419971.0,
+          "sn_formsand": "419971",
           "sand_name": "9992_GC468_GFF40",
           "boem_field": "GC468",
           "play_number": "9992",
@@ -5677,7 +6819,7 @@
         },
         {
           "csv_row": 3486,
-          "sn_formsand": 419974.0,
+          "sn_formsand": "419974",
           "sand_name": "9992_GC468_SH20",
           "boem_field": "GC468",
           "play_number": "9992",
@@ -5685,7 +6827,7 @@
         },
         {
           "csv_row": 3487,
-          "sn_formsand": 419975.0,
+          "sn_formsand": "419975",
           "sand_name": "9992_GC468_SH30",
           "boem_field": "GC468",
           "play_number": "9992",
@@ -5701,6 +6843,20 @@
         "EW958"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5731,7 +6887,7 @@
       "sand_rows": [
         {
           "csv_row": 2799,
-          "sn_formsand": 413163.0,
+          "sn_formsand": "413163",
           "sand_name": "0982_EW958_PB1",
           "boem_field": "EW958",
           "play_number": "0982",
@@ -5739,7 +6895,7 @@
         },
         {
           "csv_row": 2800,
-          "sn_formsand": 421608.0,
+          "sn_formsand": "421608",
           "sand_name": "0982_EW958_PB2",
           "boem_field": "EW958",
           "play_number": "0982",
@@ -5747,7 +6903,7 @@
         },
         {
           "csv_row": 2801,
-          "sn_formsand": 413144.0,
+          "sn_formsand": "413144",
           "sand_name": "1282_EW958_11500",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5755,7 +6911,7 @@
         },
         {
           "csv_row": 2802,
-          "sn_formsand": 413145.0,
+          "sn_formsand": "413145",
           "sand_name": "1282_EW958_12000",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5763,7 +6919,7 @@
         },
         {
           "csv_row": 2803,
-          "sn_formsand": 413147.0,
+          "sn_formsand": "413147",
           "sand_name": "1282_EW958_12900",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5771,7 +6927,7 @@
         },
         {
           "csv_row": 2804,
-          "sn_formsand": 417450.0,
+          "sn_formsand": "417450",
           "sand_name": "1282_EW958_SHOW_1",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5779,7 +6935,7 @@
         },
         {
           "csv_row": 2805,
-          "sn_formsand": 417453.0,
+          "sn_formsand": "417453",
           "sand_name": "1282_EW958_SHOW_2",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5787,7 +6943,7 @@
         },
         {
           "csv_row": 2806,
-          "sn_formsand": 417454.0,
+          "sn_formsand": "417454",
           "sand_name": "1282_EW958_SHOW_3",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5795,7 +6951,7 @@
         },
         {
           "csv_row": 2807,
-          "sn_formsand": 418702.0,
+          "sn_formsand": "418702",
           "sand_name": "1282_EW958_STRAY1",
           "boem_field": "EW958",
           "play_number": "1282",
@@ -5811,6 +6967,20 @@
         "GB293"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5831,7 +7001,7 @@
       "sand_rows": [
         {
           "csv_row": 3166,
-          "sn_formsand": 421163.0,
+          "sn_formsand": "421163",
           "sand_name": "0982_GB293_21200",
           "boem_field": "GB293",
           "play_number": "0982",
@@ -5847,6 +7017,20 @@
         "MC961"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5867,7 +7051,7 @@
       "sand_rows": [
         {
           "csv_row": 5493,
-          "sn_formsand": 419557.0,
+          "sn_formsand": "419557",
           "sand_name": "2182_MC961_15550",
           "boem_field": "MC961",
           "play_number": "2182",
@@ -5883,6 +7067,20 @@
         "EB668"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5903,7 +7101,7 @@
       "sand_rows": [
         {
           "csv_row": 484,
-          "sn_formsand": 418447.0,
+          "sn_formsand": "418447",
           "sand_name": "1982_EB668_M57",
           "boem_field": "EB668",
           "play_number": "1982",
@@ -5919,6 +7117,20 @@
         "GB877"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -5949,7 +7161,7 @@
       "sand_rows": [
         {
           "csv_row": 3248,
-          "sn_formsand": 417581.0,
+          "sn_formsand": "417581",
           "sand_name": "0582_GB877_16600",
           "boem_field": "GB877",
           "play_number": "0582",
@@ -5957,7 +7169,7 @@
         },
         {
           "csv_row": 3249,
-          "sn_formsand": 417584.0,
+          "sn_formsand": "417584",
           "sand_name": "0982_GB877_18000",
           "boem_field": "GB877",
           "play_number": "0982",
@@ -5973,6 +7185,20 @@
         "GC432"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6012,7 +7238,7 @@
       "sand_rows": [
         {
           "csv_row": 3478,
-          "sn_formsand": 422194.0,
+          "sn_formsand": "422194",
           "sand_name": "1782_GC432_M9.2",
           "boem_field": "GC432",
           "play_number": "1782",
@@ -6020,7 +7246,7 @@
         },
         {
           "csv_row": 3479,
-          "sn_formsand": 420784.0,
+          "sn_formsand": "420784",
           "sand_name": "1982_GC432_M10",
           "boem_field": "GC432",
           "play_number": "1982",
@@ -6028,7 +7254,7 @@
         },
         {
           "csv_row": 3480,
-          "sn_formsand": 422163.0,
+          "sn_formsand": "422163",
           "sand_name": "1982_GC432_M10U",
           "boem_field": "GC432",
           "play_number": "1982",
@@ -6036,7 +7262,7 @@
         },
         {
           "csv_row": 3481,
-          "sn_formsand": 422140.0,
+          "sn_formsand": "422140",
           "sand_name": "2182_GC432_M13",
           "boem_field": "GC432",
           "play_number": "2182",
@@ -6052,6 +7278,20 @@
         "DC618"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6082,7 +7322,7 @@
       "sand_rows": [
         {
           "csv_row": 403,
-          "sn_formsand": 418620.0,
+          "sn_formsand": "418620",
           "sand_name": "1382_DC618_13500",
           "boem_field": "DC618",
           "play_number": "1382",
@@ -6090,7 +7330,7 @@
         },
         {
           "csv_row": 404,
-          "sn_formsand": 418618.0,
+          "sn_formsand": "418618",
           "sand_name": "1782_DC618_14900",
           "boem_field": "DC618",
           "play_number": "1782",
@@ -6106,6 +7346,20 @@
         "MC387"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6126,7 +7380,7 @@
       "sand_rows": [
         {
           "csv_row": 5268,
-          "sn_formsand": 422165.0,
+          "sn_formsand": "422165",
           "sand_name": "2482_MC387_M48",
           "boem_field": "MC387",
           "play_number": "2482",
@@ -6142,6 +7396,20 @@
         "VK917"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6162,7 +7430,7 @@
       "sand_rows": [
         {
           "csv_row": 10319,
-          "sn_formsand": 417211.0,
+          "sn_formsand": "417211",
           "sand_name": "1982_VK917_11900",
           "boem_field": "VK917",
           "play_number": "1982",
@@ -6170,7 +7438,7 @@
         },
         {
           "csv_row": 10320,
-          "sn_formsand": 417212.0,
+          "sn_formsand": "417212",
           "sand_name": "1982_VK917_A",
           "boem_field": "VK917",
           "play_number": "1982",
@@ -6186,6 +7454,20 @@
         "MC816"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6216,7 +7498,7 @@
       "sand_rows": [
         {
           "csv_row": 5470,
-          "sn_formsand": 421445.0,
+          "sn_formsand": "421445",
           "sand_name": "1282_MC816_BLUE",
           "boem_field": "MC816",
           "play_number": "1282",
@@ -6224,7 +7506,7 @@
         },
         {
           "csv_row": 5471,
-          "sn_formsand": 421771.0,
+          "sn_formsand": "421771",
           "sand_name": "1282_MC816_ORANGE",
           "boem_field": "MC816",
           "play_number": "1282",
@@ -6232,7 +7514,7 @@
         },
         {
           "csv_row": 5472,
-          "sn_formsand": 421446.0,
+          "sn_formsand": "421446",
           "sand_name": "1382_MC816_PURPLE",
           "boem_field": "MC816",
           "play_number": "1382",
@@ -6248,6 +7530,20 @@
         "GC640"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6273,7 +7569,7 @@
       "sand_rows": [
         {
           "csv_row": 3507,
-          "sn_formsand": 418573.0,
+          "sn_formsand": "418573",
           "sand_name": "9992_GC640_M13C",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6281,7 +7577,7 @@
         },
         {
           "csv_row": 3508,
-          "sn_formsand": 418563.0,
+          "sn_formsand": "418563",
           "sand_name": "9992_GC640_M15A",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6289,7 +7585,7 @@
         },
         {
           "csv_row": 3509,
-          "sn_formsand": 421529.0,
+          "sn_formsand": "421529",
           "sand_name": "9992_GC640_M15B",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6297,7 +7593,7 @@
         },
         {
           "csv_row": 3510,
-          "sn_formsand": 421709.0,
+          "sn_formsand": "421709",
           "sand_name": "9992_GC640_M16",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6305,7 +7601,7 @@
         },
         {
           "csv_row": 3511,
-          "sn_formsand": 418570.0,
+          "sn_formsand": "418570",
           "sand_name": "9992_GC640_M17B",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6313,7 +7609,7 @@
         },
         {
           "csv_row": 3512,
-          "sn_formsand": 418565.0,
+          "sn_formsand": "418565",
           "sand_name": "9992_GC640_M18A",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6321,7 +7617,7 @@
         },
         {
           "csv_row": 3513,
-          "sn_formsand": 418568.0,
+          "sn_formsand": "418568",
           "sand_name": "9992_GC640_M21A",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6329,7 +7625,7 @@
         },
         {
           "csv_row": 3514,
-          "sn_formsand": 418566.0,
+          "sn_formsand": "418566",
           "sand_name": "9992_GC640_M21B",
           "boem_field": "GC640",
           "play_number": "9992",
@@ -6345,6 +7641,20 @@
         "VK783"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6375,7 +7685,7 @@
       "sand_rows": [
         {
           "csv_row": 10273,
-          "sn_formsand": 333728.0,
+          "sn_formsand": "333728",
           "sand_name": "1382_VK783_8000",
           "boem_field": "VK783",
           "play_number": "1382",
@@ -6383,7 +7693,7 @@
         },
         {
           "csv_row": 10274,
-          "sn_formsand": 414500.0,
+          "sn_formsand": "414500",
           "sand_name": "1782_VK783_9300",
           "boem_field": "VK783",
           "play_number": "1782",
@@ -6391,7 +7701,7 @@
         },
         {
           "csv_row": 10275,
-          "sn_formsand": 333729.0,
+          "sn_formsand": "333729",
           "sand_name": "1782_VK783_9700",
           "boem_field": "VK783",
           "play_number": "1782",
@@ -6407,6 +7717,20 @@
         "AT063"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6428,7 +7752,7 @@
       "sand_rows": [
         {
           "csv_row": 85,
-          "sn_formsand": 421073.0,
+          "sn_formsand": "421073",
           "sand_name": "9992_AT063_E_4",
           "boem_field": "AT063",
           "play_number": "9992",
@@ -6436,7 +7760,7 @@
         },
         {
           "csv_row": 86,
-          "sn_formsand": 421072.0,
+          "sn_formsand": "421072",
           "sand_name": "9992_AT063_E3_5",
           "boem_field": "AT063",
           "play_number": "9992",
@@ -6452,6 +7776,20 @@
         "GC768"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6472,7 +7810,7 @@
       "sand_rows": [
         {
           "csv_row": 3541,
-          "sn_formsand": 419486.0,
+          "sn_formsand": "419486",
           "sand_name": "1282_GC768_AMP6",
           "boem_field": "GC768",
           "play_number": "1282",
@@ -6480,7 +7818,7 @@
         },
         {
           "csv_row": 3542,
-          "sn_formsand": 419487.0,
+          "sn_formsand": "419487",
           "sand_name": "1282_GC768_AMP7",
           "boem_field": "GC768",
           "play_number": "1282",
@@ -6496,6 +7834,20 @@
         "ST221"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6516,7 +7868,7 @@
       "sand_rows": [
         {
           "csv_row": 10059,
-          "sn_formsand": 329378.0,
+          "sn_formsand": "329378",
           "sand_name": "0981_ST221_11600",
           "boem_field": "ST221",
           "play_number": "0981",
@@ -6524,7 +7876,7 @@
         },
         {
           "csv_row": 10060,
-          "sn_formsand": 329441.0,
+          "sn_formsand": "329441",
           "sand_name": "0981_ST221_11850",
           "boem_field": "ST221",
           "play_number": "0981",
@@ -6532,7 +7884,7 @@
         },
         {
           "csv_row": 10061,
-          "sn_formsand": 329442.0,
+          "sn_formsand": "329442",
           "sand_name": "0981_ST221_12000",
           "boem_field": "ST221",
           "play_number": "0981",
@@ -6548,6 +7900,20 @@
         "AC903"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -6562,6 +7928,20 @@
         "MC699"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": "no_sand_rows_for_area_block",
       "plays": [],
       "chronozones": [],
@@ -6576,6 +7956,20 @@
         "EB642"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6596,7 +7990,7 @@
       "sand_rows": [
         {
           "csv_row": 475,
-          "sn_formsand": 415880.0,
+          "sn_formsand": "415880",
           "sand_name": "0982_EB642_BS_58A",
           "boem_field": "EB642",
           "play_number": "0982",
@@ -6604,7 +7998,7 @@
         },
         {
           "csv_row": 476,
-          "sn_formsand": 416731.0,
+          "sn_formsand": "416731",
           "sand_name": "0982_EB642_BS_58B",
           "boem_field": "EB642",
           "play_number": "0982",
@@ -6620,6 +8014,20 @@
         "MC503"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6650,7 +8058,7 @@
       "sand_rows": [
         {
           "csv_row": 5296,
-          "sn_formsand": 421312.0,
+          "sn_formsand": "421312",
           "sand_name": "1382_MC503_11000",
           "boem_field": "MC503",
           "play_number": "1382",
@@ -6658,7 +8066,7 @@
         },
         {
           "csv_row": 5297,
-          "sn_formsand": 420221.0,
+          "sn_formsand": "420221",
           "sand_name": "1382_MC503_4000",
           "boem_field": "MC503",
           "play_number": "1382",
@@ -6666,7 +8074,7 @@
         },
         {
           "csv_row": 5298,
-          "sn_formsand": 420224.0,
+          "sn_formsand": "420224",
           "sand_name": "1382_MC503_4200",
           "boem_field": "MC503",
           "play_number": "1382",
@@ -6674,7 +8082,7 @@
         },
         {
           "csv_row": 5299,
-          "sn_formsand": 420225.0,
+          "sn_formsand": "420225",
           "sand_name": "1382_MC503_4800",
           "boem_field": "MC503",
           "play_number": "1382",
@@ -6682,7 +8090,7 @@
         },
         {
           "csv_row": 5300,
-          "sn_formsand": 420226.0,
+          "sn_formsand": "420226",
           "sand_name": "1382_MC503_4900",
           "boem_field": "MC503",
           "play_number": "1382",
@@ -6690,7 +8098,7 @@
         },
         {
           "csv_row": 5301,
-          "sn_formsand": 422038.0,
+          "sn_formsand": "422038",
           "sand_name": "1782_MC503_5100",
           "boem_field": "MC503",
           "play_number": "1782",
@@ -6706,6 +8114,20 @@
         "GC490"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6726,7 +8148,7 @@
       "sand_rows": [
         {
           "csv_row": 3495,
-          "sn_formsand": 421181.0,
+          "sn_formsand": "421181",
           "sand_name": "0582_GC490_HSB1",
           "boem_field": "GC490",
           "play_number": "0582",
@@ -6742,6 +8164,20 @@
         "MC506"
       ],
       "join_basis": "area_block_candidate",
+      "evidence": {
+        "code_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "name_match": {
+          "value": "not-available",
+          "source_field": null
+        },
+        "lease_block_match": {
+          "value": "not-available",
+          "source_field": null
+        }
+      },
       "unmatched_reason": null,
       "plays": [
         {
@@ -6762,7 +8198,7 @@
       "sand_rows": [
         {
           "csv_row": 5303,
-          "sn_formsand": 419617.0,
+          "sn_formsand": "419617",
           "sand_name": "1982_MC506_18000",
           "boem_field": "MC506",
           "play_number": "1982",

@@ -23,6 +23,8 @@ TERMS = (
     "not for navigational use. No explicit reuse licence is stated on the download page."
 )
 USER_AGENT = "worldenergydata/2023-atlas public research; sequential retrieval"
+MAX_ACCESS_DATABASE_BYTES = 64 * 1024 * 1024
+EXPORT_TABLES = TABLES + ("2023xref_oper-comp",)
 
 
 class DownloadLinks(HTMLParser):
@@ -102,7 +104,7 @@ def fetch_atlas(
         "refusal.json",
         "handmade-fixture.json",
     ]
-    expected += [f"{table}.csv" for table in TABLES]
+    expected += [f"{table}.csv" for table in EXPORT_TABLES]
     if any((directory / name).exists() for name in expected):
         raise FileExistsError("use a new data directory or reuse existing exports")
     records = []
@@ -134,8 +136,17 @@ def fetch_atlas(
 def _record_refusal(
     directory: Path, error: HTTPError, records: list[dict[str, object]]
 ) -> None:
+    status = (
+        "refused"
+        if error.code in (401, 403, 429)
+        else (
+            "server_error"
+            if error.code >= 500
+            else "client_error" if error.code >= 400 else "redirect_rejected"
+        )
+    )
     refusal = {
-        "status": "refused",
+        "status": status,
         "http_status": error.code,
         "source_url": error.url,
         "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -165,9 +176,11 @@ def _export_tables(
         members = [n for n in archive.namelist() if n.endswith(".accdb")]
         if len(members) != 1:
             raise ValueError("expected one Access database in Atlas ZIP")
+        if archive.getinfo(members[0]).file_size > MAX_ACCESS_DATABASE_BYTES:
+            raise ValueError("Access database exceeds size ceiling")
         (directory / "atlas-2023.accdb").write_bytes(archive.read(members[0]))
     records.append(file_record(directory / "atlas-2023.accdb", source_url))
-    for table in TABLES:
+    for table in EXPORT_TABLES:
         path = directory / f"{table}.csv"
         with path.open("x") as stream:
             subprocess.run(

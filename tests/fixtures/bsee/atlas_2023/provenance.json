@@ -26,5 +26,14 @@
       "size_bytes": 2746
     }
   ],
-  "serialization": "MDB Tools CSV with explicit four-digit years and LF line endings; source values unchanged."
+  "serialization": "MDB Tools CSV with explicit four-digit years and LF line endings; source values unchanged.",
+  "synthetic_fixtures": [
+    {
+      "file": "2023xref_oper-comp.csv",
+      "synthetic": true,
+      "purpose": "Public lease/block evidence API and export transport tests; no production crosswalk asserted.",
+      "sha256": "d4e5ee8f52f010ac1d3d2f524da2467693bb7e07a9b58d8a3064e8c8612eb9b5",
+      "size_bytes": 157
+    }
+  ]
 }
