@@ -10,7 +10,7 @@ Barracouta ~45 m) classify as ``dry`` via ``dev_system_from_water_depth_m``
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Iterable, Optional
 
 from worldenergydata.fdas.adapters.field_concept_normalizer import (
     FieldMapEntry,
@@ -18,6 +18,7 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
     number_from,
     to_field_concept,
 )
+from worldenergydata.field_development.models import FieldConcept
 
 _AUSTRALIA_MAPPING = FieldMetaMapping(
     {
@@ -30,9 +31,13 @@ _AUSTRALIA_MAPPING = FieldMetaMapping(
 )
 
 
-def australia_field_to_concept(field_meta: Dict[str, Any]):
+def australia_field_to_concept(
+    field_meta: Dict[str, Any], *, wells: Optional[Iterable[Dict[str, Any]]] = None
+) -> FieldConcept:
     """Build a sparse Australia ``FieldConcept`` from DataVic/NOPTA metadata."""
-    meta = dict(field_meta)
+    from .metadata.well_enrichment import enrich_field_metadata
+
+    meta = enrich_field_metadata(field_meta, [] if wells is None else wells)
     if "field_name" not in meta and "field" in meta:
         meta["field_name"] = meta["field"]
     meta["region"] = "australia"
@@ -45,6 +50,8 @@ def australia_field_meta_mapping() -> FieldMetaMapping:
     return _AUSTRALIA_MAPPING
 
 
-def build_australia_field_concept(field_meta: Dict[str, Any]):
+def build_australia_field_concept(
+    field_meta: Dict[str, Any], *, wells: Optional[Iterable[Dict[str, Any]]] = None
+) -> FieldConcept:
     """Alias for the #721 reference-chain terminology."""
-    return australia_field_to_concept(field_meta)
+    return australia_field_to_concept(field_meta, wells=wells)
