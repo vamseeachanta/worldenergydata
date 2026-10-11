@@ -1,0 +1,136 @@
+{
+  "schema_version": "federal-acreage-fixture-v1",
+  "tract": {
+    "tract_id": "PILOT-TRACT-A",
+    "label": "Synthetic pilot tract A",
+    "state": "NM",
+    "principal_meridian": "New Mexico Principal Meridian",
+    "township": "T05S",
+    "range": "R08E",
+    "section": 12,
+    "aliquots": [
+      "NE-NE",
+      "NW-NE",
+      "SW-NE",
+      "SE-NE",
+      "NE-NW",
+      "NW-NW",
+      "SW-NW",
+      "SE-NW"
+    ],
+    "gross_area_acres": 320.0
+  },
+  "records": [
+    {
+      "record_serial": "SYNFL0001",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 160.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "aliquots": [
+        "NE-NE",
+        "NW-NE",
+        "SW-NE",
+        "SE-NE"
+      ],
+      "source_id": "fixture-mlrs-synthetic"
+    },
+    {
+      "record_serial": "SYNFL0002",
+      "record_type": "lease",
+      "record_status": "expired",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2024-01-31",
+      "area": {
+        "value": 80.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "aliquots": [
+        "NW-NW",
+        "SW-NW"
+      ],
+      "source_id": "fixture-mlrs-synthetic"
+    },
+    {
+      "record_serial": "SYNFL0003",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 160.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "aliquots": [
+        "NE-SE",
+        "NW-SE",
+        "SW-SE",
+        "SE-SE"
+      ],
+      "source_id": "fixture-mlrs-synthetic"
+    },
+    {
+      "record_serial": "SYNFL0004",
+      "record_type": "parcel",
+      "record_status": "active",
+      "effective_date": null,
+      "expiration_date": null,
+      "area": {
+        "value": 40.0,
+        "unit": "acres"
+      },
+      "public_lessee": null,
+      "aliquots": null,
+      "source_id": "fixture-mlrs-synthetic"
+    },
+    {
+      "record_serial": "SYNFL0005",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 16.1874,
+        "unit": "hectares"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "aliquots": [
+        "NE-NW"
+      ],
+      "source_id": "fixture-mlrs-synthetic"
+    },
+    {
+      "record_serial": "SYNFL0006",
+      "record_type": "lease",
+      "record_status": "active",
+      "effective_date": "2019-06-01",
+      "expiration_date": "2029-05-31",
+      "area": {
+        "value": 40.0,
+        "unit": "acres"
+      },
+      "public_lessee": "Synthetic Example Energy LLC",
+      "aliquots": [
+        "SE-NE"
+      ],
+      "source_id": "fixture-mlrs-synthetic"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "fixture-mlrs-synthetic",
+      "dataset": "BLM MLRS (synthetic fixture)",
+      "kind": "fixture",
+      "retrieved_at": "2026-07-10T00:00:00Z",
+      "url": null,
+      "license_note": "Synthetic authored fixture; no live MLRS records or title evidence. CC0-1.0."
+    }
+  ]
+}
