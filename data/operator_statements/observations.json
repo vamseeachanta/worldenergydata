@@ -1,0 +1,705 @@
+{
+  "schema_version": 1,
+  "operators": [
+    {
+      "name": "BP",
+      "primary_domains": [
+        "bp.com"
+      ],
+      "market_context": "Integrated energy operator; UK reporting context.",
+      "discovery_url": null,
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Robots request refused before discovery; no landing URL guessed. Alternative public channels remain unassessed.",
+      "observations": [
+        {
+          "url": "https://www.bp.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:21Z",
+          "http_status": 403,
+          "content_type": "text/html",
+          "sha256": "4911896da8042697d2e59bcfad4fbed2b39001c975a674ca52a4bda1652d579d",
+          "size_bytes": 3939,
+          "terms_url": "https://www.bp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:21Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.bp.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2021": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.bp.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2022": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.bp.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2023": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.bp.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2024": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.bp.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        }
+      }
+    },
+    {
+      "name": "Chevron",
+      "primary_domains": [
+        "chevron.com"
+      ],
+      "market_context": "Integrated energy operator; US reporting context.",
+      "discovery_url": null,
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Robots request refused before discovery; no landing URL guessed. Alternative public channels remain unassessed.",
+      "observations": [
+        {
+          "url": "https://www.chevron.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:23Z",
+          "http_status": 403,
+          "content_type": "text/html",
+          "sha256": "8c469546843a09ea5e20fc197c423fe225568cfba51e5aa9f2cdd71622782c4c",
+          "size_bytes": 1484,
+          "terms_url": "https://www.chevron.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:23Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.chevron.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2021": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.chevron.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2022": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.chevron.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2023": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.chevron.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        },
+        "2024": {
+          "status": "known_unavailable",
+          "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
+          "documents": [],
+          "refusal_url": "https://www.chevron.com/robots.txt",
+          "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
+        }
+      }
+    },
+    {
+      "name": "Shell",
+      "primary_domains": [
+        "shell.com"
+      ],
+      "market_context": "Integrated energy operator; UK reporting context.",
+      "discovery_url": null,
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Fetched homepage contained no annual-report landing link in the bounded static HTML review; discovery remains missing.",
+      "observations": [
+        {
+          "url": "https://www.shell.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:25Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "6f1e40bb5188f4745dd52da50ffe8a79fb235209fc3a3958d2ea8a5745b9c628",
+          "size_bytes": 18540,
+          "terms_url": "https://www.shell.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:25Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.shell.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:16Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "b234cabe000baa7bb22d3dfb5f3ba8b2af5e37bc8c716c181d8dd8f33278751d",
+          "size_bytes": 9184,
+          "terms_url": "https://www.shell.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:25Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    },
+    {
+      "name": "Equinor",
+      "primary_domains": [
+        "equinor.com"
+      ],
+      "market_context": "Integrated energy operator; Norwegian reporting context.",
+      "discovery_url": "https://www.equinor.com/investors/annual-reports",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Annual-report or investor landing fetched; terms excerpt retained with its source. No document fetched; no URL pattern inferred.",
+      "observations": [
+        {
+          "url": "https://www.equinor.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:28Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "4381f3c6ca9228c2c67739e2ae63c712ae1151d428a4a39dcbf51f966462d13f",
+          "size_bytes": 215,
+          "terms_url": "https://www.equinor.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:28Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.equinor.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:19Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "fac0e5281d680d170599262dc82e8e0acf8f1c7d0db83ae2b5f71f7af80e5ecc",
+          "size_bytes": 413949,
+          "terms_url": "https://www.equinor.com/about-us/terms-and-conditions",
+          "terms_retrieved_at_utc": "2026-10-11T20:25:56Z",
+          "terms_wording": "You are allowed to use and to distribute necessary minor extracts from the Website to provide direct linkage to the pages"
+        },
+        {
+          "url": "https://www.equinor.com/about-us/terms-and-conditions",
+          "retrieved_at_utc": "2026-10-11T20:25:56Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "0e4aade4786b7c131071c90727bb7f3d4534fbd6136c93889f5d2b5ab3c4d553",
+          "size_bytes": 317005,
+          "terms_url": "https://www.equinor.com/about-us/terms-and-conditions",
+          "terms_retrieved_at_utc": "2026-10-11T20:25:56Z",
+          "terms_wording": "You are allowed to use and to distribute necessary minor extracts from the Website to provide direct linkage to the pages"
+        },
+        {
+          "url": "https://www.equinor.com/investors/annual-reports",
+          "retrieved_at_utc": "2026-10-11T20:25:59Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "1ca695c21879b98580356b79b6d848654d6577497c93f006f12c83e036e8a5b3",
+          "size_bytes": 653213,
+          "terms_url": "https://www.equinor.com/about-us/terms-and-conditions",
+          "terms_retrieved_at_utc": "2026-10-11T20:25:56Z",
+          "terms_wording": "You are allowed to use and to distribute necessary minor extracts from the Website to provide direct linkage to the pages"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    },
+    {
+      "name": "Aker BP",
+      "primary_domains": [
+        "akerbp.com"
+      ],
+      "market_context": "Upstream operator; Norwegian continental shelf reporting context.",
+      "discovery_url": "https://akerbp.com/investor/reports-and-presentations-2/",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Annual report links taken from the fetched reports-and-presentations listing; no stable URL pattern inferred. Listing states no licence. Only metadata retained in Git.",
+      "observations": [
+        {
+          "url": "https://akerbp.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:30Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "00ad74cbfe27594a8c84078abae07ca644e7a6c07387fba570affe888159b9f2",
+          "size_bytes": 99,
+          "terms_url": "https://akerbp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:30Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://akerbp.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:23Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "12ae148a447951b3696af357947dc8962678f7c01b6eacd6a89036f96a31fc75",
+          "size_bytes": 95455,
+          "terms_url": "https://akerbp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:30Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://akerbp.com/investor/reports-and-presentations-2/",
+          "retrieved_at_utc": "2026-10-11T20:26:03Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "f849fdeeb63720ac9e7ef589a16476288ed248230bc0a240dad1c43c216c543d",
+          "size_bytes": 156063,
+          "terms_url": "https://akerbp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:30Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "verified",
+          "note": "PDF signature and operator/year running header checked against fetched bytes.",
+          "documents": [
+            {
+              "url": "https://akerbp.com/wp-content/uploads/2024/03/aker-bp-annual-report-2023.pdf",
+              "retrieved_at_utc": "2026-10-11T20:26:54Z",
+              "http_status": 200,
+              "content_type": "application/pdf",
+              "sha256": "9a4f82d6acd5efa2afe6d29fd6391f74666ae5a14da74efc7d353ae9c6eff541",
+              "size_bytes": 12342282,
+              "terms_url": "https://akerbp.com/investor/reports-and-presentations-2/",
+              "terms_retrieved_at_utc": "2026-10-11T20:26:03Z",
+              "terms_wording": "not stated by the source",
+              "listing_url": "https://akerbp.com/investor/reports-and-presentations-2/",
+              "channel": "annual_report",
+              "operator_name": "Aker BP",
+              "fiscal_year": 2023,
+              "identity_quote": "Aker BP annual report 2023",
+              "identity_locator": "PDF page 2 running header; whitespace normalized"
+            }
+          ]
+        },
+        "2024": {
+          "status": "verified",
+          "note": "PDF signature and operator/year running header checked against fetched bytes.",
+          "documents": [
+            {
+              "url": "https://akerbp.com/wp-content/uploads/2025/04/annual-report-2024.pdf",
+              "retrieved_at_utc": "2026-10-11T20:28:03Z",
+              "http_status": 200,
+              "content_type": "application/pdf",
+              "sha256": "93b5fd1a49dd5d912d34fd1d2c5192bc48b541ca0239e94153bc4e119537a5d0",
+              "size_bytes": 13954070,
+              "terms_url": "https://akerbp.com/investor/reports-and-presentations-2/",
+              "terms_retrieved_at_utc": "2026-10-11T20:26:03Z",
+              "terms_wording": "not stated by the source",
+              "listing_url": "https://akerbp.com/investor/reports-and-presentations-2/",
+              "channel": "annual_report",
+              "operator_name": "Aker BP",
+              "fiscal_year": 2024,
+              "identity_quote": "Aker BP annual report 2024",
+              "identity_locator": "PDF page 2 running header; whitespace normalized"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "TotalEnergies",
+      "primary_domains": [
+        "totalenergies.com"
+      ],
+      "market_context": "Integrated energy operator; French reporting context.",
+      "discovery_url": "https://totalenergies.com/investors",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Annual-report or investor landing fetched; terms excerpt retained with its source. No document fetched; no URL pattern inferred.",
+      "observations": [
+        {
+          "url": "https://totalenergies.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:33Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "464fe32f2d841a296b063a278b74ab492867a9bdee91b1fdfe0ad42dc82d7056",
+          "size_bytes": 4498,
+          "terms_url": "https://totalenergies.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:33Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://totalenergies.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:25Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "95cbb60ff18f5bb273e49b11c7aec13d62809bbf288f1559f4e4dee3ef1fb5f5",
+          "size_bytes": 112881,
+          "terms_url": "https://totalenergies.com/legal",
+          "terms_retrieved_at_utc": "2026-10-11T20:26:05Z",
+          "terms_wording": "Reproduction of the Website documents is authorized solely as information for personal and private usage."
+        },
+        {
+          "url": "https://totalenergies.com/legal",
+          "retrieved_at_utc": "2026-10-11T20:26:05Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "2db833c86cdb28459c5a19e6d86485743bec84de23b0c7cb3c190ee471bf38e8",
+          "size_bytes": 68727,
+          "terms_url": "https://totalenergies.com/legal",
+          "terms_retrieved_at_utc": "2026-10-11T20:26:05Z",
+          "terms_wording": "Reproduction of the Website documents is authorized solely as information for personal and private usage."
+        },
+        {
+          "url": "https://totalenergies.com/investors",
+          "retrieved_at_utc": "2026-10-11T20:26:08Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "55213b76207294c781bdecd2442d6bc7e7bc2b6073a89c0608eef43a64fdf1b7",
+          "size_bytes": 80374,
+          "terms_url": "https://totalenergies.com/legal",
+          "terms_retrieved_at_utc": "2026-10-11T20:26:05Z",
+          "terms_wording": "Reproduction of the Website documents is authorized solely as information for personal and private usage."
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    },
+    {
+      "name": "ExxonMobil",
+      "primary_domains": [
+        "exxonmobil.com"
+      ],
+      "market_context": "Integrated energy operator; US reporting context.",
+      "discovery_url": "https://investor.exxonmobil.com/",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "No URL pattern inferred. Discovery link observed on the fetched operator homepage; document retrieval not attempted. Terms restrict website copying; no document fetched or redistributed.",
+      "observations": [
+        {
+          "url": "https://corporate.exxonmobil.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:35Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "fe26fe2d3bcc505294c038ae999c318489676303f4bb3306c39f15dc08a23e2b",
+          "size_bytes": 1843,
+          "terms_url": "https://corporate.exxonmobil.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:35Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://corporate.exxonmobil.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:28Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "30fbbe3a8d0e57f566255a576055d38fba1ca53f394d4ff0170e86aebe0bed19",
+          "size_bytes": 120317,
+          "terms_url": "https://corporate.exxonmobil.com/global-legal-pages/terms-and-conditions",
+          "terms_retrieved_at_utc": "2026-10-11T20:26:10Z",
+          "terms_wording": "You may not copy these documents to a website."
+        },
+        {
+          "url": "https://corporate.exxonmobil.com/global-legal-pages/terms-and-conditions",
+          "retrieved_at_utc": "2026-10-11T20:26:10Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "faf0b202402b8c008715e887ee931496aaf6f28ebfa66a7ab8202b05cb9d98f6",
+          "size_bytes": 139582,
+          "terms_url": "https://corporate.exxonmobil.com/global-legal-pages/terms-and-conditions",
+          "terms_retrieved_at_utc": "2026-10-11T20:26:10Z",
+          "terms_wording": "You may not copy these documents to a website."
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    },
+    {
+      "name": "Murphy Oil",
+      "primary_domains": [
+        "murphyoilcorp.com"
+      ],
+      "market_context": "Upstream operator; US reporting context.",
+      "discovery_url": "https://ir.murphyoilcorp.com/investor-relations",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "No URL pattern inferred. Discovery link observed on the fetched operator homepage; document retrieval not attempted. Terms link returned HTTP 301; destination not followed or assessed.",
+      "observations": [
+        {
+          "url": "https://www.murphyoilcorp.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:37Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "e1f21c9aa28d50ca112ed357f34b67c550597effd4d42fd55b4e27300dd8f9c1",
+          "size_bytes": 24,
+          "terms_url": "https://www.murphyoilcorp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:37Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.murphyoilcorp.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:30Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "6e8093d49e53eb056699d59bb2888031050ef484baa5e4c6e3e05314d66d8f2b",
+          "size_bytes": 418860,
+          "terms_url": "https://www.murphyoilcorp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:37Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.murphyoilcorp.com/terms-of-use",
+          "retrieved_at_utc": "2026-10-11T20:26:12Z",
+          "http_status": 301,
+          "content_type": "text/html",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0,
+          "terms_url": "https://www.murphyoilcorp.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:37Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    },
+    {
+      "name": "Hess",
+      "primary_domains": [
+        "hess.com"
+      ],
+      "market_context": "Upstream operator; US reporting context; historical annual disclosures retained in scope.",
+      "discovery_url": "https://www.hess.com/investors",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Investor link observed on homepage; attempted landing and terms URLs returned HTTP 301. Redirect destinations not followed or assessed.",
+      "observations": [
+        {
+          "url": "https://www.hess.com/robots.txt",
+          "retrieved_at_utc": "2026-10-11T20:24:40Z",
+          "http_status": 200,
+          "content_type": "text/plain",
+          "sha256": "58ef69ed76940d31fe6208c0c563d9232485c44341e36018f5cf49e4bc19bf77",
+          "size_bytes": 259,
+          "terms_url": "https://www.hess.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:40Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.hess.com/",
+          "retrieved_at_utc": "2026-10-11T20:25:32Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "a0826217bdada7a3ed756cd8a21d832f660d17db264615fc5fa58c61e17ff6a8",
+          "size_bytes": 34143,
+          "terms_url": "https://www.hess.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:40Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.hess.com/utility-pages/terms-and-conditions",
+          "retrieved_at_utc": "2026-10-11T20:26:14Z",
+          "http_status": 301,
+          "content_type": "text/html",
+          "sha256": "89517400adeb2678a8c94a50b30a18cf4c7bcf7dc0bd189b3a9b40fbec74dd14",
+          "size_bytes": 153,
+          "terms_url": "https://www.hess.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:40Z",
+          "terms_wording": "not stated by the source"
+        },
+        {
+          "url": "https://www.hess.com/investors",
+          "retrieved_at_utc": "2026-10-11T20:26:17Z",
+          "http_status": 301,
+          "content_type": "text/html",
+          "sha256": "4b7b9cb61931f751f59f74fcab1529b1f6eca6f4bd8e47e2b1b0609acca60a08",
+          "size_bytes": 150,
+          "terms_url": "https://www.hess.com/robots.txt",
+          "terms_retrieved_at_utc": "2026-10-11T20:24:40Z",
+          "terms_wording": "not stated by the source"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2022": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2023": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "No qualifying document fetched in this bounded run.",
+          "documents": []
+        }
+      }
+    }
+  ]
+}
