@@ -6,7 +6,9 @@ and telescopic joints by component type, size, and pressure rating.
 
 from __future__ import annotations
 
+import csv
 import logging
+from io import StringIO
 from pathlib import Path
 from typing import Optional
 
@@ -27,6 +29,29 @@ VALID_COMPONENT_TYPES = (
     "flex_joint",
     "telescopic_joint",
 )
+
+
+def _validate_row_widths(content: str) -> None:
+    """Reject malformed records; line numbers identify the record start."""
+    reader = csv.reader(StringIO(content), strict=True)
+    try:
+        header = next(reader, [])
+    except csv.Error as exc:
+        raise ValueError(f"Malformed CSV at line 1: {exc}") from exc
+    expected = len(header)
+    while True:
+        line_number = reader.line_num + 1
+        try:
+            row = next(reader)
+        except StopIteration:
+            break
+        except csv.Error as exc:
+            raise ValueError(f"Malformed CSV at line {line_number}: {exc}") from exc
+        if len(row) != expected:
+            raise ValueError(
+                f"CSV line {line_number}: expected {expected} fields, "
+                f"actual {len(row)}"
+            )
 
 
 class DrillingRiserLoader:
@@ -51,7 +76,18 @@ class DrillingRiserLoader:
             self._df = pd.DataFrame()
             return self._df
 
-        df = pd.read_csv(csv_path)
+        # Parse the same snapshot that was checked, so a file replacement
+        # cannot introduce unchecked rows between preflight and pandas.
+        content = csv_path.read_text(encoding="utf-8-sig")
+        _validate_row_widths(content)
+        df = pd.read_csv(StringIO(content))
+        for field in ("DATA_SOURCE", "NOTES"):
+            if field not in df.columns:
+                raise ValueError(f"Missing required column {field}")
+            missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
+            if missing.any():
+                ids = df.loc[missing, "COMPONENT_ID"].tolist()
+                raise ValueError(f"{field} must be populated for components {ids}")
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df

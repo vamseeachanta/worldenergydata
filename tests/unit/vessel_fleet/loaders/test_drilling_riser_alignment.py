@@ -9,8 +9,8 @@ import pandas as pd
 import pytest
 
 from worldenergydata.vessel_fleet.loaders.drilling_riser_loader import (
-    DrillingRiserLoader,
     _DATA_DIR,
+    DrillingRiserLoader,
 )
 
 CSV_NAME = "drilling_riser_components.csv"
