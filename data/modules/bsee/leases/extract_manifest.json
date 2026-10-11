@@ -42,10 +42,15 @@
       "size_bytes": 1699
     },
     {
+      "file": "panel_values.html",
+      "sha256": "025e6b6a4f86972654d463e347d7606256bc87cefd90583f5aa8a652ca898852",
+      "size_bytes": 41740
+    },
+    {
       "file": "source_schema.json",
       "sha256": "228bb935c4eddc17ec54b6156fe05efc575535bae94227193ce75f427bfae9fc",
       "size_bytes": 29819
     }
   ],
-  "source_manifest_sha256": "f641eaed3642999f5ab57019dd2ef2a5b8607a622d9309d9fc543226d2c57246"
+  "source_manifest_sha256": "c413356d110e736a724c1e872edee8b523a0352662b3d16081248c5e6149610e"
 }

@@ -1,7 +1,9 @@
 """Offline contract tests using small slices of published BSEE files."""
 
+import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -13,7 +15,7 @@ FIXTURE = ROOT / "tests/fixtures/bsee/leases"
 SCHEMA = json.loads((ROOT / "data/modules/bsee/leases/source_schema.json").read_text())
 
 
-def tables():
+def tables() -> dict[str, Any]:
     return {
         kind: load_table(
             FIXTURE / (spec["archive"] if kind == "lease" else spec["member"]), spec
@@ -22,7 +24,7 @@ def tables():
     }
 
 
-def test_loader_validates_real_layout_and_types():
+def test_loader_validates_real_layout_and_types() -> None:
     data = tables()
     assert data["owner"][0]["ASSIGNMENT_PCT"] == 27.5
     assert data["owner"][0]["ASGN_APRV_DATE"] == "2026-07-28"
@@ -38,14 +40,14 @@ def test_loader_validates_real_layout_and_types():
         '"1","312242","20260728","20040727","02748","G16942","C","","","101","20250701"\n',
     ],
 )
-def test_loader_rejects_malformed(tmp_path, content):
+def test_loader_rejects_malformed(tmp_path: Path, content: str) -> None:
     path = tmp_path / "bad.txt"
     path.write_text(content)
     with pytest.raises(ValueError):
         load_table(path, SCHEMA["tables"]["owner"])
 
 
-def test_curated_dates_owners_and_history():
+def test_curated_dates_owners_and_history() -> None:
     result = curate(tables(), ["G16942"])
     lease = result["leases"][0]
     assert lease["lease_num"] == "G16942"
@@ -60,7 +62,7 @@ def test_curated_dates_owners_and_history():
     assert result["panel_values"][0]["current_owners"][0]["owner_name"]
 
 
-def test_group_identity_and_no_owner_operator_multiplication():
+def test_group_identity_and_no_owner_operator_multiplication() -> None:
     data = tables()
     extra = dict(data["owner"][0], SN_LSE_OWNER="999999", OWNER_GROUP_CODE="2")
     data["owner"].append(extra)
@@ -71,7 +73,7 @@ def test_group_identity_and_no_owner_operator_multiplication():
     assert result["panel_values"][0]["current_owners"][-1]["OWNER_GROUP_CODE"] == "2"
 
 
-def test_missing_source_and_company_are_explicit():
+def test_missing_source_and_company_are_explicit() -> None:
     data = tables()
     data["company"] = []
     result = curate(data, ["G16942", "G99999"])
@@ -85,7 +87,7 @@ def test_missing_source_and_company_are_explicit():
     )
 
 
-def test_registry_round_trip_and_unknown_reason():
+def test_registry_round_trip_and_unknown_reason() -> None:
     registry = load_fields(ROOT / "config/fields.yml")
     result = registry_check(["G16942", "OCS-G 16942", "G99999"], registry)
     assert [row["field_id"] for row in result[:2]] == ["big_foot", "big_foot"]
@@ -96,13 +98,42 @@ def test_registry_round_trip_and_unknown_reason():
     }
 
 
-def test_company_history_selects_unique_unterminated_name():
+def test_every_committed_lease_round_trips_through_by_lease() -> None:
+    directory = ROOT / "data/modules/bsee/leases"
+    leases = json.loads((directory / "leases.json").read_text())
+    manifest = json.loads((directory / "extract_manifest.json").read_text())
+    registry = load_fields(ROOT / "config/fields.yml")
+    assert len(leases) == manifest["leases_ingested"]
+    numbers = [row["lease_num"] for row in leases]
+    result = registry_check(numbers, registry)
+    assert all(registry.by_lease(number) is not None for number in numbers)
+    assert all(row["field_id"] is not None and row["reason"] is None for row in result)
+    assert result == json.loads((directory / "registry.json").read_text())
+
+
+def test_committed_extract_integrity_and_complete_inventory() -> None:
+    directory = ROOT / "data/modules/bsee/leases"
+    manifest = json.loads((directory / "extract_manifest.json").read_text())
+    for record in manifest["artifacts"]:
+        content = (directory / record["file"]).read_bytes()
+        assert len(content) == record["size_bytes"]
+        assert hashlib.sha256(content).hexdigest() == record["sha256"]
+    assert hashlib.sha256(
+        (directory / "source_manifest.json").read_bytes()
+    ).hexdigest() == (manifest["source_manifest_sha256"])
+    exceptions = {"README.md", "source_manifest.json", "extract_manifest.json"}
+    assert {path.name for path in directory.iterdir() if path.is_file()} == (
+        {record["file"] for record in manifest["artifacts"]} | exceptions
+    )
+
+
+def test_company_history_selects_unique_unterminated_name() -> None:
     result = curate(tables(), ["G16942"])
     assert result["leases"][0]["operator"] == ["Chevron U.S.A. Inc."]
     assert result["owners"][0]["owner_name"] == "Equinor US Offshore EP LLC"
 
 
-def test_csv_multiline_and_blank_assignment_status(tmp_path):
+def test_csv_multiline_and_blank_assignment_status(tmp_path: Path) -> None:
     path = tmp_path / "company.txt"
     text = (FIXTURE / "compalldelimit.txt").read_text()
     text = text.replace("California Oil Company", "California\nOil Company")
@@ -116,7 +147,7 @@ def test_csv_multiline_and_blank_assignment_status(tmp_path):
     assert len(curate(data, ["G16942"])["panel_values"][0]["current_owners"]) == 2
 
 
-def test_custom_output_contains_the_manifested_schema(tmp_path):
+def test_custom_output_contains_the_manifested_schema(tmp_path: Path) -> None:
     import runpy
 
     script = runpy.run_path(str(ROOT / "scripts/bsee/fetch_leases.py"))
@@ -127,3 +158,28 @@ def test_custom_output_contains_the_manifested_schema(tmp_path):
         path.read_bytes()
         == (ROOT / "data/modules/bsee/leases/source_schema.json").read_bytes()
     )
+
+
+def test_extract_renders_and_manifests_panel_from_same_rows(tmp_path: Path) -> None:
+    import runpy
+
+    script = runpy.run_path(str(ROOT / "scripts/bsee/fetch_leases.py"))
+    schema_path, _ = script["prepare_schema"](tmp_path)
+    (tmp_path / "source_manifest.json").write_text("{}\n")
+    data = tables()
+    result = curate(data, ["G16942"])
+    result["registry"] = registry_check(
+        ["G16942"], load_fields(ROOT / "config/fields.yml")
+    )
+    script["save_extract"](tmp_path, schema_path, data, ["G16942"], result)
+    html = (tmp_path / "panel_values.html").read_text()
+    assert "WR029" in html and "PROD" in html
+    assert "2006-08-31" in html and "1996-09-01" in html
+    assert "Equinor US Offshore EP LLC" in html and "27.5" in html
+    manifest = json.loads((tmp_path / "extract_manifest.json").read_text())
+    record = next(
+        row for row in manifest["artifacts"] if row["file"] == "panel_values.html"
+    )
+    content = (tmp_path / record["file"]).read_bytes()
+    assert record["size_bytes"] == len(content)
+    assert record["sha256"] == hashlib.sha256(content).hexdigest()

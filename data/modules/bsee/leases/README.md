@@ -5,7 +5,7 @@ The extract contains the 20 Lower Tertiary leases assigned to the 10 lifecycle
 poster fields in the canonical registry. All 20 resolve through `by_lease`.
 Raw packages remain in caller-configured external storage; no full raw ZIP is
 committed. The source manifest records URLs, UTC retrieval times, SHA-256,
-byte sizes, published update dates and the source disclaimer.
+byte sizes and the source disclaimer. No source update date is inferred.
 
 ## Reproduction
 
@@ -14,14 +14,27 @@ Python environment and BSEE/core packages available, run:
 
 ```bash
 uv run python scripts/bsee/fetch_leases.py
+uv run python scripts/bsee/fetch_leases.py --update-manifest
 uv run python scripts/bsee/fetch_leases.py --from-saved
 ```
 
-The first command discovers actual source links and downloads sequentially.
+The committed manifest was emitted by the script during one paced retrieval on
+2026-10-11: the discovery page, disclaimer, one schema-listed layout per table,
+and four archives (ten files). The first command writes its run manifest beside
+the external raw files and reports differences in names, URLs, sizes and SHA-256
+against the committed manifest; it changes no curated files. Use a separate new
+raw directory for the explicit `--update-manifest` command, which replaces the
+committed manifest and regenerates the extract. `--from-saved` verifies those
+saved archives and regenerates all derived outputs, including the HTML table,
+offline. Observation timestamps describe this retrieval, not database freshness.
+
+Downloads are sequential, with at least two seconds before every request attempt,
+including a retry. The User-Agent supplies the repository contact URL.
 Existing raw files are never overwritten. HTTP 401, 403 or 429 stops downloads;
-timeouts and server errors have at most one retry. Completed downloads retain
-individual provenance sidecars even if a later request fails; interruptions are recorded. The second command verifies
-saved archive hashes and curates offline. Each run reads back its outputs.
+an access challenge also stops downloads. Timeouts and server errors have at most
+one retry. Completed downloads retain
+individual provenance sidecars even if a later request fails; interruptions are
+recorded. Each run reads back its outputs.
 The environment's prescribed cache and temporary-directory configuration applies.
 
 ## Tables and meaning
@@ -38,6 +51,8 @@ The environment's prescribed cache and temporary-directory configuration applies
   labeled actual expiration and expected expiration dates. No actual expiration
   is inferred from expected expiration or a primary term. Surface area and its
   source unit code remain present.
+- `panel_values.html`: escaped display of the same curated rows; its digest and
+  size are included in the extract manifest.
 - `registry.json` / `missing.json`: explicit registry and source-presence outcomes.
 - `source_schema.json`: verified source aliases, positions, lengths and parsed
   scalar types. Published layouts govern parsing; the existing conceptual
@@ -63,9 +78,9 @@ Panel wiring remains outside this PR: status, lease effective date, actual versu
 expected expiration, individual lease block, and owner/group-specific working
 interest. Exact available values are in `leases.json` and `panel_values.json`.
 
-The six open PR file lists were checked before file selection. The atlas addition
-in PR 1155 uses disjoint
-paths. Shared `data/modules/bsee/README.md`, `DATA_DICTIONARY.md`, `schema.yaml`,
+The download/provenance helper overlaps conceptually with
+[PR 1155](https://github.com/vamseeachanta/worldenergydata/pull/1155); consolidation
+will follow both additions. Shared `data/modules/bsee/README.md`, `DATA_DICTIONARY.md`, `schema.yaml`,
 `_metadata.json`, and freshness-scorecard integration remain deferred until the
 parallel BSEE work merges. No panel or registry configuration is changed here.
 

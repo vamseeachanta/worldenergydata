@@ -3,9 +3,21 @@
   "owner_repo": "worldenergydata",
   "files": [
     {
+      "file": "leasing-page.html",
+      "source_url": "https://www.data.bsee.gov/Main/Leasing.aspx",
+      "retrieved_at_utc": "2026-10-11T19:44:36.776142Z",
+      "sha256": "fe63a0e2eef2a5e1799d0d53201ab1b2c05e0fae7523bd8bbbf13101176af3e1",
+      "size_bytes": 55067,
+      "terms": {
+        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "license": "No explicit license grant stated on the download page.",
+        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      }
+    },
+    {
       "file": "Disclaimer.html",
       "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-      "retrieved_at_utc": "2026-10-11T18:51:39.481866Z",
+      "retrieved_at_utc": "2026-10-11T19:44:39.187947Z",
       "sha256": "64153767ca5b252488c65e4ddf6a882319cdf5350b012e3db2b86eb222bba803",
       "size_bytes": 28180,
       "terms": {
@@ -15,45 +27,9 @@
       }
     },
     {
-      "file": "compalldelimit.zip",
-      "source_url": "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
-      "retrieved_at_utc": "2026-10-11T18:52:07.624714Z",
-      "sha256": "95338a4f026c5edd65928ce5183171b7b68c08c9a3d77b60d178aea3309f15ab",
-      "size_bytes": 211281,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "companyAll.html",
-      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
-      "retrieved_at_utc": "2026-10-11T18:52:08.042387Z",
-      "sha256": "440a429a295a780a25d30387049d354df43fe082641cb7539ca7c0569050352c",
-      "size_bytes": 32585,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "companyAllFields.html",
-      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAllFields",
-      "retrieved_at_utc": "2026-10-11T18:52:30.337636Z",
-      "sha256": "48e84f32b0dbde354177281d026352b531a984e05253810ceee77c78ca7e14e4",
-      "size_bytes": 31319,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "leaseData.html",
+      "file": "lease-layout.html",
       "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
-      "retrieved_at_utc": "2026-10-11T18:51:40.820272Z",
+      "retrieved_at_utc": "2026-10-11T19:44:41.664436Z",
       "sha256": "4ab75960e2c3152dac65d91243245a3be7ce4686d7006e04e62adf112ff66dc2",
       "size_bytes": 41683,
       "terms": {
@@ -63,9 +39,21 @@
       }
     },
     {
-      "file": "leaseOwner.html",
+      "file": "lsetapefixed.zip",
+      "source_url": "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+      "retrieved_at_utc": "2026-10-11T19:44:44.526452Z",
+      "sha256": "fa2a5da3c4208f79958fc05f9f7556778857a00b497a100a57c16fa30cf4c7f6",
+      "size_bytes": 1108540,
+      "terms": {
+        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "license": "No explicit license grant stated on the download page.",
+        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      }
+    },
+    {
+      "file": "owner-layout.html",
       "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
-      "retrieved_at_utc": "2026-10-11T18:51:39.905684Z",
+      "retrieved_at_utc": "2026-10-11T19:44:46.947992Z",
       "sha256": "8462e1529a4b9b0f250eceb21ebf1dc6168cdd1bc5e03b45b34204990088acea",
       "size_bytes": 30653,
       "terms": {
@@ -75,57 +63,9 @@
       }
     },
     {
-      "file": "leaseOwnerFields.html",
-      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerFields",
-      "retrieved_at_utc": "2026-10-11T18:52:30.786485Z",
-      "sha256": "fbbe0bf134130eefb97f2869df4d91b3340ad5cf01bece3663b753062a333719",
-      "size_bytes": 29732,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "leaseOwnerOper.html",
-      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
-      "retrieved_at_utc": "2026-10-11T18:51:40.322323Z",
-      "sha256": "682b239013073505b09e2902ec1febc3f2c2a15320a8f7d6fa67296f49d1f91e",
-      "size_bytes": 30378,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "leasing-page.html",
-      "source_url": "https://www.data.bsee.gov/Main/Leasing.aspx",
-      "retrieved_at_utc": "2026-10-11T18:51:24.013368Z",
-      "sha256": "d91c88b21ad1286aff467f9a7f67ddd98a9303298784dce7ffb0472beadb8bc0",
-      "size_bytes": 55068,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
-      "file": "lseownddelimit.zip",
-      "source_url": "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
-      "retrieved_at_utc": "2026-10-11T18:51:47.758645Z",
-      "sha256": "98498419d05244c840dd61162c6ef71464085b1160b87c632f7cfbca3614fb7e",
-      "size_bytes": 1844632,
-      "terms": {
-        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
-        "license": "No explicit license grant stated on the download page.",
-        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
-      }
-    },
-    {
       "file": "lseowndelimit.zip",
       "source_url": "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
-      "retrieved_at_utc": "2026-10-11T18:51:48.716697Z",
+      "retrieved_at_utc": "2026-10-11T19:44:50.371118Z",
       "sha256": "5323534f15f0b286883f52c2dd1ec6a1b2fa32969a54c350a573bd0439057e8b",
       "size_bytes": 2743027,
       "terms": {
@@ -135,24 +75,52 @@
       }
     },
     {
-      "file": "lsetapefixed.zip",
-      "source_url": "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
-      "retrieved_at_utc": "2026-10-11T18:51:49.514740Z",
-      "sha256": "fa2a5da3c4208f79958fc05f9f7556778857a00b497a100a57c16fa30cf4c7f6",
-      "size_bytes": 1108540,
+      "file": "operator-layout.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+      "retrieved_at_utc": "2026-10-11T19:44:52.780303Z",
+      "sha256": "682b239013073505b09e2902ec1febc3f2c2a15320a8f7d6fa67296f49d1f91e",
+      "size_bytes": 30378,
+      "terms": {
+        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "license": "No explicit license grant stated on the download page.",
+        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      }
+    },
+    {
+      "file": "lseownddelimit.zip",
+      "source_url": "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+      "retrieved_at_utc": "2026-10-11T19:44:55.838768Z",
+      "sha256": "98498419d05244c840dd61162c6ef71464085b1160b87c632f7cfbca3614fb7e",
+      "size_bytes": 1844632,
+      "terms": {
+        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "license": "No explicit license grant stated on the download page.",
+        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      }
+    },
+    {
+      "file": "company-layout.html",
+      "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+      "retrieved_at_utc": "2026-10-11T19:44:58.256254Z",
+      "sha256": "440a429a295a780a25d30387049d354df43fe082641cb7539ca7c0569050352c",
+      "size_bytes": 32585,
+      "terms": {
+        "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "license": "No explicit license grant stated on the download page.",
+        "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      }
+    },
+    {
+      "file": "compalldelimit.zip",
+      "source_url": "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+      "retrieved_at_utc": "2026-10-11T19:45:00.888341Z",
+      "sha256": "95338a4f026c5edd65928ce5183171b7b68c08c9a3d77b60d178aea3309f15ab",
+      "size_bytes": 211281,
       "terms": {
         "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
         "license": "No explicit license grant stated on the download page.",
         "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
       }
     }
-  ],
-  "retrieval_time_basis": "UTC completion time recorded by saved-file modification time during this retrieval.",
-  "source_updated_as_published": {
-    "lease": "10/1/2026 10:54:35 AM",
-    "owner": "10/4/2026 7:31:11 AM",
-    "operator": "10/4/2026 7:30:53 AM",
-    "company": "10/1/2026 6:30:40 AM",
-    "timezone": "Not specified by source"
-  }
+  ]
 }

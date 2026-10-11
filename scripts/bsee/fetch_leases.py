@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import shutil
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -31,6 +32,87 @@ def write_json(path: Path, value: Any) -> dict[str, Any]:
         "file": path.name,
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         "size_bytes": path.stat().st_size,
+    }
+
+
+def compare_manifest(previous: dict[str, Any], current: dict[str, Any]) -> list[str]:
+    """Compare source bytes and locations independently of observation times."""
+    old = {row["file"]: row for row in previous["files"]}
+    new = {row["file"]: row for row in current["files"]}
+    differences = []
+    for name in sorted(old.keys() | new.keys()):
+        if name not in old or name not in new:
+            differences.append(f"{name}: {'added' if name in new else 'removed'}")
+            continue
+        for key in ("source_url", "size_bytes", "sha256"):
+            if old[name][key] != new[name][key]:
+                differences.append(
+                    f"{name}: {key}: {old[name][key]} -> {new[name][key]}"
+                )
+    return differences
+
+
+def publish_manifest(
+    records: list[dict[str, Any]], raw_dir: Path, output: Path, *, update: bool
+) -> None:
+    """Always retain the run manifest; replace the curated manifest only explicitly."""
+    manifest = {
+        "source_id": "bsee-data-center",
+        "owner_repo": "worldenergydata",
+        "files": records,
+    }
+    write_json(raw_dir / "source_manifest.json", manifest)
+    target = output / "source_manifest.json"
+    if target.exists():
+        differences = compare_manifest(json.loads(target.read_text()), manifest)
+        print(json.dumps({"manifest_differences": differences}))
+    else:
+        print(json.dumps({"manifest_differences": ["No curated manifest exists"]}))
+    if update:
+        write_json(target, manifest)
+
+
+def save_panel_html(output: Path, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Render escaped source values from the same curated retrieval."""
+    columns = (
+        "lease_num",
+        "area_block",
+        "status",
+        "effective_date",
+        "expiration_date",
+        "expected_expiration_date",
+        "current_owners",
+    )
+    html = '<!doctype html><html lang="en"><meta charset="utf-8">'
+    html += "<title>Lease panel source values</title><h1>Lease panel source values</h1>"
+    html += (
+        "<p>Actual and expected expiration dates remain distinct. Assignment interests "
+    )
+    html += "are not aggregated across groups. Source disclaimer: working database, "
+    html += "not a legal document.</p><table><tr>"
+    html += "".join(f"<th>{escape(key)}</th>" for key in columns) + "</tr>\n"
+    for row in rows:
+        html += "<tr>"
+        for key in columns:
+            value = row.get(key)
+            text = (
+                json.dumps(value, ensure_ascii=False)
+                if isinstance(value, list)
+                else str(value)
+            )
+            html += f'<td>{escape(text if value is not None else "Not reported")}</td>'
+        html += "</tr>\n"
+    html += "</table><p>Table 1. Source values for future panel wiring; status and interests "
+    html += "apply to the snapshot recorded in source_manifest.json.</p></html>\n"
+    path = output / "panel_values.html"
+    path.write_text(html, encoding="utf-8")
+    content = path.read_bytes()
+    if content.decode("utf-8") != html:
+        raise OSError("Panel HTML readback mismatch")
+    return {
+        "file": path.name,
+        "sha256": hashlib.sha256(content).hexdigest(),
+        "size_bytes": len(content),
     }
 
 
@@ -60,6 +142,13 @@ def save_extract(
     artifacts = [
         write_json(output / f"{name}.json", rows) for name, rows in result.items()
     ]
+    by_lease = {row["lease_num"]: row for row in result["leases"]}
+    artifacts.append(
+        save_panel_html(
+            output,
+            [{**by_lease[row["lease_num"]], **row} for row in result["panel_values"]],
+        )
+    )
     artifacts.append(
         {
             "file": "source_schema.json",
@@ -117,21 +206,30 @@ def main() -> None:
         action="store_true",
         help="Curate verified saved packages offline",
     )
+    parser.add_argument(
+        "--update-manifest",
+        action="store_true",
+        help="Explicitly replace the curated manifest and regenerate the extract",
+    )
     args = parser.parse_args()
     if args.raw_dir is None:
         parser.error("Set BSEE_LEASE_RAW_DIR or --raw-dir to external data storage")
     output = args.output_dir
-    schema_path, schema = prepare_schema(output)
+    if args.from_saved and args.update_manifest:
+        parser.error("--update-manifest requires a new retrieval")
     if not args.from_saved:
-        records = fetch_bundle(schema, args.raw_dir)
-        write_json(
-            output / "source_manifest.json",
-            {
-                "source_id": "bsee-data-center",
-                "owner_repo": "worldenergydata",
-                "files": records,
-            },
+        schema_path = (
+            Path(__file__).resolve().parents[2]
+            / "data/modules/bsee/leases/source_schema.json"
         )
+        schema = json.loads(schema_path.read_text())
+        records = fetch_bundle(schema, args.raw_dir)
+        if args.update_manifest:
+            output.mkdir(parents=True, exist_ok=True)
+        publish_manifest(records, args.raw_dir, output, update=args.update_manifest)
+        if not args.update_manifest:
+            return
+    schema_path, schema = prepare_schema(output)
     tables = saved_tables(args.raw_dir, output, schema)
     registry = load_fields(args.registry)
     leases = poster_leases(registry)
