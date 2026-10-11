@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import math
 import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -27,6 +28,56 @@ def atomic_json(path: Path, value: Any) -> None:
     scratch.replace(path)
 
 
+def read_record(path: Path, *, progress: bool = False) -> dict[str, Any]:
+    """Reject damaged evidence without replacing or removing the original."""
+    recovery = (
+        "Move it aside explicitly, then wait one full budget window before resuming; "
+        "cached objects and per-URL records remain verified on read."
+        if progress
+        else "Preserve it for inspection; restore verified provenance before reuse."
+    )
+    try:
+        value = json.loads(path.read_text())
+        if not isinstance(value, dict):
+            raise ValueError("expected a mapping")
+        if progress:
+            validate_progress(value)
+        else:
+            if (
+                not isinstance(value.get("sha256"), str)
+                or not isinstance(value.get("url"), str)
+                or type(value.get("size_bytes")) is not int
+                or value["size_bytes"] < 0
+            ):
+                raise ValueError("invalid URL record shape")
+        return value
+    except (ValueError, TypeError, KeyError, OverflowError) as error:
+        raise ValueError(f"Cache integrity: invalid {path.name}. {recovery}") from error
+
+
+def validate_progress(value: dict[str, Any]) -> None:
+    """Require finite timestamps and explicit mappings before any reservation."""
+    if not isinstance(value.get("completed"), dict) or not isinstance(
+        value.get("hosts"), dict
+    ):
+        raise ValueError("invalid progress mappings")
+    for host, state in value["hosts"].items():
+        if not isinstance(host, str) or not isinstance(state, dict):
+            raise ValueError("invalid host state")
+        attempts = state.get("attempts")
+        if not isinstance(attempts, list):
+            raise ValueError("invalid attempts")
+        for number in [state.get("next_at"), *attempts]:
+            if (
+                isinstance(number, bool)
+                or not isinstance(number, (int, float))
+                or not math.isfinite(number)
+                or number < 0
+                or number > 253370764800
+            ):
+                raise ValueError("invalid budget timestamp")
+
+
 class CacheStore:
     """One cache root per execution owner; simultaneous writers unsupported."""
 
@@ -38,7 +89,7 @@ class CacheStore:
         self.records.mkdir(parents=True, exist_ok=True)
         self.progress = self.root / "progress.json"
         self.state: dict[str, Any] = (
-            json.loads(self.progress.read_text())
+            read_record(self.progress, progress=True)
             if self.progress.exists()
             else {"completed": {}, "hosts": {}}
         )
@@ -53,7 +104,7 @@ class CacheStore:
         record = self._record(url)
         if not record.exists():
             return None
-        metadata = json.loads(record.read_text())
+        metadata = read_record(record)
         digest = metadata["sha256"]
         if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError("Cache integrity: invalid digest")

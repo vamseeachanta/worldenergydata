@@ -19,6 +19,14 @@ class BudgetExceeded(RuntimeError):
     """The rolling per-host request budget is exhausted."""
 
 
+class ResponseTooLarge(ValueError):
+    """A response exceeded the configured in-memory byte limit."""
+
+    def __init__(self, message: str, headers: dict[str, str]) -> None:
+        super().__init__(message)
+        self.headers = headers
+
+
 class UnreachableTarget(RuntimeError):
     """A target could not be reached from the executing machine."""
 
@@ -42,18 +50,29 @@ class FetchConfig:
     """Cache location and identification have no machine-specific defaults."""
 
     cache_root: Path | str
-    contact: str
+    user_agent: str
     fallback_interval: float = 2.0
     budget_requests: int = 30
     budget_window: float = 60.0
     timeout: float = 15.0
     max_retries: int = 2
+    max_sleep_seconds: float = 300.0
+    max_response_bytes: int = 5 * 1024 * 1024
 
     def __post_init__(self) -> None:
         if not str(self.cache_root).strip():
             raise ValueError("cache root is required")
-        if "@" not in self.contact or any(c.isspace() for c in self.contact):
-            raise ValueError("contact address is required")
+        if not self.user_agent.strip() or any(c in self.user_agent for c in "\r\n"):
+            raise ValueError("User-Agent is required and must be a single line")
+        if (
+            isinstance(self.max_sleep_seconds, bool)
+            or not isinstance(self.max_sleep_seconds, (int, float))
+            or not math.isfinite(self.max_sleep_seconds)
+            or self.max_sleep_seconds <= 0
+        ):
+            raise ValueError("Maximum sleep must be finite and positive")
+        if type(self.max_response_bytes) is not int or self.max_response_bytes <= 0:
+            raise ValueError("Maximum response bytes must be a positive integer")
         for value in (self.fallback_interval, self.budget_window, self.timeout):
             if not math.isfinite(value) or value <= 0:
                 raise ValueError(
@@ -63,15 +82,11 @@ class FetchConfig:
             raise ValueError("Invalid request or retry budget")
 
     @classmethod
-    def from_env(cls, *, contact: str) -> "FetchConfig":
+    def from_env(cls, *, user_agent: str) -> "FetchConfig":
         root = os.environ.get("STATE_FETCH_CACHE_ROOT")
         if not root:
             raise ValueError("Set STATE_FETCH_CACHE_ROOT or configure cache_root")
-        return cls(cache_root=root, contact=contact)
-
-    @property
-    def user_agent(self) -> str:
-        return f"worldenergydata-public-records/1.0 (contact: {self.contact})"
+        return cls(cache_root=root, user_agent=user_agent)
 
 
 @dataclass(frozen=True)
@@ -123,14 +138,14 @@ def header_delay(
     balance. This is a conservative assumption, not measured capacity.
     """
     h = {key.lower(): value for key, value in headers.items()}
-    delay = fallback
+    candidates = [fallback]
     remaining = _number(h.get("ratelimit-remaining"))
     reset = _number(h.get("ratelimit-reset"))
     if remaining is not None:
         horizon = reset if reset is not None else window
-        delay = max(delay, horizon / max(remaining, 1))
+        candidates.append(horizon / max(remaining, 1))
     elif reset is not None:
-        delay = max(delay, reset)
+        candidates.append(reset)
     for policy in h.get("ratelimit-limit", "").split(","):
         parts = policy.split(";")
         limit = _number(parts[0])
@@ -139,8 +154,8 @@ def header_delay(
             None,
         )
         if limit is not None and limit > 0:
-            delay = max(delay, (advertised_window or window) / limit)
-    delay = max(delay, _vendor_delay(h, window))
+            candidates.append((advertised_window or window) / limit)
+    candidates.append(_vendor_delay(h, window))
     retry = h.get("retry-after")
     seconds = _number(retry)
     if seconds is None and retry:
@@ -152,7 +167,12 @@ def header_delay(
                 )
         except (ValueError, TypeError, OverflowError):
             pass
-    return max(delay, seconds or 0.0)
+    # Ignore invalid candidates individually, retaining every valid server wait.
+    horizon = (
+        datetime(9999, 1, 1, tzinfo=timezone.utc) - (now or datetime.now(timezone.utc))
+    ).total_seconds()
+    candidates.append(seconds or 0.0)
+    return max(v for v in candidates if math.isfinite(v) and 0 <= v <= horizon)
 
 
 def _vendor_delay(headers: Mapping[str, str], window: float) -> float:

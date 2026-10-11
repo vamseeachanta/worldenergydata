@@ -4,6 +4,7 @@ from .client import Fetcher
 from .policy import (
     BudgetExceeded,
     FetchConfig,
+    ResponseTooLarge,
     TermsCheck,
     TermsDenied,
     UnreachableTarget,
@@ -17,6 +18,7 @@ __all__ = [
     "FetchConfig",
     "Fetcher",
     "FetchResult",
+    "ResponseTooLarge",
     "TermsCheck",
     "TermsDenied",
     "UnreachableTarget",

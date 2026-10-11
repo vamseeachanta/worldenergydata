@@ -28,8 +28,10 @@ Indiana production is reported per lease, which does not establish well-level pr
 <p>The reusable package is <code>worldenergydata.modules.state_regulators.fetch</code>, following the Colorado ingest's
 urllib and SHA-256/UTC provenance conventions. Cache location is explicitly supplied as <code>FetchConfig.cache_root</code>
 or through <code>STATE_FETCH_CACHE_ROOT</code>; there is no default path. The operator shall select a data-disk location.
-<code>contact</code> is a required configuration value for the descriptive User-Agent. No personal address is supplied.</p>
-<pre>config = FetchConfig.from_env(contact=approved_contact)
+<code>user_agent</code> is required configuration, with the repository URL as contact in the <code>(+URL; purpose)</code> form.</p>
+<pre>config = FetchConfig.from_env(
+    user_agent="public-records/1.0 (+https://github.com/vamseeachanta/worldenergydata; public records research)"
+)
 # Populate checks only after reading and recording the source terms.
 fetcher = Fetcher(config, recorded_terms_checks)
 projection = fetcher.run(planned_urls, dry_run=True)
@@ -43,13 +45,24 @@ records caller-supplied decisions; it does not infer permission from a successfu
 available bulk alternatives. It does not discover endpoints or crawl. Redirects are refused; any redirect destination
 requires its own explicit source permission and URL selection. Every attempt is identified, timeout-bound, paced and
 charged against a per-host budget. An uncached first request serves as the reachability preflight and retains its payload,
-so there is no extra probe. A reachability failure includes the executing machine name only in its runtime exception.</p>
+so there is no extra probe. A reachability failure identifies the build host by role in its runtime exception.</p>
 <p><code>objects/&lt;sha256&gt;</code> contains payload bytes. URL-keyed <code>records/</code> sidecars retain source URL,
 UTC fetch timestamp, response headers, SHA-256, size and the terms decision. Payload digest and size are verified on
 readback. <code>progress.json</code> retains completed URLs, request reservations and cooldowns. Atomic writes permit
 restart after interruption; corrupted cache evidence stops rather than silently becoming valid input. One writer per
-cache root is required; concurrent writers are unsupported. Payloads are read into memory, so this layer is intended
-for bounded objects; streaming large archives is future work.</p>
+cache root is required; concurrent writers are unsupported. <code>max_response_bytes</code> defaults to 5 MiB (5,242,880 bytes), bounding memory for small records;
+large archives require a future streaming implementation. Advertised lengths above the cap are refused before reading;
+otherwise at most cap + 1 bytes are read. Oversized responses are never cached and still consume an attempt.</p>
+<p><code>max_sleep_seconds</code> defaults to 300 seconds and must be finite and positive.
+Before a request, a longer cooldown raises <code>BudgetExceeded</code> with the host and UTC resume time, without sleeping.
+The original server-requested time remains persisted across restarts; the cap never shortens it. This covers Retry-After,
+standard rate limits and vendor headers. Invalid or unrepresentable header values retain fallback pacing.</p>
+<p>Invalid JSON or malformed budget state in <code>progress.json</code> raises a named cache-integrity error.
+Nothing is deleted or overwritten automatically. The operator may preserve the file by moving it aside explicitly,
+then wait one full budget window before resuming with empty budget state. Cached objects and per-URL records remain
+unaffected and are still verified on read. Damaged per-URL JSON records also raise a named integrity error.</p>
+<p>Data retrieved under an earlier recorded permission remains readable from cache after permission is withdrawn.
+That cache-hit path makes no network request; purge is an explicit operator action. Uncached URLs still require permission.</p>
 <p>The offline projection reports unique uncached requests, cached URLs, maximum retry attempts, baseline wall-clock
 estimate and terms status. Estimates exclude response latency, future header changes and retry delays; unknown vendor
 windows use configuration. Exhausted budgets stop collection for later resume. HTTP 429 retries are bounded and honor

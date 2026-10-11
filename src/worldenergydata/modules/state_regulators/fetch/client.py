@@ -12,6 +12,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from .policy import (
     BudgetExceeded,
     FetchConfig,
+    ResponseTooLarge,
     TermsCheck,
     TermsDenied,
     UnreachableTarget,
@@ -56,6 +57,9 @@ class Fetcher:
             host, {"attempts": [], "next_at": 0}
         )
         delay = max(0.0, state["next_at"] - self.clock())
+        if delay > self.config.max_sleep_seconds:
+            resume = datetime.fromtimestamp(state["next_at"], timezone.utc)
+            raise BudgetExceeded(f"Wait for {host}; resume at {resume.isoformat()} UTC")
         if delay:
             self.sleep(delay)
         now = self.clock()
@@ -83,6 +87,8 @@ class Fetcher:
     def fetch(self, url: str) -> FetchResult:
         """First uncached fetch is preflight; no duplicate probe connection."""
         origin_of(url)
+        # Earlier recorded permission keeps cached data readable after withdrawal.
+        # This path makes no network request; purging is an explicit operator action.
         cached = self.store.get(url)
         if cached:
             return cached
@@ -96,6 +102,9 @@ class Fetcher:
             self._reserve(url)
             try:
                 payload, headers = self._request(url)
+            except ResponseTooLarge as oversized:
+                self._cooldown(url, oversized.headers)
+                raise
             except HTTPError as error:
                 self._cooldown(url, error.headers)
                 error.close()
@@ -110,7 +119,19 @@ class Fetcher:
         request = Request(url, headers={"User-Agent": self.config.user_agent})
         try:
             with self.opener.open(request, timeout=self.config.timeout) as response:
-                return response.read(), dict(response.headers)
+                cap = self.config.max_response_bytes
+                length = response.headers.get("Content-Length")
+                try:
+                    advertised = int(length) if length is not None else 0
+                except ValueError:
+                    advertised = 0
+                message = f"Response from {origin_of(url)} exceeds cap of {cap} bytes"
+                if advertised > cap:
+                    raise ResponseTooLarge(message, dict(response.headers))
+                payload = response.read(cap + 1)
+                if len(payload) > cap:
+                    raise ResponseTooLarge(message, dict(response.headers))
+                return payload, dict(response.headers)
         except HTTPError:
             raise
         except (URLError, OSError) as error:
@@ -121,7 +142,7 @@ class Fetcher:
                 else "network-reachability"
             )
             raise UnreachableTarget(
-                f"{layer}: target={origin_of(url)} machine={socket.gethostname()}; {reason}"
+                f"{layer}: target={origin_of(url)} machine=the build host; {reason}"
             ) from error
 
     def preflight(self, url: str) -> FetchResult:
