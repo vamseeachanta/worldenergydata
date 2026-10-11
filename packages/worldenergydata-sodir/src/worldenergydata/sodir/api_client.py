@@ -330,6 +330,17 @@ class SodirAPIClient:
 
         return response
 
+    def query_entity(self, entity: str, **kwargs: Any) -> List[Dict[str, Any]]:
+        """Read bounded field, wellbore or production ArcGIS pages.
+
+        Uses observed metadata and a capped transport; legacy methods retain
+        their existing response contract. See feature_service.query_entity.
+        """
+        from .feature_service import query_entity
+
+        records: List[Dict[str, Any]] = query_entity(self, entity, **kwargs)
+        return records
+
     # SODIR-specific endpoint methods
 
     def get_blocks(self, **kwargs) -> List[Dict]:

@@ -1,0 +1,191 @@
+[
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:17:55.323667+00:00",
+    "sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f",
+    "size_bytes": 1245,
+    "source_url": "https://factmaps.sodir.no/map/robots.txt",
+    "status": 404,
+    "terms_url": "https://factmaps.sodir.no/map/robots.txt"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:17:57.415701+00:00",
+    "sha256": "d13f8421440b4f7847ea12c86a5388fc39dac23eba394349a8db27b8af2eaba7",
+    "size_bytes": 5643,
+    "source_url": "https://www.sodir.no/en/facts/",
+    "status": 403,
+    "terms_url": "https://www.sodir.no/en/facts/"
+  },
+  {
+    "licence_terms": "The content on the FactPages may be used in accordance with Norwegian Licence for Open Government Data (NLOD).",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:00.072636+00:00",
+    "scope": "FactPages; applicability to FactMaps not independently established",
+    "sha256": "00969907845de4ee2d8fe7466389db8f57edf1f786321baace58d16e673de8cb",
+    "size_bytes": 16670,
+    "source_url": "https://factpages.sodir.no/en/",
+    "status": 200,
+    "terms_url": "https://factpages.sodir.no/en/"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:02.607581+00:00",
+    "sha256": "f385bafce4da055182010f8e50702593437571d007b1f33f2a5d49abffe33b84",
+    "size_bytes": 24390,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:20.262766+00:00",
+    "sha256": "7f5a41935ab42ae4e5a18c5b6ccb721d96abcd007c2892afdad4a4e864b0c076",
+    "size_bytes": 1924,
+    "source_url": "https://factpages.sodir.no/api/$metadata",
+    "status": 404,
+    "terms_url": "https://factpages.sodir.no/api/$metadata"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:22.828703+00:00",
+    "sha256": "cab44af5b588ccbab249b8c933975c65a01fbad47ff66f4e0bff345b2a0d37b4",
+    "size_bytes": 288,
+    "source_url": "https://data.norge.no/robots.txt",
+    "status": 200,
+    "terms_url": "https://data.norge.no/robots.txt"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:25.390702+00:00",
+    "sha256": "ce2e5828b9bee8e0a3ca8da3494945655c492b6f5e01e9853d9bcf16e3fc6afa",
+    "size_bytes": 15898,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7100?f=pjson",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7100?f=pjson"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:27.906261+00:00",
+    "sha256": "985bd69646b029a23222edadac98a5ddf66f8c0360af9de5b2b1aa0ec03ec29f",
+    "size_bytes": 40813,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/5000?f=pjson",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/5000?f=pjson"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:35.855754+00:00",
+    "sha256": "22abea3f977a374d94584653713d9472bfa60cfa90ef660f3c542caad923d7dc",
+    "size_bytes": 30351,
+    "source_url": "https://data.norge.no/nlod/en",
+    "status": 200,
+    "terms_url": "https://data.norge.no/nlod/en"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:38.353643+00:00",
+    "sha256": "36fdc22442d56ce0824227fb131d98fd5dc10dbec71bfd5df47ae1c6a0ed365f",
+    "size_bytes": 8735,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300?f=pjson",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300?f=pjson"
+  },
+  {
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:18:40.857221+00:00",
+    "sha256": "dc1d54dab6ec8c00f70137927504e4f222c8395f10760b6beecfcfa94e08249f",
+    "size_bytes": 1245,
+    "source_url": "https://factpages.sodir.no/api/",
+    "status": 404,
+    "terms_url": "https://factpages.sodir.no/api/"
+  },
+  {
+    "licence_terms": "This licence grants you the right to copy, use and distribute information, provided you acknowledge the contributors and comply with the terms and conditions stipulated in this licence.",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:19:21.903914+00:00",
+    "sha256": "8c9abba2b7498f057e3f78bcf4a41d9c7328b12e5bd08ff85b274d18cc0d0862",
+    "size_bytes": 59743,
+    "source_url": "https://data.norge.no/nlod/en/2.0",
+    "status": 200,
+    "terms_url": "https://data.norge.no/nlod/en/2.0"
+  },
+  {
+    "entity": "fields",
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:21:53.442227+00:00",
+    "sha256": "dd7f651969500e7f4cbd9cef871c78209ac254548d440470c1508006cefd222d",
+    "size_bytes": 3861,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7100/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CShape__Area%2CShape__Length%2CcmpLongName%2CcmpNpdidCompany%2CfldCurrentActivitySatus%2CfldDateUpdated%2CfldDateUpdatedMax%2CfldDiscoveryYear%2CfldFactMapUrl%2CfldFactPageUrl%2CfldGUID%2CfldHcType%2CfldMainArea%2CfldMainSupplyBase%2CfldName%2CfldNpdidField%2CfldNpdidOwner%2CfldOwnerKind%2CfldOwnerName%2CwlbFactPageUrl%2CwlbName%2CwlbNpdidWellbore&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  },
+  {
+    "entity": "production",
+    "licence_terms": "not stated by the source",
+    "retention": "local research evidence only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:21:57.442666+00:00",
+    "sha256": "af64fd083a880ecc251f1de62e692d2286e0159a9c06ab797c283d35b9f96749",
+    "size_bytes": 2845,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CprfInformationCarrier%2CprfInformationCarrierKind%2CprfInvestmentsMillNOK%2CprfMonth%2CprfNpdidInformationCarrier%2CprfPeriod%2CprfPrdCondensateGrossMillSm3%2CprfPrdCondensateNetMillSm3%2CprfPrdGasGrossBillSm3%2CprfPrdGasNetBillSm3%2CprfPrdNGLNetMillSm3%2CprfPrdOeGrossMillSm3%2CprfPrdOeNetMillSm3%2CprfPrdOilGrossMillSm3%2CprfPrdOilNetMillSm3%2CprfPrdProducedWaterInFieldMillS%2CprfYear&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  },
+  {
+    "dataset_kind": "synthetic fixture; no measured or regulator values",
+    "licence_terms": "not stated by the source",
+    "retention": "committed synthetic fixture",
+    "retrieved_at_utc": "2026-10-11T20:23:38.131597+00:00",
+    "sha256": "c6889ad9208be1798c50b38c490962ccbe5bceff94547610c8861cf006d6db93",
+    "size_bytes": 352,
+    "source_url": null,
+    "terms_url": null
+  },
+  {
+    "entity": "fields",
+    "licence_terms": "not stated by the source",
+    "retention": "live probe provenance only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:30:36.887170+00:00",
+    "row_count": 2,
+    "sha256": "0a4e0c52f7194a6a30ba6709fda21d82919594725cade3b0a6d29e43e86e45ba",
+    "size_bytes": 546,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7100/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CfldName%2CfldNpdidField&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  },
+  {
+    "entity": "wellbores",
+    "licence_terms": "not stated by the source",
+    "retention": "live probe provenance only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:30:39.072892+00:00",
+    "row_count": 2,
+    "sha256": "342eaf517f4ff7272629a8dd95519b7506c8904623bad25d0a1238aacd9b9c38",
+    "size_bytes": 559,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/5000/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CwlbWellboreName%2CwlbNpdidWellbore&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  },
+  {
+    "entity": "production",
+    "licence_terms": "not stated by the source",
+    "retention": "live probe provenance only; no raw response committed",
+    "retrieved_at_utc": "2026-10-11T20:30:41.256893+00:00",
+    "row_count": 2,
+    "sha256": "cd97e95faa333df50fcecf1f0df3f0ea990ee557870208f4dc9ada48c8256b3e",
+    "size_bytes": 708,
+    "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CprfInformationCarrier%2CprfYear%2CprfMonth%2CprfPrdOilNetMillSm3&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+    "status": 200,
+    "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+  }
+]
