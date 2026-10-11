@@ -137,7 +137,9 @@ def fetch_family(cache_root: Path) -> Path:
     """Verify robots, disclaimer and exact listings before fetching archives."""
     cache_root.mkdir(parents=True, exist_ok=True)
     if any(cache_root.iterdir()):
-        raise FileExistsError("Preserving existing cache contents; use a fresh directory")
+        raise FileExistsError(
+            "Preserving existing cache contents; use a fresh directory"
+        )
     client, records = Client(), []
 
     def get(url: str, filename: str) -> bytes:
