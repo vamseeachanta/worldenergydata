@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>State fetch layer plan</title>
+<h1>State fetch layer implementation plan</h1>
+<p>Scope: <a href="https://github.com/vamseeachanta/worldenergydata/issues/1130">fetch infrastructure issue</a>;
+first consumer: the Indiana ingest. Implementation will follow the existing Colorado urllib request,
+configured identification, UTC timestamp and SHA-256 provenance conventions without changing that consumer.</p>
+<p>The package will contain policy/configuration, cache/progress storage and a synchronous fetch coordinator.
+The cache root and contact address will be required configuration; no machine-specific defaults will be supplied.
+All retained payloads will have URL-scoped provenance and content-addressed bytes, verified on readback.
+Atomic metadata writes will preserve completed URLs across interruption. Execution will be single-writer per cache root.</p>
+<ol><li>Offline tests will first define recorded-header pacing, HTTP 429 recovery, host budgets, terms refusal,
+cache verification, interruption/resume, request projections and fail-fast reachability.</li>
+<li>Implementation will use urllib as the existing ingest does. Every network attempt, including preflight and retries,
+will pass the same per-host budget and pacing logic. Automatic redirects will be refused to prevent unbudgeted
+requests to an unchecked source. The first fetch will act as reachability preflight, avoiding duplicate requests.</li>
+<li>Terms records will bind permission to the exact source origin, terms URL and UTC check time. Missing or denied
+permission will refuse network collection. Cached bytes and offline projections will remain readable.</li>
+<li>Standard remaining/reset and vendor tokens/cost headers will increase delay beyond the fixed conservative
+fallback. Unknown vendor window timing will use the configured budget window, explicitly an assumption.
+Retry-After will accept seconds and HTTP dates. Retries will be bounded; HTTP refusal will stop the run.</li>
+<li>The route helper will prefer explicitly supplied official bulk candidates; selecting crawl will log the decision.
+It will not discover endpoints by crawling. Dry-run will count unique uncached URLs and expose retry and latency uncertainty.</li>
+<li>Indiana source documentation will distinguish historical reachability from current observations and mark
+terms as not yet checked. No live regulator request or volume run will occur.</li>
+<li>Lint/type checks and offline tests will verify touched files. Independent defect-hunting reviews will inspect
+terms bypass, hidden requests, provenance corruption, restart behavior and optimistic dry-run estimates.</li></ol>
+<p>Excluded: dependency/lock changes, live ingest wiring, bulk runs, crawler discovery, deployment and merging.
+The draft pull request will carry acceptance evidence; terms checks, Indiana wiring and real execution will remain follow-up work.</p>
+</html>

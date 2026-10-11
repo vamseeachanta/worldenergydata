@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>State regulator fetch infrastructure</title>
+<h1>State regulator fetch infrastructure</h1>
+<p>Evidence: <a href="https://github.com/vamseeachanta/worldenergydata/issues/1130">shared fetch issue</a>
+and <a href="https://github.com/vamseeachanta/worldenergydata/issues/1129">Indiana ingest issue and connectivity comment</a>.
+The observations below were recorded on 2026-07-30 and have not been re-probed for this implementation.
+Historical connectivity does not establish current reachability or permission for automated access.</p>
+<table><thead><tr><th>Public source</th><th>Historical reachability</th><th>Throttle facts</th><th>Terms status</th></tr></thead><tbody>
+<tr><td>Indiana DNR statistics: www.in.gov/dnr/oil-and-gas/</td><td>US-located Linux workstation: HTTP 200.
+Laptop: connection refused for in.gov.</td><td>x-dotratelimit-toks-max: 2389/10000;
+x-dotrequest-cost: 56.00. Window duration and numerator meaning not established.</td><td>not yet checked</td></tr>
+<tr><td>IGWS PDMS: igws.indiana.edu/pdms/WellSearch.cfm</td><td>US-located Linux workstation: HTTP 301.</td>
+<td>No throttle headers recorded.</td><td>not yet checked; Basic and Premium access exist; bulk permission under Basic is not established.</td></tr>
+<tr><td>DNR viewer: indnr.maps.arcgis.com</td><td>US-located Linux workstation: HTTP 302.</td>
+<td>No throttle headers recorded.</td><td>not yet checked</td></tr>
+<tr><td>Indiana GIS: gisdata.in.gov/server/rest/services</td><td>US-located Linux workstation: HTTP 200.</td>
+<td>No throttle headers recorded.</td><td>not yet checked</td></tr>
+<tr><td>Bulk shapefile lead: maps.indiana.edu, PETROLEUM_WELLS_IGS_IN.SHP</td><td>Not probed in the cited record.</td>
+<td>No throttle headers recorded.</td><td>not yet checked</td></tr>
+</tbody></table><p>Table 1. Recorded Indiana source observations; these are issue-derived evidence, not fresh measurements.</p>
+<p>The nominal 10,000 / 56 capacity is about 178 requests per unspecified window. It does not establish a requests-per-second
+rate or the remaining balance. The fetcher uses the smaller possible balance for the ambiguous vendor numerator and the
+configured budget window until a source-specific interpretation is established. Standard RateLimit-Reset uses delta seconds;
+Retry-After accepts seconds or an HTTP date. Invalid values retain the conservative fixed fallback.</p>
+<p>The cited discovery found no oil/gas/well service in the DNR GIS folder. The viewer webapp data route exposed zero
+operational layers. The Hosted folder, organization-scoped hosted layers and the shapefile remain discovery leads.
+Indiana production is reported per lease, which does not establish well-level production.</p>
+<h2>Configuration and usage</h2>
+<p>The reusable package is <code>worldenergydata.modules.state_regulators.fetch</code>, following the Colorado ingest's
+urllib and SHA-256/UTC provenance conventions. Cache location is explicitly supplied as <code>FetchConfig.cache_root</code>
+or through <code>STATE_FETCH_CACHE_ROOT</code>; there is no default path. The operator shall select a data-disk location.
+<code>contact</code> is a required configuration value for the descriptive User-Agent. No personal address is supplied.</p>
+<pre>config = FetchConfig.from_env(contact=approved_contact)
+# Populate checks only after reading and recording the source terms.
+fetcher = Fetcher(config, recorded_terms_checks)
+projection = fetcher.run(planned_urls, dry_run=True)
+# Review the projection, permissions and selected bulk route before execution.
+results = fetcher.run(planned_urls)</pre>
+<p><code>TermsCheck</code> records the exact source origin, terms URL, UTC retrieval/check date and explicit bulk-access
+permission. Missing or denied permission refuses all uncached network collection, including preflight. Validated records
+are retained as <code>terms-checks.json</code> before requests and in each fetched object's provenance. The library
+records caller-supplied decisions; it does not infer permission from a successful response or perform terms review.</p>
+<p><code>choose_route</code> prefers caller-verified official bulk candidates and logs any crawl selection, including
+available bulk alternatives. It does not discover endpoints or crawl. Redirects are refused; any redirect destination
+requires its own explicit source permission and URL selection. Every attempt is identified, timeout-bound, paced and
+charged against a per-host budget. An uncached first request serves as the reachability preflight and retains its payload,
+so there is no extra probe. A reachability failure includes the executing machine name only in its runtime exception.</p>
+<p><code>objects/&lt;sha256&gt;</code> contains payload bytes. URL-keyed <code>records/</code> sidecars retain source URL,
+UTC fetch timestamp, response headers, SHA-256, size and the terms decision. Payload digest and size are verified on
+readback. <code>progress.json</code> retains completed URLs, request reservations and cooldowns. Atomic writes permit
+restart after interruption; corrupted cache evidence stops rather than silently becoming valid input. One writer per
+cache root is required; concurrent writers are unsupported. Payloads are read into memory, so this layer is intended
+for bounded objects; streaming large archives is future work.</p>
+<p>The offline projection reports unique uncached requests, cached URLs, maximum retry attempts, baseline wall-clock
+estimate and terms status. Estimates exclude response latency, future header changes and retry delays; unknown vendor
+windows use configuration. Exhausted budgets stop collection for later resume. HTTP 429 retries are bounded and honor
+Retry-After; HTTP refusals stop the run.</p>
+<p>No regulator request, crawl or volume run was performed for this implementation. Indiana wiring, actual recorded terms
+checks, current reachability observations and an authorized real run remain future work. No bulk data is committed.</p>
+</html>
