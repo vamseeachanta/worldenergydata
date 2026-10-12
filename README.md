@@ -54,6 +54,11 @@ Live: [worldenergydata field life-cycle](https://vamseeachanta.github.io/worlden
 
 This repo is the **asset & data** half of that loop — the public-source field/well/facility ledger the engineering runs against.
 
+## Repository architecture
+
+[Architecture drawing and report inventory](docs/modules/repository-architecture.md)
+covers ingestion, processing, capability provenance, publication and the bulk-data boundary.
+
 ## Overview
 
 WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:
