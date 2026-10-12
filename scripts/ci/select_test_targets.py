@@ -48,6 +48,7 @@ ALWAYS_XDIST = [
     "tests/unit/common",
     "tests/contracts",
     "tests/workflows",
+    "tests/governance",
 ]
 
 # Changing any of these can affect every module -> run the whole tree.
