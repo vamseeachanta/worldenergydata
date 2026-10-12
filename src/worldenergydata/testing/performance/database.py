@@ -143,9 +143,12 @@ class PerformanceDatabase:
     @contextmanager
     def _get_connection(self):
         """Get database connection context manager."""
-        conn = sqlite3.connect(str(self.db_path))
+        # Allow bursts of concurrent diagnostic writes up to 30 seconds.
+        conn = sqlite3.connect(str(self.db_path), timeout=30.0)
         conn.row_factory = sqlite3.Row
         try:
+            # SQLite returns the effective mode if WAL is unsupported.
+            conn.execute("PRAGMA journal_mode = WAL").fetchone()
             yield conn
         finally:
             conn.close()

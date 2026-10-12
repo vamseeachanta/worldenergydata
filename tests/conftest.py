@@ -254,36 +254,41 @@ def sample_csv_file(tmp_path: Path, sample_production_data: pd.DataFrame) -> Pat
 # Initialize global tracker lazily. Collection-only and fully deselected sessions
 # must not open the performance database.
 _performance_tracker = None
-_performance_db_path = Path(".test_performance.db")
+_performance_db_path = None
 
 
 def pytest_addoption(parser):
     """Add the performance database path seam used by lifecycle tests."""
     parser.addoption(
         "--performance-db-path",
-        default=".test_performance.db",
+        default=None,
         help="SQLite path for pytest performance records",
     )
 
 
-def _get_performance_tracker():
+def _get_performance_tracker(config):
     """Construct the tracker only when pytest is about to execute a test."""
     global _performance_tracker
     if _performance_tracker is None:
-        _performance_tracker = TestPerformanceTracker(_performance_db_path)
+        db_path = _performance_db_path
+        if db_path is None:
+            # Xdist gives each worker its own session temporary directory.
+            db_path = config._tmp_path_factory.getbasetemp() / ".test_performance.db"
+        _performance_tracker = TestPerformanceTracker(db_path)
     return _performance_tracker
 
 
 def pytest_configure(config):
     """Capture performance configuration without opening the database."""
     global _performance_db_path
-    _performance_db_path = Path(config.getoption("performance_db_path"))
+    db_path = config.getoption("performance_db_path")
+    _performance_db_path = Path(db_path) if db_path is not None else None
 
 
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
     """Called before test setup."""
-    _get_performance_tracker().start_test(item.nodeid)
+    _get_performance_tracker(item.config).start_test(item.nodeid)
 
 
 @pytest.hookimpl(hookwrapper=True)
