@@ -26,8 +26,12 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    aggregate_provenance, carries_basis, html_labels, provenance,
-    validate_day_schema, validate_vintage_row,
+    aggregate_provenance,
+    carries_basis,
+    html_labels,
+    provenance,
+    validate_day_schema,
+    validate_vintage_row,
 )
 from lower_tertiary.war_methodology import methodology_html
 
@@ -605,14 +609,14 @@ def build_html(payload: dict) -> str:
       spans (≤250 d) with WAR-union rig-days beyond, so batch-drilled wells undercount —
       disclosed, not corrected.</p>
   </footer>
-</div>
+{methodology_html()}</div>
 
 <script>const DATA={data_json};{JS}</script>
 </body>
 </html>
 """
 
-    labels = html_labels(payload) + methodology_html()
+    labels = html_labels(payload)
     return html.replace("</body>", labels + "\n</body>")
 
 
