@@ -14,6 +14,14 @@ from worldenergydata.vessel_fleet.loaders.drilling_riser_loader import (
 )
 
 CSV_NAME = "drilling_riser_components.csv"
+QUERY_VALUES = {
+    "COMPONENT_TYPE": "riser_joint",
+    "OD_IN": 21,
+    "PRESSURE_RATING_PSI": 5000,
+    "BORE_SIZE_IN": 21,
+    "BOP_TYPE": "subsea",
+    "MANUFACTURER": "Synthetic",
+}
 TEXT_DIGEST = "22be7d02a4fc4698684551c21943f9fc2e79d02e58729bd24aeced59759aaa94"
 EXPECTED_IDS = """
 RJ-21-75-BARE RJ-21-75-BUOY RJ-21-50-PUP RJ-21-40-PUP RJ-21-75-HW
@@ -62,7 +70,9 @@ def test_physical_line_number_after_quoted_newline(tmp_path: Path):
 
 def test_valid_quoted_fields_and_cache(tmp_path: Path):
     (tmp_path / CSV_NAME).write_text(
-        'COMPONENT_ID,DATA_SOURCE,NOTES\nA,"public, source","first\nsecond"\n'
+        "COMPONENT_ID,DATA_SOURCE,NOTES,COMPONENT_TYPE,OD_IN,"
+        "PRESSURE_RATING_PSI,BORE_SIZE_IN,BOP_TYPE,MANUFACTURER\n"
+        'A,"public, source","first\nsecond",riser_joint,21,5000,21,subsea,Synthetic\n'
     )
     loader = DrillingRiserLoader(tmp_path)
     df = loader.load()
@@ -74,7 +84,12 @@ def test_valid_quoted_fields_and_cache(tmp_path: Path):
 @pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
 @pytest.mark.parametrize("value", ["", "   "])
 def test_empty_provenance_rejected(tmp_path: Path, field: str, value: str):
-    row = {"COMPONENT_ID": "A", "DATA_SOURCE": "public", "NOTES": "test"}
+    row = {
+        **QUERY_VALUES,
+        "COMPONENT_ID": "A",
+        "DATA_SOURCE": "public",
+        "NOTES": "test",
+    }
     row[field] = value
     pd.DataFrame([row]).to_csv(tmp_path / CSV_NAME, index=False)
     loader = DrillingRiserLoader(tmp_path)
@@ -85,7 +100,12 @@ def test_empty_provenance_rejected(tmp_path: Path, field: str, value: str):
 
 @pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
 def test_missing_provenance_column_rejected(tmp_path: Path, field: str):
-    row = {"COMPONENT_ID": "A", "DATA_SOURCE": "public", "NOTES": "test"}
+    row = {
+        **QUERY_VALUES,
+        "COMPONENT_ID": "A",
+        "DATA_SOURCE": "public",
+        "NOTES": "test",
+    }
     del row[field]
     pd.DataFrame([row]).to_csv(tmp_path / CSV_NAME, index=False)
     with pytest.raises(ValueError, match=field):
@@ -97,7 +117,11 @@ def test_canonical_provenance_populated():
     for field in ("DATA_SOURCE", "NOTES"):
         assert df[field].notna().all()
         assert df[field].str.strip().ne("").all()
-    assert df["DATA_SOURCE"].str.startswith("API ").all()
+    # The issuer is deliberately not pinned; citations identify a document.
+    sources = df["DATA_SOURCE"]
+    assert sources.map(lambda value: isinstance(value, str)).all()
+    assert sources.eq(sources.str.strip()).all()
+    assert sources.str.match(r"^[A-Za-z].*\d").all()
 
 
 @pytest.mark.parametrize(
@@ -232,3 +256,65 @@ def test_malformed_quotes_raise_value_error(tmp_path, content, line_number):
     (tmp_path / CSV_NAME).write_text(content)
     with pytest.raises(ValueError, match=rf"Malformed CSV at line {line_number}"):
         DrillingRiserLoader(tmp_path).load()
+
+
+@pytest.mark.parametrize("blank_lines", ["middle", "trailing"])
+def test_empty_physical_lines_preserve_loaded_rows(
+    tmp_path: Path, blank_lines: str
+) -> None:
+    content = (_DATA_DIR / CSV_NAME).read_text()
+    expected = DrillingRiserLoader().load()
+    if blank_lines == "middle":
+        header, records = content.split("\n", 1)
+        content = header + "\n\n" + records
+    else:
+        content += "\n"
+    (tmp_path / CSV_NAME).write_text(content)
+    pd.testing.assert_frame_equal(DrillingRiserLoader(tmp_path).load(), expected)
+
+
+def test_short_row_after_blank_line_reports_physical_line(tmp_path: Path) -> None:
+    (tmp_path / CSV_NAME).write_text("A,B,C\n\nx,y\n")
+    with pytest.raises(ValueError, match="line 3.*expected 3.*actual 2"):
+        DrillingRiserLoader(tmp_path).load()
+
+
+def test_whitespace_only_line_is_not_empty(tmp_path: Path) -> None:
+    header = (_DATA_DIR / CSV_NAME).read_text().splitlines()[0]
+    (tmp_path / CSV_NAME).write_text(header + "\n   \n")
+    with pytest.raises(ValueError, match="line 2.*expected 31.*actual 1"):
+        DrillingRiserLoader(tmp_path).load()
+
+
+def test_delimiter_only_record_requires_provenance(tmp_path: Path) -> None:
+    header = (_DATA_DIR / CSV_NAME).read_text().splitlines()[0]
+    (tmp_path / CSV_NAME).write_text(header + "\n" + "," * 30 + "\n")
+    with pytest.raises(ValueError, match="DATA_SOURCE must be populated"):
+        DrillingRiserLoader(tmp_path).load()
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        ["COMPONENT_ID"],
+        ["DATA_SOURCE", "NOTES"],
+        ["COMPONENT_TYPE"],
+        ["OD_IN"],
+        ["PRESSURE_RATING_PSI"],
+        ["BORE_SIZE_IN"],
+        ["BOP_TYPE"],
+        ["MANUFACTURER"],
+    ],
+)
+def test_missing_required_columns_remain_uncached(
+    tmp_path: Path, fields: list[str]
+) -> None:
+    df = DrillingRiserLoader().load().drop(columns=fields)
+    df.to_csv(tmp_path / CSV_NAME, index=False)
+    loader = DrillingRiserLoader(tmp_path)
+    for _ in range(2):
+        with pytest.raises(ValueError, match="Missing required column") as error:
+            loader.load()
+        for field in fields:
+            assert field in str(error.value)
+        assert loader._df is None

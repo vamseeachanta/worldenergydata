@@ -1,7 +1,8 @@
 """Load drilling riser component data from curated dataset.
 
-Provides query interface for riser joints, BOPs, LMRPs, flex joints,
-and telescopic joints by component type, size, and pressure rating.
+Validates CSV widths, required query/provenance columns and populated provenance.
+Empty physical lines are skipped; whitespace and delimiter-only records are checked.
+Queries cover component type, size and pressure rating.
 """
 
 from __future__ import annotations
@@ -21,6 +22,17 @@ logger = logging.getLogger(__name__)
 # construction_vessel_loader for the resolution rationale.
 _DATA_DIR = Path(__file__).resolve().parent.parent / "_data" / "curated"
 _DEFAULT_FILE = "drilling_riser_components.csv"
+_REQUIRED_COLUMNS = (
+    "COMPONENT_ID",
+    "DATA_SOURCE",
+    "NOTES",
+    "COMPONENT_TYPE",
+    "OD_IN",
+    "PRESSURE_RATING_PSI",
+    "BORE_SIZE_IN",
+    "BOP_TYPE",
+    "MANUFACTURER",
+)
 
 VALID_COMPONENT_TYPES = (
     "riser_joint",
@@ -32,7 +44,7 @@ VALID_COMPONENT_TYPES = (
 
 
 def _validate_row_widths(content: str) -> None:
-    """Reject malformed records; line numbers identify the record start."""
+    """Check widths except empty physical lines; retain physical start numbers."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
@@ -47,6 +59,8 @@ def _validate_row_widths(content: str) -> None:
             break
         except csv.Error as exc:
             raise ValueError(f"Malformed CSV at line {line_number}: {exc}") from exc
+        if not row:
+            continue
         if len(row) != expected:
             raise ValueError(
                 f"CSV line {line_number}: expected {expected} fields, "
@@ -66,7 +80,10 @@ class DrillingRiserLoader:
         self._df: Optional[pd.DataFrame] = None
 
     def load(self) -> pd.DataFrame:
-        """Load curated drilling riser component data (lazy, cached)."""
+        """Validate widths, required columns and provenance before caching.
+
+        Only empty physical lines are exempt from record-width validation.
+        """
         if self._df is not None:
             return self._df
 
@@ -81,9 +98,10 @@ class DrillingRiserLoader:
         content = csv_path.read_text(encoding="utf-8-sig")
         _validate_row_widths(content)
         df = pd.read_csv(StringIO(content))
+        missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
+        if missing_columns:
+            raise ValueError("Missing required column " + ", ".join(missing_columns))
         for field in ("DATA_SOURCE", "NOTES"):
-            if field not in df.columns:
-                raise ValueError(f"Missing required column {field}")
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
                 ids = df.loc[missing, "COMPONENT_ID"].tolist()
