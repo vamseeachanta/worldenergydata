@@ -234,7 +234,7 @@ def test_generated_scorecard_fixture_consistency(tmp_path: Path):
 
 
 def test_committed_scorecard_row_schema_and_fixture_consistency():
-    """Legacy row keys come from the scorecard at commit 632f2a93e0cd0d38d15d0da7314cc87ce783b306."""
+    """Legacy row keys match scorecard commit 632f2a93e0cd0d38d15d0da7314cc87ce783b306."""
     root = Path(__file__).resolve().parents[3]
     scorecard = json.loads((root / "data/freshness-scorecard.json").read_text())
     legacy_keys = frozenset(
@@ -283,3 +283,57 @@ def test_markdown_has_fixture_readiness_value_per_row(tmp_path: Path):
         assert (
             row[index].strip() == scorecard["modules"][module_id]["fixture_readiness"]
         )
+
+
+def test_markdown_defaults_legacy_rows_to_none(tmp_path: Path) -> None:
+    """Rows without fixture readiness render none in the last column."""
+    scorecard = {
+        "report_date": "2026-06-08",
+        "modules": {
+            module: {
+                "catalog_status": "sample",
+                "freshness_status": "missing",
+                "dataset_count": 0,
+                "record_count": 0,
+            }
+            for module in ("alpha", "beta")
+        },
+    }
+    output = tmp_path / "legacy.md"
+
+    write_markdown(scorecard, output)
+
+    rows = output.read_text().splitlines()[4:]
+    assert len(rows) == len(scorecard["modules"])
+    assert all(row.split("|")[-2].strip() == "none" for row in rows)
+
+
+def test_markdown_writes_committed_scorecard(tmp_path: Path) -> None:
+    """The committed scorecard is rendered without rewriting its source."""
+    root = Path(__file__).resolve().parents[3]
+    scorecard = json.loads((root / "data/freshness-scorecard.json").read_text())
+    output = tmp_path / "committed.md"
+
+    write_markdown(scorecard, output)
+
+    rows = output.read_text().splitlines()[4:]
+    assert len(rows) == len(scorecard["modules"])
+    for row, module in zip(rows, sorted(scorecard["modules"])):
+        expected = scorecard["modules"][module].get("fixture_readiness", "none")
+        assert row.split("|")[-2].strip() == expected
+
+
+def test_markdown_preserves_packaged_readiness(tmp_path: Path) -> None:
+    """An explicit packaged value remains packaged in the last column."""
+    _write_project(tmp_path)
+    fixture = _declare_fixture(tmp_path)
+    fixture.parent.mkdir()
+    fixture.write_text("{}\n")
+    scorecard = build_scorecard(tmp_path, report_date="2026-06-08")
+    output = tmp_path / "packaged.md"
+
+    write_markdown(scorecard, output)
+
+    rows = output.read_text().splitlines()[4:]
+    row = next(row for row in rows if row.split("|")[1].strip() == "texas_rrc")
+    assert row.split("|")[-2].strip() == "packaged"

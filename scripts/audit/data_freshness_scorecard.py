@@ -82,6 +82,7 @@ def _freshness_status(
 
 
 def _fixture_readiness(project_root: Path, manifest_entry: dict[str, Any]) -> str:
+    """Report packaged for a manifest-declared, repository-relative, existing nonempty path."""
     declaration = manifest_entry.get("fixture_catalog")
     if not isinstance(declaration, str) or not declaration:
         return "none"
@@ -155,13 +156,15 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
     lines = [
         f"# Data Freshness Scorecard — {scorecard['report_date']}",
         "",
-        "| Module | Catalog Status | Freshness | Datasets | Records | Last Refresh | Scheduler Success | Fixture Readiness |",
+        "| Module | Catalog Status | Freshness | Datasets | Records | Last Refresh | "
+        "Scheduler Success | Fixture Readiness |",
         "|---|---|---|---:|---:|---|---|---|",
     ]
     for module_id, entry in sorted(scorecard["modules"].items()):
         lines.append(
             "| {module} | {catalog_status} | {freshness_status} | {dataset_count} | "
-            "{record_count} | {last_refresh} | {scheduler_last_success_ts} | {fixture_readiness} |".format(
+            "{record_count} | {last_refresh} | {scheduler_last_success_ts} | "
+            "{fixture_readiness} |".format(
                 module=module_id,
                 catalog_status=entry["catalog_status"],
                 freshness_status=entry["freshness_status"],
@@ -169,7 +172,7 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
                 record_count=entry["record_count"],
                 last_refresh=entry.get("last_refresh") or "",
                 scheduler_last_success_ts=entry.get("scheduler_last_success_ts") or "",
-                fixture_readiness=entry["fixture_readiness"],
+                fixture_readiness=entry.get("fixture_readiness", "none"),
             )
         )
     output_path.write_text("\n".join(lines) + "\n")
