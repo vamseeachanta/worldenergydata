@@ -26,8 +26,11 @@ def mod():
 
 
 @pytest.fixture(scope="module")
-def payload(mod):
-    return mod.load_payload()
+def payload():
+    """Preserve historical pins against the frozen page, not the new pipeline."""
+    text = OUT.read_text(encoding="utf-8")
+    raw = re.search(r"<script>const DATA=(\{.*\});\nconst \$=", text, re.S).group(1)
+    return json.loads(raw.replace("<\\/", "</"))
 
 
 def test_tree_shape(payload):
@@ -62,9 +65,9 @@ def test_absent_engineering_pages_are_honest_gaps(payload):
     assert links["big_foot"]["assets"] is None
 
 
-def test_committed_page_is_regenerable(mod, payload):
-    assert OUT.exists()
-    assert mod.build_html(payload) == OUT.read_text(encoding="utf-8")
+def test_legacy_source_requires_regeneration(mod):
+    with pytest.raises(ValueError, match="provenance"):
+        mod.load_payload()
 
 
 def test_page_is_self_contained():

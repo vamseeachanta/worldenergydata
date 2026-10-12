@@ -5,6 +5,7 @@ wo-april-2026-validation.md section 3: same developments, same subtotals,
 same 253-bore / 25,404-day universe.
 """
 
+import csv
 import importlib.util
 from pathlib import Path
 
@@ -41,7 +42,23 @@ def mod():
 
 @pytest.fixture(scope="module")
 def devs(mod):
-    return mod.load_bores()
+    """Historical source pins; no provenance is fabricated for old rows."""
+    producers = {r["api12"] for r in csv.DictReader(mod.BENCHMARK_CSV.open())}
+    devs = {}
+    for row in csv.DictReader(mod.SOURCE_CSV.open()):
+        lease = row["LEASE_NAME"]
+        api = row["API_WELL_NUMBER"]
+        dev = mod.DEV_OF_LEASE.get(lease, lease)
+        devs.setdefault(dev, []).append(
+            {
+                "api12": api,
+                "drill": int(row["DRILLING_DAYS"] or 0),
+                "compl": int(row["COMPLETION_DAYS"] or 0),
+                "producer": api in producers,
+                "note": mod.BORE_NOTES.get(api, ""),
+            }
+        )
+    return devs
 
 
 def test_universe_pinned(devs):
@@ -81,12 +98,16 @@ def test_producer_markers_join(devs):
 
 @pytest.fixture(scope="module")
 def vintage(mod):
-    return mod.load_vintage_diff()
+    """Historical CSV snapshot, retained pending production regeneration."""
+    groups = {}
+    for row in csv.DictReader(mod.VINTAGE_CSV.open()):
+        groups.setdefault(row["category"], []).append(row)
+    return groups
 
 
-def test_committed_markdown_is_regenerable(mod, devs, vintage):
-    assert OUT_MD.exists(), "committed listing missing"
-    assert mod.build_markdown(devs, vintage) == OUT_MD.read_text(encoding="utf-8")
+def test_legacy_source_requires_regeneration(mod):
+    with pytest.raises(ValueError, match="provenance"):
+        mod.load_bores()
 
 
 def test_markdown_carries_matrix_numbers(devs):

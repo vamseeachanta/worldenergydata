@@ -19,7 +19,21 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
+from html import escape
 from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.dc_provenance import (
+    add_days,
+    aggregate_basis,
+    nullable_days,
+    provenance,
+    sum_days,
+    validate_vintage_row,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
@@ -102,9 +116,11 @@ def load_payload() -> dict:
         row["api12"].strip()
         for row in csv.DictReader(BENCHMARK_CSV.open(encoding="utf-8"))
     }
-    vintage = {
-        row["api12"]: row for row in csv.DictReader(VINTAGE_CSV.open(encoding="utf-8"))
-    }
+    vintage = {}
+    with VINTAGE_CSV.open(encoding="utf-8") as stream:
+        for row in csv.DictReader(stream):
+            validate_vintage_row(row)
+            vintage[row["api12"]] = row
 
     bores: list[dict] = []
     for row in csv.DictReader(SOURCE_CSV.open(encoding="utf-8")):
@@ -113,6 +129,7 @@ def load_payload() -> dict:
         v = vintage.get(api12, {})
         bores.append(
             {
+                **provenance(row),
                 "api": api12,
                 "name": row["WELL_NAME"].strip() or api12[-4:],
                 "field": field,
@@ -120,14 +137,14 @@ def load_payload() -> dict:
                 "wd": _int(row["WATER_DEPTH"]),
                 "spud": _iso(row["WELL_SPUD_DATE"]),
                 "td": _iso(row["TOTAL_DEPTH_DATE"]),
-                "drill": _int(row["DRILLING_DAYS"]),
-                "compl": _int(row["COMPLETION_DAYS"]),
+                "drill": nullable_days(row["DRILLING_DAYS"]),
+                "compl": nullable_days(row["COMPLETION_DAYS"]),
                 "md": _int(row["MAX_BH_TOTAL_MD"]),
                 "tvd": _int(row["MAX_WELL_BORE_TVD"]),
                 "ppg": (row["MAX_DRILL_FLUID_WGT"] or "").strip(),
                 "st": api12[-2:] != "00",
                 "prod": api12 in producers,
-                "vin": v.get("category", "unchanged"),
+                "vin": v.get("category", "unavailable"),
             }
         )
     bores.sort(key=lambda b: (b["field"], b["block"], b["spud"] or "9999", b["api"]))
@@ -146,13 +163,11 @@ def load_payload() -> dict:
                 "prod": 0,
                 "blocks": [],
                 "wd": b["wd"],
-                "status": STATUS[b["field"]][0],
+                "status": "historical: " + STATUS[b["field"]][0],
                 "badge": STATUS[b["field"]][1],
             },
         )
         f["bores"] += 1
-        f["drill"] += b["drill"]
-        f["compl"] += b["compl"]
         f["prod"] += 1 if b["prod"] else 0
         if b["block"] not in f["blocks"]:
             f["blocks"].append(b["block"])
@@ -170,9 +185,14 @@ def load_payload() -> dict:
             },
         )
         k["bores"] += 1
-        k["drill"] += b["drill"]
-        k["compl"] += b["compl"]
         k["prod"] += 1 if b["prod"] else 0
+
+    for groups, key in ((fields, "field"), (blocks, "block")):
+        for name, group in groups.items():
+            members = [b for b in bores if b[key] == name]
+            group["basis"] = aggregate_basis(members)
+            for column in ("drill", "compl", "pnd_days"):
+                group[column] = sum_days(b[column] for b in members)
 
     return {
         "bores": bores,
@@ -329,7 +349,10 @@ footer.site a{color:var(--accent);text-decoration:none}
 
 JS = """
 const $=s=>document.querySelector(s);
-const fmt=n=>n.toLocaleString('en-US');
+const fmt=n=>n==null?'—':n.toLocaleString('en-US');
+const add=(d,c)=>d==null||c==null?null:d+c;
+const total=xs=>!xs.length||xs.some(x=>x==null)?null:xs.reduce((s,x)=>s+x,0);
+const basisOf=xs=>new Set(xs.map(x=>x.basis)).size===1?xs[0].basis:'mixed';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let axis='field', q='';
 
@@ -346,6 +369,7 @@ function crumb(parts){
 }
 
 function bar(d,c){
+  if(d==null||c==null)return '<span class="note">Incomplete day coverage</span>';
   const t=d+c||1;
   return `<span class="bar"><i class="d" style="width:${(d/t*100).toFixed(1)}%"></i><i class="c" style="width:${(c/t*100).toFixed(1)}%"></i></span>`;
 }
@@ -365,7 +389,7 @@ function renderIndex(){
       `<span class="badge hold">${n.prod||0} producer${n.prod===1?'':'s'}</span>`;
     return `<button class="node" data-kind="${isField?'field':'block'}" data-id="${esc(id)}">
       <span class="top"><h3>${esc(title)}</h3>${badge}</span>
-      <span class="meta">${esc(meta)}</span>
+      <span class="meta">${esc(meta)} · Basis: ${esc(n.basis)}</span>
       <span class="nums"><div>bores<b>${n.bores}</b></div><div>drilling<b>${fmt(n.drill)}</b></div>
       <div>completion<b>${fmt(n.compl)}</b></div></span>
       ${bar(n.drill,n.compl)}</button>`;
@@ -376,7 +400,7 @@ function renderNode(kind,id){
   const list=boresFor(kind,id).filter(b=>matches(b.api+' '+b.name+' '+b.block+' '+b.field));
   if(!list.length&&!boresFor(kind,id).length){location.hash='#/';return;}
   const all=boresFor(kind,id);
-  const drill=all.reduce((s,b)=>s+b.drill,0), compl=all.reduce((s,b)=>s+b.compl,0);
+  const drill=total(all.map(b=>b.drill)), compl=total(all.map(b=>b.compl));
   const prod=all.filter(b=>b.prod).length, st=all.filter(b=>b.st).length;
   const field=kind==='field'?DATA.fields.find(f=>f.name===id):DATA.fields.find(f=>f.name===all[0].field);
   crumb([{label:kind==='field'?'Fields':'Blocks',href:'#/'},{label:id}]);
@@ -389,9 +413,11 @@ function renderNode(kind,id){
     <p class="sub">${kind==='field'?esc(field.status):'Block of '+esc(all[0].field)} · ${fmt(all[0].wd)} ft water depth</p>
     <div class="dl">
       <div><dt>Bores</dt><dd>${all.length}</dd></div>
+      <div><dt>Basis</dt><dd>${esc(basisOf(all))}</dd></div>
+      <div><dt>PND days</dt><dd>${fmt(total(all.map(b=>b.pnd_days)))}</dd></div>
       <div><dt>Drilling days</dt><dd>${fmt(drill)}</dd></div>
       <div><dt>Completion days</dt><dd>${fmt(compl)}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${fmt(drill+compl)}</dd></div>
+      <div><dt>D&amp;C days</dt><dd>${fmt(add(drill,compl))}</dd></div>
       <div><dt>Producers</dt><dd>${prod||'—'}<small>${prod?' of '+all.length:''}</small></dd></div>
       <div><dt>Sidetracks</dt><dd>${st}</dd></div>
     </div>
@@ -405,11 +431,12 @@ function boreTable(list,showBlock){
   if(!list.length)return '<div class="empty">No bores match the search.</div>';
   return `<table><thead><tr><th>API12</th><th>Bore</th>${showBlock?'<th>Block</th>':''}
     <th>Spud</th><th>TD</th><th class="num">Drill</th><th class="num">Compl</th>
-    <th class="num">D&amp;C</th><th>Flags</th></tr></thead><tbody>
+    <th class="num">D&amp;C</th><th>Basis</th><th>PND days</th><th>Days status</th><th>Flags</th></tr></thead><tbody>
     ${list.map(b=>`<tr tabindex="0" data-api="${b.api}">
       <td class="mono">${b.api}</td><td>${esc(b.name)}</td>${showBlock?`<td class="mono">${esc(b.block)}</td>`:''}
       <td class="mono">${b.spud||'—'}</td><td class="mono">${b.td||'—'}</td>
-      <td class="num">${b.drill}</td><td class="num">${b.compl}</td><td class="num">${b.drill+b.compl}</td>
+      <td class="num">${fmt(b.drill)}</td><td class="num">${fmt(b.compl)}</td><td class="num">${fmt(add(b.drill,b.compl))}</td>
+      <td>${esc(b.basis)}</td><td>${fmt(b.pnd_days)}</td><td>${esc(b.days_status)}</td>
       <td>${b.prod?'<span class="badge ok">producer</span> ':''}${b.st?'<span class="badge hold">ST</span>':''}</td>
     </tr>`).join('')}</tbody></table>`;
 }
@@ -440,18 +467,20 @@ function renderBore(api){
     <p class="sub">${esc(b.field)} · block ${esc(b.block)} · ${fmt(b.wd)} ft water depth
       ${b.prod?' · <span class="badge ok">producer</span>':''}${b.st?' · <span class="badge hold">sidetrack</span>':''}</p>
     <div class="dl">
+      <div><dt>Basis</dt><dd>${esc(b.basis)}</dd></div>
+      <div><dt>PND days</dt><dd>${fmt(b.pnd_days)}</dd></div>
+      <div><dt>Days status</dt><dd>${esc(b.days_status)}</dd></div>
       <div><dt>Spud</dt><dd>${b.spud||'—'}</dd></div>
       <div><dt>Total depth</dt><dd>${b.td||'—'}</dd></div>
-      <div><dt>Drilling days</dt><dd>${b.drill}</dd></div>
-      <div><dt>Completion days</dt><dd>${b.compl}</dd></div>
-      <div><dt>D&amp;C days</dt><dd>${b.drill+b.compl}</dd></div>
+      <div><dt>Drilling days</dt><dd>${fmt(b.drill)}</dd></div>
+      <div><dt>Completion days</dt><dd>${fmt(b.compl)}</dd></div>
+      <div><dt>D&amp;C days</dt><dd>${fmt(add(b.drill,b.compl))}</dd></div>
       <div><dt>Measured depth</dt><dd>${b.md?fmt(b.md):'—'}<small> ft</small></dd></div>
       <div><dt>True vertical</dt><dd>${b.tvd?fmt(b.tvd):'—'}<small> ft</small></dd></div>
       <div><dt>Max mud weight</dt><dd>${b.ppg||'—'}<small> ppg</small></dd></div>
     </div>
     <p class="sub"><span class="badge ${vinBadge}">vintage</span> ${esc(vin)}.
-      Completion days count all post-TD rig time, including later servicing
-      (<a href="https://github.com/vamseeachanta/worldenergydata/issues/846">#846</a>).</p>
+      Day counts follow the recorded basis. PND is an opaque activity code.</p>
     ${links(field.slug)}</div>`;
 }
 
@@ -487,8 +516,12 @@ route();
 
 def build_html(payload: dict) -> str:
     b = payload["bores"]
-    drill = sum(x["drill"] for x in b)
-    compl = sum(x["compl"] for x in b)
+    drill = sum_days(x["drill"] for x in b)
+    compl = sum_days(x["compl"] for x in b)
+
+    def fmt(n: int | None) -> str:
+        return "—" if n is None else f"{n:,}"
+
     data_json = json.dumps(payload, separators=(",", ":"), sort_keys=True)
     # Guard: the payload is inlined in a <script>, so it must not carry a
     # closing-tag sequence. json.dumps escapes newlines; escape the slash too.
@@ -534,8 +567,7 @@ def build_html(payload: dict) -> str:
     <p class="lede">Start from a field or a block, drill to its bores, then to a single
       wellbore's full record — and on to that field's life-cycle, economics, and
       engineering pages. Every level is deep-linkable.</p>
-    <span class="disposition"><span class="dot"></span>Reconciled to the article —
-      completion-boundary rule (#846) open</span>
+    <span class="disposition"><span class="dot"></span>Recorded basis per bore; incomplete totals shown as unknown</span>
     <div class="tiles">
       <div class="tile"><div class="k">Fields</div><div class="v accent">{len(payload['fields'])}</div>
         <div class="sub">developments</div></div>
@@ -543,8 +575,8 @@ def build_html(payload: dict) -> str:
         <div class="sub">OCS leases</div></div>
       <div class="tile"><div class="k">Bores</div><div class="v">{len(b)}</div>
         <div class="sub">incl. sidetracks</div></div>
-      <div class="tile"><div class="k">D&amp;C days</div><div class="v">{drill + compl:,}</div>
-        <div class="sub">{drill:,} drilling · {compl:,} completion</div></div>
+      <div class="tile"><div class="k">D&amp;C days</div><div class="v">{fmt(add_days(drill, compl))}</div>
+        <div class="sub">{fmt(drill)} drilling · {fmt(compl)} completion · Basis: {escape(aggregate_basis(b))}</div></div>
     </div>
   </section>
 
@@ -568,8 +600,8 @@ def build_html(payload: dict) -> str:
 
   <div class="legend" aria-label="Legend">
     <span class="eyebrow" style="align-self:center">Reading the data</span>
-    <span class="item"><span class="sw" style="background:var(--accent)"></span>Drilling days (spud → TD)</span>
-    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Completion days (all post-TD rig time)</span>
+    <span class="item"><span class="sw" style="background:var(--accent)"></span>Drilling days (recorded basis)</span>
+    <span class="item"><span class="sw" style="background:color-mix(in srgb,var(--accent) 38%,transparent)"></span>Completion days (recorded basis)</span>
     <span class="item"><span class="sw" style="background:var(--ok)"></span>Reconciled / producer</span>
     <span class="item"><span class="sw" style="background:var(--warn)"></span>Open accounting question</span>
   </div>
@@ -580,9 +612,8 @@ def build_html(payload: dict) -> str:
       <a href="https://huggingface.co/datasets/aceengineer/worldenergydata-explorer">Data &amp; provenance ↗</a>
     </div>
     <p class="note">// self-contained: no external assets. Rows come verbatim from the
-      canonical extractor output (BSEE WAR vintage 2026-02-19). Drilling days mix calendar
-      spans (≤250 d) with WAR-union rig-days beyond, so batch-drilled wells undercount —
-      disclosed, not corrected.</p>
+      canonical extractor output. Basis and WAR coverage status are preserved;
+      PND remains an opaque activity code. A null contributor makes its total unknown.</p>
   </footer>
 </div>
 
