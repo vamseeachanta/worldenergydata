@@ -218,11 +218,41 @@ def test_fixture_readiness_requires_nonempty_path(
     assert entry["fixture_readiness"] == ("packaged" if nonempty else "none")
 
 
-def test_committed_scorecard_fixture_consistency():
+def test_generated_scorecard_fixture_consistency(tmp_path: Path):
+    """Repository inputs are read; generated output stays in the temporary tree."""
+    root = Path(__file__).resolve().parents[3]
+    scorecard = build_scorecard(root, report_date="2026-06-08")
+    write_markdown(scorecard, tmp_path / "scorecard.md")
+
+    for module_id, entry in scorecard["modules"].items():
+        assert entry["fixture_readiness"] in {"packaged", "none"}, module_id
+    _assert_fixture_consistency(root, scorecard)
+
+
+def test_committed_scorecard_row_schema_and_fixture_consistency():
+    """Legacy row keys come from the scorecard at commit 632f2a93e0cd0d38d15d0da7314cc87ce783b306."""
     root = Path(__file__).resolve().parents[3]
     scorecard = json.loads((root / "data/freshness-scorecard.json").read_text())
+    legacy_keys = frozenset(
+        {
+            "module",
+            "catalog_status",
+            "freshness_status",
+            "in_scheduler",
+            "public_cli",
+            "dataset_count",
+            "record_count",
+            "last_refresh",
+            "scheduler_last_success_ts",
+            "refresh_interval_days",
+        }
+    )
+    fixture_keys = legacy_keys | {"fixture_readiness"}
+    row_schemas = {frozenset(entry) for entry in scorecard["modules"].values()}
 
-    _assert_fixture_consistency(root, scorecard)
+    assert row_schemas in ({legacy_keys}, {fixture_keys})
+    if row_schemas == {fixture_keys}:
+        _assert_fixture_consistency(root, scorecard)
 
 
 def test_markdown_has_fixture_readiness_value_per_row(tmp_path: Path):
