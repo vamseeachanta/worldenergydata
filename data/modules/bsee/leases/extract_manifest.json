@@ -1,0 +1,56 @@
+{
+  "source_row_counts": {
+    "lease": 31721,
+    "owner": 240440,
+    "operator": 256358,
+    "company": 5549
+  },
+  "target_leases": 20,
+  "leases_ingested": 20,
+  "registry_resolved": 20,
+  "unresolved": [],
+  "source_missing": [],
+  "artifacts": [
+    {
+      "file": "leases.json",
+      "sha256": "4ee8b765721f3049b9b341bf224484e239fdd9bdfe36fa0ab9af58cb97ac5fbd",
+      "size_bytes": 7098
+    },
+    {
+      "file": "owners.json",
+      "sha256": "d95dafaea9974eb5a82ce269fbd2d96e3b1608016386e8d13c29f7e7b096d30c",
+      "size_bytes": 371483
+    },
+    {
+      "file": "operators.json",
+      "sha256": "1d4f411b874fecc3d338ed2ae2f7746174bc471307be10a47aec264d28dd7c91",
+      "size_bytes": 451687
+    },
+    {
+      "file": "panel_values.json",
+      "sha256": "e9cf89299de35e8372a20ab7ae922b79d70558b32393908dc053b6ef7c1483d5",
+      "size_bytes": 79172
+    },
+    {
+      "file": "missing.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "size_bytes": 3
+    },
+    {
+      "file": "registry.json",
+      "sha256": "88b58f29aa00930ba6fa7bffea5de652f7d1a3c8bd86d9a01c5054693beef039",
+      "size_bytes": 1699
+    },
+    {
+      "file": "panel_values.html",
+      "sha256": "25b903f81b59d04a564d2d4ec4d1d08faef54d3bc2faf2d87a08c33d1f6831a1",
+      "size_bytes": 5461
+    },
+    {
+      "file": "source_schema.json",
+      "sha256": "228bb935c4eddc17ec54b6156fe05efc575535bae94227193ce75f427bfae9fc",
+      "size_bytes": 29819
+    }
+  ],
+  "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac"
+}

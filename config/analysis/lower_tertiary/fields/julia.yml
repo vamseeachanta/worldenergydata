@@ -12,10 +12,12 @@ field:
   # used by reports/lower_tertiary/field_economics_julia.md).
   first_oil: "2016-03-01"
   data_through: "2024-12-31"
-  # NOTE: operator unverified from repo data and disputed — public record has
-  # Julia as ExxonMobil-operated (Equinor/Statoil a 50% partner). Confirm
-  # against an authoritative source before using downstream. See partners below.
-  operator: "Equinor"
+  # P6: ExxonMobil starts production at Julia Oil Field in the Gulf of Mexico, 2016-04-19.
+  # https://corporate.exxonmobil.com/news/news-releases/2016/0419_exxonmobil-starts-production-at-julia-oil-field-in-the-gulf-of-mexico
+  # Checked 2026-10-11; issue 747.
+  # "ExxonMobil, the operator, and Statoil Gulf of Mexico LLC each hold a 50 percent interest in the Julia unit."
+  # Was "Equinor".
+  operator: "ExxonMobil"
   partners:
     - name: "Equinor"
       working_interest: 0.50
