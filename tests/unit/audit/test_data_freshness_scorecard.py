@@ -132,7 +132,9 @@ def _declare_fixture(root: Path, module_id: str = "texas_rrc") -> Path:
 
 def _assert_fixture_consistency(root: Path, scorecard: dict) -> None:
     manifest = yaml.safe_load((root / "module-manifest.yaml").read_text())
-    declarations = {row["id"]: row.get("fixture_catalog") for row in manifest["modules"]}
+    declarations = {
+        row["id"]: row.get("fixture_catalog") for row in manifest["modules"]
+    }
     for module_id, entry in scorecard["modules"].items():
         readiness = entry["fixture_readiness"]
         declaration = declarations.get(module_id)
@@ -140,7 +142,9 @@ def _assert_fixture_consistency(root: Path, scorecard: dict) -> None:
         if readiness == "packaged":
             path = root / declaration
             assert path.exists(), module_id
-            nonempty = path.stat().st_size > 0 if path.is_file() else any(path.iterdir())
+            nonempty = (
+                path.stat().st_size > 0 if path.is_file() else any(path.iterdir())
+            )
             assert nonempty, module_id
     for module_id, declaration in declarations.items():
         if declaration:
@@ -276,4 +280,6 @@ def test_markdown_has_fixture_readiness_value_per_row(tmp_path: Path):
     assert len(rows[2:]) == scorecard["module_count"]
     for row, module_id in zip(rows[2:], sorted(scorecard["modules"])):
         assert len(row) == len(headers)
-        assert row[index].strip() == scorecard["modules"][module_id]["fixture_readiness"]
+        assert (
+            row[index].strip() == scorecard["modules"][module_id]["fixture_readiness"]
+        )

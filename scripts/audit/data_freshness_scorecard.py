@@ -96,11 +96,15 @@ def _fixture_readiness(project_root: Path, manifest_entry: dict[str, Any]) -> st
     return "none"
 
 
-def build_scorecard(project_root: Path, report_date: str | None = None) -> dict[str, Any]:
+def build_scorecard(
+    project_root: Path, report_date: str | None = None
+) -> dict[str, Any]:
     """Build a module-keyed freshness scorecard from local catalog artifacts."""
     report_date = report_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     module_manifest = _module_records(_load_yaml(project_root / "module-manifest.yaml"))
-    catalog_modules = _catalog_modules(_load_yaml(project_root / "data" / "catalog.yaml"))
+    catalog_modules = _catalog_modules(
+        _load_yaml(project_root / "data" / "catalog.yaml")
+    )
     module_ids = sorted(set(module_manifest) | set(catalog_modules))
 
     modules: dict[str, dict[str, Any]] = {}
@@ -172,13 +176,17 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
 
 
 def _default_report_path(project_root: Path, report_date: str) -> Path:
-    return project_root / "docs" / "reports" / f"data-freshness-scorecard-{report_date}.md"
+    return (
+        project_root / "docs" / "reports" / f"data-freshness-scorecard-{report_date}.md"
+    )
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
-    parser.add_argument("--date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
+    parser.add_argument(
+        "--date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    )
     parser.add_argument("--report-output", type=Path)
     parser.add_argument("--json-output", type=Path)
     parser.add_argument("--check", action="store_true")
