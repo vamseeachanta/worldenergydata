@@ -174,7 +174,7 @@ def test_bad_resume_refused(tmp_path: Path) -> None:
         )
 
 
-def test_size_drift_blocks_before_network(tmp_path: Path) -> None:
+def test_size_drift_blocks_before_download(tmp_path: Path) -> None:
     entry = record()
     entry["size_bytes"] += 1
     session = Session(Response())

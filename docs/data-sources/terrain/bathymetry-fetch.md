@@ -16,15 +16,15 @@ rasters use NAD27 Transverse Mercator with horizontal cells of 40 US survey feet
 float32 values and nodata 0. Validated deepwater clips return 2,403.958 m at
 92 degrees west, 26 degrees north (west), and 2,853.842 m at 87 degrees west,
 28 degrees north (east), within the screening criterion of 1,000–6,000 m.
-A coverage gap is not a valid deepwater sample.
+A coverage gap is not a valid deepwater sample. The east record's point value
+and screening depth differ by 0.305 m; their cells of origin are not recorded.
+Reconciliation is pending the next curation run.
 
 The GEBCO 2024 requested ZIP endpoint redirects to the ice-surface-elevation
 variant `GEBCO_2024_CF.nc`, an uncompressed netCDF file, served at
 7,466,018,396 bytes. The issue's 4,267,373,073 bytes describes the earlier ZIP
-rather than the current distribution. GEBCO curation was paused at a commit-hook infrastructure blocker; partial bytes
-are retained externally for resume. A null hash and assumed conventions deny
-reuse until completion and inspection. The transfer was not refused; the
-three-hour transfer allowance was not reached.
+rather than the current distribution. GEBCO has not yet been fetched; curation is pending. A null hash and assumed
+conventions deny reuse until completion and inspection.
 Rights remain catalog/issue provenance; no new licence qualification is claimed.
 
 Set `WORLDENERGYDATA_BATHYMETRY_ROOT` to an external data directory, or provide

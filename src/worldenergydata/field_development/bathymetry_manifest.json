@@ -143,6 +143,7 @@
         "window_min": -2854.451904296875,
         "window_max": -2853.53759765625,
         "point_value": -2854.147216796875,
+        "depth_reconciliation_reason": "The two depth values differ by 0.305 m; their cells of origin are not recorded; reconciliation is pending the next curation run.",
         "metadata_tags": {
           "AREA_OR_POINT": "Area"
         },
@@ -175,7 +176,7 @@
       "license": "Public domain (GEBCO grid is placed in the public domain; attribution requested)",
       "retrieval_date_utc": null,
       "sha256": null,
-      "sha256_reason": "Transfer paused at publication blocker: configured commit hooks directory is absent; partial bytes retained for resume.",
+      "sha256_reason": "not yet fetched; curation pending",
       "units": "m",
       "vertical_convention": "elevation_positive_up",
       "source_version": "2024",

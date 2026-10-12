@@ -90,6 +90,17 @@ def test_unsafe_redirect_refused_before_request(
     assert session.urls == [entry["source_url"]]
 
 
+def test_malformed_redirect_port_refused_before_request(tmp_path: Path) -> None:
+    entry = record()
+    session = RedirectSession([redirect("https://example.org:invalid/grid.zip")])
+    with pytest.raises(
+        TerrainFetchError, match=r"example\.org.*port is malformed"
+    ) as caught:
+        fetch_fixture(tmp_path, entry, session)
+    assert isinstance(caught.value.__cause__, ValueError)
+    assert session.urls == [entry["source_url"]]
+
+
 def test_redirect_limit(tmp_path: Path) -> None:
     entry = record()
     session = RedirectSession([redirect(entry["source_url"])] * 4)

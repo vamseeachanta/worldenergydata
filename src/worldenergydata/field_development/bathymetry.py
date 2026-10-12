@@ -76,11 +76,17 @@ def _checked_host(url: str, entry: dict[str, Any]) -> str:
     parsed = urlsplit(url)
     if parsed.scheme != "https":
         raise TerrainFetchError("every source hop must use HTTPS")
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise TerrainFetchError(
+            f"rejected redirect target {parsed.hostname}: port is malformed"
+        ) from exc
     if (
         parsed.hostname not in entry.get("allowed_hosts", [])
         or parsed.username is not None
         or parsed.password is not None
-        or parsed.port not in (None, 443)
+        or port not in (None, 443)
     ):
         raise TerrainFetchError("source host is not allowed")
     return str(parsed.hostname)
