@@ -20,6 +20,7 @@ from worldenergydata.common.logging import get_logger
 
 from ..core.config import AssumptionsManager
 from ..fiscal.terms import FiscalTerms
+from .gas_revenue import monthly_gas_revenue
 
 logger = get_logger(__name__)
 
@@ -65,6 +66,11 @@ class MonthlyCashflowModel:
     host_capex_usd: float = 0.0
     net_cashflow_usd: float = 0.0
 
+    @property
+    def total_revenue_usd(self) -> float:
+        """Gross revenue in USD; the legacy model carries oil only."""
+        return self.oil_revenue_usd
+
     def calculate_net_cashflow(self) -> float:
         """
         Calculate net cashflow.
@@ -72,7 +78,7 @@ class MonthlyCashflowModel:
         Returns:
             Net cashflow in USD
         """
-        revenue = self.oil_revenue_usd
+        revenue = self.total_revenue_usd
         costs = (
             self.royalty_usd
             + self.variable_opex_usd
@@ -84,6 +90,22 @@ class MonthlyCashflowModel:
 
         self.net_cashflow_usd = revenue - costs
         return self.net_cashflow_usd
+
+
+@dataclass
+class GasMonthlyCashflowModel(MonthlyCashflowModel):
+    """Gas-enabled projection; legacy serialized rows stay unchanged.
+
+    Gas volume is Mcf and gas revenue is USD, priced by a USD/Mcf deck.
+    """
+
+    gas_production_mcf: float = 0.0
+    gas_revenue_usd: float = 0.0
+
+    @property
+    def total_revenue_usd(self) -> float:
+        """Combined oil and gas gross revenue in USD."""
+        return self.oil_revenue_usd + self.gas_revenue_usd
 
 
 class CashflowEngine:
@@ -363,6 +385,7 @@ class CashflowEngine:
         drilling_timeline: Dict[str, any],
         wti_prices: Dict[str, float],
         first_oil_date: datetime,
+        gas_prices: Optional[Dict[str, float]] = None,
     ) -> List[MonthlyCashflowModel]:
         """
         Generate complete monthly cashflow projection.
@@ -372,6 +395,10 @@ class CashflowEngine:
             drilling_timeline: Drilling/completion timeline dict
             wti_prices: WTI price deck
             first_oil_date: First oil date
+            gas_prices: Optional YYYY-MM realized USD/Mcf deck. When supplied,
+                MONTHLY_GAS_MCF and a finite nonnegative price for each
+                production month are required. No hidden heating-value factor
+                or escalation is applied; no deck preserves legacy oil output.
 
         Returns:
             List of MonthlyCashflowModel objects
@@ -420,8 +447,21 @@ class CashflowEngine:
             .items()
         }
 
-        # Calculate revenue and costs
-        revenue_monthly = self.calculate_revenue(prod_dict, wti_prices)
+        # Calculate revenue and costs. Validate gas only when explicitly priced.
+        gas_volumes: Dict[str, float] = {}
+        gas_revenues: Dict[str, float] = {}
+        oil_revenues = self.calculate_revenue(prod_dict, wti_prices)
+        revenue_monthly = oil_revenues
+        if gas_prices is not None:
+            try:
+                gas_volumes, gas_revenues = monthly_gas_revenue(
+                    production_monthly, gas_prices
+                )
+            except ValueError as exc:
+                raise CashflowError(str(exc)) from exc
+            revenue_monthly = {
+                month: oil_revenues[month] + gas_revenues[month] for month in prod_dict
+            }
         royalty_monthly = self.calculate_royalty(revenue_monthly)
         variable_opex_monthly = self.calculate_variable_opex(prod_dict)
 
@@ -440,7 +480,7 @@ class CashflowEngine:
             cf = MonthlyCashflowModel(
                 year_month=month,
                 oil_production_bbl=prod_dict.get(month, 0.0),
-                oil_revenue_usd=revenue_monthly.get(month, 0.0),
+                oil_revenue_usd=oil_revenues.get(month, 0.0),
                 royalty_usd=royalty_monthly.get(month, 0.0),
                 variable_opex_usd=variable_opex_monthly.get(month, 0.0),
                 fixed_opex_usd=0.0,  # Would be calculated from production period
@@ -448,6 +488,12 @@ class CashflowEngine:
                 facilities_capex_usd=0.0,
                 host_capex_usd=host_capex_monthly.get(month, 0.0),
             )
+            if gas_prices is not None:
+                cf = GasMonthlyCashflowModel(
+                    **vars(cf),
+                    gas_production_mcf=gas_volumes.get(month, 0.0),
+                    gas_revenue_usd=gas_revenues.get(month, 0.0),
+                )
             cf.calculate_net_cashflow()
             cashflows.append(cf)
 
@@ -487,7 +533,11 @@ def generate_monthly_cashflow(
     first_oil_date = kwargs.get("first_oil_date", datetime.now())
 
     cashflows = engine.generate_monthly_cashflow(
-        production_df, drilling_timeline, wti_prices, first_oil_date
+        production_df,
+        drilling_timeline,
+        wti_prices,
+        first_oil_date,
+        gas_prices=kwargs.get("gas_prices"),
     )
 
     # Convert to DataFrame
