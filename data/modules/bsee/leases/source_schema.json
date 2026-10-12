@@ -1,0 +1,786 @@
+{
+  "version": 1,
+  "encoding": "cp1252",
+  "tables": {
+    "lease": {
+      "archive": "lsetapefixed.zip",
+      "member": "LSETAPE.DAT",
+      "format": "fixed",
+      "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+      "fields": [
+        {
+          "name": "Lease Number",
+          "alias": "Lease Number",
+          "start": 1,
+          "length": 7,
+          "type": "string",
+          "definition": "Lease Number - The number assigned to a lease by the regulatory agency having jurisdiction over mineral activity in the territory where the lease is located."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 8,
+          "length": 8,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Serial Type Code",
+          "alias": "Serial Type Code",
+          "start": 16,
+          "length": 1,
+          "type": "string",
+          "definition": "Serial Type Code -Indicates the reason that a serial number is issued."
+        },
+        {
+          "name": "Sale Number",
+          "alias": "Sale Number",
+          "start": 17,
+          "length": 7,
+          "type": "string",
+          "definition": "Sale Number -The number designation assigned by the Minerals Management Service to specifically identify an Outer Continental Shelf lease sale."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 24,
+          "length": 4,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Lease Expected Expiration Date",
+          "alias": "Lease Expected Expiration Date",
+          "start": 28,
+          "length": 8,
+          "type": "date",
+          "definition": "Lease Expected Expiration Date - YYYYMMDD - The anticipated day, month, and year on which the lease is scheduled to expire."
+        },
+        {
+          "name": "API State County Code",
+          "alias": "API State County Code",
+          "start": 36,
+          "length": 5,
+          "type": "string",
+          "definition": "API State County Code - A five-digit number identifier assigned to offshore Federal water areas, as recommended by API. This code becomes a part of the API well number."
+        },
+        {
+          "name": "Tract Number",
+          "alias": "Tract Number",
+          "start": 41,
+          "length": 10,
+          "type": "string",
+          "definition": "Tract Number - A number to uniquely identify the block(s) offered for a lease in an Outer Continental Lease sale assigned by the Minerals Management Service."
+        },
+        {
+          "name": "Lease Effective Date",
+          "alias": "Lease Effective Date",
+          "start": 51,
+          "length": 8,
+          "type": "date",
+          "definition": "Lease Effective Date - YYYYMMDD - The date a lease becomes operative as assigned by the Mineral Management Service."
+        },
+        {
+          "name": "Primary Term",
+          "alias": "Primary Term",
+          "start": 59,
+          "length": 2,
+          "type": "string",
+          "definition": "Primary Term - The initial period (in years) of a lease."
+        },
+        {
+          "name": "Lease Expiration Date",
+          "alias": "Lease Expiration Date",
+          "start": 61,
+          "length": 8,
+          "type": "date",
+          "definition": "Lease Expiration Date - YYYYMMDD - The date a lease expires, is relinquished or terminated."
+        },
+        {
+          "name": "Bid System Code",
+          "alias": "Bid System Code",
+          "start": 69,
+          "length": 5,
+          "type": "string",
+          "definition": "Bid System Code - Indicates the method by which royalties are determined for a lease or potential lease."
+        },
+        {
+          "name": "Royalty Rate",
+          "alias": "Royalty Rate",
+          "start": 74,
+          "length": 10,
+          "type": "decimal",
+          "definition": "Royalty Rate - Specified minimum annual royalty required from the leasehold."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 84,
+          "length": 3,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Initial Area",
+          "alias": "Initial Area",
+          "start": 87,
+          "length": 14,
+          "type": "decimal",
+          "definition": "Initial Area - The original surface area of a leasehold, unit, etc."
+        },
+        {
+          "name": "Current Area",
+          "alias": "Current Area",
+          "start": 101,
+          "length": 14,
+          "type": "decimal",
+          "definition": "Current Area - The current total surface area of a leasehold including any assingnments or changes thereto."
+        },
+        {
+          "name": "Rent per Unit",
+          "alias": "Rent per Unit",
+          "start": 115,
+          "length": 8,
+          "type": "decimal",
+          "definition": "Rent Per Unit - The rent per unit of area payable by the lessee on the first day of each lease year prior to discovery of minerals in paying quantity, on the leasehold."
+        },
+        {
+          "name": "Bid Amount",
+          "alias": "Bid Amount",
+          "start": 123,
+          "length": 13,
+          "type": "decimal",
+          "definition": "Bid Amount - A timely, sealed submittal to a mineral owner offering a monetary consideration for a specific property during a lease sale."
+        },
+        {
+          "name": "Bid per Unit",
+          "alias": "Bid per Unit",
+          "start": 136,
+          "length": 13,
+          "type": "decimal",
+          "definition": "Bid per Unit - The dollar amount of the bid received for a tract divided by the areal amount of the tract."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 149,
+          "length": 1,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Block Low Water Depth",
+          "alias": "Block Low Water Depth",
+          "start": 150,
+          "length": 5,
+          "type": "string",
+          "definition": "Block Low Water Depth - The point of the lowest (or minimum) vertical distance from mean sea level to the sea floor for a block."
+        },
+        {
+          "name": "Block Max Water Depth",
+          "alias": "Block Max Water Depth",
+          "start": 155,
+          "length": 5,
+          "type": "string",
+          "definition": "Block Max Water Depth - The point of the highest (or maximum) vertical distance from mean sea level to the sea floor for a block."
+        },
+        {
+          "name": "System Measure Flag",
+          "alias": "System Measure Flag",
+          "start": 160,
+          "length": 1,
+          "type": "string",
+          "definition": "System Measure Flag - A-Acres H-Hectares."
+        },
+        {
+          "name": "MMS Planning Area Code",
+          "alias": "MMS Planning Area Code",
+          "start": 161,
+          "length": 3,
+          "type": "string",
+          "definition": "MMS Planning Area Code - Indicates an Outer Continental Shelf (OCS) group of offshore blocks that considered an entity for administrative planning purposes."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 164,
+          "length": 2,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "District Code",
+          "alias": "District Code",
+          "start": 166,
+          "length": 2,
+          "type": "string",
+          "definition": "District Code - An indicator assigned to a sub-office of an Outer Continental Shelf (OCS) regional office which has delegated authority for field operations activities including: permitting wells, inspections, drilling, and production operations."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 168,
+          "length": 3,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Lease Status Code",
+          "alias": "Lease Status Code",
+          "start": 171,
+          "length": 6,
+          "type": "string",
+          "definition": "Lease Status Code Identifies the development stage of the lease as assigned by the Minerals Management Service's Office of Leasing and Environment."
+        },
+        {
+          "name": "Lease Status Effective Date",
+          "alias": "Lease Status Effective Date",
+          "start": 177,
+          "length": 8,
+          "type": "date",
+          "definition": "Lease Status Effective Date - YYYYMMDD - The date that the development stage of a lease becomes operative."
+        },
+        {
+          "name": "Suspension Expiration Date",
+          "alias": "Suspension Expiration Date",
+          "start": 185,
+          "length": 8,
+          "type": "date",
+          "definition": "Suspension Expiration Date - YYYYMMDD - The day, month, and year that a lease suspension of production or suspension of operations expires."
+        },
+        {
+          "name": "Suspension Type Code",
+          "alias": "Suspension Type Code",
+          "start": 193,
+          "length": 1,
+          "type": "string",
+          "definition": "Suspension Type Code - Indicates whether the lease is help by a suspension of production or suspension of operations."
+        },
+        {
+          "name": "Well Name",
+          "alias": "Well Name",
+          "start": 194,
+          "length": 6,
+          "type": "string",
+          "definition": "Well Name - The name assigned to the well. It may be a special name or the name of the property to which the well belogs."
+        },
+        {
+          "name": "Qualifying Well Types",
+          "alias": "Qualifying Well Types",
+          "start": 200,
+          "length": 1,
+          "type": "string",
+          "definition": "Qualifying Well Types - Indicates the type of well that is determined to be producible under Title 30 CFR 250.11, and therefore qualifies a lease as producible."
+        },
+        {
+          "name": "Lease Qualifying Date",
+          "alias": "Lease Qualifying Date",
+          "start": 201,
+          "length": 8,
+          "type": "date",
+          "definition": "Lease Qualifying Date - The day, month, and year that a lease is determined capable of production in paying quantities as established by the Minerals Management Service."
+        },
+        {
+          "name": "Discovery Type Code",
+          "alias": "Discovery Type Code",
+          "start": 209,
+          "length": 3,
+          "type": "string",
+          "definition": "Discovery Type Code - Indicates the type of mineral deposit discovered on a lease."
+        },
+        {
+          "name": "Field Discovery Code",
+          "alias": "Field Discovery Code",
+          "start": 212,
+          "length": 1,
+          "type": "string",
+          "definition": "Field Discovery Code - Y - a new field is discovered - N - an extension of an existing field."
+        },
+        {
+          "name": "Distance to Shore",
+          "alias": "Distance to Shore",
+          "start": 213,
+          "length": 3,
+          "type": "string",
+          "definition": "Distance to Shore - The approximate distance to the nearest coastline. The nearest coastline may be an island or a point on the U. S. Shoreline."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 216,
+          "length": 1,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Number of Platforms",
+          "alias": "Number of Platforms",
+          "start": 217,
+          "length": 3,
+          "type": "string",
+          "definition": "Number of Platforms - Number of platforms located on a lease."
+        },
+        {
+          "name": "Platform Approval Date",
+          "alias": "Platform Approval Date",
+          "start": 220,
+          "length": 8,
+          "type": "date",
+          "definition": "Platform Approval Date - YYYYMMDD - The date the first platform is approved by the Minerals Management Service for a lease."
+        },
+        {
+          "name": "First Platform Set Date",
+          "alias": "First Platform Set Date",
+          "start": 228,
+          "length": 8,
+          "type": "date",
+          "definition": "First Platform Set Date - YYYYMMDD - The date that the first platform on a lease was installed."
+        },
+        {
+          "name": "Lease Section Code",
+          "alias": "Lease Section Code",
+          "start": 236,
+          "length": 2,
+          "type": "string",
+          "definition": "Lease Section Code - An indicator of the type of section (according to the OCS Lands Act) of federally administered portions of an OCS lease."
+        },
+        {
+          "name": "Postal State Code",
+          "alias": "Postal State Code",
+          "start": 238,
+          "length": 4,
+          "type": "string",
+          "definition": "Postal State Code - Indicates the postal code for a single state that borders on the 8G line. If Postal State Code is null Section State Code is placed in this location. Section State Code - Indicates the two states associated with the section of the OCS Lands Act under which the lease was issued. (Two states bordering the 8G line.)"
+        },
+        {
+          "name": "Lease Section Area",
+          "alias": "Lease Section Area",
+          "start": 242,
+          "length": 12,
+          "type": "decimal",
+          "definition": "Lease Section Area - The suface area of the federally administered portion of an OCS lease which has been designated as containing areas other than current or previous federal area."
+        },
+        {
+          "name": "Protraction Number",
+          "alias": "Protraction Number",
+          "start": 254,
+          "length": 7,
+          "type": "string",
+          "definition": "Protraction Number - The identifier of an official protraction, which can be one of two types as utilized by the Minerals Management Service (MMS): an official Protraction Diagram (OPD) or Leasing Map."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 261,
+          "length": 8,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Suspension Effective Date",
+          "alias": "Suspension Effective Date",
+          "start": 269,
+          "length": 8,
+          "type": "date",
+          "definition": "Suspension Effective Date - YYYYMMDD - The day, month, and year that a suspension of production or suspension of operations holding a lease becomes operataive."
+        },
+        {
+          "name": "First Production Date",
+          "alias": "First Production Date",
+          "start": 277,
+          "length": 8,
+          "type": "date",
+          "definition": "First Production Date - YYYYMMDD - The date a lease is first placed on continuous extraction of solid minerals or flow of fluid minerals that is primarily for sale rather than for testing."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 285,
+          "length": 4,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Area Code",
+          "alias": "Area Code",
+          "start": 289,
+          "length": 2,
+          "type": "string",
+          "definition": "Area Code - The designated abbreviation assigned to Outer Continental Shelf (OCS) geographical units for identification purposes and for use on maps and in databases."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 291,
+          "length": 2,
+          "type": "string",
+          "definition": "Filler"
+        },
+        {
+          "name": "Block Number",
+          "alias": "Block Number",
+          "start": 293,
+          "length": 6,
+          "type": "string",
+          "definition": "Block Number - Identifies a subdivision of an Official Protraction Diagram."
+        },
+        {
+          "name": "Filler",
+          "alias": "Filler",
+          "start": 299,
+          "length": 2,
+          "type": "string",
+          "definition": "Filler"
+        }
+      ]
+    },
+    "owner": {
+      "archive": "lseowndelimit.zip",
+      "member": "lseowndelimit.txt",
+      "format": "csv",
+      "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+      "fields": [
+        {
+          "name": "OWNER_ALIQUOT_CD",
+          "alias": "Owner Aliquot Cd",
+          "start": 1,
+          "length": 1,
+          "type": "string",
+          "definition": "OWNER_ALIQUOT_CD -Indicates different percentage ownerships within a lease as a result of a partial assignment."
+        },
+        {
+          "name": "SN_LSE_OWNER",
+          "alias": "Sn Lse Owner",
+          "start": 2,
+          "length": 22,
+          "type": "string",
+          "definition": "SN_LSE_OWNER -Autogenerated sequence number which uniquely identifies each instance of a lease owner."
+        },
+        {
+          "name": "ASGN_APRV_DATE",
+          "alias": "Asgn Aprv Date",
+          "start": 24,
+          "length": 8,
+          "type": "date",
+          "definition": "ASGN_APRV_DATE -The date an assignment of interest is approved by the Minerals Management Service (MMS), and the date the official MMS records are changed."
+        },
+        {
+          "name": "MMS_START_DATE",
+          "alias": "Mms Start Date",
+          "start": 32,
+          "length": 8,
+          "type": "date",
+          "definition": "MMS_START_DATE -The date that a business entity began doing business with the Minerals Management Service."
+        },
+        {
+          "name": "MMS_COMPANY_NUM",
+          "alias": "Mms Company Num",
+          "start": 40,
+          "length": 5,
+          "type": "string",
+          "definition": "MMS_COMPANY_NUM -The number assigned by the Minerals Management Service to a business entity, individual, or agency with whom MMS does business or exchanges information."
+        },
+        {
+          "name": "LEASE_NUMBER",
+          "alias": "Lease Number",
+          "start": 45,
+          "length": 7,
+          "type": "string",
+          "definition": "LEASE_NUMBER - The number assigned to a lease by the regulatory agency having jurisdiction over mineral activity in the territory where the lease is located."
+        },
+        {
+          "name": "ASGN_STATUS_CODE",
+          "alias": "Asgn Status Code",
+          "start": 52,
+          "length": 1,
+          "type": "string",
+          "definition": "ASGN_STATUS_CODE -Indicates the stage in the approval process of a lease assignment."
+        },
+        {
+          "name": "ASGN_TERM_DATE",
+          "alias": "Asgn Term Date",
+          "start": 53,
+          "length": 8,
+          "type": "date",
+          "definition": "ASGN_TERM_DATE -The date that a lease assignment is terminated by the Minerals Management Service."
+        },
+        {
+          "name": "OWNER_GROUP_CODE",
+          "alias": "Owner Group Code",
+          "start": 61,
+          "length": 1,
+          "type": "string",
+          "definition": "OWNER_GROUP_CODE -Indicates different percentage ownerships within a lease as a result of a partial assignment."
+        },
+        {
+          "name": "ASSIGNMENT_PCT",
+          "alias": "Assignment Pct",
+          "start": 62,
+          "length": 11,
+          "type": "decimal",
+          "definition": "ASSIGNMENT_PCT -The lessee's financial interest in a lease.",
+          "unit": "percent (0 to 100)"
+        },
+        {
+          "name": "ASGN_EFF_DATE",
+          "alias": "Asgn Eff Date",
+          "start": 73,
+          "length": 8,
+          "type": "date",
+          "definition": "ASGN_EFF_DATE -The date requested as an effective date by the parties to the assignment."
+        }
+      ]
+    },
+    "operator": {
+      "archive": "lseownddelimit.zip",
+      "member": "lseownddelimit.txt",
+      "format": "csv",
+      "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+      "fields": [
+        {
+          "name": "LEASE_NUMBER",
+          "alias": "Lease Number",
+          "start": 1,
+          "length": 7,
+          "type": "string",
+          "definition": "LEASE_NUMBER - The number assigned to a lease by the regulatory agency having jurisdiction over mineral activity in the territory where the lease is located."
+        },
+        {
+          "name": "ASGN_APRV_DATE",
+          "alias": "Asgn Aprv Date",
+          "start": 8,
+          "length": 8,
+          "type": "date",
+          "definition": "ASGN_APRV_DATE -The date an assignment of interest is approved by the Minerals Management Service (MMS), and the date the official MMS records are changed."
+        },
+        {
+          "name": "ASGN_EFF_DATE",
+          "alias": "Asgn Eff Date",
+          "start": 16,
+          "length": 8,
+          "type": "date",
+          "definition": "ASGN_EFF_DATE -The date requested as an effective date by the parties to the assignment."
+        },
+        {
+          "name": "ASGN_STATUS_CODE",
+          "alias": "Asgn Status Code",
+          "start": 24,
+          "length": 1,
+          "type": "string",
+          "definition": "ASGN_STATUS_CODE -Indicates the stage in the approval process of a lease assignment."
+        },
+        {
+          "name": "OWNER_GROUP_CODE",
+          "alias": "Owner Group Code",
+          "start": 25,
+          "length": 1,
+          "type": "string",
+          "definition": "OWNER_GROUP_CODE -Indicates different percentage ownerships within a lease as a result of a partial assignment."
+        },
+        {
+          "name": "MMS_COMPANY_NUM",
+          "alias": "Mms Company Num",
+          "start": 26,
+          "length": 5,
+          "type": "string",
+          "definition": "MMS_COMPANY_NUM -The number assigned by the Minerals Management Service to a business entity, individual, or agency with whom MMS does business or exchanges information."
+        },
+        {
+          "name": "ASSIGNMENT_PCT",
+          "alias": "Assignment Pct",
+          "start": 31,
+          "length": 11,
+          "type": "decimal",
+          "definition": "ASSIGNMENT_PCT -The lessee's financial interest in a lease.",
+          "unit": "percent (0 to 100)"
+        },
+        {
+          "name": "LEASE_DESIG_DATE",
+          "alias": "Lease Desig Date",
+          "start": 42,
+          "length": 8,
+          "type": "date",
+          "definition": "LEASE_DESIG_DATE -The date that a designation of operator form for a lease was approved by the Minerals Management Service."
+        },
+        {
+          "name": "OPERATOR_NUM",
+          "alias": "Designated Operator Num",
+          "start": 50,
+          "length": 5,
+          "type": "string",
+          "definition": "OPERATOR_NUM -The number assigned by the Minerals Management Service to a business entity, individual, or agency with whom MMS does business or exchanges information."
+        }
+      ]
+    },
+    "company": {
+      "archive": "compalldelimit.zip",
+      "member": "compalldelimit.txt",
+      "format": "csv",
+      "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+      "fields": [
+        {
+          "name": "MMS_COMPANY_NUM",
+          "alias": "MMS Company Num",
+          "start": 1,
+          "length": 5,
+          "type": "string",
+          "definition": "MMS_COMPANY_NUM -The number assigned by the Minerals Management Service to a business entity, individual, or agency with whom MMS does business or exchanges information."
+        },
+        {
+          "name": "MMS_START_DATE",
+          "alias": "Mms Start Date",
+          "start": 6,
+          "length": 8,
+          "type": "date",
+          "definition": "MMS_START_DATE -The date that a business entity began doing business with the Minerals Management Service."
+        },
+        {
+          "name": "BUS_ASC_NAME",
+          "alias": "Bus Asc Name",
+          "start": 14,
+          "length": 100,
+          "type": "string",
+          "definition": "BUS_ASC_NAME -The name of a **business associate**."
+        },
+        {
+          "name": "SORT_NAME",
+          "alias": "Sort Name",
+          "start": 114,
+          "length": 75,
+          "type": "string",
+          "definition": "SORT_NAME -The name of the business entity doing business on the OCS used for sorting purposes. For example, The Louisana Land and Exploration Company would have a short name of LOUISIANA LAND AND EXPLORATION COMPANY, THE and therefore sort with business entities whose name begins with \"L.\""
+        },
+        {
+          "name": "MMS_TERM_DATE",
+          "alias": "Mms Term Date",
+          "start": 189,
+          "length": 8,
+          "type": "date",
+          "definition": "MMS_TERM_DATE -The date that a business entity is no longer qualified to do business on the OCS with MMS."
+        },
+        {
+          "name": "PAC_REGION_CODE",
+          "alias": "Pac Region Code",
+          "start": 197,
+          "length": 1,
+          "type": "string",
+          "definition": "PAC_REGION_CODE -Indicates whether a business associate is qualified with the Minerals Management Service's Pacific Region."
+        },
+        {
+          "name": "GOM_REGION_CODE",
+          "alias": "GoA Region Code",
+          "start": 198,
+          "length": 1,
+          "type": "string",
+          "definition": "GOM_REGION_CODE -Indicates whether a business associate is qualified with the Minerals Management Service's Gulf of America Region."
+        },
+        {
+          "name": "ALASKA_RGN_CODE",
+          "alias": "Alaska Rgn Code",
+          "start": 199,
+          "length": 1,
+          "type": "string",
+          "definition": "ALASKA_RGN_CODE -Indicates whether a business associate is qualified with the Minerals Management Service (MMS) Alaska Regional Office."
+        },
+        {
+          "name": "ATL_REGION_CODE",
+          "alias": "Atl Region Code",
+          "start": 200,
+          "length": 1,
+          "type": "string",
+          "definition": "ATL_REGION_CODE -Indicates whether a business associate is qualified with the Minerals Management Service's Atlantic Region."
+        },
+        {
+          "name": "DUNS_NUMBER",
+          "alias": "Duns Number",
+          "start": 201,
+          "length": 13,
+          "type": "string",
+          "definition": "DUNS_NUMBER -The unique identifier assigned to a requesting business by Dun and Bradstreet. The first nine digits are assigned by Dun and Bradstreet, the last four are agreed to by the trading partners."
+        },
+        {
+          "name": "TERM_ACTN_EFF_DT",
+          "alias": "Term Actn Eff Dt",
+          "start": 214,
+          "length": 8,
+          "type": "date",
+          "definition": "TERM_ACTN_EFF_DT -The date that an action, such as a name change or merger, that causes a business entity to terminate is effective."
+        },
+        {
+          "name": "TERMINATION_CODE",
+          "alias": "Termination Code",
+          "start": 222,
+          "length": 1,
+          "type": "string",
+          "definition": "TERMINATION_CODE -Indicates the reason a business entity terminates its qualification status with the MMS."
+        },
+        {
+          "name": "DIVISION_NAME",
+          "alias": "Division Name",
+          "start": 223,
+          "length": 35,
+          "type": "string",
+          "definition": "DIVISION_NAME -The name of the organizational division of an entity used as part of the mailing address."
+        },
+        {
+          "name": "Line 1 Address",
+          "alias": "Line 1 Address",
+          "start": 258,
+          "length": 35,
+          "type": "string",
+          "definition": "LINE_1_ADDRESS -The first line of a street address."
+        },
+        {
+          "name": "Line 2 Address",
+          "alias": "Line 2 Address",
+          "start": 293,
+          "length": 35,
+          "type": "string",
+          "definition": "LINE_2_ADDRESS -The second line of a street address."
+        },
+        {
+          "name": "CITY_NAME",
+          "alias": "City Name",
+          "start": 328,
+          "length": 35,
+          "type": "string",
+          "definition": "CITY_NAME -The name of the city for the mailing address."
+        },
+        {
+          "name": "POSTAL_ST_CODE",
+          "alias": "Postal St Code",
+          "start": 363,
+          "length": 2,
+          "type": "string",
+          "definition": "POSTAL_ST_CODE -Indicates the postal code for a state."
+        },
+        {
+          "name": "ZIP_CODE",
+          "alias": "Zip Code",
+          "start": 365,
+          "length": 20,
+          "type": "string",
+          "definition": "ZIP_CODE -The Postal Service designator which delineates the state, county or parish, community, and possibly neighborhood for a residence or business entity."
+        },
+        {
+          "name": "COUNTRY_NAME",
+          "alias": "Country Name",
+          "start": 385,
+          "length": 35,
+          "type": "string",
+          "definition": "COUNTRY_NAME -The name of the country other than the United States of America (USA) where a business entity receives correspondence."
+        }
+      ]
+    }
+  },
+  "date_format": "YYYYMMDD; blank -> null",
+  "assignment_status": {
+    "C": "Current",
+    "H": "Historic",
+    "P": "Pending",
+    "T": "Terminated",
+    "blank": "Unknown; excluded from current ownership"
+  },
+  "dictionary_reference": "docs/knowledge-base/bsee/data-dictionaries/leasing/lease-fields.md",
+  "precedence": "Published layouts govern parsing; conceptual dictionary fractions are not ASSIGNMENT_PCT units."
+}

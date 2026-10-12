@@ -1,0 +1,23 @@
+basename: federal_acreage
+
+meta:
+  label: federal_acreage_evidence
+
+file_management:
+  flag: false
+  output_directory: outputs
+
+data:
+  source: fixture
+  file: fixture_records.json
+
+tract:
+  tract_id: PILOT-TRACT-A
+  label: Synthetic pilot tract A
+  state: NM
+  principal_meridian: New Mexico Principal Meridian
+  township: T05S
+  range: R08E
+  section: 12
+  aliquots: ["NE-NE", "NW-NE", "SW-NE", "SE-NE", "NE-NW", "NW-NW", "SW-NW", "SE-NW"]
+  gross_area_acres: 320.0
