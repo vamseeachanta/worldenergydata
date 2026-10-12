@@ -1,0 +1,528 @@
+{
+  "edition": 2023,
+  "tables": {
+    "2023sands": [
+      {
+        "name": "SN_FORMSAND",
+        "source_type": "DOUBLE PRECISION",
+        "type": "identifier",
+        "nullable": true
+      },
+      {
+        "name": "SAND_NAME",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "SDDATE",
+        "source_type": "TIMESTAMP WITHOUT TIME ZONE",
+        "type": "datetime",
+        "nullable": true
+      },
+      {
+        "name": "SDYEAR",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SDDATEH",
+        "source_type": "TIMESTAMP WITHOUT TIME ZONE",
+        "type": "datetime",
+        "nullable": true
+      },
+      {
+        "name": "SDYEARH",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "WELLAPI",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "BOEM_FIELD",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FCLASS",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FSTAT",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FSTRUC",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FTRAP1",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FTRAP2",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "FDDATE",
+        "source_type": "TIMESTAMP WITHOUT TIME ZONE",
+        "type": "datetime",
+        "nullable": true
+      },
+      {
+        "name": "FDYEAR",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "EIAID",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAREA",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "SAND",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_NUM",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_NAME",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "POOL_NAME",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "CHRONOZONE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_TYPE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "SD_TYPE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "WDEP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORIGINAL OIL",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORIGINAL GAS",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORIGINAL BOE",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "CUM OIL",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "CUM GAS",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "CUM BOE",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "OIL RESERVES",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GAS RESERVES",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "BOE RESERVES",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SS",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "THK",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "TAREA",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "TVOL",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "OTHK",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "OAREA",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "OVOL",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GTHK",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GVOL",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "DRIVE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "RESTYP",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "POROSITY",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SW",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "PERMEABILITY",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "PI",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "TI",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SDPG",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SDTG",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "RSI",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "YIELD",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "PROP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GOR",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SPGR",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "API",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "BGI",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "BOI",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "RECO_AF",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "RECG_AF",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "OIP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GIP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORF",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORECO",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORECG",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "ORP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GRF",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GRECO",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GRECG",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "GRP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "NCNT",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "UCNT",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "SCNT",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "TCNT",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "BHCOMP",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "LAT",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      },
+      {
+        "name": "LONG",
+        "source_type": "DOUBLE PRECISION",
+        "type": "number",
+        "nullable": true
+      }
+    ],
+    "2023plays": [
+      {
+        "name": "CHRONOZONE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_TYPE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_NUMBER",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "PLAY_NAME_DESCRIPTION",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      }
+    ],
+    "2023chronozones": [
+      {
+        "name": "BOEM_CHRONOZONE",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      },
+      {
+        "name": "CHRONOZONE_DESCRIPTION",
+        "source_type": "VARCHAR (255)",
+        "type": "string",
+        "nullable": true
+      }
+    ]
+  },
+  "export_datetime_format": "%Y-%m-%d %H:%M:%S"
+}

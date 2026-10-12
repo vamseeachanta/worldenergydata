@@ -174,6 +174,11 @@ def engine(
         dwnld_from_zipurl = zip()
         cfg_base = dwnld_from_zipurl.router(cfg_base)
 
+    elif basename in ["federal_acreage"]:
+        from worldenergydata.federal_acreage.federal_acreage import FederalAcreage
+
+        cfg_base = FederalAcreage().router(cfg_base)
+
     else:
         raise (Exception(f"Analysis for basename: {basename} not found. ... FAIL"))
 

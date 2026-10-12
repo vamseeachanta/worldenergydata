@@ -37,6 +37,7 @@ allowed_roots:
   - .flake8
   - .gitattributes
   - .gitignore
+  - .gitleaks.toml
   - .legal-deny-list.yaml
   - LICENSE
   - Makefile
@@ -152,6 +153,7 @@ temporary_exceptions:
       - reports/field_analysis_report.html
       - reports/field_benchmark/_facts.json
       - reports/field_benchmark/index.html
+      - reports/field_benchmark/README.md
       - reports/field_development/bsee_matched/_summary.json
       - reports/field_development/bsee_matched/aconcagua.html
       - reports/field_development/bsee_matched/allegheny.html
