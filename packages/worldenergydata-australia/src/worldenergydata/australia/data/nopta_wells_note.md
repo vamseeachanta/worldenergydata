@@ -73,7 +73,10 @@ For a bounded live exercise, supply previously inspected layer metadata via
 unlicensed research evidence, not a publishable dataset. The fetcher rechecks
 robots and website terms, waits at least two seconds before each request,
 uses a repository-contact User-Agent, and refuses redirects. Any change to the
-reviewed website terms bytes blocks queries pending a new access assessment. Each request has
+reviewed website terms bytes blocks queries pending a new access assessment.
+A terms-check block usually means the copyright page markup changed because
+`REVIEWED_TERMS_SHA256` pins the full HTML; re-review the page's access terms and
+licence wording before updating the reviewed digest. Each request has
 a 30-second timeout and a 2 MB response limit; queries are capped at three pages
 and 5 MB combined response bytes. Each page requests at most 100 records, never
 more than the layer maximum. Caps and duplicate/reordered IDs fail explicitly;

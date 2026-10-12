@@ -34,10 +34,17 @@ _AUSTRALIA_MAPPING = FieldMetaMapping(
 def australia_field_to_concept(
     field_meta: Dict[str, Any], *, wells: Optional[Iterable[Dict[str, Any]]] = None
 ) -> FieldConcept:
-    """Build a sparse Australia ``FieldConcept`` from DataVic/NOPTA metadata."""
-    from .metadata.well_enrichment import enrich_field_metadata
+    """Build a sparse Australia ``FieldConcept`` from DataVic/NOPTA metadata.
 
-    meta = enrich_field_metadata(field_meta, [] if wells is None else wells)
+    Enrichment is opt-in: omitted wells preserve the original metadata path;
+    an explicitly passed empty iterable still enables enrichment provenance.
+    """
+    if wells is None:
+        meta = dict(field_meta)
+    else:
+        from .metadata.well_enrichment import enrich_field_metadata
+
+        meta = enrich_field_metadata(field_meta, wells)
     if "field_name" not in meta and "field" in meta:
         meta["field_name"] = meta["field"]
     meta["region"] = "australia"

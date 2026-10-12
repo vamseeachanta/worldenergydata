@@ -77,6 +77,7 @@ def enrich_field_metadata(
 def _has_coordinates(well: Dict[str, Any]) -> bool:
     lat, lon = well.get("latitude"), well.get("longitude")
     sr = well.get("spatial_reference")
+    # Other datums remain missing because no transformation to GDA94 is established.
     return bool(
         sr
         and sr.get("wkid") == 4283
