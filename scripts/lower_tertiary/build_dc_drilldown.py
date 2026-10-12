@@ -29,6 +29,7 @@ from lower_tertiary.dc_provenance import (
     aggregate_provenance, carries_basis, html_labels, provenance,
     validate_day_schema, validate_vintage_row,
 )
+from lower_tertiary.war_methodology import methodology_html
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
@@ -611,8 +612,8 @@ def build_html(payload: dict) -> str:
 </html>
 """
 
-    labels = html_labels(payload)
-    return html.replace("</body>", labels + "\n</body>") if labels else html
+    labels = html_labels(payload) + methodology_html()
+    return html.replace("</body>", labels + "\n</body>")
 
 
 def main() -> None:

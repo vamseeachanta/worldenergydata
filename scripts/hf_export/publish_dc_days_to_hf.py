@@ -39,6 +39,7 @@ if __package__ in (None, ""):
 from lower_tertiary.dc_provenance import (
     aggregate_provenance, carries_basis, validate_day_schema, validate_vintage_row,
 )
+from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET = "aceengineer/worldenergydata-explorer"
@@ -211,7 +212,9 @@ def build_tables() -> dict[str, pd.DataFrame]:
 
 def patch_readme(readme: str) -> str:
     if "config_name: dc_bores" in readme:
-        return readme
+        if WAR_METHODOLOGY in readme:
+            return readme
+        return readme + "\n\n" + WAR_METHODOLOGY
     anchor = "- config_name: parametric_economics\n  data_files: parametric_economics.parquet\n"
     addition = (
         anchor
@@ -223,7 +226,7 @@ def patch_readme(readme: str) -> str:
         raise SystemExit(
             "README anchor not found — dataset card layout changed; patch manually"
         )
-    return readme.replace(anchor, addition) + CARD_SECTION
+    return readme.replace(anchor, addition) + CARD_SECTION + "\n" + WAR_METHODOLOGY
 
 
 def main() -> None:
