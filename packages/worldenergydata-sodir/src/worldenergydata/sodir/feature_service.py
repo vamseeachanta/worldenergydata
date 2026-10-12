@@ -23,6 +23,7 @@ DEFAULT_FIELDS = {
     "production": [
         "OBJECTID",
         "prfInformationCarrier",
+        "prfInformationCarrierKind",
         "prfYear",
         "prfMonth",
         "prfPrdOilNetMillSm3",
@@ -156,6 +157,8 @@ def _read_response(
     client: Any, url: str, params: dict[str, Any], budget: int
 ) -> tuple[dict[str, Any], bytes, str]:
     """One capped request, with no redirects or retries after any error."""
+    if client.session.get_adapter(url).max_retries.total != 0:
+        raise ValueError("transport retries must be disabled")
     delay = 2 - (time.monotonic() - getattr(client, "_feature_last_request", 0))
     if delay > 0:
         time.sleep(delay)
@@ -244,10 +247,10 @@ def query_entity(
 ) -> list[dict[str, Any]]:
     """Read bounded ArcGIS pages, failing rather than returning truncated data.
 
-    Defaults use the small projections exercised against the live source.
-    Select additional schema properties explicitly for processor adaptation.
-    Production adaptation requires prfInformationCarrierKind in addition to
-    the default projection; select each additional volume needed by the caller.
+    Field and wellbore defaults use projections exercised against the live source.
+    The production default, including the kind key, was exercised in a two-row probe.
+    Select additional schema properties explicitly for processor adaptation,
+    including each additional production volume needed by the caller.
     """
     url, params, oid = _query_parameters(
         client, entity, select, where, page_size, max_pages, max_bytes
@@ -286,7 +289,9 @@ def query_entity(
 
 
 def emit_manifest(observations: list[dict[str, Any]]) -> bytes:
-    """Serialize declared provenance inputs deterministically, without mutation."""
+    """Serialize hand-assembled, curated observations deterministically.
+
+    These records are declared inputs, not a manifest produced by the client."""
     return (
         json.dumps(
             {"source_id": "sodir-factpages", "observations": observations},

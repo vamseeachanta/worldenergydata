@@ -145,9 +145,9 @@
     },
     {
       "dataset_kind": "synthetic fixture; no measured or regulator values",
+      "generated_at_utc": "2026-10-11T20:23:38.131597+00:00",
       "licence_terms": "not stated by the source",
       "retention": "committed synthetic fixture",
-      "retrieved_at_utc": "2026-10-11T20:23:38.131597+00:00",
       "sha256": "c6889ad9208be1798c50b38c490962ccbe5bceff94547610c8861cf006d6db93",
       "size_bytes": 352,
       "source_url": null,
@@ -186,6 +186,18 @@
       "sha256": "cd97e95faa333df50fcecf1f0df3f0ea990ee557870208f4dc9ada48c8256b3e",
       "size_bytes": 708,
       "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CprfInformationCarrier%2CprfYear%2CprfMonth%2CprfPrdOilNetMillSm3&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
+      "status": 200,
+      "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
+    },
+    {
+      "entity": "production",
+      "licence_terms": "not stated by the source",
+      "retention": "live probe provenance only; no raw response committed",
+      "retrieved_at_utc": "2026-10-12T08:25:57.023033+00:00",
+      "row_count": 2,
+      "sha256": "5bff14dd00487c38518bf15a625486df58ce1d91c71baeefcab214c4073a1ba1",
+      "size_bytes": 893,
+      "source_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer/7300/query?f=json&where=OBJECTID+%3C%3D+2&outFields=OBJECTID%2CprfInformationCarrier%2CprfInformationCarrierKind%2CprfYear%2CprfMonth%2CprfPrdOilNetMillSm3&returnGeometry=false&orderByFields=OBJECTID+ASC&resultRecordCount=2&resultOffset=0",
       "status": 200,
       "terms_url": "https://factmaps.sodir.no/api/rest/services/DataService/Data/FeatureServer?f=pjson"
     }
