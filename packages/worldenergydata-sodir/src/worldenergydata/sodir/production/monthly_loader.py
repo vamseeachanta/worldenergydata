@@ -11,6 +11,8 @@ import pandas as pd
 
 from worldenergydata.common.units import GasUnits, OilUnits
 
+from ..api_client import SodirAPIClient
+
 logger = logging.getLogger(__name__)
 
 # Backward-compatible module-level aliases (sourced from common.units)
@@ -30,7 +32,7 @@ class MonthlyProductionLoader:
     raw JSON response format, and converting units.
     """
 
-    def __init__(self, api_client=None):
+    def __init__(self, api_client: SodirAPIClient | None = None) -> None:
         """Initialize loader.
 
         Args:
@@ -116,7 +118,7 @@ class MonthlyProductionLoader:
         Returns:
             Volume in barrels.
         """
-        return sm3 * SM3_TO_BBL
+        return float(sm3 * SM3_TO_BBL)
 
     def convert_msm3_to_mcf(self, msm3: float) -> float:
         """Convert million standard cubic meters to thousand cubic feet.
@@ -127,7 +129,7 @@ class MonthlyProductionLoader:
         Returns:
             Volume in Mcf.
         """
-        return msm3 * MSM3_TO_MCF
+        return float(msm3 * MSM3_TO_MCF)
 
     def _fetch_production_data(self) -> List[Dict[str, Any]]:
         """Fetch raw production data from API."""
@@ -168,7 +170,7 @@ class MonthlyProductionLoader:
         )
 
     @staticmethod
-    def _safe_float(value) -> float:
+    def _safe_float(value: str | float | int | None) -> float:
         """Safely convert to float, defaulting to 0."""
         if value is None:
             return 0.0
