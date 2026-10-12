@@ -19,7 +19,16 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
 from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.dc_provenance import (
+    aggregate_provenance, carries_basis, html_labels, provenance,
+    validate_day_schema, validate_vintage_row,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
@@ -106,6 +115,9 @@ def load_payload() -> dict:
         row["api12"]: row for row in csv.DictReader(VINTAGE_CSV.open(encoding="utf-8"))
     }
 
+    for row in vintage.values():
+        validate_vintage_row(row)
+
     bores: list[dict] = []
     for row in csv.DictReader(SOURCE_CSV.open(encoding="utf-8")):
         api12 = row["API_WELL_NUMBER"].strip()
@@ -113,6 +125,8 @@ def load_payload() -> dict:
         v = vintage.get(api12, {})
         bores.append(
             {
+                **provenance(row),
+                **{key: v[key] for key in ("basis_v30", "basis_wed") if key in v},
                 "api": api12,
                 "name": row["WELL_NAME"].strip() or api12[-4:],
                 "field": field,
@@ -130,6 +144,8 @@ def load_payload() -> dict:
                 "vin": v.get("category", "unchanged"),
             }
         )
+        if carries_basis(row):
+            validate_day_schema(bores[-1])
     bores.sort(key=lambda b: (b["field"], b["block"], b["spud"] or "9999", b["api"]))
 
     fields: dict[str, dict] = {}
@@ -173,6 +189,10 @@ def load_payload() -> dict:
         k["drill"] += b["drill"]
         k["compl"] += b["compl"]
         k["prod"] += 1 if b["prod"] else 0
+
+    for groups, key in ((fields, "field"), (blocks, "block")):
+        for name, group in groups.items():
+            group.update(aggregate_provenance(b for b in bores if b[key] == name))
 
     return {
         "bores": bores,
@@ -493,7 +513,7 @@ def build_html(payload: dict) -> str:
     # Guard: the payload is inlined in a <script>, so it must not carry a
     # closing-tag sequence. json.dumps escapes newlines; escape the slash too.
     data_json = data_json.replace("</", "<\\/")
-    return f"""<!doctype html>
+    html = f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -590,6 +610,9 @@ def build_html(payload: dict) -> str:
 </body>
 </html>
 """
+
+    labels = html_labels(payload)
+    return html.replace("</body>", labels + "\n</body>") if labels else html
 
 
 def main() -> None:
