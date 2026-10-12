@@ -1,0 +1,31 @@
+{
+  "datasets": [
+    {
+      "count": 2,
+      "credit": "Credit: U.S. Geological Survey",
+      "documentation_retrieved_at_utc": "2026-10-11T20:37:14.596015+00:00",
+      "documentation_url": "https://earthquake.usgs.gov/fdsnws/event/1/",
+      "file": "usgs_recorded.geojson",
+      "intended_use": "Offline parser regression; historical observations, not an offshore hazard assessment",
+      "kind": "recorded",
+      "policy_retrieved_at_utc": "2026-10-11T20:37:48.727915+00:00",
+      "retrieved_at_utc": "2026-10-11T20:40:34.361744+00:00",
+      "robots_retrieved_at_utc": "2026-10-11T20:37:05.705947+00:00",
+      "robots_url": "https://www.usgs.gov/robots.txt",
+      "service_robots_status": "404 at https://earthquake.usgs.gov/robots.txt",
+      "sha256": "db565817abacf107b7065db5df9baf71840bb37c10da281a84857bd4eebceacd",
+      "size_bytes": 2024,
+      "source_url": "https://earthquake.usgs.gov/fdsnws/event/1/query?minlatitude=36&maxlatitude=38&minlongitude=136&maxlongitude=138&starttime=2024-01-01T07%3A00%3A00%2B00%3A00&endtime=2024-01-01T07%3A20%3A00%2B00%3A00&minmagnitude=6&eventtype=earthquake&format=geojson&limit=5",
+      "terms_quote": "USGS-authored or produced data and information are considered to be in the U.S. Public Domain.",
+      "terms_url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits",
+      "units": {
+        "depth_km": "km",
+        "latitude": "degrees",
+        "longitude": "degrees",
+        "magnitude": "reported magnitude scale",
+        "time_utc": "UTC"
+      }
+    }
+  ],
+  "schema_version": 1
+}
