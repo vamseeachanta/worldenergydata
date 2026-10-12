@@ -38,6 +38,7 @@ allowed_roots:
   - .gitattributes
   - .gitignore
   - .gitleaks.toml
+  - .gitleaksignore
   - .legal-deny-list.yaml
   - LICENSE
   - Makefile
