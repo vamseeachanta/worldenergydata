@@ -118,3 +118,43 @@ def test_explicit_rate_arg_overrides_deck():
     )
     out = decked.calculate_royalty(revenue, royalty_rate=0.0)
     assert out["2025-01"] == 0.0
+
+
+def test_runtime_reference_scale_parity():
+    """Parity with existing Brazil code only; not a claim that bands are correct law."""
+    import math
+
+    from worldenergydata.brazil_anp.analysis.field_economics import (
+        ROYALTY_SCALE,
+        calculate_royalties_concession,
+    )
+    from worldenergydata.fdas.fiscal import validate_deck
+
+    terms = validate_deck(
+        {
+            "schema_version": 1,
+            "country": "synthetic-reference",
+            "source_url": "https://example.org/synthetic",
+            "source_ref": "Runtime reference parity only",
+            "revision": "1",
+            "effective_date": "2026-01-01",
+            "royalty": {
+                "model": "sliding_scale",
+                "bands": [
+                    {"max_rate_bpd": None if math.isinf(limit) else limit, "rate": rate}
+                    for limit, rate in ROYALTY_SCALE
+                ],
+            },
+        }
+    )
+    eng = CashflowEngine(AssumptionsManager(), fiscal_terms=terms)
+    rates = [0]
+    for limit, _ in ROYALTY_SCALE:
+        if math.isfinite(limit):
+            rates.extend([limit, limit + 1])
+    for revenue in (0, 1_000_000):
+        for rate in rates:
+            result = eng.calculate_royalty(
+                {"2025-01": revenue}, production_rate_bpd_monthly={"2025-01": rate}
+            )
+            assert result["2025-01"] == calculate_royalties_concession(revenue, rate)
