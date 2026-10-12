@@ -140,3 +140,33 @@ A source summary is acceptable when:
 - It maps scorecard freshness/completeness through the contract mapping.
 - It does not mark scheduler-backed data `fresh` without a successful in-cadence manifest.
 - It names blockers instead of collapsing them into `missing`.
+
+## Deterministic Generator Input Integrity
+
+A generator that emits input-hash manifests shall enumerate its complete input
+set before the first semantic read. `worldenergydata.common.input_snapshot.freeze_inputs`
+will capture those paths, freeze their bytes, and calculate SHA-256 fingerprints
+before rendering begins. Input identities and paths are supplied by the caller;
+files added outside that frozen set are not discovered during rendering.
+
+Every semantic read shall use the returned immutable byte mapping. External
+binary fingerprints shall be supplied through `expected_sha256` and validated
+before extraction or rendering. Unknown fingerprint identities and mismatched
+fingerprints fail before the context yields any input bytes.
+
+All outputs shall be rendered within the context. On successful exit, every
+captured input is read and hashed again. Changed or unavailable inputs fail the
+build. Publication shall occur only after successful exit; manifest input hashes
+shall come from the initial frozen snapshot. Two equal endpoint hashes do not
+establish that a live file remained unchanged throughout rendering; frozen bytes
+keep the rendered input basis fixed even if a file changes and is restored.
+
+The helper does not provide private output staging, output-mutation detection,
+canonical-output preservation or atomic publication. Those controls require
+separate integration and validation before canonical output paths are touched.
+
+The producer-identity policy is not settled by this slice. Snapshot hashes establish
+input identity, not authenticated producer provenance. A hash dictionary controlled
+by the same pull request is not producer provenance. Durable producer ancestry,
+exact executable Git blobs, shallow-checkout history hydration, squash merges,
+rebases and source-branch deletion remain subject to a separate policy and tests.
