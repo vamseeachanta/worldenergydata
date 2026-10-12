@@ -166,9 +166,11 @@ class TestCalendarCycleTime:
         assert row["spud_to_completion_calendar_days"] == 60
         assert row["drilling_days"] == row["spud_to_completion_calendar_days"]
         assert row["completion_days"] == 100
-        assert row["spud_to_completion_calendar_days"] + row["completion_days"] == (
-            pd.Timestamp(row["first_oil"]) - pd.Timestamp(row["spud"])
-        ).days == 160
+        assert (
+            row["spud_to_completion_calendar_days"] + row["completion_days"]
+            == (pd.Timestamp(row["first_oil"]) - pd.Timestamp(row["spud"])).days
+            == 160
+        )
         columns = list(row)
         assert columns.index("spud_to_completion_calendar_days") + 1 == columns.index(
             "drilling_days"
@@ -190,10 +192,15 @@ class TestCalendarCycleTime:
 
         The existing guard rejects that span; the new field and alias are null.
         Jan 1 to Jun 9 still spans 31 + 29 + 31 + 30 + 31 + 8 = 160 days.
+        Existing-behaviour pin: Dec 31 to Jun 9 = 1 + 160 = 161 days.
+        When completion precedes spud, the span is null while the completion
+        interval is still reported, so span plus completion interval does not
+        equal first oil minus spud for such a row.
         """
         row = _calendar_benchmark_row("2019-12-31")
         assert row["spud_to_completion_calendar_days"] is None
         assert row["drilling_days"] is None
+        assert row["completion_days"] == 161
 
 
 def test_committed_csv_calendar_alias_matches_row_by_row():
@@ -208,8 +215,8 @@ def test_committed_csv_calendar_alias_matches_row_by_row():
         header = reader.fieldnames or []
         if column not in header:
             pytest.skip(
-                "CSV regeneration pending: BSEE OGOR-A inputs were unavailable "
-                "in the build environment"
+                "committed CSV not yet regenerated: column "
+                "spud_to_completion_calendar_days absent"
             )
         assert header.count(column) == 1
         assert header.index(column) + 1 == header.index("drilling_days")
