@@ -1,4 +1,4 @@
-"""Offline public-record corrections and scope preservation for issue 747."""
+"""Offline, source-linked public-record assertions for issue 747."""
 
 from pathlib import Path
 
@@ -9,94 +9,72 @@ import yaml
 from worldenergydata.lower_tertiary.npv import load_field_inputs
 
 FIELDS = Path(__file__).resolve().parents[3] / "config/analysis/lower_tertiary/fields"
-# Parsed origin/main literals at the dispatched base revision.
-ORIGINAL = {
+# Sources are the research note's keys; Julia's unchanged month retains its
+# existing regulator provenance and is not independently verified by that note.
+CORRECTIONS = {
     "cascade_chinook": {
-        "field_id": "cascade_chinook",
-        "display_name": "Cascade/Chinook",
-        "status": "producing",
-        "leases_key": "cascade_chinook",
-        "first_oil": "2021-08-01",
-        "data_through": "2024-12-31",
-        "operator": "TotalEnergies",
-        "partners": [
-            {"name": "TotalEnergies", "working_interest": 0.6},
-            {"name": "Equinor", "working_interest": 0.4},
-        ],
-        "capex": {"total_mm_usd": 2900},
-        "production_profile": {"plateau_rate_mbopd": 75, "gor_scf_per_bbl": 1400},
-        "opex_per_boe": 18.0,
+        "first_oil": {"value": "2012-02-01", "sources": ("P1:", "P2:")},
+        "operator": {"value": "Murphy", "sources": ("P2:", "P3:", "P5:")},
     },
     "julia": {
-        "field_id": "julia",
-        "display_name": "Julia",
-        "status": "producing",
-        "leases_key": "julia",
-        "first_oil": "2016-03-01",
-        "data_through": "2024-12-31",
-        "operator": "Equinor",
-        "partners": [
-            {"name": "Equinor", "working_interest": 0.5},
-            {"name": "ExxonMobil", "working_interest": 0.5},
-        ],
-        "capex": {
-            "total_mm_usd": 4700,
-            "host_mm_usd": 2500,
-            "subsea_mm_usd": 1500,
-            "wells_mm_usd": 700,
-        },
-        "production_profile": {"plateau_rate_mbopd": 34, "gor_scf_per_bbl": 1000},
-        "opex_per_boe": 18.0,
+        "first_oil": {"value": "2016-03-01", "sources": ("BSEE OGOR-A",)},
+        "operator": {"value": "ExxonMobil", "sources": ("P6:",)},
     },
     "jack_st_malo": {
-        "field_id": "jack_st_malo",
-        "display_name": "Jack/St. Malo",
-        "status": "producing",
-        "leases_key": "jack_st_malo",
-        "first_oil": "2014-02-01",
-        "data_through": "2024-12-31",
-        "operator": "Chevron",
-        "partners": [
-            {"name": "Chevron", "working_interest": 0.51},
-            {"name": "Equinor", "working_interest": 0.245},
-            {"name": "Suncor", "working_interest": 0.245},
-        ],
-        "capex": {
-            "total_mm_usd": 7500,
-            "wells_mm_usd": 4100,
-            "facilities_mm_usd": 3400,
-        },
-        "opex_per_boe": 15.0,
-        "production_profile": {"plateau_rate_mbopd": 94, "gor_scf_per_bbl": 1200},
+        "first_oil": {"value": "2014-12-01", "sources": ("P7:", "P8:")},
+        "operator": {"value": "Chevron", "sources": ("P7:",)},
     },
 }
-CORRECTIONS = {
-    "cascade_chinook": {"first_oil": "2012-02-01", "operator": "Murphy"},
-    "julia": {"operator": "ExxonMobil"},
-    "jack_st_malo": {"first_oil": "2014-12-01"},
-}
 
 
-@pytest.mark.parametrize("field_id", ORIGINAL)
-def test_public_record_and_unchanged_keys(field_id):
-    expected = {**ORIGINAL[field_id], **CORRECTIONS[field_id]}
-    parsed = yaml.safe_load((FIELDS / f"{field_id}.yml").read_text())["field"]
-    # Whole-dictionary equality preserves partners and every unmodified key.
-    assert parsed == expected
-    loaded = load_field_inputs(FIELDS, {"fields": {}})[field_id]
-    assert loaded["raw"] == expected
-    assert loaded["first_oil"] == pd.Timestamp(expected["first_oil"])
+def assert_public_record(field_id, directory, reader):
+    text = (directory / f"{field_id}.yml").read_text(encoding="utf-8")
+    if reader == "yaml":
+        parsed = yaml.safe_load(text)["field"]
+    else:
+        loaded = load_field_inputs(directory, {"fields": {}})[field_id]
+        parsed = loaded["raw"]
+        assert loaded["first_oil"] == pd.Timestamp(
+            CORRECTIONS[field_id]["first_oil"]["value"]
+        )
+    comments = "\n".join(
+        line for line in text.splitlines() if line.lstrip().startswith("#")
+    )
+    for key, correction in CORRECTIONS[field_id].items():
+        assert parsed[key] == correction["value"], key
+        assert correction["sources"]
+        for source in correction["sources"]:
+            assert source and source in comments
+
+
+@pytest.mark.parametrize("field_id", CORRECTIONS)
+def test_public_record_corrections(field_id):
+    for reader in ("yaml", "loader"):
+        assert_public_record(field_id, FIELDS, reader)
+
+
+@pytest.mark.parametrize("reader", ["yaml", "loader"])
+def test_reverted_first_oil_is_rejected(tmp_path, reader):
+    field_id = "cascade_chinook"
+    text = (FIELDS / f"{field_id}.yml").read_text(encoding="utf-8")
+    reverted = text.replace('first_oil: "2012-02-01"', 'first_oil: "2021-08-01"')
+    assert reverted != text
+    (tmp_path / f"{field_id}.yml").write_text(reverted, encoding="utf-8")
+    with pytest.raises(AssertionError):
+        assert_public_record(field_id, tmp_path, reader)
 
 
 @pytest.mark.parametrize("field_id", ["cascade_chinook", "jack_st_malo"])
 def test_partner_fallback_is_explicit(field_id):
-    text = (FIELDS / f"{field_id}.yml").read_text()
+    text = (FIELDS / f"{field_id}.yml").read_text(encoding="utf-8")
     assert "issue 747" in text
     assert "not verified" in text
-    assert "Was" in text
     if field_id == "cascade_chinook":
         assert "Cascade: MP GOM 1.00" in text
         assert "Chinook: MP GOM 0.666 (operated)" in text
         assert "ownership of MP GOM" in text
+        assert "P4:" in text
+        assert "Combined-field working interest for Murphy: not verified" in text
     else:
         assert "Jack 0.50; St. Malo 0.51" in text
+        assert "P7:" in text

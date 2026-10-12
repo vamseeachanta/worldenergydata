@@ -35,6 +35,10 @@ field:
   # Chinook remainder: not verified (issue 747 research note).
   # Murphy 80% / Petrobras America 20% is ownership of MP GOM, not field working interest.
   # Comment-only fallback: the flat partners list feeds computed capex and production shares.
+  # Combined-field working interest for Murphy: not verified (issue 747 research note).
+  # P4 identifies MP GOM interests per field, not a combined Murphy share.
+  # The operator is absent from this retained list; operator-role classification
+  # remains inconsistent until that share and the current Chinook remainder are verified.
   partners:
     - name: "TotalEnergies"
       working_interest: 0.60
