@@ -145,7 +145,7 @@ A source summary is acceptable when:
 
 A generator that emits input-hash manifests shall enumerate its complete input
 set before the first semantic read. `worldenergydata.common.input_snapshot.freeze_inputs`
-will capture those paths, freeze their bytes, and calculate SHA-256 fingerprints
+shall capture those paths, freeze their bytes, and calculate SHA-256 fingerprints
 before rendering begins. Input identities and paths are supplied by the caller;
 files added outside that frozen set are not discovered during rendering.
 
@@ -155,11 +155,25 @@ before extraction or rendering. Unknown fingerprint identities and mismatched
 fingerprints fail before the context yields any input bytes.
 
 All outputs shall be rendered within the context. On successful exit, every
-captured input is read and hashed again. Changed or unavailable inputs fail the
-build. Publication shall occur only after successful exit; manifest input hashes
+captured input is read in 1 MiB chunks and hashed again. Changed or unavailable
+inputs fail the build. Publication shall occur only after successful exit; manifest input hashes
 shall come from the initial frozen snapshot. Two equal endpoint hashes do not
 establish that a live file remained unchanged throughout rendering; frozen bytes
 keep the rendered input basis fixed even if a file changes and is restored.
+
+Inputs are held in memory for the length of the block; peak memory is about
+once the total input size plus one closing-read chunk. Present candidates are
+text sources and one workbook; entry capture is not intended to stream large
+binary inputs. The closing check runs only when the body finishes normally.
+The result exposes read-only `bytes`, `sha256` and `size` mappings; `size` records
+the frozen byte length, and `algorithm` is `"sha256"`.
+
+Integrity failures raise `InputIntegrityError`, a `ValueError` subclass carrying
+`reason` and `identity`. Reason codes are `unreadable`, `unknown-identity`,
+`pin-mismatch`, `changed` and `unavailable`. Pins shall contain exactly 64
+hexadecimal characters, without whitespace or a prefix. Upper and mixed case
+are accepted; returned digests remain lower-case. Malformed pins fail with
+`pin-mismatch`.
 
 The helper does not provide private output staging, output-mutation detection,
 canonical-output preservation or atomic publication. Those controls require

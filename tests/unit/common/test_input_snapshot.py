@@ -6,6 +6,8 @@ from hashlib import sha256
 
 import pytest
 
+from worldenergydata.common import input_snapshot
+
 
 def _freeze(inputs, **kwargs):
     name = "worldenergydata.common.input_snapshot"
@@ -62,6 +64,12 @@ def test_steady_state_hashes_match_synthetic_bytes_in_two_runs(tmp_path):
             {"source": source, "binary": binary}, expected_sha256=expected
         ) as frozen:
             runs.append(dict(frozen.sha256))
+            assert frozen.algorithm == "sha256"
+            assert dict(frozen.size) == {
+                identity: len(raw) for identity, raw in frozen.bytes.items()
+            }
+            with pytest.raises(TypeError):
+                frozen.size["source"] = 0
             assert frozen.bytes["source"] == b"synthetic text"
             assert frozen.bytes["binary"] == b"\x00\xffsynthetic binary"
     assert runs == [expected, expected]
@@ -120,3 +128,118 @@ def test_unknown_fingerprint_identity_fails_before_render(tmp_path):
         ):
             rendered = True
     assert not rendered
+
+
+@pytest.mark.parametrize("changed", [False, True])
+def test_closing_hash_reads_multiple_chunks(tmp_path, monkeypatch, changed):
+    """A source spanning several chunks is revalidated by content."""
+    monkeypatch.setattr(input_snapshot, "_HASH_CHUNK_SIZE", 8)
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic" * 4)
+    if changed:
+        with pytest.raises(ValueError, match="input changed"):
+            with _freeze({"source": source}):
+                source.write_bytes(b"replacement" * 4)
+    else:
+        with _freeze({"source": source}) as frozen:
+            assert frozen.bytes["source"] == b"synthetic" * 4
+
+
+def test_closing_check_does_not_repeat_whole_file_read(tmp_path, monkeypatch):
+    """Only the entry capture uses Path.read_bytes."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic")
+    read_bytes = type(source).read_bytes
+    reads = []
+
+    def read_once(path):
+        reads.append(path)
+        assert len(reads) == 1, "closing check repeated whole-file read"
+        return read_bytes(path)
+
+    monkeypatch.setattr(type(source), "read_bytes", read_once)
+    with _freeze({"source": source}):
+        pass
+    assert reads == [source]
+
+
+@pytest.mark.parametrize(
+    ("failure", "reason"),
+    [
+        ("missing-entry", "unreadable"),
+        ("directory-entry", "unreadable"),
+        ("unknown", "unknown-identity"),
+        ("pin", "pin-mismatch"),
+        ("changed", "changed"),
+        ("missing-exit", "unavailable"),
+    ],
+)
+def test_integrity_failure_has_reason_and_identity(tmp_path, failure, reason):
+    """Each integrity failure can be distinguished from caller errors."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic")
+    pins = None
+    if failure == "missing-entry":
+        source.unlink()
+    elif failure == "directory-entry":
+        source = tmp_path
+    elif failure == "unknown":
+        pins = {"missing": sha256(b"synthetic").hexdigest()}
+    elif failure == "pin":
+        pins = {"source": sha256(b"different").hexdigest()}
+    with pytest.raises(ValueError) as caught:
+        with _freeze({"source": source}, expected_sha256=pins):
+            if failure == "changed":
+                source.write_bytes(b"changed")
+            elif failure == "missing-exit":
+                source.unlink()
+    assert isinstance(caught.value, input_snapshot.InputIntegrityError)
+    assert caught.value.reason == reason
+    assert caught.value.identity == ("missing" if failure == "unknown" else "source")
+
+
+def test_caller_value_error_is_not_integrity_failure(tmp_path):
+    """A caller exception propagates unchanged without closing revalidation."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic")
+    caller_error = ValueError("synthetic rendering failure")
+    with pytest.raises(ValueError) as caught:
+        with _freeze({"source": source}):
+            source.unlink()
+            raise caller_error
+    assert caught.value is caller_error
+    assert not isinstance(caught.value, input_snapshot.InputIntegrityError)
+
+
+@pytest.mark.parametrize("case", ["upper", "mixed"])
+def test_correct_hex_pin_accepts_letter_case(tmp_path, case):
+    """Valid hexadecimal pins are compared without case sensitivity."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic")
+    digest = sha256(b"synthetic").hexdigest()
+    pin = digest.upper() if case == "upper" else digest[:32].upper() + digest[32:]
+    with _freeze({"source": source}, expected_sha256={"source": pin}) as frozen:
+        assert frozen.sha256["source"] == digest
+
+
+@pytest.mark.parametrize(
+    "invalid", ["wrong-upper", "short", "nonhex", "space", "prefix"]
+)
+def test_invalid_pin_fails_closed(tmp_path, invalid):
+    """Wrong or malformed pins fail before any frozen bytes are yielded."""
+    source = tmp_path / "source.dat"
+    source.write_bytes(b"synthetic")
+    digest = sha256(b"synthetic").hexdigest()
+    pin = {
+        "wrong-upper": sha256(b"different").hexdigest().upper(),
+        "short": digest[:-1],
+        "nonhex": "g" + digest[1:],
+        "space": " " + digest,
+        "prefix": "0x" + digest,
+    }[invalid]
+    with pytest.raises(ValueError, match="fingerprint mismatch") as caught:
+        with _freeze({"source": source}, expected_sha256={"source": pin}):
+            pytest.fail("invalid pin reached the caller")
+    assert isinstance(caught.value, input_snapshot.InputIntegrityError)
+    assert caught.value.reason == "pin-mismatch"
+    assert caught.value.identity == "source"
