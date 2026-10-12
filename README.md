@@ -294,12 +294,17 @@ uv add --dev pytest-cov   # Development dependency
 ## Contributing
 
 1. Fork the repository
-2. Install the pre-commit hooks once (`uv run pre-commit install`) so black/isort/flake8 run at `git commit` with the same versions as CI
+2. Sync the development tools (`uv sync --extra dev`), then install hooks (`uv run pre-commit install`) so black/isort/flake8 match CI at commit time
 3. Create a feature branch (`git checkout -b feature/new-feature`)
 4. Write tests first (TDD)
 5. Implement your changes
 6. Run quality checks (`uv run pytest && uv run ruff check .`)
 7. Submit a pull request
+
+`core.hooksPath` must not be set: it silently diverts Git away from the installed hooks.
+`PRE_COMMIT_HOME` may point to a shared cache directory.
+The secret scanner reads the repo-local `.gitleaks.toml`, derived from, and deliberately stricter than, the shared workspace-hub configuration: default rules are loaded and path entries narrowed.
+The shared file should gain the default-rule extension; this file should retain it.
 
 ## License
 
