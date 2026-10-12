@@ -1,0 +1,22 @@
+{
+  "attribution": "Synthetic test inputs; no source well records reproduced.",
+  "fixture_sha256": "f108dc41c9fb9e64975d3cbe3ef3616f02508b759b51a25e7d2790c7d8e3f882",
+  "fixture_size_bytes": 1133,
+  "intended_use": "offline software tests only",
+  "licence": "not applicable: synthetic test inputs",
+  "listing_url": "https://gis.spatial.nopta.gov.au/gis/rest/services/Public?f=json",
+  "normalized_rows_sha256": "89b4131be7f992f5f5a8299277f9c61cba34ddff755947accd29072c165ff3cf",
+  "retrieval_date_utc": null,
+  "rows": 2,
+  "source_layer_reuse": {
+    "attribution": "not stated by the source",
+    "checked_date_utc": "2026-10-11",
+    "item_url": "https://portal.spatial.nopta.gov.au/portal/sharing/rest/content/items/12886c0431a842aca665a4ecd618f091?f=json",
+    "licence": "not stated by the source",
+    "redistribution_confirmed": false,
+    "website_attribution_instruction": "Content contained herein should be attributed as \u00a9  Commonwealth of Australia (Department of Industry) [year], NOPTA [name of document or page containing the content].",
+    "website_terms_url": "https://www.nopta.gov.au/copyright.html"
+  },
+  "source_url": "urn:synthetic:nopta-wells-test",
+  "synthetic": true
+}
