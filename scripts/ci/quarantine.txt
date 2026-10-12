@@ -20,10 +20,6 @@
 tests/unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
 unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
 
-# site_assets root not in repo_structure contract — issue #524
-tests/repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
-repo_structure/test_repo_structure_contract.py::test_current_contract_accepts_approved_roots_and_exceptions
-
 # worldenergydata package-level lazy attribute access for bsee/fdas — issue #561
 # (pre-existing on main; surfaced by un-hiding the _root shard in #529; needs a
 # src/worldenergydata/__init__.py __getattr__ change — carve-sensitive)
