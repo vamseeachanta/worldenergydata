@@ -303,7 +303,8 @@ uv add --dev pytest-cov   # Development dependency
 
 `core.hooksPath` must not be set: it silently diverts Git away from the installed hooks.
 `PRE_COMMIT_HOME` may point to a shared cache directory.
-The secret scanner reads the repo-local `.gitleaks.toml`, which mirrors the workspace-hub configuration.
+The secret scanner reads the repo-local `.gitleaks.toml`, derived from, and deliberately stricter than, the shared workspace-hub configuration: default rules are loaded and path entries narrowed.
+The shared file should gain the default-rule extension; this file should retain it.
 
 ## License
 

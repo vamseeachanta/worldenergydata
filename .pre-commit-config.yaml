@@ -109,7 +109,7 @@ repos:
     rev: v8.21.2
     hooks:
       - id: gitleaks
-        # Repo-local configuration mirrors the workspace-hub scanner configuration.
+        # Derived from, and deliberately stricter than, the shared scanner configuration.
         args: [--config, .gitleaks.toml]
 
   # Commit message linting
