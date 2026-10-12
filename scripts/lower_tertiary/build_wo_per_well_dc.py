@@ -28,6 +28,7 @@ if __package__ in (None, ""):
 from lower_tertiary.dc_provenance import (
     carries_basis, markdown_labels, provenance, validate_day_schema, validate_vintage_row,
 )
+from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
@@ -362,7 +363,7 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         " `tests/unit/lower_tertiary/test_wo_per_well_dc.py`.",
         "",
     ]
-    return "\n".join(markdown_labels(lines, devs, vintage))
+    return "\n".join(markdown_labels(lines, devs, vintage)) + "\n" + WAR_METHODOLOGY
 
 
 def _anchor(title: str) -> str:

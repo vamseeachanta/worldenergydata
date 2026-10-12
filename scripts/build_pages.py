@@ -58,6 +58,7 @@ _SCRIPTS = Path(__file__).resolve().parent
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+from lower_tertiary.war_methodology import methodology_html
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
@@ -546,7 +547,8 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 "All four article tables validated against the BSEE-derived model: "
                 "reconciliation, article errata, BOEM cross-check, and change log.",
                 _toc(val_md.read_text(encoding="utf-8"))
-                + md_to_html(val_md.read_text(encoding="utf-8")),
+                + md_to_html(val_md.read_text(encoding="utf-8"))
+                + methodology_html(),
                 provenance=(
                     "Every WED number is computed by repository code from BSEE/BOEM raw "
                     "data (WAR, OGOR-A, Reserves Inventory, Deepwater Qualified Fields); "

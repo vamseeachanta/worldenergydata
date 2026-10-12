@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -37,8 +38,12 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    aggregate_provenance, carries_basis, validate_day_schema, validate_vintage_row,
+    aggregate_provenance,
+    carries_basis,
+    validate_day_schema,
+    validate_vintage_row,
 )
+from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET = "aceengineer/worldenergydata-explorer"
@@ -141,7 +146,11 @@ def build_tables() -> dict[str, pd.DataFrame]:
                     "producer": b["producer"],
                     "note": b["note"] or None,
                     **extras.get(b["api12"], {}),
-                    **{key: b[key] for key in ("basis", "pnd_days", "days_status") if key in b},
+                    **{
+                        key: b[key]
+                        for key in ("basis", "pnd_days", "days_status")
+                        if key in b
+                    },
                 }
             )
         wo = mod.WO_ARTICLE.get(dev)
@@ -210,8 +219,13 @@ def build_tables() -> dict[str, pd.DataFrame]:
 
 
 def patch_readme(readme: str) -> str:
+    """Replace a retained methodology section before appending the current note."""
+    readme = (
+        re.sub(r"(?ms)^## WAR methodology limits\n.*?(?=^## |\Z)", "", readme).rstrip()
+        + "\n"
+    )
     if "config_name: dc_bores" in readme:
-        return readme
+        return readme + "\n" + WAR_METHODOLOGY
     anchor = "- config_name: parametric_economics\n  data_files: parametric_economics.parquet\n"
     addition = (
         anchor
@@ -223,7 +237,7 @@ def patch_readme(readme: str) -> str:
         raise SystemExit(
             "README anchor not found — dataset card layout changed; patch manually"
         )
-    return readme.replace(anchor, addition) + CARD_SECTION
+    return readme.replace(anchor, addition) + CARD_SECTION + "\n" + WAR_METHODOLOGY
 
 
 def main() -> None:
