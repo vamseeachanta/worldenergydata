@@ -12,6 +12,7 @@ Documentation for all energy data sources integrated into WorldEnergyData
 - [Data For Analysis Legacy](bsee\_legacy\data_for_analysis_legacy.md)
 
 **Analysis:**
+- [Well-identifier grain for D&C metrics](bsee/analysis/well-identifier-grain.md)
 - [Intro](bsee\analysis\economics\intro.md)
 - [Jstm Production](bsee\analysis\economics\JStM_production.md)
 - [Lng](bsee\analysis\economics\lng.md)
