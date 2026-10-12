@@ -109,6 +109,9 @@ def test_marker_once_and_exact_trail_per_page(public):
     bad = []
     for rel, key, ctx in scoped_pages():
         text = (public / rel).read_text()
+        if rel == "capabilities/index.html":
+            assert sn.MARKER not in text, rel
+            continue
         if text.count(sn.MARKER) != 1:
             bad.append((rel, f"marker x{text.count(sn.MARKER)}"))
             continue
@@ -199,10 +202,16 @@ def test_data_driven_edges_resolve(public):
 
 def test_bfs_reachability_from_capabilities(public):
     scoped = {p for p, _k, _c in scoped_pages()}
-    start = "capabilities/index.html"
+    start = "capabilities/insights.html"
     seen = {start}
     q = deque([start])
     href_re = re.compile(r"""href=["']([^"'#]+)""", re.IGNORECASE)
+    stub = (public / "capabilities/index.html").read_text(encoding="utf-8")
+    stub_links = re.findall(r"""href=["']([^"']+)["']""", stub, re.IGNORECASE)
+    assert stub_links, "redirect stub links absent"
+    assert all(
+        target == "https://www.aceengineer.com/capabilities/" for target in stub_links
+    ), stub_links
     while q:
         cur = q.popleft()
         f = public / cur
@@ -220,7 +229,7 @@ def test_bfs_reachability_from_capabilities(public):
                 seen.add(nxt)
                 q.append(nxt)
     unreachable = sorted(scoped - seen)
-    assert not unreachable, f"orphaned (unreachable from capabilities): {unreachable}"
+    assert not unreachable, f"orphaned (unreachable from insights): {unreachable}"
 
 
 def test_fixed_hrefs_regression(public):
@@ -233,7 +242,6 @@ def test_fixed_hrefs_regression(public):
 
 def test_hand_authored_fixes_survive_clean_build(public):
     for rel in (
-        "capabilities/index.html",
         "capabilities/insights.html",
         "lifecycle/assets/stones_assets.html",
         "intervention-db/intervention-stats-brief.html",
