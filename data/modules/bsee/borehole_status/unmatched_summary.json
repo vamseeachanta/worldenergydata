@@ -1,0 +1,111 @@
+{
+  "borehole_counts": {
+    "lease_not_in_registry": 55304
+  },
+  "distinct_lease_counts": {
+    "lease_not_in_registry": 8298
+  },
+  "sample": [
+    {
+      "borehole_count": 338,
+      "bottom_lease": "G09372",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 301,
+      "bottom_lease": "00310",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 284,
+      "bottom_lease": "00031",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 239,
+      "bottom_lease": "00694",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 233,
+      "bottom_lease": "G01608",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 226,
+      "bottom_lease": "G02280",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 202,
+      "bottom_lease": "00025",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 196,
+      "bottom_lease": "00026",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 176,
+      "bottom_lease": "00385",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 173,
+      "bottom_lease": "00263",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 169,
+      "bottom_lease": "00034",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 164,
+      "bottom_lease": "00016",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 164,
+      "bottom_lease": "G02115",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 163,
+      "bottom_lease": "G01294",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 151,
+      "bottom_lease": "G00983",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 149,
+      "bottom_lease": "00392",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 149,
+      "bottom_lease": "00463",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 147,
+      "bottom_lease": "00035",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 144,
+      "bottom_lease": "G02137",
+      "reason": "lease_not_in_registry"
+    },
+    {
+      "borehole_count": 143,
+      "bottom_lease": "G01316",
+      "reason": "lease_not_in_registry"
+    }
+  ],
+  "sample_basis": "Top 20 lease/reason groups by borehole count; ties by lease then reason"
+}
