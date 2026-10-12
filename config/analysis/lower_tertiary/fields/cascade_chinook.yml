@@ -50,3 +50,35 @@ field:
     plateau_rate_mbopd: 75
     gor_scf_per_bbl: 1400
   opex_per_boe: 18.0
+
+# Reference data only: this combined entry has one capital cost and one plateau
+# rate. No public per-field split of that cost or rate exists in the sources
+# opened in the issue 747 research note; none is invented. The flat partners
+# list above remains the sole calculation input, including for concentration.
+partners_by_field:
+  # Row 3: P4 verifies the full Cascade interest held through MP GOM.
+  Cascade:
+    - name: "MP GOM"
+      share: 1.00
+      source:
+        key: P4
+        title: "Murphy Oil Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/717423/000071742319000016/mur-20181231x10k.htm"
+        date: "FY2018 (filed 2019)"
+        research_note_row: 3
+      source_class: primary
+      as_of: "FY2018"
+  # Row 3: P4 verifies this operated interest. The current holder of the remaining
+  # interest is unverified; Total at start-up (P2) does not establish its holder now.
+  # Murphy/Petrobras America ownership of MP GOM is entity-level, not field interest.
+  Chinook:
+    - name: "MP GOM"
+      share: 0.666
+      source:
+        key: P4
+        title: "Murphy Oil Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/717423/000071742319000016/mur-20181231x10k.htm"
+        date: "FY2018 (filed 2019)"
+        research_note_row: 3
+      source_class: primary
+      as_of: "FY2018"

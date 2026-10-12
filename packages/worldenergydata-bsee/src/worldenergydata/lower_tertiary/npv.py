@@ -11,6 +11,8 @@ from typing import Dict, Optional
 import pandas as pd
 import yaml
 
+from worldenergydata.lower_tertiary.partner_reference import validate_partners_by_field
+
 
 def _read_yaml(path: Path) -> Dict[str, object]:
     with path.open("r", encoding="utf-8") as handle:
@@ -117,6 +119,11 @@ def load_field_inputs(
             "opex_per_boe": field_payload.get("opex_per_boe"),
             "raw": field_payload,
         }
+
+        if "partners_by_field" in contents:
+            reference = contents["partners_by_field"]
+            validate_partners_by_field(field_id, reference)
+            profiles[field_id]["partners_by_field"] = reference
 
     return profiles
 
