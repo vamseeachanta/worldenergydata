@@ -9,6 +9,8 @@ Date: 2025-10-03
 Source: Ported from FDAS generate_financial_summary.py
 """
 
+import math
+from calendar import monthrange
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, List, Optional
@@ -106,6 +108,31 @@ class GasMonthlyCashflowModel(MonthlyCashflowModel):
     def total_revenue_usd(self) -> float:
         """Combined oil and gas gross revenue in USD."""
         return self.oil_revenue_usd + self.gas_revenue_usd
+
+
+PRODUCTION_RATE_BASIS = "calendar-day average per month"
+
+
+class SlidingScaleRoyalties(dict):
+    """Monthly royalty values with the production-rate averaging basis."""
+
+    production_rate_basis = PRODUCTION_RATE_BASIS
+
+
+@dataclass
+class SlidingScaleMonthlyCashflowModel(MonthlyCashflowModel):
+    """Monthly oil projection with the rate used to select the royalty band."""
+
+    production_rate_bpd: float = 0.0
+    production_rate_basis: str = PRODUCTION_RATE_BASIS
+
+
+@dataclass
+class SlidingScaleGasMonthlyCashflowModel(GasMonthlyCashflowModel):
+    """Gas-enabled projection retaining the oil-rate royalty basis."""
+
+    production_rate_bpd: float = 0.0
+    production_rate_basis: str = PRODUCTION_RATE_BASIS
 
 
 class CashflowEngine:
@@ -269,13 +296,42 @@ class CashflowEngine:
 
         return revenue
 
+    def _uses_sliding_scale(self) -> bool:
+        return (
+            self.fiscal_terms is not None
+            and self.fiscal_terms.royalty.model == "sliding_scale"
+        )
+
+    def _monthly_production_rates(self, volumes: Dict[str, float]) -> Dict[str, float]:
+        """Divide each monthly barrel volume by that month's calendar days."""
+        rates = {}
+        for month, volume in volumes.items():
+            if (
+                not isinstance(volume, (int, float))
+                or isinstance(volume, bool)
+                or not math.isfinite(volume)
+                or volume < 0
+            ):
+                raise ValueError(
+                    f"production volume missing or invalid for month {month}"
+                )
+            period = datetime.strptime(month, "%Y-%m")
+            rates[month] = volume / monthrange(period.year, period.month)[1]
+        return rates
+
     def calculate_royalty(
-        self, revenue_monthly: Dict[str, float], royalty_rate: Optional[float] = None
+        self,
+        revenue_monthly: Dict[str, float],
+        royalty_rate: Optional[float] = None,
+        *,
+        production_rate_bpd_monthly: Optional[Dict[str, float]] = None,
     ) -> Dict[str, float]:
         """
         Calculate royalty payments.
 
-        Royalty-rate resolution precedence (highest first):
+        A sliding-scale deck requires monthly production rates and selects its
+        band for each month; an explicit flat-rate argument cannot bypass it.
+        For flat, none and deckless paths, precedence is highest first:
             1. explicit ``royalty_rate`` argument;
             2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
                per-dev-system rate, ``none`` resolves to 0.0;
@@ -284,10 +340,13 @@ class CashflowEngine:
 
         Args:
             revenue_monthly: Dict mapping year-month to revenue
-            royalty_rate: Royalty rate (overrides deck/assumptions if given)
+            royalty_rate: Royalty rate override for flat, none or deckless paths.
+            production_rate_bpd_monthly: Calendar-day average per month in bpd.
+                Required for every revenue month under sliding_scale.
 
         Returns:
-            Dictionary mapping year-month to royalty
+            Dictionary mapping year-month to royalty. Sliding-scale results
+            carry production_rate_basis; legacy results retain their dict shape.
 
         Examples:
             >>> engine = CashflowEngine(assumptions_mgr)
@@ -296,6 +355,21 @@ class CashflowEngine:
             ...     0.188
             ... )
         """
+        if self._uses_sliding_scale():
+            royalty = SlidingScaleRoyalties()
+            for month, revenue in revenue_monthly.items():
+                if (
+                    production_rate_bpd_monthly is None
+                    or month not in production_rate_bpd_monthly
+                ):
+                    raise ValueError(f"production rate missing for month {month}")
+                rate = self.fiscal_terms.royalty.rate_for(
+                    self.dev_system,
+                    production_rate_bpd=production_rate_bpd_monthly[month],
+                )
+                royalty[month] = revenue * rate
+            return royalty
+
         if royalty_rate is None:
             if self.fiscal_terms is not None:
                 royalty_rate = self.fiscal_terms.royalty.rate_for(self.dev_system)
@@ -447,6 +521,12 @@ class CashflowEngine:
             .items()
         }
 
+        production_rates = (
+            self._monthly_production_rates(prod_dict)
+            if self._uses_sliding_scale()
+            else None
+        )
+
         # Calculate revenue and costs. Validate gas only when explicitly priced.
         gas_volumes: Dict[str, float] = {}
         gas_revenues: Dict[str, float] = {}
@@ -462,7 +542,9 @@ class CashflowEngine:
             revenue_monthly = {
                 month: oil_revenues[month] + gas_revenues[month] for month in prod_dict
             }
-        royalty_monthly = self.calculate_royalty(revenue_monthly)
+        royalty_monthly = self.calculate_royalty(
+            revenue_monthly, production_rate_bpd_monthly=production_rates
+        )
         variable_opex_monthly = self.calculate_variable_opex(prod_dict)
 
         # Get date range (all keys as strings)
@@ -494,6 +576,13 @@ class CashflowEngine:
                     gas_production_mcf=gas_volumes.get(month, 0.0),
                     gas_revenue_usd=gas_revenues.get(month, 0.0),
                 )
+            if production_rates is not None and month in production_rates:
+                model = (
+                    SlidingScaleGasMonthlyCashflowModel
+                    if gas_prices is not None
+                    else SlidingScaleMonthlyCashflowModel
+                )
+                cf = model(**vars(cf), production_rate_bpd=production_rates[month])
             cf.calculate_net_cashflow()
             cashflows.append(cf)
 

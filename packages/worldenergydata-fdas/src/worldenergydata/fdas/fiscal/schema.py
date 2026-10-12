@@ -7,8 +7,8 @@ data and validates it fail-closed. Strictness is deliberate — a mis-authored
 deck must raise, never silently degrade to a wrong royalty:
 
 * unknown top-level or royalty fields are rejected (typo guard);
-* ``royalty.model`` must be ``flat`` or ``none``; ``sliding_scale`` is rejected
-  with an explicit pointer to #718 (the seam it needs does not exist yet);
+* ``royalty.model`` must be ``flat``, ``none`` or ``sliding_scale``;
+* production-rate bands are ordered, bounded rates with an unbounded last band;
 * a ``flat`` model must carry ``rate_by_dev_system`` with *exactly* the four
   canonical dev systems, each rate in ``[0.0, 1.0]``;
 * provenance fields (``source_url``, ``source_ref``, ``revision``,
@@ -21,6 +21,7 @@ Issue:  https://github.com/vamseeachanta/worldenergydata/issues/714
 
 from __future__ import annotations
 
+import math
 from importlib import resources
 from typing import Any, Dict
 
@@ -59,13 +60,47 @@ _ALLOWED_TOP = {
     "effective_date",
     "schema_version",
 }
-_ALLOWED_ROYALTY = {"model", "rate_by_dev_system"}
+_ALLOWED_ROYALTY = {"model", "rate_by_dev_system", "bands"}
 _REQUIRED_PROVENANCE = ("source_url", "source_ref", "revision", "effective_date")
 
 
 def _require(cond: bool, msg: str) -> None:
     if not cond:
         raise FiscalTermsValidationError(msg)
+
+
+def _validate_bands(raw: Any) -> tuple:
+    _require(isinstance(raw, list) and raw, "royalty.bands: non-empty list required")
+    bands = []
+    previous = -1.0
+    for index, band in enumerate(raw):
+        _require(
+            isinstance(band, dict) and set(band) == {"max_rate_bpd", "rate"},
+            "royalty.bands: keys must be exactly max_rate_bpd and rate",
+        )
+        threshold, rate = band["max_rate_bpd"], band["rate"]
+        _require(
+            isinstance(rate, (int, float))
+            and not isinstance(rate, bool)
+            and 0 <= rate <= 1,
+            "royalty.bands.rate: number in [0, 1] required",
+        )
+        if threshold is None:
+            _require(index == len(raw) - 1, "unbounded band must be last")
+        else:
+            _require(
+                isinstance(threshold, (int, float)) and not isinstance(threshold, bool),
+                "royalty.bands.max_rate_bpd: number required",
+            )
+            _require(math.isfinite(threshold), "band threshold must be finite")
+            _require(
+                threshold >= 0 and threshold > previous,
+                "band thresholds must be non-negative and strictly increasing",
+            )
+            previous = threshold
+        bands.append((None if threshold is None else float(threshold), float(rate)))
+    _require(bands[-1][0] is None, "last band must be unbounded")
+    return tuple(bands)
 
 
 def _validate_royalty(raw: Any) -> RoyaltyTerms:
@@ -87,6 +122,13 @@ def _validate_royalty(raw: Any) -> RoyaltyTerms:
     )
 
     rate_map = raw.get("rate_by_dev_system")
+    if model == "sliding_scale":
+        _require(
+            "rate_by_dev_system" not in raw,
+            "royalty.rate_by_dev_system must be omitted for sliding_scale",
+        )
+        return RoyaltyTerms(model=model, bands=_validate_bands(raw.get("bands")))
+    _require("bands" not in raw, "royalty.bands requires sliding_scale")
     if model == "none":
         _require(
             rate_map is None,

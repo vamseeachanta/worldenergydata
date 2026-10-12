@@ -19,6 +19,7 @@ Issue:  https://github.com/vamseeachanta/worldenergydata/issues/714
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
@@ -27,11 +28,9 @@ from typing import Dict, Optional
 # ``flat`` deck can reproduce the legacy per-dev-system ROYALTY_RATE vector.
 DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 
-# Royalty models supported in v1. ``sliding_scale`` is intentionally *reserved*
-# but rejected by the loader: it needs a production-rate seam that
-# ``calculate_royalty`` does not yet expose (see #718).
-SUPPORTED_ROYALTY_MODELS = ("flat", "none")
-RESERVED_ROYALTY_MODELS = ("sliding_scale",)
+# Additive royalty models retain the version-1 shipped deck contract.
+SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
+RESERVED_ROYALTY_MODELS = ()
 
 # Declarative price markers (not consumed in v1 — revenue seam is #716).
 SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf")
@@ -66,9 +65,8 @@ class RoyaltyTerms:
     """Royalty sub-model.
 
     Attributes:
-        model: ``"flat"`` (per-dev-system fixed rate) or ``"none"`` (0.0, e.g.
-            Norway's no-royalty regime). ``"sliding_scale"`` is reserved and
-            rejected by the loader (#718).
+        model: ``"flat"`` (per-dev-system fixed rate), ``"none"`` (zero royalty),
+            or ``"sliding_scale"`` (production-rate bands).
         rate_by_dev_system: for ``model == "flat"``, an exact mapping over
             ``DEV_SYSTEMS`` with each rate in ``[0.0, 1.0]``. ``None`` for
             ``model == "none"``.
@@ -77,9 +75,15 @@ class RoyaltyTerms:
     model: str
     rate_by_dev_system: Optional[Dict[str, float]] = None
 
-    def rate_for(self, dev_system: str) -> float:
+    bands: tuple[tuple[Optional[float], float], ...] = ()
+
+    def rate_for(
+        self, dev_system: str, *, production_rate_bpd: Optional[float] = None
+    ) -> float:
         """Resolve the royalty rate for a development system.
 
+        ``sliding_scale`` requires a finite, non-negative daily production rate
+        and selects the first inclusive threshold, ending with an unbounded band.
         ``none`` → 0.0. ``flat`` → the mapped rate, falling back to the
         ``default`` dev-system entry when ``dev_system`` is unknown — mirroring
         ``AssumptionsManager.get``'s default-row fallback so parity holds for
@@ -87,6 +91,18 @@ class RoyaltyTerms:
         """
         if self.model == "none":
             return 0.0
+        if self.model == "sliding_scale":
+            if (
+                not isinstance(production_rate_bpd, (int, float))
+                or isinstance(production_rate_bpd, bool)
+                or not math.isfinite(production_rate_bpd)
+                or production_rate_bpd < 0
+            ):
+                raise ValueError("production rate must be finite, non-negative bpd")
+            for threshold, rate in self.bands:
+                if threshold is None or production_rate_bpd <= threshold:
+                    return rate
+            raise ValueError("production rate has no validated royalty band")
         assert self.rate_by_dev_system is not None  # guaranteed by validation
         if dev_system in self.rate_by_dev_system:
             return self.rate_by_dev_system[dev_system]
