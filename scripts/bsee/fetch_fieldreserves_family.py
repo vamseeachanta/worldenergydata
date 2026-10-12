@@ -61,7 +61,7 @@ def curate_cache(root: Path) -> dict:
         "production_master": "Oil/condensate: STB; gas: MCF; water unit not stated by source",
     }
     (root / "schema.json").write_text(
-        json.dumps(schema, indent=2, sort_keys=True) + "\n"
+        json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
     return counts
 

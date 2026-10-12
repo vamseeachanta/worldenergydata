@@ -9,7 +9,10 @@ The 2023 vintage names are verified against the
 The current production-master and Appendix B names are verified against the
 [family listing](https://www.data.boem.gov/Main/FieldReserves.aspx).
 Retrieval instants, source sizes and SHA-256 digests are recorded in
-`manifest.json`, emitted by the fetch code. The originals remain in the
+`manifest.json`: all ten records, including the production-master and Appendix B
+definition pages, are emitted by the fetch code with observed HTTP statuses.
+The four archive digests match the earlier retrieval underlying the row counts.
+The originals remain in the
 caller-configured cache. No original archive or full curated table is in Git.
 
 | Archive | Verified content | Disposition |
@@ -50,7 +53,13 @@ with the package importable. A fresh empty output directory is required.
 `--cached` verifies previous downloads and curates without network access.
 The annual standalone catalog in `config/bsee.yml` follows the existing reserves
 workbook pattern. It does not install a scheduler or widen the weekly BSEE host
-allowlist. The generic registry preserves raw workbook/delimited bins; typed
+allowlist. The weekly scheduler reads its configured or built-in dataset list,
+neither of which includes these two specs. A full run of
+`scripts/refresh_bsee_all.py` (also `--skip-ogor`) iterates the registry and
+includes them: it downloads the archives and writes generic workbook/delimited
+bins, whose headerless master parsing consumes the first data row as a header.
+An owner decision is needed on exclusion from that manual refresh; those bins
+are not the typed curated outputs. The generic registry preserves raw workbook/delimited bins; typed
 curation reads the complete archive directly, preserving headerless first rows.
 
 The fetcher uses one connection, a 30-second request timeout, a two-second pause

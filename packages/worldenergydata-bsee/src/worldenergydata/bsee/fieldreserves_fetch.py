@@ -18,6 +18,8 @@ BASE = "https://www.data.boem.gov"
 VINTAGE_LISTING = f"{BASE}/Main/HtmlPage.aspx?page=estimated2023"
 FAMILY_LISTING = f"{BASE}/Main/FieldReserves.aspx"
 TERMS_URL = f"{BASE}/Main/HtmlPage.aspx?page=Disclaimer"
+MASTER_DEFINITION = f"{BASE}/Main/HtmlPage.aspx?page=fieldNames2"
+APPENDIX_DEFINITION = f"{BASE}/Main/HtmlPage.aspx?page=appendixB"
 USER_AGENT = (
     "WorldEnergyData FieldReserves (https://github.com/vamseeachanta/worldenergydata)"
 )
@@ -54,6 +56,7 @@ class Client:
     def __init__(self, max_bytes: int = 64 * 1024 * 1024):
         self.max_bytes = max_bytes
         self._used = False
+        self.last_status: int | None = None
 
     def get(self, url: str) -> bytes:
         if not url.startswith(BASE + "/"):
@@ -66,6 +69,7 @@ class Client:
         with _open(request, timeout=30) as response:
             if response.geturl() != url:
                 raise ValueError("Unexpected redirect")
+            self.last_status = response.status
             chunks, total = [], 0
             while chunk := response.read(min(65536, self.max_bytes + 1 - total)):
                 total += len(chunk)
@@ -95,13 +99,48 @@ def validate_listing(html: str, names: Sequence[str]) -> None:
             raise ValueError(f"Listing missing expected member: {name}")
 
 
-def record(url: str, payload: bytes, retrieved_utc: str) -> dict:
-    return {
-        "source_url": url,
+def retrieval_input(
+    url: str, payload: bytes, retrieved_utc: str, http_status: int | None = None
+) -> dict:
+    item = {
+        "url": url,
         "retrieved_utc": retrieved_utc,
-        "sha256": hashlib.sha256(payload).hexdigest(),
-        "size_bytes": len(payload),
+        "payload_sha256": hashlib.sha256(payload).hexdigest(),
+        "payload_size_bytes": len(payload),
     }
+    if http_status is not None:
+        item["http_status"] = http_status
+    return item
+
+
+def record_from_input(item: dict) -> dict:
+    result = {
+        "source_url": item["url"],
+        "retrieved_utc": item["retrieved_utc"],
+        "sha256": item["payload_sha256"],
+        "size_bytes": item["payload_size_bytes"],
+    }
+    if "http_status" in item:
+        result["http_status"] = item["http_status"]
+    return result
+
+
+def record(
+    url: str, payload: bytes, retrieved_utc: str, http_status: int | None = None
+) -> dict:
+    return record_from_input(retrieval_input(url, payload, retrieved_utc, http_status))
+
+
+def manifest_from_inputs(inputs: list[dict], *, terms: str) -> str:
+    return emit_manifest([record_from_input(item) for item in inputs], terms=terms)
+
+
+def source_urls() -> list[str]:
+    return (
+        [BASE + "/robots.txt", TERMS_URL, VINTAGE_LISTING, FAMILY_LISTING]
+        + [BASE + "/FieldReserves/Files/" + urllib.parse.quote(name) for name in FILES]
+        + [MASTER_DEFINITION, APPENDIX_DEFINITION]
+    )
 
 
 def emit_manifest(records: list[dict], *, terms: str) -> str:
@@ -133,6 +172,22 @@ def fixture_manifest(root: Path) -> str:
     return emit_manifest(records, terms="not stated by the source")
 
 
+def _write_provenance(cache_root: Path, inputs: list[dict]) -> Path:
+    recorded = {
+        "data_kind": "live-retrieval-metadata",
+        "retrievals": inputs,
+        "terms": DISCLAIMER,
+    }
+    (cache_root / "recorded_inputs.json").write_text(
+        json.dumps(recorded, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    manifest = cache_root / "manifest.json"
+    manifest.write_text(
+        manifest_from_inputs(inputs, terms=DISCLAIMER), encoding="utf-8"
+    )
+    return manifest
+
+
 def fetch_family(cache_root: Path) -> Path:
     """Verify robots, disclaimer and exact listings before fetching archives."""
     cache_root.mkdir(parents=True, exist_ok=True)
@@ -140,7 +195,7 @@ def fetch_family(cache_root: Path) -> Path:
         raise FileExistsError(
             "Preserving existing cache contents; use a fresh directory"
         )
-    client, records = Client(), []
+    client, inputs = Client(), []
 
     def get(url: str, filename: str) -> bytes:
         target = cache_root / filename
@@ -148,7 +203,7 @@ def fetch_family(cache_root: Path) -> Path:
             raise FileExistsError(f"Preserving existing output: {filename}")
         body = client.get(url)
         stamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-        records.append(record(url, body, stamp))
+        inputs.append(retrieval_input(url, body, stamp, client.last_status))
         target.write_bytes(body)
         if target.read_bytes() != body:
             raise OSError("Saved source failed readback")
@@ -157,9 +212,7 @@ def fetch_family(cache_root: Path) -> Path:
     robots = get(BASE + "/robots.txt", "robots.txt").decode("utf-8")
     policy = urllib.robotparser.RobotFileParser()
     policy.parse(robots.splitlines())
-    urls = [TERMS_URL, VINTAGE_LISTING, FAMILY_LISTING] + [
-        BASE + "/FieldReserves/Files/" + urllib.parse.quote(name) for name in FILES
-    ]
+    urls = source_urls()[1:]
     if not all(policy.can_fetch(USER_AGENT, url) for url in urls):
         raise ValueError("Source robots policy refuses automated access")
     verify_terms(get(TERMS_URL, "terms.html"))
@@ -167,10 +220,10 @@ def fetch_family(cache_root: Path) -> Path:
     family = get(FAMILY_LISTING, "family.html").decode("utf-8")
     validate_listing(vintage, FILES[:2])
     validate_listing(family, FILES[2:])
-    for name, url in zip(FILES, urls[3:]):
+    for name, url in zip(FILES, urls[3:7]):
         body = get(url, name)
         if not body.startswith(b"PK\x03\x04"):
             raise ValueError(f"Expected ZIP, received other content: {name}")
-    manifest = cache_root / "manifest.json"
-    manifest.write_text(emit_manifest(records, terms=DISCLAIMER), encoding="utf-8")
-    return manifest
+    get(MASTER_DEFINITION, "master_definition.html")
+    get(APPENDIX_DEFINITION, "appendix_definition.html")
+    return _write_provenance(cache_root, inputs)
