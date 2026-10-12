@@ -26,11 +26,8 @@ def mod():
 
 
 @pytest.fixture(scope="module")
-def payload():
-    """Preserve historical pins against the frozen page, not the new pipeline."""
-    text = OUT.read_text(encoding="utf-8")
-    raw = re.search(r"<script>const DATA=(\{.*\});\nconst \$=", text, re.S).group(1)
-    return json.loads(raw.replace("<\\/", "</"))
+def payload(mod):
+    return mod.load_payload()
 
 
 def test_tree_shape(payload):
@@ -65,9 +62,9 @@ def test_absent_engineering_pages_are_honest_gaps(payload):
     assert links["big_foot"]["assets"] is None
 
 
-def test_legacy_source_requires_regeneration(mod):
-    with pytest.raises(ValueError, match="provenance"):
-        mod.load_payload()
+def test_committed_page_is_regenerable(mod, payload):
+    assert OUT.exists()
+    assert mod.build_html(payload) == OUT.read_text(encoding="utf-8")
 
 
 def test_page_is_self_contained():
@@ -97,3 +94,86 @@ def test_page_has_both_themes_and_deep_link_router():
     assert ':root[data-theme="light"]' in text
     for route in ("#/field/", "#/block/", "#/bore/"):
         assert route in text
+
+
+@pytest.mark.parametrize("missing", [("basis",), ("basis", "pnd_days", "days_status")])
+def test_synthetic_output_requires_basis(mod, monkeypatch, tmp_path, missing):
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        patch_inputs,
+        synthetic_inputs,
+    )
+
+    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    patch_inputs(monkeypatch, mod, inputs)
+    parser = mod.provenance
+    monkeypatch.setattr(
+        mod,
+        "provenance",
+        lambda row: {
+            key: value for key, value in parser(row).items() if key not in missing
+        },
+    )
+    with pytest.raises(ValueError, match="basis"):
+        mod.load_payload()
+
+
+@pytest.mark.parametrize("builder", ["vintage", "publisher"])
+def test_synthetic_table_schema_requires_basis(monkeypatch, tmp_path, builder):
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        add_source_labels,
+        load_script,
+        publisher,
+        synthetic_inputs,
+        synthetic_vintages,
+    )
+
+    if builder == "vintage":
+        module = load_script(REPO / "scripts/lower_tertiary/build_dc_vintage_diff.py")
+        parser = module.vintage_labels
+        monkeypatch.setattr(
+            module,
+            "vintage_labels",
+            lambda *args: [
+                {k: v for k, v in row.items() if k != "basis"} for row in parser(*args)
+            ],
+        )
+        old, new = synthetic_vintages()
+        with pytest.raises(ValueError, match="basis"):
+            module.build_diff(old, add_source_labels(new, "synthetic rule"))
+    else:
+        inputs = synthetic_inputs.__wrapped__(tmp_path)
+        module = publisher(monkeypatch, inputs)
+        parser = module.aggregate_provenance
+        monkeypatch.setattr(
+            module,
+            "aggregate_provenance",
+            lambda rows: {k: v for k, v in parser(rows).items() if k != "basis"},
+        )
+        with pytest.raises(ValueError, match="basis"):
+            module.build_tables()
+
+
+@pytest.mark.parametrize(
+    "basis,before,after",
+    [
+        ("mixed", "synthetic rule", "synthetic rule"),
+        ("mixed", None, "synthetic rule"),
+        ("mixed", None, "mixed"),
+        ("", "synthetic rule a", "synthetic rule b"),
+        ("synthetic rule a", "synthetic rule a", "synthetic rule b"),
+        ("unavailable", None, None),
+    ],
+)
+def test_synthetic_inconsistent_vintage_label_refused(basis, before, after):
+    from tests.unit.lower_tertiary.test_dc_provenance import load_script
+
+    mod = load_script(REPO / "scripts/lower_tertiary/dc_provenance.py")
+    row = dict(
+        basis=basis,
+        basis_v30=before,
+        basis_wed=after,
+        pnd_days=None,
+        days_status="war_covered",
+    )
+    with pytest.raises(ValueError, match="provenance"):
+        mod.validate_vintage_row(row)

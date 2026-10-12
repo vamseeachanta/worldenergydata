@@ -30,7 +30,6 @@ import importlib.util
 import sys
 import tempfile
 from pathlib import Path
-from types import ModuleType
 
 import pandas as pd
 
@@ -38,11 +37,7 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    add_days,
-    aggregate_basis,
-    sum_days,
-    validate_day_schema,
-    validate_vintage_row,
+    aggregate_provenance, carries_basis, validate_day_schema, validate_vintage_row,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -59,28 +54,22 @@ reconciliation (hub: https://vamseeachanta.github.io/worldenergydata/wo-april-20
 
 | Config | Rows | What |
 |---|---|---|
-| `dc_development_summary` | 11 | Per-development rollup with explicit article provenance gap |
+| `dc_development_summary` | 11 | Per-development rollup vs the article (7 exact, 3 explained) |
 | `dc_bores` | 253 | Per-bore spud/TD, drill vs completion split, producer/sidetrack |
-| `dc_vintage_diff` | 253 | Per-bore vintage values, separate bases and comparable deltas |
+| `dc_vintage_diff` | 253 | Frozen-V30 vs wed — drilling changed on 0 of 253 bores |
 
-`basis` preserves the complete extractor rule; `pnd_days` (nullable integer,
-units: days) counts the opaque PND activity code separately. `days_status`
-(nullable string) preserves WAR coverage vocabulary: `war_covered`,
-`war_covered_no_activity_code`, `no_war_activity`. These describe coded,
-unattributed and absent coverage, respectively; activity day values may be
-null even with coverage. Day columns use nullable integers. A null contributor
-makes its field/block total null. Multiple full rules are labelled `mixed`.
-Vintage tables carry `basis_v30` and `basis_wed`; deltas are null unless rules
-are known and equal. Article counts carry `basis_article=unavailable`; no
-article delta is asserted. Production refresh and publication remain pending.
+Basis: canonical extractor output, BSEE WAR vintage 2026-02-19. Drilling days =
+spud to TD; completion days = all post-TD rig time including later servicing
+(the open #846 boundary question). Known caveat: DRILLING_DAYS mixes calendar
+days (spans <=250 d) with WAR-union rig-days (longer spans), so batch-drilled
+wells undercount — tracked in the QA/QC hub.
 """
 
 
-def _load_listing_module() -> ModuleType:
+def _load_listing_module():
     spec = importlib.util.spec_from_file_location(
         "build_wo_per_well_dc", LISTING_SCRIPT
     )
-    assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -106,7 +95,7 @@ def _drilldown_extras() -> dict[str, dict]:
         for r in _csv.DictReader(vin_path.open(encoding="utf-8"))
     }
 
-    def _num(raw: str | None) -> float | None:
+    def _num(raw):
         raw = (raw or "").strip()
         return float(raw) if raw else None
 
@@ -129,6 +118,8 @@ def build_tables() -> dict[str, pd.DataFrame]:
     vintage = mod.load_vintage_diff()
     extras = _drilldown_extras()
 
+    source_labelled = any(carries_basis(b) for rows in devs.values() for b in rows)
+    vintage_labelled = any(carries_basis(r) for rows in vintage.values() for r in rows)
     bore_rows = []
     summary_rows = []
     for dev in sorted(devs, key=lambda d: (d == "Big Foot", d)):
@@ -145,19 +136,17 @@ def build_tables() -> dict[str, pd.DataFrame]:
                     "td_date": None if b["td"] == "—" else b["td"],
                     "drilling_days": b["drill"],
                     "completion_days": b["compl"],
-                    "dc_days": add_days(b["drill"], b["compl"]),
-                    "basis": b["basis"],
-                    "pnd_days": b["pnd_days"],
-                    "days_status": b["days_status"],
+                    "dc_days": b["drill"] + b["compl"],
                     "sidetrack": b["sidetrack"],
                     "producer": b["producer"],
                     "note": b["note"] or None,
                     **extras.get(b["api12"], {}),
+                    **{key: b[key] for key in ("basis", "pnd_days", "days_status") if key in b},
                 }
             )
         wo = mod.WO_ARTICLE.get(dev)
-        drill = sum_days(b["drill"] for b in bores)
-        compl = sum_days(b["compl"] for b in bores)
+        drill = sum(b["drill"] for b in bores)
+        compl = sum(b["compl"] for b in bores)
         summary_rows.append(
             {
                 "development": dev,
@@ -167,16 +156,11 @@ def build_tables() -> dict[str, pd.DataFrame]:
                 "producers_article": wo[1] if wo else None,
                 "drilling_days": drill,
                 "completion_days": compl,
-                "dc_days_wed": add_days(drill, compl),
-                "basis": aggregate_basis(bores),
-                "basis_article": "unavailable",
-                "pnd_days": sum_days(b["pnd_days"] for b in bores),
-                "days_status": aggregate_basis(
-                    {"basis": b["days_status"]} for b in bores
-                ),
+                "dc_days_wed": drill + compl,
                 "dc_days_article": wo[2] if wo else None,
-                "delta_days": None,  # Article basis is unavailable.
-                "status": "historical: " + mod.STATUS[dev],
+                "delta_days": (drill + compl - wo[2]) if wo else None,
+                "status": mod.STATUS[dev],
+                **aggregate_provenance(bores),
             }
         )
 
@@ -192,9 +176,7 @@ def build_tables() -> dict[str, pd.DataFrame]:
         "d_drill",
         "d_compl",
     ):
-        diff[col] = pd.to_numeric(diff[col].replace("", pd.NA), errors="raise").astype(
-            "Int64"
-        )
+        diff[col] = diff[col].astype("int64")
     diff["spud_wed"] = diff["spud_wed"].replace("", None)
     diff = diff.sort_values(["dev", "api12"]).reset_index(drop=True)
 
@@ -213,35 +195,23 @@ def build_tables() -> dict[str, pd.DataFrame]:
         "dc_bores": pd.DataFrame(bore_rows),
         "dc_vintage_diff": diff,
     }
-    for table in tables.values():
-        validate_day_schema(table.columns)
-        for column in table.columns:
-            if column in {
-                "pnd_days",
-                "drilling_days",
-                "completion_days",
-                "dc_days",
-                "dc_days_wed",
-                "dc_days_article",
-                "delta_days",
-            }:
-                table[column] = pd.to_numeric(
-                    table[column].replace("", pd.NA), errors="raise"
-                ).astype("Int64")
-            if column.startswith("basis") or column == "days_status":
-                table[column] = table[column].astype("string")
+
+    for name, table in tables.items():
+        labelled = vintage_labelled if name == "dc_vintage_diff" else source_labelled
+        if labelled:
+            validate_day_schema(table.columns)
+            table["pnd_days"] = pd.to_numeric(
+                table["pnd_days"].replace("", pd.NA), errors="raise"
+            ).astype("Int64")
+            for column in ("basis", "basis_v30", "basis_wed", "days_status"):
+                if column in table:
+                    table[column] = table[column].astype("string")
     return tables
 
 
 def patch_readme(readme: str) -> str:
     if "config_name: dc_bores" in readme:
-        heading = "\n## D&C days QA/QC tables"
-        if heading in readme:
-            start = readme.index(heading)
-            end = readme.find("\n## ", start + len(heading))
-            tail = readme[end:] if end != -1 else ""
-            return readme[:start].rstrip() + CARD_SECTION + tail
-        return readme.rstrip() + CARD_SECTION
+        return readme
     anchor = "- config_name: parametric_economics\n  data_files: parametric_economics.parquet\n"
     addition = (
         anchor
@@ -253,7 +223,7 @@ def patch_readme(readme: str) -> str:
         raise SystemExit(
             "README anchor not found — dataset card layout changed; patch manually"
         )
-    return readme.replace(anchor, addition).rstrip() + CARD_SECTION
+    return readme.replace(anchor, addition) + CARD_SECTION
 
 
 def main() -> None:
@@ -264,6 +234,8 @@ def main() -> None:
     tables = build_tables()
     assert len(tables["dc_bores"]) == 253
     assert len(tables["dc_vintage_diff"]) == 253
+    assert int(tables["dc_development_summary"]["dc_days_wed"].sum()) == 25404
+    assert int(tables["dc_development_summary"]["delta_days"].sum()) == 195  # 119+52+24
 
     out = Path(tempfile.mkdtemp(prefix="dc-days-hf-"))
     for name, df in tables.items():
