@@ -206,10 +206,9 @@ dsptsdelimit
 > labels for the six codes BSEE has never defined — live in
 > `packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/data/war_activity_codes.yml`.
 >
-> The `PND` row below is a **local addition, not a BSEE row**, and its uncertainty
-> qualifier was silently dropped when this table was copied (`PENDING/UNKNOWN` →
-> `PENDING`). Restored under
-> [#1065](https://github.com/vamseeachanta/worldenergydata/issues/1065).
+> PND: no published definition; see the
+> [publication-status note](WELL_ACTIVITY_CD/publication_status.md).
+> It is a local addition, not a published borehole-status row.
 
 | BOREHOLE_STAT_CD | BOREHOLE_STAT_DESC |
 |------------------|--------------------|
@@ -224,9 +223,9 @@ dsptsdelimit
 | ST               | BOREHOLE SIDETRACKED |
 | TA               | TEMPORARILY ABANDONED |
 | VCW              | VOLUME CHAMBER WELL |
-| PND              | PENDING/UNKNOWN (local addition — BSEE publishes no meaning for PND) |
+| PND              | no published definition; see [publication status](WELL_ACTIVITY_CD/publication_status.md) |
 
-{APD: APPLICATION FOR PERMIT TO DRILL, AST: APPROVED SIDETRACK, CNL: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED., COM: BOREHOLE COMPLETED, CT: CORE TEST WELL, DRL: DRILLING ACTIVE, DSI: DRILLING SUSPENDED, PA: PERMANENTLY ABANDONED, ST: BOREHOLE SIDETRACKED, TA: TEMPORARILY ABANDONED, VCW: VOLUME CHAMBER WELL, PND: PENDING/UNKNOWN}
+{APD: APPLICATION FOR PERMIT TO DRILL, AST: APPROVED SIDETRACK, CNL: BOREHOLE IS CANCELLED. THE REQUEST TO DRILL THE WELL IS CANCELLED AFTER THE APD OR SUNDRY HAS BEEN APPROVED. THE STATUS DATE IS THE DATE THE BOREHOLE WAS CANCELLED., COM: BOREHOLE COMPLETED, CT: CORE TEST WELL, DRL: DRILLING ACTIVE, DSI: DRILLING SUSPENDED, PA: PERMANENTLY ABANDONED, ST: BOREHOLE SIDETRACKED, TA: TEMPORARILY ABANDONED, VCW: VOLUME CHAMBER WELL, PND: no published definition; see [publication status](WELL_ACTIVITY_CD/publication_status.md)}
 
 Roy,
 
