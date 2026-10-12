@@ -95,3 +95,25 @@ scheduler_datasets:
       - mv_deep_water_field_leases.txt
     timeout_s: 600
     approx_size_mb: 0.07
+
+# Standalone annual refresh, following the reserves-workbook fallback.
+# These BOEM origins are deliberately outside bsee_refresh's weekly catalog.
+# No scheduler installation or weekly execution is implied by this entry.
+fieldreserves_annual:
+  cadence: annual
+  vintage: 2023
+  entry_point: scripts/bsee/fetch_fieldreserves_family.py
+  cache_root: caller_required
+  archives:
+    "2023 FldMoPro.zip":
+      status: fetch_only
+      reason: Access-only archive; decoder unavailable
+    "2023 Hist.zip":
+      status: supported
+      registry_dir: fieldreserves_history
+    mastproddelimit.zip:
+      status: supported
+      registry_dir: fieldreserves_production_master
+    appendbdelimit.zip:
+      status: triaged
+      classification: lease_to_field_index

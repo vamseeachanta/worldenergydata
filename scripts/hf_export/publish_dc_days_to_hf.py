@@ -17,7 +17,7 @@ All rows come from the committed listing pipeline
 (``scripts/lower_tertiary/build_wo_per_well_dc.py`` + its two committed CSV
 inputs) — this script re-projects, it does not recompute.
 
-Deps: pandas, pyarrow, huggingface_hub (token from ~/.cache/huggingface/token).
+Deps: pandas, pyarrow; publication additionally requires huggingface_hub.
 
     <python-with-deps> scripts/hf_export/publish_dc_days_to_hf.py [--dry-run]
 """
@@ -27,10 +27,18 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
+import sys
 import tempfile
 from pathlib import Path
 
 import pandas as pd
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.dc_provenance import (
+    aggregate_provenance, carries_basis, validate_day_schema, validate_vintage_row,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET = "aceengineer/worldenergydata-explorer"
@@ -110,6 +118,8 @@ def build_tables() -> dict[str, pd.DataFrame]:
     vintage = mod.load_vintage_diff()
     extras = _drilldown_extras()
 
+    source_labelled = any(carries_basis(b) for rows in devs.values() for b in rows)
+    vintage_labelled = any(carries_basis(r) for rows in vintage.values() for r in rows)
     bore_rows = []
     summary_rows = []
     for dev in sorted(devs, key=lambda d: (d == "Big Foot", d)):
@@ -131,6 +141,7 @@ def build_tables() -> dict[str, pd.DataFrame]:
                     "producer": b["producer"],
                     "note": b["note"] or None,
                     **extras.get(b["api12"], {}),
+                    **{key: b[key] for key in ("basis", "pnd_days", "days_status") if key in b},
                 }
             )
         wo = mod.WO_ARTICLE.get(dev)
@@ -149,10 +160,13 @@ def build_tables() -> dict[str, pd.DataFrame]:
                 "dc_days_article": wo[2] if wo else None,
                 "delta_days": (drill + compl - wo[2]) if wo else None,
                 "status": mod.STATUS[dev],
+                **aggregate_provenance(bores),
             }
         )
 
     diff_rows = [row for rows in vintage.values() for row in rows]
+    for row in diff_rows:
+        validate_vintage_row(row)
     diff = pd.DataFrame(diff_rows)
     for col in (
         "drill_v30",
@@ -176,11 +190,23 @@ def build_tables() -> dict[str, pd.DataFrame]:
     ):
         summary[col] = summary[col].astype("Int64")
 
-    return {
+    tables = {
         "dc_development_summary": summary,
         "dc_bores": pd.DataFrame(bore_rows),
         "dc_vintage_diff": diff,
     }
+
+    for name, table in tables.items():
+        labelled = vintage_labelled if name == "dc_vintage_diff" else source_labelled
+        if labelled:
+            validate_day_schema(table.columns)
+            table["pnd_days"] = pd.to_numeric(
+                table["pnd_days"].replace("", pd.NA), errors="raise"
+            ).astype("Int64")
+            for column in ("basis", "basis_v30", "basis_wed", "days_status"):
+                if column in table:
+                    table[column] = table[column].astype("string")
+    return tables
 
 
 def patch_readme(readme: str) -> str:

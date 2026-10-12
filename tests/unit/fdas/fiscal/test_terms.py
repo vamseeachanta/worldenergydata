@@ -2,7 +2,7 @@
 
 Covers the loader/validator contract for the source-agnostic fiscal-terms deck
 layer (#714): all shipped decks validate; unknown countries and malformed decks
-fail closed; `sliding_scale` is rejected with a #718 pointer; provenance fields
+fail closed; production-rate bands validate strictly; provenance fields
 are mandatory.
 """
 
@@ -109,12 +109,20 @@ def test_unknown_royalty_field_rejected():
         validate_deck(d)
 
 
-def test_sliding_scale_rejected_with_718_pointer():
+def test_sliding_scale_valid_bands_load():
     d = _valid_deck()
-    d["royalty"] = {"model": "sliding_scale"}
-    with pytest.raises(FiscalTermsValidationError) as exc:
-        validate_deck(d)
-    assert "718" in str(exc.value)
+    d["country"] = "synthetic"
+    d["royalty"] = {
+        "model": "sliding_scale",
+        "bands": [
+            {"max_rate_bpd": 5000, "rate": 0.05},
+            {"max_rate_bpd": 15000, "rate": 0.075},
+            {"max_rate_bpd": None, "rate": 0.15},
+        ],
+    }
+    terms = validate_deck(d)
+    assert terms.royalty.model == "sliding_scale"
+    assert terms.royalty.rate_for("dry", production_rate_bpd=5000) == 0.05
 
 
 def test_flat_requires_exact_four_dev_systems():
@@ -186,3 +194,53 @@ def test_validate_deck_is_pure_roundtrip():
     snapshot = copy.deepcopy(d)
     validate_deck(d)
     assert d == snapshot  # validation must not mutate its input
+
+
+@pytest.mark.parametrize(
+    "bands, message",
+    [
+        (
+            [
+                {"max_rate_bpd": 2, "rate": 0.1},
+                {"max_rate_bpd": 1, "rate": 0.1},
+                {"max_rate_bpd": None, "rate": 0.1},
+            ],
+            "increasing",
+        ),
+        ([{"max_rate_bpd": 1, "rate": 0.1}], "unbounded"),
+        ([{"max_rate_bpd": None, "rate": 1.1}], "rate"),
+        (
+            [
+                {"max_rate_bpd": float("nan"), "rate": 0.1},
+                {"max_rate_bpd": None, "rate": 0.1},
+            ],
+            "finite",
+        ),
+        ([{"max_rate_bpd": None, "rate": 0.1, "typo": 1}], "keys"),
+        ([], "non-empty"),
+        (
+            [{"max_rate_bpd": None, "rate": 0.1}, {"max_rate_bpd": None, "rate": 0.1}],
+            "last",
+        ),
+        (
+            [{"max_rate_bpd": True, "rate": 0.1}, {"max_rate_bpd": None, "rate": 0.1}],
+            "number",
+        ),
+        ([{"max_rate_bpd": None, "rate": float("nan")}], "rate"),
+    ],
+)
+def test_sliding_scale_invalid_bands(bands, message):
+    d = _valid_deck()
+    d["royalty"] = {"model": "sliding_scale", "bands": bands}
+    with pytest.raises(FiscalTermsValidationError, match=message):
+        validate_deck(d)
+
+
+@pytest.mark.parametrize("model", ["flat", "none"])
+def test_bands_rejected_for_other_models(model):
+    d = _valid_deck()
+    if model == "none":
+        d["royalty"] = {"model": "none"}
+    d["royalty"]["bands"] = [{"max_rate_bpd": None, "rate": 0.1}]
+    with pytest.raises(FiscalTermsValidationError, match="bands"):
+        validate_deck(d)

@@ -1,0 +1,2 @@
+include src/worldenergydata/field_development/terrain_sources.yml
+include src/worldenergydata/field_development/bathymetry_manifest.json

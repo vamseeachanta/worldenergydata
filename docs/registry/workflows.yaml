@@ -240,3 +240,30 @@ workflows:
       network_required: false
       fixtures:
         - examples/workflows/texas-rrc-production-summary/production.csv
+  - id: federal-acreage-evidence
+    basename: federal_acreage
+    title: Synthetic federal lease-position and acreage evidence
+    input: examples/workflows/federal-acreage-evidence/input.yml
+    outputs:
+      - examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_result.json
+      - examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_report.html
+    assertions:
+      json:
+        - path: examples/workflows/federal-acreage-evidence/outputs/federal_acreage_evidence_result.json
+          equals:
+            screening_status: evidence_partial
+            title_chain_gap.status: not_evaluated
+            acreage.gross_area_acres.status: available
+          approx:
+            acreage.gross_area_acres.value: 320.0
+            acreage.federal_record_coverage_acres.value: 280.0
+            acreage.leased_acres.value: 200.0
+            acreage.expired_or_nonleased_acres.value: 80.0
+            acreage.no_record_acres.value: 40.0
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[federal-acreage-evidence]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/federal-acreage-evidence/fixture_records.json

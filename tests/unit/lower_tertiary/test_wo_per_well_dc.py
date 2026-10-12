@@ -121,3 +121,98 @@ def test_markdown_carries_resolution_section(devs):
         "Servicing accrual on long-TD'd bores",
     ):
         assert needle in text, needle
+
+
+@pytest.mark.parametrize("missing", [("basis",), ("basis", "pnd_days", "days_status")])
+def test_synthetic_output_requires_basis(mod, monkeypatch, tmp_path, missing):
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        patch_inputs,
+        synthetic_inputs,
+    )
+
+    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    patch_inputs(monkeypatch, mod, inputs)
+    parser = mod.provenance
+    monkeypatch.setattr(
+        mod,
+        "provenance",
+        lambda row: {
+            key: value for key, value in parser(row).items() if key not in missing
+        },
+    )
+    with pytest.raises(ValueError, match="basis"):
+        mod.load_bores()
+
+
+def test_synthetic_label_cell_cannot_change_table_structure(mod, monkeypatch, tmp_path):
+    import csv
+
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        patch_inputs,
+        synthetic_inputs,
+        write_rows,
+    )
+
+    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    rows = list(csv.DictReader(inputs[0].open(encoding="utf-8")))
+    rows[0]["BASIS"] = "synthetic | rule\nnext <tag>"
+    write_rows(inputs[0], rows)
+    patch_inputs(monkeypatch, mod, inputs)
+    text = mod.build_markdown(mod.load_bores(), mod.load_vintage_diff())
+    assert "synthetic \\| rule<br>next &lt;tag&gt;" in text
+    assert "| 0 | 0 | 0 |" in text
+
+
+def test_synthetic_vintage_labels_are_independent_of_source(monkeypatch, tmp_path):
+    import csv
+
+    import pandas as pd
+
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        load_script,
+        patch_inputs,
+        publisher,
+        remove_source_labels,
+        strip_labels,
+        synthetic_inputs,
+        write_rows,
+    )
+
+    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    remove_source_labels(inputs[0])
+    listing = load_script(REPO / "scripts/lower_tertiary/build_wo_per_well_dc.py")
+    drilldown = load_script(REPO / "scripts/lower_tertiary/build_dc_drilldown.py")
+    for module in (listing, drilldown):
+        patch_inputs(monkeypatch, module, inputs)
+    legacy_payload = drilldown.load_payload()
+    legacy_groups = listing.load_vintage_diff()
+    exporter = publisher(monkeypatch, inputs)
+    legacy_tables = exporter.build_tables()
+    rows = list(csv.DictReader(inputs[2].open(encoding="utf-8")))
+    write_rows(
+        inputs[2],
+        [
+            dict(
+                row,
+                basis="mixed",
+                basis_v30="synthetic rule a",
+                basis_wed="synthetic rule b",
+                pnd_days="1",
+                days_status="war_covered",
+            )
+            for row in rows
+        ],
+    )
+    labelled_payload = drilldown.load_payload()
+    assert strip_labels(labelled_payload) == legacy_payload
+    assert "basis" not in labelled_payload["bores"][0]
+    assert labelled_payload["bores"][0]["basis_v30"] == "synthetic rule a"
+    assert strip_labels(listing.load_vintage_diff()) == legacy_groups
+    assert "V30 basis | Candidate basis" in listing.build_markdown(
+        listing.load_bores(), listing.load_vintage_diff()
+    )
+    for name, table in exporter.build_tables().items():
+        pd.testing.assert_frame_equal(
+            table[legacy_tables[name].columns], legacy_tables[name]
+        )
+        assert ("basis" in table) == (name == "dc_vintage_diff")

@@ -147,6 +147,26 @@ def test_current_contract_accepts_approved_roots_and_exceptions() -> None:
     assert violations == []
 
 
+def test_tracked_root_files_have_no_unknown_root_violations(monkeypatch) -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
+        monkeypatch.delenv(key, raising=False)
+    contract = load_contract(repo_root / "config" / "repo_structure.yml")
+    root_files = [
+        path
+        for path in verify_repo_structure.git_tracked_paths(repo_root)
+        if "/" not in path
+    ]
+
+    assert "MANIFEST.in" in root_files
+
+    violations = validate_paths(root_files, contract)
+
+    assert not [
+        violation for violation in violations if violation.code == "unknown-root"
+    ]
+
+
 def test_root_for_preserves_leading_dot_roots() -> None:
     assert root_for(".github/workflows/ci.yml") == ".github"
     assert root_for(".claude/settings.json") == ".claude"

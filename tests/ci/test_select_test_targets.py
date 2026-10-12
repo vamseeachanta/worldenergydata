@@ -200,3 +200,37 @@ def test_matrix_targets_only_existing_dirs_in_module_scope():
     for shard in m["include"]:
         for tgt in shard["targets"].split():
             assert (REPO_ROOT / tgt).exists(), f"{tgt} does not exist"
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        ".gitleaks.toml",
+        ".gitleaksignore",
+        ".pre-commit-config.yaml",
+        "tests/governance/test_gitleaks_config.py",
+    ],
+)
+def test_governance_always_selected(path):
+    result = select([path], REPO_ROOT)
+    assert "tests/governance" in result["xdist"]
+    matrix = to_matrix([path], REPO_ROOT)
+    assert any(
+        "tests/governance" in shard["targets"].split() for shard in matrix["include"]
+    )
+
+
+@pytest.mark.parametrize(
+    "path,scope",
+    [
+        ("README.md", "skip"),
+        ("src/worldenergydata/hse/grounding.py", "modules"),
+        ("tests/governance/test_gitleaks_config.py", "skip"),
+        ("pyproject.toml", "full"),
+    ],
+)
+def test_matrix_runs_governance_once_for_every_scope(path, scope):
+    m = to_matrix([path], REPO_ROOT)
+    assert m["scope"] == scope
+    targets = [tgt for shard in m["include"] for tgt in shard["targets"].split()]
+    assert targets.count("tests/governance") == 1

@@ -569,10 +569,9 @@ def main() -> None:
     project_root = _find_project_root()
     log.info("Project root: %s", project_root)
 
-    # Ensure url_registry is importable
-    src_path = str(project_root / "src")
-    if src_path not in sys.path:
-        sys.path.insert(0, src_path)
+    from workspace_bootstrap import bootstrap_workspace
+
+    bootstrap_workspace(project_root)
 
     from worldenergydata.bsee.data.refresh.url_registry import (
         DatasetSpec,

@@ -18,8 +18,16 @@ Stdlib-only; deterministic output (no timestamps).
 from __future__ import annotations
 
 import csv
+import sys
 from datetime import datetime
 from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.dc_provenance import (
+    carries_basis, markdown_labels, provenance, validate_day_schema, validate_vintage_row,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
@@ -135,6 +143,7 @@ def load_bores() -> dict[str, list[dict]]:
             compl = _int(row["COMPLETION_DAYS"])
             devs.setdefault(dev, []).append(
                 {
+                    **provenance(row),
                     "api12": api12,
                     "bore": row["WELL_NAME"].strip() or api12[-4:],
                     "lease_name": lease_name,
@@ -149,6 +158,8 @@ def load_bores() -> dict[str, list[dict]]:
                     "note": BORE_NOTES.get(api12, ""),
                 }
             )
+            if carries_basis(row):
+                validate_day_schema(devs[dev][-1])
     for bores in devs.values():
         bores.sort(key=lambda b: (b["spud_key"], b["api12"]))
     return devs
@@ -163,6 +174,7 @@ def load_vintage_diff() -> dict[str, list[dict]]:
     groups: dict[str, list[dict]] = {}
     with VINTAGE_CSV.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
+            validate_vintage_row(row)
             groups.setdefault(row["category"], []).append(row)
     return groups
 
@@ -350,7 +362,7 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         " `tests/unit/lower_tertiary/test_wo_per_well_dc.py`.",
         "",
     ]
-    return "\n".join(lines)
+    return "\n".join(markdown_labels(lines, devs, vintage))
 
 
 def _anchor(title: str) -> str:
