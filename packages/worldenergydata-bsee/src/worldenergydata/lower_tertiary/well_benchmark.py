@@ -262,12 +262,18 @@ def benchmark_well(
     wti: pd.Series,
     uptime_row: Optional[dict],
 ) -> dict:
-    """Assemble one benchmark row for a single well from real BSEE data."""
+    """Assemble one benchmark row for a single well from real BSEE data.
+
+    ``drilling_days`` is a deprecated alias of
+    ``spud_to_completion_calendar_days``: calendar cycle time, not drilling
+    time (issue 1077).
+    """
     wellbore = str(api12)[:12]
     monthly = _well_monthly_oil(ogor_well)
     cum_oil = float(monthly["oil_bbl"].sum())
 
-    # Drilling / completion days from the ops timeline (spud -> completion).
+    # Calendar cycle time from spud to first completion; drilling_days remains
+    # a deprecated alias, not drilling time (issue 1077).
     well_ops = ops[ops["API_WELL_NUMBER"].astype(str).str[:12] == wellbore]
     spud_dt = pd.to_datetime(spud) if spud is not None and pd.notna(spud) else pd.NaT
     comp_dt = pd.NaT
@@ -313,6 +319,7 @@ def benchmark_well(
         "field": field_name,
         "lease": lease,
         "spud": spud_dt.date() if pd.notna(spud_dt) else None,
+        "spud_to_completion_calendar_days": drilling_days,
         "drilling_days": drilling_days,
         "completion_days": completion_days,
         "first_oil": (

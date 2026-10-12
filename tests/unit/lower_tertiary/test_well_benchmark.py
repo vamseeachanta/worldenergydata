@@ -14,12 +14,16 @@ Coverage:
 
 from __future__ import annotations
 
+import csv
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
 from worldenergydata.bsee.analysis.uptime import compute_uptime
 from worldenergydata.lower_tertiary.well_benchmark import (
     BenchmarkConfig,
+    benchmark_well,
     run_well_benchmark,
     select_play_wells,
 )
@@ -124,3 +128,90 @@ class TestWellBenchmarkRealData:
         )
         assert not wells.empty
         assert set(wells["field"].unique()) == {"Julia"}
+
+
+def _calendar_benchmark_row(completion_date: str | None) -> dict:
+    """Assemble a row from synthetic production and operation records."""
+    api12 = "111111111100"
+    ops = pd.DataFrame(columns=["API_WELL_NUMBER", "operation", "date"])
+    if completion_date is not None:
+        ops.loc[0] = [api12, "Completion", pd.Timestamp(completion_date)]
+    ogor = pd.DataFrame(
+        {
+            "date": pd.to_datetime(["2020-06-01"]),
+            "MON_O_PROD_VOL": [1000.0],
+        }
+    )
+    return benchmark_well(
+        api12=api12,
+        field_name="Synthetic field",
+        lease="Synthetic lease",
+        spud="2020-01-01",
+        first_oil="2020-06-09",
+        ogor_well=ogor,
+        ops=ops,
+        wti=pd.Series([50.0], index=pd.to_datetime(["2020-06-01"])),
+        uptime_row=None,
+    )
+
+
+class TestCalendarCycleTime:
+    def test_leap_year_calendar_span_and_alias(self):
+        """Jan 1 to Mar 1 = 31 + 29 = 60 days in leap year 2020.
+
+        Mar 1 to Jun 9 = 31 + 30 + 31 + 8 = 100 days; 60 + 100 = 160,
+        the Jan 1 to Jun 9 span. The alias carries the same calendar time.
+        """
+        row = _calendar_benchmark_row("2020-03-01")
+        assert row["spud_to_completion_calendar_days"] == 60
+        assert row["drilling_days"] == row["spud_to_completion_calendar_days"]
+        assert row["completion_days"] == 100
+        assert row["spud_to_completion_calendar_days"] + row["completion_days"] == (
+            pd.Timestamp(row["first_oil"]) - pd.Timestamp(row["spud"])
+        ).days == 160
+        columns = list(row)
+        assert columns.index("spud_to_completion_calendar_days") + 1 == columns.index(
+            "drilling_days"
+        )
+
+    def test_no_completion_calendar_span_and_alias_are_null(self):
+        """Without completion, Jan 1 to completion cannot be calculated.
+
+        Jan 1 to Jun 9 = 31 + 29 + 31 + 30 + 31 + 8 = 160 days, but
+        neither calendar component can be calculated without the split date.
+        """
+        row = _calendar_benchmark_row(None)
+        assert row["spud_to_completion_calendar_days"] is None
+        assert row["drilling_days"] is None
+        assert row["completion_days"] is None
+
+    def test_completion_before_spud_calendar_span_and_alias_are_null(self):
+        """Dec 31 to Jan 1 gives completion minus spud = -1 day.
+
+        The existing guard rejects that span; the new field and alias are null.
+        Jan 1 to Jun 9 still spans 31 + 29 + 31 + 30 + 31 + 8 = 160 days.
+        """
+        row = _calendar_benchmark_row("2019-12-31")
+        assert row["spud_to_completion_calendar_days"] is None
+        assert row["drilling_days"] is None
+
+
+def test_committed_csv_calendar_alias_matches_row_by_row():
+    """The generated calendar column equals its alias, including empty cells."""
+    csv_path = (
+        Path(__file__).resolve().parents[3]
+        / "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv"
+    )
+    column = "spud_to_completion_calendar_days"
+    with csv_path.open(newline="", encoding="utf-8") as stream:
+        reader = csv.DictReader(stream)
+        header = reader.fieldnames or []
+        if column not in header:
+            pytest.skip(
+                "CSV regeneration pending: BSEE OGOR-A inputs were unavailable "
+                "in the build environment"
+            )
+        assert header.count(column) == 1
+        assert header.index(column) + 1 == header.index("drilling_days")
+        for row in reader:
+            assert row[column] == row["drilling_days"], row["api12"]
