@@ -27,7 +27,9 @@ def test_note_breakdown_is_reconciled_without_relabelling_pnd():
     so its 49 days are not a suspension assertion (DSI is suspension).
     """
     module = comparison_module()
-    records = pd.read_csv(WEEKLY / "war_data_608124009500.csv", dtype=str)
+    records = pd.read_csv(
+        WEEKLY / "war_data_608124009500.csv", dtype=str, encoding="utf-8"
+    )
     result = module.count_ratified_days(records)
     assert result["drilling_days"] == 151
     assert result["completion_days"] == 91  # Note:87; whole COM weeks retained.
@@ -110,7 +112,9 @@ def test_interim_preferred_formula_and_missing_dates():
 def test_committed_csv_recomputes_row_for_row():
     module = comparison_module()
     generated = module.build_comparison(REPO)
-    with (NOTES / "ratified_day_basis_comparison.csv").open(newline="") as stream:
+    with (NOTES / "ratified_day_basis_comparison.csv").open(
+        newline="", encoding="utf-8"
+    ) as stream:
         committed = list(csv.DictReader(stream))
     assert committed == module.csv_rows(generated)
     assert any(
@@ -175,3 +179,133 @@ def test_textual_missing_codes_follow_existing_normalization(code):
     )
     assert result["unattributed_days"] == 7
     assert result["cross_code_excess_days"] == 0
+
+
+@pytest.mark.parametrize(
+    "api,drilling,completion",
+    [("608124009500", 155, 152), ("608124003301", 37, 173)],
+)
+def test_milestone_reproduces_each_published_source(api, drilling, completion):
+    """Committed workbook Sheet1 and export rows, keyed by API_WELL_NUMBER.
+
+    Dates and weekly intervals reproduce the four review expectations;
+    source row locators are retained in build_comparison output.
+    """
+    module = comparison_module()
+    rows = module.build_comparison(REPO)
+    for source in (module.EXPORT.as_posix(), module.WORKBOOK.as_posix() + ":Sheet1"):
+        row = next(
+            r for r in rows if r["api12"] == api and r["published_table"] == source
+        )
+        assert (
+            row["milestone_drilling_days"] == drilling == row["published_drilling_days"]
+        )
+        assert (
+            row["milestone_completion_days"]
+            == completion
+            == row["published_completion_days"]
+        )
+        assert row["milestone_drilling_difference_days"] == 0
+        assert row["milestone_completion_difference_days"] == 0
+
+
+def test_milestone_union_clips_td_and_keeps_uncoded_days():
+    """Synthetic TD Jan7: Jan7-11=5, Jan15-Feb4=21; gap Jan12-14 excluded.
+
+    Duplicate and overlapping weeks add no days; an uncoded Jan8-14
+    bridges the gap, increasing completion from26 to29. DRL remains7.
+    """
+    module = comparison_module()
+    records = synthetic_records()
+    result = module.count_milestone_days(records, "2020-01-01", "2020-01-07")
+    assert result["milestone_drilling_days"] == 6
+    assert result["milestone_completion_days"] == 26
+    assert result["milestone_completion_days_by_code"] == {
+        "DRL": 1,
+        "COM": 5,
+        "DSI": 7,
+        "TA": 7,
+        "PND": 7,
+    }
+    blank = records.iloc[[0]].assign(
+        WAR_START_DT="2020-01-08", WAR_END_DT="2020-01-14", WELL_ACTIVITY_CD=None
+    )
+    result = module.count_milestone_days(
+        pd.concat([records, blank]), "2020-01-01", "2020-01-07"
+    )
+    assert result["milestone_completion_days"] == 29
+    assert module.count_ratified_days(records)["drilling_days"] == 7
+
+
+def test_milestone_missing_dates_stay_unavailable():
+    module = comparison_module()
+    for spud, td in [(None, "2020-01-07"), ("2020-01-01", None), (None, None)]:
+        result = module.count_milestone_days(synthetic_records(), spud, td)
+        assert result["milestone_drilling_days"] is None
+        assert result["milestone_completion_days"] is None
+        assert result["milestone_status"] == "not computed: dates not published"
+
+    unavailable = [
+        r
+        for r in module.build_comparison(REPO)
+        if r["coverage"] == "absent"
+        and module._date(r["spud_date"]) is None
+        and module._date(r["total_depth_date"]) is None
+    ]
+    assert unavailable
+    assert all(
+        r["milestone_status"] == "not computed: dates not published"
+        for r in unavailable
+    )
+
+
+def test_zero_without_dates_is_not_published_by_rule():
+    module = comparison_module()
+    frame = pd.DataFrame(
+        [
+            {"api": "synthetic", "d": 0, "c": 0},
+            {"api": "dated", "d": 0, "c": 0, "WELL_SPUD_DATE": "2020-01-01"},
+            {"api": "nonzero", "d": 7, "c": 0},
+        ]
+    )
+    rows = module._publication_rows(frame, "synthetic", "api", "d", "c")
+    assert rows[0]["published_drilling_days"] is None
+    assert rows[0]["published_completion_days"] is None
+    assert rows[0]["published_drilling_status"] == "not published"
+    assert rows[1]["published_drilling_days"] == 0
+    assert rows[2]["published_drilling_days"] == 7
+    assert rows[2]["published_completion_days"] is None
+    workbook = next(
+        r
+        for r in module.build_comparison(REPO)
+        if r["api12"] == "608124014001" and r["published_table"].endswith(":Sheet1")
+    )
+    for rule in ("ratified", "interim", "milestone"):
+        assert workbook[f"{rule}_drilling_difference_days"] is None
+        assert workbook[f"{rule}_completion_difference_days"] is None
+
+
+def test_activity_code_columns_keep_suspension_and_abandonment_separate():
+    result = comparison_module().count_ratified_days(synthetic_records())
+    for code in ("DRL", "COM", "DSI", "TA", "PND"):
+        assert result[f"activity_code_{code}_days"] == 7
+    assert result["suspended_days"] == result["activity_code_DSI_days"]
+    assert result["temporarily_abandoned_days"] == result["activity_code_TA_days"]
+
+
+def test_new_csv_columns_append_and_statistics_keep_three_bases_paired():
+    module = comparison_module()
+    rows = module.build_comparison(REPO)
+    keys = list(module.csv_rows(rows)[0])
+    assert keys.index("weekly_source") < keys.index("milestone_completion_days")
+    stats = module.summary_statistics(rows)
+    groups = {(s["published_table"], s["coverage"], s["metric"]) for s in stats}
+    for source, coverage, metric in groups:
+        paired = [
+            s
+            for s in stats
+            if (s["published_table"], s["coverage"], s["metric"])
+            == (source, coverage, metric)
+        ]
+        assert {s["rule"] for s in paired} == {"ratified", "interim", "milestone"}
+        assert len({s["wells"] for s in paired}) == 1
