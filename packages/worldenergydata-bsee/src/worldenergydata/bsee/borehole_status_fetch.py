@@ -76,5 +76,12 @@ def load_archive(path: Path) -> list[dict[str, str]]:
             raise ValueError("Expected only documented 5010.txt member")
         if archive.getinfo("5010.txt").file_size > 100_000_000:
             raise ValueError("Uncompressed borehole source exceeds size bound")
-        text = archive.read("5010.txt").decode("utf-8-sig")
+        raw = archive.read("5010.txt")
+        try:
+            text = raw.decode("utf-8-sig")
+        except UnicodeDecodeError as error:
+            offset = error.start + (3 if raw.startswith(b"\xef\xbb\xbf") else 0)
+            raise ValueError(
+                f"5010.txt: expected utf-8-sig; invalid byte at byte offset {offset}"
+            ) from error
     return load_boreholes(io.StringIO(text))

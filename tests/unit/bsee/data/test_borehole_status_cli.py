@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[4]
 
 
-def run_cli(raw, output):
+def run_cli(raw, output, registry=None):
     env = dict(os.environ)
     for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
         env.pop(key, None)
@@ -24,7 +24,7 @@ def run_cli(raw, output):
             "--output-dir",
             str(output),
             "--registry",
-            str(ROOT / "config/fields.yml"),
+            str(registry or ROOT / "tests/fixtures/bsee/borehole_status/registry.yml"),
             "--reuse-manifest",
         ],
         env=env,
@@ -43,7 +43,7 @@ def prepare_source(raw):
             (ROOT / "tests/fixtures/bsee/borehole_status/5010_sample.txt").read_bytes(),
         )
     manifest = json.loads(
-        (ROOT / "data/modules/bsee/borehole_status/source_manifest.json").read_text()
+        (ROOT / "tests/fixtures/bsee/borehole_status/source_manifest.json").read_text()
     )
     for record in manifest["files"]:
         source = raw / record["file"]
@@ -67,7 +67,9 @@ def test_offline_cli_snapshot_and_digest_rejection(tmp_path):
     manifest = json.loads((output / "extract_manifest.json").read_text())
     assert (
         manifest["registry_sha256"]
-        == hashlib.sha256((ROOT / "config/fields.yml").read_bytes()).hexdigest()
+        == hashlib.sha256(
+            (ROOT / "tests/fixtures/bsee/borehole_status/registry.yml").read_bytes()
+        ).hexdigest()
     )
     for record in manifest["outputs"]:
         path = (
@@ -110,7 +112,7 @@ def test_successful_download_provenance_survives_later_timeout(tmp_path, monkeyp
     import pytest
 
     with pytest.raises(TimeoutError):
-        obtain(tmp_path / "raw", False)
+        obtain(tmp_path / "raw", False, sleep=lambda _: None)
     manifest = json.loads((tmp_path / "raw/source_manifest.json").read_text())
     assert len(manifest["files"]) == 1
     assert manifest["failure"]["type"] == "TimeoutError"
@@ -134,3 +136,69 @@ def test_incomplete_or_failed_provenance_cannot_be_reused(tmp_path):
     assert "incomplete" in missing.stderr.lower()
     assert not (tmp_path / "failed").exists()
     assert not (tmp_path / "missing").exists()
+
+
+def test_registry_manifest_paths_and_small_unmatched_summary(tmp_path):
+    raw = tmp_path / "raw"
+    prepare_source(raw)
+    inside = ROOT / "tests/fixtures/bsee/borehole_status/registry.yml"
+    outside = tmp_path / "custom.yml"
+    outside.write_bytes(inside.read_bytes())
+    for registry, expected in [
+        (inside, "tests/fixtures/bsee/borehole_status/registry.yml"),
+        (outside, "custom.yml"),
+    ]:
+        output = tmp_path / registry.stem
+        result = run_cli(raw, output, registry)
+        assert result.returncode == 0, result.stderr
+        manifest = json.loads((output / "extract_manifest.json").read_text())
+        assert manifest["registry"] == expected
+        summary = json.loads((output / "unmatched_summary.json").read_text())
+        assert summary["borehole_counts"] == {"lease_not_in_registry": 1}
+        assert summary["distinct_lease_counts"] == {"lease_not_in_registry": 1}
+        assert summary["sample"][0]["bottom_lease"] == "S00538"
+        assert (raw / "unmatched_by_lease.json").exists()
+        assert not (output / "unmatched_by_lease.json").exists()
+        assert not (output / "snapshot.html").exists()
+        assert not (output / "data_dictionary.html").exists()
+
+
+def test_fetch_pauses_only_between_requests(tmp_path, monkeypatch):
+    import runpy
+
+    functions = runpy.run_path(str(ROOT / "scripts/bsee/fetch_borehole_status.py"))
+    obtain = functions["obtain_source"]
+    events = []
+
+    def fetch(url, destination):
+        events.append(destination.name)
+        return {"file": destination.name}
+
+    monkeypatch.setitem(obtain.__globals__, "fetch_file", fetch)
+    monkeypatch.setitem(obtain.__globals__, "verify_provenance", lambda *_: None)
+    obtain(tmp_path / "raw", False, request_delay=0.25, sleep=events.append)
+    assert events == [
+        "5010delimit.zip",
+        0.25,
+        "borehole_layout.html",
+        0.25,
+        "borehole_codes.html",
+        0.25,
+        "disclaimer.html",
+    ]
+
+
+def test_unmatched_sample_order_and_reason_counts():
+    import runpy
+
+    functions = runpy.run_path(str(ROOT / "scripts/bsee/fetch_borehole_status.py"))
+    groups = [
+        {"reason": "unknown", "bottom_lease": f"G{i:05}", "borehole_count": 2}
+        for i in range(25)
+    ]
+    summary = functions["unmatched_summary"](groups)
+    assert summary["borehole_counts"] == {"unknown": 50}
+    assert summary["distinct_lease_counts"] == {"unknown": 25}
+    assert [r["bottom_lease"] for r in summary["sample"]] == [
+        f"G{i:05}" for i in range(20)
+    ]

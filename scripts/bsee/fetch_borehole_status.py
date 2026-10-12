@@ -7,10 +7,12 @@ import csv
 import hashlib
 import io
 import json
+import math
 import os
+import time
 from collections import Counter
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 from urllib.error import HTTPError, URLError
 
 from worldenergydata.bsee.borehole_status import (
@@ -26,6 +28,8 @@ from worldenergydata.bsee.borehole_status_fetch import (
     load_archive,
 )
 from worldenergydata.common.fields_registry import load_fields
+
+REQUEST_DELAY_SECONDS = 1.0
 
 SOURCES = (
     ("5010delimit.zip", SOURCE_URL),
@@ -52,7 +56,15 @@ def file_digest(path: Path, storage: str) -> dict[str, Any]:
     }
 
 
-def obtain_source(raw_dir: Path, reuse: bool) -> dict[str, Any]:
+def obtain_source(
+    raw_dir: Path,
+    reuse: bool,
+    *,
+    request_delay: float = REQUEST_DELAY_SECONDS,
+    sleep: Callable[[float], Any] = time.sleep,
+) -> dict[str, Any]:
+    if not math.isfinite(request_delay) or request_delay < 0:
+        raise ValueError("Request delay must be finite and nonnegative")
     manifest_path = raw_dir / "source_manifest.json"
     manifest: dict[str, Any]
     if reuse:
@@ -65,7 +77,9 @@ def obtain_source(raw_dir: Path, reuse: bool) -> dict[str, Any]:
             "files": [],
         }
         try:
-            for name, url in SOURCES:
+            for index, (name, url) in enumerate(SOURCES):
+                if index:
+                    sleep(request_delay)
                 manifest["files"].append(fetch_file(url, raw_dir / name))
         except (HTTPError, URLError, TimeoutError, ValueError, OSError) as error:
             manifest["failure"] = {"type": type(error).__name__}
@@ -146,12 +160,43 @@ def unmatched_groups(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
+def unmatched_summary(groups: list[dict[str, Any]]) -> dict[str, Any]:
+    counts: Counter[str] = Counter()
+    leases: Counter[str] = Counter()
+    for group in groups:
+        counts[group["reason"]] += group["borehole_count"]
+        leases[group["reason"]] += 1
+    return {
+        "borehole_counts": dict(sorted(counts.items())),
+        "distinct_lease_counts": dict(sorted(leases.items())),
+        "sample": sorted(
+            groups, key=lambda g: (-g["borehole_count"], g["bottom_lease"], g["reason"])
+        )[:20],
+        "sample_basis": "Top 20 lease/reason groups by borehole count; ties by lease then reason",
+    }
+
+
+def registry_locator(path: Path) -> str:
+    repo = Path(__file__).resolve().parents[2]
+    try:
+        return path.resolve().relative_to(repo).as_posix()
+    except ValueError:
+        return path.name
+
+
 def write_snapshot(
-    raw_dir: Path, output: Path, registry_path: Path, provenance: dict[str, Any]
+    raw_dir: Path,
+    output: Path,
+    registry_path: Path,
+    provenance: dict[str, Any],
+    *,
+    play_filter: str = "lower tertiary",
 ) -> dict[str, Any]:
     registry_bytes = registry_path.read_bytes()
     result = aggregate_status(
-        load_archive(raw_dir / "5010delimit.zip"), load_fields(registry_path)
+        load_archive(raw_dir / "5010delimit.zip"),
+        load_fields(registry_path),
+        play_filter=play_filter,
     )
     attributed, unmatched = result.pop("attributed"), result.pop("unmatched")
     source_record = next(
@@ -162,11 +207,19 @@ def write_snapshot(
     result["registry_sha256"] = hashlib.sha256(registry_bytes).hexdigest()
     groups = unmatched_groups(unmatched)
     retained = write_unmatched(raw_dir, unmatched)
+    rollup = raw_dir / "unmatched_by_lease.json"
+    if rollup.exists():
+        if json.loads(rollup.read_text(encoding="utf-8")) != groups:
+            raise ValueError(
+                "Retained lease rollup differs; choose a new raw directory"
+            )
+    else:
+        write_json(rollup, groups)
     output.mkdir(parents=True, exist_ok=False)
     values = {
         "summary.json": result,
         "attributed.json": attributed,
-        "unmatched_by_lease.json": groups,
+        "unmatched_summary.json": unmatched_summary(groups),
         "schema.json": source_schema(),
         "source_manifest.json": provenance,
     }
@@ -176,13 +229,14 @@ def write_snapshot(
         write_json(path, value)
         outputs.append(file_digest(path, "curated_directory"))
     outputs.append(file_digest(retained, "external_raw_directory"))
+    outputs.append(file_digest(rollup, "external_raw_directory"))
     write_json(
         output / "extract_manifest.json",
         {
             "version": 1,
             "source_id": "bsee-data-center",
             "owner": "worldenergydata",
-            "registry": "config/fields.yml",
+            "registry": registry_locator(registry_path),
             "registry_sha256": result["registry_sha256"],
             "source_sha256": source_record["sha256"],
             "outputs": outputs,
@@ -201,6 +255,8 @@ def main() -> None:
         "--raw-dir", type=Path, default=os.environ.get("BSEE_BOREHOLE_RAW_DIR")
     )
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--request-delay", type=float, default=REQUEST_DELAY_SECONDS)
+    parser.add_argument("--play-filter", default="lower tertiary")
     parser.add_argument("--registry", type=Path, default=Path("config/fields.yml"))
     parser.add_argument(
         "--reuse-manifest", action="store_true", help="Offline digest-verified reuse"
@@ -214,8 +270,12 @@ def main() -> None:
         parser.error("Raw storage must be outside the repository")
     if output.exists():
         parser.error("Output already exists; choose a new snapshot directory")
-    provenance = obtain_source(raw_dir, args.reuse_manifest)
-    result = write_snapshot(raw_dir, output, args.registry, provenance)
+    provenance = obtain_source(
+        raw_dir, args.reuse_manifest, request_delay=args.request_delay
+    )
+    result = write_snapshot(
+        raw_dir, output, args.registry, provenance, play_filter=args.play_filter
+    )
     print(
         json.dumps(
             {

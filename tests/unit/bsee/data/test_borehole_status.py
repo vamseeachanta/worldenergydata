@@ -48,7 +48,7 @@ def test_wrong_width_and_duplicate_api_rejected():
 
 def test_join_counts_unmatched_and_empty_fields():
     rows = load_boreholes(io.StringIO(FIXTURE.read_text()))
-    result = aggregate_status(rows, load_fields(ROOT / "config/fields.yml"))
+    result = aggregate_status(rows, load_fields(FIXTURE.parent / "registry.yml"))
     assert result["joined_boreholes"] == 4
     fields = {f["field_id"]: f for f in result["fields"]}
     assert fields["big_foot"]["status_counts"] == {"COM": 1, "ST": 1}
@@ -69,7 +69,7 @@ def test_variant_bottom_lease_no_surface_fallback_and_unknown_status():
     rows[1]["Bottom Lease Number"] = ""
     rows[1]["Surface Lease Number"] = "G16942"
     rows[2]["Status Code"] = ""
-    result = aggregate_status(rows, load_fields(ROOT / "config/fields.yml"))
+    result = aggregate_status(rows, load_fields(FIXTURE.parent / "registry.yml"))
     assert result["joined_boreholes"] == 2
     assert result["unmatched"][0]["reason"] == "missing_bottom_lease"
     assert result["attributed"][0]["status_meaning"] == "undocumented_status_code"
@@ -77,7 +77,7 @@ def test_variant_bottom_lease_no_surface_fallback_and_unknown_status():
 
 
 def test_non_lower_tertiary_is_explicit():
-    registry = load_fields(ROOT / "config/fields.yml")
+    registry = load_fields(FIXTURE.parent / "registry.yml")
     from dataclasses import replace
 
     registry = FieldsRegistry([replace(registry.fields[0], play="Miocene")])
@@ -92,10 +92,21 @@ def test_recorded_source_numeric_masks_remain_explicit():
     rows = load_boreholes(io.StringIO(masked.read_text()))
     assert rows[0]["BH Total MD"] == "#####"
     assert rows[0]["Bottom Latitude"] == "################"
-    result = aggregate_status(rows, load_fields(ROOT / "config/fields.yml"))
+    result = aggregate_status(rows, load_fields(FIXTURE.parent / "registry.yml"))
     assert result["masked_numeric_cells"] == {
         "BH Total MD": 1,
         "True Vertical Depth": 1,
         "Bottom Longitude": 1,
         "Bottom Latitude": 1,
     }
+
+
+def test_non_default_play_filter():
+    rows = load_boreholes(io.StringIO(FIXTURE.read_text()))[:1]
+    rows[0]["Bottom Lease Number"] = "G11111"
+    result = aggregate_status(
+        rows, load_fields(FIXTURE.parent / "registry.yml"), play_filter="miocene"
+    )
+    assert result["joined_boreholes"] == 1
+    assert result["fields"][0]["field_id"] == "other"
+    assert result["play_filter"] == "miocene"

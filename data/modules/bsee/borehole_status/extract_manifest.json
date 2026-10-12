@@ -2,8 +2,8 @@
   "outputs": [
     {
       "file": "summary.json",
-      "sha256": "3a15653a46caea4d8c72b12daf1b0ffbbcff0d56c23c5c6e3fd6dd560166fb12",
-      "size_bytes": 4537,
+      "sha256": "ca2d532a328eb514a1e876fb5073f9c041c109e8982a32080cbf56d1f9ea5f52",
+      "size_bytes": 4572,
       "storage": "curated_directory"
     },
     {
@@ -13,15 +13,15 @@
       "storage": "curated_directory"
     },
     {
-      "file": "unmatched_by_lease.json",
-      "sha256": "20071c776fd796097fbedf7c839525a34c1e3a6ad567a951c7726ac26ad9b31e",
-      "size_bytes": 847240,
+      "file": "unmatched_summary.json",
+      "sha256": "76c437adf89876c452a6e64eca389f4d98004c151874d1574db2968a5b208a45",
+      "size_bytes": 2513,
       "storage": "curated_directory"
     },
     {
       "file": "schema.json",
-      "sha256": "31fb7963ce6926eb705e3d8078a54bc84603e5e30f6316ea1828a66537b391ce",
-      "size_bytes": 4523,
+      "sha256": "6595ea3afa990a4c31b8fd85b8ba5612b75eb67feae589517d175f83fcbc5040",
+      "size_bytes": 4550,
       "storage": "curated_directory"
     },
     {
@@ -34,6 +34,12 @@
       "file": "unmatched.csv",
       "sha256": "96fd840538b6c208851750aa473f6ea61f61a26b1fcdf5aa3cd6ef69d7a1c042",
       "size_bytes": 4624313,
+      "storage": "external_raw_directory"
+    },
+    {
+      "file": "unmatched_by_lease.json",
+      "sha256": "20071c776fd796097fbedf7c839525a34c1e3a6ad567a951c7726ac26ad9b31e",
+      "size_bytes": 847240,
       "storage": "external_raw_directory"
     }
   ],

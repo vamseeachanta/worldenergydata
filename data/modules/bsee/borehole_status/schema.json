@@ -175,6 +175,7 @@
       "type": "string"
     }
   ],
+  "encoding": "utf-8-sig",
   "format": "headerless quoted comma-delimited 5010.txt; 29 cells",
   "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=borehole",
   "mask_meaning": "Source hash mask; cause not established; retained, never numerical",

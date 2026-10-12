@@ -1,4 +1,8 @@
-"""Public BSEE borehole snapshot counts on registry-defined field leases."""
+"""Public BSEE borehole snapshot counts on registry-defined field leases.
+
+For the headered DataFrame source, use data.loaders.well.borehole_acquirer;
+see the borehole_status dataset README for the distinct loader contracts.
+"""
 
 from __future__ import annotations
 
@@ -96,6 +100,7 @@ def source_schema() -> dict[str, Any]:
         "version": 1,
         "layout_url": LAYOUT_URL,
         "status_url": STATUS_URL,
+        "encoding": "utf-8-sig",
         "format": "headerless quoted comma-delimited 5010.txt; 29 cells",
         "null_encoding": "whitespace or empty cell",
         "source_numeric_masks": SOURCE_MASKS,
@@ -189,10 +194,13 @@ def _attribution(
 
 
 def aggregate_status(
-    rows: list[dict[str, str]], registry: FieldsRegistry
+    rows: list[dict[str, str]],
+    registry: FieldsRegistry,
+    *,
+    play_filter: str = "lower tertiary",
 ) -> dict[str, Any]:
     """Count API12 boreholes by bottom lease; never substitute surface lease."""
-    fields = [f for f in registry.fields if "lower tertiary" in f.play.lower()]
+    fields = [f for f in registry.fields if play_filter.lower() in f.play.lower()]
     ids = {f.canonical_id for f in fields}
     attributed, unmatched = [], []
     counts: dict[str, Counter[str]] = {f.canonical_id: Counter() for f in fields}
@@ -220,7 +228,12 @@ def aggregate_status(
             }
         )
     return {
-        "basis": COUNT_BASIS,
+        "basis": (
+            COUNT_BASIS
+            if play_filter == "lower tertiary"
+            else COUNT_BASIS.replace("Lower Tertiary", play_filter)
+        ),
+        "play_filter": play_filter,
         "masked_numeric_cells": {
             name: sum(row[name] == mask for row in rows)
             for name, mask in SOURCE_MASKS.items()

@@ -77,3 +77,13 @@ def test_archive_requires_expected_member(tmp_path):
         archive.writestr("wrong.txt", "wrong")
     with pytest.raises(ValueError, match="5010.txt"):
         load_archive(path)
+
+
+def test_invalid_archive_encoding_names_member_and_offset():
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as archive:
+        archive.writestr("5010.txt", b"abc\xff")
+    buffer.seek(0)
+    with pytest.raises(ValueError, match="5010.txt.*utf-8-sig.*byte offset 3") as error:
+        load_archive(buffer)
+    assert isinstance(error.value.__cause__, UnicodeDecodeError)
