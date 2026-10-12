@@ -4,7 +4,7 @@ Maps each bin subdirectory to its ZIP download URL and the .bin files
 that should exist after extraction.  OGOR-A yearly files (1996-2024 +
 current) are generated programmatically.
 
-Total expected stubs across all specs: 134.
+Total expected bins across all specs: 136.
 """
 
 from __future__ import annotations
@@ -264,6 +264,17 @@ _REGULAR_SPECS: tuple[DatasetSpec, ...] = (
         "fieldreserves_master",
         f"{BOEM_BASE_URL}/FieldReserves/Files/mastdatadelimit.zip",
         ["mastdatadelimit.bin"],
+    ),
+    # Names and workbook member verified from the live 2023 listing.
+    DatasetSpec(
+        "fieldreserves_history",
+        f"{BOEM_BASE_URL}/FieldReserves/Files/2023%20Hist.zip",
+        ["2023_offldhist__2023_offldhist.bin"],
+    ),
+    DatasetSpec(
+        "fieldreserves_production_master",
+        f"{BOEM_BASE_URL}/FieldReserves/Files/mastproddelimit.zip",
+        ["mastproddelimit.bin"],
     ),
 )
 

@@ -1,0 +1,46 @@
+{
+  "history": {
+    "CUMULATIVE_BOE": "Float64",
+    "CUMULATIVE_GAS": "Float64",
+    "CUMULATIVE_OIL": "Float64",
+    "DISCOVERY_YEAR": "Int64",
+    "FIELD_CLASS": "string",
+    "FIELD_NAME_CODE": "string",
+    "ORIGINAL_BOE": "Float64",
+    "ORIGINAL_GAS_RESERVES": "Float64",
+    "ORIGINAL_OIL_RESERVES": "Float64",
+    "REMAINING_BOE": "Float64",
+    "REMAINING_GAS_RESERVES": "Float64",
+    "REMAINING_OIL_RESERVES": "Float64",
+    "RETRIEVED_UTC": "string",
+    "SOURCE_MEMBER": "string",
+    "SOURCE_SHA256": "string",
+    "SOURCE_URL": "string",
+    "YEAR": "Int64"
+  },
+  "monthly": {
+    "reason": "Access decoder unavailable",
+    "status": "fetch_only"
+  },
+  "production_master": {
+    "CASINGHEAD_GAS_MCF": "Float64",
+    "CONDENSATE_STB": "Float64",
+    "CUMULATIVE_GAS_MCF": "Float64",
+    "CUMULATIVE_OIL_STB": "Float64",
+    "FIELD_NAME_CODE": "string",
+    "FIRST_PRODUCTION_DATE": "datetime64[ns]",
+    "GAS_WELL_GAS_MCF": "Float64",
+    "LEASE_NUMBER": "string",
+    "OIL_STB": "Float64",
+    "RETRIEVED_UTC": "string",
+    "SOURCE_MARKERS": "string",
+    "SOURCE_MEMBER": "string",
+    "SOURCE_SHA256": "string",
+    "SOURCE_URL": "string",
+    "WATER_SOURCE_UNITS": "Float64"
+  },
+  "units": {
+    "history": "Oil/gas units not stated in workbook headers; source values retained without conversion",
+    "production_master": "Oil/condensate: STB; gas: MCF; water unit not stated by source"
+  }
+}
