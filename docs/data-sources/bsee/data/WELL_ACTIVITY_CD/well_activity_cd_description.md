@@ -10,11 +10,9 @@
 
 ## Two facts to carry away
 
-1. **BSEE publishes no code list for `WELL_ACTIVITY_CD`.** Not a partial one, not
-   an out-of-date one — none. The eWell WAR field definitions page, the
-   `eWellWARRawData.zip` archive, Form BSEE-0133, 30 CFR 250.743 and ONRR
-   Appendix H were each checked; every one is negative. The searches and their
-   results are recorded in the canonical file below.
+1. **No published definition was found in the sources reopened on 2026-10-12.**
+   See the [publication-status note](publication_status.md) for source scope,
+   access limitations, observed tokens and the unsent enquiry status.
 2. **The list reproduced further down is the `BOREHOLE_STAT_CD` domain**, which
    *is* published by BSEE. Six WAR activity tokens (`WO`, `CHZ`, `PND`, `MPF`,
    `REC`, `TBK`) do not appear in it at all, and six published borehole codes
@@ -69,22 +67,11 @@ Preserved here as the borehole-status reference it actually is.
 | TA               | TEMPORARILY ABANDONED |
 | VCW              | VOLUME CHAMBER WELL |
 
-### The `PND` row that used to sit at the bottom of that table
+### PND definition status
 
-The table above previously carried a twelfth row, `PND | PENDING/UNKNOWN`,
-followed by the note:
-
-> PND means we guessed it as unknown.
-
-That row is **not BSEE's**. `PND` does not appear in the published
-`BOREHOLE_STAT_CD` domain; it was added locally because the token shows up in WAR
-data. It has been lifted out of the table so it can no longer be mistaken for a
-published borehole status, and the honesty of the original note is now carried
-properly in `war_activity_codes.yml`, where `PND` has `label: null`.
-
-The note was right, and it matters: mirrors of this file that dropped the
-`/UNKNOWN` qualifier and the sentence beneath it — leaving a bare
-`PND | PENDING` — are how a hedge became a fact.
+PND: no published definition; see the [publication-status note](publication_status.md).
+The former local expansion has been removed. The canonical vocabulary
+retains `label: null`; this is not a published borehole status.
 
 ---
 
