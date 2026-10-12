@@ -44,3 +44,36 @@ field:
   production_profile:
     plateau_rate_mbopd: 94
     gor_scf_per_bbl: 1200
+
+# Reference data only: this combined entry has one capital cost and one plateau
+# rate. No public per-field split of that cost or rate exists in the sources
+# opened in the issue 747 research note; none is invented. The flat partners
+# list above remains the sole calculation input, including for concentration.
+partners_by_field:
+  # Row 9: the co-owner split rests on secondary P8 and dates from 2014. The
+  # current co-owner list needs one more primary check before it is written.
+  Jack:
+    - name: "Chevron"
+      share: 0.50
+      source:
+        key: P7
+        title: "Chevron Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        date: "FY2014 (filed 2015)"
+        research_note_row: 9
+      source_class: primary
+      as_of: "FY2014"
+  # Row 9: the co-owner split rests on secondary P8 and dates from 2014; later
+  # transfers mean the current list needs one more primary check. No Suncor
+  # interest was found in any source opened. No remainder is padded or assigned.
+  St. Malo:
+    - name: "Chevron"
+      share: 0.51
+      source:
+        key: P7
+        title: "Chevron Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        date: "FY2014 (filed 2015)"
+        research_note_row: 9
+      source_class: primary
+      as_of: "FY2014"
