@@ -193,6 +193,7 @@ def load_extended_wti_prices(through_date: str = "2025-10-01") -> pd.DataFrame:
     """Load V30 WTI prices and extend through ``through_date``.
 
     Priority: local snapshot, EIA GitHub CSV, FRED API, then flat-forward.
+    A two-second pause applies to every production call needing months beyond the snapshot.
     Returns DataFrame: Month (datetime), WTI_USD (float), source (str).
     """
     through_ts = pd.Timestamp(through_date)
@@ -286,7 +287,10 @@ def emit_wti_provenance(snapshot_bytes: bytes, metadata: dict[str, Any]) -> str:
     """Emit reproducible Markdown from committed CSV and source evidence.
 
     Metadata is observational input, retained in the sidecar for offline replay.
-    CSV digest, byte count, coverage and comparison are computed, never supplied.
+    Committed CSV digest, size, row count, coverage, parsed-values hash and
+    comparison differences are computed from the committed file. Retrieved
+    digests, size and comparison observations are read from recorded metadata.
+    Content identity is checked by reconstructing and hashing the CRLF bytes.
     """
     prices = _parse_wti_csv(
         BytesIO(snapshot_bytes), pd.Timestamp("1900-01-01"), pd.Timestamp("2100-01-01")
@@ -298,11 +302,37 @@ def emit_wti_provenance(snapshot_bytes: bytes, metadata: dict[str, Any]) -> str:
     ).hexdigest()
     retrieved = metadata.get("mirror_snapshot", {})
     normalisation = metadata.get("line_ending_normalisation", {})
+    reconstructed = snapshot_bytes.replace(b"\n", b"\r\n")
+    content_identical = (
+        b"\r" not in snapshot_bytes
+        and hashlib.sha256(reconstructed).hexdigest() == retrieved.get("sha256")
+        and len(reconstructed) == retrieved.get("size_bytes")
+    )
+    identity = (
+        "The snapshot is content-identical; line endings normalised to LF as\n"
+        "required by the repository's mixed-line-ending hook. The only difference\n"
+        f"is removal of {len(reconstructed) - len(snapshot_bytes)} CR bytes."
+        if content_identical
+        else "Content identity is not established."
+    )
+    basis = metadata.get("source_price_basis", {})
+    lines_basis = (
+        "Monthly values are an unweighted average of the daily closing spot prices\n"
+        "for a given product over the specified time period. Units: Dollars per Barrel.\n"
+        f"Source: [{basis.get('title')}]({basis.get('url')}); "
+        f"retrieved {basis.get('retrieved_at_utc', '')[:10]}.\n"
+        "The mirror labels each month with the 15th; this date represents the\n"
+        "month's average, rather than a price observed on that day.\n"
+        f"Mirror documentation: [date conventions]({basis.get('label_url')}); "
+        f"retrieved {basis.get('label_retrieved_at_utc', '')[:10]}."
+        if basis
+        else "Monthly price basis is not established from recorded source evidence."
+    )
     lines = [
         "# WTI monthly snapshot provenance",
         "",
         "Source: U.S. Energy Information Administration, Cushing WTI spot price.",
-        "Units: USD per barrel. Dates represent monthly observations.",
+        lines_basis,
         "",
         f"CSV SHA-256 as retrieved: `{retrieved.get('sha256', 'not established')}`",
         f"CSV size as retrieved (bytes): {retrieved.get('size_bytes', 'not established')}",
@@ -310,17 +340,15 @@ def emit_wti_provenance(snapshot_bytes: bytes, metadata: dict[str, Any]) -> str:
         f"CSV size as committed (bytes): {len(snapshot_bytes)}",
         f"Coverage: {min(monthly)} through {max(monthly)} ({len(prices)} rows).",
         "",
-        "The snapshot is content-identical; line endings normalised to LF as",
-        "required by the repository's mixed-line-ending hook. The only difference",
-        f"is removal of {normalisation.get('cr_bytes_removed', 'not established')} CR bytes.",
+        identity,
         "Parsed-values SHA-256 as retrieved: "
         f"`{normalisation.get('retrieved_parsed_values_sha256', 'not established')}`",
         f"Parsed-values SHA-256 as committed: `{parsed_hash}`",
         "The parsed-values hash is SHA-256 of the UTF-8 bytes of",
         '`json.dumps(rows, ensure_ascii=False, separators=(",", ":"))`, where rows',
         "contains every csv.reader row, header first, as lists of unchanged strings.",
-        "V30 workbook rows",
-        "remain authoritative; the snapshot supplies uncovered extension months.",
+        "V30 workbook rows remain authoritative; the snapshot supplies extension months "
+        "only after the workbook's last month.",
         "The July 2025 overlap criterion is within $0.01 of $68.39.",
         "",
         "## EIA origin comparison",

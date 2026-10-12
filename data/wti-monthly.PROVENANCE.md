@@ -1,7 +1,12 @@
 # WTI monthly snapshot provenance
 
 Source: U.S. Energy Information Administration, Cushing WTI spot price.
-Units: USD per barrel. Dates represent monthly observations.
+Monthly values are an unweighted average of the daily closing spot prices
+for a given product over the specified time period. Units: Dollars per Barrel.
+Source: [Spot Prices for Crude Oil and Petroleum Products](https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm); retrieved 2026-10-12.
+The mirror labels each month with the 15th; this date represents the
+month's average, rather than a price observed on that day.
+Mirror documentation: [date conventions](https://github.com/datasets/oil-prices); retrieved 2026-10-11.
 
 CSV SHA-256 as retrieved: `c45da80c522345e9c6e4631cf6dfe566b49099ec4ceba284671c110703d15473`
 CSV size as retrieved (bytes): 8786
@@ -17,8 +22,7 @@ Parsed-values SHA-256 as committed: `0b8fa92201194488781607ebadaa26b7c8c339003f5
 The parsed-values hash is SHA-256 of the UTF-8 bytes of
 `json.dumps(rows, ensure_ascii=False, separators=(",", ":"))`, where rows
 contains every csv.reader row, header first, as lists of unchanged strings.
-V30 workbook rows
-remain authoritative; the snapshot supplies uncovered extension months.
+V30 workbook rows remain authoritative; the snapshot supplies extension months only after the workbook's last month.
 The July 2025 overlap criterion is within $0.01 of $68.39.
 
 ## EIA origin comparison
@@ -140,6 +144,19 @@ Difference is mirror minus EIA. Missing means not established.
       "url": "https://www.eia.gov/robots.txt"
     }
   ],
+  "source_price_basis": {
+    "label_retrieved_at_utc": "2026-10-11T20:05:53.881713+00:00",
+    "label_url": "https://github.com/datasets/oil-prices",
+    "label_wording": "Monthly: the 15th of the month (e.g. 1987-05-15 represents the May 1987 average).",
+    "retrieved_at_utc": "2026-10-12T20:55:50.148603+00:00",
+    "sha256": "a416a5215705b86680069aab524b83cdd0be02478f0cea6de6db2a6bf0e70aea",
+    "size_bytes": 18781,
+    "status": 200,
+    "title": "Spot Prices for Crude Oil and Petroleum Products",
+    "units": "Crude Oil in Dollars per Barrel",
+    "url": "https://www.eia.gov/dnav/pet/PET_PRI_SPT_S1_M.htm",
+    "wording": "Weekly, monthly, and annual prices are calculated by EIA from daily data by taking an unweighted average of the daily closing spot prices for a given product over the specified time period."
+  },
   "source_series": "EIA Cushing, OK WTI Spot Price FOB, monthly",
   "upstream_commit": "908994d7f61a7a3e3449f2c7e3a2dca6db4a89b3"
 }

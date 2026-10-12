@@ -127,7 +127,7 @@ class TestGetWtiSourceSummary:
 
 
 @pytest.fixture(autouse=True)
-def block_network(monkeypatch: pytest.MonkeyPatch) -> None:
+def block_network(monkeypatch: pytest.MonkeyPatch) -> list[int]:
     """All tests are offline, including fallback and emitter tests."""
 
     def blocked(*args: Any, **kwargs: Any) -> NoReturn:
@@ -135,6 +135,9 @@ def block_network(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr(wti_prices.requests, "get", blocked)
     monkeypatch.delenv("FRED_API_KEY", raising=False)
+    sleeps: list[int] = []
+    monkeypatch.setattr(wti_prices.time, "sleep", sleeps.append)
+    return sleeps
 
 
 @pytest.fixture
@@ -231,6 +234,7 @@ class TestLocalSnapshot:
         caplog: pytest.LogCaptureFixture,
         synthetic_v30: None,
         content: str | None,
+        block_network: list[int],
     ) -> None:
         snapshot = tmp_path / "synthetic-wti.csv"
         if content is not None:
@@ -241,6 +245,7 @@ class TestLocalSnapshot:
         assert get_wti_source_summary(result)["flat_forward"] == 9
         assert "data/wti-monthly.PROVENANCE.md" in caplog.text
         assert "refresh data/wti-monthly.csv" in caplog.text
+        assert block_network == [2]
 
     def test_partial_snapshot_keeps_local_values(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, synthetic_v30: None
@@ -305,6 +310,53 @@ class TestWtiInputGuard:
 
 
 class TestProvenance:
+    def test_reconstructed_upstream_bytes_match_pinned_evidence(self) -> None:
+        snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
+        note = snapshot.with_suffix(".PROVENANCE.md").read_text()
+        metadata = json.loads(note.split("```json\n", 1)[1].split("\n```", 1)[0])
+        reconstructed = snapshot.read_bytes().replace(b"\n", b"\r\n")
+        expected_hash = (
+            "c45da80c522345e9c6e4631cf6dfe566b49099ec4ceba284671c110703d15473"
+        )
+        assert hashlib.sha256(reconstructed).hexdigest() == expected_hash
+        assert metadata["mirror_snapshot"]["sha256"] == expected_hash
+        assert len(reconstructed) == metadata["mirror_snapshot"]["size_bytes"] == 8786
+
+    def test_emitter_establishes_real_content_identity(self) -> None:
+        snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
+        note = snapshot.with_suffix(".PROVENANCE.md").read_text()
+        metadata = json.loads(note.split("```json\n", 1)[1].split("\n```", 1)[0])
+        result = wti_prices.emit_wti_provenance(snapshot.read_bytes(), metadata)
+        assert "content-identical; line endings normalised" in result
+        assert "removal of 490 CR bytes" in result
+
+    @pytest.mark.parametrize("invalid", ["hash", "size", "missing"])
+    def test_emitter_does_not_assert_unestablished_identity(self, invalid: str) -> None:
+        snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
+        note = snapshot.with_suffix(".PROVENANCE.md").read_text()
+        metadata = json.loads(note.split("```json\n", 1)[1].split("\n```", 1)[0])
+        if invalid == "missing":
+            del metadata["mirror_snapshot"]
+        elif invalid == "hash":
+            metadata["mirror_snapshot"]["sha256"] = "0" * 64
+        else:
+            metadata["mirror_snapshot"]["size_bytes"] += 1
+        result = wti_prices.emit_wti_provenance(snapshot.read_bytes(), metadata)
+        assert "content-identical; line endings normalised" not in result
+        assert "Content identity is not established." in result
+        assert "removal of not established" not in result
+
+    def test_emitter_states_source_price_basis(self) -> None:
+        snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
+        note = snapshot.with_suffix(".PROVENANCE.md").read_text()
+        metadata = json.loads(note.split("```json\n", 1)[1].split("\n```", 1)[0])
+        result = wti_prices.emit_wti_provenance(snapshot.read_bytes(), metadata)
+        assert "unweighted average of the daily closing spot prices" in result
+        assert "Dollars per Barrel" in result
+        assert "2026-10-12" in result
+        assert "15th" in result
+        assert "PET_PRI_SPT_S1_M.htm" in result
+
     def test_committed_parsed_values_hash_and_row_count(self) -> None:
         snapshot = wti_prices.LOCAL_SNAPSHOT_PATH
         with snapshot.open(encoding="utf-8", newline="") as stream:
