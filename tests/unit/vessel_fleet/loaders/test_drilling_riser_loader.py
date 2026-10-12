@@ -98,7 +98,7 @@ def sample_riser_data(tmp_path):
             None,
         ],
         "DATA_SOURCE": ["API 16R"] * 9,
-        "NOTES": [None] * 9,
+        "NOTES": ["Synthetic loader fixture"] * 9,
     }
     df = pd.DataFrame(data)
     csv_path = tmp_path / "drilling_riser_components.csv"
