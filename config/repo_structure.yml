@@ -41,6 +41,7 @@ allowed_roots:
   - .legal-deny-list.yaml
   - LICENSE
   - Makefile
+  - MANIFEST.in
   - mkdocs.yml
   - MODULE_INDEX.md
   - module-manifest.yaml

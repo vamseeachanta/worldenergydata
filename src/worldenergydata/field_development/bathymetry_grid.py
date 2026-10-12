@@ -1,6 +1,6 @@
 """Bounded WGS84 grid reads and nearest-cell profiles, depths in metres.
 
-Source elevation is positive upward; depth is its negative. Land becomes NaN.
+Inspected source conventions determine depth sign. Land becomes NaN.
 Antimeridian-spanning boxes are unsupported and rejected. Raster reprojection
 uses nearest cells; nodata remains NaN. Profiles are straight in lon/lat space,
 not geodesic routes or interpolated engineering surfaces.
@@ -9,7 +9,6 @@ not geodesic routes or interpolated engineering surfaces.
 from __future__ import annotations
 
 import math
-import shutil
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -53,7 +52,9 @@ def _validate_axis(axis: Any, limit: int) -> None:
 def _qualify_conventions(entry: dict[str, Any]) -> None:
     if (
         entry.get("units") != "m"
-        or entry.get("vertical_convention") != "elevation_positive_up"
+        or entry.get("vertical_convention")
+        not in ("elevation_positive_up", "depth_positive_down")
+        or entry.get("convention_evidence", {}).get("status") != "inspected"
     ):
         raise TerrainFetchError("source units/vertical conventions are not established")
 
@@ -131,8 +132,8 @@ def read_depth_grid(
 
     GeoTIFF requires optional rasterio; netCDF4 requires optional netCDF4.
     No reader dependency is added to the project. Both readers reject grids
-    with unknown units/CRS rather than guessing. netCDF archive decompression
-    streams to the archive's data root; only clipped values are loaded to RAM.
+    with unknown units/CRS rather than guessing. netCDF is opened read-only;
+    only coordinate axes and clipped values are read, without derived files.
     """
     _validate_bbox(bbox)
     if max_cells <= 0:
@@ -141,20 +142,27 @@ def read_depth_grid(
     verify_file(archive, entry)
     if entry["source_id"] == "boem_gom_bathymetry":
         name = _member(archive, ".tif", member)
-        return _read_tiff(archive, name, bbox, max_cells)
+        return _read_tiff(archive, name, bbox, max_cells, entry["vertical_convention"])
     if entry["source_id"] == "gebco_global_bathymetry":
-        name = _member(archive, ".nc", member)
-        return _read_netcdf(archive, name, bbox, max_cells)
+        return _read_netcdf(archive, bbox, max_cells, entry["vertical_convention"])
     raise ValueError("unsupported bathymetry source")
 
 
-def _depth(elevation: Any) -> Any:
+def _depth(elevation: Any, convention: str) -> Any:
     values = np.ma.asarray(elevation, dtype=float).filled(np.nan)
-    return np.where(values <= 0, -values, np.nan)
+    if convention == "elevation_positive_up":
+        return np.where(values <= 0, -values, np.nan)
+    if convention == "depth_positive_down":
+        return np.where(values >= 0, values, np.nan)
+    raise TerrainFetchError("unknown vertical convention")
 
 
 def _read_tiff(
-    archive: Path, member: str, bbox: tuple[float, float, float, float], max_cells: int
+    archive: Path,
+    member: str,
+    bbox: tuple[float, float, float, float],
+    max_cells: int,
+    convention: str,
 ) -> DepthGrid:
     try:
         import rasterio
@@ -186,26 +194,29 @@ def _read_tiff(
             values = raster.read(1, window=window, masked=True)
             if values.size == 0:
                 raise ValueError("bbox outside raster")
-            transform = raster.window_transform(window)
-            lon = transform.c + (np.arange(values.shape[1]) + 0.5) * transform.a
-            lat = transform.f + (np.arange(values.shape[0]) + 0.5) * transform.e
-            return clip_to_bbox(DepthGrid(lon, lat, _depth(values)), bbox)
+            transform = raster.transform
+            lon = (
+                transform.c
+                + (np.arange(values.shape[1]) + window.col_off + 0.5) * transform.a
+            )
+            lat = (
+                transform.f
+                + (np.arange(values.shape[0]) + window.row_off + 0.5) * transform.e
+            )
+            return clip_to_bbox(DepthGrid(lon, lat, _depth(values, convention)), bbox)
 
 
 def _read_netcdf(
-    archive: Path, member: str, bbox: tuple[float, float, float, float], max_cells: int
+    archive: Path,
+    bbox: tuple[float, float, float, float],
+    max_cells: int,
+    convention: str,
 ) -> DepthGrid:
     try:
         from netCDF4 import Dataset
     except ImportError as exc:
         raise TerrainFetchError("netCDF4 reader requires optional netCDF4") from exc
-    # A verified ZIP is the authority. Regenerate extracted bytes on every read,
-    # avoiding trust in a stale/tampered unpacked cache. Never extractall.
-    extracted = archive.with_name(archive.name + ".grid.nc")
-    with zipfile.ZipFile(archive) as zipped:
-        with zipped.open(member) as incoming, extracted.open("wb") as outgoing:
-            shutil.copyfileobj(incoming, outgoing, length=1024 * 1024)
-    with Dataset(extracted) as dataset:
+    with Dataset(archive, "r") as dataset:
         lon_var, lat_var = dataset.variables["lon"], dataset.variables["lat"]
         if (
             getattr(lon_var, "units", None) != "degrees_east"
@@ -231,4 +242,4 @@ def _read_netcdf(
         if (x[-1] - x[0] + 1) * (y[-1] - y[0] + 1) > max_cells:
             raise TerrainFetchError("clip exceeds max_cells")
         values = elevation[y[0] : y[-1] + 1, x[0] : x[-1] + 1]
-        return DepthGrid(lon[x], lat[y], _depth(values))
+        return DepthGrid(lon[x], lat[y], _depth(values, convention))

@@ -10,9 +10,12 @@ import hashlib
 import json
 import os
 import re
+import time
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin, urlsplit
 
 import requests
 
@@ -32,8 +35,6 @@ def _size(entry: dict[str, Any]) -> int:
     size = entry.get("size_bytes")
     if not isinstance(size, int) or size <= 0:
         raise TerrainFetchError("server HEAD size is not established")
-    if size != entry["issue_size_bytes"]:
-        raise TerrainFetchError("server size differs from issue; reconcile manifest")
     if entry["head"]["status"] != 200:
         raise TerrainFetchError("source HEAD was refused or unverified")
     return size
@@ -71,11 +72,49 @@ def _data_root(data_root: Path | None) -> Path:
     return result
 
 
+def _checked_host(url: str, entry: dict[str, Any]) -> str:
+    parsed = urlsplit(url)
+    if parsed.scheme != "https":
+        raise TerrainFetchError("every source hop must use HTTPS")
+    if (
+        parsed.hostname not in entry.get("allowed_hosts", [])
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.port not in (None, 443)
+    ):
+        raise TerrainFetchError("source host is not allowed")
+    return str(parsed.hostname)
+
+
+@contextmanager
+def _request(http: Any, method: str, entry: dict[str, Any], **kwargs: Any) -> Any:
+    url = entry["source_url"]
+    for hop in range(4):
+        host = _checked_host(url, entry)
+        with getattr(http, method)(
+            url, timeout=60, allow_redirects=False, **kwargs
+        ) as response:
+            if response.status_code in (301, 302, 303, 307, 308):
+                if hop == 3:
+                    raise TerrainFetchError("source redirect limit exceeded")
+                location = response.headers.get("Location")
+                if not location:
+                    raise TerrainFetchError("source redirect has no location")
+                url = urljoin(url, location)
+                continue
+            if url != entry["final_url"] or host != entry["final_host"]:
+                raise TerrainFetchError(
+                    "source final destination differs from manifest"
+                )
+            yield response
+            return
+
+
 def _head(http: Any, entry: dict[str, Any]) -> str | None:
-    with http.head(
-        entry["source_url"],
-        timeout=60,
-        allow_redirects=True,
+    with _request(
+        http,
+        "head",
+        entry,
         headers={"User-Agent": _USER_AGENT, "Accept-Encoding": "identity"},
     ) as response:
         if response.status_code != 200:
@@ -99,12 +138,12 @@ def _transfer(
     headers = {"User-Agent": _USER_AGENT, "Accept-Encoding": "identity"}
     if offset:
         headers.update({"Range": f"bytes={offset}-", "If-Range": str(etag)})
-    with http.get(
-        entry["source_url"],
+    with _request(
+        http,
+        "get",
+        entry,
         headers=headers,
         stream=True,
-        timeout=60,
-        allow_redirects=True,
     ) as response:
         if response.status_code in (401, 403, 429):
             raise TerrainFetchError(f"source refused: HTTP {response.status_code}")
@@ -141,6 +180,7 @@ def fetch_bathymetry(
     manifest_path: Path = MANIFEST_PATH,
     session: Any = None,
     curate: bool = False,
+    pause: Any = time.sleep,
 ) -> Path:
     """Fetch one archive, with at most one transport retry and one connection.
 
@@ -158,8 +198,7 @@ def fetch_bathymetry(
         raise ValueError("select exactly one manifest archive by basename")
     entry = entries[0]
     _size(entry)
-    if not str(entry["source_url"]).startswith("https://"):
-        raise ValueError("source URL must be HTTPS")
+    _checked_host(entry["source_url"], entry)
     if not entry.get("sha256") and not curate:
         raise TerrainFetchError("not yet fetched: use explicit curation mode")
     target = _data_root(data_root) / filename
@@ -178,6 +217,7 @@ def fetch_bathymetry(
             except requests.RequestException:
                 if attempt:
                     raise
+                pause(3)
     digest = file_sha256(part)
     if entry.get("sha256"):
         verify_file(part, entry)
@@ -191,6 +231,8 @@ def _record_observation(
 ) -> None:
     observation = {
         "source_url": entry["source_url"],
+        "final_url": entry["final_url"],
+        "final_host": entry["final_host"],
         "size_bytes": part.stat().st_size,
         "sha256": digest,
         "retrieval_date_utc": datetime.now(timezone.utc).isoformat(),
