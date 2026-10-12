@@ -11,7 +11,8 @@ datetimes, a finite `min_magnitude`, and an integer `limit` from 1 through 20,00
 Box bounds are latitude then longitude minima/maxima; date-line rectangles may
 use longitude bounds outside ±180, within the documented ±360 range. Radius is
 in kilometres and is applied by the service's `maxradiuskm` filter, without a
-local geospatial approximation.
+local geospatial approximation. Date-line response longitudes are retained as
+returned within ±360; this behavior has not been exercised live.
 
 The table contains event ID, UTC time, latitude/longitude in degrees, depth in
 kilometres, magnitude, magnitude type, place, event URL, query URL, and credit.
@@ -64,4 +65,5 @@ payloads are labelled synthetic and do not represent measured observations.
 `emit_manifest(payloads, inputs)` computes hashes and sizes from saved bytes.
 The committed `manifest.json` is generated with that function from
 `provenance_inputs.json`; the offline reproduction test compares exact bytes.
-No hand edits to the emitted manifest are required or permitted.
+Digest and byte size are computed without hand edits; event count and retrieval
+time are declared inputs.
