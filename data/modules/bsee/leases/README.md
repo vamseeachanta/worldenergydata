@@ -26,7 +26,16 @@ against the committed manifest; it changes no curated files. Use a separate new
 raw directory for the explicit `--update-manifest` command, which replaces the
 committed manifest and regenerates the extract. `--from-saved` verifies those
 saved archives and regenerates all derived outputs, including the HTML table,
-offline. Observation timestamps describe this retrieval, not database freshness.
+offline; combining it with `--update-manifest` rebuilds the source manifest from
+verified saved files and their original provenance without a retrieval. Observation timestamps describe this retrieval, not
+database freshness.
+
+A normal run exits 0 when sources agree and 2 when the file set, address, size,
+or digest differs (including a missing curated manifest). Only the discovery
+page is compared by its extracted archive links: byte changes are printed as
+informational while link changes fail; terms, layouts and archives remain
+byte-compared.
+The explicit `--update-manifest` flag retains its replacement behavior.
 
 Downloads are sequential, with at least two seconds before every request attempt,
 including a retry. The User-Agent supplies the repository contact URL.
@@ -51,8 +60,10 @@ The environment's prescribed cache and temporary-directory configuration applies
   labeled actual expiration and expected expiration dates. No actual expiration
   is inferred from expected expiration or a primary term. Surface area and its
   source unit code remain present.
-- `panel_values.html`: escaped display of the same curated rows; its digest and
-  size are included in the extract manifest.
+- `panel_values.html`: generated escaped display with plain headers and one line
+  per current owner, retaining serial, reported group, company and percentage;
+  unresolved names show their source reason. Its digest and size are included
+  in the extract manifest.
 - `registry.json` / `missing.json`: explicit registry and source-presence outcomes.
 - `source_schema.json`: verified source aliases, positions, lengths and parsed
   scalar types. Published layouts govern parsing; the existing conceptual

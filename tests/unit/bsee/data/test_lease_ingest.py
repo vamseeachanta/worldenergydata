@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
@@ -183,3 +184,119 @@ def test_extract_renders_and_manifests_panel_from_same_rows(tmp_path: Path) -> N
     content = (tmp_path / record["file"]).read_bytes()
     assert record["size_bytes"] == len(content)
     assert record["sha256"] == hashlib.sha256(content).hexdigest()
+
+
+PANEL_HEADERS = [
+    "Lease",
+    "Area/block",
+    "Status",
+    "Lease effective date",
+    "Actual expiration date",
+    "Expected expiration date",
+    "Current owner assignment interest (%)",
+]
+
+
+class PanelParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.rows: list[list[list[str]]] = []
+        self.cell: list[str] | None = None
+
+    def handle_starttag(self, tag: str, attrs: Any) -> None:
+        if tag == "tr":
+            self.rows.append([])
+        elif tag in {"th", "td"}:
+            self.cell = [""]
+            self.rows[-1].append(self.cell)
+        elif tag == "br" and self.cell is not None:
+            self.cell.append("")
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"th", "td"}:
+            self.cell = None
+
+    def handle_data(self, data: str) -> None:
+        if self.cell is not None:
+            self.cell[-1] += data
+
+
+def parse_panel(path: Path) -> PanelParser:
+    page = PanelParser()
+    page.feed(path.read_text())
+    assert [cell[0] for cell in page.rows[0]] == PANEL_HEADERS
+    for row in page.rows:
+        for cell in row:
+            for line in cell:
+                assert not any(
+                    token in line
+                    for token in (
+                        "[{",
+                        '{"',
+                        '"}',
+                        "OWNER_ALIQUOT_CD",
+                        "SN_LSE_OWNER",
+                        "ASSIGNMENT_PCT",
+                        "owner_name_basis",
+                        "current_owners",
+                        "lease_num",
+                        "OWNER_GROUP_CODE",
+                        "owner_name_reason",
+                    )
+                )
+    return page
+
+
+def test_panel_owner_lines_escape_names_and_expose_missing_reason(
+    tmp_path: Path,
+) -> None:
+    import runpy
+
+    script = runpy.run_path(str(ROOT / "scripts/bsee/fetch_leases.py"))
+    rows = curate(tables(), ["G16942"])["panel_values"]
+    rows[0]["current_owners"][0]["OWNER_GROUP_CODE"] = "2"
+    rows[0]["current_owners"].append(
+        {
+            "SN_LSE_OWNER": "999",
+            "OWNER_GROUP_CODE": None,
+            "owner_name": "BP Exploration & Production Inc.",
+            "ASSIGNMENT_PCT": 0.0,
+        }
+    )
+    rows.append({"lease_num": "G99999", "current_owners": []})
+    rows.append(
+        {
+            "lease_num": "G99998",
+            "current_owners": [
+                {
+                    "SN_LSE_OWNER": "998",
+                    "OWNER_GROUP_CODE": None,
+                    "owner_name": None,
+                    "owner_name_reason": "Company number absent from Company (All)",
+                    "ASSIGNMENT_PCT": 100.0,
+                }
+            ],
+        }
+    )
+    script["save_panel_html"](tmp_path, rows)
+    page = parse_panel(tmp_path / "panel_values.html")
+    assert page.rows[1][-1] == [
+        "312242 / group 2 / Equinor US Offshore EP LLC: 27.5%",
+        "312241 / ME Bigfoot, LLC: 12.5%",
+        "312240 / Chevron U.S.A. Inc.: 60.0%",
+        "999 / BP Exploration & Production Inc.: 0.0%",
+    ]
+    assert page.rows[2][-1] == ["Not reported"]
+    assert page.rows[3][-1] == [
+        "998 / Company number absent from Company (All): 100.0%"
+    ]
+
+
+def test_committed_panel_has_twenty_readable_lease_rows() -> None:
+    page = parse_panel(ROOT / "data/modules/bsee/leases/panel_values.html")
+    assert len(page.rows) == 21
+    assert page.rows[1][-1] == [
+        "312242 / Equinor US Offshore EP LLC: 27.5%",
+        "312241 / ME Bigfoot, LLC: 12.5%",
+        "312240 / Chevron U.S.A. Inc.: 60.0%",
+    ]

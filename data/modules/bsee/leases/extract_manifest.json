@@ -43,8 +43,8 @@
     },
     {
       "file": "panel_values.html",
-      "sha256": "025e6b6a4f86972654d463e347d7606256bc87cefd90583f5aa8a652ca898852",
-      "size_bytes": 41740
+      "sha256": "25b903f81b59d04a564d2d4ec4d1d08faef54d3bc2faf2d87a08c33d1f6831a1",
+      "size_bytes": 5461
     },
     {
       "file": "source_schema.json",
@@ -52,5 +52,5 @@
       "size_bytes": 29819
     }
   ],
-  "source_manifest_sha256": "c413356d110e736a724c1e872edee8b523a0352662b3d16081248c5e6149610e"
+  "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac"
 }

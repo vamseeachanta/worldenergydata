@@ -10,9 +10,9 @@ from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
-from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlparse
-from urllib.request import Request, urlopen
+
+import httpx
 
 PAGE = "https://www.data.bsee.gov/Main/Leasing.aspx"
 TERMS = {
@@ -32,13 +32,20 @@ REQUEST_INTERVAL = 2.0
 
 def _validate_url(url: str) -> None:
     parsed = urlparse(url)
-    if (
-        parsed.scheme != "https"
-        or parsed.netloc != "www.data.bsee.gov"
-        or parsed.username
-        or parsed.password
-    ):
-        raise ValueError("Only public BSEE HTTPS source URLs are permitted")
+    if parsed.scheme != "https":
+        raise ValueError(f"Rejected source URL scheme: {parsed.scheme!r}")
+    if parsed.netloc != "www.data.bsee.gov" or parsed.username or parsed.password:
+        raise ValueError(f"Rejected source URL host: {parsed.hostname!r}")
+
+
+def _open_validated_url(url: str) -> Any:
+    return httpx.stream(
+        "GET",
+        url,
+        headers={"User-Agent": USER_AGENT},
+        timeout=45,
+        follow_redirects=False,
+    )
 
 
 class _Links(HTMLParser):
@@ -64,16 +71,19 @@ def discover_archives(html: str) -> dict[str, str]:
 
 
 def _read(url: str, *, sleep: Callable[[float], None] | None = None) -> bytes:
+    _validate_url(url)
     pause = sleep if sleep is not None else time.sleep
     for attempt in range(2):
         pause(REQUEST_INTERVAL)
         try:
-            request = Request(url, headers={"User-Agent": USER_AGENT})
-            with urlopen(request, timeout=45) as response:
-                _validate_url(response.geturl())
-                body = response.read(100 * 1024 * 1024 + 1)
-                if len(body) > 100 * 1024 * 1024:
-                    raise ValueError("Source exceeds download size limit")
+            with _open_validated_url(url) as response:
+                response.raise_for_status()
+                _validate_url(str(response.url))
+                body = bytearray()
+                for chunk in response.iter_bytes(chunk_size=65536):
+                    if len(body) + len(chunk) > 100 * 1024 * 1024:
+                        raise ValueError("Source exceeds download size limit")
+                    body.extend(chunk)
                 if any(
                     marker in body[:65536].lower()
                     for marker in (
@@ -87,14 +97,14 @@ def _read(url: str, *, sleep: Callable[[float], None] | None = None) -> bytes:
                         "BSEE automated access challenge; retrieval stopped"
                     )
                 return bytes(body)
-        except HTTPError as error:
-            if error.code in {401, 403, 429}:
+        except httpx.HTTPStatusError as error:
+            if error.response.status_code in {401, 403, 429}:
                 raise PermissionError(
-                    f"BSEE automated access refused: HTTP {error.code}"
+                    f"BSEE automated access refused: HTTP {error.response.status_code}"
                 ) from error
-            if error.code < 500 or attempt:
+            if error.response.status_code < 500 or attempt:
                 raise
-        except (URLError, TimeoutError):
+        except (httpx.RequestError, TimeoutError):
             if attempt:
                 raise
     raise RuntimeError("Download attempts exhausted")
@@ -143,6 +153,7 @@ def _fetch_bundle(
     """Fetch discovery page, terms, verified layouts and four packages serially."""
     records = [download(PAGE, destination / "leasing-page.html", sleep=sleep)]
     links = discover_archives((destination / "leasing-page.html").read_text())
+    records[0]["archive_links"] = links
     records.append(
         download(TERMS["source_url"], destination / "Disclaimer.html", sleep=sleep)
     )
@@ -168,7 +179,7 @@ def fetch_bundle(
     """Preserve provenance for partial fetches and record a stopped retrieval."""
     try:
         return _fetch_bundle(schema, destination, sleep)
-    except (PermissionError, HTTPError, URLError, TimeoutError, ValueError) as error:
+    except (PermissionError, httpx.HTTPError, TimeoutError, ValueError) as error:
         destination.mkdir(parents=True, exist_ok=True)
         reason = (
             str(error) if isinstance(error, PermissionError) else type(error).__name__

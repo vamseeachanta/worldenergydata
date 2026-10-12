@@ -3,13 +3,12 @@
 import hashlib
 import json
 import runpy
-from email.message import Message
+from collections.abc import Iterator
 from io import BytesIO
 from pathlib import Path
 from typing import Any
-from urllib.error import HTTPError
-from urllib.request import Request
 
+import httpx
 import pytest
 
 from worldenergydata.bsee.lease_fetch import discover_archives, download
@@ -23,8 +22,67 @@ def no_real_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 class Response(BytesIO):
-    def geturl(self) -> str:
-        return URL
+    url = URL
+
+    def raise_for_status(self) -> None:
+        pass
+
+    def iter_bytes(self, chunk_size: int) -> Iterator[bytes]:
+        while chunk := self.read(chunk_size):
+            yield chunk
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "file:///source.zip",
+        "http://www.data.bsee.gov/source.zip",
+        "https://example.org/source.zip",
+    ],
+)
+def test_read_rejects_untrusted_url_before_open(
+    monkeypatch: pytest.MonkeyPatch, url: str
+) -> None:
+    from worldenergydata.bsee.lease_fetch import _read
+
+    calls: list[str] = []
+
+    def opened(*args: Any, **kwargs: Any) -> Response:
+        calls.append("opened")
+        return Response(b"unexpected")
+
+    monkeypatch.setattr("httpx.stream", opened)
+    with pytest.raises(ValueError, match="Rejected source URL (scheme|host)"):
+        _read(url)
+    assert calls == []
+
+
+@pytest.mark.parametrize("status", [200, 302])
+def test_http_client_streams_without_following_redirects(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, status: int
+) -> None:
+    calls: list[httpx.Request] = []
+
+    def transport(request: httpx.Request) -> httpx.Response:
+        calls.append(request)
+        return httpx.Response(
+            status,
+            headers={"Location": "https://example.org/source.zip"},
+            content=b"public bytes",
+        )
+
+    with httpx.Client(transport=httpx.MockTransport(transport)) as client:
+        monkeypatch.setattr("httpx.stream", client.stream)
+        target = tmp_path / "source.zip"
+        if status == 200:
+            download(URL, target)
+            assert target.read_bytes() == b"public bytes"
+        else:
+            with pytest.raises(httpx.HTTPStatusError):
+                download(URL, target)
+            assert not target.exists()
+    assert len(calls) == 1
+    assert str(calls[0].url) == URL
 
 
 def test_download_records_readback_provenance(
@@ -32,11 +90,11 @@ def test_download_records_readback_provenance(
 ) -> None:
     calls: list[Any] = []
 
-    def opened(request: Request, timeout: int) -> Response:
-        calls.append((request, timeout))
+    def opened(method: str, url: str, **kwargs: Any) -> Response:
+        calls.append((method, url, kwargs))
         return Response(b"public bytes")
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", opened)
+    monkeypatch.setattr("httpx.stream", opened)
     target = tmp_path / "source.zip"
     record = download(URL, target)
     assert record["sha256"] == hashlib.sha256(target.read_bytes()).hexdigest()
@@ -44,11 +102,10 @@ def test_download_records_readback_provenance(
     assert record["source_url"] == URL
     assert record["retrieved_at_utc"].endswith("Z")
     assert len(calls) == 1
-    assert calls[0][1] == 45
-    assert "WorldEnergyData" in calls[0][0].get_header("User-agent")
-    assert "(+https://github.com/vamseeachanta/worldenergydata;" in calls[0][
-        0
-    ].get_header("User-agent")
+    assert calls[0][2]["timeout"] == 45
+    assert calls[0][2]["follow_redirects"] is False
+    assert calls[0][:2] == ("GET", URL)
+    assert calls[0][2]["headers"]["User-Agent"]
     assert record["terms"]["source_url"].endswith("page=Disclaimer")
 
 
@@ -60,9 +117,12 @@ def test_access_refusal_never_retries(
 
     def refused(*args: Any, **kwargs: Any) -> None:
         calls.append(1)
-        raise HTTPError(URL, status, "Refused", Message(), None)
+        response = httpx.Response(status, request=httpx.Request("GET", URL))
+        raise httpx.HTTPStatusError(
+            "Refused", request=response.request, response=response
+        )
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", refused)
+    monkeypatch.setattr("httpx.stream", refused)
     with pytest.raises(PermissionError):
         download(URL, tmp_path / "source.zip")
     assert calls == [1]
@@ -78,7 +138,7 @@ def test_transient_failure_has_only_one_retry(
         calls.append(1)
         raise TimeoutError("timeout")
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", timed_out)
+    monkeypatch.setattr("httpx.stream", timed_out)
     monkeypatch.setattr(
         "worldenergydata.bsee.lease_fetch.time.sleep", lambda delay: None
     )
@@ -145,16 +205,16 @@ def test_bundle_paces_every_request_in_order(
 
     events: list[Any] = []
 
-    def opened(request: Request, timeout: int) -> Response:
-        events.append(("request", request.full_url))
+    def opened(method: str, url: str, **kwargs: Any) -> Response:
+        events.append(("request", url))
         body = (
             b'<a href="/Leasing/Files/lseowndelimit.zip">Owner</a>'
-            if request.full_url == PAGE
+            if url == PAGE
             else b"fixture bytes"
         )
         return Response(body)
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", opened)
+    monkeypatch.setattr("httpx.stream", opened)
     schema = {
         "tables": {
             "owner": {
@@ -177,13 +237,13 @@ def test_retry_is_also_paced(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) ->
 
     events: list[Any] = []
 
-    def opened(request: Request, timeout: int) -> Response:
+    def opened(method: str, url: str, **kwargs: Any) -> Response:
         events.append("request")
         if events.count("request") == 1:
             raise TimeoutError("fixture timeout")
         return Response(b"fixture bytes")
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", opened)
+    monkeypatch.setattr("httpx.stream", opened)
     download(URL, tmp_path / "source.zip", sleep=lambda n: events.append(n))
     assert events == [REQUEST_INTERVAL, "request", REQUEST_INTERVAL, "request"]
 
@@ -193,11 +253,11 @@ def test_challenge_body_stops_without_retry(
 ) -> None:
     calls: list[Any] = []
 
-    def challenged(request: Request, timeout: int) -> Response:
-        calls.append(request.full_url)
+    def challenged(method: str, url: str, **kwargs: Any) -> Response:
+        calls.append(url)
         return Response(b"<html>Verify you are human</html>")
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", challenged)
+    monkeypatch.setattr("httpx.stream", challenged)
     with pytest.raises(PermissionError, match="challenge"):
         download(URL, tmp_path / "archive.zip")
     assert calls == [URL]
@@ -217,10 +277,10 @@ def fixture_manifest(
         for spec in schema["tables"].values()
     ).encode()
 
-    def opened(request: Request, timeout: int) -> Response:
-        return Response(anchors if request.full_url == PAGE else b"fixture bytes")
+    def opened(method: str, url: str, **kwargs: Any) -> Response:
+        return Response(anchors if url == PAGE else b"fixture bytes")
 
-    monkeypatch.setattr("worldenergydata.bsee.lease_fetch.urlopen", opened)
+    monkeypatch.setattr("httpx.stream", opened)
     raw = tmp_path / "raw"
     records = fetch_bundle(schema, raw)
     script = runpy.run_path(str(root / "scripts/bsee/fetch_leases.py"))
@@ -267,6 +327,89 @@ def test_script_without_update_flag_preserves_committed_manifest(
             str(output),
         ],
     )
-    script["main"]()
+    with pytest.raises(SystemExit) as stopped:
+        script["main"]()
+    assert stopped.value.code == 2
     assert (output / "source_manifest.json").read_bytes() == committed
     assert (raw / "source_manifest.json").is_file()
+
+
+@pytest.mark.parametrize(
+    "change, code",
+    [
+        ("equal", 0),
+        ("archive", 2),
+        ("page_bytes", 0),
+        ("page_link", 2),
+        ("terms", 2),
+        ("missing", 2),
+        ("removed", 2),
+        ("added", 2),
+    ],
+)
+def test_normal_run_manifest_exit_status(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    change: str,
+    code: int,
+) -> None:
+    script, raw, output, records, _ = fixture_manifest(tmp_path, monkeypatch)
+    script["publish_manifest"](records, raw, output, update=True)
+    capsys.readouterr()
+    if change == "archive":
+        records[-1]["sha256"] = "0" * 64
+    elif change in {"page_bytes", "page_link"}:
+        page = raw / "leasing-page.html"
+        text = page.read_text() + "<!-- revised presentation -->"
+        if change == "page_link":
+            text += '<a href="/Leasing/Files/changed.zip">Changed</a>'
+        page.write_text(text)
+        records[0]["sha256"] = hashlib.sha256(page.read_bytes()).hexdigest()
+        records[0]["size_bytes"] = page.stat().st_size
+        records[0]["archive_links"] = discover_archives(text)
+    elif change == "terms":
+        records[1]["sha256"] = "0" * 64
+    elif change == "missing":
+        (output / "source_manifest.json").unlink()
+    elif change == "removed":
+        records.pop()
+    elif change == "added":
+        records.append(dict(records[-1], file="extra.zip"))
+    monkeypatch.setitem(script["main"].__globals__, "fetch_bundle", lambda *a: records)
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "fetch_leases.py",
+            "--raw-dir",
+            str(raw),
+            "--output-dir",
+            str(output),
+        ],
+    )
+    with pytest.raises(SystemExit) as stopped:
+        script["main"]()
+    assert stopped.value.code == code
+    report = json.loads(capsys.readouterr().out)
+    if change == "page_bytes":
+        assert not report["manifest_differences"]
+        assert all("informational" in line for line in report["manifest_information"])
+        assert len(report["manifest_information"]) == 2
+    elif change == "archive":
+        assert any(
+            records[-1]["file"] in line for line in report["manifest_differences"]
+        )
+    elif change == "page_link":
+        assert any("archive_links" in line for line in report["manifest_differences"])
+
+
+def test_saved_manifest_records_preserve_provenance_and_verify_bytes(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    script, raw, output, records, _ = fixture_manifest(tmp_path, monkeypatch)
+    script["publish_manifest"](records, raw, output, update=True)
+    assert script["saved_records"](raw) == records
+    (raw / "leasing-page.html").write_text("tampered")
+    with pytest.raises(ValueError, match="Saved source"):
+        script["saved_records"](raw)

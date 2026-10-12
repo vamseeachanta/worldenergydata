@@ -12,6 +12,19 @@
         "source_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
         "license": "No explicit license grant stated on the download page.",
         "limitations": "Working database; errors may exist. Not a legal document; not for navigational use."
+      },
+      "archive_links": {
+        "Anchors.zip": "https://www.data.bsee.gov/Other/Files/Anchors.zip",
+        "compactfixed.zip": "https://www.data.bsee.gov/Company/Files/compactfixed.zip",
+        "compactdelimit.zip": "https://www.data.bsee.gov/Company/Files/compactdelimit.zip",
+        "compallfixed.zip": "https://www.data.bsee.gov/Company/Files/compallfixed.zip",
+        "compalldelimit.zip": "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+        "lseownfixed.zip": "https://www.data.bsee.gov/Leasing/Files/lseownfixed.zip",
+        "lseowndelimit.zip": "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+        "lseowndfixed.zip": "https://www.data.bsee.gov/Leasing/Files/lseowndfixed.zip",
+        "lseownddelimit.zip": "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+        "lsetapefixed.zip": "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+        "lstleasefixed.zip": "https://www.data.bsee.gov/Leasing/Files/lstleasefixed.zip"
       }
     },
     {
