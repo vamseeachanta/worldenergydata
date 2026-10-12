@@ -158,6 +158,8 @@ def test_tracked_root_files_have_no_unknown_root_violations(monkeypatch) -> None
         if "/" not in path
     ]
 
+    assert "MANIFEST.in" in root_files
+
     violations = validate_paths(root_files, contract)
 
     assert not [
