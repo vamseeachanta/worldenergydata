@@ -1,0 +1,61 @@
+fields:
+- canonical_id: big_foot
+  display_name: big_foot
+  aliases: []
+  region: Synthetic
+  play: Lower Tertiary
+  bsee:
+    area_blocks: []
+    leases:
+    - G16942
+  bsee_block_note: ''
+  fdp_slug: big_foot
+  surfaces: {}
+- canonical_id: anchor
+  display_name: anchor
+  aliases: []
+  region: Synthetic
+  play: Lower Tertiary
+  bsee:
+    area_blocks: []
+    leases:
+    - G31751
+  bsee_block_note: ''
+  fdp_slug: anchor
+  surfaces: {}
+- canonical_id: buckskin
+  display_name: buckskin
+  aliases: []
+  region: Synthetic
+  play: Lower Tertiary
+  bsee:
+    area_blocks: []
+    leases:
+    - G25806
+  bsee_block_note: ''
+  fdp_slug: buckskin
+  surfaces: {}
+- canonical_id: julia
+  display_name: julia
+  aliases: []
+  region: Synthetic
+  play: Lower Tertiary
+  bsee:
+    area_blocks: []
+    leases:
+    - G99999
+  bsee_block_note: ''
+  fdp_slug: julia
+  surfaces: {}
+- canonical_id: other
+  display_name: other
+  aliases: []
+  region: Synthetic
+  play: Miocene
+  bsee:
+    area_blocks: []
+    leases:
+    - G11111
+  bsee_block_note: ''
+  fdp_slug: other
+  surfaces: {}
