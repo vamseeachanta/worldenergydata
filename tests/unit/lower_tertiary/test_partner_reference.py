@@ -8,8 +8,13 @@ import pandas as pd
 import pytest
 import yaml
 
+from tests.unit.lower_tertiary import test_npv as npv_tests
 from worldenergydata.lower_tertiary import portfolio_analytics
-from worldenergydata.lower_tertiary.npv import load_field_inputs
+from worldenergydata.lower_tertiary.npv import (
+    calculate_monthly_financials,
+    load_field_inputs,
+    summarize_field_financials,
+)
 
 FIELDS = Path(__file__).resolve().parents[3] / "config/analysis/lower_tertiary/fields"
 # Literal main-branch inputs; these remain the sole calculation shares.
@@ -197,3 +202,53 @@ def test_concentration_bytes_ignore_reference_block(monkeypatch, tmp_path):
     assert json.dumps(before.to_dict(orient="records"), sort_keys=True) == json.dumps(
         after.to_dict(orient="records"), sort_keys=True
     )
+
+
+def financial_outputs(profile):
+    """Reuse the synthetic production and economics helpers from test_npv."""
+    summary_tests = npv_tests.TestSummarizeFieldFinancials()
+    economics = npv_tests.TestCalculateMonthlyFinancials()._make_econ_config()
+    economics.update(summary_tests._make_econ_config())
+    monthly = calculate_monthly_financials(
+        summary_tests._make_monthly(), economics, profile["opex_per_boe"]
+    )
+    return monthly, summarize_field_financials(monthly, profile, economics)
+
+
+@pytest.mark.parametrize("field_id", VERIFIED)
+def test_npv_outputs_ignore_reference_block(tmp_path, field_id):
+    """Pin: partner reference data changes no monthly or summary output on main."""
+    with_reference = load_field_inputs(FIELDS, {"fields": {}})[field_id]
+    config = read_config(field_id)
+    del config["partners_by_field"]
+    (tmp_path / f"{field_id}.yml").write_text(yaml.safe_dump(config), encoding="utf-8")
+    without_reference = load_field_inputs(tmp_path, {"fields": {}})[field_id]
+
+    assert "partners_by_field" in with_reference
+    assert "partners_by_field" not in without_reference
+    assert {
+        key: value
+        for key, value in with_reference.items()
+        if key != "partners_by_field"
+    } == without_reference
+
+    before_monthly, before_summary = financial_outputs(with_reference)
+    after_monthly, after_summary = financial_outputs(without_reference)
+    pd.testing.assert_frame_equal(before_monthly, after_monthly, check_exact=True)
+    assert before_summary == after_summary
+
+
+def test_shared_production_monthly_outputs_equal_but_summaries_differ():
+    """Pin: shared production/economics and equal opex give equal monthly outputs."""
+    profiles = load_field_inputs(FIELDS, {"fields": {}})
+    cascade = profiles["cascade_chinook"]
+    julia = profiles["julia"]
+    assert cascade["opex_per_boe"] == julia["opex_per_boe"]
+    cascade_monthly, cascade_summary = financial_outputs(cascade)
+    julia_monthly, julia_summary = financial_outputs(julia)
+
+    pd.testing.assert_frame_equal(cascade_monthly, julia_monthly, check_exact=True)
+    assert cascade["first_oil"] != julia["first_oil"]
+    assert cascade_summary != julia_summary
+    for key in ("CAPEX ($MM)", "NPV Operations ($MM)", "NPV Project ($MM)"):
+        assert cascade_summary[key] != julia_summary[key]
