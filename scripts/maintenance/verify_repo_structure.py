@@ -10,11 +10,13 @@ metadata before they are tolerated.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import shlex
 import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -45,7 +47,6 @@ class WorktreeStatusEntry:
 
 @dataclass(frozen=True)
 class RepoStructureContract:
-
     """Parsed repo-structure contract."""
 
     allowed_roots: frozenset[str]
@@ -87,6 +88,191 @@ def load_contract(path: Path | str) -> RepoStructureContract:
         generated_artifact_roots=_as_set(payload, "generated_artifact_roots"),
         temporary_exceptions=normalized_exceptions,
     )
+
+
+class RetirementSafeLoader(yaml.SafeLoader):
+    """Read safe YAML while rejecting duplicate keys in every mapping."""
+
+
+def _unique_retirement_mapping(loader: yaml.SafeLoader, node: yaml.MappingNode) -> dict:
+    """Reject overwritten schema values before constructing a mapping."""
+    loader.flatten_mapping(node)
+    keys: set[object] = set()
+    for key_node, _ in node.value:
+        key = loader.construct_object(key_node)
+        try:
+            if key in keys:
+                raise yaml.constructor.ConstructorError(
+                    None, None, "duplicate retirement mapping key", key_node.start_mark
+                )
+            keys.add(key)
+        except TypeError as error:
+            raise yaml.constructor.ConstructorError(
+                None, None, "invalid retirement mapping key", key_node.start_mark
+            ) from error
+    return loader.construct_mapping(node)
+
+
+RetirementSafeLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, _unique_retirement_mapping
+)
+
+
+def _host_reference(value: str) -> bool:
+    """Recognize qualified host or IPv4 syntax rather than version directories."""
+    prefix = value.split("/", 1)[0].removesuffix(".")
+    return (
+        re.fullmatch(r"(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}", prefix) is not None
+        or re.fullmatch(r"(?:[0-9]{1,3}\.){3}[0-9]{1,3}", prefix) is not None
+    )
+
+
+def _relative_path_valid(value: object) -> bool:
+    """Require an unambiguous relative path without machine-specific syntax."""
+    if not isinstance(value, str) or not value or value != value.strip():
+        return False
+    if any(character in value for character in ("\\", ":", "\x00", "\n", "\r")):
+        return False
+    return all(part not in ("", ".", "..") for part in value.split("/"))
+
+
+def _substantive_string(value: object, minimum: int = 1) -> bool:
+    """Reject missing, placeholder and insufficient metadata strings."""
+    return (
+        isinstance(value, str)
+        and not _is_placeholder(value)
+        and len(value.strip()) >= minimum
+    )
+
+
+def _retirement_disposition_valid(value: object) -> bool:
+    """Validate disposition form without accessing a store or running commands."""
+    if not isinstance(value, dict):
+        return False
+    if value.get("kind") == "reproducible":
+        return set(value) == {"kind", "command"} and _substantive_string(
+            value["command"]
+        )
+    if value.get("kind") != "cold-store":
+        return False
+    if set(value) != {"kind", "dataset_path", "digest_list"}:
+        return False
+    return all(
+        _relative_path_valid(value[key]) and _substantive_string(value[key])
+        for key in ("dataset_path", "digest_list")
+    ) and not _host_reference(value["dataset_path"])
+
+
+def _retirement_entry_valid(entry: object, contract: RepoStructureContract) -> bool:
+    """Validate all required fields and reject unknown schema fields."""
+    required = {"path", "sha256", "date", "reason", "disposition", "follow_up"}
+    if not isinstance(entry, dict) or set(entry) != required:
+        return False
+    if not _relative_path_valid(entry["path"]):
+        return False
+    if root_for(entry["path"]) not in contract.generated_artifact_roots:
+        return False
+    if not isinstance(entry["sha256"], str) or not re.fullmatch(
+        r"[0-9a-f]{64}", entry["sha256"]
+    ):
+        return False
+    entry_date = entry["date"]
+    if type(entry_date) is date:
+        entry_date = entry_date.isoformat()
+    if not isinstance(entry_date, str) or not _DATE_RE.fullmatch(entry_date):
+        return False
+    try:
+        date.fromisoformat(entry_date)
+    except ValueError:
+        return False
+    follow_up_re = _URL_RE.pattern.replace("issues/", "(?:issues|pull)/")
+    return (
+        _substantive_string(entry["reason"], 30)
+        and _retirement_disposition_valid(entry["disposition"])
+        and isinstance(entry["follow_up"], str)
+        and re.fullmatch(follow_up_re, entry["follow_up"]) is not None
+    )
+
+
+def load_retirements(
+    path: Path | str, contract: RepoStructureContract
+) -> tuple[dict[str, dict], list[RepoStructureViolation]]:
+    """Load valid retirements; malformed entries never grant path exemptions."""
+    register_path = Path(path)
+    if not register_path.exists():
+        return {}, []
+    invalid = RepoStructureViolation(
+        "invalid-retirement-entry", "config", register_path.as_posix()
+    )
+    try:
+        loader = RetirementSafeLoader(register_path.read_text(encoding="utf-8"))
+        try:
+            payload = loader.get_single_data()
+        finally:
+            loader.dispose()
+    except (OSError, UnicodeError, ValueError, yaml.YAMLError):
+        return {}, [invalid]
+    if not isinstance(payload, dict) or set(payload) != {"retirements"}:
+        return {}, [invalid]
+    if not isinstance(payload["retirements"], list):
+        return {}, [invalid]
+    entries: dict[str, dict] = {}
+    violations: list[RepoStructureViolation] = []
+    seen: set[str] = set()
+    for entry in payload["retirements"]:
+        if not _retirement_entry_valid(entry, contract):
+            violations.append(invalid)
+            continue
+        entry_path = entry["path"]
+        if entry_path in seen:
+            violations.append(
+                RepoStructureViolation(
+                    "duplicate-retirement-entry", root_for(entry_path), entry_path
+                )
+            )
+        else:
+            entries[entry_path] = entry
+            seen.add(entry_path)
+    return entries, violations
+
+
+def validate_retirements(
+    retirements: dict[str, dict],
+    contract: RepoStructureContract,
+    tracked_paths: Iterable[str],
+    entries: Iterable[WorktreeStatusEntry],
+) -> list[RepoStructureViolation]:
+    """Check tracked-path and classification consistency on every default run."""
+    if not retirements:
+        return []
+    leaving = {
+        entry.old_path if "R" in entry.status and entry.old_path else entry.path
+        for entry in entries
+        if "D" in entry.status or "R" in entry.status
+    }
+    still_tracked = set(tracked_paths) - leaving
+    allowed_paths = {
+        path
+        for metadata in contract.temporary_exceptions.values()
+        if isinstance(metadata.get("allowed_paths"), list)
+        for path in metadata["allowed_paths"]
+        if isinstance(path, str)
+    }
+    violations: list[RepoStructureViolation] = []
+    for path in sorted(retirements):
+        if path in still_tracked:
+            violations.append(
+                RepoStructureViolation(
+                    "retirement-entry-for-tracked-path", root_for(path), path
+                )
+            )
+        if path in allowed_paths:
+            violations.append(
+                RepoStructureViolation(
+                    "retired-path-still-allowed", root_for(path), path
+                )
+            )
+    return violations
 
 
 def root_for(path: str) -> str:
@@ -142,10 +328,13 @@ def _path_allowed_by_exception(path: str, metadata: dict[str, object]) -> bool:
 
 
 def validate_paths(
-    paths: Iterable[str], contract: RepoStructureContract
+    paths: Iterable[str],
+    contract: RepoStructureContract,
+    retired_paths: Iterable[str] = (),
 ) -> list[RepoStructureViolation]:
     """Validate repository-relative paths against the root contract."""
 
+    retired = set(retired_paths)
     violations: list[RepoStructureViolation] = []
     emitted: set[RepoStructureViolation] = set()
 
@@ -169,7 +358,7 @@ def validate_paths(
                 )
             elif not _exception_metadata_valid(metadata):
                 add(RepoStructureViolation("invalid-exception-metadata", root, root))
-            elif not _path_allowed_by_exception(path, metadata):
+            elif path not in retired and not _path_allowed_by_exception(path, metadata):
                 add(RepoStructureViolation("generated-path-not-classified", root, path))
             continue
 
@@ -224,7 +413,9 @@ def parse_git_status_entries(output: str) -> list[WorktreeStatusEntry]:
             path = new_raw
         path = _parse_status_path(path)
         if path:
-            entries.append(WorktreeStatusEntry(status=status, path=path, old_path=old_path))
+            entries.append(
+                WorktreeStatusEntry(status=status, path=path, old_path=old_path)
+            )
     return entries
 
 
@@ -234,8 +425,23 @@ def parse_git_status_paths(output: str) -> list[str]:
     return [entry.path for entry in parse_git_status_entries(output)]
 
 
+def git_head_digest(repo_root: Path, path: str) -> str | None:
+    """Hash committed blob bytes; unreadable HEAD content cannot authorize removal."""
+    result = subprocess.run(
+        ["git", "cat-file", "blob", f"HEAD:{path}"],
+        cwd=repo_root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    return hashlib.sha256(result.stdout).hexdigest() if result.returncode == 0 else None
+
+
 def validate_worktree_status_entries(
-    entries: Iterable[WorktreeStatusEntry], contract: RepoStructureContract
+    entries: Iterable[WorktreeStatusEntry],
+    contract: RepoStructureContract,
+    retirements: dict[str, dict] | None = None,
+    repo_root: Path | None = None,
 ) -> list[RepoStructureViolation]:
     """Validate status-specific Phase-1 constraints for worktree entries."""
 
@@ -264,6 +470,22 @@ def validate_worktree_status_entries(
             else:
                 violation_path = entry.path
                 violation_root = path_root or old_root
+            leaving_path = (
+                entry.old_path if "R" in status and entry.old_path else entry.path
+            )
+            retirement = (retirements or {}).get(leaving_path)
+            if retirement is not None and repo_root is not None:
+                digest = git_head_digest(repo_root, leaving_path)
+                if digest is not None:
+                    if digest != retirement["sha256"]:
+                        add(
+                            RepoStructureViolation(
+                                "retirement-digest-mismatch",
+                                violation_root,
+                                violation_path,
+                            )
+                        )
+                    continue
             add(
                 RepoStructureViolation(
                     "generated-artifact-deletion-or-relocation",
@@ -317,6 +539,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to repo_structure.yml (default: config/repo_structure.yml)",
     )
     parser.add_argument(
+        "--retirements",
+        type=Path,
+        default=Path("config/generated_retirements.yml"),
+        help="Path to the generated retirement register",
+    )
+    parser.add_argument(
         "--path",
         action="append",
         dest="paths",
@@ -330,15 +558,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     repo_root = Path.cwd()
     contract = load_contract(args.config)
+    retirements, violations = load_retirements(args.retirements, contract)
     if args.paths is not None:
         paths = args.paths
-        violations = validate_paths(paths, contract)
+        violations.extend(validate_paths(paths, contract, retirements))
+        violations.extend(validate_retirements(retirements, contract, [], []))
     else:
         tracked_paths = git_tracked_paths(repo_root)
         worktree_entries = git_worktree_status_entries(repo_root)
         paths = tracked_paths + [entry.path for entry in worktree_entries]
-        violations = validate_paths(paths, contract)
-        violations.extend(validate_worktree_status_entries(worktree_entries, contract))
+        violations.extend(validate_paths(paths, contract, retirements))
+        violations.extend(
+            validate_retirements(retirements, contract, tracked_paths, worktree_entries)
+        )
+        violations.extend(
+            validate_worktree_status_entries(
+                worktree_entries, contract, retirements, repo_root
+            )
+        )
     if violations:
         print(format_violations(violations))
         return 1

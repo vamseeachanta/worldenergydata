@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import hashlib
+import os
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
 import yaml
 
 from scripts.maintenance import verify_repo_structure
@@ -312,4 +315,434 @@ def test_renamed_generated_artifact_is_rejected_as_relocation(tmp_path: Path) ->
             "reports/old.md -> reports/new.md",
         )
         in violations
+    )
+
+
+def _retirement_entry() -> dict:
+    """Return a synthetic retirement with a binary-content digest."""
+    return {
+        "path": "reports/example.txt",
+        "sha256": hashlib.sha256(b"committed\x00content\xff").hexdigest(),
+        "date": "2026-10-13",
+        "reason": "The generated example is retained in a verified dataset.",
+        "disposition": {
+            "kind": "cold-store",
+            "dataset_path": "generated/example",
+            "digest_list": "sha256.txt",
+        },
+        "follow_up": "https://github.com/vamseeachanta/worldenergydata/pull/394",
+    }
+
+
+def _fixture_git(root: Path, *args: str) -> bytes:
+    """Run Git solely against the disposable repository."""
+    return subprocess.check_output(["git", *args], cwd=root, stderr=subprocess.STDOUT)
+
+
+def _fixture_commit(root: Path) -> None:
+    """Commit synthetic evidence without changing any Git configuration."""
+    _fixture_git(root, "add", "-u")
+    _fixture_git(root, "add", "config")
+    if (root / "reports").exists():
+        _fixture_git(root, "add", "reports")
+    _fixture_git(
+        root,
+        "-c",
+        "user.name=test",
+        "-c",
+        "user.email=test",
+        "-c",
+        "commit.gpgsign=false",
+        "commit",
+        "-m",
+        "test fixture",
+    )
+
+
+@pytest.fixture
+def retirement_repo(tmp_path: Path, monkeypatch):
+    """Create an isolated repository with one committed generated artifact."""
+    for key in list(os.environ):
+        if key.startswith("GIT_"):
+            monkeypatch.delenv(key, raising=False)
+    monkeypatch.chdir(tmp_path)
+    _fixture_git(tmp_path, "init")
+    (tmp_path / "config").mkdir()
+    contract_path = _contract(tmp_path / "config")
+    contract_path.rename(tmp_path / "config/repo_structure.yml")
+    payload = yaml.safe_load((tmp_path / "config/repo_structure.yml").read_text())
+    payload["temporary_exceptions"]["reports"]["allowed_paths"] = [
+        "reports/example.txt"
+    ]
+    (tmp_path / "config/repo_structure.yml").write_text(yaml.safe_dump(payload))
+    (tmp_path / "reports").mkdir()
+    (tmp_path / "reports/example.txt").write_bytes(b"committed\x00content\xff")
+    _fixture_commit(tmp_path)
+    return tmp_path
+
+
+def _write_register(root: Path, entries: object) -> None:
+    """Write the register beside the disposable contract."""
+    (root / "config/generated_retirements.yml").write_text(
+        yaml.safe_dump({"retirements": entries}), encoding="utf-8"
+    )
+
+
+def _set_allowed_paths(root: Path, paths: list[str]) -> None:
+    """Change classification solely in the disposable repository."""
+    target = root / "config/repo_structure.yml"
+    payload = yaml.safe_load(target.read_text())
+    payload["temporary_exceptions"]["reports"]["allowed_paths"] = paths
+    target.write_text(yaml.safe_dump(payload), encoding="utf-8")
+
+
+def _assert_checker(capsys, expected: set[str], result: int = 1) -> None:
+    """Assert the complete set of violation codes from the real CLI."""
+    assert main([]) == result
+    output = capsys.readouterr().out
+    codes = {
+        line.split(":", 1)[0][2:]
+        for line in output.splitlines()
+        if line.startswith("- ")
+    }
+    assert codes == expected
+
+
+@pytest.mark.parametrize("staged", [True, False], ids=["staged", "unstaged"])
+def test_retirement_deletion_reads_head_and_status_end_to_end(
+    retirement_repo: Path, capsys, staged: bool
+) -> None:
+    """Matching HEAD bytes authorize staged and unstaged fixture deletions."""
+    if staged:
+        _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    else:
+        (retirement_repo / "reports/example.txt").unlink()
+    _set_allowed_paths(retirement_repo, [])
+    _write_register(retirement_repo, [_retirement_entry()])
+    _assert_checker(capsys, set(), 0)
+
+
+def test_retirement_digest_is_computed_from_head(retirement_repo: Path, capsys) -> None:
+    """A digest of different bytes cannot authorize a retirement."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    entry = _retirement_entry()
+    entry["sha256"] = hashlib.sha256(b"other content").hexdigest()
+    _write_register(retirement_repo, [entry])
+    _assert_checker(capsys, {"retirement-digest-mismatch"})
+
+
+def test_retirement_entry_for_tracked_path_is_rejected(
+    retirement_repo: Path, capsys
+) -> None:
+    """An entry cannot precede the deletion it authorizes."""
+    _set_allowed_paths(retirement_repo, [])
+    _write_register(retirement_repo, [_retirement_entry()])
+    _assert_checker(capsys, {"retirement-entry-for-tracked-path"})
+
+
+@pytest.mark.parametrize(
+    "classified", [True, False], ids=["classified", "unclassified"]
+)
+def test_retirement_rename_classifies_new_path(
+    retirement_repo: Path, capsys, classified: bool
+) -> None:
+    """A rename retires its old path and classifies its new path normally."""
+    _fixture_git(retirement_repo, "mv", "reports/example.txt", "reports/new.txt")
+    _set_allowed_paths(retirement_repo, ["reports/new.txt"] if classified else [])
+    _write_register(retirement_repo, [_retirement_entry()])
+    _assert_checker(
+        capsys,
+        set() if classified else {"generated-path-not-classified"},
+        0 if classified else 1,
+    )
+
+
+def test_retirement_leftover_allowed_row_is_rejected(
+    retirement_repo: Path, capsys
+) -> None:
+    """A retired path cannot remain in both policy lists."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _write_register(retirement_repo, [_retirement_entry()])
+    _assert_checker(capsys, {"retired-path-still-allowed"})
+
+
+def test_retirement_independent_errors_accumulate(
+    retirement_repo: Path, capsys
+) -> None:
+    """A wrong digest and leftover classification are both reported."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    entry = _retirement_entry()
+    entry["sha256"] = "0" * 64
+    _write_register(retirement_repo, [entry])
+    _assert_checker(
+        capsys, {"retirement-digest-mismatch", "retired-path-still-allowed"}
+    )
+
+
+def test_retirement_missing_register_is_empty(retirement_repo: Path, capsys) -> None:
+    """Regression pin: an absent register preserves the existing policy."""
+    _assert_checker(capsys, set(), 0)
+
+
+def test_retirement_repository_register_exists_and_loads() -> None:
+    """The repository supplies a loadable register without pinning its contents."""
+    root = Path(__file__).resolve().parents[2]
+    register = root / "config/generated_retirements.yml"
+    assert register.is_file()
+    entries, violations = verify_repo_structure.load_retirements(
+        register, load_contract(root / "config/repo_structure.yml")
+    )
+    assert isinstance(entries, dict)
+    assert violations == []
+
+
+@pytest.mark.parametrize(
+    "disposition",
+    [
+        {"kind": "reproducible", "command": "python scripts/generate_example.py"},
+        {
+            "kind": "cold-store",
+            "dataset_path": "generated/example",
+            "digest_list": "sha256.txt",
+        },
+    ],
+    ids=["reproducible", "cold-store"],
+)
+def test_retirement_dispositions_and_historical_entries(
+    retirement_repo: Path, capsys, disposition: dict
+) -> None:
+    """Merged retirements are checked for form without reading absent HEAD bytes."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    entry = _retirement_entry()
+    entry["disposition"] = disposition
+    _write_register(retirement_repo, [entry])
+    _fixture_commit(retirement_repo)
+    assert _fixture_git(retirement_repo, "status", "--porcelain") == b""
+    _assert_checker(capsys, set(), 0)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("sha256", "ABC"),
+        ("sha256", "A" * 64),
+        ("sha256", 1),
+        ("date", "13-10-2026"),
+        ("date", "2026-02-30"),
+        ("date", 1),
+        ("reason", "TBD"),
+        ("reason", "short"),
+        ("reason", 1),
+        ("path", "src/example.txt"),
+        ("path", "/reports/example.txt"),
+        ("path", "reports/../example.txt"),
+        ("path", "reports//example.txt"),
+        ("path", "reports\\example.txt"),
+        ("path", 1),
+        ("follow_up", "https://example.invalid/issues/1"),
+        (
+            "follow_up",
+            "https://github.com/vamseeachanta/worldenergydata/issues/394/extra",
+        ),
+        ("follow_up", 1),
+        ("disposition", {"kind": "unknown"}),
+        ("disposition", {"kind": "cold-store", "digest_list": "sha256.txt"}),
+        ("disposition", {"kind": "cold-store", "dataset_path": "generated/example"}),
+        ("disposition", {"kind": "reproducible"}),
+        ("disposition", {"kind": "reproducible", "command": "TBD"}),
+        (
+            "disposition",
+            {"kind": "reproducible", "command": "generate", "extra": "value"},
+        ),
+        (
+            "disposition",
+            {
+                "kind": "cold-store",
+                "dataset_path": "/store/example",
+                "digest_list": "sha256.txt",
+            },
+        ),
+        (
+            "disposition",
+            {
+                "kind": "cold-store",
+                "dataset_path": "Z:/example",
+                "digest_list": "sha256.txt",
+            },
+        ),
+        (
+            "disposition",
+            {
+                "kind": "cold-store",
+                "dataset_path": "https://example.invalid/store",
+                "digest_list": "sha256.txt",
+            },
+        ),
+        (
+            "disposition",
+            {
+                "kind": "cold-store",
+                "dataset_path": "../example",
+                "digest_list": "sha256.txt",
+            },
+        ),
+        (
+            "disposition",
+            {
+                "kind": "cold-store",
+                "dataset_path": "generated/example",
+                "digest_list": "/sha256.txt",
+            },
+        ),
+        ("disposition", []),
+        ("extra", "value"),
+    ],
+)
+def test_retirement_malformed_field_is_rejected(
+    retirement_repo: Path, capsys, field: str, value: object
+) -> None:
+    """Malformed entries cannot exempt a deleted path from existing checks."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    entry = _retirement_entry()
+    entry[field] = value
+    _write_register(retirement_repo, [entry])
+    _assert_checker(
+        capsys,
+        {
+            "invalid-retirement-entry",
+            "generated-path-not-classified",
+            "generated-artifact-deletion-or-relocation",
+        },
+    )
+
+
+@pytest.mark.parametrize("field", list(_retirement_entry()))
+def test_retirement_missing_field_is_rejected(
+    retirement_repo: Path, capsys, field: str
+) -> None:
+    """Every schema field is required."""
+    entry = _retirement_entry()
+    del entry[field]
+    _write_register(retirement_repo, [entry])
+    _assert_checker(capsys, {"invalid-retirement-entry"})
+
+
+def test_retirement_duplicate_path_is_rejected(retirement_repo: Path, capsys) -> None:
+    """A path has at most one retirement record."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    _write_register(retirement_repo, [_retirement_entry(), _retirement_entry()])
+    _assert_checker(capsys, {"duplicate-retirement-entry"})
+
+
+@pytest.mark.parametrize("entries", [None, {}, ["invalid"], [None]])
+def test_retirement_wrong_container_type_is_rejected(
+    retirement_repo: Path, capsys, entries: object
+) -> None:
+    """Register and entry containers have a fixed shape."""
+    _write_register(retirement_repo, entries)
+    _assert_checker(capsys, {"invalid-retirement-entry"})
+
+
+def test_retirement_unreadable_head_is_not_accepted(
+    retirement_repo: Path, capsys
+) -> None:
+    """A staged deletion with no committed source bytes remains refused."""
+    (retirement_repo / "reports/uncommitted.txt").write_text("new")
+    _fixture_git(retirement_repo, "add", "reports/uncommitted.txt")
+    (retirement_repo / "reports/uncommitted.txt").unlink()
+    entry = _retirement_entry()
+    entry["path"] = "reports/uncommitted.txt"
+    _write_register(retirement_repo, [entry])
+    _assert_checker(capsys, {"generated-artifact-deletion-or-relocation"})
+
+
+def test_retirement_explicit_paths_read_no_status(
+    retirement_repo: Path, monkeypatch, capsys
+) -> None:
+    """Explicit classification never reads working-tree status."""
+
+    def forbidden_status(root):
+        raise AssertionError("Explicit paths must not read status")
+
+    monkeypatch.setattr(
+        verify_repo_structure, "git_worktree_status_entries", forbidden_status
+    )
+    assert main(["--path", "src/example.py"]) == 0
+    assert capsys.readouterr().out == "Repo structure contract: OK\n"
+
+
+def test_retirement_preserves_invalid_exception_violation(
+    retirement_repo: Path, capsys
+) -> None:
+    """Retirement metadata does not hide an invalid root exception."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    target = retirement_repo / "config/repo_structure.yml"
+    payload = yaml.safe_load(target.read_text())
+    payload["temporary_exceptions"]["reports"]["allowed_paths"] = None
+    target.write_text(yaml.safe_dump(payload))
+    _write_register(retirement_repo, [_retirement_entry()])
+    _assert_checker(capsys, {"invalid-exception-metadata"})
+
+
+def test_retirement_relative_versioned_dataset_is_accepted(
+    retirement_repo: Path, capsys
+) -> None:
+    """A relative version directory is not a host reference."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    entry = _retirement_entry()
+    entry["disposition"]["dataset_path"] = "generated.v1/example"
+    _write_register(retirement_repo, [entry])
+    _assert_checker(capsys, set(), 0)
+
+
+@pytest.mark.parametrize("location", ["register", "entry", "disposition"])
+def test_retirement_duplicate_yaml_keys_are_rejected(
+    retirement_repo: Path, capsys, location: str
+) -> None:
+    """Duplicate mapping keys cannot hide invalid register content."""
+    raw = yaml.safe_dump({"retirements": [_retirement_entry()]})
+    if location == "register":
+        raw = "retirements: [invalid]\nretirements: []\n"
+    elif location == "entry":
+        raw = raw.replace("  sha256:", "  sha256: invalid\n  sha256:")
+    else:
+        raw = raw.replace("    kind:", "    kind: invalid\n    kind:")
+    (retirement_repo / "config/generated_retirements.yml").write_text(raw)
+    _assert_checker(capsys, {"invalid-retirement-entry"})
+
+
+def test_retirement_unquoted_invalid_calendar_date_is_rejected(
+    retirement_repo: Path, capsys
+) -> None:
+    """Invalid YAML calendar scalars are reported as register violations."""
+    (retirement_repo / "config/generated_retirements.yml").write_text(
+        "retirements:\n- date: 2026-02-30\n"
+    )
+    _assert_checker(capsys, {"invalid-retirement-entry"})
+
+
+@pytest.mark.parametrize(
+    "dataset_path", ["example.invalid./dataset", "192.0.2.1./dataset"]
+)
+def test_retirement_terminal_dot_host_reference_is_rejected(
+    retirement_repo: Path, capsys, dataset_path: str
+) -> None:
+    """A terminal DNS root dot does not turn a host reference into a dataset."""
+    _fixture_git(retirement_repo, "rm", "reports/example.txt")
+    _set_allowed_paths(retirement_repo, [])
+    entry = _retirement_entry()
+    entry["disposition"]["dataset_path"] = dataset_path
+    _write_register(retirement_repo, [entry])
+    _assert_checker(
+        capsys,
+        {
+            "invalid-retirement-entry",
+            "generated-path-not-classified",
+            "generated-artifact-deletion-or-relocation",
+        },
     )
