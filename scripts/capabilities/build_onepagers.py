@@ -1,16 +1,16 @@
-# ABOUTME: Generate client-facing 1-page capability PDFs (light theme, branded).
-# ABOUTME: One PDF per left-nav section and per live work; rendered via headless Chrome.
-"""Build self-contained capability HTML pages and sibling single-page PDFs.
+# ABOUTME: Generate self-contained capability HTML cards for the website.
+# ABOUTME: One card per capability section and live work; no browser is required.
+"""Build self-contained capability HTML cards.
 
-Each light-themed A4 page contains the worldenergydata logo, description, figures,
-deliverables and live address. The HTML print source is kept beside its PDF in
-``reports/capabilities/pdf/``; ``build_pages.py`` copies both to the published tree.
-Headless Chrome prints the kept HTML. The optional ``--brand CSS_FILE`` argument
-inlines a resource-free stylesheet after the default styles.
+Each card contains the worldenergydata logo, description, figures, deliverables
+and report address. Cards remain in ``reports/capabilities/pdf/`` to preserve
+published addresses; ``build_pages.py`` copies the folder, including retired
+PDFs that remain tracked but are no longer generated, to the published tree.
+The optional ``--brand CSS_FILE`` argument inlines a resource-free stylesheet
+following the default styles.
 
 Run:
-    .venv/bin/python scripts/capabilities/build_onepagers.py
-    # needs google-chrome on PATH; override with CHROME=/path/to/chrome
+    python scripts/capabilities/build_onepagers.py
 """
 
 from __future__ import annotations
@@ -18,21 +18,13 @@ from __future__ import annotations
 import argparse
 import base64
 import html
-import os
 import re
-import shutil
-import subprocess
-from collections.abc import Callable
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
 _OUT = _REPO / "reports" / "capabilities" / "pdf"
 _TOKENS = (_REPO / "reports" / "capabilities" / "assets" / "tokens.css").read_text(encoding="utf-8").strip()
 _SITE = "https://vamseeachanta.github.io/worldenergydata"
-_CHROME = os.environ.get("CHROME") or shutil.which("google-chrome") or shutil.which(
-    "google-chrome-stable"
-) or shutil.which("chromium")
-
 _LOGO = """<svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-label="worldenergydata">
   <g fill="none" stroke-width="3">
     <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
@@ -514,42 +506,23 @@ def _validate_brand(css: str) -> None:
         )
 
 
-def _to_pdf(source: Path, out_pdf: Path) -> None:
-    subprocess.run(
-        [
-            _CHROME,
-            "--headless",
-            "--no-sandbox",
-            "--disable-gpu",
-            "--no-pdf-header-footer",
-            f"--print-to-pdf={out_pdf.resolve()}",
-            str(source.resolve()),
-        ],
-        check=True,
-        capture_output=True,
-        timeout=90,
-    )
-
-
 def build_onepager(
     spec: dict,
     out_dir: Path,
     *,
     brand_css: str = "",
-    renderer: Callable[[Path, Path], None] | None = None,
 ) -> Path:
-    """Keep the self-contained page and print that same file to its sibling PDF."""
+    """Write the self-contained HTML card at its retained address."""
     text = _render_html(spec, brand_css)
     out_dir.mkdir(parents=True, exist_ok=True)
     source = out_dir / f"{spec['id']}.html"
     source.write_text(text + "\n", encoding="utf-8")
-    (renderer or _to_pdf)(source, source.with_suffix(".pdf"))
     return source
 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
-        description="Build capability HTML pages and PDFs."
+        description="Build capability HTML cards."
     )
     parser.add_argument(
         "--brand",
@@ -565,15 +538,13 @@ def main(argv: list[str] | None = None) -> None:
             _validate_brand(brand_css)
         except (OSError, UnicodeError, ValueError) as error:
             parser.error(f"cannot read brand stylesheet: {error}")
-    if not _CHROME:
-        raise SystemExit("No Chrome found; set CHROME to a browser executable")
     ids = set()
     for spec in SPECS:
         assert spec["id"] not in ids, f"duplicate id {spec['id']}"
         ids.add(spec["id"])
         build_onepager(spec, _OUT, brand_css=brand_css)
     print(
-        f"Wrote {len(SPECS)} one-pager PDFs and HTML pages into {_OUT.relative_to(_REPO)}/"
+        f"Wrote {len(SPECS)} capability HTML cards into {_OUT.relative_to(_REPO)}/"
     )
 
 
