@@ -112,7 +112,7 @@ def test_interim_preferred_formula_and_missing_dates():
 def test_committed_csv_recomputes_row_for_row():
     module = comparison_module()
     generated = module.build_comparison(REPO)
-    with (NOTES / "ratified_day_basis_comparison.csv").open(
+    with (NOTES / "day_basis_comparison.csv").open(
         newline="", encoding="utf-8"
     ) as stream:
         committed = list(csv.DictReader(stream))

@@ -1,4 +1,6 @@
-# Ratified day basis comparison
+Formerly published as `ratified_day_basis_comparison.md`.
+
+# activity-code rule day basis comparison
 
 ## Purpose and decision compared
 
@@ -46,7 +48,7 @@ The new count_ratified_days function wraps war_rig_days.rig_days_by_bore with BA
 | PND | undefined; other-coded, separately visible | lines135-160;null label,unknown role |
 | remaining codes | other-coded by actual token | lines98-114,126-133,162-191 |
 
-Table 2. Documented labels are from the borehole-status domain; reuse in activity codes remains inferred (docs/data-sources/bsee/data/WELL_ACTIVITY_CD/well_activity_cd_description.md:43-51). Unknown codes are not given meanings.
+Table 2. Documented labels are from the borehole-status domain; reuse in activity codes remains inferred (docs/data-sources/bsee/data/WELL_ACTIVITY_CD/well_activity_cd_description.md:40-43,51-68). Unknown codes are not given meanings.
 
 A record's own WAR_START_DT and WAR_END_DT are normalized to midnight and counted inclusively. Adjacent, overlapping and duplicate intervals merge within each code and for the overall union (war_rig_days.py:178-211,501-526). The full package path is packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/. Each activity-code count retains the week’s recorded code; milestone or remark dates do not split the activity-code buckets. A within-week code change is not resolved by this schema. Different code buckets may overlap; their sum need not equal total. The CSV exposes cross_code_excess_days and unattributed_days. The four matched wellbores have no cross-code excess, exact duplicate, uncoded record, rejected or implausible span. Gap boundaries are in the CSV; gaps add no activity days and do not establish inactivity or missing regulator submissions. Preparation excludes missing endpoints and counts reversed spans as rejected (war_rig_days.py:243-309).
 
@@ -56,6 +58,8 @@ Interim drilling is inclusive (TD minus spud) plus one; completion uses preferre
 
 
 Milestone basis is the default for this comparison. Activity-code and interim methods are retained side by side for flexibility, including a later separate day rate for suspended time. Confirmation across the wider population is still required before any published figure is replaced. No method is removed or existing calculator default changed.
+
+- Wider-population verification shall include API12 608124014001: the only held week after the published total-depth date is coded DRL, while the milestone basis counts it as completion (2/7 drilling/completion days; Table 4, export row).
 
 Milestone drilling is the plain calendar date difference, published TOTAL_DEPTH_DATE minus published WELL_SPUD_DATE. Milestone completion is the union of all committed weekly intervals on or after published TOTAL_DEPTH_DATE, whatever their activity code; intervals are clipped at TD and counted by the existing union_days helper, inclusive of both endpoints. Unreported gaps add no days. This is the helper’s existing convention, not a second interval convention. Missing published dates give "not computed: dates not published", never zero. The published dates are the same source-row dates used by the interim method; the explicit QA/benchmark and note date locators above still apply.
 
@@ -76,9 +80,9 @@ Table 3. A per-well extract is not a complete-history certificate. Every absent 
 
 ## Per-well table
 
-All computed rows are below. The [CSV](ratified_day_basis_comparison.csv) holds the full population, exact input row keys/cell locators, all category counts, dates, record counts and all three bases and their day/percent differences. None below means unavailable, not zero. Source aliases refer to Table 1.
+All computed rows are below. The [CSV](day_basis_comparison.csv) holds the full population, exact input row keys/cell locators, all category counts, dates, record counts and all three bases and their day/percent differences. None below means unavailable, not zero. Source aliases refer to Table 1.
 
-| API12 | Source | Published D/C (days) | Ratified D/C (days) | D delta (days) | C delta (days) | Interim D/C (days) | Milestone D/C (days) | Milestone D delta (days) | Milestone C delta (days) | COM (days) | DRL (days) | DSI (days) | PA (days) | PND (days) | TA (days) | Interim D delta (days) | Interim C delta (days) |
+| API12 | Source | Published D/C (days) | activity-code rule D/C (days) | D delta (days) | C delta (days) | Interim D/C (days) | Milestone D/C (days) | Milestone D delta (days) | Milestone C delta (days) | COM (days) | DRL (days) | DSI (days) | PA (days) | PND (days) | TA (days) | Interim D delta (days) | Interim C delta (days) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 608124009500 | milestone | 155/93 | 151/91 | -4 | -2 | 156/387 | 155/152 | 0 | 59 | 91 | 151 | 0 | 0 | 49 | 17 | 1 | 294 |
 | 608124009500 | summary | 151/87 | 151/91 | 0 | 4 | 156/387 | 155/152 | 4 | 65 | 91 | 151 | 0 | 0 | 49 | 17 | 5 | 300 |
@@ -102,49 +106,49 @@ Statistics use the same numeric well/metric pairs for all three rules, grouped b
 
 | Source | Coverage | Metric | Rule | Wells | Median absolute (days) | Maximum absolute (days) | Within 5 days | Within 5 percent | Mean signed (days) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| milestone | history | drilling | ratified | 1 | 4 | 4 | 1 | 1 | -4 |
+| milestone | history | drilling | activity-code rule | 1 | 4 | 4 | 1 | 1 | -4 |
 | milestone | history | drilling | interim | 1 | 1 | 1 | 1 | 1 | 1 |
 | milestone | history | drilling | milestone | 1 | 0 | 0 | 1 | 1 | 0 |
-| milestone | history | completion | ratified | 1 | 2 | 2 | 1 | 1 | -2 |
+| milestone | history | completion | activity-code rule | 1 | 2 | 2 | 1 | 1 | -2 |
 | milestone | history | completion | interim | 1 | 294 | 294 | 0 | 0 | 294 |
 | milestone | history | completion | milestone | 1 | 59 | 59 | 0 | 0 | 59 |
-| summary | history | drilling | ratified | 1 | 0 | 0 | 1 | 1 | 0 |
+| summary | history | drilling | activity-code rule | 1 | 0 | 0 | 1 | 1 | 0 |
 | summary | history | drilling | interim | 1 | 5 | 5 | 1 | 1 | 5 |
 | summary | history | drilling | milestone | 1 | 4 | 4 | 1 | 1 | 4 |
-| summary | history | completion | ratified | 1 | 4 | 4 | 1 | 1 | 4 |
+| summary | history | completion | activity-code rule | 1 | 4 | 4 | 1 | 1 | 4 |
 | summary | history | completion | interim | 1 | 300 | 300 | 0 | 0 | 300 |
 | summary | history | completion | milestone | 1 | 65 | 65 | 0 | 0 | 65 |
-| workbook | history | drilling | ratified | 2 | 3.0 | 4.0 | 2 | 1 | -3.0 |
+| workbook | history | drilling | activity-code rule | 2 | 3.0 | 4.0 | 2 | 1 | -3.0 |
 | workbook | history | drilling | interim | 2 | 1.0 | 1.0 | 2 | 2 | 1.0 |
 | workbook | history | drilling | milestone | 2 | 0.0 | 0.0 | 2 | 2 | 0.0 |
-| workbook | history | completion | ratified | 2 | 46.0 | 61.0 | 0 | 0 | -46.0 |
+| workbook | history | completion | activity-code rule | 2 | 46.0 | 61.0 | 0 | 0 | -46.0 |
 | workbook | history | completion | interim | 2 | 232.5 | 235.0 | 0 | 0 | 232.5 |
 | workbook | history | completion | milestone | 2 | 0.0 | 0.0 | 2 | 2 | 0.0 |
-| workbook | sample | completion | ratified | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
+| workbook | sample | completion | activity-code rule | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
 | workbook | sample | completion | interim | 1 | 104.0 | 104.0 | 0 | 0 | -104.0 |
 | workbook | sample | completion | milestone | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
-| export | history | drilling | ratified | 2 | 3.0 | 4.0 | 2 | 1 | -3.0 |
+| export | history | drilling | activity-code rule | 2 | 3.0 | 4.0 | 2 | 1 | -3.0 |
 | export | history | drilling | interim | 2 | 1.0 | 1.0 | 2 | 2 | 1.0 |
 | export | history | drilling | milestone | 2 | 0.0 | 0.0 | 2 | 2 | 0.0 |
-| export | history | completion | ratified | 2 | 46.0 | 61.0 | 0 | 0 | -46.0 |
+| export | history | completion | activity-code rule | 2 | 46.0 | 61.0 | 0 | 0 | -46.0 |
 | export | history | completion | interim | 2 | 232.5 | 235.0 | 0 | 0 | 232.5 |
 | export | history | completion | milestone | 2 | 0.0 | 0.0 | 2 | 2 | 0.0 |
-| export | sample | drilling | ratified | 1 | 5.0 | 5.0 | 1 | 0 | 5.0 |
+| export | sample | drilling | activity-code rule | 1 | 5.0 | 5.0 | 1 | 0 | 5.0 |
 | export | sample | drilling | interim | 1 | 1.0 | 1.0 | 1 | 0 | 1.0 |
 | export | sample | drilling | milestone | 1 | 0.0 | 0.0 | 1 | 1 | 0.0 |
-| export | sample | completion | ratified | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
+| export | sample | completion | activity-code rule | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
 | export | sample | completion | interim | 1 | 104.0 | 104.0 | 0 | 0 | -104.0 |
 | export | sample | completion | milestone | 1 | 269.0 | 269.0 | 0 | 0 | -269.0 |
-| QA | history | drilling | ratified | 1 | 0.0 | 0.0 | 1 | 1 | 0.0 |
+| QA | history | drilling | activity-code rule | 1 | 0.0 | 0.0 | 1 | 1 | 0.0 |
 | QA | history | drilling | interim | 1 | 5.0 | 5.0 | 1 | 1 | 5.0 |
 | QA | history | drilling | milestone | 1 | 4.0 | 4.0 | 1 | 1 | 4.0 |
-| QA | history | completion | ratified | 1 | 0.0 | 0.0 | 1 | 1 | 0.0 |
+| QA | history | completion | activity-code rule | 1 | 0.0 | 0.0 | 1 | 1 | 0.0 |
 | QA | history | completion | interim | 1 | 296.0 | 296.0 | 0 | 0 | 296.0 |
 | QA | history | completion | milestone | 1 | 61.0 | 61.0 | 0 | 0 | 61.0 |
-| benchmark | history | drilling | ratified | 2 | 170.0 | 300.0 | 0 | 0 | -170.0 |
+| benchmark | history | drilling | activity-code rule | 2 | 170.0 | 300.0 | 0 | 0 | -170.0 |
 | benchmark | history | drilling | interim | 2 | 166.0 | 295.0 | 0 | 0 | -166.0 |
 | benchmark | history | drilling | milestone | 2 | 167.0 | 296.0 | 0 | 0 | -167.0 |
-| benchmark | history | completion | ratified | 2 | 208.0 | 227.0 | 0 | 0 | -208.0 |
+| benchmark | history | completion | activity-code rule | 2 | 208.0 | 227.0 | 0 | 0 | -208.0 |
 | benchmark | history | completion | interim | 2 | 70.5 | 72.0 | 0 | 0 | 70.5 |
 | benchmark | history | completion | milestone | 2 | 162.0 | 166.0 | 0 | 0 | -162.0 |
 
@@ -165,7 +169,7 @@ Table 5. Paired statistics. One paired well does not establish a population tren
 | 608124009500 | milestone | drilling | -4 | Published TD-minus-spud drilling differs from whole DRL weeks; milestone drilling difference 0 days. |
 | 608124009500 | summary | completion | 4 | Activity-code note COM/TA allocation differs by four compensating days; the precise cause is not shown by the records. |
 
-Table 6. Ten largest absolute ratified differences over fully-recorded wellbores only, across both metrics; sparse samples are excluded and published tables remain independent.
+Table 6. Ten largest absolute activity-code rule differences over fully-recorded wellbores only, across both metrics; sparse samples are excluded and published tables remain independent.
 
 ## What the published figures are
 
@@ -188,7 +192,7 @@ The repository’s own comment says the following in packages/worldenergydata-bs
 >        above and is ours to defend; it is not ratified by the owner.  See
 >        #1064 and #1072.
 
-## Is the ratified rule closer than the interim rule
+## Is the activity-code rule closer than the interim rule
 
 The conclusion rests on the 2 fully-recorded wellbores out of the 253 published wellbores. Two further wellbores match only one or two stray weekly records and carry no weight in this conclusion.
 
@@ -196,11 +200,11 @@ Drilling: the activity-code rule is not closer than interim; milestone reproduce
 
 Completion: the activity-code rule is nearer than interim but remains outside five days on both wells; milestone reproduces both published figures exactly.
 
-For each source separately, the differences below are computed minus published. Workbook: ratified drilling is -2 and -4 days, interim +1 and +1, milestone 0 and 0; ratified completion is -31 and -61, interim +230 and +235, milestone 0 and 0. Export: the same independent comparisons give ratified drilling -2 and -4 days, interim +1 and +1, milestone 0 and 0; ratified completion -31 and -61, interim +230 and +235, milestone 0 and 0. The order is 608124003301 followed by 608124009500. Thus only milestone reproduces drilling and completion for both fully-recorded wells in each published source. The workbook and export are consistent with a milestone basis on the two fully-recorded wells; not established for the other wellbores.
+For each source separately, the differences below are computed minus published. Workbook: activity-code rule drilling is -2 and -4 days, interim +1 and +1, milestone 0 and 0; activity-code rule completion is -31 and -61, interim +230 and +235, milestone 0 and 0. Export: the same independent comparisons give activity-code rule drilling -2 and -4 days, interim +1 and +1, milestone 0 and 0; activity-code rule completion -31 and -61, interim +230 and +235, milestone 0 and 0. The order is 608124003301 followed by 608124009500. Thus only milestone reproduces drilling and completion for both fully-recorded wells in each published source. The workbook and export are consistent with a milestone basis on the two fully-recorded wells; not established for the other wellbores.
 
 Completion reconciliation is computed from the clipped code unions:
 
-| API12 | Source | Codes on or after TD (days) | Milestone C (days) | Ratified C delta (days) | Interim C delta (days) |
+| API12 | Source | Codes on or after TD (days) | Milestone C (days) | activity-code rule C delta (days) | Interim C delta (days) |
 | --- | --- | --- | --- | --- | --- |
 | 608124003301 | workbook | COM 142 + PND 31 | 173 | -31.0 | 230.0 |
 | 608124009500 | workbook | COM 91 + PND 44 + TA 17 | 152 | -61.0 | 235.0 |
@@ -211,7 +215,7 @@ Table 7. Inclusive reported days on or after published TD; overlapping code buck
 
 The activity-code completion deficits equal the after-TD PND and TA time. The interim completion excess equals the unreported calendar gap. Drilling under the activity-code method follows whole DRL weeks, while the published date difference crosses into PND-coded weeks. No within-week activity change is inferred. The review’s four figures reproduce: 608124009500 drilling 155 and completion 152; 608124003301 drilling 37 and completion 173.
 
-Across the remaining sources the result is mixed. Milestone drilling favors interim (1 versus 4 days; within5 ties at1), while completion favors ratified (2 versus294; within5:1 versus0). Summary drilling medians are0 versus5 with counts1 versus1; completion medians4 versus300 with counts1 versus0. QA agreement is reproducibility only. Against the calendar benchmark, ratified is farther for drilling (170 versus166 days; counts0 versus0) and completion (208 versus70.5; counts0 versus0). Sparse samples cannot establish whole-well accuracy. Milestone is the default; the other methods remain available. Wider-population confirmation remains required before published figures are replaced.
+Across the remaining sources the result is mixed. Milestone drilling favors interim (1 versus 4 days; within5 ties at1), while completion favors activity-code rule (2 versus294; within5:1 versus0). Summary drilling medians are0 versus5 with counts1 versus1; completion medians4 versus300 with counts1 versus0. QA agreement is reproducibility only. Against the calendar benchmark, activity-code rule is farther for drilling (170 versus166 days; counts0 versus0) and completion (208 versus70.5; counts0 versus0). Sparse samples cannot establish whole-well accuracy. Milestone is the default; the other methods remain available. Wider-population confirmation remains required before published figures are replaced.
 
 ## Test well
 
