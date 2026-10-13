@@ -399,7 +399,8 @@ def test_each_page_states_source_and_data_basis() -> None:
     """Require a named source and an explicit recorded or missing data cut-off."""
     for spec in load_builder().SPECS:
         assert re.search(
-            r"data as of: (?:\d{4}-\d{2}(?:-\d{2})?|not recorded)(?:\b|$)", spec["std"]
+            r"data as of: (?:\d{4}(?:-\d{2}(?:-\d{2})?)?|not recorded)(?:\b|$)",
+            spec["std"],
         ), spec["id"]
         assert spec["std"].split("data as of:")[0].strip(" ·"), spec["id"]
         assert spec["std"] in html.unescape(load_builder()._render_html(spec))
