@@ -99,3 +99,24 @@ def test_redirect_or_refusal_is_returned_once(monkeypatch, status):
 def test_invalid_limit_prevents_request(limit):
     with pytest.raises(ValueError, match="size limit"):
         fetch_source("https://example.org/source", max_bytes=limit)
+
+
+def test_large_ceiling_requires_document_mode_before_request(monkeypatch):
+    def forbidden_pause(seconds):
+        raise AssertionError("pause forbidden before validation")
+
+    monkeypatch.setattr("time.sleep", forbidden_pause)
+    with pytest.raises(ValueError, match="document_mode"):
+        fetch_source("https://example.org/report.pdf", max_bytes=2_000_001)
+
+
+def test_document_mode_allows_large_ceiling(monkeypatch):
+    monkeypatch.setattr("time.sleep", lambda seconds: None)
+    result, data = fetch_source(
+        "https://example.org/report.pdf",
+        max_bytes=30_000_000,
+        document_mode=True,
+        transport=lambda request, timeout: SyntheticResponse(b"synthetic document"),
+    )
+    assert data == b"synthetic document"
+    assert result["size_bytes"] == len(data)

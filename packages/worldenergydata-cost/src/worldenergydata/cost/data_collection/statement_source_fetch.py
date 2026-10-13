@@ -34,6 +34,7 @@ def fetch_source(
     url: str,
     *,
     max_bytes: int = 2_000_000,
+    document_mode: bool = False,
     transport: Callable[..., Any] | None = None,
 ) -> tuple[dict[str, Any], bytes]:
     """Return exact response metadata and bytes, aborting above the size limit.
@@ -42,10 +43,13 @@ def fetch_source(
     callers shall stop on 403/429/challenges, including robots refusals. No
     server-requested wait is performed, so Retry-After cannot prolong this call.
     Redirects remain 3xx observations for explicit policy review by the caller.
+    Ceilings above the default 2 MB require explicit document_mode=True.
     """
     validate_url(url)
     if max_bytes < 1 or max_bytes > 30_000_000:
         raise ValueError("size limit must be between 1 and 30000000 bytes")
+    if max_bytes > 2_000_000 and not document_mode:
+        raise ValueError("ceilings above 2000000 bytes require document_mode=True")
     request = Request(
         url, headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity"}
     )

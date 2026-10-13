@@ -23,7 +23,7 @@ SEED_OPERATORS = (
 )
 YEARS = frozenset(range(2020, 2025))
 Channel = Literal["annual_report", "sec_10k", "sec_20f", "sustainability_report"]
-Status = Literal["verified", "missing", "known_unavailable"]
+Status = Literal["verified", "missing", "known_unavailable", "access_refused"]
 
 
 class StrictModel(BaseModel):
@@ -67,7 +67,7 @@ class DocumentEvidence(SourceObservation):
     listing_url: str
     channel: Channel
     operator_name: str = Field(min_length=1)
-    fiscal_year: int = Field(ge=2020, le=2024)
+    fiscal_year: int = Field(ge=min(YEARS), le=max(YEARS))
     identity_quote: str = Field(min_length=1)
     identity_locator: str = Field(min_length=1)
     http_status: Literal[200]
@@ -78,6 +78,11 @@ class DocumentEvidence(SourceObservation):
 
 
 class YearCoverage(StrictModel):
+    """Access refusal means the source refused this client's request for the stated
+    scope; document existence is unknown and another channel remains necessary.
+    Known unavailability requires evidence of absence or nonpublication that year.
+    """
+
     status: Status
     note: str = Field(min_length=1)
     documents: list[DocumentEvidence] = Field(default_factory=list)
@@ -89,15 +94,17 @@ class YearCoverage(StrictModel):
     def check_evidence(self) -> YearCoverage:
         if (self.status == "verified") != bool(self.documents):
             raise ValueError("only verified years require document evidence")
-        if self.status == "known_unavailable":
+        if self.status in {"access_refused", "known_unavailable"}:
             if not self.refusal_url or not self.refusal_scope:
-                raise ValueError("known_unavailable requires refusal URL and scope")
+                raise ValueError(f"{self.status} requires refusal URL and scope")
             validate_url(self.refusal_url)
         elif any(
             v is not None
             for v in (self.refusal_url, self.refusal_scope, self.finding_quote)
         ):
-            raise ValueError("refusal fields only belong to known_unavailable")
+            raise ValueError(
+                "refusal fields only belong to access_refused or known_unavailable"
+            )
         return self
 
 
@@ -143,17 +150,20 @@ class OperatorStatement(StrictModel):
                     raise ValueError("document identity must match operator and year")
                 if document.channel not in self.filing_channels:
                     raise ValueError("document channel must be declared")
-            if coverage.status == "known_unavailable":
+            if coverage.status in {"access_refused", "known_unavailable"}:
                 matches = [
                     o for o in self.observations if o.url == coverage.refusal_url
                 ]
-                refusal = any(o.http_status in {403, 429} for o in matches)
-                finding = any(o.http_status == 200 for o in matches) and bool(
-                    coverage.finding_quote
-                )
-                if not (refusal or finding):
+                if coverage.status == "access_refused":
+                    if not any(o.http_status in {403, 429} for o in matches):
+                        raise ValueError(
+                            "access_refused requires refusal response evidence"
+                        )
+                elif not (
+                    any(o.http_status == 200 for o in matches) and coverage.finding_quote
+                ):
                     raise ValueError(
-                        "refusal or explicit source finding requires response evidence"
+                        "known_unavailable requires explicit source finding evidence"
                     )
         return self
 

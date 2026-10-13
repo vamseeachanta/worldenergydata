@@ -27,35 +27,35 @@
       ],
       "coverage_by_year": {
         "2020": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.bp.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2021": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.bp.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2022": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.bp.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2023": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.bp.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2024": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.bp.com/robots.txt",
@@ -89,35 +89,35 @@
       ],
       "coverage_by_year": {
         "2020": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.chevron.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2021": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.chevron.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2022": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.chevron.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2023": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.chevron.com/robots.txt",
           "refusal_scope": "Operator website access during this run only; alternative filing channels not assessed."
         },
         "2024": {
-          "status": "known_unavailable",
+          "status": "access_refused",
           "note": "Robots endpoint returned HTTP 403; source requests stopped. This records access refusal, not report absence.",
           "documents": [],
           "refusal_url": "https://www.chevron.com/robots.txt",

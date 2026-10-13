@@ -7,9 +7,11 @@ ExxonMobil, Murphy Oil and Hess, with fiscal years 2020–2024.
 
 ## Evidence and current coverage
 
-`data/operator_statements/observations.json` retains curated response metadata
-from the bounded public-source run. `registry.json` is the deterministic,
-validated manifest emitted from those inputs. No report, filing, webpage body
+`data/operator_statements/observations.json` is the edited input retaining curated
+response metadata from the bounded public-source run. `registry.json` is generated
+by the emitter and carries the same content in sorted form with validated defaults;
+it is never edited by hand. The command in "Loading and regenerating"
+regenerates it. No report, filing, webpage body
 or engineering cost value is redistributed. SHA-256 and byte counts refer to
 the response bytes, not to these JSON files. Retrieval timestamps are UTC.
 
@@ -22,9 +24,12 @@ right. Documents remain outside Git. Remaining years were not inferred from
 links, upload-directory years, search results or URL templates.
 
 BP and Chevron returned HTTP 403 at their robots endpoints. Ten year rows
-record `known_unavailable` for **operator-site access in this run**, rather
-than asserting that the reports do not exist. Other filing channels were not
-assessed. The remaining 33 operator-years are `missing`.
+record `access_refused` for **operator-site access in this run**. The source
+refused this client's request for the stated scope; this says nothing about
+whether the document exists, and the operator-year remains to be obtained
+through another channel. Other filing channels were not assessed. The seed has
+2 `verified`, 10 `access_refused`, 33 `missing` and 0 `known_unavailable`
+operator-years, totalling 45; no seed entry holds evidence of document absence.
 
 Equinor and TotalEnergies landing pages were fetched; documents were not.
 ExxonMobil and Murphy Oil investor links were observed on their corporate
@@ -63,12 +68,15 @@ Each operator-year stores one of:
   fiscal year, document channel, identity quotation/locator, HTTP 200, PDF content
   type, positive byte count, SHA-256, retrieval timestamp and terms provenance.
 - `missing`: no qualifying document was fetched; a note explains the gap.
-- `known_unavailable`: a bounded access refusal or explicit source finding is
-  recorded, with URL, scope, note and a retained response observation. This
-  status does not establish absence from all public filing channels. HTTP
-  403/429 establishes access refusal; an HTTP 200 source finding additionally
-  requires `finding_quote` containing the explicit nonpublication or challenge
-  statement. An ordinary successful listing cannot prove unavailability.
+- `access_refused`: source access was refused for the recorded scope; the year
+  requires a refusal URL, scope, note and matching retained HTTP 403/429 response
+  observation with its address and UTC retrieval time. Document existence is
+  unknown and another channel remains necessary.
+- `known_unavailable`: evidence states that the document does not exist or was
+  not published for that year. It requires a source URL, scope, note, matching
+  retained HTTP 200 response observation and `finding_quote` containing the
+  explicit absence or nonpublication finding. A refusal cannot justify this
+  status; an ordinary HTTP 200 without a finding proves neither status.
 
 Current document validation admits PDF annual statements only. HTML-native SEC
 filings need a later contract extension and explicit content/identity checks;
@@ -86,7 +94,10 @@ present, not proof of complete channel inventories.
 
 From the repository root, with the cost package installed in the environment:
 
-```python
+The following command regenerates the manifest:
+
+```bash
+python - <<'PY'
 from pathlib import Path
 from worldenergydata.cost.data_collection import (
     derive_coverage, emit_registry, load_registry,
@@ -97,6 +108,7 @@ manifest = Path("data/operator_statements/registry.json")
 manifest.write_bytes(emit_registry(inputs))
 registry = load_registry(manifest)
 coverage = {row.name: derive_coverage(row) for row in registry.operators}
+PY
 ```
 
 The offline tests reproduce the committed manifest byte for byte, reproduce a
@@ -110,11 +122,24 @@ A later backfill issue will select missing operator-years and use the discovery
 notes and listing location. Before requesting a document, it will read the
 source's current robots and terms statements, including those of a different
 subdomain or document origin. It will record any refusal and stop that site;
-no alternate route will be used to circumvent it.
+no alternate route will be used to circumvent it. For operators listed on a
+regulated exchange, the regulator filing channel is the first backfill step
+for operator-years recorded as access refused, subject to that channel's own
+source-policy checks.
 
 `statement_source_fetch.fetch_source` performs one request after a two-second
 pause, with a descriptive repository-contact User-Agent, a 30-second socket
 timeout and a caller-selected byte limit (default 2 MB, maximum 30 MB).
+A ceiling above 2 MB requires `document_mode=True`; otherwise validation rejects
+it before a request or pause. After the applicable source-policy checks, a
+caller can explicitly request document mode:
+
+```python
+from worldenergydata.cost.data_collection.statement_source_fetch import fetch_source
+
+metadata, body = fetch_source(document_url, max_bytes=30_000_000, document_mode=True)
+```
+
 It returns HTTP errors once, follows no redirects and performs no retries or
 server-requested waits. Callers own policy authorization, challenge detection,
 PDF signature/identity checks and sequential orchestration. It is a low-level

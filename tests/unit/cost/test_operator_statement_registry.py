@@ -233,7 +233,7 @@ def test_observation_changes_manifest(tmp_path, synthetic_operator):
 
 
 def test_refusal_requires_scope_and_observation(synthetic_operator):
-    synthetic_operator["coverage_by_year"]["2020"]["status"] = "known_unavailable"
+    synthetic_operator["coverage_by_year"]["2020"]["status"] = "access_refused"
     with pytest.raises(ValidationError):
         OperatorStatement.model_validate(synthetic_operator)
 
@@ -302,10 +302,100 @@ def test_refusal_or_explicit_finding_is_valid(synthetic_operator, status, quote)
     observation["http_status"] = status
     synthetic_operator["observations"] = [observation]
     synthetic_operator["coverage_by_year"]["2020"].update(
-        status="known_unavailable",
+        status="access_refused" if status in {403, 429} else "known_unavailable",
         refusal_url=observation["url"],
         refusal_scope="Synthetic access scope",
         finding_quote=quote,
     )
     row = OperatorStatement.model_validate(synthetic_operator)
     assert derive_coverage(row)["earliest_covered_year"] is None
+
+
+def refused_operator(synthetic_operator):
+    observation = synthetic_observations()[0]
+    observation["http_status"] = 403
+    synthetic_operator["observations"] = [observation]
+    synthetic_operator["coverage_by_year"]["2020"].update(
+        status="access_refused",
+        refusal_url=observation["url"],
+        refusal_scope="Synthetic source only",
+    )
+    return synthetic_operator
+
+
+def test_access_refused_with_evidence_validates(synthetic_operator):
+    row = OperatorStatement.model_validate(refused_operator(synthetic_operator))
+    assert row.coverage_by_year[2020].status == "access_refused"
+
+
+@pytest.mark.parametrize("missing", ["refusal_url", "refusal_scope", "observations"])
+def test_access_refused_without_evidence_rejected(synthetic_operator, missing):
+    payload = refused_operator(synthetic_operator)
+    if missing == "observations":
+        payload[missing] = []
+    else:
+        payload["coverage_by_year"]["2020"].pop(missing)
+    with pytest.raises(ValidationError, match="access_refused requires|refusal response"):
+        OperatorStatement.model_validate(payload)
+
+
+@pytest.mark.parametrize("status", [403, 429])
+def test_refusal_cannot_prove_known_unavailable(synthetic_operator, status):
+    payload = refused_operator(synthetic_operator)
+    payload["observations"][0]["http_status"] = status
+    payload["coverage_by_year"]["2020"].update(
+        status="known_unavailable",
+        finding_quote="Synthetic source does not publish this year",
+    )
+    with pytest.raises(ValidationError, match="explicit source finding"):
+        OperatorStatement.model_validate(payload)
+
+
+def test_ordinary_response_cannot_prove_access_refused(synthetic_operator):
+    payload = refused_operator(synthetic_operator)
+    payload["observations"][0]["http_status"] = 200
+    with pytest.raises(ValidationError, match="refusal response"):
+        OperatorStatement.model_validate(payload)
+
+
+def test_seed_refusals_are_access_refused():
+    registry = load_registry(DATA / "registry.json")
+    refused = {
+        (row.name, year)
+        for row in registry.operators
+        for year, coverage in row.coverage_by_year.items()
+        if coverage.status == "access_refused"
+    }
+    assert refused == {
+        (name, year) for name in ["BP", "Chevron"] for year in range(2020, 2025)
+    }
+    assert not any(
+        coverage.status == "known_unavailable"
+        for row in registry.operators
+        for coverage in row.coverage_by_year.values()
+    )
+
+
+def test_coverage_preserves_access_refused(synthetic_operator):
+    from collections import Counter
+
+    row = OperatorStatement.model_validate(refused_operator(synthetic_operator))
+    result = derive_coverage(row)
+    assert Counter(result["coverage_by_year"].values()) == {
+        "access_refused": 1,
+        "missing": 4,
+    }
+    assert result["coverage_by_channel"]["annual_report"] == []
+    assert result["earliest_covered_year"] is None
+    assert result["latest_verified_year"] is None
+
+
+def test_document_year_bounds_match_coverage_window():
+    from worldenergydata.cost.data_collection.operator_statement_registry import (
+        YEARS,
+        DocumentEvidence,
+    )
+
+    bounds = DocumentEvidence.model_json_schema()["properties"]["fiscal_year"]
+    assert bounds["minimum"] == min(YEARS)
+    assert bounds["maximum"] == max(YEARS)
