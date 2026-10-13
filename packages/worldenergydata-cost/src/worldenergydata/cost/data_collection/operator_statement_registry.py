@@ -160,7 +160,8 @@ class OperatorStatement(StrictModel):
                             "access_refused requires refusal response evidence"
                         )
                 elif not (
-                    any(o.http_status == 200 for o in matches) and coverage.finding_quote
+                    any(o.http_status == 200 for o in matches)
+                    and coverage.finding_quote
                 ):
                     raise ValueError(
                         "known_unavailable requires explicit source finding evidence"

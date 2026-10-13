@@ -335,7 +335,9 @@ def test_access_refused_without_evidence_rejected(synthetic_operator, missing):
         payload[missing] = []
     else:
         payload["coverage_by_year"]["2020"].pop(missing)
-    with pytest.raises(ValidationError, match="access_refused requires|refusal response"):
+    with pytest.raises(
+        ValidationError, match="access_refused requires|refusal response"
+    ):
         OperatorStatement.model_validate(payload)
 
 
