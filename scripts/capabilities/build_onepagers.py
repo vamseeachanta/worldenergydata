@@ -227,8 +227,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   <div class="std">{std}</div>
   <h1>{title}</h1>
   <p class="blurb">{blurb}</p>
-  {figs}
-  <h2>What you get</h2>
+{figs}  <h2>What you get</h2>
   <ul>{bullets}</ul>
   <div class="foot">
     <div>worldenergydata · open energy-data · deterministic outputs on public regulatory filings<br>
@@ -247,7 +246,7 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
             f'<div class="l">{html.escape(l)}</div></div>'
             for v, l in spec["figures"]
         )
-        figs = f'<div class="figs">{cells}</div>'
+        figs = f'  <div class="figs">{cells}</div>\n'
     bullets = "".join(f"<li>{html.escape(b)}</li>" for b in spec["bullets"])
     live = f"{_SITE}/{spec['path']}"
     return _TEMPLATE.format(

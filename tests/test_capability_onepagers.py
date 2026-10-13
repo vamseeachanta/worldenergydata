@@ -229,3 +229,15 @@ def test_brand_rejects_string_image_resources(function, tmp_path):
             renderer=lambda source, target: None,
         )
     assert not (tmp_path / "output").exists()
+
+
+def test_every_spec_has_no_trailing_whitespace() -> None:
+    """Every specification renders without spaces or tabs at line endings."""
+    mod = load_builder()
+    violations = [
+        (spec["id"], number)
+        for spec in mod.SPECS
+        for number, line in enumerate(mod._render_html(spec).splitlines(), 1)
+        if line.endswith((" ", "\t"))
+    ]
+    assert not violations, violations
