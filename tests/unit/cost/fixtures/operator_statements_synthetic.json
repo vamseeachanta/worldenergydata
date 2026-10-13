@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "operators": [
+    {
+      "name": "Synthetic Operator",
+      "primary_domains": [
+        "example.org"
+      ],
+      "market_context": "Synthetic test market; no real disclosure",
+      "discovery_url": "https://example.org/reports",
+      "filing_channels": [
+        "annual_report"
+      ],
+      "discovery_notes": "Synthetic listing, no inferred pattern",
+      "observations": [
+        {
+          "url": "https://example.org/reports",
+          "retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "b4cb00492e4079cc43162cc2a710a9131671d1669e3f179de7218fd67d23462c",
+          "size_bytes": 27,
+          "terms_url": "https://example.org/terms",
+          "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "terms_wording": "Synthetic permission for tests only"
+        },
+        {
+          "url": "https://example.org/terms",
+          "retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "http_status": 200,
+          "content_type": "text/html",
+          "sha256": "b4cb00492e4079cc43162cc2a710a9131671d1669e3f179de7218fd67d23462c",
+          "size_bytes": 27,
+          "terms_url": "https://example.org/terms",
+          "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+          "terms_wording": "Synthetic permission for tests only"
+        }
+      ],
+      "coverage_by_year": {
+        "2020": {
+          "status": "missing",
+          "note": "Not attempted",
+          "documents": []
+        },
+        "2021": {
+          "status": "missing",
+          "note": "Not attempted",
+          "documents": []
+        },
+        "2022": {
+          "status": "verified",
+          "note": "Synthetic fixture only",
+          "documents": [
+            {
+              "url": "https://example.org/report-2022.pdf",
+              "listing_url": "https://example.org/reports",
+              "channel": "annual_report",
+              "operator_name": "Synthetic Operator",
+              "fiscal_year": 2022,
+              "identity_quote": "Synthetic Operator Annual Report 2022",
+              "identity_locator": "Synthetic PDF title page",
+              "retrieved_at_utc": "2026-10-11T12:00:00Z",
+              "http_status": 200,
+              "content_type": "application/pdf",
+              "sha256": "aa1193a0568d76c4f486f872fc1e239c65e378e416967818ecb8404764259463",
+              "size_bytes": 22,
+              "terms_url": "https://example.org/terms",
+              "terms_retrieved_at_utc": "2026-10-11T11:59:00Z",
+              "terms_wording": "Synthetic permission for tests only"
+            }
+          ]
+        },
+        "2023": {
+          "status": "missing",
+          "note": "Not attempted",
+          "documents": []
+        },
+        "2024": {
+          "status": "missing",
+          "note": "Not attempted",
+          "documents": []
+        }
+      }
+    }
+  ]
+}
