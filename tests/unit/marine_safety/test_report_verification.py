@@ -114,3 +114,42 @@ def test_verified_pages_have_agreement_coverage() -> None:
     module = load_generator("generate_optimized_report")
     assert hasattr(module, "VERIFIED_PAGES")
     assert set(module.VERIFIED_PAGES) == AGREEMENT_TEST_PAGES
+
+
+def test_landing_index_omits_unverified_reports(tmp_path, monkeypatch) -> None:
+    """Published files do not re-enter the landing report navigation."""
+    spec = importlib.util.spec_from_file_location(
+        "report_pages", ROOT / "scripts/build_pages.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "PUBLIC", tmp_path)
+    monkeypatch.setattr(module, "ASSETS", tmp_path / "assets")
+    module.build(domains=["marine_safety"])
+    html = (tmp_path / "index.html").read_text()
+    for page in PAGES:
+        assert Path(page).name not in html
+
+
+def test_report_lists_relabel_unverified_pages() -> None:
+    """Retained report descriptions expose their unverified status."""
+    summary = (ROOT / "reports/REPORT_SUMMARY.md").read_text()
+    assert "**Status:** unverified" in summary
+    readme = (ROOT / "reports/marine_safety/README.md").read_text()
+    for page in PAGES[1:]:
+        entry = next(
+            line
+            for line in readme.splitlines()
+            if line.startswith(f"- **{Path(page).name}")
+        )
+        assert "unverified" in entry
+
+
+def test_inventory_relabels_unverified_pages() -> None:
+    """The generated inventory cannot advertise these pages as current analysis."""
+    import csv
+
+    with (ROOT / "docs/modules/report-inventory.csv").open() as stream:
+        rows = {row["path"]: row for row in csv.DictReader(stream)}
+    for page in PAGES:
+        assert rows[page]["classification"] == "unverified"

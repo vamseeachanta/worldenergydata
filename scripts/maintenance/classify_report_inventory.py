@@ -4,11 +4,12 @@
 Rule order (first match wins), as defined by the architecture page:
 1. Superseded: an explicit link with rel="successor-version" whose href resolves
    to an existing replacement file inside the repository.
-2. Current: a Pages input selection whose existence gates are present.
-3. One-off: an unselected filename with a separate demo or test token, bounded
+2. Unverified: an explicit unverified report paragraph.
+3. Current: a Pages input selection whose existence gates are present.
+4. One-off: an unselected filename with a separate demo or test token, bounded
    by start, underscore or hyphen on the left and underscore, hyphen or dot on
    the right.
-4. Undetermined: no decisive evidence under the preceding rules.
+5. Undetermined: no decisive evidence under the preceding rules.
 
 Only --write writes a file: the inventory CSV. Reports remain read-only.
 """
@@ -235,6 +236,9 @@ def classify_tree(root, builder=BUILDER):
         replacement = replacement_evidence(path, root)
         if replacement:
             classification, evidence = "superseded", replacement
+        elif '<p class="unverified">' in path.read_text(encoding="utf-8"):
+            classification = "unverified"
+            evidence = "explicit unverified notice; source-data reproduction not established"
         elif relative in selected:
             classification, evidence = "current", selected[relative]
         elif re.search(r"(^|[_-])(demo|test)(?=[_.-])", path.name):
@@ -280,7 +284,7 @@ def main(argv=None):
     else:
         counts = Counter(row["classification"] for row in classify_tree(ROOT, BUILDER))
         print("| Classification | HTML files |\n| --- | --- |")
-        for classification in ("current", "superseded", "one-off", "undetermined"):
+        for classification in ("current", "superseded", "unverified", "one-off", "undetermined"):
             print(f"| {classification} | {counts[classification]} |")
         print(
             "\n| Repository-relative selection glob | Existence gates | "

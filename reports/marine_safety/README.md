@@ -16,10 +16,10 @@ bash scripts/marine_safety/analyze_incidents.sh
 
 This will create the following reports in this directory:
 
-- **executive_summary.html** - Dashboard with key metrics across all incident types
-- **hatch_analysis.html** - Detailed hatch/door/opening maloperation incidents (191 incidents)
-- **foundering_analysis.html** - Vessel foundering events and fatalities (8,426 incidents)
-- **fatality_analysis.html** - Fatal incidents analysis (5,119 incidents)
+- **executive_summary.html** - unverified dashboard with key metrics across all incident types
+- **hatch_analysis.html** - unverified hatch/door/opening maloperation incidents (191 incidents)
+- **foundering_analysis.html** - unverified vessel foundering events and fatalities (8,426 incidents)
+- **fatality_analysis.html** - unverified fatal incidents analysis (5,119 incidents)
 
 ## Features
 
