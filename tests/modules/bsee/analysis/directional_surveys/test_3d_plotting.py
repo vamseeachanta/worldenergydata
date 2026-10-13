@@ -16,7 +16,7 @@ sys.path.insert(0, src_path)
 from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
 
 
-def test_actual_3d_plotting():
+def test_actual_3d_plotting(tmp_path):
     """Generate actual 3D plots to verify visualization works"""
 
     print("Testing actual 3D plot generation...")
@@ -55,12 +55,12 @@ def test_actual_3d_plotting():
     }
 
     # Create output directory
-    output_dir = "test_output"
+    output_dir = os.fspath(tmp_path)
     os.makedirs(output_dir, exist_ok=True)
 
     cfg = {
         "Analysis": {
-            "result_folder": f"./{output_dir}/",
+            "result_folder": f"{output_dir}/",
             "file_name_for_overwrite": "test_directional_surveys",
         },
         "custom_parameters": {"field_nickname": "TestField"},
@@ -118,7 +118,7 @@ def test_actual_3d_plotting():
 
 
 if __name__ == "__main__":
-    success = test_actual_3d_plotting()
+    success = test_actual_3d_plotting("test_output")
     if success:
         print("\n🎉 SUCCESS: All directional surveys methods working!")
         print("Check the test_output/ directory for the generated 3D plot.")
