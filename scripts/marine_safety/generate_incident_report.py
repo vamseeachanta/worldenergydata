@@ -23,7 +23,7 @@ import json
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from scripts.marine_safety.generate_optimized_report import unverified_notice
+from scripts.marine_safety.report_notice import NOTICE_STYLE, unverified_notice
 
 try:
     from worldenergydata.modules.marine_safety.analysis.incidents.hatch_maloperation_analysis import HatchMaloperationAnalyzer
@@ -619,6 +619,7 @@ def generate_executive_summary(data: dict, analyses: dict, output_dir: Path, use
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marine Safety Incident Analysis - Executive Summary</title>
     <style>
+{NOTICE_STYLE}
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -1041,6 +1042,7 @@ def generate_detailed_report(incident_type: str, df: pd.DataFrame, analysis: dic
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
+{NOTICE_STYLE}
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;

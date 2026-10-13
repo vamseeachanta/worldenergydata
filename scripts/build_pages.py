@@ -811,7 +811,7 @@ def build_marine_safety(available_viz: dict[str, bool]) -> list[tuple]:
     to one another with relative hrefs (the executive summary links the fatality,
     foundering and hatch analyses), so the whole tree is copied to preserve those
     links. The IMO GISIS executive report is a single top-level file copied flat.
-    Only real-data reports are published; the synthetic ``*_demo`` page is not.
+    Retained incident reports are marked unverified; the synthetic ``*_demo`` page is not published.
     Returns ``[]`` &mdash; the landing index keys off what exists in ``public/``."""
     src = REPORTS / "marine_safety"
     if src.exists():

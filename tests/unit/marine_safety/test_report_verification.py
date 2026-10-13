@@ -4,6 +4,8 @@ import ast
 import hashlib
 import importlib.util
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -13,8 +15,9 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parents[3]
 NOTICE = (
     "Figures on this page could not be re-derived from data held in this "
-    "repository; treat as unverified"
+    "repository; treat as unverified."
 )
+LINKED_NOTICE = NOTICE.replace("on this page", "in the linked report")
 PAGES = (
     "reports/IMO_GISIS_Executive_Report.html",
     "reports/marine_safety/executive_summary.html",
@@ -34,15 +37,15 @@ HATCH_TITLES = (
 AGREEMENT_TEST_PAGES = set()
 
 
-def assert_notice(html: str) -> None:
+def assert_notice(html: str, expected: str = NOTICE) -> None:
     """Require one visible notice as the first text following the main title."""
     soup = BeautifulSoup(html, "html.parser")
     heading = soup.find("h1")
     assert heading is not None
     text = next(item for item in heading.next_siblings if str(item).strip())
     assert text.name == "p"
-    assert text.get_text(strip=True) == NOTICE
-    assert html.count(NOTICE) == 1
+    assert text.get_text(strip=True) == expected
+    assert html.count(expected) == 1
 
 
 def load_generator(name: str):
@@ -180,7 +183,7 @@ def test_capability_writer_notice(name: str) -> None:
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     entry = next(item for item in module.SPECS if item["id"] == name)
-    assert_notice(module._render_html(entry))
+    assert_notice(module._render_html(entry), LINKED_NOTICE)
 
 
 @pytest.mark.parametrize(
@@ -188,7 +191,9 @@ def test_capability_writer_notice(name: str) -> None:
 )
 def test_committed_capability_notice(name: str) -> None:
     """Generated companion pages expose the status of their linked figures."""
-    assert_notice((ROOT / f"reports/capabilities/pdf/{name}.html").read_text())
+    assert_notice(
+        (ROOT / f"reports/capabilities/pdf/{name}.html").read_text(), LINKED_NOTICE
+    )
 
 
 def test_capability_descriptions_are_retained() -> None:
@@ -244,3 +249,79 @@ def test_committed_hatch_series(name: str, digest: str) -> None:
     html = (ROOT / "reports/marine_safety/hatch_analysis.html").read_text()
     value = re.search(rf"const {name} = (\{{.*?\}});", html, re.S).group(1)
     assert hashlib.sha256(value.encode()).hexdigest() == digest
+
+
+@pytest.mark.parametrize(
+    "page",
+    PAGES
+    + tuple(
+        f"reports/capabilities/pdf/{name}.html"
+        for name in ("imo", "ms-exec", "ms-hatch", "ms-foundering", "ms-fatality")
+    ),
+)
+def test_committed_notice_style(page: str) -> None:
+    """Notices have a distinct quiet rule and retain plain text weight."""
+    soup = BeautifulSoup((ROOT / page).read_text(), "html.parser")
+    first = soup.find("h1").find_next_sibling()
+    assert "unverified" in first.get("class", [])
+    styles = " ".join(style.get_text() for style in soup.find_all("style"))
+    rule = re.search(r"(?:\.header p)?\.unverified\s*\{([^}]+)\}", styles)
+    assert rule is not None
+    assert "font-weight: 400" in rule.group(1)
+    assert "opacity: 0.75" in rule.group(1)
+    assert not any(token in rule.group(1) for token in ("background", "border"))
+
+
+def test_shared_notice_has_no_import_side_effects() -> None:
+    """Capability notice imports do not load plotting or configure logging."""
+    code = (
+        "import logging, sys; "
+        "from scripts.capabilities import build_onepagers; "
+        "from scripts.marine_safety import report_notice; "
+        "assert not logging.getLogger().handlers; "
+        "assert 'pandas' not in sys.modules; "
+        "assert 'plotly' not in sys.modules; "
+        "assert report_notice.VERIFIED_PAGES == ()"
+    )
+    subprocess.run([sys.executable, "-c", code], cwd=ROOT, check=True)
+
+
+@pytest.mark.parametrize(
+    "path",
+    (
+        "scripts/marine_safety/generate_incident_report.py",
+        "scripts/marine_safety/generate_optimized_report.py",
+        "reports/imo_gisis_analysis_report.py",
+    ),
+)
+def test_writer_notice_style(path: str) -> None:
+    """All incident writers insert the shared style in their HTML templates."""
+    tree = ast.parse((ROOT / path).read_text())
+    templates = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.JoinedStr) and "<style>" in ast.unparse(n)
+    ]
+    assert templates
+    assert all(
+        any(
+            isinstance(n, ast.FormattedValue)
+            and isinstance(n.value, ast.Name)
+            and n.value.id == "NOTICE_STYLE"
+            for n in template.values
+        )
+        for template in templates
+    )
+
+
+def test_publication_docstring_marks_unverified() -> None:
+    """Publication documentation distinguishes availability from qualification."""
+    tree = ast.parse((ROOT / "scripts/build_pages.py").read_text())
+    function = next(
+        n
+        for n in tree.body
+        if isinstance(n, ast.FunctionDef) and n.name == "build_marine_safety"
+    )
+    doc = ast.get_docstring(function)
+    assert "marked unverified" in doc
+    assert "Only real-data reports are published" not in doc

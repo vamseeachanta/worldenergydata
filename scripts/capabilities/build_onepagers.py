@@ -28,7 +28,7 @@ from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO))
-from scripts.marine_safety.generate_optimized_report import UNVERIFIED_NOTICE
+from scripts.marine_safety.report_notice import LINKED_REPORT_NOTICE, NOTICE_STYLE
 
 _OUT = _REPO / "reports" / "capabilities" / "pdf"
 _TOKENS = (_REPO / "reports" / "capabilities" / "assets" / "tokens.css").read_text(encoding="utf-8").strip()
@@ -326,7 +326,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/executive_summary.html',
-  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+  'blurb': LINKED_REPORT_NOTICE + '\n\n' + (
       'An overview of the combined casualty records, with source coverage and links to '
       'the detailed incident analyses.'),
   'figures': [],
@@ -340,7 +340,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          '· data as of: 2012 (Coast Guard record coverage end); Canadian acquisition cut-off not '
          'recorded',
   'path': 'marine_safety/fatality_analysis.html',
-  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+  'blurb': LINKED_REPORT_NOTICE + '\n\n' + (
       'Fatal incidents are grouped by recorded cause and category, with reported '
       'fatalities distinguished from incident counts.'),
   'figures': [],
@@ -354,7 +354,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/foundering_analysis.html',
-  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+  'blurb': LINKED_REPORT_NOTICE + '\n\n' + (
       'Foundering incidents are grouped to examine reported fatalities and recurring '
       'incident patterns. Imported International Maritime Organization records contain no '
       'fatality counts; those counts use the Canadian and Coast Guard records.'),
@@ -369,7 +369,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/hatch_analysis.html',
-  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+  'blurb': LINKED_REPORT_NOTICE + '\n\n' + (
       'Incident narratives are screened for hatch, door and opening maloperation, then '
       'grouped by recorded severity.'),
   'figures': [],
@@ -397,7 +397,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
   'std': 'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (collation date); latest export window ends 2025-10-10',
   'path': 'IMO_GISIS_Executive_Report.html',
-  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+  'blurb': LINKED_REPORT_NOTICE + '\n\n' + (
       'Marine casualty records are grouped by severity, vessel type and flag state. '
       'Recorded occurrences span 1900-01-01 to 2025-06-09.'),
   'figures': [],
@@ -443,6 +443,7 @@ _FONT_CSS = "".join(
 _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <title>{title}</title>
 <style>
+{notice_style}
   @page{{size:A4;margin:0}}
   {tokens}
   {font_css}
@@ -477,7 +478,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   <div class="top">{logo}<div class="kind">Capability summary</div></div>
   <div class="std">{std}</div>
   <h1>{title}</h1>
-  <p class="blurb">{blurb}</p>
+  <p class="{blurb_class}">{blurb}</p>
 {figs}<h2>What you get</h2>
   <ul>{bullets}</ul>
   <div class="foot">
@@ -500,6 +501,7 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
     bullets = "".join(f"<li>{html.escape(b)}</li>" for b in spec["bullets"])
     live = f"{_SITE}/{spec['path']}"
     return _TEMPLATE.format(
+        notice_style=NOTICE_STYLE,
         tokens=_TOKENS,
         font_css=_FONT_CSS,
         revision_date=REVISION_DATE,
@@ -507,6 +509,7 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
         logo=_LOGO,
         std=html.escape(spec["std"]),
         title=html.escape(spec["title"]),
+        blurb_class="blurb unverified" if spec["blurb"].startswith(LINKED_REPORT_NOTICE) else "blurb",
         blurb='</p>\n  <p class="blurb">'.join(
             html.escape(paragraph) for paragraph in spec["blurb"].split("\n\n")
         ),
