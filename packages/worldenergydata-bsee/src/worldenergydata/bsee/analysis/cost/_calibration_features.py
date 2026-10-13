@@ -1,5 +1,5 @@
 # ABOUTME: WRK-171 internal feature engineering and proxy rate constants for cost calibration.
-# ABOUTME: Extracted from cost_calibration.py to keep file length under 400 lines.
+# ABOUTME: There is no fixed line limit; a reviewer may comment on a module that is hard to read.
 
 """Internal feature engineering for MultivariateCalibration (WRK-171).
 
