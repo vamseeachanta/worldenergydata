@@ -454,3 +454,9 @@ def test_economic_pages_state_price_and_cost_basis() -> None:
         if spec["id"] in ids or spec["id"].startswith("economics-"):
             assert "Price:" in spec["std"], spec["id"]
             assert "cost:" in spec["std"], spec["id"]
+
+
+def test_country_name_is_spelled_out_in_source_basis() -> None:
+    """Expand the country name alongside the public agency name on each page."""
+    for spec in load_builder().SPECS:
+        assert not re.search(r"(?<!\w)U\.S\.(?!\w)", spec["std"], re.I), spec["id"]

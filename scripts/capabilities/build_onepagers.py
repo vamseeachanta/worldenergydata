@@ -54,7 +54,7 @@ REVISION_DATE = "2026-10-13"
 SPECS: list[dict] = [{'id': 'sec-economics',
   'kind': 'section',
   'title': 'Field economics and production comparison',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -69,7 +69,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-anchor',
   'kind': 'work',
   'title': 'Anchor field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -84,7 +84,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-big_foot',
   'kind': 'work',
   'title': 'Big Foot field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -99,7 +99,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-cascade_chinook',
   'kind': 'work',
   'title': 'Cascade–Chinook field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -114,7 +114,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-jack_st_malo',
   'kind': 'work',
   'title': 'Jack / St. Malo field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -129,7 +129,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-julia',
   'kind': 'work',
   'title': 'Julia field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -144,7 +144,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-shenandoah',
   'kind': 'work',
   'title': 'Shenandoah field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -159,7 +159,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'economics-stones',
   'kind': 'work',
   'title': 'Stones field economics',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -174,7 +174,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'portfolio',
   'kind': 'work',
   'title': 'Lower Tertiary economics portfolio',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
@@ -187,7 +187,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'benchmark',
   'kind': 'work',
   'title': 'Lower Tertiary well production comparison',
-  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; U.S. '
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States '
          'Energy Information Administration oil prices · data as of: 2025-05 · Price: historical '
          'West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities '
          'and operating assumptions',
