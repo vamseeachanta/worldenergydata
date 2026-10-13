@@ -18,6 +18,19 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
+UNVERIFIED_NOTICE = (
+    "Figures on this page could not be re-derived from data held in this "
+    "repository; treat as unverified"
+)
+VERIFIED_PAGES = ()
+
+
+def unverified_notice(page_name: str) -> str:
+    """Mark reports unless repository-backed agreement tests cover the page."""
+    if page_name in VERIFIED_PAGES:
+        return ""
+    return f'<p class="unverified">{UNVERIFIED_NOTICE}</p>'
+
 
 def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_dir: Path) -> Path:
     """Export incident data to CSV file for client-side loading."""
@@ -263,6 +276,7 @@ def generate_optimized_html(incident_type: str, csv_relative_path: str, analysis
 <body>
     <div class="header">
         <h1>{title}</h1>
+        {unverified_notice(f'{incident_type}_analysis.html')}
         <p>Detailed Analysis Report</p>
         <p>Generated: {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}</p>
     </div>
