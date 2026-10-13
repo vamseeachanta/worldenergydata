@@ -506,7 +506,11 @@ def assert_economics_cutoff(specs: list[dict]) -> None:
         if spec["id"] in {"sec-economics", "portfolio", "benchmark"} or spec[
             "id"
         ].startswith("economics-"):
-            assert f"data as of: {vintage}" in spec["std"], spec["id"]
+            printed = re.search(
+                r"data as of: (\d{4}-\d{2}(?:-\d{2})?)(?=\s|$)", spec["std"]
+            )
+            assert printed is not None, spec["id"]
+            assert printed.group(1) == vintage, spec["id"]
 
 
 def test_committed_html_copy_excludes_banned_wording() -> None:
@@ -570,6 +574,12 @@ def test_economics_cutoff_negative_control() -> None:
     spec = dict(load_builder().SPECS[0], std="data as of: unsupported")
     with pytest.raises(AssertionError, match=spec["id"]):
         assert_economics_cutoff([spec])
+    prefix_only = dict(load_builder().SPECS[0])
+    prefix_only["std"] = re.sub(
+        r"(data as of: \d{4}-\d{2})", r"\1-01", prefix_only["std"]
+    )
+    with pytest.raises(AssertionError, match=prefix_only["id"]):
+        assert_economics_cutoff([prefix_only])
 
 
 def test_explicit_empty_figures_has_no_trailing_whitespace() -> None:
