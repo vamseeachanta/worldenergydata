@@ -388,3 +388,43 @@ def test_guard_switch_rejects_reset_modified_file(tmp_path):
     output = result.stdout + result.stderr
     assert result.returncode != 0, output
     assert "changed: seed.txt" in output
+
+
+def _nested_session_body(tmp_path, child_body):
+    """Use a real subprocess in the same checkout, with a recursion marker."""
+    child_temp = str(tmp_path / "child-temp")
+    return (
+        "import os, subprocess, sys\n"
+        "    if os.environ.get('TREE_CHILD_TEST'):\n"
+        f"        {child_body}\n"
+        "    else:\n"
+        "        env = os.environ.copy()\n"
+        "        env['TREE_CHILD_TEST'] = '1'\n"
+        "        result = subprocess.run(\n"
+        "            [sys.executable, '-m', 'pytest', '-q', '-p', 'no:cacheprovider',\n"
+        f"             '--basetemp={child_temp}', 'test_sample.py'],\n"
+        "            env=env, capture_output=True, text=True, check=False, timeout=3600)\n"
+        "        assert result.returncode == 0, result.stdout + result.stderr"
+    )
+
+
+def test_guard_child_inherits_existing_work_mode(tmp_path):
+    """A nested session does not reject work the outer session preserves."""
+    body = _nested_session_body(
+        tmp_path, "assert Path('seed.txt').read_text() == 'developer work'"
+    )
+    root = _fixture_repository(tmp_path, body)
+    (root / "seed.txt").write_text("developer work", encoding="utf-8")
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_guard_reports_child_write_once(tmp_path):
+    """The outer session alone reports a file written by its child."""
+    body = _nested_session_body(tmp_path, "Path('child-created.txt').write_text('new')")
+    root = _fixture_repository(tmp_path, body)
+    result = _session(root, tmp_path)
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "new: child-created.txt" in output
+    assert output.count("Repository tree preservation failed:") == 1

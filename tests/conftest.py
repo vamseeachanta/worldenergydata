@@ -257,6 +257,7 @@ def sample_csv_file(tmp_path: Path, sample_production_data: pd.DataFrame) -> Pat
 # must not open the performance database.
 _performance_tracker = None
 _performance_db_path = None
+_TREE_GUARD_PARENT_ENV = "WORLDENERGYDATA_TREE_GUARD_PARENT"
 
 
 def _tree_git_environment():
@@ -383,6 +384,8 @@ def _configure_tree_guard(config):
     """Capture pre-existing work only when the developer requests that mode."""
     if hasattr(config, "workerinput"):
         return
+    config._tree_guard_child = False
+    config._tree_guard_parent_set = False
     config._tree_guard_root = None
     config._tree_guard_cwd = Path.cwd()
     config._tree_guard_initial = {}
@@ -399,6 +402,13 @@ def _configure_tree_guard(config):
             config._tree_guard_error = "Git could not resolve the checkout"
         return
     config._tree_guard_root = Path(os.fsdecode(result.stdout).strip())
+    parent = os.environ.get(_TREE_GUARD_PARENT_ENV)
+    if parent == str(config._tree_guard_root):
+        config._tree_guard_child = True
+        return
+    config._tree_guard_previous_parent = parent
+    os.environ[_TREE_GUARD_PARENT_ENV] = str(config._tree_guard_root)
+    config._tree_guard_parent_set = True
     if config.getoption("allow_existing_tree_changes"):
         try:
             config._tree_guard_initial = {
@@ -412,7 +422,7 @@ def _configure_tree_guard(config):
 def _finish_tree_guard(session):
     """Fail the controlling session when its tree does not meet the criterion."""
     config = session.config
-    if hasattr(config, "workerinput"):
+    if hasattr(config, "workerinput") or config._tree_guard_child:
         return
     if config._tree_guard_note:
         print("Tree preservation check did not run: " + config._tree_guard_note + ".")
@@ -448,6 +458,23 @@ def _finish_tree_guard(session):
     )
     if session.exitstatus == pytest.ExitCode.OK:
         session.exitstatus = pytest.ExitCode.TESTS_FAILED
+
+
+def _restore_tree_guard_environment(config):
+    """Restore inherited parent state after the owning session finishes."""
+    if not getattr(config, "_tree_guard_parent_set", False):
+        return
+    previous = config._tree_guard_previous_parent
+    if previous is None:
+        os.environ.pop(_TREE_GUARD_PARENT_ENV, None)
+    else:
+        os.environ[_TREE_GUARD_PARENT_ENV] = previous
+    config._tree_guard_parent_set = False
+
+
+def pytest_unconfigure(config):
+    """Also restore parent state when configuration or session setup fails."""
+    _restore_tree_guard_environment(config)
 
 
 def pytest_addoption(parser):
@@ -505,7 +532,10 @@ def pytest_runtest_makereport(item, call):
 @pytest.hookimpl(trylast=True)
 def pytest_sessionfinish(session, exitstatus):
     """Check tree preservation and report performance at session finish."""
-    _finish_tree_guard(session)
+    try:
+        _finish_tree_guard(session)
+    finally:
+        _restore_tree_guard_environment(session.config)
     if _performance_tracker:
         summary = _performance_tracker.get_session_summary()
 
