@@ -1,7 +1,9 @@
 """Regression coverage for unreproducible incident report publication."""
 
 import ast
+import hashlib
 import importlib.util
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -19,6 +21,14 @@ PAGES = (
     "reports/marine_safety/hatch_analysis.html",
     "reports/marine_safety/foundering_analysis.html",
     "reports/marine_safety/fatality_analysis.html",
+)
+HATCH_SENTENCE = (
+    "The assessment-class and annual charts count records analysed by assessment "
+    "class and year, respectively, not detected hatch incidents."
+)
+HATCH_TITLES = (
+    "Records Analysed by Assessment Class (Top Categories)",
+    "Records Analysed per Year (Last 10 Years)",
 )
 # No repository-backed agreement test can cover these absent raw inputs.
 AGREEMENT_TEST_PAGES = set()
@@ -47,7 +57,11 @@ def load_generator(name: str):
 @pytest.mark.parametrize("page", PAGES)
 def test_committed_page_notice(page: str) -> None:
     """Existing figures remain visibly unverified without JavaScript."""
-    assert_notice((ROOT / page).read_text(encoding="utf-8"))
+    html = (ROOT / page).read_text(encoding="utf-8")
+    assert_notice(html)
+    if page.endswith("hatch_analysis.html"):
+        notice = BeautifulSoup(html, "html.parser").find("p", class_="unverified")
+        assert notice.find_next_sibling().get_text(strip=True) == HATCH_SENTENCE
 
 
 @pytest.mark.parametrize("kind", ("hatch", "foundering", "fatality"))
@@ -189,3 +203,44 @@ def test_capability_descriptions_are_retained() -> None:
     for name, text in descriptions.items():
         html = (ROOT / f"reports/capabilities/pdf/{name}.html").read_text()
         assert text in BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
+
+
+@pytest.mark.parametrize(
+    "title, previous",
+    (
+        (HATCH_TITLES[0], "Hatch Incidents by Assessment Class (Top Categories)"),
+        (HATCH_TITLES[1], "Hatch Incidents per Year (Last 10 Years)"),
+    ),
+)
+def test_committed_hatch_chart_titles(title: str, previous: str) -> None:
+    """Record-count charts identify their population without changing data."""
+    html = (ROOT / "reports/marine_safety/hatch_analysis.html").read_text()
+    assert f"title: '{title}'" in html
+    assert f"title: '{previous}'" not in html
+
+
+def test_hatch_record_constants() -> None:
+    """The hand-marked page agrees with the shared record-chart constants."""
+    module = load_generator("generate_optimized_report")
+    assert module.HATCH_RECORD_NOTICE == HATCH_SENTENCE
+    assert module.HATCH_RECORD_TITLES == HATCH_TITLES
+
+
+@pytest.mark.parametrize(
+    "name, digest",
+    (
+        (
+            "hatchSeverity",
+            "fed8eb406ef82fea1e438f250e680403689c524745aa442a6b43f9b32b00cbe1",
+        ),
+        (
+            "hatchTrend",
+            "7bf547189bb89d47dc4444ba2f91e0304ae9b4aea4c425a4bc32298920826a10",
+        ),
+    ),
+)
+def test_committed_hatch_series(name: str, digest: str) -> None:
+    """Pin every embedded series byte to the starting report data."""
+    html = (ROOT / "reports/marine_safety/hatch_analysis.html").read_text()
+    value = re.search(rf"const {name} = (\{{.*?\}});", html, re.S).group(1)
+    assert hashlib.sha256(value.encode()).hexdigest() == digest

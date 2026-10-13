@@ -22,6 +22,15 @@ UNVERIFIED_NOTICE = (
     "Figures on this page could not be re-derived from data held in this "
     "repository; treat as unverified"
 )
+# The committed record-count page has no producer in either detail writer.
+HATCH_RECORD_NOTICE = (
+    "The assessment-class and annual charts count records analysed by assessment "
+    "class and year, respectively, not detected hatch incidents."
+)
+HATCH_RECORD_TITLES = (
+    "Records Analysed by Assessment Class (Top Categories)",
+    "Records Analysed per Year (Last 10 Years)",
+)
 VERIFIED_PAGES = ()
 
 
