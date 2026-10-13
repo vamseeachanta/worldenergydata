@@ -336,3 +336,55 @@ def test_guard_rejects_formerly_listed_report(tmp_path):
     output = result.stdout + result.stderr
     assert result.returncode != 0, output
     assert "new: test-results-unit-ci.xml" in output
+
+
+def test_guard_switch_rejects_rewritten_modified_file(tmp_path):
+    """Initially modified tracked bytes cannot be overwritten under the switch."""
+    root = _fixture_repository(tmp_path, "Path('seed.txt').write_text('rewritten')")
+    (root / "seed.txt").write_text("developer work", encoding="utf-8")
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "changed: seed.txt" in output
+
+
+def test_guard_switch_rejects_rewritten_untracked_file(tmp_path):
+    """Initially untracked bytes cannot be overwritten under the switch."""
+    root = _fixture_repository(
+        tmp_path, "Path('developer.txt').write_text('rewritten')"
+    )
+    (root / "developer.txt").write_text("developer work", encoding="utf-8")
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "new: developer.txt" in output
+
+
+def test_guard_switch_rejects_deleted_modified_file(tmp_path):
+    """Deleting an initially modified file must still be reported."""
+    root = _fixture_repository(tmp_path, "Path('seed.txt').unlink()")
+    (root / "seed.txt").write_text("developer work", encoding="utf-8")
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "deleted: seed.txt" in output
+
+
+def test_guard_switch_rejects_restored_deleted_file(tmp_path):
+    """Restoring an initially absent tracked file must still be reported."""
+    root = _fixture_repository(tmp_path, "Path('seed.txt').write_text('original')")
+    (root / "seed.txt").unlink()
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "changed: seed.txt" in output
+
+
+def test_guard_switch_rejects_reset_modified_file(tmp_path):
+    """Returning modified bytes to HEAD still discards the developer's work."""
+    root = _fixture_repository(tmp_path, "Path('seed.txt').write_text('original')")
+    (root / "seed.txt").write_text("developer work", encoding="utf-8")
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "changed: seed.txt" in output

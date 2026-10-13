@@ -7,6 +7,7 @@ This module provides:
 - Test collection filtering
 """
 
+import hashlib
 import os
 import shutil
 import subprocess
@@ -364,13 +365,27 @@ def _undeclared_tree_changes(config, changes):
     return result
 
 
+def _tree_content(path):
+    """Digest initially dirty bytes, preserving symlink and absent-file state."""
+    if path.is_symlink():
+        return "symlink", hashlib.sha256(os.fsencode(os.readlink(path))).hexdigest()
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except FileNotFoundError:
+        return None
+    return "file", digest.hexdigest()
+
+
 def _configure_tree_guard(config):
     """Capture pre-existing work only when the developer requests that mode."""
     if hasattr(config, "workerinput"):
         return
     config._tree_guard_root = None
     config._tree_guard_cwd = Path.cwd()
-    config._tree_guard_initial = set()
+    config._tree_guard_initial = {}
     config._tree_guard_error = None
     config._tree_guard_note = None
     if shutil.which("git") is None:
@@ -386,7 +401,10 @@ def _configure_tree_guard(config):
     config._tree_guard_root = Path(os.fsdecode(result.stdout).strip())
     if config.getoption("allow_existing_tree_changes"):
         try:
-            config._tree_guard_initial = set(_tree_changes(config._tree_guard_root))
+            config._tree_guard_initial = {
+                path: _tree_content(config._tree_guard_root / path)
+                for path in _tree_changes(config._tree_guard_root)
+            }
         except (OSError, subprocess.SubprocessError):
             config._tree_guard_error = "Git could not record the initial tree"
 
@@ -403,16 +421,18 @@ def _finish_tree_guard(session):
     changes = {}
     if error is None:
         try:
-            changes = _undeclared_tree_changes(
-                config, _tree_changes(config._tree_guard_root)
-            )
+            changes = _tree_changes(config._tree_guard_root)
+            for path, initial in config._tree_guard_initial.items():
+                current = _tree_content(config._tree_guard_root / path)
+                if current == initial:
+                    changes.pop(path, None)
+                else:
+                    changes[path] = changes.get(
+                        path, "deleted" if current is None else "changed"
+                    )
+            changes = _undeclared_tree_changes(config, changes)
         except (OSError, subprocess.SubprocessError):
-            error = "Git could not read the final tree"
-    changes = {
-        path: kind
-        for path, kind in changes.items()
-        if path not in config._tree_guard_initial
-    }
+            error = "The final tree could not be read"
     if not changes and error is None:
         return
     print("\nRepository tree preservation failed:")
@@ -436,7 +456,7 @@ def pytest_addoption(parser):
         "--allow-existing-tree-changes",
         action="store_true",
         default=False,
-        help="Report only paths newly changed during the session; see docs/development/index.md",
+        help="Compare existing dirty content and report new changes; see docs/development/index.md",
     )
     parser.addoption(
         "--performance-db-path",
