@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -56,9 +57,9 @@ def _get_nested(payload, dotted_path):
     return value
 
 
-def _assert_json_expectations(workflow):
+def _assert_json_expectations(workflow, output_root=REPO_ROOT):
     for assertion in workflow.get("assertions", {}).get("json", []):
-        with (REPO_ROOT / assertion["path"]).open() as fp:
+        with (output_root / assertion["path"]).open() as fp:
             payload = json.load(fp)
 
         for dotted_path, expected in assertion.get("equals", {}).items():
@@ -68,9 +69,9 @@ def _assert_json_expectations(workflow):
             assert _get_nested(payload, dotted_path) == pytest.approx(expected)
 
 
-def _assert_csv_expectations(workflow):
+def _assert_csv_expectations(workflow, output_root=REPO_ROOT):
     for assertion in workflow.get("assertions", {}).get("csv", []):
-        df = pd.read_csv(REPO_ROOT / assertion["path"])
+        df = pd.read_csv(output_root / assertion["path"])
 
         if "row_count" in assertion:
             assert len(df) == assertion["row_count"]
@@ -84,7 +85,7 @@ def _assert_csv_expectations(workflow):
             assert actual_sum == pytest.approx(expected_sum)
 
 
-def _assert_bsee_production_summary(workflow, input_path: Path):
+def _assert_bsee_production_summary(workflow, input_path: Path, output_root=REPO_ROOT):
     if workflow["basename"] != "bsee":
         return
 
@@ -97,14 +98,29 @@ def _assert_bsee_production_summary(workflow, input_path: Path):
         return
 
     expected_oil_bbl = _expected_oil_bbl(input_path)
-    summary_df = pd.read_csv(REPO_ROOT / summary_outputs[0])
+    summary_df = pd.read_csv(output_root / summary_outputs[0])
     actual_oil_bbl = summary_df["O_CUMMULATIVE_PROD_MMBBL"].sum() * 1_000_000
     assert actual_oil_bbl == pytest.approx(expected_oil_bbl)
 
-    summary_json = (REPO_ROOT / summary_outputs[0]).with_suffix(".json")
+    summary_json = (output_root / summary_outputs[0]).with_suffix(".json")
     with summary_json.open() as fp:
         payload = json.load(fp)
     assert payload["totals"]["oil_bbl"] == pytest.approx(expected_oil_bbl)
+
+
+@pytest.fixture
+def workflow_root(workflow, tmp_path):
+    """Copy adjacent input files and registered fixtures without prior outputs."""
+    source_dir = REPO_ROOT / Path(workflow["input"]).parent
+    inputs = [
+        path.relative_to(REPO_ROOT) for path in source_dir.iterdir() if path.is_file()
+    ]
+    inputs.extend(workflow.get("data_source", {}).get("fixtures", []))
+    for relative_path in dict.fromkeys(inputs):
+        destination = tmp_path / relative_path
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(REPO_ROOT / relative_path, destination)
+    return tmp_path
 
 
 @pytest.mark.parametrize(
@@ -112,8 +128,8 @@ def _assert_bsee_production_summary(workflow, input_path: Path):
     _workflow_cases(),
     ids=[workflow["id"] for workflow in _workflow_cases()],
 )
-def test_registry_workflow_outputs(workflow):
-    input_path = REPO_ROOT / workflow["input"]
+def test_registry_workflow_outputs(workflow, workflow_root):
+    input_path = workflow_root / workflow["input"]
 
     cfg = engine(inputfile=str(input_path))
 
@@ -121,11 +137,11 @@ def test_registry_workflow_outputs(workflow):
     assert cfg["basename"] == workflow["basename"]
 
     for output in workflow["outputs"]:
-        assert (REPO_ROOT / output).exists(), output
+        assert (workflow_root / output).exists(), output
 
-    _assert_bsee_production_summary(workflow, input_path)
-    _assert_json_expectations(workflow)
-    _assert_csv_expectations(workflow)
+    _assert_bsee_production_summary(workflow, input_path, workflow_root)
+    _assert_json_expectations(workflow, workflow_root)
+    _assert_csv_expectations(workflow, workflow_root)
 
 
 @pytest.mark.parametrize(
@@ -133,10 +149,10 @@ def test_registry_workflow_outputs(workflow):
     _workflow_cases(),
     ids=[workflow["id"] for workflow in _workflow_cases()],
 )
-def test_module_yaml_invocation_exits_zero(workflow):
+def test_module_yaml_invocation_exits_zero(workflow, workflow_root):
     result = subprocess.run(
         [sys.executable, "-m", "worldenergydata", workflow["input"]],
-        cwd=REPO_ROOT,
+        cwd=workflow_root,
         env=_pythonpath_env(),
         text=True,
         capture_output=True,

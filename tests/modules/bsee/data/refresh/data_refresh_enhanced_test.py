@@ -11,6 +11,7 @@ Usage:
 
 # Standard library imports
 import os
+import shutil
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -104,7 +105,7 @@ def get_valid_pytest_output_file(pytest_output_file):
     return pytest_output_file
 
 
-def test_run_enhanced_process():
+def test_run_enhanced_process(tmp_path):
     """
     Main test function for enhanced data refresh with all optimizations.
 
@@ -118,6 +119,11 @@ def test_run_enhanced_process():
     # Use the enhanced configuration file with all features
     input_file = "data_refresh_enhanced.yml"
     input_file = get_valid_pytest_output_file(input_file)
+    if tmp_path is not None:
+        temporary_input = tmp_path / Path(input_file).name
+        if os.path.exists(input_file):
+            shutil.copy2(input_file, temporary_input)
+        input_file = str(temporary_input)
 
     # Check if file exists, if not create it
     if not os.path.exists(input_file):
@@ -126,6 +132,17 @@ def test_run_enhanced_process():
 
         # Create a minimal enhanced config if it doesn't exist
         create_default_enhanced_config(input_file)
+
+    if tmp_path is not None:
+        import yaml
+
+        with open(input_file) as stream:
+            config = yaml.safe_load(stream)
+        config.setdefault("parameters", {}).setdefault("filepath", {}).setdefault(
+            "apm", {}
+        )["bin"] = str(tmp_path / "bin" / "apd")
+        with open(input_file, "w") as stream:
+            yaml.safe_dump(config, stream)
 
     pytest_output_file = None
 
@@ -187,7 +204,7 @@ def create_default_enhanced_config(filepath):
 # Main execution
 if __name__ == "__main__":
     # Run the enhanced test directly (standalone mode)
-    test_run_enhanced_process()
+    test_run_enhanced_process(None)
 else:
     # When imported (e.g., by pytest), just expose the test function
     pass

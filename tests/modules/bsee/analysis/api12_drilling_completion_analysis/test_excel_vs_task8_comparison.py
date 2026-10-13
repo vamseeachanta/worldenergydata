@@ -354,10 +354,11 @@ class ExcelVsTask8Comparison:
     not Path(_EXCEL_CSV).exists() or not Path(_TASK8_CSV).exists(),
     reason="Requires BSEE results CSV files (run 'make data' first)",
 )
-def test_excel_vs_task8_comparison():
+def test_excel_vs_task8_comparison(tmp_path):
     """Test the comparison functionality"""
 
     comparator = ExcelVsTask8Comparison()
+    comparator.output_folder = str(tmp_path)
     report_path = comparator.run_comparison()
 
     print(f"\n+ Comparison complete!")
@@ -367,4 +368,4 @@ def test_excel_vs_task8_comparison():
 
 
 if __name__ == "__main__":
-    test_excel_vs_task8_comparison()
+    test_excel_vs_task8_comparison("results")

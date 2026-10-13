@@ -331,7 +331,9 @@ monitoring:
 
     def test_performance_metrics(self):
         """Test performance metrics collection."""
-        monitor = DashboardMonitor()
+        monitor = DashboardMonitor(
+            {"audit_file": str(self.output_dir / "performance_audit.jsonl")}
+        )
 
         # Simulate multiple operations
         for i in range(10):

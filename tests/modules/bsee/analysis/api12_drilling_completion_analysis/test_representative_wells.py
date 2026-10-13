@@ -188,7 +188,7 @@ class TestRepresentativeWells:
 
         return summary
 
-    def test_save_selected_wells_info(self):
+    def test_save_selected_wells_info(self, tmp_path):
         """Save the selected wells information to a file for later analysis."""
         import json
 
@@ -267,7 +267,7 @@ class TestRepresentativeWells:
         }
 
         # Save to results directory
-        output_file = "tests/modules/bsee/analysis/api12_drilling_completion_analysis/results/selected_wells_info.json"
+        output_file = Path(tmp_path) / "selected_wells_info.json"
         with open(output_file, "w") as f:
             json.dump(selected_wells_info, f, indent=2)
 
@@ -281,4 +281,6 @@ if __name__ == "__main__":
     test.test_select_high_and_low_difference_wells()
     test.test_detailed_well_comparison()
     test.test_comprehensive_summary_generation()
-    test.test_save_selected_wells_info()
+    test.test_save_selected_wells_info(
+        "tests/modules/bsee/analysis/api12_drilling_completion_analysis/results"
+    )

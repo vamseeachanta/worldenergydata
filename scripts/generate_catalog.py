@@ -539,8 +539,11 @@ def generate_catalog(
     module_filter: str | None = None,
     dry_run: bool = False,
     external_data_root: Path | None = None,
+    output_root: Path | None = None,
 ) -> dict[str, Any]:
+    """Scan existing inputs and write inventories under the selected output root."""
     data_root = root / "data" / "modules"
+    destination_root = root if output_root is None else output_root
     ext_modules = external_data_root / "modules" if external_data_root else None
 
     if not data_root.exists() and not ext_modules:
@@ -585,9 +588,9 @@ def generate_catalog(
         schema = scan_module(mp, root, external_mod_path=ext_mp, osha_dict=use_osha)
         mods[name] = schema
         if not dry_run and mp.is_relative_to(root):
-            sp = mp / "schema.yaml"
+            sp = destination_root / mp.relative_to(root) / "schema.yaml"
             _write_yaml_atomic(sp, schema)
-            written.append(str(sp.relative_to(root)))
+            written.append(str(sp.relative_to(destination_root)))
 
     tot_ds = sum(len(m.get("datasets", [])) for m in mods.values())
     tot_bs = sum(len(m.get("binary_stores", [])) for m in mods.values())
@@ -606,9 +609,9 @@ def generate_catalog(
         "modules": mods,
     }
     if not dry_run:
-        cp = root / "data" / "catalog.yaml"
+        cp = destination_root / "data" / "catalog.yaml"
         _write_yaml_atomic(cp, catalog)
-        written.append(str(cp.relative_to(root)))
+        written.append(str(cp.relative_to(destination_root)))
     print(f"Scanned {len(mods)} modules, {tot_ds} datasets, {tot_bs} binary stores")
     print(f"Total size: {_humanize_bytes(tot_sz)}")
     if written:
@@ -627,6 +630,7 @@ def main() -> None:
     ap.add_argument("--module", help="Process only this module")
     ap.add_argument("--dry-run", action="store_true", help="Scan without writing")
     ap.add_argument("--project-root", default=None, help="Override project root")
+    ap.add_argument("--output-root", type=Path, default=None, help="Override output root")
     ap.add_argument(
         "--external-data-root",
         default=None,
@@ -653,6 +657,7 @@ def main() -> None:
         module_filter=args.module,
         dry_run=args.dry_run,
         external_data_root=ext_root,
+        output_root=args.output_root,
     )
 
 
