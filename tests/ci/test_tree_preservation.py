@@ -71,7 +71,7 @@ def _child_environment():
     return env
 
 
-def _fixture_repository(tmp_path, body):
+def _fixture_repository(tmp_path, body, fixtures=""):
     """Build a minimal fixture HEAD without changing Git identity/configuration."""
     root = tmp_path / "case"
     root.mkdir()
@@ -79,7 +79,7 @@ def _fixture_repository(tmp_path, body):
     (root / "pytest.ini").write_text("[pytest]\n", encoding="utf-8")
     (root / "seed.txt").write_text("original", encoding="utf-8")
     (root / "test_sample.py").write_text(
-        "from pathlib import Path\ndef test_sample():\n    " + body + "\n",
+        f"from pathlib import Path\ndef test_sample({fixtures}):\n    " + body + "\n",
         encoding="utf-8",
     )
     _git(root, "init", "-q")
@@ -264,3 +264,74 @@ def test_guard_clears_inherited_git_bindings(tmp_path):
     assert _git(REPO_ROOT, "rev-parse", "HEAD") == caller_head
     assert hashlib.sha256(caller_index.read_bytes()).hexdigest() == before_index
     assert hashlib.sha256(source.read_bytes()).hexdigest() == before_source
+
+
+def test_guard_accepts_declared_junit_file(tmp_path):
+    """Only the JUnit file declared for this session is exempted."""
+    root = _fixture_repository(tmp_path, "assert True")
+    result = _session(root, tmp_path, "--junitxml=declared.xml")
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, output
+    assert (root / "declared.xml").is_file()
+    assert "new: declared.xml" not in output
+
+
+@pytest.mark.parametrize(
+    "kind,destination",
+    [
+        ("json", "declared.json"),
+        ("html", "declared-html"),
+        ("annotate", "declared-annotate"),
+        (None, None),
+    ],
+)
+def test_guard_accepts_declared_coverage_output(tmp_path, kind, destination):
+    """Coverage file and directory destinations, plus data, are session outputs."""
+    pytest.importorskip("pytest_cov", reason="Coverage integration requires pytest-cov")
+    root = _fixture_repository(tmp_path, "assert True")
+    options = ["--cov=test_sample"]
+    if kind is not None:
+        options.append(f"--cov-report={kind}:{destination}")
+    result = _session(root, tmp_path, *options)
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, output
+    if destination is not None:
+        assert (root / destination).exists()
+    assert (root / ".coverage").is_file()
+    assert "Repository tree preservation failed" not in output
+
+
+def test_guard_accepts_declared_benchmark_file(tmp_path):
+    """The benchmark option's opened output file is exempted."""
+    pytest.importorskip(
+        "pytest_benchmark", reason="Benchmark integration requires pytest-benchmark"
+    )
+    root = _fixture_repository(
+        tmp_path, "assert benchmark(lambda: 1) == 1", fixtures="benchmark"
+    )
+    result = _session(root, tmp_path, "--benchmark-json=declared.json")
+    output = result.stdout + result.stderr
+    assert result.returncode == 0, output
+    assert '"benchmarks":' in (root / "declared.json").read_text(encoding="utf-8")
+    assert "new: declared.json" not in output
+
+
+def test_guard_declared_output_does_not_hide_other_files(tmp_path):
+    """A declared report does not exempt a neighbouring unrequested file."""
+    root = _fixture_repository(tmp_path, "Path('created.txt').write_text('new')")
+    result = _session(root, tmp_path, "--junitxml=declared.xml")
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "new: created.txt" in output
+    assert "new: declared.xml" not in output
+
+
+def test_guard_rejects_formerly_listed_report(tmp_path):
+    """A formerly excepted shard name fails unless this session declares it."""
+    root = _fixture_repository(
+        tmp_path, "Path('test-results-unit-ci.xml').write_text('new')"
+    )
+    result = _session(root, tmp_path)
+    output = result.stdout + result.stderr
+    assert result.returncode != 0, output
+    assert "new: test-results-unit-ci.xml" in output

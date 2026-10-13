@@ -258,97 +258,6 @@ _performance_tracker = None
 _performance_db_path = None
 
 
-# Exact report paths from the reusable test workflow's JUnit option.
-_TREE_OUTPUT_EXCEPTIONS = frozenset(
-    {
-        "test-results-unit-analysis.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-audit.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-australia.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-baker_hughes.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-brazil_anp.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-bsee.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-canada.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-ci.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-cli.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-common.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-config.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-consolidated.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-core.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-cost.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-curated.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-dashboard.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-data_procurement.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-decommissioning.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-drilling.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-drilling_pressure_management.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-economics.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-eia.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-eia_us.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-energy_mix.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-fdas.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-federal_acreage.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-field_development.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-financial.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-gtm.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-hse.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-hygiene.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-kansas_kgs.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-landman.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-lng_terminals.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-lower_tertiary.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-marine.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-marine_safety.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-metocean.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-mexico_cnh.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-modules.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-pipeline_ci_cd.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-pipeline_safety.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-production.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-reporting.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-reservoir.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-safety_analysis.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-scheduler.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-site.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-sodir.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-spain.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-state_regulators.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-subsea.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-texas_rrc.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-ukcs.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-validation.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-vessel_fleet.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-vessel_hull_models.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-well_bore_design.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-well_planning.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-well_production_dashboard.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-west_africa.xml",  # Reusable test workflow JUnit output.
-        "test-results-unit-worldenergydata.xml",  # Reusable test workflow JUnit output.
-        "test-results-_archive.xml",  # Reusable test workflow JUnit output.
-        "test-results-agent_os.xml",  # Reusable test workflow JUnit output.
-        "test-results-ai_test_generation.xml",  # Reusable test workflow JUnit output.
-        "test-results-benchmarks.xml",  # Reusable test workflow JUnit output.
-        "test-results-ci.xml",  # Reusable test workflow JUnit output.
-        "test-results-common.xml",  # Reusable test workflow JUnit output.
-        "test-results-contracts.xml",  # Reusable test workflow JUnit output.
-        "test-results-cron.xml",  # Reusable test workflow JUnit output.
-        "test-results-drilling.xml",  # Reusable test workflow JUnit output.
-        "test-results-governance.xml",  # Reusable test workflow JUnit output.
-        "test-results-hse.xml",  # Reusable test workflow JUnit output.
-        "test-results-marine.xml",  # Reusable test workflow JUnit output.
-        "test-results-marine_safety.xml",  # Reusable test workflow JUnit output.
-        "test-results-modules.xml",  # Reusable test workflow JUnit output.
-        "test-results-repo_structure.xml",  # Reusable test workflow JUnit output.
-        "test-results-reservoir.xml",  # Reusable test workflow JUnit output.
-        "test-results-scheduler.xml",  # Reusable test workflow JUnit output.
-        "test-results-workflow_api.xml",  # Reusable test workflow JUnit output.
-        "test-results-workflows.xml",  # Reusable test workflow JUnit output.
-        "test-results-_root.xml",  # Reusable test workflow JUnit output.
-        "test-results-integration.xml",  # Reusable test workflow JUnit output.
-        "test-results-performance.xml",  # Reusable test workflow JUnit output.
-    }
-)
-
-
 def _tree_git_environment():
     """Prevent inherited Git bindings from selecting another checkout."""
     env = os.environ.copy()
@@ -390,11 +299,69 @@ def _tree_changes(root):
             if "R" in flags:
                 changes[original] = "deleted"
                 changes[path] = "new"
-    return {
-        path: kind
-        for path, kind in changes.items()
-        if path not in _TREE_OUTPUT_EXCEPTIONS
-    }
+    return changes
+
+
+def _declared_tree_outputs(config):
+    """Read exact file and directory destinations from active session options."""
+    files, directories = [], []
+    junit = config.getoption("xmlpath", default=None)
+    if junit:
+        files.append(os.path.expanduser(os.path.expandvars(junit)))
+    benchmark = config.getoption("benchmark_json", default=None)
+    if benchmark is not None:
+        files.append(benchmark.name)
+    plugin = config.pluginmanager.getplugin("_cov")
+    controller = getattr(plugin, "cov_controller", None)
+    cov = getattr(controller, "cov", None)
+    if cov is not None:
+        files.append(cov.config.data_file)
+        defaults = {
+            "html": cov.config.html_dir,
+            "xml": cov.config.xml_output,
+            "json": cov.config.json_output,
+            "lcov": cov.config.lcov_output,
+        }
+        reports = config.getoption("cov_report", default={})
+        if not isinstance(reports, dict):
+            reports = dict.fromkeys(reports)
+        for kind, destination in reports.items():
+            if kind in ("term", "term-missing", ""):
+                continue
+            destination = destination or defaults.get(kind)
+            if kind == "annotate" and destination is None:
+                files.extend(
+                    name + ",cover" for name in cov.get_data().measured_files()
+                )
+            elif destination is not None:
+                outputs = directories if kind in ("html", "annotate") else files
+                outputs.append(destination)
+
+    def absolute(paths):
+        """Keep plug-in pathname semantics without resolving symlink targets."""
+        return {
+            Path(os.path.abspath(config._tree_guard_cwd / path))
+            for path in paths
+            if path not in ("-", "<stdout>", "<stderr>")
+        }
+
+    return absolute(files), absolute(directories)
+
+
+def _undeclared_tree_changes(config, changes):
+    """Exclude only exact requested files and descendants of requested folders."""
+    files, directories = _declared_tree_outputs(config)
+    result = {}
+    for path, kind in changes.items():
+        absolute = Path(os.path.abspath(config._tree_guard_root / path))
+        if absolute in files:
+            continue
+        if any(
+            absolute == folder or folder in absolute.parents for folder in directories
+        ):
+            continue
+        result[path] = kind
+    return result
 
 
 def _configure_tree_guard(config):
@@ -402,6 +369,7 @@ def _configure_tree_guard(config):
     if hasattr(config, "workerinput"):
         return
     config._tree_guard_root = None
+    config._tree_guard_cwd = Path.cwd()
     config._tree_guard_initial = set()
     config._tree_guard_error = None
     config._tree_guard_note = None
@@ -435,7 +403,9 @@ def _finish_tree_guard(session):
     changes = {}
     if error is None:
         try:
-            changes = _tree_changes(config._tree_guard_root)
+            changes = _undeclared_tree_changes(
+                config, _tree_changes(config._tree_guard_root)
+            )
         except (OSError, subprocess.SubprocessError):
             error = "Git could not read the final tree"
     changes = {
