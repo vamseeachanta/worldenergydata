@@ -1,0 +1,5 @@
+# One entry per retired generated path: path, sha256, date, reason, disposition,
+# and follow_up (a repository issue or pull request URL).
+# Disposition: cold-store with dataset_path and digest_list (relative paths),
+# or reproducible with command. SHA-256 identifies the last committed bytes.
+retirements: []
