@@ -1,12 +1,12 @@
 # ABOUTME: Generate client-facing 1-page capability PDFs (light theme, branded).
 # ABOUTME: One PDF per left-nav section and per live work; rendered via headless Chrome.
-"""Build the **capability one-pagers** — a single-page, client-facing PDF for every
-left-nav section and every live work surfaced on ``/capabilities/``.
+"""Build self-contained capability HTML pages and sibling single-page PDFs.
 
-Each one-pager is a self-contained, light-themed, A4 page (worldenergydata logo,
-what-it-is, key figures, what-you-get, and the live link) rendered to PDF with
-headless Chrome. Output: ``reports/capabilities/pdf/<id>.pdf`` (committed frozen
-artifacts; ``build_pages.py`` copies them to ``public/capabilities/pdf/``).
+Each light-themed A4 page contains the worldenergydata logo, description, figures,
+deliverables and live address. The HTML print source is kept beside its PDF in
+``reports/capabilities/pdf/``; ``build_pages.py`` copies both to the published tree.
+Headless Chrome prints the kept HTML. The optional ``--brand CSS_FILE`` argument
+inlines a resource-free stylesheet after the default styles.
 
 Run:
     .venv/bin/python scripts/capabilities/build_onepagers.py
@@ -15,11 +15,14 @@ Run:
 
 from __future__ import annotations
 
+import argparse
+import base64
 import html
 import os
+import re
 import shutil
 import subprocess
-import tempfile
+from collections.abc import Callable
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -39,161 +42,403 @@ _LOGO = """<svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-lab
     <line x1="13.5" y1="45" x2="50.5" y2="45" stroke="#0B3D91" stroke-width="2"/>
   </g>
   <circle cx="32" cy="32" r="3" fill="#2BB2A6"/>
-  <text x="74" y="43" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">
+  <text x="74" y="43" font-family="Open Sans" font-size="31" font-weight="800" letter-spacing="-0.6">
     <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
   </text>
 </svg>"""
 
-# Each spec: id, kind (section|work), title, std (basis line), path (live page),
-# blurb (what it is), figures [(value,label)], bullets (what you get).
-SPECS: list[dict] = [
-    # ---- sections (one per left-nav menu item) ----
-    dict(id="sec-economics", kind="section", title="Field economics & benchmarking",
-         std="BSEE OGOR-A · life-to-date, public data", path="capabilities/#economics",
-         blurb="Per-well, per-block and per-field NPV (@10%) and breakeven WTI for the seven "
-               "Lower-Tertiary deepwater fields, computed from public BSEE production filings — "
-               "life-to-date, not full-cycle — and regression-guarded by a CI test on every change.",
-         figures=[("7", "deepwater fields"), ("158", "producing wells"), ("685.0", "MMbbl cum. oil")],
-         bullets=["Life-to-date cashflow, NPV timeline and breakeven per field",
-                  "Price sensitivity (dNPV/dWTI), reproducible to the cent",
-                  "Portfolio roll-up plus cross-field well benchmarking (2010–latest)"]),
-    dict(id="sec-wells", kind="section", title="Well operations",
-         std="BSEE Well Activity Reports · directional surveys", path="capabilities/#wells",
-         blurb="Drilling and completion performance and well geometry reconstructed directly "
-               "from BSEE Well Activity Reports for the Lower-Tertiary deepwater play.",
-         figures=[("217", "wells"), ("12", "fields"), ("38 / 24 d", "median drill / completion")],
-         bullets=["Spud→TD drilling and TD→final-activity completion spans, medians by field",
-                  "Per-well depth and water-depth context (to 37,743 ft MD)",
-                  "Interactive 3D directional surveys from one frozen data contract"]),
-    dict(id="sec-playbook", kind="section", title="Offshore field-development playbook",
-         std="SubseaIQ catalog × BSEE assets", path="capabilities/#playbook",
-         blurb="From a field's parameters to a ranked development concept, a to-scale subsea "
-               "schematic and indicative economics — generated deterministically across every "
-               "major offshore region.",
-         figures=[("~2,150", "global fields"), ("333", "Gulf of Mexico"), ("115", "BSEE-matched")],
-         bullets=["Concept-selection engine at Concept-Select / FEL-1 fidelity",
-                  "To-scale subsea schematics and 3D hardware, self-contained",
-                  "Recommended vs as-built concept across 115 BSEE-cross-referenced fields"]),
-    dict(id="sec-safety", kind="section", title="Offshore safety & HSE",
-         std="BSEE · USCG · TSB · IMO GISIS · MAIB", path="capabilities/#safety",
-         blurb="Public marine-casualty and offshore-incident data, normalized and analysed "
-               "deterministically — incident classification, cause-event breakdowns, and "
-               "engineering screens anchored to real failures.",
-         figures=[("102,618", "incident records"), ("7,349", "fatalities analysed"), ("13,338", "IMO casualties")],
-         bullets=["Cross-database fatality / foundering / hatch breakdowns",
-                  "IMO GISIS casualties by severity, vessel type and flag state (1900–2025)",
-                  "Mooring-fatigue screening anchored to real BSEE failure incidents"]),
-    dict(id="sec-validation", kind="section", title="Verified figures & provenance",
-         std="source-traceable · CI-guarded", path="capabilities/#validation",
-         blurb="Every published number traces to a public regulatory filing; the economics are "
-               "regression-guarded by CI so a result can never silently drift from the method it "
-               "claims.",
-         figures=[("BSEE", "public source"), ("CI", "regression-guarded"), ("100%", "source-traceable")],
-         bullets=["Every figure labelled with its source and any data limits",
-                  "Deterministic, stdlib-only static build — identical for everyone, every time",
-                  "Where data is incomplete, each page says so rather than guessing"]),
-    # ---- works (one per live card) ----
-    *[dict(id=f"economics-{slug}", kind="work", title=f"{name} field economics",
-           std="BSEE OGOR-A · life-to-date, public data", path=f"economics-{slug}.html",
-           blurb=f"Per-well stackup, NPV timeline and critical-operations detail for the {name} "
-                 "Lower-Tertiary deepwater field, life-to-date on public BSEE data (not full-cycle).",
-           figures=[], bullets=["Per-well and field-level NPV (@10%), breakeven WTI and cashflow",
-                                 "NPV timeline with drilling/completion operation markers",
-                                 "Deterministic and regression-guarded by CI on every change"])
-      for slug, name in [("anchor", "Anchor"), ("big_foot", "Big Foot"),
-                         ("cascade_chinook", "Cascade–Chinook"), ("jack_st_malo", "Jack / St. Malo"),
-                         ("julia", "Julia"), ("shenandoah", "Shenandoah"), ("stones", "Stones")]],
-    dict(id="portfolio", kind="work", title="Lower-Tertiary portfolio summary",
-         std="field-by-field roll-up", path="portfolio.html",
-         blurb="The whole Lower-Tertiary play at a glance, aggregated from the per-field "
-               "economics.",
-         figures=[("7", "fields"), ("158", "wells"), ("685.0", "MMbbl")],
-         bullets=["Side-by-side NPV and production across all seven fields",
-                  "Inherits each field's figures and data limits"]),
-    dict(id="benchmark", kind="work", title="Well benchmarking",
-         std="BSEE OGOR-A · 2010–latest", path="benchmark.html",
-         blurb="Cross-field per-well performance benchmarking over the Lower-Tertiary play.",
-         figures=[], bullets=["Normalized cumulative and rate comparisons across fields",
-                              "Same data window as the field economics"]),
-    dict(id="completion", kind="work", title="Drilling & completion days",
-         std="BSEE Well Activity Reports", path="completion/",
-         blurb="WAR-derived drilling and completion durations across the Lower-Tertiary "
-               "deepwater fields, with medians by field and full depth context.",
-         figures=[("217", "wells"), ("12", "fields"), ("38 / 24 d", "median drill / compl.")],
-         bullets=["Spud→TD drilling and TD→final-activity completion spans",
-                  "Per-field medians robust to sidetracks and recompletions",
-                  "Deterministic from a frozen WAR-derived reference workbook"]),
-    dict(id="well-path", kind="work", title="Julia well paths (3D)",
-         std="BSEE directional surveys", path="well-path.html",
-         blurb="Interactive 3D directional surveys for the Julia development, two renderers "
-               "(Plotly + Three.js) driven by one frozen JSON data contract.",
-         figures=[], bullets=["North/east-correct 3D well geometry",
-                              "One data contract → two independent renderers"]),
-    dict(id="fd-showcase", kind="work", title="Field-development capability showcase",
-         std="concept → schematic → economics", path="field-development/showcase.html",
-         blurb="What the field-development playbook produces end-to-end, with generated subsea "
-               "schematics for real fields across every major offshore region.",
-         figures=[], bullets=["Concept selection, schematic and indicative economics in one view",
-                              "Verified exemplar fields per offshore region"]),
-    dict(id="fd-playbook", kind="work", title="Interactive playbook",
-         std="live parameter sliders", path="field-development/playbook.html",
-         blurb="Move water depth, reserves and tieback distance and watch the recommended "
-               "development concept and its schematic update live.",
-         figures=[], bullets=["Instant concept recommendation from field parameters",
-                              "To-scale schematic regenerates as you move the sliders"]),
-    dict(id="fd-portfolio", kind="work", title="Deepwater portfolio",
-         std="10-field Gulf of Mexico", path="field-development/portfolio/",
-         blurb="Full field-development plans for a 10-field deepwater Gulf of Mexico portfolio, "
-               "one page per field.",
-         figures=[("10", "fields")], bullets=["DEXPI-style layout plus 3D hardware",
-                                              "One self-contained page per field"]),
-    dict(id="fd-bsee-matched", kind="work", title="BSEE-matched fields",
-         std="recommended vs as-built", path="field-development/bsee-matched/",
-         blurb="Recommended versus as-built development concept, with schematics, across "
-               "BSEE-cross-referenced Gulf of Mexico fields.",
-         figures=[("115", "fields")], bullets=["Engine pick vs the real as-built concept",
-                                               "Schematics for every matched field"]),
-    dict(id="ms-exec", kind="work", title="Marine safety analytics",
-         std="TSB · IMO GISIS · MAIB", path="marine_safety/executive_summary.html",
-         blurb="Cross-database marine-casualty analysis — the executive summary and entry point "
-               "to the fatality, foundering and hatch breakdowns.",
-         figures=[("102,618", "records"), ("7,349", "fatalities")],
-         bullets=["Combined public casualty databases, normalized",
-                  "Links through to fatality / foundering / hatch detail"]),
-    dict(id="ms-fatality", kind="work", title="Fatality analysis",
-         std="cross-database", path="marine_safety/fatality_analysis.html",
-         blurb="Fatal-incident breakdown and leading causes across the combined casualty databases.",
-         figures=[], bullets=["Leading fatal-incident causes ranked", "Counts by category"]),
-    dict(id="ms-foundering", kind="work", title="Foundering analysis",
-         std="cross-database", path="marine_safety/foundering_analysis.html",
-         blurb="Foundering-incident breakdown, fatality distribution and patterns.",
-         figures=[], bullets=["Fatality distribution per incident", "Pattern breakdown"]),
-    dict(id="ms-hatch", kind="work", title="Hatch analysis",
-         std="cross-database", path="marine_safety/hatch_analysis.html",
-         blurb="Hatch-maloperation incidents detected and classified by severity.",
-         figures=[], bullets=["Severity classification of detected incidents",
-                              "Regex-detected from the full incident corpus"]),
-    dict(id="imo", kind="work", title="IMO GISIS casualties",
-         std="IMO GISIS public database", path="IMO_GISIS_Executive_Report.html",
-         blurb="Marine casualties by severity, vessel type and flag state from the IMO GISIS "
-               "public database, 1900–2025.",
-         figures=[("13,338", "casualties"), ("38.7%", "very serious")],
-         bullets=["Severity, vessel-type and flag-state breakdowns",
-                  "125-year coverage with trend analysis"]),
-    dict(id="mooring", kind="work", title="Mooring-fatigue grounded card",
-         std="DNV-OS-E301 T-N curves", path="hse/mooring-fatigue-grounded-card.html",
-         blurb="Mooring fatigue-life screening anchored to real BSEE mooring-failure incidents.",
-         figures=[("18.4 yr", "governing life"), ("25 yr", "design")],
-         bullets=["T-N curve fatigue screen vs design life",
-                  "Anchored to documented BSEE failure precedents"]),
-]
+# Editorial revision; independent of the print date.
+REVISION_DATE = "2026-10-13"
+
+# id, kind, title, source and data basis, live path, deliverable, figures, bullets.
+SPECS: list[dict] = [{'id': 'sec-economics',
+  'kind': 'section',
+  'title': 'Field economics and production comparison',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'capabilities/#economics',
+  'blurb': 'Life-to-date field, block and well cashflow for the selected deepwater Gulf of Mexico '
+           'developments. The comparison covers recorded production and costs estimated from the '
+           'stated assumptions, rather than a full-cycle forecast.',
+  'figures': [['7', 'developments recorded as producing in the reference population']],
+  'bullets': ['Net present value at a 10% annual discount rate and field cashflow timelines',
+              'Oil-price sensitivity and field breakeven comparisons',
+              'Well and block contributions, with shared costs allocated by production share']},
+ {'id': 'economics-anchor',
+  'kind': 'work',
+  'title': 'Anchor field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-anchor.html',
+  'blurb': 'The field record starts production in 2024-08. The reference population contains 2 '
+           'producing wells and 15 total wellbores. Shared field costs are allocated by production '
+           'share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'economics-big_foot',
+  'kind': 'work',
+  'title': 'Big Foot field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-big_foot.html',
+  'blurb': 'A deepwater Gulf of Mexico field. The field record starts production in 2018-11. The '
+           'reference population contains 7 producing wells and 38 total wellbores. Shared field '
+           'costs are allocated by production share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'economics-cascade_chinook',
+  'kind': 'work',
+  'title': 'Cascade–Chinook field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-cascade_chinook.html',
+  'blurb': 'The corrected field record starts production in 2012-09. The reference population '
+           'contains 3 producing wells and 14 total wellbores. Shared field costs are allocated by '
+           'production share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'economics-jack_st_malo',
+  'kind': 'work',
+  'title': 'Jack / St. Malo field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-jack_st_malo.html',
+  'blurb': 'The field record starts production in 2014-12. The reference population contains 22 '
+           'producing wells and 73 total wellbores. Shared field costs are allocated by production '
+           'share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'economics-julia',
+  'kind': 'work',
+  'title': 'Julia field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-julia.html',
+  'blurb': 'The field record starts production in 2016-03. The reference population contains 4 '
+           'producing wells and 9 total wellbores. Shared field costs are allocated by production '
+           'share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'economics-shenandoah',
+  'kind': 'work',
+  'title': 'Shenandoah field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-shenandoah.html',
+  'blurb': 'First production is recorded in 2025-02. Through the stated cut-off the record '
+           'contains early production from 1 producing well and 23 total wellbores. Economics are '
+           'not yet evaluated on this page; the recorded return measure is absent.',
+  'figures': [],
+  'bullets': ['First recorded production month and reference window',
+              'Producing-well and total-wellbore population',
+              'Economics not yet evaluated for this early-production record']},
+ {'id': 'economics-stones',
+  'kind': 'work',
+  'title': 'Stones field economics',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'economics-stones.html',
+  'blurb': 'The field record starts production in 2016-09. The reference population contains 10 '
+           'producing wells and 22 total wellbores. Shared field costs are allocated by production '
+           'share.',
+  'figures': [],
+  'bullets': ['Net present value at a 10% annual discount rate and field breakeven oil price',
+              'Well and block cashflow contributions and production totals',
+              'Cashflow timeline with drilling and completion activity context']},
+ {'id': 'portfolio',
+  'kind': 'work',
+  'title': 'Lower Tertiary economics portfolio',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'portfolio.html',
+  'blurb': 'Field-level production and life-to-date cashflow are compared for the selected '
+           'deepwater Gulf of Mexico reference population. Recorded producing status includes the '
+           'early-production development; the count does not imply an evaluated return for each '
+           'field.',
+  'figures': [['7', 'developments recorded as producing in the reference population']],
+  'bullets': ['Field and well production comparisons with source limitations',
+              'Life-to-date cashflow and net present value at a 10% annual discount rate']},
+ {'id': 'benchmark',
+  'kind': 'work',
+  'title': 'Lower Tertiary well production comparison',
+  'std': 'Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United '
+         'States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax '
+         'basis · Price: historical West Texas Intermediate monthly prices; cost: recorded '
+         'drilling, completion, facilities and operating assumptions',
+  'path': 'benchmark.html',
+  'blurb': 'Well-level production contributions are compared within and between the selected '
+           'fields, with recorded volumes distinguished from indicative cost allocations.',
+  'figures': [],
+  'bullets': ['Well production profiles and cumulative contributions',
+              'Comparison of well and block contributions within each field',
+              'Shared field costs allocated by production share; source limitations stated']},
+ {'id': 'sec-wells',
+  'kind': 'section',
+  'title': 'Well operations and geometry',
+  'std': 'Bureau of Safety and Environmental Enforcement Well Activity Reports · data as of: '
+         '2025-08-03 (latest recorded completion activity in the reference workbook; acquisition '
+         'cut-off not recorded)',
+  'path': 'capabilities/#wells',
+  'blurb': 'Well activity, depth and surveyed geometry provide context for the reference '
+           'population. The twelve lease-name groups include separate Cascade and Chinook and Jack '
+           'and St. Malo groups. Kaskida and Tiber are recorded as pre-final-investment-decision; '
+           'North Platte is recorded as non-producing.',
+  'figures': [['217', 'well records with a recorded well identifier'],
+              ['12', 'lease-name groups in the reference population']],
+  'bullets': ['Spud-to-total-depth drilling spans and total-depth-to-final-activity completion '
+              'spans',
+              'Well depth and water-depth context; maximum measured depth: 37,743 feet',
+              'Julia survey trajectories linked to well identification and surface locations']},
+ {'id': 'completion',
+  'kind': 'work',
+  'title': 'Drilling and completion durations',
+  'std': 'Bureau of Safety and Environmental Enforcement Well Activity Reports · data as of: '
+         '2025-08-03 (latest recorded completion activity in the reference workbook; acquisition '
+         'cut-off not recorded)',
+  'path': 'completion/',
+  'blurb': 'Drilling and completion duration distributions are compared by lease group, '
+           'distinguishing zero recorded spans from non-zero durations. The twelve lease-name '
+           'groups include separate Cascade and Chinook and Jack and St. Malo groups. Kaskida and '
+           'Tiber are recorded as pre-final-investment-decision; North Platte is recorded as '
+           'non-producing.',
+  'figures': [['217', 'well records with a recorded well identifier'],
+              ['12', 'lease-name groups in the reference population']],
+  'bullets': ['Drilling: median of 217 records, including 33 with zero recorded days: 38 days; '
+              'median of 184 non-zero spans: 46.5 days',
+              'Completion: median of 217 records, including 31 with zero recorded days: 24 days; '
+              'median of 186 non-zero spans: 33 days',
+              'Spud-to-total-depth and total-depth-to-final-activity spans; source limitations '
+              'stated']},
+ {'id': 'well-path',
+  'kind': 'work',
+  'title': 'Julia well survey geometry',
+  'std': 'Bureau of Safety and Environmental Enforcement directional surveys and well metadata · '
+         'data as of: 2026-02-11 (survey-file vintage in the manifest); well-metadata file '
+         'vintage: 2025-07-31; source acquisition cut-off not recorded',
+  'path': 'well-path.html',
+  'blurb': 'Three-dimensional Julia well trajectories reconstructed from survey stations and '
+           'referenced to surface well locations.',
+  'figures': [],
+  'bullets': ['Northing, easting and depth along surveyed boreholes',
+              'Well identification and surface-location context']},
+ {'id': 'sec-playbook',
+  'kind': 'section',
+  'title': 'Offshore development concept comparison',
+  'std': 'SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental '
+         'Enforcement asset records · data as of: 2014 (approximate catalogue baseline; '
+         'acquisition cut-off not recorded) · pre-tax basis · Price: supplied field oil-price '
+         'inputs; cost: development-system assumptions and qualitative concept adjustments',
+  'path': 'capabilities/#playbook',
+  'blurb': 'Early concept comparison from field parameters, with subsea arrangements and '
+           'indicative economics. This is a concept-stage assessment rather than a detailed '
+           'development design.',
+  'figures': [['333', 'Gulf of Mexico fields in the catalogue'],
+              ['115', 'fields matched to regulator lease blocks']],
+  'bullets': ['Development concept screening from depth, reserves and tieback distance',
+              'Subsea arrangements and equipment geometry',
+              'Comparison with recorded development concepts where matched']},
+ {'id': 'fd-showcase',
+  'kind': 'work',
+  'title': 'Offshore development concept examples',
+  'std': 'SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental '
+         'Enforcement asset records · data as of: 2014 (approximate catalogue baseline; '
+         'acquisition cut-off not recorded) · pre-tax basis · Price: supplied field oil-price '
+         'inputs; cost: development-system assumptions and qualitative concept adjustments',
+  'path': 'field-development/showcase.html',
+  'blurb': 'Selected offshore-field examples illustrate concept screening, subsea arrangements and '
+           'indicative economics.',
+  'figures': [],
+  'bullets': ['Field parameters and screened development concepts',
+              'Subsea arrangements for the selected examples']},
+ {'id': 'fd-playbook',
+  'kind': 'work',
+  'title': 'Development concept sensitivity',
+  'std': 'SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental '
+         'Enforcement asset records · data as of: 2014 (approximate catalogue baseline; '
+         'acquisition cut-off not recorded)',
+  'path': 'field-development/playbook.html',
+  'blurb': 'Development concepts and subsea arrangements are compared as water depth, reserves and '
+           'tieback distance vary.',
+  'figures': [],
+  'bullets': ['Concept response to changes in field parameters',
+              'Subsea layout response to tieback-distance and water-depth changes']},
+ {'id': 'fd-portfolio',
+  'kind': 'work',
+  'title': 'Gulf of Mexico concept portfolio',
+  'std': 'SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental '
+         'Enforcement asset records · data as of: 2014 (approximate catalogue baseline; '
+         'acquisition cut-off not recorded)',
+  'path': 'field-development/portfolio/',
+  'blurb': 'Concept-stage development assessments for the selected deepwater Gulf of Mexico '
+           'fields.',
+  'figures': [['10', 'field profiles in the selected portfolio']],
+  'bullets': ['Per-field development concepts and subsea arrangements',
+              'Equipment geometry and field-parameter context']},
+ {'id': 'fd-bsee-matched',
+  'kind': 'work',
+  'title': 'Matched offshore development concepts',
+  'std': 'SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental '
+         'Enforcement asset records · data as of: 2014 (approximate catalogue baseline; '
+         'acquisition cut-off not recorded)',
+  'path': 'field-development/bsee-matched/',
+  'blurb': '333 Gulf of Mexico fields in the catalogue; 115 matched to regulator lease blocks. '
+           'Screened concepts are compared with recorded as-built concepts for the matched fields.',
+  'figures': [['115', 'Gulf of Mexico fields matched to regulator lease blocks']],
+  'bullets': ['Recorded and screened development concepts side by side',
+              'Subsea arrangements and source matching context']},
+ {'id': 'ms-exec',
+  'kind': 'work',
+  'title': 'Marine casualty overview',
+  'std': 'Transportation Safety Board of Canada marine occurrences; United States Coast Guard '
+         '1995–2012 recreational boating accident reports, distributed by Data Liberation Project; '
+         'International Maritime Organization Global Integrated Shipping Information System · data '
+         'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
+  'path': 'marine_safety/executive_summary.html',
+  'blurb': 'An overview of the combined casualty records, with source coverage and links to the '
+           'detailed incident analyses.',
+  'figures': [],
+  'bullets': ['Incident and fatality distributions by source and category',
+              'Links to fatality, foundering and hatch-incident analyses']},
+ {'id': 'ms-fatality',
+  'kind': 'work',
+  'title': 'Marine fatality analysis',
+  'std': 'Transportation Safety Board of Canada marine occurrences; United States Coast Guard '
+         '1995–2012 recreational boating accident reports, distributed by Data Liberation Project '
+         '· data as of: 2012 (Coast Guard record coverage end); Canadian acquisition cut-off not '
+         'recorded',
+  'path': 'marine_safety/fatality_analysis.html',
+  'blurb': 'Fatal incidents are grouped by recorded cause and category, with reported fatalities '
+           'distinguished from incident counts.',
+  'figures': [],
+  'bullets': ['Ranked causes among fatal incidents',
+              'Incident-category counts and recorded fatality distributions']},
+ {'id': 'ms-foundering',
+  'kind': 'work',
+  'title': 'Vessel foundering analysis',
+  'std': 'Transportation Safety Board of Canada marine occurrences; United States Coast Guard '
+         '1995–2012 recreational boating accident reports, distributed by Data Liberation Project; '
+         'International Maritime Organization Global Integrated Shipping Information System · data '
+         'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
+  'path': 'marine_safety/foundering_analysis.html',
+  'blurb': 'Foundering incidents are grouped to examine reported fatalities and recurring incident '
+           'patterns. Imported International Maritime Organization records contain no fatality '
+           'counts; those counts use the Canadian and Coast Guard records.',
+  'figures': [],
+  'bullets': ['Recorded fatalities per foundering incident',
+              'Cause and incident-pattern distributions']},
+ {'id': 'ms-hatch',
+  'kind': 'work',
+  'title': 'Hatch and opening incidents',
+  'std': 'Transportation Safety Board of Canada marine occurrences; United States Coast Guard '
+         '1995–2012 recreational boating accident reports, distributed by Data Liberation Project; '
+         'International Maritime Organization Global Integrated Shipping Information System · data '
+         'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
+  'path': 'marine_safety/hatch_analysis.html',
+  'blurb': 'Incident narratives are screened for hatch, door and opening maloperation, then '
+           'grouped by recorded severity.',
+  'figures': [],
+  'bullets': ['Severity distribution of identified incidents',
+              'Incident descriptions and source context for review']},
+ {'id': 'sec-safety',
+  'kind': 'section',
+  'title': 'Offshore and marine incident assessment',
+  'std': 'Transportation Safety Board of Canada marine occurrences; United States Coast Guard '
+         '1995–2012 recreational boating accident reports, distributed by Data Liberation Project; '
+         'International Maritime Organization Global Integrated Shipping Information System · data '
+         'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded; '
+         'Bureau of Safety and Environmental Enforcement incident corpus latest recorded incident: '
+         '2026-01-08',
+  'path': 'capabilities/#safety',
+  'blurb': 'Marine casualty and offshore incident records support cause analysis and engineering '
+           'screening. Source populations and missing information limit comparisons.',
+  'figures': [],
+  'bullets': ['Fatality, foundering and hatch-incident distributions',
+              'Casualty severity, vessel-type and flag-state comparisons',
+              'Mooring fatigue screening with illustrative loading and recorded failure context']},
+ {'id': 'imo',
+  'kind': 'work',
+  'title': 'International marine casualty analysis',
+  'std': 'International Maritime Organization Global Integrated Shipping Information System · data '
+         'as of: 2025-10-11 (collation date); latest export window ends 2025-10-10',
+  'path': 'IMO_GISIS_Executive_Report.html',
+  'blurb': 'Marine casualty records are grouped by severity, vessel type and flag state. Recorded '
+           'occurrences span 1900-01-01 to 2025-06-09.',
+  'figures': [],
+  'bullets': ['Severity and vessel-type distributions',
+              'Flag-state comparisons and occurrence-year trends']},
+ {'id': 'mooring',
+  'kind': 'work',
+  'title': 'Mooring fatigue life check',
+  'std': 'Bureau of Safety and Environmental Enforcement incident records; DNV-RP-C203 S-N curve '
+         'D, seawater with cathodic protection (edition not recorded in linked report); Vicinay '
+         'component catalogue · data as of: 2026-01-08 (latest recorded incident in the corpus)',
+  'path': 'hse/mooring-fatigue-grounded-card.html',
+  'blurb': 'Mooring fatigue screening compares calculated life with the design basis under an '
+           'illustrative tension spectrum. The component catalogue contains no cyclic load '
+           'history; project-specific loading is required for acceptance.',
+  'figures': [],
+  'bullets': ['Governing component life, design fatigue factor and design-life comparison',
+              'Recorded mooring failure incidents for engineering context',
+              'Loading and component assumptions stated beside the result']},
+ {'id': 'sec-validation',
+  'kind': 'section',
+  'title': 'Analysis sources and limitations',
+  'std': 'Bureau of Safety and Environmental Enforcement production and activity records; FDAS V30 '
+         'Financial Project Summary · data as of: 2026-01-30 (reference extraction); production '
+         'through 2025-05',
+  'path': 'capabilities/#validation',
+  'blurb': 'Source records, analysis assumptions and reference comparisons are presented with the '
+           'reported results so their basis and limitations can be examined.',
+  'figures': [],
+  'bullets': ['Production and economic inputs identified alongside results',
+              'Economics checked against the FDAS V30 Financial Project Summary',
+              'Missing inputs and indicative cost allocations identified']}]
+
+_FONT_DIR = _REPO / "reports/capabilities/assets/fonts/OpenSans"
+_FONT_CSS = "".join(
+    '@font-face{font-family:"Open Sans";font-style:normal;'
+    f'font-weight:{weight};src:url(data:font/ttf;base64,'
+    + base64.b64encode((_FONT_DIR / f"OpenSans-{name}.ttf").read_bytes()).decode("ascii")
+    + ') format("truetype")}'
+    for weight, name in ((400, "Regular"), (700, "Bold"), (800, "ExtraBold"))
+)
 
 _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>{title}</title>
 <style>
   @page{{size:A4;margin:0}}
   {tokens}
+  {font_css}
   *{{box-sizing:border-box;margin:0;padding:0}}
-  body{{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;
+  body{{font-family:"Open Sans";color:var(--ink);background:#fff;
        width:210mm;min-height:297mm;padding:18mm 18mm 14mm}}
   .top{{display:flex;align-items:center;justify-content:space-between;
        border-bottom:2px solid var(--navy);padding-bottom:12px}}
@@ -218,24 +463,23 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   .foot .live{{color:var(--navy);font-weight:700}}
   .cta{{background:linear-gradient(135deg,#0f8a7e,#0B3D91);color:#fff;font-weight:700;
        font-size:12px;padding:8px 14px;border-radius:9px;display:inline-block}}
-</style></head>
+</style>{brand_style}</head>
 <body>
-  <div class="top">{logo}<div class="kind">Capability one-pager</div></div>
+  <div class="top">{logo}<div class="kind">Capability summary</div></div>
   <div class="std">{std}</div>
   <h1>{title}</h1>
   <p class="blurb">{blurb}</p>
-  {figs}
-  <h2>What you get</h2>
+{figs}<h2>What you get</h2>
   <ul>{bullets}</ul>
   <div class="foot">
-    <div>worldenergydata · open energy-data · deterministic outputs on public regulatory filings<br>
-      <span class="live">Explore live: {live}</span></div>
-    <span class="cta">View interactive &rarr;</span>
+    <div>worldenergydata · Analysis basis and limitations stated above · Revision: {revision_date}<br>
+      <a class="live" href="{live}">Explore live</a></div>
   </div>
 </body></html>"""
 
 
-def _render_html(spec: dict) -> str:
+def _render_html(spec: dict, brand_css: str = "") -> str:
+    _validate_brand(brand_css)
     figs = ""
     if spec["figures"]:
         cells = "".join(
@@ -243,39 +487,94 @@ def _render_html(spec: dict) -> str:
             f'<div class="l">{html.escape(l)}</div></div>'
             for v, l in spec["figures"]
         )
-        figs = f'<div class="figs">{cells}</div>'
+        figs = f'  <div class="figs">{cells}</div>\n'
     bullets = "".join(f"<li>{html.escape(b)}</li>" for b in spec["bullets"])
     live = f"{_SITE}/{spec['path']}"
-    return _TEMPLATE.format(tokens=_TOKENS, 
-        logo=_LOGO, std=html.escape(spec["std"]), title=html.escape(spec["title"]),
-        blurb=html.escape(spec["blurb"]), figs=figs, bullets=bullets, live=html.escape(live),
+    return _TEMPLATE.format(
+        tokens=_TOKENS,
+        font_css=_FONT_CSS,
+        revision_date=REVISION_DATE,
+        brand_style=f"<style>{brand_css}</style>" if brand_css else "",
+        logo=_LOGO,
+        std=html.escape(spec["std"]),
+        title=html.escape(spec["title"]),
+        blurb=html.escape(spec["blurb"]),
+        figs=figs,
+        bullets=bullets,
+        live=html.escape(live),
     )
 
 
-def _to_pdf(html_text: str, out_pdf: Path) -> None:
-    with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8") as f:
-        f.write(html_text)
-        src = f.name
-    try:
-        subprocess.run(
-            [_CHROME, "--headless", "--no-sandbox", "--disable-gpu",
-             "--no-pdf-header-footer", f"--print-to-pdf={out_pdf}", src],
-            check=True, capture_output=True, timeout=90,
+def _validate_brand(css: str) -> None:
+    # CSS escapes can hide imports and resource functions from literal checks.
+    resources = r"@import\b|(?:url|image|(?:-webkit-)?image-set|src)\s*\(|</style"
+    if "\\" in css or re.search(resources, css, re.IGNORECASE):
+        raise ValueError(
+            "brand stylesheet must be self-contained CSS without resources or markup"
         )
-    finally:
-        os.unlink(src)
 
 
-def main() -> None:
+def _to_pdf(source: Path, out_pdf: Path) -> None:
+    subprocess.run(
+        [
+            _CHROME,
+            "--headless",
+            "--no-sandbox",
+            "--disable-gpu",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={out_pdf.resolve()}",
+            str(source.resolve()),
+        ],
+        check=True,
+        capture_output=True,
+        timeout=90,
+    )
+
+
+def build_onepager(
+    spec: dict,
+    out_dir: Path,
+    *,
+    brand_css: str = "",
+    renderer: Callable[[Path, Path], None] | None = None,
+) -> Path:
+    """Keep the self-contained page and print that same file to its sibling PDF."""
+    text = _render_html(spec, brand_css)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    source = out_dir / f"{spec['id']}.html"
+    source.write_text(text + "\n", encoding="utf-8")
+    (renderer or _to_pdf)(source, source.with_suffix(".pdf"))
+    return source
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Build capability HTML pages and PDFs."
+    )
+    parser.add_argument(
+        "--brand",
+        type=Path,
+        metavar="CSS_FILE",
+        help="Inline a stylesheet after the default styles (no external resources).",
+    )
+    args = parser.parse_args(argv)
+    brand_css = ""
+    if args.brand is not None:
+        try:
+            brand_css = args.brand.read_text(encoding="utf-8")
+            _validate_brand(brand_css)
+        except (OSError, UnicodeError, ValueError) as error:
+            parser.error(f"cannot read brand stylesheet: {error}")
     if not _CHROME:
-        raise SystemExit("No Chrome found; set CHROME=/path/to/google-chrome")
-    _OUT.mkdir(parents=True, exist_ok=True)
+        raise SystemExit("No Chrome found; set CHROME to a browser executable")
     ids = set()
     for spec in SPECS:
         assert spec["id"] not in ids, f"duplicate id {spec['id']}"
         ids.add(spec["id"])
-        _to_pdf(_render_html(spec), _OUT / f"{spec['id']}.pdf")
-    print(f"Wrote {len(SPECS)} one-pager PDFs into {_OUT.relative_to(_REPO)}/")
+        build_onepager(spec, _OUT, brand_css=brand_css)
+    print(
+        f"Wrote {len(SPECS)} one-pager PDFs and HTML pages into {_OUT.relative_to(_REPO)}/"
+    )
 
 
 if __name__ == "__main__":

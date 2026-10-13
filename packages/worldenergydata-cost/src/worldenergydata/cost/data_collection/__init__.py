@@ -31,9 +31,25 @@ from worldenergydata.cost.data_collection.linkage import (
     disclosure_row_is_linkable,
     resolve_cost_datapoint_link,
 )
+from worldenergydata.cost.data_collection.operator_statement_registry import (
+    DocumentEvidence,
+    OperatorStatement,
+    StatementRegistry,
+    YearCoverage,
+    derive_coverage,
+    emit_registry,
+    load_registry,
+)
 from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
 
 __all__ = [
+    "DocumentEvidence",
+    "OperatorStatement",
+    "StatementRegistry",
+    "YearCoverage",
+    "derive_coverage",
+    "emit_registry",
+    "load_registry",
     "AcceptedRecord",
     "CitationValidationResult",
     "ClassificationDecision",

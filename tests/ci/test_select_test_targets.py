@@ -234,3 +234,24 @@ def test_matrix_runs_governance_once_for_every_scope(path, scope):
     assert m["scope"] == scope
     targets = [tgt for shard in m["include"] for tgt in shard["targets"].split()]
     assert targets.count("tests/governance") == 1
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/capabilities/build_onepagers.py",
+        "tests/test_capability_onepagers.py",
+        "reports/capabilities/pdf/sec-economics.html",
+        "reports/capabilities/pdf/mooring.pdf",
+    ],
+)
+def test_capability_contract_paths_select_test_file(path: str) -> None:
+    """A capability change collects its root-level contract module."""
+    result = select([path], REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert "tests/test_capability_onepagers.py" in result["xdist"]
+    matrix = to_matrix([path], REPO_ROOT)
+    assert any(
+        shard["targets"] == "tests/test_capability_onepagers.py"
+        for shard in matrix["include"]
+    )
