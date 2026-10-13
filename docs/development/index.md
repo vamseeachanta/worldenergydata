@@ -41,11 +41,27 @@ mypy .
 ```
 
 Test sessions fail if tracked files differ from HEAD or new unignored files
-remain. For existing uncommitted work, use `pytest --allow-existing-tree-changes`;
-the session records dirty paths at the start and still fails for newly changed
-paths. Only the exact JUnit report paths produced by the reusable test workflow
-are excepted. Ignored tool outputs retain their existing ignore rules. Outside
-a Git checkout, or without Git, the check prints a note and does not fail.
+remain. The guard reads what `git status` sees: tracked files and untracked files
+that are not ignored. It cannot detect untracked writes in ignored locations,
+including `results/`, `output/`, `test_output/`, `tests/**/results/Plot`,
+`examples/workflows/*/outputs`, `test_export*.json` and `*.log`, or ignored
+coverage, Hypothesis, pytest-cache, bytecode, package-metadata and environment
+outputs. A test that writes only there can pass the guard.
+
+Only outputs declared by this session's own options are exempted: `--junitxml`,
+file or directory destinations of `--cov-report`, the active coverage data file,
+and `--benchmark-json`. Files match exactly; declared directories include their
+descendants. There is no list of exempt report names.
+
+For existing uncommitted work, use `pytest --allow-existing-tree-changes`. The
+session records content digests only for initially dirty paths, including absent
+files, and fails if those contents change or another path becomes dirty. Untouched
+existing work passes. Writes restored before the final reading are not detected.
+An internal environment marker delegates nested sessions in the same checkout to
+the outer guard and is restored at session end.
+
+Parallel workers do not repeat the controlling session's check. Outside a Git
+checkout, or without Git, the check prints a note and does not fail.
 
 ## Project Structure
 

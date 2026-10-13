@@ -97,8 +97,7 @@ def _fixture_repository(tmp_path, body, fixtures=""):
             f"tree {tree}\n"
             "author Fixture <fixture> 0 +0000\n"
             "committer Fixture <fixture> 0 +0000\n\n"
-            "test: initialize disposable tree\n\n"
-            "Co-Authored-By: Codex <noreply@openai.com>\n"
+            "test: initialize disposable tree\n"
         ),
     )
     _git(root, "update-ref", "HEAD", commit)
@@ -234,7 +233,7 @@ def test_guard_bounds_path_list(tmp_path):
 
 
 def test_guard_rejects_unlisted_report(tmp_path):
-    """A report outside the exact declared exceptions still fails."""
+    """A report not requested by this session still fails."""
     root = _fixture_repository(
         tmp_path, "Path('test-results-unknown.xml').write_text('new')"
     )
@@ -428,3 +427,61 @@ def test_guard_reports_child_write_once(tmp_path):
     assert result.returncode != 0, output
     assert "new: child-created.txt" in output
     assert output.count("Repository tree preservation failed:") == 1
+
+
+def test_collector_cache_redirect_applies_to_new_modules(tmp_path):
+    """A newly named collector module receives the temporary cache configuration."""
+    root = _fixture_repository(tmp_path, "assert True")
+    suite = root / "collectors"
+    suite.mkdir()
+    shutil.copyfile(
+        REPO_ROOT / "tests/unit/lng_terminals/conftest.py", suite / "conftest.py"
+    )
+    (suite / "test_new_cache.py").write_text(
+        "from pathlib import Path\n"
+        "from worldenergydata.lng_terminals import config\n"
+        "def test_cache(tmp_path_factory):\n"
+        "    cache = Path(config.get_config().cache.cache_dir)\n"
+        "    assert tmp_path_factory.getbasetemp() in cache.parents\n",
+        encoding="utf-8",
+    )
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_metadata_generator_runs_once_per_class(tmp_path):
+    """The metadata class reuses one generation without changing its assertions."""
+    root = _fixture_repository(tmp_path, "assert True")
+    source = root / "support_metadata.py"
+    shutil.copyfile(REPO_ROOT / "tests/test_metadata.py", source)
+    inputs = tmp_path / "inputs"
+    (inputs / "data/modules/sample").mkdir(parents=True)
+    counter = tmp_path / "generator-calls.txt"
+    generator = tmp_path / "generator.py"
+    generator.write_text(
+        "import argparse, json\nfrom pathlib import Path\n"
+        "parser = argparse.ArgumentParser()\n"
+        "parser.add_argument('--output-root', type=Path)\n"
+        "root = parser.parse_args().output_root / 'data/modules/sample'\n"
+        "root.mkdir(parents=True, exist_ok=True)\n"
+        f"counter = Path({str(counter)!r})\n"
+        "with counter.open('a', encoding='utf-8') as stream: stream.write('run\\n')\n"
+        "data = dict(module='sample', last_refresh=None, record_count=0, file_count=0, "
+        "total_size_bytes=0, source_url=None, format=None, files=[])\n"
+        "(root / '_metadata.json').write_text(json.dumps(data), encoding='utf-8')\n",
+        encoding="utf-8",
+    )
+    (root / "test_metadata_reuse.py").write_text(
+        "import importlib.util, sys\nfrom pathlib import Path\n"
+        f"spec = importlib.util.spec_from_file_location('metadata_copy', {str(source)!r})\n"
+        "module = importlib.util.module_from_spec(spec)\n"
+        "sys.modules[spec.name] = module\n"
+        "spec.loader.exec_module(module)\n"
+        f"module.REPO_ROOT = Path({str(inputs)!r})\n"
+        f"module.GENERATE_SCRIPT = Path({str(generator)!r})\n"
+        "TestGenerateMetadata = module.TestGenerateMetadata\n",
+        encoding="utf-8",
+    )
+    result = _session(root, tmp_path, "--allow-existing-tree-changes")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert counter.read_text(encoding="utf-8").splitlines() == ["run"]
