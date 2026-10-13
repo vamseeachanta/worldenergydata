@@ -105,7 +105,7 @@ jobs:
             --cov=src \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
-            --junitxml=test-results.xml
+            --junitxml=reports/coverage/test-results.xml
 
       - name: Run sequential tests (integration / performance)
         run: |
@@ -121,7 +121,7 @@ jobs:
         with:
           name: test-results-${{ matrix.python-version }}
           path: |
-            test-results.xml
+            reports/coverage/test-results.xml
             coverage.xml
 
       - name: Upload coverage to Codecov

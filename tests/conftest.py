@@ -7,8 +7,10 @@ This module provides:
 - Test collection filtering
 """
 
+import hashlib
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from datetime import datetime, timedelta
@@ -255,10 +257,234 @@ def sample_csv_file(tmp_path: Path, sample_production_data: pd.DataFrame) -> Pat
 # must not open the performance database.
 _performance_tracker = None
 _performance_db_path = None
+_TREE_GUARD_PARENT_ENV = "WORLDENERGYDATA_TREE_GUARD_PARENT"
+
+
+def _tree_git_environment():
+    """Prevent inherited Git bindings from selecting another checkout."""
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
+    return env
+
+
+def _tree_git(root, *arguments):
+    """Run a read-only Git command against the selected checkout."""
+    return subprocess.run(
+        ["git", "-C", str(root), *arguments],
+        env=_tree_git_environment(),
+        capture_output=True,
+        check=False,
+    )
+
+
+def _tree_changes(root):
+    """Return changed, deleted and new paths, using NUL-delimited Git status."""
+    result = _tree_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+    result.check_returncode()
+    changes = {}
+    entries = iter(result.stdout.split(b"\0"))
+    for entry in entries:
+        if not entry:
+            continue
+        flags = entry[:2].decode("ascii")
+        path = os.fsdecode(entry[3:])
+        if flags == "??" or "A" in flags:
+            kind = "new"
+        elif "D" in flags:
+            kind = "deleted"
+        else:
+            kind = "changed"
+        changes[path] = kind
+        if "R" in flags or "C" in flags:
+            original = os.fsdecode(next(entries))
+            if "R" in flags:
+                changes[original] = "deleted"
+                changes[path] = "new"
+    return changes
+
+
+def _declared_tree_outputs(config):
+    """Read exact file and directory destinations from active session options."""
+    files, directories = [], []
+    junit = config.getoption("xmlpath", default=None)
+    if junit:
+        files.append(os.path.expanduser(os.path.expandvars(junit)))
+    benchmark = config.getoption("benchmark_json", default=None)
+    if benchmark is not None:
+        files.append(benchmark.name)
+    plugin = config.pluginmanager.getplugin("_cov")
+    controller = getattr(plugin, "cov_controller", None)
+    cov = getattr(controller, "cov", None)
+    if cov is not None:
+        files.append(cov.config.data_file)
+        defaults = {
+            "html": cov.config.html_dir,
+            "xml": cov.config.xml_output,
+            "json": cov.config.json_output,
+            "lcov": cov.config.lcov_output,
+        }
+        reports = config.getoption("cov_report", default={})
+        if not isinstance(reports, dict):
+            reports = dict.fromkeys(reports)
+        for kind, destination in reports.items():
+            if kind in ("term", "term-missing", ""):
+                continue
+            destination = destination or defaults.get(kind)
+            if kind == "annotate" and destination is None:
+                files.extend(
+                    name + ",cover" for name in cov.get_data().measured_files()
+                )
+            elif destination is not None:
+                outputs = directories if kind in ("html", "annotate") else files
+                outputs.append(destination)
+
+    def absolute(paths):
+        """Keep plug-in pathname semantics without resolving symlink targets."""
+        return {
+            Path(os.path.abspath(config._tree_guard_cwd / path))
+            for path in paths
+            if path not in ("-", "<stdout>", "<stderr>")
+        }
+
+    return absolute(files), absolute(directories)
+
+
+def _undeclared_tree_changes(config, changes):
+    """Exclude only exact requested files and descendants of requested folders."""
+    files, directories = _declared_tree_outputs(config)
+    result = {}
+    for path, kind in changes.items():
+        absolute = Path(os.path.abspath(config._tree_guard_root / path))
+        if absolute in files:
+            continue
+        if any(
+            absolute == folder or folder in absolute.parents for folder in directories
+        ):
+            continue
+        result[path] = kind
+    return result
+
+
+def _tree_content(path):
+    """Digest initially dirty bytes, preserving symlink and absent-file state."""
+    if path.is_symlink():
+        return "symlink", hashlib.sha256(os.fsencode(os.readlink(path))).hexdigest()
+    digest = hashlib.sha256()
+    try:
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(chunk)
+    except FileNotFoundError:
+        return None
+    return "file", digest.hexdigest()
+
+
+def _configure_tree_guard(config):
+    """Capture pre-existing work only when the developer requests that mode."""
+    if hasattr(config, "workerinput"):
+        return
+    config._tree_guard_child = False
+    config._tree_guard_parent_set = False
+    config._tree_guard_root = None
+    config._tree_guard_cwd = Path.cwd()
+    config._tree_guard_initial = {}
+    config._tree_guard_error = None
+    config._tree_guard_note = None
+    if shutil.which("git") is None:
+        config._tree_guard_note = "Git is not available"
+        return
+    result = _tree_git(config.rootpath, "rev-parse", "--show-toplevel")
+    if result.returncode:
+        if b"not a git repository" in result.stderr.lower():
+            config._tree_guard_note = "outside a Git checkout"
+        else:
+            config._tree_guard_error = "Git could not resolve the checkout"
+        return
+    config._tree_guard_root = Path(os.fsdecode(result.stdout).strip())
+    parent = os.environ.get(_TREE_GUARD_PARENT_ENV)
+    if parent == str(config._tree_guard_root):
+        config._tree_guard_child = True
+        return
+    config._tree_guard_previous_parent = parent
+    os.environ[_TREE_GUARD_PARENT_ENV] = str(config._tree_guard_root)
+    config._tree_guard_parent_set = True
+    if config.getoption("allow_existing_tree_changes"):
+        try:
+            config._tree_guard_initial = {
+                path: _tree_content(config._tree_guard_root / path)
+                for path in _tree_changes(config._tree_guard_root)
+            }
+        except (OSError, subprocess.SubprocessError):
+            config._tree_guard_error = "Git could not record the initial tree"
+
+
+def _finish_tree_guard(session):
+    """Fail the controlling session when its tree does not meet the criterion."""
+    config = session.config
+    if hasattr(config, "workerinput") or config._tree_guard_child:
+        return
+    if config._tree_guard_note:
+        print("Tree preservation check did not run: " + config._tree_guard_note + ".")
+        return
+    error = config._tree_guard_error
+    changes = {}
+    if error is None:
+        try:
+            changes = _tree_changes(config._tree_guard_root)
+            for path, initial in config._tree_guard_initial.items():
+                current = _tree_content(config._tree_guard_root / path)
+                if current == initial:
+                    changes.pop(path, None)
+                else:
+                    changes[path] = changes.get(
+                        path, "deleted" if current is None else "changed"
+                    )
+            changes = _undeclared_tree_changes(config, changes)
+        except (OSError, subprocess.SubprocessError):
+            error = "The final tree could not be read"
+    if not changes and error is None:
+        return
+    print("\nRepository tree preservation failed:")
+    if error:
+        print("  " + error)
+    for path, kind in sorted(changes.items())[:50]:
+        print(f"  {kind}: {repr(path)[1:-1]}")
+    if len(changes) > 50:
+        print(f"  {len(changes) - 50} additional path(s) not shown")
+    print(
+        "Use --allow-existing-tree-changes for pre-existing work; "
+        "see docs/development/index.md."
+    )
+    if session.exitstatus == pytest.ExitCode.OK:
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
+
+
+def _restore_tree_guard_environment(config):
+    """Restore inherited parent state after the owning session finishes."""
+    if not getattr(config, "_tree_guard_parent_set", False):
+        return
+    previous = config._tree_guard_previous_parent
+    if previous is None:
+        os.environ.pop(_TREE_GUARD_PARENT_ENV, None)
+    else:
+        os.environ[_TREE_GUARD_PARENT_ENV] = previous
+    config._tree_guard_parent_set = False
+
+
+def pytest_unconfigure(config):
+    """Also restore parent state when configuration or session setup fails."""
+    _restore_tree_guard_environment(config)
 
 
 def pytest_addoption(parser):
-    """Add the performance database path seam used by lifecycle tests."""
+    """Register performance output and tree-preservation options."""
+    parser.addoption(
+        "--allow-existing-tree-changes",
+        action="store_true",
+        default=False,
+        help="Compare existing dirty content and report new changes; see docs/development/index.md",
+    )
     parser.addoption(
         "--performance-db-path",
         default=None,
@@ -279,7 +505,8 @@ def _get_performance_tracker(config):
 
 
 def pytest_configure(config):
-    """Capture performance configuration without opening the database."""
+    """Capture performance configuration and the initial tree state."""
+    _configure_tree_guard(config)
     global _performance_db_path
     db_path = config.getoption("performance_db_path")
     _performance_db_path = Path(db_path) if db_path is not None else None
@@ -304,7 +531,11 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.hookimpl(trylast=True)
 def pytest_sessionfinish(session, exitstatus):
-    """Called after test session finishes."""
+    """Check tree preservation and report performance at session finish."""
+    try:
+        _finish_tree_guard(session)
+    finally:
+        _restore_tree_guard_environment(session.config)
     if _performance_tracker:
         summary = _performance_tracker.get_session_summary()
 

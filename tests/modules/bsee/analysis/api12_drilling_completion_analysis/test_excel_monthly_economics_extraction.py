@@ -313,10 +313,11 @@ class ExcelMonthlyEconomicsExtractor:
     not Path(_EXCEL_FILE).exists(),
     reason="Requires BSEE Excel data file (run 'make data' first)",
 )
-def test_excel_monthly_economics_extraction():
+def test_excel_monthly_economics_extraction(tmp_path):
     """Test the Excel monthly economics extraction"""
 
     extractor = ExcelMonthlyEconomicsExtractor()
+    extractor.output_folder = str(tmp_path)
     df_economics, csv_path = extractor.run_extraction()
 
     # Validate extraction
@@ -337,4 +338,4 @@ def test_excel_monthly_economics_extraction():
 
 
 if __name__ == "__main__":
-    test_excel_monthly_economics_extraction()
+    test_excel_monthly_economics_extraction("results")

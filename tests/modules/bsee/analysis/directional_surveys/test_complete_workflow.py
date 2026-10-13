@@ -15,6 +15,7 @@ import os
 import shutil
 import sys
 import tempfile
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -30,12 +31,17 @@ from worldenergydata.modules.bsee.analysis.well_api12 import WellAPI12
 class TestDirectionalSurveysWorkflow:
     """Complete test suite for directional surveys workflow"""
 
-    def setup_method(self):
+    @pytest.fixture(autouse=True)
+    def temporary_results(self, tmp_path):
+        """Initialize the workflow with temporary plot output."""
+        self.initialize_results(tmp_path)
+
+    def initialize_results(self, output_dir):
         """Setup test fixtures"""
         self.well_api12 = WellAPI12()
 
         # Use specific directory for test outputs
-        self.temp_dir = os.path.join(os.path.dirname(__file__), "..", "results", "Plot")
+        self.temp_dir = os.fspath(output_dir)
         # Ensure the directory exists
         os.makedirs(self.temp_dir, exist_ok=True)
 
@@ -98,8 +104,7 @@ class TestDirectionalSurveysWorkflow:
 
     def teardown_method(self):
         """Clean up after tests"""
-        # Note: self.temp_dir now points to a persistent results directory
-        # We don't remove it but could clean up specific test files if needed
+        # The pytest temporary-directory fixture manages test output.
         pass
 
     def test_complete_directional_surveys_workflow(self):
@@ -321,7 +326,7 @@ class TestDirectionalSurveysWorkflow:
             print("   ~ Actual 3D plot generation: SKIPPED")
 
 
-def test_all_directional_surveys_methods():
+def test_all_directional_surveys_methods(tmp_path):
     """Convenience function to run all tests in sequence"""
 
     print("\n" + "=" * 80)
@@ -332,7 +337,7 @@ def test_all_directional_surveys_methods():
     print("add_relative_WH_positions, plot_field_wells")
 
     test_instance = TestDirectionalSurveysWorkflow()
-    test_instance.setup_method()
+    test_instance.initialize_results(tmp_path)
 
     try:
         # Run all tests
@@ -368,5 +373,7 @@ def test_all_directional_surveys_methods():
 
 if __name__ == "__main__":
     """Run tests directly when executed as script"""
-    success = test_all_directional_surveys_methods()
+    success = test_all_directional_surveys_methods(
+        Path(__file__).parent / ".." / "results" / "Plot"
+    )
     sys.exit(0 if success else 1)

@@ -15,6 +15,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from worldenergydata.well_production_dashboard.export_manager import (
     ExportConfiguration,
@@ -98,6 +99,11 @@ class TestVerificationMetadata(unittest.TestCase):
 
 class TestWellDashboardExportManager(unittest.TestCase):
     """Test suite for WellDashboardExportManager"""
+
+    @pytest.fixture(autouse=True)
+    def temporary_exports(self, tmp_path):
+        """Provide a temporary basename for real batch-export output."""
+        self.export_output = tmp_path
 
     def setUp(self):
         """Set up test fixtures"""
@@ -257,7 +263,9 @@ class TestWellDashboardExportManager(unittest.TestCase):
         manager = WellDashboardExportManager()
         config = ExportConfiguration(formats=["pdf", "excel", "json"])
 
-        results = manager.export_batch(self.sample_data, "test_export", config)
+        results = manager.export_batch(
+            self.sample_data, str(self.export_output / "test_export"), config
+        )
 
         self.assertEqual(len(results), 3)
         self.assertTrue(all(r.success for r in results))

@@ -25,8 +25,9 @@ SCRIPT_PATH = PROJECT_ROOT / "scripts" / "generate_catalog.py"
 
 
 @pytest.fixture(scope="module", autouse=True)
-def generate_catalog():
+def generate_catalog(tmp_path_factory):
     """Run the catalog generator once before all tests in this module."""
+    output_root = tmp_path_factory.mktemp("catalog")
     result = subprocess.run(
         [
             sys.executable,
@@ -35,6 +36,8 @@ def generate_catalog():
             str(PROJECT_ROOT),
             "--external-data-root",
             str(PROJECT_ROOT / "data"),
+            "--output-root",
+            str(output_root),
         ],
         capture_output=True,
         text=True,
@@ -44,6 +47,14 @@ def generate_catalog():
     assert (
         result.returncode == 0
     ), f"generate_catalog.py failed:\nstdout: {result.stdout}\nstderr: {result.stderr}"
+    with pytest.MonkeyPatch.context() as patcher:
+        patcher.setattr(
+            sys.modules[__name__], "CATALOG_PATH", output_root / "data" / "catalog.yaml"
+        )
+        patcher.setattr(
+            sys.modules[__name__], "DATA_MODULES", output_root / "data" / "modules"
+        )
+        yield
 
 
 class TestCatalogYaml:
