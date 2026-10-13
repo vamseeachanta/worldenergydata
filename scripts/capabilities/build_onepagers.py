@@ -473,7 +473,7 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   <ul>{bullets}</ul>
   <div class="foot">
     <div>worldenergydata · Analysis basis and limitations stated above · Revision: {revision_date}<br>
-      <span class="live">Explore live: {live}</span></div>
+      <a class="live" href="{live}">Explore live</a></div>
   </div>
 </body></html>"""
 

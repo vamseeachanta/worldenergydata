@@ -590,3 +590,5 @@ def test_page_basis_and_plain_label(spec: dict) -> None:
     text = mod._render_html(spec)
     assert "Capability summary" in text
     assert '<span class="cta">' not in text
+    assert '<a class="live" href="' in text
+    assert ">Explore live</a>" in text
