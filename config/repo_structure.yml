@@ -91,6 +91,10 @@ temporary_exceptions:
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
+      - reports/capabilities/assets/fonts/OpenSans/OFL.txt
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-Bold.ttf
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-ExtraBold.ttf
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-Regular.ttf
       - reports/capabilities/assets/tokens.css
       - reports/capabilities/index.html
       - reports/capabilities/pdf/benchmark.html

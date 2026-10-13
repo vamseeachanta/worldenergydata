@@ -61,6 +61,8 @@ def assert_page(text, title):
     assert page.titles == [title]
     assert not page.resources
     styles = "".join(re.findall(r"<style[^>]*>(.*?)</style>", text, re.S))
+    # Committed typefaces are embedded data; external resources remain forbidden.
+    styles = re.sub(r"url\(data:font/ttf;base64,[A-Za-z0-9+/=]+\)", "", styles)
     assert not re.search(
         r"@import\b|(?:url|image|(?:-webkit-)?image-set|src)\s*\(", styles, re.I
     )
@@ -429,3 +431,26 @@ def test_page_titles_are_unique() -> None:
     assert_unique_titles(specs)
     with pytest.raises(AssertionError, match="duplicate page title"):
         assert_unique_titles(specs + [dict(specs[0], id="duplicate")])
+
+
+def test_footer_avoids_unavailable_arrow_glyph() -> None:
+    """The decorative arrow requires a system font outside the committed family."""
+    assert "&rarr;" not in load_builder()._TEMPLATE
+
+
+def test_source_and_engineering_abbreviations_are_expanded() -> None:
+    """Use full source and engineering terms in the one-page summaries."""
+    unexplained = (
+        r"\b(?:BSEE|EIA|WAR|NPV|WTI|USCG|TSB|IMO|GISIS|MAIB|DLP|TD|MD|HSE|DEXPI)\b"
+    )
+    for page, field, text in copy_fields(load_builder()):
+        assert not re.search(unexplained, text), (page, field)
+
+
+def test_economic_pages_state_price_and_cost_basis() -> None:
+    """Identify price inputs separately from the recorded cost assumptions."""
+    ids = {"sec-economics", "portfolio", "benchmark", "sec-playbook", "fd-showcase"}
+    for spec in load_builder().SPECS:
+        if spec["id"] in ids or spec["id"].startswith("economics-"):
+            assert "Price:" in spec["std"], spec["id"]
+            assert "cost:" in spec["std"], spec["id"]
