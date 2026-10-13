@@ -203,6 +203,7 @@ def generate_all_metadata(
     module_filter: str | None = None,
     external_data_root: Path | None = None,
     dry_run: bool = False,
+    output_root: Path | None = None,
 ) -> dict[str, dict[str, Any]]:
     """Generate metadata for all modules.
 
@@ -211,11 +212,13 @@ def generate_all_metadata(
         module_filter: If set, only process this module.
         external_data_root: Optional external data directory.
         dry_run: If True, do not write files.
+        output_root: Optional destination root; defaults to the project root.
 
     Returns:
         Dict mapping module names to their metadata.
     """
     data_root = root / "data" / "modules"
+    destination_root = root if output_root is None else output_root
     ext_modules = external_data_root / "modules" if external_data_root else None
 
     # Collect module names
@@ -250,7 +253,7 @@ def generate_all_metadata(
 
         if not dry_run:
             out_path = (
-                (data_root / name / "_metadata.json")
+                (destination_root / "data" / "modules" / name / "_metadata.json")
                 if (data_root / name).exists()
                 else None
             )
@@ -259,7 +262,7 @@ def generate_all_metadata(
                 with open(out_path, "w") as f:
                     json.dump(metadata, f, indent=2)
                 try:
-                    written.append(str(out_path.relative_to(root)))
+                    written.append(str(out_path.relative_to(destination_root)))
                 except ValueError:
                     written.append(str(out_path))
 
@@ -290,6 +293,7 @@ def main() -> None:
     ap.add_argument("--module", help="Process only this module")
     ap.add_argument("--dry-run", action="store_true", help="Scan without writing")
     ap.add_argument("--project-root", default=None, help="Override project root")
+    ap.add_argument("--output-root", type=Path, default=None, help="Override output root")
     ap.add_argument(
         "--external-data-root",
         default=None,
@@ -318,6 +322,7 @@ def main() -> None:
         module_filter=args.module,
         external_data_root=ext_root,
         dry_run=args.dry_run,
+        output_root=args.output_root,
     )
 
 

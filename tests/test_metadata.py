@@ -20,21 +20,52 @@ GENERATE_SCRIPT = REPO_ROOT / "scripts" / "generate_metadata.py"
 class TestGenerateMetadata:
     """Verify scripts/generate_metadata.py runs and produces valid output."""
 
-    def test_script_runs_without_error(self):
+    @pytest.fixture(scope="class", autouse=True)
+    def temporary_metadata(self, tmp_path_factory):
+        """Generate inventories from existing inputs into temporary output."""
+        output_root = tmp_path_factory.mktemp("metadata")
+        with pytest.MonkeyPatch.context() as patcher:
+            patcher.setattr(
+                sys.modules[__name__], "MODULES_DIR", output_root / "data" / "modules"
+            )
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(GENERATE_SCRIPT),
+                    "--output-root",
+                    str(output_root),
+                ],
+                capture_output=True,
+                cwd=str(REPO_ROOT),
+                check=True,
+            )
+            yield output_root
+
+    def test_script_runs_without_error(self, temporary_metadata):
         """The generate_metadata.py script exits 0."""
         result = subprocess.run(
-            [sys.executable, str(GENERATE_SCRIPT)],
+            [
+                sys.executable,
+                str(GENERATE_SCRIPT),
+                "--output-root",
+                str(temporary_metadata),
+            ],
             capture_output=True,
             text=True,
             cwd=str(REPO_ROOT),
         )
         assert result.returncode == 0, f"generate_metadata.py failed:\n{result.stderr}"
 
-    def test_metadata_json_created_for_each_module(self):
+    def test_metadata_json_created_for_each_module(self, temporary_metadata):
         """Every module directory should have a _metadata.json after running."""
         # Run the script first to ensure files exist
         subprocess.run(
-            [sys.executable, str(GENERATE_SCRIPT)],
+            [
+                sys.executable,
+                str(GENERATE_SCRIPT),
+                "--output-root",
+                str(temporary_metadata),
+            ],
             capture_output=True,
             cwd=str(REPO_ROOT),
         )
