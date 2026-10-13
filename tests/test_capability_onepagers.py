@@ -1,12 +1,12 @@
-"""Kept capability pages and PDF rendering, using the sibling script-test layout."""
+"""Retained capability HTML cards, using the sibling script-test layout."""
 
 from __future__ import annotations
 
 import html
 import importlib.util
+import inspect
 import json
 import re
-import shutil
 import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
@@ -73,26 +73,24 @@ def assert_page(text, title):
     assert str(SCRIPT.resolve().parents[2]) not in text
 
 
-@pytest.mark.parametrize("write_pdf", [False, True])
-def test_build_keeps_html_and_prints_same_file(tmp_path, write_pdf):
+def test_default_build_writes_html_only_without_browser(tmp_path, monkeypatch):
+    """The default build writes HTML and cannot launch a browser process."""
     mod = load_builder()
-    spec = mod.SPECS[0]
-    calls = []
-
-    def renderer(source, target):
-        assert source.read_text(encoding="utf-8").startswith("<!doctype html>")
-        calls.append((source, target))
-        if write_pdf:
-            target.write_bytes(b"PDF fixture")
-
     out = tmp_path / "output"
-    mod.build_onepager(spec, out, renderer=renderer)
-    source = out / f"{spec['id']}.html"
-    target = out / f"{spec['id']}.pdf"
-    assert calls == [(source, target)]
-    assert set(out.iterdir()) == ({source, target} if write_pdf else {source})
-    assert set(tmp_path.iterdir()) == {out}
-    assert_page(source.read_text(encoding="utf-8"), spec["title"])
+    monkeypatch.setattr(mod, "_OUT", out)
+    monkeypatch.setattr(mod, "_REPO", tmp_path)
+
+    def reject_process(*args, **kwargs):
+        raise AssertionError("the default build launched a process")
+
+    monkeypatch.setattr(subprocess, "run", reject_process)
+    mod.main([])
+    assert {p.name for p in out.iterdir()} == {
+        f"{spec['id']}.html" for spec in mod.SPECS
+    }
+    assert not list(out.rglob("*.pdf"))
+    for spec in mod.SPECS:
+        assert_page((out / f"{spec['id']}.html").read_text(), spec["title"])
 
 
 @pytest.mark.parametrize("escaped", [False, True])
@@ -122,8 +120,6 @@ def test_cli_brand_is_inline_after_defaults(tmp_path, monkeypatch):
     monkeypatch.setattr(mod, "_OUT", out)
     monkeypatch.setattr(mod, "_REPO", tmp_path)
     monkeypatch.setattr(mod, "SPECS", mod.SPECS[:1])
-    monkeypatch.setattr(mod, "_CHROME", "unused")
-    monkeypatch.setattr(mod, "_to_pdf", lambda source, target: None)
     mod.main(["--brand", str(brand)])
     spec = mod.SPECS[0]
     text = (out / f"{spec['id']}.html").read_text(encoding="utf-8")
@@ -168,43 +164,6 @@ def test_brand_cannot_add_resources_or_markup(css, tmp_path):
     assert not (tmp_path / "output").exists()
 
 
-def test_browser_receives_kept_path(tmp_path, monkeypatch):
-    mod = load_builder()
-    source = tmp_path / "kept.html"
-    source.write_text(mod._render_html(mod.SPECS[0]), encoding="utf-8")
-    commands = []
-    monkeypatch.setattr(mod, "_CHROME", "browser")
-    monkeypatch.setattr(
-        mod.subprocess, "run", lambda command, **kwargs: commands.append(command)
-    )
-    mod._to_pdf(source, tmp_path / "kept.pdf")
-    assert commands[0][-1] == str(source.resolve())
-    assert {p.name for p in tmp_path.iterdir()} == {"kept.html"}
-
-
-def test_real_pdf_document_title(tmp_path):
-    mod = load_builder()
-    if not mod._CHROME:
-        pytest.skip("not applicable: Chrome is absent")
-    if not shutil.which("pdfinfo"):
-        pytest.skip("not applicable: pdfinfo is absent")
-    spec = mod.SPECS[0]
-    mod.build_onepager(spec, tmp_path)
-    info = subprocess.run(
-        ["pdfinfo", str(tmp_path / f"{spec['id']}.pdf")],
-        check=True,
-        capture_output=True,
-        text=True,
-    ).stdout
-    title = next(
-        line.split(":", 1)[1].strip()
-        for line in info.splitlines()
-        if line.startswith("Title:")
-    )
-    assert title == spec["title"]
-    assert not re.search(r"\btmp[a-z0-9_]{6,}", title)
-
-
 @pytest.mark.parametrize(
     "css", [r'@im\70ort "remote.css";', r"body {background:u\72l(asset)}"]
 )
@@ -215,7 +174,6 @@ def test_brand_rejects_escaped_resource_references(css, tmp_path):
             mod.SPECS[0],
             tmp_path / "output",
             brand_css=css,
-            renderer=lambda source, target: None,
         )
     assert not (tmp_path / "output").exists()
 
@@ -229,7 +187,6 @@ def test_brand_rejects_string_image_resources(function, tmp_path):
             mod.SPECS[0],
             tmp_path / "output",
             brand_css=css,
-            renderer=lambda source, target: None,
         )
     assert not (tmp_path / "output").exists()
 
@@ -602,3 +559,16 @@ def test_page_basis_and_plain_label(spec: dict) -> None:
     assert '<span class="cta">' not in text
     assert '<a class="live" href="' in text
     assert ">Explore live</a>" in text
+
+
+def test_builder_has_no_pdf_print_interface(tmp_path):
+    """The builder exposes an HTML-only interface without browser lookup."""
+    mod = load_builder()
+    assert not hasattr(mod, "_to_pdf")
+    assert not hasattr(mod, "_CHROME")
+    assert "renderer" not in inspect.signature(mod.build_onepager).parameters
+    spec = mod.SPECS[0]
+    source = mod.build_onepager(spec, tmp_path)
+    assert source == tmp_path / f"{spec['id']}.html"
+    assert list(tmp_path.iterdir()) == [source]
+    assert not list(tmp_path.rglob("*.pdf"))

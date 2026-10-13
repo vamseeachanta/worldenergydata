@@ -169,7 +169,7 @@ The builder's descriptions establish stated provenance, not freshness or numeric
 Table 3. The 21 work specifications represented by 15 capability nodes.
 
 The five `kind="section"` summaries are navigation summaries, not additional work capabilities
-(`scripts/capabilities/build_onepagers.py:50-94`). The PDF builder and frozen PDFs survive;
+(`scripts/capabilities/build_onepagers.py:50-94`). The HTML card builder remains; tracked PDFs are no longer generated;
 the API HTML surfaces do not. The landing redirect already exists through
 [PR 1001](https://github.com/vamseeachanta/worldenergydata/pull/1001).
 
