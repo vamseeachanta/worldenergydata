@@ -210,6 +210,7 @@ def test_guard_switch_preserves_existing_untracked_file(tmp_path):
 
 def test_guard_checks_parallel_session_once(tmp_path):
     """Two workers produce one controlling-process preservation report."""
+    pytest.importorskip("xdist", reason="Two-worker integration requires pytest-xdist")
     root = _fixture_repository(tmp_path, "Path('created.txt').write_text('new')")
     result = _session(root, tmp_path, "-n", "2", "--dist=each")
     output = result.stdout + result.stderr
