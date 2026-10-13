@@ -57,7 +57,15 @@ class TestCLI:
 
     def test_load_command(self, sample_csv_for_cli):
         """The load command accepts a file path and exits 0."""
-        result = runner.invoke(app, ["load", str(sample_csv_for_cli)])
+        result = runner.invoke(
+            app,
+            [
+                "load",
+                str(sample_csv_for_cli),
+                "--output",
+                str(sample_csv_for_cli.parent),
+            ],
+        )
         assert result.exit_code == 0
 
     def test_load_missing_file(self):
