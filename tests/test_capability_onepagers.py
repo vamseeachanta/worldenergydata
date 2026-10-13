@@ -325,7 +325,7 @@ class VisibleCopy(HTMLParser):
 
     def handle_data(self, data: str) -> None:
         if not self.in_style:
-            self.parts.append(data)
+            self.parts.append(re.sub(r"https?://[^\s]+", "", data))
 
 
 def copy_fields(mod) -> list[tuple[str, str, str]]:
@@ -390,7 +390,8 @@ def test_verified_requires_sentence_reference() -> None:
         [("page", "blurb", "Verified. Against reference values.")], "absolutes"
     )
     assert not wording_findings(
-        [("page", "blurb", "Verified against V30 golden baseline.")], "absolutes"
+        [("page", "blurb", "Verified against FDAS V30 Financial Project Summary.")],
+        "absolutes",
     )
 
 
@@ -479,7 +480,10 @@ def test_country_name_is_spelled_out_in_source_basis() -> None:
         assert not re.search(r"(?<!\w)U\.S\.(?!\w)", spec["std"], re.I), spec["id"]
 
 
-NAMED_REFERENCES = ("V30 golden baseline", "World Oil April 2026 article")
+NAMED_REFERENCES = (
+    "FDAS V30 Financial Project Summary",
+    "World Oil April 2026 article",
+)
 
 
 def committed_copy_fields(directory: Path) -> list:
@@ -495,7 +499,8 @@ def assert_economics_cutoff(specs: list[dict]) -> None:
     data_path = (
         SCRIPT.parents[2] / "reports/lower_tertiary/data/all_fields_economics.json"
     )
-    vintage = json.loads(data_path.read_text())["meta"]["vintage"]
+    vintage_text = json.loads(data_path.read_text())["meta"]["vintage"]
+    vintage = re.search(r"through (\d{4}-\d{2})", vintage_text).group(1)
     for spec in specs:
         if spec["id"] in {"sec-economics", "portfolio", "benchmark"} or spec[
             "id"
