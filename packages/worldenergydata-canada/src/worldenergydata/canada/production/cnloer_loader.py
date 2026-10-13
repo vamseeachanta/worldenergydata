@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import json
 import re
+from html.parser import HTMLParser
 from importlib.resources import files
 from pathlib import Path
 from typing import List, Optional
@@ -188,12 +189,172 @@ def _extract_volumes(vals: List[float]) -> tuple:
     return (0.0, 0.0, 0.0)
 
 
+class _ModalTables(HTMLParser):
+    """Collect cells from the five production modals, tolerating th/td endings."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.tables = {}
+        self._divs = []
+        self._modal = None
+        self._table = False
+        self._row = None
+        self._cell = None
+        self._annotation = False
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "div":
+            self._divs.append(self._modal)
+            identifier = attrs.get("id", "")
+            if identifier in {"pshf97", "pshf98", "pshf99", "pshf00", "pshf01"}:
+                if identifier in self.tables:
+                    raise CnloerParseError("duplicate production modal")
+                self._modal = identifier
+                self.tables[identifier] = []
+        if self._modal and tag == "table":
+            if self._table or self.tables[self._modal]:
+                raise CnloerParseError("multiple production tables in modal")
+            self._table = True
+        # Unit exponents are header content; superscripts in data rows are annotations.
+        if self._table and tag == "sup" and len(self.tables[self._modal]) >= 4:
+            self._annotation = True
+        if self._table and tag == "tr":
+            self._row = []
+        if self._table and tag in {"td", "th"}:
+            self._cell = []
+
+    def handle_data(self, data):
+        if self._cell is not None and not self._annotation:
+            self._cell.append(data)
+
+    def handle_endtag(self, tag):
+        if tag == "sup":
+            self._annotation = False
+        if tag in {"td", "th"} and self._cell is not None:
+            if self._row is not None:
+                self._row.append("".join(self._cell).strip())
+            self._cell = None
+            self._annotation = False
+        if tag == "tr" and self._row is not None:
+            self.tables[self._modal].append(self._row)
+            self._row = None
+        if tag == "table":
+            self._table = False
+        if tag == "div" and self._divs:
+            self._modal = self._divs.pop()
+
+
+def _modal_number(cell: str) -> str:
+    """Validate nonnegative source numbers with space or comma grouping."""
+    value = cell.strip().replace("\xa0", " ")
+    if not re.fullmatch(r"(?:\d+|\d{1,3}(?:[ ,]\d{3})+)(?:\.\d+)?", value):
+        raise CnloerParseError("malformed monthly production value")
+    return value.replace(" ", "").replace(",", "")
+
+
+def _validate_modal_headers(rows, year):
+    if len(rows) < 4 or rows[1] != ["Oil", "Gas", "Water"]:
+        raise CnloerParseError("unexpected production columns")
+    if [re.sub(r"\s+", "", c) for c in rows[2]] != ["m3", "103m3", "m3"]:
+        raise CnloerParseError("unsupported production units")
+    expected_header = ["Year", "Month"] if year < 2000 else ["Year/Month", "Reservoir"]
+    headers = rows[0][:2]
+    if year == 2000 and headers == ["Year/Month", "Reservoir**"]:
+        headers = ["Year/Month", "Reservoir"]
+    if headers != expected_header:
+        raise CnloerParseError("unexpected production period columns")
+
+
+def _modal_monthly_lines(rows, year):
+    _validate_modal_headers(rows, year)
+    months, lines = set(), []
+    current_month, reservoirs = None, []
+    cumulative = False
+    for cells in rows[4:]:
+        if not cells:
+            raise CnloerParseError("empty production row")
+        if cells[0].startswith("Cumulative"):
+            cumulative = True
+        if cumulative:
+            continue
+        cells = cells.copy()
+        if year < 2000 and cells[0].isdigit():
+            if int(cells.pop(0)) != year:
+                raise CnloerParseError("production year does not match modal")
+        month = _month_to_int(cells[0])
+        if year < 2000:
+            if month is None or len(cells) != 5:
+                raise CnloerParseError("malformed monthly production row")
+            values = cells[1:4]
+        else:
+            if month is not None:
+                if current_month is not None and reservoirs != [
+                    "Hibernia",
+                    "Avalon",
+                    "Total",
+                ]:
+                    raise CnloerParseError("missing reservoir total")
+                current_month, reservoirs = month, []
+                cells.pop(0)
+            if current_month is None or len(cells) != 5:
+                raise CnloerParseError("malformed reservoir production row")
+            reservoirs.append(cells[0])
+            values = cells[1:4]
+            # Validate subrows but select the published Total, without summing it twice.
+            for value in values:
+                _modal_number(value)
+            if cells[0] != "Total":
+                continue
+            month = current_month
+        if month in months:
+            raise CnloerParseError("duplicate monthly production period")
+        months.add(month)
+        lines.append(f"{month} {year} " + " ".join(_modal_number(v) for v in values))
+    if year >= 2000 and reservoirs != ["Hibernia", "Avalon", "Total"]:
+        raise CnloerParseError("missing reservoir total")
+    if months != set(range(1, 13)):
+        raise CnloerParseError("missing monthly production period")
+    return lines
+
+
+def parse_cnloer_production_html(html: str, *, field_name: str) -> pd.DataFrame:
+    """Parse supplied Hibernia 1997–2001 modals; no source data is retained.
+
+    Source: C-NLOER Statistical Information, pshf97–pshf01 modal tables,
+    https://www.cnloer.ca/information/statistics/ (opened 2026-10-13).
+    Headers specify oil/water m3 and gas thousand m3. The existing PDF
+    conversions are reused. Published reservoir totals take precedence over
+    subrows; cumulative rows are excluded. All twelve months are required.
+    """
+    if field_name != FIELD_CODES["h"]:
+        raise CnloerParseError("historical HTML tables cover Hibernia only")
+    parser = _ModalTables()
+    parser.feed(html)
+    parser.close()
+    lines = []
+    for year in range(1997, 2002):
+        identifier = f"pshf{year % 100:02d}"
+        if identifier not in parser.tables:
+            raise CnloerParseError(f"missing production modal {identifier}")
+        # Text parser expects a month name, followed by year and metric volumes.
+        for line in _modal_monthly_lines(parser.tables[identifier], year):
+            month, rest = line.split(" ", 1)
+            name = next(
+                name for name, number in _MONTHS.items() if number == int(month)
+            )
+            lines.append(f"{name} {rest}")
+    return parse_cnloer_production_text("\n".join(lines), field_name=field_name)
+
+
 class CnloerProductionLoader:
     """Reads a C-NLOER field PDF (or injected text) -> long loader rows.
 
     Dependency-injected ``raw_text`` (pre-extracted ``pdftotext`` output) is used
-    for tests; otherwise ``path`` is read via ``pdftotext -layout``. The runtime
-    download lane (fetch + gitignored cache) is a documented #719 follow-on and
+    for tests; otherwise ``path`` is read via ``pdftotext -layout``.
+    Optional ``raw_html`` supplies the historical Hibernia statistics modals;
+    PDF periods retain their original values on overlap. The runtime
+    download path (fetch + gitignored cache) is a documented #719 follow-on and
     is NOT exercised in tests nor committed with cached PDFs (licence).
     """
 
@@ -203,18 +364,35 @@ class CnloerProductionLoader:
         field_name: str,
         path: Optional[Path] = None,
         raw_text: Optional[str] = None,
+        raw_html: Optional[str] = None,
     ):
         self.field_name = field_name
         self._path = path
         self._raw_text = raw_text
+        self._raw_html = raw_html
 
     def load(self) -> pd.DataFrame:
+        historical = None
+        if self._raw_html is not None:
+            historical = parse_cnloer_production_html(
+                self._raw_html, field_name=self.field_name
+            )
+            if self._raw_text is None and self._path is None:
+                return historical
         text = (
             self._raw_text
             if self._raw_text is not None
             else self._pdftotext(self._path)
         )
-        return parse_cnloer_production_text(text, field_name=self.field_name)
+        existing = parse_cnloer_production_text(text, field_name=self.field_name)
+        if historical is None:
+            return existing
+        return (
+            pd.concat([existing, historical], ignore_index=True)
+            .drop_duplicates(["year", "month"], keep="first")
+            .sort_values(["year", "month"])
+            .reset_index(drop=True)
+        )
 
     @staticmethod
     def _pdftotext(path: Optional[Path]) -> str:
