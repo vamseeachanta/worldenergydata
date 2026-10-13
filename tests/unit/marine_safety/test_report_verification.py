@@ -153,3 +153,39 @@ def test_inventory_relabels_unverified_pages() -> None:
         rows = {row["path"]: row for row in csv.DictReader(stream)}
     for page in PAGES:
         assert rows[page]["classification"] == "unverified"
+
+
+@pytest.mark.parametrize(
+    "name", ("imo", "ms-exec", "ms-hatch", "ms-foundering", "ms-fatality")
+)
+def test_capability_writer_notice(name: str) -> None:
+    """Retained capability inputs place the same warning beneath the title."""
+    spec = importlib.util.spec_from_file_location(
+        "report_capabilities", ROOT / "scripts/capabilities/build_onepagers.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    entry = next(item for item in module.SPECS if item["id"] == name)
+    assert_notice(module._render_html(entry))
+
+
+@pytest.mark.parametrize(
+    "name", ("imo", "ms-exec", "ms-hatch", "ms-foundering", "ms-fatality")
+)
+def test_committed_capability_notice(name: str) -> None:
+    """Generated companion pages expose the status of their linked figures."""
+    assert_notice((ROOT / f"reports/capabilities/pdf/{name}.html").read_text())
+
+
+def test_capability_descriptions_are_retained() -> None:
+    """Warning insertion preserves existing descriptive and date-range text."""
+    descriptions = {
+        "imo": "Recorded occurrences span 1900-01-01 to 2025-06-09.",
+        "ms-exec": "An overview of the combined casualty records",
+        "ms-hatch": "Incident narratives are screened for hatch",
+        "ms-foundering": "Foundering incidents are grouped to examine reported fatalities",
+        "ms-fatality": "Fatal incidents are grouped by recorded cause and category",
+    }
+    for name, text in descriptions.items():
+        html = (ROOT / f"reports/capabilities/pdf/{name}.html").read_text()
+        assert text in BeautifulSoup(html, "html.parser").get_text(" ", strip=True)

@@ -22,10 +22,14 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 from collections.abc import Callable
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(_REPO))
+from scripts.marine_safety.generate_optimized_report import UNVERIFIED_NOTICE
+
 _OUT = _REPO / "reports" / "capabilities" / "pdf"
 _TOKENS = (_REPO / "reports" / "capabilities" / "assets" / "tokens.css").read_text(encoding="utf-8").strip()
 _SITE = "https://vamseeachanta.github.io/worldenergydata"
@@ -322,8 +326,9 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/executive_summary.html',
-  'blurb': 'An overview of the combined casualty records, with source coverage and links to the '
-           'detailed incident analyses.',
+  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+      'An overview of the combined casualty records, with source coverage and links to '
+      'the detailed incident analyses.'),
   'figures': [],
   'bullets': ['Incident and fatality distributions by source and category',
               'Links to fatality, foundering and hatch-incident analyses']},
@@ -335,8 +340,9 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          '· data as of: 2012 (Coast Guard record coverage end); Canadian acquisition cut-off not '
          'recorded',
   'path': 'marine_safety/fatality_analysis.html',
-  'blurb': 'Fatal incidents are grouped by recorded cause and category, with reported fatalities '
-           'distinguished from incident counts.',
+  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+      'Fatal incidents are grouped by recorded cause and category, with reported '
+      'fatalities distinguished from incident counts.'),
   'figures': [],
   'bullets': ['Ranked causes among fatal incidents',
               'Incident-category counts and recorded fatality distributions']},
@@ -348,9 +354,10 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/foundering_analysis.html',
-  'blurb': 'Foundering incidents are grouped to examine reported fatalities and recurring incident '
-           'patterns. Imported International Maritime Organization records contain no fatality '
-           'counts; those counts use the Canadian and Coast Guard records.',
+  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+      'Foundering incidents are grouped to examine reported fatalities and recurring '
+      'incident patterns. Imported International Maritime Organization records contain no '
+      'fatality counts; those counts use the Canadian and Coast Guard records.'),
   'figures': [],
   'bullets': ['Recorded fatalities per foundering incident',
               'Cause and incident-pattern distributions']},
@@ -362,8 +369,9 @@ SPECS: list[dict] = [{'id': 'sec-economics',
          'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded',
   'path': 'marine_safety/hatch_analysis.html',
-  'blurb': 'Incident narratives are screened for hatch, door and opening maloperation, then '
-           'grouped by recorded severity.',
+  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+      'Incident narratives are screened for hatch, door and opening maloperation, then '
+      'grouped by recorded severity.'),
   'figures': [],
   'bullets': ['Severity distribution of identified incidents',
               'Incident descriptions and source context for review']},
@@ -389,8 +397,9 @@ SPECS: list[dict] = [{'id': 'sec-economics',
   'std': 'International Maritime Organization Global Integrated Shipping Information System · data '
          'as of: 2025-10-11 (collation date); latest export window ends 2025-10-10',
   'path': 'IMO_GISIS_Executive_Report.html',
-  'blurb': 'Marine casualty records are grouped by severity, vessel type and flag state. Recorded '
-           'occurrences span 1900-01-01 to 2025-06-09.',
+  'blurb': UNVERIFIED_NOTICE + '\n\n' + (
+      'Marine casualty records are grouped by severity, vessel type and flag state. '
+      'Recorded occurrences span 1900-01-01 to 2025-06-09.'),
   'figures': [],
   'bullets': ['Severity and vessel-type distributions',
               'Flag-state comparisons and occurrence-year trends']},
@@ -498,7 +507,9 @@ def _render_html(spec: dict, brand_css: str = "") -> str:
         logo=_LOGO,
         std=html.escape(spec["std"]),
         title=html.escape(spec["title"]),
-        blurb=html.escape(spec["blurb"]),
+        blurb='</p>\n  <p class="blurb">'.join(
+            html.escape(paragraph) for paragraph in spec["blurb"].split("\n\n")
+        ),
         figs=figs,
         bullets=bullets,
         live=html.escape(live),
