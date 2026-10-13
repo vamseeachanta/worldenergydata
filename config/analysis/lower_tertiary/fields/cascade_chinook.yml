@@ -55,6 +55,9 @@ field:
 # rate. No public per-field split of that cost or rate exists in the sources
 # opened in the issue 747 research note; none is invented. The flat partners
 # list above remains the sole calculation input, including for concentration.
+# With shared production, economics and opex inputs, the monthly calculation is
+# identical across fields, while summaries also use field first-oil dates and
+# capital costs, which differ for Cascade/Chinook and Julia.
 partners_by_field:
   # Row 3: P4 verifies the full Cascade interest held through MP GOM.
   Cascade:
