@@ -38,6 +38,10 @@
 
 ## Activity Codes
 
+The table below is not a verified WELL_ACTIVITY_CD domain. For that field,
+codes without a published definition are shown as bare codes and labelled
+undefined; see the [publication-status note](../../../../data-sources/bsee/data/WELL_ACTIVITY_CD/publication_status.md).
+
 | Code | Description | Category |
 |------|-------------|----------|
 | DR | Drilling | Drilling |
@@ -50,7 +54,7 @@
 | GV | Gravel Pack | Completion |
 | TB | Tubing | Completion |
 | ST | Stimulation | Completion |
-| WO | Workover | Workover |
+| WO | no published definition; see [publication status](../../../../data-sources/bsee/data/WELL_ACTIVITY_CD/publication_status.md) | Undefined |
 | WL | Wireline | Service |
 | PB | Plugback | Abandonment |
 | PA | Plug/Abandon | Abandonment |

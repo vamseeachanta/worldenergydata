@@ -5,7 +5,6 @@ import pytest
 from worldenergydata.bsee.data.refresh.url_registry import (
     BOEM_BASE_URL,
     BSEE_BASE_URL,
-    DatasetSpec,
     get_all_specs,
     get_ogor_a_specs,
     get_regular_specs,
@@ -22,6 +21,8 @@ EXPECTED_DIRS = {
     "deepqual",
     "dsptsdelimit",
     "fieldreserves_master",
+    "fieldreserves_history",
+    "fieldreserves_production_master",
     "fieldreserves_tables",
     "fmp",
     "historical_production_yearly",
@@ -52,9 +53,19 @@ def test_all_specs_cover_all_stub_directories():
     assert actual_dirs == EXPECTED_DIRS
 
 
-def test_total_expected_bins_is_134():
+def test_total_expected_bins_is_136():
     total = sum(len(spec.expected_bins) for spec in get_all_specs())
-    assert total == 134
+    assert total == 136
+
+
+def test_fieldreserves_family_supported_specs():
+    history = get_specs_for_dir("fieldreserves_history")
+    production = get_specs_for_dir("fieldreserves_production_master")
+    assert len(history) == len(production) == 1
+    assert history[0].zip_url.endswith("2023%20Hist.zip")
+    assert history[0].expected_bins == ["2023_offldhist__2023_offldhist.bin"]
+    assert production[0].zip_url.endswith("mastproddelimit.zip")
+    assert production[0].expected_bins == ["mastproddelimit.bin"]
 
 
 def test_all_urls_use_official_federal_bases():
@@ -109,7 +120,6 @@ def test_no_duplicate_expected_bins():
     seen: dict[str, str] = {}
     for spec in get_all_specs():
         for bin_name in spec.expected_bins:
-            key = f"{spec.bin_dir}/{bin_name}"
             if bin_name in seen and seen[bin_name] != spec.bin_dir:
                 pytest.fail(
                     f"Bin {bin_name!r} appears in both {seen[bin_name]!r} and {spec.bin_dir!r}"

@@ -6,9 +6,39 @@ field:
   display_name: "Cascade/Chinook"
   status: producing
   leases_key: cascade_chinook
-  first_oil: "2021-08-01"
+  # P1: Production Start-up of Cascade field in Gulf of Mexico ultra deep water (Petrobras), 2012-03-01.
+  # https://www.sec.gov/Archives/edgar/data/0001119639/000129281412000476/pbra20120301_6k.htm
+  # "on February 25, 2012, it was started the production of Cascade field through Cascade 4 well"
+  # P2: First oil on BW Pioneer (BW Offshore), 2012-03-02.
+  # https://bwoffshore.com/pressreleases/first-oil-on-bw-pioneer
+  # "The FPSO BW Pioneer has received first oil in the US Gulf of Mexico."
+  # Actual start 2012-02-25; month-start convention retained. Checked 2026-10-11; issue 747.
+  # Was "2021-08-01".
+  first_oil: "2012-02-01"
   data_through: "2024-12-31"
-  operator: "TotalEnergies"
+  # P2: First oil on BW Pioneer (BW Offshore), 2012-03-02.
+  # https://bwoffshore.com/pressreleases/first-oil-on-bw-pioneer
+  # P3: Murphy Oil Closes Gulf of Mexico Joint Venture, Provides Updated Guidance
+  # and Announces New Unsecured Credit Facility, 2018-12-03.
+  # https://www.sec.gov/Archives/edgar/data/0000717423/000071742318000050/mur-20181203xex99_1.htm
+  # P5: Murphy Oil Corporation annual report, FY2025 (filed 2026).
+  # https://www.sec.gov/Archives/edgar/data/717423/000162828026011709/mur-20251231.htm
+  # Operated through the joint-venture company MP Gulf of Mexico, LLC;
+  # original operator Petrobras America. Checked 2026-10-11; issue 747.
+  # Was "TotalEnergies".
+  operator: "Murphy"
+  # P4: Murphy Oil Corporation annual report, FY2018 (filed 2019).
+  # https://www.sec.gov/Archives/edgar/data/717423/000071742319000016/mur-20181231x10k.htm
+  # Checked 2026-10-11; issue 747. Was TotalEnergies 0.60 / Equinor 0.40; retained below.
+  # Those entries are contradicted by P4. Verified field interests:
+  # Cascade: MP GOM 1.00; Chinook: MP GOM 0.666 (operated).
+  # Chinook remainder: not verified (issue 747 research note).
+  # Murphy 80% / Petrobras America 20% is ownership of MP GOM, not field working interest.
+  # Comment-only fallback: the flat partners list feeds computed capex and production shares.
+  # Combined-field working interest for Murphy: not verified (issue 747 research note).
+  # P4 identifies MP GOM interests per field, not a combined Murphy share.
+  # The operator is absent from this retained list; operator-role classification
+  # remains inconsistent until that share and the current Chinook remainder are verified.
   partners:
     - name: "TotalEnergies"
       working_interest: 0.60
@@ -20,3 +50,38 @@ field:
     plateau_rate_mbopd: 75
     gor_scf_per_bbl: 1400
   opex_per_boe: 18.0
+
+# Reference data only: this combined entry has one capital cost and one plateau
+# rate. No public per-field split of that cost or rate exists in the sources
+# opened in the issue 747 research note; none is invented. The flat partners
+# list above remains the sole calculation input, including for concentration.
+# With shared production, economics and opex inputs, the monthly calculation is
+# identical across fields, while summaries also use field first-oil dates and
+# capital costs, which differ for Cascade/Chinook and Julia.
+partners_by_field:
+  # Row 3: P4 verifies the full Cascade interest held through MP GOM.
+  Cascade:
+    - name: "MP GOM"
+      share: 1.00
+      source:
+        key: P4
+        title: "Murphy Oil Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/717423/000071742319000016/mur-20181231x10k.htm"
+        date: "FY2018 (filed 2019)"
+        research_note_row: 3
+      source_class: primary
+      as_of: "FY2018"
+  # Row 3: P4 verifies this operated interest. The current holder of the remaining
+  # interest is unverified; Total at start-up (P2) does not establish its holder now.
+  # Murphy/Petrobras America ownership of MP GOM is entity-level, not field interest.
+  Chinook:
+    - name: "MP GOM"
+      share: 0.666
+      source:
+        key: P4
+        title: "Murphy Oil Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/717423/000071742319000016/mur-20181231x10k.htm"
+        date: "FY2018 (filed 2019)"
+        research_note_row: 3
+      source_class: primary
+      as_of: "FY2018"

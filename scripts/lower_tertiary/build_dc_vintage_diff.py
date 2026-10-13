@@ -13,9 +13,15 @@ either input changes, then re-run ``build_wo_per_well_dc.py``.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pandas as pd
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.dc_provenance import carries_basis, validate_day_schema, vintage_labels
 
 REPO = Path(__file__).resolve().parents[2]
 V30_DIR = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
@@ -35,11 +41,12 @@ def _dev(series: pd.Series) -> pd.Series:
     return series.map(lambda x: DEV_OF_LEASE.get(str(x).strip(), str(x).strip()))
 
 
-def main() -> None:
-    frozen = pd.ExcelFile(FROZEN_XLSX).parse("Sheet1")
+def build_diff(frozen: pd.DataFrame, cand: pd.DataFrame) -> pd.DataFrame:
+    """Retain MB comparisons and append labels only for basis-bearing inputs."""
+    labelled = carries_basis(frozen.columns) or carries_basis(cand.columns)
+    cand = cand.copy()
     frozen = frozen.dropna(subset=["API_WELL_NUMBER"]).copy()
     frozen["api12"] = frozen["API_WELL_NUMBER"].astype("int64").astype(str)
-    cand = pd.read_csv(CANDIDATE_CSV, dtype={"API_WELL_NUMBER": str})
     cand["api12"] = cand["API_WELL_NUMBER"].str.strip()
     for df in (frozen, cand):
         df["dev"] = _dev(df["LEASE_NAME"])
@@ -94,6 +101,21 @@ def main() -> None:
         )
 
     out = pd.DataFrame(rows)
+    if labelled:
+        labels = pd.DataFrame(vintage_labels(frozen, cand, out["api12"]))
+        validate_day_schema(labels.columns)
+        labels["pnd_days"] = labels["pnd_days"].astype("Int64")
+        for column in ("basis", "basis_v30", "basis_wed", "days_status"):
+            labels[column] = labels[column].astype("string")
+        out = pd.concat([out, labels], axis=1)
+        validate_day_schema(out.columns)
+    return out
+
+
+def main() -> None:
+    frozen = pd.ExcelFile(FROZEN_XLSX).parse("Sheet1")
+    cand = pd.read_csv(CANDIDATE_CSV, dtype={"API_WELL_NUMBER": str})
+    out = build_diff(frozen, cand)
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(OUT_CSV, index=False)
     n_changed = (out["category"] == "drilling_changed").sum()

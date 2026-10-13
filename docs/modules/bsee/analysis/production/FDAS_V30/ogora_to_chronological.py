@@ -186,8 +186,13 @@ def allocate_dnc_by_month(dnc_path: Optional[str]) -> pd.DataFrame:
     return out
 
 def load_wti_monthly(wti_path: Optional[str]) -> pd.DataFrame:
-    if not wti_path or not os.path.exists(wti_path):
+    if not wti_path:
         return pd.DataFrame(columns=["MONTH","WTI_USD"])
+    if not os.path.exists(wti_path):
+        raise FileNotFoundError(
+            "WTI input missing; use data/wti-monthly.csv "
+            "(see data/wti-monthly.PROVENANCE.md)"
+        )
     df = pd.read_csv(wti_path)
     # Accept Month/DATE variants
     date_col = next((c for c in df.columns if str(c).strip().upper() in {"MONTH","DATE"}), None)
@@ -223,7 +228,7 @@ def build_chrono(ogor_dir: str, leases_path: str, pattern: str,
         # Types
         df["DAYS_ON"]  = pd.to_numeric(df["DAYS_ON"], errors="coerce").fillna(0)
         df["OIL_PROD"] = pd.to_numeric(df["OIL_PROD"], errors="coerce").fillna(0)
-        # WATER_PROD may not exist in standard 19-col set; try to find it 
+        # WATER_PROD may not exist in standard 19-col set; try to find it
         if "WATER_PROD" in df.columns:
             df["WATER_PROD"] = pd.to_numeric(df["WATER_PROD"], errors="coerce").fillna(0)
         else:
@@ -332,7 +337,9 @@ def parse_args():
     ap.add_argument("--leases", default="leases.xlsx", help="Leases file (.xlsx/.xls/.csv)")
     ap.add_argument("--pattern", default="ogora20??delimit.zip", help="Glob for OGOR zips")
     ap.add_argument("--dnc", default=None, help="Optional drilling_and_completion_days.xlsx")
-    ap.add_argument("--wti", default=None, help="Optional wti_monthly.csv")
+    ap.add_argument(
+        "--wti", default=None, help="Optional WTI CSV; use data/wti-monthly.csv"
+    )
     ap.add_argument("--out", default="chronological_lease_analysis.xlsx", help="Output Excel path")
     return ap.parse_args()
 

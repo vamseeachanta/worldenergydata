@@ -12,6 +12,11 @@ Each section emits a DataFrame plus a `caveats` flag column so missing
 inputs are explicit rather than silently elided. The `PortfolioAnalyticsRun`
 dataclass bundles all four sections + run metadata.
 
+Paired developments each have one combined capital cost and plateau rate.
+No public per-field split of that cost or rate is established in the opened
+sources; none is invented. Per-field partner shares are reference data only;
+the flat partners list remains the sole calculation input for concentration.
+
 Public surface:
     - PortfolioAnalyticsRun — bundle of 4 section DataFrames + metadata
     - analyze_technology_generation(field_ids, *, economics_run) -> DataFrame

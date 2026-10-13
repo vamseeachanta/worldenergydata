@@ -81,11 +81,31 @@ def _freshness_status(
     return catalog_status or "unknown"
 
 
-def build_scorecard(project_root: Path, report_date: str | None = None) -> dict[str, Any]:
+def _fixture_readiness(project_root: Path, manifest_entry: dict[str, Any]) -> str:
+    """Report packaged for a manifest-declared, repository-relative, existing nonempty path."""
+    declaration = manifest_entry.get("fixture_catalog")
+    if not isinstance(declaration, str) or not declaration:
+        return "none"
+    relative_path = Path(declaration)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        return "none"
+    fixture_path = project_root / relative_path
+    if fixture_path.is_file() and fixture_path.stat().st_size > 0:
+        return "packaged"
+    if fixture_path.is_dir() and any(fixture_path.iterdir()):
+        return "packaged"
+    return "none"
+
+
+def build_scorecard(
+    project_root: Path, report_date: str | None = None
+) -> dict[str, Any]:
     """Build a module-keyed freshness scorecard from local catalog artifacts."""
     report_date = report_date or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     module_manifest = _module_records(_load_yaml(project_root / "module-manifest.yaml"))
-    catalog_modules = _catalog_modules(_load_yaml(project_root / "data" / "catalog.yaml"))
+    catalog_modules = _catalog_modules(
+        _load_yaml(project_root / "data" / "catalog.yaml")
+    )
     module_ids = sorted(set(module_manifest) | set(catalog_modules))
 
     modules: dict[str, dict[str, Any]] = {}
@@ -112,6 +132,7 @@ def build_scorecard(project_root: Path, report_date: str | None = None) -> dict[
                 scheduler_manifest,
                 report_date,
             ),
+            "fixture_readiness": _fixture_readiness(project_root, manifest_entry),
             "in_scheduler": bool(manifest_entry.get("in_scheduler", False)),
             "public_cli": bool(manifest_entry.get("public_cli", False)),
             "dataset_count": dataset_count,
@@ -135,13 +156,15 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
     lines = [
         f"# Data Freshness Scorecard — {scorecard['report_date']}",
         "",
-        "| Module | Catalog Status | Freshness | Datasets | Records | Last Refresh | Scheduler Success |",
-        "|---|---|---|---:|---:|---|---|",
+        "| Module | Catalog Status | Freshness | Datasets | Records | Last Refresh | "
+        "Scheduler Success | Fixture Readiness |",
+        "|---|---|---|---:|---:|---|---|---|",
     ]
     for module_id, entry in sorted(scorecard["modules"].items()):
         lines.append(
             "| {module} | {catalog_status} | {freshness_status} | {dataset_count} | "
-            "{record_count} | {last_refresh} | {scheduler_last_success_ts} |".format(
+            "{record_count} | {last_refresh} | {scheduler_last_success_ts} | "
+            "{fixture_readiness} |".format(
                 module=module_id,
                 catalog_status=entry["catalog_status"],
                 freshness_status=entry["freshness_status"],
@@ -149,19 +172,24 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
                 record_count=entry["record_count"],
                 last_refresh=entry.get("last_refresh") or "",
                 scheduler_last_success_ts=entry.get("scheduler_last_success_ts") or "",
+                fixture_readiness=entry.get("fixture_readiness", "none"),
             )
         )
     output_path.write_text("\n".join(lines) + "\n")
 
 
 def _default_report_path(project_root: Path, report_date: str) -> Path:
-    return project_root / "docs" / "reports" / f"data-freshness-scorecard-{report_date}.md"
+    return (
+        project_root / "docs" / "reports" / f"data-freshness-scorecard-{report_date}.md"
+    )
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", type=Path, default=Path.cwd())
-    parser.add_argument("--date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"))
+    parser.add_argument(
+        "--date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    )
     parser.add_argument("--report-output", type=Path)
     parser.add_argument("--json-output", type=Path)
     parser.add_argument("--check", action="store_true")

@@ -26,8 +26,13 @@ def run_spain_reference_chain(
     start: Optional[str] = None,
     end: Optional[str] = None,
     oil_price_usd_bbl: float = 75.0,
+    gas_prices: Optional[Dict[str, float]] = None,
 ) -> Dict[str, Any]:
-    """Run the one-field Spain CORES chain slice."""
+    """Run one field with optional YYYY-MM gas prices in USD/Mcf.
+
+    Gas volume already uses the loader's GWh-to-Mcf conversion. Supplying a
+    deck enables gas revenue; omission retains oil-only pre-tax plumbing.
+    """
     unified = adapter.fetch(
         ProductionQuery(
             regions=["spain"],
@@ -54,6 +59,7 @@ def run_spain_reference_chain(
         {"drilling_monthly": {}},
         price_deck,
         first_oil,
+        gas_prices=gas_prices,
     )
 
     onshore_flag = _is_onshore(field_meta)
@@ -96,7 +102,7 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
 def _pre_tax_metrics(cashflows, onshore_model_mismatch: bool) -> Dict[str, float]:
     return {
         "months": len(cashflows),
-        "gross_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
+        "gross_revenue_usd": float(sum(cf.total_revenue_usd for cf in cashflows)),
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),
         "net_cashflow_usd": float(sum(cf.net_cashflow_usd for cf in cashflows)),

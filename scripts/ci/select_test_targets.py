@@ -48,6 +48,7 @@ ALWAYS_XDIST = [
     "tests/unit/common",
     "tests/contracts",
     "tests/workflows",
+    "tests/governance",
 ]
 
 # Changing any of these can affect every module -> run the whole tree.
@@ -75,6 +76,60 @@ CORE_PREFIXES = (
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
     "config/repo_structure.yml": "tests/repo_structure",
+    "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
+    "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/benchmark.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/benchmark.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/completion.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/completion.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-anchor.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-anchor.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-big_foot.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-big_foot.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-cascade_chinook.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-cascade_chinook.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-jack_st_malo.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-jack_st_malo.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-julia.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-julia.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-shenandoah.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-shenandoah.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-stones.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/economics-stones.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-bsee-matched.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-bsee-matched.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-playbook.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-playbook.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-portfolio.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-portfolio.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-showcase.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/fd-showcase.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/imo.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/imo.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/mooring.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/mooring.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-exec.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-exec.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-fatality.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-fatality.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-foundering.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-foundering.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-hatch.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/ms-hatch.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/portfolio.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/portfolio.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-economics.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-economics.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-playbook.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-playbook.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-safety.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-safety.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-validation.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-validation.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-wells.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/sec-wells.pdf": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/well-path.html": "tests/test_capability_onepagers.py",
+    "reports/capabilities/pdf/well-path.pdf": "tests/test_capability_onepagers.py",
 }
 
 # Paths that exercise the durable-workflow registry (covered by tests/workflows,
@@ -189,7 +244,7 @@ def select(changed: list[str], root: Path) -> dict:
     xdist.extend(sorted(contracts))
     seq = [f"tests/integration/modules/{m}" for m in sorted(seq_modules)]
 
-    # keep only dirs that exist, dedupe, preserve order
+    # keep existing directories and test files, dedupe, preserve order
     xdist = _existing_unique(xdist, root)
     seq = _existing_unique(seq, root)
     return {"scope": "modules" if relevant else "skip", "xdist": xdist, "seq": seq}
@@ -198,7 +253,9 @@ def select(changed: list[str], root: Path) -> dict:
 def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
-        if t not in seen and (root / t).is_dir():
+        target = root / t
+        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
     return out

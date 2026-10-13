@@ -6,14 +6,34 @@ field:
   display_name: "Jack/St. Malo"
   status: producing
   leases_key: jack_st_malo
-  first_oil: "2014-02-01"
+  # P7: Chevron Corporation annual report, FY2014 (filed 2015), primary.
+  # https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm
+  # "First production was achieved in December 2014."
+  # P8: Jack, St. Malo partners announce first oil from deepwater Gulf of Mexico
+  # project (World Oil), 2014-12-02; secondary, supporting only.
+  # https://worldoil.com/news/2014/12/2/jack-st-malo-partners-announce-first-oil-from-deepwater-gulf-of-mexico-project
+  # Reproduces the operator release of 2014-12-02.
+  # Exact first-flow day is not published in sources opened; month-start convention retained.
+  # Checked 2026-10-11; issue 747. Was "2014-02-01".
+  first_oil: "2014-12-01"
   data_through: "2024-12-31"
   operator: "Chevron"
+  # P7: Chevron Corporation annual report, FY2014 (filed 2015).
+  # https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm
+  # Checked 2026-10-11; issue 747. Was Chevron 0.51 for the combined fields; retained below.
+  # Verified Chevron field interests: Jack 0.50; St. Malo 0.51.
+  # Comment-only fallback: the flat partners list feeds computed capex and production shares.
   partners:
     - name: "Chevron"
       working_interest: 0.51
+    # not verified; no Suncor interest was found in any source opened; the co-owner split
+    # in the note rests on a secondary 2014 source and needs a current primary check
+    # (issue 747 research note). Was Equinor 0.245; retained unchanged.
     - name: "Equinor"
       working_interest: 0.245
+    # not verified; no Suncor interest was found in any source opened; the co-owner split
+    # in the note rests on a secondary 2014 source and needs a current primary check
+    # (issue 747 research note). Was Suncor 0.245; retained unchanged.
     - name: "Suncor"
       working_interest: 0.245
   capex:
@@ -24,3 +44,36 @@ field:
   production_profile:
     plateau_rate_mbopd: 94
     gor_scf_per_bbl: 1200
+
+# Reference data only: this combined entry has one capital cost and one plateau
+# rate. No public per-field split of that cost or rate exists in the sources
+# opened in the issue 747 research note; none is invented. The flat partners
+# list above remains the sole calculation input, including for concentration.
+partners_by_field:
+  # Row 9: the co-owner split rests on secondary P8 and dates from 2014. The
+  # current co-owner list needs one more primary check before it is written.
+  Jack:
+    - name: "Chevron"
+      share: 0.50
+      source:
+        key: P7
+        title: "Chevron Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        date: "FY2014 (filed 2015)"
+        research_note_row: 9
+      source_class: primary
+      as_of: "FY2014"
+  # Row 9: the co-owner split rests on secondary P8 and dates from 2014; later
+  # transfers mean the current list needs one more primary check. No Suncor
+  # interest was found in any source opened. No remainder is padded or assigned.
+  St. Malo:
+    - name: "Chevron"
+      share: 0.51
+      source:
+        key: P7
+        title: "Chevron Corporation annual report"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        date: "FY2014 (filed 2015)"
+        research_note_row: 9
+      source_class: primary
+      as_of: "FY2014"

@@ -44,11 +44,13 @@ clean:
 # BSEE data management
 .PHONY: data data-dry
 
+# Prerequisites: install uv and run `uv sync` once.
+# Issue 1066 notes: eWell WAR bulk contains only reports submitted since April 2004.
 data:  ## Download BSEE datasets (~300 MB, ~8 min)
-	python3 scripts/refresh_bsee_all.py
+	uv run python scripts/refresh_bsee_all.py
 
 data-dry:  ## Show what data would be downloaded
-	python3 scripts/refresh_bsee_all.py --dry-run
+	uv run python scripts/refresh_bsee_all.py --dry-run
 
 # Parallel file processing example
 process-files:

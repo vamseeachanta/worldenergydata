@@ -86,16 +86,16 @@ def test_atlas_still_single_h1(public):
     assert text.count("<h1") == 1
 
 
-# --- Sub-feature 3: dual country-scope numbers on all three surfaces ----------
+# --- Sub-feature 3: dual country-scope numbers on both data surfaces ----------
 
 DUAL_SURFACES = (
-    "capabilities/index.html",
     "capabilities/insights.html",
     "all-regions-atlas.html",
 )
 
 
-def test_dual_country_numbers_on_all_three_surfaces(public):
+def test_dual_country_numbers_on_both_surfaces(public):
+    """Regression pin: both country figures remain on both data surfaces."""
     for rel in DUAL_SURFACES:
         text = (public / rel).read_text()
         assert "205 countries in atlas scope" in text, rel
@@ -103,11 +103,14 @@ def test_dual_country_numbers_on_all_three_surfaces(public):
 
 
 def test_capabilities_hero_repointed(public):
-    text = (public / "capabilities/index.html").read_text()
-    # stale count dropped; explorer framing added; link unchanged
+    stub = public / "capabilities/index.html"
+    text = stub.read_text(encoding="utf-8")
+    target = "https://www.aceengineer.com/capabilities/"
+    assert f'<link rel="canonical" href="{target}">' in text
+    assert f'<meta http-equiv="refresh" content="0; url={target}">' in text
+    assert '<meta name="robots" content="noindex, follow">' in text
     assert "120 GoM fields" not in text
-    assert 'href="../field-atlas/"' in text
-    assert "Field Explorer" in text
+    assert stub.read_bytes() == (REPO / "reports/capabilities/index.html").read_bytes()
 
 
 # --- Sub-feature 4: branding pass --------------------------------------------

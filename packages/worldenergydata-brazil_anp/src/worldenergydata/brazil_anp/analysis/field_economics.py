@@ -1,7 +1,12 @@
 """Brazilian fiscal regime models: concession and production sharing (PSA).
 
+The concession royalty production-rate bands are illustrative, not
+source-qualified fiscal terms. They are retained for compatibility and shall
+not be copied into a fiscal deck without a governing contract and case.
+See the package README for the source comparison and qualification limits.
+
 Concession (post-salt, e.g. Marlim, Roncador):
-- Royalties: 5-15% on gross revenue (sliding scale by production rate)
+- Royalties: illustrative 5-15% on gross revenue (production-rate bands)
 - Special Participation (SP): 0-40% progressive tax on net revenue for large fields
 - IRPJ + CSLL: ~34% corporate tax on net income
 
@@ -20,7 +25,18 @@ logger = logging.getLogger(__name__)
 
 CORPORATE_TAX_RATE = 0.34  # IRPJ (25%) + CSLL (9%)
 
-# Sliding scale for concession royalties based on production rate (bpd)
+# Illustrative bands: externally supplied barrels/day; rates on gross revenue.
+# First mismatch: Decreto 2.705/1998, art. 12, paragraphs 1-2 specifies a
+# contractual concession percentage, not these daily production-rate bands.
+# Presidency: Lei 9.478/1997, art. 47, caput/paragraph 1; Decreto 2.705/1998,
+# arts. 11-12. Opened 2026-10-12:
+# https://www.planalto.gov.br/ccivil_03/leis/l9478.htm
+# https://www.planalto.gov.br/ccivil_03/decreto/d2705.htm
+# ANP, Royalties, calculation factors (opened 2026-10-12):
+# https://www.gov.br/anp/pt-br/assuntos/royalties-e-outras-participacoes/royalties
+# Art. 22's special-participation tables concern quarterly field net revenue,
+# production year and location, not this royalty scale. Full comparison: README.
+ROYALTY_SCALE_IS_ILLUSTRATIVE = True
 ROYALTY_SCALE = [
     (5_000, 0.05),
     (15_000, 0.075),
@@ -57,6 +73,13 @@ class FiscalResult:
 def calculate_royalties_concession(
     gross_revenue: float, production_rate_bpd: float
 ) -> float:
+    """Apply the illustrative royalty bands to externally supplied gross revenue.
+
+    The rate input uses barrels/day in the concession model's field context.
+    Field aggregation, averaging basis, production year and location class are
+    not established by this interface. The bands are not qualified fiscal terms;
+    see ROYALTY_SCALE_IS_ILLUSTRATIVE and the package README source comparison.
+    """
     if gross_revenue <= 0:
         return 0.0
 
@@ -105,7 +128,7 @@ def calculate_psa_government_take(
 
 
 class ConcessionRegime:
-    """Concession fiscal regime for post-salt fields."""
+    """Concession model for post-salt fields with illustrative royalty bands."""
 
     def calculate(
         self,

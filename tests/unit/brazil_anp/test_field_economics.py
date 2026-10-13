@@ -184,3 +184,97 @@ class TestPSARegime:
             profit_oil_gov_share=0.70,
         )
         assert high.total_government_take > low.total_government_take
+
+
+def test_royalty_scale_is_marked_illustrative():
+    from worldenergydata.brazil_anp.analysis import field_economics
+
+    assert getattr(field_economics, "ROYALTY_SCALE_IS_ILLUSTRATIVE", False) is True
+    assert "illustrative" in field_economics.__doc__.lower()
+    assert "illustrative" in calculate_royalties_concession.__doc__.lower()
+    assert "illustrative" in ConcessionRegime.__doc__.lower()
+
+
+def test_royalty_scale_documentation_is_qualified():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[3]
+    readme = (root / "packages/worldenergydata-brazil_anp/README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "illustrative" in readme.lower()
+    assert "ROYALTY_SCALE_IS_ILLUSTRATIVE" in readme
+    assert "art. 12" in readme
+    assert "2026-10-12" in readme
+
+
+def test_shipped_fiscal_decks_exclude_scale_regression_pin(monkeypatch):
+    """Pin: shipped decks and production builders already exclude these bands."""
+    import inspect
+    from importlib import resources
+
+    import yaml
+
+    from worldenergydata.brazil_anp.analysis import field_economics
+    from worldenergydata.fdas.fiscal import (
+        available_countries,
+        get_fiscal_terms,
+        schema,
+        terms,
+        validate_deck,
+    )
+
+    def reject_reference(*args, **kwargs):
+        raise AssertionError("A shipped deck read the illustrative royalty scale")
+
+    class UnreadableScale:
+        __iter__ = reject_reference
+        __getitem__ = reject_reference
+        __len__ = reject_reference
+
+    monkeypatch.setattr(field_economics, "ROYALTY_SCALE", UnreadableScale())
+    monkeypatch.setattr(
+        field_economics, "calculate_royalties_concession", reject_reference
+    )
+    countries = available_countries()
+    assert countries == ["norway", "uk", "us_gom"]
+    decks = resources.files("worldenergydata.fdas.fiscal.decks")
+    for country in countries:
+        raw = yaml.safe_load(decks.joinpath(country + ".yml").read_text())
+        loaded = get_fiscal_terms(country)
+        assert validate_deck(raw) == loaded
+        assert loaded.royalty.model in {"flat", "none"}
+        assert loaded.royalty.bands == ()
+    for builder in (schema, terms):
+        source = inspect.getsource(builder)
+        assert "ROYALTY_SCALE" not in source
+        assert "brazil_anp" not in source
+
+
+def test_royalty_band_values_and_boundaries_regression_pin():
+    """Pin: values follow field_economics.ROYALTY_SCALE, not a legal table."""
+    from worldenergydata.brazil_anp.analysis.field_economics import ROYALTY_SCALE
+
+    assert ROYALTY_SCALE == [
+        (5_000, 0.05),
+        (15_000, 0.075),
+        (30_000, 0.10),
+        (50_000, 0.125),
+        (float("inf"), 0.15),
+    ]
+    for rate_bpd, royalty_rate in (
+        (0, 0.05),
+        (5_000, 0.05),
+        (5_001, 0.075),
+        (15_000, 0.075),
+        (15_001, 0.10),
+        (30_000, 0.10),
+        (30_001, 0.125),
+        (50_000, 0.125),
+        (50_001, 0.15),
+        (100_000, 0.15),
+    ):
+        assert calculate_royalties_concession(1_000_000, rate_bpd) == (
+            1_000_000 * royalty_rate
+        )
+        assert calculate_royalties_concession(0, rate_bpd) == 0

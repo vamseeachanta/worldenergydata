@@ -37,9 +37,12 @@ allowed_roots:
   - .flake8
   - .gitattributes
   - .gitignore
+  - .gitleaks.toml
+  - .gitleaksignore
   - .legal-deny-list.yaml
   - LICENSE
   - Makefile
+  - MANIFEST.in
   - mkdocs.yml
   - MODULE_INDEX.md
   - module-manifest.yaml
@@ -88,33 +91,63 @@ temporary_exceptions:
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
+      - reports/capabilities/assets/fonts/OpenSans/OFL.txt
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-Bold.ttf
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-ExtraBold.ttf
+      - reports/capabilities/assets/fonts/OpenSans/OpenSans-Regular.ttf
       - reports/capabilities/assets/tokens.css
       - reports/capabilities/index.html
+      - reports/capabilities/pdf/benchmark.html
       - reports/capabilities/pdf/benchmark.pdf
+      - reports/capabilities/pdf/completion.html
       - reports/capabilities/pdf/completion.pdf
+      - reports/capabilities/pdf/economics-anchor.html
       - reports/capabilities/pdf/economics-anchor.pdf
+      - reports/capabilities/pdf/economics-big_foot.html
       - reports/capabilities/pdf/economics-big_foot.pdf
+      - reports/capabilities/pdf/economics-cascade_chinook.html
       - reports/capabilities/pdf/economics-cascade_chinook.pdf
+      - reports/capabilities/pdf/economics-jack_st_malo.html
       - reports/capabilities/pdf/economics-jack_st_malo.pdf
+      - reports/capabilities/pdf/economics-julia.html
       - reports/capabilities/pdf/economics-julia.pdf
+      - reports/capabilities/pdf/economics-shenandoah.html
       - reports/capabilities/pdf/economics-shenandoah.pdf
+      - reports/capabilities/pdf/economics-stones.html
       - reports/capabilities/pdf/economics-stones.pdf
+      - reports/capabilities/pdf/fd-bsee-matched.html
       - reports/capabilities/pdf/fd-bsee-matched.pdf
+      - reports/capabilities/pdf/fd-playbook.html
       - reports/capabilities/pdf/fd-playbook.pdf
+      - reports/capabilities/pdf/fd-portfolio.html
       - reports/capabilities/pdf/fd-portfolio.pdf
+      - reports/capabilities/pdf/fd-showcase.html
       - reports/capabilities/pdf/fd-showcase.pdf
+      - reports/capabilities/pdf/imo.html
       - reports/capabilities/pdf/imo.pdf
+      - reports/capabilities/pdf/mooring.html
       - reports/capabilities/pdf/mooring.pdf
+      - reports/capabilities/pdf/ms-exec.html
       - reports/capabilities/pdf/ms-exec.pdf
+      - reports/capabilities/pdf/ms-fatality.html
       - reports/capabilities/pdf/ms-fatality.pdf
+      - reports/capabilities/pdf/ms-foundering.html
       - reports/capabilities/pdf/ms-foundering.pdf
+      - reports/capabilities/pdf/ms-hatch.html
       - reports/capabilities/pdf/ms-hatch.pdf
+      - reports/capabilities/pdf/portfolio.html
       - reports/capabilities/pdf/portfolio.pdf
+      - reports/capabilities/pdf/sec-economics.html
       - reports/capabilities/pdf/sec-economics.pdf
+      - reports/capabilities/pdf/sec-playbook.html
       - reports/capabilities/pdf/sec-playbook.pdf
+      - reports/capabilities/pdf/sec-safety.html
       - reports/capabilities/pdf/sec-safety.pdf
+      - reports/capabilities/pdf/sec-validation.html
       - reports/capabilities/pdf/sec-validation.pdf
+      - reports/capabilities/pdf/sec-wells.html
       - reports/capabilities/pdf/sec-wells.pdf
+      - reports/capabilities/pdf/well-path.html
       - reports/capabilities/pdf/well-path.pdf
       - reports/completion/index.html
       - reports/completion/verification.html
@@ -152,6 +185,7 @@ temporary_exceptions:
       - reports/field_analysis_report.html
       - reports/field_benchmark/_facts.json
       - reports/field_benchmark/index.html
+      - reports/field_benchmark/README.md
       - reports/field_development/bsee_matched/_summary.json
       - reports/field_development/bsee_matched/aconcagua.html
       - reports/field_development/bsee_matched/allegheny.html
