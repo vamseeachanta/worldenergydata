@@ -9,6 +9,7 @@ This module provides:
 
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 from datetime import datetime, timedelta
@@ -257,8 +258,216 @@ _performance_tracker = None
 _performance_db_path = None
 
 
+# Exact report paths from the reusable test workflow's JUnit option.
+_TREE_OUTPUT_EXCEPTIONS = frozenset(
+    {
+        "test-results-unit-analysis.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-audit.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-australia.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-baker_hughes.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-brazil_anp.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-bsee.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-canada.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-ci.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-cli.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-common.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-config.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-consolidated.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-core.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-cost.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-curated.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-dashboard.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-data_procurement.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-decommissioning.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-drilling.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-drilling_pressure_management.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-economics.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-eia.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-eia_us.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-energy_mix.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-fdas.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-federal_acreage.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-field_development.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-financial.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-gtm.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-hse.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-hygiene.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-kansas_kgs.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-landman.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-lng_terminals.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-lower_tertiary.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-marine.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-marine_safety.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-metocean.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-mexico_cnh.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-modules.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-pipeline_ci_cd.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-pipeline_safety.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-production.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-reporting.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-reservoir.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-safety_analysis.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-scheduler.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-site.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-sodir.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-spain.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-state_regulators.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-subsea.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-texas_rrc.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-ukcs.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-validation.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-vessel_fleet.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-vessel_hull_models.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-well_bore_design.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-well_planning.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-well_production_dashboard.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-west_africa.xml",  # Reusable test workflow JUnit output.
+        "test-results-unit-worldenergydata.xml",  # Reusable test workflow JUnit output.
+        "test-results-_archive.xml",  # Reusable test workflow JUnit output.
+        "test-results-agent_os.xml",  # Reusable test workflow JUnit output.
+        "test-results-ai_test_generation.xml",  # Reusable test workflow JUnit output.
+        "test-results-benchmarks.xml",  # Reusable test workflow JUnit output.
+        "test-results-ci.xml",  # Reusable test workflow JUnit output.
+        "test-results-common.xml",  # Reusable test workflow JUnit output.
+        "test-results-contracts.xml",  # Reusable test workflow JUnit output.
+        "test-results-cron.xml",  # Reusable test workflow JUnit output.
+        "test-results-drilling.xml",  # Reusable test workflow JUnit output.
+        "test-results-governance.xml",  # Reusable test workflow JUnit output.
+        "test-results-hse.xml",  # Reusable test workflow JUnit output.
+        "test-results-marine.xml",  # Reusable test workflow JUnit output.
+        "test-results-marine_safety.xml",  # Reusable test workflow JUnit output.
+        "test-results-modules.xml",  # Reusable test workflow JUnit output.
+        "test-results-repo_structure.xml",  # Reusable test workflow JUnit output.
+        "test-results-reservoir.xml",  # Reusable test workflow JUnit output.
+        "test-results-scheduler.xml",  # Reusable test workflow JUnit output.
+        "test-results-workflow_api.xml",  # Reusable test workflow JUnit output.
+        "test-results-workflows.xml",  # Reusable test workflow JUnit output.
+        "test-results-_root.xml",  # Reusable test workflow JUnit output.
+        "test-results-integration.xml",  # Reusable test workflow JUnit output.
+        "test-results-performance.xml",  # Reusable test workflow JUnit output.
+    }
+)
+
+
+def _tree_git_environment():
+    """Prevent inherited Git bindings from selecting another checkout."""
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
+    return env
+
+
+def _tree_git(root, *arguments):
+    """Run a read-only Git command against the selected checkout."""
+    return subprocess.run(
+        ["git", "-C", str(root), *arguments],
+        env=_tree_git_environment(),
+        capture_output=True,
+        check=False,
+    )
+
+
+def _tree_changes(root):
+    """Return changed, deleted and new paths, using NUL-delimited Git status."""
+    result = _tree_git(root, "status", "--porcelain=v1", "-z", "--untracked-files=all")
+    result.check_returncode()
+    changes = {}
+    entries = iter(result.stdout.split(b"\0"))
+    for entry in entries:
+        if not entry:
+            continue
+        flags = entry[:2].decode("ascii")
+        path = os.fsdecode(entry[3:])
+        if flags == "??" or "A" in flags:
+            kind = "new"
+        elif "D" in flags:
+            kind = "deleted"
+        else:
+            kind = "changed"
+        changes[path] = kind
+        if "R" in flags or "C" in flags:
+            original = os.fsdecode(next(entries))
+            if "R" in flags:
+                changes[original] = "deleted"
+                changes[path] = "new"
+    return {
+        path: kind
+        for path, kind in changes.items()
+        if path not in _TREE_OUTPUT_EXCEPTIONS
+    }
+
+
+def _configure_tree_guard(config):
+    """Capture pre-existing work only when the developer requests that mode."""
+    if hasattr(config, "workerinput"):
+        return
+    config._tree_guard_root = None
+    config._tree_guard_initial = set()
+    config._tree_guard_error = None
+    config._tree_guard_note = None
+    if shutil.which("git") is None:
+        config._tree_guard_note = "Git is not available"
+        return
+    result = _tree_git(config.rootpath, "rev-parse", "--show-toplevel")
+    if result.returncode:
+        if b"not a git repository" in result.stderr.lower():
+            config._tree_guard_note = "outside a Git checkout"
+        else:
+            config._tree_guard_error = "Git could not resolve the checkout"
+        return
+    config._tree_guard_root = Path(os.fsdecode(result.stdout).strip())
+    if config.getoption("allow_existing_tree_changes"):
+        try:
+            config._tree_guard_initial = set(_tree_changes(config._tree_guard_root))
+        except (OSError, subprocess.SubprocessError):
+            config._tree_guard_error = "Git could not record the initial tree"
+
+
+def _finish_tree_guard(session):
+    """Fail the controlling session when its tree does not meet the criterion."""
+    config = session.config
+    if hasattr(config, "workerinput"):
+        return
+    if config._tree_guard_note:
+        print("Tree preservation check did not run: " + config._tree_guard_note + ".")
+        return
+    error = config._tree_guard_error
+    changes = {}
+    if error is None:
+        try:
+            changes = _tree_changes(config._tree_guard_root)
+        except (OSError, subprocess.SubprocessError):
+            error = "Git could not read the final tree"
+    changes = {
+        path: kind
+        for path, kind in changes.items()
+        if path not in config._tree_guard_initial
+    }
+    if not changes and error is None:
+        return
+    print("\nRepository tree preservation failed:")
+    if error:
+        print("  " + error)
+    for path, kind in sorted(changes.items())[:50]:
+        print(f"  {kind}: {repr(path)[1:-1]}")
+    if len(changes) > 50:
+        print(f"  {len(changes) - 50} additional path(s) not shown")
+    print(
+        "Use --allow-existing-tree-changes for pre-existing work; "
+        "see docs/development/index.md."
+    )
+    if session.exitstatus == pytest.ExitCode.OK:
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
+
+
 def pytest_addoption(parser):
-    """Add the performance database path seam used by lifecycle tests."""
+    """Register performance output and tree-preservation options."""
+    parser.addoption(
+        "--allow-existing-tree-changes",
+        action="store_true",
+        default=False,
+        help="Report only paths newly changed during the session; see docs/development/index.md",
+    )
     parser.addoption(
         "--performance-db-path",
         default=None,
@@ -279,7 +488,8 @@ def _get_performance_tracker(config):
 
 
 def pytest_configure(config):
-    """Capture performance configuration without opening the database."""
+    """Capture performance configuration and the initial tree state."""
+    _configure_tree_guard(config)
     global _performance_db_path
     db_path = config.getoption("performance_db_path")
     _performance_db_path = Path(db_path) if db_path is not None else None
@@ -304,7 +514,8 @@ def pytest_runtest_makereport(item, call):
 
 @pytest.hookimpl(trylast=True)
 def pytest_sessionfinish(session, exitstatus):
-    """Called after test session finishes."""
+    """Check tree preservation and report performance at session finish."""
+    _finish_tree_guard(session)
     if _performance_tracker:
         summary = _performance_tracker.get_session_summary()
 

@@ -69,13 +69,20 @@ class TestGenerateMetadata:
             capture_output=True,
             cwd=str(REPO_ROOT),
         )
-        if not MODULES_DIR.is_dir():
+        input_modules = REPO_ROOT / "data" / "modules"
+        if not input_modules.is_dir():
             pytest.skip("data/modules/ not present")
 
-        for mod_dir in sorted(MODULES_DIR.iterdir()):
+        for mod_dir in sorted(input_modules.iterdir()):
             if not mod_dir.is_dir():
                 continue
-            meta_path = mod_dir / "_metadata.json"
+            meta_path = (
+                temporary_metadata
+                / "data"
+                / "modules"
+                / mod_dir.name
+                / "_metadata.json"
+            )
             assert meta_path.exists(), f"Missing _metadata.json in {mod_dir.name}"
 
     def test_metadata_json_has_required_fields(self):

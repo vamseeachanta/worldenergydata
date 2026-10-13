@@ -40,6 +40,13 @@ ruff check .
 mypy .
 ```
 
+Test sessions fail if tracked files differ from HEAD or new unignored files
+remain. For existing uncommitted work, use `pytest --allow-existing-tree-changes`;
+the session records dirty paths at the start and still fails for newly changed
+paths. Only the exact JUnit report paths produced by the reusable test workflow
+are excepted. Ignored tool outputs retain their existing ignore rules. Outside
+a Git checkout, or without Git, the check prints a note and does not fail.
+
 ## Project Structure
 
 ### Core Architecture
