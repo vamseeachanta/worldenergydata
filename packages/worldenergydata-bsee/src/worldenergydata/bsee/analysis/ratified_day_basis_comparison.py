@@ -391,7 +391,7 @@ def main():
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     rows = build_comparison(args.root)
-    target = args.output or args.root / NOTES / "ratified_day_basis_comparison.csv"
+    target = args.output or args.root / NOTES / "day_basis_comparison.csv"
     target.write_text(comparison_csv(rows), encoding="utf-8", newline="")
     print(json.dumps(summary_statistics(rows), indent=2))
 
