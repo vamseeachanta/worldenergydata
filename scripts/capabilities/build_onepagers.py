@@ -15,11 +15,13 @@ Run:
 
 from __future__ import annotations
 
+import argparse
 import html
 import os
+import re
 import shutil
 import subprocess
-import tempfile
+from collections.abc import Callable
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
@@ -189,6 +191,7 @@ SPECS: list[dict] = [
 ]
 
 _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>{title}</title>
 <style>
   @page{{size:A4;margin:0}}
   {tokens}
@@ -218,14 +221,13 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
   .foot .live{{color:var(--navy);font-weight:700}}
   .cta{{background:linear-gradient(135deg,#0f8a7e,#0B3D91);color:#fff;font-weight:700;
        font-size:12px;padding:8px 14px;border-radius:9px;display:inline-block}}
-</style></head>
+</style>{brand_style}</head>
 <body>
   <div class="top">{logo}<div class="kind">Capability one-pager</div></div>
   <div class="std">{std}</div>
   <h1>{title}</h1>
   <p class="blurb">{blurb}</p>
-  {figs}
-  <h2>What you get</h2>
+{figs}  <h2>What you get</h2>
   <ul>{bullets}</ul>
   <div class="foot">
     <div>worldenergydata · open energy-data · deterministic outputs on public regulatory filings<br>
@@ -235,7 +237,8 @@ _TEMPLATE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
 </body></html>"""
 
 
-def _render_html(spec: dict) -> str:
+def _render_html(spec: dict, brand_css: str = "") -> str:
+    _validate_brand(brand_css)
     figs = ""
     if spec["figures"]:
         cells = "".join(
@@ -243,39 +246,92 @@ def _render_html(spec: dict) -> str:
             f'<div class="l">{html.escape(l)}</div></div>'
             for v, l in spec["figures"]
         )
-        figs = f'<div class="figs">{cells}</div>'
+        figs = f'  <div class="figs">{cells}</div>\n'
     bullets = "".join(f"<li>{html.escape(b)}</li>" for b in spec["bullets"])
     live = f"{_SITE}/{spec['path']}"
-    return _TEMPLATE.format(tokens=_TOKENS, 
-        logo=_LOGO, std=html.escape(spec["std"]), title=html.escape(spec["title"]),
-        blurb=html.escape(spec["blurb"]), figs=figs, bullets=bullets, live=html.escape(live),
+    return _TEMPLATE.format(
+        tokens=_TOKENS,
+        brand_style=f"<style>{brand_css}</style>" if brand_css else "",
+        logo=_LOGO,
+        std=html.escape(spec["std"]),
+        title=html.escape(spec["title"]),
+        blurb=html.escape(spec["blurb"]),
+        figs=figs,
+        bullets=bullets,
+        live=html.escape(live),
     )
 
 
-def _to_pdf(html_text: str, out_pdf: Path) -> None:
-    with tempfile.NamedTemporaryFile("w", suffix=".html", delete=False, encoding="utf-8") as f:
-        f.write(html_text)
-        src = f.name
-    try:
-        subprocess.run(
-            [_CHROME, "--headless", "--no-sandbox", "--disable-gpu",
-             "--no-pdf-header-footer", f"--print-to-pdf={out_pdf}", src],
-            check=True, capture_output=True, timeout=90,
+def _validate_brand(css: str) -> None:
+    # CSS escapes can hide imports and resource functions from literal checks.
+    resources = r"@import\b|(?:url|image|(?:-webkit-)?image-set|src)\s*\(|</style"
+    if "\\" in css or re.search(resources, css, re.IGNORECASE):
+        raise ValueError(
+            "brand stylesheet must be self-contained CSS without resources or markup"
         )
-    finally:
-        os.unlink(src)
 
 
-def main() -> None:
+def _to_pdf(source: Path, out_pdf: Path) -> None:
+    subprocess.run(
+        [
+            _CHROME,
+            "--headless",
+            "--no-sandbox",
+            "--disable-gpu",
+            "--no-pdf-header-footer",
+            f"--print-to-pdf={out_pdf.resolve()}",
+            str(source.resolve()),
+        ],
+        check=True,
+        capture_output=True,
+        timeout=90,
+    )
+
+
+def build_onepager(
+    spec: dict,
+    out_dir: Path,
+    *,
+    brand_css: str = "",
+    renderer: Callable[[Path, Path], None] | None = None,
+) -> Path:
+    """Keep the self-contained page and print that same file to its sibling PDF."""
+    text = _render_html(spec, brand_css)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    source = out_dir / f"{spec['id']}.html"
+    source.write_text(text + "\n", encoding="utf-8")
+    (renderer or _to_pdf)(source, source.with_suffix(".pdf"))
+    return source
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Build capability HTML pages and PDFs."
+    )
+    parser.add_argument(
+        "--brand",
+        type=Path,
+        metavar="CSS_FILE",
+        help="Inline a stylesheet after the default styles (no external resources).",
+    )
+    args = parser.parse_args(argv)
+    brand_css = ""
+    if args.brand is not None:
+        try:
+            brand_css = args.brand.read_text(encoding="utf-8")
+            _validate_brand(brand_css)
+        except (OSError, UnicodeError, ValueError) as error:
+            parser.error(f"cannot read brand stylesheet: {error}")
     if not _CHROME:
-        raise SystemExit("No Chrome found; set CHROME=/path/to/google-chrome")
-    _OUT.mkdir(parents=True, exist_ok=True)
+        raise SystemExit("No Chrome found; set CHROME to a browser executable")
     ids = set()
     for spec in SPECS:
         assert spec["id"] not in ids, f"duplicate id {spec['id']}"
         ids.add(spec["id"])
-        _to_pdf(_render_html(spec), _OUT / f"{spec['id']}.pdf")
-    print(f"Wrote {len(SPECS)} one-pager PDFs into {_OUT.relative_to(_REPO)}/")
+        build_onepager(spec, _OUT, brand_css=brand_css)
+    print(
+        f"Wrote {len(SPECS)} one-pager PDFs and HTML pages into {_OUT.relative_to(_REPO)}/"
+    )
 
 
 if __name__ == "__main__":

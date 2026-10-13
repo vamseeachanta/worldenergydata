@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>Hatch analysis</title>
+<style>
+  @page{size:A4;margin:0}
+  :root{--navy:#0B3D91;--teal:#0f8a7e;--ink:#13233f;--muted:#5b6b86;--line:#dbe4f0;--soft:#f4f8fc}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:#fff;
+       width:210mm;min-height:297mm;padding:18mm 18mm 14mm}
+  .top{display:flex;align-items:center;justify-content:space-between;
+       border-bottom:2px solid var(--navy);padding-bottom:12px}
+  .top svg{height:30px;width:auto}
+  .kind{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);font-weight:700}
+  h1{font-size:30px;color:var(--navy);margin:26px 0 4px;letter-spacing:-.4px;line-height:1.15}
+  .std{color:var(--teal);font-weight:700;font-size:13px}
+  .blurb{color:var(--ink);font-size:14.5px;line-height:1.55;margin:18px 0 4px;max-width:165mm}
+  .figs{display:flex;gap:14px;margin:22px 0 6px}
+  .fig{flex:1;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .fig .v{font-size:25px;font-weight:800;color:var(--navy);letter-spacing:-.5px}
+  .fig .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+     margin:26px 0 10px;border-left:4px solid var(--teal);padding-left:10px}
+  ul{list-style:none}
+  li{font-size:14px;line-height:1.5;padding:6px 0 6px 24px;position:relative;border-bottom:1px solid var(--line)}
+  li:before{content:"";position:absolute;left:4px;top:13px;width:8px;height:8px;border-radius:50%;
+            background:var(--teal)}
+  .foot{position:absolute;left:18mm;right:18mm;bottom:14mm;border-top:1px solid var(--line);
+        padding-top:10px;display:flex;justify-content:space-between;align-items:flex-end;
+        font-size:11.5px;color:var(--muted)}
+  .foot .live{color:var(--navy);font-weight:700}
+  .cta{background:linear-gradient(135deg,#0f8a7e,#0B3D91);color:#fff;font-weight:700;
+       font-size:12px;padding:8px 14px;border-radius:9px;display:inline-block}
+</style></head>
+<body>
+  <div class="top"><svg viewBox="0 0 400 64" xmlns="http://www.w3.org/2000/svg" aria-label="worldenergydata">
+  <g fill="none" stroke-width="3">
+    <circle cx="32" cy="32" r="23" stroke="#0B3D91"/>
+    <ellipse cx="32" cy="32" rx="9.5" ry="23" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="9" y1="32" x2="55" y2="32" stroke="#2BB2A6" stroke-width="2.5"/>
+    <line x1="13.5" y1="19" x2="50.5" y2="19" stroke="#0B3D91" stroke-width="2"/>
+    <line x1="13.5" y1="45" x2="50.5" y2="45" stroke="#0B3D91" stroke-width="2"/>
+  </g>
+  <circle cx="32" cy="32" r="3" fill="#2BB2A6"/>
+  <text x="74" y="43" font-family="Arial,Helvetica,sans-serif" font-size="31" font-weight="800" letter-spacing="-0.6">
+    <tspan fill="#0B3D91">world</tspan><tspan fill="#2BB2A6">energy</tspan><tspan fill="#0B3D91">data</tspan>
+  </text>
+</svg><div class="kind">Capability one-pager</div></div>
+  <div class="std">cross-database</div>
+  <h1>Hatch analysis</h1>
+  <p class="blurb">Hatch-maloperation incidents detected and classified by severity.</p>
+  <h2>What you get</h2>
+  <ul><li>Severity classification of detected incidents</li><li>Regex-detected from the full incident corpus</li></ul>
+  <div class="foot">
+    <div>worldenergydata · open energy-data · deterministic outputs on public regulatory filings<br>
+      <span class="live">Explore live: https://vamseeachanta.github.io/worldenergydata/marine_safety/hatch_analysis.html</span></div>
+    <span class="cta">View interactive &rarr;</span>
+  </div>
+</body></html>
