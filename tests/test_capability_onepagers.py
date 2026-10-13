@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import html
 import importlib.util
+import json
 import re
 import shutil
 import subprocess
@@ -274,6 +275,11 @@ BANNED_COPY = {
         "every major offshore region",
         "instant",
         "instantly",
+        "always",
+        "exact",
+        "validated",
+        "certified",
+        "100 %",
     ),
     "promotional": (
         "world-class",
@@ -290,6 +296,12 @@ BANNED_COPY = {
         "powerful",
         "comprehensive",
         "full field-development plans",
+        "guarantee",
+        "unique",
+        "leading",
+        "robust",
+        "proven",
+        "state-of-the-art",
     ),
 }
 
@@ -346,8 +358,13 @@ def wording_findings(fields: list, category: str) -> list:
                 findings.append((page, field, phrase))
         if category == "absolutes":
             for sentence in re.split(r"[.!?](?:\s|$)", text):
+                reference_pattern = (
+                    r"\bverified\s+against\s+(?:"
+                    + "|".join(re.escape(reference) for reference in NAMED_REFERENCES)
+                    + r")(?!\w)"
+                )
                 if re.search(r"\bverified\b", sentence, re.I) and not re.search(
-                    r"\bagainst\s+\S", sentence, re.I
+                    reference_pattern, sentence, re.I
                 ):
                     findings.append((page, field, "verified without reference"))
     return findings
@@ -373,7 +390,7 @@ def test_verified_requires_sentence_reference() -> None:
         [("page", "blurb", "Verified. Against reference values.")], "absolutes"
     )
     assert not wording_findings(
-        [("page", "blurb", "Verified against reference values.")], "absolutes"
+        [("page", "blurb", "Verified against V30 golden baseline.")], "absolutes"
     )
 
 
@@ -460,3 +477,105 @@ def test_country_name_is_spelled_out_in_source_basis() -> None:
     """Expand the country name alongside the public agency name on each page."""
     for spec in load_builder().SPECS:
         assert not re.search(r"(?<!\w)U\.S\.(?!\w)", spec["std"], re.I), spec["id"]
+
+
+NAMED_REFERENCES = ("V30 golden baseline", "World Oil April 2026 article")
+
+
+def committed_copy_fields(directory: Path) -> list:
+    """Collect readable text from retained pages without embedded font payloads."""
+    return [
+        (page.name, "readable text", " ".join(VisibleCopy(page.read_text()).parts))
+        for page in sorted(directory.glob("*.html"))
+    ]
+
+
+def assert_economics_cutoff(specs: list[dict]) -> None:
+    """Require the economics basis to equal its cited data vintage."""
+    data_path = (
+        SCRIPT.parents[2] / "reports/lower_tertiary/data/all_fields_economics.json"
+    )
+    vintage = json.loads(data_path.read_text())["meta"]["vintage"]
+    for spec in specs:
+        if spec["id"] in {"sec-economics", "portfolio", "benchmark"} or spec[
+            "id"
+        ].startswith("economics-"):
+            assert f"data as of: {vintage}" in spec["std"], spec["id"]
+
+
+def test_committed_html_copy_excludes_banned_wording() -> None:
+    """Apply the editorial word rules to each committed readable page."""
+    directory = SCRIPT.parents[2] / "reports/capabilities/pdf"
+    fields = committed_copy_fields(directory)
+    assert len(fields) == 26
+    for category in BANNED_COPY:
+        assert not wording_findings(fields, category)
+
+
+def test_committed_html_negative_control(tmp_path: Path) -> None:
+    """Detect a prohibited phrase in retained text but ignore font styles."""
+    (tmp_path / "page.html").write_text("<style>never</style><p>NEVER</p>")
+    assert wording_findings(committed_copy_fields(tmp_path), "absolutes")
+
+
+@pytest.mark.parametrize(
+    "phrase",
+    (
+        "guarantee",
+        "unique",
+        "leading",
+        "robust",
+        "proven",
+        "state-of-the-art",
+        "always",
+        "exact",
+        "validated",
+        "certified",
+        "100 %",
+    ),
+)
+def test_extended_words_negative_control(phrase: str) -> None:
+    """Reject each added word as a whole word irrespective of case."""
+    assert any(
+        wording_findings([("page", "blurb", phrase.upper())], category)
+        for category in BANNED_COPY
+    )
+
+
+def test_verified_named_reference_negative_control() -> None:
+    """Reject a verification claim without a reference from the named set."""
+    assert wording_findings(
+        [("page", "blurb", "Verified against arbitrary values.")], "absolutes"
+    )
+
+
+def test_economics_cutoff_matches_cited_data() -> None:
+    """Read the vintage once from the source rather than duplicating its date."""
+    assert_economics_cutoff(load_builder().SPECS)
+
+
+def test_economics_cutoff_negative_control() -> None:
+    """Demonstrate that an unsupported cutoff is rejected."""
+    spec = dict(load_builder().SPECS[0], std="data as of: unsupported")
+    with pytest.raises(AssertionError, match=spec["id"]):
+        assert_economics_cutoff([spec])
+
+
+def test_explicit_empty_figures_has_no_trailing_whitespace() -> None:
+    """An explicitly empty figures list emits no block or trailing whitespace."""
+    mod = load_builder()
+    text = mod._render_html(dict(mod.SPECS[0], figures=[]))
+    assert '<div class="figs">' not in text
+    assert all(not line.endswith((" ", "\t")) for line in text.splitlines())
+
+
+@pytest.mark.parametrize("spec", load_builder().SPECS, ids=lambda spec: spec["id"])
+def test_page_basis_and_plain_label(spec: dict) -> None:
+    """Keep the estimated cost basis and remove unsupported template buttons."""
+    mod = load_builder()
+    assert "incurred costs" not in spec["blurb"]
+    if "Price:" in spec["std"]:
+        assert "pre-tax" in spec["std"], spec["id"]
+    text = mod._render_html(spec)
+    assert "Capability summary" in text
+    assert '<span class="cta">' not in text
