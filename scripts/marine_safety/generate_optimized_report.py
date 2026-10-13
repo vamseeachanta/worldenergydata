@@ -15,9 +15,19 @@ import logging
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'src'))
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
+from scripts.marine_safety.report_notice import (
+    HATCH_RECORD_NOTICE,
+    HATCH_RECORD_TITLES,
+    NOTICE_STYLE,
+    UNVERIFIED_NOTICE,
+    VERIFIED_PAGES,
+    unverified_notice,
+)
 
 def export_incident_data_to_csv(df: pd.DataFrame, incident_type: str, results_dir: Path) -> Path:
     """Export incident data to CSV file for client-side loading."""
@@ -91,6 +101,7 @@ def generate_optimized_html(incident_type: str, csv_relative_path: str, analysis
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
+{NOTICE_STYLE}
         body {{
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -263,6 +274,7 @@ def generate_optimized_html(incident_type: str, csv_relative_path: str, analysis
 <body>
     <div class="header">
         <h1>{title}</h1>
+        {unverified_notice(f'{incident_type}_analysis.html')}
         <p>Detailed Analysis Report</p>
         <p>Generated: {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}</p>
     </div>

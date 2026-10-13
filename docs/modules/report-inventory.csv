@@ -1,5 +1,5 @@
 path,classification,evidence
-reports/IMO_GISIS_Executive_Report.html,current,scripts/build_pages.py:806-825 (build_marine_safety)
+reports/IMO_GISIS_Executive_Report.html,unverified,explicit unverified notice; source-data reproduction not established
 reports/anchor_field_demo_report.html,one-off,filename demo/test marker; not selected by Pages
 reports/capabilities/index.html,current,scripts/build_pages.py:746-783 (build_capabilities)
 reports/capabilities/insights.html,current,scripts/build_pages.py:746-783 (build_capabilities)
@@ -286,10 +286,10 @@ reports/lower_tertiary/v30_v50_brief.html,undetermined,no decisive publication o
 reports/lower_tertiary/war-activity-codes.html,current,scripts/build_pages.py:417-697 (build_lower_tertiary)
 reports/lower_tertiary/wo-april-2026-qaqc-hub.html,current,scripts/build_pages.py:417-697 (build_lower_tertiary)
 reports/lower_tertiary_field_summary.html,undetermined,no decisive publication or replacement evidence under these rules
-reports/marine_safety/executive_summary.html,current,scripts/build_pages.py:806-825 (build_marine_safety)
-reports/marine_safety/fatality_analysis.html,current,scripts/build_pages.py:806-825 (build_marine_safety)
-reports/marine_safety/foundering_analysis.html,current,scripts/build_pages.py:806-825 (build_marine_safety)
-reports/marine_safety/hatch_analysis.html,current,scripts/build_pages.py:806-825 (build_marine_safety)
+reports/marine_safety/executive_summary.html,unverified,explicit unverified notice; source-data reproduction not established
+reports/marine_safety/fatality_analysis.html,unverified,explicit unverified notice; source-data reproduction not established
+reports/marine_safety/foundering_analysis.html,unverified,explicit unverified notice; source-data reproduction not established
+reports/marine_safety/hatch_analysis.html,unverified,explicit unverified notice; source-data reproduction not established
 reports/marine_safety_cause_analysis_demo.html,one-off,filename demo/test marker; not selected by Pages
 reports/metocean/test_wave_rose.html,one-off,filename demo/test marker; not selected by Pages
 reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic.html,undetermined,no decisive publication or replacement evidence under these rules

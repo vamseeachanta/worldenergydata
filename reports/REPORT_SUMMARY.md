@@ -1,7 +1,7 @@
 # IMO GISIS Executive Report - Summary
 
 **Date Created:** 2025-10-11
-**Status:** ✅ COMPLETE
+**Status:** unverified — source rows required for reproduction are absent.
 **Format:** Interactive HTML with Plotly Visualizations
 
 ---
@@ -237,11 +237,11 @@ The Python script can be modified to:
 
 This interactive HTML report provides a comprehensive, professional presentation of 125 years of global marine casualty data. The interactive visualizations allow for both high-level overview and detailed exploration, making it ideal for executive presentations and technical discussions.
 
-**Ready for immediate use with engineering manager.**
+**Unverified historical report record; figures require source-data verification.**
 
 ---
 
 **Report Created:** 2025-10-11
 **Data Coverage:** 1900-2025 (13,160 casualties)
 **Format:** Interactive HTML
-**Status:** ✅ Production Ready
+**Status:** unverified

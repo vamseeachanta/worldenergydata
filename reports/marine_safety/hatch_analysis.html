@@ -174,11 +174,15 @@
             font-size: 1.2em;
             color: #666;
         }
+            .unverified { font-weight: 400; opacity: 0.75; }
+        .header p.unverified { font-weight: 400; opacity: 0.75; font-size: 0.95em; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>Hatch Maloperation Incidents</h1>
+        <p class="unverified">Figures on this page could not be re-derived from data held in this repository; treat as unverified.</p>
+        <p class="unverified">The assessment-class and annual charts count records analysed by assessment class and year, respectively, not detected hatch incidents.</p>
         <p>Detailed Analysis Report</p>
         <p>Generated: October 23, 2025 at 14:57:16</p>
     </div>
@@ -204,7 +208,7 @@
             text: hatchSeverity.y.map(String),
             textposition: 'outside'
         }], {
-            title: 'Hatch Incidents by Assessment Class (Top Categories)',
+            title: 'Records Analysed by Assessment Class (Top Categories)',
             margin: {t: 60, r: 20, b: 80, l: 60},
             yaxis: {title: 'Incidents'},
             xaxis: {title: 'Assessment Class'}
@@ -222,7 +226,7 @@
             line: {color: '#ff7f0e', width: 3},
             marker: {size: 8}
         }], {
-            title: 'Hatch Incidents per Year (Last 10 Years)',
+            title: 'Records Analysed per Year (Last 10 Years)',
             margin: {t: 60, r: 20, b: 80, l: 60},
             yaxis: {title: 'Incidents'},
             xaxis: {title: 'Year', dtick: 1}

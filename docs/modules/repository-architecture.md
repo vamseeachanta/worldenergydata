@@ -179,6 +179,10 @@ Classification covers every existing HTML file recursively under reports, includ
 It is a retention triage, not permission to remove files or a certification of their data.
 Rules are evaluated in this order by `scripts/maintenance/classify_report_inventory.py`:
 
+An explicit unverified paragraph is classified as **unverified** before the current,
+one-off and undetermined rules. Published availability does not establish reproducibility.
+The counts below retain the earlier inspection; the generated CSV records current status.
+
 1. **Superseded:** the HTML explicitly declares a `link` with `rel="successor-version"`
    and an `href` resolving to an existing file inside the repository. That replacement is
    recorded as evidence. A newer timestamp, similar filename or an absent index link is
@@ -280,7 +284,8 @@ syntax tree. Conditional gates and glob selection are mirrored in one function;
 each branch cites its source function and lines. The selection table and counts
 above are emitted by `--summary`. The publication agreement test executes the real
 builder with its output directories redirected to pytest's temporary directory,
-records copy inputs, and requires every selected report HTML file to be current.
+records copy inputs, and requires every selected report HTML file to be current or
+explicitly unverified.
 The builder performs no network acquisition; report SHA-256 digests are compared
 before and after verification. No report is opened for writing.
 

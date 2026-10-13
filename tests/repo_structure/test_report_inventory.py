@@ -118,7 +118,11 @@ def test_builder_agreement(tmp_path, monkeypatch):
     builder.build()
     assert observed, "No report publication was observed"
     rows = {row["path"]: row for row in module.classify_tree(ROOT, BUILDER)}
-    assert {p for p in observed if rows[p]["classification"] != "current"} == set()
+    assert {
+        p
+        for p in observed
+        if rows[p]["classification"] not in {"current", "unverified"}
+    } == set()
 
 
 def test_committed_csv_matches(capsys):

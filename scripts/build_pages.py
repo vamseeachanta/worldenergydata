@@ -811,7 +811,7 @@ def build_marine_safety(available_viz: dict[str, bool]) -> list[tuple]:
     to one another with relative hrefs (the executive summary links the fatality,
     foundering and hatch analyses), so the whole tree is copied to preserve those
     links. The IMO GISIS executive report is a single top-level file copied flat.
-    Only real-data reports are published; the synthetic ``*_demo`` page is not.
+    Retained incident reports are marked unverified; the synthetic ``*_demo`` page is not published.
     Returns ``[]`` &mdash; the landing index keys off what exists in ``public/``."""
     src = REPORTS / "marine_safety"
     if src.exists():
@@ -1025,20 +1025,6 @@ def _safety_section() -> str:
     :func:`build_marine_safety` and :func:`build_hse`. Cards link only the pages
     that exist on disk, so a partial build still produces a correct section."""
     cards = []
-    if (PUBLIC / "marine_safety" / "executive_summary.html").exists():
-        cards.append(
-            '<a class="card" href="marine_safety/executive_summary.html">'
-            "<h3>Marine Safety Analytics &rarr;</h3><p>Cross-database casualty "
-            "analysis &mdash; foundering, fatality and hatch breakdowns over "
-            "102,618 incident records (Canadian TSB, IMO GISIS, UK MAIB).</p></a>"
-        )
-    if (PUBLIC / "IMO_GISIS_Executive_Report.html").exists():
-        cards.append(
-            '<a class="card" href="IMO_GISIS_Executive_Report.html">'
-            "<h3>IMO GISIS Casualties &rarr;</h3><p>13,338 marine casualties "
-            "(1900&ndash;2025) by severity, vessel type and flag state, from the "
-            "IMO GISIS public database.</p></a>"
-        )
     if (PUBLIC / "hse" / "mooring-fatigue-grounded-card.html").exists():
         cards.append(
             '<a class="card" href="hse/mooring-fatigue-grounded-card.html">'

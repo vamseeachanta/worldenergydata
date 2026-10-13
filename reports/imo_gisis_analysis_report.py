@@ -12,6 +12,10 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from datetime import datetime
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.marine_safety.report_notice import NOTICE_STYLE, unverified_notice
 
 # Configuration
 DATA_FILE = Path("/mnt/github/workspace-hub/worldenergydata/data/modules/marine_safety/raw/imo_gisis/imo_gisis_collated.csv")
@@ -263,6 +267,7 @@ html_content = f"""
     <title>IMO GISIS Marine Casualties Analysis Report</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
+{NOTICE_STYLE}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
@@ -369,6 +374,7 @@ html_content = f"""
         <!-- Header -->
         <div class="header">
             <h1>🚢 IMO GISIS Marine Casualties Analysis</h1>
+            {unverified_notice('IMO_GISIS_Executive_Report.html')}
             <p class="subtitle">Comprehensive Analysis of Global Maritime Safety Data (1900-2025)</p>
             <p style="color: #95a5a6; margin-top: 10px;">
                 Report Generated: {datetime.now().strftime('%B %d, %Y at %H:%M UTC')}<br>
