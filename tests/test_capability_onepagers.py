@@ -325,7 +325,7 @@ class VisibleCopy(HTMLParser):
 
     def handle_data(self, data: str) -> None:
         if not self.in_style:
-            self.parts.append(re.sub(r"https?://[^\s]+", "", data))
+            self.parts.append(data)
 
 
 def copy_fields(mod) -> list[tuple[str, str, str]]:
@@ -522,6 +522,11 @@ def test_committed_html_negative_control(tmp_path: Path) -> None:
     """Detect a prohibited phrase in retained text but ignore font styles."""
     (tmp_path / "page.html").write_text("<style>never</style><p>NEVER</p>")
     assert wording_findings(committed_copy_fields(tmp_path), "absolutes")
+    visible_url = "https://example.org/guarantee"
+    (tmp_path / "url.html").write_text(f"<p>{visible_url}</p>")
+    assert ("url.html", "readable text", "guarantee") in wording_findings(
+        committed_copy_fields(tmp_path), "promotional"
+    )
 
 
 @pytest.mark.parametrize(
