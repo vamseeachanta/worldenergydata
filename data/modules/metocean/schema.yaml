@@ -1,12 +1,16 @@
 module: metocean
-description: API-RP-2MET-derived metocean extremes (GoM hurricane single-region and
-  by-region, US-zone 100-yr waves and winds, West Africa / North Sea / NW Atlantic
-  regional extremes, Hs-Tp joint occurrence, sea-temperature ranges) and
-  marine-growth terminal thickness reference tables.
+description: Metocean reference structures and user-supplied licensed tables.
 datasets:
 - name: api_rp2met_hurricane_gom_extremes.csv
-  path: data/modules/metocean/curated/api_rp2met_hurricane_gom_extremes.csv
   format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
   columns:
   - name: PARAMETER
     type: string
@@ -40,12 +44,16 @@ datasets:
     type: float
     description: ''
     unit: ''
-  row_count: 16
-  size_bytes: 1018
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: api_rp2met_us_zone_100yr_waves.csv
-  path: data/modules/metocean/curated/api_rp2met_us_zone_100yr_waves.csv
   format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
   columns:
   - name: ZONE
     type: integer
@@ -87,9 +95,6 @@ datasets:
     type: integer
     description: ''
     unit: ''
-  row_count: 15
-  size_bytes: 1236
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: marine_growth_terminal_thickness.csv
   path: data/modules/metocean/curated/marine_growth_terminal_thickness.csv
   format: csv
@@ -114,8 +119,15 @@ datasets:
   size_bytes: 141
   last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: api_rp2met_gom_extremes_by_region.csv
-  path: data/modules/metocean/curated/api_rp2met_gom_extremes_by_region.csv
   format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
   description: GoM hurricane extremes by sub-region and return period (long-form).
   columns:
   - {name: PARAMETER, type: string, description: '', unit: ''}
@@ -128,9 +140,6 @@ datasets:
   - {name: RP_200YR, type: float, description: '', unit: ''}
   - {name: RP_1000YR, type: float, description: '', unit: ''}
   - {name: RP_2000YR, type: float, description: '', unit: ''}
-  row_count: 116
-  size_bytes: 12577
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: metocean_regional_extremes.csv
   path: data/modules/metocean/curated/metocean_regional_extremes.csv
   format: csv
@@ -176,8 +185,15 @@ datasets:
   size_bytes: 367
   last_modified: '2026-06-22T17:06:49.955460+00:00'
 - name: api_rp2met_us_zone_100yr_winds.csv
-  path: data/modules/metocean/curated/api_rp2met_us_zone_100yr_winds.csv
   format: csv
+  distributed: false
+  availability: Not distributed; a user-supplied licensed copy is required.
+  citation: >-
+    API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.
+  supply:
+    loader: worldenergydata.metocean.licensed_tables.load_licensed_table
+    argument: copy_path
+    environment_variable: METOCEAN_LICENSED_DATA_DIR
   description: 100-year extreme 10m/60-min wind speeds by US offshore zone (wind
     companion to the US-zone waves table).
   columns:
@@ -185,7 +201,4 @@ datasets:
   - {name: LOCATION, type: string, description: '', unit: ''}
   - {name: WIND_10M_60MIN_WITH_WAVE_MS, type: float, description: '', unit: m/s}
   - {name: WIND_10M_60MIN_MAX_MS, type: float, description: '', unit: m/s}
-  row_count: 15
-  size_bytes: 537
-  last_modified: '2026-06-22T17:06:49.955460+00:00'
 binary_stores: []
