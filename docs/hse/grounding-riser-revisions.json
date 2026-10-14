@@ -1,0 +1,10 @@
+{
+  "revision": 1,
+  "history": [
+    {
+      "revision": 1,
+      "date": "2026-10-14",
+      "change": "Riser disconnect and pressure-containment candidate identifiers were added to support incident grounding with explicit limits on confirming causes."
+    }
+  ]
+}
