@@ -338,3 +338,7 @@ class BaseClient(ABC):
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         """Context manager exit."""
         self.close()
+
+    def fetch_resource(self, url, transport, headers=None):
+        """Fetch retained evidence through the bounded archive transport."""
+        return transport.download(url, headers=headers)

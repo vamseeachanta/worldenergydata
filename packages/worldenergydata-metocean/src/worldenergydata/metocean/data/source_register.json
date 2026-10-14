@@ -1,0 +1,1835 @@
+{
+  "schema_version": 1,
+  "readiness": "ndbc_archive_observations_only",
+  "description": "Publisher evidence and observed access. Only the validated NDBC yearly standard meteorological parser is enabled. Legacy catalog locations remain unverified compatibility records. No design conditions are established.",
+  "sources": [
+    {
+      "id": "coops",
+      "publisher": "NOAA CO-OPS",
+      "family": "tides_water_levels_currents",
+      "region": "United States",
+      "docs_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+      "terms_url": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+      "terms_quote": "The information on government servers are in the public domain, unless specifically annotated otherwise",
+      "terms_rechecked": true,
+      "eligibility": "pending_data_probe",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": [
+          "water level",
+          "tide predictions",
+          "currents",
+          "wind",
+          "temperature"
+        ],
+        "evidence_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+        "locator": "Data Products"
+      },
+      "units": {
+        "value": "metric: Celsius, meters, cm/s as appropriate; currents are cm/s",
+        "evidence_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+        "locator": "Units"
+      },
+      "coverage": {
+        "value": "station-dependent; individual station history not verified",
+        "evidence_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+        "locator": "Station ID"
+      },
+      "cadence": {
+        "value": "water level verification monthly; preliminary water level and current products use six-minute intervals",
+        "evidence_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+        "locator": "Data Products"
+      },
+      "example_url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=english&application=DataAPI_Sample&format=xml",
+      "terms_check": {
+        "source": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+        "checked_at": "2026-10-14T03:41:16.138843+00:00",
+        "http_status": 200,
+        "bytes": 24039,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_data_probe",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "coops",
+        "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=english&application=DataAPI_Sample&format=xml",
+        "fetched_at": "2026-10-14T02:59:24.744337+00:00",
+        "http_status": 200,
+        "bytes": 2178,
+        "error": null,
+        "sha256": "8a3e428eff135e724be1a5302d70a870d217f50a4cf57caedb68cf8debb703b5",
+        "outcome": "success",
+        "content_validated": false
+      },
+      "metadata_fetch": {
+        "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
+        "fetched_at": "2026-10-14T03:30:28.920244+00:00",
+        "http_status": 200,
+        "bytes": 777394,
+        "sha256": "b39e26fc3c49ce15e0b3647cfe3760eac3248b9e5e5953fa4fe17fa72dd121d9"
+      }
+    },
+    {
+      "id": "met_norway",
+      "publisher": "MET Norway",
+      "family": "ocean_forecast",
+      "region": "Northwestern Europe",
+      "docs_url": "https://api.met.no/weatherapi/oceanforecast/2.0/documentation",
+      "terms_url": "https://docs.api.met.no/doc/TermsOfService.html",
+      "terms_quote": "All open data require attribution as specified in the CC BY 4.0 license",
+      "terms_rechecked": true,
+      "eligibility": "pending_data_probe",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": [
+          "sea_surface_wave_height",
+          "sea_surface_wave_from_direction",
+          "sea_water_speed",
+          "sea_water_to_direction",
+          "sea_water_temperature"
+        ],
+        "evidence_url": "https://docs.api.met.no/doc/oceanforecast/datamodel.html",
+        "locator": "Variables"
+      },
+      "units": {
+        "value": [
+          "m",
+          "degrees",
+          "m/s",
+          "degrees",
+          "celsius"
+        ],
+        "evidence_url": "https://docs.api.met.no/doc/oceanforecast/datamodel.html",
+        "locator": "Variables"
+      },
+      "coverage": {
+        "value": "regional wave model: Norwegian Sea, North Sea and Barents Sea",
+        "evidence_url": "https://docs.api.met.no/doc/oceanforecast/datamodel.html",
+        "locator": "Wave models"
+      },
+      "cadence": {
+        "value": "regional wave forecasts four times per day; coastal wave forecasts twice per day",
+        "evidence_url": "https://docs.api.met.no/doc/oceanforecast/datamodel.html",
+        "locator": "Wave models"
+      },
+      "example_url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+      "terms_check": {
+        "source": "https://docs.api.met.no/doc/TermsOfService.html",
+        "checked_at": "2026-10-14T03:41:11.950238+00:00",
+        "http_status": 200,
+        "bytes": 27044,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_data_probe",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "a",
+      "test_fetch": {
+        "id": "met_norway",
+        "url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+        "fetched_at": "2026-10-14T02:59:26.002333+00:00",
+        "http_status": 200,
+        "bytes": 44290,
+        "error": null,
+        "sha256": "1844651a88e96056a31260393d01a9845ee026b4431f6dd1396c36b68e5a58fc",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "irish_weather_buoys",
+      "publisher": "Marine Institute",
+      "family": "erddap",
+      "region": "North-East Atlantic",
+      "docs_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+      "terms_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+      "terms_quote": "Creative Commons Attribution 4.0",
+      "terms_rechecked": true,
+      "eligibility": "pending_data_probe",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": [
+          "WaveHeight",
+          "Tp",
+          "WavePeriod",
+          "WindSpeed",
+          "AtmosphericPressure",
+          "SeaTemperature"
+        ],
+        "evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "locator": "Dataset Attribute Structure"
+      },
+      "units": {
+        "value": "WaveHeight meters; Tp seconds; WavePeriod zero-crossing seconds; WindSpeed knots; AtmosphericPressure millibars; SeaTemperature degrees_C",
+        "evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "locator": "variable units attributes"
+      },
+      "coverage": {
+        "value": "time_coverage_start 2001-02-06T13:00:00Z; real-time M2, M3, M4, M5, M6; historical M1, FS1 and original M4 location",
+        "evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "locator": "NC_GLOBAL summary and time_coverage_start"
+      },
+      "cadence": {
+        "value": "PT1H temporal resolution; publication latency not verified",
+        "evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "locator": "NC_GLOBAL time_coverage_resolution"
+      },
+      "example_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.csv?time,station_id,WaveHeight,Tp&time>=2025-12-31T00:00:00Z&time<=2025-12-31T01:00:00Z",
+      "terms_check": {
+        "source": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "checked_at": "2026-10-14T03:41:14.266804+00:00",
+        "http_status": 200,
+        "bytes": 104868,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_data_probe",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "a",
+      "test_fetch": {
+        "id": "irish_weather_buoys",
+        "url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.csv?time,station_id,WaveHeight,Tp&time>=2025-12-31T00:00:00Z&time<=2025-12-31T01:00:00Z",
+        "fetched_at": "2026-10-14T02:59:27.622681+00:00",
+        "http_status": 200,
+        "bytes": 415,
+        "error": null,
+        "sha256": "21df707f6a31e112e09eed61b4204ff67b395c80ccbb3229acf2644096cdc328",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "canada_gdwps",
+      "publisher": "Environment and Climate Change Canada",
+      "family": "wave_forecast",
+      "region": "Canada and global",
+      "docs_url": "https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/",
+      "terms_url": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+      "terms_quote": "including for commercial purposes, subject to the terms below.",
+      "terms_rechecked": true,
+      "eligibility": "ad_hoc_probe_only",
+      "reason": "MSC Datamart HTTPS usage policy requires AMQPS for systematic retrieval and prohibits directory polling. Anonymous access is stated in publisher introduction.",
+      "usage_policy_url": "https://eccc-msc.github.io/open-data/usage-policy/readme_en/",
+      "variables": {
+        "value": [
+          "significant wave height",
+          "peak period",
+          "primary swell height",
+          "primary swell direction",
+          "primary swell period"
+        ],
+        "evidence_url": "https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/",
+        "locator": "Data and Products"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "global forecasts out to 240 hours",
+        "evidence_url": "https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/",
+        "locator": "Data and Products"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": null,
+      "terms_check": {
+        "source": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+        "checked_at": "2026-10-14T03:41:13.110865+00:00",
+        "http_status": 200,
+        "bytes": 17355,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": null,
+      "access_status": "ad_hoc_probe_only",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "MSC Datamart HTTPS usage policy requires AMQPS for systematic retrieval and prohibits directory polling. Anonymous access is stated in publisher introduction."
+      }
+    },
+    {
+      "id": "brazil_pnboia",
+      "publisher": "Centro de Hidrografia da Marinha",
+      "family": "buoy_observations",
+      "region": "Brazil",
+      "docs_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+      "terms_url": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf",
+      "terms_quote": "could not be confirmed at its source: quotation not found on re-fetch",
+      "terms_rechecked": false,
+      "eligibility": "unavailable",
+      "reason": "could not be confirmed at its source: quotation not found on re-fetch",
+      "variables": {
+        "value": [
+          "water temperature",
+          "wind",
+          "waves",
+          "salinity",
+          "currents",
+          "atmospheric pressure"
+        ],
+        "evidence_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+        "locator": "not verified: publisher heading encoding could not be confirmed"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "Brazilian coast and tropical South Atlantic buoy observations",
+        "evidence_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+        "locator": "Tipos de sistema de coleta"
+      },
+      "cadence": {
+        "value": "near-real-time satellite transmission; numeric interval not verified",
+        "evidence_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+        "locator": "Objetivo do Programa"
+      },
+      "example_url": null,
+      "terms_check": {
+        "source": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf",
+        "checked_at": "2026-10-14T03:39:43.445526+00:00",
+        "http_status": 200,
+        "bytes": 53887,
+        "quotations_checked": 1,
+        "found": 0,
+        "removed": 1,
+        "quotation_found": false
+      },
+      "account_required": null,
+      "access_status": "not_enabled",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "Download endpoint and automated access conditions not verified."
+      }
+    },
+    {
+      "id": "australia_auswave",
+      "publisher": "Bureau of Meteorology",
+      "family": "wave_forecast",
+      "region": "Australia and global",
+      "docs_url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+      "terms_url": "https://www.bom.gov.au/copyright",
+      "terms_quote": "could not be confirmed at its source: quotation not found on re-fetch",
+      "terms_rechecked": false,
+      "eligibility": "unavailable",
+      "reason": "could not be confirmed at its source: quotation not found on re-fetch",
+      "variables": {
+        "value": [
+          "significant wave height",
+          "peak wave period",
+          "wind"
+        ],
+        "evidence_url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+        "locator": "Popular Output Metadata"
+      },
+      "units": {
+        "value": "significant wave height m; peak period sec; wind m/s",
+        "evidence_url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+        "locator": "Popular Output Metadata"
+      },
+      "coverage": {
+        "value": "global and regional grids",
+        "evidence_url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+        "locator": "AUSWAVE Data"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": null,
+      "terms_check": {
+        "source": "https://www.bom.gov.au/copyright",
+        "checked_at": "2026-10-14T03:06:17.644283+00:00",
+        "http_status": 403,
+        "bytes": 1387,
+        "error": "HTTP 403",
+        "quotation_found": false
+      },
+      "account_required": true,
+      "access_status": "unavailable",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "could not be confirmed at its source: quotation not found on re-fetch"
+      }
+    },
+    {
+      "id": "india_incois",
+      "publisher": "Indian National Centre for Ocean Information Services",
+      "family": "buoy_currents",
+      "region": "India",
+      "docs_url": "https://incois.gov.in/site/dataholdings.jsp",
+      "terms_url": null,
+      "terms_quote": "no terms statement found",
+      "terms_rechecked": false,
+      "eligibility": "not_enabled",
+      "reason": "Moored and wave-rider buoy observations are visualization-only with no download. HF Radar requires registered access. Other advertised downloads lack a verified anonymous endpoint.",
+      "variables": {
+        "value": [
+          "wave parameters",
+          "currents",
+          "sea surface temperature",
+          "wind",
+          "pressure"
+        ],
+        "evidence_url": "https://incois.gov.in/site/dataholdings.jsp",
+        "locator": "Data Holdings table"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "moored buoy availability from 1997; wave-rider buoy availability from 2008, as publisher states",
+        "evidence_url": "https://incois.gov.in/site/dataholdings.jsp",
+        "locator": "Moored Buoy and Wave Rider Buoy rows"
+      },
+      "cadence": {
+        "value": "real-time reception; publication interval not verified",
+        "evidence_url": "https://incois.gov.in/site/dataholdings.jsp",
+        "locator": "Mode of reception"
+      },
+      "example_url": null,
+      "account_required": null,
+      "access_status": "not_enabled",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "Moored and wave-rider buoy observations are visualization-only with no download. HF Radar requires registered access. Other advertised downloads lack a verified anonymous endpoint."
+      }
+    },
+    {
+      "id": "indonesia_bmkg",
+      "publisher": "Badan Meteorologi, Klimatologi, dan Geofisika",
+      "family": "marine_forecast",
+      "region": "South-East Asia",
+      "docs_url": "https://maritim.bmkg.go.id/apidoc",
+      "terms_url": null,
+      "terms_quote": "no terms statement found",
+      "terms_rechecked": false,
+      "eligibility": "not_enabled",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": "marine and port weather forecasts and wave warnings",
+        "evidence_url": "https://maritim.bmkg.go.id/apidoc",
+        "locator": "Tentang"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "Indonesian ports and marine forecast areas",
+        "evidence_url": "https://maritim.bmkg.go.id/apidoc",
+        "locator": "meta endpoint"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": "https://maritim.bmkg.go.id/marine2026-data/meta/area_province.json",
+      "account_required": false,
+      "access_status": "not_enabled",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "indonesia_bmkg",
+        "url": "https://maritim.bmkg.go.id/marine2026-data/meta/area_province.json",
+        "fetched_at": "2026-10-14T02:59:29.631047+00:00",
+        "http_status": 200,
+        "bytes": 51443,
+        "error": null,
+        "sha256": "4eceb7280ca1a380835f2770b5b896293dda7e072162abaa9f8eed7e37fed79b",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "pirata",
+      "publisher": "NOAA PMEL",
+      "family": "tropical_moored_buoy",
+      "region": "Tropical Atlantic including offshore West Africa",
+      "docs_url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+      "terms_url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+      "terms_quote": "If you use these data in publications, please acknowledge the TAO Project Office of NOAA/PMEL.",
+      "terms_rechecked": true,
+      "eligibility": "pending_data_probe",
+      "reason": "Publisher states registration is voluntary. This is an international array, not a verified West African national service.",
+      "variables": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "tropical Atlantic station map",
+        "evidence_url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+        "locator": "PIRATA Data Delivery station grid"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": null,
+      "terms_check": {
+        "source": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+        "checked_at": "2026-10-14T03:41:17.470344+00:00",
+        "http_status": 200,
+        "bytes": 44448,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": null,
+      "access_status": "pending_data_probe",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "Publisher states registration is voluntary. This is an international array, not a verified West African national service."
+      }
+    },
+    {
+      "id": "ncep_wave_hindcast",
+      "publisher": "NOAA NCEP",
+      "family": "wave_hindcast",
+      "region": "Global",
+      "docs_url": "https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "terms_quote": "are in the public domain, unless specifically noted otherwise",
+      "terms_rechecked": true,
+      "eligibility": "pending_data_probe",
+      "reason": "Archive links observed; bounded anonymous hindcast response not verified. Dataset-specific exceptions require checking. NWS requests unavailable-service retries at one-minute intervals.",
+      "variables": {
+        "value": "wave hindcast; individual archived field definitions not verified",
+        "evidence_url": "https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php",
+        "locator": "hindcasts"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "coverage": {
+        "value": "CFSRR-forced consistent hindcast 1979 through 2009; operational-wind hindcast February 2005 through May 2019",
+        "evidence_url": "https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php",
+        "locator": "hindcasts"
+      },
+      "cadence": {
+        "value": "historical archive; update cadence not verified",
+        "evidence_url": "https://polar.ncep.noaa.gov/waves/download.shtml",
+        "locator": "Archived Data"
+      },
+      "example_url": null,
+      "terms_check": {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": null,
+      "access_status": "pending_data_probe",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "Archive links observed; bounded anonymous hindcast response not verified. Dataset-specific exceptions require checking. NWS requests unavailable-service retries at one-minute intervals."
+      }
+    },
+    {
+      "id": "ndbc_archive",
+      "publisher": "NOAA NDBC",
+      "family": "standard_meteorological_archive",
+      "region": "station-dependent",
+      "docs_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "terms_quote": "are in the public domain, unless specifically noted otherwise",
+      "terms_rechecked": true,
+      "eligibility": "verified_archive_parser",
+      "reason": "NWS general data terms; dataset-specific annotations remain governing.",
+      "variables": {
+        "value": "WVHT and DPD",
+        "evidence_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+        "locator": "response header"
+      },
+      "units": {
+        "value": "WVHT metres; DPD seconds",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "locator": "response units header"
+      },
+      "coverage": {
+        "value": "station-dependent; full coverage not yet verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+        "locator": "response rows"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+      "terms_check": {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "verified_archive_parser",
+      "update_enabled": true,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "ndbc_archive",
+        "url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+        "fetched_at": "2026-10-14T02:59:19.890708+00:00",
+        "http_status": 200,
+        "bytes": 162187,
+        "error": null,
+        "sha256": "18b0d60caf77f557878b7606ce3105f7d682706f6411c5b1da27448009c5ab73",
+        "outcome": "success",
+        "content_validated": true
+      },
+      "readiness": "observations_only"
+    },
+    {
+      "id": "ndbc_realtime",
+      "publisher": "NOAA NDBC",
+      "family": "standard_meteorological_realtime",
+      "region": "station-dependent",
+      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "terms_quote": "are in the public domain, unless specifically noted otherwise",
+      "terms_rechecked": true,
+      "eligibility": "pending_validation",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": "WVHT and DPD",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "locator": "response header"
+      },
+      "units": {
+        "value": "WVHT metres; DPD seconds",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "locator": "response units header"
+      },
+      "coverage": {
+        "value": "station-dependent; full coverage not yet verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "locator": "response rows"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "terms_check": {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_validation",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "ndbc_realtime",
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "fetched_at": "2026-10-14T02:59:21.230765+00:00",
+        "http_status": 200,
+        "bytes": 598404,
+        "error": null,
+        "sha256": "00213fc1952f7e6e9e4e19eff8073b7121c073179717c05b0fa6d2429d51a1c0",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "ndbc_spectral",
+      "publisher": "NOAA NDBC",
+      "family": "wave_summary",
+      "region": "station-dependent",
+      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "terms_quote": "are in the public domain, unless specifically noted otherwise",
+      "terms_rechecked": true,
+      "eligibility": "pending_validation",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": "see response header or XML attributes",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+        "locator": "response header"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+        "locator": "not verified"
+      },
+      "coverage": {
+        "value": "station-dependent; full coverage not yet verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+        "locator": "response rows"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+      "terms_check": {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_validation",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "ndbc_spectral",
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+        "fetched_at": "2026-10-14T02:59:22.344407+00:00",
+        "http_status": 200,
+        "bytes": 148541,
+        "error": null,
+        "sha256": "5c16af994e6df295311bf94025c021ac6913820606a4922c1b7cda3a96cfd393",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "ndbc_stations",
+      "publisher": "NOAA NDBC",
+      "family": "station_metadata",
+      "region": "station-dependent",
+      "docs_url": "https://www.ndbc.noaa.gov/activestations.xml",
+      "terms_url": "https://www.weather.gov/disclaimer",
+      "terms_quote": "are in the public domain, unless specifically noted otherwise",
+      "terms_rechecked": true,
+      "eligibility": "pending_validation",
+      "reason": "Small response received; this source is not integrated into the normalized update workflow.",
+      "variables": {
+        "value": "see response header or XML attributes",
+        "evidence_url": "https://www.ndbc.noaa.gov/activestations.xml",
+        "locator": "response header"
+      },
+      "units": {
+        "value": "not verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/activestations.xml",
+        "locator": "not verified"
+      },
+      "coverage": {
+        "value": "station-dependent; full coverage not yet verified",
+        "evidence_url": "https://www.ndbc.noaa.gov/activestations.xml",
+        "locator": "response rows"
+      },
+      "cadence": {
+        "value": "not verified",
+        "evidence_url": "not verified"
+      },
+      "example_url": "https://www.ndbc.noaa.gov/activestations.xml",
+      "terms_check": {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0,
+        "quotation_found": true
+      },
+      "account_required": false,
+      "access_status": "pending_validation",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "id": "ndbc_stations",
+        "url": "https://www.ndbc.noaa.gov/activestations.xml",
+        "fetched_at": "2026-10-14T02:59:23.528706+00:00",
+        "http_status": 200,
+        "bytes": 272962,
+        "error": null,
+        "sha256": "a56c2fdbd95734531d24f2424be8e12f389ed97240d8195c3c27d82eeb4839c8",
+        "outcome": "success",
+        "content_validated": false
+      }
+    },
+    {
+      "id": "ndbc_currents",
+      "publisher": "NOAA NDBC",
+      "family": "ocean_currents",
+      "region": "not verified",
+      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/",
+      "terms_url": null,
+      "terms_quote": "no terms statement found",
+      "terms_rechecked": false,
+      "eligibility": "unavailable",
+      "reason": "HTTP 403 on publisher directory; endpoint not verified",
+      "variables": {
+        "value": "not verified"
+      },
+      "units": {
+        "value": "not verified"
+      },
+      "coverage": {
+        "value": "not verified"
+      },
+      "cadence": {
+        "value": "not verified"
+      },
+      "example_url": null,
+      "account_required": null,
+      "access_status": "unavailable",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "HTTP 403 on publisher directory; endpoint not verified"
+      }
+    },
+    {
+      "id": "nhc_best_track",
+      "publisher": "NOAA NHC",
+      "family": "tropical_cyclone_best_track",
+      "region": "not verified",
+      "docs_url": "https://www.nhc.noaa.gov/data/",
+      "terms_url": null,
+      "terms_quote": "no terms statement found",
+      "terms_rechecked": false,
+      "eligibility": "unavailable",
+      "reason": "HTTP 403 on publisher page; archive endpoint not verified",
+      "variables": {
+        "value": "not verified"
+      },
+      "units": {
+        "value": "not verified"
+      },
+      "coverage": {
+        "value": "not verified"
+      },
+      "cadence": {
+        "value": "not verified"
+      },
+      "example_url": null,
+      "account_required": null,
+      "access_status": "unavailable",
+      "update_enabled": false,
+      "accessed_on": "2026-10-14",
+      "source_class": "d",
+      "test_fetch": {
+        "outcome": "not_attempted",
+        "http_status": null,
+        "bytes": null,
+        "fetched_at": null,
+        "content_validated": false,
+        "reason": "HTTP 403 on publisher page; archive endpoint not verified"
+      }
+    }
+  ],
+  "failed_pages": [
+    {
+      "publisher": "NOAA NDBC",
+      "url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
+      "error": "Failed to fetch https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf: (403) Forbidden",
+      "retry": "not attempted"
+    },
+    {
+      "publisher": "NOAA NDBC",
+      "url": "https://www.ndbc.noaa.gov/disclaimer.shtml",
+      "error": "URL https://www.ndbc.noaa.gov/disclaimer.shtml is not accessible via this tool.",
+      "retry": "not attempted"
+    },
+    {
+      "publisher": "NOAA NHC",
+      "url": "https://www.nhc.noaa.gov/data/",
+      "error": "Internal Error",
+      "retry": "not attempted"
+    }
+  ],
+  "unverified_families": [
+    "NDBC archive, real-time, spectral and current response formats",
+    "tropical cyclone best-track actual response",
+    "West African national service"
+  ],
+  "legacy_catalog": [
+    {
+      "name": "ndbc_42001",
+      "source_type": "buoy",
+      "lat": 25.9,
+      "lon": -89.68,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42002",
+      "source_type": "buoy",
+      "lat": 26.05,
+      "lon": -93.64,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42003",
+      "source_type": "buoy",
+      "lat": 26.04,
+      "lon": -85.61,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42019",
+      "source_type": "buoy",
+      "lat": 27.91,
+      "lon": -95.36,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42020",
+      "source_type": "buoy",
+      "lat": 26.97,
+      "lon": -96.7,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42035",
+      "source_type": "buoy",
+      "lat": 29.23,
+      "lon": -94.41,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42036",
+      "source_type": "buoy",
+      "lat": 28.5,
+      "lon": -84.52,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42039",
+      "source_type": "buoy",
+      "lat": 28.79,
+      "lon": -86.01,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42040",
+      "source_type": "buoy",
+      "lat": 29.21,
+      "lon": -88.21,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42041",
+      "source_type": "buoy",
+      "lat": 27.47,
+      "lon": -90.73,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_42055",
+      "source_type": "buoy",
+      "lat": 22.02,
+      "lon": -94.05,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "ndbc_44008",
+      "source_type": "buoy",
+      "lat": 40.5,
+      "lon": -69.25,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44011",
+      "source_type": "buoy",
+      "lat": 41.1,
+      "lon": -66.62,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44013",
+      "source_type": "buoy",
+      "lat": 42.35,
+      "lon": -70.69,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44014",
+      "source_type": "buoy",
+      "lat": 36.61,
+      "lon": -74.84,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44017",
+      "source_type": "buoy",
+      "lat": 40.69,
+      "lon": -72.05,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44025",
+      "source_type": "buoy",
+      "lat": 40.25,
+      "lon": -73.16,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44027",
+      "source_type": "buoy",
+      "lat": 44.28,
+      "lon": -67.31,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_44065",
+      "source_type": "buoy",
+      "lat": 40.37,
+      "lon": -73.7,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "ndbc_51000",
+      "source_type": "buoy",
+      "lat": 23.54,
+      "lon": -154.07,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_51001",
+      "source_type": "buoy",
+      "lat": 23.45,
+      "lon": -162.28,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_51002",
+      "source_type": "buoy",
+      "lat": 17.09,
+      "lon": -157.79,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_51004",
+      "source_type": "buoy",
+      "lat": 17.53,
+      "lon": -152.48,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_51101",
+      "source_type": "buoy",
+      "lat": 24.32,
+      "lon": -162.06,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_46047",
+      "source_type": "buoy",
+      "lat": 32.43,
+      "lon": -119.53,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "ndbc_46059",
+      "source_type": "buoy",
+      "lat": 37.98,
+      "lon": -129.97,
+      "coverage_radius_km": 200.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure"
+      ],
+      "priority": 1,
+      "region": "pacific"
+    },
+    {
+      "name": "coops_8771341",
+      "source_type": "tide_gauge",
+      "lat": 29.37,
+      "lon": -94.79,
+      "coverage_radius_km": 100.0,
+      "parameters": [
+        "water_level",
+        "tidal_current",
+        "current_speed",
+        "wind_speed"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "coops_8760922",
+      "source_type": "tide_gauge",
+      "lat": 29.11,
+      "lon": -89.41,
+      "coverage_radius_km": 100.0,
+      "parameters": [
+        "water_level",
+        "tidal_current",
+        "current_speed",
+        "wind_speed"
+      ],
+      "priority": 1,
+      "region": "gom"
+    },
+    {
+      "name": "coops_8724580",
+      "source_type": "tide_gauge",
+      "lat": 24.55,
+      "lon": -81.81,
+      "coverage_radius_km": 100.0,
+      "parameters": [
+        "water_level",
+        "tidal_current",
+        "current_speed",
+        "wind_speed"
+      ],
+      "priority": 1,
+      "region": "us_coastal"
+    },
+    {
+      "name": "coops_8443970",
+      "source_type": "tide_gauge",
+      "lat": 42.36,
+      "lon": -71.05,
+      "coverage_radius_km": 100.0,
+      "parameters": [
+        "water_level",
+        "tidal_current",
+        "current_speed",
+        "wind_speed"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "coops_8518750",
+      "source_type": "tide_gauge",
+      "lat": 40.7,
+      "lon": -74.01,
+      "coverage_radius_km": 100.0,
+      "parameters": [
+        "water_level",
+        "tidal_current",
+        "current_speed",
+        "wind_speed"
+      ],
+      "priority": 1,
+      "region": "ne_atlantic"
+    },
+    {
+      "name": "era5_global_0",
+      "source_type": "reanalysis",
+      "lat": 0.0,
+      "lon": 0.0,
+      "coverage_radius_km": 20000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "global"
+    },
+    {
+      "name": "era5_gom",
+      "source_type": "reanalysis",
+      "lat": 27.0,
+      "lon": -90.0,
+      "coverage_radius_km": 3000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "gom"
+    },
+    {
+      "name": "era5_north_sea",
+      "source_type": "reanalysis",
+      "lat": 57.0,
+      "lon": 3.0,
+      "coverage_radius_km": 2000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "north_sea"
+    },
+    {
+      "name": "era5_pacific",
+      "source_type": "reanalysis",
+      "lat": 20.0,
+      "lon": -150.0,
+      "coverage_radius_km": 5000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "pacific"
+    },
+    {
+      "name": "cfsr_global",
+      "source_type": "reanalysis",
+      "lat": 0.0,
+      "lon": 0.0,
+      "coverage_radius_km": 20000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "global"
+    },
+    {
+      "name": "open_meteo_global",
+      "source_type": "model",
+      "lat": 0.0,
+      "lon": 0.0,
+      "coverage_radius_km": 20000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "global"
+    },
+    {
+      "name": "open_meteo_north_sea",
+      "source_type": "model",
+      "lat": 57.0,
+      "lon": 2.0,
+      "coverage_radius_km": 3000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "north_sea"
+    },
+    {
+      "name": "open_meteo_gom",
+      "source_type": "model",
+      "lat": 27.0,
+      "lon": -89.0,
+      "coverage_radius_km": 3000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 3,
+      "region": "gom"
+    },
+    {
+      "name": "met_norway_global",
+      "source_type": "model",
+      "lat": 68.5,
+      "lon": 12.5,
+      "coverage_radius_km": 3000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction",
+        "water_temperature",
+        "air_temperature",
+        "pressure",
+        "Hs_swell",
+        "Tp_swell",
+        "wave_direction"
+      ],
+      "priority": 2,
+      "region": "north_sea"
+    },
+    {
+      "name": "met_norway_norkyst",
+      "source_type": "model",
+      "lat": 65.0,
+      "lon": 7.0,
+      "coverage_radius_km": 2000.0,
+      "parameters": [
+        "Hs",
+        "Tp",
+        "wind_speed",
+        "wind_direction",
+        "current_speed",
+        "current_direction"
+      ],
+      "priority": 2,
+      "region": "north_sea"
+    }
+  ],
+  "terms_recheck": {
+    "passes": 1,
+    "pages": [
+      {
+        "source": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+        "checked_at": "2026-10-14T03:06:09.974189+00:00",
+        "http_status": 200,
+        "bytes": 24039,
+        "error": null
+      },
+      {
+        "source": "https://docs.api.met.no/doc/TermsOfService.html",
+        "checked_at": "2026-10-14T03:06:11.307042+00:00",
+        "http_status": 200,
+        "bytes": 27044,
+        "error": null
+      },
+      {
+        "source": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "checked_at": "2026-10-14T03:06:12.895505+00:00",
+        "http_status": 200,
+        "bytes": 104868,
+        "error": null
+      },
+      {
+        "source": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+        "checked_at": "2026-10-14T03:06:14.882529+00:00",
+        "http_status": 200,
+        "bytes": 17355,
+        "error": null
+      },
+      {
+        "source": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf",
+        "checked_at": "2026-10-14T03:06:16.127913+00:00",
+        "http_status": 200,
+        "bytes": 53887,
+        "error": null
+      },
+      {
+        "source": "https://www.bom.gov.au/copyright",
+        "checked_at": "2026-10-14T03:06:17.644283+00:00",
+        "http_status": 403,
+        "bytes": 1387,
+        "error": "HTTP 403"
+      },
+      {
+        "source": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+        "checked_at": "2026-10-14T03:06:18.828768+00:00",
+        "http_status": 200,
+        "bytes": 44448,
+        "error": null
+      },
+      {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:06:20.283093+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "error": null
+      }
+    ],
+    "final_passes": 2,
+    "final_pages": [
+      {
+        "source": "https://docs.api.met.no/doc/TermsOfService.html",
+        "checked_at": "2026-10-14T03:41:11.950238+00:00",
+        "http_status": 200,
+        "bytes": 27044,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0
+      },
+      {
+        "source": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+        "checked_at": "2026-10-14T03:41:13.110865+00:00",
+        "http_status": 200,
+        "bytes": 17355,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0
+      },
+      {
+        "source": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+        "checked_at": "2026-10-14T03:41:14.266804+00:00",
+        "http_status": 200,
+        "bytes": 104868,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0
+      },
+      {
+        "source": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+        "checked_at": "2026-10-14T03:41:16.138843+00:00",
+        "http_status": 200,
+        "bytes": 24039,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0
+      },
+      {
+        "source": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+        "checked_at": "2026-10-14T03:41:17.470344+00:00",
+        "http_status": 200,
+        "bytes": 44448,
+        "quotations_checked": 1,
+        "found": 1,
+        "removed": 0
+      },
+      {
+        "source": "https://www.weather.gov/disclaimer",
+        "checked_at": "2026-10-14T03:41:18.872054+00:00",
+        "http_status": 200,
+        "bytes": 41679,
+        "quotations_checked": 5,
+        "found": 5,
+        "removed": 0
+      }
+    ],
+    "removed_on_first_final_pass": [
+      {
+        "source": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf",
+        "http_status": 200,
+        "quotations_checked": 1,
+        "found": 0,
+        "removed": 1,
+        "reason": "quotation not found on re-fetch"
+      }
+    ]
+  }
+}

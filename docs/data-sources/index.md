@@ -168,3 +168,4 @@ analysis_result = wed.analysis.production_trends(bsee_data)
 ---
 
 *Choose a data source above to dive into specific documentation and examples.*
+- [Open metocean observations and source register](metocean-open-observations.html)
