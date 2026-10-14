@@ -267,8 +267,14 @@ def _crane_bytes(bundle):
 
 def _source_manifest(bundle):
     fields = (
-        "url", "publisher", "retrieved_at", "size_bytes", "sha256",
-        "refetched_at", "refetch_sha256", "raw_disposition",
+        "url",
+        "publisher",
+        "retrieved_at",
+        "size_bytes",
+        "sha256",
+        "refetched_at",
+        "refetch_sha256",
+        "raw_disposition",
     )
     return {
         sid: {field: source[field] for field in fields}
