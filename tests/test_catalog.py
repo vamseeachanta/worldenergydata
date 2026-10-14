@@ -228,7 +228,7 @@ def synthetic_contract():
         "path": "<output-dir>/synthetic.csv",
         "format": "csv",
         "columns": [{"name": "value", "type": "string"}],
-        "status": "local_draft_public_export_requires_owner_eligibility",
+        "status": "local_draft_public_export_requires_maintainer_eligibility",
         "contract_only": True,
     }
 
@@ -288,10 +288,17 @@ def test_wrongly_flagged_entry_is_not_exempt(flag):
 
 def test_ordinary_entry_requires_size_and_contract_requires_structure():
     assert required_dataset_fields({"name": "ordinary.csv"}) == {
-        "name", "path", "format", "columns", "size_bytes"
+        "name",
+        "path",
+        "format",
+        "columns",
+        "size_bytes",
     }
     assert required_dataset_fields(synthetic_contract()) == {
-        "name", "path", "format", "columns"
+        "name",
+        "path",
+        "format",
+        "columns",
     }
     broken = synthetic_contract()
     broken["columns"] = []

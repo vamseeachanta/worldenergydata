@@ -31,6 +31,8 @@ from typing import Any
 
 import yaml
 
+CONTRACT_ONLY_STATUS = "local_draft_public_export_requires_maintainer_eligibility"
+
 _DATE_RE = [
     re.compile(p)
     for p in [
@@ -549,7 +551,7 @@ def validate_contract_entry(entry: dict[str, Any]) -> None:
         or Path(name).name != name
         or not name.endswith("." + entry["format"])
         or entry["path"] != "<output-dir>/" + name
-        or entry["status"] != "local_draft_public_export_requires_owner_eligibility"
+        or entry["status"] != CONTRACT_ONLY_STATUS
         or "size_bytes" in entry
         or "row_count" in entry
     ):

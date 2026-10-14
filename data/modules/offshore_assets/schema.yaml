@@ -398,7 +398,7 @@ datasets:
   format: csv
   description: Angola evidence-extension entity registry (partial research only; not a national completeness
     claim). Namespaced entity_id is a lookup ID, origin_* preserve original IDs.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
     quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
@@ -485,11 +485,11 @@ datasets:
 - name: legacy_entity_crosswalk.csv
   path: <output-dir>/legacy_entity_crosswalk.csv
   format: csv
-  description: Candidate and owner-adjudicated links between registry entities and legacy fields.csv fingerprint
+  description: Candidate and maintainer-adjudicated links between registry entities and legacy fields.csv fingerprint
     groups. Key (entity_id, legacy_row_fingerprint, relation_type); each fingerprint group has at most
     one accepted same_entity target (field scope only). Pending/conflicting/composite links never act
     as join equivalence.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
     quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
@@ -520,7 +520,7 @@ datasets:
     optional: true
   - name: approved_by
     type: string
-    description: owner signoff; required to change or accept a match
+    description: maintainer sign-off; required to change or accept a match
     unit: ''
     optional: true
   - name: candidate_payload
@@ -555,7 +555,7 @@ datasets:
     primary_key: true
   - name: match_status
     type: string
-    description: disposition; builder emits pending or conflicting, owner decisions may set the rest
+    description: disposition; builder emits pending or conflicting, maintainer decisions may set the rest
     unit: ''
     enum: &id003
     - accepted
@@ -631,7 +631,7 @@ datasets:
   format: csv
   description: One row per distinct legacy fields.csv Angola row fingerprint group; legacy-only rows stay
     visible. Group identity is the fingerprint, not FIELD_ID or row order.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
     quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
@@ -696,7 +696,7 @@ datasets:
   path: <output-dir>/entity_relationships.csv
   format: csv
   description: Source-backed memberships between registry entities.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
     quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
@@ -813,7 +813,7 @@ datasets:
   description: Object with records[] (one per evidence record group, with multiplicity) and parent_references[]
     (inherited-cost parent rows). Record ID is <dataset>:<table>:<explicit entity_id|cost_id|source_ref,
     else content fingerprint>.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   schema_version: 1
   columns:
@@ -868,7 +868,7 @@ datasets:
   description: Record-level publication matrix over records plus parent references; missing decisions
     fail closed and deferral cascades through dependencies. Signoff is an evidence claim, not authenticated
     authority.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   columns:
   - name: record_id
@@ -908,7 +908,7 @@ datasets:
     optional: false
   - name: reviewer
     type: string|null
-    description: must be the repository owner for eligible decisions; property is always present, null
+    description: must be the repository maintainer for eligible decisions; property is always present, null
       until reviewed
     unit: ''
     optional: false
@@ -934,9 +934,9 @@ datasets:
 - name: catalog_match_decisions.json
   path: <output-dir>/catalog_match_decisions.json
   format: json
-  description: 'Sole authority for equivalence adjudication: array of owner decisions bound to crosswalk
+  description: 'Sole authority for equivalence adjudication: array of maintainer decisions bound to crosswalk
     candidates by (entity_id, legacy_row_fingerprint, relation_type) and candidate_sha256.'
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   columns:
   - name: entity_id
@@ -963,7 +963,7 @@ datasets:
     unit: ''
   - name: approved_by
     type: string
-    description: owner signoff
+    description: maintainer sign-off
     unit: ''
   - name: approval_ref
     type: string
@@ -980,7 +980,7 @@ datasets:
   description: Pins schema version, input/output/decision hashes, counts and readiness for the extension;
     never pins its own hash. Machine-readable JSON Schema is data/modules/offshore_assets/catalog_integration_schema.json.
     Raw-source hashes are unknown_not_retained.
-  status: local_draft_public_export_requires_owner_eligibility
+  status: local_draft_public_export_requires_maintainer_eligibility
   contract_only: true
   columns:
   - name: dataset_id

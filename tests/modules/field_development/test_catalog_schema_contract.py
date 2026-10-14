@@ -15,6 +15,8 @@ import catalog_test_support as support
 import pytest
 import yaml
 
+from scripts.generate_catalog import CONTRACT_ONLY_STATUS as STATUS
+
 OFFSHORE = support.ROOT / "data/modules/offshore_assets"
 TABLE_NAMES = {
     "entity_registry.csv": "entities",
@@ -28,7 +30,6 @@ TABLE_NAMES = {
 }
 CSV_NAMES = tuple(n for n in TABLE_NAMES if n.endswith(".csv"))
 EMPTY_TABLE = "An empty table is a zero-byte file without a header."
-STATUS = "local_draft_public_export_requires_owner_eligibility"
 
 
 @pytest.fixture(scope="module")
@@ -610,6 +611,7 @@ def check_contract(contract, api, bundles, schema):
 
 
 def test_contract_matches_writer(contract, api, bundles, json_schema):
+    assert STATUS == "local_draft_public_export_requires_maintainer_eligibility"
     check_contract(contract, api, bundles, json_schema)
 
 
