@@ -17,6 +17,10 @@ TABLES = (
     "api_rp2met_us_zone_100yr_waves.csv",  # Not distributed.
     "api_rp2met_gom_extremes_by_region.csv",  # Not distributed.
     "api_rp2met_us_zone_100yr_winds.csv",  # Not distributed.
+    "metocean_regional_extremes.csv",  # Not distributed.
+    "metocean_hs_tp_occurrence.csv",  # Not distributed.
+    "metocean_temperature_ranges.csv",  # Not distributed.
+    "marine_growth_terminal_thickness.csv",  # Not distributed.
 )
 
 
@@ -61,8 +65,9 @@ def test_missing_copy_is_plain(tmp_path, monkeypatch, name):
     with pytest.raises(FileNotFoundError) as error:
         licensed_tables.load_licensed_table(name)
     message = str(error.value)
-    assert "API-RP-2MET" in message
-    assert "not stated in the repository" in message
+    assert "API RP 2MET" in message
+    assert "Derivation of Metocean Design and Operating Conditions" in message
+    assert "edition and table titles: to be completed from the licensed copy" in message
     assert name in message
     assert "licensed" in message
     assert "not distributed with the repository" in message
@@ -151,7 +156,7 @@ def test_unknown_table_is_refused(tmp_path):
 
 
 def test_tables_are_not_distributed():
-    """Only licensed entries lose their bundled routes; retained tables stay."""
+    """All licensed entries have external routes and no bundled tables."""
     schema = yaml.safe_load((MODULE_DIR / "schema.yaml").read_text())
     metadata = json.loads((MODULE_DIR / "_metadata.json").read_text())
     assert {
@@ -182,3 +187,20 @@ def test_tables_are_not_distributed():
         serialized = json.dumps(parsed)
         assert all(name not in serialized for name in TABLES)
         assert "data/modules/metocean/curated" not in serialized
+
+
+def test_citations_and_provenance():
+    """Every external entry cites the same document without weakening provenance."""
+    citation = (
+        "API RP 2MET, Derivation of Metocean Design and Operating Conditions; "
+        "edition and table titles: to be completed from the licensed copy"
+    )
+    schema = yaml.safe_load((MODULE_DIR / "schema.yaml").read_text())
+    metadata = json.loads((MODULE_DIR / "_metadata.json").read_text())
+    for entry in schema["datasets"] + metadata["external_datasets"]:
+        assert entry["citation"] == citation
+    readme = (MODULE_DIR / "README.md").read_text()
+    assert citation in readme
+    for text in (readme, metadata["provenance"]):
+        assert "not established" not in text
+        assert "retained legacy" not in text

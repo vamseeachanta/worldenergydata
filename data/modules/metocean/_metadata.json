@@ -4,32 +4,8 @@
   "format": ".csv,.md,.yaml",
   "has_external_data": true,
   "external_data_root": null,
-  "provenance": "Licensed API-RP-2MET tabulated values are not distributed. Source-table origin for retained legacy reference datasets is not established.",
+  "provenance": "API RP 2MET tabulated values attributed by the repository are not distributed; authorized copies must be supplied externally.",
   "files": [
-    {
-      "name": "marine_growth_terminal_thickness.csv",
-      "path": "curated/marine_growth_terminal_thickness.csv",
-      "size_bytes": 141,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "metocean_regional_extremes.csv",
-      "path": "curated/metocean_regional_extremes.csv",
-      "size_bytes": 6792,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "metocean_hs_tp_occurrence.csv",
-      "path": "curated/metocean_hs_tp_occurrence.csv",
-      "size_bytes": 12039,
-      "modified": "2026-06-22"
-    },
-    {
-      "name": "metocean_temperature_ranges.csv",
-      "path": "curated/metocean_temperature_ranges.csv",
-      "size_bytes": 367,
-      "modified": "2026-06-22"
-    },
     {
       "name": "README.md",
       "path": "README.md"
@@ -45,7 +21,7 @@
       "name": "api_rp2met_hurricane_gom_extremes.csv",
       "distributed": false,
       "availability": "Not distributed; supply a licensed copy outside the repository.",
-      "citation": "API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
       "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
@@ -54,7 +30,7 @@
       "name": "api_rp2met_us_zone_100yr_waves.csv",
       "distributed": false,
       "availability": "Not distributed; supply a licensed copy outside the repository.",
-      "citation": "API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
       "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
@@ -63,7 +39,7 @@
       "name": "api_rp2met_gom_extremes_by_region.csv",
       "distributed": false,
       "availability": "Not distributed; supply a licensed copy outside the repository.",
-      "citation": "API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
       "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
@@ -72,7 +48,43 @@
       "name": "api_rp2met_us_zone_100yr_winds.csv",
       "distributed": false,
       "availability": "Not distributed; supply a licensed copy outside the repository.",
-      "citation": "API-RP-2MET; document title: not stated in the repository; edition: not stated in the repository; clause or publication table title: not stated in the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
+      "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
+      "argument": "copy_path",
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+    },
+    {
+      "name": "marine_growth_terminal_thickness.csv",
+      "distributed": false,
+      "availability": "Not distributed; supply a licensed copy outside the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
+      "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
+      "argument": "copy_path",
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+    },
+    {
+      "name": "metocean_regional_extremes.csv",
+      "distributed": false,
+      "availability": "Not distributed; supply a licensed copy outside the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
+      "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
+      "argument": "copy_path",
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+    },
+    {
+      "name": "metocean_hs_tp_occurrence.csv",
+      "distributed": false,
+      "availability": "Not distributed; supply a licensed copy outside the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
+      "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
+      "argument": "copy_path",
+      "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
+    },
+    {
+      "name": "metocean_temperature_ranges.csv",
+      "distributed": false,
+      "availability": "Not distributed; supply a licensed copy outside the repository.",
+      "citation": "API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy",
       "loader": "worldenergydata.metocean.licensed_tables.load_licensed_table",
       "argument": "copy_path",
       "environment_variable": "METOCEAN_LICENSED_DATA_DIR"
