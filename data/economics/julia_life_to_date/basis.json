@@ -58,9 +58,27 @@
     }
   },
   "block": "WR 584",
+  "excluded_completions": [],
   "field": "Julia",
   "field_code": "WR627",
+  "field_lease_leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "field_selection_matches_previous_lease_extract": false,
   "lease": "G20351",
+  "leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "production_leases": [
+    "G20351",
+    "G20361",
+    "G25251"
+  ],
+  "production_selection": "BOEM_FIELD = WR627; field-lease selection: FIELD_NAME_CODE = WR627; wells: BOTM_FLD_NAME_CD = WR627; completions: API join to selected field wells.",
   "production_years": [
     2015,
     2016,
@@ -76,5 +94,5 @@
     2026
   ],
   "selection_basis": "reports/lower_tertiary/2026-06-17-julia-granular-economics-summary.md",
-  "source_revision": "5c2d37dacdf878d828329e0c6523b7d84806d539"
+  "source_revision": "c9f0e83c3d9c3d581546c1c42c8e687f0db20338"
 }

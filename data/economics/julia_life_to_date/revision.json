@@ -1,10 +1,15 @@
 {
-  "revision": "1",
+  "revision": "2",
   "history": [
     {
       "revision": "1",
       "date": "2026-10-14",
       "change": "Observed lease production and raw filing provenance are added; economic assumptions and excluded full-cycle results are stated."
+    },
+    {
+      "revision": "2",
+      "date": "2026-10-14",
+      "change": "Production and field-lease rows are selected by field code; all discovered leases, completion exclusions and reproducible archive receipts are recorded to expose the retained field coverage."
     }
   ]
 }

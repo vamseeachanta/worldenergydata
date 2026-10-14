@@ -229,3 +229,171 @@ def test_field_identity_matches_public_filing(dataset):
     path.write_text(json.dumps(basis))
     with pytest.raises(ValueError, match="field"):
         load_verified(dataset)
+
+
+def test_every_completed_field_well_is_produced_or_explicitly_excluded():
+    import csv
+
+    basis = json.loads((DATA / "basis.json").read_text())
+    wells = list(csv.DictReader((DATA / "raw/wells.csv").open()))
+    produced = set()
+    for path in (DATA / "raw").glob("ogora*.csv"):
+        produced.update(row[8].strip() for row in csv.reader(path.open()))
+    excluded = {
+        item["api_well_number"]: item["reason"]
+        for item in basis.get("excluded_completions", [])
+    }
+    completed = {
+        row["API_WELL_NUMBER"]
+        for row in wells
+        if row["BOTM_FLD_NAME_CD"] == basis["field_code"]
+        and row["BOREHOLE_STAT_CD"] == "COM"
+    }
+    assert completed
+    assert not (completed - produced - excluded.keys())
+    assert all(excluded.values())
+
+
+def test_missing_completion_exclusion_fails_closed(dataset):
+    import csv
+    import io
+
+    path = dataset / "raw/wells.csv"
+    rows = list(csv.reader(path.open()))
+    row = list(rows[1])
+    row[0], row[6] = "608124099999", "COM"
+    rows.append(row)
+    buffer = io.StringIO(newline="")
+    csv.writer(buffer, lineterminator="\n").writerows(rows)
+    path.write_text(buffer.getvalue())
+    sources_path = dataset / "sources.json"
+    sources = json.loads(sources_path.read_text())
+    source = next(f for f in sources["files"] if f["path"] == "raw/wells.csv")
+    source["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    source["record_count"] += 1
+    source["source_row_numbers"].append(source["source_row_numbers"][-1] + 1)
+    sources_path.write_text(json.dumps(sources))
+    with pytest.raises(ValueError, match="completion coverage"):
+        load_verified(dataset)
+
+
+def test_production_field_code_must_match_basis(dataset):
+    import csv
+    import io
+
+    sources_path = dataset / "sources.json"
+    sources = json.loads(sources_path.read_text())
+    source = next(f for f in sources["files"] if f["path"] == "raw/ogora2016.csv")
+    path = dataset / source["path"]
+    rows = list(csv.reader(path.open()))
+    rows[0][13] = "OTHER_FIELD"
+    buffer = io.StringIO(newline="")
+    csv.writer(buffer, lineterminator="\n").writerows(rows)
+    path.write_text(buffer.getvalue())
+    source["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    sources_path.write_text(json.dumps(sources))
+    with pytest.raises(ValueError, match="production field"):
+        load_verified(dataset)
+
+
+def test_field_identity_accepts_all_field_leases(dataset):
+    import csv
+    import io
+
+    path = dataset / "raw/field.csv"
+    rows = list(csv.reader(path.open()))
+    extra = list(rows[1])
+    extra[1], extra[3] = "G25251", "  540"
+    rows.append(extra)
+    buffer = io.StringIO(newline="")
+    csv.writer(buffer, lineterminator="\n").writerows(rows)
+    path.write_text(buffer.getvalue())
+    sources_path = dataset / "sources.json"
+    sources = json.loads(sources_path.read_text())
+    source = next(f for f in sources["files"] if f["path"] == "raw/field.csv")
+    source["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    source["record_count"] += 1
+    source["source_row_numbers"].append(source["source_row_numbers"][-1] + 1)
+    sources_path.write_text(json.dumps(sources))
+    basis_path = dataset / "basis.json"
+    basis = json.loads(basis_path.read_text())
+    basis["leases"] = sorted(set(basis.get("leases", [basis["lease"]])) | {"G25251"})
+    basis_path.write_text(json.dumps(basis))
+    assert not load_verified(dataset)[0].empty
+
+
+def script_module(name):
+    import importlib.util
+
+    path = ROOT / "scripts/lower_tertiary" / f"{name}.py"
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_collector_selects_field_code_across_leases(tmp_path):
+    import zipfile
+
+    collector = script_module("collect_life_to_date")
+    path = tmp_path / "sample.zip"
+    blob = b'"G20351","OTHER"\r\n"G25251","WR627"\r\n'
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("production.txt", blob)
+    output = tmp_path / "selected.csv"
+    with zipfile.ZipFile(path) as archive:
+        source = collector.select_member(
+            archive, "production.txt", [1], False, output, {"WR627"}
+        )
+    assert output.read_bytes() == b'"G25251","WR627"\n'
+    assert source["source_row_numbers"] == [2]
+    assert source["record_count"] == 1
+
+
+def test_fetch_writes_receipt_accepted_by_collector(tmp_path, monkeypatch):
+    import subprocess
+    import zipfile
+
+    fetcher = script_module("fetch_life_to_date")
+    collector = script_module("collect_life_to_date")
+    url = "https://www.data.bsee.gov/Production/Files/sample.zip"
+    sources = tmp_path / "sources.json"
+    sources.write_text(
+        json.dumps(
+            {
+                "files": [
+                    {"source_url": url, "receipt_name": "sample.request.txt"},
+                    {"source_url": url, "receipt_name": "sample.request.txt"},
+                ]
+            }
+        )
+    )
+    calls = []
+
+    def curl(command, **kwargs):
+        calls.append(command)
+        output = Path(command[command.index("--output") + 1])
+        with zipfile.ZipFile(output, "w") as archive:
+            archive.writestr("rows.txt", b'"G25251","WR627"\r\n')
+        return subprocess.CompletedProcess(command, 0, stdout="200", stderr="")
+
+    monkeypatch.setattr(fetcher.subprocess, "run", curl)
+    archives = tmp_path / "archives"
+    fetcher.fetch(sources, archives)
+    receipt = (archives / "sample.request.txt").read_text().splitlines()
+    assert receipt[0] == url
+    assert receipt[1].endswith("Z")
+    assert receipt[2] == "HTTP_STATUS: 200"
+    assert len(calls) == 1
+    output = tmp_path / "raw"
+    output.mkdir()
+    rows = collector.collect_one(
+        archives,
+        output,
+        "sample.zip",
+        "sample.request.txt",
+        [("rows.txt", [1], False, "selected.csv", {"WR627"})],
+    )
+    assert rows[0]["http_status"] == 200
+    assert rows[0]["retrieved_at"] == receipt[1]
+    assert "fetch_life_to_date.py" in rows[0]["archive_reproduce_command"]

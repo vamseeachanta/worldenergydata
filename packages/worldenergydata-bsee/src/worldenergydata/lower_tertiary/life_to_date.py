@@ -13,7 +13,7 @@ from worldenergydata.bsee.data.sources.bin.ogor_production_loader import OGOR_CO
 
 
 def load_verified(data_dir):
-    """Read the retained lease production and its declared basis."""
+    """Read the retained field production and its declared basis."""
     data_dir = Path(data_dir)
     basis = json.loads((data_dir / "basis.json").read_text())
     provenance = json.loads((data_dir / "sources.json").read_text())
@@ -32,8 +32,11 @@ def load_verified(data_dir):
             "PROD_INTERVAL_CD", "UNIT_AGT_NUMBER", "UNIT_ALOC_SUFFIX", "PRODUCT_CODE"]
     if frame.duplicated(keys).any():
         raise ValueError("duplicate completion-month record")
-    if set(frame.LEASE_NUMBER.str.strip()) != {basis["lease"]}:
+    if set(frame.BOEM_FIELD.str.strip()) != {basis["field_code"]}:
+        raise ValueError("production field does not agree with basis")
+    if not set(frame.LEASE_NUMBER.str.strip()).issubset(basis["leases"]):
         raise ValueError("production lease does not agree with basis")
+    basis["completion_coverage"] = verify_completion_coverage(verified, basis, frame)
     monthly = frame.groupby("date", as_index=False)[["oil_bbl", "gas_mcf"]].sum()
     first = monthly.loc[monthly.oil_bbl > 0, "date"].min()
     monthly = monthly.loc[monthly.date >= first].reset_index(drop=True)
@@ -111,7 +114,9 @@ def analyse(data_dir):
     }
     annual = monthly.assign(year=monthly.date.dt.year).groupby("year")[["oil_bbl", "gas_mcf"]].sum()
     return {
-        "field": basis["field"], "lease": basis["lease"], "block": basis["block"],
+        "field": basis["field"], "lease": basis["lease"], "leases": basis["leases"], "block": basis["block"],
+        "completion_coverage": basis["completion_coverage"],
+        "field_selection_matches_previous_lease_extract": basis["field_selection_matches_previous_lease_extract"],
         "field_code": basis["field_code"], "source_revision": basis["source_revision"],
         "scope": "life-to-date, pre-tax assumption scenario", "assumptions": a,
         "start": monthly.date.min().strftime("%Y-%m"), "end": monthly.date.max().strftime("%Y-%m"),
@@ -153,7 +158,7 @@ def summary(result):
         rows.append(f'<tr><td>{label}</td><td>{unit}</td><td data-metric="{key}">{value:,.1f}</td></tr>')
     return section("summary", "1 Executive Summary", f'''
 <p>The observed-production scenario can support comparisons of economic assumptions. Investment and full-cycle decisions require a verified cost, fiscal and reserves basis.</p>
-<p>The Julia lease records cover {escape(result['start'])} through {escape(result['end'])}. Prices, expenditure, royalty and discounting are assumed; tax and future production are excluded.</p>
+<p>The Julia field-coded records cover {escape(result['start'])} through {escape(result['end'])}. Prices, expenditure, royalty and discounting are assumed; tax and future production are excluded.</p>
 <p>The scenario quantities and discounted balance are presented in Table 1.1. Monetary totals are in USD billion; this case does not establish actual realized revenue or expenditure.</p>
 <table><thead><tr><th>Quantity</th><th>Unit</th><th>Value</th></tr></thead><tbody>{''.join(rows)}</tbody></table>
 <p class="caption">Table 1.1 – Observed production and assumption-case quantities.</p>
@@ -182,14 +187,14 @@ def assumption_table(result):
 def introduction_and_basis(result):
     from html import escape
 
-    identity = f"Julia; lease {escape(result['lease'])}; field code {escape(result['field_code'])}; block {escape(result['block'])}"
+    identity = f"Julia; leases {escape(', '.join(result['leases']))}; field code {escape(result['field_code'])}; block {escape(result['block'])}"
     intro = section("introduction", "2 Introduction", '''
 <p>The analysis calculates a field-level pre-tax assumption scenario from retained public production filings. The demonstration summary identifies Julia as the field; it is used only for field selection [I2].</p>
-<p>The scope ends at the latest observed lease-production month. Decline extrapolation, booked-reserve valuation, full-cycle economics and actual expenditure reconciliation are excluded.</p>
+<p>The scope ends at the latest observed field-production month. Decline extrapolation, booked-reserve valuation, full-cycle economics and actual expenditure reconciliation are excluded.</p>
 ''')
     basis = section("design-data", "3 Design Data", f'''
-<p>The input basis comprises lease production, well/completion identifiers and field identifiers from public federal filings. The retained rows and their source archive digests are listed in the accompanying manifest.</p>
-<h3>3.1 Site or field data</h3><p>{identity}. Observed production spans {result['start']} to {result['end']}, with {result['months']} monthly observations. Earlier retained lease records contain zero oil production.</p>
+<p>The input basis comprises field-coded production, well/completion identifiers and field identifiers from public federal filings. The retained rows and their source archive digests are listed in the accompanying manifest.</p>
+<h3>3.1 Site or field data</h3><p>{identity}. Observed production spans {result['start']} to {result['end']}, with {result['months']} monthly observations. Earlier retained production records contain zero oil production.</p>
 <h3>3.2 Structure or equipment data</h3><p>Well and completion filings support lease identity. Equipment design and mechanical capacities are not evaluated because the calculation uses field-level production and an assumed capital total.</p>
 <h3>3.3 Environmental data</h3><p>Not applicable: no environmental loads or physical equipment response are calculated.</p>
 <h3>3.4 Vessel data</h3><p>Not applicable: no vessel operation or vessel-dependent cost is modelled.</p>
@@ -205,7 +210,7 @@ def methodology_and_results(result):
     annual_rows = ''.join(f'<tr><td>{row["year"]}</td><td>{row["oil_mmbbl"]:.1f}</td><td>{row["gas_bcf"]:.1f}</td></tr>'
                           for row in result["annual"])
     methods = section("method", "4 Analysis Methodology", '''
-<p>Production is summed by month across all retained lease completions. Monetary quantities are calculated using the monthly financial and field-summary functions in worldenergydata [I1]; no production forecast is used.</p>
+<p>Production is summed by month across all retained field-coded completions. Monetary quantities are calculated using the monthly financial and field-summary functions in worldenergydata [I1]; no production forecast is used.</p>
 <p>Gross revenue is oil volume multiplied by the assumed oil price plus gas volume multiplied by the assumed gas price. Royalty is gross revenue multiplied by the assumed royalty fraction. Operating expenditure is energy-equivalent production multiplied by the assumed unit operating cost.</p>
 <p>Pre-tax operating cashflow is gross revenue less royalty and operating expenditure. Gas energy-equivalence follows the existing module convention of 6.0 Mcf/boe; gas in BCF is the reported Mcf total divided by one million.</p>
 <p>Operating cashflow is discounted by (1 + annual discount rate)<sup>elapsed months / 12</sup>, with the first observed oil month as the origin. The life-to-date balance is discounted operating cashflow less assumed capital charged at that origin.</p>
@@ -214,7 +219,7 @@ def methodology_and_results(result):
     results = section("results", "5 Detailed Results", f'''
 <p>The annual observed-production quantities are presented in Table 5.1. The last year contains records only through {result['end']}; annual quantities for that year are incomplete.</p>
 <table><thead><tr><th>Year</th><th>Oil (MMbbl)</th><th>Gas (BCF)</th></tr></thead><tbody>{annual_rows}</tbody></table>
-<p class="caption">Table 5.1 – Observed lease production by calendar year.</p>
+<p class="caption">Table 5.1 – Observed field-coded production by calendar year.</p>
 <p>The discounted assumption-case balance is {result['summary_metrics']['ltd_npv_usd_mm']:,.1f} USD billion against the zero-balance comparator. Capital is an assumed lump sum, so the balance cannot be interpreted as an audit of historical spending.</p>
 ''')
     return methods + results
@@ -225,14 +230,31 @@ def findings_and_limits(result):
 
     limits = ''.join(f'<li>{escape(item["reason"])} See Section 3.7 and [I4].</li>'
                      for item in result["assumptions"].values())
+    selection = (
+        "Field-code selection returns the same production rows as the previous G20351 lease extract; the production and economic results are unchanged."
+        if result["field_selection_matches_previous_lease_extract"] else
+        "Field-code selection changes the retained production rows relative to the previous G20351 lease extract."
+    )
+    coverage = result["completion_coverage"]
+    excluded = ''.join(f'<li>API {escape(row["api_well_number"])}: {escape(row["reason"])}</li>'
+                       for row in coverage["excluded"])
+    completion_limit = (
+        f'<li>{coverage["checked_count"]} COM field wells are checked: '
+        f'{len(coverage["produced"])} appear in field-coded production; '
+        f'{len(coverage["excluded"])} are excluded with the following snapshot-limited reasons.<ul>{excluded}</ul>'
+        'Field-code selection does not establish unreported or differently coded production for the excluded APIs.</li>'
+    )
+    retrieved_dates = ', '.join(sorted({row["retrieved_at"][:10] for row in result["sources"]["files"]}))
     return section("findings", "6 Key Findings", f'''
 <p>The findings apply to the observed-production assumption case and its stated data window.</p>
-<h3>6.1 Observed production</h3><p>The retained lease rows sum to {result['summary_metrics']['oil_mmbbl']:,.1f} MMbbl oil and {result['summary_metrics']['gas_bcf']:,.1f} BCF gas through {result['end']}. These are reported production quantities, not recoverable reserves.</p>
+<h3>6.1 Observed production</h3><p>The retained field-coded rows sum to {result['summary_metrics']['oil_mmbbl']:,.1f} MMbbl oil and {result['summary_metrics']['gas_bcf']:,.1f} BCF gas through {result['end']}. These are reported production quantities, not recoverable reserves.</p>
 <h3>6.2 Economic balance</h3><p>The discounted balance is {result['summary_metrics']['ltd_npv_usd_mm']:,.1f} USD billion against zero for the assumed price, cost and fiscal case. Actual field profitability and full-cycle value are not established.</p>
 ''') + section("limitations", "7 Limitations", f'''
 <p>The limitations identify missing evidence and the quantities affected. The actions in Section 8 are needed before the scenario can support broader financial decisions.</p>
 <ul>{limits}<li>Production is available only through {result['end']}, at the retrieval dates in the source manifest; subsequent production is not included. See Section 5.</li>
-<li>Field rows are retained after lease selection and LF normalization. Bulk archives remain identified by address and digest for reproduction. See [I4].</li>
+<li>Production rows are selected by BOEM_FIELD WR627 and field-lease rows by FIELD_NAME_CODE WR627. Wells are selected by BOTM_FLD_NAME_CD WR627; completion records are joined to the selected well APIs. All columns are retained with LF normalization. {selection} See [I4].</li>
+{completion_limit}
+<li>Archive digests identify the copies retrieved on {retrieved_dates}. Later downloads, at least of the rolling current-year file, are expected to differ; annual archives may also be revised. The committed raw rows remain the reproducible analysis input. See [I4].</li>
 <li>Full-cycle values and reserves-based forecasts remain excluded pending reserves qualification in issue 973. See Section 2.</li>
 <li>Assumption-deck reconciliation, depreciation, intangible drilling costs, loss carryforward, severance and royalty relief are not modelled. Those items remain open in issue 651. See Section 3.7.</li></ul>
 ''')
@@ -314,6 +336,7 @@ def build(data_dir, output_dir):
         "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py",
         "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py",
         "scripts/lower_tertiary/collect_life_to_date.py",
+        "scripts/lower_tertiary/fetch_life_to_date.py",
         "scripts/lower_tertiary/build_life_to_date.py",
     ]
     root = Path(__file__).resolve().parents[5]
@@ -386,10 +409,39 @@ def verify_field_identity(verified, basis):
     if expected != ("Julia", "G20351", "WR627", "WR 584"):
         raise ValueError("field is outside the supported demonstration")
     frame = pd.read_csv(io.BytesIO(verified["raw/field.csv"]), dtype=str, keep_default_na=False)
-    if len(frame) != 1:
-        raise ValueError("field identity is not uniquely established")
-    row = frame.iloc[0]
-    observed = (row.FLD_NICK_NAME, row.LEASE_NUMBER, row.FIELD_NAME_CODE,
-                row.AREA_CODE.strip() + " " + row.BLOCK_NUMBER.strip())
-    if observed != expected:
+    if frame.empty or set(frame.FLD_NICK_NAME) != {basis["field"]} or set(frame.FIELD_NAME_CODE) != {basis["field_code"]}:
         raise ValueError("field identifiers do not match the public filing")
+    primary = frame.loc[frame.LEASE_NUMBER.str.strip() == basis["lease"]]
+    if primary.empty or not ((primary.AREA_CODE.str.strip() + " " + primary.BLOCK_NUMBER.str.strip()) == basis["block"]).any():
+        raise ValueError("field identifiers do not match the public filing")
+    leases = set(frame.LEASE_NUMBER.str.strip())
+    for path, blob in verified.items():
+        if path.startswith("raw/ogora"):
+            rows = pd.read_csv(io.BytesIO(blob), names=OGOR_COLUMN_NAMES, dtype=str, keep_default_na=False)
+            leases.update(rows.LEASE_NUMBER.str.strip())
+        elif path == "raw/wells.csv":
+            rows = pd.read_csv(io.BytesIO(blob), dtype=str, keep_default_na=False)
+            leases.update(rows.SURF_LEASE_NUMBER.str.strip())
+            leases.update(rows.BOTM_LEASE_NUMBER.str.strip())
+        elif path == "raw/completions.csv":
+            rows = pd.read_csv(io.BytesIO(blob), dtype=str, keep_default_na=False)
+            leases.update(rows.LEASE_NUMBER.str.strip())
+    leases.discard("")
+    if leases != set(basis["leases"]):
+        raise ValueError("field lease set does not match the retained filings")
+
+
+def verify_completion_coverage(verified, basis, production):
+    """Require a production row or an explicit exclusion for every COM field well."""
+    wells = pd.read_csv(io.BytesIO(verified["raw/wells.csv"]), dtype=str, keep_default_na=False)
+    if set(wells.BOTM_FLD_NAME_CD.str.strip()) != {basis["field_code"]}:
+        raise ValueError("well field does not agree with basis")
+    completed = set(wells.loc[wells.BOREHOLE_STAT_CD.str.strip() == "COM", "API_WELL_NUMBER"].str.strip())
+    produced = set(production.API_WELL_NUMBER.str.strip())
+    missing = completed - produced
+    exclusions = basis.get("excluded_completions", [])
+    excluded = {item["api_well_number"] for item in exclusions if item.get("reason", "").strip()}
+    if missing != excluded or len(exclusions) != len(excluded):
+        raise ValueError("completion coverage requires an explicit exclusion reason")
+    return {"checked_count": len(completed), "completed": sorted(completed),
+            "produced": sorted(completed & produced), "excluded": exclusions}
