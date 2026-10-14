@@ -101,6 +101,14 @@ def test_public_record_reproducible_and_revision_bound():
             ROOT / "docs/data-sources/bsee/analysis/survey/one_well_validation.json"
         ).read_text()
     )
+    regeneration = (
+        "python -m worldenergydata.bsee.analysis.directional_survey_validation "
+        "--input-dir data/modules/bsee/directional_survey_validation "
+        "--output docs/data-sources/bsee/analysis/survey/one_well_validation.json"
+    )
+    assert first["method_digests"] == saved["method_digests"], (
+        "Pinned method digests differ. Regenerate the saved record:\n" + regeneration
+    )
     assert first == saved
 
 
@@ -173,3 +181,131 @@ def test_invalid_qualification_evidence_rejected(tmp_path, kind):
         json.dumps({"before": before_hash, "tampered": tampered, "restored": restored})
         + "\n"
     )
+
+
+def test_changed_method_pin_reports_regeneration(monkeypatch):
+    import re
+
+    from worldenergydata.bsee.analysis import directional_survey_validation as module
+
+    original = module.build_record
+
+    def changed_method(input_dir):
+        record = original(input_dir)
+        record["method_digests"]["well_api12.py"] = "0" * 64
+        return record
+
+    monkeypatch.setattr(module, "build_record", changed_method)
+    command = (
+        "python -m worldenergydata.bsee.analysis.directional_survey_validation "
+        "--input-dir data/modules/bsee/directional_survey_validation "
+        "--output docs/data-sources/bsee/analysis/survey/one_well_validation.json"
+    )
+    with pytest.raises(AssertionError, match=re.escape(command)):
+        test_public_record_reproducible_and_revision_bound()
+    assert command in module.__doc__
+
+
+def test_digest_inputs_keep_checkout_bytes():
+    import os
+    import subprocess
+
+    method_dir = "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/"
+    files = [
+        "data/modules/bsee/directional_survey_validation/stations.csv",
+        "data/modules/bsee/directional_survey_validation/source.json",
+        method_dir + "well_api12.py",
+        method_dir + "directional_survey_validation.py",
+    ]
+    env = os.environ.copy()
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
+        env.pop(name, None)
+    result = subprocess.run(
+        ["git", "check-attr", "text", "eol", "--", *files],
+        cwd=ROOT,
+        env=env,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    attributes = result.stdout.splitlines()
+    for path in files[:2]:
+        assert f"{path}: text: unset" in attributes
+    for path in files[2:]:
+        assert f"{path}: eol: lf" in attributes
+
+
+@pytest.fixture
+def extraction_fixture(tmp_path):
+    """Artificial archive made from retained rows; no engineering qualification."""
+    import csv
+    import hashlib
+    import itertools
+    import json
+    import zipfile
+
+    inputs = ROOT / "data/modules/bsee/directional_survey_validation"
+    source = json.loads((inputs / "source.json").read_text(encoding="utf-8"))
+    with (ROOT / source["held_catalog"]).open(encoding="utf-8", newline="") as stream:
+        catalog_rows = list(itertools.islice(csv.DictReader(stream), 2))
+    catalog = tmp_path / "catalog.csv"
+    catalog.write_text(
+        "API_WELL_NUMBER\n"
+        + catalog_rows[1]["API_WELL_NUMBER"]
+        + "\n"
+        + catalog_rows[0]["API_WELL_NUMBER"]
+        + "\n",
+        encoding="utf-8",
+    )
+    rows = (inputs / "stations.csv").read_bytes().splitlines(keepends=True)[:2]
+    earlier_api = str(int(float(catalog_rows[1]["API_WELL_NUMBER"])))
+    incomplete = rows[0].replace(source["api12"].encode(), earlier_api.encode())
+    archive = tmp_path / "survey.zip"
+    with zipfile.ZipFile(archive, "w") as zipped:
+        zipped.writestr(
+            source["archive_member"],
+            (incomplete + incomplete + b"".join(rows)).replace(b"\n", b"\r\n"),
+        )
+    source.update(
+        archive_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
+        held_catalog_sha256=hashlib.sha256(catalog.read_bytes()).hexdigest(),
+        record_count=2,
+        data_sha256=hashlib.sha256(b"".join(rows)).hexdigest(),
+    )
+    manifest = tmp_path / "source.json"
+    manifest.write_text(json.dumps(source) + "\n", encoding="utf-8")
+    output = tmp_path / "retained.csv"
+    return archive, catalog, manifest, output, b"".join(rows)
+
+
+def _extractor():
+    import runpy
+
+    return runpy.run_path(
+        str(ROOT / "scripts/bsee/extract_directional_survey_validation.py")
+    )["extract"]
+
+
+def test_extraction_selects_first_complete_unique_depth_survey(extraction_fixture):
+    archive, catalog, manifest, output, expected = extraction_fixture
+    extract = _extractor()
+    extract(archive, catalog, manifest, output)
+    assert output.read_bytes() == expected
+    assert b"\r" not in output.read_bytes()
+    extract(archive, catalog, manifest, output)
+    assert output.read_bytes() == expected
+
+
+@pytest.mark.parametrize(
+    "field", ["archive_sha256", "held_catalog_sha256", "data_sha256"]
+)
+def test_extraction_rejects_digest_mismatch(extraction_fixture, field):
+    import json
+
+    archive, catalog, manifest, output, _ = extraction_fixture
+    source = json.loads(manifest.read_text(encoding="utf-8"))
+    source[field] = "0" * 64
+    manifest.write_text(json.dumps(source) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="digest mismatch"):
+        _extractor()(archive, catalog, manifest, output)
+    assert not output.exists()

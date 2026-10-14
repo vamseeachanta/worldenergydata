@@ -1,4 +1,8 @@
-"""Build a reproducible comparison with one published BSEE survey."""
+"""Build a reproducible comparison with one published BSEE survey.
+
+Regenerate the saved record after a change to either pinned method file:
+python -m worldenergydata.bsee.analysis.directional_survey_validation --input-dir data/modules/bsee/directional_survey_validation --output docs/data-sources/bsee/analysis/survey/one_well_validation.json
+"""
 
 from __future__ import annotations
 
@@ -38,10 +42,10 @@ def digest(path):
 def _read_inputs(input_dir):
     """Verify retained input digests and the predeclared criterion."""
     root = Path(input_dir)
-    source = json.loads((root / "source.json").read_text())
-    criteria = json.loads((root / "criteria.json").read_text())
-    revision = json.loads((root / "revision.json").read_text())
-    execution = json.loads((root / "execution.json").read_text())
+    source = json.loads((root / "source.json").read_text(encoding="utf-8"))
+    criteria = json.loads((root / "criteria.json").read_text(encoding="utf-8"))
+    revision = json.loads((root / "revision.json").read_text(encoding="utf-8"))
+    execution = json.loads((root / "execution.json").read_text(encoding="utf-8"))
     raw_path = root / "stations.csv"
     if digest(raw_path) != source["data_sha256"]:
         raise ValueError("Survey input digest mismatch")
@@ -210,7 +214,11 @@ def main():
     args = parser.parse_args()
     record = build_record(args.input_dir)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(record, indent=2, allow_nan=False) + "\n")
+    args.output.write_text(
+        json.dumps(record, indent=2, allow_nan=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
+    )
 
 
 if __name__ == "__main__":

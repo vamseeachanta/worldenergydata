@@ -27,7 +27,7 @@
   "source": {
     "source_id": "bsee-data-center",
     "dataset_id": "dsptsdelimit",
-    "owner_repo": "worldenergydata",
+    "maintaining_repo": "worldenergydata",
     "api12": "177114156300",
     "url": "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP",
     "retrieved_at": "2026-10-14T17:18:42Z",
@@ -37,6 +37,8 @@
     "record_count": 109,
     "data_sha256": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
     "transformation": "API-selected original rows; CRLF converted to LF; numeric fields unchanged",
+    "extraction_command": "python scripts/bsee/extract_directional_survey_validation.py --archive \"$SURVEY_ARCHIVE\" --output \"$RETAINED_ROWS\"",
+    "digest_policy": "Raw bytes; Git attributes preserve retained inputs with -text and both pinned method files with text eol=lf",
     "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=dirSurvPoints",
     "layout_retrieved_at": "2026-10-14T17:21:02Z",
     "method_url": "https://www.data.bsee.gov/Main/DirectionalSurvey.aspx",
@@ -80,14 +82,14 @@
   },
   "input_digests": {
     "stations.csv": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
-    "source.json": "468e33215c826ec28e5ee0b3fc2b40406d416f89aabe7942eb05834914226446",
+    "source.json": "19c9a815c3939e0902fff150ace53a740f4450f5c7b07b3f8051a7c2d2f46554",
     "criteria.json": "bb04abbb7f60c354b150bea768fd07cc294ea69cf00510dba809fe1382140801",
     "revision.json": "f0044ad9ceb5e08e6a00394e37383a9684feb00f97f9332494fe96e1865f9181",
     "execution.json": "1f1d4ec32f1a07676c986dbf93ab273b7f046e251fdeec34afb71a5ef980f9ca"
   },
   "method_digests": {
     "well_api12.py": "dfa12c10ea1fff7dc3b0f247895e85725410b146356f90e1094405b7a728a635",
-    "directional_survey_validation.py": "6543531afab514b399155874cd8e706c6d7e862f841d58ced79050d238aa308d"
+    "directional_survey_validation.py": "51c216340056db0028a7ad787bd89690ef16c3671dc0af828561da4db34fbe3f"
   },
   "datum": {
     "first_measured_depth_ft": 0.0,

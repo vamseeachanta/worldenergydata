@@ -1,7 +1,7 @@
 {
   "source_id": "bsee-data-center",
   "dataset_id": "dsptsdelimit",
-  "owner_repo": "worldenergydata",
+  "maintaining_repo": "worldenergydata",
   "api12": "177114156300",
   "url": "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP",
   "retrieved_at": "2026-10-14T17:18:42Z",
@@ -11,6 +11,8 @@
   "record_count": 109,
   "data_sha256": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
   "transformation": "API-selected original rows; CRLF converted to LF; numeric fields unchanged",
+  "extraction_command": "python scripts/bsee/extract_directional_survey_validation.py --archive \"$SURVEY_ARCHIVE\" --output \"$RETAINED_ROWS\"",
+  "digest_policy": "Raw bytes; Git attributes preserve retained inputs with -text and both pinned method files with text eol=lf",
   "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=dirSurvPoints",
   "layout_retrieved_at": "2026-10-14T17:21:02Z",
   "method_url": "https://www.data.bsee.gov/Main/DirectionalSurvey.aspx",
