@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "purpose": "Observed-production assumption sensitivity; not an investment valuation",
+  "criteria": [
+    "Every retained input digest agrees with its bytes.",
+    "Source years and observed production months are complete without duplicate completion-month records.",
+    "Summary quantities equal module results rounded to one decimal place.",
+    "Two independent builds produce byte-identical outputs.",
+    "Revision history is generated from data and its newest row agrees with the declared revision.",
+    "No projected production or full-cycle value is calculated."
+  ]
+}
