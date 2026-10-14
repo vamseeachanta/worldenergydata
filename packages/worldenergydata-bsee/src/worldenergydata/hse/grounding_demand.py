@@ -15,7 +15,7 @@ Flow::
 
     from worldenergydata.hse.grounding_demand import ground_and_log, rollup, load_demand
 
-    ground_and_log("riser_viv_fatigue")     # unknown -> logged as a GAP, re-raises
+    ground_and_log("subsea_landslide")     # unknown -> logged as a GAP, re-raises
     ground_and_log("mooring_fatigue")        # covered -> logged as a HIT
     print(render_rollup_md(rollup(load_demand())))
 

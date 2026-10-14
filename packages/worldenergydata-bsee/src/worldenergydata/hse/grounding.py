@@ -104,6 +104,25 @@ FAILURE_MODES: dict[str, FailureMode] = {
         sources=("bsee",),
         include=re.compile(r"\bfire\b|explosion|ignition|flash fire", re.I),
     ),
+    "riser_viv_fatigue": FailureMode(
+        key="riser_viv_fatigue",
+        label="Riser VIV / fatigue candidates (cause unconfirmed)",
+        sources=("bsee",),
+        include=re.compile(
+            r"^(?!.*\b(?:weather|emergency|dropped)\b).*\briser\s+disconnect\b",
+            re.I,
+        ),
+    ),
+    "structural_overpressure": FailureMode(
+        key="structural_overpressure",
+        label="Pressure containment candidates (cause unconfirmed)",
+        sources=("bsee",),
+        include=re.compile(
+            r"\bgas release\b|\bpressure release\b|pressure regulator failure"
+            r"|trapped well pressure|pressurized riser string",
+            re.I,
+        ),
+    ),
 }
 
 # --- BSEE ACCIDENT_TYPE -> severity rank (higher = worse) ---------------------

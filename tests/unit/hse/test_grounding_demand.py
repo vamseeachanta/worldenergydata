@@ -53,10 +53,10 @@ def test_ground_and_log_gap_for_unknown_mode(tmp_path):
     log = tmp_path / "demand.jsonl"
     with pytest.raises(KeyError):
         ground_and_log(
-            "riser_viv_fatigue", when="2026-06-19", log_path=log, bsee_path=FIXTURE
+            "subsea_landslide", when="2026-06-19", log_path=log, bsee_path=FIXTURE
         )
     rec = load_demand(log)[0]
-    assert rec["failure_mode"] == "riser_viv_fatigue"
+    assert rec["failure_mode"] == "subsea_landslide"
     assert rec["covered"] is False and rec["reason"] == "unknown_mode"
 
 
