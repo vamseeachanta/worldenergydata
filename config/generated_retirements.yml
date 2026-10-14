@@ -2,4 +2,238 @@
 # and follow_up (a repository issue or pull request URL).
 # Disposition: cold-store with dataset_path and digest_list (relative paths),
 # or reproducible with command. SHA-256 identifies the last committed bytes.
-retirements: []
+retirements:
+- path: reports/capabilities/pdf/benchmark.pdf
+  sha256: 28931d632e234d75ee07bf6b99dacbb4b21d9846b977b293a779cc0aaaa017b1
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/completion.pdf
+  sha256: 3b5eb4edee22de0cd09d2c70dc030ad5265d586be91921b0398fe37bf69c9fa8
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-anchor.pdf
+  sha256: 6427766c5cd4a5b399db6678c28515e4e8a6c82f15b13a34a4eb1f7ffd34502e
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-big_foot.pdf
+  sha256: 555f29f0d4f925ff4e0529f288f9c57e87e3f2ea9ae04bcbdc6a6e3da75b9c8b
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-cascade_chinook.pdf
+  sha256: d569973cb1d067e17eb26cbe34d9f612fbb4ae6c332d3a24c25689574a4d4fcc
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-jack_st_malo.pdf
+  sha256: 8d7314c23c49ac26361f5e9168d21cde472145fcfd80ca3534e6a92422a57f3f
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-julia.pdf
+  sha256: 17b3d8c5b05fea08257f31a9a54863a374ee9ee11273ed89849f14def1caa8d6
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-shenandoah.pdf
+  sha256: 710665f3c9e32f04b1bd82ebabbb7d6300694395e70c2cea39eb2618c9655061
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/economics-stones.pdf
+  sha256: 41cc9bb4a015c670fd3c6117139563c33f226d448ef3288485c6a9ccbb9bfef9
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/fd-bsee-matched.pdf
+  sha256: 3b6d84e64ac9a7b8707943f2242b35f543439a99595ec2d6332ef9f75530371a
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/fd-playbook.pdf
+  sha256: 6c1fab212885e96a5e967c0408d915e497ab93844a59cff146e51771fd24a6ef
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/fd-portfolio.pdf
+  sha256: 71c824e74ce048236298169ee69a61e2d8a0b31c58412c0d34d6dd058ad920e6
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/fd-showcase.pdf
+  sha256: 21bc88e18e163bafaee8058d049dcc80d0538d2c85c2edc233653f296552bb99
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/imo.pdf
+  sha256: 90f7a0dee2e9eedf8a56756fdd2738f6ac1a09d4101892e38eeea0414464477d
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/mooring.pdf
+  sha256: 5f6515e8d266eb810a2cc413afaafc5a02df1dfbd4d7760581193006e9ffd54e
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/ms-exec.pdf
+  sha256: 7237f3b346e67ddd1f6a5916e4273d05343540a65c06a0aeb1f90acce6a5628a
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/ms-fatality.pdf
+  sha256: 2ca6fb0822b7f6c5b778cfbc3ae39f2697a9fff76288a50b45ae314e4df7ae0a
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/ms-foundering.pdf
+  sha256: a9ae25dca508ab030ea4f51ec5fe48c0dcec3328c23ec0a6ead5151a791fe63e
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/ms-hatch.pdf
+  sha256: 35e3b7859ed549583017ebbcf54c53756fc9c57056a05a7ab34db796f8d9d946
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/portfolio.pdf
+  sha256: 0797d3b2fcad615666402a8ec9739b6e6f729749a40a768ecbff349f5387f5bc
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/sec-economics.pdf
+  sha256: cd52a9ca0c60c7c24c45cdd4f71761d5610983ad738221f0211c86343bc573cd
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/sec-playbook.pdf
+  sha256: 7d45c43ae751ef7422906519ccdbdd4d5c19ba1768ff4cd46c2a58871455417e
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/sec-safety.pdf
+  sha256: 0a6879a1de76992a48be59eb9c7c25a74c689ba6498ca9aad513475bfe16d6b9
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/sec-validation.pdf
+  sha256: 2281b929e527c8ae2d1657389f32d15bc373ff4c4e676f3f4e9723fe286d8bdc
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/sec-wells.pdf
+  sha256: c7f678ec0200243b2d71ba30bb066e31acc937fad4d2625b8f17df3f2b8e98ca
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199
+- path: reports/capabilities/pdf/well-path.pdf
+  sha256: 9c9f92af51fb4175170b8539c1669bf5fbe9be729b0d10d1ac0d607807c281e8
+  date: '2026-10-14'
+  reason: The capability summary print path was removed; the HTML pages are the maintained outputs.
+  disposition:
+    kind: cold-store
+    dataset_path: worldenergydata/reports/capabilities/pdf
+    digest_list: SHA256SUMS.txt
+  follow_up: https://github.com/vamseeachanta/worldenergydata/issues/1199

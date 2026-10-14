@@ -42,3 +42,15 @@ See `tests/integration/test_data_symlink.py` for the full verification suite.
 
 `RELOCATION-LOG.md` on `/mnt/ace/worldenergydata/` documents the original file
 moves and checksums.
+
+## Retired capability PDFs
+
+The generated capability PDFs are retained in the cold store at
+`worldenergydata/reports/capabilities/pdf/`. The folder contains
+`SHA256SUMS.txt`; the store records the retirement in `RELOCATION-LOG.md`
+and keeps no separate manifest for this repository.
+
+To retrieve a PDF, request read access to the cold store, copy the named file
+from that folder to a local destination outside the repository, and verify its
+SHA-256 against `SHA256SUMS.txt` and `config/generated_retirements.yml`.
+The HTML capability pages remain the maintained outputs.
