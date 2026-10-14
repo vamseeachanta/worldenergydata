@@ -2,22 +2,25 @@
 
 ## Summary
 
-Revision 1. Corpus current to 2026-01-08; 1,987 incident records. Accident classifications identify candidates; VIV, fatigue and overpressure causes are not established.
+Revision 2. Corpus current to 2026-01-08; 1,987 incident records. Accident classifications identify candidates; VIV, fatigue and overpressure causes are not established.
 
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-14 | Riser disconnect and pressure-containment candidate identifiers were added to support incident grounding with explicit limits on confirming causes. |
+| 2 | 2026-10-14 | Dataset identity, source file and missing acquisition dates were recorded, and candidate subset and overlap relations were stated to clarify the evidence limits. |
 
 ## Corpus basis
 
-Source: [BSEE Data Center](https://www.data.bsee.gov/Main/RawData.aspx).
+Source: [BSEE Incident Investigations](https://www.data.bsee.gov/Other/Files/IncInvRawData.zip); file `mv_acc_investigations.txt`; download date not recorded; data-addition commit date not recorded (external corpus).
 Corpus SHA-256: `a174d467b39f74f3ceeab4c4d3e0dd01c903de253b21feec03359e818b9dd2fd`.
 
 Identifiers below combine incident date, recorded time, lease and area block; the source has no separate incident identifier. Empty fields are preserved. No operator column is included.
 
 ## Classification limits
+
+On these corpus rows, `riser_viv_fatigue` is a subset of the existing `riser_fatigue` matches. `structural_overpressure` overlaps `fire_explosion` on gas-release-with-fire rows.
 
 Riser disconnect candidates require a join to incident text that confirms the cause before citation as VIV or fatigue precedent. Weather, emergency and dropped item classifications are excluded. A missing fatigue term cannot establish absence of fatigue.
 

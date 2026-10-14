@@ -20,6 +20,26 @@ MODES = ("riser_viv_fatigue", "structural_overpressure")
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def source_line(source: dict) -> str:
+    """Keep source identity and acquisition-date evidence in the revision record."""
+    if source["download_date"]:
+        date_text = f"downloaded {source['download_date']}"
+    elif source["data_added_commit_date"]:
+        date_text = (
+            "download date not recorded; data added to the repository by a "
+            f"commit dated {source['data_added_commit_date']}"
+        )
+    else:
+        date_text = (
+            "download date not recorded; data-addition commit date not recorded "
+            "(external corpus)"
+        )
+    return (
+        f"Source: [{source['dataset_name']}]({source['download_url']}); "
+        f"file `{source['file_name']}`; {date_text}."
+    )
+
+
 def build_note(corpus: Path, revisions: Path) -> str:
     """Render candidate identifiers using the production classifier's picks."""
     history = json.loads(revisions.read_text(encoding="utf-8"))
@@ -42,12 +62,16 @@ def build_note(corpus: Path, revisions: Path) -> str:
         lines.append(f"| {entry['revision']} | {entry['date']} | {entry['change']} |")
     lines += [
         "", "## Corpus basis", "",
-        "Source: [BSEE Data Center](https://www.data.bsee.gov/Main/RawData.aspx).",
+        source_line(history["source"]),
         f"Corpus SHA-256: `{hashlib.sha256(corpus.read_bytes()).hexdigest()}`.", "",
         "Identifiers below combine incident date, recorded time, lease and area "
         "block; the source has no separate incident identifier. Empty fields "
         "are preserved. No operator column is included.", "",
         "## Classification limits", "",
+        "On these corpus rows, `riser_viv_fatigue` is a subset of the existing "
+        "`riser_fatigue` matches. `structural_overpressure` overlaps "
+        "`fire_explosion` on gas-release-with-fire rows.",
+        "",
         "Riser disconnect candidates require a join to "
         "incident text that confirms the cause before citation as VIV or fatigue "
         "precedent. Weather, "

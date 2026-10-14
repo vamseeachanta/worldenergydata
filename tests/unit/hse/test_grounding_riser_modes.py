@@ -157,3 +157,73 @@ def test_identifier_note_accepts_the_classifiers_iso_dates(tmp_path):
     note = builder["build_note"](corpus, revisions)
     assert "2006-03-20|8:22|G17003|WR 544" in note
     assert "7 candidates" in note and "45 candidates" in note
+
+
+def test_identifier_note_source_matches_revision_record():
+    root = Path(__file__).resolve().parents[3]
+    revisions = root / "docs/hse/grounding-riser-revisions.json"
+    source = json.loads(revisions.read_text())["source"]
+    builder = runpy.run_path(str(root / "scripts/build_hse_grounding_matches.py"))
+    note = builder["build_note"](FIXTURE, revisions)
+    assert (
+        f"Source: [{source['dataset_name']}]({source['download_url']}); "
+        f"file `{source['file_name']}`; download date not recorded; "
+        "data-addition commit date not recorded (external corpus)."
+    ) in note.splitlines()
+
+
+@pytest.mark.parametrize(
+    "download_date,commit_date,date_text",
+    [
+        ("2026-01-10", None, "downloaded 2026-01-10"),
+        (
+            None,
+            "2026-01-11",
+            "download date not recorded; data added to the repository by a "
+            "commit dated 2026-01-11",
+        ),
+        (
+            None,
+            None,
+            "download date not recorded; data-addition commit date not recorded "
+            "(external corpus)",
+        ),
+    ],
+)
+def test_identifier_note_renders_recorded_source_dates(
+    tmp_path, download_date, commit_date, date_text
+):
+    root = Path(__file__).resolve().parents[3]
+    data = json.loads((root / "docs/hse/grounding-riser-revisions.json").read_text())
+    data["source"] = {
+        "dataset_name": "Synthetic incident dataset",
+        "download_url": "https://example.org/incidents.zip",
+        "file_name": "synthetic_incidents.txt",
+        "download_date": download_date,
+        "data_added_commit_date": commit_date,
+    }
+    revisions = tmp_path / "revisions.json"
+    revisions.write_text(json.dumps(data))
+    builder = runpy.run_path(str(root / "scripts/build_hse_grounding_matches.py"))
+    note = builder["build_note"](FIXTURE, revisions)
+    assert (
+        "Source: [Synthetic incident dataset](https://example.org/incidents.zip); "
+        f"file `synthetic_incidents.txt`; {date_text}."
+    ) in note.splitlines()
+
+
+def test_identifier_note_states_candidate_relations():
+    root = Path(__file__).resolve().parents[3]
+    builder = runpy.run_path(str(root / "scripts/build_hse_grounding_matches.py"))
+    note = builder["build_note"](
+        FIXTURE, root / "docs/hse/grounding-riser-revisions.json"
+    )
+    assert (
+        "On these corpus rows, `riser_viv_fatigue` is a subset of the existing "
+        "`riser_fatigue` matches."
+    ) in note
+    assert (
+        "`structural_overpressure` overlaps `fire_explosion` on "
+        "gas-release-with-fire rows."
+    ) in note
+    assert "causes are not established" in note
