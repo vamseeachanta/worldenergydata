@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "record_count": 161,
+  "crane_rating_count": 24,
+  "source_count": 29,
+  "units": {
+    "capacity_t": "metric tonnes",
+    "radius_min_m": "metres",
+    "radius_max_m": "metres",
+    "tension_t": "metric tonnes"
+  },
+  "files": {
+    "construction_evidence.json": {
+      "sha256": "c37d64a6a56203526669f9079fabc156413bf80d10ebbd9592dcc68eeb5c46db",
+      "size_bytes": 150377
+    },
+    "construction_crane_ratings.csv": {
+      "sha256": "e812880d3d50b84d8b15eb799dfbcb4c8ab3fe23188f403e37eae6ba9eca01bd",
+      "size_bytes": 5906
+    }
+  }
+}
