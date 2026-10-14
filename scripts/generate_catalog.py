@@ -534,6 +534,53 @@ def _resolve_external_root(cli_value: str | None) -> Path | None:
     return None
 
 
+def validate_contract_entry(entry: dict[str, Any]) -> None:
+    """Reject incomplete or wrongly flagged metadata before it is preserved."""
+    invalid = "invalid contract-only metadata"
+    if not isinstance(entry, dict) or entry.get("contract_only") is not True:
+        raise ValueError(invalid + ": flag must be exactly true")
+    for field in ("name", "path", "format", "status"):
+        value = entry.get(field)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(invalid + ": missing " + field)
+    name = entry["name"]
+    if (
+        entry["format"] not in {"csv", "json"}
+        or Path(name).name != name
+        or not name.endswith("." + entry["format"])
+        or entry["path"] != "<output-dir>/" + name
+        or entry["status"] != "local_draft_public_export_requires_owner_eligibility"
+        or "size_bytes" in entry
+        or "row_count" in entry
+    ):
+        raise ValueError(invalid + ": expected unsized output-template contract")
+    columns = entry.get("columns")
+    if not isinstance(columns, list) or not columns:
+        raise ValueError(invalid + ": columns must be a nonempty list")
+    names = set()
+    types = {
+        "string",
+        "integer",
+        "float",
+        "datetime",
+        "boolean",
+        "list",
+        "dict",
+        "string|null",
+    }
+    for col in columns:
+        if (
+            not isinstance(col, dict)
+            or not isinstance(col.get("name"), str)
+            or not col["name"].strip()
+            or col["name"] in names
+            or not isinstance(col.get("type"), str)
+            or col["type"] not in types
+        ):
+            raise ValueError(invalid + ": invalid or duplicate column")
+        names.add(col["name"])
+
+
 def _preserve_contract_entries(schema: dict[str, Any], schema_path: Path) -> None:
     """Carry hand-authored ``contract_only`` entries across regeneration.
 
@@ -545,9 +592,16 @@ def _preserve_contract_entries(schema: dict[str, Any], schema_path: Path) -> Non
     with open(schema_path, encoding="utf-8") as fh:
         previous = yaml.safe_load(fh) or {}
     seen = {d.get("path") for d in schema.get("datasets", [])}
+    pending = []
     for ds in previous.get("datasets", []):
-        if ds.get("contract_only") and ds.get("path") not in seen:
-            schema["datasets"].append(ds)
+        if "contract_only" not in ds:
+            continue
+        validate_contract_entry(ds)
+        if ds["path"] in seen:
+            raise ValueError("duplicate contract-only path: " + ds["path"])
+        seen.add(ds["path"])
+        pending.append(ds)
+    schema["datasets"].extend(pending)
 
 
 def generate_catalog(

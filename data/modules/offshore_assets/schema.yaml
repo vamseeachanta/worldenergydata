@@ -1,3 +1,7 @@
+# JSON type string|null permits JSON null; optional controls property absence independently.
+# A foreign_key list denotes the union of its targets, not a composite key.
+# CSV types describe decoded cells; native None is serialized as empty text.
+# Manifest presence maps describe draft/export emission; optional gate pins come from CLI inputs.
 module: offshore_assets
 description: Global O&G fields, production facilities, host vessels, drilling rigs
   and jackups (parsed from legacy reference extraction). Complements US-GoM BSEE.
@@ -392,15 +396,24 @@ datasets:
 - name: entity_registry.csv
   path: <output-dir>/entity_registry.csv
   format: csv
-  description: Angola evidence-extension entity registry (partial research only; not
-    a national completeness claim). Namespaced entity_id is a lookup ID, origin_*
-    preserve original IDs.
+  description: Angola evidence-extension entity registry (partial research only; not a national completeness
+    claim). Namespaced entity_id is a lookup ID, origin_* preserve original IDs.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
-    with doubled quotes; strict csv.DictReader parse with newline=''; header = sorted
-    union of row keys (alphabetical); list/dict cells serialized as compact sorted-key
-    JSON; booleans as True/False; None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
+    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
+    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
+    None as empty
+  empty_table: An empty table is a zero-byte file without a header.
+  dialect:
+    encoding: UTF-8 without BOM
+    lineterminator: '
+
+      '
+    delimiter: ','
+    quotechar: '"'
+    doublequote: true
+    quoting: minimal
   schema_version: 1
   columns:
   - name: country
@@ -472,16 +485,26 @@ datasets:
 - name: legacy_entity_crosswalk.csv
   path: <output-dir>/legacy_entity_crosswalk.csv
   format: csv
-  description: Candidate and owner-adjudicated links between registry entities and
-    legacy fields.csv fingerprint groups. Key (entity_id, legacy_row_fingerprint,
-    relation_type); each fingerprint group has at most one accepted same_entity target
-    (field scope only). Pending/conflicting/composite links never act as join equivalence.
+  description: Candidate and owner-adjudicated links between registry entities and legacy fields.csv fingerprint
+    groups. Key (entity_id, legacy_row_fingerprint, relation_type); each fingerprint group has at most
+    one accepted same_entity target (field scope only). Pending/conflicting/composite links never act
+    as join equivalence.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
-    with doubled quotes; strict csv.DictReader parse with newline=''; header = sorted
-    union of row keys (alphabetical); list/dict cells serialized as compact sorted-key
-    JSON; booleans as True/False; None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
+    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
+    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
+    None as empty
+  empty_table: An empty table is a zero-byte file without a header.
+  dialect:
+    encoding: UTF-8 without BOM
+    lineterminator: '
+
+      '
+    delimiter: ','
+    quotechar: '"'
+    doublequote: true
+    quoting: minimal
   schema_version: 1
   columns:
   - name: adjudication_source_refs
@@ -502,8 +525,8 @@ datasets:
     optional: true
   - name: candidate_payload
     type: dict
-    description: JSON of the original candidate row; its fingerprint must equal candidate_sha256
-      and its status must be pending or conflicting
+    description: JSON of the original candidate row; its fingerprint must equal candidate_sha256 and its
+      status must be pending or conflicting
     unit: ''
   - name: candidate_sha256
     type: string
@@ -532,10 +555,9 @@ datasets:
     primary_key: true
   - name: match_status
     type: string
-    description: disposition; builder emits pending or conflicting, owner decisions
-      may set the rest
+    description: disposition; builder emits pending or conflicting, owner decisions may set the rest
     unit: ''
-    enum: &id002
+    enum: &id003
     - accepted
     - pending
     - conflicting
@@ -556,7 +578,7 @@ datasets:
     type: string
     description: relation
     unit: ''
-    enum: &id001
+    enum: &id002
     - same_entity
     - constituent_of
     - phase_of
@@ -567,22 +589,77 @@ datasets:
     unit: ''
     enum:
     - 1
+  fingerprint:
+    inputs:
+      candidate:
+      - entity_id
+      - evidence_refs
+      - legacy_field_id
+      - legacy_row_fingerprint
+      - match_status
+      - multiplicity
+      - origin_entity_id
+      - rationale
+      - relation_type
+      - schema_version
+    algorithm: SHA-256
+    encoding: UTF-8
+    json_options: &id001
+      sort_keys: true
+      ensure_ascii: false
+      separators:
+      - ','
+      - ':'
+      allow_nan: false
+    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    recomputation:
+      value:
+        entity_id: synthetic:field:alpha
+        origin_entity_id: synthetic-alpha
+        legacy_row_fingerprint: '0000000000000000000000000000000000000000000000000000000000000000'
+        legacy_field_id: synthetic-legacy
+        match_status: conflicting
+        relation_type: same_entity
+        evidence_refs:
+        - synthetic-source
+        rationale: synthetic candidate
+        multiplicity: 1
+        schema_version: 1
+      sha256: 03b973ec1b0d681c962b4265dc0cbcf20860fca65b42f418a08db62e32e5e761
 - name: legacy_catalog_ledger.csv
   path: <output-dir>/legacy_catalog_ledger.csv
   format: csv
-  description: One row per distinct legacy fields.csv Angola row fingerprint group;
-    legacy-only rows stay visible. Group identity is the fingerprint, not FIELD_ID
-    or row order.
+  description: One row per distinct legacy fields.csv Angola row fingerprint group; legacy-only rows stay
+    visible. Group identity is the fingerprint, not FIELD_ID or row order.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
-    with doubled quotes; strict csv.DictReader parse with newline=''; header = sorted
-    union of row keys (alphabetical); list/dict cells serialized as compact sorted-key
-    JSON; booleans as True/False; None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
+    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
+    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
+    None as empty
+  empty_table: An empty table is a zero-byte file without a header.
+  dialect:
+    encoding: UTF-8 without BOM
+    lineterminator: '
+
+      '
+    delimiter: ','
+    quotechar: '"'
+    doublequote: true
+    quoting: minimal
   schema_version: 1
-  fingerprint: SHA-256 hex over compact UTF-8 JSON array (separators ',' ':', sort_keys,
-    ensure_ascii=False) of the parsed cell strings in original CSV header order, unnormalized;
-    schema_version 1; identical rows form one group with multiplicity
+  fingerprint:
+    inputs:
+      legacy_row: parsed cell strings in original_header order, without normalization
+    algorithm: SHA-256
+    encoding: UTF-8
+    json_options: *id001
+    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    recomputation:
+      value:
+      - synthetic Ω
+      - ''
+      sha256: eee24008d139447bd0725d36ab5b6d878ecc1edbd8d0f3ae9ca8f5a559ef7d80
   columns:
   - name: attributes
     type: dict
@@ -603,8 +680,8 @@ datasets:
     unit: ''
   - name: original_header
     type: list
-    description: JSON list of original CSV header names in original order; unique;
-      same set as attributes keys
+    description: JSON list of original CSV header names in original order; unique; same set as attributes
+      keys
     unit: ''
   - name: status
     type: string
@@ -621,10 +698,20 @@ datasets:
   description: Source-backed memberships between registry entities.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
-  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar
-    with doubled quotes; strict csv.DictReader parse with newline=''; header = sorted
-    union of row keys (alphabetical); list/dict cells serialized as compact sorted-key
-    JSON; booleans as True/False; None as empty
+  csv_dialect: UTF-8 without BOM, LF line endings, comma delimiter, double-quote quotechar with doubled
+    quotes and minimal quoting; strict csv.DictReader parse with newline=''; header = sorted union of
+    row keys (alphabetical); list/dict cells serialized as compact sorted-key JSON; booleans as True/False;
+    None as empty
+  empty_table: An empty table is a zero-byte file without a header.
+  dialect:
+    encoding: UTF-8 without BOM
+    lineterminator: '
+
+      '
+    delimiter: ','
+    quotechar: '"'
+    doublequote: true
+    quoting: minimal
   schema_version: 1
   columns:
   - name: date_precision
@@ -664,7 +751,7 @@ datasets:
     - hosted_by
   - name: relationship_id
     type: string
-    description: <dataset>:relationship:<fingerprint of row>
+    description: <dataset>:relationship:<SHA-256 of the native pre-ID object specified by fingerprint>
     unit: ''
     primary_key: true
   - name: source_refs
@@ -689,26 +776,55 @@ datasets:
     description: FK to entity_registry.csv
     unit: ''
     foreign_key: entity_registry.csv:entity_id
+  fingerprint:
+    inputs:
+      relationship:
+      - date_precision
+      - dependencies
+      - effective_date
+      - object_entity_id
+      - predicate
+      - source_refs
+      - source_vintage
+      - status
+      - subject_entity_id
+    algorithm: SHA-256
+    encoding: UTF-8
+    json_options: *id001
+    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    recomputation:
+      object:
+        subject_entity_id: synthetic:field:alpha
+        object_entity_id: synthetic:development:omega
+        predicate: part_of
+        source_refs:
+        - synthetic-source
+        source_vintage: synthetic Ω
+        effective_date: null
+        date_precision: unknown
+        status: supported
+        dependencies:
+        - synthetic:record:alpha
+        - synthetic:record:omega
+      sha256: 884c1945d68cc966a1f55eb14e00cf0da2dcb63692aeabaa334dd5860a908348
 - name: catalog_links.json
   path: <output-dir>/catalog_links.json
   format: json
-  description: Object with records[] (one per evidence record group, with multiplicity)
-    and parent_references[] (inherited-cost parent rows). Record ID is <dataset>:<table>:<explicit
-    entity_id|cost_id|source_ref, else content fingerprint>.
+  description: Object with records[] (one per evidence record group, with multiplicity) and parent_references[]
+    (inherited-cost parent rows). Record ID is <dataset>:<table>:<explicit entity_id|cost_id|source_ref,
+    else content fingerprint>.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
   schema_version: 1
   columns:
   - name: records
     type: list
-    description: 'array of link objects: record_id, table, sha256, multiplicity, subject,
-      entity_id, link_status, dependencies; inherited_cost_records also carry parent_row_fingerprint
-      and parent_record_id'
+    description: 'array of link objects: record_id, table, sha256, multiplicity, subject, entity_id, link_status,
+      dependencies; inherited_cost_records also carry parent_row_fingerprint and parent_record_id'
     unit: ''
   - name: parent_references
     type: list
-    description: 'array of {record_id: sanctioned_projects:row:<sha256>, sha256, table:
-      parent_reference}'
+    description: 'array of {record_id: sanctioned_projects:row:<sha256>, sha256, table: parent_reference}'
     unit: ''
   - name: link_status
     type: string
@@ -730,12 +846,28 @@ datasets:
     - cost_observations
     - milestone_observations
     - inherited_cost_records
+  fingerprint:
+    inputs:
+      record: complete native evidence object; parent digest uses parsed parent cells in pinned header
+        order
+    algorithm: SHA-256
+    encoding: UTF-8
+    json_options: *id001
+    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    recomputation:
+      value:
+        subject: synthetic Ω
+        event_date: null
+        precision: unknown
+        scope: field
+        source_ref: synthetic-source
+      sha256: afdcc05cdbaaf160173f7c653e2ca82a2c6b0f39e7922010b65e9e6bf1275c04
 - name: publication_eligibility.json
   path: <output-dir>/publication_eligibility.json
   format: json
-  description: Record-level publication matrix over records plus parent references;
-    missing decisions fail closed and deferral cascades through dependencies. Signoff
-    is an evidence claim, not authenticated authority.
+  description: Record-level publication matrix over records plus parent references; missing decisions
+    fail closed and deferral cascades through dependencies. Signoff is an evidence claim, not authenticated
+    authority.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
   columns:
@@ -743,7 +875,9 @@ datasets:
     type: string
     description: FK to catalog_links.json
     unit: ''
-    foreign_key: catalog_links.json:records.record_id
+    foreign_key:
+    - catalog_links.json:records.record_id
+    - catalog_links.json:parent_references.record_id
     primary_key: true
   - name: table
     type: string
@@ -767,13 +901,17 @@ datasets:
     description: always unresolved as generated
     unit: ''
   - name: basis
-    type: string
-    description: public basis for decision; null until reviewed
+    type: string|null
+    description: public basis for decision; null until reviewed; property is always present, null until
+      reviewed
     unit: ''
+    optional: false
   - name: reviewer
-    type: string
-    description: must be the repository owner for eligible decisions
+    type: string|null
+    description: must be the repository owner for eligible decisions; property is always present, null
+      until reviewed
     unit: ''
+    optional: false
   - name: approval_ref
     type: string
     description: required for eligible decisions
@@ -796,9 +934,8 @@ datasets:
 - name: catalog_match_decisions.json
   path: <output-dir>/catalog_match_decisions.json
   format: json
-  description: 'Sole authority for equivalence adjudication: array of owner decisions
-    bound to crosswalk candidates by (entity_id, legacy_row_fingerprint, relation_type)
-    and candidate_sha256.'
+  description: 'Sole authority for equivalence adjudication: array of owner decisions bound to crosswalk
+    candidates by (entity_id, legacy_row_fingerprint, relation_type) and candidate_sha256.'
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
   columns:
@@ -814,12 +951,12 @@ datasets:
     type: string
     description: crosswalk key part
     unit: ''
-    enum: *id001
+    enum: *id002
   - name: match_status
     type: string
     description: disposition
     unit: ''
-    enum: *id002
+    enum: *id003
   - name: candidate_sha256
     type: string
     description: must equal the candidate's digest
@@ -840,8 +977,8 @@ datasets:
 - name: integration_manifest.json
   path: <output-dir>/integration_manifest.json
   format: json
-  description: Pins schema version, input/output/decision hashes, counts and readiness
-    for the extension; never pins its own hash. Machine-readable JSON Schema is data/modules/offshore_assets/catalog_integration_schema.json.
+  description: Pins schema version, input/output/decision hashes, counts and readiness for the extension;
+    never pins its own hash. Machine-readable JSON Schema is data/modules/offshore_assets/catalog_integration_schema.json.
     Raw-source hashes are unknown_not_retained.
   status: local_draft_public_export_requires_owner_eligibility
   contract_only: true
@@ -852,12 +989,20 @@ datasets:
     unit: ''
     enum:
     - angola-field-development-evidence
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: schema_version
     type: integer
     description: fixed 1
     unit: ''
     enum:
     - 1
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: state
     type: string
     description: publication state
@@ -865,83 +1010,191 @@ datasets:
     enum:
     - local_draft_not_for_publication
     - eligible_derived_export
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: readiness
     type: string
     description: fixed
     unit: ''
     enum:
     - partial_research_only
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: input_hashes
     type: dict
-    description: filename -> SHA-256 for the five evidence tables (.json), legacy_catalog,
-      inherited_cost_parent, original_manifest
+    description: filename -> SHA-256 for the five evidence tables (.json), legacy_catalog, inherited_cost_parent,
+      original_manifest
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
+    value_schema:
+      type: object
+      additionalProperties:
+        type: string
+        pattern: ^[a-f0-9]{64}$
   - name: output_hashes
     type: dict
     description: artifact filename -> SHA-256 for every other emitted artifact
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
+    value_schema:
+      type: object
+      additionalProperties:
+        type: string
+        pattern: ^[a-f0-9]{64}$
   - name: decision_sha256
     type: string
     description: fingerprint of match decisions
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: eligibility_sha256
     type: string
     description: fingerprint of eligibility matrix
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: gate_input_sha256
     type: dict
     description: optional raw gate-file byte digests (match_decisions, eligibility)
     unit: ''
     optional: true
+    presence:
+      draft: optional
+      export: optional
+    value_schema:
+      type: object
+      description: Optional raw CLI gate-file byte digests; separate from normalized semantic decision
+        digests and not authentication.
+      properties:
+        match_decisions:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+        eligibility:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+      additionalProperties: false
   - name: counts
     type: dict
     description: evidence table -> record count
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
+    value_schema:
+      type: object
+      additionalProperties:
+        type: integer
+        minimum: 0
   - name: entity_counts
     type: dict
     description: entity_type -> count
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
+    value_schema:
+      type: object
+      additionalProperties:
+        type: integer
+        minimum: 0
   - name: research_entity_count
     type: integer
     description: non-supplemental registry entities
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: registry_entity_count
     type: integer
     description: all registry entities
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: supplemental_entity_count
     type: integer
     description: supplemental registry entities
     unit: ''
+    presence:
+      draft: present
+      export: present
+    optional: false
   - name: legacy_row_count
     type: integer
-    description: legacy Angola rows (sum of multiplicities); draft only
+    description: legacy Angola rows (sum of multiplicities)
     unit: ''
-    optional: true
+    optional: false
+    presence:
+      draft: present
+      export: present
   - name: source_counts
     type: dict
-    description: pre-deferral counts per table incl. parent_reference; public export
-      only
+    description: pre-deferral counts per table incl. parent_reference
     unit: ''
     optional: true
+    presence:
+      draft: absent
+      export: present
   - name: deferred_counts
     type: dict
-    description: deferred records per table; public export only
+    description: deferred records per table
     unit: ''
     optional: true
+    presence:
+      draft: absent
+      export: present
   - name: as_of
-    type: string
-    description: original snapshot as_of; draft only
+    type: string|null
+    description: Original snapshot as_of; property is always present in both modes, null when the snapshot
+      omits the date
     unit: ''
-    optional: true
+    optional: false
+    presence:
+      draft: present
+      export: present
   - name: raw_source_hashes
     type: string
-    description: unknown_not_retained; draft only
+    description: unknown_not_retained
     unit: ''
-    optional: true
+    optional: false
+    presence:
+      draft: present
+      export: present
   - name: authority_note
     type: string
-    description: signoff-is-evidence note; draft only
+    description: signoff-is-evidence note
     unit: ''
-    optional: true
+    optional: false
+    presence:
+      draft: present
+      export: present
+  fingerprint:
+    inputs:
+      decision_sha256: complete ordered match_decisions array
+      eligibility_sha256: complete ordered eligibility array
+    algorithm: SHA-256
+    encoding: UTF-8
+    json_options: *id001
+    native_values: null stays null; lists retain order; objects have sorted names; no CSV conversion
+    recomputation:
+      value: []
+      sha256: 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945
 binary_stores: []
