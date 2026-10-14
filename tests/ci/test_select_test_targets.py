@@ -242,7 +242,7 @@ def test_matrix_runs_governance_once_for_every_scope(path, scope):
         "scripts/capabilities/build_onepagers.py",
         "tests/test_capability_onepagers.py",
         "reports/capabilities/pdf/sec-economics.html",
-        "reports/capabilities/pdf/mooring.pdf",
+        "reports/capabilities/pdf/mooring.html",
     ],
 )
 def test_capability_contract_paths_select_test_file(path: str) -> None:
