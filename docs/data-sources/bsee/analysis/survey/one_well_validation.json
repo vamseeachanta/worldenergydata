@@ -1,0 +1,4357 @@
+{
+  "revision": "1",
+  "summary": {
+    "api12": "177114156300",
+    "record_count": 109,
+    "passes": {
+      "measured_depth_ft": true,
+      "inclination_deg": true,
+      "azimuth_deg": true,
+      "relative_tvd_ft": true
+    },
+    "maximum_absolute_differences": {
+      "measured_depth_ft": 0.0,
+      "inclination_deg": 0.0,
+      "azimuth_deg": 0.0,
+      "relative_tvd_ft": 0.5
+    },
+    "qualification": "Relative depth comparison; angular decoding consistency only"
+  },
+  "revision_history": [
+    {
+      "revision": "1",
+      "date": "2026-10-14",
+      "change": "Initial comparison of one public survey to expose date-schema and geometry limitations"
+    }
+  ],
+  "source": {
+    "source_id": "bsee-data-center",
+    "dataset_id": "dsptsdelimit",
+    "owner_repo": "worldenergydata",
+    "api12": "177114156300",
+    "url": "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP",
+    "retrieved_at": "2026-10-14T17:18:42Z",
+    "http_status": 200,
+    "archive_sha256": "7ba4990d8517b750c49735741a924c45e031d26f0a8f740fe4777a842df4de47",
+    "archive_member": "dsptsdelimit.txt",
+    "record_count": 109,
+    "data_sha256": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
+    "transformation": "API-selected original rows; CRLF converted to LF; numeric fields unchanged",
+    "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=dirSurvPoints",
+    "layout_retrieved_at": "2026-10-14T17:21:02Z",
+    "method_url": "https://www.data.bsee.gov/Main/DirectionalSurvey.aspx",
+    "method_retrieved_at": "2026-10-14T17:20:41Z",
+    "selection": "First held catalog row with a complete, unique-depth public survey; the issue input API is absent from the held catalog; no numerical error was used for selection",
+    "held_catalog": "data/modules/bsee/current/wells/well_data.csv",
+    "held_catalog_base": "84e702f566fa26ccd00345dc9c9c4c46fa433199",
+    "held_catalog_sha256": "a83e923852e0b38caab59d3369446858f743eb1f337cdd91ddbda6894c6f78d3",
+    "held_catalog_vintage": "not recorded",
+    "well_dates": {
+      "TOTAL_DEPTH_DATE": "8/18/1988",
+      "WELL_SPUD_DATE": "5/31/1988"
+    },
+    "rights_basis": "Public federal data; source catalog identifies government public-domain collection",
+    "readiness": "partial; regression comparison only",
+    "source_version": "sha256:7ba4990d8517b750c49735741a924c45e031d26f0a8f740fe4777a842df4de47",
+    "units": {
+      "depth": "feet assumed from repository convention; not stated in opened layout",
+      "inclination_and_direction_degrees": "degree",
+      "inclination_and_direction_minutes": "arcminute",
+      "geographic_positions": "degree"
+    }
+  },
+  "criteria": {
+    "revision": "1",
+    "intended_use": "One-survey regression comparison only",
+    "tolerances": {
+      "measured_depth_ft": 0.1,
+      "inclination_deg": 0.1,
+      "azimuth_deg": 0.1,
+      "relative_tvd_ft": 1.0
+    },
+    "basis": "assumed, based on previous experience; depth units follow the existing repository feet convention",
+    "comparison_basis": "Unrounded differences; first-station depth datum; angular decoding is a consistency check",
+    "geographic_coordinates": "No acceptance criterion without a qualified native-projection transform"
+  },
+  "execution": {
+    "criteria_recorded_at": "2026-10-14T18:36:23.366792+00:00",
+    "criteria_sha256": "bb04abbb7f60c354b150bea768fd07cc294ea69cf00510dba809fe1382140801",
+    "first_computation_started_at": "2026-10-14T18:53:04.514843+00:00"
+  },
+  "input_digests": {
+    "stations.csv": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
+    "source.json": "468e33215c826ec28e5ee0b3fc2b40406d416f89aabe7942eb05834914226446",
+    "criteria.json": "bb04abbb7f60c354b150bea768fd07cc294ea69cf00510dba809fe1382140801",
+    "revision.json": "f0044ad9ceb5e08e6a00394e37383a9684feb00f97f9332494fe96e1865f9181",
+    "execution.json": "1f1d4ec32f1a07676c986dbf93ab273b7f046e251fdeec34afb71a5ef980f9ca"
+  },
+  "method_digests": {
+    "well_api12.py": "dfa12c10ea1fff7dc3b0f247895e85725410b146356f90e1094405b7a728a635",
+    "directional_survey_validation.py": "6543531afab514b399155874cd8e706c6d7e862f841d58ced79050d238aa308d"
+  },
+  "datum": {
+    "first_measured_depth_ft": 0.0,
+    "first_published_tvd_ft": 0.0,
+    "horizontal_origin": "First published station; no geographic transform applied"
+  },
+  "known_limits": [
+    "Depth units follow the repository's feet convention; the opened layout does not state units.",
+    "Published DELTA_X and DELTA_Y are longitude and latitude differences, not linear offsets.",
+    "Geographic coordinates are retained in stations.csv but are not qualified against computed linear positions.",
+    "Inclination and azimuth comparisons test decoding of the same input, not independent measurements.",
+    "One public survey does not qualify other wells, absolute wellhead placement or plotting labels."
+  ],
+  "stations": [
+    {
+      "station": 1,
+      "raw_row": 1,
+      "computed_position_ft": {
+        "north_from_first_station": 0.0,
+        "east_from_first_station": 0.0,
+        "down_from_first_station": 0.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 2,
+      "raw_row": 2,
+      "computed_position_ft": {
+        "north_from_first_station": 0.2,
+        "east_from_first_station": 0.0,
+        "down_from_first_station": 100.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 100.0,
+          "published_or_decoded": 100.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 7.5,
+          "published_or_decoded": 7.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 100.0,
+          "published_or_decoded": 100.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 3,
+      "raw_row": 3,
+      "computed_position_ft": {
+        "north_from_first_station": 0.8,
+        "east_from_first_station": 0.3,
+        "down_from_first_station": 200.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 200.0,
+          "published_or_decoded": 200.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 32.5,
+          "published_or_decoded": 32.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 200.0,
+          "published_or_decoded": 200.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 4,
+      "raw_row": 4,
+      "computed_position_ft": {
+        "north_from_first_station": 1.9,
+        "east_from_first_station": 1.1,
+        "down_from_first_station": 300.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 300.0,
+          "published_or_decoded": 300.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 37.6,
+          "published_or_decoded": 37.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 300.0,
+          "published_or_decoded": 300.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 5,
+      "raw_row": 5,
+      "computed_position_ft": {
+        "north_from_first_station": 3.3,
+        "east_from_first_station": 2.0,
+        "down_from_first_station": 400.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 400.0,
+          "published_or_decoded": 400.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 28.7,
+          "published_or_decoded": 28.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 400.0,
+          "published_or_decoded": 400.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 6,
+      "raw_row": 6,
+      "computed_position_ft": {
+        "north_from_first_station": 4.7,
+        "east_from_first_station": 3.0,
+        "down_from_first_station": 500.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 500.0,
+          "published_or_decoded": 500.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 42.7,
+          "published_or_decoded": 42.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 500.0,
+          "published_or_decoded": 500.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 7,
+      "raw_row": 7,
+      "computed_position_ft": {
+        "north_from_first_station": 5.8,
+        "east_from_first_station": 4.3,
+        "down_from_first_station": 599.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 600.0,
+          "published_or_decoded": 600.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 56.8,
+          "published_or_decoded": 56.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 599.9,
+          "published_or_decoded": 600.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 8,
+      "raw_row": 8,
+      "computed_position_ft": {
+        "north_from_first_station": 6.5,
+        "east_from_first_station": 5.9,
+        "down_from_first_station": 699.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 700.0,
+          "published_or_decoded": 700.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 76.8,
+          "published_or_decoded": 76.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 699.9,
+          "published_or_decoded": 700.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 9,
+      "raw_row": 9,
+      "computed_position_ft": {
+        "north_from_first_station": 6.7,
+        "east_from_first_station": 7.2,
+        "down_from_first_station": 799.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 800.0,
+          "published_or_decoded": 800.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 93.9,
+          "published_or_decoded": 93.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 799.9,
+          "published_or_decoded": 800.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 10,
+      "raw_row": 10,
+      "computed_position_ft": {
+        "north_from_first_station": 6.7,
+        "east_from_first_station": 7.9,
+        "down_from_first_station": 899.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 900.0,
+          "published_or_decoded": 900.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 83.9,
+          "published_or_decoded": 83.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 899.9,
+          "published_or_decoded": 900.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 11,
+      "raw_row": 11,
+      "computed_position_ft": {
+        "north_from_first_station": 6.8,
+        "east_from_first_station": 8.3,
+        "down_from_first_station": 999.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1000.0,
+          "published_or_decoded": 1000.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 55.0,
+          "published_or_decoded": 55.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 999.9,
+          "published_or_decoded": 1000.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 12,
+      "raw_row": 12,
+      "computed_position_ft": {
+        "north_from_first_station": 7.2,
+        "east_from_first_station": 8.5,
+        "down_from_first_station": 1099.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1100.0,
+          "published_or_decoded": 1100.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 6.0,
+          "published_or_decoded": 6.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1099.9,
+          "published_or_decoded": 1100.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 13,
+      "raw_row": 13,
+      "computed_position_ft": {
+        "north_from_first_station": 7.7,
+        "east_from_first_station": 8.8,
+        "down_from_first_station": 1199.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1200.0,
+          "published_or_decoded": 1200.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 48.1,
+          "published_or_decoded": 48.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1199.9,
+          "published_or_decoded": 1200.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 14,
+      "raw_row": 14,
+      "computed_position_ft": {
+        "north_from_first_station": 8.0,
+        "east_from_first_station": 9.6,
+        "down_from_first_station": 1299.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1300.0,
+          "published_or_decoded": 1300.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 83.2,
+          "published_or_decoded": 83.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1299.9,
+          "published_or_decoded": 1300.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 15,
+      "raw_row": 15,
+      "computed_position_ft": {
+        "north_from_first_station": 7.9,
+        "east_from_first_station": 10.1,
+        "down_from_first_station": 1399.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1400.0,
+          "published_or_decoded": 1400.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 147.2,
+          "published_or_decoded": 147.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1399.9,
+          "published_or_decoded": 1400.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 16,
+      "raw_row": 16,
+      "computed_position_ft": {
+        "north_from_first_station": 7.8,
+        "east_from_first_station": 10.4,
+        "down_from_first_station": 1499.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1500.0,
+          "published_or_decoded": 1500.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 68.3,
+          "published_or_decoded": 68.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1499.9,
+          "published_or_decoded": 1500.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 17,
+      "raw_row": 17,
+      "computed_position_ft": {
+        "north_from_first_station": 8.1,
+        "east_from_first_station": 10.6,
+        "down_from_first_station": 1599.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1600.0,
+          "published_or_decoded": 1600.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 358.3,
+          "published_or_decoded": 358.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1599.9,
+          "published_or_decoded": 1600.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 18,
+      "raw_row": 18,
+      "computed_position_ft": {
+        "north_from_first_station": 8.7,
+        "east_from_first_station": 10.7,
+        "down_from_first_station": 1699.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1700.0,
+          "published_or_decoded": 1700.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 7.4,
+          "published_or_decoded": 7.4,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1699.9,
+          "published_or_decoded": 1700.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 19,
+      "raw_row": 19,
+      "computed_position_ft": {
+        "north_from_first_station": 9.5,
+        "east_from_first_station": 11.0,
+        "down_from_first_station": 1799.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1800.0,
+          "published_or_decoded": 1800.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 38.4,
+          "published_or_decoded": 38.4,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1799.9,
+          "published_or_decoded": 1800.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 20,
+      "raw_row": 20,
+      "computed_position_ft": {
+        "north_from_first_station": 10.0,
+        "east_from_first_station": 11.7,
+        "down_from_first_station": 1899.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 1900.0,
+          "published_or_decoded": 1900.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 67.5,
+          "published_or_decoded": 67.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1899.9,
+          "published_or_decoded": 1900.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 21,
+      "raw_row": 21,
+      "computed_position_ft": {
+        "north_from_first_station": 10.3,
+        "east_from_first_station": 12.5,
+        "down_from_first_station": 1999.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2000.0,
+          "published_or_decoded": 2000.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 80.5,
+          "published_or_decoded": 80.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 1999.9,
+          "published_or_decoded": 2000.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 22,
+      "raw_row": 22,
+      "computed_position_ft": {
+        "north_from_first_station": 10.2,
+        "east_from_first_station": 13.1,
+        "down_from_first_station": 2099.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2100.0,
+          "published_or_decoded": 2100.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 131.8,
+          "published_or_decoded": 131.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2099.9,
+          "published_or_decoded": 2100.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 23,
+      "raw_row": 23,
+      "computed_position_ft": {
+        "north_from_first_station": 9.8,
+        "east_from_first_station": 13.2,
+        "down_from_first_station": 2199.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2200.0,
+          "published_or_decoded": 2200.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 193.8,
+          "published_or_decoded": 193.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2199.9,
+          "published_or_decoded": 2200.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 24,
+      "raw_row": 24,
+      "computed_position_ft": {
+        "north_from_first_station": 9.4,
+        "east_from_first_station": 12.8,
+        "down_from_first_station": 2299.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2300.0,
+          "published_or_decoded": 2300.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 236.9,
+          "published_or_decoded": 236.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2299.9,
+          "published_or_decoded": 2300.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 25,
+      "raw_row": 25,
+      "computed_position_ft": {
+        "north_from_first_station": 8.9,
+        "east_from_first_station": 12.1,
+        "down_from_first_station": 2399.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2400.0,
+          "published_or_decoded": 2400.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 238.9,
+          "published_or_decoded": 238.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2399.9,
+          "published_or_decoded": 2400.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 26,
+      "raw_row": 26,
+      "computed_position_ft": {
+        "north_from_first_station": 8.6,
+        "east_from_first_station": 11.3,
+        "down_from_first_station": 2499.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2500.0,
+          "published_or_decoded": 2500.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 258.0,
+          "published_or_decoded": 258.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2499.9,
+          "published_or_decoded": 2500.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 27,
+      "raw_row": 27,
+      "computed_position_ft": {
+        "north_from_first_station": 8.6,
+        "east_from_first_station": 10.2,
+        "down_from_first_station": 2599.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2600.0,
+          "published_or_decoded": 2600.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 279.0,
+          "published_or_decoded": 279.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2599.9,
+          "published_or_decoded": 2600.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 28,
+      "raw_row": 28,
+      "computed_position_ft": {
+        "north_from_first_station": 8.6,
+        "east_from_first_station": 9.1,
+        "down_from_first_station": 2699.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2700.0,
+          "published_or_decoded": 2700.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 256.1,
+          "published_or_decoded": 256.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2699.9,
+          "published_or_decoded": 2700.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 29,
+      "raw_row": 29,
+      "computed_position_ft": {
+        "north_from_first_station": 8.0,
+        "east_from_first_station": 8.3,
+        "down_from_first_station": 2799.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2800.0,
+          "published_or_decoded": 2800.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 212.1,
+          "published_or_decoded": 212.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2799.9,
+          "published_or_decoded": 2800.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 30,
+      "raw_row": 30,
+      "computed_position_ft": {
+        "north_from_first_station": 7.0,
+        "east_from_first_station": 7.2,
+        "down_from_first_station": 2899.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 2900.0,
+          "published_or_decoded": 2900.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 244.2,
+          "published_or_decoded": 244.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2899.9,
+          "published_or_decoded": 2900.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 31,
+      "raw_row": 31,
+      "computed_position_ft": {
+        "north_from_first_station": 6.5,
+        "east_from_first_station": 5.6,
+        "down_from_first_station": 2999.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3000.0,
+          "published_or_decoded": 3000.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 258.2,
+          "published_or_decoded": 258.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 2999.8,
+          "published_or_decoded": 3000.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 32,
+      "raw_row": 32,
+      "computed_position_ft": {
+        "north_from_first_station": 5.7,
+        "east_from_first_station": 4.0,
+        "down_from_first_station": 3099.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3100.0,
+          "published_or_decoded": 3100.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 230.1,
+          "published_or_decoded": 230.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3099.8,
+          "published_or_decoded": 3100.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 33,
+      "raw_row": 33,
+      "computed_position_ft": {
+        "north_from_first_station": 4.7,
+        "east_from_first_station": 2.9,
+        "down_from_first_station": 3199.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3200.0,
+          "published_or_decoded": 3200.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 222.1,
+          "published_or_decoded": 222.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3199.8,
+          "published_or_decoded": 3200.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 34,
+      "raw_row": 34,
+      "computed_position_ft": {
+        "north_from_first_station": 3.8,
+        "east_from_first_station": 2.5,
+        "down_from_first_station": 3299.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3300.0,
+          "published_or_decoded": 3300.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 174.1,
+          "published_or_decoded": 174.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3299.8,
+          "published_or_decoded": 3300.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 35,
+      "raw_row": 35,
+      "computed_position_ft": {
+        "north_from_first_station": 3.1,
+        "east_from_first_station": 2.6,
+        "down_from_first_station": 3399.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3400.0,
+          "published_or_decoded": 3400.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 178.1,
+          "published_or_decoded": 178.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3399.8,
+          "published_or_decoded": 3400.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 36,
+      "raw_row": 36,
+      "computed_position_ft": {
+        "north_from_first_station": 2.5,
+        "east_from_first_station": 2.7,
+        "down_from_first_station": 3499.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3500.0,
+          "published_or_decoded": 3500.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 163.0,
+          "published_or_decoded": 163.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3499.8,
+          "published_or_decoded": 3500.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 37,
+      "raw_row": 37,
+      "computed_position_ft": {
+        "north_from_first_station": 1.3,
+        "east_from_first_station": 2.4,
+        "down_from_first_station": 3599.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3600.0,
+          "published_or_decoded": 3600.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 212.0,
+          "published_or_decoded": 212.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3599.8,
+          "published_or_decoded": 3600.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 38,
+      "raw_row": 38,
+      "computed_position_ft": {
+        "north_from_first_station": 0.1,
+        "east_from_first_station": 1.5,
+        "down_from_first_station": 3699.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3700.0,
+          "published_or_decoded": 3700.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 219.0,
+          "published_or_decoded": 219.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3699.8,
+          "published_or_decoded": 3700.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 39,
+      "raw_row": 39,
+      "computed_position_ft": {
+        "north_from_first_station": -0.6,
+        "east_from_first_station": 0.7,
+        "down_from_first_station": 3799.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3800.0,
+          "published_or_decoded": 3800.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 245.9,
+          "published_or_decoded": 245.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3799.8,
+          "published_or_decoded": 3800.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 40,
+      "raw_row": 40,
+      "computed_position_ft": {
+        "north_from_first_station": -1.4,
+        "east_from_first_station": 0.5,
+        "down_from_first_station": 3899.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3900.0,
+          "published_or_decoded": 3900.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 161.9,
+          "published_or_decoded": 161.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3899.8,
+          "published_or_decoded": 3900.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 41,
+      "raw_row": 41,
+      "computed_position_ft": {
+        "north_from_first_station": -1.6,
+        "east_from_first_station": 0.6,
+        "down_from_first_station": 3916.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 3917.0,
+          "published_or_decoded": 3917.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 177.8,
+          "published_or_decoded": 177.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 3916.8,
+          "published_or_decoded": 3917.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 42,
+      "raw_row": 42,
+      "computed_position_ft": {
+        "north_from_first_station": -3.4,
+        "east_from_first_station": 0.4,
+        "down_from_first_station": 4048.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4049.0,
+          "published_or_decoded": 4049.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 190.2,
+          "published_or_decoded": 190.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4048.8,
+          "published_or_decoded": 4049.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 43,
+      "raw_row": 43,
+      "computed_position_ft": {
+        "north_from_first_station": -4.5,
+        "east_from_first_station": 0.1,
+        "down_from_first_station": 4142.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4143.0,
+          "published_or_decoded": 4143.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 200.2,
+          "published_or_decoded": 200.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4142.8,
+          "published_or_decoded": 4143.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 44,
+      "raw_row": 44,
+      "computed_position_ft": {
+        "north_from_first_station": -5.7,
+        "east_from_first_station": -0.3,
+        "down_from_first_station": 4236.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4237.0,
+          "published_or_decoded": 4237.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 204.2,
+          "published_or_decoded": 204.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4236.7,
+          "published_or_decoded": 4237.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 45,
+      "raw_row": 45,
+      "computed_position_ft": {
+        "north_from_first_station": -6.8,
+        "east_from_first_station": -0.9,
+        "down_from_first_station": 4330.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4331.0,
+          "published_or_decoded": 4331.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 209.2,
+          "published_or_decoded": 209.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4330.7,
+          "published_or_decoded": 4331.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 46,
+      "raw_row": 46,
+      "computed_position_ft": {
+        "north_from_first_station": -7.7,
+        "east_from_first_station": -1.2,
+        "down_from_first_station": 4424.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4425.0,
+          "published_or_decoded": 4425.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 178.2,
+          "published_or_decoded": 178.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4424.7,
+          "published_or_decoded": 4425.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 47,
+      "raw_row": 47,
+      "computed_position_ft": {
+        "north_from_first_station": -8.5,
+        "east_from_first_station": -1.2,
+        "down_from_first_station": 4518.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4519.0,
+          "published_or_decoded": 4519.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 181.2,
+          "published_or_decoded": 181.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4518.7,
+          "published_or_decoded": 4519.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 48,
+      "raw_row": 48,
+      "computed_position_ft": {
+        "north_from_first_station": -9.4,
+        "east_from_first_station": -1.2,
+        "down_from_first_station": 4612.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4613.0,
+          "published_or_decoded": 4613.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 175.2,
+          "published_or_decoded": 175.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4612.7,
+          "published_or_decoded": 4613.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 49,
+      "raw_row": 49,
+      "computed_position_ft": {
+        "north_from_first_station": -10.2,
+        "east_from_first_station": -1.1,
+        "down_from_first_station": 4706.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4707.0,
+          "published_or_decoded": 4707.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 178.2,
+          "published_or_decoded": 178.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4706.7,
+          "published_or_decoded": 4707.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 50,
+      "raw_row": 50,
+      "computed_position_ft": {
+        "north_from_first_station": -10.8,
+        "east_from_first_station": -1.1,
+        "down_from_first_station": 4800.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4801.0,
+          "published_or_decoded": 4801.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 185.2,
+          "published_or_decoded": 185.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4800.7,
+          "published_or_decoded": 4801.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 51,
+      "raw_row": 51,
+      "computed_position_ft": {
+        "north_from_first_station": -11.2,
+        "east_from_first_station": -1.5,
+        "down_from_first_station": 4894.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4895.0,
+          "published_or_decoded": 4895.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 239.2,
+          "published_or_decoded": 239.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4894.7,
+          "published_or_decoded": 4895.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 52,
+      "raw_row": 52,
+      "computed_position_ft": {
+        "north_from_first_station": -11.5,
+        "east_from_first_station": -2.0,
+        "down_from_first_station": 4988.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 4989.0,
+          "published_or_decoded": 4989.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 255.2,
+          "published_or_decoded": 255.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 4988.7,
+          "published_or_decoded": 4989.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 53,
+      "raw_row": 53,
+      "computed_position_ft": {
+        "north_from_first_station": -11.7,
+        "east_from_first_station": -2.4,
+        "down_from_first_station": 5082.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5083.0,
+          "published_or_decoded": 5083.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 230.2,
+          "published_or_decoded": 230.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5082.7,
+          "published_or_decoded": 5083.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 54,
+      "raw_row": 54,
+      "computed_position_ft": {
+        "north_from_first_station": -12.0,
+        "east_from_first_station": -2.7,
+        "down_from_first_station": 5176.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5177.0,
+          "published_or_decoded": 5177.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 214.2,
+          "published_or_decoded": 214.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5176.7,
+          "published_or_decoded": 5177.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 55,
+      "raw_row": 55,
+      "computed_position_ft": {
+        "north_from_first_station": -12.5,
+        "east_from_first_station": -3.0,
+        "down_from_first_station": 5270.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5271.0,
+          "published_or_decoded": 5271.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 216.2,
+          "published_or_decoded": 216.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5270.7,
+          "published_or_decoded": 5271.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 56,
+      "raw_row": 56,
+      "computed_position_ft": {
+        "north_from_first_station": -12.9,
+        "east_from_first_station": -3.7,
+        "down_from_first_station": 5364.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5365.0,
+          "published_or_decoded": 5365.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 248.2,
+          "published_or_decoded": 248.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5364.7,
+          "published_or_decoded": 5365.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 57,
+      "raw_row": 57,
+      "computed_position_ft": {
+        "north_from_first_station": -13.3,
+        "east_from_first_station": -4.4,
+        "down_from_first_station": 5458.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5459.0,
+          "published_or_decoded": 5459.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 246.2,
+          "published_or_decoded": 246.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5458.7,
+          "published_or_decoded": 5459.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 58,
+      "raw_row": 58,
+      "computed_position_ft": {
+        "north_from_first_station": -13.6,
+        "east_from_first_station": -4.9,
+        "down_from_first_station": 5552.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5553.0,
+          "published_or_decoded": 5553.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 228.2,
+          "published_or_decoded": 228.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5552.7,
+          "published_or_decoded": 5553.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 59,
+      "raw_row": 59,
+      "computed_position_ft": {
+        "north_from_first_station": -14.0,
+        "east_from_first_station": -5.4,
+        "down_from_first_station": 5646.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5647.0,
+          "published_or_decoded": 5647.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 224.2,
+          "published_or_decoded": 224.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5646.7,
+          "published_or_decoded": 5647.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 60,
+      "raw_row": 60,
+      "computed_position_ft": {
+        "north_from_first_station": -14.8,
+        "east_from_first_station": -6.1,
+        "down_from_first_station": 5740.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5741.0,
+          "published_or_decoded": 5741.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 219.2,
+          "published_or_decoded": 219.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5740.7,
+          "published_or_decoded": 5741.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 61,
+      "raw_row": 61,
+      "computed_position_ft": {
+        "north_from_first_station": -15.6,
+        "east_from_first_station": -6.7,
+        "down_from_first_station": 5834.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5835.0,
+          "published_or_decoded": 5835.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 215.2,
+          "published_or_decoded": 215.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5834.7,
+          "published_or_decoded": 5835.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 62,
+      "raw_row": 62,
+      "computed_position_ft": {
+        "north_from_first_station": -16.5,
+        "east_from_first_station": -7.0,
+        "down_from_first_station": 5928.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 5929.0,
+          "published_or_decoded": 5929.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 191.2,
+          "published_or_decoded": 191.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 5928.7,
+          "published_or_decoded": 5929.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 63,
+      "raw_row": 63,
+      "computed_position_ft": {
+        "north_from_first_station": -17.7,
+        "east_from_first_station": -7.3,
+        "down_from_first_station": 6022.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6023.0,
+          "published_or_decoded": 6023.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 189.2,
+          "published_or_decoded": 189.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6022.7,
+          "published_or_decoded": 6023.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 64,
+      "raw_row": 64,
+      "computed_position_ft": {
+        "north_from_first_station": -18.7,
+        "east_from_first_station": -7.4,
+        "down_from_first_station": 6116.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6117.0,
+          "published_or_decoded": 6117.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 190.2,
+          "published_or_decoded": 190.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6116.7,
+          "published_or_decoded": 6117.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 65,
+      "raw_row": 65,
+      "computed_position_ft": {
+        "north_from_first_station": -19.5,
+        "east_from_first_station": -7.6,
+        "down_from_first_station": 6210.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6211.0,
+          "published_or_decoded": 6211.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 192.2,
+          "published_or_decoded": 192.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6210.7,
+          "published_or_decoded": 6211.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 66,
+      "raw_row": 66,
+      "computed_position_ft": {
+        "north_from_first_station": -20.3,
+        "east_from_first_station": -7.7,
+        "down_from_first_station": 6304.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6305.0,
+          "published_or_decoded": 6305.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 189.2,
+          "published_or_decoded": 189.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6304.7,
+          "published_or_decoded": 6305.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 67,
+      "raw_row": 67,
+      "computed_position_ft": {
+        "north_from_first_station": -21.1,
+        "east_from_first_station": -7.9,
+        "down_from_first_station": 6398.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6399.0,
+          "published_or_decoded": 6399.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 190.2,
+          "published_or_decoded": 190.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6398.7,
+          "published_or_decoded": 6399.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 68,
+      "raw_row": 68,
+      "computed_position_ft": {
+        "north_from_first_station": -22.2,
+        "east_from_first_station": -7.9,
+        "down_from_first_station": 6492.7
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6493.0,
+          "published_or_decoded": 6493.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 171.2,
+          "published_or_decoded": 171.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6492.7,
+          "published_or_decoded": 6493.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 69,
+      "raw_row": 69,
+      "computed_position_ft": {
+        "north_from_first_station": -23.3,
+        "east_from_first_station": -7.5,
+        "down_from_first_station": 6586.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6587.0,
+          "published_or_decoded": 6587.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 158.2,
+          "published_or_decoded": 158.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6586.6,
+          "published_or_decoded": 6587.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 70,
+      "raw_row": 70,
+      "computed_position_ft": {
+        "north_from_first_station": -24.3,
+        "east_from_first_station": -7.2,
+        "down_from_first_station": 6680.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6681.0,
+          "published_or_decoded": 6681.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 171.2,
+          "published_or_decoded": 171.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6680.6,
+          "published_or_decoded": 6681.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 71,
+      "raw_row": 71,
+      "computed_position_ft": {
+        "north_from_first_station": -25.1,
+        "east_from_first_station": -7.2,
+        "down_from_first_station": 6774.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6775.0,
+          "published_or_decoded": 6775.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 179.2,
+          "published_or_decoded": 179.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6774.6,
+          "published_or_decoded": 6775.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 72,
+      "raw_row": 72,
+      "computed_position_ft": {
+        "north_from_first_station": -25.7,
+        "east_from_first_station": -7.1,
+        "down_from_first_station": 6868.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6869.0,
+          "published_or_decoded": 6869.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.2,
+          "published_or_decoded": 0.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 162.2,
+          "published_or_decoded": 162.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6868.6,
+          "published_or_decoded": 6869.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 73,
+      "raw_row": 73,
+      "computed_position_ft": {
+        "north_from_first_station": -26.2,
+        "east_from_first_station": -6.7,
+        "down_from_first_station": 6962.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 6963.0,
+          "published_or_decoded": 6963.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.5,
+          "published_or_decoded": 0.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 129.2,
+          "published_or_decoded": 129.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 6962.6,
+          "published_or_decoded": 6963.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 74,
+      "raw_row": 74,
+      "computed_position_ft": {
+        "north_from_first_station": -26.4,
+        "east_from_first_station": -6.4,
+        "down_from_first_station": 7056.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7057.0,
+          "published_or_decoded": 7057.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 0.0,
+          "published_or_decoded": 0.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7056.6,
+          "published_or_decoded": 7057.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 75,
+      "raw_row": 75,
+      "computed_position_ft": {
+        "north_from_first_station": -25.9,
+        "east_from_first_station": -6.1,
+        "down_from_first_station": 7150.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7151.0,
+          "published_or_decoded": 7151.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 28.2,
+          "published_or_decoded": 28.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7150.6,
+          "published_or_decoded": 7151.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 76,
+      "raw_row": 76,
+      "computed_position_ft": {
+        "north_from_first_station": -24.8,
+        "east_from_first_station": -5.6,
+        "down_from_first_station": 7244.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7245.0,
+          "published_or_decoded": 7245.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 24.2,
+          "published_or_decoded": 24.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7244.6,
+          "published_or_decoded": 7245.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 77,
+      "raw_row": 77,
+      "computed_position_ft": {
+        "north_from_first_station": -23.7,
+        "east_from_first_station": -5.1,
+        "down_from_first_station": 7338.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7339.0,
+          "published_or_decoded": 7339.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 20.2,
+          "published_or_decoded": 20.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7338.6,
+          "published_or_decoded": 7339.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 78,
+      "raw_row": 78,
+      "computed_position_ft": {
+        "north_from_first_station": -22.6,
+        "east_from_first_station": -4.5,
+        "down_from_first_station": 7432.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7433.0,
+          "published_or_decoded": 7433.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 40.2,
+          "published_or_decoded": 40.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7432.6,
+          "published_or_decoded": 7433.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 79,
+      "raw_row": 79,
+      "computed_position_ft": {
+        "north_from_first_station": -21.9,
+        "east_from_first_station": -3.6,
+        "down_from_first_station": 7526.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7527.0,
+          "published_or_decoded": 7527.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 61.2,
+          "published_or_decoded": 61.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7526.6,
+          "published_or_decoded": 7527.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 80,
+      "raw_row": 80,
+      "computed_position_ft": {
+        "north_from_first_station": -21.4,
+        "east_from_first_station": -2.4,
+        "down_from_first_station": 7620.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7621.0,
+          "published_or_decoded": 7621.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.8,
+          "published_or_decoded": 0.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 78.2,
+          "published_or_decoded": 78.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7620.6,
+          "published_or_decoded": 7621.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 81,
+      "raw_row": 81,
+      "computed_position_ft": {
+        "north_from_first_station": -21.0,
+        "east_from_first_station": -1.1,
+        "down_from_first_station": 7714.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7715.0,
+          "published_or_decoded": 7715.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 67.2,
+          "published_or_decoded": 67.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7714.6,
+          "published_or_decoded": 7715.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 82,
+      "raw_row": 82,
+      "computed_position_ft": {
+        "north_from_first_station": -20.4,
+        "east_from_first_station": 0.5,
+        "down_from_first_station": 7808.6
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7809.0,
+          "published_or_decoded": 7809.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 68.2,
+          "published_or_decoded": 68.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7808.6,
+          "published_or_decoded": 7809.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 83,
+      "raw_row": 83,
+      "computed_position_ft": {
+        "north_from_first_station": -19.7,
+        "east_from_first_station": 1.9,
+        "down_from_first_station": 7902.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7903.0,
+          "published_or_decoded": 7903.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 63.2,
+          "published_or_decoded": 63.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7902.5,
+          "published_or_decoded": 7903.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 84,
+      "raw_row": 84,
+      "computed_position_ft": {
+        "north_from_first_station": -19.0,
+        "east_from_first_station": 3.4,
+        "down_from_first_station": 7996.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 7997.0,
+          "published_or_decoded": 7997.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 64.2,
+          "published_or_decoded": 64.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 7996.5,
+          "published_or_decoded": 7997.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 85,
+      "raw_row": 85,
+      "computed_position_ft": {
+        "north_from_first_station": -18.2,
+        "east_from_first_station": 5.1,
+        "down_from_first_station": 8090.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8091.0,
+          "published_or_decoded": 8091.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.2,
+          "published_or_decoded": 1.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 64.2,
+          "published_or_decoded": 64.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8090.5,
+          "published_or_decoded": 8091.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 86,
+      "raw_row": 86,
+      "computed_position_ft": {
+        "north_from_first_station": -17.1,
+        "east_from_first_station": 6.5,
+        "down_from_first_station": 8184.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8185.0,
+          "published_or_decoded": 8185.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 41.2,
+          "published_or_decoded": 41.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8184.5,
+          "published_or_decoded": 8184.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 87,
+      "raw_row": 87,
+      "computed_position_ft": {
+        "north_from_first_station": -16.1,
+        "east_from_first_station": 7.9,
+        "down_from_first_station": 8282.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8283.0,
+          "published_or_decoded": 8283.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.0,
+          "published_or_decoded": 1.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 65.2,
+          "published_or_decoded": 65.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8282.5,
+          "published_or_decoded": 8282.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 88,
+      "raw_row": 88,
+      "computed_position_ft": {
+        "north_from_first_station": -15.6,
+        "east_from_first_station": 8.7,
+        "down_from_first_station": 8329.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8330.0,
+          "published_or_decoded": 8330.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.2,
+          "published_or_decoded": 1.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 54.2,
+          "published_or_decoded": 54.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8329.5,
+          "published_or_decoded": 8329.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 89,
+      "raw_row": 89,
+      "computed_position_ft": {
+        "north_from_first_station": -15.4,
+        "east_from_first_station": 9.1,
+        "down_from_first_station": 8372.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8373.0,
+          "published_or_decoded": 8373.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.3,
+          "published_or_decoded": 0.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 122.0,
+          "published_or_decoded": 122.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8372.5,
+          "published_or_decoded": 8372.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 90,
+      "raw_row": 90,
+      "computed_position_ft": {
+        "north_from_first_station": -15.1,
+        "east_from_first_station": 10.0,
+        "down_from_first_station": 8466.5
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8467.0,
+          "published_or_decoded": 8467.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 0.9,
+          "published_or_decoded": 0.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 61.0,
+          "published_or_decoded": 61.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8466.5,
+          "published_or_decoded": 8466.0,
+          "absolute_difference": 0.5,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 91,
+      "raw_row": 91,
+      "computed_position_ft": {
+        "north_from_first_station": -14.5,
+        "east_from_first_station": 11.7,
+        "down_from_first_station": 8560.4
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8561.0,
+          "published_or_decoded": 8561.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.3,
+          "published_or_decoded": 1.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 73.3,
+          "published_or_decoded": 73.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8560.4,
+          "published_or_decoded": 8560.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 92,
+      "raw_row": 92,
+      "computed_position_ft": {
+        "north_from_first_station": -13.9,
+        "east_from_first_station": 13.7,
+        "down_from_first_station": 8654.4
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8655.0,
+          "published_or_decoded": 8655.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.3,
+          "published_or_decoded": 1.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 75.5,
+          "published_or_decoded": 75.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8654.4,
+          "published_or_decoded": 8654.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 93,
+      "raw_row": 93,
+      "computed_position_ft": {
+        "north_from_first_station": -13.4,
+        "east_from_first_station": 15.7,
+        "down_from_first_station": 8749.4
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8750.0,
+          "published_or_decoded": 8750.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.3,
+          "published_or_decoded": 1.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 77.8,
+          "published_or_decoded": 77.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8749.4,
+          "published_or_decoded": 8749.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 94,
+      "raw_row": 94,
+      "computed_position_ft": {
+        "north_from_first_station": -12.9,
+        "east_from_first_station": 17.9,
+        "down_from_first_station": 8843.4
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8844.0,
+          "published_or_decoded": 8844.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.4,
+          "published_or_decoded": 1.4,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 72.4,
+          "published_or_decoded": 72.4,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8843.4,
+          "published_or_decoded": 8843.0,
+          "absolute_difference": 0.4,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 95,
+      "raw_row": 95,
+      "computed_position_ft": {
+        "north_from_first_station": -12.1,
+        "east_from_first_station": 20.1,
+        "down_from_first_station": 8936.3
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 8937.0,
+          "published_or_decoded": 8937.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.5,
+          "published_or_decoded": 1.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 71.0,
+          "published_or_decoded": 71.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 8936.3,
+          "published_or_decoded": 8936.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 96,
+      "raw_row": 96,
+      "computed_position_ft": {
+        "north_from_first_station": -11.6,
+        "east_from_first_station": 22.7,
+        "down_from_first_station": 9031.3
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9032.0,
+          "published_or_decoded": 9032.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.7,
+          "published_or_decoded": 1.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 86.3,
+          "published_or_decoded": 86.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9031.3,
+          "published_or_decoded": 9031.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 97,
+      "raw_row": 97,
+      "computed_position_ft": {
+        "north_from_first_station": -11.6,
+        "east_from_first_station": 25.6,
+        "down_from_first_station": 9125.3
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9126.0,
+          "published_or_decoded": 9126.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.8,
+          "published_or_decoded": 1.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 93.2,
+          "published_or_decoded": 93.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9125.3,
+          "published_or_decoded": 9125.0,
+          "absolute_difference": 0.3,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 98,
+      "raw_row": 98,
+      "computed_position_ft": {
+        "north_from_first_station": -11.8,
+        "east_from_first_station": 28.5,
+        "down_from_first_station": 9219.2
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9220.0,
+          "published_or_decoded": 9220.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.8,
+          "published_or_decoded": 1.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 94.1,
+          "published_or_decoded": 94.1,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9219.2,
+          "published_or_decoded": 9219.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 99,
+      "raw_row": 99,
+      "computed_position_ft": {
+        "north_from_first_station": -12.0,
+        "east_from_first_station": 31.3,
+        "down_from_first_station": 9313.2
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9314.0,
+          "published_or_decoded": 9314.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.5,
+          "published_or_decoded": 1.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 96.2,
+          "published_or_decoded": 96.2,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9313.2,
+          "published_or_decoded": 9313.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 100,
+      "raw_row": 100,
+      "computed_position_ft": {
+        "north_from_first_station": -12.3,
+        "east_from_first_station": 33.7,
+        "down_from_first_station": 9407.1
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9408.0,
+          "published_or_decoded": 9408.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.5,
+          "published_or_decoded": 1.5,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 97.0,
+          "published_or_decoded": 97.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9407.1,
+          "published_or_decoded": 9407.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 101,
+      "raw_row": 101,
+      "computed_position_ft": {
+        "north_from_first_station": -12.7,
+        "east_from_first_station": 36.2,
+        "down_from_first_station": 9502.1
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9503.0,
+          "published_or_decoded": 9503.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.6,
+          "published_or_decoded": 1.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 98.7,
+          "published_or_decoded": 98.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9502.1,
+          "published_or_decoded": 9502.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 102,
+      "raw_row": 102,
+      "computed_position_ft": {
+        "north_from_first_station": -12.9,
+        "east_from_first_station": 38.8,
+        "down_from_first_station": 9595.1
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9596.0,
+          "published_or_decoded": 9596.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.6,
+          "published_or_decoded": 1.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 91.4,
+          "published_or_decoded": 91.4,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9595.1,
+          "published_or_decoded": 9595.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 103,
+      "raw_row": 103,
+      "computed_position_ft": {
+        "north_from_first_station": -13.0,
+        "east_from_first_station": 41.6,
+        "down_from_first_station": 9690.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9691.0,
+          "published_or_decoded": 9691.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.8,
+          "published_or_decoded": 1.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 91.0,
+          "published_or_decoded": 91.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9690.0,
+          "published_or_decoded": 9690.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 104,
+      "raw_row": 104,
+      "computed_position_ft": {
+        "north_from_first_station": -13.0,
+        "east_from_first_station": 44.4,
+        "down_from_first_station": 9784.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9785.0,
+          "published_or_decoded": 9785.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.6,
+          "published_or_decoded": 1.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 89.9,
+          "published_or_decoded": 89.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9784.0,
+          "published_or_decoded": 9784.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 105,
+      "raw_row": 105,
+      "computed_position_ft": {
+        "north_from_first_station": -13.0,
+        "east_from_first_station": 47.1,
+        "down_from_first_station": 9877.0
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9878.0,
+          "published_or_decoded": 9878.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.7,
+          "published_or_decoded": 1.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 89.9,
+          "published_or_decoded": 89.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9877.0,
+          "published_or_decoded": 9877.0,
+          "absolute_difference": 0.0,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 106,
+      "raw_row": 106,
+      "computed_position_ft": {
+        "north_from_first_station": -13.1,
+        "east_from_first_station": 49.8,
+        "down_from_first_station": 9970.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 9972.0,
+          "published_or_decoded": 9972.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.6,
+          "published_or_decoded": 1.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 95.9,
+          "published_or_decoded": 95.9,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 9970.9,
+          "published_or_decoded": 9971.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 107,
+      "raw_row": 107,
+      "computed_position_ft": {
+        "north_from_first_station": -13.2,
+        "east_from_first_station": 52.5,
+        "down_from_first_station": 10065.9
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 10067.0,
+          "published_or_decoded": 10067.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.7,
+          "published_or_decoded": 1.7,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 88.6,
+          "published_or_decoded": 88.6,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 10065.9,
+          "published_or_decoded": 10066.0,
+          "absolute_difference": 0.1,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 108,
+      "raw_row": 108,
+      "computed_position_ft": {
+        "north_from_first_station": -13.4,
+        "east_from_first_station": 55.3,
+        "down_from_first_station": 10159.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 10161.0,
+          "published_or_decoded": 10161.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.8,
+          "published_or_decoded": 1.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 97.3,
+          "published_or_decoded": 97.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 10159.8,
+          "published_or_decoded": 10160.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    },
+    {
+      "station": 109,
+      "raw_row": 109,
+      "computed_position_ft": {
+        "north_from_first_station": -13.9,
+        "east_from_first_station": 59.1,
+        "down_from_first_station": 10280.8
+      },
+      "comparison": {
+        "measured_depth_ft": {
+          "computed": 10282.0,
+          "published_or_decoded": 10282.0,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "inclination_deg": {
+          "computed": 1.8,
+          "published_or_decoded": 1.8,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "azimuth_deg": {
+          "computed": 97.3,
+          "published_or_decoded": 97.3,
+          "absolute_difference": 0.0,
+          "tolerance": 0.1,
+          "passes": true
+        },
+        "relative_tvd_ft": {
+          "computed": 10280.8,
+          "published_or_decoded": 10281.0,
+          "absolute_difference": 0.2,
+          "tolerance": 1.0,
+          "passes": true
+        }
+      }
+    }
+  ]
+}
