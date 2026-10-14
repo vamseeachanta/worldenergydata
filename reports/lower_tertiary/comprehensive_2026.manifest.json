@@ -1,0 +1,140 @@
+{
+  "base_commit": "0306ce2d04e8e68f97f4084c256b6c998843729d",
+  "generator_command": "uv run --no-sync python scripts/reporting/assemble_lt_comprehensive.py --output-dir reports/lower_tertiary",
+  "inputs": [
+    {
+      "path": "config/analysis/lower_tertiary/comprehensive_revision.yml",
+      "sha256": "7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5",
+      "size_bytes": 232
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/anchor.yml",
+      "sha256": "d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a",
+      "size_bytes": 684
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/big_foot.yml",
+      "sha256": "605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e",
+      "size_bytes": 1113
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/cascade_chinook.yml",
+      "sha256": "bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c",
+      "size_bytes": 4435
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/jack_st_malo.yml",
+      "sha256": "92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca",
+      "size_bytes": 3684
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/julia.yml",
+      "sha256": "cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02",
+      "size_bytes": 1317
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/kaskida.yml",
+      "sha256": "059587560dd87343b4372529aed8c1960977592d4a07489f76a3786542be8eff",
+      "size_bytes": 424
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/north_platte.yml",
+      "sha256": "72dcc19d42bb81435efae7d69996f7eb25ab1cc90589716584882750351514ca",
+      "size_bytes": 836
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/shenandoah.yml",
+      "sha256": "f5cd461122c618a36968737689f19af0a1712bc4fbe28b3b8ad97c5f61219a66",
+      "size_bytes": 458
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/stones.yml",
+      "sha256": "7829532d7685b55cc3e5a28725bfe58b451bd5137755ad6ea5abb5476ee97314",
+      "size_bytes": 508
+    },
+    {
+      "path": "config/analysis/lower_tertiary/fields/tiber.yml",
+      "sha256": "19cb8fc299c730625a00ace219310d65d33214d63ca31c5f4f210698870787f5",
+      "size_bytes": 408
+    },
+    {
+      "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py",
+      "sha256": "8e5031c31dccaf09445618582e72d36d7d9ae5c78624a05c790220c6e510bf2a",
+      "size_bytes": 34629
+    },
+    {
+      "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio.py",
+      "sha256": "d0b5a818f58668e95df8555069aeb2470f77c1ea6187d181237a06832190b559",
+      "size_bytes": 1526
+    },
+    {
+      "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py",
+      "sha256": "504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165",
+      "size_bytes": 20660
+    },
+    {
+      "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py",
+      "sha256": "1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32",
+      "size_bytes": 19173
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py",
+      "sha256": "897cc3ff9ee63b57ee5017fa79389016f5d496bb1b98c8a576d7402900afcdf0",
+      "size_bytes": 10934
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py",
+      "sha256": "3fa582e62b82abc05dfb45ae67ffa532dc292bfa8ee71d87feed4fa7ec020c84",
+      "size_bytes": 12733
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "b4993eac46f35d07c564b8a4b0f6f15969c8afb286a942b24c1e520e9125579f",
+      "size_bytes": 22594
+    },
+    {
+      "path": "reports/lower_tertiary_field_summary.md",
+      "sha256": "1dfd622a38adc326ff79c5685b3c12b12bae34aff13d506e0a29f22553cc80bd",
+      "size_bytes": 4588
+    },
+    {
+      "path": "scripts/reporting/assemble_lt_comprehensive.py",
+      "sha256": "336ca78612a5ed0e7f85e0ffdc896cf91ac0eeeef57d05153a767bbf2646d8bc",
+      "size_bytes": 1942
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "852d52e88c25b8a6dd16faa695fed195d307c07a293a51a0cc03d26bede28ac6",
+      "size_bytes": 1288997
+    }
+  ],
+  "limits": {
+    "anchor": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "big_foot": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "cascade_chinook": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "jack_st_malo": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "julia": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "kaskida": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "north_platte": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "shenandoah": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "stones": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "tiber": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373)."
+  },
+  "outputs": [
+    {
+      "path": "reports/lower_tertiary/comprehensive_2026.html",
+      "sha256": "744af7422ae67eb1b6106cd563088bcc49da21677269fa487f449f6e5ae4d614",
+      "size_bytes": 105300
+    },
+    {
+      "path": "reports/lower_tertiary/comprehensive_2026.md",
+      "sha256": "4cb3df97bab286294105a56144b4356618a5b96383cc367a170bd6876308a4d9",
+      "size_bytes": 75528
+    }
+  ],
+  "pdf_metadata": "Not rendered; no PDF artifact is claimed.",
+  "report_date": "2026-10-14",
+  "revision": "A",
+  "schema_version": 1,
+  "source_state": "Input digests identify the executed source bytes, including uncommitted changes."
+}

@@ -1,0 +1,2231 @@
+<!DOCTYPE html><html><head><meta charset='utf-8'><title>Lower Tertiary Comprehensive Field Report</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1200px;margin:2em auto;padding:0 1em;color:#222;}h1{border-bottom:2px solid #333;padding-bottom:0.4em;}h2{margin-top:2em;color:#003366;border-bottom:1px solid #ccc;padding-bottom:0.3em;}h3{margin-top:1.5em;color:#444;}table{border-collapse:collapse;margin:1em 0;font-size:0.9em;}th,td{border:1px solid #ccc;padding:0.4em 0.7em;text-align:left;}th{background:#f4f4f4;}.meta{color:#666;font-size:0.9em;margin-bottom:1em;}.caveat{background:#fff3cd;border-left:4px solid #f0ad4e;padding:0.6em 1em;margin:1em 0;}.exec-summary{background:#eef6fc;border-left:4px solid #3a7bd5;padding:1em 1.5em;margin:1em 0;}.field-section{border:1px solid #ddd;padding:1em 1.4em;margin:1em 0;border-radius:4px;background:#fafafa;}code{background:#f4f4f4;padding:0.1em 0.3em;border-radius:3px;}td,th{overflow-wrap:anywhere;}table{table-layout:fixed;width:100%;}@media print{@page{size:A4 landscape;margin:12mm;}body{margin:0;max-width:none;font-size:10pt;}table{font-size:8pt;}.field-section{break-before:page;}tr{break-inside:avoid;}}</style></head><body><h1>Lower Tertiary Comprehensive Field Report</h1><div class='meta'>Revision: A &middot; Issue date: 2026-10-14 &middot; 10 GoM Lower Tertiary fields</div><h2>Executive Summary</h2><div class='exec-summary'><ul><li>Economic basis: constant scenario oil price $70.0/bbl; discount rate 10.0%; before corporate tax. Costs are assumed, based on previous experience (#651), at the configuration dates.</li><li>Portfolio totals: 10 fields, $55,500 M aggregate scenario capex</li><li>Strongest economics: <strong>Shenandoah</strong> (NPV $8,569.8 M @ 10.0%, breakeven $26.3/bbl)</li><li>Marginal at base case: Julia (NPV &lt; 0 at $70.0/bbl with documented decline-curve cashflow)</li><li>Operator concentration: <strong>BP</strong> holds the largest working-interest-weighted capex share at 32.4% across 2 fields</li><li>Dominant tech generation: <strong>Subsea 20K</strong> (5 fields, $31,400 M total scenario capex)</li><li>Pre-FID configurations: 3 fields classified pre-FID; current sanction status is not established. Capital estimates are assumed.</li><li>Caveats: cashflow basis is documented decline-curve (OGOR-grounded follow-up under #367); HSE coverage minimum-viable pending #366; live cost benchmarking pending #343 + #344</li></ul></div><h2>Revision history</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>revision</th>
+      <th>date</th>
+      <th>change</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>A</td>
+      <td>2026-10-14</td>
+      <td>First issue combines ten-field scenario economics, source references and explicit data gaps to support comparisons on a stated assumption basis.</td>
+    </tr>
+  </tbody>
+</table><p>Revision history: each row identifies an issue and its reason.</p><h2>Economic basis</h2><p>Oil-price deck: $70.0/bbl, constant nominal scenario; discount rate: 10.0%; reinvestment rate: 6.0%; horizon: 20 years; plateau duration: 3 years; annual decline: 8.0%. Costs and model defaults without verified public provenance are assumed, based on previous experience (#651). Capital is charged at inception; oil-only cashflows deduct operating costs and the configured royalty, before corporate tax. NPV is discounted to model inception, without calendar-year alignment. Gas revenue, escalation and decommissioning are not modelled. Paired development entries retain combined capital and plateau rates; separate field splits are not established. Configuration dates govern the input basis; the issue date does not refresh those inputs. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h2>Portfolio Economics — All Fields</h2><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>field_id</th>
+      <th>display_name</th>
+      <th>status</th>
+      <th>operator</th>
+      <th>capex_mm_usd</th>
+      <th>plateau_thousand_bbl_per_day</th>
+      <th>npv_mm_usd</th>
+      <th>irr_annual_pct</th>
+      <th>mirr_annual_pct</th>
+      <th>payback_years</th>
+      <th>breakeven_oil_usd_per_bbl</th>
+      <th>cashflow_basis</th>
+      <th>npv_mm_usd_at_$50</th>
+      <th>npv_mm_usd_at_$60</th>
+      <th>npv_mm_usd_at_$70</th>
+      <th>npv_mm_usd_at_$80</th>
+      <th>npv_mm_usd_at_$100</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>anchor</td>
+      <td>Anchor</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>5,600.0</td>
+      <td>75.0</td>
+      <td>2,177.4</td>
+      <td>17.3</td>
+      <td>Not established</td>
+      <td>5.0</td>
+      <td>55.2</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-765.4</td>
+      <td>706.0</td>
+      <td>2,177.4</td>
+      <td>3,648.8</td>
+      <td>6,591.5</td>
+    </tr>
+    <tr>
+      <td>big_foot</td>
+      <td>Big Foot</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>5,200.0</td>
+      <td>75.0</td>
+      <td>2,577.4</td>
+      <td>19.2</td>
+      <td>Not established</td>
+      <td>5.0</td>
+      <td>52.5</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-365.4</td>
+      <td>1,106.0</td>
+      <td>2,577.4</td>
+      <td>4,048.8</td>
+      <td>6,991.5</td>
+    </tr>
+    <tr>
+      <td>cascade_chinook</td>
+      <td>Cascade/Chinook</td>
+      <td>producing</td>
+      <td>Murphy</td>
+      <td>2,900.0</td>
+      <td>75.0</td>
+      <td>4,372.9</td>
+      <td>36.9</td>
+      <td>Not established</td>
+      <td>3.0</td>
+      <td>40.3</td>
+      <td>documented_decline_curve_v1</td>
+      <td>1,430.1</td>
+      <td>2,901.5</td>
+      <td>4,372.9</td>
+      <td>5,844.3</td>
+      <td>8,787.1</td>
+    </tr>
+    <tr>
+      <td>jack_st_malo</td>
+      <td>Jack/St. Malo</td>
+      <td>producing</td>
+      <td>Chevron</td>
+      <td>7,500.0</td>
+      <td>94.0</td>
+      <td>2,247.6</td>
+      <td>15.6</td>
+      <td>Not established</td>
+      <td>5.0</td>
+      <td>57.8</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-1,440.7</td>
+      <td>403.5</td>
+      <td>2,247.6</td>
+      <td>4,091.8</td>
+      <td>7,780.1</td>
+    </tr>
+    <tr>
+      <td>julia</td>
+      <td>Julia</td>
+      <td>producing</td>
+      <td>ExxonMobil</td>
+      <td>4,700.0</td>
+      <td>34.0</td>
+      <td>-1,403.0</td>
+      <td>4.0</td>
+      <td>Not established</td>
+      <td>12.0</td>
+      <td>91.0</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,737.0</td>
+      <td>-2,070.0</td>
+      <td>-1,403.0</td>
+      <td>-735.9</td>
+      <td>598.1</td>
+    </tr>
+    <tr>
+      <td>kaskida</td>
+      <td>Kaskida</td>
+      <td>pre_fid</td>
+      <td>BP</td>
+      <td>10,000.0</td>
+      <td>120.0</td>
+      <td>2,443.8</td>
+      <td>14.6</td>
+      <td>Not established</td>
+      <td>6.0</td>
+      <td>59.6</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,264.7</td>
+      <td>89.6</td>
+      <td>2,443.8</td>
+      <td>4,798.0</td>
+      <td>9,506.5</td>
+    </tr>
+    <tr>
+      <td>north_platte</td>
+      <td>North Platte</td>
+      <td>pre_fid</td>
+      <td>TotalEnergies</td>
+      <td>6,000.0</td>
+      <td>75.0</td>
+      <td>1,777.4</td>
+      <td>15.6</td>
+      <td>Not established</td>
+      <td>5.0</td>
+      <td>57.9</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-1,165.4</td>
+      <td>306.0</td>
+      <td>1,777.4</td>
+      <td>3,248.8</td>
+      <td>6,191.5</td>
+    </tr>
+    <tr>
+      <td>shenandoah</td>
+      <td>Shenandoah</td>
+      <td>under_development</td>
+      <td>Beacon Offshore Energy</td>
+      <td>1,800.0</td>
+      <td>100.0</td>
+      <td>8,569.8</td>
+      <td>91.7</td>
+      <td>Not established</td>
+      <td>2.0</td>
+      <td>26.3</td>
+      <td>documented_decline_curve_v1</td>
+      <td>4,646.1</td>
+      <td>6,608.0</td>
+      <td>8,569.8</td>
+      <td>10,531.7</td>
+      <td>14,455.4</td>
+    </tr>
+    <tr>
+      <td>stones</td>
+      <td>Stones</td>
+      <td>producing</td>
+      <td>Shell</td>
+      <td>3,800.0</td>
+      <td>50.0</td>
+      <td>1,384.9</td>
+      <td>16.8</td>
+      <td>Not established</td>
+      <td>5.0</td>
+      <td>55.9</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-576.9</td>
+      <td>404.0</td>
+      <td>1,384.9</td>
+      <td>2,365.8</td>
+      <td>4,327.7</td>
+    </tr>
+    <tr>
+      <td>tiber</td>
+      <td>Tiber</td>
+      <td>pre_fid</td>
+      <td>BP</td>
+      <td>8,000.0</td>
+      <td>80.0</td>
+      <td>295.9</td>
+      <td>10.7</td>
+      <td>Not established</td>
+      <td>7.0</td>
+      <td>68.1</td>
+      <td>documented_decline_curve_v1</td>
+      <td>-2,843.1</td>
+      <td>-1,273.6</td>
+      <td>295.9</td>
+      <td>1,865.3</td>
+      <td>5,004.3</td>
+    </tr>
+  </tbody>
+</table><p>Portfolio economics, using the economic basis above.</p><h2>Cross-Field Analytics</h2><h3>Technology Generation</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>dev_system</th>
+      <th>field_count</th>
+      <th>fields</th>
+      <th>total_capex_mm_usd</th>
+      <th>mean_capex_usd_per_bbl_proxy</th>
+      <th>total_recoverable_mmbbl_proxy</th>
+      <th>total_npv_mm_usd</th>
+      <th>mean_breakeven_usd_per_bbl</th>
+      <th>caveats</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Dry Tree</td>
+      <td>1</td>
+      <td>big_foot</td>
+      <td>5,200.0</td>
+      <td>9.5</td>
+      <td>547.5</td>
+      <td>2,577.4</td>
+      <td>52.5</td>
+      <td>recoverable_mmbbl_proxy uses plateau×20yr — OGOR-grounded follow-up under #367</td>
+    </tr>
+    <tr>
+      <td>Subsea 15K</td>
+      <td>3</td>
+      <td>cascade_chinook, jack_st_malo, stones</td>
+      <td>14,200.0</td>
+      <td>8.9</td>
+      <td>1,598.7</td>
+      <td>8,005.4</td>
+      <td>51.3</td>
+      <td>recoverable_mmbbl_proxy uses plateau×20yr — OGOR-grounded follow-up under #367</td>
+    </tr>
+    <tr>
+      <td>Subsea 20K</td>
+      <td>5</td>
+      <td>anchor, kaskida, north_platte, shenandoah, tiber</td>
+      <td>31,400.0</td>
+      <td>9.8</td>
+      <td>3,285.0</td>
+      <td>15,264.2</td>
+      <td>53.4</td>
+      <td>recoverable_mmbbl_proxy uses plateau×20yr — OGOR-grounded follow-up under #367</td>
+    </tr>
+    <tr>
+      <td>Tieback 15K</td>
+      <td>1</td>
+      <td>julia</td>
+      <td>4,700.0</td>
+      <td>18.9</td>
+      <td>248.2</td>
+      <td>-1,403.0</td>
+      <td>91.0</td>
+      <td>recoverable_mmbbl_proxy uses plateau×20yr — OGOR-grounded follow-up under #367</td>
+    </tr>
+  </tbody>
+</table><p>Technology comparisons, using a plateau-equivalent recovery proxy.</p><h3>Operator Concentration</h3><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>company</th>
+      <th>field_count</th>
+      <th>sum_wi_capex_mm_usd</th>
+      <th>sum_wi_plateau_thousand_bbl_per_day</th>
+      <th>share_capex_pct</th>
+      <th>hhi_contribution</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BP</td>
+      <td>2</td>
+      <td>18,000.0</td>
+      <td>200.0</td>
+      <td>32.4</td>
+      <td>1,051.9</td>
+    </tr>
+    <tr>
+      <td>Chevron</td>
+      <td>3</td>
+      <td>10,445.0</td>
+      <td>139.8</td>
+      <td>18.8</td>
+      <td>354.2</td>
+    </tr>
+    <tr>
+      <td>TotalEnergies</td>
+      <td>3</td>
+      <td>8,440.0</td>
+      <td>129.4</td>
+      <td>15.2</td>
+      <td>231.3</td>
+    </tr>
+    <tr>
+      <td>Equinor</td>
+      <td>5</td>
+      <td>8,177.5</td>
+      <td>109.4</td>
+      <td>14.7</td>
+      <td>217.1</td>
+    </tr>
+    <tr>
+      <td>Shell</td>
+      <td>1</td>
+      <td>3,800.0</td>
+      <td>50.0</td>
+      <td>6.8</td>
+      <td>46.9</td>
+    </tr>
+    <tr>
+      <td>ExxonMobil</td>
+      <td>1</td>
+      <td>2,350.0</td>
+      <td>17.0</td>
+      <td>4.2</td>
+      <td>17.9</td>
+    </tr>
+    <tr>
+      <td>Suncor</td>
+      <td>1</td>
+      <td>1,837.5</td>
+      <td>23.0</td>
+      <td>3.3</td>
+      <td>11.0</td>
+    </tr>
+    <tr>
+      <td>Beacon Offshore Energy</td>
+      <td>1</td>
+      <td>1,800.0</td>
+      <td>100.0</td>
+      <td>3.2</td>
+      <td>10.5</td>
+    </tr>
+    <tr>
+      <td>Marubeni Oil &amp; Gas</td>
+      <td>1</td>
+      <td>650.0</td>
+      <td>9.4</td>
+      <td>1.2</td>
+      <td>1.4</td>
+    </tr>
+  </tbody>
+</table><p>Operator concentration, using configuration working-interest shares.</p><h3>HSE per Field</h3><div class='caveat'>Field incident counts and rates are not established. Full HSE coverage requires #366 (HSE bulk dedup + ingest).</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>field_id</th>
+      <th>incident_count</th>
+      <th>incidents_per_mmbbl</th>
+      <th>data_completeness</th>
+      <th>source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>anchor</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>big_foot</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>cascade_chinook</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>jack_st_malo</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>julia</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>kaskida</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>north_platte</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>shenandoah</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>stones</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+    <tr>
+      <td>tiber</td>
+      <td>Not established</td>
+      <td>Not established</td>
+      <td>minimum_viable_pending_#366</td>
+      <td>placeholder pending #366 (HSE bulk dedup + ingest)</td>
+    </tr>
+  </tbody>
+</table><p>HSE availability; missing counts are not measured zeroes.</p><h3>Cost Benchmark vs Disclosures</h3><div class='caveat'>Live benchmarking requires #343 (operator registry) + #344 (restatement lineage) seeding the <code>project_revision_view</code>.</div><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>field_id</th>
+      <th>operator</th>
+      <th>modelled_capex_mm_usd</th>
+      <th>disclosed_capex_mm_usd</th>
+      <th>delta_pct</th>
+      <th>benchmark_status</th>
+      <th>caveats</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>anchor</td>
+      <td>Chevron</td>
+      <td>5,600.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>big_foot</td>
+      <td>Chevron</td>
+      <td>5,200.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>cascade_chinook</td>
+      <td>Murphy</td>
+      <td>2,900.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>jack_st_malo</td>
+      <td>Chevron</td>
+      <td>7,500.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>julia</td>
+      <td>ExxonMobil</td>
+      <td>4,700.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>kaskida</td>
+      <td>BP</td>
+      <td>10,000.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>north_platte</td>
+      <td>TotalEnergies</td>
+      <td>6,000.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>shenandoah</td>
+      <td>Beacon Offshore Energy</td>
+      <td>1,800.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>stones</td>
+      <td>Shell</td>
+      <td>3,800.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+    <tr>
+      <td>tiber</td>
+      <td>BP</td>
+      <td>8,000.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>no_data_pending_#343</td>
+      <td>Live benchmark requires #343 (operator registry) + #344 (restatement lineage) to seed the project_revision_view.</td>
+    </tr>
+  </tbody>
+</table><p>Cost comparison availability, using scenario capital costs.</p><h2>Per-Field Detail</h2><div class='field-section'><h3>Anchor (<code>anchor</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; First oil: <b>2024-08-01</b> &middot; Capex: <b>$5,600 M</b> &middot; Plateau: <b>75 thousand bbl/day</b><br>NPV at 10.0%: <b>$2,177.4 M</b> &middot; Payback: <b>5.0 yr</b> &middot; Breakeven: <b>$55.2/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-765.4</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>706.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>2,177.4</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>3,648.8</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>6,591.5</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $5,600.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml#field.capex.total_mm_usd</td>
+      <td>sha256:d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 75.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml#field.opex_per_boe</td>
+      <td>sha256:d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml#field</td>
+      <td>sha256:d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/anchor.yml#field.partners</td>
+      <td>sha256:d20c5e685f139b2ac202a481c4b82d79e5eed8345afbae491f3ad5d712b6113a</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Big Foot (<code>big_foot</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; First oil: <b>2018-11-01</b> &middot; Capex: <b>$5,200 M</b> &middot; Plateau: <b>75 thousand bbl/day</b><br>NPV at 10.0%: <b>$2,577.4 M</b> &middot; Payback: <b>5.0 yr</b> &middot; Breakeven: <b>$52.5/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-365.4</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>1,106.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>2,577.4</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>4,048.8</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>6,991.5</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $5,200.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml#field.capex.total_mm_usd</td>
+      <td>sha256:605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 75.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml#field.opex_per_boe</td>
+      <td>sha256:605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml#field</td>
+      <td>sha256:605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/big_foot.yml#field.partners</td>
+      <td>sha256:605e7701cab20fdd8a213664aed1ca38339e4a019b7b73f214aaf3320355c31e</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Cascade/Chinook (<code>cascade_chinook</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Murphy</b> &middot; First oil: <b>2012-02-01</b> &middot; Capex: <b>$2,900 M</b> &middot; Plateau: <b>75 thousand bbl/day</b><br>NPV at 10.0%: <b>$4,372.9 M</b> &middot; Payback: <b>3.0 yr</b> &middot; Breakeven: <b>$40.3/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>1,430.1</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>2,901.5</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>4,372.9</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>5,844.3</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>8,787.1</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $2,900.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml#field.capex.total_mm_usd</td>
+      <td>sha256:bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 75.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $18.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml#field.opex_per_boe</td>
+      <td>sha256:bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml#field</td>
+      <td>sha256:bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/cascade_chinook.yml#field.partners</td>
+      <td>sha256:bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Jack/St. Malo (<code>jack_st_malo</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Chevron</b> &middot; First oil: <b>2014-12-01</b> &middot; Capex: <b>$7,500 M</b> &middot; Plateau: <b>94 thousand bbl/day</b><br>NPV at 10.0%: <b>$2,247.6 M</b> &middot; Payback: <b>5.0 yr</b> &middot; Breakeven: <b>$57.8/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-1,440.7</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>403.5</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>2,247.6</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>4,091.8</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>7,780.1</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $7,500.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml#field.capex.total_mm_usd</td>
+      <td>sha256:92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 94.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml#field.opex_per_boe</td>
+      <td>sha256:92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml#field</td>
+      <td>sha256:92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/jack_st_malo.yml#field.partners</td>
+      <td>sha256:92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Julia (<code>julia</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>ExxonMobil</b> &middot; First oil: <b>2016-03-01</b> &middot; Capex: <b>$4,700 M</b> &middot; Plateau: <b>34 thousand bbl/day</b><br>NPV at 10.0%: <b>$-1,403.0 M</b> &middot; Payback: <b>12.0 yr</b> &middot; Breakeven: <b>$91.0/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-2,737.0</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>-2,070.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>-1,403.0</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>-735.9</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>598.1</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $4,700.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml#field.capex.total_mm_usd</td>
+      <td>sha256:cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 34.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $18.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml#field.opex_per_boe</td>
+      <td>sha256:cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml#field</td>
+      <td>sha256:cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/julia.yml#field.partners</td>
+      <td>sha256:cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Kaskida (<code>kaskida</code>)</h3><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>BP</b> &middot; First oil: <b>2032-01-01</b> &middot; Capex: <b>$10,000 M</b> &middot; Plateau: <b>120 thousand bbl/day</b><br>NPV at 10.0%: <b>$2,443.8 M</b> &middot; Payback: <b>6.0 yr</b> &middot; Breakeven: <b>$59.6/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-2,264.7</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>89.6</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>2,443.8</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>4,798.0</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>9,506.5</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $10,000.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/kaskida.yml#field.capex.total_mm_usd</td>
+      <td>sha256:059587560dd87343b4372529aed8c1960977592d4a07489f76a3786542be8eff</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 120.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/kaskida.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:059587560dd87343b4372529aed8c1960977592d4a07489f76a3786542be8eff</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_OPEX_PER_BOE</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/kaskida.yml#field</td>
+      <td>sha256:059587560dd87343b4372529aed8c1960977592d4a07489f76a3786542be8eff</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_operator_concentration</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>North Platte (<code>north_platte</code>)</h3><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>TotalEnergies</b> &middot; First oil: <b>2030-01-01</b> &middot; Capex: <b>$6,000 M</b> &middot; Plateau: <b>75 thousand bbl/day</b><br>NPV at 10.0%: <b>$1,777.4 M</b> &middot; Payback: <b>5.0 yr</b> &middot; Breakeven: <b>$57.9/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-1,165.4</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>306.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>1,777.4</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>3,248.8</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>6,191.5</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $6,000.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/north_platte.yml#field.capex.total_mm_usd</td>
+      <td>sha256:72dcc19d42bb81435efae7d69996f7eb25ab1cc90589716584882750351514ca</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 75.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/north_platte.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:72dcc19d42bb81435efae7d69996f7eb25ab1cc90589716584882750351514ca</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_OPEX_PER_BOE</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/north_platte.yml#field</td>
+      <td>sha256:72dcc19d42bb81435efae7d69996f7eb25ab1cc90589716584882750351514ca</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_operator_concentration</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Shenandoah (<code>shenandoah</code>)</h3><div class='meta'>Status: <b>under_development</b> &middot; Operator: <b>Beacon Offshore Energy</b> &middot; First oil: <b>2025-10-01</b> &middot; Capex: <b>$1,800 M</b> &middot; Plateau: <b>100 thousand bbl/day</b><br>NPV at 10.0%: <b>$8,569.8 M</b> &middot; Payback: <b>2.0 yr</b> &middot; Breakeven: <b>$26.3/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>4,646.1</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>6,608.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>8,569.8</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>10,531.7</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>14,455.4</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $1,800.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/shenandoah.yml#field.capex.total_mm_usd</td>
+      <td>sha256:f5cd461122c618a36968737689f19af0a1712bc4fbe28b3b8ad97c5f61219a66</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 100.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/shenandoah.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:f5cd461122c618a36968737689f19af0a1712bc4fbe28b3b8ad97c5f61219a66</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_OPEX_PER_BOE</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/shenandoah.yml#field</td>
+      <td>sha256:f5cd461122c618a36968737689f19af0a1712bc4fbe28b3b8ad97c5f61219a66</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_operator_concentration</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Stones (<code>stones</code>)</h3><div class='meta'>Status: <b>producing</b> &middot; Operator: <b>Shell</b> &middot; First oil: <b>2016-09-01</b> &middot; Capex: <b>$3,800 M</b> &middot; Plateau: <b>50 thousand bbl/day</b><br>NPV at 10.0%: <b>$1,384.9 M</b> &middot; Payback: <b>5.0 yr</b> &middot; Breakeven: <b>$55.9/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-576.9</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>404.0</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>1,384.9</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>2,365.8</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>4,327.7</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $3,800.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/stones.yml#field.capex.total_mm_usd</td>
+      <td>sha256:7829532d7685b55cc3e5a28725bfe58b451bd5137755ad6ea5abb5476ee97314</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 50.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/stones.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:7829532d7685b55cc3e5a28725bfe58b451bd5137755ad6ea5abb5476ee97314</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/stones.yml#field.opex_per_boe</td>
+      <td>sha256:7829532d7685b55cc3e5a28725bfe58b451bd5137755ad6ea5abb5476ee97314</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/stones.yml#field</td>
+      <td>sha256:7829532d7685b55cc3e5a28725bfe58b451bd5137755ad6ea5abb5476ee97314</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_operator_concentration</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><div class='field-section'><h3>Tiber (<code>tiber</code>)</h3><div class='meta'>Status: <b>pre_fid</b> &middot; Operator: <b>BP</b> &middot; First oil: <b>2030-01-01</b> &middot; Capex: <b>$8,000 M</b> &middot; Plateau: <b>80 thousand bbl/day</b><br>NPV at 10.0%: <b>$295.9 M</b> &middot; Payback: <b>7.0 yr</b> &middot; Breakeven: <b>$68.1/bbl</b> &middot; Cashflow basis: <code>documented_decline_curve_v1</code></div><p>Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).</p><h4>Sensitivity</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>oil_price_usd_per_bbl</th>
+      <th>npv_mm_usd</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50.0</td>
+      <td>-2,843.1</td>
+    </tr>
+    <tr>
+      <td>60.0</td>
+      <td>-1,273.6</td>
+    </tr>
+    <tr>
+      <td>70.0</td>
+      <td>295.9</td>
+    </tr>
+    <tr>
+      <td>80.0</td>
+      <td>1,865.3</td>
+    </tr>
+    <tr>
+      <td>100.0</td>
+      <td>5,004.3</td>
+    </tr>
+  </tbody>
+</table><p>Oil-price sensitivity, using the field economic basis.</p><h4>Citations</h4><table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>input</th>
+      <th>publisher</th>
+      <th>code_id</th>
+      <th>revision</th>
+      <th>basis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Capex $8,000.0 M</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/tiber.yml#field.capex.total_mm_usd</td>
+      <td>sha256:19cb8fc299c730625a00ace219310d65d33214d63ca31c5f4f210698870787f5</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Plateau 80.0 thousand bbl/day</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/tiber.yml#field.production_profile.plateau_rate_mbopd</td>
+      <td>sha256:19cb8fc299c730625a00ace219310d65d33214d63ca31c5f4f210698870787f5</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Opex $15.0/boe</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_OPEX_PER_BOE</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Oil price $70.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.oil_price_usd_per_bbl</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Royalty 12.5%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#DEFAULT_FEDERAL_ROYALTY</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>discount_rate: 10.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.discount_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>reinvestment_rate: 6.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.reinvestment_rate</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>annual_decline: 8.0%</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.annual_decline</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>project_years: 20</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.project_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>plateau_years: 3</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.plateau_years</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>Sensitivity oil-price deck: $50.0/bbl, $60.0/bbl, $70.0/bbl, $80.0/bbl, $100.0/bbl</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#run_portfolio.sensitivity_prices</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>assumed, based on previous experience</td>
+    </tr>
+    <tr>
+      <td>First-oil schedule and data cutoff</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/fields/tiber.yml#field</td>
+      <td>sha256:19cb8fc299c730625a00ace219310d65d33214d63ca31c5f4f210698870787f5</td>
+      <td>assumed, based on previous experience; configuration values, current status unverified</td>
+    </tr>
+    <tr>
+      <td>Working-interest shares</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_operator_concentration</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration partners or operator-only fallback</td>
+    </tr>
+    <tr>
+      <td>Technology classification</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#_resolved_dev_system</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>assumed, based on previous experience; configuration or roster mapping</td>
+    </tr>
+    <tr>
+      <td>NPV, rates, payback, breakeven and sensitivities</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py#analyze_field</td>
+      <td>sha256:1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32</td>
+      <td>computed from the scenario inputs above</td>
+    </tr>
+    <tr>
+      <td>Portfolio totals, technology and operator comparisons</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#run_portfolio_analytics</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>computed; plateau-equivalent recovery proxy, not reserves</td>
+    </tr>
+    <tr>
+      <td>HSE and disclosed-cost completeness</td>
+      <td>worldenergydata</td>
+      <td>packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py#analyze_hse_per_field</td>
+      <td>sha256:504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165</td>
+      <td>not established; placeholder values are not measurements</td>
+    </tr>
+    <tr>
+      <td>Report revision and issue date</td>
+      <td>worldenergydata</td>
+      <td>config/analysis/lower_tertiary/comprehensive_revision.yml</td>
+      <td>sha256:7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5</td>
+      <td>issued revision record</td>
+    </tr>
+  </tbody>
+</table><p>Numeric-input and calculation references; source digests are in the companion manifest.</p></div><h2>Caveats</h2><ul><li><b>Cashflow basis:</b> documented decline-curve. OGOR-grounded forward path tracked under #367.</li><li><b>HSE coverage:</b> placeholder rows pending #366.</li><li><b>Cost benchmarking:</b> rows flagged <code>no_data_pending_#343</code>.</li><li><b>Pre-FID economics:</b> scenario-grade, not commitment-grade.</li><li><b>Citation schema:</b> flat dict; migration to formal schema is #361.</li></ul></body></html>

@@ -314,6 +314,10 @@ temporary_exceptions:
       - reports/lower_tertiary/anchor_npv_stackup.html
       - reports/lower_tertiary/big_foot_npv_stackup.html
       - reports/lower_tertiary/cascade_chinook_npv_stackup.html
+      - reports/lower_tertiary/comprehensive_2026.html
+      - reports/lower_tertiary/comprehensive_2026.md
+      - reports/lower_tertiary/comprehensive_2026.pdf
+      - reports/lower_tertiary/comprehensive_2026.manifest.json
       - reports/lower_tertiary/fdas_revision_comparison.md
       - reports/lower_tertiary/fdas_v50_roy_project_summary.csv
       - reports/lower_tertiary/field_economics_anchor.md
