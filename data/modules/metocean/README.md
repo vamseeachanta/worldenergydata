@@ -1,80 +1,33 @@
-# Metocean — API-RP-2MET Extremes & Marine Growth Reference
+# Metocean reference data and external licensed tables
 
-Public-safe metocean reference tables converted from legacy API-RP-2MET-derived
-engineering workbooks (read with openpyxl). All values are indicative reference
-data re-expressed in clean tables.
+The module documents structures for external licensed tables.
+The repository attributes these tables to API RP 2MET-derived workbooks.
+Their tabulated values are not distributed with the repository.
 
-Corpus epic llm-wiki#767; worldenergydata issue #543 (Part B).
+## External licensed tables
 
-## Tables (`curated/`)
+These tables are **not distributed**. Their schema entries retain column names,
+types and units, with no bundled path or values. Supply an authorized CSV copy
+outside the repository using
+`worldenergydata.metocean.licensed_tables.load_licensed_table(name, copy_path=...)`.
+Alternatively, set `METOCEAN_LICENSED_DATA_DIR` to an external directory holding
+the expected filename. An explicit `copy_path` takes precedence. The loader
+requires the metocean source checkout to establish the repository boundary;
+installed copies without that boundary fail plainly. Paths inside the
+repository, including symlinks into it, are refused. Columns must match the
+schema exactly, including order; returned cells remain strings.
 
-### `api_rp2met_hurricane_gom_extremes.csv` — 16 rows
-Hurricane wind / wave / current / water-level extremes for the deep-water Gulf
-of Mexico, by return period (10, 25, 50, 100, 200, 1000, 2000 years).
+Citation for each external table: API RP 2MET, Derivation of Metocean Design and Operating Conditions; edition and table titles: to be completed from the licensed copy
 
-| Column | Notes |
-|---|---|
-| PARAMETER | metocean parameter incl. units (e.g. `Significant wave height (m)`) |
-| RP_10YR … RP_2000YR | value at each return period |
+The following descriptions are repository section titles, not verified titles
+of tables in the publication.
 
-### `api_rp2met_us_zone_100yr_waves.csv` — 15 rows
-Nominal 100-year extreme wave heights and associated current / storm-tide by US
-offshore zone (Washington/Oregon, Gulf of Alaska, Cook Inlet, Aleutian/Bering
-shelf basins, Chukchi/Beaufort seas, US Atlantic embayments).
+- `api_rp2met_hurricane_gom_extremes.csv` — not distributed; Hurricane extremes by return period.
+- `api_rp2met_us_zone_100yr_waves.csv` — not distributed; Extreme waves, currents and storm tide by offshore zone.
+- `api_rp2met_gom_extremes_by_region.csv` — not distributed; GoM hurricane extremes by sub-region and return period (long-form).
+- `api_rp2met_us_zone_100yr_winds.csv` — not distributed; 100-year extreme 10m/60-min wind speeds by US offshore zone (wind companion to the US-zone waves table).
 
-Columns: ZONE, LOCATION, HMAX_100YR_MEAN_M, HMAX_100YR_RANGE_M,
-WAVE_STEEPNESS_RANGE, CURRENT_MEAN_MS, CURRENT_RANGE_MS, STORM_TIDE_MEAN_M,
-STORM_TIDE_RANGE_M, BASIS.
-
-### `marine_growth_terminal_thickness.csv` — 3 rows
-Terminal thickness of marine growth (hard / soft / algae-kelp) by depth band
-(0–15 m, 15–30 m, 30 m–sea floor). Thickness values carry their `m` unit
-verbatim from the source.
-
-### `api_rp2met_gom_extremes_by_region.csv` — 116 rows
-Deep-water Gulf of Mexico hurricane extremes (wind / wave / current / water
-level) by **sub-region** and return period — the regional breakdown
-(Central / Western / Eastern GoM, All Regions North of 28° N) plus the
-early-season / late-season seasonal blocks, complementing the single-region
-`api_rp2met_hurricane_gom_extremes.csv`. Long-form.
-
-Columns: PARAMETER, UNIT, REGION, RP_10YR … RP_2000YR.
-
-### `metocean_regional_extremes.csv` — 82 rows
-Indicative extreme metocean parameters (wind / wave / current / storm surge) by
-return period (1, 5, 10, 50, 100 yr) for non-GoM regions: West Africa
-(Nigeria shallow & deep, northern Angola, southern Namibia), the North Sea /
-NE Atlantic / Norwegian Sea (Celtic Sea, Southern/Central/Northern North Sea,
-West of Shetland, Haltenbank, Barents Sea) and the NW Atlantic (off Newfoundland,
-off Nova Scotia / Sable Island Bank). Long-form, one row per region × parameter.
-
-Columns: REGION, NOMINAL_WATER_DEPTH, PARAMETER, UNIT, RP_1YR … RP_100YR.
-
-### `metocean_hs_tp_occurrence.csv` — 226 rows
-Joint percentage-occurrence scatter of significant wave height (Hs) versus
-spectral peak period (Tp) for three deep-water locations (Gulf of Mexico,
-offshore Nigeria, offshore Angola). Long-form; zero-occurrence cells dropped.
-
-Columns: LOCATION, HS_BAND_M, TP_BAND_S, OCCURRENCE_PCT.
-
-### `metocean_temperature_ranges.csv` — 7 rows
-Air / sea-surface / sea-floor temperature ranges (°C) for North Sea,
-eastern North Atlantic and Norwegian Sea areas.
-
-Columns: AREA, AIR_TEMP_C, SEA_TEMP_C, SEAFLOOR_TEMP_C.
-
-### `api_rp2met_us_zone_100yr_winds.csv` — 15 rows
-100-year extreme 10 m / 60-min wind speeds (with-wave and maximum) by US offshore
-zone — the wind companion to `api_rp2met_us_zone_100yr_waves.csv`.
-
-Columns: ZONE, LOCATION, WIND_10M_60MIN_WITH_WAVE_MS, WIND_10M_60MIN_MAX_MS.
-
-## Notes
-
-- The source workbooks were multi-table "poster" layouts. Only the
-  cleanly-structured, unambiguous tables were extracted; blocks that mixed
-  several locations without a per-row location key were **not** carried over to
-  avoid stripping context from facts.
-- Relationship to the live `metocean-data-fetcher` / `metocean-statistics`
-  skills: these are static **design-criteria reference** tables (standards-style
-  indicative extremes), complementing real-time/observed metocean feeds.
+- `marine_growth_terminal_thickness.csv` — not distributed; Terminal marine-growth thickness by depth band.
+- `metocean_regional_extremes.csv` — not distributed; Regional metocean extremes by parameter and return period.
+- `metocean_hs_tp_occurrence.csv` — not distributed; Joint wave-height and peak-period occurrence.
+- `metocean_temperature_ranges.csv` — not distributed; Air and sea temperature ranges by area.
