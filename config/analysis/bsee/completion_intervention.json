@@ -1,5 +1,5 @@
 {
-  "dataset_owner": "worldenergydata",
+  "dataset": "worldenergydata",
   "intended_use": "Descriptive characterisation of the supplied public-source snapshots; no engineering performance qualification.",
   "parameters": {
     "candidate_codes": [
@@ -34,9 +34,14 @@
         "change": "Initial record characterisation with source digests and explicit coverage limits.",
         "date": "2026-10-14",
         "revision": "1"
+      },
+      {
+        "change": "Renamed the dataset key to clarify the public schema. The SHA-256 digests of results.json, per_well.csv, war_per_well.csv and completion_strata.csv are unchanged from revision 1.",
+        "date": "2026-10-14",
+        "revision": "2"
       }
     ],
-    "revision": "1"
+    "revision": "2"
   },
   "rights_basis": "Public government data; existing source catalogue bsee-data-center.",
   "source_id": "bsee-data-center",

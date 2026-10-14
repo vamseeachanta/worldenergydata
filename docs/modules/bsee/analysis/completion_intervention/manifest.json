@@ -2,8 +2,8 @@
   "outputs": [
     {
       "file": "report.html",
-      "sha256": "0bedf06489b04f3afdfa9175f7acdde5f486fd6f76712bb769b41283498b0fca",
-      "size_bytes": 865957
+      "sha256": "a8a7a294f4c3989b1a488a38ae8ee3af4fc96f05f0217295779d1280fcdd33a3",
+      "size_bytes": 866182
     },
     {
       "file": "results.json",
@@ -29,19 +29,19 @@
   "provenance": {
     "criteria_file": "config/analysis/bsee/completion_intervention.json",
     "criteria_version": 1,
-    "dataset_owner": "worldenergydata",
+    "dataset": "worldenergydata",
     "implementation_sha256": {
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/completion_intervention/__init__.py": "5d2933b70ad906009245222085868fa02dbcfcff6ca97c9f765c9091f3f8ac7c",
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/completion_intervention/activity.py": "0bba2c9447d2fd462908f641b47a0939133cd68e17da84fb5e82f2bd08a57c12",
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/completion_intervention/report.py": "af896dab2c61c3d887e7a1a30cf9a6874701b29443376c51d79ca00c086e2103",
-      "scripts/reporting/build_completion_intervention.py": "b6d8c2c6c2d8638b24afe270886e5ca7d04b1d04bc27981487ef907e55dfda3a"
+      "scripts/reporting/build_completion_intervention.py": "f2da31ae1bf81a378761719fe4ca0e77d8dd4d18f27a4d562b04f37fc3244802"
     },
     "intended_use": "Descriptive characterisation of the supplied public-source snapshots; no engineering performance qualification.",
     "rights_basis": "Public government data; existing source catalogue bsee-data-center.",
     "run_record": {
-      "criteria_recorded_at": "2026-10-14T16:16:03.512559+00:00",
-      "criteria_sha256": "9c04e6da46a358e06977f821f1421e82d65e5afb2aa8593b9e40b2153fa80515",
-      "first_run_started_at": "2026-10-14T16:16:03.512638+00:00"
+      "criteria_recorded_at": "2026-10-14T20:40:45.798079+00:00",
+      "criteria_sha256": "59730d05cecf07a1ec62519961f6438133e60f7680c766a0b6aafc9d736ded02",
+      "first_run_started_at": "2026-10-14T20:40:45.798086+00:00"
     },
     "source_files": [
       {
@@ -70,9 +70,9 @@
       }
     ],
     "source_id": "bsee-data-center",
-    "source_revision": "5c2d37dacdf878d828329e0c6523b7d84806d539"
+    "source_revision": "47e11b4ea8b2f92853187b5113fc1bb622eef7f5"
   },
-  "revision": "1",
+  "revision": "2",
   "summary": {
     "candidate_war_records": 230402,
     "completion_records": 72844,

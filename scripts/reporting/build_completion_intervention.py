@@ -213,7 +213,7 @@ def build(criteria_path, sources, output, run_record):
         "implementation_sha256": {p.as_posix(): digest(p) for p in implementation},
         "criteria_version": criteria["version"],
         "source_id": criteria["source_id"],
-        "dataset_owner": criteria["dataset_owner"],
+        "dataset": criteria["dataset"],
         "intended_use": criteria["intended_use"],
         "rights_basis": criteria["rights_basis"],
         "source_files": [

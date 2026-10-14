@@ -370,6 +370,8 @@ def test_delivered_report_manifest_revision_and_criteria():
         assert (root / item["file"]).stat().st_size == item["size_bytes"]
     criteria_path = Path("config/analysis/bsee/completion_intervention.json")
     criteria = json.loads(criteria_path.read_text())
+    assert criteria["dataset"] == "worldenergydata"
+    assert manifest["provenance"]["dataset"] == criteria["dataset"]
     assert (
         manifest["revision"]
         == criteria["report"]["revision"]
