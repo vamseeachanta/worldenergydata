@@ -1,0 +1,55 @@
+{
+  "basis": "Exact source rows projected to identifier and analysis columns; no narrative or contact columns retained.",
+  "files": {
+    "mv_api_list_all.csv": {
+      "archive_sha256": "b35613f47dd7f944f787e132c322a2ab0b7fab6ee003cf20411947090fc6479d",
+      "member": "mv_api_list_all.txt",
+      "rows": 40,
+      "sha256": "ba863f23d57ec1aa5ebb43725c6394406b963de12fd4a1f99e1374b28b8e8158",
+      "source_url": "https://www.data.bsee.gov/Well/Files/APIRawData.zip"
+    },
+    "mv_api_wellcomps_all.csv": {
+      "archive_sha256": "b35613f47dd7f944f787e132c322a2ab0b7fab6ee003cf20411947090fc6479d",
+      "member": "mv_api_wellcomps_all.txt",
+      "rows": 91,
+      "sha256": "af07225365b2a06da2f6b21c4bab56b0700dc5473b85c0d32c87054cc50ea6f4",
+      "source_url": "https://www.data.bsee.gov/Well/Files/APIRawData.zip"
+    },
+    "mv_boreholes_all.csv": {
+      "archive_sha256": "068367918756e33592788aa79d30bb2d06c1d4bdb4388c220ccff30e1b64dc2a",
+      "member": "mv_boreholes_all.txt",
+      "rows": 40,
+      "sha256": "821b325cf9a8f4e6338c1ea66973b75a499f048d9621a4189e1f3e81e38da684",
+      "source_url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip"
+    },
+    "mv_eor_completions.csv": {
+      "archive_sha256": "dfdca8a0cec3627c7619967a6db0ee0d22d629a7c2fb2749ff7e484e92ecf011",
+      "member": "mv_eor_completions.txt",
+      "rows": 12,
+      "sha256": "4c8d92d0b1bc63326ebe20cbc871ff390943f122dc11bdb4ee3e5cd939976cc1",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip"
+    },
+    "mv_eor_mainquery.csv": {
+      "archive_sha256": "dfdca8a0cec3627c7619967a6db0ee0d22d629a7c2fb2749ff7e484e92ecf011",
+      "member": "mv_eor_mainquery.txt",
+      "rows": 25,
+      "sha256": "8779b0c1233588975a48342d21a43b7b97d2a83679c7d82ab1e1009ce7532241",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip"
+    },
+    "mv_war_main.csv": {
+      "archive_sha256": "200d666319b4c78c6746e5594f561051fa59a10ca32035694d9c3719183a9179",
+      "member": "mv_war_main.txt",
+      "rows": 26,
+      "sha256": "e0aab6f6a0e46e087459dfa33cc897c33713a23949d32f37936c5adeee7fec19",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    },
+    "mv_war_main_prop.csv": {
+      "archive_sha256": "200d666319b4c78c6746e5594f561051fa59a10ca32035694d9c3719183a9179",
+      "member": "mv_war_main_prop.txt",
+      "rows": 26,
+      "sha256": "d6d9ca7d3c59bd72d570a97d2ee0a30698fcd2f1ac26ad3ba60278bfc7e38473",
+      "source_url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    }
+  },
+  "source_id": "bsee-data-center"
+}

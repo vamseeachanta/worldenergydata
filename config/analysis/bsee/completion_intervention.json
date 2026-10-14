@@ -1,0 +1,112 @@
+{
+  "dataset": "worldenergydata",
+  "intended_use": "Descriptive characterisation of the supplied public-source snapshots; no engineering performance qualification.",
+  "parameters": {
+    "candidate_codes": [
+      "PA",
+      "REC",
+      "ST",
+      "TA",
+      "WO"
+    ],
+    "depth_edges": [
+      1000,
+      3000,
+      5000,
+      10000
+    ],
+    "era_edges": [
+      2000,
+      2010,
+      2020
+    ],
+    "outlier_quantiles": [
+      0.05,
+      0.95
+    ],
+    "workover_codes": [
+      "W"
+    ]
+  },
+  "report": {
+    "history": [
+      {
+        "change": "Initial record characterisation with source digests and explicit coverage limits.",
+        "date": "2026-10-14",
+        "revision": "1"
+      },
+      {
+        "change": "Renamed the dataset key to clarify the public schema. The SHA-256 digests of results.json, per_well.csv, war_per_well.csv and completion_strata.csv are unchanged from revision 1.",
+        "date": "2026-10-14",
+        "revision": "2"
+      }
+    ],
+    "revision": "2"
+  },
+  "rights_basis": "Public government data; existing source catalogue bsee-data-center.",
+  "source_id": "bsee-data-center",
+  "sources": [
+    {
+      "file": "eWellWARRawData.zip",
+      "http_status": 200,
+      "members": [
+        "mv_war_main",
+        "mv_war_main_prop"
+      ],
+      "publisher_name": "eWell Submissions WAR",
+      "retrieved_at": "2026-10-14T15:36:07Z",
+      "sha256": "200d666319b4c78c6746e5594f561051fa59a10ca32035694d9c3719183a9179",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    },
+    {
+      "file": "BoreholeRawData.zip",
+      "http_status": 200,
+      "members": [
+        "mv_boreholes_all"
+      ],
+      "publisher_name": "Borehole",
+      "retrieved_at": "2026-10-14T15:42:31Z",
+      "sha256": "068367918756e33592788aa79d30bb2d06c1d4bdb4388c220ccff30e1b64dc2a",
+      "url": "https://www.data.bsee.gov/Well/Files/BoreholeRawData.zip"
+    },
+    {
+      "file": "eWellEORRawData.zip",
+      "http_status": 200,
+      "members": [
+        "mv_eor_mainquery",
+        "mv_eor_completions",
+        "mv_eor_operationcodes",
+        "mv_eor_compstatcodes"
+      ],
+      "publisher_name": "eWell Submissions EOR",
+      "retrieved_at": "2026-10-14T15:44:05Z",
+      "sha256": "dfdca8a0cec3627c7619967a6db0ee0d22d629a7c2fb2749ff7e484e92ecf011",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellEORRawData.zip"
+    },
+    {
+      "file": "APIRawData.zip",
+      "http_status": 200,
+      "members": [
+        "mv_api_list_all",
+        "mv_api_wellcomps_all"
+      ],
+      "publisher_name": "API Lookup",
+      "retrieved_at": "2026-10-14T15:53:20Z",
+      "sha256": "b35613f47dd7f944f787e132c322a2ab0b7fab6ee003cf20411947090fc6479d",
+      "url": "https://www.data.bsee.gov/Well/Files/APIRawData.zip"
+    }
+  ],
+  "unavailable": [
+    {
+      "file": "CompletionRawData.zip",
+      "http_status": 200,
+      "publisher_name": "Completion download referenced by the repository dictionary",
+      "reason": "HTTP 200 returned HTML rather than a ZIP archive; this payload is not used as data.",
+      "retrieved_at": "2026-10-14T15:41:53Z",
+      "sha256": "df76514cb743e7eaa7954f9205e12a19221cd53750fde13f049aa90a1920df79",
+      "status": "unavailable",
+      "url": "https://www.data.bsee.gov/Well/Files/CompletionRawData.zip"
+    }
+  ],
+  "version": 1
+}
