@@ -1,11 +1,11 @@
 {
-  "base_commit": "0306ce2d04e8e68f97f4084c256b6c998843729d",
+  "base_commit": "5c4a51a257455b26afc7a57f3b30d37c96e5a855",
   "generator_command": "uv run --no-sync python scripts/reporting/assemble_lt_comprehensive.py --output-dir reports/lower_tertiary",
   "inputs": [
     {
       "path": "config/analysis/lower_tertiary/comprehensive_revision.yml",
-      "sha256": "7229247b38aa3dd85cd049194bbbaf9052226790a7cdf8fc2f2a1c8d900e9ba5",
-      "size_bytes": 232
+      "sha256": "1ee88c3ab27685b6ef2ff4b8a33f0b595fdeb6c72207f4945298a33c849241da",
+      "size_bytes": 515
     },
     {
       "path": "config/analysis/lower_tertiary/fields/anchor.yml",
@@ -19,18 +19,18 @@
     },
     {
       "path": "config/analysis/lower_tertiary/fields/cascade_chinook.yml",
-      "sha256": "bac446562260a2751f51cf4e0db88afd1588eeb649dca7a4f476161f1dcfd79c",
-      "size_bytes": 4435
+      "sha256": "3af56c586da313a07abba006907f2c048c7493f72b4e36cd527a10d0101e1ed5",
+      "size_bytes": 6957
     },
     {
       "path": "config/analysis/lower_tertiary/fields/jack_st_malo.yml",
-      "sha256": "92ab6b2a1d0b81062355edad549665cb335b4376878358ba8a0f4a48a98857ca",
-      "size_bytes": 3684
+      "sha256": "a3f5a8503077beee51d783c85c83218d17d123f3aa76b7543aa7259311ab8079",
+      "size_bytes": 5932
     },
     {
       "path": "config/analysis/lower_tertiary/fields/julia.yml",
-      "sha256": "cd30f446b273ef5a373fe492dcfe8f7a00d14a15146d4f2f65f847d44ac90d02",
-      "size_bytes": 1317
+      "sha256": "db275d8b985265daf35c062815b669ae2502e392af6e9fc087a5ba51fd6af080",
+      "size_bytes": 2342
     },
     {
       "path": "config/analysis/lower_tertiary/fields/kaskida.yml",
@@ -59,8 +59,8 @@
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py",
-      "sha256": "8e5031c31dccaf09445618582e72d36d7d9ae5c78624a05c790220c6e510bf2a",
-      "size_bytes": 34629
+      "sha256": "4a0812f0da0d16cff242e69260175866d43efffae27ae2eebf92c9fae7af9792",
+      "size_bytes": 37984
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio.py",
@@ -109,32 +109,32 @@
     }
   ],
   "limits": {
-    "anchor": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "big_foot": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "cascade_chinook": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "jack_st_malo": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "julia": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "kaskida": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "north_platte": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "shenandoah": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "stones": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
-    "tiber": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed, based on previous experience (#651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373)."
+    "anchor": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "big_foot": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "cascade_chinook": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "jack_st_malo": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "julia": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "kaskida": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "north_platte": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "shenandoah": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "stones": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373).",
+    "tiber": "Economic basis: oil-price deck $70.0/bbl; cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); data_through: 2024-12-31; nominal cost base year: not established. Production history: not established in this assembly; the plateau is a scenario input, and the cashflow is a decline-curve projection, not observed BSEE production (#367). HSE: not established; the upstream placeholder is not an observed zero (#366). Comparable disclosed cost and escalation basis: not established (#343, #344). Field status and first-oil schedule are configuration values, not a current operating-status check. Annual MIRR: not established; the monthly-period rate routine is applied to annual cashflows (#373)."
   },
   "outputs": [
     {
       "path": "reports/lower_tertiary/comprehensive_2026.html",
-      "sha256": "744af7422ae67eb1b6106cd563088bcc49da21677269fa487f449f6e5ae4d614",
-      "size_bytes": 105300
+      "sha256": "2c5ceec1820a0793208fc6391f7fe293e93f31561b2d33c3c7e9735ae003b9cc",
+      "size_bytes": 165017
     },
     {
       "path": "reports/lower_tertiary/comprehensive_2026.md",
-      "sha256": "4cb3df97bab286294105a56144b4356618a5b96383cc367a170bd6876308a4d9",
-      "size_bytes": 75528
+      "sha256": "3020fa9063e19f02dc6c6584f2797eeafc0598cdc3f67ce2b945c771cc904176",
+      "size_bytes": 113504
     }
   ],
   "pdf_metadata": "Not rendered; no PDF artifact is claimed.",
   "report_date": "2026-10-14",
-  "revision": "A",
+  "revision": "B",
   "schema_version": 1,
   "source_state": "Input digests identify the executed source bytes, including uncommitted changes."
 }

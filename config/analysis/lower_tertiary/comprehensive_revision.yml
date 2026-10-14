@@ -1,7 +1,13 @@
-revision: A
+revision: B
 history:
   - revision: A
     date: "2026-10-14"
     change: >-
       First issue combines ten-field scenario economics, source references and
       explicit data gaps to support comparisons on a stated assumption basis.
+  - revision: B
+    date: "2026-10-14"
+    change: >-
+      Public sources and retrieval dates are attached to their input keys;
+      unsourced field inputs are labelled as assumptions. Contradicted or
+      unverified working interests are excluded from concentration comparisons.

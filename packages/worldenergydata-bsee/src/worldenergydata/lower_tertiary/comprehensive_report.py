@@ -34,6 +34,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
+from urllib.parse import urlsplit
 
 import pandas as pd
 import yaml
@@ -44,6 +45,7 @@ from worldenergydata.lower_tertiary.portfolio import (
 )
 from worldenergydata.lower_tertiary.portfolio_analytics import (
     PortfolioAnalyticsRun,
+    analyze_operator_concentration,
     run_portfolio_analytics,
 )
 from worldenergydata.lower_tertiary.portfolio_economics import (
@@ -140,7 +142,8 @@ def _economic_basis(result: ComprehensiveReportResult) -> str:
         f"discount rate: {run.discount_rate:.1%}; reinvestment rate: {run.reinvestment_rate:.1%}; "
         f"horizon: {run.project_years} years; plateau duration: {run.plateau_years} years; "
         f"annual decline: {run.annual_decline:.1%}. "
-        "Costs and model defaults without verified public provenance are assumed, based on previous experience (#651). "
+        "Unsourced field inputs are assumed (unsourced configuration value, #651). "
+        "Generic discount, reinvestment and decline rates and horizon defaults are assumed, based on previous experience. "
         "Capital is charged at inception; oil-only cashflows deduct operating costs and the configured royalty, "
         "before corporate tax. NPV is discounted to model inception, without calendar-year alignment. Gas revenue, escalation and decommissioning are not modelled. "
         "Paired development entries retain combined capital and plateau rates; separate field splits are not established. "
@@ -154,7 +157,7 @@ def _field_basis(result: ComprehensiveReportResult, econ) -> str:
     cutoff = payload.get("data_through") or "not established"
     return (
         f"Economic basis: oil-price deck ${result.economics_run.oil_price_usd_per_bbl:.1f}/bbl; "
-        f"cost basis: configuration capex and opex, assumed, based on previous experience (#651); "
+        f"cost basis: configuration capex and opex, assumed (unsourced configuration value, #651); "
         f"data_through: {cutoff}; nominal cost base year: not established. "
         "Production history: not established in this assembly; the plateau is a scenario input, "
         "and the cashflow is a decline-curve projection, not observed BSEE production (#367). "
@@ -172,6 +175,43 @@ def report_hse(result: ComprehensiveReportResult) -> pd.DataFrame:
     return frame
 
 
+UNSOURCED_INPUT_BASIS = "assumed (unsourced configuration value, #651)"
+
+
+def _citation_rows(payload, field_id, label, path, basis, key):
+    rows = []
+    source = repository_root() / path.split("#", 1)[0]
+    source_revision = "sha256:" + hashlib.sha256(source.read_bytes()).hexdigest()
+    references = (payload.get("sources") or {}).get(key, []) if key else []
+    for reference in references or [None]:
+        missing_public = "Not established" if basis == UNSOURCED_INPUT_BASIS else "Not applicable"
+        row = {
+            "input": label, "publisher": "worldenergydata", "code_id": path,
+            "revision": source_revision, "basis": basis,
+            "source_id": missing_public, "title": missing_public,
+            "url": missing_public, "retrieved": missing_public,
+            "sha256": missing_public, "http_status": "Not applicable",
+        }
+        if reference is not None:
+            for name in ("id", "title", "url", "retrieved", "sha256"):
+                if name not in reference:
+                    raise ValueError(f"Missing public citation {name}: {field_id}")
+            row.update({name: reference[name] for name in ("title", "url")})
+            row["publisher"] = urlsplit(reference["url"]).netloc
+            row["source_id"] = reference["id"]
+            row["retrieved"] = reference["retrieved"] or "not retrieved in this revision"
+            row["sha256"] = reference["sha256"] or "Not established"
+            row["http_status"] = str(reference["http_status"])
+            row["basis"] = "public source recorded in configuration; " + reference["retrieval_status"]
+            if key == "first_oil":
+                row["basis"] += "; exact first-flow day not established by this citation; configured month-start convention retained"
+        if key == "partners" and payload.get("working_interest_status") in ("contradicted", "unverified"):
+            row["basis"] += "; working interests contradicted or unverified; excluded from concentration"
+        rows.append(row)
+
+    return rows
+
+
 def _report_citations(result: ComprehensiveReportResult, econ) -> pd.DataFrame:
     payload = result.field_payloads[econ.field_id]
     config = f"config/analysis/lower_tertiary/fields/{econ.field_id}.yml"
@@ -179,27 +219,32 @@ def _report_citations(result: ComprehensiveReportResult, econ) -> pd.DataFrame:
     analytics = "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py"
     run = result.economics_run
     rows = []
-    def add(label, path, basis="assumed, based on previous experience"):
-        source = repository_root() / path.split("#", 1)[0]
-        source_revision = "sha256:" + hashlib.sha256(source.read_bytes()).hexdigest()
-        rows.append({"input": label, "publisher": "worldenergydata", "code_id": path,
-                     "revision": source_revision, "basis": basis})
-    add(f"Capex ${econ.capex_mm_usd:,.1f} M", config + "#field.capex.total_mm_usd")
-    add(f"Plateau {econ.plateau_mbopd:.1f} thousand bbl/day", config + "#field.production_profile.plateau_rate_mbopd")
+    unsourced = UNSOURCED_INPUT_BASIS
+    generic = "assumed, based on previous experience"
+
+    def add(label, path, basis=unsourced, key=None):
+        rows.extend(_citation_rows(payload, econ.field_id, label, path, basis, key))
+
+    add(f"Capex ${econ.capex_mm_usd:,.1f} M", config + "#field.capex.total_mm_usd", key="capex.total_mm_usd")
+    add(f"Plateau {econ.plateau_mbopd:.1f} thousand bbl/day", config + "#field.production_profile.plateau_rate_mbopd", key="production_profile.plateau_rate_mbopd")
     opex = payload.get("opex_per_boe", DEFAULT_OPEX_PER_BOE)
-    add(f"Opex ${float(opex):.1f}/boe", config + "#field.opex_per_boe" if payload.get("opex_per_boe") else module + "#DEFAULT_OPEX_PER_BOE")
+    add(f"Opex ${float(opex):.1f}/boe", config + "#field.opex_per_boe" if payload.get("opex_per_boe") else module + "#DEFAULT_OPEX_PER_BOE", key="opex_per_boe")
     add(f"Oil price ${run.oil_price_usd_per_bbl:.1f}/bbl", module + "#run_portfolio.oil_price_usd_per_bbl")
-    add(f"Royalty {DEFAULT_FEDERAL_ROYALTY:.1%}", module + "#DEFAULT_FEDERAL_ROYALTY")
+    add(f"Royalty {DEFAULT_FEDERAL_ROYALTY:.1%}", module + "#DEFAULT_FEDERAL_ROYALTY", key="royalty_rate")
     for name, value in (("discount_rate", run.discount_rate), ("reinvestment_rate", run.reinvestment_rate), ("annual_decline", run.annual_decline)):
-        add(f"{name}: {value:.1%}", module + "#run_portfolio." + name)
+        add(f"{name}: {value:.1%}", module + "#run_portfolio." + name, generic)
     for name, value in (("project_years", run.project_years), ("plateau_years", run.plateau_years)):
-        add(f"{name}: {value}", module + "#run_portfolio." + name)
+        add(f"{name}: {value}", module + "#run_portfolio." + name, generic)
     add("Sensitivity oil-price deck: " + ", ".join(f"${price:.1f}/bbl" for price in run.sensitivity_prices), module + "#run_portfolio.sensitivity_prices")
-    add("First-oil schedule and data cutoff", config + "#field", "assumed, based on previous experience; configuration values, current status unverified")
-    add("Working-interest shares", config + "#field.partners" if payload.get("partners") else analytics + "#analyze_operator_concentration", "assumed, based on previous experience; configuration partners or operator-only fallback")
-    add("Technology classification", analytics + "#_resolved_dev_system", "assumed, based on previous experience; configuration or roster mapping")
+    add("First-oil schedule", config + "#field.first_oil", key="first_oil")
+    add("Data cutoff", config + "#field.data_through", key="data_through")
+    add("Operator", config + "#field.operator", key="operator")
+    add("Status", config + "#field.status", key="status")
+    add("Working-interest shares", config + "#field.partners" if payload.get("partners") else analytics + "#analyze_operator_concentration", key="partners")
+    add("Technology classification", analytics + "#_resolved_dev_system")
     add("NPV, rates, payback, breakeven and sensitivities", module + "#analyze_field", "computed from the scenario inputs above")
-    add("Portfolio totals, technology and operator comparisons", analytics + "#run_portfolio_analytics", "computed; plateau-equivalent recovery proxy, not reserves")
+    add("Portfolio totals and technology comparisons", analytics + "#run_portfolio_analytics", "computed; plateau-equivalent recovery proxy, not reserves")
+    add("Operator concentration", analytics + "#analyze_operator_concentration", "computed from eligible configuration working interests; contradicted or unverified interests excluded")
     add("HSE and disclosed-cost completeness", analytics + "#analyze_hse_per_field", "not established; placeholder values are not measurements")
     add("Report revision and issue date", "config/analysis/lower_tertiary/comprehensive_revision.yml", "issued revision record")
     return pd.DataFrame(rows)
@@ -285,15 +330,35 @@ def _report_technology_frame(result: ComprehensiveReportResult) -> pd.DataFrame:
     })
 
 
+def _eligible_operator_frame(field_payloads) -> pd.DataFrame:
+    eligible = [
+        fid for fid, payload in field_payloads.items()
+        if payload.get("working_interest_status") not in ("contradicted", "unverified")
+    ]
+    return analyze_operator_concentration(eligible)
+
+
 def _report_operator_frame(result: ComprehensiveReportResult) -> pd.DataFrame:
-    return result.analytics_run.operator.rename(columns={
+    return _eligible_operator_frame(result.field_payloads).rename(columns={
         "sum_wi_plateau_mbopd": "sum_wi_plateau_thousand_bbl_per_day",
     })
+
+
+def _operator_exclusion_note(result: ComprehensiveReportResult) -> str:
+    names = [
+        str(payload.get("display_name") or fid)
+        for fid, payload in result.field_payloads.items()
+        if payload.get("working_interest_status") in ("contradicted", "unverified")
+    ]
+    if not names:
+        return "Operator concentration, using configuration working-interest shares."
+    return " and ".join(names) + " excluded: working interests contradicted or unverified. Shares and concentration index use only the remaining fields."
 
 
 def _compute_executive_summary(
     economics_run: PortfolioEconomicsRun,
     analytics_run: PortfolioAnalyticsRun,
+    operator_frame: pd.DataFrame,
 ) -> List[str]:
     """Bind executive-summary findings to computed thresholds, not prose."""
     bullets: List[str] = []
@@ -301,11 +366,11 @@ def _compute_executive_summary(
     bullets.append(
         f"Economic basis: constant scenario oil price ${economics_run.oil_price_usd_per_bbl:.1f}/bbl; "
         f"discount rate {economics_run.discount_rate:.1%}; before corporate tax. "
-        "Costs are assumed, based on previous experience (#651), at the configuration dates."
+        "Costs are assumed (unsourced configuration value, #651), at the configuration dates."
     )
 
-    # Total portfolio capex from analytics (sum of WI capex shares ≡ total capex).
-    total_capex = float(analytics_run.operator["sum_wi_capex_mm_usd"].sum())
+    # Full portfolio capital remains independent of the eligible WI denominator.
+    total_capex = sum(r.capex_mm_usd for r in economics_run.results)
     n_fields = len(economics_run.results)
     bullets.append(
         f"Portfolio totals: {n_fields} fields, "
@@ -330,14 +395,17 @@ def _compute_executive_summary(
             "with documented decline-curve cashflow)"
         )
 
-    # Top operator.
-    top_op = analytics_run.operator.iloc[0]
-    bullets.append(
-        f"Operator concentration: **{top_op['company']}** holds the largest "
-        f"working-interest-weighted capex share at "
-        f"{float(top_op['share_capex_pct']):.1f}% across "
-        f"{int(top_op['field_count'])} fields"
-    )
+    # Top operator among eligible fields.
+    if operator_frame.empty:
+        bullets.append("Operator concentration: Not established; no eligible working interests.")
+    else:
+        top_op = operator_frame.iloc[0]
+        bullets.append(
+            f"Operator concentration: **{top_op['company']}** holds the largest "
+            f"working-interest-weighted capex share at "
+            f"{float(top_op['share_capex_pct']):.1f}% across "
+            f"{int(top_op['field_count'])} fields"
+        )
 
     # Dominant tech generation.
     tech = analytics_run.technology.sort_values(
@@ -391,7 +459,7 @@ def assemble_comprehensive_report(
         raise ValueError("Economics roster is incomplete; no field may be dropped")
     payloads = {fid: _load_field_payload(fid) for fid in field_ids}
     revision = load_revision_record()
-    summary = _compute_executive_summary(economics_run, analytics_run)
+    summary = _compute_executive_summary(economics_run, analytics_run, _eligible_operator_frame(payloads))
 
     return ComprehensiveReportResult(
         economics_run=economics_run,
@@ -485,7 +553,7 @@ def render_markdown(result: ComprehensiveReportResult, path: Path | str) -> Path
     parts.append("")
     parts.append(_md_table(_report_operator_frame(result)))
     parts.append("")
-    parts.append("Operator concentration, using configuration working-interest shares.")
+    parts.append(_operator_exclusion_note(result))
     parts.append("")
     parts.append("### HSE per Field (minimum-viable; full coverage pending #366)")
     parts.append("")
@@ -637,7 +705,7 @@ def render_html(result: ComprehensiveReportResult, path: Path | str) -> Path:
     parts.append("<p>Technology comparisons, using a plateau-equivalent recovery proxy.</p>")
     parts.append("<h3>Operator Concentration</h3>")
     parts.append(_html_table(_report_operator_frame(result)))
-    parts.append("<p>Operator concentration, using configuration working-interest shares.</p>")
+    parts.append(f"<p>{html.escape(_operator_exclusion_note(result))}</p>")
     parts.append("<h3>HSE per Field</h3>")
     parts.append(
         "<div class='caveat'>Field incident counts and rates are not established. "

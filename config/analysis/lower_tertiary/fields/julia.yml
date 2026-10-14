@@ -23,6 +23,25 @@ field:
       working_interest: 0.50
     - name: "ExxonMobil"
       working_interest: 0.50
+  sources:
+    operator:
+      - id: P6
+        title: "ExxonMobil starts production at Julia Oil Field in the Gulf of Mexico, 2016-04-19"
+        url: "https://corporate.exxonmobil.com/news/news-releases/2016/0419_exxonmobil-starts-production-at-julia-oil-field-in-the-gulf-of-mexico"
+        retrieved: "2026-10-14"
+        sha256: "29052f7a5b0cc7865ec9c43e1a4708c8616bb811fb009f9434cf008061c7f54f"
+        attempted: "2026-10-14T17:54:44.977987+00:00"
+        http_status: 200
+        retrieval_status: "retrieved"
+    partners:
+      - id: P6
+        title: "ExxonMobil starts production at Julia Oil Field in the Gulf of Mexico, 2016-04-19"
+        url: "https://corporate.exxonmobil.com/news/news-releases/2016/0419_exxonmobil-starts-production-at-julia-oil-field-in-the-gulf-of-mexico"
+        retrieved: "2026-10-14"
+        sha256: "29052f7a5b0cc7865ec9c43e1a4708c8616bb811fb009f9434cf008061c7f54f"
+        attempted: "2026-10-14T17:54:44.977987+00:00"
+        http_status: 200
+        retrieval_status: "retrieved"
   capex:
     total_mm_usd: 4700
     host_mm_usd: 2500

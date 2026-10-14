@@ -237,3 +237,137 @@ def test_annual_mirr_requires_consistent_cashflow_periods(report, tmp_path):
         assert "monthly-period rate routine" in document
         assert "annual cashflows" in document
     assert original.equals(report.economics_run.to_summary_frame()["mirr_annual"])
+
+
+@pytest.mark.parametrize("render", [builder.render_markdown, builder.render_html])
+def test_public_sources_are_printed_with_retrieval_evidence(report, tmp_path, render):
+    text = render(report, tmp_path / "sources").read_text()
+    for fid in ("cascade_chinook", "jack_st_malo", "julia"):
+        sources = report.field_payloads[fid].get("sources", {})
+        assert sources, fid
+        for key, references in sources.items():
+            citations = builder._report_citations(
+                report,
+                next(
+                    econ
+                    for econ in report.economics_run.results
+                    if econ.field_id == fid
+                ),
+            )
+            for source in references:
+                assert source["url"] in text
+                assert source["title"] in text
+                rows = citations[citations["url"] == source["url"]]
+                assert not rows.empty
+                assert (
+                    rows["code_id"]
+                    == f"config/analysis/lower_tertiary/fields/{fid}.yml#field.{key}"
+                ).any()
+                if source["retrieved"]:
+                    assert source["retrieved"] in text
+                    assert source["sha256"] in text
+                else:
+                    assert "not retrieved in this revision" in rows["retrieved"].values
+
+
+def test_only_generic_defaults_claim_previous_experience(report):
+    generic = (
+        "discount_rate:",
+        "reinvestment_rate:",
+        "annual_decline:",
+        "project_years:",
+        "plateau_years:",
+    )
+    for econ in report.economics_run.results:
+        citations = builder._report_citations(report, econ)
+        for row in citations.to_dict("records"):
+            if "assumed, based on previous experience" in row["basis"]:
+                assert row["input"].startswith(generic)
+            if row["url"] in ("Not applicable", "Not established") and row[
+                "input"
+            ].startswith(
+                ("Capex", "Plateau", "Opex", "Royalty", "Oil price", "Sensitivity")
+            ):
+                assert row["basis"] == "assumed (unsourced configuration value, #651)"
+
+
+@pytest.mark.parametrize("render", [builder.render_markdown, builder.render_html])
+def test_disputed_interests_are_excluded_and_concentration_recomputed(
+    report, tmp_path, render
+):
+    from worldenergydata.lower_tertiary.portfolio_analytics import (
+        analyze_operator_concentration,
+    )
+
+    excluded = {"cascade_chinook", "jack_st_malo"}
+    for fid in excluded:
+        assert report.field_payloads[fid]["working_interest_status"] in (
+            "contradicted",
+            "unverified",
+        )
+    eligible = [fid for fid in report.field_payloads if fid not in excluded]
+    expected = analyze_operator_concentration(eligible).rename(
+        columns={"sum_wi_plateau_mbopd": "sum_wi_plateau_thousand_bbl_per_day"}
+    )
+    frame = builder._report_operator_frame(report)
+    assert frame.equals(expected)
+    eligible_capex = sum(
+        e.capex_mm_usd for e in report.economics_run.results if e.field_id in eligible
+    )
+    assert frame["sum_wi_capex_mm_usd"].sum() == eligible_capex
+    assert "Suncor" not in frame["company"].values
+    top = frame.iloc[0]
+    assert top["share_capex_pct"] == 100.0 * top["sum_wi_capex_mm_usd"] / eligible_capex
+    bullet = next(
+        s for s in report.executive_summary if s.startswith("Operator concentration:")
+    )
+    assert f"{top['share_capex_pct']:.1f}%" in bullet
+    assert f"{int(top['field_count'])} fields" in bullet
+    assert frame["hhi_contribution"].equals(frame["share_capex_pct"] ** 2)
+    # The full-portfolio capital total is independent of the filtered WI denominator.
+    total = sum(e.capex_mm_usd for e in report.economics_run.results)
+    assert any(
+        f"${total:,.0f} M" in b
+        for b in report.executive_summary
+        if b.startswith("Portfolio totals:")
+    )
+    text = render(report, tmp_path / "concentration").read_text()
+    assert (
+        "Cascade/Chinook and Jack/St. Malo excluded: working interests contradicted or unverified"
+        in text
+    )
+
+
+def test_exclusion_is_driven_by_configuration_status(report):
+    broken = deepcopy(report)
+    for fid in broken.field_payloads:
+        broken.field_payloads[fid]["working_interest_status"] = "unverified"
+    assert builder._report_operator_frame(broken).empty
+
+
+def test_revision_b_preserves_revision_a(report):
+    assert [row["revision"] for row in report.revision_record["history"]][:2] == [
+        "A",
+        "B",
+    ]
+    assert report.revision_record["history"][0]["change"] == (
+        "First issue combines ten-field scenario economics, source references and "
+        "explicit data gaps to support comparisons on a stated assumption basis."
+    )
+
+
+def test_no_eligible_interests_withholds_summary_share(report, monkeypatch):
+    def payload(field_id):
+        data = deepcopy(report.field_payloads[field_id])
+        data["working_interest_status"] = "unverified"
+        return data
+
+    monkeypatch.setattr(builder, "_load_field_payload", payload)
+    result = builder.assemble_comprehensive_report(
+        economics_run=report.economics_run, analytics_run=report.analytics_run
+    )
+    bullet = next(
+        s for s in result.executive_summary if s.startswith("Operator concentration:")
+    )
+    assert "Not established" in bullet
+    assert "largest" not in bullet
