@@ -38,22 +38,34 @@ def test_unresolved_candidates_are_not_accepted_identities(bundle):
 
 def test_worked_lookup_uses_sourced_method_tension_pairs(bundle):
     rows = ce.find_pipelay(" S-LAY ", 1050, bundle=bundle)
-    assert {row["vessel_name"] for row in rows} == {
-        "PIONEERING SPIRIT", "SOLITAIRE"
-    }
-    assert ce.find_pipelay("s-lay", 2000, bundle=bundle)[0]["vessel_name"] == "PIONEERING SPIRIT"
+    assert {row["vessel_name"] for row in rows} == {"PIONEERING SPIRIT", "SOLITAIRE"}
+    assert (
+        ce.find_pipelay("s-lay", 2000, bundle=bundle)[0]["vessel_name"]
+        == "PIONEERING SPIRIT"
+    )
     assert ce.find_pipelay("s-lay", 2001, bundle=bundle) == []
     assert all(row["matched_capability"]["source_id"] for row in rows)
 
 
 def test_multiple_lay_methods_do_not_share_tension(bundle):
-    slay = ce.find_pipelay("s-lay", 600, bundle=bundle)
-    jlay = ce.find_pipelay("j-lay", 937, bundle=bundle)
-    assert "SEVEN BOREALIS" in {row["vessel_name"] for row in slay}
-    assert "SEVEN BOREALIS" in {row["vessel_name"] for row in jlay}
-    assert "SEVEN BOREALIS" not in {
-        row["vessel_name"] for row in ce.find_pipelay("s-lay", 937, bundle=bundle)
+    # Synthetic method pair isolates query semantics from changing fleet coverage.
+    row = next(r for r in bundle["vessels"] if r["vessel_name"] == "SOLITAIRE")
+    dynamic = copy.deepcopy(row["pipelay"][0])
+    dynamic.update(
+        method="j-lay",
+        tension_t=600,
+        rating_basis="dynamic maximum tension (synthetic fixture)",
+        value_quote="600 t (synthetic fixture)",
+    )
+    row["pipelay"].append(dynamic)
+    slay = ce.find_pipelay("s-lay", 1050, bundle=bundle)
+    jlay = ce.find_pipelay("j-lay", 600, bundle=bundle)
+    assert "SOLITAIRE" in {row["vessel_name"] for row in slay}
+    assert "SOLITAIRE" in {row["vessel_name"] for row in jlay}
+    assert "SOLITAIRE" not in {
+        row["vessel_name"] for row in ce.find_pipelay("j-lay", 937, bundle=bundle)
     }
+    assert jlay[0]["matched_capability"]["rating_basis"] == dynamic["rating_basis"]
 
 
 @pytest.mark.parametrize("value", [-1, float("nan"), float("inf"), True, "1050"])
@@ -77,7 +89,9 @@ def test_crane_ratings_preserve_points_intervals_and_per_crane_basis(bundle):
     sleipnir = [r for r in bundle["cranes"] if r["vessel_name"] == "SLEIPNIR"]
     main = [r for r in sleipnir if "main hoist" in r["crane"]]
     assert [(r["capacity_t"], r["radius_min_m"], r["radius_max_m"]) for r in main] == [
-        (10000, 27, 48), (7000, 62, 62), (4000, 82, 82)
+        (10000, 27, 48),
+        (7000, 62, 62),
+        (4000, 82, 82),
     ]
     assert all("per crane" in r["crane"] for r in main)
     assert [r["radius_kind"] for r in main] == ["interval", "point", "point"]
@@ -90,12 +104,27 @@ def test_historical_status_is_not_inferred_from_fleet_listing(bundle):
     assert rows["HERMOD"]["status"]["value"] == "scrapped"
 
 
-@pytest.mark.parametrize("defect", [
-    "missing_provenance", "duplicate_name", "duplicate_imo", "bad_imo",
-    "unknown_source", "missing_locator", "missing_quote", "negative_capacity",
-    "reversed_radius", "nonfinite_tension", "plot_value", "bad_source_digest",
-    "missing_source_date", "missing_record", "unknown_hull", "unresolved_fact",
-])
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "missing_provenance",
+        "duplicate_name",
+        "duplicate_imo",
+        "bad_imo",
+        "unknown_source",
+        "missing_locator",
+        "missing_quote",
+        "negative_capacity",
+        "reversed_radius",
+        "nonfinite_tension",
+        "plot_value",
+        "bad_source_digest",
+        "missing_source_date",
+        "missing_record",
+        "unknown_hull",
+        "unresolved_fact",
+    ],
+)
 def test_invalid_evidence_fails_closed(bundle, defect):
     row = next(row for row in bundle["vessels"] if row["imo"])
     rating = bundle["cranes"][0]
@@ -119,7 +148,9 @@ def test_invalid_evidence_fails_closed(bundle, defect):
     elif defect == "reversed_radius":
         rating["radius_min_m"] = rating["radius_max_m"] + 1
     elif defect == "nonfinite_tension":
-        next(r for r in bundle["vessels"] if r["pipelay"])["pipelay"][0]["tension_t"] = float("nan")
+        next(r for r in bundle["vessels"] if r["pipelay"])["pipelay"][0][
+            "tension_t"
+        ] = float("nan")
     elif defect == "plot_value":
         rating["evidence_kind"] = "plot"
     elif defect == "bad_source_digest":
@@ -144,12 +175,18 @@ def test_export_is_deterministic_and_read_back(bundle, tmp_path):
     assert ce.load_evidence(tmp_path) == bundle
     manifest = json.loads((tmp_path / ce.MANIFEST_NAME).read_text(encoding="utf-8"))
     for name, entry in manifest["files"].items():
-        assert hashlib.sha256((tmp_path / name).read_bytes()).hexdigest() == entry["sha256"]
+        assert (
+            hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()
+            == entry["sha256"]
+        )
         assert b"\r" not in (tmp_path / name).read_bytes()
     with (tmp_path / ce.CRANE_NAME).open(encoding="utf-8", newline="") as stream:
         ratings = list(csv.DictReader(stream))
     assert len(ratings) == len(bundle["cranes"])
-    assert all(row["capacity_t"] and row["radius_max_m"] and row["source_url"] for row in ratings)
+    assert all(
+        row["capacity_t"] and row["radius_max_m"] and row["source_url"]
+        for row in ratings
+    )
 
 
 def test_tampered_output_is_rejected(bundle, tmp_path):
@@ -182,4 +219,121 @@ def test_manifest_unit_drift_is_rejected(bundle, tmp_path):
     manifest["units"]["capacity_t"] = "short tons"
     path.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="units"):
+        ce.load_evidence(tmp_path)
+
+
+@pytest.mark.parametrize(
+    "defect",
+    [
+        "missing_searches",
+        "false_research",
+        "false_not_researched",
+        "missing_outcome",
+        "bad_search_date",
+        "bad_search_url",
+        "missing_candidates",
+        "missing_candidate_summary",
+        "generic_limitation",
+    ],
+)
+def test_unresolved_research_record_fails_closed(bundle, defect):
+    row = next(r for r in bundle["vessels"] if r["identity_status"] == "unresolved")
+    source = next(iter(bundle["sources"].values()))
+    row.update(
+        searched=[
+            {
+                "url": source["url"],
+                "date": source["retrieved_at"][:10],
+                "outcome": "No identity bridge established",
+                "locator": "Fleet listing",
+            }
+        ],
+        candidates=[],
+        candidate_summary="no candidate found in " + source["url"],
+        limitation="researched, unresolved",
+    )
+    ce.validate_evidence(bundle)
+    if defect == "missing_searches":
+        row.pop("searched")
+    elif defect == "false_research":
+        row["searched"] = []
+    elif defect == "false_not_researched":
+        row["limitation"] = "not researched"
+    elif defect == "missing_outcome":
+        row["searched"][0]["outcome"] = ""
+    elif defect == "bad_search_date":
+        row["searched"][0]["date"] = "2026-02-30"
+    elif defect == "bad_search_url":
+        row["searched"][0]["url"] = "not a URL"
+    elif defect == "missing_candidates":
+        row.pop("candidates")
+    elif defect == "missing_candidate_summary":
+        row.pop("candidate_summary")
+    elif defect == "generic_limitation":
+        row["limitation"] = "Unresolved after bounded primary-source research"
+    with pytest.raises(ValueError):
+        ce.validate_evidence(bundle)
+
+
+def test_unresearched_row_makes_no_search_claim(bundle):
+    row = next(r for r in bundle["vessels"] if r["identity_status"] == "unresolved")
+    row.update(
+        searched=[],
+        candidates=[],
+        limitation="not researched",
+        candidate_summary="no candidate found in sources: none (not researched)",
+    )
+    ce.validate_evidence(bundle)
+
+
+@pytest.mark.parametrize("field", ["value_quote", "rating_basis"])
+def test_pipelay_requires_printed_value_and_basis(bundle, field):
+    capability = next(r for r in bundle["vessels"] if r["pipelay"])["pipelay"][0]
+    capability[field] = ""
+    with pytest.raises(ValueError):
+        ce.validate_evidence(bundle)
+
+
+def test_crane_requires_printed_value(bundle):
+    bundle["cranes"][0]["value_quote"] = ""
+    with pytest.raises(ValueError):
+        ce.validate_evidence(bundle)
+
+
+def test_solitaire_holding_basis_survives_lookup(bundle):
+    row = next(
+        r
+        for r in ce.find_pipelay("s-lay", 1050, bundle=bundle)
+        if r["vessel_name"] == "SOLITAIRE"
+    )
+    assert (
+        row["matched_capability"]["rating_basis"]
+        == "holding capacity (publisher wording)"
+    )
+    assert row["matched_capability"]["value_quote"] == "1050-tonne holding capacity"
+
+
+def test_balder_partial_hoist_export_is_explicit(bundle):
+    row = next(r for r in bundle["vessels"] if r["vessel_name"] == "BALDER")
+    assert "omitted:" in row["crane_evidence"]
+    assert "whip" in row["crane_evidence"].lower()
+
+
+def test_hull_inventory_reference_resolves_and_matches_digest(bundle):
+    root = Path(__file__).resolve().parents[3]
+    inventory = root / bundle["hull_review"]["inventory"]
+    raw = inventory.read_text(encoding="utf-8").encode("utf-8")
+    assert hashlib.sha256(raw).hexdigest() == bundle["hull_review"]["inventory_sha256"]
+
+
+def test_manifest_source_metadata_is_read_back(bundle, tmp_path):
+    ce.ingest_evidence(bundle, tmp_path)
+    path = tmp_path / ce.MANIFEST_NAME
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    assert "sources" in manifest
+    sid = next(iter(bundle["sources"]))
+    assert manifest["sources"][sid]["url"] == bundle["sources"][sid]["url"]
+    manifest["sources"][sid]["size_bytes"] += 1
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(ValueError, match="source metadata"):
         ce.load_evidence(tmp_path)

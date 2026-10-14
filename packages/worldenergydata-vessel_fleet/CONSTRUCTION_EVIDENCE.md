@@ -17,9 +17,29 @@ or spelling alone. Records with no matching named hull model use `hull_model:
 "none"`; the inventory review is recorded in the bundle. Generic meshes are not
 assigned to named vessels.
 
+The third identity field, `owner`, means the registered title holder from a
+vessel register; a designer's ownership label does not establish that fact.
+
+Coverage at 2026-10-14: 161 roster rows, 0 resolved, 30 partial and 131 unresolved.
+The unresolved rows comprise 28 researched-unresolved and 103 not researched.
+Four rows have sourced IMO numbers, two vessels have sourced lay tension, and
+five vessels have crane ratings (20 ratings). Six previously unresolved rows
+now have exact published fleet names. This is partial coverage of the roster.
+
+Every unresolved row has `searched` and `candidates` lists. Each search attempt
+records its URL, date, locator and outcome. An empty search list means
+`limitation: "not researched"`; a nonempty list means
+`limitation: "researched, unresolved"`. Where no candidate is supported,
+`candidate_summary` states `no candidate found in` followed by the attempted
+sources, or `sources: none (not researched)`. Failed retrievals do not establish
+that a vessel is absent from a fleet. Historical names and similar spellings
+remain candidates unless the identity bridge is established.
+
 `construction_crane_ratings.csv` exports printed capacity/radius points and
 intervals, with metric-tonne and metre units in the headers. Each row retains
 the vessel, hoist, configuration, source URL, retrieval timestamp and locator.
+`value_quote` preserves the printed value string. The vessel's `crane_evidence`
+names omitted hoists or modes where the export is only part of a printed table.
 `point` has equal minimum/maximum radii; `interval` retains both printed bounds;
 `up_to` has an unknown lower bound, not zero. Ratings are per identified crane,
 not automatically tandem capacities. No plot is digitised or interpolated.
@@ -49,6 +69,15 @@ The query returns screening candidates, including their identity limitations
 and matched-capability provenance. It does not establish present availability
 or engineering suitability. Distinct methods retain distinct tension ratings.
 Missing capacities never qualify and nonfinite/negative thresholds are rejected.
+Each lay rating retains `value_quote` and `rating_basis`. Holding capacity,
+S-lay tension capacity and dynamic maximum tension are distinct publisher bases;
+the numeric screening threshold does not make them interchangeable. The current
+bundle has no reverified dynamic maximum tension values: inaccessible evidence
+was removed rather than retained as a current sourced result.
+
+The hull inventory reference resolves within the `worldenergydata` repository at
+`data/modules/vessel_hull_models/INVENTORY.md`; its LF-normalized digest is
+recorded and tested. The inventory is not included in the installable package.
 
 Reviewed evidence can be ingested offline with
 `python -m worldenergydata.vessel_fleet.construction_evidence <bundle.json> <output-directory>`.

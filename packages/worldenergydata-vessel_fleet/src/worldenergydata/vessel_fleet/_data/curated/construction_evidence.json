@@ -7,12 +7,138 @@
     "inventory": "data/modules/vessel_hull_models/INVENTORY.md",
     "inventory_sha256": "c7c0e639e93663744708d2a12679e5d0bca3d820c7d77343b0325b12134e98b5",
     "digest_encoding": "UTF-8 with LF line endings",
-    "conclusion": "No named vessel in this roster has a confirmed matching hull model in the available inventory; generic meshes are not assigned."
+    "conclusion": "No named vessel in this roster has a confirmed matching hull model in the available inventory; generic meshes are not assigned.",
+    "inventory_repository": "worldenergydata",
+    "inventory_verified_at": "2026-10-14"
   },
   "sources": {
+    "asianlift": {
+      "url": "https://www.asianlift.com.sg/about.html",
+      "retrieved_at": "2026-10-14T07:48:13.521623+00:00",
+      "size_bytes": 12859,
+      "sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": ":: ASIAN LIFT ::",
+      "publisher": "Asian Lift",
+      "quotes": {
+        "candidates": "Currently, our fleet includes the Asian Helping Hand III, Asian Hercules II, and Asian Hercules III"
+      },
+      "refetched_at": "2026-10-14T07:57:03.514761+00:00",
+      "refetch_sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+      "refetch_verified": true
+    },
+    "audacia": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/audacia",
+      "retrieved_at": "2026-10-14T07:47:01.552444+00:00",
+      "size_bytes": 61779,
+      "sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Audacia | Allseas",
+      "publisher": "Allseas",
+      "quotes": {
+        "name": "Audacia"
+      },
+      "refetched_at": "2026-10-14T07:57:06.328973+00:00",
+      "refetch_sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
+      "refetch_verified": true
+    },
+    "boskalis": {
+      "url": "https://boskalis.com/about-us/fleet-and-equipment/offshore-vessels/floating-sheerleg-cranes",
+      "retrieved_at": "2026-10-14T07:48:02.435355+00:00",
+      "size_bytes": 157120,
+      "sha256": "3b92416bea35536778270fe7b08d0d9ed655cedfa14786df10f48e702b113d7c",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Floating sheerleg and crane barges | Boskalis",
+      "publisher": "Boskalis",
+      "quotes": {
+        "name": "Asian Hercules II"
+      },
+      "refetched_at": "2026-10-14T07:57:09.610656+00:00",
+      "refetch_sha256": "576e08457a643af217a1c25541646d0ac1d8dd4f6db348e4b495a04ea39d0c29",
+      "refetch_verified": true
+    },
+    "dof": {
+      "url": "https://www.dof.com/fleet",
+      "retrieved_at": "2026-10-14T07:48:05.826157+00:00",
+      "size_bytes": 168244,
+      "sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "DOF Fleet Overview | Advanced Offshore Vessels",
+      "publisher": "DOF",
+      "quotes": {
+        "acergy": "Skandi Acergy",
+        "seven": "Skandi Seven"
+      },
+      "refetched_at": "2026-10-14T07:57:12.884480+00:00",
+      "refetch_sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+      "refetch_verified": true
+    },
+    "fairplayer": {
+      "url": "https://www.jumbomaritime.nl/vessels/fairplayer/",
+      "retrieved_at": "2026-10-14T07:47:25.226486+00:00",
+      "size_bytes": 162772,
+      "sha256": "c75a0bb9484b8dbb4a81ef36a72c004cc7b95e83aca0c41706d92a9805fcd3b9",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Fairplayer | Jumbo Maritime | DP2 Heavy Lift Crane Vessel",
+      "publisher": "Jumbo Maritime",
+      "quotes": {
+        "name": "Fairplayer"
+      },
+      "refetched_at": "2026-10-14T07:57:15.163577+00:00",
+      "refetch_sha256": "4c7699db775b213b3119865737681bfbb1257025d1ce25f786bee98a9147a4c4",
+      "refetch_verified": true
+    },
+    "global1200": {
+      "url": "https://ulstein.com/references/african-huan-qui-1200",
+      "retrieved_at": "2026-10-14T07:47:41.519737+00:00",
+      "size_bytes": 135061,
+      "sha256": "6d8abd6d51124fa0479feec1283543dd214aa27434325a49f2995dc373659375",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "African Huan Qiu 1200 | Ulstein Group",
+      "publisher": "Ulstein",
+      "quotes": {
+        "name": "African Huan Qiu 1200 (first name: Global 1200)",
+        "imo": "9463815",
+        "operator": "DS Global Offshore Engineering (Tianjin) Co. Ltd."
+      },
+      "refetched_at": "2026-10-14T07:57:19.611897+00:00",
+      "refetch_sha256": "caf6bad558c43aa55a10eb1af63b310e8dbaeeadd791d6ccee829dd376e54c29",
+      "refetch_verified": true
+    },
+    "happy": {
+      "url": "https://bignewsmagazine.bigliftshipping.com/bignews-43/introduction",
+      "retrieved_at": "2026-10-14T07:47:30.880200+00:00",
+      "size_bytes": 30867,
+      "sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Introduction - BigNews 43",
+      "publisher": "BigLift Shipping",
+      "quotes": {
+        "retirement": "Happy Buccaneer, which was beached in Turkey to be dismantled"
+      },
+      "refetched_at": "2026-10-14T07:57:21.932549+00:00",
+      "refetch_sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+      "refetch_verified": true
+    },
+    "heerema_barges": {
+      "url": "https://www.heerema.com/heerema-marine-contractors/fleet/barges",
+      "retrieved_at": "2026-10-14T07:47:55.947048+00:00",
+      "size_bytes": 101824,
+      "sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Heerema Marine Contractors | Fleet | Barges",
+      "publisher": "Heerema Marine Contractors",
+      "quotes": {
+        "fleet": "Heerema's barges",
+        "name": "H-851"
+      },
+      "refetched_at": "2026-10-14T07:57:24.154564+00:00",
+      "refetch_sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+      "refetch_verified": true
+    },
     "heerema_fleet": {
       "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
-      "retrieved_at": "2026-10-14T04:49:04.025591+00:00",
+      "retrieved_at": "2026-10-14T07:46:49.640324+00:00",
       "size_bytes": 101558,
       "sha256": "9de32d29acf6f5e3b1a0d501ca5ad5e2124dc45399395f21c7caddd1d3e8cb60",
       "raw_disposition": "not redistributed; permission not established",
@@ -25,196 +151,43 @@
         "balder": "Balder",
         "aegir": "Aegir"
       },
-      "refetched_at": "2026-10-14T05:03:54.535796+00:00",
+      "refetched_at": "2026-10-14T07:57:26.404218+00:00",
       "refetch_sha256": "9de32d29acf6f5e3b1a0d501ca5ad5e2124dc45399395f21c7caddd1d3e8cb60",
       "refetch_verified": true
     },
-    "hmc": {
-      "url": "https://www.heerema.com/hubfs/HMC%20Equipment%20Folder_20211108.pdf?hsLang=en",
-      "retrieved_at": "2026-10-14T04:47:06.827952+00:00",
-      "size_bytes": 4598887,
-      "sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
+    "helix_q4000": {
+      "url": "https://helixesg.com/our-assets/q4000",
+      "publisher": "Helix Energy Solutions",
+      "retrieved_at": "2026-10-14T07:48:24.947688+00:00",
+      "size_bytes": 64282,
+      "sha256": "7629c5f6b4333abda34861244338f8c08b4ee78cd3ef3f184651a09fc3318591",
+      "title": "Q4000 - Helix Energy Solutions",
+      "refetched_at": "2026-10-14T07:57:28.594164+00:00",
+      "refetch_sha256": "1c8619e8195a299bced363b5fc4b5943d5dd29868a4b7c0775ab0b7e379c1052",
+      "refetch_verified": true,
       "raw_disposition": "not redistributed; permission not established",
-      "copy_permitted": true,
-      "publisher": "Heerema Marine Contractors",
-      "quotes": {},
-      "refetched_at": "2026-10-14T05:03:56.983967+00:00",
-      "refetch_sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
-      "refetch_verified": true
-    },
-    "pioneering": {
-      "url": "https://www.allseas.com/en/who-we-are/our-fleet/pioneering-spirit",
-      "retrieved_at": "2026-10-14T04:47:59.943770+00:00",
-      "size_bytes": 101826,
-      "sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Pioneering Spirit | Allseas",
-      "publisher": "Allseas",
       "quotes": {
-        "name": "Pioneering Spirit"
-      },
-      "refetched_at": "2026-10-14T05:04:00.323549+00:00",
-      "refetch_sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
-      "refetch_verified": true
+        "q-4000": "Q4000"
+      }
     },
-    "solitaire": {
-      "url": "https://www.allseas.com/en/who-we-are/our-fleet/solitaire",
-      "retrieved_at": "2026-10-14T04:49:07.187305+00:00",
-      "size_bytes": 68308,
-      "sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
+    "hercules_drilling": {
+      "url": "https://www.odfjelldrilling.com/rig/hercules/",
+      "retrieved_at": "2026-10-14T07:48:10.447887+00:00",
+      "size_bytes": 62570,
+      "sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Solitaire | Allseas",
-      "publisher": "Allseas",
+      "title": "Hercules - Odfjell Drilling",
+      "publisher": "Odfjell Drilling",
       "quotes": {
-        "name": "Solitaire"
+        "candidate": "The Hercules is a sixth generation deepwater and harsh environment semi-submersible."
       },
-      "refetched_at": "2026-10-14T05:04:03.504844+00:00",
-      "refetch_sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
-      "refetch_verified": true
-    },
-    "audacia": {
-      "url": "https://www.allseas.com/en/who-we-are/our-fleet/audacia",
-      "retrieved_at": "2026-10-14T04:49:10.361017+00:00",
-      "size_bytes": 61779,
-      "sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Audacia | Allseas",
-      "publisher": "Allseas",
-      "quotes": {
-        "name": "Audacia"
-      },
-      "refetched_at": "2026-10-14T05:04:06.720013+00:00",
-      "refetch_sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
-      "refetch_verified": true
-    },
-    "lorelay": {
-      "url": "https://www.allseas.com/en/who-we-are/our-fleet/lorelay",
-      "retrieved_at": "2026-10-14T04:59:54.853918+00:00",
-      "size_bytes": 57391,
-      "sha256": "16d0140f7c057e9975bcc0371092925a3d2320c2dd472f3f5590d4abfa7c2c84",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Lorelay | Allseas",
-      "publisher": "Allseas",
-      "quotes": {
-        "name": "Our first pipelay vessel, Lorelay"
-      },
-      "refetched_at": "2026-10-14T05:04:09.907018+00:00",
-      "refetch_sha256": "16d0140f7c057e9975bcc0371092925a3d2320c2dd472f3f5590d4abfa7c2c84",
-      "refetch_verified": true
-    },
-    "togmor": {
-      "url": "https://www.allseas.com/en/who-we-are/our-fleet/tog-mor",
-      "retrieved_at": "2026-10-14T04:59:57.976272+00:00",
-      "size_bytes": 49607,
-      "sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Tog Mor | Allseas",
-      "publisher": "Allseas",
-      "quotes": {
-        "name": "Tog Mor"
-      },
-      "refetched_at": "2026-10-14T05:04:13.073784+00:00",
-      "refetch_sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
-      "refetch_verified": true
-    },
-    "subsea7": {
-      "url": "https://www.subsea7.com/en/media/datasheets.html",
-      "retrieved_at": "2026-10-14T04:49:34.989249+00:00",
-      "size_bytes": 124733,
-      "sha256": "d474c73ca0d1a2596774f46e818e3a4f0702237a50fd25fbb97a633b849bb734",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Datasheets",
-      "publisher": "Subsea7",
-      "quotes": {
-        "seven_borealis": "Seven Borealis",
-        "seven_vega": "Seven Vega",
-        "seven_arctic": "Seven Arctic",
-        "seven_oceans": "Seven Oceans",
-        "seven_navica": "Seven Navica",
-        "seven_seas": "Seven Seas",
-        "seven_pacific": "Seven Pacific"
-      },
-      "refetched_at": "2026-10-14T05:04:15.613880+00:00",
-      "refetch_sha256": "d474c73ca0d1a2596774f46e818e3a4f0702237a50fd25fbb97a633b849bb734",
-      "refetch_verified": true
-    },
-    "borealis": {
-      "url": "https://www.subsea7.com/content/dam/subsea7-corporate2018/Datasheets/Vessel/2025/Seven_Borealis-300dpi.pdf.downloadasset.pdf",
-      "retrieved_at": "2026-10-14T04:51:14.265739+00:00",
-      "size_bytes": 3282195,
-      "sha256": "7d9dc837e7ceb7e3244b100ec71fec37e1f92564d26b93a2d9ff3bb4d7e9ae84",
-      "raw_disposition": "not redistributed; permission not established",
-      "copy_permitted": true,
-      "publisher": "Subsea7",
-      "quotes": {},
-      "refetched_at": "2026-10-14T05:04:18.266255+00:00",
-      "refetch_sha256": "7d9dc837e7ceb7e3244b100ec71fec37e1f92564d26b93a2d9ff3bb4d7e9ae84",
-      "refetch_verified": true
-    },
-    "technipfmc": {
-      "url": "https://www.technipfmc.com/en/what-we-do/fleet/",
-      "retrieved_at": "2026-10-14T04:49:38.072128+00:00",
-      "size_bytes": 116206,
-      "sha256": "c78b5416a98bcd4c6c9be9bfa47476c3826a7f5b3fc87772cb0ca6bcbbeda535",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Fleet - TechnipFMC plc ",
-      "publisher": "TechnipFMC",
-      "quotes": {
-        "deep_blue": "Deep Blue",
-        "deep_energy": "Deep Energy"
-      },
-      "refetched_at": "2026-10-14T05:04:21.308202+00:00",
-      "refetch_sha256": "c78b5416a98bcd4c6c9be9bfa47476c3826a7f5b3fc87772cb0ca6bcbbeda535",
-      "refetch_verified": true
-    },
-    "javelin": {
-      "url": "https://www.jumbomaritime.nl/wp-content/uploads/2024/01/207-Factsheet_Javelin-2023-print.pdf",
-      "retrieved_at": "2026-10-14T04:48:13.882029+00:00",
-      "size_bytes": 1323576,
-      "sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
-      "raw_disposition": "not redistributed; permission not established",
-      "copy_permitted": true,
-      "publisher": "Jumbo Maritime",
-      "quotes": {
-        "imo": "IMO no. 9243837"
-      },
-      "refetched_at": "2026-10-14T05:04:24.969888+00:00",
-      "refetch_sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
-      "refetch_verified": true
-    },
-    "javelin_fleet": {
-      "url": "https://www.jumbomaritime.nl/vessels/jumbo-javelin/",
-      "retrieved_at": "2026-10-14T04:57:24.795065+00:00",
-      "size_bytes": 158506,
-      "sha256": "c6f05bab190e917d6bb15d51a88af81449429dc848b2f0c343c8261451dd89f3",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Jumbo Javelin | DP2 Heavy Lift Crane Vessel",
-      "publisher": "Jumbo Maritime",
-      "quotes": {
-        "name": "Jumbo Javelin"
-      },
-      "refetched_at": "2026-10-14T05:04:28.618531+00:00",
-      "refetch_sha256": "0c7faa70cc241b079cae660d6e65cc581bac2de317463e726ca45acc61cc0ba3",
-      "refetch_verified": true
-    },
-    "fairplayer": {
-      "url": "https://www.jumbomaritime.nl/vessels/fairplayer/",
-      "retrieved_at": "2026-10-14T04:49:14.038767+00:00",
-      "size_bytes": 162772,
-      "sha256": "0b5a4c9bf41dff32b8e016669df2b73050de1033a7679e314177c5029220c2ca",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Fairplayer | Jumbo Maritime | DP2 Heavy Lift Crane Vessel",
-      "publisher": "Jumbo Maritime",
-      "quotes": {
-        "name": "Fairplayer"
-      },
-      "refetched_at": "2026-10-14T05:04:32.214885+00:00",
-      "refetch_sha256": "4b6fa2e6285d23fe4851f23ca86c659598036c45bb4d40919254a746ad8d33ef",
+      "refetched_at": "2026-10-14T07:57:32.302767+00:00",
+      "refetch_sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
       "refetch_verified": true
     },
     "hermod": {
       "url": "https://heerema.com/insights/responsible-recycling-with-heerema",
-      "retrieved_at": "2026-10-14T04:49:16.596536+00:00",
+      "retrieved_at": "2026-10-14T07:47:28.656123+00:00",
       "size_bytes": 93785,
       "sha256": "7fd7ad90b502073aaec6e510767b265fb4c1a71a13b2acc6491c7909554f56db",
       "raw_disposition": "not redistributed; permission not established",
@@ -223,125 +196,86 @@
       "quotes": {
         "recycling": "Hermod retired responsibly, ultimately with 98% of the vessel recycled!"
       },
-      "refetched_at": "2026-10-14T05:04:34.812526+00:00",
+      "refetched_at": "2026-10-14T07:57:35.390095+00:00",
       "refetch_sha256": "7fd7ad90b502073aaec6e510767b265fb4c1a71a13b2acc6491c7909554f56db",
       "refetch_verified": true
     },
-    "happy": {
-      "url": "https://bignewsmagazine.bigliftshipping.com/bignews-43/introduction",
-      "retrieved_at": "2026-10-14T04:49:19.483769+00:00",
-      "size_bytes": 30867,
-      "sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+    "hmc": {
+      "url": "https://www.heerema.com/hubfs/HMC%20Equipment%20Folder_20211108.pdf?hsLang=en",
+      "retrieved_at": "2026-10-14T07:46:51.993939+00:00",
+      "size_bytes": 4598887,
+      "sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Introduction - BigNews 43",
-      "publisher": "BigLift Shipping",
-      "quotes": {
-        "retirement": "Happy Buccaneer, which was beached in Turkey to be dismantled"
-      },
-      "refetched_at": "2026-10-14T05:04:37.226939+00:00",
-      "refetch_sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+      "copy_permitted": true,
+      "publisher": "Heerema Marine Contractors",
+      "quotes": {},
+      "refetched_at": "2026-10-14T07:57:37.597602+00:00",
+      "refetch_sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
       "refetch_verified": true
     },
-    "safeen": {
-      "url": "https://ulstein.com/references/safeen-3000",
-      "retrieved_at": "2026-10-14T04:53:22.097381+00:00",
-      "size_bytes": 135778,
-      "sha256": "5d1875e8e54082e67022eaffc5ce15cbeb1ba8e53019e2513830b1547f8c9c60",
+    "javelin": {
+      "url": "https://www.jumbomaritime.nl/wp-content/uploads/2024/01/207-Factsheet_Javelin-2023-print.pdf",
+      "retrieved_at": "2026-10-14T07:47:17.806306+00:00",
+      "size_bytes": 1323576,
+      "sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Sapura 3000 (Safeen 3000) | Ulstein Group",
-      "publisher": "Ulstein",
+      "copy_permitted": true,
+      "publisher": "Jumbo Maritime",
       "quotes": {
-        "name": "New name: Safeen 3000",
-        "former": "Sapura 3000",
-        "imo": "9391270",
-        "owner": "Safeen Feeder Company"
+        "imo": "IMO no. 9243837"
       },
-      "refetched_at": "2026-10-14T05:04:39.662896+00:00",
-      "refetch_sha256": "2fcbcfda9c8cf213686bc3992886517104c165476c51db2316bc1c5db17d1589",
+      "refetched_at": "2026-10-14T07:57:40.754435+00:00",
+      "refetch_sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
       "refetch_verified": true
     },
-    "timas": {
-      "url": "https://ulstein.com/references/timas-1201",
-      "retrieved_at": "2026-10-14T04:57:09.975313+00:00",
-      "size_bytes": 133630,
-      "sha256": "1ac646bd3f1dbfaf1ed6b50e6b8c49fd7c49d15f022e9dd300111b2ba215d82d",
+    "javelin_fleet": {
+      "url": "https://www.jumbomaritime.nl/vessels/jumbo-javelin/",
+      "retrieved_at": "2026-10-14T07:47:21.775185+00:00",
+      "size_bytes": 158506,
+      "sha256": "1be6bc149537dff303500ebd6c7bfa7d7ff9b29cd8afde408211560d3d11d894",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Global 1201 (Timas 1201) | Ulstein Group",
-      "publisher": "Ulstein",
+      "title": "Jumbo Javelin | DP2 Heavy Lift Crane Vessel",
+      "publisher": "Jumbo Maritime",
       "quotes": {
-        "former": "Global 1201",
-        "imo": "9513579",
-        "rename": "2020: The new owner is PT Timas Samudera Indonesia, and the ship name has changed to Timas 1201."
+        "name": "Jumbo Javelin"
       },
-      "refetched_at": "2026-10-14T05:04:42.090812+00:00",
-      "refetch_sha256": "7788a5e1617934f46abaca498c6918888220eaa0563b75da48e2114a866aa94f",
+      "refetched_at": "2026-10-14T07:57:44.254868+00:00",
+      "refetch_sha256": "87eef22ba7a99257131fad4a62990ea86af8277ed897b8b916efedf9cebce4d7",
       "refetch_verified": true
     },
-    "global1200": {
-      "url": "https://ulstein.com/references/african-huan-qui-1200",
-      "retrieved_at": "2026-10-14T04:57:13.007886+00:00",
-      "size_bytes": 134694,
-      "sha256": "b62208f3baa7a967009e5cc01a36ed9d0ef54372918c921e56eb5febbdfcd587",
+    "lorelay": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/lorelay",
+      "retrieved_at": "2026-10-14T07:47:04.567063+00:00",
+      "size_bytes": 57391,
+      "sha256": "4fc4e368ad9d3edeb71bf66d71d2b9ac65e86077c0fba16d77a06d894e5caad3",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "African Huan Qiu 1200 | Ulstein Group",
-      "publisher": "Ulstein",
+      "title": "Lorelay | Allseas",
+      "publisher": "Allseas",
       "quotes": {
-        "name": "African Huan Qiu 1200 (first name: Global 1200)",
-        "imo": "9463815",
-        "operator": "DS Global Offshore Engineering (Tianjin) Co. Ltd."
+        "name": "Our first pipelay vessel, Lorelay"
       },
-      "refetched_at": "2026-10-14T05:04:44.518948+00:00",
-      "refetch_sha256": "f9d3c7e58ce4df4ac35799576a517d50dffb88d7fe495da47a046e4cb3bd178a",
+      "refetched_at": "2026-10-14T07:57:48.114237+00:00",
+      "refetch_sha256": "4fc4e368ad9d3edeb71bf66d71d2b9ac65e86077c0fba16d77a06d894e5caad3",
       "refetch_verified": true
     },
-    "telford": {
-      "url": "https://telfordoffshore.com/fleet/telford-31/",
-      "retrieved_at": "2026-10-14T04:55:38.654951+00:00",
-      "size_bytes": 35094,
-      "sha256": "a11b0b5aa09b1b7b15f505b2c966397b2dc87ae66eebb0b6fa4a958dda94a342",
+    "micoperi_yudin": {
+      "url": "https://www.micoperi.com/wp-content/uploads/2024/10/BROCHURE-Yudin-1-1.pdf",
+      "publisher": "Micoperi",
+      "retrieved_at": "2026-10-14T07:54:08.840097+00:00",
+      "size_bytes": 2051124,
+      "sha256": "61afcb510d2d924b6509e29db8f64ef15fbad539047436104faa5b196dbe9dc2",
+      "copy_permitted": true,
+      "refetched_at": "2026-10-14T07:57:51.092928+00:00",
+      "refetch_sha256": "61afcb510d2d924b6509e29db8f64ef15fbad539047436104faa5b196dbe9dc2",
+      "refetch_verified": true,
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Telford 31 - Telford Offshore",
-      "publisher": "Telford Offshore",
       "quotes": {
-        "rename": "Telford 31 (ex Jascon 31)"
-      },
-      "refetched_at": "2026-10-14T05:04:47.201072+00:00",
-      "refetch_sha256": "c3d81e330185a3130e88749c1de30e8a0ea227c67c5be36e09ffbe2120b80ee6",
-      "refetch_verified": true
-    },
-    "telford25": {
-      "url": "https://telfordoffshore.com/fleet/telford-25/",
-      "retrieved_at": "2026-10-14T04:57:15.940527+00:00",
-      "size_bytes": 36086,
-      "sha256": "2c8e7424a81311b7f4b09ddcda56c12f6eb4bbebac745195e458f9d7a4babe47",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Telford 25 - Telford Offshore",
-      "publisher": "Telford Offshore",
-      "quotes": {
-        "rename": "Telford 25 (ex Jascon 25)"
-      },
-      "refetched_at": "2026-10-14T05:04:49.922124+00:00",
-      "refetch_sha256": "a99c1a8c500a2c7690ed6a6b15bc0c538a33a07345d4ceac8e12c84aa457a15c",
-      "refetch_verified": true
-    },
-    "telford34": {
-      "url": "https://telfordoffshore.com/fleet/telford-34/",
-      "retrieved_at": "2026-10-14T04:57:18.742960+00:00",
-      "size_bytes": 36214,
-      "sha256": "b93d4742b734c815ca9bfdb0554bc4f8480861de954c87935bef5febebb65dd6",
-      "raw_disposition": "not redistributed; permission not established",
-      "title": "Telford 34 - Telford Offshore",
-      "publisher": "Telford Offshore",
-      "quotes": {
-        "rename": "Telford 34 (ex Jascon 34)"
-      },
-      "refetched_at": "2026-10-14T05:04:52.614168+00:00",
-      "refetch_sha256": "020e0f4fd07ad2c2af92ee97506ba276fefd49ece882b9e32a95a9ff2b7650bf",
-      "refetch_verified": true
+        "stanislav_yudin": "HLV YUDIN"
+      }
     },
     "nmdc": {
       "url": "https://www.nmdc-energy.com/en/about-us/fleet/",
-      "retrieved_at": "2026-10-14T04:55:41.545203+00:00",
+      "retrieved_at": "2026-10-14T07:47:53.036809+00:00",
       "size_bytes": 50482,
       "sha256": "311417494f8d798573e8b15230c34e4c981b4d79604a10c067b5568d4f87cc1e",
       "raw_disposition": "not redistributed; permission not established",
@@ -352,122 +286,214 @@
         "750": "DLB 750",
         "1000": "DLB 1000"
       },
-      "refetched_at": "2026-10-14T05:04:55.499305+00:00",
+      "refetched_at": "2026-10-14T07:57:54.718223+00:00",
       "refetch_sha256": "311417494f8d798573e8b15230c34e4c981b4d79604a10c067b5568d4f87cc1e",
       "refetch_verified": true
     },
-    "heerema_barges": {
-      "url": "https://www.heerema.com/heerema-marine-contractors/fleet/barges",
-      "retrieved_at": "2026-10-14T04:55:44.127898+00:00",
-      "size_bytes": 101824,
-      "sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+    "pioneering": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/pioneering-spirit",
+      "retrieved_at": "2026-10-14T07:46:55.024209+00:00",
+      "size_bytes": 101826,
+      "sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Heerema Marine Contractors | Fleet | Barges",
-      "publisher": "Heerema Marine Contractors",
+      "title": "Pioneering Spirit | Allseas",
+      "publisher": "Allseas",
       "quotes": {
-        "fleet": "Heerema's barges",
-        "name": "H-851"
+        "name": "Pioneering Spirit"
       },
-      "refetched_at": "2026-10-14T05:04:58.036403+00:00",
-      "refetch_sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+      "refetched_at": "2026-10-14T07:57:57.623754+00:00",
+      "refetch_sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
       "refetch_verified": true
     },
-    "shore": {
-      "url": "https://shoreoffshore.com/fleet/",
-      "retrieved_at": "2026-10-14T04:55:49.945394+00:00",
-      "size_bytes": 127838,
-      "sha256": "4c88d5718871f3dc1815d6b967019d32918e0f836772893df6016f833ab3c25a",
+    "safeen": {
+      "url": "https://ulstein.com/references/safeen-3000",
+      "retrieved_at": "2026-10-14T07:47:33.604780+00:00",
+      "size_bytes": 136145,
+      "sha256": "e41aea55672e7a52ce4f78b4f3f977acafa85c1e6edef6ac6dd29308222d2814",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Our Fleet of Derrick Barges | Shore Offshore Services",
-      "publisher": "Shore Offshore Services",
+      "title": "Sapura 3000 (Safeen 3000) | Ulstein Group",
+      "publisher": "Ulstein",
       "quotes": {
-        "raeford": "D/B Raeford",
-        "performance": "D/B Performance",
-        "thor": "D/B THOR"
+        "name": "New name: Safeen 3000",
+        "former": "Sapura 3000",
+        "imo": "9391270",
+        "owner": "Safeen Feeder Company"
       },
-      "refetched_at": "2026-10-14T05:05:00.565929+00:00",
-      "refetch_sha256": "4c88d5718871f3dc1815d6b967019d32918e0f836772893df6016f833ab3c25a",
+      "refetched_at": "2026-10-14T07:58:00.725787+00:00",
+      "refetch_sha256": "0d0e45e07ce31b64d326c316eb47d0da83a5ba3ed6017bd758a95b3a5c9f3191",
       "refetch_verified": true
     },
-    "boskalis": {
-      "url": "https://boskalis.com/about-us/fleet-and-equipment/offshore-vessels/floating-sheerleg-cranes",
-      "retrieved_at": "2026-10-14T04:55:53.200359+00:00",
-      "size_bytes": 157120,
-      "sha256": "15c167af70224de8ce9df9deb891a8268253ed78843fe63ffd5db02335d70aa0",
+    "saipem_2015": {
+      "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:48.930467+00:00",
+      "size_bytes": 1666394,
+      "sha256": "758c504135b7b06c36c96eafb7deceebab92dbe5ff02672b7346b0b60fbf8ee6",
+      "copy_permitted": true,
+      "refetched_at": "2026-10-14T07:58:02.936705+00:00",
+      "refetch_sha256": "758c504135b7b06c36c96eafb7deceebab92dbe5ff02672b7346b0b60fbf8ee6",
+      "refetch_verified": true,
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Floating sheerleg and crane barges | Boskalis",
-      "publisher": "Boskalis",
       "quotes": {
-        "name": "Asian Hercules II"
+        "castoro_sei": "Castoro Sei",
+        "castoro_7": "Castoro Sette",
+        "semac_i": "Semac 1"
+      }
+    },
+    "saipem_7000": {
+      "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards/saipem-7000",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:46.493866+00:00",
+      "size_bytes": 156778,
+      "sha256": "3cc1d219a8b01223d48f60c2ba0fb97e9fc255e6710b5e4a026c6a0398371e80",
+      "title": "Saipem 7000 | Saipem",
+      "refetched_at": "2026-10-14T07:58:37.634090+00:00",
+      "refetch_sha256": "dbf5113015b4c5e57d741dd93ae15d5174edab420dd9586f56325bc0b5b8739a",
+      "refetch_verified": true,
+      "raw_disposition": "not redistributed; permission not established",
+      "quotes": {
+        "saipem_7000": "SAIPEM 7000"
+      }
+    },
+    "saipem_fleet": {
+      "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:48:16.303771+00:00",
+      "size_bytes": 186424,
+      "sha256": "e08875826645ab2017ecea041b18a89522d54edbc78fbb7735f4f81d920f9cf7",
+      "title": "Fleet and yards | Saipem",
+      "refetched_at": "2026-10-14T07:58:40.126749+00:00",
+      "refetch_sha256": "f1dfacd3bdf5b3853c641cce94a94307ad03f79c1fc8e00bdb5a6abf6c16d94f",
+      "refetch_verified": true,
+      "raw_disposition": "not redistributed; permission not established",
+      "quotes": {
+        "castorone": "CASTORONE",
+        "castoro_10": "CASTORO 10"
+      }
+    },
+    "saipem_fleet_second": {
+      "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:43.981650+00:00",
+      "size_bytes": 181412,
+      "sha256": "e1633d2de49c57c40150aec1b5a61696c5c86e2d83a7bb8b3aaa99eed4e223ce",
+      "title": "Flotta e Cantieri | Saipem",
+      "refetched_at": "2026-10-14T07:58:42.632536+00:00",
+      "refetch_sha256": "f3b1be8fbc7ef088cbd9c5a452e1736d3b58190656d4a024bde85d93bb08266a",
+      "refetch_verified": true,
+      "raw_disposition": "not redistributed; permission not established",
+      "quotes": {
+        "saipem_fds": "SAIPEM FDS",
+        "saipem_fds_2": "SAIPEM FDS 2",
+        "saipem_3000": "SAIPEM 3000",
+        "saipem_fds2": "SAIPEM FDS 2"
+      }
+    },
+    "seaway_strashnov": {
+      "url": "https://www.seaway7.com/vessels/seaway-strashnov/",
+      "publisher": "Seaway7",
+      "retrieved_at": "2026-10-14T07:48:18.722241+00:00",
+      "size_bytes": 54100,
+      "sha256": "cc1292f531e9fbf4dc6b073c33f8c79c4bd040b0a4112fd11135935e4ec57d84",
+      "title": "Seaway Strashnov - Seaway 7",
+      "refetched_at": "2026-10-14T07:58:45.050318+00:00",
+      "refetch_sha256": "cc1292f531e9fbf4dc6b073c33f8c79c4bd040b0a4112fd11135935e4ec57d84",
+      "refetch_verified": true,
+      "raw_disposition": "not redistributed; permission not established",
+      "quotes": {
+        "oleg_strashnov": "Seaway Strashnov"
+      }
+    },
+    "solitaire": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/solitaire",
+      "retrieved_at": "2026-10-14T07:46:58.544874+00:00",
+      "size_bytes": 68308,
+      "sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Solitaire | Allseas",
+      "publisher": "Allseas",
+      "quotes": {
+        "name": "Solitaire"
       },
-      "refetched_at": "2026-10-14T05:05:03.805189+00:00",
-      "refetch_sha256": "d9eb81013434ae1ca71fe7fab74d5015fe75f1134cd8637e44b40fe92dee77aa",
+      "refetched_at": "2026-10-14T07:58:48.660475+00:00",
+      "refetch_sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
       "refetch_verified": true
     },
-    "dof": {
-      "url": "https://www.dof.com/fleet",
-      "retrieved_at": "2026-10-14T04:57:21.197890+00:00",
-      "size_bytes": 168244,
-      "sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+    "telford": {
+      "url": "https://telfordoffshore.com/fleet/telford-31/",
+      "retrieved_at": "2026-10-14T07:47:45.345685+00:00",
+      "size_bytes": 35094,
+      "sha256": "35165e12e707454b75e877a8aed950077450f49eb15a1495e49c7bb333f8f4a5",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "DOF Fleet Overview | Advanced Offshore Vessels",
-      "publisher": "DOF",
+      "title": "Telford 31 - Telford Offshore",
+      "publisher": "Telford Offshore",
       "quotes": {
-        "acergy": "Skandi Acergy",
-        "seven": "Skandi Seven"
+        "rename": "Telford 31 (ex Jascon 31)"
       },
-      "refetched_at": "2026-10-14T05:05:06.380391+00:00",
-      "refetch_sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+      "refetched_at": "2026-10-14T07:58:53.942485+00:00",
+      "refetch_sha256": "ffa09b1dbb0b3267d164217332fee265a6a99903ee7da7b93855b5171890941d",
       "refetch_verified": true
     },
-    "mcdermott": {
-      "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
-      "retrieved_at": "2026-10-14T04:59:51.458434+00:00",
-      "size_bytes": 104548,
-      "sha256": "6c29585b3d0a0653a92a3371199d34bd23e26c04762e9c82abb3fa79b1427a95",
+    "telford25": {
+      "url": "https://telfordoffshore.com/fleet/telford-25/",
+      "retrieved_at": "2026-10-14T07:47:47.910485+00:00",
+      "size_bytes": 36086,
+      "sha256": "61d06aed7ad59c57949c64096681f2fde60345cdcb5d730a148cde91db530584",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Marine Vessels | McDermott",
-      "publisher": "McDermott",
+      "title": "Telford 25 - Telford Offshore",
+      "publisher": "Telford Offshore",
       "quotes": {
-        "owner": "Through ownership of our fleet",
-        "amazon": "Amazon",
-        "dlv": "Derrick Lay Vessel 2000",
-        "no102": "North Ocean 102",
-        "db30": "Derrick Barge 30",
-        "db50": "Derrick Barge 50"
+        "rename": "Telford 25 (ex Jascon 25)"
       },
-      "refetched_at": "2026-10-14T05:05:08.926810+00:00",
-      "refetch_sha256": "577276119f92cf95279d70733bda99580174f9c15d4a778f498bc5996c1ffc49",
+      "refetched_at": "2026-10-14T07:58:56.463839+00:00",
+      "refetch_sha256": "67d0c128aed7b9df6431147ee2fe9ac8b2653c83efa044a1cac7ee43d3ae0bb8",
       "refetch_verified": true
     },
-    "hercules_drilling": {
-      "url": "https://www.odfjelldrilling.com/rig/hercules/",
-      "retrieved_at": "2026-10-14T04:49:41.146358+00:00",
-      "size_bytes": 62570,
-      "sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
+    "telford34": {
+      "url": "https://telfordoffshore.com/fleet/telford-34/",
+      "retrieved_at": "2026-10-14T07:47:50.547411+00:00",
+      "size_bytes": 36214,
+      "sha256": "dfc5594a4e51f8b8b3d8fe679c6ef0bbda477eaa56d4efc5a0d7362cce2b4de3",
       "raw_disposition": "not redistributed; permission not established",
-      "title": "Hercules - Odfjell Drilling",
-      "publisher": "Odfjell Drilling",
+      "title": "Telford 34 - Telford Offshore",
+      "publisher": "Telford Offshore",
       "quotes": {
-        "candidate": "The Hercules is a sixth generation deepwater and harsh environment semi-submersible."
+        "rename": "Telford 34 (ex Jascon 34)"
       },
-      "refetched_at": "2026-10-14T05:05:12.122350+00:00",
-      "refetch_sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
+      "refetched_at": "2026-10-14T07:58:58.958467+00:00",
+      "refetch_sha256": "7d356ceac1d9ad864c661bceb4e671cebcabd4687113e16202783a0623b0f888",
       "refetch_verified": true
     },
-    "asianlift": {
-      "url": "https://www.asianlift.com.sg/about.html",
-      "retrieved_at": "2026-10-14T04:49:44.259351+00:00",
-      "size_bytes": 12859,
-      "sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+    "timas": {
+      "url": "https://ulstein.com/references/timas-1201",
+      "retrieved_at": "2026-10-14T07:47:37.605701+00:00",
+      "size_bytes": 133997,
+      "sha256": "feb5ff9d52c6ab5a847277a23a315069cb3e0eb3f9e9ee001d679fc3d57c29fc",
       "raw_disposition": "not redistributed; permission not established",
-      "title": ":: ASIAN LIFT ::",
-      "publisher": "Asian Lift",
+      "title": "Global 1201 (Timas 1201) | Ulstein Group",
+      "publisher": "Ulstein",
       "quotes": {
-        "candidates": "Currently, our fleet includes the Asian Helping Hand III, Asian Hercules II, and Asian Hercules III"
+        "former": "Global 1201",
+        "imo": "9513579",
+        "rename": "2020: The new owner is PT Timas Samudera Indonesia, and the ship name has changed to Timas 1201."
       },
-      "refetched_at": "2026-10-14T05:05:15.103885+00:00",
-      "refetch_sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+      "refetched_at": "2026-10-14T07:59:01.464131+00:00",
+      "refetch_sha256": "7bdb7a95959e1e959097de0a5e89d8d98a18289852e029255f55046408c40334",
+      "refetch_verified": true
+    },
+    "togmor": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/tog-mor",
+      "retrieved_at": "2026-10-14T07:47:08.216153+00:00",
+      "size_bytes": 49607,
+      "sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
+      "raw_disposition": "not redistributed; permission not established",
+      "title": "Tog Mor | Allseas",
+      "publisher": "Allseas",
+      "quotes": {
+        "name": "Tog Mor"
+      },
+      "refetched_at": "2026-10-14T07:59:03.693295+00:00",
+      "refetch_sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
       "refetch_verified": true
     }
   },
@@ -495,9 +521,17 @@
       "candidates": [],
       "hull_model": "none",
       "pipelay": [],
-      "crane_evidence": "printed ratings; not a complete operational load chart",
+      "crane_evidence": "printed heavy-lift hoist ratings; omitted: auxiliary deck crane and deep-water lowering ratings on page 5. Not a complete operational load chart.",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SLEIPNIR",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "THIALF",
@@ -522,9 +556,17 @@
       "candidates": [],
       "hull_model": "none",
       "pipelay": [],
-      "crane_evidence": "printed ratings; not a complete operational load chart",
+      "crane_evidence": "printed hoist table; omitted: deepwater main-hoist and special-block modes in page 7 prose. Not a complete operational load chart.",
       "provenance": "construction_vessels.csv / VESSEL_NAME=THIALF",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "BALDER",
@@ -549,9 +591,17 @@
       "candidates": [],
       "hull_model": "none",
       "pipelay": [],
-      "crane_evidence": "printed ratings; not a complete operational load chart",
+      "crane_evidence": "printed main-hoist ratings only; omitted: portside auxiliary hoist and whip hoist; starboard first auxiliary hoist, second auxiliary hoist and whip hoist. Page 9 of the equipment folder; dual whip capacities are not assigned to an inferred configuration.",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BALDER",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "AEGIR",
@@ -578,7 +628,15 @@
       "pipelay": [],
       "crane_evidence": "printed ratings; not a complete operational load chart",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AEGIR",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "PIONEERING SPIRIT",
@@ -607,12 +665,22 @@
           "method": "s-lay",
           "tension_t": 2000,
           "source_id": "pioneering",
-          "locator": "Unmatched pipelay capacity"
+          "locator": "Unmatched pipelay capacity",
+          "value_quote": "S-lay tension capacity of 2000 tonnes",
+          "rating_basis": "S-lay tension capacity (publisher wording)"
         }
       ],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=PIONEERING SPIRIT",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.allseas.com/en/who-we-are/our-fleet/pioneering-spirit",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "AUDACIA",
@@ -639,7 +707,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AUDACIA",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.allseas.com/en/who-we-are/our-fleet/audacia",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SOLITAIRE",
@@ -668,20 +744,41 @@
           "method": "s-lay",
           "tension_t": 1050,
           "source_id": "solitaire",
-          "locator": "Setting the pipelay standard / holding capacity and S-lay"
+          "locator": "Setting the pipelay standard / holding capacity and S-lay",
+          "value_quote": "1050-tonne holding capacity",
+          "rating_basis": "holding capacity (publisher wording)"
         }
       ],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SOLITAIRE",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.allseas.com/en/who-we-are/our-fleet/solitaire",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SAIPEM 7000",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "SAIPEM 7000",
+        "source_id": "saipem_7000",
+        "quote_key": "saipem_7000",
+        "locator": "Vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_7000",
+        "quote_key": "saipem_7000",
+        "locator": "Vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -689,15 +786,52 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAIPEM 7000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards/saipem-7000",
+          "date": "2026-10-14",
+          "locator": "Vessel heading",
+          "outcome": "Exact vessel name retrieved"
+        }
+      ]
     },
     {
       "vessel_name": "SAIPEM FDS",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "SAIPEM FDS",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_fds",
+        "locator": "Flotta e Cantieri / page 2 vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_fds",
+        "locator": "Flotta e Cantieri / page 2 vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -705,7 +839,27 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAIPEM FDS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SAIPEM FDS2",
@@ -716,71 +870,80 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "SAIPEM FDS 2",
+          "source_id": "saipem_fleet_second",
+          "quote_key": "saipem_fds2",
+          "locator": "Flotta e Cantieri / page 2 vessel heading",
+          "disposition": "Possible duplicate of the separate SAIPEM FDS 2 roster row; spelling alone does not establish the bridge."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAIPEM FDS2",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "SEVEN BOREALIS",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Borealis",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_borealis"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_borealis",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
       "hull_model": "none",
-      "pipelay": [
+      "pipelay": [],
+      "crane_evidence": "not established; prior ratings removed because the cited brochure was not retrieved",
+      "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN BOREALIS",
+      "limitation": "researched, unresolved",
+      "searched": [
         {
-          "method": "s-lay",
-          "tension_t": 600,
-          "source_id": "borealis",
-          "locator": "Page 2 / Rigid S-lay / Max Tension (t), dynamic"
+          "url": "https://www.subsea7.com/content/dam/subsea7-corporate2018/Datasheets/Vessel/2025/Seven_Borealis-300dpi.pdf.downloadasset.pdf",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
         },
         {
-          "method": "j-lay",
-          "tension_t": 937,
-          "source_id": "borealis",
-          "locator": "Page 2 / Rigid J-lay / Max Tension (t), dynamic"
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
         }
       ],
-      "crane_evidence": "printed ratings; not a complete operational load chart",
-      "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN BOREALIS",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "candidate_summary": "no candidate found in https://www.subsea7.com/content/dam/subsea7-corporate2018/Datasheets/Vessel/2025/Seven_Borealis-300dpi.pdf.downloadasset.pdf; https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "SEVEN VEGA",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Vega",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_vega"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_vega",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -788,26 +951,24 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN VEGA",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "SEVEN ARCTIC",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Arctic",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_arctic"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_arctic",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -815,26 +976,24 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN ARCTIC",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "AMAZON",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Amazon",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "amazon"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "amazon",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -842,26 +1001,24 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AMAZON",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "DLV 2000",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Derrick Lay Vessel 2000",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "dlv"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "dlv",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -869,7 +1026,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLV 2000",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "NORTH OCEAN 105",
@@ -885,26 +1051,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=NORTH OCEAN 105",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DEEP ENERGY",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Deep Energy",
-        "source_id": "technipfmc",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "deep_energy"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "TechnipFMC",
-        "source_id": "technipfmc",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "deep_energy",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -912,7 +1069,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DEEP ENERGY",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.technipfmc.com/en/what-we-do/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.technipfmc.com/en/what-we-do/fleet/"
     },
     {
       "vessel_name": "HAPPY BUCCANEER",
@@ -933,7 +1099,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HAPPY BUCCANEER",
-      "limitation": "Publisher reports beached for dismantling; completion of scrapping is not established. Status remains null."
+      "limitation": "Publisher reports beached for dismantling; completion of scrapping is not established. Status remains null.",
+      "searched": [
+        {
+          "url": "https://bignewsmagazine.bigliftshipping.com/bignews-43/introduction",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "OSA GOLIATH",
@@ -949,7 +1123,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSA GOLIATH",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "OSA SAMPSON",
@@ -965,7 +1141,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSA SAMPSON",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "HERCULES",
@@ -1003,7 +1181,22 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HERCULES",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.asianlift.com.sg/about.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        },
+        {
+          "url": "https://www.odfjelldrilling.com/rig/hercules/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "COMANCHE",
@@ -1019,7 +1212,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=COMANCHE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DLB 264",
@@ -1035,7 +1230,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB 264",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "GLOBAL 1200",
@@ -1074,7 +1271,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=GLOBAL 1200",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://ulstein.com/references/african-huan-qui-1200",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "HERMOD",
@@ -1101,7 +1306,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HERMOD",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://heerema.com/insights/responsible-recycling-with-heerema",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "Q-4000",
@@ -1112,12 +1325,29 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "Q4000",
+          "source_id": "helix_q4000",
+          "quote_key": "q-4000",
+          "locator": "Vessel heading",
+          "disposition": "Publisher spelling differs from the historical roster; no IMO bridge retrieved. Candidate retained without a registered identity claim."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=Q-4000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://helixesg.com/our-assets/q4000",
+          "date": "2026-10-14",
+          "locator": "Vessel heading",
+          "outcome": "Q4000 candidate present; historical roster identity not independently bridged"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "INTREPID",
@@ -1133,7 +1363,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=INTREPID",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "EXPRESS",
@@ -1149,7 +1381,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=EXPRESS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "JUMBO JAVELIN",
@@ -1181,7 +1415,21 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JUMBO JAVELIN",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.jumbomaritime.nl/wp-content/uploads/2024/01/207-Factsheet_Javelin-2023-print.pdf",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        },
+        {
+          "url": "https://www.jumbomaritime.nl/vessels/jumbo-javelin/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "FAIRPLAYER",
@@ -1208,7 +1456,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=FAIRPLAYER",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. IMO from linked factsheet omitted: not found on re-fetch."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. IMO from linked factsheet omitted: not found on re-fetch.",
+      "searched": [
+        {
+          "url": "https://www.jumbomaritime.nl/vessels/fairplayer/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "MARIDIVE CONSTRUCTOR",
@@ -1224,26 +1480,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=MARIDIVE CONSTRUCTOR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DB 50",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Derrick Barge 50",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db50"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db50",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -1251,7 +1498,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 50",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "DB 16",
@@ -1267,7 +1523,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 16",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DB 101",
@@ -1283,7 +1541,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 101",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DB27",
@@ -1299,26 +1559,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB27",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DB30",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Derrick Barge 30",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db30"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db30",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -1326,7 +1577,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB30",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "KP1",
@@ -1342,7 +1602,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=KP1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "HLS 2000",
@@ -1358,7 +1620,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HLS 2000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEP 250",
@@ -1374,7 +1638,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEP 250",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DLB-750",
@@ -1401,7 +1667,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB-750",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.nmdc-energy.com/en/about-us/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "DLB-1000",
@@ -1428,7 +1702,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB-1000",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.nmdc-energy.com/en/about-us/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "JASCON 8",
@@ -1444,7 +1726,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 8",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "JASCON 30",
@@ -1460,7 +1744,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 30",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "JASCON 25",
@@ -1494,7 +1780,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 25",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://telfordoffshore.com/fleet/telford-25/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "JASCON 34",
@@ -1528,7 +1822,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 34",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://telfordoffshore.com/fleet/telford-34/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "JASCON 2",
@@ -1544,7 +1846,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 2",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "JASCON 31",
@@ -1578,7 +1882,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 31",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://telfordoffshore.com/fleet/telford-31/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "OSFI DB KALLOP",
@@ -1589,20 +1901,21 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [
-        {
-          "value": "D/B THOR",
-          "source_id": "shore",
-          "locator": "Our Fleet / vessel heading",
-          "quote_key": "thor",
-          "disposition": "Historical-to-current identity bridge not established."
-        }
-      ],
+      "candidates": [],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSFI DB KALLOP",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://shoreoffshore.com/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "connection refused; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://shoreoffshore.com/fleet/"
     },
     {
       "vessel_name": "OSFI SWING THOMPSON",
@@ -1618,7 +1931,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSFI SWING THOMPSON",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "MSV REGALIA",
@@ -1634,7 +1949,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=MSV REGALIA",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CASTORO OTTO",
@@ -1650,15 +1967,28 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO OTTO",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SAIPEM 3000",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "SAIPEM 3000",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_3000",
+        "locator": "Flotta e Cantieri / page 2 vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_3000",
+        "locator": "Flotta e Cantieri / page 2 vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -1666,7 +1996,27 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAIPEM 3000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "CASTORO II",
@@ -1682,7 +2032,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO II",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CRAWLER",
@@ -1698,7 +2050,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CRAWLER",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "S 355",
@@ -1714,7 +2068,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=S 355",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "STANISLAV YUDIN",
@@ -1725,12 +2081,35 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "HLV YUDIN",
+          "source_id": "micoperi_yudin",
+          "quote_key": "stanislav_yudin",
+          "locator": "Page 2 / vessel heading",
+          "disposition": "No explicit former-name bridge in the retrieved brochure; not accepted by surname alone."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=STANISLAV YUDIN",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.seaway7.com/wp-content/uploads/2020/08/Seaway_Yudin.pdf",
+          "date": "2026-10-14",
+          "locator": "Operator vessel brochure",
+          "outcome": "HTTP 404; content not retrieved"
+        },
+        {
+          "url": "https://www.micoperi.com/wp-content/uploads/2024/10/BROCHURE-Yudin-1-1.pdf",
+          "date": "2026-10-14",
+          "locator": "Page 2 / vessel heading",
+          "outcome": "Candidate present; explicit former-name bridge not found"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "OLEG STRASHNOV",
@@ -1741,12 +2120,35 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "Seaway Strashnov",
+          "source_id": "seaway_strashnov",
+          "quote_key": "oleg_strashnov",
+          "locator": "Vessel heading",
+          "disposition": "No explicit former-name bridge on the retrieved operator page; not accepted by surname alone."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OLEG STRASHNOV",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.seaway7.com/vessels/seaway-strashnov/",
+          "date": "2026-10-14",
+          "locator": "Vessel heading",
+          "outcome": "Candidate present; explicit former-name bridge not found"
+        },
+        {
+          "url": "https://www.royalihc.com/careers/manufacturing/interview-nico-schiedon",
+          "date": "2026-10-14",
+          "locator": "Builder interview",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "CYCLONE",
@@ -1762,7 +2164,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CYCLONE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "HERCULES II",
@@ -1786,7 +2190,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HERCULES II",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://boskalis.com/about-us/fleet-and-equipment/offshore-vessels/floating-sheerleg-cranes",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "TAKLIFT 1",
@@ -1802,7 +2215,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "TAKLIFT 4",
@@ -1818,7 +2233,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 4",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "TAKLIFT 6",
@@ -1834,7 +2251,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 6",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "TAKLIFT 7",
@@ -1850,7 +2269,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 7",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SUPERIOR PERFORMANCE",
@@ -1861,20 +2282,21 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [
-        {
-          "value": "D/B Performance",
-          "source_id": "shore",
-          "locator": "Our Fleet / vessel heading",
-          "quote_key": "performance",
-          "disposition": "Historical-to-current identity bridge not established."
-        }
-      ],
+      "candidates": [],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SUPERIOR PERFORMANCE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://shoreoffshore.com/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "connection refused; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://shoreoffshore.com/fleet/"
     },
     {
       "vessel_name": "TETRA ARAPAHO",
@@ -1890,7 +2312,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TETRA ARAPAHO",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "HLV UGLEN",
@@ -1906,7 +2330,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HLV UGLEN",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LORELAY",
@@ -1933,7 +2359,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LORELAY",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.allseas.com/en/who-we-are/our-fleet/lorelay",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "TOG MOR",
@@ -1960,7 +2394,15 @@
       "pipelay": [],
       "crane_evidence": "printed ratings; not a complete operational load chart",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TOG MOR",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.allseas.com/en/who-we-are/our-fleet/tog-mor",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "CALAMITY JANE",
@@ -1976,7 +2418,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CALAMITY JANE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ASCOT FORCADOS 1",
@@ -1992,7 +2436,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ASCOT FORCADOS 1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LONE STAR",
@@ -2008,7 +2454,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LONE STAR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEA HORIZON",
@@ -2024,7 +2472,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEA HORIZON",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "HAI YANG SHI YOU 201",
@@ -2040,7 +2490,22 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=HAI YANG SHI YOU 201",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.cnoocengineering.com/english/Solutions/Fleet/DerrickLayingBarge/",
+          "date": "2026-10-14",
+          "locator": "Derrick & Laying Barge / operator fleet",
+          "outcome": "TLS certificate verification failed; content not retrieved"
+        },
+        {
+          "url": "https://www.cnoocengineering.com/english/InvestorRelations/ReportsTwo/annualreport/202405/P020240521547610392006.pdf",
+          "date": "2026-10-14",
+          "locator": "Annual report / deepwater equipment",
+          "outcome": "TLS certificate verification failed; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.cnoocengineering.com/english/Solutions/Fleet/DerrickLayingBarge/; https://www.cnoocengineering.com/english/InvestorRelations/ReportsTwo/annualreport/202405/P020240521547610392006.pdf"
     },
     {
       "vessel_name": "LANJIANG",
@@ -2056,7 +2521,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LANJIANG",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LEWEK CHAMPION",
@@ -2072,7 +2539,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LEWEK CHAMPION",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LEWEK CRUSADER",
@@ -2088,7 +2557,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LEWEK CRUSADER",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "AMC CONNECTOR",
@@ -2104,7 +2575,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AMC CONNECTOR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CHICKASAW",
@@ -2120,7 +2593,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CHICKASAW",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "IROQUOIS",
@@ -2136,7 +2611,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=IROQUOIS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LB32",
@@ -2152,26 +2629,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LB32",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "NO102",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "North Ocean 102",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "no102"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "no102",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2179,7 +2647,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=NO102",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "STEALTH",
@@ -2195,7 +2672,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=STEALTH",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ECLIPSE",
@@ -2211,7 +2690,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ECLIPSE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DLB NORCE ENDEAVOUR",
@@ -2227,7 +2708,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB NORCE ENDEAVOUR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "Castoro Sei",
@@ -2238,20 +2721,60 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "Castoro Sei",
+          "source_id": "saipem_2015",
+          "quote_key": "castoro_sei",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015 and divestment footnote",
+          "disposition": "Historical listing only; current identity and the bridge from this roster spelling are not established."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=Castoro Sei",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "CASTORO 10",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "CASTORO 10",
+        "source_id": "saipem_fleet",
+        "quote_key": "castoro_10",
+        "locator": "Fleet and Yards / vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_fleet",
+        "quote_key": "castoro_10",
+        "locator": "Fleet and Yards / vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2259,7 +2782,27 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO 10",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SEMAC I",
@@ -2270,12 +2813,41 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "Semac 1",
+          "source_id": "saipem_2015",
+          "quote_key": "semac_i",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015 and divestment footnote",
+          "disposition": "Historical listing only; current identity and the bridge from this roster spelling are not established."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEMAC I",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "CASTORO 7",
@@ -2286,20 +2858,60 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [],
+      "candidates": [
+        {
+          "value": "Castoro Sette",
+          "source_id": "saipem_2015",
+          "quote_key": "castoro_7",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015 and divestment footnote",
+          "disposition": "Historical listing only; current identity and the bridge from this roster spelling are not established."
+        }
+      ],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO 7",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ],
+      "candidate_summary": "Candidates are not accepted identities."
     },
     {
       "vessel_name": "CASTORONE",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "CASTORONE",
+        "source_id": "saipem_fleet",
+        "quote_key": "castorone",
+        "locator": "Fleet and Yards / vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_fleet",
+        "quote_key": "castorone",
+        "locator": "Fleet and Yards / vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2307,15 +2919,46 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORONE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SAIPEM FDS 2",
-      "identity_status": "unresolved",
+      "identity_status": "partial",
       "imo": null,
-      "current_name": null,
+      "current_name": {
+        "value": "SAIPEM FDS 2",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_fds_2",
+        "locator": "Flotta e Cantieri / page 2 vessel heading"
+      },
       "owner": null,
-      "operator": null,
+      "operator": {
+        "value": "Saipem",
+        "source_id": "saipem_fleet_second",
+        "quote_key": "saipem_fds_2",
+        "locator": "Flotta e Cantieri / page 2 vessel heading",
+        "qualification": "Publisher fleet association; legal operating entity and availability not established."
+      },
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2323,7 +2966,27 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAIPEM FDS 2",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "Only the published name and fleet association are accepted. Registry identity, registered title holder and current availability are not established.",
+      "searched": [
+        {
+          "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+          "date": "2026-10-14",
+          "locator": "Fleet and Yards / vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+          "date": "2026-10-14",
+          "locator": "Flotta e Cantieri / page 2 vessel listings",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        },
+        {
+          "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+          "date": "2026-10-14",
+          "locator": "Printed page 24 / Offshore fleet at December 31, 2015",
+          "outcome": "Fleet names checked; exact listings and historical candidates are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "JASCON 18",
@@ -2339,7 +3002,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 18",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "JASCON 35",
@@ -2355,7 +3020,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 35",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "NORMAND SEVEN",
@@ -2371,26 +3038,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=NORMAND SEVEN",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEVEN OCEANS",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Oceans",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_oceans"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_oceans",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2398,26 +3056,24 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN OCEANS",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "SEVEN NAVICA",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Navica",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_navica"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_navica",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2425,7 +3081,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN NAVICA",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "KOMMANDOR 3000",
@@ -2441,7 +3106,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=KOMMANDOR 3000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LOCHNAGAR",
@@ -2457,26 +3124,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LOCHNAGAR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEVEN SEAS",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Seas",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_seas"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_seas",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2484,7 +3142,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN SEAS",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "ROCKWATER 1",
@@ -2500,26 +3167,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ROCKWATER 1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEVEN PACIFIC",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Seven Pacific",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_pacific"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "Subsea7",
-        "source_id": "subsea7",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "seven_pacific",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -2527,7 +3185,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN PACIFIC",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.subsea7.com/en/media/datasheets.html",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "robot challenge; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.subsea7.com/en/media/datasheets.html"
     },
     {
       "vessel_name": "SKANDI NEPTUNE",
@@ -2543,7 +3210,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SKANDI NEPTUNE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEISRANGER",
@@ -2559,7 +3228,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEISRANGER",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ACERGY DISCOVERY",
@@ -2575,7 +3246,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY DISCOVERY",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ACERGY POLARIS",
@@ -2591,7 +3264,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY POLARIS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ACERGY EAGLE",
@@ -2607,7 +3282,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY EAGLE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SEVEN MAR",
@@ -2623,7 +3300,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN MAR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SKANDI ACERGY",
@@ -2650,7 +3329,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SKANDI ACERGY",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.dof.com/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SAPURA 3000",
@@ -2667,12 +3354,7 @@
         "locator": "Introduction / New name",
         "quote_key": "name"
       },
-      "owner": {
-        "value": "Safeen Feeder Company",
-        "source_id": "safeen",
-        "locator": "Owned By",
-        "quote_key": "owner"
-      },
+      "owner": null,
       "operator": null,
       "status": null,
       "aka": [
@@ -2688,7 +3370,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SAPURA 3000",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. Crane ratings omitted because introductory and as-built ratings conflict."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. Crane ratings omitted because introductory and as-built ratings conflict. Designer-reported ownership is not a verified register title-holder fact.",
+      "searched": [
+        {
+          "url": "https://ulstein.com/references/safeen-3000",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SKANDI SEVEN",
@@ -2715,7 +3405,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SKANDI SEVEN",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.dof.com/fleet",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "SWIBER CONCORDE",
@@ -2731,7 +3429,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CONCORDE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CAPPY BISSO",
@@ -2747,7 +3447,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CAPPY BISSO",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "LILI BISSO",
@@ -2763,7 +3465,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=LILI BISSO",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BIG CHIEF",
@@ -2779,7 +3483,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BIG CHIEF",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BOAZ",
@@ -2795,7 +3501,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BOAZ",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BISSO 350",
@@ -2811,7 +3519,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BISSO 350",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CROSSMAR 7",
@@ -2827,7 +3537,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 7",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CROSSMAR 14",
@@ -2843,7 +3555,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 14",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CROSSMAR 21",
@@ -2859,7 +3573,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 21",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "MAMMOTH ELEVATOR",
@@ -2875,7 +3591,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=MAMMOTH ELEVATOR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CHEROKEE",
@@ -2891,7 +3609,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CHEROKEE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "TITAN II",
@@ -2907,7 +3627,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TITAN II",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "H-851",
@@ -2934,7 +3656,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=H-851",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown.",
+      "searched": [
+        {
+          "url": "https://www.heerema.com/heerema-marine-contractors/fleet/barges",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "MARIDIVE 300",
@@ -2950,7 +3680,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=MARIDIVE 300",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DB 26",
@@ -2966,7 +3698,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 26",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "INTERMAC 650",
@@ -2982,7 +3716,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=INTERMAC 650",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "OSFI DB RAEFORD",
@@ -2993,20 +3729,21 @@
       "operator": null,
       "status": null,
       "aka": [],
-      "candidates": [
-        {
-          "value": "D/B Raeford",
-          "source_id": "shore",
-          "locator": "Our Fleet / vessel heading",
-          "quote_key": "raeford",
-          "disposition": "Historical-to-current identity bridge not established."
-        }
-      ],
+      "candidates": [],
       "hull_model": "none",
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSFI DB RAEFORD",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://shoreoffshore.com/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "connection refused; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://shoreoffshore.com/fleet/"
     },
     {
       "vessel_name": "SUPERIOR PRIDE",
@@ -3022,7 +3759,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SUPERIOR PRIDE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "TETRA DB-1",
@@ -3038,7 +3777,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=TETRA DB-1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ASCOT ESCRAVOS 1",
@@ -3054,7 +3795,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ASCOT ESCRAVOS 1",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DLB BIG CHIEF",
@@ -3070,7 +3813,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB BIG CHIEF",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DLB MIGHTY CHIEF",
@@ -3086,7 +3831,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB MIGHTY CHIEF",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BRAVE",
@@ -3102,7 +3849,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BRAVE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "RIDER",
@@ -3118,7 +3867,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=RIDER",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "PECOS",
@@ -3134,7 +3885,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=PECOS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CM 11",
@@ -3150,7 +3903,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 11",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CM 9",
@@ -3166,7 +3921,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 9",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CM 15",
@@ -3182,7 +3939,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 15",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BH109",
@@ -3198,7 +3957,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BH109",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BH106",
@@ -3214,7 +3975,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BH106",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "ENTERPRISE 3",
@@ -3230,7 +3993,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=ENTERPRISE 3",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CAESAR",
@@ -3246,7 +4011,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CAESAR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SWIBER CHAI",
@@ -3262,7 +4029,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CHAI",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SWIBER CONQUEST",
@@ -3278,7 +4047,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CONQUEST",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SWIBER GLORIOUS",
@@ -3294,7 +4065,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER GLORIOUS",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SWIBER MAGNIFICENT",
@@ -3310,7 +4083,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER MAGNIFICENT",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "AZIZ",
@@ -3326,7 +4101,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AZIZ",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "MAS 300",
@@ -3342,7 +4119,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=MAS 300",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "PJW 3000",
@@ -3358,7 +4137,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=PJW 3000",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "SWIBER RESOLUTE",
@@ -3374,7 +4155,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER RESOLUTE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "CONSTRUCTOR",
@@ -3390,26 +4173,17 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=CONSTRUCTOR",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "DEEP BLUE",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Deep Blue",
-        "source_id": "technipfmc",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "deep_blue"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "TechnipFMC",
-        "source_id": "technipfmc",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "deep_blue",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -3417,26 +4191,24 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DEEP BLUE",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.technipfmc.com/en/what-we-do/fleet/",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.technipfmc.com/en/what-we-do/fleet/"
     },
     {
       "vessel_name": "DB-30",
-      "identity_status": "partial",
+      "identity_status": "unresolved",
       "imo": null,
-      "current_name": {
-        "value": "Derrick Barge 30",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db30"
-      },
+      "current_name": null,
       "owner": null,
-      "operator": {
-        "value": "McDermott",
-        "source_id": "mcdermott",
-        "locator": "Vessel heading / fleet listing",
-        "quote_key": "db30",
-        "qualification": "Publisher fleet association; legal operating entity and availability not established."
-      },
+      "operator": null,
       "status": null,
       "aka": [],
       "candidates": [],
@@ -3444,7 +4216,16 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB-30",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown."
+      "limitation": "researched, unresolved",
+      "searched": [
+        {
+          "url": "https://www.mcdermott.com/mcdermott-difference/vessels",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "HTTP 403; content not retrieved"
+        }
+      ],
+      "candidate_summary": "no candidate found in https://www.mcdermott.com/mcdermott-difference/vessels"
     },
     {
       "vessel_name": "Nexus",
@@ -3460,7 +4241,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=Nexus",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "Tai'an Kou",
@@ -3476,7 +4259,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=Tai'an Kou",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "IOS PIPELINER",
@@ -3492,7 +4277,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=IOS PIPELINER",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "EMERALD SEA",
@@ -3508,7 +4295,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=EMERALD SEA",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "BOLD ENDURANCE",
@@ -3524,7 +4313,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=BOLD ENDURANCE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "AGILE",
@@ -3540,7 +4331,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=AGILE",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "GLOBAL 1201",
@@ -3575,7 +4368,15 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=GLOBAL 1201",
-      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. Ownership milestone is historical; current owner is not assigned."
+      "limitation": "Only populated fields are source-backed. Fleet listing does not establish active status; absent fields remain unknown. Ownership milestone is historical; current owner is not assigned.",
+      "searched": [
+        {
+          "url": "https://ulstein.com/references/timas-1201",
+          "date": "2026-10-14",
+          "locator": "Previously cited identity or capability locator",
+          "outcome": "Retrieved and checked; accepted facts and candidate limitations are recorded separately"
+        }
+      ]
     },
     {
       "vessel_name": "S230",
@@ -3591,7 +4392,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=S230",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     },
     {
       "vessel_name": "APACHE II",
@@ -3607,7 +4410,9 @@
       "pipelay": [],
       "crane_evidence": "not established",
       "provenance": "construction_vessels.csv / VESSEL_NAME=APACHE II",
-      "limitation": "No current primary-source identity established in this evidence bundle; legacy identity and engineering fields are not verified. Unresolved after bounded primary-source research; candidates are not accepted matches."
+      "limitation": "not researched",
+      "searched": [],
+      "candidate_summary": "no candidate found in sources: none (not researched)"
     }
   ],
   "cranes": [
@@ -3621,7 +4426,8 @@
       "radius_max_m": 48,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity"
+      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity",
+      "value_quote": "10,000 mT between 27 - 48 m radius"
     },
     {
       "vessel_name": "SLEIPNIR",
@@ -3633,7 +4439,8 @@
       "radius_max_m": 62,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity"
+      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity",
+      "value_quote": "7,000 mT at 62 m radius"
     },
     {
       "vessel_name": "SLEIPNIR",
@@ -3645,7 +4452,8 @@
       "radius_max_m": 82,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity"
+      "locator": "Page 5 / Portside and Starboard Heavy Lift Cranes / Main Hoist Capacity",
+      "value_quote": "4,000 mT at 82 m radius"
     },
     {
       "vessel_name": "SLEIPNIR",
@@ -3657,7 +4465,8 @@
       "radius_max_m": 58,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 5 / Auxiliary Hoist Capacity"
+      "locator": "Page 5 / Auxiliary Hoist Capacity",
+      "value_quote": "2,500 mT between 33 - 58 m radius"
     },
     {
       "vessel_name": "SLEIPNIR",
@@ -3669,7 +4478,8 @@
       "radius_max_m": 153,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 5 / Whip Hoist Capacity"
+      "locator": "Page 5 / Whip Hoist Capacity",
+      "value_quote": "200 mT between 37 - 153 m radius"
     },
     {
       "vessel_name": "THIALF",
@@ -3681,7 +4491,8 @@
       "radius_max_m": 31.2,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 7 / Portside and starboard crane / Main hoist"
+      "locator": "Page 7 / Portside and starboard crane / Main hoist",
+      "value_quote": "7,100 t up to 31.2 m"
     },
     {
       "vessel_name": "THIALF",
@@ -3693,7 +4504,8 @@
       "radius_max_m": 79.2,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 7 / Portside and starboard crane / Auxiliary hoist"
+      "locator": "Page 7 / Portside and starboard crane / Auxiliary hoist",
+      "value_quote": "907 t 36.0 - 79.2 m"
     },
     {
       "vessel_name": "THIALF",
@@ -3705,7 +4517,8 @@
       "radius_max_m": 129.5,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 7 / Portside and starboard crane / Whip hoist"
+      "locator": "Page 7 / Portside and starboard crane / Whip hoist",
+      "value_quote": "200 t 41.0 - 129.5 m"
     },
     {
       "vessel_name": "BALDER",
@@ -3717,7 +4530,8 @@
       "radius_max_m": 65,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 9 / Portside crane / Main hoist guyed"
+      "locator": "Page 9 / Portside crane / Main hoist guyed",
+      "value_quote": "2,721 t 23 – 65 m"
     },
     {
       "vessel_name": "BALDER",
@@ -3729,7 +4543,8 @@
       "radius_max_m": 90,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 9 / Portside crane / Main hoist revolving"
+      "locator": "Page 9 / Portside crane / Main hoist revolving",
+      "value_quote": "1,995 t 23 – 90 m"
     },
     {
       "vessel_name": "BALDER",
@@ -3741,7 +4556,8 @@
       "radius_max_m": 52,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 9 / Starboard crane / Main hoist guyed"
+      "locator": "Page 9 / Starboard crane / Main hoist guyed",
+      "value_quote": "3,628 t 24 – 52 m"
     },
     {
       "vessel_name": "BALDER",
@@ -3753,7 +4569,8 @@
       "radius_max_m": 80,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 9 / Starboard crane / Main hoist revolving"
+      "locator": "Page 9 / Starboard crane / Main hoist revolving",
+      "value_quote": "2,993 t 24 – 80 m"
     },
     {
       "vessel_name": "AEGIR",
@@ -3765,7 +4582,8 @@
       "radius_max_m": 33,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 11 / Crane / Main Hoist"
+      "locator": "Page 11 / Crane / Main Hoist",
+      "value_quote": "5,000 mT between 18-33m radius"
     },
     {
       "vessel_name": "AEGIR",
@@ -3777,7 +4595,8 @@
       "radius_max_m": 75,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 11 / Crane / Main Hoist"
+      "locator": "Page 11 / Crane / Main Hoist",
+      "value_quote": "1,500mT at 75m radius"
     },
     {
       "vessel_name": "AEGIR",
@@ -3789,7 +4608,8 @@
       "radius_max_m": 85,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 11 / Crane / Auxiliary Hoist"
+      "locator": "Page 11 / Crane / Auxiliary Hoist",
+      "value_quote": "750mT between 23 – 85m radius"
     },
     {
       "vessel_name": "AEGIR",
@@ -3801,7 +4621,8 @@
       "radius_max_m": 110,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 11 / Crane / Auxiliary Hoist"
+      "locator": "Page 11 / Crane / Auxiliary Hoist",
+      "value_quote": "300mT up to 110m radius"
     },
     {
       "vessel_name": "AEGIR",
@@ -3813,55 +4634,8 @@
       "radius_max_m": 123,
       "evidence_kind": "printed_table",
       "source_id": "hmc",
-      "locator": "Page 11 / Crane / Whip hoist"
-    },
-    {
-      "vessel_name": "SEVEN BOREALIS",
-      "crane": "Dual main hoist",
-      "mode": "revolving",
-      "capacity_t": 4000,
-      "radius_kind": "point",
-      "radius_min_m": 40,
-      "radius_max_m": 40,
-      "evidence_kind": "printed_table",
-      "source_id": "borealis",
-      "locator": "Page 2 / Main Crane / Dual main hoist"
-    },
-    {
-      "vessel_name": "SEVEN BOREALIS",
-      "crane": "Dual main hoist",
-      "mode": "revolving",
-      "capacity_t": 1500,
-      "radius_kind": "point",
-      "radius_min_m": 78,
-      "radius_max_m": 78,
-      "evidence_kind": "printed_table",
-      "source_id": "borealis",
-      "locator": "Page 2 / Main Crane / Dual main hoist"
-    },
-    {
-      "vessel_name": "SEVEN BOREALIS",
-      "crane": "Auxiliary hoist",
-      "mode": "4 falls",
-      "capacity_t": 1200,
-      "radius_kind": "point",
-      "radius_min_m": 70,
-      "radius_max_m": 70,
-      "evidence_kind": "printed_table",
-      "source_id": "borealis",
-      "locator": "Page 2 / Main Crane / Auxiliary hoist"
-    },
-    {
-      "vessel_name": "SEVEN BOREALIS",
-      "crane": "Auxiliary hoist",
-      "mode": "2 falls",
-      "capacity_t": 600,
-      "radius_kind": "point",
-      "radius_min_m": 103,
-      "radius_max_m": 103,
-      "evidence_kind": "printed_table",
-      "source_id": "borealis",
-      "locator": "Page 2 / Main Crane / Auxiliary hoist"
+      "locator": "Page 11 / Crane / Whip hoist",
+      "value_quote": "110 mT between 31 – 123 m radius"
     },
     {
       "vessel_name": "TOG MOR",
@@ -3873,7 +4647,8 @@
       "radius_max_m": 17,
       "evidence_kind": "printed_text",
       "source_id": "togmor",
-      "locator": "Deck cranes/lifting equipment"
+      "locator": "Deck cranes/lifting equipment",
+      "value_quote": "300 t at 17 m"
     },
     {
       "vessel_name": "TOG MOR",
@@ -3885,7 +4660,8 @@
       "radius_max_m": 49,
       "evidence_kind": "printed_text",
       "source_id": "togmor",
-      "locator": "Deck cranes/lifting equipment"
+      "locator": "Deck cranes/lifting equipment",
+      "value_quote": "30 t at 49 m"
     },
     {
       "vessel_name": "TOG MOR",
@@ -3897,7 +4673,8 @@
       "radius_max_m": 8,
       "evidence_kind": "printed_text",
       "source_id": "togmor",
-      "locator": "Deck cranes/lifting equipment"
+      "locator": "Deck cranes/lifting equipment",
+      "value_quote": "79 t at 8 m"
     }
   ]
 }

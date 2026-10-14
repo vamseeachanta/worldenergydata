@@ -1,8 +1,320 @@
 {
   "schema_version": 1,
   "record_count": 161,
-  "crane_rating_count": 24,
-  "source_count": 29,
+  "crane_rating_count": 20,
+  "source_count": 31,
+  "sources": {
+    "asianlift": {
+      "url": "https://www.asianlift.com.sg/about.html",
+      "publisher": "Asian Lift",
+      "retrieved_at": "2026-10-14T07:48:13.521623+00:00",
+      "size_bytes": 12859,
+      "sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+      "refetched_at": "2026-10-14T07:57:03.514761+00:00",
+      "refetch_sha256": "2354cc9cc62c6d68eb6a2b6f73a9f632734f496152f49c62464705b6c3a86253",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "audacia": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/audacia",
+      "publisher": "Allseas",
+      "retrieved_at": "2026-10-14T07:47:01.552444+00:00",
+      "size_bytes": 61779,
+      "sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
+      "refetched_at": "2026-10-14T07:57:06.328973+00:00",
+      "refetch_sha256": "23c2432f33e032f1fc5483b7e17d7beb9816c60c068e340b0c47bc1d01f29587",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "boskalis": {
+      "url": "https://boskalis.com/about-us/fleet-and-equipment/offshore-vessels/floating-sheerleg-cranes",
+      "publisher": "Boskalis",
+      "retrieved_at": "2026-10-14T07:48:02.435355+00:00",
+      "size_bytes": 157120,
+      "sha256": "3b92416bea35536778270fe7b08d0d9ed655cedfa14786df10f48e702b113d7c",
+      "refetched_at": "2026-10-14T07:57:09.610656+00:00",
+      "refetch_sha256": "576e08457a643af217a1c25541646d0ac1d8dd4f6db348e4b495a04ea39d0c29",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "dof": {
+      "url": "https://www.dof.com/fleet",
+      "publisher": "DOF",
+      "retrieved_at": "2026-10-14T07:48:05.826157+00:00",
+      "size_bytes": 168244,
+      "sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+      "refetched_at": "2026-10-14T07:57:12.884480+00:00",
+      "refetch_sha256": "fc55182572bfe03c882176c4d920bc110e04c365cab164f64687d8b0bb04f4fa",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "fairplayer": {
+      "url": "https://www.jumbomaritime.nl/vessels/fairplayer/",
+      "publisher": "Jumbo Maritime",
+      "retrieved_at": "2026-10-14T07:47:25.226486+00:00",
+      "size_bytes": 162772,
+      "sha256": "c75a0bb9484b8dbb4a81ef36a72c004cc7b95e83aca0c41706d92a9805fcd3b9",
+      "refetched_at": "2026-10-14T07:57:15.163577+00:00",
+      "refetch_sha256": "4c7699db775b213b3119865737681bfbb1257025d1ce25f786bee98a9147a4c4",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "global1200": {
+      "url": "https://ulstein.com/references/african-huan-qui-1200",
+      "publisher": "Ulstein",
+      "retrieved_at": "2026-10-14T07:47:41.519737+00:00",
+      "size_bytes": 135061,
+      "sha256": "6d8abd6d51124fa0479feec1283543dd214aa27434325a49f2995dc373659375",
+      "refetched_at": "2026-10-14T07:57:19.611897+00:00",
+      "refetch_sha256": "caf6bad558c43aa55a10eb1af63b310e8dbaeeadd791d6ccee829dd376e54c29",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "happy": {
+      "url": "https://bignewsmagazine.bigliftshipping.com/bignews-43/introduction",
+      "publisher": "BigLift Shipping",
+      "retrieved_at": "2026-10-14T07:47:30.880200+00:00",
+      "size_bytes": 30867,
+      "sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+      "refetched_at": "2026-10-14T07:57:21.932549+00:00",
+      "refetch_sha256": "d30cc1ce1fe1e8ca8e51ee0088c5e05238ff29efd2a68f353b44fde5c3cd23fc",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "heerema_barges": {
+      "url": "https://www.heerema.com/heerema-marine-contractors/fleet/barges",
+      "publisher": "Heerema Marine Contractors",
+      "retrieved_at": "2026-10-14T07:47:55.947048+00:00",
+      "size_bytes": 101824,
+      "sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+      "refetched_at": "2026-10-14T07:57:24.154564+00:00",
+      "refetch_sha256": "63a640dd2d2aec63fa57408e07c71b619910a5141c08da5b3fa15d07905c5e6e",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "heerema_fleet": {
+      "url": "https://www.heerema.com/heerema-marine-contractors/fleet",
+      "publisher": "Heerema Marine Contractors",
+      "retrieved_at": "2026-10-14T07:46:49.640324+00:00",
+      "size_bytes": 101558,
+      "sha256": "9de32d29acf6f5e3b1a0d501ca5ad5e2124dc45399395f21c7caddd1d3e8cb60",
+      "refetched_at": "2026-10-14T07:57:26.404218+00:00",
+      "refetch_sha256": "9de32d29acf6f5e3b1a0d501ca5ad5e2124dc45399395f21c7caddd1d3e8cb60",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "helix_q4000": {
+      "url": "https://helixesg.com/our-assets/q4000",
+      "publisher": "Helix Energy Solutions",
+      "retrieved_at": "2026-10-14T07:48:24.947688+00:00",
+      "size_bytes": 64282,
+      "sha256": "7629c5f6b4333abda34861244338f8c08b4ee78cd3ef3f184651a09fc3318591",
+      "refetched_at": "2026-10-14T07:57:28.594164+00:00",
+      "refetch_sha256": "1c8619e8195a299bced363b5fc4b5943d5dd29868a4b7c0775ab0b7e379c1052",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "hercules_drilling": {
+      "url": "https://www.odfjelldrilling.com/rig/hercules/",
+      "publisher": "Odfjell Drilling",
+      "retrieved_at": "2026-10-14T07:48:10.447887+00:00",
+      "size_bytes": 62570,
+      "sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
+      "refetched_at": "2026-10-14T07:57:32.302767+00:00",
+      "refetch_sha256": "28907ce72a3cef0031712aabe8a1b7c4fe37d19c0449ee5541f8cdee5e9dc064",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "hermod": {
+      "url": "https://heerema.com/insights/responsible-recycling-with-heerema",
+      "publisher": "Heerema Marine Contractors",
+      "retrieved_at": "2026-10-14T07:47:28.656123+00:00",
+      "size_bytes": 93785,
+      "sha256": "7fd7ad90b502073aaec6e510767b265fb4c1a71a13b2acc6491c7909554f56db",
+      "refetched_at": "2026-10-14T07:57:35.390095+00:00",
+      "refetch_sha256": "7fd7ad90b502073aaec6e510767b265fb4c1a71a13b2acc6491c7909554f56db",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "hmc": {
+      "url": "https://www.heerema.com/hubfs/HMC%20Equipment%20Folder_20211108.pdf?hsLang=en",
+      "publisher": "Heerema Marine Contractors",
+      "retrieved_at": "2026-10-14T07:46:51.993939+00:00",
+      "size_bytes": 4598887,
+      "sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
+      "refetched_at": "2026-10-14T07:57:37.597602+00:00",
+      "refetch_sha256": "3c9c67d42bb6c64f980c00e84e2597b826936c3c43d514e356977dccadc56680",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "javelin": {
+      "url": "https://www.jumbomaritime.nl/wp-content/uploads/2024/01/207-Factsheet_Javelin-2023-print.pdf",
+      "publisher": "Jumbo Maritime",
+      "retrieved_at": "2026-10-14T07:47:17.806306+00:00",
+      "size_bytes": 1323576,
+      "sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
+      "refetched_at": "2026-10-14T07:57:40.754435+00:00",
+      "refetch_sha256": "2c9c6103699c48dd6d86308ea62dc147032ab60bb7d34dc0dc76ca147a972a82",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "javelin_fleet": {
+      "url": "https://www.jumbomaritime.nl/vessels/jumbo-javelin/",
+      "publisher": "Jumbo Maritime",
+      "retrieved_at": "2026-10-14T07:47:21.775185+00:00",
+      "size_bytes": 158506,
+      "sha256": "1be6bc149537dff303500ebd6c7bfa7d7ff9b29cd8afde408211560d3d11d894",
+      "refetched_at": "2026-10-14T07:57:44.254868+00:00",
+      "refetch_sha256": "87eef22ba7a99257131fad4a62990ea86af8277ed897b8b916efedf9cebce4d7",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "lorelay": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/lorelay",
+      "publisher": "Allseas",
+      "retrieved_at": "2026-10-14T07:47:04.567063+00:00",
+      "size_bytes": 57391,
+      "sha256": "4fc4e368ad9d3edeb71bf66d71d2b9ac65e86077c0fba16d77a06d894e5caad3",
+      "refetched_at": "2026-10-14T07:57:48.114237+00:00",
+      "refetch_sha256": "4fc4e368ad9d3edeb71bf66d71d2b9ac65e86077c0fba16d77a06d894e5caad3",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "micoperi_yudin": {
+      "url": "https://www.micoperi.com/wp-content/uploads/2024/10/BROCHURE-Yudin-1-1.pdf",
+      "publisher": "Micoperi",
+      "retrieved_at": "2026-10-14T07:54:08.840097+00:00",
+      "size_bytes": 2051124,
+      "sha256": "61afcb510d2d924b6509e29db8f64ef15fbad539047436104faa5b196dbe9dc2",
+      "refetched_at": "2026-10-14T07:57:51.092928+00:00",
+      "refetch_sha256": "61afcb510d2d924b6509e29db8f64ef15fbad539047436104faa5b196dbe9dc2",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "nmdc": {
+      "url": "https://www.nmdc-energy.com/en/about-us/fleet/",
+      "publisher": "NMDC Energy",
+      "retrieved_at": "2026-10-14T07:47:53.036809+00:00",
+      "size_bytes": 50482,
+      "sha256": "311417494f8d798573e8b15230c34e4c981b4d79604a10c067b5568d4f87cc1e",
+      "refetched_at": "2026-10-14T07:57:54.718223+00:00",
+      "refetch_sha256": "311417494f8d798573e8b15230c34e4c981b4d79604a10c067b5568d4f87cc1e",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "pioneering": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/pioneering-spirit",
+      "publisher": "Allseas",
+      "retrieved_at": "2026-10-14T07:46:55.024209+00:00",
+      "size_bytes": 101826,
+      "sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
+      "refetched_at": "2026-10-14T07:57:57.623754+00:00",
+      "refetch_sha256": "113ebc39922f031e01a50eb6be8a830a4c196c936382f51758fd0bb7eef85c50",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "safeen": {
+      "url": "https://ulstein.com/references/safeen-3000",
+      "publisher": "Ulstein",
+      "retrieved_at": "2026-10-14T07:47:33.604780+00:00",
+      "size_bytes": 136145,
+      "sha256": "e41aea55672e7a52ce4f78b4f3f977acafa85c1e6edef6ac6dd29308222d2814",
+      "refetched_at": "2026-10-14T07:58:00.725787+00:00",
+      "refetch_sha256": "0d0e45e07ce31b64d326c316eb47d0da83a5ba3ed6017bd758a95b3a5c9f3191",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "saipem_2015": {
+      "url": "https://www.saipem.com/sites/default/files/2023-09/Annual_Report_2015.pdf",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:48.930467+00:00",
+      "size_bytes": 1666394,
+      "sha256": "758c504135b7b06c36c96eafb7deceebab92dbe5ff02672b7346b0b60fbf8ee6",
+      "refetched_at": "2026-10-14T07:58:02.936705+00:00",
+      "refetch_sha256": "758c504135b7b06c36c96eafb7deceebab92dbe5ff02672b7346b0b60fbf8ee6",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "saipem_7000": {
+      "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards/saipem-7000",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:46.493866+00:00",
+      "size_bytes": 156778,
+      "sha256": "3cc1d219a8b01223d48f60c2ba0fb97e9fc255e6710b5e4a026c6a0398371e80",
+      "refetched_at": "2026-10-14T07:58:37.634090+00:00",
+      "refetch_sha256": "dbf5113015b4c5e57d741dd93ae15d5174edab420dd9586f56325bc0b5b8739a",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "saipem_fleet": {
+      "url": "https://www.saipem.com/en/solutions-energy-transition/fleet-and-yards",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:48:16.303771+00:00",
+      "size_bytes": 186424,
+      "sha256": "e08875826645ab2017ecea041b18a89522d54edbc78fbb7735f4f81d920f9cf7",
+      "refetched_at": "2026-10-14T07:58:40.126749+00:00",
+      "refetch_sha256": "f1dfacd3bdf5b3853c641cce94a94307ad03f79c1fc8e00bdb5a6abf6c16d94f",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "saipem_fleet_second": {
+      "url": "https://www.saipem.com/it/soluzioni-transizione-energetica/flotta-e-cantieri?page=1",
+      "publisher": "Saipem",
+      "retrieved_at": "2026-10-14T07:49:43.981650+00:00",
+      "size_bytes": 181412,
+      "sha256": "e1633d2de49c57c40150aec1b5a61696c5c86e2d83a7bb8b3aaa99eed4e223ce",
+      "refetched_at": "2026-10-14T07:58:42.632536+00:00",
+      "refetch_sha256": "f3b1be8fbc7ef088cbd9c5a452e1736d3b58190656d4a024bde85d93bb08266a",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "seaway_strashnov": {
+      "url": "https://www.seaway7.com/vessels/seaway-strashnov/",
+      "publisher": "Seaway7",
+      "retrieved_at": "2026-10-14T07:48:18.722241+00:00",
+      "size_bytes": 54100,
+      "sha256": "cc1292f531e9fbf4dc6b073c33f8c79c4bd040b0a4112fd11135935e4ec57d84",
+      "refetched_at": "2026-10-14T07:58:45.050318+00:00",
+      "refetch_sha256": "cc1292f531e9fbf4dc6b073c33f8c79c4bd040b0a4112fd11135935e4ec57d84",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "solitaire": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/solitaire",
+      "publisher": "Allseas",
+      "retrieved_at": "2026-10-14T07:46:58.544874+00:00",
+      "size_bytes": 68308,
+      "sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
+      "refetched_at": "2026-10-14T07:58:48.660475+00:00",
+      "refetch_sha256": "507c4ee3ffc5d6ae83d4621e19359b7c234bcbaaa7893592e0f0327db4865ce8",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "telford": {
+      "url": "https://telfordoffshore.com/fleet/telford-31/",
+      "publisher": "Telford Offshore",
+      "retrieved_at": "2026-10-14T07:47:45.345685+00:00",
+      "size_bytes": 35094,
+      "sha256": "35165e12e707454b75e877a8aed950077450f49eb15a1495e49c7bb333f8f4a5",
+      "refetched_at": "2026-10-14T07:58:53.942485+00:00",
+      "refetch_sha256": "ffa09b1dbb0b3267d164217332fee265a6a99903ee7da7b93855b5171890941d",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "telford25": {
+      "url": "https://telfordoffshore.com/fleet/telford-25/",
+      "publisher": "Telford Offshore",
+      "retrieved_at": "2026-10-14T07:47:47.910485+00:00",
+      "size_bytes": 36086,
+      "sha256": "61d06aed7ad59c57949c64096681f2fde60345cdcb5d730a148cde91db530584",
+      "refetched_at": "2026-10-14T07:58:56.463839+00:00",
+      "refetch_sha256": "67d0c128aed7b9df6431147ee2fe9ac8b2653c83efa044a1cac7ee43d3ae0bb8",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "telford34": {
+      "url": "https://telfordoffshore.com/fleet/telford-34/",
+      "publisher": "Telford Offshore",
+      "retrieved_at": "2026-10-14T07:47:50.547411+00:00",
+      "size_bytes": 36214,
+      "sha256": "dfc5594a4e51f8b8b3d8fe679c6ef0bbda477eaa56d4efc5a0d7362cce2b4de3",
+      "refetched_at": "2026-10-14T07:58:58.958467+00:00",
+      "refetch_sha256": "7d356ceac1d9ad864c661bceb4e671cebcabd4687113e16202783a0623b0f888",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "timas": {
+      "url": "https://ulstein.com/references/timas-1201",
+      "publisher": "Ulstein",
+      "retrieved_at": "2026-10-14T07:47:37.605701+00:00",
+      "size_bytes": 133997,
+      "sha256": "feb5ff9d52c6ab5a847277a23a315069cb3e0eb3f9e9ee001d679fc3d57c29fc",
+      "refetched_at": "2026-10-14T07:59:01.464131+00:00",
+      "refetch_sha256": "7bdb7a95959e1e959097de0a5e89d8d98a18289852e029255f55046408c40334",
+      "raw_disposition": "not redistributed; permission not established"
+    },
+    "togmor": {
+      "url": "https://www.allseas.com/en/who-we-are/our-fleet/tog-mor",
+      "publisher": "Allseas",
+      "retrieved_at": "2026-10-14T07:47:08.216153+00:00",
+      "size_bytes": 49607,
+      "sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
+      "refetched_at": "2026-10-14T07:59:03.693295+00:00",
+      "refetch_sha256": "8a3e55de25b74e85e63b65d2ac5c7a668bb40cd30bc1d8fa2ce0aa482cedab27",
+      "raw_disposition": "not redistributed; permission not established"
+    }
+  },
   "units": {
     "capacity_t": "metric tonnes",
     "radius_min_m": "metres",
@@ -11,12 +323,12 @@
   },
   "files": {
     "construction_evidence.json": {
-      "sha256": "c37d64a6a56203526669f9079fabc156413bf80d10ebbd9592dcc68eeb5c46db",
-      "size_bytes": 150377
+      "sha256": "53f06de766d3aa41a3a9f49cf181241e4c7a0680df06eee97f24d8b401468678",
+      "size_bytes": 164928
     },
     "construction_crane_ratings.csv": {
-      "sha256": "e812880d3d50b84d8b15eb799dfbcb4c8ab3fe23188f403e37eae6ba9eca01bd",
-      "size_bytes": 5906
+      "sha256": "60f8ce1f1f5c6405080ad448bbe4948ff9e7cb3b5af04a399681fe7492f63d42",
+      "size_bytes": 5310
     }
   }
 }
