@@ -26,3 +26,7 @@
 *.o binary
 *.a binary
 
+# Preserve the raw-byte digests used by the directional-survey record.
+data/modules/bsee/directional_survey_validation/** -text
+packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf

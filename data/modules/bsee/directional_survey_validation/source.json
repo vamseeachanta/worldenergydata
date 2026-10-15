@@ -1,0 +1,38 @@
+{
+  "source_id": "bsee-data-center",
+  "dataset_id": "dsptsdelimit",
+  "maintaining_repo": "worldenergydata",
+  "api12": "177114156300",
+  "url": "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP",
+  "retrieved_at": "2026-10-14T17:18:42Z",
+  "http_status": 200,
+  "archive_sha256": "7ba4990d8517b750c49735741a924c45e031d26f0a8f740fe4777a842df4de47",
+  "archive_member": "dsptsdelimit.txt",
+  "record_count": 109,
+  "data_sha256": "fca147bb9eab935d36825f987964f23e6d5aa51bbbcf506fa3ddb1d8496a7790",
+  "transformation": "API-selected original rows; CRLF converted to LF; numeric fields unchanged",
+  "extraction_command": "python scripts/bsee/extract_directional_survey_validation.py --archive \"$SURVEY_ARCHIVE\" --output \"$RETAINED_ROWS\"",
+  "digest_policy": "Raw bytes; Git attributes preserve retained inputs with -text and both pinned method files with text eol=lf",
+  "layout_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=dirSurvPoints",
+  "layout_retrieved_at": "2026-10-14T17:21:02Z",
+  "method_url": "https://www.data.bsee.gov/Main/DirectionalSurvey.aspx",
+  "method_retrieved_at": "2026-10-14T17:20:41Z",
+  "selection": "First held catalog row with a complete, unique-depth public survey; the issue input API is absent from the held catalog; no numerical error was used for selection",
+  "held_catalog": "data/modules/bsee/current/wells/well_data.csv",
+  "held_catalog_base": "84e702f566fa26ccd00345dc9c9c4c46fa433199",
+  "held_catalog_sha256": "a83e923852e0b38caab59d3369446858f743eb1f337cdd91ddbda6894c6f78d3",
+  "held_catalog_vintage": "not recorded",
+  "well_dates": {
+    "TOTAL_DEPTH_DATE": "8/18/1988",
+    "WELL_SPUD_DATE": "5/31/1988"
+  },
+  "rights_basis": "Public federal data; source catalog identifies government public-domain collection",
+  "readiness": "partial; regression comparison only",
+  "source_version": "sha256:7ba4990d8517b750c49735741a924c45e031d26f0a8f740fe4777a842df4de47",
+  "units": {
+    "depth": "feet assumed from repository convention; not stated in opened layout",
+    "inclination_and_direction_degrees": "degree",
+    "inclination_and_direction_minutes": "arcminute",
+    "geographic_positions": "degree"
+  }
+}
