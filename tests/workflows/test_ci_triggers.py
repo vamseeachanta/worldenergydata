@@ -310,4 +310,4 @@ else:
             assert "parents" in result.stdout
 
 
-# Exercise merge selection after a base change.
+# Exercise merge selection again after a base change.
