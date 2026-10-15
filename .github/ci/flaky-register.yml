@@ -1,0 +1,13 @@
+---
+- id: tests/unit/ci/test_performance_tracker_concurrency.py::test_two_process_trackers_preserve_every_record
+  kind: retry-pass
+  first_seen: '2026-10-15'
+  last_seen: '2026-10-15'
+  evidence:
+    - https://github.com/vamseeachanta/worldenergydata/actions/runs/38726236486/job/116392677940
+  cause: >-
+    Concurrent database initialization raised database is locked while switching
+    the journal mode to WAL. This is a retry-pass candidate; a successful retry
+    has not been established.
+  fix_issue: pending
+  status: open
