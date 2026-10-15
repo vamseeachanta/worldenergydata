@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import pytest
 import yaml
 
 CI_WORKFLOW = Path(__file__).resolve().parents[2] / ".github/workflows/ci.yml"
@@ -136,3 +137,56 @@ def test_jobs_and_steps_do_not_filter_edit_events() -> None:
         for condition in conditions:
             for event_field in ("github.event.action", "github.event.changes"):
                 assert event_field not in str(condition), (job_id, condition)
+
+
+def _checkout_steps() -> list:
+    """Enumerate every checkout, including the optional full test matrix."""
+    return [
+        (job_id, index)
+        for job_id, job in _load_workflow()["jobs"].items()
+        for index, step in enumerate(job.get("steps", []))
+        if step.get("uses", "").startswith("actions/checkout@")
+    ]
+
+
+@pytest.mark.parametrize("job_id,index", _checkout_steps())
+def test_checkout_resolves_and_guards_event_base(job_id: str, index: int) -> None:
+    """Every checkout tests a merge verified against the event's base commit."""
+    steps = _load_workflow()["jobs"][job_id]["steps"]
+    assert index > 0, job_id
+    resolve, checkout, guard = steps[index - 1 : index + 2]
+    condition = "github.event_name == 'pull_request'"
+    assert resolve["if"] == guard["if"] == condition
+    assert resolve["id"] == "resolve_merge"
+    assert checkout["with"]["ref"] == (
+        "${{ steps.resolve_merge.outputs.sha || github.sha }}"
+    )
+    assert resolve["env"] == {
+        "GH_TOKEN": "${{ github.token }}",
+        "REPOSITORY": "${{ github.repository }}",
+        "PR_NUMBER": "${{ github.event.pull_request.number }}",
+        "BASE_SHA": "${{ github.event.pull_request.base.sha }}",
+    }
+    script = resolve["run"]
+    for required in (
+        'gh api "repos/$REPOSITORY/pulls/$PR_NUMBER"',
+        "--jq '.merge_commit_sha // empty'",
+        'gh api "repos/$REPOSITORY/commits/$sha"',
+        "--jq '.parents[0].sha // empty'",
+        '"$first_parent" = "$BASE_SHA"',
+        'echo "sha=$sha" >> "$GITHUB_OUTPUT"',
+        "seq 1 10",
+        "sleep 6",
+        "exit 1",
+    ):
+        assert required in script, (job_id, required)
+    assert guard["env"] == {"BASE_SHA": "${{ github.event.pull_request.base.sha }}"}
+    for required in (
+        "git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1",
+        '"$first_parent" != "$BASE_SHA"',
+        "git rev-parse HEAD",
+        "git rev-parse 'HEAD^{tree}'",
+        "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree",
+        "exit 1",
+    ):
+        assert required in guard["run"], (job_id, required)
