@@ -308,3 +308,6 @@ else:
             assert "current-base" in result.stdout
             assert "event-head" in result.stdout
             assert "parents" in result.stdout
+
+
+# Exercise merge selection after a base change.
