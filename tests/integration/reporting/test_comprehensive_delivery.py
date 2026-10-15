@@ -1,6 +1,8 @@
 """Publication contracts for the comprehensive report."""
 
+import re
 from copy import deepcopy
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -322,7 +324,17 @@ def test_disputed_interests_are_excluded_and_concentration_recomputed(
         s for s in report.executive_summary if s.startswith("Operator concentration:")
     )
     assert f"{top['share_capex_pct']:.1f}%" in bullet
-    assert f"{int(top['field_count'])} fields" in bullet
+    assert top["field_count"] == 2
+    assert "across two fields" in bullet
+    basis = (
+        "Among fields with uncontested configuration working interests "
+        "(publicly sourced for Julia only), "
+    )
+    share = (
+        f"{top['company']} has the largest working-interest-weighted scenario "
+        f"capex share, {top['share_capex_pct']:.1f}% across two fields."
+    )
+    assert basis + share in bullet
     assert frame["hhi_contribution"].equals(frame["share_capex_pct"] ** 2)
     # The full-portfolio capital total is independent of the filtered WI denominator.
     total = sum(e.capex_mm_usd for e in report.economics_run.results)
@@ -332,6 +344,7 @@ def test_disputed_interests_are_excluded_and_concentration_recomputed(
         if b.startswith("Portfolio totals:")
     )
     text = render(report, tmp_path / "concentration").read_text()
+    assert text.count(basis + share) == 2
     assert (
         "Cascade/Chinook and Jack/St. Malo excluded: working interests contradicted or unverified"
         in text
@@ -371,3 +384,32 @@ def test_no_eligible_interests_withholds_summary_share(report, monkeypatch):
     )
     assert "Not established" in bullet
     assert "largest" not in bullet
+
+
+@pytest.mark.parametrize("render", [builder.render_markdown, builder.render_html])
+def test_operator_citations_postdate_configured_operator_event(
+    report, tmp_path, render
+):
+    payload = report.field_payloads["cascade_chinook"]
+    event = next(
+        source for source in payload["sources"]["operator"] if source["id"] == "P3"
+    )
+    event_date = date.fromisoformat(
+        re.findall(r"\d{4}-\d{2}-\d{2}", event["title"])[-1]
+    )
+    econ = next(
+        e for e in report.economics_run.results if e.field_id == "cascade_chinook"
+    )
+    citations = builder._report_citations(report, econ)
+    rows = citations[citations["input"] == "Operator"]
+    assert not rows.empty
+    for row in rows.to_dict("records"):
+        if row["retrieved"] == "not retrieved in this revision":
+            continue
+        dates = re.findall(r"\d{4}-\d{2}-\d{2}", row["title"])
+        assert dates, "Retrieved operator evidence needs a publication date"
+        assert date.fromisoformat(dates[-1]) >= event_date
+    text = render(report, tmp_path / "operator-citations").read_text()
+    for row in rows.to_dict("records"):
+        assert row["title"] in text
+        assert row["retrieved"] in text

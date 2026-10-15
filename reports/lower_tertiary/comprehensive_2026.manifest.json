@@ -1,11 +1,11 @@
 {
-  "base_commit": "5c4a51a257455b26afc7a57f3b30d37c96e5a855",
+  "base_commit": "4d05d614cdac8e3e328b3dc0d495705600adb027",
   "generator_command": "uv run --no-sync python scripts/reporting/assemble_lt_comprehensive.py --output-dir reports/lower_tertiary",
   "inputs": [
     {
       "path": "config/analysis/lower_tertiary/comprehensive_revision.yml",
-      "sha256": "1ee88c3ab27685b6ef2ff4b8a33f0b595fdeb6c72207f4945298a33c849241da",
-      "size_bytes": 515
+      "sha256": "39d98264b26ddc5de9f21137b74d92bae67ec03155099d940ec617d59457f75a",
+      "size_bytes": 822
     },
     {
       "path": "config/analysis/lower_tertiary/fields/anchor.yml",
@@ -19,8 +19,8 @@
     },
     {
       "path": "config/analysis/lower_tertiary/fields/cascade_chinook.yml",
-      "sha256": "3af56c586da313a07abba006907f2c048c7493f72b4e36cd527a10d0101e1ed5",
-      "size_bytes": 6957
+      "sha256": "8320764f9b3e56a770ae244ebde60b3eac2ce6786e60b0863dc033db3e79cc63",
+      "size_bytes": 6567
     },
     {
       "path": "config/analysis/lower_tertiary/fields/jack_st_malo.yml",
@@ -59,8 +59,8 @@
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py",
-      "sha256": "4a0812f0da0d16cff242e69260175866d43efffae27ae2eebf92c9fae7af9792",
-      "size_bytes": 37984
+      "sha256": "c4858e371ed50c6d538e27a5c9e3e9b8fa49cca5fe890ab313275e1e832e9015",
+      "size_bytes": 38485
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio.py",
@@ -123,18 +123,18 @@
   "outputs": [
     {
       "path": "reports/lower_tertiary/comprehensive_2026.html",
-      "sha256": "2c5ceec1820a0793208fc6391f7fe293e93f31561b2d33c3c7e9735ae003b9cc",
-      "size_bytes": 165017
+      "sha256": "3c0d82af425e7e0263e9674aca9d7295b77bd6c9cc8df84c945886a69b525e3c",
+      "size_bytes": 165008
     },
     {
       "path": "reports/lower_tertiary/comprehensive_2026.md",
-      "sha256": "3020fa9063e19f02dc6c6584f2797eeafc0598cdc3f67ce2b945c771cc904176",
-      "size_bytes": 113504
+      "sha256": "0f955f16a03748742300cf567ea536b585352116d2ad9dde6d17eeb4dd60674e",
+      "size_bytes": 113612
     }
   ],
   "pdf_metadata": "Not rendered; no PDF artifact is claimed.",
-  "report_date": "2026-10-14",
-  "revision": "B",
+  "report_date": "2026-10-15",
+  "revision": "C",
   "schema_version": 1,
   "source_state": "Input digests identify the executed source bytes, including uncommitted changes."
 }

@@ -344,15 +344,32 @@ def _report_operator_frame(result: ComprehensiveReportResult) -> pd.DataFrame:
     })
 
 
+def _operator_share_statement(operator_frame: pd.DataFrame) -> str:
+    if operator_frame.empty:
+        return "Not established; no eligible working interests."
+    top = operator_frame.iloc[0]
+    count = int(top["field_count"])
+    words = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten")
+    count_text = words[count] if 0 <= count < len(words) else str(count)
+    return (
+        "Among fields with uncontested configuration working interests "
+        "(publicly sourced for Julia only), "
+        f"{top['company']} has the largest working-interest-weighted scenario "
+        f"capex share, {float(top['share_capex_pct']):.1f}% across "
+        f"{count_text} {'field' if count == 1 else 'fields'}."
+    )
+
+
 def _operator_exclusion_note(result: ComprehensiveReportResult) -> str:
     names = [
         str(payload.get("display_name") or fid)
         for fid, payload in result.field_payloads.items()
         if payload.get("working_interest_status") in ("contradicted", "unverified")
     ]
+    share = _operator_share_statement(_report_operator_frame(result))
     if not names:
-        return "Operator concentration, using configuration working-interest shares."
-    return " and ".join(names) + " excluded: working interests contradicted or unverified. Shares and concentration index use only the remaining fields."
+        return "Operator concentration, using configuration working-interest shares. " + share
+    return " and ".join(names) + " excluded: working interests contradicted or unverified. Shares and concentration index use only the remaining fields. " + share
 
 
 def _compute_executive_summary(
@@ -395,17 +412,8 @@ def _compute_executive_summary(
             "with documented decline-curve cashflow)"
         )
 
-    # Top operator among eligible fields.
-    if operator_frame.empty:
-        bullets.append("Operator concentration: Not established; no eligible working interests.")
-    else:
-        top_op = operator_frame.iloc[0]
-        bullets.append(
-            f"Operator concentration: **{top_op['company']}** holds the largest "
-            f"working-interest-weighted capex share at "
-            f"{float(top_op['share_capex_pct']):.1f}% across "
-            f"{int(top_op['field_count'])} fields"
-        )
+    # Top operator among eligible fields, qualified by its input basis.
+    bullets.append("Operator concentration: " + _operator_share_statement(operator_frame))
 
     # Dominant tech generation.
     tech = analytics_run.technology.sort_values(

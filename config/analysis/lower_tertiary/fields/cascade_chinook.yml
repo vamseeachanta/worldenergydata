@@ -64,14 +64,6 @@ field:
         http_status: 200
         retrieval_status: "retrieved"
     operator:
-      - id: P2
-        title: "First oil on BW Pioneer (BW Offshore), 2012-03-02"
-        url: "https://bwoffshore.com/pressreleases/first-oil-on-bw-pioneer"
-        retrieved: "2026-10-14"
-        sha256: "04de52ed4035b3080dfa028341568dfba796c91951a14910866fa34590a9f8f6"
-        attempted: "2026-10-14T17:54:41.240023+00:00"
-        http_status: 200
-        retrieval_status: "retrieved"
       - id: P3
         title: >-
           Murphy Oil Closes Gulf of Mexico Joint Venture, Provides Updated Guidance and Announces New
