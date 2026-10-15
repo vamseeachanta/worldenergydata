@@ -113,3 +113,26 @@ def test_concurrency_event_behavior() -> None:
         assert cancel is False
         groups.append(group)
     assert len(set(groups)) == len(runs)
+
+
+def test_pull_request_activity_types() -> None:
+    """Retargeting starts fresh gates while preserving the default events."""
+    workflow = _load_workflow()
+    events = workflow["on"] if "on" in workflow else workflow[True]
+    pull_request = events["pull_request"] or {}
+    assert pull_request.get("types") == [
+        "opened",
+        "synchronize",
+        "reopened",
+        "edited",
+    ]
+
+
+def test_jobs_and_steps_do_not_filter_edit_events() -> None:
+    """Every edit runs the gates so skipped checks cannot mask failures."""
+    for job_id, job in _load_workflow()["jobs"].items():
+        conditions = [job.get("if", "")]
+        conditions.extend(step.get("if", "") for step in job.get("steps", []))
+        for condition in conditions:
+            for event_field in ("github.event.action", "github.event.changes"):
+                assert event_field not in str(condition), (job_id, condition)
