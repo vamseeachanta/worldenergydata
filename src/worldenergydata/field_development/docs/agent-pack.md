@@ -4,10 +4,11 @@
 | --- | --- |
 | Module | `field_development` |
 | Repository | `worldenergydata` |
-| Path | `src/worldenergydata/field_development` |
-| Pack revision | 0, 2026-10-15 |
+| Path | `src/worldenergydata/field_development` (package scope) |
+| Pack | `src/worldenergydata/field_development/docs/agent-pack.md` |
+| Pack revision | 1, 2026-10-15 |
 | Code revision | `55991b0def0f90708b3e0c396c0f57d9d1b7f7fb` |
-| Analysis family | Data pipeline; AQG r0 Python calculations gate set |
+| Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10 Python calculations gate set |
 | Quality manager role | Calculations quality manager, interim data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
 
@@ -84,17 +85,17 @@ Offline record date: 2026-10-15; code pin as in header; BASE results below, repe
 
 | ID | Source and inputs | Independent expectation, tolerance and basis | Existing test node ID | Offline result |
 | --- | --- | --- | --- | --- |
-| V1 | Synthetic in-test concept: one manifold, 12 km tieback, 50 px/km | Linear distance scaling: 12 × 50 = 600 px; absolute error 0 px, exact equality of the axis-aligned geometry; validates drawing scale only | `tests/modules/field_development/test_layout.py::test_host_to_manifold_pixel_distance_equals_tieback_times_scale` | PASS at BASE and AFTER [tests/modules/field_development/test_layout.py:L21-L38] |
+| V1 | Synthetic in-test concept: one manifold, 12 km tieback, 50 px/km | Linear distance scaling: 12 × 50 = 600 px; absolute error 0 px, exact equality of the axis-aligned geometry; validates drawing scale only | `tests/modules/field_development/test_layout.py::test_host_to_manifold_pixel_distance_equals_tieback_times_scale` | PASS at BASE and AFTER [tests/modules/field_development/test_layout.py:L26-L37] |
 
 ### Regression examples
 
 | ID | Fixture and expected behavior | Tolerance and basis | Existing test node ID | Offline result |
 | --- | --- | --- | --- | --- |
-| R1 | Synthetic near-host concept ranks `subsea_tieback` first | 0 categorical mismatches; heuristic expectation, not independent engineering truth | `tests/modules/field_development/test_recommendation.py::test_marginal_near_host_field_recommends_tieback` | PASS at BASE and AFTER [tests/modules/field_development/test_recommendation.py:L53-L65] |
-| R2 | Concept without depth returns LOW hydrate severity and a nonempty note | 0 missing notes; policy regression, not a safety clearance | `tests/modules/field_development/test_flow_assurance.py::test_hydrate_unknown_depth_is_low_and_noted` | PASS at BASE and AFTER [tests/modules/field_development/test_flow_assurance.py:L79-L82] |
-| R3 | Graph XML round-trip preserves nodes and edges | 0 differing node attributes or edge tuples; self-round-trip regression | `tests/modules/field_development/test_dexpi.py::test_roundtrip_preserves_nodes_and_edges` | PASS at BASE and AFTER [tests/modules/field_development/test_dexpi.py:L75-L92] |
+| R1 | Synthetic near-host concept ranks `subsea_tieback` first | 0 categorical mismatches; heuristic expectation, not independent engineering truth | `tests/modules/field_development/test_recommendation.py::test_marginal_near_host_field_recommends_tieback` | PASS at BASE and AFTER [tests/modules/field_development/test_recommendation.py:L49-L60] |
+| R2 | Concept without depth returns LOW hydrate severity and a nonempty note | 0 missing notes; policy regression, not a safety clearance | `tests/modules/field_development/test_flow_assurance.py::test_hydrate_unknown_depth_is_low_and_noted` | PASS at BASE and AFTER [tests/modules/field_development/test_flow_assurance.py:L75-L78] |
+| R3 | Graph XML round-trip preserves nodes and edges | 0 differing node attributes or edge tuples; self-round-trip regression | `tests/modules/field_development/test_dexpi.py::test_roundtrip_preserves_nodes_and_edges` | PASS at BASE and AFTER [tests/modules/field_development/test_dexpi.py:L75-L89] |
 
-The geometry case establishes scale arithmetic only; the hazard tests explicitly check heuristic direction rather than precise physical predictions. [tests/modules/field_development/test_layout.py:L21-L38] [tests/modules/field_development/test_flow_assurance.py:L4-L9]
+The geometry case establishes scale arithmetic only; the hazard tests explicitly check heuristic direction rather than precise physical predictions. [tests/modules/field_development/test_layout.py:L26-L37] [tests/modules/field_development/test_flow_assurance.py:L5-L9]
 
 ## 5. QA gates
 
@@ -103,39 +104,39 @@ Gate selection: AQG r0, section 10, Python calculations; section 9, evidence app
 | Gate | Applicability | Module-specific route |
 | --- | --- | --- |
 | G0 | Applicable: inputs, units, citations | `FieldConcept`, `sanity_check`, JSON schema and provenance review [src/worldenergydata/field_development/models.py:L131-L184] [src/worldenergydata/field_development/loader.py:L32-L44] |
-| G1 | Applicable: imports and offline tests | Python/pytest; XML parsed by ElementTree and SVG checked by renderer tests; no external-program load claim [tests/modules/field_development/test_dexpi.py:L35-L42] [tests/modules/field_development/test_layout.py:L69-L75] |
-| G2 | Applicable: independent hand or published check | V1 closed-form scale check; engineering-screen validation remains U2 [tests/modules/field_development/test_layout.py:L21-L38] |
+| G1 | Applicable: imports and offline tests | Python/pytest; XML parsed by ElementTree and SVG checked by renderer tests; no external-program load claim [tests/modules/field_development/test_dexpi.py:L34-L41] [tests/modules/field_development/test_layout.py:L70-L76] |
+| G2 | Applicable: independent hand or published check | V1 closed-form scale check; engineering-screen validation remains U2 [tests/modules/field_development/test_layout.py:L26-L37] |
 | G3 | NOT_APPLICABLE | AQG r0 section 10 excludes short dynamics for Python calculations. |
 | G4 | NOT_APPLICABLE | AQG r0 section 10 excludes diffraction QA for Python calculations. |
 | G5 | Applicable: traceable evidence appendix | Record tests, pin, input hashes and outstanding items; the report builder itself ends with source prose and embeds diagrams, without an AQG signature record [src/worldenergydata/field_development/fdp_report.py:L199-L245] |
 
 | Check ID | Operation and executable evidence | Numeric pass criterion and unit | Gate |
 | --- | --- | --- | --- |
-| FD-G0-1 | `test_field_concept.py::test_negative_water_depth_rejected`: construct `FieldConcept` with negative depth | 1 `ValidationError` raised, count | G0 | [tests/modules/field_development/test_field_concept.py:L64-L66] |
-| FD-G0-2 | `test_field_concept.py::test_committed_json_schema_matches_model`: compare committed JSON schema with `build_schema()` | 0 differing schema values, count | G0 | [tests/modules/field_development/test_field_concept.py:L190-L197] |
-| FD-G1-1 | Run both module test directories and the discovered consumer/contract tests | 0 failed tests and 0 collection errors, count; retain all skip reasons | G1 | [tests/modules/field_development/test_field_concept.py:L32-L38] |
-| FD-G1-2 | R3: `dexpi_to_graph(graph_to_dexpi(graph))` compared with the original graph | 0 differing node attributes and 0 differing edge tuples, count | G1 | [tests/modules/field_development/test_dexpi.py:L75-L92] |
-| FD-G2-1 | V1: `compute_pixel_positions`, measure host-to-manifold Euclidean distance against distance × scale | 600 px expected, absolute error 0 px | G2 | [tests/modules/field_development/test_layout.py:L21-L38] |
-| FD-G5-1 | `test_fdp_report.py::test_embeds_both_visualizations`: inspect `build_fdp_html` output | At least 2 inline SVG elements, count; this checks composition, not signed clearance | G5 | [tests/modules/field_development/test_fdp_report.py:L49-L54] |
-| FD-G5-2 | Resolve every pack citation at the pin, associate V1/R1–R3 with run records, and hash the pack and evidence inputs | 0 unresolved citations and 0 unmatched example nodes, count; 1 SHA-256 per evidence input, digest count | G5 | Proposed evidence-assembly criterion defined by this pack. |
+| FD-G0-1 | `test_field_concept.py::test_negative_water_depth_rejected`: construct `FieldConcept` with negative depth | 1 `ValidationError` raised, count [tests/modules/field_development/test_field_concept.py:L70-L72] | G0 |
+| FD-G0-2 | `test_field_concept.py::test_committed_json_schema_matches_model`: compare committed JSON schema with `build_schema()` | 0 differing schema values, count [tests/modules/field_development/test_field_concept.py:L190-L197] | G0 |
+| FD-G1-1 | Run both module test directories and the discovered consumer/contract tests | 0 failed tests and 0 collection errors, count; retain all skip reasons [tests/modules/field_development/test_field_concept.py:L172-L174] | G1 |
+| FD-G1-2 | R3: `dexpi_to_graph(graph_to_dexpi(graph))` compared with the original graph | 0 differing node attributes and 0 differing edge tuples, count [tests/modules/field_development/test_dexpi.py:L75-L89] | G1 |
+| FD-G2-1 | V1: `compute_pixel_positions`, measure host-to-manifold Euclidean distance against distance × scale | 600 px expected, absolute error 0 px [tests/modules/field_development/test_layout.py:L26-L37] | G2 |
+| FD-G2-2 | Diagnostic: construct `FieldConcept(name="synthetic", water_depth_m=1500.0, num_wells=6, discount_rate=0.0)` and read `estimate_economics(concept).discount_rate`; retained script `evidence/probe-zero.py` | Returned rate = 0.0, fraction; observed 0.1 at BASE and AFTER: FAIL, known defect, issue pending (3) [src/worldenergydata/field_development/models.py:L162-L168] [src/worldenergydata/field_development/integrations.py:L135-L143] | G2 |
+| FD-G5-1 | `test_fdp_report.py::test_embeds_both_visualizations`: inspect `build_fdp_html` output | At least 2 inline SVG elements, count; this checks composition, not signed clearance [tests/modules/field_development/test_fdp_report.py:L48-L52] | G5 |
+| FD-G5-2 | Proposed evidence-assembly check: resolve every citation at the pin, associate V1/R1–R3 with run records, and hash the pack and evidence inputs; retained records listed in section 10 | 0 unresolved citations and 0 unmatched example nodes, count; 1 SHA-256 per evidence input, digest count | G5 |
 
 ## 6. Known failure modes and pitfalls
 
 | Symptom | Cause and detection | Incident or follow-up | Observed |
 | --- | --- | --- | --- |
-| Missing inputs can appear LOW | Hydrate, wax and erosion return LOW plus a note when inputs are unavailable; inspect notes as well as severity; R2 detects the missing-depth policy. [src/worldenergydata/field_development/flow_assurance.py:L201-L206] [src/worldenergydata/field_development/flow_assurance.py:L264-L272] [src/worldenergydata/field_development/flow_assurance.py:L399-L408] | #642; provenance/coverage follow-up: issue pending (2)  2026-10-15 |
-| Explicit zero discount silently becomes the assumption default | `FieldConcept` accepts zero but `estimate_economics` selects with boolean `or`; detection: compare returned rate to an explicit 0.0 input; no existing dedicated detection check was identified. [src/worldenergydata/field_development/models.py:L162-L168] [src/worldenergydata/field_development/integrations.py:L135-L143] | issue pending (3)  2026-10-15 |
-| Sparse concepts can pass sanity without engineering completeness | Checks run only when dependent fields are populated; graph construction draws one tree when well count is absent or zero; report construction substitutes four wells for a false-valued count. [src/worldenergydata/field_development/sanity.py:L69-L86] [src/worldenergydata/field_development/graph.py:L120-L124] [src/worldenergydata/field_development/fdp_report.py:L203-L214] | #568; coverage follow-up: issue pending (2)  2026-10-15 |
-| Unavailable integration can look like a successful workflow | Imports and queries can return `None`, empty picks or notes; integration tests deliberately accept some degraded results; FD-G1-1 alone does not establish populated economics or installation suitability. [src/worldenergydata/field_development/integrations.py:L105-L132] [src/worldenergydata/field_development/integrations.py:L176-L203] [tests/modules/field_development/test_integrations.py:L83-L86] | #575; issue pending (2)  2026-10-15 |
-| Calibration fit mistaken for predictive accuracy | Thresholds use the scored catalog; no holdout; no held-out detection check exists; require a held-out evaluation before predictive claims. [docs/domains/field-development/calibration-v2.md:L85-L100] | #640  2026-10-15 |
-| Erosion threshold presented as verified code compliance | Fixed configured threshold, no mixture-density calculation, edition or clause trace; no licensed-copy detection check exists; review provenance before use. [src/worldenergydata/field_development/flow_assurance.py:L38-L45] | issue pending (1)  2026-10-15 |
-
+| Missing inputs can appear LOW | Hydrate, wax and erosion return LOW plus a note when inputs are unavailable; inspect notes as well as severity; R2 detects the missing-depth policy. [src/worldenergydata/field_development/flow_assurance.py:L201-L206] [src/worldenergydata/field_development/flow_assurance.py:L264-L272] [src/worldenergydata/field_development/flow_assurance.py:L399-L408] | #642; provenance/coverage follow-up: issue pending (2) | 2026-10-15 |
+| Explicit zero discount silently becomes the assumption default | `FieldConcept` accepts zero but `estimate_economics` selects with boolean `or`; detection: FD-G2-2 requires returned rate = 0.0 (fraction) for an explicit 0.0 input; the offline diagnostic returns 0.1 at BASE and AFTER, so the criterion FAILS; no dedicated repository regression exists. [src/worldenergydata/field_development/models.py:L162-L168] [src/worldenergydata/field_development/integrations.py:L135-L143] | issue pending (3) | 2026-10-15 |
+| Sparse concepts can pass sanity without engineering completeness | Checks run only when dependent fields are populated; graph construction draws one tree when well count is absent or zero; report construction substitutes four wells for a false-valued count; no detection check exists for engineering completeness or rejection of substituted counts. [src/worldenergydata/field_development/sanity.py:L69-L86] [src/worldenergydata/field_development/graph.py:L120-L124] [src/worldenergydata/field_development/fdp_report.py:L203-L214] | #568; coverage follow-up: issue pending (2) | 2026-10-15 |
+| Unavailable integration can look like a successful workflow | Imports and queries can return `None`, empty picks or notes; integration tests deliberately accept some degraded results; FD-G1-1 alone does not establish populated economics or installation suitability; no detection check exists that requires populated economics, installation and hardware results. [src/worldenergydata/field_development/integrations.py:L105-L132] [src/worldenergydata/field_development/integrations.py:L176-L203] [tests/modules/field_development/test_integrations.py:L62-L77] | #575; issue pending (2) | 2026-10-15 |
+| Calibration fit mistaken for predictive accuracy | Thresholds use the scored catalog; no holdout; no held-out detection check exists; require a held-out evaluation before predictive claims. [docs/domains/field-development/calibration-v2.md:L85-L100] | #640 | 2026-10-15 |
+| Erosion threshold presented as verified code compliance | Fixed configured threshold, no mixture-density calculation, edition or clause trace; no licensed-copy detection check exists; review provenance before use. [src/worldenergydata/field_development/flow_assurance.py:L38-L45] | issue pending (1) | 2026-10-15 |
 
 ## 7. Lessons log
 
 Append-only initial entry; record ID `initial-pack`; date 2026-10-15; shared-log entry: pending.
 
-Preserve the distinction between a heuristic regression, a closed-form geometry check and independent engineering validation; sections 4–6 record those boundaries. [tests/modules/field_development/test_flow_assurance.py:L4-L9] [tests/modules/field_development/test_layout.py:L21-L38]
+Preserve the distinction between a heuristic regression, a closed-form geometry check and independent engineering validation; sections 4–6 record those boundaries. [tests/modules/field_development/test_flow_assurance.py:L5-L9] [tests/modules/field_development/test_layout.py:L26-L37]
 
 ## 8. Ownership
 
@@ -147,7 +148,16 @@ Proposed responsibility: calculations quality manager for interim data-pipeline 
 
 Optional enrichment delegates to FDAS for classification/NPV, construction capability data for installation screening and curated subsea components for representative hardware picks; missing dependencies can degrade results. [src/worldenergydata/field_development/integrations.py:L105-L170] [src/worldenergydata/field_development/integrations.py:L176-L248]
 
-Implementation-map audit record: inspected the public implementation map at revision `b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407`, `docs/registry/implementation-map.yaml`, family index; none of its 13 families covers this pack’s concept-ranking, hazard-tier or schematic-placement methods. The similarly named development-layout catenary entry belongs to a separate statics method, which this module’s plan-view method does not implement. Source: digitalmodel, *Implementation map*, cited revision, `families` and `catenary-mooring-line-statics` entries.
+Implementation-map inventory (A8 r1): digitalmodel, *Implementation map*, revision `b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407`, `docs/registry/implementation-map.yaml` and its index. This is a digitalmodel artefact with 13 families and 0 worldenergydata implementation rows; the inventory of map implementations for this package is empty, with 0 rows to add. The counted-family grep is `NOT_APPLICABLE`: no map family has an implementation row in this package. Source: digitalmodel, *Implementation map*, cited revision, `repository` and `families` entries.
+
+Map follow-up (U2, issue pending (2)): add the following section-3 method families with implementations in this package; they count only from the first map revision that contains such rows. Source: digitalmodel, *Implementation map*, cited revision, `families` inventory.
+
+- Feasibility and weighted ranking, including depth and regional priors. [src/worldenergydata/field_development/recommendation.py:L200-L245] [src/worldenergydata/field_development/recommendation.py:L394-L429] [src/worldenergydata/field_development/recommendation.py:L114-L125] [src/worldenergydata/field_development/basin.py:L146-L163]
+- Graph and plan-layout placement. [src/worldenergydata/field_development/graph.py:L160-L196] [src/worldenergydata/field_development/layout.py:L126-L155]
+- Hazard-tier screening, including the bulk-velocity erosion screen. [src/worldenergydata/field_development/flow_assurance.py:L169-L183] [src/worldenergydata/field_development/flow_assurance.py:L384-L451]
+- DEXPI-aligned XML export. [src/worldenergydata/field_development/dexpi.py:L65-L105]
+- Symbol library. [src/worldenergydata/field_development/symbols/__init__.py:L7-L22]
+- Calibration backtesting. [src/worldenergydata/field_development/calibration.py:L80-L96]
 
 Repository search record: searched tracked Python under `src/`, `packages/` and `scripts/` for the ranking/temperature/velocity functions, cost assumption keys, depth classifiers, NPV functions and layout methods. The following are distinct routes requiring attention; helpers that call a method are identified as consumers.
 
@@ -168,7 +178,7 @@ Detailed economics implementation parity and the remaining upstream/downstream i
 | Item | Scope, evidence and completion criterion | Responsible role | Tracking |
 | --- | --- | --- | --- |
 | U1 | Establish standards editions, publication titles, clauses and citation-sidecar applicability; reconcile the fixed erosion heuristic with its stated references without copying licensed values [src/worldenergydata/field_development/flow_assurance.py:L38-L45] [src/worldenergydata/field_development/dexpi.py:L15-L26] [src/worldenergydata/field_development/symbols/__init__.py:L15-L18] | Maintainer | issue pending (1) |
-| U2 | Extend method-by-method coverage of catalog publication, analogs/reference data, terrain/bathymetry, economics/norms, optional CAD, launch scripts and consumer adapters; add independent engineering examples, populated-dependency checks and generated QA evidence; retain missing-package/fixture results [src/worldenergydata/field_development/catalog_integration.py:L54-L100] [src/worldenergydata/field_development/fdp_report.py:L199-L245] [tests/modules/field_development/test_integrations.py:L83-L86] | Maintainer | issue pending (2) |
+| U2 | Extend method-by-method coverage of catalog publication, analogs/reference data, terrain/bathymetry, economics/norms, optional CAD, launch scripts and consumer adapters; add independent engineering examples, populated-dependency checks and generated QA evidence; retain missing-package/fixture results [src/worldenergydata/field_development/catalog_integration.py:L54-L100] [src/worldenergydata/field_development/fdp_report.py:L199-L245] [tests/modules/field_development/test_integrations.py:L62-L77] | Maintainer | issue pending (2) |
 | Defect | Preserve explicit zero discount in `estimate_economics`; add a regression that checks returned zero and undiscounted arithmetic [src/worldenergydata/field_development/integrations.py:L135-L143] [src/worldenergydata/field_development/models.py:L162-L168] | Maintainer | issue pending (3) |
 | Calibration | Independent evaluation and non-circular concept discrimination; do not quote in-sample fit as unseen-data accuracy [docs/domains/field-development/calibration-v2.md:L85-L111] | Maintainer | #640 |
 
@@ -352,8 +362,33 @@ The main-path citations identify the behavior reviewed; the remaining files belo
 | `tests/unit/field_development/test_risk_classifiers.py` | [tests/unit/field_development/test_risk_classifiers.py:L1-L89] |
 | `tests/unit/field_development/test_well_economics.py` | [tests/unit/field_development/test_well_economics.py:L1-L375] |
 
-Offline run records (2026-10-15): module directories — 576 passed, 0 failed, 7 skipped; discovered consumer and contract files — 70 passed, 0 failed, 0 skipped. AFTER results were identical for both commands. The installed environment was resolved by ordinary `uv run`; the documented `--noconftest` form was used with `PYTHONPATH`, `-q -rA -p no:cacheprovider` and a scratch basetemp; repository addopts were retained.
+Offline run records (2026-10-15): code pin remains `55991b0def0f90708b3e0c396c0f57d9d1b7f7fb`; BASE is `9ef993445433456593fbf854f98cdb10a9a891ce`, whose only difference from the code pin is this pack. AFTER runs use the uncommitted documentation tree on that BASE; no module code or test changes.
 
-Baseline skip inventory: optional `cadquery` imports (2 collection skips); optional `rasterio` and `netCDF4` reader cases (2 test skips); live terrain endpoint (1 opt-in skip); unmaterialized binary fixtures (2 test skips). These are not validation successes; dependent cases are NOT_RUN. Evidence: [tests/modules/field_development/test_assembly_3d.py:L10-L14] [tests/modules/field_development/test_equipment_3d.py:L10-L14] [tests/modules/field_development/test_terrain.py:L180-L196] [tests/unit/field_development/test_bathymetry_readers.py:L183-L240] [tests/unit/field_development/test_lt_reserves_discovery.py:L54-L65] [tests/unit/field_development/test_lt_reserves_discovery.py:L254-L264]
+| Run scope | BASE passed / failed / skipped | AFTER passed / failed / skipped | NOT_RUN exclusions |
+| --- | --- | --- | --- |
+| Both module test directories | 578 / 0 / 5 | 578 / 0 / 5 | 5 skip records: 2 collection records and 3 individual test nodes, detailed below |
+| Consumer and contract scope listed below | 70 / 0 / 0 | 70 / 0 / 0 | 0 |
+
+Successful test form, identical at BASE and AFTER: `PYTHONPATH=<package source>:<dependency source> uv run --with rasterio --with netCDF4 --no-build-package rasterio --no-build-package netCDF4 python -m pytest --noconftest <scope> -q -rA -p no:cacheprovider --basetemp=<scratch>`; the environment was resolved with ordinary project sources. Repository addopts were retained; HTML/XML/JSON coverage destinations were redirected to scratch with `--cov-report`. No tests or markers were changed. The two real reader nodes now PASS at BASE and AFTER: `tests/unit/field_development/test_bathymetry_readers.py::test_real_tiny_geotiff` and `tests/unit/field_development/test_bathymetry_readers.py::test_real_tiny_netcdf_preserves_directory`. [tests/unit/field_development/test_bathymetry_readers.py:L184-L217] [tests/unit/field_development/test_bathymetry_readers.py:L220-L245]
+
+Dependency attempt at BASE and AFTER: `uv run --extra cad --with rasterio --with netCDF4 --no-build-package cadquery --no-build-package cadquery-ocp --no-build-package vtk --no-build-package rasterio --no-build-package netCDF4 python -m pytest ...` cannot resolve `nlopt==2.10.0`: "can't be installed because it doesn't have a source distribution or wheel for the current platform" (Linux aarch64). No long source build was attempted. An earlier blanket `--no-build` attempt stopped at the git-sourced `assetutilities` package; package-specific binary restrictions allowed that source package to build. The declared `cad` extra requests CadQuery for Python >= 3.11. [pyproject.toml:L178-L184]
+
+### Remaining offline exclusions
+
+| Node or collection | Offline result and reason | Tracking and evidence |
+| --- | --- | --- |
+| `tests/modules/field_development/test_assembly_3d.py`; `tests/modules/field_development/test_equipment_3d.py` | NOT_RUN: 2 collection skips, `No module named 'cadquery'`; the declared CAD extra cannot install because `nlopt==2.10.0` has no compatible distribution | U2, issue pending (2); [tests/modules/field_development/test_assembly_3d.py:L12-L14] [tests/modules/field_development/test_equipment_3d.py:L12-L14] |
+| `tests/unit/field_development/test_lt_reserves_discovery.py::test_bridge_codes_resolve_in_deepqual` | NOT_RUN: `deepqual bin not materialized (LFS stub / CI)`; LFS objects are not fetched in this job under the LFS freeze through 2026-11-01 | U2, issue pending (2); [tests/unit/field_development/test_lt_reserves_discovery.py:L54-L65] |
+| `tests/unit/field_development/test_lt_reserves_discovery.py::test_known_answer_real_2023_vintage` | NOT_RUN: `fieldreserves_tables bin not materialized (LFS stub / CI)`; LFS objects are not fetched in this job under the same freeze | U2, issue pending (2); [tests/unit/field_development/test_lt_reserves_discovery.py:L252-L264] |
+| `tests/modules/field_development/test_terrain.py::test_fetch_dem_live_smoke` | NOT_RUN in offline scope: the test fetches a live DEM endpoint and requires `WED_LIVE_NETWORK_TESTS=1`; network availability and live data are outside a reproducible offline run | U2, issue pending (2); [tests/modules/field_development/test_terrain.py:L187-L196] |
 
 Consumer/contract run scope: `tests/unit/australia/test_field_concept_opt_in.py`, `tests/unit/brazil_anp/test_brazil_field_concept.py`, `tests/unit/brazil_anp/test_reference_chain.py`, `tests/unit/fdas/adapters/test_field_concept_normalizer.py`, `tests/unit/sodir/test_norway_716.py`, `tests/integration/site/test_architecture_panel.py`, `tests/integration/site/test_public_link_graph.py`, and `tests/contracts`.
+
+### Retained evidence for FD-G5-2
+
+The supplemental review-artifact directory `evidence/` is retained outside the repository with the handoff: `input-sha256.json` lists one SHA-256 for each of 181 pinned source inputs (all cited files, package files, module tests and the consumer/contract scope); `run-record.json` lists the BASE/AFTER outcomes and SHA-256 for each retained log and diagnostic script. Local-path and source-address headers in retained logs are replaced; result values are unchanged. `pack.sha256` fingerprints the final pack separately to avoid a self-referential digest. These records document the offline checks; they do not supply independent engineering validation or clearance (U2, issue pending (2)).
+
+| Retained record | SHA-256 |
+| --- | --- |
+| `evidence/input-sha256.json` | `53f8196662af80a83d02ed3c0e4a3b6822d9448d88cd452b819fc800bec6c682` |
+| `evidence/run-record.json` | `081e67d13e742c25ae885dcfe4959b1ffd49798d1585a37e3d264b6d25ed5cb8` |
