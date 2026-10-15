@@ -1,3 +1,4 @@
+# Exercise pull request CI against a stack parent.
 """Keep pull request CI available for every target branch."""
 
 from pathlib import Path
