@@ -94,6 +94,10 @@ Onshore energy data sources including unconventional resources.
 **Update Frequency:** Regular updates from public sources
 **Key Use Cases:** Unconventional analysis, land management, completion optimization
 
+### [Open metocean observations and source register](metocean-open-observations.html)
+
+NDBC yearly wave observations, archive updates and empirical wave statistics.
+
 ## Data Integration Architecture
 
 ### Standardized Data Formats
@@ -168,4 +172,3 @@ analysis_result = wed.analysis.production_trends(bsee_data)
 ---
 
 *Choose a data source above to dive into specific documentation and examples.*
-- [Open metocean observations and source register](metocean-open-observations.html)
