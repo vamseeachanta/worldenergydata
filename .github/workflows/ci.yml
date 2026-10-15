@@ -4,14 +4,15 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    # Run every edit: filtering base changes could let skipped checks mask failures.
+    types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
@@ -75,8 +76,52 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -141,8 +186,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -177,8 +266,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -205,10 +338,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -239,8 +415,52 @@ jobs:
     needs: [lint] # test job skips on unlabeled PRs (module gate covers them)
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -270,8 +490,52 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
+      - name: Resolve merge commit for event base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          sha=''
+          first_parent=''
+          for attempt in $(seq 1 10); do
+            sha=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" --jq '.merge_commit_sha // empty')
+            first_parent=''
+            if [ -n "$sha" ]; then
+              first_parent=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[0].sha // empty')
+              if [ "$first_parent" = "$BASE_SHA" ]; then
+                echo "sha=$sha" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 10 ]; then
+              sleep 6
+            fi
+          done
+          echo "::error::Merge $sha first parent $first_parent differs from event base $BASE_SHA after 10 tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          first_parent=$(git cat-file -p HEAD | sed -n 's/^parent //p' | head -n 1)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$first_parent" != "$BASE_SHA" ]; then
+            echo "::error::Tested $tested first parent $first_parent differs from event base $BASE_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent base=$BASE_SHA tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
