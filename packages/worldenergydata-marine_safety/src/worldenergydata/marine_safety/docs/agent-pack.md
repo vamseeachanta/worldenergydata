@@ -5,10 +5,10 @@
 | Module | `marine_safety` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety` |
-| Pack revision | 0, 2026-10-15 |
+| Pack revision | 1, 2026-10-15 |
 | Code revision | `55991b0def0f90708b3e0c396c0f57d9d1b7f7fb` |
-| Analysis family | Data pipeline; AQG r0 Python calculations gate set |
-| Required quality role | Calculations quality manager |
+| Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10, Python calculations |
+| Required quality role | EC quality manager; data-pipeline quality manager as deputy when appointed |
 | Status | DRAFT |
 
 ## 1. Purpose and scope
@@ -69,17 +69,26 @@ UNVERIFIED: U2 — coordinate datum, longitude sign convention, date timezone an
 | Filtered query | `query()` loads before applying exact membership and inclusive year bounds; it returns counts after filtering and an empty `correlations` dictionary | Filtering does not itself correlate individual incidents. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L539-L570] |
 | Descriptive aggregation | `trend_analysis()` groups by year/source/type; `top_incident_types()` groups and ranks by count; `risk_hotspots()` groups by region/type | Counts of records; no exposure denominator is used in these functions. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L632-L676] |
 | Source overlap and mean severity | `correlations()` computes the mean mapped score and the fraction of type/year/region groups having multiple sources | Shared groups do not establish that two records describe the same event. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L593-L630] |
-| Individual record matching, supplementary route | `IncidentMatcher.calculate_confidence()` returns 1.0 immediately for equal normalized IMO identifiers; otherwise it combines available name/location/date/IMO component scores with renormalized weights | The early return does not require date agreement, so equal vessel identifiers alone are insufficient evidence of duplicate events. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L293-L352] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L491-L523] |
-| Matching distances and time, supplementary route | `_haversine_distance()` converts degree differences to radians and multiplies the great-circle angle by `EARTH_RADIUS_KM`; location and date scores decay linearly to zero at their configured thresholds | Radius, threshold and weight defaults are implementation constants, not independently validated calibration. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L35-L75] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L195-L196] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L420-L489] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643] |
+| Individual record matching, supplementary route | `IncidentMatcher.calculate_confidence()` returns 1.0 immediately for equal normalized IMO identifiers; otherwise it combines available name/location/date/IMO component scores with renormalized weights | The early return does not require date agreement, so equal vessel identifiers alone are insufficient evidence of duplicate events. `IncidentMatcher` defaults to 3 days, 50 km and name similarity 0.8; `IncidentCorrelator._compare()` is a separate route with defaults 5 days, 100 km and name similarity 0.75. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L40-L49] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L26-L47] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L293-L352] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L491-L523] |
+| Matching distances and time, supplementary route | `_haversine_distance()` converts degree differences to radians and multiplies the great-circle angle by `EARTH_RADIUS_KM`; location and date scores decay linearly to zero at their configured thresholds | The separate module-level `incident_correlator._haversine()` implements its own great-circle calculation; `_compare()` uses linear location decay and Jaccard name similarity with the different defaults above. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L175-L218] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L357-L373] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L403-L419] Radius, threshold and weight defaults are implementation constants, not independently validated calibration. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L35-L75] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L195-L196] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L420-L489] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643] |
 | Database batch import, supplementary route | `BaseImporter.import_data()` batches model instances; `_commit_batch()` rolls back failed batches and increments `errors` instead of raising | Consumers must inspect returned statistics; the base `is_duplicate()` always returns false. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/base_importer.py:L98-L195] |
 
-The IMO importer docstring names `MSC-MEPC.3/Circ.4/Rev.1` as its reporting-format reference; this pack establishes only what the code names, without asserting compliance or reproducing publication values. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16]
+The following inventory records the references named by the code; it establishes no clause conformance and reproduces no publication values. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L34-L38] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_validators.py:L1-L8]
 
-UNVERIFIED: U3 — the named reporting reference's full title, clause basis and conformance, severity calibration, matching calibration and external-source completeness have not been checked against independent published material; clause text not checked against the licensed copy, issue pending (1).
+| Reference named in code | Title and qualification | Evidence |
+| --- | --- | --- |
+| `MSC-MEPC.3/Circ.4/Rev.1` | U3: public title and clause basis unverified | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16] |
+| `MSC-MEPC.3/Circ.4` | U3: public title and clause basis unverified; taxonomy labels it casualty-investigation guidance | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_taxonomy.py:L32-L37] |
+| `MSC-MEPC.3/Circ.3` | U3: public title and clause basis unverified; EMSA importer names a different identifier | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L34-L38] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L270-L273] |
+| `IMO Resolution A.600(15)` | IMO ship identification number scheme; public title confirmed by IMO, *IMO identification number schemes*, section “IMO ship identification number scheme”, resolution adopted 1987 ([public reference](https://www.imo.org/en/OurWork/MSAS/Pages/IMO-identification-number-scheme.aspx)); checksum clause basis remains U3 | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_validators.py:L1-L8] |
+| `Directive 2009/18/EC` | U3: public title and provision basis unverified | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L270-L273] |
+| `ISO 3166-1 alpha-2` | U3: edition, public title and clause basis unverified | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L200-L200] |
+
+UNVERIFIED: U3 — the unconfirmed reference titles, editions, clause bases and conformance, severity calibration, matching calibration and external-source completeness have not been checked against independent published material; clause text not checked against the licensed copy, issue pending (1).
 
 ## 4. Validated worked examples
 
-Validated examples: 0; the four selected examples below are regression checks of synthetic data or fixture behavior, with expected values specified by repository assertions rather than an independently published dataset. [tests/marine_safety/test_api_on_base.py:L33-L41] [tests/unit/marine_safety/test_cross_database.py:L200-L204] [tests/unit/marine_safety/test_cross_database_live.py:L195-L231]
+Validated examples: 0; the five selected examples below are regression checks of synthetic data, fixture behavior or a bundled CSV workflow, with expected values specified by repository assertions rather than an independently published dataset. [docs/registry/workflows.yaml:L152-L174] [tests/marine_safety/test_api_on_base.py:L33-L41] [tests/unit/marine_safety/test_cross_database.py:L200-L204] [tests/unit/marine_safety/test_cross_database_live.py:L195-L231]
 
 | Case | Source and input | Expected value, unit and tolerance basis | Existing test node ID | Offline result at the code revision |
 | --- | --- | --- | --- | --- |
@@ -87,6 +96,7 @@ Validated examples: 0; the four selected examples below are regression checks of
 | R2 year bounds | Built-in synthetic records; start year 2018, end year 2020 | 0 records outside inclusive bounds, exact comparison; filter contract | `tests/unit/marine_safety/test_cross_database.py::TestFilterByYear::test_year_range_combines_start_and_end` | PASS at BASE and AFTER. [tests/unit/marine_safety/test_cross_database.py:L200-L204] |
 | R3 failed import | Missing occurrence CSV locator supplied by the test | `data_freshness=synthetic`, 0 label mismatches; fallback contract | `tests/unit/marine_safety/test_cross_database_live.py::TestGracefulFallback::test_fallback_to_synthetic_on_missing_maib_file` | PASS at BASE and AFTER. [tests/unit/marine_safety/test_cross_database_live.py:L195-L203] |
 | R4 partial import | Fixture `tests/fixtures/marine_safety/maib_occurrences_sample.csv` plus missing TSB file | `data_freshness=live`, 0 label mismatches; existing behavior, not proof of complete observations | `tests/unit/marine_safety/test_cross_database_live.py::TestGracefulFallback::test_partial_fallback_single_bad_source` | PASS at BASE and AFTER. [tests/unit/marine_safety/test_cross_database_live.py:L221-L231] |
+| R5 CSV engine | `examples/workflows/marine-safety-stats/input.yml`, bundled CSV; repository workflow assertions | Total 5 records; source counts 2 and 3; fire 2 records; type-count CSV 4 rows and count sum 5 records; exact repository assertions | `tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[marine-safety-stats]` | PASS at BASE and AFTER. [docs/registry/workflows.yaml:L152-L174] [tests/workflows/test_durable_workflows.py:L125-L144] |
 
 The hand checks in section 5 use a separately constructed arithmetic fixture and a geometric identity; they are limited sanity checks and do not qualify incident populations or matching accuracy. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L609-L615] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643]
 
@@ -97,11 +107,14 @@ Gate selection: G0 inputs, G1 imports/tests, G2 hand or published checks, G3 and
 | Gate | Applicability and route | Required checks and current evidence |
 | --- | --- | --- |
 | G0 | Applicable: local CSV and DataFrame schema, casualty units and provenance | S0.1, S0.2 and S0.3 below; default and mixed-source behavior have explicit regression assertions. [tests/unit/marine_safety/test_cross_database.py:L84-L112] [tests/unit/marine_safety/test_cross_database_live.py:L221-L231] |
-| G1 | Applicable: Python imports and offline pytest; engine output route is local CSV/JSON | S1.1 and S1.2; the full test set has baseline failures, so no gate clearance is asserted. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L186-L202] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L50-L73] |
+| G1 | Applicable: Python imports and offline pytest; engine output route is local CSV/JSON | S1.1, S1.2, S1.3 and S1.4; the full test set has baseline failures, so no gate clearance is asserted. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L186-L202] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L50-L73] |
 | G2 | Applicable: count conservation, group-overlap arithmetic and spherical-distance identities | S2.1 and S2.2; external qualification remains U3. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L609-L676] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643] |
 | G3 | NOT_APPLICABLE: this main path aggregates incident records and has no dynamics integration step | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L632-L676] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L34-L73] |
 | G4 | NOT_APPLICABLE: this main path emits counts and summaries without a diffraction mesh or hydrodynamic coefficients | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L39-L73] |
 | G5 | Applicable: maintain case results, input identity, limits and open-item traceability | S5.1 and S5.2; required evidence follows AQG r0, revision 0, section 9, QA appendix. |
+
+
+The module CI shard targets the excluded directory, and the selector documents treating no-tests exit 5 as a pass; that pass is not evidence for S1.2. S1.3 measures directory collection separately; it must not be replaced by explicit-file collection. [scripts/ci/select_test_targets.py:L157-L164] [scripts/ci/select_test_targets.py:L216-L218] [tests/conftest.py:L662-L680]
 
 These checks define acceptance criteria for this pack's scope; they do not replace the module's existing assertions or establish family clearance.
 
@@ -112,9 +125,11 @@ These checks define acceptance criteria for this pack's scope; they do not repla
 | S0.3 | `_load_base()` fallback via R3 and R4; inspect mixed-source semantics before interpreting output | 0 mismatches against the two existing freshness assertions; unit: labels; per-source provenance remains a separate gap | Two pytest results; G0. [tests/unit/marine_safety/test_cross_database_live.py:L195-L231] |
 | S1.1 | `IncidentsQuery` import and API route via `test_incidents_query_is_typed_query_subclass` and R1 | 2 passing nodes, 0 import/query errors; unit: test nodes | Existing pytest results; G1. [tests/marine_safety/test_api_on_base.py:L27-L41] |
 | S1.2 | Complete offline test-file set described below | 0 failed nodes and 0 errors; unit: test outcomes; currently baseline unmet, see section 6 | Baseline and final JUnit results; G1. [tests/unit/marine_safety/test_validators.py:L24-L42] [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] |
+| S1.3 | Directory-mode `pytest tests/unit/marine_safety --collect-only`; compare with explicit-file outcome inventory | At least 2,038 collected test outcomes, 0 excluded dedicated test files; unit: outcomes/files; baseline FAIL, 0 collected instead | Collection log; issue #1239; G1. [tests/conftest.py:L662-L680] |
+| S1.4 | `MarineSafety.router()` through R5 and `engine()` | 0 mismatches against total 5, source counts 2 and 3, fire 2, CSV rows 4 and count sum 5; unit: records/rows | R5 workflow output assertions; G1. [docs/registry/workflows.yaml:L152-L174] [tests/workflows/test_durable_workflows.py:L125-L144] |
 | S2.1 | `top_incident_types()`, `trend_analysis()`, `risk_hotspots()` and `correlations()` on the arithmetic fixture below | 0 count error in records; 0.0 overlap error in dimensionless fraction | Hand-check output; G2. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L609-L676] |
 | S2.2 | `IncidentMatcher._haversine_distance()` on coincident points and a quarter equator | Coincident distance 0.0 km exactly; quarter-circle absolute error at most `1e-9` km, a floating-point allowance against the geometric identity | Hand-check output; G2. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L195-L196] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643] |
-| S5.1 | Resolve R1–R4 against the baseline and final result records | 4 matching node IDs; 0 missing results and 0 changed outcomes; unit: case records | Case ledger; G5. [tests/marine_safety/test_api_on_base.py:L33-L41] [tests/unit/marine_safety/test_cross_database_live.py:L195-L231] |
+| S5.1 | Resolve R1–R5 against the baseline and final result records | 5 matching node IDs; 0 missing results and 0 changed outcomes; unit: case records | Case ledger; G5. [tests/marine_safety/test_api_on_base.py:L33-L41] [tests/unit/marine_safety/test_cross_database_live.py:L195-L231] |
 | S5.2 | Hash test-file inputs and compare immutable source bytes with the code pin; resolve citations and item references | 0 source digest mismatches, 0 unresolved citations, 0 unnumbered coverage items; unit: files/references/items | Citation and source audit; G5. |
 
 The arithmetic input has three collision records from two sources and one fire record from a third source, all in one year and region; direct enumeration gives type counts 3 and 1, total count 4, and one shared group out of two groups, or 0.5; the code below is the reproducible audit input rather than a field dataset.
@@ -156,8 +171,11 @@ mapfile -t targets < <(
     rg '/test_[^/]+\.py$' | sort
 )
 export COVERAGE_FILE="$TMPDIR/coverage"
-uv run python -m pytest "${targets[@]}" \
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1
+export HF_HOME="$TMPDIR/huggingface" XDG_CACHE_HOME="$TMPDIR/xdg-cache"
+uv run --extra llm python -m pytest "${targets[@]}" \
   tests/integration/cli/test_marine_safety_cli.py \
+  'tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[marine-safety-stats]' \
   -q -rA -p no:cacheprovider --basetemp="$TMPDIR/test-temp" \
   --runslow --allow-existing-tree-changes --continue-on-collection-errors \
   --cov-report=term --cov-report=html:"$TMPDIR/coverage-html" \
@@ -172,18 +190,27 @@ Explicit files retain the existing collection hooks while allowing individual ta
 
 | Symptom, with silent fallbacks first | Cause and detection | Incident or follow-up |
 | --- | --- | --- |
+| Directory/CI collection silently omits 52 of the 57 dedicated test files | Root `pytest_ignore_collect` excludes the unit directory; S1.3 FAIL: 0 collected, against at least 2,038 explicit-file outcome entries | #1239 (open); 2026-10-15. [tests/conftest.py:L662-L680] [scripts/ci/select_test_targets.py:L157-L164] |
+| Reversed year bounds return an empty result without an error | `query()` applies both bounds independently; no detection check exists for rejecting `start_year > end_year` | Issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L547-L550] |
+| Negative casualty counts survive normalization | Integer conversion has no nonnegative constraint on this path; no detection check exists for negative counts on source normalization | Issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L269-L279] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L287-L292] |
+| Base duplicate detection never rejects a record | `BaseImporter.is_duplicate()` returns false; no detection check exists for duplicate rejection by this base implementation | Issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/base_importer.py:L184-L195] |
+| Hatch integration remains skipped with the optional extra installed | Unconditional module mark says “LLM integration tests require --with-llm flag and transformers/torch installed”; S1.2 records 16 SKIP outcomes; no detection check exists for executing those assertions through that flag | Issue pending (7). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L554-L558] |
+| Unit database model file skips at collection | Module-level skip says “Investigation and Personnel models not yet implemented”; S1.2 records one module SKIP, with no measured database result | Issue pending (1). [tests/unit/marine_safety/test_models.py:L9-L14] |
+| Three classifier initialization guards previously skipped when the dependency was absent | Existing guards say “transformers library not installed”; with `llm` installed these nodes now run and FAIL at unavailable local model loading or the error-message assertion; S1.2 records the outcomes | Issue pending (7). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L50-L118] |
 | Mixed synthetic/observed results labeled `live`; API does not return the freshness metadata | Any successful importer sets the global label; other source rows remain synthetic, and the API returns only `result.data`; S0.3 reproduces current behavior, but no detection check exists for per-row provenance in this API | Related implementation history #207; issue pending (6) for per-source provenance. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L481-L508] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L192-L202] |
 | Importer exceptions disappear and invalid records are omitted from the query path | `_load_base()` catches all importer exceptions; `_load_from_importer()` skips `None` and missing IDs; S0.3 detects full fallback, while rejected-row accounting has no detection check in this path | Issue pending (6). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L454-L464] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L481-L489] |
 | Failed database batches do not raise from `_commit_batch()` | Rollback and error-count increment; inspect returned statistics before accepting completeness; S1.2 does not independently prove database persistence | No detection check exists for complete persistence on this supplementary route; issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/base_importer.py:L167-L195] |
 | Missing related-person data becomes zero casualties in the MAIB importer | `_count_casualties()` returns zero when the occurrence is absent from its cache; S0.2 checks dtype, not missingness semantics | No detection check exists for distinguishing unknown casualties from true zero on this route; issue pending (6). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/maib_importer.py:L226-L247] |
 | One vessel identifier can link distinct events | Exact normalized IMO match returns confidence 1.0 before date/location scores; matching needs event-level qualification | No detection check exists for same identifier on different dates in the reviewed main-path tests; issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L296-L309] |
-| A missing fixture import prevents collecting the hatch-analysis test file | Import still references `tests.modules.marine_safety.fixtures`; S1.2 records the collection error | Existing issue #327 is closed but documents the same missing fixture package; current occurrence is in a test file rather than the corrected conftest. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] [tests/unit/marine_safety/conftest.py:L16-L23] [docs/plans/2026-05-04-issue-327-conftest-marine-safety-fix.md:L7-L17] |
+| Missing fixture imports prevent collecting the hatch-analysis file and leave two lazy fixtures unusable | Test file imports `tests.modules.marine_safety.fixtures`; `sample_incident_batch` and `performance_test_data` retain lazy imports of it; S1.2 records the file collection ERROR; no detection check exists for those unused fixtures | #327 is closed history; issue pending (9) for remaining imports; #1239 tracks the directory exclusion. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] [tests/unit/marine_safety/conftest.py:L87-L96] [tests/unit/marine_safety/conftest.py:L236-L245] |
 | Fifteen scraper tests fail on absent method names | Tests call `fetch_page`, `parse_incident_html`, `scrape_incidents`, PDF download/extraction/metadata methods; S1.2 detects API-contract mismatch | Issue pending (3); distinguish test-contract defects from a verified live acquisition failure. [tests/unit/marine_safety/test_uscg_scraper.py:L77-L139] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/scrapers/uscg_scraper.py:L277-L350] |
 | Thirteen validator tests fail before their intended assertions | Tests construct empty Pydantic models although required data fields are declared; S1.2 detects construction errors | Issue pending (4). [tests/unit/marine_safety/test_validators.py:L24-L42] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/utils/validators.py:L20-L27] |
 | Correlation test helper finds no qualifying pair | The test implements its own weighted name/identifier formula instead of calling `IncidentMatcher`; S1.2 detects its failing expectation | Issue pending (5); this test helper is not a reference implementation. [tests/unit/marine_safety/test_correlation.py:L764-L803] |
-| Optional classifier tests fail or error during initialization | `transformers` is unavailable; 2 test failures and 27 setup errors are dependency-blocked rather than observed classification results; S1.2 records them | NOT_RUN for their intended classification checks, exact error: `RuntimeError: Failed to load transformers library. Install with: pip install transformers torch`; issue pending (7). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/llm_classifier.py:L106-L121] [tests/unit/marine_safety/analysis/test_llm_classifier.py:L120-L142] |
+| Optional classifier tests fail or error at local model loading | The `llm` extra is installed; offline cache has no model fixture; S1.2 records 5 FAIL and 27 setup ERROR outcomes, with no measured classification result | Error suffix: “We couldn't connect to 'https://huggingface.co' to load the files, and couldn't find them in the cached files.”; issue pending (7). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/llm_classifier.py:L106-L123] [tests/unit/marine_safety/analysis/test_llm_classifier.py:L50-L142] |
 | Statistical report test expects standard output but receives none | `print_report()` logs through the logger; test inspects `capsys.readouterr().out`; S1.2 detects the mismatch | Issue pending (8). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/cause_statistics.py:L250-L275] [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201] |
-| PostgreSQL model tests skip on the offline configuration | Repository decorators declare unsupported enum/schema fixtures and field mismatches; S1.2 records the reasons | NOT_RUN for their database assertions; issue pending (1). [tests/modules/marine_safety/test_models.py:L73-L78] [tests/modules/marine_safety/test_models.py:L327-L331] |
+| PostgreSQL model tests skip on the offline configuration | Repository decorators declare unsupported enum/schema fixtures and field mismatches; S1.2 records the reasons | SKIP with no measured database result; issue pending (1). [tests/modules/marine_safety/test_models.py:L73-L78] [tests/modules/marine_safety/test_models.py:L327-L331] |
+| Query output with an unparseable date makes analytics raise | `_add_derived_columns()` coerces dates, but `correlations()` and `trend_analysis()` parse strictly; no detection check exists for invalid-date analytics on query output | Issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L510-L515] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L593-L595] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L640-L646] |
+| Reporting identifiers differ across importers and taxonomy | Code names `MSC-MEPC.3/Circ.4/Rev.1`, `MSC-MEPC.3/Circ.4` and `MSC-MEPC.3/Circ.3`; no detection check exists for a consistent publication/edition basis, and no reconciliation is asserted | U3; issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_taxonomy.py:L32-L37] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/emsa_importer.py:L34-L38] |
 
 Incident observations above were recorded on 2026-10-15 against the header code revision; no source, test, configuration or data correction is included in this pack.
 
@@ -193,20 +220,23 @@ Incident observations above were recorded on 2026-10-15 against the header code 
 | --- | --- | --- | --- | --- | --- |
 | 2026-10-15 | Initial revision | Distinguish source configuration, successful file loading and mixed synthetic results; do not infer dataset completeness from a global freshness label | [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L481-L508] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L192-L202] | Main-path limits, regression R4 and provenance follow-up | Pending, issue pending (1) |
 | 2026-10-15 | Initial revision | Compare collection results with discovered files; a directory exclusion can hide nested tests | [tests/conftest.py:L662-L682] | Explicit-file reproduction and test inventory | Pending, issue pending (1) |
+| 2026-10-15 | Revision 1 | Install declared extras before interpreting classifier outcomes; preserve ERROR, FAIL and SKIP as measured categories, and distinguish directory collection from explicit-file execution | [pyproject.toml:L161-L166] [tests/conftest.py:L662-L680] | Extra-enabled results, S1.3 and collection defect #1239 | Pending, issue pending (1) |
 
 ## 8. Ownership
 
-Required review role: calculations quality manager for the data-pipeline scope, using AQG r0, revision 0, section 10, Python calculations; independent sign-off follows AQG r0, revision 0, section 11.
+Required review role: EC quality manager for the data-pipeline scope, using AQG r0, revision 0, section 10, Python calculations; independent sign-off follows AQG r0, revision 0, section 11.
 
-Required producing function: data-pipeline maintainers; numerical-method or classification disagreements go to the calculations quality manager, and unresolved scope or assignment decisions go to the maintainers.
+Required producing function: data-pipeline maintainers; numerical-method or classification disagreements go to the EC quality manager, and unresolved scope or assignment decisions go to the maintainers.
 
-UNVERIFIED: U5 — deputy quality-manager assignment and shared lessons-log registration have not been established, issue pending (1).
+UNVERIFIED: U5 — data-pipeline deputy quality-manager assignment, EC index-row update and shared lessons-log registration have not been established, issue pending (1).
 
 ## 9. Dependencies and implementation inventory
 
 | Relationship | Source and boundary |
 | --- | --- |
 | Shared query API | `IncidentsQuery` inherits `TypedQuery` and declares source/category/year filters; normalization is delegated to the shared query base. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L32-L63] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L169-L184] |
+| Compatibility inventory row `modules/marine_safety` | One-line re-export of this package; implementation remains here. [src/worldenergydata/modules/marine_safety/__init__.py:L1-L1] |
+| Script inventory row `scripts/marine_safety` | Separate consumer and SQL aggregation route; assessed here only as an implementation-map lead, not as package code. [scripts/marine_safety/analyze_marine_safety_database.py:L49-L85] |
 | Python dependencies | The domain declares core, NumPy, pandas, SciPy, Plotly, Pydantic, settings, SQLAlchemy, HTTPX, HTML/PDF parsing, rapidfuzz, retry and CLI dependencies. [packages/worldenergydata-marine_safety/pyproject.toml:L31-L48] |
 | Source-file importers | The analyzer instantiates MAIB, IMO and TSB file parsers; there is no EMSA live branch in this loader. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L414-L452] |
 | Synthetic input | Built-in records and the severity-score mapping live in `_cross_database_data.py`; they supply default and missing-source rows. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/_cross_database_data.py:L1-L23] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L491-L508] |
@@ -215,7 +245,7 @@ UNVERIFIED: U5 — deputy quality-manager assignment and shared lessons-log regi
 
 ### Map revision and counted-family audit
 
-External audit input: digitalmodel, *Implementation map*, `docs/registry/implementation-map.yaml`, branch `codex/implmap-work`, map-file commit `b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407`, embedded data revision `947fa50ff9a9e210de7e8f90e01b37add85c5954`, `families` inventory.
+External audit input: digitalmodel, *Implementation map*, `docs/registry/implementation-map.yaml`, map-file commit `b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407`, embedded data revision `947fa50ff9a9e210de7e8f90e01b37add85c5954`, `families` inventory.
 
 | Audit quantity | Result |
 | --- | --- |
@@ -229,16 +259,18 @@ External audit input: digitalmodel, *Implementation map*, `docs/registry/impleme
 
 The audit above is an observation of the named external map revision, not a claim that this package has no algorithms or duplicates.
 
-Map follow-up, issue pending (1): add or assess the section-3 method families before they become counted families: file loading/normalization, incident/region categories, casualty severity, filtered query, descriptive aggregation, source overlap/mean severity, individual record matching, matching distances/time, and database batch import.
+Map follow-up, issue pending (1): add or assess the section-3 method families before they become counted families: file loading/normalization, incident/region categories, casualty severity, filtered query, descriptive aggregation, source overlap/mean severity, individual record matching (both `IncidentMatcher` and `IncidentCorrelator._compare()`), matching distances/time (both great-circle implementations), database batch import, and the CSV engine summary and further descriptive aggregations inventoried below.
 
 ### Repository-wide additional search
 
-The supplementary search covered tracked and nonignored Python sources throughout the repository, including `scripts/`, using `haversine`, `source_overlap_rate`, `_calc_severity`, `normalize_severity`, `calculate_severity`, `IncidentMatcher`, `top_incident_types` and `trend_analysis`; this exploratory vocabulary is separate from the absent counted-family search.
+The supplementary search covered tracked and nonignored Python sources throughout the repository, including `scripts/`, using `haversine`, `source_overlap_rate`, `_calc_severity`, `normalize_severity`, `calculate_severity`, `IncidentMatcher`, `IncidentCorrelator`, `6371`, `radians`, `asin`, `distance`, `get_severity_distribution`, `calculate_cause_severity_crosstab`, `top_incident_types` and `trend_analysis`; this exploratory vocabulary is separate from the absent counted-family search.
 
 | Definition or route | Classification and evidence |
 | --- | --- |
 | `IncidentsQuery.trends`, `top_types`, `correlations`, `risk_hotspots` | Helpers delegating to the listed analyzer; no independent aggregation implementation. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L204-L291] |
-| `MarineSafety._run_incident_stats` | Delegates trend and type counts; independently builds summary source counts by `value_counts()`, already listed in sections 1 and 3. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L39-L66] |
+| `MarineSafety._run_incident_stats` | Delegates trend and type counts; independently builds summary source counts by `value_counts()`, already listed in section 1. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/marine_safety.py:L39-L66] |
+| `IncidentCorrelator._compare` and module-level `_haversine` | Second in-package matching and great-circle implementations, using linear location scoring and Jaccard name similarity with different defaults from `IncidentMatcher`; map follow-up issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L26-L47] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L175-L218] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L357-L373] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L403-L419] |
+| `HatchStatistics.get_severity_distribution`, `DataQualityDashboard._calculate_severity_distribution`, `CauseStatistics.calculate_cause_severity_crosstab` | Further descriptive aggregations of existing severity labels, not casualty-severity formulas; map follow-up issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/hatch_statistics.py:L94-L112] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/reports/quality_dashboard.py:L860-L881] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/cause_statistics.py:L632-L678] |
 | `DataNormalizer.normalize_severity` | Further in-package numeric severity policy; separate from `_calc_severity()`, now inventoried here, map follow-up issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/processors/data_normalizer.py:L274-L330] |
 | `imo_parser.calculate_severity` | Further in-package casualty-severity calculation, now inventoried here; its importer re-exports are helpers, map follow-up issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_parser.py:L299-L328] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L57-L67] |
 | `NTSBImporter._calculate_severity`, `ATSBImporter._calculate_severity` | Further in-package severity calculations, now inventoried here; map follow-up issue pending (1). [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/ntsb_importer.py:L563-L598] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/atsb_importer.py:L725-L763] |
@@ -255,21 +287,21 @@ This revision completes sections 1–6 for the main query/aggregation path and r
 
 | Item | Scope or limitation | Responsible function | Issue |
 | --- | --- | --- | --- |
-| C1 | Finish method-by-method assessment of the inventory below, source-format units, supplementary database/import/classification/report paths, shared tests and all discovered documentation; add independent worked examples, method-map coverage and review assignments | Data-pipeline maintainers | issue pending (1) |
+| C1 | Finish method-by-method assessment of the inventory below, source-format units, invalid dates, reversed year bounds, negative casualties, base duplicate detection, inconsistent reference identifiers, supplementary database/import/classification/report paths, shared tests and all discovered documentation; add independent worked examples, method-map coverage and review assignments | Data-pipeline maintainers | issue pending (1) |
 | C2 | Complete source dataset acquisition and document observed population, date range and freshness; no inferred record-count target is adopted here | Data-pipeline maintainers | #153; [docs/data-sources/DATA_ACQUISITION_GUIDE.md:L35-L48] |
 | C3 | Verify knowledge-pack exclusion from wheel payloads; existing recursive Markdown glob is a packaging concern | Package maintainers | issue pending (2); [packages/worldenergydata-marine_safety/pyproject.toml:L69-L70] |
 | C4 | Resolve scraper test/API mismatch and rerun the 15 failures | Data-pipeline maintainers | issue pending (3); [tests/unit/marine_safety/test_uscg_scraper.py:L77-L139] |
 | C5 | Resolve validator construction/API mismatch and rerun the 13 failures | Data-pipeline maintainers | issue pending (4); [tests/unit/marine_safety/test_validators.py:L24-L42] |
 | C6 | Replace or qualify the test-local correlation helper expectation | Data-pipeline maintainers | issue pending (5); [tests/unit/marine_safety/test_correlation.py:L764-L803] |
 | C7 | Expose per-source provenance, fallback reasons and unknown-casualty handling to query consumers | Data-pipeline maintainers | issue pending (6); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L454-L508] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/api.py:L192-L202] |
-| C8 | Restore missing fixture import coverage; the earlier issue is closed and does not establish this test file is collectable | Test maintainers | #327; [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] |
+| C8 | Restore directory-mode collection and the hatch test-file import; correct lazy imports in `sample_incident_batch` and `performance_test_data`; closed #327 remains history | Test maintainers | #1239; issue pending (9). [tests/conftest.py:L662-L680] [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] [tests/unit/marine_safety/conftest.py:L87-L96] [tests/unit/marine_safety/conftest.py:L236-L245] |
 | C9 | Establish optional classifier dependency tests without requiring unrecorded model downloads | Test maintainers | issue pending (7); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/llm_classifier.py:L106-L123] |
 | C10 | Reconcile report logging with standard-output assertions | Test maintainers | issue pending (8); [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201] |
 | U1 | UNVERIFIED: README maturity, capability counts and asynchronous-operation claims outside the assessed main path | Data-pipeline maintainers | issue pending (1); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/README.md:L3-L8] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/README.md:L55-L85] |
 | U2 | UNVERIFIED: coordinate datum, longitude sign, timezone and complete per-format unit contracts | Data-pipeline maintainers | issue pending (1); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/database/models.py:L112-L134] |
-| U3 | UNVERIFIED: independent taxonomy, severity/matching calibration, publication title/clause basis and source completeness | Calculations quality manager | issue pending (1); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L269-L279] |
+| U3 | UNVERIFIED: independent taxonomy, severity/matching calibration, unconfirmed publication titles, editions and clause bases and source completeness | EC quality manager | issue pending (1); [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/importers/imo_importer.py:L1-L16] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/cross_database.py:L269-L279] |
 | U4 | UNVERIFIED: exclusion of this knowledge pack from a rebuilt wheel | Package maintainers | issue pending (2); [packages/worldenergydata-marine_safety/pyproject.toml:L69-L70] |
-| U5 | UNVERIFIED: deputy assignment and shared lessons-log registration | Maintainers | issue pending (1) |
+| U5 | UNVERIFIED: data-pipeline deputy assignment, EC index-row update and shared lessons-log registration | Maintainers | issue pending (1) |
 
 The calculation-output citation contract was readable as a supporting instruction; this change introduces no standards-derived runtime constant or numerical payload sidecar, and U3 retains the unresolved publication basis rather than inventing one.
 
@@ -367,11 +399,11 @@ All 85 Python files were read for syntax-tree inventory; full line-by-line asses
 
 ### Test inventory and offline results
 
-The final baseline uses 56 discovered test files plus the dedicated CLI integration file; JUnit records 2,142 individual collected nodes, one module collection skip and one module collection error, for 2,144 entries; 2,045 nodes passed, 32 failed, 27 errored in setup, 38 nodes skipped, and the module skip raises pytest's skipped total to 39 while the module collection error raises its error total to 28.
+The current BASE and AFTER commands use 56 discovered test files plus the dedicated CLI integration file and the single R5 workflow node (58 files). Both commands ran against `de90ed1413b3f291f60fba625a8b8bac3233122c`, with AFTER using the uncommitted documentation tree; package and test source bytes match the preserved header code pin and `origin/main`. JUnit records 2,143 individual collected nodes, one module collection skip and one module collection error: 2,145 entries comprising 2,046 PASS, 35 FAIL, 28 ERROR and 36 SKIP outcomes. NOT_RUN: 0. The 28 errors comprise 27 setup errors and one collection error; the 36 skips comprise 35 individual skips and one module collection skip.
 
-The intended assertions of the 27 dependency-blocked setup cases and the uncollectable hatch test module are NOT_RUN; the two optional-dependency call failures remain reported as failures and their classification behavior is also NOT_RUN; these categories describe the same outcomes and must not be summed as additional executed tests.
+The `llm` optional extra is installed in both runs. Classification has no measured result for model-loading failures or setup errors; these remain FAIL and ERROR outcomes, rather than additional NOT_RUN entries. Relative to the prior environment, three initialization guards now run instead of skipping, and R5 adds one passing workflow node. The unconditional 16-test integration skip remains despite the installed extra. [pyproject.toml:L161-L166] [tests/unit/marine_safety/analysis/test_llm_classifier.py:L50-L142] [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L554-L558]
 
-The optional classifier error is recorded verbatim in section 6; the fixture collection error is `ModuleNotFoundError: No module named 'tests.modules.marine_safety.fixtures'`; no solver, licensed interface or source-data download was used. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14]
+The model-loading error suffix is quoted in section 6; the collection error is `ModuleNotFoundError: No module named 'tests.modules.marine_safety.fixtures'`. Model access stays offline through `HF_HUB_OFFLINE=1` and `TRANSFORMERS_OFFLINE=1`; no solver, licensed interface or source-data download was used. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14]
 
 | Test file | Passed | Failed | Setup/collection errors | Skipped | Evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -389,7 +421,7 @@ The optional classifier error is recorded verbatim in section 6; the fixture col
 | `tests/unit/marine_safety/analysis/test_cause_report.py` | 20 | 0 | 0 | 0 | [tests/unit/marine_safety/analysis/test_cause_report.py:L1-L8] |
 | `tests/unit/marine_safety/analysis/test_cause_statistics.py` | 13 | 1 | 0 | 0 | [tests/unit/marine_safety/analysis/test_cause_statistics.py:L1-L8] |
 | `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py` | 0 | 0 | 0 | 16 | [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8] |
-| `tests/unit/marine_safety/analysis/test_llm_classifier.py` | 0 | 2 | 27 | 3 | [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8] |
+| `tests/unit/marine_safety/analysis/test_llm_classifier.py` | 0 | 5 | 27 | 0 | [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8] |
 | `tests/unit/marine_safety/importers/test_atsb_importer.py` | 65 | 0 | 0 | 0 | [tests/unit/marine_safety/importers/test_atsb_importer.py:L1-L8] |
 | `tests/unit/marine_safety/importers/test_boating_importer.py` | 67 | 0 | 0 | 0 | [tests/unit/marine_safety/importers/test_boating_importer.py:L1-L8] |
 | `tests/unit/marine_safety/importers/test_emsa_importer.py` | 19 | 0 | 0 | 0 | [tests/unit/marine_safety/importers/test_emsa_importer.py:L1-L8] |
@@ -432,118 +464,121 @@ The optional classifier error is recorded verbatim in section 6; the fixture col
 | `tests/unit/marine_safety/test_uscg_scraper.py` | 3 | 15 | 0 | 0 | [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8] |
 | `tests/unit/marine_safety/test_validators.py` | 0 | 13 | 0 | 0 | [tests/unit/marine_safety/test_validators.py:L1-L8] |
 | `tests/unit/marine_safety/utils/test_validators.py` | 43 | 0 | 0 | 0 | [tests/unit/marine_safety/utils/test_validators.py:L1-L8] |
+| `tests/workflows/test_durable_workflows.py` (R5 only) | 1 | 0 | 0 | 0 | [tests/workflows/test_durable_workflows.py:L125-L144] |
 
 Every nonpassing node in the baseline is recorded below; dependency and database skips retain their existing decorators and configuration, with no new skip or quarantine entry.
 
 #### Failed
 
-- `tests/unit/marine_safety/analysis/test_cause_statistics.py::TestStatisticalSummary::test_print_report` [tests/unit/marine_safety/analysis/test_cause_statistics.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_custom_model_path` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_repeated_initialization` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/test_correlation.py::TestIncidentMatcherConfidence::test_find_matches_returns_above_threshold` [tests/unit/marine_safety/test_correlation.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_success` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_timeout` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_connection_error` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_retry_on_failure` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_max_retries_exceeded` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_html` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_empty_html` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_malformed_html` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_scrape_incidents_date_range` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_download_pdf_success` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_parse_pdf_metadata` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_http_500_error` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_invalid_ssl_certificate` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_network_timeout_recovery` [tests/unit/marine_safety/test_uscg_scraper.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_valid_incident_data` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_missing_required_fields` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_casualties_validation` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_negative_casualties` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_severity_type_consistency` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_location_validation` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_valid_vessel_data` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_vessel_name_required` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_gross_tonnage_positive` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_year_built_range` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_pollution_environmental_impact` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_critical_severity_requires_investigation` [tests/unit/marine_safety/test_validators.py:L1-L8]
-- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_vessel_incident_consistency` [tests/unit/marine_safety/test_validators.py:L1-L8]
-#### Error / intended assertions NOT_RUN
+- `tests/unit/marine_safety/analysis/test_cause_statistics.py::TestStatisticalSummary::test_print_report` [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_llm_classifier_initialization` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L51-L68]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_model_loading_with_cache` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L70-L92]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_fallback_on_model_load_failure` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L94-L118]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_custom_model_path` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L120-L129]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_repeated_initialization` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L603-L617]
+- `tests/unit/marine_safety/test_correlation.py::TestIncidentMatcherConfidence::test_find_matches_returns_above_threshold` [tests/unit/marine_safety/test_correlation.py:L764-L803]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_success` [tests/unit/marine_safety/test_uscg_scraper.py:L78-L86]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_timeout` [tests/unit/marine_safety/test_uscg_scraper.py:L90-L95]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_connection_error` [tests/unit/marine_safety/test_uscg_scraper.py:L99-L104]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_retry_on_failure` [tests/unit/marine_safety/test_uscg_scraper.py:L108-L120]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_max_retries_exceeded` [tests/unit/marine_safety/test_uscg_scraper.py:L124-L132]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_html` [tests/unit/marine_safety/test_uscg_scraper.py:L135-L143]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_empty_html` [tests/unit/marine_safety/test_uscg_scraper.py:L146-L151]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_malformed_html` [tests/unit/marine_safety/test_uscg_scraper.py:L154-L160]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_scrape_incidents_date_range` [tests/unit/marine_safety/test_uscg_scraper.py:L164-L177]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_download_pdf_success` [tests/unit/marine_safety/test_uscg_scraper.py:L185-L195]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text` [tests/unit/marine_safety/test_uscg_scraper.py:L210-L221]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_parse_pdf_metadata` [tests/unit/marine_safety/test_uscg_scraper.py:L224-L239]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_http_500_error` [tests/unit/marine_safety/test_uscg_scraper.py:L247-L255]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_invalid_ssl_certificate` [tests/unit/marine_safety/test_uscg_scraper.py:L259-L264]
+- `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_network_timeout_recovery` [tests/unit/marine_safety/test_uscg_scraper.py:L274-L281]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_valid_incident_data` [tests/unit/marine_safety/test_validators.py:L25-L42]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_missing_required_fields` [tests/unit/marine_safety/test_validators.py:L45-L57]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_casualties_validation` [tests/unit/marine_safety/test_validators.py:L60-L72]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_negative_casualties` [tests/unit/marine_safety/test_validators.py:L75-L82]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_severity_type_consistency` [tests/unit/marine_safety/test_validators.py:L85-L97]
+- `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_location_validation` [tests/unit/marine_safety/test_validators.py:L100-L116]
+- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_valid_vessel_data` [tests/unit/marine_safety/test_validators.py:L123-L137]
+- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_vessel_name_required` [tests/unit/marine_safety/test_validators.py:L140-L147]
+- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_gross_tonnage_positive` [tests/unit/marine_safety/test_validators.py:L150-L157]
+- `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_year_built_range` [tests/unit/marine_safety/test_validators.py:L160-L174]
+- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_pollution_environmental_impact` [tests/unit/marine_safety/test_validators.py:L181-L196]
+- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_critical_severity_requires_investigation` [tests/unit/marine_safety/test_validators.py:L199-L211]
+- `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_vessel_incident_consistency` [tests/unit/marine_safety/test_validators.py:L214-L223]
 
-- `tests/unit/marine_safety/test_hatch_maloperation_analysis.py` [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_positive` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_negative` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_confidence_scores_returned` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_batch_classification` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classification_determinism` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_hatch_not_closed` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_opening_maloperation` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_engine_room_access_failure` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_watertight_door_issue` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_negative_case_no_hatch_incident` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_empty_text_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_none_value_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_whitespace_only_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_very_long_text_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_multilingual_text` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_special_characters_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_numeric_only_text` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_processing_faster_than_individual` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_classification_within_time_limit` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_throughput` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_memory_usage_stability` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_confidence_calibration` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_concurrent_classification` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_error_recovery` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-#### Existing skip / intended assertions NOT_RUN
+#### Setup and collection errors
 
-- `tests/unit/marine_safety/test_models.py` [tests/unit/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_minimal` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_full` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_incident_date_required` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_vessel_relationship` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_latitude_constraint_valid` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_longitude_constraint_valid` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_created_at_auto_generated` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_updated_at_auto_updated` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_create_vessel_minimal` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_company_relationship` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_incidents_relationship` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_imo_number_unique` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_gross_tonnage_positive` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_create_company_minimal` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_vessels_relationship` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_imo_number_unique_company` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_active_default` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestEnums::test_incident_type_enum` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/modules/marine_safety/test_models.py::TestEnums::test_severity_level_enum` [tests/modules/marine_safety/test_models.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_with_llm_enabled` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_llm_vs_regex_comparison` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hybrid_detection_fallback` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_llm_confidence_threshold` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_batch_processing_consistency` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_large_dataset_processing_time` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_memory_efficiency_large_dataset` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_graceful_handling_of_null_narratives` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_handling_of_malformed_data` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_partial_llm_failure_handling` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_generate_analysis_report_with_confidence` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_confidence_distribution_in_report` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_temporal_analysis_with_llm_results` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_custom_model_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_disable_llm_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_batch_size_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_llm_classifier_initialization` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_model_loading_with_cache` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
-- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_fallback_on_model_load_failure` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L1-L8]
+- `tests/unit/marine_safety/test_hatch_maloperation_analysis.py` [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_positive` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L144-L153]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_negative` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L155-L164]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_confidence_scores_returned` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L166-L173]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_batch_classification` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L175-L188]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classification_determinism` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L190-L199]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_hatch_not_closed` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L214-L228]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_opening_maloperation` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L230-L244]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_engine_room_access_failure` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L246-L260]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_watertight_door_issue` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L262-L276]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_negative_case_no_hatch_incident` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L278-L286]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_empty_text_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L301-L308]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_none_value_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L310-L318]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_whitespace_only_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L320-L325]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_very_long_text_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L327-L333]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_multilingual_text` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L335-L346]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_special_characters_handling` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L348-L358]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_numeric_only_text` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L360-L365]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_processing_faster_than_individual` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L380-L398]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_classification_within_time_limit` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L400-L410]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_throughput` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L412-L424]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_memory_usage_stability` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L427-L452]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L467-L478]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L480-L491]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_confidence_calibration` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L493-L506]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L508-L553]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_concurrent_classification` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L568-L579]
+- `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_error_recovery` [tests/unit/marine_safety/analysis/test_llm_classifier.py:L581-L601]
+
+#### Existing skips
+
+- `tests/unit/marine_safety/test_models.py` [tests/unit/marine_safety/test_models.py:L11-L14]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_minimal` [tests/modules/marine_safety/test_models.py:L81-L97]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_full` [tests/modules/marine_safety/test_models.py:L100-L125]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_incident_date_required` [tests/modules/marine_safety/test_models.py:L128-L139]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_vessel_relationship` [tests/modules/marine_safety/test_models.py:L142-L157]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_latitude_constraint_valid` [tests/modules/marine_safety/test_models.py:L160-L173]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_longitude_constraint_valid` [tests/modules/marine_safety/test_models.py:L176-L189]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_created_at_auto_generated` [tests/modules/marine_safety/test_models.py:L192-L206]
+- `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_updated_at_auto_updated` [tests/modules/marine_safety/test_models.py:L209-L228]
+- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_create_vessel_minimal` [tests/modules/marine_safety/test_models.py:L239-L249]
+- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_company_relationship` [tests/modules/marine_safety/test_models.py:L252-L262]
+- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_incidents_relationship` [tests/modules/marine_safety/test_models.py:L265-L286]
+- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_imo_number_unique` [tests/modules/marine_safety/test_models.py:L289-L310]
+- `tests/modules/marine_safety/test_models.py::TestVesselModel::test_gross_tonnage_positive` [tests/modules/marine_safety/test_models.py:L313-L324]
+- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_create_company_minimal` [tests/modules/marine_safety/test_models.py:L335-L344]
+- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_vessels_relationship` [tests/modules/marine_safety/test_models.py:L347-L360]
+- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_imo_number_unique_company` [tests/modules/marine_safety/test_models.py:L363-L374]
+- `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_active_default` [tests/modules/marine_safety/test_models.py:L377-L384]
+- `tests/modules/marine_safety/test_models.py::TestEnums::test_incident_type_enum` [tests/modules/marine_safety/test_models.py:L394-L400]
+- `tests/modules/marine_safety/test_models.py::TestEnums::test_severity_level_enum` [tests/modules/marine_safety/test_models.py:L403-L408]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_with_llm_enabled` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L52-L73]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_llm_vs_regex_comparison` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L75-L102]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hybrid_detection_fallback` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L104-L140]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_llm_confidence_threshold` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L142-L168]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_batch_processing_consistency` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L170-L194]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_large_dataset_processing_time` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L226-L242]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_memory_efficiency_large_dataset` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L244-L270]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_graceful_handling_of_null_narratives` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L301-L317]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_handling_of_malformed_data` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L319-L341]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_partial_llm_failure_handling` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L343-L370]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_generate_analysis_report_with_confidence` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L427-L443]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_confidence_distribution_in_report` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L445-L457]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_temporal_analysis_with_llm_results` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L459-L469]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_custom_model_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L492-L503]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_disable_llm_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L505-L519]
+- `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_batch_size_configuration` [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L521-L538]
 
 ### Shared tests discovered outside the dedicated module test set
 
-These shared-domain files mention the module and were discovered for follow-up; their complete cross-domain suites are outside this revision's executed test set, C1, issue pending (1).
+These shared-domain files mention the module and were discovered for follow-up; only the marine-safety-stats output node is executed here from the workflow file; complete cross-domain suites remain outside this revision's executed test set, C1, issue pending (1).
 
 - [tests/workflows/test_durable_workflows.py:L178-L178]
 - [tests/modules/marketing/test_hurricane_mooring_risk_infographic.py:L18-L18]
@@ -624,6 +659,6 @@ The package README and the following Markdown files under `docs/` were found by 
 
 ### Verification status
 
-The supplemental dependency-contract command `uv run python -m pytest tests/contracts -q -rA -p no:cacheprovider` with scratch output destinations and the existing-tree integrity option passed all 8 nodes on the uncommitted tree at the same code pin; no nodes failed, skipped or were NOT_RUN. [tests/contracts/test_assetutilities_data_contract.py:L1-L51] [tests/contracts/test_assetutilities_engine_contract.py:L1-L31]
+The supplemental dependency-contract command `uv run --extra llm python -m pytest tests/contracts -q -rA -p no:cacheprovider` with scratch output destinations and the existing-tree integrity option passed all 8 nodes at BASE and AFTER on the uncommitted tree, based on `de90ed1413b3f291f60fba625a8b8bac3233122c` with the preserved header code pin; no nodes failed, skipped or were NOT_RUN. [tests/contracts/test_assetutilities_data_contract.py:L1-L51] [tests/contracts/test_assetutilities_engine_contract.py:L1-L31]
 
-BASE and final test results, citation resolution, ten manual citation checks, file hygiene, public-wording scans and implementation-map selection are recorded in the accompanying change description; clearance remains pending independent review.
+BASE and AFTER test results, citation resolution, ten manual citation checks, file hygiene, public-wording scans and implementation-map selection are recorded in the accompanying change description; clearance remains pending independent review.
