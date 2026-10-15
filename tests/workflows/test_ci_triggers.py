@@ -1,4 +1,4 @@
-"""Keep pull request CI available for every target branch."""
+"""Keep pull request CI available across target branch changes."""
 
 from pathlib import Path
 
