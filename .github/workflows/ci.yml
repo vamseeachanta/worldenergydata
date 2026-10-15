@@ -4,6 +4,8 @@ on:
   push:
     branches: [main, develop]
   pull_request:
+    # Run every edit: filtering base changes could let skipped checks mask failures.
+    types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
@@ -74,8 +76,72 @@ jobs:
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -140,8 +206,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -176,8 +306,72 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -204,10 +398,73 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -238,8 +495,72 @@ jobs:
     needs: [lint] # test job skips on unlabeled PRs (module gate covers them)
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -269,8 +590,72 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
+      - name: Resolve merge commit for current base
+        id: resolve_merge
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          retries=${MERGE_RETRIES:-10}
+          delay=${MERGE_RETRY_SECONDS:-6}
+          for attempt in $(seq 1 "$retries"); do
+            tip=$(gh api "repos/$REPOSITORY/git/ref/heads/$BASE_REF" --jq .object.sha)
+            pr=$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER" \
+              --jq '[.mergeable, (.merge_commit_sha // "")] | @tsv')
+            read -r mergeable sha <<< "$pr"
+            if [ "$mergeable" = false ] || [ -z "$sha" ]; then
+              echo "::error::Pull request is not mergeable or has no merge commit (conflict or mergeability pending)"
+              exit 1
+            fi
+            parent_text=$(gh api "repos/$REPOSITORY/commits/$sha" --jq '.parents[].sha')
+            mapfile -t parents <<< "$parent_text"
+            first_parent=${parents[0]:-}
+            second_parent=${parents[1]:-}
+            if [ "${#parents[@]}" -eq 2 ] && [ "$first_parent" = "$tip" ] && \
+               [ "$second_parent" = "$HEAD_SHA" ]; then
+              echo "sha=$sha" >> "$GITHUB_OUTPUT"
+              echo "tip=$tip" >> "$GITHUB_OUTPUT"
+              echo "head=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            if [ "$attempt" -lt "$retries" ]; then
+              sleep "$delay"
+            fi
+          done
+          echo "::error::Merge $sha parents ${parents[*]} differ from tip $tip" \
+            "and head $HEAD_SHA after $retries tries"
+          exit 1
+
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.resolve_merge.outputs.sha || github.sha }}
+
+      - name: Verify tested merge base
+        if: github.event_name == 'pull_request'
+        env:
+          RESOLVED_SHA: ${{ steps.resolve_merge.outputs.sha }}
+          BASE_TIP: ${{ steps.resolve_merge.outputs.tip }}
+          HEAD_SHA: ${{ steps.resolve_merge.outputs.head }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          tested=$(git rev-parse HEAD)
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          tree=$(git rev-parse 'HEAD^{tree}')
+          if [ "$tested" != "$RESOLVED_SHA" ] || [ "${#parents[@]}" -ne 2 ] || \
+             [ "$first_parent" != "$BASE_TIP" ] || [ "$second_parent" != "$HEAD_SHA" ]; then
+            echo "::error::Tested $tested expected $RESOLVED_SHA parents ${parents[*]}" \
+              "tip $BASE_TIP head $HEAD_SHA"
+            exit 1
+          fi
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$BASE_TIP event_base=$EVENT_BASE tree=$tree"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
