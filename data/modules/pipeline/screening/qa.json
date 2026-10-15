@@ -1,0 +1,233 @@
+{
+  "by_field": {
+    "buried_design": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 13650
+    },
+    "concrete_density_kg_m3": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 13650
+    },
+    "contents_density_kg_m3": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 6825
+    },
+    "corrosion_coating": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 13650
+    },
+    "corrosion_coating_thickness_m": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 13650
+    },
+    "friction_coefficient": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "governing_case": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "grade": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "hs_100yr_m": {
+      "DEFAULT": 13284,
+      "DERIVED": 366,
+      "PUBLIC": 0,
+      "unknown": 13284
+    },
+    "hs_10yr_m": {
+      "DEFAULT": 13284,
+      "DERIVED": 366,
+      "PUBLIC": 0,
+      "unknown": 13284
+    },
+    "length_m": {
+      "DEFAULT": 6478,
+      "DERIVED": 7172,
+      "PUBLIC": 0,
+      "unknown": 6478
+    },
+    "load_case": {
+      "DEFAULT": 0,
+      "DERIVED": 13650,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "maop_pa": {
+      "DEFAULT": 1264,
+      "DERIVED": 12386,
+      "PUBLIC": 0,
+      "unknown": 1264
+    },
+    "mean_bearing_deg": {
+      "DEFAULT": 6478,
+      "DERIVED": 7172,
+      "PUBLIC": 0,
+      "unknown": 6478
+    },
+    "midpoint_latitude_deg": {
+      "DEFAULT": 6472,
+      "DERIVED": 7178,
+      "PUBLIC": 0,
+      "unknown": 6472
+    },
+    "midpoint_longitude_deg": {
+      "DEFAULT": 6472,
+      "DERIVED": 7178,
+      "PUBLIC": 0,
+      "unknown": 6472
+    },
+    "min_water_depth_m": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 13650
+    },
+    "nominal_size_m": {
+      "DEFAULT": 2010,
+      "DERIVED": 11640,
+      "PUBLIC": 0,
+      "unknown": 2010
+    },
+    "od_m": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 2010
+    },
+    "permit_length_m": {
+      "DEFAULT": 476,
+      "DERIVED": 13174,
+      "PUBLIC": 0,
+      "unknown": 476
+    },
+    "permit_length_unit": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "product_code": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 13650,
+      "unknown": 0
+    },
+    "record_length_years": {
+      "DEFAULT": 12786,
+      "DERIVED": 864,
+      "PUBLIC": 0,
+      "unknown": 12786
+    },
+    "retained_observations": {
+      "DEFAULT": 0,
+      "DERIVED": 13650,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "seabed_current_m_s": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "segment_id": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 13650,
+      "unknown": 0
+    },
+    "size_code": {
+      "DEFAULT": 1720,
+      "DERIVED": 0,
+      "PUBLIC": 11930,
+      "unknown": 1720
+    },
+    "smys_pa": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 0
+    },
+    "soil_sample_distance_m": {
+      "DEFAULT": 6472,
+      "DERIVED": 7178,
+      "PUBLIC": 0,
+      "unknown": 6472
+    },
+    "soil_type": {
+      "DEFAULT": 6472,
+      "DERIVED": 7178,
+      "PUBLIC": 0,
+      "unknown": 6472
+    },
+    "station_distance_m": {
+      "DEFAULT": 6472,
+      "DERIVED": 7178,
+      "PUBLIC": 0,
+      "unknown": 6472
+    },
+    "station_id": {
+      "DEFAULT": 6472,
+      "DERIVED": 0,
+      "PUBLIC": 7178,
+      "unknown": 6472
+    },
+    "status": {
+      "DEFAULT": 0,
+      "DERIVED": 0,
+      "PUBLIC": 13650,
+      "unknown": 0
+    },
+    "tp_100yr_s": {
+      "DEFAULT": 13370,
+      "DERIVED": 280,
+      "PUBLIC": 0,
+      "unknown": 13370
+    },
+    "tp_10yr_s": {
+      "DEFAULT": 13370,
+      "DERIVED": 280,
+      "PUBLIC": 0,
+      "unknown": 13370
+    },
+    "wall_thickness_m": {
+      "DEFAULT": 3672,
+      "DERIVED": 9978,
+      "PUBLIC": 0,
+      "unknown": 3672
+    },
+    "wave_direction_deg": {
+      "DEFAULT": 13650,
+      "DERIVED": 0,
+      "PUBLIC": 0,
+      "unknown": 6478
+    }
+  },
+  "rows": 13650,
+  "segments": 6825,
+  "source_classes": {
+    "DEFAULT": 318124,
+    "DERIVED": 126868,
+    "PUBLIC": 60058
+  }
+}

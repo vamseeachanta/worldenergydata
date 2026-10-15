@@ -1,0 +1,3390 @@
+{
+  "artifacts": [
+    {
+      "bytes": 5832,
+      "path": "qa.html",
+      "sha256": "02723b7f827688623a1cc00580d3cea5fa79be3fb9f64b5a5ce2f58db2a87a3b"
+    },
+    {
+      "bytes": 4468,
+      "path": "qa.json",
+      "sha256": "55015c140f2c2616a1e5ea60a79df764a6a239a4b5e89eb84041fdf35c3bc7b1"
+    },
+    {
+      "bytes": 110325,
+      "path": "sample.csv",
+      "sha256": "9641bfa2c0c757affd76a4b9a61d8856d0546e67809e29b6e9af48809b093368"
+    },
+    {
+      "bytes": 207337,
+      "path": "sources.json",
+      "sha256": "1f40251a047ba68977880145fefe4b1c8dce9f42bc4a99c596d97fa47f72e499"
+    }
+  ],
+  "criteria": {
+    "code_sha256": {
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py": "f9f39d610730266a59deb6732c62a5bc49159ba1351e476b25587920b2165614",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py": "2de8aee0002a0657401a1e4b746db5b4a45a60458f18caa326674ed57c3b1a18",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py": "85699b66840256156632f20934fc60b07965147b2b54b40f1d2c7539f360dc1b",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening.py": "48db9d8bb53d7f4418fe91bec4f7bb408dd34a79ab27520bf4db21f3383116b9",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_io.py": "4df748b97b1844272cd00640fa805ecde2ecef06f7dabf6fec937b27dd774361",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_sources.py": "6e0d92194eaca4311cb4e87acbe4b6656afee457531d3178542a24de780e52aa",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py": "67a1a4f3d2a6db2d58953268630424047945f73f173de90170474626aee5c643",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py": "d03444cbdf11fea31da0a38e2b83d5a957ae15309ac3076185d2a31ecf8ab460",
+      "scripts/bsee/build_pipeline_screening.py": "5123fa9af9553343d96d48d072fc1f2c3b6ec4fdaee3fa68ace410fb79af3f21"
+    },
+    "defaults_sha256": "95da3755a30209b9b89e1009890dfd2356ca576a5bfbf5c81dd84bfb4041c3b2",
+    "first_run_started_at": "2026-10-15T05:10:11.174704+00:00",
+    "recorded_at": "2026-10-15T05:10:11.172764+00:00",
+    "revision_sha256": "17b3011fa81edc27341f7664bb4fa2162bb39b59f0db903985efe7cbd3f8b807",
+    "schema_sha256": "2f54f99ef1dc50ffaf0d9e6f5731228f6463fe8eeb83593bf449216a4baed331"
+  },
+  "dataset_id": "pipeline-screening",
+  "inputs": [
+    {
+      "blob": "data/worldenergydata/blobs/sha256/44/44659a4c465ac44cc0b867c825ea987ea14b8272db3cf92469cead5285a8182b.zip",
+      "bytes": 4500525,
+      "path": "sources/permit.zip",
+      "sha256": "44659a4c465ac44cc0b867c825ea987ea14b8272db3cf92469cead5285a8182b",
+      "source_id": "bsee-data-center",
+      "source_version": "sha256:44659a4c465ac44cc0b867c825ea987ea14b8272db3cf92469cead5285a8182b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ae/ae7e9e708519eb893a2fd64740f3eae9150b6166e7d8ba5c58e2908386a5903f.zip",
+      "bytes": 29741240,
+      "path": "sources/location.zip",
+      "sha256": "ae7e9e708519eb893a2fd64740f3eae9150b6166e7d8ba5c58e2908386a5903f",
+      "source_id": "bsee-data-center",
+      "source_version": "sha256:ae7e9e708519eb893a2fd64740f3eae9150b6166e7d8ba5c58e2908386a5903f",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/6b/6bf64cfef229aff816cd4b738b1603e1565a259fea2547cb97b6d9f0db947b9f.xml",
+      "bytes": 272964,
+      "path": "sources/ndbc-stations.xml",
+      "sha256": "6bf64cfef229aff816cd4b738b1603e1565a259fea2547cb97b6d9f0db947b9f",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:6bf64cfef229aff816cd4b738b1603e1565a259fea2547cb97b6d9f0db947b9f",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/e1/e1194c97884ec61c312f5f589d2f2fabcabf160e1870abcb15ee67be73423f79.zip",
+      "bytes": 2571768,
+      "path": "sources/sediment.zip",
+      "sha256": "e1194c97884ec61c312f5f589d2f2fabcabf160e1870abcb15ee67be73423f79",
+      "source_id": "usgs-layer-register",
+      "source_version": "USGS Data Series 146, 2006, edition 1.0",
+      "source_vintage": {
+        "reason": "The release is dated 2006; assigned sample observation dates are not established.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/4b/4b790c6d53a455fd8ddb403ca84d47de3a9e82bda0e145260144cdccdd0e081b.html",
+      "bytes": 14697,
+      "path": "sources/status-values.html",
+      "sha256": "4b790c6d53a455fd8ddb403ca84d47de3a9e82bda0e145260144cdccdd0e081b",
+      "source_id": "bsee-data-center",
+      "source_version": "sha256:4b790c6d53a455fd8ddb403ca84d47de3a9e82bda0e145260144cdccdd0e081b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ef/ef3e3a5577b78f727d373d6d384ad312c18a09e8621a6abdf639ca18845bff57.txt",
+      "bytes": 4727248,
+      "path": "sources/ndbc/42019h2022.txt",
+      "sha256": "ef3e3a5577b78f727d373d6d384ad312c18a09e8621a6abdf639ca18845bff57",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:ef3e3a5577b78f727d373d6d384ad312c18a09e8621a6abdf639ca18845bff57",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/9b/9b149015f4860e162f8e4527ae4f8469950d97a43fd36668df1244859eab9d09.txt",
+      "bytes": 3991381,
+      "path": "sources/ndbc/42019h2023.txt",
+      "sha256": "9b149015f4860e162f8e4527ae4f8469950d97a43fd36668df1244859eab9d09",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:9b149015f4860e162f8e4527ae4f8469950d97a43fd36668df1244859eab9d09",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/a9/a9accf13d239172b882d3ed468b37fcc9a8b64e875fc7dafd01e2ac413bc1388.txt",
+      "bytes": 4742998,
+      "path": "sources/ndbc/42019h2024.txt",
+      "sha256": "a9accf13d239172b882d3ed468b37fcc9a8b64e875fc7dafd01e2ac413bc1388",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:a9accf13d239172b882d3ed468b37fcc9a8b64e875fc7dafd01e2ac413bc1388",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/b5/b580e6cb18db466628e9309b62f311dae15adabeae4f4763db28dadb827bbe0a.txt",
+      "bytes": 4682857,
+      "path": "sources/ndbc/42019h2025.txt",
+      "sha256": "b580e6cb18db466628e9309b62f311dae15adabeae4f4763db28dadb827bbe0a",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:b580e6cb18db466628e9309b62f311dae15adabeae4f4763db28dadb827bbe0a",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42027h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42027h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42027h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/bf/bfb44d63c506b0751d75201c5bcb7aa8996b2c5809e3570c0c59692d928c213a.txt",
+      "bytes": 128427,
+      "path": "sources/ndbc/42027h2025.txt",
+      "sha256": "bfb44d63c506b0751d75201c5bcb7aa8996b2c5809e3570c0c59692d928c213a",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:bfb44d63c506b0751d75201c5bcb7aa8996b2c5809e3570c0c59692d928c213a",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42031h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42031h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42031h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/3b/3bc28b5632837781b94bea7ca7b90479921c0450934edf75058f7da6111f9e81.txt",
+      "bytes": 184319,
+      "path": "sources/ndbc/42031h2025.txt",
+      "sha256": "3bc28b5632837781b94bea7ca7b90479921c0450934edf75058f7da6111f9e81",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:3bc28b5632837781b94bea7ca7b90479921c0450934edf75058f7da6111f9e81",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/46/468b2d6bfaf679eb98bf0bedf07927793e1ec0a319ea3a3e81e16ddb0a163291.txt",
+      "bytes": 3324328,
+      "path": "sources/ndbc/42035h2022.txt",
+      "sha256": "468b2d6bfaf679eb98bf0bedf07927793e1ec0a319ea3a3e81e16ddb0a163291",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:468b2d6bfaf679eb98bf0bedf07927793e1ec0a319ea3a3e81e16ddb0a163291",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/99/992d5f1e78186f2bfc19996778dafb48945a22494ba6ee654c4f21aca22d293b.txt",
+      "bytes": 2755015,
+      "path": "sources/ndbc/42035h2023.txt",
+      "sha256": "992d5f1e78186f2bfc19996778dafb48945a22494ba6ee654c4f21aca22d293b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:992d5f1e78186f2bfc19996778dafb48945a22494ba6ee654c4f21aca22d293b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/18/18fd2bd983551c98ab486ba077b72e077e6240e5f3aa57eda2a1fe3b91eaf0f3.txt",
+      "bytes": 3032998,
+      "path": "sources/ndbc/42035h2024.txt",
+      "sha256": "18fd2bd983551c98ab486ba077b72e077e6240e5f3aa57eda2a1fe3b91eaf0f3",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:18fd2bd983551c98ab486ba077b72e077e6240e5f3aa57eda2a1fe3b91eaf0f3",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/2b/2b16797f858c3033eb2b682f7360028bc86abd7dbce8016a0e2e4483670f1753.txt",
+      "bytes": 3308677,
+      "path": "sources/ndbc/42035h2025.txt",
+      "sha256": "2b16797f858c3033eb2b682f7360028bc86abd7dbce8016a0e2e4483670f1753",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:2b16797f858c3033eb2b682f7360028bc86abd7dbce8016a0e2e4483670f1753",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/4b/4b4d22c3f97ec2fe695d88e49bd18aa6ac92f621e06c94a7f97f18c0c8e22530.txt",
+      "bytes": 4728058,
+      "path": "sources/ndbc/42040h2022.txt",
+      "sha256": "4b4d22c3f97ec2fe695d88e49bd18aa6ac92f621e06c94a7f97f18c0c8e22530",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:4b4d22c3f97ec2fe695d88e49bd18aa6ac92f621e06c94a7f97f18c0c8e22530",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/84/842f2bf70871a44d3b433d8bc9a2f42af20fd2db6c3a45756ccf21e546923310.txt",
+      "bytes": 4727068,
+      "path": "sources/ndbc/42040h2023.txt",
+      "sha256": "842f2bf70871a44d3b433d8bc9a2f42af20fd2db6c3a45756ccf21e546923310",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:842f2bf70871a44d3b433d8bc9a2f42af20fd2db6c3a45756ccf21e546923310",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/4a/4a052d1de1d421f3b9a85aa6e11285412c4ffae17743312335430c966870f67b.txt",
+      "bytes": 4743268,
+      "path": "sources/ndbc/42040h2024.txt",
+      "sha256": "4a052d1de1d421f3b9a85aa6e11285412c4ffae17743312335430c966870f67b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:4a052d1de1d421f3b9a85aa6e11285412c4ffae17743312335430c966870f67b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/86/8605c22f859c5450341383379c43cbb530ecaad8880073e273b4afde49b44dad.txt",
+      "bytes": 4683924,
+      "path": "sources/ndbc/42040h2025.txt",
+      "sha256": "8605c22f859c5450341383379c43cbb530ecaad8880073e273b4afde49b44dad",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:8605c22f859c5450341383379c43cbb530ecaad8880073e273b4afde49b44dad",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42043h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42043h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42043h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42043h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42050h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42050h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42050h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42050h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42051h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42051h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42051h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42051h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42067h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42067h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42067h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/55/55561ca136dee6ca565ca7f9992db61f139a713a5c78e2e29eac72df1355bb0e.txt",
+      "bytes": 4125061,
+      "path": "sources/ndbc/42067h2025.txt",
+      "sha256": "55561ca136dee6ca565ca7f9992db61f139a713a5c78e2e29eac72df1355bb0e",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:55561ca136dee6ca565ca7f9992db61f139a713a5c78e2e29eac72df1355bb0e",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/b6/b68e44444f7948fbaf028f5d20baa78bf2b7776805a363f16de0ec6df123d420.txt",
+      "bytes": 1395965,
+      "path": "sources/ndbc/42084h2022.txt",
+      "sha256": "b68e44444f7948fbaf028f5d20baa78bf2b7776805a363f16de0ec6df123d420",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:b68e44444f7948fbaf028f5d20baa78bf2b7776805a363f16de0ec6df123d420",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/cd/cdb80266b31a41a2bed4230058574615380caed188b875407233f285a8004ff8.txt",
+      "bytes": 1555097,
+      "path": "sources/ndbc/42084h2023.txt",
+      "sha256": "cdb80266b31a41a2bed4230058574615380caed188b875407233f285a8004ff8",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:cdb80266b31a41a2bed4230058574615380caed188b875407233f285a8004ff8",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/a8/a88c8de6fa9f5374837097b1e37b7b7818e5f2c102c11d40d8a3661d917df0ac.txt",
+      "bytes": 1152016,
+      "path": "sources/ndbc/42084h2024.txt",
+      "sha256": "a88c8de6fa9f5374837097b1e37b7b7818e5f2c102c11d40d8a3661d917df0ac",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:a88c8de6fa9f5374837097b1e37b7b7818e5f2c102c11d40d8a3661d917df0ac",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/7a/7ab04b5461e976a37b053c82d70434f02a772762c0f6df60962565ca1b3df9d4.txt",
+      "bytes": 1292814,
+      "path": "sources/ndbc/42084h2025.txt",
+      "sha256": "7ab04b5461e976a37b053c82d70434f02a772762c0f6df60962565ca1b3df9d4",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:7ab04b5461e976a37b053c82d70434f02a772762c0f6df60962565ca1b3df9d4",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ad/ad98d80a476a7fe8c1541f7c54d36d71ac2bbd344ec1f55a37adf41ed4d24a3b.txt",
+      "bytes": 446691,
+      "path": "sources/ndbc/42091h2022.txt",
+      "sha256": "ad98d80a476a7fe8c1541f7c54d36d71ac2bbd344ec1f55a37adf41ed4d24a3b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:ad98d80a476a7fe8c1541f7c54d36d71ac2bbd344ec1f55a37adf41ed4d24a3b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/fb/fbfdeb0f78be7965fbc619d6b68e5ed5fc3ee1271ff749af9c8f808eb9c45450.txt",
+      "bytes": 1191888,
+      "path": "sources/ndbc/42091h2023.txt",
+      "sha256": "fbfdeb0f78be7965fbc619d6b68e5ed5fc3ee1271ff749af9c8f808eb9c45450",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:fbfdeb0f78be7965fbc619d6b68e5ed5fc3ee1271ff749af9c8f808eb9c45450",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/d2/d29da84f682b7b6f59b3c71b0c892c33c2fbb9adc1b781c2d1bc9594d52968b0.txt",
+      "bytes": 1536763,
+      "path": "sources/ndbc/42091h2024.txt",
+      "sha256": "d29da84f682b7b6f59b3c71b0c892c33c2fbb9adc1b781c2d1bc9594d52968b0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:d29da84f682b7b6f59b3c71b0c892c33c2fbb9adc1b781c2d1bc9594d52968b0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/f9/f97275d9ae1042f50da4acc997e6816524e26c2e6cd93030a0c87b9d8449cd02.txt",
+      "bytes": 576898,
+      "path": "sources/ndbc/42091h2025.txt",
+      "sha256": "f97275d9ae1042f50da4acc997e6816524e26c2e6cd93030a0c87b9d8449cd02",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:f97275d9ae1042f50da4acc997e6816524e26c2e6cd93030a0c87b9d8449cd02",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42354h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42354h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42354h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/48/4838807d0bae47959ff03c3808d0cbffdc4a23d3c8b79ce371e73b5e440fb92c.txt",
+      "bytes": 1516293,
+      "path": "sources/ndbc/42354h2025.txt",
+      "sha256": "4838807d0bae47959ff03c3808d0cbffdc4a23d3c8b79ce371e73b5e440fb92c",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:4838807d0bae47959ff03c3808d0cbffdc4a23d3c8b79ce371e73b5e440fb92c",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42358h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42358h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42358h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/42358h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/3a/3aaeed2d1204f9aa3439feedaac1d97f714ef868556f2d155526c0a2bd995fd1.txt",
+      "bytes": 777593,
+      "path": "sources/ndbc/burl1h2022.txt",
+      "sha256": "3aaeed2d1204f9aa3439feedaac1d97f714ef868556f2d155526c0a2bd995fd1",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:3aaeed2d1204f9aa3439feedaac1d97f714ef868556f2d155526c0a2bd995fd1",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/80/8023088670cf9dc35ca8f95350663ab26014d02fbb0f9e15fb7eef0a73167def.txt",
+      "bytes": 777593,
+      "path": "sources/ndbc/burl1h2023.txt",
+      "sha256": "8023088670cf9dc35ca8f95350663ab26014d02fbb0f9e15fb7eef0a73167def",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:8023088670cf9dc35ca8f95350663ab26014d02fbb0f9e15fb7eef0a73167def",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/39/3986af94e3ecb14503519067d340f51e26c7167d541ac5d89465a41127c4f541.txt",
+      "bytes": 781242,
+      "path": "sources/ndbc/burl1h2024.txt",
+      "sha256": "3986af94e3ecb14503519067d340f51e26c7167d541ac5d89465a41127c4f541",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:3986af94e3ecb14503519067d340f51e26c7167d541ac5d89465a41127c4f541",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/17/17cd8d53ef9737c8e196d3f9239f016db44461eae7fba4b490c13b9acb7e69b1.txt",
+      "bytes": 540141,
+      "path": "sources/ndbc/burl1h2025.txt",
+      "sha256": "17cd8d53ef9737c8e196d3f9239f016db44461eae7fba4b490c13b9acb7e69b1",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:17cd8d53ef9737c8e196d3f9239f016db44461eae7fba4b490c13b9acb7e69b1",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/e8/e8d4517c63569274fd38b1da13ef34d4bd6c9955b51386dfa1695ec2bb992211.txt",
+      "bytes": 7686218,
+      "path": "sources/ndbc/capl1h2022.txt",
+      "sha256": "e8d4517c63569274fd38b1da13ef34d4bd6c9955b51386dfa1695ec2bb992211",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:e8d4517c63569274fd38b1da13ef34d4bd6c9955b51386dfa1695ec2bb992211",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/81/81bb4fc0d91c433dda7f4bae19f34888bd64301ea265dcfb184522788c71073b.txt",
+      "bytes": 7765161,
+      "path": "sources/ndbc/capl1h2023.txt",
+      "sha256": "81bb4fc0d91c433dda7f4bae19f34888bd64301ea265dcfb184522788c71073b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:81bb4fc0d91c433dda7f4bae19f34888bd64301ea265dcfb184522788c71073b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/4b/4bc3de24d1c25f0b3fba5b60cf689a9f072d7199459596c794dba332a285ba2b.txt",
+      "bytes": 7791060,
+      "path": "sources/ndbc/capl1h2024.txt",
+      "sha256": "4bc3de24d1c25f0b3fba5b60cf689a9f072d7199459596c794dba332a285ba2b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:4bc3de24d1c25f0b3fba5b60cf689a9f072d7199459596c794dba332a285ba2b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/54/54d3c684f6294b6eef409222de0df675e2a11d46004e5d38cb5680806c7015b7.txt",
+      "bytes": 7747005,
+      "path": "sources/ndbc/capl1h2025.txt",
+      "sha256": "54d3c684f6294b6eef409222de0df675e2a11d46004e5d38cb5680806c7015b7",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:54d3c684f6294b6eef409222de0df675e2a11d46004e5d38cb5680806c7015b7",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/cgcl1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/cgcl1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/cgcl1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/cgcl1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/7b/7b9e642ad52b3010b42a93dd4b22109f62966ae7b66f2c70cdacc433ba1b08a7.txt",
+      "bytes": 1917594,
+      "path": "sources/ndbc/dila1h2022.txt",
+      "sha256": "7b9e642ad52b3010b42a93dd4b22109f62966ae7b66f2c70cdacc433ba1b08a7",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:7b9e642ad52b3010b42a93dd4b22109f62966ae7b66f2c70cdacc433ba1b08a7",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/8b/8b6ee4555bb3d17c3821d03ab534f4d0994fdad79ba2690b2b8ff21418d7eda9.txt",
+      "bytes": 7717012,
+      "path": "sources/ndbc/dila1h2023.txt",
+      "sha256": "8b6ee4555bb3d17c3821d03ab534f4d0994fdad79ba2690b2b8ff21418d7eda9",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:8b6ee4555bb3d17c3821d03ab534f4d0994fdad79ba2690b2b8ff21418d7eda9",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ce/ceca5c23cb98383634a87397f794ae88c75d9b0c613eff794b1f816804c3734e.txt",
+      "bytes": 7545153,
+      "path": "sources/ndbc/dila1h2024.txt",
+      "sha256": "ceca5c23cb98383634a87397f794ae88c75d9b0c613eff794b1f816804c3734e",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:ceca5c23cb98383634a87397f794ae88c75d9b0c613eff794b1f816804c3734e",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/e1/e16cb99ab3dd578665fc500c746d87c1b29864cb142261cefb92f565cc80a465.txt",
+      "bytes": 7751455,
+      "path": "sources/ndbc/dila1h2025.txt",
+      "sha256": "e16cb99ab3dd578665fc500c746d87c1b29864cb142261cefb92f565cc80a465",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:e16cb99ab3dd578665fc500c746d87c1b29864cb142261cefb92f565cc80a465",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/68/68cff667a3688d863a82efac4363331941bc491aa7de69ccf9f6f2296d413f74.txt",
+      "bytes": 1267093,
+      "path": "sources/ndbc/dpha1h2022.txt",
+      "sha256": "68cff667a3688d863a82efac4363331941bc491aa7de69ccf9f6f2296d413f74",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:68cff667a3688d863a82efac4363331941bc491aa7de69ccf9f6f2296d413f74",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/3a/3a71f978ca31ac53dee25dbad35b50df207ae80f669cbd570f8e3d73e5166342.txt",
+      "bytes": 952211,
+      "path": "sources/ndbc/dpha1h2023.txt",
+      "sha256": "3a71f978ca31ac53dee25dbad35b50df207ae80f669cbd570f8e3d73e5166342",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:3a71f978ca31ac53dee25dbad35b50df207ae80f669cbd570f8e3d73e5166342",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/60/60dbe903c8a4f11e5f9e9bcf6e57fff2d2702d314d94171bedb4f76ba2168845.txt",
+      "bytes": 5589467,
+      "path": "sources/ndbc/dpha1h2024.txt",
+      "sha256": "60dbe903c8a4f11e5f9e9bcf6e57fff2d2702d314d94171bedb4f76ba2168845",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:60dbe903c8a4f11e5f9e9bcf6e57fff2d2702d314d94171bedb4f76ba2168845",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/e3/e302401d4f1f45fe77647ef26067ea6dbb5bf007299f44cd73f1be63aeede224.txt",
+      "bytes": 807764,
+      "path": "sources/ndbc/dpha1h2025.txt",
+      "sha256": "e302401d4f1f45fe77647ef26067ea6dbb5bf007299f44cd73f1be63aeede224",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:e302401d4f1f45fe77647ef26067ea6dbb5bf007299f44cd73f1be63aeede224",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/80/80d64240219410feccc61d542d1b1b106e2daf98ad813197276356c21e134b04.txt",
+      "bytes": 7353447,
+      "path": "sources/ndbc/einl1h2022.txt",
+      "sha256": "80d64240219410feccc61d542d1b1b106e2daf98ad813197276356c21e134b04",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:80d64240219410feccc61d542d1b1b106e2daf98ad813197276356c21e134b04",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/9d/9d5bec42c26cf2668c27a0d5364a24d138b49770e268bab59fdb22a2293b5383.txt",
+      "bytes": 7668863,
+      "path": "sources/ndbc/einl1h2023.txt",
+      "sha256": "9d5bec42c26cf2668c27a0d5364a24d138b49770e268bab59fdb22a2293b5383",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:9d5bec42c26cf2668c27a0d5364a24d138b49770e268bab59fdb22a2293b5383",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/52/520c972c015c8e220676d575879e0bac52c4df5ccbeb9d6b33311224f71be8bc.txt",
+      "bytes": 7486858,
+      "path": "sources/ndbc/einl1h2024.txt",
+      "sha256": "520c972c015c8e220676d575879e0bac52c4df5ccbeb9d6b33311224f71be8bc",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:520c972c015c8e220676d575879e0bac52c4df5ccbeb9d6b33311224f71be8bc",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/1c/1c4f4588e0e06d1ea86f9abf6d1540889de916d512fffba03cf222aa1d693b55.txt",
+      "bytes": 7693516,
+      "path": "sources/ndbc/einl1h2025.txt",
+      "sha256": "1c4f4588e0e06d1ea86f9abf6d1540889de916d512fffba03cf222aa1d693b55",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:1c4f4588e0e06d1ea86f9abf6d1540889de916d512fffba03cf222aa1d693b55",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/2b/2bcb179f41e1afd838b19b04b4adca89c5f740ea89525f48979e25adaaaf2271.txt",
+      "bytes": 7743089,
+      "path": "sources/ndbc/fpst2h2022.txt",
+      "sha256": "2bcb179f41e1afd838b19b04b4adca89c5f740ea89525f48979e25adaaaf2271",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:2bcb179f41e1afd838b19b04b4adca89c5f740ea89525f48979e25adaaaf2271",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/27/27661e660aa2243b1faa9207b113a4bff78a7eb736ddf8a56999f83a3a5281ea.txt",
+      "bytes": 7778422,
+      "path": "sources/ndbc/fpst2h2023.txt",
+      "sha256": "27661e660aa2243b1faa9207b113a4bff78a7eb736ddf8a56999f83a3a5281ea",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:27661e660aa2243b1faa9207b113a4bff78a7eb736ddf8a56999f83a3a5281ea",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ff/ff4a73c35d9fc37da7a4f89e86243f71e56fce567419d12349e62c917201077b.txt",
+      "bytes": 7788568,
+      "path": "sources/ndbc/fpst2h2024.txt",
+      "sha256": "ff4a73c35d9fc37da7a4f89e86243f71e56fce567419d12349e62c917201077b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:ff4a73c35d9fc37da7a4f89e86243f71e56fce567419d12349e62c917201077b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/6f/6f74dd81b97d579af2da02ec48fb958491cea1450c4ac5bb5b6dbbd296e19143.txt",
+      "bytes": 7748429,
+      "path": "sources/ndbc/fpst2h2025.txt",
+      "sha256": "6f74dd81b97d579af2da02ec48fb958491cea1450c4ac5bb5b6dbbd296e19143",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:6f74dd81b97d579af2da02ec48fb958491cea1450c4ac5bb5b6dbbd296e19143",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/frcb6h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/8e/8e7a49130a9b59d65db35c0911e39b2d57910ed2d89ed75e872bb65abc2c7608.txt",
+      "bytes": 3966463,
+      "path": "sources/ndbc/frcb6h2023.txt",
+      "sha256": "8e7a49130a9b59d65db35c0911e39b2d57910ed2d89ed75e872bb65abc2c7608",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:8e7a49130a9b59d65db35c0911e39b2d57910ed2d89ed75e872bb65abc2c7608",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/9a/9ab641b161b10f1203c395981de62488f94299ef71fc94b646d79a667bd0ad42.txt",
+      "bytes": 7456242,
+      "path": "sources/ndbc/frcb6h2024.txt",
+      "sha256": "9ab641b161b10f1203c395981de62488f94299ef71fc94b646d79a667bd0ad42",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:9ab641b161b10f1203c395981de62488f94299ef71fc94b646d79a667bd0ad42",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/33/330ed504fd69f2402ba8230619a98d607c46ad391ad7ec181048a9b9e4e4577a.txt",
+      "bytes": 7519699,
+      "path": "sources/ndbc/frcb6h2025.txt",
+      "sha256": "330ed504fd69f2402ba8230619a98d607c46ad391ad7ec181048a9b9e4e4577a",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:330ed504fd69f2402ba8230619a98d607c46ad391ad7ec181048a9b9e4e4577a",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/frma1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/6f/6fbfee335b8f9502e852e30ec9a89fc920c8240a3154a5b7500970d0857fb259.txt",
+      "bytes": 1920442,
+      "path": "sources/ndbc/frma1h2023.txt",
+      "sha256": "6fbfee335b8f9502e852e30ec9a89fc920c8240a3154a5b7500970d0857fb259",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:6fbfee335b8f9502e852e30ec9a89fc920c8240a3154a5b7500970d0857fb259",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/21/21156b8c12381042fee631fb08b874ef99b7479b81d467c3a8f78cff8a1403e9.txt",
+      "bytes": 7783406,
+      "path": "sources/ndbc/frma1h2024.txt",
+      "sha256": "21156b8c12381042fee631fb08b874ef99b7479b81d467c3a8f78cff8a1403e9",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:21156b8c12381042fee631fb08b874ef99b7479b81d467c3a8f78cff8a1403e9",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/8d/8d2e81b3b432072816931167a4fb772b2e8d44683ca4009689538af4e195d546.txt",
+      "bytes": 7728760,
+      "path": "sources/ndbc/frma1h2025.txt",
+      "sha256": "8d2e81b3b432072816931167a4fb772b2e8d44683ca4009689538af4e195d546",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:8d2e81b3b432072816931167a4fb772b2e8d44683ca4009689538af4e195d546",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/19/1944b887540819d2e137d78a0904174da01cd1ea977eb3c9d87e1aa448abb094.txt",
+      "bytes": 1035960,
+      "path": "sources/ndbc/frwl1h2022.txt",
+      "sha256": "1944b887540819d2e137d78a0904174da01cd1ea977eb3c9d87e1aa448abb094",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:1944b887540819d2e137d78a0904174da01cd1ea977eb3c9d87e1aa448abb094",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/98/9829063d5ac067bee662c503470ada8b92f111f75fd25ac3eb1478a1bfa3d099.txt",
+      "bytes": 6248245,
+      "path": "sources/ndbc/frwl1h2023.txt",
+      "sha256": "9829063d5ac067bee662c503470ada8b92f111f75fd25ac3eb1478a1bfa3d099",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:9829063d5ac067bee662c503470ada8b92f111f75fd25ac3eb1478a1bfa3d099",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/b1/b1a98ca36571648663b2b8a3aed866786c5bb0c5fe32d752f50be37267841cf8.txt",
+      "bytes": 7777443,
+      "path": "sources/ndbc/frwl1h2024.txt",
+      "sha256": "b1a98ca36571648663b2b8a3aed866786c5bb0c5fe32d752f50be37267841cf8",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:b1a98ca36571648663b2b8a3aed866786c5bb0c5fe32d752f50be37267841cf8",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/33/33951a8f37b4a610bf3c394745cadab63dbfaf9245e71159c95b3cea96d4e15b.txt",
+      "bytes": 7741843,
+      "path": "sources/ndbc/frwl1h2025.txt",
+      "sha256": "33951a8f37b4a610bf3c394745cadab63dbfaf9245e71159c95b3cea96d4e15b",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:33951a8f37b4a610bf3c394745cadab63dbfaf9245e71159c95b3cea96d4e15b",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/grbl1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/grbl1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/grbl1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/grbl1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kata1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kata1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kata1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kata1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/katph2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/katph2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/katph2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/katph2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbbfh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbbfh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbbfh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbbfh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbqxh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbqxh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbqxh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kbqxh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kcvwh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kcvwh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kcvwh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kcvwh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kdlph2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kdlph2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kdlph2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kdlph2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kehch2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kehch2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kehch2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kehch2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/keirh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/keirh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/keirh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/keirh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kemkh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kemkh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kemkh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kemkh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgbkh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgbkh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgbkh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgbkh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kghbh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kghbh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kghbh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kghbh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgryh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgryh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgryh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgryh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgulh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgulh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgulh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgulh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvwh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvwh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvwh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvwh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvxh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvxh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvxh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kgvxh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khhvh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khhvh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khhvh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khhvh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khqih2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khqih2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khqih2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/khqih2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kikth2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kikth2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kikth2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kikth2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kipnh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kipnh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kipnh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kipnh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmdjh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmdjh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmdjh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmdjh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmish2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmish2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmish2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kmish2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kscfh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kscfh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kscfh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kscfh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksprh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksprh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksprh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksprh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksqeh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksqeh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksqeh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ksqeh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvafh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvafh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvafh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvafh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvbsh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvbsh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvbsh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvbsh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvkyh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvkyh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvkyh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvkyh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvoah2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvoah2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvoah2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvoah2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvqth2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvqth2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvqth2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kvqth2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kxihh2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kxihh2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kxihh2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/kxihh2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/c1/c164d698a7a2c8f6a860355cbf01a2e40910d429c4072a65713f8ba9165354d7.txt",
+      "bytes": 422394,
+      "path": "sources/ndbc/lopl1h2022.txt",
+      "sha256": "c164d698a7a2c8f6a860355cbf01a2e40910d429c4072a65713f8ba9165354d7",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:c164d698a7a2c8f6a860355cbf01a2e40910d429c4072a65713f8ba9165354d7",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/917630202d9246fdea1af4d02ad8243673bf73faaaaf58afe874e0fef875c952.txt",
+      "bytes": 705414,
+      "path": "sources/ndbc/lopl1h2023.txt",
+      "sha256": "917630202d9246fdea1af4d02ad8243673bf73faaaaf58afe874e0fef875c952",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:917630202d9246fdea1af4d02ad8243673bf73faaaaf58afe874e0fef875c952",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/9a/9a87b36670aa388a3d34179845aedb2f62775898dbd67402457a19f7b0466abc.txt",
+      "bytes": 777771,
+      "path": "sources/ndbc/lopl1h2024.txt",
+      "sha256": "9a87b36670aa388a3d34179845aedb2f62775898dbd67402457a19f7b0466abc",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:9a87b36670aa388a3d34179845aedb2f62775898dbd67402457a19f7b0466abc",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/27/27240869968727d5452ed6d7bd024e86a36f9ec421ea819a30f01b1f6c383ce4.txt",
+      "bytes": 778661,
+      "path": "sources/ndbc/lopl1h2025.txt",
+      "sha256": "27240869968727d5452ed6d7bd024e86a36f9ec421ea819a30f01b1f6c383ce4",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:27240869968727d5452ed6d7bd024e86a36f9ec421ea819a30f01b1f6c383ce4",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/luml1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/luml1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/luml1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/luml1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/af/af7508b6f56b0e654b40c4ec1d703caf35f2a4e2fcd6de4d18bcb0d7b312d301.txt",
+      "bytes": 7743801,
+      "path": "sources/ndbc/mbet2h2022.txt",
+      "sha256": "af7508b6f56b0e654b40c4ec1d703caf35f2a4e2fcd6de4d18bcb0d7b312d301",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:af7508b6f56b0e654b40c4ec1d703caf35f2a4e2fcd6de4d18bcb0d7b312d301",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ba/bad79e7f21647e115e79e88ae8cca51a58f37e7646dcc2652804aa8b9ec75d09.txt",
+      "bytes": 7769433,
+      "path": "sources/ndbc/mbet2h2023.txt",
+      "sha256": "bad79e7f21647e115e79e88ae8cca51a58f37e7646dcc2652804aa8b9ec75d09",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:bad79e7f21647e115e79e88ae8cca51a58f37e7646dcc2652804aa8b9ec75d09",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/58/58b10720d412a5e816903300a25384e8411cc689e13d58cadaf8dfeedbc8490f.txt",
+      "bytes": 7787411,
+      "path": "sources/ndbc/mbet2h2024.txt",
+      "sha256": "58b10720d412a5e816903300a25384e8411cc689e13d58cadaf8dfeedbc8490f",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:58b10720d412a5e816903300a25384e8411cc689e13d58cadaf8dfeedbc8490f",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ff/fffe78d88fa33f6214fa73c437c4fa4f78e55f637d5df654ba90f5901662ef3c.txt",
+      "bytes": 7749497,
+      "path": "sources/ndbc/mbet2h2025.txt",
+      "sha256": "fffe78d88fa33f6214fa73c437c4fa4f78e55f637d5df654ba90f5901662ef3c",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:fffe78d88fa33f6214fa73c437c4fa4f78e55f637d5df654ba90f5901662ef3c",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mqmt2h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mqmt2h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mqmt2h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mqmt2h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mrsl1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mrsl1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mrsl1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/mrsl1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/24/243f625b3314b8b958209e9bf6bccb4b9a5e0baae78122e9b175c93920bc7f36.txt",
+      "bytes": 7749764,
+      "path": "sources/ndbc/pill1h2022.txt",
+      "sha256": "243f625b3314b8b958209e9bf6bccb4b9a5e0baae78122e9b175c93920bc7f36",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:243f625b3314b8b958209e9bf6bccb4b9a5e0baae78122e9b175c93920bc7f36",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/c5/c5fd9b7c3553afaf1f646d40c05bfef9858c60d1d49f75bdf1a481eff8f5c0db.txt",
+      "bytes": 7689422,
+      "path": "sources/ndbc/pill1h2023.txt",
+      "sha256": "c5fd9b7c3553afaf1f646d40c05bfef9858c60d1d49f75bdf1a481eff8f5c0db",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:c5fd9b7c3553afaf1f646d40c05bfef9858c60d1d49f75bdf1a481eff8f5c0db",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/22/22d097fe3fe3a70de6c667b2c39320f1edb069118da3851a77d13fc156c6fe74.txt",
+      "bytes": 7779401,
+      "path": "sources/ndbc/pill1h2024.txt",
+      "sha256": "22d097fe3fe3a70de6c667b2c39320f1edb069118da3851a77d13fc156c6fe74",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:22d097fe3fe3a70de6c667b2c39320f1edb069118da3851a77d13fc156c6fe74",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/f8/f8b9442fa862dd67f7ca75c0b9100fb15fd00839426c84341666ac0a7269d511.txt",
+      "bytes": 7741309,
+      "path": "sources/ndbc/pill1h2025.txt",
+      "sha256": "f8b9442fa862dd67f7ca75c0b9100fb15fd00839426c84341666ac0a7269d511",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:f8b9442fa862dd67f7ca75c0b9100fb15fd00839426c84341666ac0a7269d511",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/49/493c4cf112bc0c5de8a3a50e50606e21a847a1a37ebada728d4c13c69b878b0d.txt",
+      "bytes": 7619023,
+      "path": "sources/ndbc/pstl1h2022.txt",
+      "sha256": "493c4cf112bc0c5de8a3a50e50606e21a847a1a37ebada728d4c13c69b878b0d",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:493c4cf112bc0c5de8a3a50e50606e21a847a1a37ebada728d4c13c69b878b0d",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/da/dabed0548479cefe08de8c0876032cfceb7946fc62147363f858e53e0cec6b66.txt",
+      "bytes": 7767475,
+      "path": "sources/ndbc/pstl1h2023.txt",
+      "sha256": "dabed0548479cefe08de8c0876032cfceb7946fc62147363f858e53e0cec6b66",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:dabed0548479cefe08de8c0876032cfceb7946fc62147363f858e53e0cec6b66",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/37/37aa57961298824c7a2e93e218f49ac945088e80051b8f3fb34daeb7447ba79c.txt",
+      "bytes": 7784207,
+      "path": "sources/ndbc/pstl1h2024.txt",
+      "sha256": "37aa57961298824c7a2e93e218f49ac945088e80051b8f3fb34daeb7447ba79c",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:37aa57961298824c7a2e93e218f49ac945088e80051b8f3fb34daeb7447ba79c",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/1b/1bee344c71cf24286772d6425e3d175db786a997e7dee4fc6c1872e490dd7ace.txt",
+      "bytes": 7745581,
+      "path": "sources/ndbc/pstl1h2025.txt",
+      "sha256": "1bee344c71cf24286772d6425e3d175db786a997e7dee4fc6c1872e490dd7ace",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:1bee344c71cf24286772d6425e3d175db786a997e7dee4fc6c1872e490dd7ace",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/59/59d7f626bec371359c667680750a71bb40ef98d54446ab93e09a1f5e9016fa01.txt",
+      "bytes": 7751811,
+      "path": "sources/ndbc/ptbm6h2022.txt",
+      "sha256": "59d7f626bec371359c667680750a71bb40ef98d54446ab93e09a1f5e9016fa01",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:59d7f626bec371359c667680750a71bb40ef98d54446ab93e09a1f5e9016fa01",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/dc/dc9b1070bab824a29a19f8acdd392dab300dc9a6ec436c0ce9de839f4046f492.txt",
+      "bytes": 7774951,
+      "path": "sources/ndbc/ptbm6h2023.txt",
+      "sha256": "dc9b1070bab824a29a19f8acdd392dab300dc9a6ec436c0ce9de839f4046f492",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:dc9b1070bab824a29a19f8acdd392dab300dc9a6ec436c0ce9de839f4046f492",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/ab/ab887a85da2fbadeefaa4404978a5e412ce5b385e8480c93cdf5abf07303e536.txt",
+      "bytes": 7782694,
+      "path": "sources/ndbc/ptbm6h2024.txt",
+      "sha256": "ab887a85da2fbadeefaa4404978a5e412ce5b385e8480c93cdf5abf07303e536",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:ab887a85da2fbadeefaa4404978a5e412ce5b385e8480c93cdf5abf07303e536",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/17/1752cc5bafc2ca845618bad28b0f10ccbce3eafb6f16297ca792a4d2ab221050.txt",
+      "bytes": 7748963,
+      "path": "sources/ndbc/ptbm6h2025.txt",
+      "sha256": "1752cc5bafc2ca845618bad28b0f10ccbce3eafb6f16297ca792a4d2ab221050",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:1752cc5bafc2ca845618bad28b0f10ccbce3eafb6f16297ca792a4d2ab221050",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ptfl1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/ptfl1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/dd/dd0fe1a3c8daa90c3432b72d1071cfaf8fc008b43f0fea1e2c2033a6600d024c.txt",
+      "bytes": 3400156,
+      "path": "sources/ndbc/ptfl1h2024.txt",
+      "sha256": "dd0fe1a3c8daa90c3432b72d1071cfaf8fc008b43f0fea1e2c2033a6600d024c",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:dd0fe1a3c8daa90c3432b72d1071cfaf8fc008b43f0fea1e2c2033a6600d024c",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/21/2103ce452b3e20bf147e1b1c3f3ddbd8d30f9339a778ebbfb1940251068b3418.txt",
+      "bytes": 7745047,
+      "path": "sources/ndbc/ptfl1h2025.txt",
+      "sha256": "2103ce452b3e20bf147e1b1c3f3ddbd8d30f9339a778ebbfb1940251068b3418",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:2103ce452b3e20bf147e1b1c3f3ddbd8d30f9339a778ebbfb1940251068b3418",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/spll1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/spll1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/spll1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/spll1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/cd/cd5725fc8ac4652827ff6543580823cadd318eb3c974d2ea3cd5c27fcccf25d2.txt",
+      "bytes": 654862,
+      "path": "sources/ndbc/srst2h2022.txt",
+      "sha256": "cd5725fc8ac4652827ff6543580823cadd318eb3c974d2ea3cd5c27fcccf25d2",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:cd5725fc8ac4652827ff6543580823cadd318eb3c974d2ea3cd5c27fcccf25d2",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/72/72e53b1f41df2354224e2b6ee8b80aa4597b518e892839cb13f53d4f6eacbd96.txt",
+      "bytes": 548062,
+      "path": "sources/ndbc/srst2h2023.txt",
+      "sha256": "72e53b1f41df2354224e2b6ee8b80aa4597b518e892839cb13f53d4f6eacbd96",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:72e53b1f41df2354224e2b6ee8b80aa4597b518e892839cb13f53d4f6eacbd96",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/29/29880990014b0ab8955d39fca6899bc1548447bc73e04a0cb4bfbe02ba146dd4.txt",
+      "bytes": 268068,
+      "path": "sources/ndbc/srst2h2024.txt",
+      "sha256": "29880990014b0ab8955d39fca6899bc1548447bc73e04a0cb4bfbe02ba146dd4",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:29880990014b0ab8955d39fca6899bc1548447bc73e04a0cb4bfbe02ba146dd4",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/09/09190d4fdc27ca80f937c3e0a83da2d6fffaee5eb75359a23fe92a1a621b8400.txt",
+      "bytes": 168744,
+      "path": "sources/ndbc/srst2h2025.txt",
+      "sha256": "09190d4fdc27ca80f937c3e0a83da2d6fffaee5eb75359a23fe92a1a621b8400",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:09190d4fdc27ca80f937c3e0a83da2d6fffaee5eb75359a23fe92a1a621b8400",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/trbl1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/trbl1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/trbl1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/trbl1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/c2/c29165254852b41b7708392472f977b0bd1b8f9107de3f32b0e5b02d06dac0e2.txt",
+      "bytes": 7641362,
+      "path": "sources/ndbc/txpt2h2022.txt",
+      "sha256": "c29165254852b41b7708392472f977b0bd1b8f9107de3f32b0e5b02d06dac0e2",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:c29165254852b41b7708392472f977b0bd1b8f9107de3f32b0e5b02d06dac0e2",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/81/812f74cd33f14e34f2ccbe57a1147517472242d85c18a7ca389c90f266104f6e.txt",
+      "bytes": 7767119,
+      "path": "sources/ndbc/txpt2h2023.txt",
+      "sha256": "812f74cd33f14e34f2ccbe57a1147517472242d85c18a7ca389c90f266104f6e",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:812f74cd33f14e34f2ccbe57a1147517472242d85c18a7ca389c90f266104f6e",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/f9/f995df498627e9ef133464f338ee69e6cc2e0b433f34a57b8a62fb432438e082.txt",
+      "bytes": 7780024,
+      "path": "sources/ndbc/txpt2h2024.txt",
+      "sha256": "f995df498627e9ef133464f338ee69e6cc2e0b433f34a57b8a62fb432438e082",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:f995df498627e9ef133464f338ee69e6cc2e0b433f34a57b8a62fb432438e082",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/0f/0fef805793d3a8f191a0c7840023fca3ac7ed81ac949acf9275e25e2fdf85ba5.txt",
+      "bytes": 7735079,
+      "path": "sources/ndbc/txpt2h2025.txt",
+      "sha256": "0fef805793d3a8f191a0c7840023fca3ac7ed81ac949acf9275e25e2fdf85ba5",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:0fef805793d3a8f191a0c7840023fca3ac7ed81ac949acf9275e25e2fdf85ba5",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/wdel1h2022.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/wdel1h2023.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/wdel1h2024.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    },
+    {
+      "blob": "data/worldenergydata/blobs/sha256/91/919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0.txt",
+      "bytes": 27,
+      "path": "sources/ndbc/wdel1h2025.txt",
+      "sha256": "919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_id": "noaa-ndbc",
+      "source_version": "sha256:919b853ac91854f5b2ec14db1e5749c319e44e5e38ba863d19a87a014a24bbf0",
+      "source_vintage": {
+        "reason": "Publisher effective date is not established by this snapshot.",
+        "state": "unknown"
+      }
+    }
+  ],
+  "intended_use": "screening_inventory_only",
+  "owner": "worldenergydata",
+  "payload": {
+    "blob": "data/worldenergydata/blobs/sha256/50/5048a348b76ac76f8131e24e304e25178c27880d7cbbdbaafbafd6373f0234cb.csv",
+    "bytes": 15355981,
+    "disposition": "MOVE",
+    "path": "data/modules/pipeline/screening/full.csv",
+    "re_downloadable": true,
+    "regenerator": "scripts/bsee/build_pipeline_screening.py",
+    "second_copy_status": "not_verified",
+    "sha256": "5048a348b76ac76f8131e24e304e25178c27880d7cbbdbaafbafd6373f0234cb"
+  },
+  "readiness_status": "partial",
+  "revision": "1",
+  "rows": 13650,
+  "sample_rows": 100,
+  "schema_version": "1",
+  "source_freshness": {
+    "reason": "Publisher effective dates and observation coverage are not qualified by the collector.",
+    "state": "unverified"
+  }
+}

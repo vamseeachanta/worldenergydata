@@ -1,0 +1,11 @@
+{
+  "revision": "1",
+  "history": [
+    {
+      "revision": "1",
+      "date": "2026-10-15",
+      "changed": "Initial screening database and source QA",
+      "why": "Expose derived geometry, assumptions and missing evidence before stability calculations"
+    }
+  ]
+}
