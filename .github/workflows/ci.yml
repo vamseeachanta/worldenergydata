@@ -5,6 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     # Run every edit: filtering base changes could let skipped checks mask failures.
+    # Retarget checks exercise the same gates against the updated base.
     types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
