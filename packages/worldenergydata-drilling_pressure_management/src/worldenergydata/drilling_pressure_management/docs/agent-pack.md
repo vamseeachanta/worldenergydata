@@ -5,7 +5,7 @@
 | Module | `drilling_pressure_management` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management` |
-| Pack revision | 0 |
+| Pack revision | 1 |
 | Code pin | `3cad44fa0b5d4a5a4a8798cb6cb2dc15739ee746` |
 | Analysis family | EC; Python calculations gate set for a data pipeline |
 | Quality role | Calculations quality manager; data quality manager appointment pending |
@@ -16,8 +16,16 @@
 
 The public API exposes system records, configuration records, capability records, filters, summaries and a pressure-window analyzer. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/__init__.py:L3-L25]
 `PressureWindowAnalyzer.analyze` returns pressure arithmetic and a threshold flag; it does not launch a solver or calculate a circulating-flow loss from the supplied rate. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214]
-The distribution declares Alpha development status; that classifier does not establish engineering validation. [packages/worldenergydata-drilling_pressure_management/pyproject.toml:L17-L24]
+The distribution declares Alpha development status; that classifier does not establish engineering validation. [packages/worldenergydata-drilling_pressure_management/pyproject.toml:L16-L24]
+The flag uses window width alone, without comparing ECD with either bound; omitted annular loss adds 200.0 psi, and configuration-type queries omit the stored `multi_mode` system. These failures are tracked in #1290; engineering clearance remains open. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L33-L46] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L174-L181]
 Use the catalog as stored data and the analyzer as screening arithmetic; require source qualification and input review before operational use, under open items 1–3.
+
+### Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- |
+| 0 | 2026-10-16 | Initial cited contracts, regression examples and open items |
+| 1 | 2026-10-16 | Add missing failure modes, full test nodes and an ECD magnitude check; correct the Alpha citation and issue references |
 
 ## 2. Inputs and outputs
 
@@ -68,19 +76,19 @@ Do not use this implementation as its own independent hand-check reference.
 
 Validated examples: **0**. The following **5 regression examples** use expectations encoded by the repository tests; none is presented as independent engineering validation. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L168] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L155] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L169]
 
-All node IDs below use the prefix `tests/unit/drilling_pressure_management/`; inputs are literals or the in-module stored lists, with no external input file. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L168] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L155] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L165]
+Inputs are literals or the in-module stored lists, with no external input file. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L168] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L155] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L165]
 
-| Case | Expected value and tolerance basis | Existing test node suffix | Last offline result |
+| Case | Expected value and tolerance basis | Existing test node | Last offline result |
 | --- | --- | --- | --- |
-| R1 window subtraction | 4500.0 − 4000.0 = 500.0 psi; `pytest.approx(500.0)`, implicit library tolerance; proposed pack comparison ≤ 0.0005 psi | `test_mpd_configurations.py::TestPressureWindowAnalyzer::test_pressure_window_equals_fracture_minus_pore` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] | BASE PASS; AFTER PASS |
-| R2 preserved depth | 1500.0 m; `pytest.approx(1500.0)`, implicit library tolerance; proposed pack comparison ≤ 0.0015 m | `test_mpd_configurations.py::TestPressureWindowAnalyzer::test_analyze_preserves_depth_in_result` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L160] | BASE PASS; AFTER PASS |
-| R3 threshold sides | 199.9 psi → true; 200.1 psi → false; 0 boolean mismatches | `test_mpd_configurations.py::TestPressureWindowAnalyzer::test_mpd_required_helper_boundary_at_200` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L162-L164] | BASE PASS; AFTER PASS |
-| R4 capability totals | Summary total equals stored list length; 0 records difference | `test_fleet_mpd.py::TestFleetMPDSummary::test_total_rigs_sum_matches_fleet` [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L147] | BASE PASS; AFTER PASS |
-| R5 catalog rows | Summary rows equal catalog length; 0 rows difference | `test_mpd_systems.py::TestSystemsSummary::test_dataframe_row_count_matches_catalog` [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L165] | BASE PASS; AFTER PASS |
+| R1 window subtraction | 4500.0 − 4000.0 = 500.0 psi; `pytest.approx(500.0)`, implicit library tolerance; proposed pack comparison ≤ 0.0005 psi | `tests/unit/drilling_pressure_management/test_mpd_configurations.py::TestPressureWindowAnalyzer::test_pressure_window_equals_fracture_minus_pore` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] | BASE PASS; AFTER PASS |
+| R2 preserved depth | 1500.0 m; `pytest.approx(1500.0)`, implicit library tolerance; proposed pack comparison ≤ 0.0015 m | `tests/unit/drilling_pressure_management/test_mpd_configurations.py::TestPressureWindowAnalyzer::test_analyze_preserves_depth_in_result` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L160] | BASE PASS; AFTER PASS |
+| R3 threshold sides | 199.9 psi → true; 200.1 psi → false; 0 boolean mismatches | `tests/unit/drilling_pressure_management/test_mpd_configurations.py::TestPressureWindowAnalyzer::test_mpd_required_helper_boundary_at_200` [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L162-L164] | BASE PASS; AFTER PASS |
+| R4 capability totals | Summary total equals stored list length; 0 records difference | `tests/unit/drilling_pressure_management/test_fleet_mpd.py::TestFleetMPDSummary::test_total_rigs_sum_matches_fleet` [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L147] | BASE PASS; AFTER PASS |
+| R5 catalog rows | Summary rows equal catalog length; 0 rows difference | `tests/unit/drilling_pressure_management/test_mpd_systems.py::TestSystemsSummary::test_dataframe_row_count_matches_catalog` [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L165] | BASE PASS; AFTER PASS |
 
-Execution observation at the code pin: BASE 83 run / 83 passed / 0 failed / 0 skipped / 0 NOT_RUN; AFTER 83 run / 83 passed / 0 failed / 0 skipped / 0 NOT_RUN. All five node IDs above passed in both runs; no module code changed. No solver is required by these three test files. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L1-L12] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L1-L12] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L1-L13]
+Execution observation for this revision, with module code unchanged from the code pin: BASE 83 run / 83 passed / 0 failed / 0 skipped / 0 NOT_RUN; AFTER 83 run / 83 passed / 0 failed / 0 skipped / 0 NOT_RUN. All five node IDs above passed in both runs. No solver is required by these three test files. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L1-L12] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L1-L12] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L1-L13]
 
-Both runs used ordinary source-enabled `uv run python -m pytest tests/unit/drilling_pressure_management -q -rA -p no:cacheprovider --basetemp=<scratch>`, with repository `addopts` retained and one test process. AFTER additionally used `--allow-existing-tree-changes` to fingerprint the pre-existing pack and reject changes to it or new undeclared writes, as documented by the repository. [docs/development/index.md:L56-L59]
+The source-enabled test command is `uv run --no-project --with pytest --with 'pandas>=2.3.3,<3' --with pytest-cov --with pytest-asyncio --with psutil --with plotly --with pyyaml --with 'pydantic>=2.13.4,<3' --with pydantic-settings python -m pytest tests/unit/drilling_pressure_management -q -rA -p no:cacheprovider --basetemp=<scratch> --cov-report= --cov-report=json:<scratch>/coverage.json`, with repository `addopts` retained and coverage data directed outside the checkout. `PYTHONPATH` includes `src`, `packages/worldenergydata-core/src`, `packages/worldenergydata-drilling_pressure_management/src` and the sibling utility source; `COVERAGE_FILE` is also directed to scratch. AFTER additionally uses `--allow-existing-tree-changes` to fingerprint the pre-existing pack and reject new undeclared writes, as documented by the repository. [docs/development/index.md:L56-L59]
 
 ## 5. QA gates
 
@@ -88,29 +96,55 @@ Apply AQG r0, section 10, Python calculations row and G5; section 11 requires in
 
 | Gate | Applicability | Module-specific executable check and numeric pass criterion | Evidence / disposition |
 | --- | --- | --- | --- |
-| G0 | Applicable | C0a: run `TestMPDSystemsCatalog::test_all_max_pressure_ratings_positive` and `test_all_max_flow_rates_positive`; 0 records at or below 0 psi or 0 gpm. [tests/unit/drilling_pressure_management/test_mpd_systems.py:L43-L53] | Test results; data consistency only. |
+| G0 | Applicable | C0a: run `tests/unit/drilling_pressure_management/test_mpd_systems.py::TestMPDSystemsCatalog::test_all_max_pressure_ratings_positive` and `tests/unit/drilling_pressure_management/test_mpd_systems.py::TestMPDSystemsCatalog::test_all_max_flow_rates_positive`; 0 records at or below 0 psi or 0 gpm. [tests/unit/drilling_pressure_management/test_mpd_systems.py:L43-L53] | Test results; data consistency only. |
 | G0 | Applicable | C0b: audit `analyze` and `PressureWindow`: 0 mismatches between seven numeric inputs' documented units and their use (m, psi, pounds/gallon, gpm); explicitly record the unused flow argument. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] | Unit audit; physical input validation remains item 1. |
 | G1 | Applicable | C1: import through the tests and run all three test files; 83 passed tests, 0 failures, 0 skipped tests, 0 collection errors. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L5-L12] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L6-L12] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L6-L13] | Python import/test route; no program deck is written. |
 | G2 | Applicable | C2a: calculate 4500.0 − 4000.0 independently with decimal arithmetic and compare `analyze(...).pressure_window_psi`; absolute difference ≤ 0.0005 psi. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] | Arithmetic check only; coefficient qualification remains item 3. |
 | G2 | Applicable | C2b: call `mpd_required` at 199.9, 200.0 and 200.1 psi with a 200.0 psi threshold; expected true, false, false; 0 boolean mismatches. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L235-L246] | Boundary check; equality supplements R3. |
+| G2 | Applicable | C2c: execute `PressureWindowAnalyzer().ecd_pressure(10.0, 3000.0, 300.0)`; compare with 5418.11 psi, calculated as 10.0 × 0.052 × 9842.52 + 300.0; absolute difference ≤ 0.01 psi. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L177-L178] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L216-L233] | Coefficient visibility and arithmetic consistency only; independent provenance remains item 3. |
 | G3 | NOT_APPLICABLE | No transient integration or dynamics model is implemented by the analyzer. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L246] | No short dynamics run. |
 | G4 | NOT_APPLICABLE | No diffraction mesh, hydrostatics or radiation calculation is implemented by the analyzer. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L246] | No diffraction evidence. |
 | G5 | Applicable | C5: reconcile R1–R5 node IDs and results with both test logs at the pin; 5 of 5 cases traced, 0 missing results or pin mismatches. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L92-L100] [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L152-L164] [tests/unit/drilling_pressure_management/test_fleet_mpd.py:L145-L147] [tests/unit/drilling_pressure_management/test_mpd_systems.py:L163-L165] | Pack evidence table; quality-manager clearance remains required. |
 
-Checks defined: G0 = 2, G1 = 1, G2 = 2, G3 = 0, G4 = 0, G5 = 1; total = 6.
-Execution observation: C0a, C0b, C1, C2a, C2b and C5 passed their stated consistency criteria; the decimal subtraction difference was 0.0 psi and the threshold probe had 0 boolean mismatches. A passed consistency or arithmetic check does not close the provenance gaps in section 10.
+Checks defined: G0 = 2, G1 = 1, G2 = 3, G3 = 0, G4 = 0, G5 = 1; total = 7.
+Execution observation: C0a, C0b, C1, C2a, C2b, C2c and C5 passed their stated consistency criteria; decimal subtraction differed by 0.0 psi, the threshold probe had 0 boolean mismatches, and ECD was within 0.01 psi of 5418.11 psi. A passed consistency or arithmetic check does not close the provenance gaps in section 10.
+
+C2c can be run in the same source-enabled environment:
+
+```python
+from worldenergydata.drilling_pressure_management import PressureWindowAnalyzer
+
+assert abs(PressureWindowAnalyzer().ecd_pressure(10.0, 3000.0, 300.0) - 5418.11) <= 0.01
+```
 
 ## 6. Known failure modes and pitfalls
 
-| Symptom / cause | Detection and disposition | Reference |
+| Symptom / cause | Detection and disposition | Reference at the code pin |
 | --- | --- | --- |
-| Changing `flow_rate_gpm` does not change results; the supplied annular loss controls the friction term | C0b; compare two rates with all other arguments fixed; no existing dedicated detection test; issue pending (1) | `analyze` never reads the argument. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] |
-| Negative or nonfinite inputs are not rejected, and inverted windows can be flagged as requiring MPD | C0b; inspect for finite/range guards and probe invalid inputs; no existing dedicated detection test; issue pending (1) | Direct arithmetic and less-than comparison. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L204-L246] |
-| Stored capability and rating assertions can pass without proving current equipment capability | C0a checks structure, not source accuracy; no independent detection check exists; issue pending (2) | Records contain descriptive fields but no source/version/freshness fields. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L13-L29] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L14-L26] |
-| ECD tests check positivity and monotonicity rather than an independently sourced magnitude | C2a does not validate ECD coefficients; no independent coefficient detection check exists; issue pending (3) | Existing ECD assertions. [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L122-L150] |
-| Recursive Markdown package-data selection matches the documentation location | Match `docs/agent-pack.md` against the configured glob; inspect a future wheel; issue pending (4) | Existing package-data rule. [packages/worldenergydata-drilling_pressure_management/pyproject.toml:L48-L54] |
+| Changing `flow_rate_gpm` does not change results; the supplied annular loss controls the friction term | C0b records the unused argument; no detection check exists for flow sensitivity; issue pending (1) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] |
+| Negative or nonfinite inputs are not rejected; `fracture_gradient_psi` expects a pressure, so supplying a gradient can create an inverted window and a true flag | C0b audits units only; no detection check exists for finite/range rejection or the naming trap; issue pending (1) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L193-L246] |
+| Stored capability and rating assertions can pass without proving current equipment capability | C0a checks positive ratings only; no detection check exists for source accuracy or currency; issue pending (2) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L13-L29] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L14-L26] |
+| Metres, pounds/gallon and psi are assumed; 0.052 and 3.28084 lack independent qualification, while existing ECD tests check positivity and monotonicity | C2c checks magnitude against the written expression; C0b audits declared units; no detection check exists for pressure datum, gallon convention or independent coefficient accuracy; issue pending (3) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L177-L178] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L216-L233] [tests/unit/drilling_pressure_management/test_mpd_configurations.py:L122-L150] |
+| Recursive Markdown package-data selection matches the documentation location | No detection check exists for built-wheel exclusion; issue pending (4) | [packages/worldenergydata-drilling_pressure_management/pyproject.toml:L48-L54] |
+| SF1: `mpd_required` uses only window width; ECD outside the pore/fracture bounds can accompany a false flag | No detection check exists for ECD position versus the flag; #1290; issue pending (1) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L204-L214] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L235-L246] |
+| SF2: the stored `multi_mode` system is absent from all four configuration-type queries; its type is not a configuration key | No detection check exists for catalog-to-configuration type coverage; #1290; issue pending (1) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L33-L46] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L174-L176] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L249-L261] |
+| SF3: omitted `annular_pressure_drop_psi` silently adds 200.0 psi, even for static or unknown-friction input; the result does not expose the default used | No detection check exists for omitted loss or default disclosure; R1 and R2 inherit it; #1290; issue pending (1) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] |
+| Exact-match queries given case or spelling variants for contractor, system type or rig type return empty lists, indistinguishable from a valid query with no matches | No detection check exists for normalization or query validation; issue pending (2) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L173-L175] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L174-L181] |
+| Rig `mpd_system` references and rig-type compatibility can drift without a referential integrity test | No detection check exists for catalog-id resolution and membership in `compatible_rig_types`; issue pending (2) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L14-L26] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L13-L29] |
+| Zero-default integer count dictionaries treat an absent capable count as zero; truth-value filtering trusts stored capability flags | R4 reconciles total records only; no detection check exists for absent versus false capability data; issue pending (2) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L168-L170] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/fleet_mpd.py:L178-L201] |
+| The 200.0 psi threshold default is a configurable software boundary without independent engineering qualification | C2b checks strict comparison only; no detection check exists for the physical threshold basis; issue pending (3) | [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L187-L188] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L235-L246] |
 
-Issue discovery observation: module-name, MPD and pressure-window searches found no confirmed analyzer incident; the inventory audit is tracked by the capability-inventory issue, with the package split tracked separately. See section 10 for issue links and draft dispositions.
+Sweep: 12 documented failure modes and pitfalls, including SF1–SF3 in #1290. All four package Python files were read at the code pin. The sweep found 0 swallowed exceptions, 0 record-skipping `continue` statements, 0 `return None` or literal empty-result returns on error paths, 0 external-text numeric conversions, 0 date defaults and 0 cache writes. Empty filter results, zero-default aggregation, numeric defaults and unit assumptions are covered above. Unknown index keys raise `KeyError`, rather than returning an empty result. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L249-L256] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L164-L171]
+
+The exact discovery commands, run from the repository root, were:
+
+```sh
+package=packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management
+rg -n 'except|continue|return None|return \[\]|return \{\}|= 0(\.0)?\b|1970|int\(|float\(|0\.052|3\.28084|200\.0|cache|default|units' "$package" --glob '*.py'
+rg -n 'except|continue|return|default|float\(|int\(|psi|gpm|ppg|_m\b' "$package" --glob '*.py'
+```
+
+#1290 tracks the three confirmed analyzer/catalog failures. The other rows identify limitations and missing evidence; issue pending (1)–(5) remain drafts in section 10.
 
 ## 7. Lessons log
 
@@ -171,11 +205,11 @@ Registry observation at the code pin: `docs/registry/module-routing.yaml` does n
 
 | Item | Missing evidence / action | Responsibility | Tracking |
 | --- | --- | --- | --- |
-| 1 | Define invalid-input handling and the unused flow-rate contract; add detection tests; retain current module code in this documentation change | Calculation maintainer | issue pending (1) |
-| 2 | UNVERIFIED: real-world accuracy, currency and source rights of stored catalog/capability assertions; qualify sources and codenaming before publishing record identities or using records as engineering input | Data maintainer | issue pending (2) |
+| 1 | Define invalid-input handling and the unused flow-rate contract; add ECD-position, type-coverage and omitted-loss detection tests for #1290; retain current module code in this documentation change | Calculation maintainer | issue pending (1) |
+| 2 | UNVERIFIED: real-world accuracy, currency and source rights of stored catalog/capability assertions; qualify sources and codenaming before publishing record identities or using records as engineering input; add referential integrity tests for every non-null `mpd_system` and membership of the rig type in `compatible_rig_types`; define exact-match query and missing-capability behavior | Data maintainer | issue pending (2) |
 | 3 | Resolve both earlier UNVERIFIED claims: pressure datum, gallon convention, admissibility envelope, coefficient provenance and independent threshold basis; add independent ECD examples and determine whether a standards-derived Citation sidecar is required | Calculation maintainer | issue pending (3) |
 | 4 | Establish documentation exclusion from wheel data; existing recursive Markdown glob conflicts with the intended documentation-only delivery; wheel contents have not been built or inspected | Package maintainer | issue pending (4) |
 | 5 | Add method families and package rows to the implementation map; retain A8 empty-inventory treatment until then | Map maintainer | issue pending (5) |
-| 6 | Reconcile historical readiness/index coverage with the package path and executed test count | Documentation maintainer | [Capability inventory issue](https://github.com/vamseeachanta/worldenergydata/issues/349) |
+| 6 | Reconcile historical readiness/index coverage with the package path and executed test count | Documentation maintainer | #349 |
 
-The distribution split remains tracked by [the package-artifact issue](https://github.com/vamseeachanta/worldenergydata/issues/529); it is context, not a confirmed analyzer incident.
+The distribution split remains tracked by #529; it is context, not a confirmed analyzer incident.
