@@ -377,3 +377,27 @@ See `docs/DEVELOPMENT_WORKFLOW.md` for complete workflow documentation.
 
 **Last Updated:** 2025-10-22
 **Version:** 1.0.0
+
+## Pack lint
+
+```bash
+python scripts/pack_lint.py --account "$GITHUB_REPOSITORY_OWNER" path/to/agent-pack.md
+python scripts/pack_lint.py --drafts path/to/drafts.md path/to/agent-pack.md
+```
+
+The script is run by the pull-request check and before a pack is published.
+It uses only the Python standard library and accepts multiple pack paths.
+
+- `S10`: headings cover sections 1 through 10.
+- `SWEEP`: include `sweep: N found`; zero findings require the grep used alongside it.
+- `NODE`: test node IDs start with `tests/` or contain `/tests/`; source-symbol references are allowed.
+- `URL`: omit GitHub API, issue and pull-request URLs and owner names in URLs; cite issues as `#NNN`.
+- `DRAFT`: number each pending issue; `--drafts FILE` also checks its list entry.
+- `ROLE`: use `maintainer` for the merging role and `maintainers` for coordination.
+- `TABLE`: keep table rows together; separate complete tables and fenced examples are allowed.
+- `READ`: an unreadable pack, including invalid UTF-8, fails.
+
+Exit codes: `0` clean, `1` lint/read failure, `2` usage error.
+The optional `--skip RULE[,RULE]` filters named lint rules locally; CI uses no skips.
+Without `--drafts`, numbered pending issues produce a note because list matching is unavailable.
+The check covers mechanical wording and structure; it does not qualify technical evidence.
