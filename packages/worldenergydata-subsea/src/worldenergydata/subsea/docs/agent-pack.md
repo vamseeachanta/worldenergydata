@@ -5,7 +5,7 @@
 | Module | subsea |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-subsea/src/worldenergydata/subsea` |
-| Pack revision | 1 |
+| Pack revision | 2 |
 | Code pin | `6149361d36373afe24fe1b0c1fe59886375d46b7` |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Family review role | Calculations quality manager |
@@ -27,6 +27,7 @@ The module manifest labels subsea `stable`, while the distribution classifier la
 | --- | --- | --- |
 | 0 | 2026-10-16 | Initial package inventory, checks and open items. |
 | 1 | 2026-10-16 | Add omitted silent paths, complete test references, distinguish issue drafts from filed issues and record executed CAD coverage. |
+| 2 | 2026-10-16 | Include and link the ten issue drafts, distinguish downstream geometry from package validation and make CAD coverage conditional on its environment. |
 
 ## 2. Inputs and outputs
 
@@ -86,7 +87,7 @@ AQG r0, *Analysis QA gates*, revision 0, section 10, Python calculations, suppli
 
 ## 4. Validated worked examples
 
-One downstream analytical geometry example is validated against the annulus-volume formula. The five regression examples below check parser expectations and repository-maintained data; physical catalogue accuracy remains UNVERIFIED under U3. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L52-L61]
+Validated examples for this package: 0. One downstream analytical geometry example (V1) validates `field_development.equipment_3d.jumper_volume_mm3` against the annulus-volume formula; it does not validate a method in this package. The five regression examples below check parser expectations and repository-maintained data; physical catalogue accuracy remains UNVERIFIED under U3. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L52-L61]
 
 ### Validated analytical geometry example
 
@@ -128,7 +129,7 @@ Applicable gate selection follows AQG r0, *Analysis QA gates*, revision 0, secti
 | C01 / G0 | Run `tests/unit/subsea/test_manifold_suppliers.py::test_schema_splits_delimited_lists`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_accepts_native_lists`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_requires_company`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_bad_role`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_bad_tier`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_coerces_unknown_depth_to_none`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_implausible_depth` | 7 passed tests; 0 failed tests (count) | Roles, tiers, company, lists and coarse depth rejection; no fractional-depth or locale case. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] |
 | C02 / G0 | Run both classes of `tests/unit/curated/test_csv_validation.py` | 10 passed tests; 0 failed tests (count); loaded OD and MBL each strictly greater than 0 in declared field units | CSV/model smoke tests and selected rejections; not a finite-value or full geometry check. [tests/unit/curated/test_csv_validation.py:L24-L110] |
 | C03 / G0 | Run `tests/unit/subsea/test_manifold_suppliers.py::test_database_has_all_key_players`, `tests/unit/subsea/test_manifold_suppliers.py::test_every_record_has_a_source_url`, `tests/unit/subsea/test_manifold_suppliers.py::test_every_record_is_classified`, `tests/unit/subsea/test_manifold_suppliers.py::test_depths_within_bounds` | 4 passed tests; 0 failed tests (count); catalogue depth strictly greater than 0 and at most 6000 m | 1 or more source-list items per loaded record; URL prefix only, not source truth or freshness. [tests/unit/subsea/test_manifold_suppliers.py:L76-L99] |
-| C04 / G1 | Run the four discovered test files with the test form below, including the declared test and CAD requirements | 44 passed tests; 0 failed tests; 0 skipped tests (count), including 7 CAD nodes | 3 query tests, 13 downstream integration tests and 7 CAD tests complement C01–C03; environment reproducibility remains a follow-up, issue pending (6). [tests/unit/subsea/test_manifold_suppliers.py:L105-L125] [tests/modules/field_development/test_integrations.py:L33-L142] [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
+| C04 / G1 | Run the four discovered test files with the test form below, including the declared test and CAD requirements | 37 passed tests; 0 failed tests (count), plus 7 CAD nodes, which are `NOT_RUN` unless the environment of draft 6 is available | 3 query tests, 13 downstream integration tests and 7 CAD tests complement C01–C03; environment reproducibility remains a follow-up, issue pending (6). [tests/unit/subsea/test_manifold_suppliers.py:L105-L125] [tests/modules/field_development/test_integrations.py:L33-L142] [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
 | C05 / G2 | Hand-enumerate the three literal fragments and two native-list elements; compare `_split_list_fields` results using `tests/unit/subsea/test_manifold_suppliers.py::test_schema_splits_delimited_lists` and `tests/unit/subsea/test_manifold_suppliers.py::test_schema_accepts_native_lists` | 0 differing items (count); ordered equality, no tolerance | 2 passed test nodes; a parser check, with no physical benchmark claim. [tests/unit/subsea/test_manifold_suppliers.py:L32-L45] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L104-L115] |
 | C06 / G5 | Resolve every bracket citation using `git show <code-pin>:<path>`; require `1 <= start <= end <= line_count`; inspect all E1–E5 results and section-10 issue references | 0 broken citations, 0 missing example results, 0 untracked open items (count) | Producer audit retained with the handoff; independent review and issue creation remain pending. (AQG r0, sections 9 and 11.) |
 
@@ -356,7 +357,7 @@ The seven individual downstream CAD nodes below all pass in the current final ru
 
 ### Open items
 
-Numbered issue-pending markers identify drafts, not filed issues. The accompanying issue-draft list contains Draft 1 through Draft 10; the maintainers will create the issues and replace the corresponding markers before A7 clearance. Existing #349 remains the filed readiness follow-up.
+Numbered issue-pending markers identify drafts, not filed issues. The accompanying [issue-draft list](ISSUES_DRAFT.md) contains Draft 1 through Draft 10; the maintainers will create the issues and replace the corresponding markers before merging. Existing #349 remains the filed readiness follow-up.
 
 | Item | Required follow-up and responsibility | Tracking |
 | --- | --- | --- |
