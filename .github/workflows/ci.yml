@@ -4,20 +4,63 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    # Run every edit: filtering base changes could let skipped checks mask failures.
+    # Metadata edits copy the last full result; base changes run the full gate.
     types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: >-
+    ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
+    (github.event.action != 'edited' || github.event.changes.base) && github.ref || github.run_id }}
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' &&
+    (github.event.action != 'edited' || github.event.changes.base) }}
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
+  mode:
+    name: Gate mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      replay: ${{ steps.mode.outputs.replay }}
+    steps:
+      - name: Select gate mode
+        id: mode
+        env:
+          REPLAY: >-
+            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' && !github.event.changes.base }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
+          echo "replay=$REPLAY"
+          if [ "$IS_PR" = true ] && [ "$REPLAY" != true ]; then
+            tip=$(git ls-remote --exit-code "$BASE_URL" "refs/heads/$BASE_REF" | cut -f1)
+            if [[ ! "$tip" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "::error::Cannot record a unique base tip"
+              exit 1
+            fi
+            printf . > "$RUNNER_TEMP/gate-tip"
+            echo "tip=$tip" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Record full-run base tip
+        if: github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gate-tip-${{ steps.mode.outputs.tip }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate-tip
+          retention-days: 14
+          if-no-files-found: error
+
   # --------------------------------------------------------- PR domain gate --
   # Modular per-domain PR gate (#474, #496, domain-matrix): a PR fans out into
   # one CI job per touched domain (+ the always-on cross-cutting core), so each
@@ -37,7 +80,10 @@ jobs:
   # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
   # passes no `with:` overrides.
   domain-tests:
-    if: github.event_name == 'pull_request'
+    needs: [mode]
+    if: >-
+      always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
   # Name-preserving gate: the reusable workflow surfaces its own aggregate as
@@ -47,8 +93,10 @@ jobs:
   # NO ruleset change and does not break in-flight PRs. (#530)
   pr-gate:
     name: Test (PR gate)
-    needs: [domain-tests]
-    if: always() && github.event_name == 'pull_request'
+    needs: [mode, domain-tests]
+    if: >-
+      always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Gate on domain matrix result
@@ -64,12 +112,14 @@ jobs:
   test:
     name: Test Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    needs: [mode]
     if: >-
+      always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
       github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'ci-full'))
+       contains(github.event.pull_request.labels.*.name, 'ci-full')))
     strategy:
       fail-fast: false
       matrix:
@@ -200,6 +250,8 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
@@ -296,6 +348,8 @@ jobs:
   type-check:
     name: Type Check
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
@@ -384,6 +438,8 @@ jobs:
   security:
     name: Security Scan
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
@@ -475,7 +531,10 @@ jobs:
   build:
     name: Build Package
     runs-on: ubuntu-latest
-    needs: [lint] # test job skips on unlabeled PRs (module gate covers them)
+    needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
+    if: >-
+      always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
+      == 'success'
 
     steps:
       - name: Checkout repository
@@ -566,7 +625,10 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    needs: [mode]
+    if: >-
+      always() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
 
     steps:
       - name: Checkout repository
@@ -651,3 +713,118 @@ jobs:
           else
             echo "Skipping Sphinx build: docs/conf.py is not present"
           fi
+
+  lint-replay:
+    name: Lint
+    needs: [mode]
+    if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Lint
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+
+  type-check-replay:
+    name: Type Check
+    needs: [mode]
+    if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Type Check
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+
+  security-replay:
+    name: Security Scan
+    needs: [mode]
+    if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Security Scan
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+
+  docs-replay:
+    name: Documentation
+    needs: [mode]
+    if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Documentation
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+
+  pr-gate-replay:
+    name: Test (PR gate)
+    needs: [mode]
+    if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Test (PR gate)
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"

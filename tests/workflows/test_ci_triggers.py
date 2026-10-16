@@ -42,22 +42,44 @@ def test_required_pull_request_check_name_is_unchanged() -> None:
 
 def _evaluate_expression(expression: str, context: dict) -> object:
     """Evaluate the equality and short-circuit subset used by concurrency."""
-    expression = expression.strip()
-    for operator in ("||", "&&", "=="):
-        left, separator, right = expression.partition(operator)
-        if separator:
-            value = _evaluate_expression(left, context)
-            if operator == "||":
-                return value or _evaluate_expression(right, context)
-            if operator == "&&":
-                return value and _evaluate_expression(right, context)
-            return value == _evaluate_expression(right, context)
-    if expression.startswith("'") and expression.endswith("'"):
-        return expression[1:-1]
-    return context[expression]
+    import ast
+    import re
+
+    expression = re.sub(
+        r"(?:github|needs)\.[\w.-]+",
+        lambda match: repr(context.get(match[0])),
+        expression,
+    )
+    expression = expression.replace("&&", " and ").replace("||", " or ")
+    expression = re.sub(r"!(?!=)", " not ", expression).strip()
+
+    def evaluate(node):
+        """Interpret only literals, comparisons and Boolean operators."""
+        if isinstance(node, ast.Constant):
+            return node.value
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+            return not evaluate(node.operand)
+        if isinstance(node, ast.Compare):
+            left, right = evaluate(node.left), evaluate(node.comparators[0])
+            return (
+                left != right if isinstance(node.ops[0], ast.NotEq) else left == right
+            )
+        if isinstance(node, ast.BoolOp):
+            value = evaluate(node.values[0])
+            for operand in node.values[1:]:
+                if isinstance(node.op, ast.And):
+                    value = value and evaluate(operand)
+                else:
+                    value = value or evaluate(operand)
+            return value
+        raise AssertionError(ast.dump(node))
+
+    return evaluate(ast.parse(expression, mode="eval").body)
 
 
-def _concurrency(event: str, ref: str, run_id: int) -> tuple[str, bool]:
+def _concurrency(
+    event: str, ref: str, run_id: int, action: str = "opened", base_change: bool = False
+) -> tuple[str, bool]:
     """Render the configured group and cancellation expression for a run."""
     import re
 
@@ -67,6 +89,8 @@ def _concurrency(event: str, ref: str, run_id: int) -> tuple[str, bool]:
         "github.event_name": event,
         "github.ref": ref,
         "github.run_id": run_id,
+        "github.event.action": action,
+        "github.event.changes.base": base_change,
     }
     group = re.sub(
         r"\$\{\{(.*?)\}\}",
@@ -85,13 +109,14 @@ def _concurrency(event: str, ref: str, run_id: int) -> tuple[str, bool]:
 def test_concurrency_expression_contract() -> None:
     """Only pull request runs share a ref group and cancel earlier runs."""
     concurrency = _load_workflow()["concurrency"]
-    assert concurrency["group"] == (
-        "${{ github.workflow }}-"
-        "${{ github.event_name == 'pull_request' && github.ref || github.run_id }}"
+    assert "github.event.changes.base" in concurrency["group"]
+    assert _concurrency("pull_request", "refs/pull/1/merge", 101, "edited") == (
+        "CI-101",
+        False,
     )
-    assert (
-        concurrency["cancel-in-progress"]
-        == "${{ github.event_name == 'pull_request' }}"
+    assert _concurrency("pull_request", "refs/pull/1/merge", 102, "edited", True) == (
+        "CI-refs/pull/1/merge",
+        True,
     )
 
 
@@ -133,13 +158,92 @@ def test_pull_request_activity_types() -> None:
 
 
 def test_jobs_and_steps_do_not_filter_edit_events() -> None:
-    """Every edit runs the gates so skipped checks cannot mask failures."""
+    """Step-level full-gate behavior remains independent of metadata edits."""
     for job_id, job in _load_workflow()["jobs"].items():
-        conditions = [job.get("if", "")]
+        if job_id == "mode" or job_id.endswith("-replay"):
+            continue
+        conditions = []
         conditions.extend(step.get("if", "") for step in job.get("steps", []))
         for condition in conditions:
             for event_field in ("github.event.action", "github.event.changes"):
                 assert event_field not in str(condition), (job_id, condition)
+
+
+def test_base_change_runs_full_gate() -> None:
+    """Only metadata edits select replay; retargets run the full gate."""
+    mode = _load_workflow()["jobs"]["mode"]
+    assert "if" not in mode
+    expression = mode["steps"][0]["env"]["REPLAY"]
+    assert expression == (
+        "${{ github.event_name == 'pull_request' && "
+        "github.event.action == 'edited' && !github.event.changes.base }}"
+    )
+    for event, action, base, expected in [
+        ("pull_request", "edited", False, True),
+        ("pull_request", "edited", True, False),
+        ("pull_request", "opened", False, False),
+        ("pull_request", "synchronize", False, False),
+        ("pull_request", "reopened", False, False),
+        ("push", "edited", False, False),
+        ("schedule", "", False, False),
+        ("workflow_dispatch", "", False, False),
+    ]:
+        assert (
+            _evaluate_expression(
+                expression[3:-2],
+                {
+                    "github.event_name": event,
+                    "github.event.action": action,
+                    "github.event.changes.base": base,
+                },
+            )
+            is expected
+        )
+
+
+def test_required_names_have_complementary_twins() -> None:
+    """Every required name has a full job and a real-result replay twin."""
+    jobs = _load_workflow()["jobs"]
+    names = ("Lint", "Type Check", "Security Scan", "Documentation", "Test (PR gate)")
+    for name in names:
+        matches = [(key, job) for key, job in jobs.items() if job.get("name") == name]
+        assert len(matches) == 2
+        full = [job for key, job in matches if not key.endswith("-replay")][0]
+        twin = [job for key, job in matches if key.endswith("-replay")][0]
+        assert "always()" in full["if"]
+        assert "needs.mode.outputs.replay != 'true'" in full["if"]
+        assert twin["if"] == (
+            "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
+        )
+        assert "mode" in full["needs"]
+        assert twin["needs"] == ["mode"]
+        assert twin["permissions"] == {"contents": "read", "actions": "read"}
+        assert twin["steps"][-1]["env"]["CHECK_NAME"] == name
+        for mode_result in ("success", "failure", "cancelled"):
+            for output in ("true", "false", ""):
+                context = {
+                    "needs.mode.result": mode_result,
+                    "needs.mode.outputs.replay": output,
+                    "github.event_name": "pull_request",
+                }
+                heavy_runs = _evaluate_expression(
+                    full["if"].replace("always()", "True"), context
+                )
+                twin_runs = _evaluate_expression(twin["if"], context)
+                assert int(bool(heavy_runs)) + int(bool(twin_runs)) == 1
+    for key, job in jobs.items():
+        if key != "mode" and not key.endswith("-replay"):
+            assert "needs.mode.outputs.replay != 'true'" in job["if"], key
+            assert "always()" in job["if"], key
+            assert "mode" in job["needs"], key
+    assert "needs.lint.result == 'success'" in jobs["build"]["if"]
+    assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
+    assert not any(
+        "checkout@" in step.get("uses", "") for step in jobs["mode"]["steps"]
+    )
+    artifact = jobs["mode"]["steps"][-1]
+    assert artifact["with"]["retention-days"] == 14
+    assert artifact["with"]["name"].startswith("gate-tip-")
 
 
 def _checkout_steps() -> list:
@@ -149,6 +253,7 @@ def _checkout_steps() -> list:
         for job_id, job in _load_workflow()["jobs"].items()
         for index, step in enumerate(job.get("steps", []))
         if step.get("uses", "").startswith("actions/checkout@")
+        and not job_id.endswith("-replay")
     ]
 
 
