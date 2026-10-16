@@ -5,7 +5,7 @@
 | Module | metocean |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-metocean/src/worldenergydata/metocean` |
-| Pack revision | 2 |
+| Pack revision | 3 |
 | Code revision | `a8b26875c1d94a138456fbd885043f43307b73b3` |
 | Analysis family | Data pipeline; Python calculations gate set, AQG r0 §10 |
 | QA family | EC |
@@ -69,6 +69,7 @@ UNVERIFIED: a common geodetic datum, elevation origin, current-direction sense a
 | Time alignment | Groups by parameter/source/unit; keeps first duplicate timestamp; continuous interpolation uses pandas `linear`, directions use forward-fill/backward-fill | [packages/worldenergydata-metocean/src/worldenergydata/metocean/unified/harmonizer.py:L302-L338] |
 | Retry handling | Retry delays multiply the configured delay by retry count; this is linear backoff, despite the exponential-backoff docstring | [packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/base_client.py:L130-L134] [packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/base_client.py:L169-L219] |
 | Statistics backend | Joint probability imports `metocean_stats.stats` unconditionally; a docstring version is not a verified installed-version pin | [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L1-L18] |
+| metocean-stats v1.2 (version 1.2.0) reference | The library does not fit extremes or environmental contours itself: it delegates these calculations to `pyextremes`, `scipy.stats` and `virocon`. | [Applied Ocean Research 176 (2026), 105257](https://doi.org/10.1016/j.apor.2026.105257) (open access, CC BY 4.0); [MET-OM/metocean-stats code](https://github.com/MET-OM/metocean-stats) |
 
 The data documentation names API RP 2MET, *Derivation of Metocean Design and Operating Conditions*; edition and table titles remain incomplete in that documentation, and clause text was not checked against the licensed copy. [data/modules/metocean/README.md:L20-L23]
 The external-table loader enforces column order and row width and refuses repository-local inputs, including resolved symlinks; it returns string cells rather than validating numeric engineering ranges. [packages/worldenergydata-metocean/src/worldenergydata/metocean/licensed_tables.py:L52-L71]
@@ -118,7 +119,7 @@ These are proposed repeatable checks, not clearance signatures; diagnostic failu
 | MET-12 / G0 | Apply the same nonempty Hs–Tp fixture to `build_scatter_matrix(normalize=True)`, `ScatterDiagram.compute` and `JointProbabilityModel.scatter_diagram`; label fraction versus percent and record bin edges versus widths | Fraction-sum error below 0.000001 dimensionless; percent-sum error at most 0.00005 × cell count percentage points for `compute`, 0.0005 × cell count percentage points for `scatter_diagram`, plus 0.000001 percentage points floating-point allowance; unlabelled normalized outputs 0 (count) | Proposed cross-route check; blocked by C4 collection failure, issue pending (2). Percent routes round to 4 and 3 decimals respectively; tolerances follow half the rounding quantum per cell, rather than assuming exact totals. [packages/worldenergydata-metocean/src/worldenergydata/metocean/ndbc_analysis.py:L163-L213] [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/scatter_diagram.py:L45-L86] [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L132-L189] |
 
 ## 6. Known failure modes and pitfalls
-sweep: not run (legacy pack)
+sweep: 64 found (broad-exception candidate matches, not confirmed silent failures). Command: `rg -n 'except Exception' packages/worldenergydata-metocean/src/worldenergydata/metocean -g '*.py'`. Run 2026-10-16; existing failure analysis below remains applicable; full candidate qualification remains C3.
 
 | Symptom (silent failures first) | Cause / detection | Incident or follow-up / date | Evidence |
 | --- | --- | --- | --- |
@@ -142,8 +143,9 @@ sweep: not run (legacy pack)
 | --- | --- | --- | --- | --- | --- |
 | 2026-10-15 | Pack revision 0 | Keep ingestion dictionaries and scatter dictionaries distinct; do not equate a quality check's Boolean with complete input | [packages/worldenergydata-metocean/src/worldenergydata/metocean/ndbc_analysis.py:L97-L113] [packages/worldenergydata-metocean/src/worldenergydata/metocean/ndbc_analysis.py:L191-L195] [packages/worldenergydata-metocean/src/worldenergydata/metocean/processors/quality_filter.py:L110-L118] | Sections 2, 5 and 6 | Pending maintainer entry, issue pending (1) |
 | 2026-10-15 | Pack revision 1 | Require absolute collection health with hidden statistics files counted, and account for parsed/rejected rows in module-output evidence | [tests/conftest.py:L650-L657] [packages/worldenergydata-metocean/src/worldenergydata/metocean/ndbc_analysis.py:L143-L155] | Sections 5, 6, 9 and 10 | Pending maintainer entry, issue pending (1), issue pending (2) |
+| 2026-10-16 | Pack revision 3; #1314 | Cite metocean-stats 1.2.0 and distinguish its orchestration from fitting by `pyextremes`, `scipy.stats` and `virocon`; the dependency pin lands in unmerged #1313 | [Applied Ocean Research 176 (2026), 105257](https://doi.org/10.1016/j.apor.2026.105257) (open access, CC BY 4.0); [MET-OM/metocean-stats code](https://github.com/MET-OM/metocean-stats) | Sections 3 and 9; rerun broad-exception sweep in section 6 for pack lint | Pending maintainer entry |
 
-## 8. Ownership
+## 8. Maintainer responsibility
 
 Proposed review responsibility: calculations quality manager; deputy to be designated by the maintainer; producing role: documentation contributor; escalation: maintainer for unresolved qualification and missing evidence.
 Independent clearance and reviewer signatures are required before treating the draft as cleared. (AQG r0, §11, Sign-off and independence.)
@@ -155,6 +157,7 @@ Independent clearance and reviewer signatures are required before treating the d
 | Upstream shared core | Logging and data-root resolver imports. [packages/worldenergydata-metocean/src/worldenergydata/metocean/processors/quality_filter.py:L17-L22] [packages/worldenergydata-metocean/src/worldenergydata/metocean/config.py:L9-L12] | Package dependency declared. [packages/worldenergydata-metocean/pyproject.toml:L29-L48] |
 | HTTP, numeric, dataframe, plotting, SQL and configuration libraries | Declared dependencies include httpx, numpy, pandas, scipy, plotly, SQLAlchemy, pydantic and pydantic-settings. [packages/worldenergydata-metocean/pyproject.toml:L29-L42] | Version ranges are declarations, not an independently validated compatibility matrix. [packages/worldenergydata-metocean/pyproject.toml:L29-L42] |
 | Statistics backend | Unconditional `metocean_stats` import. [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L14-L18] | Not declared in this member's dependency list; issue pending (2). [packages/worldenergydata-metocean/pyproject.toml:L29-L42] |
+| metocean-stats v1.2 (version 1.2.0) reference and delegates | The library does not fit extremes or environmental contours itself: it delegates them to `pyextremes`, `scipy.stats` and `virocon`. [Applied Ocean Research 176 (2026), 105257](https://doi.org/10.1016/j.apor.2026.105257) (open access, CC BY 4.0); [MET-OM/metocean-stats code](https://github.com/MET-OM/metocean-stats) | The `metocean-stats==1.2.0` dependency pin lands in #1313, which is not merged as of 2026-10-16; this reference does not establish an installed version. |
 | Observation sources | NDBC and Open-Meteo clients delegate to the shared HTTP base. [packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py:L133-L139] [packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/open_meteo_client.py:L143-L149] | Live availability and source rights are outside the offline evidence; #462. |
 | Downstream scheduler | Uses `OpenMeteoClient`, serializes forecast/source/fetch timestamps and writes Parquet. [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/metocean_refresh.py:L94-L119] | Scheduler integration has mocked tests, not a live refresh claim. [tests/unit/scheduler/test_metocean_adapter.py:L38-L65] |
 
