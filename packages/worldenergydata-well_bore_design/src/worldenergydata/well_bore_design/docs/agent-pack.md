@@ -5,7 +5,7 @@
 | Module | `well_bore_design` |
 | Repository | `worldenergydata` |
 | Path | `packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design` |
-| Pack revision | 0, 2026-10-15 |
+| Pack revision | 1, 2026-10-16 |
 | Code revision | `3cad44fa0b5d4a5a4a8798cb6cb2dc15739ee746` |
 | Analysis family | EC; Python calculations gate set, AQG r0, section 10 |
 | Quality role | Calculations quality manager; deputy assignment open |
@@ -23,11 +23,18 @@ The public API exports geometry/profile dataclasses, bore classification, scalar
 
 Maturity evidence is the member's Alpha classifier, rather than a routing-registry maturity claim. [packages/worldenergydata-well_bore_design/pyproject.toml:L14-L22]
 
-UNVERIFIED: U1 — Physical accuracy, empirical applicability and source editions for the hydraulic correlations and cleaning threshold require independent qualification; code attribution alone does not establish them (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L100] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139]
+UNVERIFIED: U1 — Loss magnitude is NON-CONSERVATIVE in the four section-5 force-balance cases (8 to 419 times below the floor); ECD and compatibility are optimistic (#1288). Physical accuracy, empirical applicability and source editions for the hydraulic correlations and cleaning threshold require independent qualification; code attribution alone does not establish them (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L100] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139]
 
 UNVERIFIED: U2 — Engineering validity of the selection envelopes, relative cost factors and risk thresholds requires independent evidence (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L65] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L276]
 
 UNVERIFIED: U3 — A common depth datum and true-vertical versus measured-depth convention across stored metre depths and hydraulic foot depths is not established; callers must provide that basis explicitly (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L63] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L106-L120] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L105-L132]
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-15 | Initial module knowledge pack; qualification gaps recorded. |
+| 1 | 2026-10-16 | Failure inventory expanded after the hydraulic bound and selection checks exposed undocumented limitations. |
 
 ## 2. Inputs and outputs
 
@@ -111,6 +118,8 @@ AFTER: 105 run / 105 passed / 0 failed / 0 skipped / 0 NOT_RUN
 
 The documented `--noconftest` form is used with the normal project sources and unchanged `addopts`; coverage destinations and the environment are redirected to scratch, with no solver dependency in the module tests. [AGENTS.md:L1-L12] [tests/unit/well_bore_design/test_hydraulics.py:L1-L11] [tests/unit/well_bore_design/test_schemas.py:L1-L13] [tests/unit/well_bore_design/test_decision_framework.py:L1-L15]
 
+Fix-up execution record, 2026-10-16: BASE `1e40a4ccad4c313ce9dea2d9e8079988e7dd0b2a`; AFTER is the uncommitted documentation tree. The package source is unchanged from the code pin. The focused suite ran with the isolated pytest tool, package source on `PYTHONPATH`, `--no-project --with pytest`, `--noconftest -o addopts='' -p no:cacheprovider` and scratch `--basetemp`: **105 passed / 0 failed / 0 skipped** at both BASE and AFTER. This directly runs the module tests without the unrelated repository coverage configuration. C06–C08 arithmetic passed; C09 and C11 reproduce existing failures rather than clear them.
+
 ## 5. QA gates
 
 Gate applicability: G0 inputs/units/citations, G1 imports/tests and G2 hand or published check apply; G3 and G4 are `NOT_APPLICABLE` for Python calculations; G5 evidence applies to every family. (AQG r0, sections 9–10.)
@@ -127,10 +136,27 @@ These are executable acceptance criteria, with the recorded results below; a pas
 | G2 / C06 | Re-evaluate R1 independently of the function using rational arithmetic `204/(189/4)` ft/s | Relative residual <=1e-4, unit 1 | Arithmetic diagnostic PASS; consistency only. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L30-L48] [tests/unit/well_bore_design/test_hydraulics.py:L25-L30] |
 | G2 / C07 | Re-evaluate R2 as `19/2+5/13` ppg and compare `ecd_ppg` | Relative residual <=1e-5, unit 1 | Arithmetic diagnostic PASS; source qualification remains open. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L106-L120] [tests/unit/well_bore_design/test_hydraulics.py:L137-L140] |
 | G2 / C08 | Re-evaluate R3 as `200/217` and compare `hole_cleaning_index` | Relative residual <=1e-5, unit 1 | Arithmetic diagnostic PASS; this does not validate cleaning adequacy. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139] [tests/unit/well_bore_design/test_hydraulics.py:L177-L180] |
-| G2 / C09 | Compare `recommend('exploration', 10000, 0.8, 500)` with the selected matrix depth range | 0 silent out-of-range selections (count); selected depth <=6000 m or explicit unsupported status | Diagnostic confirmed slim selection without a depth caveat; baseline FAIL, issue pending (4). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L27] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L134-L166] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] |
+| G2 / C09 | Compare `recommend('exploration', 10000, 0.8, 500)`, `recommend('exploration', 3000, 1.0, 12000)` and `recommend('exploration', 3000, 2.0, 20000)` with the entire selected matrix row | 0 selections outside depth, flow or well-type sets without a caveat (count) | FAIL at BASE and AFTER: 3 silent violations, respectively depth, flow and well type; #1288. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L48] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] |
 | G3 | `NOT_APPLICABLE`: no time-domain simulation in the calculation interface | Not a dynamic analysis | Python calculations family row. (AQG r0, section 10.) |
 | G4 | `NOT_APPLICABLE`: no diffraction-body or mesh computation in this interface | Not a diffraction analysis | Python calculations family row. (AQG r0, section 10.) |
 | G5 / C10 | Retain a calculation record with input units, code/input SHA-256, R1–R6 node outcomes, diagnostic results and explicit U1/U2 dispositions | 6 of 6 regression node results linked; 0 missing input units, hashes or unresolved dispositions presented as cleared (count) | Pack evidence below; DRAFT disposition; independent signature pending. (AQG r0, sections 9, 11 and 13.) |
+
+### Yield-stress force-balance check (C11)
+
+C11 supplements C06–C08: for every positive-flow case below, loss per 100 ft shall be at least `YP/(3*(D_h-D_p))`; the criterion is 0 violations (count). BASE and AFTER: **4 violations**, unchanged code; #1288. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L74-L100]
+
+For a steady annular force balance, `dP/dL = 4*tau_wall/(D_h-D_p)`. A flowing Bingham fluid requires `tau_wall >= YP`. Converting the inch gap to feet, multiplying by 100 ft and converting lbf/ft² to psi gives `4*(YP/100)*12*100/(144*(D_h-D_p)) = YP/(3*(D_h-D_p))` psi/100 ft. This is a lower bound, not a replacement hydraulic correlation. The calculation imports the pinned function for loss and evaluates this bound separately.
+
+| Geometry (in); flow (gpm); mud (ppg); PV (cP); YP (lbf/100 ft²) | Re; branch | Module loss (psi/100 ft) | Floor (psi/100 ft) | Floor / loss (1) | Module / floor-only ECD (ppg), 10000 ft |
+| --- | --- | --- | --- | --- | --- |
+| 8.5/5.0; 500; 10; 20; 15 | 46581; turbulent | 0.0487 | 1.4286 | 29.3 | 10.0094 / 10.2747 |
+| 8.5/5.0; 100; 9; 10; 10 | 12658; turbulent | 0.0023 | 0.9524 | 418.6 | 9.0004 / 9.1832 |
+| 8.5/5.0; 100; 9; 40; 10 | 4038; turbulent | 0.0029 | 0.9524 | 333.1 | 9.0005 / 9.1832 |
+| 6.0/3.5; 500; 10; 20; 15 | 68719; turbulent | 0.2497 | 2.0000 | 8.0 | 10.0480 / 10.3846 |
+
+Table C11. Independently evaluated floor compared with the imported implementation; ratios use unrounded losses. The review's whole-number range is 8 to 419 times.
+
+`pressure_window_check(STANDARD, 10, 10.2, 9.5, 500, 10000)` returns `compatible=True`, `limiting_factor="none"` and ECD 10.0094 ppg. The floor alone requires at least 10.2747 ppg, exceeding the fracture gradient 10.2 ppg; the compatible result is NON-CONSERVATIVE. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L192-L220]
 
 G5 input fingerprint procedure: for each calculation, sort `relative input path + space + file SHA-256` lines, hash the joined manifest and retain outputs with the same fingerprint; inline test inputs use the three pinned test-file digests as the input manifest. (AQG r0, sections 2 and 13.)
 
@@ -148,9 +174,19 @@ Combined input fingerprint: `c515d9f25ddd02d573fc57bee08d3cc3a0483895b49413f0cdc
 
 | Symptom | Cause / detection | Tracking and date |
 | --- | --- | --- |
+| SF1: NON-CONSERVATIVE annular loss; optimistic ECD and `compatible` | C11: flowing losses are 8 to 419 times below the yield-stress floor; 4 violations. Magnitude, not only notation, is in question | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L79-L100] |
+| SF2: Caller rheology cannot be supplied or read back | PV 20 cP / YP 15 lbf/100 ft² are silently used by `pressure_window_check`; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L192-L196] |
+| SF4: Unknown or mis-cased categories silently fall through | `Exploration` selects standard instead of slim; `gravel pack` bypasses the slim caveat and risk step; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L134-L166] |
+| S1: Measured depth also used as TVD | Comparison uses one depth for friction length and ECD denominator; a deviated trajectory understates the ECD increment when MD is passed; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L161-L177] |
+| S2: Recommendation window flag is not hydraulic | `pressure_window_compatible` tests window width only; neither ECD nor the mud is evaluated despite the class docstring; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L90-L92] |
+| S3: Zero bit-size defaults classify as slim | Three bit sizes default 0.0; passing one to the classifier returns slim without warning or bore-type cross-check; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L27-L76] |
+| S4: Clamp hides negative flow and incomplete scalar validation | Non-positive velocity sets Re to zero and the loss clamp can return 0.0 for negative flow; signs, finiteness and rheology are not validated; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L74-L100] |
+| Unqualified fixed defaults silently supply engineering basis | Mud 9.0 ppg, cutting density 21.7 ppg, comparison PV/YP defaults, vertical deviation 0.0 and simple completion are assumed when omitted; 1.05 ECD warning and selection/risk/cost constants lack independent qualification; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L65] |
+| Empty sections and inconsistent stored profiles are accepted | Empty section default and unmatched arrays/minimum/bottleneck fields have no consistency validation; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L120] |
+| Units and preset geometry are caller assumptions | Metres versus feet, inches, gpm versus bopd and density units are not converted or tagged at runtime; fixed comparison geometry ignores supplied sections; no detection check exists | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L145-L188] |
 | Empty profile reports safe | `all` over an empty margin list returns true, while the fraction method returns zero; C03 detects the disagreement | issue pending (2), 2026-10-15; no existing empty-profile detection test. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L111-L120] [tests/unit/well_bore_design/test_schemas.py:L208-L251] |
 | Compatible flag without a pore-pressure lower-bound check | C04: the upper margin and available-window width can both pass with ECD below pore pressure; do not treat `compatible` as a complete well-control check | issue pending (3), 2026-10-15. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L199-L220] |
-| Depth envelope silently bypassed | C09: `total_depth_m` is accepted but unused in `_select_candidate`; matrix depths do not constrain selection | issue pending (4), 2026-10-15; no existing envelope detection check in shipped tests. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L48] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] [tests/unit/well_bore_design/test_decision_framework.py:L92-L174] |
+| SF3: Depth, flow and well-type envelopes silently bypassed | C09: all three selected matrix envelopes are ignored; 3 silent violations | #1288, 2026-10-16. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L48] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] |
 | Comparison preset conflicts with classifier boundary | Large comparison geometry uses 12.25 in, while the helper classifies exactly 12.25 in as standard; C01 proves the boundary only, not agreement with the preset | issue pending (1), 2026-10-15; no preset/classifier agreement check exists. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L10-L15] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L27-L38] |
 | Formula notation can obscure velocity conversion | Docstring laminar expression uses AV, implementation uses `av_fpm = 60*av`; C06–C08 establish arithmetic only, not the physical source | issue pending (1), 2026-10-15; no independent published-value detection check exists. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L98] |
 | Profile safety omits lower bound and weighting by depth interval | Stored margin is fracture minus ECD; `safe_depth_fraction` counts points rather than interval lengths; C03 covers empty data only | issue pending (2), related issue pending (3), 2026-10-15; no lower-bound or interval-weighting detection check exists. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L91-L120] |
@@ -158,6 +194,15 @@ Combined input fingerprint: `c515d9f25ddd02d573fc57bee08d3cc3a0483895b49413f0cdc
 | Test described as laminar exercises the turbulent branch | At Q=100 gpm in the viscosity test, both viscosity settings give Re >2100 using the implemented formula; C06–C08 do not qualify either loss branch independently | issue pending (1), 2026-10-15; no independent laminar expected-value check exists. [tests/unit/well_bore_design/test_hydraulics.py:L100-L112] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L78-L98] |
 | A named negative-margin test does not assert negative margin or incompatibility | Existing test asserts presence/non-None fields; its name alone is not branch coverage evidence | issue pending (3), 2026-10-15; C04 supplies a concrete lower-bound detection case. [tests/unit/well_bore_design/test_decision_framework.py:L225-L237] |
 | Stored zero limits hide missing design basis | `pressure_window_ppg` returns zero if either limit is zero; no automatic calculation of profile minima or bottleneck | issue pending (2), 2026-10-15; no missing-basis detection check exists. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L78-L82] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L97-L120] |
+
+Silent-failure sweep, 2026-10-16, all four package Python files at the code pin: 20 distinct section-6 rows (the 10 original rows, SF3 widened, plus 10 new rows). No swallowed exception, skipped-record `continue`, error-path `None`/empty return, external-text numeric conversion, date default or cache write exists. Empty list/dict initialisers are covered as schema defaults, caveats or comparison accumulation, rather than error returns. Zero limits, empty profile return and all fixed defaults/units are covered above. Empty notes are descriptive metadata, not calculation fallbacks.
+
+```text
+rg -n 'except|continue|return None|return \[\]|return \{\}|= 0(\.0)?\b|1970|float\(|int\(|default|0\.05|1\.05|0\.052|0\.408|21\.7|20\.0|15\.0' <package>/*.py
+rg -n 'return|field\(|: float =|: str =|open\(|write|cache|ppg|gpm|bopd|ft|metre|inch' <package>/*.py
+```
+
+The sweep includes manual inspection of every matched definition, including the 9.0 ppg mud default and heuristic thresholds not matched by the first expression. SF2/SF4 and S1–S4 have no shipped detection check; their reproduced observations do not imply a passing gate.
 
 Diagnostic reproduction, using only the public API and an anonymous dataset ID:
 
@@ -255,16 +300,18 @@ These outside-package findings belong in the map follow-up, issue pending (6); n
 
 Repository inspection record at the code pin: `docs/registry/module-routing.yaml` is absent; there are no routing fields to update and no routing-domain contract change. Repository issue searches for module name, hydraulics, pressure-window checking and profiles found no matching specific defect issue; issue 349 is historical inventory context, and issue 529 is package-split context, rather than incident evidence for C03/C04/C09.
 
+The SF1–SF4 and S1–S4 limitations remain present in the pinned implementation; #1288 tracks them. No calculation is corrected by this documentation revision.
+
 ### Open-item register
 
 | Item | Missing evidence / next action | Responsible role / tracking |
 | --- | --- | --- |
-| U1 | Independently sourced hydraulic/cleaning formulas, edition/equation metadata, laminar/turbulent reference cases, velocity-notation reconciliation and provenance sidecars; 0 independently validated examples currently claimed | Maintainer; issue pending (1). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L100] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139] |
+| U1 | Independently sourced hydraulic/cleaning formulas, edition/equation metadata, laminar/turbulent reference cases, velocity-notation reconciliation, loss-magnitude correction against C11, caller-rheology disclosure and provenance sidecars (#1288); 0 independently validated examples currently claimed | Maintainer; issue pending (1). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L100] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139] |
 | U2 | Evidence and applicability for selection/risk/cost heuristics, completion policy and the comparison-preset/classifier boundary disagreement | Maintainer; issue pending (1). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L65] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L276] |
 | U3 | Explicit metre/foot depth datum, TVD versus MD basis and conversion contract | Maintainer; issue pending (1). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L63] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L106-L120] |
-| O1 | Define empty/inconsistent profile handling and missing-limit status; detect invalid geometry/array data before safety evaluation | Maintainer; issue pending (2). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L82] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L89-L120] |
+| O1 | Define empty/inconsistent profile handling and missing-limit status; detect invalid geometry/array data, zero bit-size classification, negative flow, non-finite scalars and clamp-hidden invalid inputs before safety evaluation (#1288) | Maintainer; issue pending (2). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L82] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L89-L120] |
 | O2 | Define pore-pressure lower-bound compatibility and strengthen the existing branch assertions | Maintainer; issue pending (3). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L199-L220] [tests/unit/well_bore_design/test_decision_framework.py:L225-L237] |
-| O3 | Enforce matrix depth/flow applicability or identify descriptive ranges explicitly | Maintainer; issue pending (4). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L48] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] |
+| O3 | Enforce matrix depth/flow/well-type applicability and category validation or identify unsupported inputs explicitly (#1288) | Maintainer; issue pending (4). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L48] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L250] |
 | O4 | Exclude the pack from wheel data; the existing `**/*.md` pattern matches nested Markdown, so exclusion is not established and no wheel was built here | Maintainer; issue pending (5), related issue 529. [packages/worldenergydata-well_bore_design/pyproject.toml:L47-L53] |
 | O5 | Add every section-3 method family and section-9 supplemental finding to the implementation map before those families become counted | Maintainer; issue pending (6). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L30-L188] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L27-L38] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L78-L120] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L105-L276] |
 | O6 | Assign deputy, record independent clearance/shared lessons, link the maintained index and replace all pending issue references | Maintainer; issue pending (7), related issue 349; Module agent lifecycle, revision 0, sections 3–4 |
