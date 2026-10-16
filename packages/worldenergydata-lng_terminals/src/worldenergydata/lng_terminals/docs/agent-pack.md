@@ -5,7 +5,7 @@
 | Module | `lng_terminals` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals` |
-| Pack revision | 0, 2026-10-15 |
+| Pack revision | 1, 2026-10-15 |
 | Code revision | `285d65c40896b17ccf44568e59f5b789d59c943e` |
 | Analysis family | Data pipeline; EC; AQG r0 Python calculations gate set |
 | Quality manager role | Calculations quality manager, pending a data-pipeline specialist |
@@ -22,6 +22,13 @@ Engineering sub-models hold hull, pipeline, process, storage and marine attribut
 Use these interfaces for dataset processing, with the limitations in section 6; completeness scoring checks presence rather than independent correctness of values. [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/quality_scorer.py:L125-L153]
 
 UNVERIFIED: current real-world dataset completeness, engineering fitness and externally assigned maturity have not been established; issue pending (1).
+
+### Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-15 | Document the pinned collector, processing and query routes and their evidence. |
+| 1 | 2026-10-15 | Correct the cache inventory and document cache loss, unit assumptions and other data-loss risks with detection limits. |
 
 ## 2. Inputs and outputs
 
@@ -99,10 +106,40 @@ Gate selection: AQG r0, section 10, Python calculations, with G5 from section 9;
 | G0 | Applicable: reproducibility | C02 hash pinned Python inputs and module tests in sorted relative-path order; recompute source-file digests before/after | 0 source or test digest mismatches, files | Source manifest PASS; cache fixture isolates collector writes [tests/unit/lng_terminals/conftest.py:L8-L15] |
 | G1 | Applicable: Python imports and offline tests | C03 run the complete `tests/unit/lng_terminals` directory with `uv run python -m pytest`; importing collectors uses test cache redirection | 429 passed nodes, 0 failures/errors/skips/NOT_RUN, tests | BASE PASS; AFTER PASS; fixture [tests/unit/lng_terminals/conftest.py:L8-L15] |
 | G2 | Applicable: independent arithmetic | C04 repeat V1 from its inline input; compare `StorageSpec.total_capacity_m3` with separate multiplication | Absolute error 0 cubic metres for 640000 cubic metres | V1 BASE PASS; AFTER PASS; [tests/unit/lng_terminals/models/test_design.py:L87-L93] |
-| G2 | Applicable: missing-capacity convention | C05 run `TestCapacityAnalysisTotal::test_total_capacity_with_none`, compare one 10.0 MTPA value plus missing capacity with 10.0 | Absolute error 0 MTPA | BASE PASS; AFTER PASS; [tests/unit/lng_terminals/test_capacity_timeline.py:L49-L55] |
+| G2 | Applicable: missing-capacity convention | C05 run `tests/unit/lng_terminals/test_capacity_timeline.py::TestCapacityAnalysisTotal::test_total_capacity_with_none`, compare one 10.0 MTPA value plus missing capacity with 10.0 | Absolute error 0 MTPA | BASE PASS; AFTER PASS; [tests/unit/lng_terminals/test_capacity_timeline.py:L49-L55] |
 | G3 | NOT_APPLICABLE: no time integration in the collector/process/export route | No dynamics check | NOT_APPLICABLE | Pipeline calls data export and reports [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/cli.py:L258-L274] |
 | G4 | NOT_APPLICABLE: the route exports tabular records rather than a diffraction model | No diffraction check | NOT_APPLICABLE | CSV and Parquet write flattened rows [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/exporters/csv_exporter.py:L49-L69] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/exporters/parquet_exporter.py:L54-L65] |
 | G5 | Applicable: evidence accompanying this pack | C06 resolve every citation at the pin; require a test node and BASE/AFTER result for every section-4 case; verify manifest | 0 broken citations, citations; 5/5 cases accounted for, cases; 0 digest mismatches, files | Self-check record PASS; report exports alone supply no gate/signature record [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/reports/quality_dashboard.py:L87-L99] |
+| G0 | Applicable: tracked cache exposure | C07 run `git ls-files -- 'packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/*_cache.json'` and count paths | 0 tracked collector cache files, files | FAIL at the pin: 5 tracked cache files; test isolation does not untrack them; incident #1209 |
+| G1 | Applicable: collector test isolation | C08 run `tests/ci/test_tree_preservation.py::test_collector_cache_redirect_applies_to_new_modules` | 1 passed node, 0 failures, tests | BASE PASS; AFTER PASS; [tests/ci/test_tree_preservation.py:L432-L449] [tests/unit/lng_terminals/conftest.py:L8-L15] |
+| G2 | Applicable: conversion arithmetic under the mcm/d assumption | C09 execute the arithmetic probe below; compare Bcf/day conversion factors and GIE annualisation | Factor difference at most 0.1 %; GIE rounding error at most 0.1 MTPA | BASE PASS; AFTER PASS; checks arithmetic only, not source units; [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/normalizer.py:L21-L25] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/ferc_collector.py:L51-L52] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/gie_collector.py:L113-L123] |
+
+C09 executable probe (offline; repository sources and declared dependencies required):
+
+```python
+from worldenergydata.lng_terminals.collectors.ferc_collector import (
+    _BCFD_TO_MTPA as FERC_BCFD_TO_MTPA,
+)
+from worldenergydata.lng_terminals.collectors.gie_collector import GIECollector
+from worldenergydata.lng_terminals.processors.normalizer import (
+    BCM_TO_MTPA,
+    BCFD_TO_MTPA as NORMALIZER_BCFD_TO_MTPA,
+)
+
+# Hand conversion basis for this comparison, not a qualified physical reference.
+expected = 28316847 / 10**9 * 365 * BCM_TO_MTPA
+assert FERC_BCFD_TO_MTPA == NORMALIZER_BCFD_TO_MTPA
+assert abs(FERC_BCFD_TO_MTPA - expected) / expected * 100 <= 0.1
+collector = GIECollector()
+try:
+    record = collector._parse_record(
+        {"name": "Synthetic A", "country": "FRA", "maxCapacity": "100"}
+    )
+    assert record is not None
+    assert abs(record.capacity_mtpa - 100 * 365 / 1000 * BCM_TO_MTPA) <= 0.1
+finally:
+    collector.client.close()
+```
 
 For a production refresh, additionally require a source-qualified dataset revision, input fingerprints, successful scheduler manifest and signed gate evidence; the current scheduler adapter returns skipped with zero records. [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/lng_terminals_refresh.py:L33-L54]
 
@@ -112,14 +149,22 @@ For a production refresh, additionally require a source-qualified dataset revisi
 | --- | --- | --- | --- |
 | Collector failure can look like an empty result: missing URL or caught collection error returns empty content; CLI catches further exceptions at debug level | C03 covers existing fallbacks, but no end-to-end source-loss rejection check exists; require nonempty, source-qualified output before accepting freshness | #458 and #462 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/gie_collector.py:L59-L82] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/cli.py:L85-L124] |
 | Cache deserialization failure returns an empty list, and zero-length valid caches are not usable in force-cache mode | C03: existing corrupt-cache and force-cache tests; do not interpret an empty cache as a successful refresh | #462 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L159-L170] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L201-L215] |
-| Extra pipeline records disappear from flat output after the eighth entry | Diagnostic: construct 9 pipelines and compare input count with indexed output count; current result 9 versus 8; no shipped overflow-rejection test exists | issue pending (3) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L292-L301] |
+| Tracked-cache incident: test runs rewrote package cache JSON; the default cache directory is inside the package | C07 detects tracked files (5 at the pin, criterion 0); C08 proves test cache redirection, but does not protect CLI or production runs | #1209 | [tests/unit/lng_terminals/conftest.py:L8-L15] [tests/ci/test_tree_preservation.py:L432-L449] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/config.py:L19-L23] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/config.py:L82-L94] |
+| Empty-result cache overwrite: collection writes the validated list even when empty; `_write_cache` replaces data and metadata without checking for an earlier nonempty cache | no detection check exists for CLI or production runs; C08 tests isolation only. An empty cache makes CACHE_FIRST refetch and FORCE_CACHE raise; a fresh timestamp alone does not establish source freshness | #1265 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L125-L157] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L201-L231] |
+| GIE unit misread: the comment allows mcm/d or GWh/d, but `maxCapacity` or fallback `dtmi` is always interpreted as mcm/d without reading a unit field | no detection check exists for wrong or unknown source units; C09 checks only the assumed mcm/d arithmetic. A GWh/d value can be mis-scaled and still satisfy model bounds | #1265 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/gie_collector.py:L113-L123] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L109-L119] |
+| Extra pipeline records disappear from flat output after the eighth entry | Diagnostic: construct 9 pipelines and compare input count with indexed output count; current result 9 versus 8; no detection check exists | issue pending (3) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L292-L301] |
 | Partial higher-priority engineering sub-model replaces existing sub-model fields rather than filling missing nested fields | Diagnostic: merge matching records with base storage tank count and incoming total only; verify tank count survives; no detection check exists in the shipped tests | issue pending (2) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/enricher.py:L96-L139] |
 | Zero latitude or longitude disappears from map selection; GIE also converts a numeric zero coordinate to missing; deduplication bypasses proximity at zero | Diagnostic: construct valid zero-coordinate records and check retained count; no detection check exists in the shipped tests | issue pending (4) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/reports/terminal_map.py:L36-L40] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/gie_collector.py:L158-L166] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/deduplicator.py:L114-L122] |
 | Dashboard median uses the upper middle score for an even number of records | Diagnostic: compare generated median with the mean of the central pair; no detection check exists in the shipped tests | issue pending (5) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/reports/quality_dashboard.py:L38-L51] |
 | Missing category scores 100 points; source count counts citation objects without distinct-source deduplication | C03 covers the convention; a high score alone does not establish source independence | #462; qualification issue pending (1) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/data_quality.py:L99-L119] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/quality_scorer.py:L150-L153] |
 | Scheduler registration is not refresh implementation: enabled job returns skipped and zero records | Detection: inspect adapter result for `success`, positive records and a manifest; no detection check exists that proves this adapter can refresh successfully | #458; #270 is historical configuration work | [config/scheduler/scheduler_config.yml:L59-L63] [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/lng_terminals_refresh.py:L33-L54] |
 | Query country/type/region encodings differ from model records; query lowercases exact strings without alias translation | C03 covers each interface independently; do not interchange the two datasets as a single canonical source | issue pending (1) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/query.py:L89-L105] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L77-L108] |
-| Incremental collection still calls fresh fetch, without an incremental cursor in the base lifecycle | C03: `TestRefreshModeIncremental::test_incremental_fetches_fresh`; no selective-update guarantee | #462 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L217-L231] [tests/unit/lng_terminals/test_refresh_modes.py:L290-L308] |
+| Incremental collection still calls fresh fetch, without an incremental cursor in the base lifecycle | C03: `tests/unit/lng_terminals/test_refresh_modes.py::TestRefreshModeIncremental::test_incremental_fetches_fresh`; no selective-update guarantee | #462 | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L217-L231] [tests/unit/lng_terminals/test_refresh_modes.py:L290-L308] |
+| Deduplication retains one most-complete group member and discards other members' values and citations without merging | no detection check exists for loss of complementary values or citations; C03 tests the existing retention convention | issue pending (7) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/deduplicator.py:L74-L83] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/deduplicator.py:L209-L217] |
+| Loader and collector parsers skip invalid records; normalization can retain partial in-place mutation; scoring exceptions leave records unscored, with warnings rather than returned failure counts | no detection check exists for a caller-visible accounting of dropped, partially normalized or unscored records | issue pending (8) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/loaders/terminal_loader.py:L87-L107] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/ferc_collector.py:L99-L105] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/gie_collector.py:L87-L94] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/giignl_collector.py:L153-L156] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/web_collector.py:L122-L125] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/normalizer.py:L238-L249] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/quality_scorer.py:L104-L108] |
+| Alias matching can falsely merge same-country records when stripping generic words leaves an empty name: the empty string is a substring of every alias | no detection check exists for rejecting empty normalized names before alias matching | issue pending (9) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/deduplicator.py:L18-L27] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/deduplicator.py:L129-L146] |
+| Enrichment unions aliases through a set, so alias order and serialized CSV bytes can vary between processes | no detection check exists for stable alias ordering across processes | issue pending (10) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/enricher.py:L113-L123] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L269-L274] |
+| Total capacity sums import and export capacities across every status; the CLI labels this mixed sum as total capacity | C03 verifies the sum convention, but no detection check exists that prevents interpreting it as operational liquefaction capacity | issue pending (11) | [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/analysis/capacity_analysis.py:L33-L35] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/cli.py:L217-L233] |
 
 Observation date for the diagnostic rows: 2026-10-15; their source locations are pinned above. These are documentation findings, with implementation corrections left to the linked follow-ups.
 
@@ -127,7 +172,7 @@ Observation date for the diagnostic rows: 2026-10-15; their source locations are
 
 | Date | Evidence entry | Lesson | Pack change | Shared entry |
 | --- | --- | --- | --- | --- |
-| 2026-10-15 | Initial pinned inspection | Keep query data and collector data distinct; enrichment uses whole-record priority and flat export has a fixed pipeline limit | Sections 1, 3 and 6 document the separate routes and loss risks | No external entry created; [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/query.py:L77-L78] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/enricher.py:L103-L132] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L292-L301] |
+| 2026-10-15 | Initial pinned inspection | Keep query data and collector data distinct; enrichment uses whole-record priority and flat export has a fixed pipeline limit | Sections 1, 3 and 6 document the separate routes and loss risks | Shared-log entry pending, issue pending (12); [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/query.py:L77-L78] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/processors/enricher.py:L103-L132] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/models/terminal.py:L292-L301] |
 
 ## 8. Ownership
 
@@ -139,7 +184,7 @@ Clearance remains pending; this pack records no reviewer approval. (Pack status:
 
 The package declares shared core, pandas, Pydantic, PyArrow, PyYAML, HTTPX, Beautiful Soup and Typer dependencies; Plotly is loaded when generating maps, and pdfplumber is loaded for PDF extraction. [packages/worldenergydata-lng_terminals/pyproject.toml:L29-L39] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/reports/terminal_map.py:L51-L57] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/giignl_collector.py:L69-L89]
 
-Dataset inputs have separate authorities: `_dataset.TERMINALS` feeds the query client; `_SEED_TERMINALS` feeds `SeedCollector`; the curated file feeds `TerminalLoader`; collector caches contain serialized model records and collection metadata. [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/query.py:L77-L78] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/seed_collector.py:L1485-L1491] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/loaders/terminal_loader.py:L70-L107] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L125-L148]
+Dataset inputs have separate authorities: `_dataset.TERMINALS` feeds the query client; `_SEED_TERMINALS` feeds `SeedCollector`; the curated file feeds `TerminalLoader`; only `seed_dataset_cache.json` contains serialized model records (119); the FERC, GIE, GIIGNL and web cache files each contain `[]` (0 records, 2 bytes). Their metadata also records 0; cache presence is not evidence of successful collection. [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/query.py:L77-L78] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/seed_collector.py:L1485-L1491] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/loaders/terminal_loader.py:L70-L107] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/collectors/base_collector.py:L125-L148] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/ferc_cache.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/gie_cache.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/giignl_cache.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/web_cache.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/seed_dataset_meta.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/ferc_meta.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/gie_meta.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/giignl_meta.json:L1-L1] [packages/worldenergydata-lng_terminals/src/worldenergydata/lng_terminals/_data/cache/web_meta.json:L1-L1]
 
 The downstream scheduler adapter exists but returns skipped rather than invoking the collector route; no solver-version dependency is involved in that adapter. [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/lng_terminals_refresh.py:L33-L54]
 
@@ -150,6 +195,8 @@ Map evidence record: repository `digitalmodel`, ref `origin/codex/implmap-work`,
 Inventory result: 0 map families have implementation rows under the header package path, so the required implementation inventory is empty, there are 0 counted families, and the counted-family grep is `NOT_APPLICABLE` for that reason; no in-package search signals or path-matching exclusions apply. This is absence of map coverage, not evidence that these methods are unique.
 
 Map follow-up, issue pending (1): add the section-3 families with in-package rows before counting them: collector/cache lifecycle, source parsing, capacity conversion, text/country normalization, fuzzy/geographic deduplication, source-priority enrichment, storage multiplication, completeness scoring, capacity/timeline aggregation and query aggregation.
+
+Map follow-up also covers parallel great-circle calculations in `marine_safety`, `metocean`, `texas_rrc` and `marine`, and record matching/source-priority merge in `vessel_fleet` (#1227); group these by result family rather than treating package-specific symbols as unique. These are map gaps outside this package, not counted-family misses. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/correlation/matcher.py:L613-L643] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/incidents/incident_correlator.py:L357-L373] [packages/worldenergydata-metocean/src/worldenergydata/metocean/utils/coordinates.py:L76-L101] [packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/infrastructure/spatial.py:L39-L54] [packages/worldenergydata-marine/src/worldenergydata/marine/vessel_gis.py:L42-L67]
 
 ### Repository-wide supplemental search
 
@@ -268,7 +315,7 @@ Documentation discovery used case-insensitive `lng[ _-]?terminals` under `docs/`
 
 Package README and packaging configuration were also read. The existing recursive Markdown package-data pattern matches this documentation path; wheel exclusion requires packaging follow-up, not a claim that the pack is excluded. [packages/worldenergydata-lng_terminals/README.md:L1-L16] [packages/worldenergydata-lng_terminals/pyproject.toml:L54-L65]
 
-Related cross-cutting test discovery also found scheduler, source-refresh audit and tree-preservation consumers outside this module test directory; their full-domain runs are outside the module baseline and are not claimed as passed here. [tests/unit/scheduler/test_jobs.py:L15-L15] [tests/unit/audit/test_source_refresh_contract.py:L189-L198] [tests/ci/test_tree_preservation.py:L1-L30]
+Related cross-cutting test discovery also found scheduler, source-refresh audit and tree-preservation consumers outside this module test directory; full-domain runs are outside the module baseline. The nine LNG scheduler cases and the C08 cache-redirection node were additionally selected for the focused execution record below; the source-refresh audit was not run. [tests/unit/scheduler/test_jobs.py:L15-L15] [tests/unit/audit/test_source_refresh_contract.py:L189-L198] [tests/ci/test_tree_preservation.py:L1-L30]
 
 ### Open-item register
 
@@ -283,6 +330,13 @@ Every item is assigned to the maintainers for issue assignment and review; pendi
 | Even-sample median | Implement the conventional median or name the upper-middle statistic explicitly; add a two-score case | issue pending (5) |
 | Documentation packaging | Exclude this pack from wheel data without removing curated data; verify the built artifact | issue pending (6) |
 | Refresh readiness | Replace skipped scheduler result with a source-qualified successful refresh and manifest; retain distinct source-vintage and refresh-time evidence | #458 and #462 |
+| Cache overwrite and source units | Preserve a good cache after empty collection; validate GIE capacity units explicitly | #1265 |
+| Deduplication data retention | Retain complementary fields and citations from non-selected group members | issue pending (7) |
+| Record accounting | Return dropped, partially normalized and unscored counts to callers | issue pending (8) |
+| Empty-name alias matching | Reject empty normalized names before substring matching | issue pending (9) |
+| Alias ordering | Make alias union order stable across processes | issue pending (10) |
+| Mixed capacity total | Label import/export and status scope explicitly | issue pending (11) |
+| Shared lesson | Add the cache-loss and unit-assumption findings to the shared lessons log | issue pending (12) |
 
 ### Test execution record
 
@@ -292,4 +346,10 @@ AFTER: same test form and code revision; the documented `--allow-existing-tree-c
 
 Contracts: `uv run python -m pytest tests/contracts -q -rA -p no:cacheprovider --basetemp=<scratch> --allow-existing-tree-changes`; ordinary workspace sources and unchanged addopts; 46 run, 46 passed, 0 failed, 0 skipped, 0 NOT_RUN at the same code revision.
 
-Self-check record: A1 through A8 passed the producer checks; citation resolution covered every repository citation, with ten selected citations additionally read against pinned source text. All five example nodes passed at BASE and AFTER, the source/test manifest contained 65 files with zero byte mismatches, and the publication/name scan had zero findings. A7 uses pending draft numbers until issue numbers are assigned; A8 inventory is empty and its counted-family grep is `NOT_APPLICABLE`. These are producer results, not independent clearance.
+Initial self-check record: A1 through A8 passed the producer checks; citation resolution covered every repository citation, with ten selected citations additionally read against pinned source text. All five example nodes passed at BASE and AFTER, the source/test manifest contained 65 files with zero byte mismatches, and the publication/name scan had zero findings. A7 uses pending draft numbers until issue numbers are assigned; A8 inventory is empty and its counted-family grep is `NOT_APPLICABLE`. These are producer results, not independent clearance.
+
+Documentation revision 1 checks: BASE at `9ea85ef95440fb5c4fe87915a530770812f003cc`, AFTER on the uncommitted documentation tree. The complete module directory passed 429/429 at BASE and AFTER, with 0 failed, skipped or NOT_RUN. The focused consumer selection passed 10/10 at BASE and AFTER (nine `LngTerminalsRefreshJob` cases plus C08); 68 unrelated scheduler cases were deselected. C09 passed at BASE and AFTER; the two Bcf/day factors agree within 0.1 %, and 100 mcm/d gives 26.8 MTPA. These checks establish arithmetic under the assumed units, not unit correctness or physical qualification.
+
+Execution form: `uv run --no-project --with pytest python -m pytest <selection> -q -rA -p no:cacheprovider --basetemp=<scratch>` with the required declared dependencies supplied, root and workspace package sources on `PYTHONPATH`, unchanged repository addopts, and coverage outputs redirected to scratch. AFTER used `--allow-existing-tree-changes` to compare the pre-existing documentation bytes. The consumer selection was `tests/unit/scheduler/test_jobs.py tests/ci/test_tree_preservation.py::test_collector_cache_redirect_applies_to_new_modules -k 'LngTerminalsRefreshJob or test_collector_cache_redirect_applies_to_new_modules'`. Initial collection errors from missing dependencies were resolved before counting results.
+
+Revision 1 self-check: all 266 citation occurrences (234 distinct ranges, 111 files) resolve at the header code pin; the 56 occurrences on changed lines (51 distinct ranges) were additionally read for claim support. All 65 source/test manifest entries match BASE and the initial bytes. C07 reports the pre-existing 5 tracked collector cache files against a criterion of 0; this documented exposure remains unresolved by test isolation. A5 producer check: the tracked-cache incident, empty-result overwrite and GIE unit assumption each have a section-6 row with a section-5 detection check or an explicit detection gap. Independent clearance remains pending.
