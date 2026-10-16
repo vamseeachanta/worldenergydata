@@ -70,7 +70,7 @@ UNVERIFIED: no published carbon-accounting definition, reporting boundary, or st
 
 Breakeven uses `brentq` over zero to the upper price with `xtol=1e-6` USD/tCO2 and `rtol=1e-9`; tornado results sort the absolute NPV ranges in descending order. [packages/worldenergydata-economics/src/worldenergydata/economics/carbon.py:L178-L194] [packages/worldenergydata-economics/src/worldenergydata/economics/carbon.py:L298-L313]
 
-No citation sidecar is present in the NPV or MIRR result fields; the provenance gap is tracked by [the calculation-citation issue](https://github.com/vamseeachanta/worldenergydata/issues/361). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L82-L129]
+No citation sidecar is present in the NPV or MIRR result fields; the provenance gap is tracked by the calculation-citation issue (#361). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L82-L129]
 
 ## 4. Validated worked examples
 
@@ -109,13 +109,14 @@ Additional diagnostic criteria for known gaps, without claiming an existing pass
 | G5 / D3 | Inspect package-data patterns before asserting that this pack is excluded from a wheel | 0 `docs/agent-pack.md` members in a built wheel; count; build not performed | [packages/worldenergydata-economics/pyproject.toml:L54-L55] |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection | Tracking |
 | --- | --- | --- |
 | Missing emissions become zero; the replacement schedule discards existing carbon costs when sensitivity is recalculated | D1; no existing missing-emission detection test exists in the two domain test files | Issue pending (2). [packages/worldenergydata-economics/src/worldenergydata/economics/carbon.py:L321-L345] |
 | One negative sample gives zero MIRR periods, then division by zero; finance and reinvestment rate domains are unchecked | D2; no existing one-sample detection test exists | Issue pending (3). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L215-L236] |
-| A local MIRR path and an independent FDAS financial path remain present; matching method names do not establish identical timing or error semantics | Compare time bases and guards before reusing reference values; no cross-surface parity test is established here | [Consolidation](https://github.com/vamseeachanta/worldenergydata/issues/735) redirects to [economics reconciliation](https://github.com/vamseeachanta/worldenergydata/issues/832). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L215-L244] [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L62-L113] |
-| Result structures carry no formula provenance sidecar | Inspect result fields; no sidecar detection check exists in these tests | [Citation tracking](https://github.com/vamseeachanta/worldenergydata/issues/361). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L82-L129] |
+| A local MIRR path and an independent FDAS financial path remain present; matching method names do not establish identical timing or error semantics | Compare time bases and guards before reusing reference values; no cross-surface parity test is established here | Consolidation (#735) redirects to economics reconciliation (#832). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L215-L244] [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L62-L113] |
+| Result structures carry no formula provenance sidecar | Inspect result fields; no sidecar detection check exists in these tests | Citation tracking (#361). [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L82-L129] |
 | Package-data glob includes nested Markdown, so exclusion of the pack from distributions is not established | D3 | Issue pending (4). [packages/worldenergydata-economics/pyproject.toml:L54-L55] |
 
 ## 7. Lessons log
@@ -203,8 +204,8 @@ The documentation search also found a consolidation follow-on and a reference pa
 | O2 | Missing-emission sensitivity admission check and regression test | Issue pending (2) |
 | O3 | MIRR input-domain and short-series detection tests | Issue pending (3) |
 | O4 | Wheel exclusion of this pack is not established; check distribution contents and correct packaging separately | Issue pending (4) |
-| O5 | Formula provenance sidecar and governing-reference coverage | [Calculation citations](https://github.com/vamseeachanta/worldenergydata/issues/361) |
-| O6 | Independent disposition of overlapping financial surfaces and parity criteria | [Economics reconciliation](https://github.com/vamseeachanta/worldenergydata/issues/832) |
+| O5 | Formula provenance sidecar and governing-reference coverage | Calculation citations (#361) |
+| O6 | Independent disposition of overlapping financial surfaces and parity criteria | Economics reconciliation (#832) |
 | O7 | Independent second-provider review, role appointment and replacement of pending issue references | Issue pending (5) |
 
 No client-derived input values are introduced; examples use the cited test fixtures and closed-form arithmetic. [tests/unit/economics/test_dcf.py:L68-L76] [tests/unit/economics/test_dcf.py:L222-L237] [tests/unit/economics/test_dcf.py:L281-L295]

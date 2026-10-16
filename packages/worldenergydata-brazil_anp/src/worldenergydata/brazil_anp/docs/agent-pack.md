@@ -101,6 +101,7 @@ AQG r0 section 10, Python calculations, supplies G0–G2; G3 and G4 are inapplic
 Checks defined: G0 **3**, G1 **1**, G2 **2**, G3 **0**, G4 **0**, G5 **1**; **7 total** (AQG r0 sections 9–10; check definitions above).
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause and detection | Incident or follow-up; recorded date | Evidence |
 | --- | --- | --- | --- |

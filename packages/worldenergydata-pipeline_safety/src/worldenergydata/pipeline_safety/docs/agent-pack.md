@@ -155,6 +155,7 @@ C01–C10 are regressions of implemented behavior, not detectors of SF1–SF9. N
 Engineering release shall additionally require zero unreferenced governing formulas, zero unqualified input units and zero report results without traceable gate evidence; those prerequisites remain open under issues #361 and #364 and drafts 1, 2 and 4, rather than being cleared by the regression suite (AQG r0, sections 4, 9–11).
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection check or missing coverage | Issue / evidence | Date |
 | --- | --- | --- | --- |

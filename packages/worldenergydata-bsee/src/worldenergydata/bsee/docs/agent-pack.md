@@ -112,6 +112,7 @@ Applicable family set: AQG r0, section 10, Python calculations; G0 inputs/units/
 G5.1 depends on the `scripts/bsee` row and checks output traceability only; a signed analytical QA appendix is not established by this test; issue pending (1). [tests/unit/bsee/data/test_lease_ingest.py:L164-L186]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection and incident | Evidence |
 | --- | --- | --- |

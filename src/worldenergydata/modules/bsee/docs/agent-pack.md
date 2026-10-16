@@ -80,6 +80,7 @@ Family set: AQG r0 section 10, Python calculations; G0, G1, G2 and G5 apply, whi
 | G5 applicable | C5 | 3 of 3 listed regression cases have node IDs and paired offline results; 0 unaccounted cases, dimensionless count | R1–R3 evidence contract; no engineering clearance follows from import identity alone. [tests/unit/common/test_namespace_workspace.py:L119-L122] [tests/unit/test_modules_compat.py:L9-L14] [tests/unit/test_modules_compat.py:L32-L36] |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection | Evidence and disposition |
 | --- | --- | --- |

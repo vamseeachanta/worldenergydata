@@ -117,7 +117,6 @@ The governing family set is AQG r0, section 10, Python calculations: G0 inputs/u
 | C08 / G5 | `tests/unit/production/unified/test_benchmark_report.py::test_render_row_badge_matches_provenance` | 0 mismatches between visible badge and row provenance; at least 1 rendered row | PASS. [tests/unit/production/unified/test_benchmark_report.py:L259-L279] |
 | C09 / G5 | R4 plus `tests/unit/production/unified/test_benchmark_report.py::TestRegionStatus::test_region_status_covers_every_requested_region` | 0 fabricated rows for empty source; exactly 3 requested-region statuses in fixture | PASS. [tests/unit/production/unified/test_benchmark_report.py:L163-L187] [tests/unit/production/unified/test_benchmark_report.py:L331-L336] |
 | C10 / G5 | `tests/unit/production/unified/test_benchmark_report.py::test_discount_rate_mismatch_raises` | Exactly 1 `ValueError` for unsupported annual discount 0.15 (dimensionless) | PASS; report cannot silently claim an unsupported rate. [tests/unit/production/unified/test_benchmark_report.py:L294-L299] |
-
 | C11 / G2 | V1/V2 workflow engine fits and analytic EUR assertions; companion module invocation | 2 passing nodes; EUR 9000.0 and 13675.44 bbl at full registry precision, relative tolerance 1e-6; R² 1.0 (dimensionless) | PASS at BASE and repeat. [docs/registry/workflows.yaml:L137-L149] [tests/workflows/test_durable_workflows.py:L126-L162] |
 | C12 / G0 | `tests/unit/production/unified/test_ukcs_adapter_loader.py::test_fetch_transforms_nsta_loader_output_to_standard_columns` | 1 filtered row; 1 NaN condensate value, not a measured zero (bbl) | PASS. [tests/unit/production/unified/test_ukcs_adapter_loader.py:L62-L90] |
 | C13 / G5 | `tests/unit/production/unified/test_cross_basin.py::TestFiscalRegimeCoverage::test_every_routed_region_has_a_country_specific_regime` | 0 routed regions lacking a country-specific regime (region count) | PASS; regression, not fiscal qualification. [tests/unit/production/unified/test_cross_basin.py:L278-L288] |
@@ -126,6 +125,7 @@ The governing family set is AQG r0, section 10, Python calculations: G0 inputs/u
 The hand integral covers exponential EUR and C11 adds closed-form hyperbolic coverage; independent harmonic coverage remains issue pending (3), and G5 clearance is not established by these producer checks (AQG r0, sections 9 and 11). [packages/worldenergydata-production/src/worldenergydata/production/forecast/decline.py:L298-L307]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause / limit | Detection and disposition | Incident / tracking |
 | --- | --- | --- | --- |

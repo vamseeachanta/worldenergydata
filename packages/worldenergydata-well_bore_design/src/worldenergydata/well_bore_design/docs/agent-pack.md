@@ -171,6 +171,7 @@ Input-manifest record (SHA-256 over the sorted relative-path/file-digest lines, 
 Combined input fingerprint: `c515d9f25ddd02d573fc57bee08d3cc3a0483895b49413f0cdc938596394ceee`.
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause / detection | Tracking and date |
 | --- | --- | --- |

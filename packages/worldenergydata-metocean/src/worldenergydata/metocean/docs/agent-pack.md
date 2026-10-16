@@ -118,6 +118,7 @@ These are proposed repeatable checks, not clearance signatures; diagnostic failu
 | MET-12 / G0 | Apply the same nonempty Hs–Tp fixture to `build_scatter_matrix(normalize=True)`, `ScatterDiagram.compute` and `JointProbabilityModel.scatter_diagram`; label fraction versus percent and record bin edges versus widths | Fraction-sum error below 0.000001 dimensionless; percent-sum error at most 0.00005 × cell count percentage points for `compute`, 0.0005 × cell count percentage points for `scatter_diagram`, plus 0.000001 percentage points floating-point allowance; unlabelled normalized outputs 0 (count) | Proposed cross-route check; blocked by C4 collection failure, issue pending (2). Percent routes round to 4 and 3 decimals respectively; tolerances follow half the rounding quantum per cell, rather than assuming exact totals. [packages/worldenergydata-metocean/src/worldenergydata/metocean/ndbc_analysis.py:L163-L213] [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/scatter_diagram.py:L45-L86] [packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/joint_probability.py:L132-L189] |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom (silent failures first) | Cause / detection | Incident or follow-up / date | Evidence |
 | --- | --- | --- | --- |

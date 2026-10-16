@@ -125,6 +125,7 @@ Check definitions are acceptance instructions; the cited nodes specify the corre
 G5 report tests establish serialization/provenance behavior; they do not supply an independent signature or certify external workbook contents. [tests/unit/spain/test_cores_field_development_report.py:L176-L224] [tests/unit/spain/test_cores_live.py:L61-L93]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection check | Incident or tracking reference; evidence |
 | --- | --- | --- |

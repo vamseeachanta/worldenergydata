@@ -143,6 +143,7 @@ The 137 absent-data cases are SKIPPED; not exercised, not successful production 
 One additional existing skip checks the committed benchmark column only after its regeneration; it is a stale-output limitation under #1077, not a missing dependency. Thus 470 executed and passed + 137 not exercised for absent data + 1 stale-output skip = 608 module nodes; all 107 additional nodes executed and passed. [tests/unit/lower_tertiary/test_well_benchmark.py:L210-L224]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection check or gap | Tracking / date | Evidence |
 | --- | --- | --- | --- |

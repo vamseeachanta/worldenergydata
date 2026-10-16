@@ -134,6 +134,7 @@ G0-01, G0-02, G2-01 and G5-01 were exercised on the controlled five-row fixture;
 For reproducibility, build the G2 fixture as five rows with columns `incident_type`, `sub_type`, `severity`, `year` and values `kick`, `pressure_control`, `recordable`, `2020`; retain the exact CSV bytes and SHA-256 beside the evidence.
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause and detection recipe | Reference / tracking |
 |---|---|---|

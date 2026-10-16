@@ -86,19 +86,19 @@ All criteria below are proposed acceptance checks; a passing fixture check estab
 
 | Check | Gate | Executable check and numeric pass criterion | Evidence |
 | --- | --- | --- | --- |
-| C01 | G0 | `T::TestEIAFeedClientInit::test_client_raises_when_no_api_key`: exactly 1 `EIAKeyError` exception for absent authentication | [tests/unit/eia/test_client.py:L154-L159] |
-| C02 | G0 | `T::TestEIAFeedClientParsing::test_parse_petroleum_response_returns_list`: exactly 3 records | [tests/unit/eia/test_client.py:L195-L202] |
-| C03 | G0 | `T::TestEIAFeedClientParsing::test_parse_petroleum_value_is_float`: exactly 3 float values, 0 non-float values | [tests/unit/eia/test_client.py:L212-L218] |
+| C01 | G0 | `tests/unit/eia/test_client.py::TestEIAFeedClientInit::test_client_raises_when_no_api_key`: exactly 1 `EIAKeyError` exception for absent authentication | [tests/unit/eia/test_client.py:L154-L159] |
+| C02 | G0 | `tests/unit/eia/test_client.py::TestEIAFeedClientParsing::test_parse_petroleum_response_returns_list`: exactly 3 records | [tests/unit/eia/test_client.py:L195-L202] |
+| C03 | G0 | `tests/unit/eia/test_client.py::TestEIAFeedClientParsing::test_parse_petroleum_value_is_float`: exactly 3 float values, 0 non-float values | [tests/unit/eia/test_client.py:L212-L218] |
 | C04 | G0 | R3: exactly 1 schema field per output object; 0 differing characters against `JSONL_SCHEMA_VERSION` | [tests/unit/eia/test_client.py:L431-L445] |
 | C05 | G1 | Import through the complete `tests/unit/eia` suite: 0 failed tests and 0 collection errors | [tests/unit/eia/test_client.py:L16-L26] |
 | C06 | G1 | Run all five scheduler-adapter tests; 0 failed tests; adapter success fixture returns 15 updated records | [tests/unit/scheduler/test_eia_adapter.py:L17-L47] [tests/unit/scheduler/test_eia_adapter.py:L49-L146] |
 | C07 | G2 | R1: first gas value equals the fixture decimal 3100.0 Bcf, absolute difference 0.0 Bcf; 2 output records | [tests/unit/eia/test_client.py:L220-L228] |
 | C08 | G2 | R4: hand count of periods strictly greater than the watermark gives 3 - 2 = 1 record; output count differs by 0 records | [tests/unit/eia/test_client.py:L588-L611] |
 | C09 | G5 | R5: state readback differs from saved period by 0 characters | [tests/unit/eia/test_client.py:L368-L372] |
-| C10 | G5 | `T::TestEIAIngestionSyncJsonl::test_write_jsonl_one_record_per_line`: 2 inputs produce exactly 2 JSONL lines | [tests/unit/eia/test_client.py:L416-L429] |
+| C10 | G5 | `tests/unit/eia/test_client.py::TestEIAIngestionSyncJsonl::test_write_jsonl_one_record_per_line`: 2 inputs produce exactly 2 JSONL lines | [tests/unit/eia/test_client.py:L416-L429] |
 | C11 | G5 | Resolve every pack citation at the code pin; exactly 0 missing paths or out-of-range citations; read ten supporting ranges; exactly 0 mismatches | Pack self-check record retained separately; proposed check, no production QA appendix generator |
-| C12 | G0 | `T::TestEIAIngestionState::test_state_missing_feed_returns_none`: exactly 1 missing-feed lookup returns `None` | [tests/unit/eia/test_client.py:L374-L376] |
-| C13 | G1 | `T::TestEIAFeedClientFetch::test_fetch_raises_on_http_error` and `test_fetch_raises_on_rate_limit`: 2 HTTP status cases, 2 expected exceptions, 0 missing exceptions | [tests/unit/eia/test_client.py:L289-L305] |
+| C12 | G0 | `tests/unit/eia/test_client.py::TestEIAIngestionState::test_state_missing_feed_returns_none`: exactly 1 missing-feed lookup returns `None` | [tests/unit/eia/test_client.py:L374-L376] |
+| C13 | G1 | `tests/unit/eia/test_client.py::TestEIAFeedClientFetch::test_fetch_raises_on_http_error` and `test_fetch_raises_on_rate_limit`: 2 HTTP status cases, 2 expected exceptions, 0 missing exceptions | [tests/unit/eia/test_client.py:L289-L305] |
 
 G2 is a hand check of record selection and literal numeric conversion, not an independent source-data validation. G5 checks output/schema/state traceability; they do not constitute a signed production QA appendix; [issue pending (5)](ISSUES_DRAFT.md#draft-5). [tests/unit/eia/test_client.py:L220-L228] [tests/unit/eia/test_client.py:L588-L611]
 

@@ -131,6 +131,7 @@ The following ten checks define pack acceptance evidence; they do not turn the o
 | ec-citations | Resolve pack citations at the code revision and compare the ten selected passages | 0 missing files/ranges; 10 of 10 passages support their claims; unit citations | Resolver output and hand comparison record; G5 (AQG r0, section 9, “QA appendix”). |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause / detection | Incident or follow-up; date / evidence |
 | --- | --- | --- |

@@ -137,6 +137,7 @@ The criteria below are pack acceptance proposals, not claims of clearance; check
 Checks defined: G0 6; G1 1; G2 4; G3 1 NOT_APPLICABLE; G4 1 NOT_APPLICABLE; G5 1. Gate pass thresholds do not waive missing evidence.
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause and detection | Tracking / date |
 | --- | --- | --- |

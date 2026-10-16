@@ -142,6 +142,7 @@ The following diagnostic checks are specified for follow-up, outside the six gat
 | D04 | Send failed dataset envelopes through `CollectionWorkflow.execute`; accepted failed-envelope count 0; absent API clients must not qualify as fetched data. [packages/worldenergydata-sodir/src/worldenergydata/sodir/workflows/collection.py:L47-L130] [packages/worldenergydata-sodir/src/worldenergydata/sodir/parallel.py:L298-L371] | Code inspection mismatch; issue pending (1) |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 Inspection date for all entries: 2026-10-15. A diagnostic defined above is not claimed to be an existing automated regression test.
 
