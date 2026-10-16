@@ -5,11 +5,18 @@
 | Module | `kansas_kgs` |
 | Repository | `worldenergydata` |
 | Package scope | `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs` |
-| Pack revision | 0, 2026-10-16 |
+| Pack revision | 1, 2026-10-16 |
 | Code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
 | Analysis family | EC; data ingestion and screening calculations |
 | Quality role | Calculations quality manager, interim data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-16 | Initial package inventory, regression evidence and open-item register |
+| 1 | 2026-10-16 | Publish the eight issue drafts, link their scopes and proposed responsibilities, and record the missing-KID ambiguity |
 
 ## 1. Purpose and scope
 
@@ -119,7 +126,7 @@ Checks below are executable existing tests except the explicit C06 hand arithmet
 
 ## 6. Known failure modes and pitfalls
 
-sweep: 72 found (reviewed sites; intentional fallbacks included).
+sweep: 73 found (reviewed sites; intentional fallbacks included).
 
 The inventory below records reviewed behavioural sites, including intentional fallbacks and bookkeeping defaults; a row is not automatically a confirmed defect.
 The reproducible package-wide searches were:
@@ -203,6 +210,7 @@ rg -n '0\.0|0\.05|1970|cache|to_csv|to_parquet|write_text|replace|NaT|pd.NA|time
 | S70 | Snapshot size starts at zero and hashes all bytes; an empty file receives a valid digest without a completeness failure | C11 checks one nonempty CSV; no empty-file rejection check exists | issue pending (2) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L183-L190] |
 | S71 | Naive output timestamp is assumed UTC | no detection check exists for naive timestamps | issue pending (3) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L211-L215] |
 | S72 | Promotion replaces normalized files and curated outputs individually; a later promotion failure can leave a mixed packet | C12 covers failure before promotion only; no detection check exists for late failure | issue pending (4) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L92-L101] |
+| S73 | Direct calls with several API10 candidates stringify missing KIDs on both sides; a missing pressure KID can select the one missing well KID and emit kid_fallback_join instead of ambiguity flags | no detection check exists; C08 covers populated KIDs only | issue pending (1) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L156-L163] |
 
 The two swallowed exception sites are S01 and S02; the four explicit `continue` sites are S04, S36, S57 and S67; empty-result persistence and zero defaults are included rather than treated as evidence of successful ingestion. [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L73-L85] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L122-L128] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L97-L103] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L193-L204] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/pressure.py:L75-L86] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L135-L144]
 The related feature record is #725, not a confirmed incident report; its repository plan records malformed rows, pressure/depth assumptions and ambiguous joins as risks addressed by explicit tests. [docs/plans/2026-07-03-issue-725-kansas-kgs-pressure-observations.md:L616-L633]
@@ -288,22 +296,22 @@ There are 0 module-local README or documentation files at the code pin; the dist
 
 ### Open-item register
 
-Every item below is assigned to the maintainers for issue creation or assignment; draft numbers refer to the accompanying issue-draft list and must be replaced with issue numbers before independent clearance.
+Every item below is assigned to the maintainers for issue creation or assignment; draft numbers refer to [ISSUES_DRAFT.md](ISSUES_DRAFT.md) and must be replaced with issue numbers before independent clearance.
 
-| Item | Required evidence or disposition | Tracking |
-| --- | --- | --- |
-| U1: pressure/depth basis | Qualify gauge units, depth datum, atmospheric assumption and independent benchmark; regression arithmetic is not independent physical validation | issue pending (5) |
-| U2: ancillary numeric units | Versioned dictionary for rate, deliverability and water-production columns | issue pending (5) |
-| U3: spatial conventions | Coordinate datum, origin, sign convention and unit metadata | issue pending (5) |
-| U4: live source readiness | Re-derive source coverage/freshness, retain content digests and rights/readiness metadata; historical docs counts are not adopted | issue pending (5) |
-| Input validation gaps | Section-6 numeric/identity/coercion gaps, including nonfinite values and direct-call schema gaps | issue pending (1) |
-| Empty/completeness gaps | Section-6 empty tables, optional missing counters and fallback-origin gaps | issue pending (2) |
-| Provenance gaps | Section-6 raw validation, metadata exceptions, timestamp assumptions and revision/source-manifest gaps | issue pending (3) |
-| Promotion gaps | Section-6 cleanup suppression, timestamp collision and partial-promotion cases | issue pending (4) |
-| Parallel paths and map | Inventory missing method families; reconcile legacy/package schema and source documentation routes | issue pending (6) |
-| Distribution inclusion | Existing nested Markdown package-data glob also matches this pack; wheel exclusion is not established. [packages/worldenergydata-kansas_kgs/pyproject.toml:L40-L41] | issue pending (7) |
-| Documentation codenaming | Identifying record terminology in 7 discovered documentation files and fixture contents are not repeated; a separate content change is needed | issue pending (8) |
-| Review and reading boundary | Independent clearance, family/deputy appointments, shared-log registration, remaining wider-document reading and conversion of drafts to issues | issue pending (8) |
+| Item | Required evidence or disposition | Proposed responsible role | Tracking |
+| --- | --- | --- | --- |
+| U1: pressure/depth basis | Qualify gauge units, depth datum, atmospheric assumption and independent benchmark; regression arithmetic is not independent physical validation | Calculations reviewer | issue pending (5) |
+| U2: ancillary numeric units | Versioned dictionary for rate, deliverability and water-production columns | Calculations reviewer | issue pending (5) |
+| U3: spatial conventions | Coordinate datum, origin, sign convention and unit metadata | Calculations reviewer | issue pending (5) |
+| U4: live source readiness | Re-derive source coverage/freshness, retain content digests and rights/readiness metadata; historical docs counts are not adopted | Calculations reviewer | issue pending (5) |
+| Input validation gaps | Section-6 numeric/identity/coercion gaps, including nonfinite values and direct-call schema gaps | Data-pipeline maintainer | issue pending (1) |
+| Empty/completeness gaps | Section-6 empty tables, optional missing counters and fallback-origin gaps | Data-pipeline maintainer | issue pending (2) |
+| Provenance gaps | Section-6 raw validation, metadata exceptions, timestamp assumptions and revision/source-manifest gaps | Data-pipeline maintainer | issue pending (3) |
+| Promotion gaps | Section-6 cleanup suppression, timestamp collision and partial-promotion cases | Data-pipeline maintainer | issue pending (4) |
+| Parallel paths and map | Inventory missing method families; reconcile legacy/package schema and source documentation routes | Implementation-map maintainer | issue pending (6) |
+| Distribution inclusion | Existing nested Markdown package-data glob also matches this pack; wheel exclusion is not established. [packages/worldenergydata-kansas_kgs/pyproject.toml:L40-L41] | Packaging maintainer | issue pending (7) |
+| Documentation codenaming | Identifying record terminology in 7 discovered documentation files and fixture contents are not repeated; a separate content change is needed | Documentation maintainer | issue pending (8) |
+| Review and reading boundary | Independent clearance, family/deputy appointments, shared-log registration, remaining wider-document reading and conversion of drafts to issues | Documentation maintainer | issue pending (8) |
 
 UNVERIFIED: U4, live source freshness, complete raw-data row counts, distribution-wide readiness and external source rights were not established by offline fixture tests; issue pending (5). [docs/data-sources/onshore/kansas-kgs/pressure-observations.md:L46-L50]
 Historical documentation records a prior production run; its counts and year range are not current-run validation. [docs/data-sources/onshore/kansas-kgs/pressure-observations.md:L46-L50]
