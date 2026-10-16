@@ -157,12 +157,15 @@ jobs:
 
       - name: Lint changed agent packs
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PACK_ACCOUNT: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
+          # pull_request checkout is the merge ref; its first parent is the current base.
+          # Reject a non-merge checkout rather than silently checking only one commit.
+          git rev-parse --verify HEAD^2 > /dev/null
+          BASE_SHA=$(git rev-parse --verify HEAD^1)
           changed_packs_file=$(mktemp)
-          git diff --name-only --diff-filter=ACMR -z "$BASE_SHA" HEAD -- '*agent-pack.md' > "$changed_packs_file"
+          git diff --name-only --diff-filter=ACMR -z "$BASE_SHA" HEAD -- ':(glob)**/agent-pack.md' > "$changed_packs_file"
           mapfile -d '' -t packs < "$changed_packs_file"
           if [ "${#packs[@]}" -eq 0 ]; then
             echo "No changed agent packs."
