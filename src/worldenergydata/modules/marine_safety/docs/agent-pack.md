@@ -5,7 +5,7 @@
 | Module | `modules/marine_safety` |
 | Repository | `worldenergydata` |
 | Package path | `src/worldenergydata/modules/marine_safety` |
-| Pack revision | 0, 2026-10-16 |
+| Pack revision | 1, 2026-10-16 |
 | Code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
 | Analysis family | EC; compatibility interface for a data pipeline; AQG r0 section 10, Python calculations |
 | Quality role | Calculations quality manager; data-pipeline quality manager as deputy when appointed |
@@ -115,14 +115,8 @@ No local swallowing handler, skipped record, error-return sentinel, numeric defa
 | Legacy analysis export declarations overstate the runtime namespace | Finder selects the canonical analysis initializer, which does not bind the two report symbols declared in the compatibility file | C1 detects 2 missing declarations; direct import from `worldenergydata.marine_safety.analysis.cause_report` is the tested route | issue pending (1), 2026-10-16. [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L13-L16] [src/worldenergydata/_compat.py:L103-L123] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L9-L56] [tests/modules/marine_safety/analysis/test_cause_report.py:L12-L15] |
 | Finder can decline a target after an internal resolution error | Shared `find_spec()` catches `ModuleNotFoundError` and `ValueError`, substitutes `None`, then returns no spec; later import machinery decides the outcome | no detection check exists for the swallowed cause; C5 checks only available targets | issue pending (1), 2026-10-16. [src/worldenergydata/_compat.py:L106-L116] |
 | A closed compatibility incident does not prove every old import surface works | #278's plan distinguishes healthy canonical marine-safety packages from deleted implementations in another domain | C5 covers the five package aliases; C1 covers declared symbols | #278, 2026-10-16. [docs/plans/2026-05-04-issue-278-compatibility-shims.md:L15-L19] [docs/plans/2026-05-04-issue-278-compatibility-shims.md:L30-L35] |
-| Existing model tests report skips rather than database validation | Four class-level skip decorators name enum, schema and fixture incompatibilities | C2 exposes skips; no detection check exists for actual PostgreSQL persistence in this run | issue pending (3), 2026-10-16. [tests/modules/marine_safety/test_models.py:L73-L78] [tests/modules/marine_safety/test_models.py:L231-L235] [tests/modules/marine_safety/test_models.py:L327-L331] [tests/modules/marine_safety/test_models.py:L387-L390] |
+| Canonical-package tests fail, error or skip | Database fixtures, unavailable classifier inputs, logging assertions, a test-local matching oracle, and scraper/validator API expectations belong to the [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and section 10 C4–C10 | C2 and C3 record outcomes; no detection check exists for skipped assertions or unavailable model results | Tracked there: database skips / its draft 1; C4 / its draft 3; C5 / its draft 4; C6 / its draft 5; C9 / its draft 7 (including integration skips); C10 / its draft 8. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L198-L211] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md:L293-L299] |
 | One hatch-analysis test imports a nonexistent fixture namespace | Test imports the historical fixture path; the fixture source is under the unit-test tree | C3 records collection errors; no module code correction is included | #327, 2026-10-16. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] [docs/plans/2026-05-04-issue-327-conftest-marine-safety-fix.md:L9-L17] |
-| Classifier assertions cannot measure classification | Declared packages are installed, but model files are unavailable offline; constructor wraps model-loading errors | C3 records setup ERROR separately from assertion FAIL | issue pending (2), 2026-10-16. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/llm_classifier.py:L106-L123] |
-| Statistical-summary report test captures no stdout | `print_report()` uses logging while the test asserts against captured stdout | C3 records the failing test | issue pending (5), 2026-10-16. [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/cause_statistics.py:L250-L259] [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201] |
-| Test-local matching oracle finds no qualifying pair | The test calculates its own reduced confidence and requires at least one match; the assertion fails on its fixture | C3 records the failing test; no canonical matcher defect is inferred | issue pending (5), 2026-10-16. [tests/unit/marine_safety/test_correlation.py:L764-L803] |
-| Scraper tests call an obsolete public method surface | Tests invoke `scrape_incidents()` and `download_pdf()`; the current class implements `scrape()` and internal report processing instead | C3 records `AttributeError` outcomes | issue pending (5), 2026-10-16. [tests/unit/marine_safety/test_uscg_scraper.py:L162-L195] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/scrapers/uscg_scraper.py:L350-L364] |
-| Validator tests fail before validating their payloads | Tests instantiate required-field models without arguments and expect a result-object `validate()` API | C3 records model-construction errors | issue pending (5), 2026-10-16. [tests/unit/marine_safety/test_validators.py:L25-L42] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/utils/validators.py:L20-L27] |
-| Requested classifier integration checks still skip with their options enabled | Module-level `pytest.mark.skip` is unconditional; a separate model-test module calls `pytest.skip(..., allow_module_level=True)` | C3 exposes skips; no detection check exists for the skipped assertions themselves | issue pending (3), 2026-10-16. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L554-L558] [tests/unit/marine_safety/test_models.py:L9-L14] |
 
 ## 7. Lessons log
 
@@ -178,6 +172,8 @@ Repository-wide discovery for the same interface uses `rg -n --glob '*.py' 'worl
 
 ### Coverage record
 
+The two compatibility-specific drafts are committed in [ISSUES_DRAFT.md](ISSUES_DRAFT.md); their numbers remain 1 and 4 to preserve existing references. Canonical-package defects are tracked in its own pack and must not create additional drafts here.
+
 All five package Python files were read in full, including the incident-analysis subdirectory; no subordinate compatibility source is excluded from this pack. [src/worldenergydata/modules/marine_safety/__init__.py:L1-L1] [src/worldenergydata/modules/marine_safety/analysis/__init__.py:L1-L36] [src/worldenergydata/modules/marine_safety/analysis/incidents/__init__.py:L1-L14] [src/worldenergydata/modules/marine_safety/importers/__init__.py:L1-L13] [src/worldenergydata/modules/marine_safety/processors/__init__.py:L1-L20]
 
 Supporting sources read: the shared redirect and attribute shim, canonical export initializers, canonical package metadata, the existing canonical knowledge pack, the compatibility and fixture-repair plans, and the example test assertions cited above. [src/worldenergydata/_compat.py:L1-L142] [src/worldenergydata/modules/__init__.py:L1-L37] [packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/analysis/__init__.py:L1-L56] [docs/plans/2026-05-04-issue-278-compatibility-shims.md:L13-L35] [docs/plans/2026-05-04-issue-327-conftest-marine-safety-fix.md:L7-L46]
@@ -187,10 +183,8 @@ Supporting sources read: the shared redirect and attribute shim, canonical expor
 | U1: maturity and compatibility contract | Reconcile declared versus active exports, define compatibility maturity and document the missing-target diagnostic contract | Module maintainer | issue pending (1) |
 | U2: wider documentation claims | Reconcile discovered documentation with the separate canonical-package assessment; excerpts establish discovery only, not capability or data qualification | Module maintainer | issue pending (1) |
 | Unit-test collection gap | Restore complete discovery and resolve the historical fixture imports; the old repair issue is closed, not evidence of current coverage | Test maintainer | #1239; #327 |
-| Classifier reference inputs | Provide a pinned local model fixture; package installation alone does not supply model weights | Test maintainer | issue pending (2) |
-| Skipped assertions | Supply compatible database fixtures and replace unconditional skips with executable checks before claiming their results | Test maintainer | issue pending (3) |
+| Canonical-package test outcomes | Resolve database/model fixtures, unconditional skips and assertion/API mismatches in the canonical pack; retain this pack's outcome inventory as evidence | Canonical-package test maintainers | [canonical marine-safety pack](../../../../../packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety/docs/agent-pack.md) (#1236), section 6 and C4–C10; its drafts 1, 3, 4, 5, 7 and 8 |
 | Implementation-map follow-up | Register the three section-3 compatibility method families with in-package rows before counting them in a later A8 audit | Registry maintainer | issue pending (4) |
-| Explicit-file baseline failures | Reconcile statistics logging, matching, scraper method calls and validation test APIs with the canonical implementation; keep individual outcomes visible | Test maintainer | issue pending (5) |
 
 UNVERIFIED: U2 — capability, completeness, worked-example counts and validation claims in the discovered documentation are not accepted as evidence for the compatibility boundary; reconciliation remains issue pending (1).
 
@@ -325,7 +319,7 @@ Discovery command: `rg -l -i 'marine[_-]safety|modules/marine_safety' docs`; mat
 - [docs/research/marine_safety_data_sources_verification_report.md:L4-L4]
 
 
-### Offline test evidence
+### Offline test evidence — canonical-package test outcomes, tracked in the canonical pack
 
 All commands use `python -m pytest -q -rA -p no:cacheprovider --basetemp=<scratch>` through ordinary `uv run`, with the existing addopts unchanged, one process and temporary source copies. Source pin for BASE and the uncommitted AFTER tree: `72716499230d3457ce90a5bcd23a8a8367bc0bd3`. Classifier runs install the declared `test` and `llm` extras and set `HF_HUB_OFFLINE=1` and `TRANSFORMERS_OFFLINE=1`; no model download is attempted.
 
@@ -339,149 +333,149 @@ Explicit-file argument expansion: `$(rg --files tests/unit/marine_safety -g 'tes
 
 The explicit-run skip counts include one module-level skip report in addition to skipped test nodes; the collection error is also a file-level report, separate from the 2036 selected test nodes. The recorded failures originate in unchanged source or test files at the pin; source bytes were compared with `origin/main`. No solver is involved in these commands. Model setup errors provide no classification result; database and unconditional integration skips provide no validation result.
 
-### Nonpassing baseline nodes
+### Nonpassing baseline nodes — canonical-package test outcomes, tracked in the canonical pack
 
-The following records identify every assertion failure and setup/collection error from the enabled explicit-file command; unchanged AFTER outcomes are required before accepting this documentation change. Existing skip groups follow the table.
+The following records preserve every assertion failure and setup/collection error from the original enabled explicit-file command at the code pin. These are canonical-package test outcomes, tracked in the canonical pack, not additional compatibility drafts. Existing skip groups follow the table.
 
 | Outcome | Node or file | Tracking and pinned test definition |
 | --- | --- | --- |
 | ERROR | `tests/unit/marine_safety/test_hatch_maloperation_analysis.py` | #327. [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_positive` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L144-L153] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_negative` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L155-L164] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_confidence_scores_returned` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L166-L173] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_batch_classification` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L175-L188] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classification_determinism` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L190-L199] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_hatch_not_closed` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L214-L228] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_opening_maloperation` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L230-L244] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_engine_room_access_failure` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L246-L260] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_watertight_door_issue` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L262-L276] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_negative_case_no_hatch_incident` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L278-L286] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_empty_text_handling` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L301-L308] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_none_value_handling` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L310-L318] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_whitespace_only_handling` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L320-L325] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_very_long_text_handling` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L327-L333] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_multilingual_text` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L335-L346] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_special_characters_handling` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L348-L358] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_numeric_only_text` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L360-L365] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_processing_faster_than_individual` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L380-L398] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_classification_within_time_limit` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L400-L410] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_throughput` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L412-L424] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_memory_usage_stability` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L427-L452] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L467-L478] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L480-L491] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_confidence_calibration` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L493-L506] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L508-L553] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_concurrent_classification` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L568-L579] |
-| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_error_recovery` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L581-L601] |
-| FAILED | `tests/unit/marine_safety/analysis/test_cause_statistics.py::TestStatisticalSummary::test_print_report` | issue pending (5). [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201] |
-| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_llm_classifier_initialization` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L51-L68] |
-| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_model_loading_with_cache` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L70-L92] |
-| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_fallback_on_model_load_failure` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L94-L118] |
-| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_custom_model_path` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L120-L129] |
-| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_repeated_initialization` | issue pending (2). [tests/unit/marine_safety/analysis/test_llm_classifier.py:L603-L617] |
-| FAILED | `tests/unit/marine_safety/test_correlation.py::TestIncidentMatcherConfidence::test_find_matches_returns_above_threshold` | issue pending (5). [tests/unit/marine_safety/test_correlation.py:L764-L803] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_success` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L78-L86] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_timeout` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L90-L95] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_connection_error` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L99-L104] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_retry_on_failure` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L108-L120] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_max_retries_exceeded` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L124-L132] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_html` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L135-L143] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_empty_html` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L146-L151] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_malformed_html` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L154-L160] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_scrape_incidents_date_range` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L164-L177] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_download_pdf_success` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L185-L195] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L210-L221] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_parse_pdf_metadata` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L224-L239] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_http_500_error` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L247-L255] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_invalid_ssl_certificate` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L259-L264] |
-| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_network_timeout_recovery` | issue pending (5). [tests/unit/marine_safety/test_uscg_scraper.py:L274-L281] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_valid_incident_data` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L25-L42] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_missing_required_fields` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L45-L57] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_casualties_validation` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L60-L72] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_negative_casualties` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L75-L82] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_severity_type_consistency` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L85-L97] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_location_validation` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L100-L116] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_valid_vessel_data` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L123-L137] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_vessel_name_required` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L140-L147] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_gross_tonnage_positive` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L150-L157] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_year_built_range` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L160-L174] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_pollution_environmental_impact` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L181-L196] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_critical_severity_requires_investigation` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L199-L211] |
-| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_vessel_incident_consistency` | issue pending (5). [tests/unit/marine_safety/test_validators.py:L214-L223] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_positive` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L144-L153] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classify_hatch_maloperation_negative` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L155-L164] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_confidence_scores_returned` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L166-L173] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_batch_classification` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L175-L188] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestBasicClassification::test_classification_determinism` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L190-L199] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_hatch_not_closed` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L214-L228] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_opening_maloperation` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L230-L244] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_engine_room_access_failure` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L246-L260] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_detect_watertight_door_issue` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L262-L276] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestHatchDetectionPatterns::test_negative_case_no_hatch_incident` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L278-L286] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_empty_text_handling` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L301-L308] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_none_value_handling` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L310-L318] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_whitespace_only_handling` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L320-L325] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_very_long_text_handling` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L327-L333] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_multilingual_text` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L335-L346] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_special_characters_handling` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L348-L358] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestEdgeCases::test_numeric_only_text` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L360-L365] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_processing_faster_than_individual` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L380-L398] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_classification_within_time_limit` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L400-L410] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_batch_throughput` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L412-L424] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestPerformance::test_memory_usage_stability` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L427-L452] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_positive_case_accuracy` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L467-L478] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_negative_case_accuracy` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L480-L491] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_confidence_calibration` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L493-L506] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestClassificationAccuracy::test_f1_score_calculation` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L508-L553] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_concurrent_classification` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L568-L579] |
+| ERROR | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_error_recovery` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L581-L601] |
+| FAILED | `tests/unit/marine_safety/analysis/test_cause_statistics.py::TestStatisticalSummary::test_print_report` | Canonical pack C10 / its draft 8. [tests/unit/marine_safety/analysis/test_cause_statistics.py:L195-L201] |
+| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_llm_classifier_initialization` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L51-L68] |
+| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_model_loading_with_cache` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L70-L92] |
+| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_fallback_on_model_load_failure` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L94-L118] |
+| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestLLMClassifierInitialization::test_custom_model_path` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L120-L129] |
+| FAILED | `tests/unit/marine_safety/analysis/test_llm_classifier.py::TestRobustness::test_repeated_initialization` | Canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_llm_classifier.py:L603-L617] |
+| FAILED | `tests/unit/marine_safety/test_correlation.py::TestIncidentMatcherConfidence::test_find_matches_returns_above_threshold` | Canonical pack C6 / its draft 5. [tests/unit/marine_safety/test_correlation.py:L764-L803] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_success` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L78-L86] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_timeout` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L90-L95] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_connection_error` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L99-L104] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_retry_on_failure` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L108-L120] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_max_retries_exceeded` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L124-L132] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_html` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L135-L143] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_empty_html` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L146-L151] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_malformed_html` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L154-L160] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_scrape_incidents_date_range` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L164-L177] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_download_pdf_success` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L185-L195] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L210-L221] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_parse_pdf_metadata` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L224-L239] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_http_500_error` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L247-L255] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_invalid_ssl_certificate` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L259-L264] |
+| FAILED | `tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_network_timeout_recovery` | Canonical pack C4 / its draft 3. [tests/unit/marine_safety/test_uscg_scraper.py:L274-L281] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_valid_incident_data` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L25-L42] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_missing_required_fields` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L45-L57] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_casualties_validation` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L60-L72] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_negative_casualties` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L75-L82] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_severity_type_consistency` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L85-L97] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_location_validation` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L100-L116] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_valid_vessel_data` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L123-L137] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_vessel_name_required` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L140-L147] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_gross_tonnage_positive` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L150-L157] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_year_built_range` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L160-L174] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_pollution_environmental_impact` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L181-L196] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_critical_severity_requires_investigation` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L199-L211] |
+| FAILED | `tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_vessel_incident_consistency` | Canonical pack C5 / its draft 4. [tests/unit/marine_safety/test_validators.py:L214-L223] |
 
 Skip inventory: the initial directory command skips every test in the four model classes listed below; the enabled explicit-file command skips the entire unit model file and every node in the integration file because those files declare unconditional skips. The initial explicit-file command additionally skips the marked memory test; the enabled command attempts it and records its model setup error. [tests/modules/marine_safety/test_models.py:L73-L78] [tests/modules/marine_safety/test_models.py:L231-L235] [tests/modules/marine_safety/test_models.py:L327-L331] [tests/modules/marine_safety/test_models.py:L387-L390] [tests/unit/marine_safety/test_models.py:L9-L14] [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L554-L558] [tests/unit/marine_safety/analysis/test_llm_classifier.py:L426-L442]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_minimal`; issue pending (3). [tests/modules/marine_safety/test_models.py:L81-L97]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_minimal`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L81-L97]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_full`; issue pending (3). [tests/modules/marine_safety/test_models.py:L100-L125]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_create_incident_full`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L100-L125]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_incident_date_required`; issue pending (3). [tests/modules/marine_safety/test_models.py:L128-L139]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_incident_date_required`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L128-L139]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_vessel_relationship`; issue pending (3). [tests/modules/marine_safety/test_models.py:L142-L157]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_vessel_relationship`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L142-L157]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_latitude_constraint_valid`; issue pending (3). [tests/modules/marine_safety/test_models.py:L160-L173]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_latitude_constraint_valid`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L160-L173]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_longitude_constraint_valid`; issue pending (3). [tests/modules/marine_safety/test_models.py:L176-L189]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_longitude_constraint_valid`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L176-L189]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_created_at_auto_generated`; issue pending (3). [tests/modules/marine_safety/test_models.py:L192-L206]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_created_at_auto_generated`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L192-L206]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_updated_at_auto_updated`; issue pending (3). [tests/modules/marine_safety/test_models.py:L209-L228]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestMarineIncidentModel::test_updated_at_auto_updated`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L209-L228]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_create_vessel_minimal`; issue pending (3). [tests/modules/marine_safety/test_models.py:L239-L249]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_create_vessel_minimal`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L239-L249]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_company_relationship`; issue pending (3). [tests/modules/marine_safety/test_models.py:L252-L262]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_company_relationship`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L252-L262]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_incidents_relationship`; issue pending (3). [tests/modules/marine_safety/test_models.py:L265-L286]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_vessel_incidents_relationship`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L265-L286]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_imo_number_unique`; issue pending (3). [tests/modules/marine_safety/test_models.py:L289-L310]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_imo_number_unique`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L289-L310]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_gross_tonnage_positive`; issue pending (3). [tests/modules/marine_safety/test_models.py:L313-L324]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestVesselModel::test_gross_tonnage_positive`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L313-L324]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_create_company_minimal`; issue pending (3). [tests/modules/marine_safety/test_models.py:L335-L344]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_create_company_minimal`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L335-L344]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_vessels_relationship`; issue pending (3). [tests/modules/marine_safety/test_models.py:L347-L360]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_vessels_relationship`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L347-L360]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_imo_number_unique_company`; issue pending (3). [tests/modules/marine_safety/test_models.py:L363-L374]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_imo_number_unique_company`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L363-L374]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_active_default`; issue pending (3). [tests/modules/marine_safety/test_models.py:L377-L384]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestCompanyModel::test_company_active_default`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L377-L384]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestEnums::test_incident_type_enum`; issue pending (3). [tests/modules/marine_safety/test_models.py:L394-L400]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestEnums::test_incident_type_enum`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L394-L400]
 
-- SKIP: `tests/modules/marine_safety/test_models.py::TestEnums::test_severity_level_enum`; issue pending (3). [tests/modules/marine_safety/test_models.py:L403-L408]
+- SKIP: `tests/modules/marine_safety/test_models.py::TestEnums::test_severity_level_enum`; canonical pack section 6 / its draft 1. [tests/modules/marine_safety/test_models.py:L403-L408]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_with_llm_enabled`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L52-L73]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_with_llm_enabled`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L52-L73]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_llm_vs_regex_comparison`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L75-L102]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hatch_analyzer_llm_vs_regex_comparison`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L75-L102]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hybrid_detection_fallback`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L104-L140]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_hybrid_detection_fallback`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L104-L140]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_llm_confidence_threshold`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L142-L168]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_llm_confidence_threshold`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L142-L168]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_batch_processing_consistency`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L170-L194]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestHatchAnalyzerWithLLM::test_batch_processing_consistency`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L170-L194]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_large_dataset_processing_time`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L226-L242]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_large_dataset_processing_time`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L226-L242]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_memory_efficiency_large_dataset`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L244-L270]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMPerformanceIntegration::test_memory_efficiency_large_dataset`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L244-L270]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_graceful_handling_of_null_narratives`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L301-L317]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_graceful_handling_of_null_narratives`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L301-L317]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_handling_of_malformed_data`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L319-L341]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_handling_of_malformed_data`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L319-L341]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_partial_llm_failure_handling`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L343-L370]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestLLMErrorHandling::test_partial_llm_failure_handling`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L343-L370]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_generate_analysis_report_with_confidence`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L427-L443]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_generate_analysis_report_with_confidence`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L427-L443]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_confidence_distribution_in_report`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L445-L457]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_confidence_distribution_in_report`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L445-L457]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_temporal_analysis_with_llm_results`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L459-L469]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestAnalysisReportGeneration::test_temporal_analysis_with_llm_results`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L459-L469]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_custom_model_configuration`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L492-L503]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_custom_model_configuration`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L492-L503]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_disable_llm_configuration`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L505-L519]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_disable_llm_configuration`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L505-L519]
 
-- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_batch_size_configuration`; issue pending (3). [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L521-L538]
+- SKIP: `tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py::TestConfigurationOptions::test_batch_size_configuration`; canonical pack C9 / its draft 7. [tests/unit/marine_safety/analysis/test_hatch_maloperation_integration.py:L521-L538]
 
-### Discovered test files
+### Discovered test files — canonical-package test outcomes, tracked in the canonical pack
 
 Inventory: 58 test files across the target directories and shared compatibility test; 52 are under the canonical unit-test tree. The directory command selects 109 nodes from the remaining paths; explicit unit-file execution selects 2036 nodes and exposes the collection error separately. Counts are execution and discovery records, not claims of validation.
 
