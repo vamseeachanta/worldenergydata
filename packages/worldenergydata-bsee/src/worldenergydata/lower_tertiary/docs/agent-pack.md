@@ -5,7 +5,7 @@
 | Module | bsee:lower_tertiary |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary |
-| Pack revision | 0, 2026-10-15 |
+| Pack revision | 1, 2026-10-15 |
 | Code revision | 285d65c40896b17ccf44568e59f5b789d59c943e |
 | Analysis family | EC; data pipelines and calculations |
 | Quality manager role | Calculations quality manager |
@@ -22,6 +22,13 @@ Portfolio economics uses a plateau followed by a declared decline curve; it does
 Observed-production analysis verifies retained filing digests, coverage and identity before computing a pre-tax assumption scenario; its horizon ends at observed production rather than a reserves forecast. [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L15-L78] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L81-L129]
 
 The scope is this package, including its helper modules; physical design, equipment response and environmental loading are outside the observed-production calculation. [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L187-L205]
+
+### Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-15 | Initial module scope, methods, evidence and limitations |
+| 1 | 2026-10-15 | Correct the discount-rate citation; identify absent-data groups, silent defaults, public-record checks and the parallel implementation so evidence and limits are explicit |
 
 ## 2. Inputs and outputs
 
@@ -59,7 +66,7 @@ No spatial coordinate frame or phase convention participates in the monthly fina
 | Method | Implementing definition and computational basis | Reference status |
 | --- | --- | --- |
 | Monthly financials | Revenue = oil × oil price + gas × gas price; BOE = oil + gas / 6; royalty = revenue × rate; opex = BOE × unit cost; tax = max(operating income, 0) × tax rate; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L145-L168] | Code convention; independent physical energy equivalence is not established here |
-| Monthly discounting | Monthly effective rate = `(1 + annual_rate) ** (1/12) - 1`; elapsed months measured from first oil; present cashflow summed and capex subtracted; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L182-L210] | Code algorithm, distinct from the historical reproduction origin |
+| Monthly discounting | Monthly effective rate = `(1 + annual_rate) ** (1/12) - 1`; elapsed months measured from first oil; present cashflow summed and capex subtracted; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L179-L210] | Code algorithm, distinct from the historical reproduction origin |
 | Historical NPV and MIRR | Cashflows trimmed to first/last entries above 1e-6 USD magnitude, NPV discounted from the first retained entry; MIRR uses monthly compounding and annualizes by twelfth power; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py:L273-L287] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py:L751-L768] | Workbook reproduction; equality to its golden outputs is regression evidence |
 | Production classification | Test-product code has highest priority, then exploratory status / first-oil rules, with commercial/non-producing defaults from oil volume; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/production_classifier.py:L43-L81] | Repository rules; negative oil also follows the non-producing default |
 | Drilling learning | Sort wells by spud, split at `n // 2`, compare median days per 1,000 ft TVD between halves; strict deltas below -10.0 or above +10.0 percent classify change; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/drilling_learning.py:L24-L67] | Repository heuristic; no external calibration claimed |
@@ -98,8 +105,9 @@ Gate selection: AQG r0, section 10, Python calculations; G5 also applies under s
 
 | Gate | Applicability | Module-specific check | Numeric pass criterion and unit | Evidence |
 | --- | --- | --- | --- | --- |
-| G0 | Applicable: inputs, units and provenance | C0a: corrupt one byte in a copied retained input, then call `load_verified` | 1 `ValueError` matching digest; 0 accepted corrupt inputs | `test_corrupt_raw_bytes_fail_closed`; [tests/unit/lower_tertiary/test_life_to_date.py:L44-L48] |
-| G0 | Applicable | C0b: remove one declared source year before `load_verified` | 1 coverage exception; 0 accepted incomplete datasets | `test_missing_year_fails_closed`; [tests/unit/lower_tertiary/test_life_to_date.py:L51-L59] |
+| G0 | Applicable: inputs, units and provenance | C0a: corrupt one byte in a copied retained input, then call `load_verified` | 1 `ValueError` matching digest; 0 accepted corrupt inputs | `tests/unit/lower_tertiary/test_life_to_date.py::test_corrupt_raw_bytes_fail_closed`; [tests/unit/lower_tertiary/test_life_to_date.py:L44-L48] |
+| G0 | Applicable | C0b: remove one declared source year before `load_verified` | 1 coverage exception; 0 accepted incomplete datasets | `tests/unit/lower_tertiary/test_life_to_date.py::test_missing_year_fails_closed`; [tests/unit/lower_tertiary/test_life_to_date.py:L51-L59] |
+| G0 | Applicable: configuration provenance | C0c: compare three configured records through YAML and `load_field_inputs`; reject a reverted first-oil date through both readers | 0 value or source-marker mismatches in 3 records; 1 rejected reversion per reader (2 readers); not an audit of every field | `tests/unit/lower_tertiary/test_field_public_record_747.py::test_public_record_corrections` and `tests/unit/lower_tertiary/test_field_public_record_747.py::test_reverted_first_oil_is_rejected`; [tests/unit/lower_tertiary/test_field_public_record_747.py:L11-L64] |
 | G1 | Applicable: Python imports and offline tests | C1: import the module through the full discovered module test suite | 0 failed tests and 0 collection errors, counts in tests; absent-data cases disclosed separately | Test receipt below; package exports [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/__init__.py:L6-L18] |
 | G2 | Applicable: independent arithmetic | C2: `calculate_monthly_financials`, V1 closed-form revenue comparison | Relative error ≤ 1e-6, unit 1; expected 750,000.0 USD | V1 node; [tests/unit/lower_tertiary/test_npv.py:L222-L248] |
 | G3 | NOT_APPLICABLE: no time-domain mechanical simulation in the monthly calculation | None | Not applicable | Calculation surface [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L131-L226]; AQG r0, section 10 |
@@ -111,32 +119,42 @@ These are executable evidence checks, not a signed release clearance; the compre
 
 ### Offline execution receipt
 
-Code pin: `285d65c40896b17ccf44568e59f5b789d59c943e`; ordinary workspace sources, declared test extra and configured addopts retained; results were recorded on the uncommitted documentation tree. After-change commands used the existing `--allow-existing-tree-changes` option so the tree-preservation guard could fingerprint the new pack and still reject further modifications.
+Code pin: `285d65c40896b17ccf44568e59f5b789d59c943e`; BASE: `1d59b3f6ee29e40f08ea4be17a0fa0f1a878a167`. Local checks use workspace sources through `PYTHONPATH`, declared test dependencies and calculation / I/O dependencies installed as wheels, with configured addopts retained. Coverage, performance and temporary outputs are directed to scratch. AFTER results are recorded on the uncommitted documentation tree with the existing `--allow-existing-tree-changes` option, retaining the tree-preservation guard.
 
-| Command, generic form | BASE passed / failed / skipped | AFTER passed / failed / skipped | Total nodes | NOT_RUN classification |
+| Command, generic form | BASE passed / failed / skipped | AFTER passed / failed / skipped | Total nodes | Not exercised / other skips |
 | --- | --- | --- | --- | --- |
-| `uv run --extra test python -m pytest tests/unit/lower_tertiary -q -rA -p no:cacheprovider --basetemp=<scratch>` | 470 / 0 / 138 | 470 / 0 / 138 | 608 | 137 absent-production cases; 1 stale-output case, details below |
-| `uv run --extra test python -m pytest <reporting-integration files> <determinism file> tests/contracts -q -rA -p no:cacheprovider --basetemp=<scratch> <coverage destinations>` | 107 / 0 / 0 | 107 / 0 / 0 | 107 | 0 |
+| `uv run --no-project --with pytest <test dependencies> python -m pytest tests/unit/lower_tertiary -q -rA -p no:cacheprovider --basetemp=<scratch> <coverage destinations>` | 470 / 0 / 138 | 470 / 0 / 138 | 608 | 137 SKIPPED; not exercised: BSEE OGOR-A production data absent; 1 stale-output case |
+| `uv run --no-project --with pytest <test dependencies> python -m pytest <reporting-integration files> <determinism file> tests/contracts -q -rA -p no:cacheprovider --basetemp=<scratch> <coverage destinations>` | 107 / 0 / 0 | 107 / 0 / 0 | 107 | 0 |
 
-A further module-suite receipt run with `--junitxml=<scratch>/module-receipt.xml` retained every node ID and skip reason: 470 passed, 0 failed, 138 skipped; the skip names are preserved with the evidence rather than copied into this public pack.
+BASE and AFTER JUnit receipts retain every node ID and skip reason: 470 passed, 0 failed, 138 skipped in each module run and 107 passed in each additional run; skip classifications are unchanged. Identifying node IDs are retained with the evidence rather than copied into this public pack.
 
 The additional paths are `tests/integration/reporting/test_lt_comprehensive.py`, `tests/integration/reporting/test_comprehensive_delivery.py` and `tests/unit/fdas/validation/test_v30_determinism.py`; no routing-registry contract exists to exercise, so the existing `tests/contracts` domain was run.
 
-Missing production files cause 137 existing skips across extended production, repeatability, financial benchmarks, the later baseline, well benchmarking and well NPV decomposition; these are recorded as NOT_RUN for unavailable reference fixtures, not as successful production reproduction. [tests/unit/lower_tertiary/test_extended_production.py:L72-L84] [tests/unit/lower_tertiary/test_repeatability_v30.py:L44-L54] [tests/unit/lower_tertiary/test_v30_benchmarks.py:L75-L85] [tests/unit/lower_tertiary/test_well_benchmark.py:L32-L43] [tests/unit/lower_tertiary/test_well_npv_stackup.py:L20-L37]
+The 137 absent-data cases are SKIPPED; not exercised, not successful production reproduction. The groups below are disjoint and counted from both BASE and AFTER JUnit receipts.
 
-One additional existing skip checks the committed benchmark column only after its regeneration; it is a stale-output limitation under #1077, not a missing dependency. [tests/unit/lower_tertiary/test_well_benchmark.py:L210-L224]
+| Cases | Classification and named data | Evidence |
+| --- | --- | --- |
+| 117: 22 extended-production, 10 repeatability, 85 financial-benchmark cases | SKIPPED; not exercised: BSEE OGOR-A yearly archives `ogora<year>delimit.zip` absent under the BSEE data root `zip/historical_production_yearly` | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L144-L154] [tests/unit/lower_tertiary/test_extended_production.py:L72-L84] [tests/unit/lower_tertiary/test_repeatability_v30.py:L44-L54] [tests/unit/lower_tertiary/test_v30_benchmarks.py:L75-L85] |
+| 8: later-baseline cases | SKIPPED; not exercised: BSEE OGOR-A `.bin` production files absent under `bin/historical_production_yearly` | [tests/unit/lower_tertiary/test_v50_baseline.py:L98-L133] |
+| 12: 6 well-benchmark and 6 well-NPV cases | SKIPPED; not exercised: BSEE OGOR-A yearly ZIP archives and `.bin` fallback absent; `WED_DATA_ROOT` selects the BSEE data root | [tests/unit/lower_tertiary/test_well_benchmark.py:L32-L43] [tests/unit/lower_tertiary/test_well_npv_stackup.py:L20-L37] |
+| 0: V30 workbook cases | No absent-workbook skips: `leases.xlsx`, `lease_assumptions.xlsx`, `wti_monthly.xlsx` and `drilling_and_completion_days.xlsx` are present in `docs/modules/bsee/analysis/production/FDAS_V30/` | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L23-L24] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L32-L49] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L81-L112] |
+| 0: report-generator import failures | Counted separately from absent data: the broad exception guard could hide a broken import, but no skip with this reason occurred | [tests/unit/lower_tertiary/test_well_npv_stackup.py:L25-L29] |
+
+One additional existing skip checks the committed benchmark column only after its regeneration; it is a stale-output limitation under #1077, not a missing dependency. Thus 470 executed and passed + 137 not exercised for absent data + 1 stale-output skip = 608 module nodes; all 107 additional nodes executed and passed. [tests/unit/lower_tertiary/test_well_benchmark.py:L210-L224]
 
 ## 6. Known failure modes and pitfalls
 
 | Symptom / cause | Detection check or gap | Tracking / date | Evidence |
 | --- | --- | --- | --- |
 | Missing OGOR years are skipped by the ZIP loader; malformed oil is coerced to zero | C0b protects the separate retained-input route; no detection check exists for completeness of the general ZIP route | Issue pending (3), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L144-L184] |
+| Configured first-oil dates affect the discount origin; #747 reports historical public-record discrepancies, including a date about 9 years late, and operator discrepancies. The pin already contains a limited correction and regression check | C0c checks 3 records and rejects a reverted date; no detection check exists auditing every configuration date against the public record | #747 (open), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L100-L103] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L186] [tests/unit/lower_tertiary/test_field_public_record_747.py:L11-L64] |
+| Missing first oil silently resolves to 1970-01-01, so later cashflows are discounted from January 1970 without warning; missing `capex.total_mm_usd` silently becomes 0.0, making project NPV equal operating NPV and PI 0.0 | No detection check exists rejecting either silent default; C2 verifies revenue arithmetic only | #1269 (open), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L54-L59] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L192] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L203-L207] |
 | Missing WTI observations fall through to a fixed historical constant; early workbook return does not cap the requested month | Inspect output maximum month and fallback source counts; no detection check exists enforcing the intended capped-date / latest-observation contract | #1191, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/wti_prices.py:L199-L206] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/wti_prices.py:L240-L266] |
 | HSE placeholder carries a zero incident count; absence of observations must remain visible | Reporting test requires all placeholder counts to become unknown; 0 retained numeric placeholders in `report_hse` | #366, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py:L334-L354] [tests/integration/reporting/test_comprehensive_delivery.py:L99-L102] |
 | Cost comparison calls the disclosure query with an empty revision view and catches failures | Inspect `benchmark_status` and caveats; no detection check exists establishing live disclosure coverage | #343, #344, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py:L388-L425] |
 | `Gas (BCF)` in `summarize_field_financials` divides `gas_mcf` by 1e9 instead of 1e6; the observed-production path converts separately | No detection check exists for the summary gas key; `test_monthly_mass_balance_and_gas_units` covers the separate observed-production result only | Issue pending (1), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L194-L217] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L104-L107] [tests/unit/lower_tertiary/test_life_to_date.py:L76-L83] |
 | Annual portfolio cashflows are passed to an MIRR API documented as monthly; comprehensive output suppresses annual MIRR | No detection check exists validating the portfolio annual MIRR against an annual-period closed form; do not use that output as a hand reference | Issue pending (4), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py:L266-L274] [packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py:L137-L169] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py:L286-L295] |
-| Calendar cycle time is exposed through deprecated `drilling_days` | Existing benchmark alias test / regenerated CSV check; 0 label ambiguities is the desired criterion, but regenerated CSV check skips | #1077; basis reconciliation #1062, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/well_benchmark.py:L265-L294] [tests/unit/lower_tertiary/test_well_benchmark.py:L170-L224] |
+| Calendar cycle time is exposed through deprecated `drilling_days` | Existing benchmark alias test / regenerated CSV check; 0 label ambiguities is the desired criterion, but regenerated CSV check skips | #1077; basis reconciliation #1062; WAR quantization, April 2004 coverage floor and MD versus TVD limits #1078, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/well_benchmark.py:L265-L294] [tests/unit/lower_tertiary/test_well_benchmark.py:L170-L224] |
 | WAR labels are legacy display strings; some codes lack a defensible published definition | No detection check exists establishing meanings of undocumented codes; never treat display vocabulary as regulatory definitions | #1062, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/ops_timeline.py:L59-L84] |
 | Decline-derived EUR may be unavailable, low quality or unqualified as reserves | Inspect `decline_flag`, minimum 6 positive monthly points and fit quality; no detection check exists qualifying booked reserves | #973, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/well_benchmark.py:L205-L243] |
 | Assumption decks, fiscal extension and formal citation adoption remain separate work | C2 verifies arithmetic only; no detection check exists establishing external validity of all default assumptions | #651, #361, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py:L138-L168] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py:L630-L635] |
@@ -146,7 +164,7 @@ One additional existing skip checks the committed benchmark column only after it
 
 | Date | Entry ID | Lesson | Evidence | Pack change | Shared-log entry |
 | --- | --- | --- | --- | --- | --- |
-| 2026-10-15 | LT-knowledge-0 | State the cashflow basis before comparing NPV: annual projected oil receipts and observed monthly production have different origins and cost treatments | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py:L124-L159] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L207] | Sections 1–3 distinguish the paths | Not assigned |
+| 2026-10-15 | LT-knowledge-0 | State the cashflow basis before comparing NPV: annual projected oil receipts and observed monthly production have different origins and cost treatments | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py:L124-L159] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L207] | Sections 1–3 distinguish the paths | Issue pending (5) |
 | 2026-10-15 | LT-units-0 | A correctly converted reporting result does not qualify the summary helper's gas output | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L194-L217] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L104-L107] | Sections 2 and 6 disclose the difference | Issue pending (1) |
 
 ## 8. Ownership
@@ -187,7 +205,7 @@ Map source record: digitalmodel, *Implementation map*, ref `origin/codex/implmap
 
 These values are the recorded result of parsing that map and selecting `implementations[].path` by the complete header-package prefix, before ranking by descending in-package row count and preserving file order for ties (digitalmodel, *Implementation map*, the map revision and `families` collection named above).
 
-Map follow-up: add the section-3 method families for lease/month production aggregation, monthly cashflow and discounting, historical NPV/MIRR, production classification, depth-normalized drilling comparison, portfolio projection/breakeven and input-integrity checks; a family becomes counted only when the map contains an in-package implementation row (#349). [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L203-L232] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L131-L226] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py:L273-L287] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/production_classifier.py:L19-L81] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/drilling_learning.py:L41-L107] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py:L124-L198] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L50-L78]
+Map follow-up: add the section-3 method families for lease/month production aggregation, monthly cashflow and discounting, historical NPV/MIRR, production classification, depth-normalized drilling comparison, portfolio projection/breakeven and input-integrity checks, including the parallel production aggregation and WAR activity route inventoried below; a family becomes counted only when the map contains an in-package implementation row (#349). [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L203-L232] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L131-L226] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_financial_reproducer.py:L273-L287] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/production_classifier.py:L19-L81] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/drilling_learning.py:L41-L107] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py:L124-L198] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/life_to_date.py:L50-L78]
 
 ### Further repository search
 
@@ -195,6 +213,7 @@ An additional definition-name search covered repository Python, including `scrip
 
 | Other definition | Classification / limitation | Evidence |
 | --- | --- | --- |
+| Sibling `bsee/analysis/lower_tertiary/` | Parallel route inside the bsee pack scope: `LegacyProductionLoader.field_total_rate` sums monthly well rates; WAR methods count records by year and rig and group subsea / dry-tree activity; map follow-up #349 should register both production routes and WAR methods | [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/lower_tertiary/legacy_loader.py:L109-L128] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/lower_tertiary/war_extractor.py:L83-L158] |
 | FDAS `calculate_npv` and `excel_like_mirr` | Independent financial implementations outside the package; map follow-up #349 | [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L25-L115] [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L118-L166] |
 | Economics `calculate_npv` | Separate schedule-based DCF outside the package; map follow-up #349 | [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L137-L182] |
 | `scripts/all_fields_economics.py::npv_trim`, `excel_mirr` | Independently compute trimmed NPV and MIRR; map follow-up #349 | [scripts/all_fields_economics.py:L73-L87] |
@@ -283,6 +302,8 @@ The package README was read for distribution context; there is no pre-existing R
 | O8 | Replace placeholder HSE / empty disclosure comparison with observed coverage | #366, #343, #344; data maintainers | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py:L334-L425] |
 | O9 | Formal calculation-citation sidecars remain outside this documentation change | #361; module maintainers | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py:L630-L635] |
 | O10 | Extend the implementation map to every method family in section 3 and the advisory duplicate findings in section 9 | #349; registry maintainers | Section-9 map source and cited definition inventory |
+| O11 | Assign the shared-log entry for the cashflow-basis lesson | Issue pending (5); module maintainers | Section-7 lesson LT-knowledge-0 |
+| O12 | Replace the broad report-generator import skip with a failing import check; keep import-failure counts separate meanwhile | Issue pending (6); test maintainers | [tests/unit/lower_tertiary/test_well_npv_stackup.py:L25-L29] |
 
 ### Unverified claims
 
