@@ -141,6 +141,8 @@ jobs:
   pack-lint:
     name: Lint Changed Knowledge Packs
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository

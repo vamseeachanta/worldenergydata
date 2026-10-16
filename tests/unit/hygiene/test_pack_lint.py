@@ -16,6 +16,11 @@ ISSUE = "/".join(
 )
 BAD_ROLE = "project" + " manager"
 OTHER_ROLE = "dis" + "patcher"
+ACCOUNT_WARNING = (
+    "warning: account-name check skipped: no account given "
+    "(use --account NAME or set GITHUB_REPOSITORY_OWNER); "
+    "issue and pull-request URLs are still checked\n"
+)
 
 # Each negative fixture changes exactly one place in the passing pack.
 EDITS = {
@@ -47,9 +52,10 @@ def pack(tmp_path):
     return path
 
 
-def run(*args):
+def run(*args, default_account=True):
+    account = ["--account", "example-owner"] if default_account else []
     return subprocess.run(
-        [sys.executable, str(SCRIPT), *map(str, args)],
+        [sys.executable, str(SCRIPT), *account, *map(str, args)],
         capture_output=True,
         text=True,
         check=False,
@@ -63,17 +69,17 @@ def edit(pack, old, new):
     return text[: text.index(old)].count("\n") + 1
 
 
-def assert_clean(result, count=1):
+def assert_clean(result, count=1, stderr=""):
     assert result.returncode == 0, result.stdout + result.stderr
-    assert not result.stderr
+    assert result.stderr == stderr
     assert result.stdout.rstrip().endswith(
         f"pack_lint: clean (0 failure(s) in {count} file(s))"
     )
 
 
-def assert_rule(result, rule, locations):
+def assert_rule(result, rule, locations, stderr=""):
     assert result.returncode == 1, result.stdout + result.stderr
-    assert not result.stderr
+    assert result.stderr == stderr
     lines = [line for line in result.stdout.splitlines() if ": " + rule + ": " in line]
     failures = [
         line
@@ -108,7 +114,12 @@ def test_one_edit_one_rule(pack, rule):
 def test_url_forms(pack, account, url):
     number = edit(pack, "See #123.", "See " + url + ".")
     args = [] if account is None else ["--account", account]
-    assert_rule(run(*args, pack), "URL", [(pack, number)])
+    assert_rule(
+        run(*args, pack, default_account=False),
+        "URL",
+        [(pack, number)],
+        stderr=ACCOUNT_WARNING if account is None else "",
+    )
 
 
 def test_account_url(pack):
@@ -124,7 +135,7 @@ def test_account_prose_is_allowed():
 def test_environment_account(pack, monkeypatch):
     monkeypatch.setenv("GITHUB_REPOSITORY_OWNER", "example-owner")
     number = edit(pack, "See #123.", "See https://example.org/example-owner.")
-    assert_rule(run(pack), "URL", [(pack, number)])
+    assert_rule(run(pack, default_account=False), "URL", [(pack, number)])
 
 
 def test_explicit_account_overrides_environment(pack, monkeypatch):
@@ -152,14 +163,24 @@ def test_node_forms(pack, node, valid):
         assert_rule(result, "NODE", [(pack, number)])
 
 
-@pytest.mark.parametrize("prose", ["issue-pending markers", "issue pending (n)"])
+@pytest.mark.parametrize(
+    "prose", ["issue-pending markers", "issue pending (n)", "issue pending draft 3"]
+)
 def test_pending_prose(pack, prose):
     edit(pack, "issue pending (1)", prose)
     assert_clean(run(pack))
 
 
 @pytest.mark.parametrize(
-    "entry", ["(1) Example", "1. Example", "1) Example", "Draft 1", "## 1. Example"]
+    "entry",
+    [
+        "Draft 1: Example",
+        "**Draft 1:** Example",
+        "- **Draft 1:** Example",
+        "## Draft 1: Example",
+        "* Draft 1: Example",
+        "dRaFt 1: Example",
+    ],
 )
 def test_draft_entry_forms(pack, tmp_path, entry):
     drafts = tmp_path / "drafts.md"
@@ -201,7 +222,7 @@ def test_role_words(pack, role):
         pack, "The maintainers arrange review", "The " + role + " arranges review"
     )
     result = run(pack)
-    if role in {"maintainer", "coordinator"}:
+    if role in {OTHER_ROLE, "maintainer", "coordinator"}:
         assert_clean(result)
     else:
         assert_rule(result, "ROLE", [(pack, number)])
@@ -335,7 +356,7 @@ def test_repeated_draft_number(pack, tmp_path):
 def test_leading_zero_draft_number(pack, tmp_path):
     edit(pack, "issue pending (1)", "issue pending (01)")
     drafts = tmp_path / "drafts.md"
-    drafts.write_text("(01) Example\n")
+    drafts.write_text("Draft 01: Example\n")
     assert_clean(run("--drafts", drafts, pack))
 
 
@@ -344,3 +365,115 @@ def test_no_draft_markers_produce_no_note(pack):
     result = run(pack)
     assert_clean(result)
     assert "note:" not in result.stdout
+
+
+@pytest.mark.parametrize(
+    "prose",
+    [
+        "The query " + OTHER_ROLE + " routes requests to the adapters.",
+        "removed before the PR merges",
+        "removed before the branch merges",
+        "wait until before the upstream fix merges",
+        "removed before the pull request merges",
+        "removed before the change merges",
+        "removed before the patch merges",
+        "removed before the commit merges",
+    ],
+)
+def test_engineering_prose(pack, prose):
+    edit(pack, "The maintainers arrange review before the maintainer merges.", prose)
+    assert_clean(run(pack))
+
+
+@pytest.mark.parametrize(
+    "role",
+    [
+        OTHER_ROLE,
+        BAD_ROLE,
+        "P" + "M",
+        "manager",
+        "coordinator",
+        "owner",
+        "lead",
+        "reviewer",
+        "engineer",
+        "admin",
+        "administrator",
+        "steward",
+        "supervisor",
+        "director",
+        "operator",
+        "upstream lead",
+    ],
+)
+def test_merging_role_nouns(pack, role):
+    number = edit(
+        pack, "before the maintainer merges", "before the " + role + " merges"
+    )
+    assert_rule(run(pack), "ROLE", [(pack, number)])
+
+
+@pytest.mark.parametrize("account", [None, "", "   "])
+def test_missing_account_warning_once(pack, tmp_path, account):
+    other = tmp_path / "other.md"
+    other.write_bytes(pack.read_bytes())
+    args = [] if account is None else ["--account", account]
+    assert_clean(
+        run(*args, pack, other, default_account=False),
+        count=2,
+        stderr=ACCOUNT_WARNING,
+    )
+
+
+@pytest.mark.parametrize("source", ["option", "environment"])
+def test_account_has_no_warning(monkeypatch, source):
+    args = ["--account", "example-owner"] if source == "option" else []
+    if source == "environment":
+        monkeypatch.setenv("GITHUB_REPOSITORY_OWNER", "example-owner")
+    assert_clean(run(*args, PASS, default_account=False))
+
+
+def test_issue_url_guidance(pack):
+    number = edit(pack, "See #123.", "See " + ISSUE + ".")
+    result = run(pack)
+    assert_rule(result, "URL", [(pack, number)])
+    assert (
+        "write #NNN for an issue of this repository; "
+        "for another project use link text, not #NNN"
+    ) in result.stdout
+
+
+@pytest.mark.parametrize("fence", ["```", "~~~"])
+def test_fenced_section_is_not_evidence(pack, fence):
+    heading = "## 7. Lessons log"
+    edit(pack, heading, f"{fence}text\n{heading}\n{fence}")
+    result = run(pack)
+    assert_rule(result, "S10", [(pack, 1)])
+    assert "section heading(s) missing: 7" in result.stdout
+
+
+@pytest.mark.parametrize("heading", ["##7. Lessons log", "#7. Lessons log"])
+def test_heading_needs_space(pack, heading):
+    edit(pack, "## 7. Lessons log", heading)
+    assert_rule(run(pack), "S10", [(pack, 1)])
+
+
+@pytest.mark.parametrize("fence", ["```", "~~~"])
+def test_fenced_sweep_is_not_evidence(pack, fence):
+    edit(pack, "sweep: 2 found", f"{fence}text\nsweep: 2 found\n{fence}")
+    assert_rule(run(pack), "SWEEP", [(pack, 1)])
+
+
+@pytest.mark.parametrize(
+    "entry",
+    ["1.", "(1)", "Draft 1 - Example", "1. Example", "1) Example", "1", "Draft 1"],
+)
+def test_non_draft_entries_do_not_count(pack, tmp_path, entry):
+    drafts = tmp_path / "drafts.md"
+    drafts.write_text(entry + "\n")
+    number = next(
+        i
+        for i, line in enumerate(pack.read_text().splitlines(), 1)
+        if "issue pending" in line
+    )
+    assert_rule(run("--drafts", drafts, pack), "DRAFT", [(pack, number)])
