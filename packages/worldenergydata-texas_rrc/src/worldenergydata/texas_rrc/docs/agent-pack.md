@@ -99,6 +99,7 @@ The checks below are proposed acceptance checks, not declarations of signed clea
 C0 and C2 inputs are the existing fixture values; the aggregation method sums oil and counts distinct leases. [tests/unit/texas_rrc/test_csv_loader.py:L78-L80] [tests/unit/texas_rrc/test_production_processor.py:L316-L327] [packages/worldenergydata-texas_rrc/src/worldenergydata/texas_rrc/processors/production_processor.py:L498-L519]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause and detection | Tracking | Evidence |
 | --- | --- | --- | --- |

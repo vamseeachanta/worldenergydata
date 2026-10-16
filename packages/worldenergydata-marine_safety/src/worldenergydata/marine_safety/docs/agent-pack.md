@@ -121,7 +121,7 @@ These checks define acceptance criteria for this pack's scope; they do not repla
 | Check | Function, quantity and executable route | Numeric pass criterion and unit | Evidence and gate |
 | --- | --- | --- | --- |
 | S0.1 | `IncidentsQuery.query(source=maib)` via R1 | 10 schema columns, 0 missing or reordered columns; unit: columns | R1 result; G0. [tests/marine_safety/test_api_on_base.py:L13-L24] [tests/marine_safety/test_api_on_base.py:L33-L41] |
-| S0.2 | Analyzer casualty dtypes via `TestSchemaColumns::test_fatalities_is_integer_type` and `test_injuries_is_integer_type` | 2 integer-typed casualty fields, 0 dtype failures; unit: fields/person counts | Two existing pytest results; G0. [tests/unit/marine_safety/test_cross_database.py:L102-L106] |
+| S0.2 | Analyzer casualty dtypes via `tests/unit/marine_safety/test_cross_database.py::TestSchemaColumns::test_fatalities_is_integer_type` and `test_injuries_is_integer_type` | 2 integer-typed casualty fields, 0 dtype failures; unit: fields/person counts | Two existing pytest results; G0. [tests/unit/marine_safety/test_cross_database.py:L102-L106] |
 | S0.3 | `_load_base()` fallback via R3 and R4; inspect mixed-source semantics before interpreting output | 0 mismatches against the two existing freshness assertions; unit: labels; per-source provenance remains a separate gap | Two pytest results; G0. [tests/unit/marine_safety/test_cross_database_live.py:L195-L231] |
 | S1.1 | `IncidentsQuery` import and API route via `test_incidents_query_is_typed_query_subclass` and R1 | 2 passing nodes, 0 import/query errors; unit: test nodes | Existing pytest results; G1. [tests/marine_safety/test_api_on_base.py:L27-L41] |
 | S1.2 | Complete offline test-file set described below | 0 failed nodes and 0 errors; unit: test outcomes; currently baseline unmet, see section 6 | Baseline and final JUnit results; G1. [tests/unit/marine_safety/test_validators.py:L24-L42] [tests/unit/marine_safety/test_hatch_maloperation_analysis.py:L11-L14] |
@@ -187,6 +187,7 @@ uv run --extra llm python -m pytest "${targets[@]}" \
 Explicit files retain the existing collection hooks while allowing individual targets to be exercised despite the directory exclusion; `--continue-on-collection-errors` preserves the error result while running collectable tests, and the existing-tree option verifies that pre-existing documentation edits stay intact. [tests/conftest.py:L480-L493] [tests/conftest.py:L662-L682]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom, with silent fallbacks first | Cause and detection | Incident or follow-up |
 | --- | --- | --- |

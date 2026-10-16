@@ -108,6 +108,7 @@ The target runtime for G1 is Python with SQLAlchemy/pandas and the shared query 
 G2 is an ingestion accounting check only; physical-unit and regulatory qualification remain open under issue pending (2).
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom | Cause and detection | Tracking / date |
 |---|---|---|

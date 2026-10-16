@@ -97,6 +97,7 @@ Gate selection: AQG r0 §10, Python calculations; G5 applies to every family (AQ
 C2 covers Python only. Loading exported MSH in Gmsh or OpenFOAM is NOT_RUN: mesher/solver binaries and version-specific import acceptance are outside this offline check; OrcaWave is named only as a GDF source; no compatibility pass is inferred from the writer. [packages/worldenergydata-vessel_hull_models/src/worldenergydata/vessel_hull_models/geometry/msh_exporter.py:L5-L8] [packages/worldenergydata-vessel_hull_models/src/worldenergydata/vessel_hull_models/geometry/gdf_parser.py:L4-L8]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause (silent failures first) | Detection in section 5 or gap | Incident / tracking | Date recorded | Evidence |
 | --- | --- | --- | --- | --- |

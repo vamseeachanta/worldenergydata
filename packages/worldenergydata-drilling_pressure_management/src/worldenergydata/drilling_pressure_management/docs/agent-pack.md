@@ -118,6 +118,7 @@ assert abs(PressureWindowAnalyzer().ecd_pressure(10.0, 3000.0, 300.0) - 5418.11)
 ```
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom / cause | Detection and disposition | Reference at the code pin |
 | --- | --- | --- |

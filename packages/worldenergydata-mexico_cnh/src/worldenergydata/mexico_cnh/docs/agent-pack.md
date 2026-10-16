@@ -128,6 +128,7 @@ The `header-mapping` check uses unaccented headers only and cannot detect accent
 These checks provide no live portal acceptance record; browser navigation, export selectors, downloaded-source fingerprints and a production QA-appendix generator remain outside the demonstrated offline results; issue #720 and issue pending (4). [packages/worldenergydata-mexico_cnh/src/worldenergydata/mexico_cnh/scrapers/sih_scraper.py:L405-L449] [packages/worldenergydata-mexico_cnh/src/worldenergydata/mexico_cnh/scrapers/sih_scraper.py:L573-L752]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 The following findings were confirmed against the code pin. Executed checks are distinguished from prospective criteria and paths for which no detection check exists; the focused suite does not cover all findings.
 

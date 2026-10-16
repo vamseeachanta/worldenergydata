@@ -144,6 +144,7 @@ finally:
 For a production refresh, additionally require a source-qualified dataset revision, input fingerprints, successful scheduler manifest and signed gate evidence; the current scheduler adapter returns skipped with zero records. [packages/worldenergydata-scheduler/src/worldenergydata/scheduler/jobs/lng_terminals_refresh.py:L33-L54]
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom and cause | Detection / limitation | Incident or follow-up | Evidence |
 | --- | --- | --- | --- |

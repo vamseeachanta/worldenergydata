@@ -155,6 +155,7 @@ Verification record, 2026-10-15: scratch recipes and input digests retained as `
 Check inventory: G0 has 9 checks, G1 has 1, G2 has 3, G3 and G4 have 0 applicable checks, G5 has 1; total 14. No check is added for the four silent failures tracked by #1281: NaN availability, unknown regulatory keys, unassigned calibration rows and missing production months. Their section-6 rows state "no detection check exists"; passing G1 tests do not establish their absence.
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 The incident leads are feature requests rather than confirmed incident reports; the confirmed code findings and their detection recipes follow, with silent substitutions first. [docs/plans/2026-05-18-issue-424-decommissioning-market-outlook.md:L49-L80]
 
