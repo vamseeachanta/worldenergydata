@@ -141,7 +141,6 @@ class TestModuleSchemas:
             ), f"{schema_path}: 'datasets' should be a list"
 
     def test_dataset_entries_have_required_fields(self):
-        required = {"name", "path", "format", "columns", "size_bytes"}
         for module_dir in self._module_dirs():
             schema_path = module_dir / "schema.yaml"
             if not schema_path.exists():
@@ -149,7 +148,7 @@ class TestModuleSchemas:
             with open(schema_path) as f:
                 data = yaml.safe_load(f)
             for ds in data.get("datasets", []):
-                for field in required:
+                for field in required_dataset_fields(ds):
                     assert field in ds, (
                         f"{schema_path} dataset '{ds.get('name', '?')}': "
                         f"missing '{field}'"
@@ -199,6 +198,7 @@ class TestColumnSchemas:
             "dict",
             "NoneType",
             "bool",
+            "string|null",
         }
         for module_name, ds in self._all_datasets():
             for col in ds["columns"]:
@@ -209,7 +209,120 @@ class TestColumnSchemas:
 
     def test_csv_datasets_have_row_count(self):
         for module_name, ds in self._all_datasets():
-            if ds.get("format") == "csv":
+            if ds.get("format") == "csv" and not is_contract_metadata(ds):
                 assert (
                     "row_count" in ds and ds["row_count"] is not None
                 ), f"{module_name}/{ds['name']}: CSV dataset missing row_count"
+
+
+def catalog_generator():
+    """Load the same generator used by the catalog fixture."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("catalog_generator", SCRIPT_PATH)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def required_dataset_fields(dataset):
+    """Contract metadata exempts only measured size, after structural validation."""
+    fields = {"name", "path", "format", "columns", "size_bytes"}
+    if is_contract_metadata(dataset):
+        fields.remove("size_bytes")
+    return fields
+
+
+def synthetic_contract():
+    return {
+        "name": "synthetic.csv",
+        "path": "<output-dir>/synthetic.csv",
+        "format": "csv",
+        "columns": [{"name": "value", "type": "string"}],
+        "status": "local_draft_public_export_requires_maintainer_eligibility",
+        "contract_only": True,
+    }
+
+
+def synthetic_module(tmp_path, entries):
+    module = tmp_path / "data/modules/synthetic"
+    module.mkdir(parents=True)
+    path = module / "schema.yaml"
+    path.write_text(yaml.safe_dump({"module": "synthetic", "datasets": entries}))
+    return path
+
+
+def test_contract_preservation_is_byte_stable(tmp_path):
+    generator = catalog_generator()
+    path = synthetic_module(tmp_path, [synthetic_contract()])
+    generator.generate_catalog(tmp_path)
+    first = path.read_bytes()
+    generator.generate_catalog(tmp_path)
+    assert path.read_bytes() == first
+    assert yaml.safe_load(first)["datasets"] == [synthetic_contract()]
+
+
+@pytest.mark.parametrize("field", ["name", "path", "format", "columns", "status"])
+def test_malformed_contract_is_refused(tmp_path, field):
+    entry = synthetic_contract()
+    entry.pop(field)
+    path = synthetic_module(tmp_path, [entry])
+    original = path.read_bytes()
+    with pytest.raises(ValueError, match="invalid contract-only"):
+        catalog_generator().generate_catalog(tmp_path)
+    assert path.read_bytes() == original
+
+
+def test_duplicate_contract_path_is_refused(tmp_path):
+    path = synthetic_module(tmp_path, [synthetic_contract(), synthetic_contract()])
+    original = path.read_bytes()
+    with pytest.raises(ValueError, match="duplicate contract-only path"):
+        catalog_generator().generate_catalog(tmp_path)
+    assert path.read_bytes() == original
+
+
+def test_contract_path_colliding_with_scanned_file_is_refused(tmp_path):
+    entry = synthetic_contract()
+    path = synthetic_module(tmp_path, [entry])
+    scanned = {"datasets": [{"path": entry["path"], "size_bytes": 0}]}
+    with pytest.raises(ValueError, match="duplicate contract-only path"):
+        catalog_generator()._preserve_contract_entries(scanned, path)
+
+
+@pytest.mark.parametrize("flag", [False, 1, "true", "false", None])
+def test_wrongly_flagged_entry_is_not_exempt(flag):
+    entry = synthetic_contract()
+    entry["contract_only"] = flag
+    with pytest.raises(ValueError, match="invalid contract-only"):
+        required_dataset_fields(entry)
+
+
+def test_ordinary_entry_requires_size_and_contract_requires_structure():
+    assert required_dataset_fields({"name": "ordinary.csv"}) == {
+        "name",
+        "path",
+        "format",
+        "columns",
+        "size_bytes",
+    }
+    assert required_dataset_fields(synthetic_contract()) == {
+        "name",
+        "path",
+        "format",
+        "columns",
+    }
+    broken = synthetic_contract()
+    broken["columns"] = []
+    with pytest.raises(ValueError, match="invalid contract-only"):
+        required_dataset_fields(broken)
+    ordinary = synthetic_contract()
+    ordinary.update(path="synthetic.csv", size_bytes=0, row_count=0)
+    with pytest.raises(ValueError, match="invalid contract-only"):
+        required_dataset_fields(ordinary)
+
+
+def is_contract_metadata(dataset):
+    if "contract_only" not in dataset:
+        return False
+    catalog_generator().validate_contract_entry(dataset)
+    return True

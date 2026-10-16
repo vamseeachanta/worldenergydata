@@ -249,6 +249,29 @@ def unified(
 # ==============================================================================
 
 
+@app.command("update")
+def update(
+    config: Path = typer.Option(..., "--config", exists=True, readable=True),
+    data_root: Path = typer.Option(
+        ..., "--data-root", help="Archive root outside the repository"
+    ),
+    refresh: bool = typer.Option(
+        False, "--refresh", help="Check retained publisher revisions"
+    ),
+) -> None:
+    """Update configured completed-year archives and print a JSON run report."""
+    import json
+
+    from worldenergydata.metocean.update import update_archive
+
+    report = update_archive(
+        json.loads(config.read_text(encoding="utf-8")), data_root, refresh=refresh
+    )
+    typer.echo(json.dumps(report, indent=2))
+    if report["failures"]:
+        raise typer.Exit(1)
+
+
 def main() -> None:
     """CLI entry point."""
     try:

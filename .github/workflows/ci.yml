@@ -4,14 +4,15 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    # Run every edit: filtering base changes could let skipped checks mask failures.
+    types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
@@ -77,6 +78,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -143,6 +204,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -179,6 +300,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -208,7 +389,65 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 0
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -241,6 +480,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -272,6 +571,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7

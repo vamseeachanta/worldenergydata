@@ -615,3 +615,80 @@ class NDBCClient(BaseClient):
                 continue
 
         return records
+
+    @staticmethod
+    def parse_standard_archive(station_id, content, raw_sha256):
+        """Parse header-named standard records into original UTC wave rows.
+
+        Two-digit years mean 1900 + YY. Missing fields remain null and counted;
+        repeated timestamps retain their distinct source line identities.
+        """
+        import math
+        from datetime import timezone
+
+        lines = content.decode("ascii").splitlines()
+        header = None
+        result = []
+        for line_number, line in enumerate(lines):
+            parts = line.strip().lstrip("#").split()
+            if not parts:
+                continue
+            if parts[0] in ("YY", "YYYY"):
+                header = parts
+                continue
+            if line.lstrip().startswith("#"):
+                continue
+            if header is None or "WVHT" not in header or "DPD" not in header:
+                raise ValueError("Standard meteorological header is missing")
+            required = ["MM", "DD", "hh", "WVHT", "DPD"]
+            if "mm" in header:
+                required.append("mm")
+            if any(
+                name not in header or header.index(name) >= len(parts)
+                for name in required
+            ):
+                raise ValueError(
+                    "Standard record is missing a required wave or time field"
+                )
+            values = dict(zip(header, parts))
+            year = int(parts[0])
+            if year < 100:
+                year += 1900
+            timestamp = datetime(
+                year,
+                int(values["MM"]),
+                int(values["DD"]),
+                int(values["hh"]),
+                int(values.get("mm", 0)),
+                tzinfo=timezone.utc,
+            )
+            for data_field, variable, unit, kind in (
+                ("WVHT", "wave_height_m", "m", None),
+                ("DPD", "wave_period_s", "s", "dominant"),
+            ):
+                token = values[data_field]
+                value = None if token in NDBC_MISSING_VALUES else float(token)
+                if value is not None and (
+                    not math.isfinite(value)
+                    or value < 0
+                    or value == 99
+                    or (data_field == "DPD" and value == 0)
+                ):
+                    value = None
+                result.append(
+                    dict(
+                        station_id=station_id,
+                        observation_time=timestamp,
+                        variable=variable,
+                        value=value,
+                        unit=unit,
+                        quality_flag="missing" if value is None else "source_valid",
+                        source_id="ndbc_archive",
+                        period_kind=kind,
+                        raw_sha256=raw_sha256,
+                        row_number=line_number,
+                    )
+                )
+        if header is None:
+            raise ValueError("Standard meteorological header is missing")
+        return result

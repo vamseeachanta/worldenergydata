@@ -7,7 +7,7 @@ Asserts the falsifiable post-implementation checks from the approved plan:
 - Citations panel ≥80 rows total (8 inputs × 10 fields, minimum)
 - Markdown contains every field's section heading
 - HTML renders with both #366 + #343 caveats
-- PDF rendering invoked (placeholder OK on hosts without Chrome)
+- PDF rendering produces a real PDF when the renderer is available
 """
 
 from __future__ import annotations
@@ -120,16 +120,19 @@ class TestRendering:
 
     def test_render_all_writes_three_outputs(self, tmp_path, report):
         paths = render_all(report, tmp_path)
-        assert set(paths.keys()) == {"markdown", "html", "pdf"}
+        assert {"markdown", "html"} <= set(paths)
+        assert set(paths) <= {"markdown", "html", "pdf"}
         for name, path in paths.items():
             assert path.is_file(), f"{name} output not written: {path}"
         # Markdown must be non-trivial.
         assert paths["markdown"].stat().st_size > 1000
         # HTML must be non-trivial.
         assert paths["html"].stat().st_size > 1000
-        # PDF either rendered (Chrome available) or contains placeholder text.
-        # Both cases produce a file ≥ a few bytes.
-        assert paths["pdf"].stat().st_size > 0
+        # A renderer gap leaves the PDF absent; text placeholders are refused.
+        if "pdf" in paths:
+            assert paths["pdf"].read_bytes().startswith(b"%PDF-")
+        else:
+            assert not (tmp_path / "comprehensive_2026.pdf").exists()
 
 
 @integration

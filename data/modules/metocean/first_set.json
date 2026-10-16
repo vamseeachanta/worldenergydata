@@ -1,0 +1,83 @@
+{
+  "coverage_end": "2025-12-31T23:59:59Z",
+  "coverage_kind": "completed_yearly_archives",
+  "stations": [
+    {
+      "id": "42001",
+      "start_year": 1976,
+      "end_year": 2025,
+      "latitude": 25.922,
+      "longitude": -89.638,
+      "coordinates_source": "https://www.ndbc.noaa.gov/activestations.xml",
+      "nearest_coops": {
+        "id": "8760922",
+        "latitude": 28.9322,
+        "longitude": -89.4075,
+        "distance_km": 335.491,
+        "metadata_source": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
+      }
+    },
+    {
+      "id": "42002",
+      "start_year": 1976,
+      "end_year": 2025,
+      "latitude": 25.95,
+      "longitude": -93.78,
+      "coordinates_source": "https://www.ndbc.noaa.gov/activestations.xml",
+      "nearest_coops": {
+        "id": "8779749",
+        "latitude": 26.0675,
+        "longitude": -97.1548,
+        "distance_km": 337.5,
+        "metadata_source": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
+      }
+    },
+    {
+      "id": "42003",
+      "start_year": 1977,
+      "end_year": 2022,
+      "latitude": 25.925,
+      "longitude": -85.616,
+      "coordinates_source": "https://www.ndbc.noaa.gov/activestations.xml",
+      "nearest_coops": {
+        "id": "8726384",
+        "latitude": 27.6387,
+        "longitude": -82.5621,
+        "distance_km": 358.044,
+        "metadata_source": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
+      }
+    },
+    {
+      "id": "42040",
+      "start_year": 1995,
+      "end_year": 2025,
+      "latitude": 29.207,
+      "longitude": -88.237,
+      "coordinates_source": "https://www.ndbc.noaa.gov/activestations.xml",
+      "nearest_coops": {
+        "id": "8760721",
+        "latitude": 29.179306,
+        "longitude": -89.258835,
+        "distance_km": 99.238,
+        "metadata_source": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json"
+      }
+    }
+  ],
+  "coops_selection": {
+    "status": "metadata_distance_verified",
+    "method": "Minimum great-circle distance over every station in the fetched CO-OPS station response; distance_km uses existing NearestSourceFinder.distance_km. Geographic proximity does not establish common hydrodynamic conditions or product availability.",
+    "candidate_count": 302,
+    "metadata_fetch": {
+      "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json",
+      "fetched_at": "2026-10-14T03:30:28.920244+00:00",
+      "http_status": 200,
+      "bytes": 777394,
+      "sha256": "b39e26fc3c49ce15e0b3647cfe3760eac3248b9e5e5953fa4fe17fa72dd121d9"
+    },
+    "water_level_update": "not_implemented"
+  },
+  "cyclone_best_track": {
+    "status": "not_available",
+    "reason": "Publisher page returned HTTP 403; no alternate route attempted"
+  }
+}

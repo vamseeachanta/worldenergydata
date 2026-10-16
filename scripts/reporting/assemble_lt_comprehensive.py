@@ -22,6 +22,7 @@ from pathlib import Path
 from worldenergydata.lower_tertiary.comprehensive_report import (
     assemble_comprehensive_report,
     render_all,
+    write_manifest,
 )
 
 
@@ -45,6 +46,8 @@ def main() -> int:
 
     result = assemble_comprehensive_report()
     paths = render_all(result, args.output_dir)
+    manifest = write_manifest(result, paths, args.output_dir)
+    print(f"Wrote manifest: {manifest}")
     for name, path in paths.items():
         print(f"Wrote {name}: {path}")
     print(f"Fields covered: {len(result.economics_run.results)}")

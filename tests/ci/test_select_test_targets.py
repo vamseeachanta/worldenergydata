@@ -255,3 +255,21 @@ def test_capability_contract_paths_select_test_file(path: str) -> None:
         shard["targets"] == "tests/test_capability_onepagers.py"
         for shard in matrix["include"]
     )
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "README.md",
+        "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py",
+        "tests/integration/reporting/test_comprehensive_delivery.py",
+    ],
+)
+def test_reporting_contracts_join_always_on_targets(path):
+    target = "tests/integration/reporting"
+    assert target in select([path], REPO_ROOT)["xdist"]
+    matrix = to_matrix([path], REPO_ROOT)
+    always = next(shard for shard in matrix["include"] if shard["name"] == "_always")
+    assert target in always["targets"].split()
+    targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+    assert targets.count(target) == 1

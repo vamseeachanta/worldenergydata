@@ -36,6 +36,55 @@ field:
     # (issue 747 research note). Was Suncor 0.245; retained unchanged.
     - name: "Suncor"
       working_interest: 0.245
+  sources:
+    first_oil:
+      - id: P7
+        title: "Chevron Corporation annual report, FY2014 (filed 2015)"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        retrieved: null
+        sha256: null
+        attempted: "2026-10-14T17:54:44.050388+00:00"
+        http_status: 403
+        retrieval_status: "not retrieved in this revision"
+      - id: P8
+        title: >-
+          Jack, St. Malo partners announce first oil from deepwater Gulf of Mexico project (World Oil),
+          2014-12-02
+        url: "https://worldoil.com/news/2014/12/2/jack-st-malo-partners-announce-first-oil-from-deepwater-gulf-of-mexico-project"
+        retrieved: "2026-10-14"
+        sha256: "621f3bb94654776468d4a7e4ee8883ce1efa3513712eff3d80187dff6cb3af5b"
+        attempted: "2026-10-14T17:54:44.394723+00:00"
+        http_status: 200
+        retrieval_status: "retrieved"
+    operator:
+      - id: P7
+        title: "Chevron Corporation annual report, FY2014 (filed 2015)"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        retrieved: null
+        sha256: null
+        attempted: "2026-10-14T17:54:44.050388+00:00"
+        http_status: 403
+        retrieval_status: "not retrieved in this revision"
+    partners:
+      - id: P7
+        title: "Chevron Corporation annual report, FY2014 (filed 2015)"
+        url: "https://www.sec.gov/Archives/edgar/data/93410/000009341015000010/cvx-123114x10kdoc.htm"
+        retrieved: null
+        sha256: null
+        attempted: "2026-10-14T17:54:44.050388+00:00"
+        http_status: 403
+        retrieval_status: "not retrieved in this revision"
+      - id: P8
+        title: >-
+          Jack, St. Malo partners announce first oil from deepwater Gulf of Mexico project (World Oil),
+          2014-12-02
+        url: "https://worldoil.com/news/2014/12/2/jack-st-malo-partners-announce-first-oil-from-deepwater-gulf-of-mexico-project"
+        retrieved: "2026-10-14"
+        sha256: "621f3bb94654776468d4a7e4ee8883ce1efa3513712eff3d80187dff6cb3af5b"
+        attempted: "2026-10-14T17:54:44.394723+00:00"
+        http_status: 200
+        retrieval_status: "retrieved"
+  working_interest_status: unverified
   capex:
     total_mm_usd: 7500
     wells_mm_usd: 4100
