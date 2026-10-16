@@ -51,12 +51,13 @@ def _evaluate_expression(expression: str, context: dict) -> object:
         expression,
     )
     expression = expression.replace("&&", " and ").replace("||", " or ")
+    expression = re.sub(r"\bnull\b", "None", expression)
     expression = re.sub(r"!(?!=)", " not ", expression).strip()
 
     def evaluate(node):
         """Interpret only literals, comparisons and Boolean operators."""
-        if isinstance(node, ast.Constant):
-            return node.value
+        if isinstance(node, (ast.Constant, ast.Dict)):
+            return ast.literal_eval(node)
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
             return not evaluate(node.operand)
         if isinstance(node, ast.Compare):
@@ -78,7 +79,11 @@ def _evaluate_expression(expression: str, context: dict) -> object:
 
 
 def _concurrency(
-    event: str, ref: str, run_id: int, action: str = "opened", base_change: bool = False
+    event: str,
+    ref: str,
+    run_id: int,
+    action: str = "opened",
+    base_change: object = None,
 ) -> tuple[str, bool]:
     """Render the configured group and cancellation expression for a run."""
     import re
@@ -118,6 +123,16 @@ def test_concurrency_expression_contract() -> None:
         "CI-refs/pull/1/merge",
         True,
     )
+
+
+@pytest.mark.parametrize("base_change", [None, {"ref": {"from": "main"}}])
+def test_concurrency_cancellation_is_boolean(base_change: object) -> None:
+    """Actual absent/object event fields cannot become a non-Boolean setting."""
+    group, cancel = _concurrency(
+        "pull_request", "refs/pull/1/merge", 103, "edited", base_change
+    )
+    assert cancel is (base_change is not None)
+    assert group == ("CI-103" if base_change is None else "CI-refs/pull/1/merge")
 
 
 def test_concurrency_event_behavior() -> None:

@@ -13,10 +13,10 @@ on:
 concurrency:
   group: >-
     ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base) && github.ref || github.run_id }}
+    (github.event.action != 'edited' || github.event.changes.base != null) && github.ref || github.run_id }}
   cancel-in-progress: >-
     ${{ github.event_name == 'pull_request' &&
-    (github.event.action != 'edited' || github.event.changes.base) }}
+    (github.event.action != 'edited' || github.event.changes.base != null) }}
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
