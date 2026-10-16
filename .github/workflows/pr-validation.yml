@@ -137,3 +137,35 @@ jobs:
           else
             echo "::notice::Consider adding a CODEOWNERS file"
           fi
+
+  pack-lint:
+    name: Lint Changed Knowledge Packs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Lint changed agent packs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PACK_ACCOUNT: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          changed_packs_file=$(mktemp)
+          git diff --name-only --diff-filter=ACMR -z "$BASE_SHA" HEAD -- '*agent-pack.md' > "$changed_packs_file"
+          mapfile -d '' -t packs < "$changed_packs_file"
+          if [ "${#packs[@]}" -eq 0 ]; then
+            echo "No changed agent packs."
+            exit 0
+          fi
+          python scripts/pack_lint.py --account "$PACK_ACCOUNT" "${packs[@]}"
