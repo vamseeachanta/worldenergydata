@@ -182,11 +182,13 @@ def _validate_research(row):
         _require(_text(attempt.get("locator")), "Missing search locator")
     _require(bool(searches) or not row["candidates"], "Unresearched row has candidates")
     if not row["candidates"]:
-        sources = "; ".join(attempt["url"] for attempt in searches)
-        sources = sources or "sources: none (not researched)"
+        summary = "not researched"
+        if searches:
+            sources = "; ".join(attempt["url"] for attempt in searches)
+            summary = "no candidate found in " + sources
         _require(
-            row.get("candidate_summary") == "no candidate found in " + sources,
-            "Missing no-candidate search summary",
+            row.get("candidate_summary") == summary,
+            "Invalid candidate summary for research disposition",
         )
 
 

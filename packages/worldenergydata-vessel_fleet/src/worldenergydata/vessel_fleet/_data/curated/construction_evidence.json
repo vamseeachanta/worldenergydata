@@ -876,7 +876,7 @@
           "source_id": "saipem_fleet_second",
           "quote_key": "saipem_fds2",
           "locator": "Flotta e Cantieri / page 2 vessel heading",
-          "disposition": "Possible duplicate of the separate SAIPEM FDS 2 roster row; spelling alone does not establish the bridge."
+          "disposition": "Roster spelling variant of the separate row with partial identity (spacing differs); the shared listing does not establish a registry bridge."
         }
       ],
       "hull_model": "none",
@@ -1053,7 +1053,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=NORTH OCEAN 105",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DEEP ENERGY",
@@ -1125,7 +1125,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSA GOLIATH",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "OSA SAMPSON",
@@ -1143,7 +1143,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSA SAMPSON",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "HERCULES",
@@ -1214,7 +1214,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=COMANCHE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DLB 264",
@@ -1232,7 +1232,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB 264",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "GLOBAL 1200",
@@ -1365,7 +1365,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=INTREPID",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "EXPRESS",
@@ -1383,7 +1383,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=EXPRESS",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "JUMBO JAVELIN",
@@ -1482,7 +1482,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=MARIDIVE CONSTRUCTOR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DB 50",
@@ -1525,7 +1525,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 16",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DB 101",
@@ -1543,7 +1543,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 101",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DB27",
@@ -1561,7 +1561,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB27",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DB30",
@@ -1604,7 +1604,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=KP1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "HLS 2000",
@@ -1622,7 +1622,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=HLS 2000",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEP 250",
@@ -1640,7 +1640,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEP 250",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DLB-750",
@@ -1728,7 +1728,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 8",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "JASCON 30",
@@ -1746,7 +1746,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 30",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "JASCON 25",
@@ -1848,7 +1848,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 2",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "JASCON 31",
@@ -1933,7 +1933,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=OSFI SWING THOMPSON",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "MSV REGALIA",
@@ -1951,7 +1951,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=MSV REGALIA",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CASTORO OTTO",
@@ -1969,7 +1969,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO OTTO",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SAIPEM 3000",
@@ -2034,7 +2034,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CASTORO II",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CRAWLER",
@@ -2052,7 +2052,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CRAWLER",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "S 355",
@@ -2070,7 +2070,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=S 355",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "STANISLAV YUDIN",
@@ -2166,7 +2166,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CYCLONE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "HERCULES II",
@@ -2217,7 +2217,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "TAKLIFT 4",
@@ -2235,7 +2235,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 4",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "TAKLIFT 6",
@@ -2253,7 +2253,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 6",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "TAKLIFT 7",
@@ -2271,7 +2271,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TAKLIFT 7",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SUPERIOR PERFORMANCE",
@@ -2314,7 +2314,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TETRA ARAPAHO",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "HLV UGLEN",
@@ -2332,7 +2332,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=HLV UGLEN",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LORELAY",
@@ -2420,7 +2420,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CALAMITY JANE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ASCOT FORCADOS 1",
@@ -2438,7 +2438,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ASCOT FORCADOS 1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LONE STAR",
@@ -2456,7 +2456,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LONE STAR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEA HORIZON",
@@ -2474,7 +2474,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEA HORIZON",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "HAI YANG SHI YOU 201",
@@ -2523,7 +2523,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LANJIANG",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LEWEK CHAMPION",
@@ -2541,7 +2541,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LEWEK CHAMPION",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LEWEK CRUSADER",
@@ -2559,7 +2559,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LEWEK CRUSADER",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "AMC CONNECTOR",
@@ -2577,7 +2577,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=AMC CONNECTOR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CHICKASAW",
@@ -2595,7 +2595,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CHICKASAW",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "IROQUOIS",
@@ -2613,7 +2613,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=IROQUOIS",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LB32",
@@ -2631,7 +2631,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LB32",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "NO102",
@@ -2674,7 +2674,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=STEALTH",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ECLIPSE",
@@ -2692,7 +2692,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ECLIPSE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DLB NORCE ENDEAVOUR",
@@ -2710,7 +2710,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB NORCE ENDEAVOUR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "Castoro Sei",
@@ -2727,7 +2727,7 @@
           "source_id": "saipem_2015",
           "quote_key": "castoro_sei",
           "locator": "Printed page 24 / Offshore fleet at December 31, 2015 and divestment footnote",
-          "disposition": "Historical listing only; current identity and the bridge from this roster spelling are not established."
+          "disposition": "Exact name listed at 2015-12-31; this dated listing does not establish current identity, current status or a registry identifier."
         }
       ],
       "hull_model": "none",
@@ -3004,7 +3004,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 18",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "JASCON 35",
@@ -3022,7 +3022,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=JASCON 35",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "NORMAND SEVEN",
@@ -3040,7 +3040,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=NORMAND SEVEN",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEVEN OCEANS",
@@ -3108,7 +3108,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=KOMMANDOR 3000",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LOCHNAGAR",
@@ -3126,7 +3126,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LOCHNAGAR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEVEN SEAS",
@@ -3169,7 +3169,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ROCKWATER 1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEVEN PACIFIC",
@@ -3212,7 +3212,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SKANDI NEPTUNE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEISRANGER",
@@ -3230,7 +3230,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEISRANGER",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ACERGY DISCOVERY",
@@ -3248,7 +3248,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY DISCOVERY",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ACERGY POLARIS",
@@ -3266,7 +3266,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY POLARIS",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ACERGY EAGLE",
@@ -3284,7 +3284,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ACERGY EAGLE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SEVEN MAR",
@@ -3302,7 +3302,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SEVEN MAR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SKANDI ACERGY",
@@ -3431,7 +3431,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CONCORDE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CAPPY BISSO",
@@ -3449,7 +3449,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CAPPY BISSO",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "LILI BISSO",
@@ -3467,7 +3467,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=LILI BISSO",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BIG CHIEF",
@@ -3485,7 +3485,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BIG CHIEF",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BOAZ",
@@ -3503,7 +3503,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BOAZ",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BISSO 350",
@@ -3521,7 +3521,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BISSO 350",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CROSSMAR 7",
@@ -3539,7 +3539,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 7",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CROSSMAR 14",
@@ -3557,7 +3557,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 14",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CROSSMAR 21",
@@ -3575,7 +3575,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CROSSMAR 21",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "MAMMOTH ELEVATOR",
@@ -3593,7 +3593,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=MAMMOTH ELEVATOR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CHEROKEE",
@@ -3611,7 +3611,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CHEROKEE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "TITAN II",
@@ -3629,7 +3629,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TITAN II",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "H-851",
@@ -3682,7 +3682,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=MARIDIVE 300",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DB 26",
@@ -3700,7 +3700,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DB 26",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "INTERMAC 650",
@@ -3718,7 +3718,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=INTERMAC 650",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "OSFI DB RAEFORD",
@@ -3761,7 +3761,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SUPERIOR PRIDE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "TETRA DB-1",
@@ -3779,7 +3779,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=TETRA DB-1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ASCOT ESCRAVOS 1",
@@ -3797,7 +3797,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ASCOT ESCRAVOS 1",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DLB BIG CHIEF",
@@ -3815,7 +3815,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB BIG CHIEF",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DLB MIGHTY CHIEF",
@@ -3833,7 +3833,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=DLB MIGHTY CHIEF",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BRAVE",
@@ -3851,7 +3851,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BRAVE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "RIDER",
@@ -3869,7 +3869,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=RIDER",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "PECOS",
@@ -3887,7 +3887,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=PECOS",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CM 11",
@@ -3905,7 +3905,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 11",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CM 9",
@@ -3923,7 +3923,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 9",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CM 15",
@@ -3941,7 +3941,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CM 15",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BH109",
@@ -3959,7 +3959,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BH109",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BH106",
@@ -3977,7 +3977,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BH106",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "ENTERPRISE 3",
@@ -3995,7 +3995,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=ENTERPRISE 3",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CAESAR",
@@ -4013,7 +4013,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CAESAR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SWIBER CHAI",
@@ -4031,7 +4031,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CHAI",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SWIBER CONQUEST",
@@ -4049,7 +4049,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER CONQUEST",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SWIBER GLORIOUS",
@@ -4067,7 +4067,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER GLORIOUS",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SWIBER MAGNIFICENT",
@@ -4085,7 +4085,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER MAGNIFICENT",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "AZIZ",
@@ -4103,7 +4103,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=AZIZ",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "MAS 300",
@@ -4121,7 +4121,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=MAS 300",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "PJW 3000",
@@ -4139,7 +4139,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=PJW 3000",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "SWIBER RESOLUTE",
@@ -4157,7 +4157,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=SWIBER RESOLUTE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "CONSTRUCTOR",
@@ -4175,7 +4175,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=CONSTRUCTOR",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "DEEP BLUE",
@@ -4243,7 +4243,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=Nexus",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "Tai'an Kou",
@@ -4261,7 +4261,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=Tai'an Kou",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "IOS PIPELINER",
@@ -4279,7 +4279,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=IOS PIPELINER",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "EMERALD SEA",
@@ -4297,7 +4297,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=EMERALD SEA",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "BOLD ENDURANCE",
@@ -4315,7 +4315,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=BOLD ENDURANCE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "AGILE",
@@ -4333,7 +4333,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=AGILE",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "GLOBAL 1201",
@@ -4394,7 +4394,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=S230",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     },
     {
       "vessel_name": "APACHE II",
@@ -4412,7 +4412,7 @@
       "provenance": "construction_vessels.csv / VESSEL_NAME=APACHE II",
       "limitation": "not researched",
       "searched": [],
-      "candidate_summary": "no candidate found in sources: none (not researched)"
+      "candidate_summary": "not researched"
     }
   ],
   "cranes": [

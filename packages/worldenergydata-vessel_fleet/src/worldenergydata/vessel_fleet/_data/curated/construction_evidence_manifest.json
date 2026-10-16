@@ -323,8 +323,8 @@
   },
   "files": {
     "construction_evidence.json": {
-      "sha256": "53f06de766d3aa41a3a9f49cf181241e4c7a0680df06eee97f24d8b401468678",
-      "size_bytes": 164928
+      "sha256": "9e4f89c63c8d1a6290525c41af6641683d92751c1cf558355506a805e85cd383",
+      "size_bytes": 161076
     },
     "construction_crane_ratings.csv": {
       "sha256": "60f8ce1f1f5c6405080ad448bbe4948ff9e7cb3b5af04a399681fe7492f63d42",

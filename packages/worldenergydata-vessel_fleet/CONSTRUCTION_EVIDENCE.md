@@ -30,10 +30,11 @@ Every unresolved row has `searched` and `candidates` lists. Each search attempt
 records its URL, date, locator and outcome. An empty search list means
 `limitation: "not researched"`; a nonempty list means
 `limitation: "researched, unresolved"`. Where no candidate is supported,
-`candidate_summary` states `no candidate found in` followed by the attempted
-sources, or `sources: none (not researched)`. Failed retrievals do not establish
-that a vessel is absent from a fleet. Historical names and similar spellings
-remain candidates unless the identity bridge is established.
+`candidate_summary` states `not researched` when no search is recorded.
+A researched row without candidates states `no candidate found in` followed
+by the attempted sources. Failed retrievals do not establish that an asset is
+absent from a listing. Historical names and similar spellings remain candidates
+unless the identity bridge is established.
 
 `construction_crane_ratings.csv` exports printed capacity/radius points and
 intervals, with metric-tonne and metre units in the headers. Each row retains
