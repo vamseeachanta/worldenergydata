@@ -281,7 +281,7 @@ def test_unresearched_row_makes_no_search_claim(bundle):
         searched=[],
         candidates=[],
         limitation="not researched",
-        candidate_summary="no candidate found in sources: none (not researched)",
+        candidate_summary="not researched",
     )
     ce.validate_evidence(bundle)
 
@@ -337,3 +337,57 @@ def test_manifest_source_metadata_is_read_back(bundle, tmp_path):
     path.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="source metadata"):
         ce.load_evidence(tmp_path)
+
+
+def test_retained_unresearched_summaries_make_no_search_claim(bundle):
+    rows = [row for row in bundle["vessels"] if row["limitation"] == "not researched"]
+    assert rows
+    assert all(row["searched"] == [] and row["candidates"] == [] for row in rows)
+    assert all(row["candidate_summary"] == "not researched" for row in rows)
+
+
+def test_unresearched_row_rejects_search_claim(bundle):
+    row = next(
+        row for row in bundle["vessels"] if row["limitation"] == "not researched"
+    )
+    row["candidate_summary"] = "no candidate found in sources: none (not researched)"
+    with pytest.raises(ValueError, match="summary"):
+        ce.validate_evidence(bundle)
+
+
+def test_dated_exact_name_candidates_explain_temporal_limit(bundle):
+    candidates = [
+        candidate
+        for row in bundle["vessels"]
+        if row["identity_status"] == "unresolved"
+        for candidate in row["candidates"]
+        if candidate["value"].casefold() == row["vessel_name"].casefold()
+        and "2015" in candidate["locator"]
+    ]
+    assert candidates
+    for candidate in candidates:
+        assert "2015-12-31" in candidate["disposition"]
+        assert "current identity" in candidate["disposition"]
+        assert "registry identifier" in candidate["disposition"]
+
+
+def test_spacing_variant_has_explicit_partial_row_cross_reference(bundle):
+    partial_names = {
+        "".join(row["vessel_name"].split()).casefold()
+        for row in bundle["vessels"]
+        if row["identity_status"] == "partial"
+    }
+    variants = [
+        row
+        for row in bundle["vessels"]
+        if row["identity_status"] == "unresolved"
+        and "".join(row["vessel_name"].split()).casefold() in partial_names
+    ]
+    assert variants
+    for row in variants:
+        assert any(
+            "Roster spelling variant" in candidate["disposition"]
+            and "row with partial identity" in candidate["disposition"]
+            and "registry bridge" in candidate["disposition"]
+            for candidate in row["candidates"]
+        )
