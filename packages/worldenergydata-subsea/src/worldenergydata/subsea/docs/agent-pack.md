@@ -5,7 +5,7 @@
 | Module | subsea |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-subsea/src/worldenergydata/subsea` |
-| Pack revision | 0 |
+| Pack revision | 1 |
 | Code pin | `6149361d36373afe24fe1b0c1fe59886375d46b7` |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Family review role | Calculations quality manager |
@@ -20,6 +20,13 @@ The supplier loader reads UTF-8 CSV, validates rows and filters by role, tier, c
 Scope includes every Python file in the package, including both subpackages; the implementing methods perform validation and selection rather than structural, pressure-containment or mooring-equilibrium analysis. [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L70-L152] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L25-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L24-L55] [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L39-L93]
 
 The module manifest labels subsea `stable`, while the distribution classifier labels it `Alpha`; these are declarations rather than independently established readiness (U2 in section 10). [module-manifest.yaml:L491-L504] [packages/worldenergydata-subsea/pyproject.toml:L15-L23]
+
+### Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 0 | 2026-10-16 | Initial package inventory, checks and open items. |
+| 1 | 2026-10-16 | Add omitted silent paths, complete test references, distinguish issue drafts from filed issues and record executed CAD coverage. |
 
 ## 2. Inputs and outputs
 
@@ -79,7 +86,15 @@ AQG r0, *Analysis QA gates*, revision 0, section 10, Python calculations, suppli
 
 ## 4. Validated worked examples
 
-No independently validated example is claimed for this package: the selected examples below check literal parser expectations and repository-maintained data rather than a published engineering benchmark; the downstream closed-form CAD case has not run successfully here. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L52-L61]
+One downstream analytical geometry example is validated against the annulus-volume formula. The five regression examples below check parser expectations and repository-maintained data; physical catalogue accuracy remains UNVERIFIED under U3. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L52-L61]
+
+### Validated analytical geometry example
+
+| ID | Synthetic input and independent reference | Expected volume (mm³) | Observed volume (mm³) | Criterion and existing test node ID | Baseline / final |
+| --- | --- | --- | --- | --- | --- |
+| V1 | OD 8.0 in, wall thickness 0.500 in, length 50.0 ft; reference is π × ((OD/2)² − ((OD − 2 × wall)/2)²) × length after conversion to mm | 115833329.7 | 115833329.7 | `math.isclose` relative tolerance `1e-3` (0.1%); observed relative difference 0.0%; `tests/modules/field_development/test_equipment_3d.py::test_volume_matches_hollow_pipe_formula` | NOT_RUN / PASS; the final isolated environment supplies CAD. [tests/modules/field_development/test_equipment_3d.py:L33-L42] [tests/modules/field_development/test_equipment_3d.py:L52-L61] |
+
+Volumes are rounded to one decimal place after comparing unrounded values. This example qualifies the downstream geometry calculation for the stated synthetic case; U1 unit qualification and U3 catalogue accuracy remain open. [tests/modules/field_development/test_equipment_3d.py:L52-L61]
 
 ### Regression examples
 
@@ -93,7 +108,7 @@ Test paths in the node column are repository-relative; each PASS is an offline o
 | E4 | Synthetic unrecognized component category, in test | 1 validation exception; exact rejection | `tests/unit/curated/test_csv_validation.py::TestMooringLoading::test_invalid_component_type_raises_validation_error` | PASS / PASS. [tests/unit/curated/test_csv_validation.py:L94-L103] |
 | E5 | Curated jumper and mooring CSV paths constructed in test | Each list has more than 0 records; repository smoke criterion, no independent accuracy tolerance | `tests/unit/curated/test_csv_validation.py::TestMooringLoading::test_all_csv_rows_load_without_error` | PASS / PASS. [tests/unit/curated/test_csv_validation.py:L17-L21] [tests/unit/curated/test_csv_validation.py:L105-L110] |
 
-The downstream `tests/modules/field_development/test_equipment_3d.py::test_volume_matches_hollow_pipe_formula` independently computes an annulus volume from test dimensions with relative tolerance `1e-3`; its result is NOT_RUN because the declared CAD extra cannot install (`nlopt==2.10.0` has no compatible distribution), so it is not counted as a validated example. [tests/modules/field_development/test_equipment_3d.py:L12-L14] [tests/modules/field_development/test_equipment_3d.py:L52-L61] [pyproject.toml:L178-L184]
+The earlier locked-extra attempt could not install `nlopt==2.10.0`. The current isolated environment satisfies the declared `cadquery>=2.8` requirement with CadQuery 2.8.0 and `nlopt==2.11.0`; all seven downstream CAD nodes now pass. Full locked-project resolution remains unverified. [tests/modules/field_development/test_equipment_3d.py:L12-L96] [pyproject.toml:L178-L184]
 
 ## 5. QA gates
 
@@ -110,14 +125,14 @@ Applicable gate selection follows AQG r0, *Analysis QA gates*, revision 0, secti
 
 | Check | Executable definition | Numeric pass criterion and unit | Evidence and limit |
 | --- | --- | --- | --- |
-| C01 / G0 | Run the seven `test_schema_*` nodes in the supplier test file | 7 passed tests; 0 failed tests (count) | Roles, tiers, company, lists and coarse depth rejection; no fractional-depth or locale case. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] |
+| C01 / G0 | Run `tests/unit/subsea/test_manifold_suppliers.py::test_schema_splits_delimited_lists`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_accepts_native_lists`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_requires_company`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_bad_role`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_bad_tier`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_coerces_unknown_depth_to_none`, `tests/unit/subsea/test_manifold_suppliers.py::test_schema_rejects_implausible_depth` | 7 passed tests; 0 failed tests (count) | Roles, tiers, company, lists and coarse depth rejection; no fractional-depth or locale case. [tests/unit/subsea/test_manifold_suppliers.py:L32-L70] |
 | C02 / G0 | Run both classes of `tests/unit/curated/test_csv_validation.py` | 10 passed tests; 0 failed tests (count); loaded OD and MBL each strictly greater than 0 in declared field units | CSV/model smoke tests and selected rejections; not a finite-value or full geometry check. [tests/unit/curated/test_csv_validation.py:L24-L110] |
-| C03 / G0 | Run `test_database_has_all_key_players`, `test_every_record_has_a_source_url`, `test_every_record_is_classified`, `test_depths_within_bounds` | 4 passed tests; 0 failed tests (count); catalogue depth strictly greater than 0 and at most 6000 m | 1 or more source-list items per loaded record; URL prefix only, not source truth or freshness. [tests/unit/subsea/test_manifold_suppliers.py:L76-L99] |
-| C04 / G1 | Run the four discovered test files with the test form below; attempt the declared `cad` extra | 37 available tests passed; 0 available tests failed (count); separately record 7 CAD nodes NOT_RUN | 3 query tests and 13 downstream integration tests complement C01–C03; CAD availability remains a gap, issue pending (6). [tests/unit/subsea/test_manifold_suppliers.py:L105-L125] [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
-| C05 / G2 | Hand-enumerate the three literal fragments and two native-list elements; compare `_split_list_fields` results using `test_schema_splits_delimited_lists` and `test_schema_accepts_native_lists` | 0 differing items (count); ordered equality, no tolerance | 2 passed test nodes; a parser check, with no physical benchmark claim. [tests/unit/subsea/test_manifold_suppliers.py:L32-L45] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L104-L115] |
+| C03 / G0 | Run `tests/unit/subsea/test_manifold_suppliers.py::test_database_has_all_key_players`, `tests/unit/subsea/test_manifold_suppliers.py::test_every_record_has_a_source_url`, `tests/unit/subsea/test_manifold_suppliers.py::test_every_record_is_classified`, `tests/unit/subsea/test_manifold_suppliers.py::test_depths_within_bounds` | 4 passed tests; 0 failed tests (count); catalogue depth strictly greater than 0 and at most 6000 m | 1 or more source-list items per loaded record; URL prefix only, not source truth or freshness. [tests/unit/subsea/test_manifold_suppliers.py:L76-L99] |
+| C04 / G1 | Run the four discovered test files with the test form below, including the declared test and CAD requirements | 44 passed tests; 0 failed tests; 0 skipped tests (count), including 7 CAD nodes | 3 query tests, 13 downstream integration tests and 7 CAD tests complement C01–C03; environment reproducibility remains a follow-up, issue pending (6). [tests/unit/subsea/test_manifold_suppliers.py:L105-L125] [tests/modules/field_development/test_integrations.py:L33-L142] [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
+| C05 / G2 | Hand-enumerate the three literal fragments and two native-list elements; compare `_split_list_fields` results using `tests/unit/subsea/test_manifold_suppliers.py::test_schema_splits_delimited_lists` and `tests/unit/subsea/test_manifold_suppliers.py::test_schema_accepts_native_lists` | 0 differing items (count); ordered equality, no tolerance | 2 passed test nodes; a parser check, with no physical benchmark claim. [tests/unit/subsea/test_manifold_suppliers.py:L32-L45] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L104-L115] |
 | C06 / G5 | Resolve every bracket citation using `git show <code-pin>:<path>`; require `1 <= start <= end <= line_count`; inspect all E1–E5 results and section-10 issue references | 0 broken citations, 0 missing example results, 0 untracked open items (count) | Producer audit retained with the handoff; independent review and issue creation remain pending. (AQG r0, sections 9 and 11.) |
 
-Execution form: `uv run python -m pytest tests/unit/subsea tests/unit/curated/test_csv_validation.py tests/modules/field_development/test_equipment_3d.py tests/modules/field_development/test_integrations.py -q -rA -p no:cacheprovider --basetemp=<scratch>`; ordinary sources, no addopts override, no worker parallelism; later runs use a temporary test/data copy and the same installed workspace through `--project <repository>`. The CAD availability attempt adds `--extra test --extra cad`; it fails before pytest starts, on the unavailable pinned `nlopt` distribution. [pyproject.toml:L143-L157] [pyproject.toml:L178-L184] [pyproject.toml:L392-L413]
+Current execution form: `uv run --no-project --no-compile-bytecode --active --python <environment>/bin/python --with pytest python -m pytest tests/unit/subsea/test_manifold_suppliers.py tests/unit/curated/test_csv_validation.py tests/modules/field_development/test_equipment_3d.py tests/modules/field_development/test_integrations.py -q -rA -p no:cacheprovider --basetemp=<scratch>` from a temporary test/data/configuration copy, importing worktree sources through `PYTHONPATH`. The isolated environment supplies the declared test and CAD requirements. Ordinary pytest configuration, including coverage, is retained without an addopts override or worker parallelism. [pyproject.toml:L143-L157] [pyproject.toml:L178-L184] [pyproject.toml:L392-L413]
 
 ## 6. Known failure modes and pitfalls
 
@@ -128,14 +143,17 @@ The following exact searches were run against every package Python file at the c
 ```sh
 rg -n 'except|continue|return None|return \[\]|return \{\}|= 0(\.0)?\b|1970|0\.05|5 ?%' packages/worldenergydata-subsea/src/worldenergydata/subsea --glob '*.py'
 rg -n 'int\(|float\(|pd\.notna|if .* for |if .*strip|if r\.|_records|Optional|List\[|_in\b|_ft\b|_psi\b|_kips\b|_mm\b|_kn\b|_kg_per_m\b|DEPTH_M|read_csv|DictReader' packages/worldenergydata-subsea/src/worldenergydata/subsea --glob '*.py'
+rg -n 'except|continue|return None|return \[\]|return \{\}|= 0(\.0)?\b|\b0\b|1970|%|int\(|float\(|cache|_records|page|offset|limit|step|range\(' packages/worldenergydata-subsea/src/worldenergydata/subsea --glob '*.py'
 ```
 
-A row denotes a distinct inspected path or field, not necessarily a defect; expected missing-value behavior is retained so that silent normalizations and exclusions remain visible. There are no `except` handlers, `continue` statements, epoch defaults, percentage defaults or zero-valued fallback defaults in these implementations. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L1-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L1-L55] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L1-L152] [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L1-L93]
+Sweep: 59 found
+
+A row denotes a distinct inspected path or field. Expected missing-value behavior is retained alongside defects so that silent normalizations and exclusions remain visible. There are no `except` handlers, `continue` statements, epoch defaults, percentage defaults or zero-valued fallback defaults in these implementations. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L1-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L1-L55] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L1-L152] [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L1-L93]
 
 | ID | Path or field; symptom and cause | Existing detection check; follow-up |
 | --- | --- | --- |
-| S01 | Missing CSV: warning followed by cached empty result; later file creation does not trigger reload. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L40-L44] | no detection check exists; issue pending (1). |
-| S02 | Header-only CSV: empty row list is cached without a nonempty-data check. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L45-L53] | no detection check exists; issue pending (1). |
+| S01 | Missing CSV: warning followed by cached empty result; later file creation does not trigger reload. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L40-L44] | C03 detects fewer than 10 default-path records; no detection check exists for caller-supplied missing paths or reload behavior; issue pending (1). |
+| S02 | Header-only CSV: empty row list is cached without a nonempty-data check. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L45-L53] | C03 detects fewer than 10 default-path records; no detection check exists for caller-supplied header-only paths; issue pending (1). |
 | S03 | Cached records: source edits are not read again; all() copies the list but shares mutable models. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L40-L57] | no detection check exists; issue pending (1). |
 | S04 | Role filter silently excludes nonmatching or unknown-role records. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L69-L70] | C04 checks selected positive matches, not exclusion accounting; issue pending (1). |
 | S05 | Tier filter silently excludes nonmatching or unknown-tier records. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L71-L72] | C04 checks selected positive matches, not exclusion accounting; issue pending (1). |
@@ -185,17 +203,22 @@ A row denotes a distinct inspected path or field, not necessarily a defect; expe
 | S49 | mbl_kn: catalog and field comment label kN; model does not qualify input units. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L17-L17] | no detection check exists for input unit qualification; issue pending (5). |
 | S50 | weight_kg_per_m: catalog labels kg despite per-length field suffix; no conversion. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L18-L18] | no detection check exists for input unit qualification; issue pending (5). |
 | S51 | MAX_WATER_DEPTH_M: range message assumes metres; no unit-tag validation. [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L131-L136] | no detection check exists for input unit qualification; issue pending (5). |
-| S52 | OD: <= 0 rejects nonpositive finite values but lets NaN pass. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L25-L31] | no detection check exists for non-finite inputs; issue pending (3). |
-| S53 | wall thickness: <= 0 rejects nonpositive finite values but lets NaN pass. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L33-L39] | no detection check exists for non-finite inputs; issue pending (3). |
-| S54 | pressure: <= 0 rejects nonpositive finite values but lets NaN pass. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L41-L47] | no detection check exists for non-finite inputs; issue pending (3). |
-| S55 | MBL: <= 0 rejects nonpositive finite values but lets NaN pass. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L33-L39] | no detection check exists for non-finite inputs; issue pending (3). |
+| S52 | OD: <= 0 rejects nonpositive finite values but lets NaN pass on direct construction; CSV NaN is dropped and fails as a missing required field. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L25-L31] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L59-L63] | no detection check exists for non-finite inputs; issue pending (3). |
+| S53 | wall thickness: <= 0 rejects nonpositive finite values but lets NaN pass on direct construction; CSV NaN is dropped and fails as a missing required field. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L33-L39] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L59-L63] | no detection check exists for non-finite inputs; issue pending (3). |
+| S54 | pressure: <= 0 rejects nonpositive finite values but lets NaN pass on direct construction; CSV NaN is dropped and fails as a missing required field. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L41-L47] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L59-L63] | no detection check exists for non-finite inputs; issue pending (3). |
+| S55 | MBL: <= 0 rejects nonpositive finite values but lets NaN pass on direct construction; CSV NaN is dropped and fails as a missing required field. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L33-L39] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L51-L55] | no detection check exists for non-finite inputs; issue pending (3). |
+| S56 | Positive infinity survives CSV loading and the <= 0 checks for OD, wall thickness, pressure and MBL. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L25-L47] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L59-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L33-L39] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L51-L55] | no detection check exists; issue pending (3). |
+| S57 | Empty get query: the empty string is a substring of every company, so get("") returns the first record. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L87-L93] | no detection check exists; issue pending (1). |
+| S58 | Negative weight_air_kips and weight_kg_per_m are accepted; neither optional weight has a sign check. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L20-L47] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L18-L39] | no detection check exists; issue pending (3). |
+| S59 | Default pandas NA tokens (NA, N/A, null, None, nan and empty cells) erase literal optional text before pd.notna filtering; the model default None then applies. Required fields instead fail validation. [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L59-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L51-L55] | no detection check exists; issue pending (3). |
 
-Sweep inventory: 55 rows, including 2 empty-result cache paths, 4 explicit `return None` sites, 2 explicit `return []` sites, 4 list defaults, 18 scalar model defaults, 9 unit assumptions and 4 NaN-sensitive positivity validators; overlapping categories are counted once per row above. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L39-L93] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L43-L136] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L13-L47] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L13-L39]
+Sweep inventory: 59 rows, including 2 empty-result cache paths, 4 explicit `return None` sites, 2 explicit `return []` sites, 4 list defaults, 18 scalar model defaults, 9 unit assumptions, 4 NaN-sensitive positivity validators and the 4 additional paths S56–S59; overlapping categories are counted once per row above. [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L39-L93] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L43-L136] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L13-L47] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L13-L39]
 
 ### Additional confirmed gaps and issue context
 
 | Finding | Evidence | Detection / disposition |
 | --- | --- | --- |
+| Infinite external depth text raises raw OverflowError at int(float(v)); this is an explicit failure rather than a silent path | [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L122-L126] | no detection check exists; issue pending (2). |
 | Jumper negative length and wall greater than radius are accepted by the data model; downstream CAD rejects a nonpositive bore | [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L13-L47] [src/worldenergydata/field_development/equipment_3d.py:L66-L76] | no detection check exists in the model tests; issue pending (3). |
 | Mooring size lacks positivity validation; supplier unknown columns are ignored by default model configuration | [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L13-L39] [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L35-L66] | no detection check exists; issue pending (3) for component validation, issue pending (4) for supplier schema policy. |
 | Catalogue unit labels disagree with dimensional field suffixes | [data/catalog.yaml:L1730-L1741] [data/catalog.yaml:L1785-L1800] | no detection check exists; issue pending (5); do not use these labels as a conversion reference. |
@@ -242,7 +265,7 @@ Map source: `digitalmodel`, `docs/registry/implementation-map.yaml`, schema 1; r
 | --- | --- |
 | Map families with at least one row inside the package | 0; empty inventory. (Implementation map, named data revision, `families[*].implementations[*].path`.) |
 | Counted families | 0; no ranked family or path-vocabulary exclusion applies. (Implementation map, named data revision, implementation paths.) |
-| Counted-family signal grep | NOT_APPLICABLE: no map family has an implementation row in this package. (Implementation map, named data revision, implementation paths.) |
+| Counted-family signal grep | NOT_APPLICABLE: the map inventories digitalmodel only; no map family has an implementation row in this package. (Implementation map, named data revision, implementation paths.) |
 | Further second implementations counted for A8 | 0; empty counted-family set. (Implementation map, named data revision, implementation paths.) |
 | A8 producer result | PASS for empty inventory; map follow-up below remains required. (Implementation map, named data revision, implementation paths.) |
 
@@ -263,7 +286,7 @@ rg -n 'subsea|manifold|jumper|mooring' scripts --glob '*.py'
 | Integration `_pick_jumper`, `_pick_mooring` | Delegating loaders plus independent representative ranking; outside-package selection map gap, issue pending (7). [src/worldenergydata/field_development/integrations.py:L224-L249] |
 | Demo `pick_chain_component` | Separate CSV reader and maximum-MBL chain selection; outside-package map gap, issue pending (7); inspected only, not executed. [scripts/demo/_mooring_live.py:L44-L50] |
 | Emerging-basin schema `_coerce_int` | Separate `int(float(v))` normalization with its own unknown-token policy; outside-package map gap, issue pending (7). [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discovery_schema.py:L97-L109] |
-| CAD `build_jumper_solid`, `build_jumper_from_catalog` | Geometry implementation and delegating catalog selection; not an additional in-package data validator; downstream coverage gap, issue pending (6). [src/worldenergydata/field_development/equipment_3d.py:L53-L106] |
+| CAD `build_jumper_solid`, `build_jumper_from_catalog` | Geometry implementation and delegating catalog selection; not an additional in-package data validator; downstream environment reproducibility follow-up, issue pending (6). [src/worldenergydata/field_development/equipment_3d.py:L53-L106] |
 
 Further-search findings do not change the empty counted-family A8 result. (Implementation map, schema 1, named data revision, implementation paths.)
 
@@ -290,29 +313,36 @@ The complete package Python inventory is seven files; no Python subpackage is ex
 
 Discovery used `rg --files` under the package and `rg -n` over `docs`, `tests`, `packages`, `src` and `scripts` for `worldenergydata[./]subsea`, the three public schema names, loader names and dataset file stems; generic engineering uses of the word subsea were separated from package/API references. [packages/worldenergydata-subsea/src/worldenergydata/subsea/__init__.py:L1-L8] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/__init__.py:L3-L17] [tests/unit/curated/test_csv_validation.py:L8-L21]
 
-The code inventory contains 31 directly relevant test functions (14 supplier, 10 component and 7 downstream CAD), plus 13 downstream integration tests; module-level CAD skip counts as one pytest collection skip, not seven executed tests. [tests/unit/subsea/test_manifold_suppliers.py:L32-L125] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L12-L96] [tests/modules/field_development/test_integrations.py:L33-L142]
+The code inventory contains 31 directly relevant test functions (14 supplier, 10 component and 7 downstream CAD), plus 13 downstream integration tests. When CAD is unavailable, the module guard counts as one pytest collection skip; the current final run executes all 44 functions. [tests/unit/subsea/test_manifold_suppliers.py:L32-L125] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L12-L96] [tests/modules/field_development/test_integrations.py:L33-L142]
 
 ### Recorded offline results
 
-All runs used code pin `6149361d36373afe24fe1b0c1fe59886375d46b7`; the final runs were performed on the uncommitted documentation tree, with identical code/test inputs and ordinary uv sources, no addopts override. [tests/unit/subsea/test_manifold_suppliers.py:L32-L125] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L12-L96]
+All runs use code pin `6149361d36373afe24fe1b0c1fe59886375d46b7`. Revision 0 observations are preserved in the first table; current revision 1 results follow it. Runtime code and test inputs remain unchanged, and checks run on the uncommitted documentation tree. [tests/unit/subsea/test_manifold_suppliers.py:L32-L125] [tests/unit/curated/test_csv_validation.py:L24-L110] [tests/modules/field_development/test_equipment_3d.py:L12-L96]
 
-| Command scope | Baseline | Final | Interpretation |
+| Revision 0 command scope | Baseline | Final | Interpretation |
 | --- | --- | --- | --- |
 | Direct supplier/component tests plus CAD file | 24 passed, 0 failed, 1 module skip | 24 passed, 0 failed, 1 module skip | 24 executed nodes; the CAD guard skips collection. [tests/modules/field_development/test_equipment_3d.py:L12-L14] |
 | Same paths plus downstream integration file | 37 passed, 0 failed, 1 module skip | 37 passed, 0 failed, 1 module skip | 37 executed nodes; CAD remains unavailable. [tests/modules/field_development/test_integrations.py:L33-L142] |
 | Declared test/CAD extra attempt | pytest NOT_RUN; resolver exit 2 | Same availability limitation, not retried | `nlopt==2.10.0` has no source distribution or compatible wheel; dependency setup stops before collection. [pyproject.toml:L178-L184] |
 
-The seven individual downstream CAD nodes below are all NOT_RUN for the same unavailable declared extra; the single collection skip above is not seven executed or passing tests. [tests/modules/field_development/test_equipment_3d.py:L12-L96]
+| Revision 1 command scope | Result | Interpretation |
+| --- | --- | --- |
+| Same four test files, initial minimal environment | 36 passed, 1 failed, 1 collection skip | The first FDAS import fails because `numpy-financial` is missing; a direct import probe confirms the missing declared dependency. It is installed before the final run. CAD is initially absent. [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L13-L16] [packages/worldenergydata-fdas/pyproject.toml:L41-L45] |
+| Same four test files, complete focused environment | 44 passed, 0 failed, 0 skipped | Includes all seven CAD nodes and the recovered integration case; V1 also passes. [tests/modules/field_development/test_equipment_3d.py:L12-L96] [tests/modules/field_development/test_integrations.py:L33-L142] |
 
-| Existing node suffix in `tests/modules/field_development/test_equipment_3d.py` | Result |
+The current isolated environment uses Python 3.11.15, pytest 9.1.1, pandas 2.3.3, Pydantic 2.14.1, CadQuery 2.8.0, nlopt 2.11.0 and numpy-financial 1.0.0. These are observed test-environment versions; reproducibility in the locked project and other supported environments remains a follow-up, issue pending (6). [pyproject.toml:L143-L157] [pyproject.toml:L178-L184] [packages/worldenergydata-fdas/pyproject.toml:L41-L45]
+
+The seven individual downstream CAD nodes below all pass in the current final run. The historical collection skips above represent unavailable CAD collection, rather than executed nodes. [tests/modules/field_development/test_equipment_3d.py:L12-L96]
+
+| Existing test node ID | Result |
 | --- | --- |
-| `::test_builds_a_valid_solid` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L46-L49] |
-| `::test_volume_matches_hollow_pipe_formula` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L52-L61] |
-| `::test_is_hollow_less_than_solid_cylinder` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L64-L68] |
-| `::test_wall_too_thick_raises` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L71-L73] |
-| `::test_export_writes_step_file` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L76-L80] |
-| `::test_build_from_catalog` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L86-L91] |
-| `::test_unknown_component_raises_keyerror` | NOT_RUN: unavailable CAD extra. [tests/modules/field_development/test_equipment_3d.py:L94-L96] |
+| `tests/modules/field_development/test_equipment_3d.py::test_builds_a_valid_solid` | PASS. [tests/modules/field_development/test_equipment_3d.py:L46-L49] |
+| `tests/modules/field_development/test_equipment_3d.py::test_volume_matches_hollow_pipe_formula` | PASS. [tests/modules/field_development/test_equipment_3d.py:L52-L61] |
+| `tests/modules/field_development/test_equipment_3d.py::test_is_hollow_less_than_solid_cylinder` | PASS. [tests/modules/field_development/test_equipment_3d.py:L64-L68] |
+| `tests/modules/field_development/test_equipment_3d.py::test_wall_too_thick_raises` | PASS. [tests/modules/field_development/test_equipment_3d.py:L71-L73] |
+| `tests/modules/field_development/test_equipment_3d.py::test_export_writes_step_file` | PASS. [tests/modules/field_development/test_equipment_3d.py:L76-L80] |
+| `tests/modules/field_development/test_equipment_3d.py::test_build_from_catalog` | PASS. [tests/modules/field_development/test_equipment_3d.py:L86-L91] |
+| `tests/modules/field_development/test_equipment_3d.py::test_unknown_component_raises_keyerror` | PASS. [tests/modules/field_development/test_equipment_3d.py:L94-L96] |
 
 ### Unverified claims
 
@@ -326,6 +356,8 @@ The seven individual downstream CAD nodes below are all NOT_RUN for the same una
 
 ### Open items
 
+Numbered issue-pending markers identify drafts, not filed issues. The accompanying issue-draft list contains Draft 1 through Draft 10; the maintainers will create the issues and replace the corresponding markers before A7 clearance. Existing #349 remains the filed readiness follow-up.
+
 | Item | Required follow-up and responsibility | Tracking |
 | --- | --- | --- |
 | Missing/empty data, caches and query omissions | Maintainer: define unavailable versus empty state, reload/mutation policy and omission-accounting tests; S01–S08 | issue pending (1). [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L39-L93] |
@@ -333,10 +365,10 @@ The seven individual downstream CAD nodes below are all NOT_RUN for the same una
 | Component validation and missing cells | Maintainer: finite-value, geometry, completeness and missing-cell policies | issue pending (3). [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L13-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L13-L55] |
 | Supplier normalization and provenance completeness | Maintainer: absent/blank/null list and scalar cases, source/date formats and unknown-key policy | issue pending (4). [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L38-L152] |
 | Unit qualification | Maintainer: resolve U1 before dimensional reuse | issue pending (5). [data/catalog.yaml:L1730-L1741] [data/catalog.yaml:L1789-L1796] |
-| CAD tests | Maintainer: supply a compatible declared-extra environment; all seven downstream CAD node results remain NOT_RUN | issue pending (6); context #580. [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
+| CAD environment reproducibility | Maintainer: preserve the working declared-extra versions and make seven-node CAD coverage reproducible; the current final run passes all seven nodes | issue pending (6); context #580. [tests/modules/field_development/test_equipment_3d.py:L12-L96] |
 | Historical readiness claims | Maintainer: reconcile U2 and obsolete source/test inventory | #349. [docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.yaml:L822-L835] |
 | Map and shared index follow-up | Maintainer: add all six section-3 method families, register outside-package search findings and index this pack | issue pending (7). [packages/worldenergydata-subsea/src/worldenergydata/subsea/schemas/manifold_supplier.py:L70-L152] [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L35-L93] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L25-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L24-L55] |
-| Independent worked example and source basis | Maintainer: establish U3 and an independent data-validation benchmark; 0 validated examples are claimed here | issue pending (8). [tests/unit/subsea/test_manifold_suppliers.py:L32-L99] |
+| Independent catalogue example and source basis | Maintainer: establish U3 and an independent data-validation benchmark; V1 validates synthetic geometry only | issue pending (8). [tests/unit/subsea/test_manifold_suppliers.py:L32-L99] [tests/modules/field_development/test_equipment_3d.py:L52-L61] |
 | Distribution and deputy | Maintainer: resolve U4 and U5 before relying on exclusion or review assignment | issue pending (9), issue pending (10). [packages/worldenergydata-subsea/pyproject.toml:L49-L55] (AQG r0, section 11.) |
 
 No module-routing registry is present at the code pin, so no registry file is changed; package registration remains in the existing module manifest. [module-manifest.yaml:L491-L506]
