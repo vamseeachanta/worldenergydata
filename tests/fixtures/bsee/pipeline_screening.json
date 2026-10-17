@@ -1,0 +1,68 @@
+{
+  "description": "Synthetic screening fixture; not engineering input",
+  "permits": [
+    {
+      "SEGMENT_NUM": "synthetic-active",
+      "STATUS_CODE": "ACT",
+      "PPL_SIZE_CODE": "06",
+      "MAOP_PRSS": 1000,
+      "SEG_LENGTH": 1,
+      "MIN_WTR_DPTH": 40,
+      "MAX_WTR_DPTH": 100,
+      "PROD_CODE": "OIL",
+      "BURIAL_DESIGN": "Y"
+    },
+    {
+      "SEGMENT_NUM": "synthetic-abandoned",
+      "STATUS_CODE": "ABN"
+    },
+    {
+      "SEGMENT_NUM": "synthetic-removed",
+      "STATUS_CODE": "RMV"
+    },
+    {
+      "SEGMENT_NUM": "synthetic-out",
+      "STATUS_CODE": "OUT"
+    }
+  ],
+  "locations": [
+    {
+      "SEGMENT_NUM": "synthetic-active",
+      "POINT_NUM": 2,
+      "LATITUDE": 0,
+      "LONGITUDE": 2,
+      "WATER_DEPTH": 15
+    },
+    {
+      "SEGMENT_NUM": "synthetic-active",
+      "POINT_NUM": 1,
+      "LATITUDE": 0,
+      "LONGITUDE": 0,
+      "WATER_DEPTH": 10
+    }
+  ],
+  "defaults": {
+    "permit_length_unit": {
+      "value": "mile",
+      "rationale": "Synthetic conversion case"
+    },
+    "empty_density": {
+      "value": 0,
+      "rationale": "No contents mass"
+    },
+    "product_density": {
+      "value": null,
+      "rationale": "No product measurement supplied"
+    },
+    "status_meanings": {
+      "value": {
+        "ACT": "ACTIVE",
+        "ABN": "ABANDONED",
+        "RMV": "REMOVED",
+        "OUT": "OUT OF SERVICE",
+        "PREM": "PROPOSE REMOVAL"
+      },
+      "rationale": "Known status meanings for a synthetic screening fixture"
+    }
+  }
+}
