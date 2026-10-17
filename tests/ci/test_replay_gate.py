@@ -80,9 +80,7 @@ class FakeAPI:
 
 def decide(replay, api, **kwargs):
     """Invoke the real decision engine without real sleeping or networking."""
-    return replay.decide(
-        api, CONTEXT, "Lint", sleep=api.sleep, monotonic=lambda: api.elapsed, **kwargs
-    )
+    return replay.decide(api, CONTEXT, "Lint", **kwargs)
 
 
 def test_title_edit_after_green(replay):
@@ -124,27 +122,80 @@ def test_no_earlier_run(replay):
     assert decide(replay, api)["decision"] == "FAIL"
 
 
-def test_in_progress_source_is_waited_for(replay):
-    """The latest active full run wins over an older green run."""
+def test_in_progress_newer_run_is_ignored(replay):
+    """Only completed evidence decides; an active run cannot delay an edit."""
     api = FakeAPI()
-    api.runs[0].update(status="in_progress", conclusion=None)
-
-    def finish():
-        api.runs[0].update(status="completed", conclusion="success")
-
-    api.on_sleep = finish
-    assert decide(replay, api)["decision"] == "PASS"
-    assert api.elapsed == 30
+    api.runs.insert(0, run(95, None, "in_progress"))
+    api.artifacts[95] = api.artifacts[90]
+    result = decide(replay, api)
+    assert result["decision"] == "PASS"
+    assert result["run_id"] == 90
+    assert api.elapsed == 0
 
 
-def test_wait_timeout(replay):
-    """A full run that never completes fails at the 45-minute boundary."""
+def test_no_completed_run_fails_closed(replay):
+    """An edit fails immediately when its only full run is still queued."""
     api = FakeAPI()
     api.runs[0].update(status="queued", conclusion=None)
     result = decide(replay, api)
     assert result["decision"] == "FAIL"
-    assert "timeout" in result["reason"]
-    assert api.elapsed == 2700
+    assert api.elapsed == 0
+
+
+@pytest.mark.parametrize("mode_result", ["failure", "cancelled", "skipped", None])
+def test_newer_completed_full_run_without_marker_fails(replay, mode_result):
+    """A newer unmarked full run must never fall back to older green evidence."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, "failure"))
+    api.jobs[95] = [
+        {"name": "Gate mode", "status": "completed", "conclusion": mode_result},
+        {"name": "Lint", "conclusion": "failure"},
+    ]
+    result = decide(replay, api)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "full run without base-tip evidence"
+
+
+def test_completed_replay_reaches_older_full_run(replay):
+    """A successful mode with no marker identifies a completed replay."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95))
+    api.jobs[95] = [
+        {"name": "Gate mode", "status": "completed", "conclusion": "success"}
+    ]
+    result = decide(replay, api)
+    assert result["decision"] == "PASS"
+    assert result["run_id"] == 90
+
+
+@pytest.mark.parametrize("status", [None, "queued", "in_progress"])
+def test_unfinished_mode_cannot_identify_replay(replay, status):
+    """A success conclusion alone cannot certify completed replay identity."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, "failure"))
+    api.jobs[95] = [{"name": "Gate mode", "status": status, "conclusion": "success"}]
+    assert decide(replay, api)["decision"] == "FAIL"
+
+
+@pytest.mark.parametrize("conclusion", ["success", "failure"])
+def test_duplicate_modes_cannot_identify_replay(replay, conclusion):
+    """Ambiguous mode identity cannot hide a newer unmarked full run."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, "failure"))
+    api.jobs[95] = [
+        {"name": "Gate mode", "status": "completed", "conclusion": "success"},
+        {"name": "Gate mode", "status": "completed", "conclusion": conclusion},
+    ]
+    assert decide(replay, api)["decision"] == "FAIL"
+
+
+def test_startup_failure_without_jobs_reaches_older_full_run(replay):
+    """The review permits skipping a startup failure that created no jobs."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, "failure"))
+    result = decide(replay, api)
+    assert result["decision"] == "PASS"
+    assert result["run_id"] == 90
 
 
 @pytest.mark.parametrize("conclusion", ["cancelled", "neutral", "action_required"])
@@ -175,13 +226,11 @@ def test_active_replay_is_not_waited_for(replay):
     "conclusion", ["success", "skipped", "failure", "timed_out", "cancelled", None]
 )
 def test_same_named_job_conclusions(replay, conclusion):
-    """Only a successful or deliberately skipped source job passes."""
+    """Only a successful source job passes."""
     api = FakeAPI()
     api.jobs[90][0]["conclusion"] = conclusion
     result = decide(replay, api)
-    assert result["decision"] == (
-        "PASS" if conclusion in ("success", "skipped") else "FAIL"
-    )
+    assert result["decision"] == ("PASS" if conclusion == "success" else "FAIL")
 
 
 @pytest.mark.parametrize(
@@ -213,14 +262,12 @@ def test_missing_same_named_job(replay):
 
 
 @pytest.mark.parametrize("reverse", [False, True])
-def test_duplicate_job_names_ignore_inactive_twin(replay, reverse):
-    """The completed heavy job wins over its same-named skipped twin."""
+def test_duplicate_job_names_fail_closed(replay, reverse):
+    """Duplicate required names cannot certify an unambiguous result."""
     api = FakeAPI()
     api.jobs[90].append({"id": 4, "name": "Lint", "conclusion": "skipped"})
     if reverse:
         api.jobs[90].reverse()
-    assert decide(replay, api)["job_id"] == 3
-    next(job for job in api.jobs[90] if job["id"] == 3)["conclusion"] = "failure"
     assert decide(replay, api)["decision"] == "FAIL"
 
 

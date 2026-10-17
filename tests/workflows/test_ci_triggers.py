@@ -216,41 +216,77 @@ def test_base_change_runs_full_gate() -> None:
         )
 
 
-def test_required_names_have_complementary_twins() -> None:
-    """Every required name has a full job and a real-result replay twin."""
+def test_required_names_have_single_result_job() -> None:
+    """Each required check has one cancellable job that gates full or replay."""
     jobs = _load_workflow()["jobs"]
-    names = ("Lint", "Type Check", "Security Scan", "Documentation", "Test (PR gate)")
-    for name in names:
-        matches = [(key, job) for key, job in jobs.items() if job.get("name") == name]
-        assert len(matches) == 2
-        full = [job for key, job in matches if not key.endswith("-replay")][0]
-        twin = [job for key, job in matches if key.endswith("-replay")][0]
-        assert "always()" in full["if"]
-        assert "needs.mode.outputs.replay != 'true'" in full["if"]
-        assert twin["if"] == (
-            "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
+    required = {
+        "Lint": "lint",
+        "Type Check": "type-check",
+        "Security Scan": "security",
+        "Documentation": "docs",
+        "Test (PR gate)": "domain-tests",
+    }
+    for name, heavy_id in required.items():
+        matches = [job for job in jobs.values() if job.get("name") == name]
+        assert len(matches) == 1
+        gate = matches[0]
+        assert gate["needs"] == ["mode", heavy_id]
+        assert "!cancelled()" in gate["if"]
+        assert "needs.mode.outputs.replay" not in gate["if"]
+        assert gate["permissions"] == {"contents": "read", "actions": "read"}
+        checkout, replay, full = gate["steps"]
+        assert (
+            checkout["if"]
+            == replay["if"]
+            == ("needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'")
         )
-        assert "mode" in full["needs"]
-        assert twin["needs"] == ["mode"]
-        assert twin["permissions"] == {"contents": "read", "actions": "read"}
-        assert twin["steps"][-1]["env"]["CHECK_NAME"] == name
+        assert replay["env"]["CHECK_NAME"] == name
+        assert full["if"] == (
+            "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
+        )
+        assert full["env"]["FULL_RESULT"] == "${{ needs." + heavy_id + ".result }}"
+        for result, expected in [
+            ("success", 0),
+            ("failure", 1),
+            ("skipped", 1),
+            ("cancelled", 1),
+            ("", 1),
+        ]:
+            completed = subprocess.run(
+                ["bash", "-e", "-c", full["run"]],
+                env={**os.environ, "FULL_RESULT": result},
+                capture_output=True,
+            )
+            assert completed.returncode == expected
         for mode_result in ("success", "failure", "cancelled"):
             for output in ("true", "false", ""):
                 context = {
                     "needs.mode.result": mode_result,
                     "needs.mode.outputs.replay": output,
-                    "github.event_name": "pull_request",
                 }
-                heavy_runs = _evaluate_expression(
-                    full["if"].replace("always()", "True"), context
+                assert bool(_evaluate_expression(replay["if"], context)) != bool(
+                    _evaluate_expression(full["if"], context)
                 )
-                twin_runs = _evaluate_expression(twin["if"], context)
-                assert int(bool(heavy_runs)) + int(bool(twin_runs)) == 1
-    for key, job in jobs.items():
-        if key != "mode" and not key.endswith("-replay"):
-            assert "needs.mode.outputs.replay != 'true'" in job["if"], key
-            assert "always()" in job["if"], key
-            assert "mode" in job["needs"], key
+
+
+def test_full_jobs_honor_cancellation() -> None:
+    """All seven heavy jobs remain cancellable after mode failure."""
+    jobs = _load_workflow()["jobs"]
+    for key in (
+        "domain-tests",
+        "test",
+        "lint",
+        "type-check",
+        "security",
+        "build",
+        "docs",
+    ):
+        condition = jobs[key]["if"]
+        assert "always()" not in condition, key
+        assert "!cancelled()" in condition, key
+        assert "needs.mode.outputs.replay != 'true'" in condition, key
+        assert "needs.mode.result != 'success'" in condition, key
+        assert "mode" in jobs[key]["needs"]
     assert "needs.lint.result == 'success'" in jobs["build"]["if"]
     assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
     assert not any(
@@ -268,7 +304,7 @@ def _checkout_steps() -> list:
         for job_id, job in _load_workflow()["jobs"].items()
         for index, step in enumerate(job.get("steps", []))
         if step.get("uses", "").startswith("actions/checkout@")
-        and not job_id.endswith("-replay")
+        and step.get("name") != "Checkout replay lookup"
     ]
 
 

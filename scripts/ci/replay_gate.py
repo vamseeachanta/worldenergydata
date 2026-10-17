@@ -42,15 +42,17 @@ def matching(run: dict[str, Any], context: dict[str, Any]) -> bool:
 
 
 def source(api: API, context: dict[str, Any]) -> tuple[dict, str, list] | None:
-    """Choose the newest decisive full run, or a pending possible full run."""
+    """Choose the newest completed decisive full run; never use older evidence."""
     root = f"repos/{context['repository']}/actions"
     query = urlencode({"event": "pull_request", "head_sha": context["head"]})
     runs = pages(api, f"{root}/workflows/ci.yml/runs?{query}", "workflow_runs")
     for run in sorted(runs, key=lambda item: item["id"], reverse=True):
         if not matching(run, context):
             continue
-        if run["status"] == "completed" and run["conclusion"] not in (
-            "success", "failure", "timed_out"
+        if run["status"] != "completed" or run["conclusion"] not in (
+            "success",
+            "failure",
+            "timed_out",
         ):
             continue
         artifacts = pages(api, f"{root}/runs/{run['id']}/artifacts", "artifacts")
@@ -64,36 +66,33 @@ def source(api: API, context: dict[str, Any]) -> tuple[dict, str, list] | None:
         ]
         if len(tips) > 1:
             raise ValueError("ambiguous base-tip evidence")
-        if len(tips) == 1 and run["status"] != "completed":
-            return run, tips[0], []
         jobs = pages(
             api, f"{root}/runs/{run['id']}/attempts/{run['run_attempt']}/jobs", "jobs"
         )
         if len(tips) == 1:
             return run, tips[0], jobs
         if any(item["name"].startswith("gate-tip-") for item in artifacts):
-            if run["status"] == "completed":
-                raise ValueError("missing current-attempt base-tip evidence")
-            return run, "", jobs
-        if run["status"] != "completed" and not any(
-            job["name"] == "Gate mode" and job.get("status") == "completed"
-            for job in jobs
+            raise ValueError("missing current-attempt base-tip evidence")
+        modes = [job for job in jobs if job["name"] == "Gate mode"]
+        if not jobs or (
+            len(modes) == 1
+            and modes[0].get("status") == "completed"
+            and modes[0].get("conclusion") == "success"
         ):
-            return run, "", jobs
+            continue
+        raise ValueError("full run without base-tip evidence")
     return None
 
 
 def copy_job(jobs: list[dict], name: str, result: dict) -> dict:
-    """A skipped twin never overrides a non-skipped source conclusion."""
+    """Require exactly one successful source job under the required name."""
     matches = [job for job in jobs if job["name"] == name]
-    active = [job for job in matches if job.get("conclusion") != "skipped"]
-    decisive = active if active else matches
-    if len(active) > 1 or not decisive:
+    if len(matches) != 1:
         result["reason"] = "missing or ambiguous source job"
         return result
-    job = decisive[0]
+    job = matches[0]
     result.update(job_id=job["id"], conclusion=job.get("conclusion"))
-    if job.get("conclusion") in ("success", "skipped"):
+    if job.get("conclusion") == "success":
         result.update(decision="PASS", reason="source job passed")
     else:
         result["reason"] = "source job did not pass"
@@ -104,44 +103,44 @@ def decide(
     api: API,
     context: dict[str, Any],
     job_name: str,
-    *,
-    sleep: Callable[[float], None] = time.sleep,
-    monotonic: Callable[[], float] = time.monotonic,
-    timeout: int = 2700,
 ) -> dict[str, Any]:
     """Fail closed on absent, stale, failed or unverifiable full-run evidence."""
     result = dict(
-        decision="FAIL", reason="no earlier decisive full run", run_id=None,
-        attempt=None, head=context["head"], recorded_tip=None, live_tip=None,
-        job_id=None, conclusion=None,
+        decision="FAIL",
+        reason="no earlier decisive full run",
+        run_id=None,
+        attempt=None,
+        head=context["head"],
+        recorded_tip=None,
+        live_tip=None,
+        job_id=None,
+        conclusion=None,
     )
-    deadline = monotonic() + timeout
     try:
-        while True:
-            candidate = source(api, context)
-            if candidate is None:
-                return result
-            run, tip, jobs = candidate
-            result.update(run_id=run["id"], attempt=run["run_attempt"], recorded_tip=tip)
-            if run["status"] == "completed":
-                break
-            remaining = deadline - monotonic()
-            if remaining <= 0:
-                result["reason"] = "timeout waiting for earlier full run"
-                return result
-            sleep(min(30, remaining))
+        candidate = source(api, context)
+        if candidate is None:
+            return result
+        run, tip, jobs = candidate
+        result.update(run_id=run["id"], attempt=run["run_attempt"], recorded_tip=tip)
         result = copy_job(jobs, job_name, result)
         base = quote(context["base_ref"], safe="")
         live = api(f"repos/{context['repository']}/branches/{base}")["commit"]["sha"]
         result["live_tip"] = live
         if live != tip:
             result["decision"] = "FAIL"
-            result["reason"] = "the base moved since the last full run; push or re-run the gate"
+            result["reason"] = (
+                "the base moved since the last full run; push or re-run the gate"
+            )
             return result
         return result
-    except (OSError, HTTPException, ValueError, KeyError, TypeError):
+    except (OSError, HTTPException, ValueError, KeyError, TypeError) as error:
         result["decision"] = "FAIL"
-        result["reason"] = "API evidence unavailable or malformed"
+        result["reason"] = (
+            "full run without base-tip evidence"
+            if isinstance(error, ValueError)
+            and str(error) == "full run without base-tip evidence"
+            else "API evidence unavailable or malformed"
+        )
         return result
 
 
@@ -181,7 +180,9 @@ def main() -> int:
         context = dict(
             repository=os.environ["GITHUB_REPOSITORY"],
             run_id=int(os.environ["GITHUB_RUN_ID"]),
-            head=pr["head"]["sha"], pr=pr["number"], base_ref=pr["base"]["ref"],
+            head=pr["head"]["sha"],
+            pr=pr["number"],
+            base_ref=pr["base"]["ref"],
             base_repository_id=pr["base"]["repo"]["id"],
         )
         result = decide(request_json, context, sys.argv[1])
