@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "candidate_event_count": 50,
+  "source_count": 52,
+  "accepted_event_count": 0,
+  "bulk_admitted": false,
+  "status": "candidate_validation_passed_acceptance_blocked",
+  "storage": "external job storage; canonical placement pending",
+  "relative_location": "modules/hse/offshore/candidate-validation-v1",
+  "candidate_packet_sha256": "771dd845729cbb7f21f29ddf748b9dcbc3a412cfc4aff90fff959c794532a8ad",
+  "sample_sha256": "0f8f972d8810df48025dd465350bdf9ed9749afdbbae0ff678db7cf0c9bcd3da",
+  "independently_rechecked_events": 5,
+  "pilot_status": "two_current_sources_one_unverified_cached_source",
+  "external_indexes": {
+    "hse": "unavailable",
+    "marine_safety": "complete_index_unavailable"
+  },
+  "private_catalog_status": "unavailable; not modified",
+  "privacy_review": "Curated strings inspected; no personal names found. Exact text inventory and contact checks pass; no universal name-recognition claim.",
+  "checks": {
+    "schema_fields": "PASS: 50 events and 52 sources",
+    "unique_source_references": "PASS",
+    "within_packet_event_matching": "PASS: no duplicate pair",
+    "planted_duplicate": "PASS: second pilot intake added zero evidence rows",
+    "independent_source_sample": "PASS: 5 of 50, plus partial pilot check",
+    "pilot_three_public_sources": "NOT_PASSED: HSE notice unavailable",
+    "existing_dataset_deduplication": "NOT_RUN: complete canonical indexes unavailable",
+    "bulk_acceptance": "NOT_RUN: pilot and canonical dedup prerequisites unmet"
+  },
+  "sha256": {
+    "events.json": "dc819b7977e68da435579fee9a0568bbef4478800a54dd400a1d70377de16e11",
+    "sources.json": "8f65cda5b1ed0aad683f68d7b6ba3186a37408c8f8eb39f3568e87fc026f85ba"
+  }
+}
