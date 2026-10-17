@@ -238,6 +238,14 @@ class OffshoreImporter:
                                 raise ValueError(
                                     "conflicting event classification; explicit review required"
                                 )
+                        if (
+                            not linked
+                            and db.execute(
+                                "SELECT 1 FROM external_links WHERE event_id=?",
+                                (incoming_id,),
+                            ).fetchone()
+                        ):
+                            raise ValueError("conflicting event ID")
                         target_id = linked[0] if linked else incoming_id
                         count = db.execute(
                             "SELECT count(*) FROM (SELECT event_id FROM events UNION SELECT event_id FROM external_links)"
@@ -270,6 +278,18 @@ class OffshoreImporter:
                         )
                         stats["linked_existing"] += int(not linked)
                     else:
+                        if any(
+                            row[key] != target[key]
+                            for key in (
+                                "operation",
+                                "failure_mode",
+                                "failure_summary",
+                                "equipment",
+                            )
+                        ):
+                            raise ValueError(
+                                "conflicting event classification; explicit review required"
+                            )
                         target_id = target["event_id"]
                         identity = merge_identity(target, row)
                         if (

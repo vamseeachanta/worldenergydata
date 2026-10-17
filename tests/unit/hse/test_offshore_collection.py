@@ -914,3 +914,129 @@ def test_committed_packets_exclude_cached_evidence():
     for name in ("pilot.json", "sample.json"):
         rows = json.loads((root / name).read_text())
         assert all(row["access_status"] == "public" for row in rows["sources"])
+
+
+@pytest.mark.parametrize("stage", ["pilot", "candidate"])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"operation": "lifting"},
+        {"failure_mode": "equipment failure"},
+        {"failure_summary": "equipment failed during handling"},
+        {"equipment": ["hoist"]},
+    ],
+)
+def test_stored_classification_conflict_rolls_back_reviewed_pilot(
+    tmp_path, stage, changes
+):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    approve_test_pilot(importer)
+    importer = OffshoreImporter(importer.database)
+    with importer.connect() as db:
+        before = list(db.iterdump())
+    rows = packet(
+        [event(event_id="another", **changes)],
+        [source(event_id="another", source_ref="second")],
+    )
+    with pytest.raises(
+        ValueError,
+        match="conflicting event classification; explicit review required",
+    ):
+        importer.ingest(rows, stage=stage)
+    with importer.connect() as db:
+        assert list(db.iterdump()) == before
+
+
+@pytest.mark.parametrize("route", ["stored", "linked"])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"operation": "lifting"},
+        {"failure_mode": "equipment failure"},
+        {"failure_summary": "equipment failed during handling"},
+        {"equipment": ["hoist"]},
+    ],
+)
+def test_same_packet_classification_conflict_rolls_back(tmp_path, route, changes):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    existing = []
+    if route == "linked":
+        existing = [
+            dict(
+                module="hse",
+                record_id="42",
+                event_date="2024-02-01",
+                country="GB",
+                installation_name="test installation",
+            )
+        ]
+    with importer.connect() as db:
+        before = list(db.iterdump())
+    rows = packet(
+        [event(), event(event_id="another", **changes)],
+        [source(), source(event_id="another", source_ref="second")],
+    )
+    with pytest.raises(
+        ValueError,
+        match="conflicting event classification; explicit review required",
+    ):
+        importer.ingest(rows, existing=existing)
+    with importer.connect() as db:
+        assert list(db.iterdump()) == before
+
+
+@pytest.mark.parametrize("module", ["hse", "marine_safety"])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {},
+        {"operation": "lifting"},
+        {"failure_mode": "equipment failure"},
+        {"failure_summary": "equipment failed during handling"},
+        {"equipment": ["hoist"]},
+    ],
+)
+def test_existing_event_id_cannot_gain_second_intake_link(tmp_path, module, changes):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    importer.ingest(
+        packet(),
+        existing=[
+            dict(
+                module="hse",
+                record_id="42",
+                event_date="2024-02-01",
+                country="GB",
+                installation_name="test installation",
+            )
+        ],
+    )
+    approve_test_pilot(importer)
+    importer = OffshoreImporter(importer.database)
+    rows = packet(
+        [
+            event(
+                event_date="2024-03-01",
+                installation_name="different installation",
+                installation_aliases=[],
+                **changes,
+            )
+        ]
+    )
+    with importer.connect() as db:
+        before = list(db.iterdump())
+    with pytest.raises(ValueError, match="conflicting event ID"):
+        importer.ingest(
+            rows,
+            existing=[
+                dict(
+                    module=module,
+                    record_id="43",
+                    event_date="2024-03-01",
+                    country="GB",
+                    installation_name="different installation",
+                )
+            ],
+            stage="candidate",
+        )
+    with importer.connect() as db:
+        assert list(db.iterdump()) == before

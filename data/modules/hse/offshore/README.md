@@ -25,6 +25,8 @@ Index JSON has top-level keys `hse` and `marine_safety`, each containing `comple
 
 Exact `(source, source_ref)` references are unique. Reruns add no duplicate evidence rows. Event matching requires normalized installation names or reviewed aliases, country and dates within two days; BSEE also uses exact date plus lease/area-block. Ambiguity stops intake for explicit review. Approximate spelling matches are not accepted. Matches and exact duplicates are logged with rule, score and disposition. Existing datasets are linked, never copied. Every evidence-table mutation invalidates bulk/index acceptance receipts.
 
+Intake refuses a matching row when its operation, failure mode, failure summary or equipment differs from the stored event or non-empty link annotations. A conflict requires explicit review; intake preserves the curated classification. An event ID already linked to an existing record cannot create a second link through `ingest(existing=...)`. Both refusals roll back the entire packet, including source evidence, deduplication logs and review receipts.
+
 ## Privacy and review limits
 
 The importer rejects unreviewed string values and contact patterns before persistence. The reviewed-text inventory must be curated and independently checked; the importer does not generate it. Contact checks also cover external identities. This is an admission control, not universal personal-name recognition: a falsely approved inventory can still contain a name. Review receipts have a closed schema and cannot carry free-form reviewer names or notes. `InjuryIncident.injured_person_name` is untouched.
