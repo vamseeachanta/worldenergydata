@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source": "uk_hse",
+      "url": "https://resources.hse.gov.uk/notices",
+      "licence": "OGL-3.0 (scope not reconfirmed)",
+      "terms_url": "https://www.hse.gov.uk/copyright.htm",
+      "terms_status": "copyright link returned 404; issue cites OGL except otherwise stated",
+      "access_status": "unverified_transport_error_and_403",
+      "robots_status": "legacy transport error; current register 403; temporary spreadsheet disallowed",
+      "notes": "Unverified notice retained as a candidate link only; no cached assertion is admitted as evidence.",
+      "alternate_urls": [
+        "https://notices.hse.gov.uk/",
+        "https://www.hse.gov.uk/enforce/temporary-register-notices.htm"
+      ],
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "current access attempted; notice not reached"
+    },
+    {
+      "source": "opred",
+      "url": "https://itportal.energysecurity.gov.uk/irs/publications/pon1/",
+      "licence": "OGL-3.0",
+      "terms_url": "https://itportal.energysecurity.gov.uk/irs/publications/pon1/2024/notification/4966",
+      "terms_status": "confirmed OGL v3.0 in official record footer",
+      "access_status": "public",
+      "robots_status": "record paths permitted",
+      "notes": "Exact release metadata; observed time has no published timezone.",
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+    },
+    {
+      "source": "bsee",
+      "url": "https://www.bsee.gov/what-we-do/incident-investigations/offshore-incident-investigations/district-investigation-reports",
+      "licence": "US federal works; third-party exceptions not cleared",
+      "terms_url": "https://www.bsee.gov/",
+      "terms_status": "federal agency reports; no blanket clearance of third-party contributions",
+      "access_status": "public",
+      "robots_status": "listing and report paths permitted",
+      "notes": "District report candidates require existing incident/investigation index reconciliation; never copy existing rows.",
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+    },
+    {
+      "source": "iogp",
+      "url": "https://data.iogp.org/Safety/FatalIncidents",
+      "licence": "not established",
+      "terms_url": "https://data.iogp.org/Home/Index",
+      "terms_status": "no reuse licence displayed",
+      "access_status": "public_landing_only",
+      "robots_status": "404",
+      "notes": "Requested collection redirects to public/member selection; no forms or registration used.",
+      "alternate_urls": [
+        "https://data.iogp.org/Safety/HighPotentialEvents",
+        "https://data.iogp.org/Incidents/LessonSharing"
+      ],
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
+      "verification_basis": "carried from earlier collection; not rechecked in this run"
+    },
+    {
+      "source": "havtil",
+      "url": "https://www.havtil.no/en/supervision/investigation-reports/",
+      "licence": "Havtil reuse with credit; excludes third-party media",
+      "terms_url": "https://www.havtil.no/en/contact-us/loose-pages-contact-us/copyright/",
+      "terms_status": "confirmed reuse of website information with attribution; media exceptions excluded",
+      "access_status": "public",
+      "robots_status": "no disallow rules",
+      "notes": "Official English and Norwegian pages; impossible migrated publication dates excluded or replaced only by explicit direction dates.",
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+    },
+    {
+      "source": "nopsema",
+      "url": "https://www.nopsema.gov.au/offshore-industry/directions-notices-and-alerts/published-directions-and-notices",
+      "licence": "not established",
+      "terms_url": null,
+      "terms_status": "not verified",
+      "access_status": "timeout",
+      "robots_status": "read timeout",
+      "notes": "No collection attempted after timeout.",
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
+      "verification_basis": "carried from earlier collection; not rechecked in this run"
+    },
+    {
+      "source": "iadc",
+      "url": "https://iadc.org/health-safety-environment/safety-alerts/",
+      "licence": "All rights reserved; metadata and original paraphrase only",
+      "terms_url": "https://iadc.org/safety-alerts/alert-24-6-uncontrolled-release-of-lower-marine-riser-package/",
+      "terms_status": "confirmed All Rights Reserved in official alert footer; no report text or images retained",
+      "access_status": "public",
+      "robots_status": "alert paths permitted",
+      "notes": "Pilot alert omits event date and installation; association is curated from the issue seed, not automatic matching.",
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "independent public-source recheck in this run; see source_review.json"
+    },
+    {
+      "source": "csb",
+      "url": "https://www.csb.gov/investigations/",
+      "licence": "not established; US public record lead",
+      "terms_url": null,
+      "terms_status": "not verified",
+      "access_status": "blocked_403",
+      "robots_status": "403",
+      "notes": "No bypass or report collection.",
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
+      "verification_basis": "carried from earlier collection; not rechecked in this run"
+    },
+    {
+      "source": "sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/0000949039/000119312524024116/d768599d8k.htm",
+      "licence": "issuer filing; reuse rights not cleared",
+      "terms_url": "https://www.sec.gov/privacy.htm",
+      "terms_status": "not verified; issuer content is not assumed federal-authored",
+      "access_status": "blocked_403",
+      "robots_status": "403",
+      "notes": "Robots request returned 403; filing not requested. Context lead only.",
+      "access_date": "2026-10-17",
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "current robots request blocked; stopped"
+    },
+    {
+      "source": "osha",
+      "url": "https://www.osha.gov/",
+      "licence": "not reverified",
+      "terms_url": null,
+      "terms_status": "existing holdings, not recollected",
+      "access_status": "blocked_403",
+      "robots_status": "403",
+      "notes": "Legacy dataset authority; no new rows.",
+      "access_date": null,
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "carried from earlier collection; not rechecked in this run"
+    },
+    {
+      "source": "epa",
+      "url": "https://www.epa.gov/toxics-release-inventory-tri-program",
+      "licence": "not reverified",
+      "terms_url": null,
+      "terms_status": "existing holdings, not recollected",
+      "access_status": "not_recollected",
+      "robots_status": "public TRI path permitted",
+      "notes": "Legacy TRI authority; no new rows.",
+      "access_date": null,
+      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "verification_basis": "carried from earlier collection; not rechecked in this run"
+    }
+  ]
+}
