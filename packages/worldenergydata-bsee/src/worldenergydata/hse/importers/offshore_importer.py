@@ -118,11 +118,12 @@ class OffshoreImporter:
         self.database = Path(database)
         self.database.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
-            db.executescript("""
+            db.executescript(
+                """
                 CREATE TABLE IF NOT EXISTS events(event_id TEXT PRIMARY KEY, payload TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS external_links(
                     event_id TEXT NOT NULL, module TEXT NOT NULL, record_id TEXT NOT NULL,
-                    identity TEXT NOT NULL,
+                    identity TEXT NOT NULL, annotations TEXT NOT NULL DEFAULT '{}',
                     UNIQUE(module,record_id));
                 CREATE TABLE IF NOT EXISTS sources(
                     source TEXT NOT NULL, source_ref TEXT NOT NULL, event_id TEXT NOT NULL,
@@ -131,7 +132,16 @@ class OffshoreImporter:
                     id INTEGER PRIMARY KEY, incoming_id TEXT, matched_id TEXT,
                     rule TEXT NOT NULL, score REAL NOT NULL, disposition TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS gates(name TEXT PRIMARY KEY, payload TEXT NOT NULL);
-            """)
+            """
+            )
+
+            columns = {
+                row[1] for row in db.execute("PRAGMA table_info(external_links)")
+            }
+            if "annotations" not in columns:
+                db.execute(
+                    "ALTER TABLE external_links ADD COLUMN annotations TEXT NOT NULL DEFAULT '{}'"
+                )
 
     def connect(self):
         return sqlite3.connect(self.database)
@@ -173,7 +183,13 @@ class OffshoreImporter:
                 json.loads(row[0]) for row in db.execute("SELECT payload FROM events")
             ]
             links = [
-                dict(json.loads(r[3]), event_id=r[0], module=r[1], record_id=r[2])
+                dict(
+                    json.loads(r[3]),
+                    event_id=r[0],
+                    module=r[1],
+                    record_id=r[2],
+                    annotations=json.loads(r[4]),
+                )
                 for r in db.execute("SELECT * FROM external_links")
             ]
             indexed = {(r["module"], r["record_id"]): r for r in [*existing, *links]}
@@ -218,13 +234,25 @@ class OffshoreImporter:
                             json.loads(linked[1]) if linked else row, row, target
                         )
                         db.execute(
-                            "INSERT INTO external_links VALUES (?,?,?,?) "
-                            "ON CONFLICT(module,record_id) DO UPDATE SET identity=excluded.identity",
+                            "INSERT INTO external_links VALUES (?,?,?,?,?) "
+                            "ON CONFLICT(module,record_id) DO UPDATE SET identity=excluded.identity, annotations=excluded.annotations",
                             (
                                 target_id,
                                 target["module"],
                                 target["record_id"],
                                 json.dumps(identity, sort_keys=True),
+                                json.dumps(
+                                    {
+                                        key: row[key]
+                                        for key in (
+                                            "operation",
+                                            "failure_mode",
+                                            "failure_summary",
+                                            "equipment",
+                                        )
+                                    },
+                                    sort_keys=True,
+                                ),
                             ),
                         )
                         # Later rows in this packet must see reviewed aliases
@@ -254,9 +282,11 @@ class OffshoreImporter:
                         "INSERT INTO dedup_log VALUES(NULL,?,?,?,?,?)",
                         (
                             incoming_id,
-                            f"{target['module']}:{target['record_id']}"
-                            if target.get("module")
-                            else target_id,
+                            (
+                                f"{target['module']}:{target['record_id']}"
+                                if target.get("module")
+                                else target_id
+                            ),
                             rule,
                             1.0,
                             "linked",
@@ -394,6 +424,8 @@ class OffshoreImporter:
                 or not isinstance(index["records"], list)
             ):
                 raise ValueError("complete existing index coverage required")
+            if module == "hse" and not index["records"]:
+                raise ValueError("complete hse index must contain existing records")
             seen = set()
             for row in index["records"]:
                 validate_identity(row)
@@ -422,11 +454,16 @@ class OffshoreImporter:
                 json.loads(r[0]) for r in db.execute("SELECT payload FROM events")
             ]
             identities = {r["event_id"]: r for r in events}
-            for event_id, identity in db.execute(
-                "SELECT event_id,identity FROM external_links"
+            for event_id, identity, annotations in db.execute(
+                "SELECT event_id,identity,annotations FROM external_links"
             ):
                 identities.setdefault(
-                    event_id, dict(json.loads(identity), event_id=event_id)
+                    event_id,
+                    dict(
+                        json.loads(identity),
+                        **json.loads(annotations),
+                        event_id=event_id,
+                    ),
                 )
             events = list(identities.values())
             for row in events:
@@ -453,13 +490,26 @@ class OffshoreImporter:
                             json.loads(old[1]) if old else row, row, target
                         )
                         db.execute(
-                            "INSERT INTO external_links VALUES(?,?,?,?) "
-                            "ON CONFLICT(module,record_id) DO UPDATE SET identity=excluded.identity",
+                            "INSERT INTO external_links VALUES(?,?,?,?,?) "
+                            "ON CONFLICT(module,record_id) DO UPDATE SET identity=excluded.identity, annotations=excluded.annotations",
                             (
                                 row["event_id"],
                                 module,
                                 target["record_id"],
                                 json.dumps(identity, sort_keys=True),
+                                json.dumps(
+                                    {
+                                        key: row[key]
+                                        for key in (
+                                            "operation",
+                                            "failure_mode",
+                                            "failure_summary",
+                                            "equipment",
+                                        )
+                                        if key in row
+                                    },
+                                    sort_keys=True,
+                                ),
                             ),
                         )
                         db.execute(
@@ -478,7 +528,7 @@ class OffshoreImporter:
                             )
             # Reconciliation checks every original canonical event before
             # replacing it; already linked identities are checked on repeat.
-            for event_id, module, record_id, identity in db.execute(
+            for event_id, module, record_id, identity, _annotations in db.execute(
                 "SELECT * FROM external_links"
             ):
                 target = next(
@@ -573,6 +623,7 @@ class OffshoreImporter:
                         module=r[1],
                         record_id=r[2],
                         identity=json.loads(r[3]),
+                        annotations=json.loads(r[4]),
                     )
                     for r in db.execute(
                         "SELECT * FROM external_links ORDER BY event_id,module,record_id"

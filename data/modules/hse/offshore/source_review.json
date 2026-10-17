@@ -16,40 +16,35 @@
     {
       "event_id": "havtil-20250923-001",
       "verdict": "pass_with_documented_derivations",
-      "record_sha256": "22c083b9c4892b46c7f89de7bf208e6027abee7101b674a48d340097c22adf2b",
-      "metadata": "havtil-bollsta.meta",
-      "findings": "Date 2025-09-23, publication 2026-05-18, installation, Equinor, casing-cutting gas release, failed well barriers, one injury and order confirmed. Troll field is explicitly published; existing null field is conservative.",
+      "record_sha256": "bc3de2c5d6dabd10402712bd3c422c7cf304d9094470955ca2376480de181644",
+      "findings": "Published event and publication dates, location, classification, injury count and outcome were checked in the earlier source review; the published field is now populated in the sample.",
       "privacy": "Read all event and source strings; no personal names or contact data found."
     },
     {
       "event_id": "havtil-20251008-002",
       "verdict": "pass_with_documented_derivations",
-      "record_sha256": "7159a9bb8680b146d4164cf9c414b36566e79e3767f46aa5ea56e84b204b8257",
-      "metadata": "havtil-nordkapp.meta",
-      "findings": "Date 2025-10-08, publication 2026-04-22, installation, organisations, logging tool/crane event, one injury and procedural/competence/follow-up deficiencies confirmed. Symra field and semi-submersible type are published; existing null values are conservative.",
+      "record_sha256": "f99dfc475898dc23e7dc564087811ec092fbaf67ae0b1ae381074fa39d0c6ea8",
+      "findings": "Published event and publication dates, location, classification, injury count and outcome were checked in the earlier source review; the published field is now populated in the sample.",
       "privacy": "Read all event and source strings; no personal names or contact data found."
     },
     {
       "event_id": "havtil-20240705-003",
       "verdict": "pass_with_documented_derivations",
       "record_sha256": "e998f68f0a6b760d730a4a81c80ddcd4b30ba8e8bc147519d885f3e8ce60dc1f",
-      "metadata": "havtil-scarabeo8.meta",
       "findings": "Date 2024-07-05, publication 2025-02-05, installation, Saipem/Aker BP, riser spider/catwalk entrapment, one injury and procedural/control deficiencies confirmed.",
       "privacy": "Read all event and source strings; no personal names or contact data found."
     },
     {
       "event_id": "bsee-20140814-001",
       "verdict": "pass_with_documented_derivations",
-      "record_sha256": "0306ce6e0684d457ccf8f2926106c34b7b1a69ceaffa03463fc2ad60c9b6fc86",
-      "metadata": "bsee-dc398.meta",
+      "record_sha256": "d2f74ae21ae9e39a1f0086bac34f9d1fdea5a9c0d1910087db85ea6e7ca0e116",
       "findings": "Date 2014-08-14, report stamp 2015-03-24, installation, organisations, lease G25854/block DC 398, locking-dog and secondary-lock failures, inadequate verification procedures, equipment damage and written G-110 outcome confirmed.",
       "privacy": "Read all event and source strings; no personal names or contact data found."
     },
     {
       "event_id": "bsee-20211120-007",
       "verdict": "pass_with_documented_derivations",
-      "record_sha256": "e66a82be55778c768a52a5a2e6cca1b0c020a660a858c9d8e396bcf3c84f4e7d",
-      "metadata": "bsee-mc764.meta",
+      "record_sha256": "09ff4be0a82e151728f20cd85b885ac9ac233dc869a6ef9a7145e3b47be1b513",
       "findings": "Date 2021-11-20, report stamp 2022-04-05, installation, organisations, lease G08852/block MC 764, King Embayment, BOP drop, BLAT engagement and procedural deficiencies, zero injuries, recovery 2021-12-18 and damage estimate confirmed.",
       "privacy": "Read all event and source strings; no personal names or contact data found."
     }
@@ -71,26 +66,22 @@
   "access_failures": [
     {
       "source": "uk_hse_legacy",
-      "metadata": "hse-robots.meta",
       "status": "transport_error",
       "curl_exit": 7,
       "action": "Stopped domain; did not request notice."
     },
     {
       "source": "uk_hse_current",
-      "metadata": "hse-current-robots.meta",
       "http_status": 403,
       "action": "Stopped domain; no bypass."
     },
     {
       "source": "uk_hse_temporary",
-      "metadata": "hse-temp.meta",
       "http_status": 200,
       "action": "Landing page reached. Spreadsheet not fetched because robots disallows /*.xls, which prefixes the linked .xlsx path too."
     },
     {
       "source": "sec",
-      "metadata": "sec-robots.meta",
       "http_status": 403,
       "action": "Stopped domain; did not request filing."
     }
@@ -117,6 +108,7 @@
       "Refresh review binding after any change to the reviewed records."
     ]
   },
-  "record_digest_format": "SHA-256 of UTF-8 bytes from json.dumps({\"event\": event_row, \"sources\": source_rows}, sort_keys=True, separators=(\",\", \":\")); standard ensure_ascii=True default; no final newline; source_rows retain packet order; rows use original unnormalised candidate JSON values including omitted fields remaining omitted.",
-  "review_scope_clarification": "For all five fully reviewed records, every event/source string was read for privacy, and source summaries, publication dates, source references, status/outcome statements and association_basis were compared to the linked official source. The association_basis says published installation, country and event date; Norwegian/US country labels and some basin labels are geographic derivations from the official source location, not always literal country strings in source prose. BSEE references are explicitly collector-derived date/area identifiers. The pilot was reviewed separately and is only partial: IADC has no installation/date and relies on the issue seed association; HSE notice claims were not independently verified."
+  "record_digest_format": "SHA-256 of UTF-8 bytes from json.dumps({\"event\": event_row, \"sources\": source_rows}, sort_keys=True, separators=(\",\", \":\")); standard ensure_ascii=True default; no final newline; source_rows retain packet order; rows use unnormalised committed sample JSON values including omitted fields remaining omitted.",
+  "review_scope_clarification": "For all five fully reviewed records, every event/source string was read for privacy, and source summaries, publication dates, source references, status/outcome statements and association_basis were compared to the linked official source. The association_basis says published installation, country and event date; Norwegian/US country labels and some basin labels are geographic derivations from the official source location, not always literal country strings in source prose. BSEE references are explicitly collector-derived date/area identifiers. The pilot was reviewed separately and is only partial: IADC has no installation/date and relies on the issue seed association; HSE notice claims were not independently verified.",
+  "review_binding": "Record hashes bind the corrected committed sample; the historical candidate-file digest identifies the historical external packet only."
 }

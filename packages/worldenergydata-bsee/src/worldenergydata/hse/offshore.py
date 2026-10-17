@@ -159,11 +159,23 @@ class SourceDocument(StrictModel):
     licence: str = Field(min_length=1)
     evidence_level: Literal["regulator", "industry alert", "company"]
     access_status: Literal["public", "cached"]
-    summary: str = Field(min_length=1)
+    summary: str | None = Field(default=None, min_length=1)
     association_basis: str = "published installation, country and event date"
+
+    @field_validator("summary", "status")
+    @classmethod
+    def short_source_text(cls, value):
+        if value is not None and len(value.split()) > 50:
+            raise ValueError("source text exceeds 50 words")
+        return value
 
     @model_validator(mode="after")
     def official_public_source(self):
+        if (
+            self.source in {Source.IOGP, Source.NOPSEMA, Source.CSB}
+            and self.summary is not None
+        ):
+            raise ValueError("source permits links and metadata only; summary refused")
         url = urlsplit(self.url)
         if (
             url.scheme != "https"
@@ -177,9 +189,11 @@ class SourceDocument(StrictModel):
         level = (
             "company"
             if self.source == Source.SEC
-            else "industry alert"
-            if self.source in {Source.IADC, Source.IOGP}
-            else "regulator"
+            else (
+                "industry alert"
+                if self.source in {Source.IADC, Source.IOGP}
+                else "regulator"
+            )
         )
         if self.evidence_level != level:
             raise ValueError("evidence level does not match source authority")
@@ -232,7 +246,7 @@ def check_privacy(value, reviewed_text):
     """
     allowed = set(reviewed_text)
     check_contacts([value, reviewed_text])
-    for item in [*text_values(value), *allowed]:
+    for item in text_values(value):
         if item not in allowed:
             raise ValueError(
                 "privacy: unreviewed text or contact data; admission refused"

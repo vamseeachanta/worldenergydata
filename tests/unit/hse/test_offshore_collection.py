@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
+
 from worldenergydata.hse.importers.offshore_importer import OffshoreImporter
 from worldenergydata.hse.offshore import Event, SourceDocument, check_privacy
 
@@ -354,6 +355,14 @@ def test_full_gate_requires_consumed_indexes_and_frozen_independent_review(tmp_p
     indexes = {
         module: {"complete": True, "records": []} for module in ("hse", "marine_safety")
     }
+    indexes["hse"]["records"] = [
+        dict(
+            record_id="unrelated",
+            event_date="2020-01-01",
+            country="US",
+            installation_name="test unrelated",
+        )
+    ]
     importer.reconcile_existing(indexes)
     importer.approve_bulk(review, indexes)
     assert importer.export(tmp_path / "accepted")["bulk_admitted"] is True
@@ -723,3 +732,102 @@ def test_canonical_alias_chain_is_persistent_and_idempotent(tmp_path):
         stage="candidate",
     )
     assert result["events_added"] == 0
+
+
+@pytest.mark.parametrize("route", ["ingest", "reconcile"])
+def test_link_preserves_classification_and_binds_export_digest(tmp_path, route):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    identity = dict(
+        record_id="42",
+        event_date="2024-02-01",
+        country="GB",
+        installation_name="test installation",
+    )
+    if route == "ingest":
+        importer.ingest(packet(), existing=[dict(identity, module="hse")])
+    else:
+        importer.ingest(packet())
+        importer.reconcile_existing(
+            {
+                "hse": {"complete": True, "records": [identity]},
+                "marine_safety": {"complete": True, "records": []},
+            }
+        )
+    importer = OffshoreImporter(importer.database)
+    importer.export(tmp_path / "export")
+    link = json.loads((tmp_path / "export/external_links.json").read_text())[0]
+    expected = {
+        key: event()[key]
+        for key in ("operation", "failure_mode", "failure_summary", "equipment")
+    }
+    assert link["annotations"] == expected
+    digest = importer.content_digest()
+    with importer.connect() as db:
+        db.execute("UPDATE external_links SET annotations='{}'")
+    assert importer.content_digest() != digest
+
+
+@pytest.mark.parametrize(
+    "agency,host",
+    [
+        ("iogp", "data.iogp.org"),
+        ("nopsema", "www.nopsema.gov.au"),
+        ("csb", "www.csb.gov"),
+    ],
+)
+def test_metadata_only_sources_refuse_summary_and_allow_omission(agency, host):
+    row = source(
+        source=agency,
+        url=f"https://{host}/test",
+        evidence_level="industry alert" if agency == "iogp" else "regulator",
+    )
+    with pytest.raises(ValidationError, match="metadata"):
+        SourceDocument.model_validate(row)
+    row.pop("summary")
+    assert SourceDocument.model_validate(row).summary is None
+
+
+@pytest.mark.parametrize("field", ["summary", "status"])
+def test_source_text_is_limited_to_fifty_words(field):
+    with pytest.raises(ValidationError, match="50 words"):
+        SourceDocument.model_validate(source(**{field: "word " * 51}))
+    SourceDocument.model_validate(source(**{field: "word " * 50}))
+
+
+def test_bulk_gate_refuses_fewer_than_fifty_with_valid_prior_pilot(tmp_path):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    review = approve_test_pilot(importer)
+    with pytest.raises(ValueError, match="50 events"):
+        importer.approve_bulk(review, {})
+
+
+def test_pilot_gate_counts_agencies_not_public_documents(tmp_path):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    importer.ingest(
+        packet(sources=[source(source_ref=f"notice-{n}") for n in range(3)])
+    )
+    review = dict(
+        verdict="pass",
+        reviewer_role="independent_agent",
+        reviewed_event_ids=["test-event"],
+        dataset_sha256=importer.content_digest(),
+    )
+    with pytest.raises(ValueError, match="three public sources"):
+        importer.approve_pilot("test-event", review)
+
+
+def test_empty_hse_index_is_refused():
+    with pytest.raises(ValueError, match="hse"):
+        OffshoreImporter._index_evidence(
+            {
+                "hse": {"complete": True, "records": []},
+                "marine_safety": {"complete": True, "records": []},
+            }
+        )
+
+
+def test_committed_packets_exclude_cached_evidence():
+    root = Path(__file__).resolve().parents[3] / "data/modules/hse/offshore"
+    for name in ("pilot.json", "sample.json"):
+        rows = json.loads((root / name).read_text())
+        assert all(row["access_status"] == "public" for row in rows["sources"])

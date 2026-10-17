@@ -9,7 +9,7 @@
       "terms_status": "copyright link returned 404; issue cites OGL except otherwise stated",
       "access_status": "unverified_transport_error_and_403",
       "robots_status": "legacy transport error; current register 403; temporary spreadsheet disallowed",
-      "notes": "Historical cached notice 314115322 retained with explicit uncertainty. Current run neither confirms nor refutes it; cached evidence cannot satisfy pilot approval.",
+      "notes": "Unverified notice retained as a candidate link only; no cached assertion is admitted as evidence.",
       "alternate_urls": [
         "https://notices.hse.gov.uk/",
         "https://www.hse.gov.uk/enforce/temporary-register-notices.htm"
@@ -57,8 +57,8 @@
         "https://data.iogp.org/Safety/HighPotentialEvents",
         "https://data.iogp.org/Incidents/LessonSharing"
       ],
-      "access_date": "2026-10-17",
-      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
       "verification_basis": "carried from earlier collection; not rechecked in this run"
     },
     {
@@ -83,8 +83,8 @@
       "access_status": "timeout",
       "robots_status": "read timeout",
       "notes": "No collection attempted after timeout.",
-      "access_date": "2026-10-17",
-      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
       "verification_basis": "carried from earlier collection; not rechecked in this run"
     },
     {
@@ -109,8 +109,8 @@
       "access_status": "blocked_403",
       "robots_status": "403",
       "notes": "No bypass or report collection.",
-      "access_date": "2026-10-17",
-      "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
+      "access_date": null,
+      "collection_policy": "links and public metadata only; no summaries, report text, images or personal names",
       "verification_basis": "carried from earlier collection; not rechecked in this run"
     },
     {
@@ -135,7 +135,7 @@
       "access_status": "blocked_403",
       "robots_status": "403",
       "notes": "Legacy dataset authority; no new rows.",
-      "access_date": "2026-10-17",
+      "access_date": null,
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
       "verification_basis": "carried from earlier collection; not rechecked in this run"
     },
@@ -148,7 +148,7 @@
       "access_status": "not_recollected",
       "robots_status": "public TRI path permitted",
       "notes": "Legacy TRI authority; no new rows.",
-      "access_date": "2026-10-17",
+      "access_date": null,
       "collection_policy": "links, public metadata and original paraphrases only; no report text, images or personal names",
       "verification_basis": "carried from earlier collection; not rechecked in this run"
     }

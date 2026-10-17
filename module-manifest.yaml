@@ -112,7 +112,7 @@ modules:
     entry_point: "from worldenergydata.hse import HSEIncident, BSEEIncidentsImporter"
     notes: >-
       Existing authorities: BSEE, OSHA and EPA. Source-neutral public offshore
-      evidence adds UK HSE notices, OPRED, Havtil, NOPSEMA and US CSB; registry
+      evidence registers UK HSE notices, OPRED, Havtil, NOPSEMA and US CSB; registry
       records acquisition gaps. UK HSE offshore statistics: not acquired.
     in_scheduler: false
     public_cli: false
