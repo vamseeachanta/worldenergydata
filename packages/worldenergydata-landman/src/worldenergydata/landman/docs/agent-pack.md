@@ -118,6 +118,7 @@ Before any data consumer relies on acquisition, the following detection checks s
 | D6 | Parse the pinned `LandmanError.__init__` parameter names with Python `ast`; count `LandmanError`/`LandmanValidationError` calls in `landman.py` having keywords outside that set | 6 incompatible call sites (count), at lines 159, 176, 193, 201, 230 and 360; readiness requires 0 | Exception-constructor defect; [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L22-L28] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L159-L179] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L193-L205] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L230-L233] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L360-L363] |
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | Symptom, cause and limit | Detection | Tracking and observation date |
 |---|---|---|

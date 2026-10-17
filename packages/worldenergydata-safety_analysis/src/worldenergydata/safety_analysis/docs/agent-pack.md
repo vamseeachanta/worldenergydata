@@ -124,6 +124,7 @@ Gate selection is the Python calculations row of AQG r0 §10, with G5 required u
 UNVERIFIED: a generated, signed AQG appendix covering arbitrary downstream safety reports is not qualified by EVID-1/EVID-2; C1.
 
 ## 6. Known failure modes and pitfalls
+sweep: not run (legacy pack)
 
 | ID / symptom | Cause and consequence | Detection / existing coverage | Tracking / date |
 | --- | --- | --- | --- |
