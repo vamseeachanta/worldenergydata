@@ -5,7 +5,8 @@
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 0 |
+| Pack revision | 1 |
+| Pack date | 2026-10-17 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -15,7 +16,7 @@
 
 The public API exposes Excel pivot and summary loaders returning pandas DataFrames. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/__init__.py:L4-L12]
 The report function produces a dictionary of record counts, date bounds and available dimensions; it does not write a report file. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L11-L42]
-The loaders read supplied files rather than downloading or refreshing them. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L36-L72] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L75-L110]
+The package loaders read supplied files rather than downloading or refreshing them; a separate collector downloads and reads rig-count workbooks without these loaders (section 9). [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L36-L72] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L75-L110]
 The distribution declares Alpha maturity; this is metadata rather than evidence of production readiness. [packages/worldenergydata-baker_hughes/pyproject.toml:L15-L23]
 
 ## 2. Inputs and outputs
@@ -63,13 +64,13 @@ The following checks define the proposed evidence route under AQG r0, section 10
 
 | Gate | Applicability | Check ID and executable route | Numeric pass criterion; unit |
 | --- | --- | --- | --- |
-| G0 | Applicable: input/output schema | C0: `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_standardized_columns` | 12 expected columns, 0 extras; columns. [tests/test_baker_hughes_loader.py:L23-L41] |
-| G0 | Applicable: date and count types | C1: `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_date_parsed` and `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_rig_count_is_numeric` | 2 dtype assertions pass; assertions. These do not detect value corruption. [tests/test_baker_hughes_loader.py:L43-L53] |
-| G1 | Applicable: Python imports and offline tests; no external program loading route | C2: `tests/unit/baker_hughes/test_smoke.py::test_package_imports` and `tests/unit/baker_hughes/test_smoke.py::test_public_api_exported` | 3 import/API assertions pass; assertions. [tests/unit/baker_hughes/test_smoke.py:L5-L14] |
-| G2 | Applicable: independent hand check of reshape cardinality | C3: calculate 6 times 3 = 18 rows; run `tests/test_baker_hughes_loader.py::TestSummaryLoader::test_summary_row_count` | Absolute difference 0 rows; this validates reshape cardinality only, not source counts. [tests/test_baker_hughes_loader.py:L104-L109] |
+| G0 | Applicable: input/output schema | C0: `load_pivot_table` output schema; `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_standardized_columns` | 12 expected columns, 0 extras; columns. [tests/test_baker_hughes_loader.py:L23-L41] |
+| G0 | Applicable: date and count types | C1: `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_date_parsed` and `tests/test_baker_hughes_loader.py::TestPivotTableLoader::test_pivot_rig_count_is_numeric` | `load_pivot_table` output `date`/`rig_count`: 0 of 2 columns with the wrong dtype; count. These do not detect value corruption. [tests/test_baker_hughes_loader.py:L43-L53] |
+| G1 | Applicable: Python imports and offline tests; no external program loading route | C2: `tests/unit/baker_hughes/test_smoke.py::test_package_imports` and `tests/unit/baker_hughes/test_smoke.py::test_public_api_exported` | `worldenergydata.baker_hughes` exports `load_pivot_table` and `load_summary`: 2 of 2 names resolvable, 0 missing; count. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/__init__.py:L10-L12] [tests/unit/baker_hughes/test_smoke.py:L12-L14] |
+| G2 | Applicable: independent hand check of reshape cardinality | C3: `load_summary` output cardinality; calculate 6 times 3 = 18 rows; run `tests/test_baker_hughes_loader.py::TestSummaryLoader::test_summary_row_count` | Absolute difference 0 rows; this validates reshape cardinality only, not source counts. [tests/test_baker_hughes_loader.py:L104-L109] |
 | G3 | NOT_APPLICABLE: no dynamic simulation is performed by either loader | No dynamics check | No dynamic outputs. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L36-L72] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L75-L110] |
 | G4 | NOT_APPLICABLE: no mesh or hydrodynamic solver is used by either loader | No mesh check | No mesh outputs. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L36-L72] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L75-L110] |
-| G5 | Applicable: ingestion report evidence | C4: `tests/test_baker_hughes_loader.py::TestIngestionReport::test_generate_report_from_pivot` | record_count difference 0 rows; 0 missing asserted keys. Source fingerprint and signed QA appendix are not tested. [tests/test_baker_hughes_loader.py:L123-L135] |
+| G5 | Applicable: ingestion report evidence | C4: `generate_report` output `record_count` and required keys; `tests/test_baker_hughes_loader.py::TestIngestionReport::test_generate_report_from_pivot` | record_count difference 0 rows; 0 missing asserted keys. Source fingerprint and signed QA appendix are not tested. [tests/test_baker_hughes_loader.py:L123-L135] |
 
 Five checks are defined: G0 = 2, G1 = 1, G2 = 1, G3 = 0, G4 = 0, G5 = 1; these are evidence checks, not a declaration of full gate clearance.
 UNVERIFIED: Independent source-count accuracy and source-unit qualification remain open under G0/G2; issue pending (3).
@@ -77,7 +78,7 @@ UNVERIFIED: The ingestion report does not establish signed QA evidence or input 
 
 ## 6. Known failure modes and pitfalls
 
-sweep: 16 found
+sweep: 19 found
 
 The sweep groups distinct behaviors rather than matching lines; each depth-unit assumption and each dropped report dimension is counted separately. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L30-L31] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L59-L69] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L94-L106] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L27-L40]
 
@@ -99,6 +100,9 @@ The sweep groups distinct behaviors rather than matching lines; each depth-unit 
 | F14 | Missing basin values disappear from report dimension inventory. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L33-L34] | no detection check exists; issue pending (2) |
 | F15 | Missing state values disappear from report dimension inventory. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L36-L37] | no detection check exists; issue pending (2) |
 | F16 | Missing country values disappear from report dimension inventory. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L39-L40] | no detection check exists; issue pending (2) |
+| F17 | Missing pivot source columns (`Country`, `County`, `StateProvince`, `BasinName`, `DrillFor`, `Location`, `Trajectory`, `WellType`) are ignored by rename when no corresponding filter accesses them; unmapped extra columns pass through. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L56-L57] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L66-L72] | no detection check exists; C0 checks only the unchanged fixture schema; issue pending (2) |
+| F18 | Absent `basin`, `state` or `country` columns omit `basins`, `states` or `countries` from `generate_report` without a completeness status, unlike the missing-value cases F14–F16. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L33-L40] | no detection check exists; C4 covers populated pivot input only; issue pending (2) |
+| F19 | Missing pivot dates survive `pd.to_datetime` as `NaT`; `generate_report` ignores them in min/max, and all-missing dates produce `"NaT"` bounds without a completeness status. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L59-L59] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L27-L31] | no detection check exists; C1 checks dtype only and C4 uses populated dates; issue pending (2) |
 
 The following sweep commands cover every Python source file in the header package; results are reviewed against the complete functions rather than treated as confirmed defects solely from a match.
 
@@ -129,19 +133,22 @@ The input datasets used by the tests are repository Excel fixtures; no source re
 
 Implementation-map basis: `docs/registry/implementation-map.yaml` in digitalmodel, ref `origin/codex/implmap-work`, commit `3256bab95f84da3d9fadce8d5dcf8458d66d1eb4`, embedded data revision `270c8759c374b67a7f032953e7fcdb14e0224461`.
 Inventory: 0 map families have implementation paths inside this package; counted families: 0; the required counted-family grep is NOT_APPLICABLE because the map has no in-package rows.
-Map follow-up: Excel pivot ingestion, summary wide-to-long ingestion and ingestion-report aggregation will need mapping; issue pending (4).
+Map follow-up: Excel pivot ingestion, summary wide-to-long ingestion and ingestion-report aggregation will need mapping, together with the separate workbook collector and its parquet export caller listed below; issue pending (4).
 
-Repository-wide discovery uses `rg -n 'load_pivot_table|load_summary|def generate_report|RigCount|PublishDate' --glob '*.py' .`, including scripts; unrelated report-function name hits do not establish duplicate rig-count algorithms.
+Repository-wide discovery uses `rg -n 'load_pivot_table|load_summary|def generate_report|RigCount|PublishDate|BakerHughesCollector|download_na_rig_count|download_international_rig_count' --glob '*.py' .`, including scripts; unrelated report-function name hits do not establish duplicate rig-count algorithms.
 The in-package implementation inventory is `load_pivot_table`, `load_summary`, `generate_report`; all three methods are listed in section 3. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L36-L42] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L75-L79] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py:L11-L11]
+
+Outside-package map gap: `BakerHughesCollector.download_na_rig_count` and `download_international_rig_count` independently download and parse Excel workbooks with `pd.read_excel`; both catch any exception and return an empty DataFrame. [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/baker_hughes_collector.py:L38-L74]
+The export caller `main` saves non-empty results to parquet without `load_pivot_table` or `load_summary`; empty results produce no saved file. This is outside the header package and does not change the counted-family result; issue pending (4). [scripts/vessel_fleet/enrich_from_government.py:L44-L69]
 
 ## 10. Coverage and open items
 
 | Item | Coverage or limitation | Tracking |
 | --- | --- | --- |
 | Numeric qualification | F1–F6, F11–F12; missing, fractional, locale-separated and unit-mismatched inputs lack rejection tests | issue pending (1) |
-| Schema and completeness | F7–F10, F13–F16; empty-filter and missing-dimension/report cases lack detection checks | issue pending (2) |
+| Schema and completeness | F7–F10, F13–F19; empty-filter, missing/extra-column and missing-dimension/report cases lack detection checks | issue pending (2) |
 | Independent evidence | UNVERIFIED: Source workbook revision, depth units, independent counts and signed fingerprinted QA evidence are not established | issue pending (3) |
-| Map coverage | No in-package map family; add section-3 method families before counting them | issue pending (4) |
+| Map coverage | No in-package map family; add section-3 method families and the outside-package collector/export path before counting in-package rows | issue pending (4) |
 | Distribution boundary | Existing package-data glob includes `**/*.md`; excluding docs from distribution is not established and no packaging code is changed. [packages/worldenergydata-baker_hughes/pyproject.toml:L55-L56] | issue pending (5) |
 | Documentation discovery | Read the member README and all three package Python files; module-naming documentation found in 6 repository discovery documents, including 1 discovery file with identifying names; individual identifying paths are withheld | issue pending (3) |
 | Testing coverage | Read all 15 test definitions across the loader tests and smoke tests; 3 regression cases are listed in section 4. [tests/test_baker_hughes_loader.py:L13-L135] [tests/unit/baker_hughes/test_smoke.py:L8-L14] | issue pending (3) |
