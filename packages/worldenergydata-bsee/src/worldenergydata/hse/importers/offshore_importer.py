@@ -219,9 +219,25 @@ class OffshoreImporter:
                     target, rule = candidates[0]
                     if target.get("module"):
                         linked = db.execute(
-                            "SELECT event_id,identity FROM external_links WHERE module=? AND record_id=?",
+                            "SELECT event_id,identity,annotations FROM external_links "
+                            "WHERE module=? AND record_id=?",
                             (target["module"], target["record_id"]),
                         ).fetchone()
+                        annotations = {
+                            key: row[key]
+                            for key in (
+                                "operation",
+                                "failure_mode",
+                                "failure_summary",
+                                "equipment",
+                            )
+                        }
+                        if linked:
+                            previous = json.loads(linked[2])
+                            if previous and previous != annotations:
+                                raise ValueError(
+                                    "conflicting event classification; explicit review required"
+                                )
                         target_id = linked[0] if linked else incoming_id
                         count = db.execute(
                             "SELECT count(*) FROM (SELECT event_id FROM events UNION SELECT event_id FROM external_links)"
@@ -241,18 +257,7 @@ class OffshoreImporter:
                                 target["module"],
                                 target["record_id"],
                                 json.dumps(identity, sort_keys=True),
-                                json.dumps(
-                                    {
-                                        key: row[key]
-                                        for key in (
-                                            "operation",
-                                            "failure_mode",
-                                            "failure_summary",
-                                            "equipment",
-                                        )
-                                    },
-                                    sort_keys=True,
-                                ),
+                                json.dumps(annotations, sort_keys=True),
                             ),
                         )
                         # Later rows in this packet must see reviewed aliases
@@ -658,7 +663,7 @@ class OffshoreImporter:
             )
             manifest.update(
                 dataset_sha256=self.content_digest(db),
-                digest_format="canonical-sqlite-evidence-v1",
+                digest_format="canonical-sqlite-evidence-v2",
             )
             outputs = {}
             for name, payload in tables.items():

@@ -96,7 +96,7 @@
     "Ocean Great White",
     "Ocean GreatWhite",
     "SCHIEHALLION",
-    "SEC filing blocked; no facts are drawn from it. UK HSE notice confirms process deficiencies, not a mechanical cause.",
+    "SEC filing blocked; no facts are drawn from it. UK HSE notice unverified; no facts are drawn from it.",
     "The LMRP fell following separation of the disconnected riser. Retaining hoses subsequently failed; the riser landed away from infrastructure. No injuries or subsea-asset damage were reported.",
     "The notification records a chemical release from a fully ruptured riser. The release ended and no formal investigation was opened.",
     "UK HSE legal breach link unavailable; legal_provision remains null.",
@@ -126,6 +126,6 @@
     "OPRED published coordinates: 60 degrees 22 minutes 50.718 seconds N; 4 degrees 5 minutes 56.016 seconds W. Decimal conversion uses degrees + minutes/60 + seconds/3600.",
     "OPRED observed time 06:45 has no published timezone; event precision is date only.",
     "UK HSE legal breach link unavailable; legal_provision remains null.",
-    "SEC filing blocked; no facts are drawn from it. UK HSE notice confirms process deficiencies, not a mechanical cause."
+    "SEC filing blocked; no facts are drawn from it. UK HSE notice unverified; no facts are drawn from it."
   ]
 }

@@ -276,6 +276,7 @@ def test_manifest_digests_and_bulk_gate(tmp_path):
     manifest = importer.export(tmp_path / "exports")
     assert manifest["event_count"] == 1
     assert manifest["bulk_admitted"] is False
+    assert manifest["digest_format"] == "canonical-sqlite-evidence-v2"
     for name, digest in manifest["sha256"].items():
         assert (
             hashlib.sha256((tmp_path / "exports" / name).read_bytes()).hexdigest()
@@ -765,6 +766,88 @@ def test_link_preserves_classification_and_binds_export_digest(tmp_path, route):
     with importer.connect() as db:
         db.execute("UPDATE external_links SET annotations='{}'")
     assert importer.content_digest() != digest
+
+
+@pytest.mark.parametrize("stage", ["pilot", "candidate"])
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"operation": "lifting"},
+        {"failure_mode": "equipment failure"},
+        {"failure_summary": "equipment failed during handling"},
+        {"equipment": ["hoist"]},
+    ],
+)
+def test_linked_classification_conflict_rolls_back_reviewed_pilot(
+    tmp_path, stage, changes
+):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    importer.ingest(
+        packet(),
+        existing=[
+            dict(
+                module="hse",
+                record_id="42",
+                event_date="2024-02-01",
+                country="GB",
+                installation_name="test installation",
+            )
+        ],
+    )
+    approve_test_pilot(importer)
+    importer = OffshoreImporter(importer.database)
+    with importer.connect() as db:
+        before = list(db.iterdump())
+    with pytest.raises(
+        ValueError,
+        match="conflicting event classification; explicit review required",
+    ):
+        importer.ingest(packet([event(**changes)]), stage=stage)
+    with importer.connect() as db:
+        assert list(db.iterdump()) == before
+
+
+def test_legacy_link_migration_exports_empty_annotations_and_accepts_intake(tmp_path):
+    database = tmp_path / "offshore.db"
+    identity = dict(
+        event_date="2024-02-01",
+        country="GB",
+        installation_name="test installation",
+        installation_aliases=["test alias"],
+        block_or_lease=None,
+    )
+    with sqlite3.connect(database) as db:
+        db.execute(
+            "CREATE TABLE external_links("
+            "event_id TEXT NOT NULL, module TEXT NOT NULL, record_id TEXT NOT NULL, "
+            "identity TEXT NOT NULL, UNIQUE(module,record_id))"
+        )
+        db.execute(
+            "INSERT INTO external_links VALUES (?,?,?,?)",
+            ("test-event", "hse", "42", json.dumps(identity, sort_keys=True)),
+        )
+    importer = OffshoreImporter(database)
+    importer.export(tmp_path / "legacy-export")
+    legacy_link = json.loads(
+        (tmp_path / "legacy-export/external_links.json").read_text()
+    )[0]
+    assert legacy_link["identity"] == identity
+    assert legacy_link["annotations"] == {}
+    assert importer.ingest(packet()) == dict(
+        events_added=0, sources_added=1, linked_existing=0
+    )
+    importer = OffshoreImporter(database)
+    manifest = importer.export(tmp_path / "export")
+    assert manifest["linked_existing_count"] == 1
+    link = json.loads((tmp_path / "export/external_links.json").read_text())[0]
+    assert link["identity"] == identity
+    assert link["annotations"] == {
+        key: event()[key]
+        for key in ("operation", "failure_mode", "failure_summary", "equipment")
+    }
+    digest = importer.content_digest()
+    assert importer.ingest(packet())["sources_added"] == 0
+    assert importer.content_digest() == digest
 
 
 @pytest.mark.parametrize(

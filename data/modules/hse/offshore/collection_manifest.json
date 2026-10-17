@@ -4,7 +4,7 @@
   "source_count": 52,
   "accepted_event_count": 0,
   "bulk_admitted": false,
-  "status": "candidate_validation_passed_acceptance_blocked",
+  "status": "candidate_validation_unverified_acceptance_blocked",
   "storage": "external packet not located; canonical placement unverified",
   "relative_location": "modules/hse/offshore/candidate-validation-v1",
   "candidate_packet_sha256": "771dd845729cbb7f21f29ddf748b9dcbc3a412cfc4aff90fff959c794532a8ad",
