@@ -42,20 +42,34 @@ def matching(run: dict[str, Any], context: dict[str, Any]) -> bool:
 
 
 def source(api: API, context: dict[str, Any]) -> tuple[dict, str, list] | None:
-    """Choose the newest completed decisive full run; never use older evidence."""
+    """Choose decisive full evidence; reject a newer unfinished full run."""
     root = f"repos/{context['repository']}/actions"
     query = urlencode({"event": "pull_request", "head_sha": context["head"]})
     runs = pages(api, f"{root}/workflows/ci.yml/runs?{query}", "workflow_runs")
     for run in sorted(runs, key=lambda item: item["id"], reverse=True):
         if not matching(run, context):
             continue
-        if run["status"] != "completed" or run["conclusion"] not in (
+        if run["status"] == "completed" and run["conclusion"] not in (
             "success",
             "failure",
             "timed_out",
         ):
             continue
         artifacts = pages(api, f"{root}/runs/{run['id']}/artifacts", "artifacts")
+        jobs = pages(
+            api, f"{root}/runs/{run['id']}/attempts/{run['run_attempt']}/jobs", "jobs"
+        )
+        modes = [job for job in jobs if job["name"] == "Gate mode"]
+        is_replay = (
+            len(modes) == 1
+            and modes[0].get("status") == "completed"
+            and modes[0].get("conclusion") == "success"
+        )
+        has_marker = any(item["name"].startswith("gate-tip-") for item in artifacts)
+        if run["status"] != "completed":
+            if is_replay and not has_marker:
+                continue
+            raise ValueError("newer full run in progress")
         tips = [
             item["name"][9:49]
             for item in artifacts
@@ -66,19 +80,11 @@ def source(api: API, context: dict[str, Any]) -> tuple[dict, str, list] | None:
         ]
         if len(tips) > 1:
             raise ValueError("ambiguous base-tip evidence")
-        jobs = pages(
-            api, f"{root}/runs/{run['id']}/attempts/{run['run_attempt']}/jobs", "jobs"
-        )
         if len(tips) == 1:
             return run, tips[0], jobs
-        if any(item["name"].startswith("gate-tip-") for item in artifacts):
+        if has_marker:
             raise ValueError("missing current-attempt base-tip evidence")
-        modes = [job for job in jobs if job["name"] == "Gate mode"]
-        if not jobs or (
-            len(modes) == 1
-            and modes[0].get("status") == "completed"
-            and modes[0].get("conclusion") == "success"
-        ):
+        if not jobs or is_replay:
             continue
         raise ValueError("full run without base-tip evidence")
     return None
@@ -136,9 +142,10 @@ def decide(
     except (OSError, HTTPException, ValueError, KeyError, TypeError) as error:
         result["decision"] = "FAIL"
         result["reason"] = (
-            "full run without base-tip evidence"
+            str(error)
             if isinstance(error, ValueError)
-            and str(error) == "full run without base-tip evidence"
+            and str(error)
+            in ("full run without base-tip evidence", "newer full run in progress")
             else "API evidence unavailable or malformed"
         )
         return result

@@ -122,14 +122,16 @@ def test_no_earlier_run(replay):
     assert decide(replay, api)["decision"] == "FAIL"
 
 
-def test_in_progress_newer_run_is_ignored(replay):
-    """Only completed evidence decides; an active run cannot delay an edit."""
+def test_in_progress_newer_full_run_fails_closed(replay):
+    """An active full run must never expose older green evidence."""
     api = FakeAPI()
     api.runs.insert(0, run(95, None, "in_progress"))
     api.artifacts[95] = api.artifacts[90]
+    api.jobs[95] = [{"name": "Lint", "conclusion": "failure"}]
     result = decide(replay, api)
-    assert result["decision"] == "PASS"
-    assert result["run_id"] == 90
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "newer full run in progress"
+    assert result["run_id"] is None
     assert api.elapsed == 0
 
 
@@ -217,9 +219,58 @@ def test_active_replay_is_not_waited_for(replay):
     """An active replay with a finished mode cannot hold up another replay."""
     api = FakeAPI()
     api.runs.insert(0, run(95, None, "in_progress"))
-    api.jobs[95] = [{"name": "Gate mode", "status": "completed"}]
+    api.jobs[95] = [
+        {"name": "Gate mode", "status": "completed", "conclusion": "success"}
+    ]
     assert decide(replay, api)["decision"] == "PASS"
     assert api.elapsed == 0
+
+
+@pytest.mark.parametrize("status", ["queued", "in_progress"])
+@pytest.mark.parametrize(
+    "modes",
+    [
+        [],
+        [{"name": "Gate mode", "status": "in_progress", "conclusion": None}],
+        [{"name": "Gate mode", "status": "completed", "conclusion": "failure"}],
+        [{"name": "Gate mode", "status": "completed"}],
+        [
+            {"name": "Gate mode", "status": "completed", "conclusion": "success"},
+            {"name": "Gate mode", "status": "completed", "conclusion": "success"},
+        ],
+    ],
+)
+def test_unidentified_active_run_blocks_older_green(replay, status, modes):
+    """Only one successfully completed mode can identify an active replay."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, None, status))
+    api.jobs[95] = modes
+    result = decide(replay, api)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "newer full run in progress"
+    assert api.elapsed == 0
+
+
+@pytest.mark.parametrize(
+    "marker",
+    [
+        {"name": f"gate-tip-{TIP}-attempt-2", "expired": False},
+        {"name": f"gate-tip-{TIP}-attempt-1", "expired": False},
+        {"name": f"gate-tip-{TIP}-attempt-2", "expired": True},
+        {"name": "gate-tip-malformed", "expired": False},
+    ],
+)
+def test_active_mode_success_with_marker_is_not_replay(replay, marker):
+    """Any base-tip artifact prevents treating an active full run as a replay."""
+    api = FakeAPI()
+    api.runs.insert(0, run(95, None, "in_progress"))
+    api.artifacts[95] = [marker]
+    api.jobs[95] = [
+        {"name": "Gate mode", "status": "completed", "conclusion": "success"}
+    ]
+    result = decide(replay, api)
+    assert result["decision"] == "FAIL"
+    assert result["reason"] == "newer full run in progress"
 
 
 @pytest.mark.parametrize(
