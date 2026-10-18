@@ -74,12 +74,12 @@
       "sha256": "6e339cc7f4a8590e8b31eb76f087cb35af26843bfaf1433fba231073b07d290b"
     },
     {
-      "path": "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv",
-      "sha256": "e0979bafd77f5b80a34e7b048bb29042044e5770ca7c74445d369b8a8e4b72a8"
-    },
-    {
       "path": "data/modules/cost/curated/project_asset_requirements.csv",
       "sha256": "3fa8344ebf78976a06ea39455d9cd1ac45e0339a88efe0e061517361ccf86b80"
+    },
+    {
+      "path": "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv",
+      "sha256": "e0979bafd77f5b80a34e7b048bb29042044e5770ca7c74445d369b8a8e4b72a8"
     },
     {
       "path": "data/modules/cost/curated/sanctioned_projects.csv",
@@ -150,7 +150,7 @@
   "producer": {
     "builder_path": "scripts/cost/build_big_foot_cost_map.py",
     "builder_sha256": "1a818396e701bd077e757bba1ad2c445a505daf501ed57bb297dc6516aa0e622",
-    "commit": "66ce9d6808492a01f6a7cac60415304bcc6e6ef5",
+    "commit": "a5e8ff1182c3c75f909d45ac3d8f626f97bf69c0",
     "commit_policy": "exact_builder_containing_commit",
     "tool_version": "1.2.0"
   },
