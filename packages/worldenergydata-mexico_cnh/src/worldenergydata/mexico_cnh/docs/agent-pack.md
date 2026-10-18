@@ -1,5 +1,9 @@
 # mexico_cnh module knowledge pack
 
+sweep: 16 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-mexico_cnh/src/worldenergydata/mexico_cnh --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `mexico_cnh` |

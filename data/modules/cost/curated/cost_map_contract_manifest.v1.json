@@ -79,7 +79,7 @@
     },
     {
       "path": "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv",
-      "sha256": "e0979bafd77f5b80a34e7b048bb29042044e5770ca7c74445d369b8a8e4b72a8"
+      "sha256": "5dbc970add27d218c738ee037f12e7c0b3e4678fc5501d0bdfbfa97c8f81be1a"
     },
     {
       "path": "data/modules/cost/curated/sanctioned_projects.csv",
@@ -87,15 +87,15 @@
     },
     {
       "path": "docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx",
-      "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
+      "sha256": "6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb"
     },
     {
       "path": "docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx",
-      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04"
+      "sha256": "1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b"
     },
     {
       "path": "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx",
-      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407"
+      "sha256": "eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb"
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map.py",
@@ -222,7 +222,7 @@
         "version": "3.1.5"
       },
       "file": "drilling_and_completion_days.xlsx",
-      "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
+      "sha256": "6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb"
     },
     {
       "allowlisted_cells": [
@@ -244,7 +244,7 @@
         "version": "3.1.5"
       },
       "file": "financial_project_summary.xlsx",
-      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04"
+      "sha256": "1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b"
     },
     {
       "allowlisted_cells": [
@@ -265,7 +265,7 @@
         "version": "3.1.5"
       },
       "file": "lease_assumptions.xlsx",
-      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407"
+      "sha256": "eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb"
     }
   ]
 }

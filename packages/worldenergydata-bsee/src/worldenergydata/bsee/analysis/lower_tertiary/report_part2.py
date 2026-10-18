@@ -2,7 +2,7 @@
 
 Generates an interactive report comparing deepwater architecture options
 (Subsea Tieback, Spar, TLP, Semi/DDS, FrPS) for Lower Tertiary developments.
-Companion to the World Oil January 2026 article by Frontier Deepwater.
+Companion to the World Oil January 2026 article by Reference contributor.
 
 All data flows from the LTAnalyzer, which reads the YAML config file.
 No hardcoded metrics — everything sourced from YAML via analyzer properties.
@@ -392,7 +392,7 @@ class Part2Report:
             '<div class="data-note">'
             "<strong>Disclaimer:</strong> "
             "Analysis and conclusions are derived from the published "
-            "World Oil articles by Frontier Deepwater. Financial figures "
+            "World Oil articles by Reference contributor. Financial figures "
             "are article-sourced and not independently verified.</div>"
         )
         return {"title": "Conclusions", "content": content}

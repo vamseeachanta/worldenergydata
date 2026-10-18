@@ -1,5 +1,9 @@
 # Marine safety module knowledge pack
 
+sweep: 120 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `marine_safety` |

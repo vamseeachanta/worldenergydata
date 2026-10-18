@@ -105,7 +105,7 @@ No broad file moves, generated artifact deletion, package-source reshuffle, docs
 - `reports/modules/marketing/VALIDATION_REPORT.md`
 - `reports/modules/marketing/marketing_brochure_bsee_data_integration.md`
 - `reports/modules/marketing/marketing_brochure_economic_evaluation_npv_analysis.md`
-- `reports/modules/marketing/marketing_brochure_project_economics_field_data_analysis_system.md`
+- `reports/modules/marketing/marketing_brochure_project_economics.md`
 - `reports/modules/marketing/marketing_brochure_field-specific_analysis.md`
 - `reports/modules/marketing/marketing_brochure_marine_safety_incident_analysis.md`
 - `reports/modules/marketing/marketing_brochure_web_scraping_infrastructure.md`

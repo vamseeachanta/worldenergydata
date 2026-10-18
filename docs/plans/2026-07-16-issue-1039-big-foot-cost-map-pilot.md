@@ -73,7 +73,7 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 - `test_project_economics_crosswalk_preserves_workbook_vintage_and_assumption_status`
 - `test_project_economics_total_is_4517_3_mm_and_stale_5200_mm_config_is_not_disclosure`
 - `test_installation_and_hookup_are_explicitly_unmapped_in_project_economics`
-- `test_dnc_workbook_hash_is_3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f`
+- `test_dnc_workbook_hash_is_6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb`
 - `test_big_foot_outputs_are_byte_deterministic`
 
 ## Acceptance Criteria

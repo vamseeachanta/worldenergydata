@@ -1,11 +1,11 @@
 ---
-name: project_economics-economics
+name: project-economics
 description: Perform offshore field development economic analysis with NPV, MIRR, IRR, and payback calculations. Use for investment analysis, cashflow modeling, BSEE data integration, development system classification, and Excel report generation.
 ---
 
-# project_economics Economics Skill
+# Project Economics Skill
 
-Field Development Analysis System (project_economics) for offshore oil & gas economic evaluation with Excel-compatible NPV, MIRR, IRR, and payback calculations.
+Project economics (project_economics) for offshore oil & gas economic evaluation with Excel-compatible NPV, MIRR, IRR, and payback calculations.
 
 ## When to Use
 
@@ -32,7 +32,7 @@ Field Development Analysis System (project_economics) for offshore oil & gas eco
 Calculate core investment metrics from cashflows.
 
 ```yaml
-project_economics_economics:
+project_economics:
   financial_metrics:
     flag: true
     cashflows:
@@ -55,7 +55,7 @@ project_economics_economics:
 Classify fields by water depth for cost estimation.
 
 ```yaml
-project_economics_economics:
+project_economics:
   classification:
     flag: true
     water_depths:
@@ -72,7 +72,7 @@ project_economics_economics:
 Generate monthly cashflow projections.
 
 ```yaml
-project_economics_economics:
+project_economics:
   cashflow_modeling:
     flag: true
     development_name: "ANCHOR"
@@ -90,7 +90,7 @@ project_economics_economics:
 End-to-end economic analysis with BSEE data.
 
 ```yaml
-project_economics_economics:
+project_economics:
   field_analysis:
     flag: true
     development_name: "ANCHOR"

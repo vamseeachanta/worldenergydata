@@ -1,5 +1,9 @@
 # UKCS module knowledge pack
 
+sweep: 4 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-ukcs/src/worldenergydata/ukcs --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `ukcs` |

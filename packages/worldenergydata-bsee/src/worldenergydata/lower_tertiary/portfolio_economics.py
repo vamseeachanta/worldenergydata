@@ -317,7 +317,7 @@ def analyze_field(
             },
             {
                 "input": f"Opex ${opex_per_boe:.2f}/boe",
-                "publisher": "FDAS / yaml override",
+                "publisher": "Project economics reference / yaml override",
                 "code_id": f"yaml: field.opex_per_boe ({field_id}) or default",
                 "revision": "embedded",
             },
@@ -335,19 +335,19 @@ def analyze_field(
             },
             {
                 "input": f"Annual decline {annual_decline:.1%}",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "deepwater_default_decline (lower_tertiary.portfolio_economics)",
                 "revision": "embedded",
             },
             {
                 "input": f"Plateau duration {plateau_years} years",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "DEFAULT_PLATEAU_YEARS",
                 "revision": "embedded",
             },
             {
                 "input": f"Discount rate {discount_rate:.1%}",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "evaluation_default",
                 "revision": "embedded",
             },

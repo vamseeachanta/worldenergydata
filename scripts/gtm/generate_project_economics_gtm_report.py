@@ -717,7 +717,7 @@ def generate_html(
 
 <!-- ====================== FOOTER ====================== -->
 <div class="report-footer">
-  <strong>ACE Engineer</strong> &bull; Field Development Analytics Suite (project_economics) &bull;
+  <strong>ACE Engineer</strong> &bull; Project economics (project_economics) &bull;
   worldenergydata Python Library &bull;
   Confidential &mdash; For client use only &bull;
   Generated 2026-05-04

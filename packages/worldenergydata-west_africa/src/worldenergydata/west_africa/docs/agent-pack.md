@@ -1,5 +1,9 @@
 # West Africa module knowledge pack
 
+sweep: 5 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-west_africa/src/worldenergydata/west_africa --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `west_africa` |

@@ -1,5 +1,9 @@
 # Safety analysis module knowledge pack
 
+sweep: 18 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | safety_analysis |

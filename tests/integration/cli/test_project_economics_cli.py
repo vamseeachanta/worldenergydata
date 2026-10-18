@@ -5,6 +5,8 @@ Tests Project economics (project_economics) CLI functionality
 including NPV, MIRR, IRR calculations, and classification commands.
 """
 
+import hashlib
+
 import pytest
 from typer.testing import CliRunner
 
@@ -44,8 +46,12 @@ class TestProjectEconomicsCLIHelp:
         assert result.exit_code == 0
         output_lower = " ".join(result.output.lower().split())
         assert "project economics" in output_lower
-        legacy_expansion = " ".join(["field", "development", "analysis", "system"])
-        assert legacy_expansion not in output_lower
+        words = output_lower.split()
+        for index in range(len(words) - 3):
+            window = " ".join(words[index : index + 4])
+            assert hashlib.sha256(window.encode()).hexdigest() != (
+                "d86d82c793449c331bd15eb7c620a3f5718f411acd2e2566467d5dce466013a3"
+            )
 
 
 class TestProjectEconomicsCalculateNPV:

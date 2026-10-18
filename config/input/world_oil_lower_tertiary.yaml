@@ -14,12 +14,12 @@ metadata:
       title: "America's Promising Lower Tertiary Frontier — Two Decades Later"
       publication: "World Oil"
       date: "2025-10"
-      author: "Frontier Deepwater"
+      author: "Reference contributor"
     part2:
       title: "Enhancing Industry Performance — The Options"
       publication: "World Oil"
       date: "2026-01"
-      author: "Frontier Deepwater"
+      author: "Reference contributor"
 
 # ── Field Block Mappings ──────────────────────────────────────────────
 fields:
@@ -97,9 +97,9 @@ fields:
       platform: "Spar"
 
 # ── Article-Derived Metrics ───────────────────────────────────────────
-# Source: Frontier Deepwater analysis of BSEE data (2025)
+# Source: Reference contributor analysis of BSEE data (2025)
 article_metrics:
-  source_attribution: "Frontier Deepwater analysis of BSEE data (2025)"
+  source_attribution: "Reference contributor analysis of BSEE data (2025)"
   aggregate:
     total_investment_billion: 50
     total_modu_days: 20000
@@ -213,15 +213,15 @@ output:
     part1:
       filename: "lt_performance_report.html"
       title: "Lower Tertiary Performance Analysis"
-      output_dir: "frontierdeepwater/Mktg/World Oil/2025-10"
+      output_dir: "Reference contributor/Mktg/World Oil/2025-10"
     part2:
       filename: "lt_options_report.html"
       title: "Architecture Options Analysis"
-      output_dir: "frontierdeepwater/Mktg/World Oil/2026-01"
+      output_dir: "Reference contributor/Mktg/World Oil/2026-01"
     executive:
       filename: "lt_executive_summary.html"
       title: "Lower Tertiary Executive Summary"
-      output_dir: "frontierdeepwater/Mktg/World Oil"
+      output_dir: "Reference contributor/Mktg/World Oil"
   copy_to: "reports/bsee/lower_tertiary"
 
 execution:

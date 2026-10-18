@@ -1,5 +1,9 @@
 # project_economics module knowledge pack
 
+sweep: 11 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-project_economics/src/worldenergydata/project_economics --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `project_economics` |
@@ -210,7 +214,7 @@ Additional repository inventory (a–t); every source range below was read at th
 | (q) Consumers: field-development integration/costs | Depth classification, assumptions and coarse economics. [src/worldenergydata/field_development/integrations.py:L111-L160] [src/worldenergydata/field_development/cost_estimator.py:L209-L218] |
 | (r) Consumer: unified benchmark | Uses project_economics depth classification. [packages/worldenergydata-production/src/worldenergydata/production/unified/benchmark_report.py:L150-L160] |
 | (s) Consumers: notebooks and workflows | Shared API examples, legacy import example and annual CSV workflow configuration; reading inventory below. [notebooks/quickstart_project_economics.py:L12-L33] [notebooks/lease_npv_walkthrough.py:L37-L45] [examples/project_economics_complete_workflow.py:L29-L45] [examples/workflows/project_economics-field-npv/input.yml:L14-L22] |
-| (t) Consumer guidance: economics skill | Documents financial metrics, cashflows, forecasting and reporting; guidance rather than an implementation. [.claude/skills/project_economics-economics/SKILL.md:L3-L20] |
+| (t) Consumer guidance: economics skill | Documents financial metrics, cashflows, forecasting and reporting; guidance rather than an implementation. [.claude/skills/project-economics/SKILL.md:L3-L20] |
 
 Map inventory: `digitalmodel` implementation map `docs/registry/implementation-map.yaml` at `b5acbe5f61ed4c755c1f7ea4fafa4611bd14e407`, data revision `947fa50ff9a9e210de7e8f90e01b37add85c5954`, contains 13 families and 0 implementation rows in the header package. The in-package inventory is empty; counted-family grep is NOT_APPLICABLE because there is no mapped family with a row in this package. No path signal or case-sensitive Python `re` search is applied without a counted family. The broader repository inventory above remains useful even though it does not alter that result.
 
@@ -228,7 +232,7 @@ Source coverage: all 20 Python files under the module, its two READMEs, package 
 
 READ module documentation: `docs/modules/project_economics/USER-GUIDE.md`, `VALIDATION-REPORT.md`, `DEPLOYMENT-CHECKLIST.md`, `country-adapter-checklist.md`; also `docs/domains/field-development/gas-revenue.md`. [docs/modules/project_economics/USER-GUIDE.md:L1-L12] [docs/modules/project_economics/VALIDATION-REPORT.md:L1-L20] [docs/modules/project_economics/DEPLOYMENT-CHECKLIST.md:L1-L14] [docs/modules/project_economics/country-adapter-checklist.md:L1-L18] [docs/domains/field-development/gas-revenue.md:L1-L20]
 
-READ additional usage guidance and examples (source ranges, not executed workflows): [notebooks/quickstart_project_economics.py:L12-L33] [notebooks/lease_npv_walkthrough.py:L37-L45] [examples/project_economics_complete_workflow.py:L29-L45] [examples/workflows/project_economics-field-npv/input.yml:L14-L22] [.claude/skills/project_economics-economics/SKILL.md:L3-L20] The skill describes a historical configuration surface; the complete-workflow example retains legacy import paths, so neither establishes current API compatibility.
+READ additional usage guidance and examples (source ranges, not executed workflows): [notebooks/quickstart_project_economics.py:L12-L33] [notebooks/lease_npv_walkthrough.py:L37-L45] [examples/project_economics_complete_workflow.py:L29-L45] [examples/workflows/project_economics-field-npv/input.yml:L14-L22] [.claude/skills/project-economics/SKILL.md:L3-L20] The skill describes a historical configuration surface; the complete-workflow example retains legacy import paths, so neither establishes current API compatibility.
 
 Markdown documentation mentioning project_economics was indexed across `docs/`; broader historical/planning/cross-module review is deferred under the bounded main-path scope, with no claim of exhaustive historical-document reading. The public inventory below uses source references and neutral folder groups; restricted names are not reproduced. Issue pending (3).
 

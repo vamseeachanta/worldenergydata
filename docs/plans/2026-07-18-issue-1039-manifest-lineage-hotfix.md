@@ -226,9 +226,9 @@ sha256sum \
 Expected workbook hashes:
 
 ```text
-a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407  lease_assumptions.xlsx
-00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04  financial_project_summary.xlsx
-3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f  drilling_and_completion_days.xlsx
+eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb  lease_assumptions.xlsx
+1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b  financial_project_summary.xlsx
+6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb  drilling_and_completion_days.xlsx
 ```
 
 - [ ] **Step 2: Regenerate through the production builder**

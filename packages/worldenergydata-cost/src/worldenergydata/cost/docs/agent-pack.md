@@ -1,5 +1,9 @@
 # Cost module knowledge pack
 
+sweep: 3 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-cost/src/worldenergydata/cost --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `cost` |

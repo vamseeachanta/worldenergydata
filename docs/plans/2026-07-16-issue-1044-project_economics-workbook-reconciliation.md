@@ -11,13 +11,13 @@
 
 ## Resource Intelligence Summary
 
-- Frozen V30 references include `lease_assumptions.xlsx` (SHA-256 `a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407`, one `A1:G40` sheet) and `financial_project_summary.xlsx` (SHA-256 `00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04`, one `A1:AB11` summary plus ten `A1:M298` project sheets). The manifest will verify these live values rather than trust existing partial validation tests.
+- Frozen V30 references include `lease_assumptions.xlsx` (SHA-256 `eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb`, one `A1:G40` sheet) and `financial_project_summary.xlsx` (SHA-256 `1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b`, one `A1:AB11` summary plus ten `A1:M298` project sheets). The manifest will verify these live values rather than trust existing partial validation tests.
 - The project_economics assumptions deck contains system-based single-point inputs rather than independently sourced disclosures. Reconciliation will therefore classify these as workbook assumptions with their own vintage.
 - Existing V50 comparison work remains linked to #899. This issue will not silently adopt V50 formulas or after-tax/NOL behavior.
 - Big Foot provides an overlap through observed D&C days and dry-system assumptions even where workbook/project identities do not line up as a direct row match.
 - The visible facilities components are $100MM or $200MM below the workbook `Facilities Cost` for producing projects because water-injection-facility cost is embedded in the total without a summary column; the crosswalk will represent this explicitly.
 - Only five workbook identities have candidate sanctioned-cost matches, and `Tiber` versus `Tiber-Guadalupe` requires a scope decision rather than a silent alias.
-- The D&C workbook is frozen at SHA-256 `3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f`; workbook core metadata will be excluded from publishable inventories.
+- The D&C workbook is frozen at SHA-256 `6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb`; workbook core metadata will be excluded from publishable inventories.
 
 ## Artifact Map
 

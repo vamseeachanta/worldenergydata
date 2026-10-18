@@ -18,7 +18,7 @@ If you do have the demarcation (rough) coordinates of those curves etc. , I can 
 Thank you,
 Vamsee
 
-On Wed, Jun 11, 2025 at 5:04 PM <chuck.white@frontierdeepwater.com> wrote:
+On Wed, Jun 11, 2025 at 5:04 PM <reference@example.invalid> wrote:
 Vamsee, have y’all generated or can you generate a map showing these blocks in one image?
 
 ![data_screenshot](modulesseenalysis
@@ -35,7 +35,7 @@ Best wishes,
 
 Charles N. White
 
-EVP, Frontier Deepwater Appraisal Solutions LLC
+EVP, Reference contributor Appraisal Solutions LLC
 
 LP SDP, Fellow IMarEST & SNAME
 

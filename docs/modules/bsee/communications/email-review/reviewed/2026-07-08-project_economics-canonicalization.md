@@ -6,7 +6,7 @@ analysis session.
 ## Confirmed Direction
 
 - `worldenergydata` (`wed`) should become the canonical go-forward codebase for
-  Frontier-Deepwater Lower-Tertiary economics.
+  Reference contributor Lower-Tertiary economics.
 - The current wed V30 reproduction quality is a valid reproduction gate: about
   +/-0.1% oil and +/-1% NPV versus the frozen V30 baseline.
 - That validates the codebase and reproduction harness. It does not mean every

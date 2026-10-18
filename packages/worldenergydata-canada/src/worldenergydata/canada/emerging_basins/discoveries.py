@@ -5,8 +5,7 @@ human-readable source of truth), validates every row against
 :class:`DiscoverySchema`, and exposes simple filters.
 
 This complements the basin-level :mod:`watch_list` (one stub per basin) with a
-discovery-level catalog (one row per well/discovery) for the three frontier
-deepwater plays tracked in issue #603 — Guyana (Stabroek + adjacent),
+discovery-level catalog (one row per well/discovery) for the three emerging deepwater plays tracked in issue #603 — Guyana (Stabroek + adjacent),
 Suriname (Block 58 + adjacent), and Namibia (Orange Basin).
 
 Example::

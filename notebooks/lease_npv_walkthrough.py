@@ -180,13 +180,13 @@ citations = pd.DataFrame(
         },
         {
             "input": f"Variable opex ${variable_opex_per_bbl:.2f}/bbl ({dev_system})",
-            "publisher": "FDAS",
+            "publisher": "Project economics reference",
             "code_id": f"AssumptionsManager:{dev_system}:VARIABLE_OPEX_$/BBL",
             "revision": "embedded",
         },
         {
             "input": f"Fixed opex ${fixed_opex_mm_per_year:.1f} M/yr ({dev_system})",
-            "publisher": "FDAS",
+            "publisher": "Project economics reference",
             "code_id": f"AssumptionsManager:{dev_system}:FIXED_OPEX_MM_PER_YEAR",
             "revision": "embedded",
         },
@@ -198,19 +198,19 @@ citations = pd.DataFrame(
         },
         {
             "input": f"Annual decline {annual_decline:.1%}",
-            "publisher": "FDAS",
+            "publisher": "Project economics reference",
             "code_id": "deepwater_default_decline",
             "revision": "embedded",
         },
         {
             "input": f"Dev capex ${abs(dev_capex_mm):,.0f} M ({dev_system})",
-            "publisher": "FDAS",
+            "publisher": "Project economics reference",
             "code_id": f"calibration:{dev_system}:dev_capex_mm",
             "revision": "embedded",
         },
         {
             "input": "Discount rate 10%",
-            "publisher": "FDAS",
+            "publisher": "Project economics reference",
             "code_id": "evaluation_default",
             "revision": "embedded",
         },

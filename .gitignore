@@ -285,7 +285,6 @@ reports/coverage/
 results/modules/marine_safety/
 
 # Nested clones (not submodules)
-frontierdeepwater/
 
 # Claude Flow artifacts (transient)
 **/.claude-flow/

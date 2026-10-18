@@ -62,7 +62,7 @@ scripts/
 
 **What it does:**
 - Analyzes production data for all BSEE wells
-- Enhances BSEE data with project_economics (Field and Development Area System) information
+- Enhances BSEE data with project_economics (Project economics) information
 - Generates comprehensive production reports with interactive visualizations
 
 **Outputs:**
@@ -342,7 +342,7 @@ chmod +x scripts/marine_safety/*.sh
 Scripts process data from:
 
 - **BSEE** - Bureau of Safety and Environmental Enforcement
-- **project_economics** - Field and Development Area System
+- **project_economics** - Project economics
 - **USCG MISLE** - US Coast Guard Marine Information
 - **NOAA** - National Oceanic and Atmospheric Administration
 - **MAIB** - UK Marine Accident Investigation Branch

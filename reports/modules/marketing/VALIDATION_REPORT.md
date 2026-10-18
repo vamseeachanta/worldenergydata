@@ -127,7 +127,7 @@ drwxrwxrwx 1 root root 4096 well_production_dashboard
 
 ---
 
-### ✅ project_economics - Field Data Analysis System (Tier 3)
+### ✅ project_economics - Project economics (Tier 3)
 
 **Status:** VALIDATED
 **Path:** `src/worldenergydata/modules/project_economics`

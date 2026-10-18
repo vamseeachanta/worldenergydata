@@ -76,7 +76,7 @@ Best wishes,
 
 Charles N. White
 
-EVP, Frontier Deepwater Appraisal Solutions LLC
+EVP, Reference contributor Appraisal Solutions LLC
 
 LP SDP, Fellow IMarEST & SNAME
 

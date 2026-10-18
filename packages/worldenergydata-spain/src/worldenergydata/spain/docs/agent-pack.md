@@ -1,5 +1,9 @@
 # Spain module knowledge pack
 
+sweep: 0 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-spain/src/worldenergydata/spain --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `spain` |
