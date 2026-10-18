@@ -4,7 +4,7 @@ ABOUTME: Reads the V30 drilling_and_completion_days workbook and renders the dri
 ABOUTME: learning-curve front-door page + per-well CSV to reports/lower_tertiary/.
 
 This is the guaranteed entry point for the saved analytic. It reads Sheet1 of
-``docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx``
+``docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx``
 (219 rows: 217 Lower-Tertiary development wellbores + one blank + one spreadsheet
 TOTALS row), computes portfolio drilling statistics, and emits:
 
@@ -54,7 +54,7 @@ DEFAULT_SOURCE = (
     / "bsee"
     / "analysis"
     / "production"
-    / "FDAS_V30"
+    / "project_economics_V30"
     / "drilling_and_completion_days.xlsx"
 )
 REPORTS_DIR = PROJECT_ROOT / "reports" / "lower_tertiary"

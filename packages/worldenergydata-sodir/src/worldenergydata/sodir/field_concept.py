@@ -12,7 +12,7 @@ DERIVED fields are pre-computed here before the 1:1 mapping applies:
     (Bcf / 6) — field_processor exposes them separately (review M2). Returns
     None (field left unset) when both are absent — never a false 0.
 
-Imports the fdas member at runtime via the shared namespace (root/members always
+Imports the project_economics member at runtime via the shared namespace (root/members always
 installed together), mirroring the established member→member pattern.
 
 Issue: https://github.com/vamseeachanta/worldenergydata/issues/716
@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     FieldMapEntry,
     FieldMetaMapping,
     to_field_concept,

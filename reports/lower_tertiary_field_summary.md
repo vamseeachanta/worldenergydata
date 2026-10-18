@@ -87,7 +87,7 @@
 |-------------|-------------|---------------------|---------------|
 | **BSEE OGOR Production** | Historical production archives | **July 2025** | October 15, 2025 |
 | **BSEE 2024 Annual** | Complete 2024 production year | **December 2024** | August 10, 2025 |
-| **FDAS V30 Lease Mapping** | Verified lease-to-field mappings | **October 2024** | October 2024 |
+| **project_economics V30 Lease Mapping** | Verified lease-to-field mappings | **October 2024** | October 2024 |
 | **Economic Assumptions** | Price decks, fiscal terms, CAPEX/OPEX | **December 2024** | December 20, 2024 |
 | **Field Configurations** | Water depths, systems, lease counts | **October 2024** | October 21, 2024 |
 
@@ -105,9 +105,9 @@
 ## Related Files
 
 - **Interactive Report:** `reports/lower_tertiary_field_summary.html`
-- **Production Data:** `results/fdas_production/e_production_by_development_*.csv`
+- **Production Data:** `results/project_economics_production/e_production_by_development_*.csv`
 - **Field Configs:** `config/analysis/lower_tertiary/fields/`
-- **Lease Mapping:** `config/analysis/lower_tertiary/lease_mapping_fdas.yml`
+- **Lease Mapping:** `config/analysis/lower_tertiary/lease_mapping_project_economics.yml`
 - **Economic Params:** `config/analysis/lower_tertiary/economic_assumptions.yml`
 
 ---

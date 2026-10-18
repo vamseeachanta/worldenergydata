@@ -53,7 +53,7 @@ A derived-only linkage contract in `worldenergydata.cost.data_collection.linkage
 ### Explicitly out of scope for this issue
 - Fuzzy matching, alias tables, trimming/case-normalization heuristics, or canonical-name normalization
 - Currency normalization or comparability policy
-- Any changes to FDAS / lower_tertiary / analytics consumers
+- Any changes to project_economics / lower_tertiary / analytics consumers
 - Any stored foreign-key-style `CostDataPoint` reference field
 - Restatement/versioning behavior
 - Redefining disclosure schema fields from #334

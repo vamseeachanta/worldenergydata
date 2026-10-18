@@ -2,10 +2,10 @@
 
 Each module provides subcommands for a specific domain:
 - bsee: BSEE data operations and analysis
-- dashboard: Plotly Dash web dashboard for BSEE/FDAS data
+- dashboard: Plotly Dash web dashboard for BSEE/project_economics data
 - eia: EIA API v2 weekly petroleum and gas feed ingestion
 - marine_safety: Marine safety incident data
-- fdas: Field development analysis system
+- project_economics: Field development analysis system
 - ndbc: NDBC buoy data — scatter matrices, Weibull fits, wave roses (WRK-316)
 - sodir: SODIR (Norwegian Offshore Directorate) data operations
 - metocean: Metocean data (buoys, tides, marine weather)
@@ -24,7 +24,7 @@ _COMMAND_MODULES = {
     "canada",
     "dashboard",
     "eia",
-    "fdas",
+    "project_economics",
     "kansas_kgs",
     "landman",
     "lng_terminals",
@@ -51,7 +51,7 @@ __all__ = [
     "dashboard",
     "eia",
     "marine_safety",
-    "fdas",
+    "project_economics",
     "ndbc",
     "sodir",
     "metocean",

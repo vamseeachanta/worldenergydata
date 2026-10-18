@@ -56,16 +56,16 @@ workflows:
       network_required: false
       fixtures:
         - examples/workflows/bsee-well-comparison/sample_production.csv
-  - id: fdas-field-npv
-    basename: fdas
-    title: FDAS field economics NPV from bundled cashflow CSV
-    input: examples/workflows/fdas-field-npv/input.yml
+  - id: project_economics-field-npv
+    basename: project_economics
+    title: project_economics field economics NPV from bundled cashflow CSV
+    input: examples/workflows/project_economics-field-npv/input.yml
     outputs:
-      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
-      - examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+      - examples/workflows/project_economics-field-npv/outputs/project_economics_field_npv_metrics.csv
+      - examples/workflows/project_economics-field-npv/outputs/project_economics_field_npv_summary.json
     assertions:
       json:
-        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_summary.json
+        - path: examples/workflows/project_economics-field-npv/outputs/project_economics_field_npv_summary.json
           equals:
             field.name: Synthetic Anchor
             metrics.payback_years: 2.0
@@ -73,20 +73,20 @@ workflows:
             metrics.npv: 243.42599549211099
             metrics.irr_annual: 0.23375192852825855
       csv:
-        - path: examples/workflows/fdas-field-npv/outputs/fdas_field_npv_metrics.csv
+        - path: examples/workflows/project_economics-field-npv/outputs/project_economics_field_npv_metrics.csv
           row_count: 1
-    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-field-npv]
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[project_economics-field-npv]
     runtime: offline
-  - id: fdas-npv-sensitivity
-    basename: fdas
-    title: FDAS NPV sensitivity matrix for price and production rate
-    input: examples/workflows/fdas-npv-sensitivity/input.yml
+  - id: project_economics-npv-sensitivity
+    basename: project_economics
+    title: project_economics NPV sensitivity matrix for price and production rate
+    input: examples/workflows/project_economics-npv-sensitivity/input.yml
     outputs:
-      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
-      - examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+      - examples/workflows/project_economics-npv-sensitivity/outputs/project_economics_npv_sensitivity_matrix.csv
+      - examples/workflows/project_economics-npv-sensitivity/outputs/project_economics_npv_sensitivity_summary.json
     assertions:
       json:
-        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_summary.json
+        - path: examples/workflows/project_economics-npv-sensitivity/outputs/project_economics_npv_sensitivity_summary.json
           equals:
             best_case.price_multiplier: 1.2
             best_case.rate_multiplier: 1.2
@@ -94,11 +94,11 @@ workflows:
             best_case.npv: 541.8482344102176
             worst_case.npv: -452.8925619834712
       csv:
-        - path: examples/workflows/fdas-npv-sensitivity/outputs/fdas_npv_sensitivity_matrix.csv
+        - path: examples/workflows/project_economics-npv-sensitivity/outputs/project_economics_npv_sensitivity_matrix.csv
           row_count: 4
           column_sums:
             npv: -21.036814425244776
-    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[fdas-npv-sensitivity]
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[project_economics-npv-sensitivity]
     runtime: offline
   - id: pipeline-safety-ffs
     basename: pipeline_safety

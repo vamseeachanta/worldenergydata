@@ -7,7 +7,7 @@ application with Rich console output.
 
 Architecture:
     The CLI uses a modular architecture where each domain module (bsee,
-    marine-safety, fdas) provides its own Typer sub-application that is
+    marine-safety, project_economics) provides its own Typer sub-application that is
     registered with the main app.
 
 Usage:
@@ -23,13 +23,13 @@ Usage:
     worldenergydata bsee analyze --field "MC252"
     worldenergydata bsee report --block 759 --format excel
     worldenergydata marine-safety stats --source uscg
-    worldenergydata fdas calculate-npv --discount-rate 0.10
+    worldenergydata project_economics calculate-npv --discount-rate 0.10
 
 Modules:
     bsee          - BSEE (Bureau of Safety and Environmental Enforcement) data
                     including well production, directional surveys, and reports
     marine-safety - Marine safety incident data from USCG, NTSB, MAIB, TSB
-    fdas          - Field Development Analysis System for NPV, MIRR, IRR
+    project_economics          - Field Development Analysis System for NPV, MIRR, IRR
 
 Global Commands:
     version       - Display version information
@@ -55,7 +55,7 @@ from worldenergydata.cli.commands import (
     canada,
     dashboard,
     eia,
-    fdas,
+    project_economics,
     kansas_kgs,
     landman,
     lng_terminals,
@@ -87,7 +87,7 @@ app.add_typer(bsee.app, name="bsee", help="BSEE data operations and analysis")
 app.add_typer(
     dashboard.app,
     name="dashboard",
-    help="Launch the Plotly Dash BSEE/FDAS web dashboard",
+    help="Launch the Plotly Dash BSEE/project_economics web dashboard",
 )
 app.add_typer(
     eia.app,
@@ -99,7 +99,7 @@ app.add_typer(
     name="marine-safety",
     help="Marine safety incident data management",
 )
-app.add_typer(fdas.app, name="fdas", help="Field Development Analysis System")
+app.add_typer(project_economics.app, name="project_economics", help="Field Development Analysis System")
 app.add_typer(
     lower_tertiary.app,
     name="lower-tertiary",
@@ -189,7 +189,7 @@ def info() -> None:
     )
     table.add_row(
         "dashboard",
-        "Plotly Dash BSEE/FDAS web dashboard (server)",
+        "Plotly Dash BSEE/project_economics web dashboard (server)",
         "launch",
     )
     table.add_row(
@@ -201,7 +201,7 @@ def info() -> None:
         "marine-safety", "Marine safety incident data", "scrape, stats, export, db"
     )
     table.add_row(
-        "fdas",
+        "project_economics",
         "Field Development Analysis System",
         "calculate-npv, calculate-mirr, analyze",
     )

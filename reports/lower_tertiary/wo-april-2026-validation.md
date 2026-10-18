@@ -2,8 +2,8 @@
 
 **Status:** validated 2026-07-06 · all 4 tables dispositioned
 **Benchmark name:** "World Oil April 2026 article" (World Oil Lower-Tertiary series, part 2; BSEE-derived data thru Nov 2025)
-**Canonical model artifact:** `docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx` (+ assumptions in `lease_assumptions.xlsx`)
-**Model basis:** the worldenergydata ("wed") toolset is the canonical model going forward. It reproduces the frozen **V30** baseline (2025-09-29) to within ±0.1 % and carries the extended **V50** production window (through 2026-04) on one code path. Economics below are quoted on the **V50 (latest-OGOR-A)** basis, with the frozen V30 reference shown alongside; **D&C days are version-independent** (identical under V30 and V50). Full three-revision comparison, script differences, missed-file inventory and bug review: [FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html) (§6.1).
+**Canonical model artifact:** `docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx` (+ assumptions in `lease_assumptions.xlsx`)
+**Model basis:** the worldenergydata ("wed") toolset is the canonical model going forward. It reproduces the frozen **V30** baseline (2025-09-29) to within ±0.1 % and carries the extended **V50** production window (through 2026-04) on one code path. Economics below are quoted on the **V50 (latest-OGOR-A)** basis, with the frozen V30 reference shown alongside; **D&C days are version-independent** (identical under V30 and V50). Full three-revision comparison, script differences, missed-file inventory and bug review: [project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html) (§6.1).
 **Live reconciliation page:** [/completion/verification.html](https://vamseeachanta.github.io/worldenergydata/completion/verification.html)
 
 ---
@@ -22,7 +22,7 @@ This document is the durable, single-source record of the validation — every n
 
 ## 1. Headline finding
 
-The article's four tables **are this repository's FDAS V30 model output**: `financial_project_summary.xlsx` reproduces Tables 1 and 2 column-for-column (spud dates 9/9, wellbores, D&C days, oil volumes and revenues in band). Validation therefore splits cleanly:
+The article's four tables **are this repository's project_economics V30 model output**: `financial_project_summary.xlsx` reproduces Tables 1 and 2 column-for-column (spud dates 9/9, wellbores, D&C days, oil volumes and revenues in band). Validation therefore splits cleanly:
 
 - **BSEE-derived columns** (wells, sidetracks, spud dates, D&C days, produced oil, revenue) — reconciled by re-running our own code against BSEE WAR + OGOR-A raw data. These we can defend end-to-end.
 - **Modeled columns** (cost deck, NPV10) — flagged as model output on the V30 assumptions deck (`lease_assumptions.xlsx`); reproduced by our code but only as good as the deck.
@@ -39,7 +39,7 @@ The article's four tables **are this repository's FDAS V30 model output**: `fina
 
 ## 3. Field-level D&C reconciliation (Table 1)
 
-> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html). The table below reconciles our extraction against the **article as published**. For the bore-by-bore drill-down behind every row (spud, TD date, drilling/completion split, producer and sidetrack markers), see the [per-well D&C days listing](https://vamseeachanta.github.io/worldenergydata/wo-april-2026-per-well-dc.html).
+> **On the latest (V50/wed) basis, D&C is fully reconciled: V50 = wed to the day, Δ = 0 for every field** (same byte-identical extractor, same WAR). The per-field **drilling / completion / D&C** split (V30 / V50 / wed + discrepancy) is on the [comparison page §4.4](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html). The table below reconciles our extraction against the **article as published**. For the bore-by-bore drill-down behind every row (spud, TD date, drilling/completion split, producer and sidetrack markers), see the [per-well D&C days listing](https://vamseeachanta.github.io/worldenergydata/wo-april-2026-per-well-dc.html).
 
 Our full-raw candidate extraction (canonical extractor reading raw BSEE WAR `.bin`; wed PR [#851](https://github.com/vamseeachanta/worldenergydata/pull/851), issue [#842](https://github.com/vamseeachanta/worldenergydata/issues/842)) vs the article, total D&C days:
 
@@ -81,7 +81,7 @@ The article's Table 1 was built on BSEE WAR data through **November 2025**. Our 
 2. **All 53 added days are completion-phase, none drilling** (`drill_delta = 0` for every well). Each traces to rig-on-well days on wells that reached total depth years ago (Big Foot 2020; Stones 2018–2022), so they are **late-life well-servicing / intervention days**, not new-well D&C — swept in by the extractor's simplified rule that counts every rig-day after TD as "completion" (the same accounting behaviour tracked for Jack St Malo in [#846](https://github.com/vamseeachanta/worldenergydata/issues/846)).
 3. **None of the WED-vs-article Δ days in §3 come from this newer data.** Shenandoah (+24), Buckskin (+52) and Jack St Malo (+119) all pre-date the cutoff (latest activity 2025-09, 2024-05 and 2025-05 respectively); those differences are recompletion accounting, the Buckskin recovery, and the JSM over-count — orthogonal to the data vintage. **Refreshing to the Feb-2026 vintage therefore leaves the reconciliation of the nine matched developments unchanged, and the article stands as printed for them.**
 
-*Reproduce:* re-run `docs/modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py` against the `2026-02-19` WAR `.bin` feed with `leases_v21_kc.csv`, applying an `activity-day > 2025-11-30` filter on the same `WAR_START_DT`/`WAR_END_DT` daily index the extractor already unions.
+*Reproduce:* re-run `docs/modules/bsee/analysis/production/project_economics_V30/extract_drilling_completion_days.py` against the `2026-02-19` WAR `.bin` feed with `leases_v21_kc.csv`, applying an `activity-day > 2025-11-30` filter on the same `WAR_START_DT`/`WAR_END_DT` daily index the extractor already unions.
 
 ## 4. Discrepancies found in the article (QA hand-back)
 
@@ -219,7 +219,7 @@ Discovery + first-production dates now sourced from BSEE Deepwater Qualified Fie
 
 ### 6.1 Revision lineage (V30 → V50 → wed) and canonical basis
 
-The full three-way comparison — scripts, inputs, months of BSEE data, result tables, script-by-script differences, the missed-file inventory, and an adversarial bug review — is its own living page: **[FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)**. Summary:
+The full three-way comparison — scripts, inputs, months of BSEE data, result tables, script-by-script differences, the missed-file inventory, and an adversarial bug review — is its own living page: **[project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)**. Summary:
 
 | Dimension | V30 (2025-09-29) | V50 (2026-06-26) | wed (2026-07-06) |
 |---|---|---|---|
@@ -231,7 +231,7 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | Result workbook | shipped .xlsx | **none shipped** | YAML + markdown reports |
 | Portfolio NPV @10 % | −$8,327.8 MM | −$7,895.3 MM (+$432.5 MM) | reproduces both |
 
-**Roy's V50 script has now been run and reconciled field-by-field against wed** (2026-07-07; full tables on the [comparison page §4.4–§4.6](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)). Headline result, to verify D&C and financials on the latest (V50/wed) basis:
+**Roy's V50 script has now been run and reconciled field-by-field against wed** (2026-07-07; full tables on the [comparison page §4.4–§4.6](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)). Headline result, to verify D&C and financials on the latest (V50/wed) basis:
 
 | Check | Result |
 |---|---|
@@ -269,4 +269,4 @@ The full three-way comparison — scripts, inputs, months of BSEE data, result t
 | 2026-07-06 | KC deepwater ingest landed (PR #851): canonical extractor reads raw WAR `.bin`; Buckskin becomes a matched row (§3); Anchor fidelity pinned exactly by test. Benchmark renamed to "World Oil April 2026 article" everywhere (PR #852). This report committed (PR #853). |
 | 2026-07-06 | BOEM reserves + discovery ingest landed (#847 / PR #861, plan #854 with two adversarial review rounds): annual Table 4 workbook + Deepwater Qualified Fields on refresh cadence; curated per-development table with citation columns; **Stones reserves discrepancy surfaced** (§5.1). Follow-on source family filed as #855. |
 | 2026-07-06 | Delta-increase analysis added (§3.1): current 2026-02-19 WAR vintage vs the article's Nov-2025 cutoff yields **+53 D&C days** (Big Foot +33, Stones +20), all post-TD well-servicing; Table 1 gains a **Δ since Nov '25** column. Section permalinks + an "On this page" contents nav added to the page. |
-| 2026-07-06 | Migrated the model basis to **V50 (latest OGOR-A)** with V30 as the frozen reference; added §6.1 revision lineage and a full companion page ([FDAS revision comparison](https://vamseeachanta.github.io/worldenergydata/fdas-revision-comparison.html)) covering the three-revision comparison, V30→V50 script differences, missed-file inventory, and an adversarial bug review of the wed scripts (V30/V50 source archives backed up to `/mnt/ace/.../fdas_revisions/`). Surfaced two reconciliation items for the article team: pre-tax vs after-tax, and 13 changed V50 cost cells. |
+| 2026-07-06 | Migrated the model basis to **V50 (latest OGOR-A)** with V30 as the frozen reference; added §6.1 revision lineage and a full companion page ([project_economics revision comparison](https://vamseeachanta.github.io/worldenergydata/project_economics-revision-comparison.html)) covering the three-revision comparison, V30→V50 script differences, missed-file inventory, and an adversarial bug review of the wed scripts (V30/V50 source archives backed up to `/mnt/ace/.../project_economics_revisions/`). Surfaced two reconciliation items for the article team: pre-tax vs after-tax, and 13 changed V50 cost cells. |

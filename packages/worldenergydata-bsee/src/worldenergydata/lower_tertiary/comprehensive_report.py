@@ -254,8 +254,8 @@ def write_manifest(result: ComprehensiveReportResult, paths: Dict[str, Path], ou
     root = repository_root()
     inputs = [revision_record_path(), Path(__file__), root / "scripts/reporting/assemble_lt_comprehensive.py"]
     inputs += [root / "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary" / name for name in ("portfolio.py", "portfolio_economics.py", "portfolio_analytics.py")]
-    inputs += [root / "packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py",
-               root / "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py",
+    inputs += [root / "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/api.py",
+               root / "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/core/financial.py",
                root / "uv.lock", root / "pyproject.toml",
                root / "reports/lower_tertiary_field_summary.md"]
     inputs += [fields_config_dir() / f"{fid}.yml" for fid in result.field_payloads]
@@ -617,7 +617,7 @@ def render_markdown(result: ComprehensiveReportResult, path: Path | str) -> Path
     parts.append(
         "- **Cashflow basis:** documented decline-curve (plateau×K years → "
         "exponential decline). OGOR-grounded forward path is #367 "
-        "(ProductionAPI12 → FDAS migration)."
+        "(ProductionAPI12 → project_economics migration)."
     )
     parts.append(
         "- **HSE coverage:** placeholder rows pending #366 (HSE bulk dedup + ingest)."

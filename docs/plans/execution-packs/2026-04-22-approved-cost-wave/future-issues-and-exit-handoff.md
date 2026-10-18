@@ -12,7 +12,7 @@ The first implementation wave has been landed on `main`.
   - PR merged: https://github.com/vamseeachanta/worldenergydata/pull/345
 - #337 — disclosure ingest contract
   - PR merged: https://github.com/vamseeachanta/worldenergydata/pull/346
-- #338 — disclosure analytics views and FDAS surface
+- #338 — disclosure analytics views and project_economics surface
   - PR merged: https://github.com/vamseeachanta/worldenergydata/pull/347
 
 ## Validation evidence from the landed wave
@@ -27,7 +27,7 @@ The first implementation wave has been landed on `main`.
 - Closeout comment: https://github.com/vamseeachanta/worldenergydata/issues/337#issuecomment-4300829035
 
 ### #338
-- Passed: `PYTHONPATH='src:../assetutilities/src' uv run python -m pytest --noconftest tests/unit/cost/test_disclosure_analytics.py tests/unit/fdas/test_disclosure_api.py tests/test_query_api.py --no-cov -v`
+- Passed: `PYTHONPATH='src:../assetutilities/src' uv run python -m pytest --noconftest tests/unit/cost/test_disclosure_analytics.py tests/unit/project_economics/test_disclosure_api.py tests/test_query_api.py --no-cov -v`
 - Closeout comment: https://github.com/vamseeachanta/worldenergydata/issues/338#issuecomment-4300765931
 
 ## Known blocker carried forward

@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "worldenergydata-project_economics"
+version = "0.1.0"
+description = "Source-agnostic Field Development Analysis System (project_economics) economics engine + country fiscal-terms decks for the worldenergydata namespace."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Development Team", email = "dev@example.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# ---------------------------------------------------------------------------
+# Source-agnostic economics member (ADR 0001 — project_economics carve-out, #714).
+# ---------------------------------------------------------------------------
+# project_economics was previously shipped inside the worldenergydata-bsee coupled cluster
+# on the premise of a bsee <-> project_economics import cycle (ADR 0001 Phase 2, #529). That
+# premise was REFUTED for project_economics on 2026-07-02: two independent module-level greps
+# found ZERO project_economics -> bsee / project_economics -> lower_tertiary edges. project_economics depends only on:
+#   * worldenergydata-core  -> worldenergydata.common.{exceptions,logging}
+#   * worldenergydata-cost  -> project_economics.api lazily delegates to
+#                              cost.disclosure_analytics (leaf; cost deps core
+#                              only, so no member cycle)
+# Carving project_economics out lets non-US sources run field economics without importing
+# the US-GoM bsee cluster. If a real project_economics -> bsee back-edge is ever introduced,
+# STOP and re-plan — do not paper over it with a lazy import.
+dependencies = [
+    "worldenergydata-core",
+    "worldenergydata-cost",
+    "numpy>=2.2.6,<3.0",
+    "numpy-financial>=1.0.0",
+    "pandas>=2.3.3,<3.0",
+    "openpyxl>=3.1.0,<4.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/vamseeachanta/worldenergydata"
+"Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+# ---------------------------------------------------------------------------
+# PEP 420 namespace packaging (ADR 0001 — domain-package split)
+# ---------------------------------------------------------------------------
+# Ships ONLY worldenergydata.project_economics* (+ its data files). Does NOT ship
+# ``worldenergydata/__init__.py`` — the root distribution remains the sole owner
+# of the namespace root. ``find_namespace`` + explicit include keeps setuptools
+# from discovering a bare ``worldenergydata`` regular package here.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = [
+    "worldenergydata.project_economics*",
+]
+namespaces = true
+
+[tool.setuptools.package-data]
+"worldenergydata.project_economics" = ["*.md", "*.json", "**/*.yml", "**/*.yaml", "**/*.json", "**/*.csv", "**/*.md", "**/*.html"]
+# Fiscal-terms decks ship as package data on the EXACT owning package so
+# importlib.resources("worldenergydata.project_economics.fiscal.decks") resolves in wheel,
+# sdist, and editable installs.
+"worldenergydata.project_economics.fiscal" = ["decks/*.yml"]

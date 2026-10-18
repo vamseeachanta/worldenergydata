@@ -6,7 +6,7 @@ import pandas as pd
 
 from worldenergydata.canada.field_concept import build_canada_field_concept
 from worldenergydata.canada.reference_chain import run_canada_reference_chain
-from worldenergydata.fdas.adapters.contract import FDAS_PRODUCTION_COLUMNS
+from worldenergydata.project_economics.adapters.contract import PROJECT_ECONOMICS_PRODUCTION_COLUMNS
 from worldenergydata.production.unified.adapters.canada_adapter import CanadaAdapter
 
 
@@ -61,8 +61,8 @@ def test_reference_chain_hibernia_is_dry_gbs_and_revenue_positive():
     # Hibernia is a shallow-water GBS dry-tree field → depth classifier "dry"
     assert result["dev_system"] == "dry"
     assert result["pre_tax_metrics"]["dev_system_source"] == "depth_classifier"
-    assert list(result["fdas_production"].columns) == list(FDAS_PRODUCTION_COLUMNS)
-    assert list(result["fdas_production"]["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert list(result["project_economics_production"].columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
+    assert list(result["project_economics_production"]["YEAR_MONTH"]) == ["2024-01", "2024-02"]
     assert result["pre_tax_metrics"]["gross_revenue_usd"] > 0.0
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
 

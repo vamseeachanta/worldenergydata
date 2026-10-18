@@ -146,11 +146,11 @@ def engine(
         landman_app = Landman()
         cfg_base = landman_app.router(cfg_base)
 
-    elif basename in ["fdas"]:
-        from worldenergydata.fdas.fdas import FDAS
+    elif basename in ["project_economics"]:
+        from worldenergydata.project_economics.project_economics import ProjectEconomics
 
-        fdas_app = FDAS()
-        cfg_base = fdas_app.router(cfg_base)
+        project_economics_app = ProjectEconomics()
+        cfg_base = project_economics_app.router(cfg_base)
 
     elif basename in ["pipeline_safety"]:
         from worldenergydata.pipeline_safety.pipeline_safety import PipelineSafety

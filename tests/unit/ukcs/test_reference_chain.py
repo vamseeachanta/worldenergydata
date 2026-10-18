@@ -5,7 +5,7 @@ import math
 import pandas as pd
 import pytest
 
-from worldenergydata.fdas.adapters.contract import FDAS_PRODUCTION_COLUMNS
+from worldenergydata.project_economics.adapters.contract import PROJECT_ECONOMICS_PRODUCTION_COLUMNS
 from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
 from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
 from worldenergydata.ukcs.reference_chain import (
@@ -100,7 +100,7 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     )
 
     assert result["economics_label"] == "chain_plumbing_pre_tax"
-    assert list(result["fdas_production"].columns) == list(FDAS_PRODUCTION_COLUMNS)
+    assert list(result["project_economics_production"].columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
     assert result["pre_tax_metrics"]["months"] >= 2
     assert result["pre_tax_metrics"]["royalty_usd"] == pytest.approx(0.0)
     assert result["pre_tax_metrics"]["gross_revenue_usd"] > 0.0

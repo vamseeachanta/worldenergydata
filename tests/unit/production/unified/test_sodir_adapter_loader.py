@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from worldenergydata.common.units import OilUnits
-from worldenergydata.fdas.adapters.contract import to_fdas_production
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 
@@ -84,15 +84,15 @@ def test_fetch_transforms_loader_output_to_standard_columns():
     assert "water_injected_sm3" not in out.columns
 
 
-def test_fetch_output_is_accepted_by_fdas_production_contract():
+def test_fetch_output_is_accepted_by_project_economics_production_contract():
     adapter = SodirAdapter(loader=FixtureMonthlyLoader())
 
     unified = adapter.fetch(ProductionQuery(regions=["ncs"], fields=["JOHAN SVERDRUP"]))
-    fdas = to_fdas_production(unified)
+    project_economics = to_project_economics_production(unified)
 
-    assert list(fdas["DEV_NAME"].unique()) == ["JOHAN SVERDRUP"]
-    assert list(fdas["YEAR_MONTH"]) == ["2024-01", "2024-02"]
-    assert fdas["MONTHLY_WATER_BBL"].isna().all()
+    assert list(project_economics["DEV_NAME"].unique()) == ["JOHAN SVERDRUP"]
+    assert list(project_economics["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert project_economics["MONTHLY_WATER_BBL"].isna().all()
 
 
 def test_fetch_all_uses_loader_all_path_when_no_field_filter():

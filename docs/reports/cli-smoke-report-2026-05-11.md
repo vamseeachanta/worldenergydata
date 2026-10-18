@@ -15,7 +15,7 @@
 | `worldenergydata dashboard --help` | bounded-safe | 0 | pass |
 | `worldenergydata eia --help` | bounded-safe | 0 | pass |
 | `worldenergydata marine-safety --help` | bounded-safe | 0 | pass |
-| `worldenergydata fdas --help` | bounded-safe | 0 | pass |
+| `worldenergydata project_economics --help` | bounded-safe | 0 | pass |
 | `worldenergydata lower-tertiary --help` | bounded-safe | 0 | pass |
 | `worldenergydata forecast --help` | bounded-safe | 0 | pass |
 | `worldenergydata sodir --help` | bounded-safe | 0 | pass |
@@ -27,7 +27,7 @@
 | `worldenergydata landman --help` | bounded-safe | 0 | pass |
 | `worldenergydata lng-terminals --help` | bounded-safe | 0 | pass |
 | `worldenergydata safety-analysis --help` | bounded-safe | 0 | pass |
-| `worldenergydata fdas calculate-npv --cashflows [-1000,100,200,300] --discount-rate 0.10` | fixture-only | 0 | pass |
-| `worldenergydata fdas calculate-all --cashflows [-5000,1000,1500,2000]` | fixture-only | 0 | pass |
-| `worldenergydata fdas classify 5000` | fixture-only | 0 | pass |
+| `worldenergydata project_economics calculate-npv --cashflows [-1000,100,200,300] --discount-rate 0.10` | fixture-only | 0 | pass |
+| `worldenergydata project_economics calculate-all --cashflows [-5000,1000,1500,2000]` | fixture-only | 0 | pass |
+| `worldenergydata project_economics classify 5000` | fixture-only | 0 | pass |
 | `worldenergydata marine-safety db init --dev-mode --dry-run` | bounded-safe | 0 | pass |

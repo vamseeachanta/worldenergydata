@@ -64,7 +64,7 @@ This is a **planning/audit-first** packet. It does not authorize implementation 
 
 ## Evidence anchors from repo inspection
 
-- `README.md` advertises BSEE, marine safety, and FDAS workflows plus local BSEE data requirement.
+- `README.md` advertises BSEE, marine safety, and project_economics workflows plus local BSEE data requirement.
 - `MODULE_INDEX.md` claims 27 modules and flags scheduler gaps for `canada`, `hse`, `marine_safety`, `pipeline_safety`, and `lng_terminals`.
 - `src/worldenergydata/` has far more live module folders than the README highlights, including `brazil_anp`, `canada`, `eia_us`, `hse`, `lng_terminals`, `metocean`, `mexico_cnh`, `pipeline_safety`, `sodir`, `texas_rrc`, `ukcs`, `vessel_fleet`, `vessel_hull_models`, `west_africa`, etc.
 - `data/catalog.yaml` reports 12 modules / 44 datasets / ~10.5 MB, while `MODULE_INDEX.md` advertises 27 modules; this mismatch is the main data-completeness audit target.
@@ -155,7 +155,7 @@ Required outputs:
 - Follow-up issue candidates for broken/stale public examples.
 
 Rules:
-- Prefer bounded commands: `uv run worldenergydata --help`, `uv run worldenergydata info`, module `--help`, and pure FDAS calculation examples.
+- Prefer bounded commands: `uv run worldenergydata --help`, `uv run worldenergydata info`, module `--help`, and pure project_economics calculation examples.
 - Avoid commands that download large BSEE or external datasets unless run in dry-run/sample mode.
 - Link results to known issues #313, #327, #328, #326, #325, #278 where appropriate.
 - Post concise final comment to #352.

@@ -16,7 +16,7 @@ console = Console()
 
 app = typer.Typer(
     name="dashboard",
-    help="Launch the Plotly Dash BSEE/FDAS web dashboard",
+    help="Launch the Plotly Dash BSEE/project_economics web dashboard",
     no_args_is_help=False,
 )
 
@@ -29,7 +29,7 @@ def dashboard(
     ),
     debug: bool = typer.Option(False, "--debug", help="Enable Dash debug mode"),
 ) -> None:
-    """Start the interactive GOM dashboard (BSEE production + FDAS incidents)."""
+    """Start the interactive GOM dashboard (BSEE production + project_economics incidents)."""
     from worldenergydata.dashboard.app import run_server
 
     console.print(

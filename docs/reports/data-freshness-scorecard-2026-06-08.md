@@ -7,7 +7,7 @@
 | canada | runtime_fetched | missing | 0 | 0 |  |  |
 | common | not_applicable | missing | 0 | 0 |  |  |
 | eia_us | runtime_fetched | missing | 0 | 0 |  |  |
-| fdas | not_applicable | not_applicable | 1 | 0 | 2026-05-15 |  |
+| project_economics | not_applicable | not_applicable | 1 | 0 | 2026-05-15 |  |
 | hse | sample | sample | 0 | 0 | 2026-05-15 |  |
 | landman | not_applicable | missing | 0 | 0 |  |  |
 | lng_terminals | full | full | 1 | 0 | 2026-05-15 |  |

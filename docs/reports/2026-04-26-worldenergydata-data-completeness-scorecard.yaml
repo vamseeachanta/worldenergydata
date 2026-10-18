@@ -233,10 +233,10 @@ records:
     related_issues: []
     safe_next_action: no-op audit; no own data dir expected
 
-  - module: fdas
+  - module: project_economics
     source_authority: derived from BSEE + analysis configs
     local_paths:
-      - data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+      - data/modules/project_economics/enhanced/wells/well_data_enhanced.csv
     catalog_datasets: present
     row_count: ~unknown (4.6 MB CSV)
     size_bytes: 4593879
@@ -414,7 +414,7 @@ scheduler_summary:
     - pipeline_safety
     - marine_safety
     - safety_analysis
-    - fdas
+    - project_economics
     - vessel_fleet
     - vessel_hull_models
     - well_production_dashboard
@@ -493,7 +493,7 @@ follow_up_issue_candidates:
     summary: 5 scheduler jobs declare output_dir paths that do not exist on disk; eia_us output_dir name mismatch (data/modules/eia vs eia_us)
     related_issues: [266, 273]
   - id: bsee-current-stub-rot
-    summary: 12 bsee/current/*.csv files are 100-row 2025-07-31 stubs; downstream fdas + dashboards consume stub data silently
+    summary: 12 bsee/current/*.csv files are 100-row 2025-07-31 stubs; downstream project_economics + dashboards consume stub data silently
     related_issues: [334]
   - id: marine-safety-scrape-failure-backlog
     summary: 4 zero-byte HTML files + 22 IMO GISIS placeholder pages; USCG MISLE / PHMSA / OSHA fatalities / IMO GISIS all blocked

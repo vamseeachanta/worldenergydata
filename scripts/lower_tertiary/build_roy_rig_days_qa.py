@@ -20,7 +20,7 @@ check gets presented as a validated basis:
     that can *validate* anything.
 
 ``owner_shipped``
-    Numbers produced by the owner's own scripts (the FDAS V30 package, the
+    Numbers produced by the owner's own scripts (the project_economics V30 package, the
     ``drilling_and_completion_days.py`` extractor).  Comparing against these
     measures the *size of the change* we are proposing, not its correctness:
     they encode the calendar spud->TD definition the new basis replaces.
@@ -55,7 +55,7 @@ ANCHOR_WAR_CSV = REPO / "docs/modules/bsee/analysis/rig_days/war_data_6081240095
 JULIA_WAR_CSV = REPO / "docs/modules/bsee/analysis/rig_days/war_data_608124003301.csv"
 PUBLISHED_CSV = (
     REPO
-    / "docs/modules/bsee/analysis/production/FDAS_V30"
+    / "docs/modules/bsee/analysis/production/project_economics_V30"
     / "drilling_and_completion_days_v21_kc.csv"
 )
 CACHE_CSV = REPO / "reports/lower_tertiary/data/roy_rig_days_qa.csv"
@@ -69,7 +69,7 @@ ANCHOR_API12 = "608124009500"
 #: Julia JU102 -- the owner supplied parsed remarks for it but never a day count.
 JULIA_API12 = "608124003301"
 
-#: Owner-shipped per-field totals, transcribed from the FDAS V30 package the
+#: Owner-shipped per-field totals, transcribed from the project_economics V30 package the
 #: owner delivered (``financial_project_summary.xlsx`` sheet ``Project_Summary``).
 #: Frozen here rather than read from the workbook so the page stays stdlib-only
 #: and the transcription is reviewable in the diff.
@@ -289,7 +289,7 @@ ANCHORS: list[dict] = [
         "roy": str(V30_OWNER_STONES["wellbores"]),
         "unit": "",
         "source": _src(
-            "docs/modules/bsee/analysis/production/FDAS_V30/"
+            "docs/modules/bsee/analysis/production/project_economics_V30/"
             "financial_project_summary.xlsx",
             None,
         ),
@@ -304,7 +304,7 @@ ANCHORS: list[dict] = [
         "roy": str(V30_OWNER_STONES["drilling_days"]),
         "unit": "d",
         "source": _src(
-            "docs/modules/bsee/analysis/production/FDAS_V30/"
+            "docs/modules/bsee/analysis/production/project_economics_V30/"
             "financial_project_summary.xlsx",
             None,
         ),
@@ -318,7 +318,7 @@ ANCHORS: list[dict] = [
         "roy": str(V30_OWNER_STONES["completion_days"]),
         "unit": "d",
         "source": _src(
-            "docs/modules/bsee/analysis/production/FDAS_V30/"
+            "docs/modules/bsee/analysis/production/project_economics_V30/"
             "financial_project_summary.xlsx",
             None,
         ),
@@ -1262,7 +1262,7 @@ def build_html(
         <td class="num">155</td><td>TD &minus; spud, <strong>exclusive</strong> = 155</td></tr>
       <tr><td>Drilling days</td><td>{_blob(_src("docs/data-sources/bsee/analysis/rig_days/rig_days_summary.md", 21))}</td>
         <td class="num">156</td><td>TD &minus; spud <strong>+ 1</strong>, the stated formula = 156</td></tr>
-      <tr><td>Published extract</td><td>{_blob(_src("docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days_v21_kc.csv"))}</td>
+      <tr><td>Published extract</td><td>{_blob(_src("docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days_v21_kc.csv"))}</td>
         <td class="num">{pub["drilling"]}</td><td>the exclusive convention, as shipped</td></tr>
       <tr class="total"><td>WAR DRL, this basis</td><td>merged DRL weeks
         {facts["drl_span"][0]} &rarr; {facts["drl_span"][1]}</td>
@@ -1311,7 +1311,7 @@ def build_html(
     <p><strong>The World Oil Table 1 anchor is circular.</strong> Stones prints
     {WO_STONES["dc_days"]:,} D&amp;C days there, and the owner tabulated that table &mdash; but
     the validation page records that <em>&ldquo;the article's four tables are this repository's
-    FDAS V30 model output&rdquo;</em>. Comparing our numbers to it compares our numbers to
+    project_economics V30 model output&rdquo;</em>. Comparing our numbers to it compares our numbers to
     themselves. It is a useful measure of how far published figures will move
     ({war_dc - WO_STONES["dc_days"]:+,} days for Stones); it is not a check.</p>
   </div>

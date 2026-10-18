@@ -43,10 +43,10 @@ INPUT_PATHS = (
     "config/analysis/lower_tertiary/fields/big_foot.yml",
     *(
         CURATED + name
-        for name in "award_asset_links.csv contract_awards.csv cost_award_identity.csv cost_event_identity.csv cost_project_identity.csv cost_requirement_identity.csv cost_revision_trails.csv fdas_project_cost_crosswalk.csv project_asset_requirements.csv sanctioned_projects.csv".split()
+        for name in "award_asset_links.csv contract_awards.csv cost_award_identity.csv cost_event_identity.csv cost_project_identity.csv cost_requirement_identity.csv cost_revision_trails.csv project_economics_project_cost_crosswalk.csv project_asset_requirements.csv sanctioned_projects.csv".split()
     ),
     *(
-        "docs/modules/bsee/analysis/production/FDAS_V30/" + name
+        "docs/modules/bsee/analysis/production/project_economics_V30/" + name
         for name in "drilling_and_completion_days.xlsx financial_project_summary.xlsx lease_assumptions.xlsx".split()
     ),
     *(
@@ -206,11 +206,11 @@ def awards(frozen: dict[str, bytes]) -> list[dict[str, str]]:
     return resolved
 
 
-def fdas(
+def project_economics(
     frozen: dict[str, bytes],
 ) -> tuple[list[dict[str, str]], list[dict[str, str]], dict[str, str]]:
-    rows = csv_rows(frozen[CURATED + "fdas_project_cost_crosswalk.csv"])
-    prefix = "docs/modules/bsee/analysis/production/FDAS_V30/"
+    rows = csv_rows(frozen[CURATED + "project_economics_project_cost_crosswalk.csv"])
+    prefix = "docs/modules/bsee/analysis/production/project_economics_V30/"
     hashes: dict[str, str] = {}
     for row in rows:
         prior = hashes.setdefault(row["WORKBOOK_FILE"], row["WORKBOOK_SHA256"])
@@ -232,7 +232,7 @@ def fdas(
         "drilling",
         "completion",
     } or len(opex) != 2:
-        raise ValueError("FDAS additive/OPEX contract drift")
+        raise ValueError("project_economics additive/OPEX contract drift")
     values = re.findall(
         r"(?m)^\s*total_mm_usd:\s*([0-9.]+)\s*$",
         frozen["config/analysis/lower_tertiary/fields/big_foot.yml"].decode(),
@@ -284,15 +284,15 @@ def build_context(frozen: dict[str, bytes]) -> dict:
         raise ValueError("controlled target event IDs must be exact")
     if tuple(sorted(event.event_id for event in trace)) != EVENT_IDS:
         raise ValueError("controlled trace event IDs must be exact")
-    additive, opex, stale = fdas(frozen)
+    additive, opex, stale = project_economics(frozen)
     return {
         "targets": targets,
         "trace": trace,
         "awards": awards(frozen),
         "requirements": csv_rows(frozen[CURATED + "project_asset_requirements.csv"]),
-        "fdas_all": csv_rows(frozen[CURATED + "fdas_project_cost_crosswalk.csv"]),
-        "fdas_additive": additive,
-        "fdas_opex": opex,
+        "project_economics_all": csv_rows(frozen[CURATED + "project_economics_project_cost_crosswalk.csv"]),
+        "project_economics_additive": additive,
+        "project_economics_opex": opex,
         "stale": stale,
     }
 

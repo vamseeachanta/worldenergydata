@@ -115,9 +115,9 @@ modules:
     capability_source: manifest
     related_wrk: [WRK-163, WRK-198, WRK-249]
 
-  - id: fdas
+  - id: project_economics
     name: "Field Development Analysis System"
-    package: "worldenergydata.fdas"
+    package: "worldenergydata.project_economics"
     region: [gulf_of_mexico, usa]
     domain: [economics, production]
     data_types:
@@ -137,7 +137,7 @@ modules:
       - BseeAdapter
       - classify_dev_system_by_depth
     status: stable
-    entry_point: "from worldenergydata.fdas import calculate_npv, excel_like_mirr, calculate_all_metrics"
+    entry_point: "from worldenergydata.project_economics import calculate_npv, excel_like_mirr, calculate_all_metrics"
     notes: "NPV, MIRR, IRR, and payback calculations for deepwater GOM fields with BSEE production data integration and water-depth-based development classification."
     in_scheduler: false
     public_cli: true
@@ -698,7 +698,7 @@ modules:
     key_classes: []
     status: stable
     entry_point: "from worldenergydata.reporting import ..."
-    notes: "Shared report generation infrastructure — HTML/Excel/JSON templates and utility functions used by bsee, fdas, marine_safety, and safety_analysis."
+    notes: "Shared report generation infrastructure — HTML/Excel/JSON templates and utility functions used by bsee, project_economics, marine_safety, and safety_analysis."
     in_scheduler: false
     public_cli: false
     catalog_status: not_applicable

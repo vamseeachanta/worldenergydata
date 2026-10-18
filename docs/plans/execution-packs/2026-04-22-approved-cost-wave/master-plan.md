@@ -6,7 +6,7 @@ Mode: parallel implementation wave with zero git contention
 Approved issues in scope:
 - #335 — disclosure-to-CostDataPoint linkage model
 - #337 — citation quality and automated ingestion contracts for annual disclosures
-- #338 — annual disclosure analytics views and integration surface for cost/fdas/lower_tertiary
+- #338 — annual disclosure analytics views and integration surface for cost/project_economics/lower_tertiary
 Excluded:
 - #336 — not approval-ready / still blocked
 
@@ -21,7 +21,7 @@ Wave 2 (serial after Wave 1)
 
 Reason:
 - #335 and #337 both own `src/worldenergydata/cost/data_collection/__init__.py` and therefore cannot run concurrently without git contention.
-- #338 writes to `src/worldenergydata/cost/__init__.py`, `src/worldenergydata/fdas/`, and cost analytics tests, so it is file-disjoint from #335 and #337 except for broad repo test surfaces.
+- #338 writes to `src/worldenergydata/cost/__init__.py`, `src/worldenergydata/project_economics/`, and cost analytics tests, so it is file-disjoint from #335 and #337 except for broad repo test surfaces.
 
 ## Contention map
 
@@ -33,10 +33,10 @@ Stream A (#335) writes:
 Stream B (#338) writes:
 - `src/worldenergydata/cost/disclosure_analytics.py`
 - `src/worldenergydata/cost/__init__.py`
-- `src/worldenergydata/fdas/api.py`
-- `src/worldenergydata/fdas/__init__.py`
+- `src/worldenergydata/project_economics/api.py`
+- `src/worldenergydata/project_economics/__init__.py`
 - `tests/unit/cost/test_disclosure_analytics.py`
-- `tests/unit/fdas/test_disclosure_api.py`
+- `tests/unit/project_economics/test_disclosure_api.py`
 - `tests/test_query_api.py`
 
 Stream C (#337) writes:
@@ -66,7 +66,7 @@ From Stream A (#335)
 
 From Stream B (#338)
 - derived analytics view module
-- FDAS disclosure namespace/API seam
+- project_economics disclosure namespace/API seam
 - tests for raw-vs-derived separation and package-level API exposure
 - issue comment with validation evidence
 

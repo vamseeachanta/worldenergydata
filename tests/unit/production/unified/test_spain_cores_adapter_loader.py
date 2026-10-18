@@ -5,7 +5,7 @@ import json
 import pandas as pd
 import pytest
 
-from worldenergydata.fdas.adapters.contract import to_fdas_production
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
     _EmbeddedCoresFixtureLoader,
@@ -128,15 +128,15 @@ def test_fetch_transforms_cores_loader_output_to_standard_columns():
     assert row["source"] == "cores"
 
 
-def test_fetch_output_is_accepted_by_fdas_production_contract():
+def test_fetch_output_is_accepted_by_project_economics_production_contract():
     adapter = SpainCoresAdapter(loader=FixtureCoresLoader())
 
     unified = adapter.fetch(ProductionQuery(regions=["spain"], fields=["Ayoluengo"]))
-    fdas = to_fdas_production(unified)
+    project_economics = to_project_economics_production(unified)
 
-    assert list(fdas["DEV_NAME"].unique()) == ["Ayoluengo"]
-    assert list(fdas["YEAR_MONTH"]) == ["2024-01", "2024-02"]
-    assert fdas["MONTHLY_WATER_BBL"].isna().all()
+    assert list(project_economics["DEV_NAME"].unique()) == ["Ayoluengo"]
+    assert list(project_economics["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert project_economics["MONTHLY_WATER_BBL"].isna().all()
 
 
 def test_fetch_all_uses_loader_all_path_when_no_field_filter():

@@ -1,10 +1,10 @@
 # ABOUTME: Parametric per-concept CAPEX/OPEX estimator (issue #643, epic #567).
-# ABOUTME: Layers concept-specific adjustments onto the field-level FDAS economics.
+# ABOUTME: Layers concept-specific adjustments onto the field-level project_economics economics.
 """
 worldenergydata.field_development.cost_estimator
 ================================================
 
-The FDAS economics in :mod:`worldenergydata.field_development.integrations` are
+The project_economics economics in :mod:`worldenergydata.field_development.integrations` are
 **depth-driven and field-level**: at a given water depth every concept inherits
 the same dev-system CAPEX (``dry`` / ``subsea15`` / ``subsea20``). That is the
 right altitude for a sanity-check NPV, but a Concept-Select comparison needs to
@@ -13,9 +13,9 @@ dedicated FPSO at the same depth.
 
 This module adds that separation **by reuse, not re-derivation**:
 
-* the **base CAPEX** is :func:`integrations.estimate_economics` (FDAS host +
+* the **base CAPEX** is :func:`integrations.estimate_economics` (project_economics host +
   per-well assumptions) — never recomputed here;
-* the **base annual OPEX** is the FDAS ``FIXED_OPEX_MM_PER_YEAR`` assumption for
+* the **base annual OPEX** is the project_economics ``FIXED_OPEX_MM_PER_YEAR`` assumption for
   the same depth-classified dev system;
 * the **per-concept multipliers** are derived from the same priors the
   recommendation engine already scores on — :data:`recommendation._CONCEPT_PROFILES`
@@ -26,7 +26,7 @@ This module adds that separation **by reuse, not re-derivation**:
 
 Every multiplier is a **qualitative engineering prior** (Concept-Select / AACE
 Class 5 fidelity), documented inline with its rationale — not an empirically
-calibrated cost model. Costs round to 0.1 MM. If FDAS cannot classify a dev
+calibrated cost model. Costs round to 0.1 MM. If project_economics cannot classify a dev
 system (e.g. unknown water depth) the estimator **degrades gracefully**: it
 returns an estimate carrying a ``note`` rather than raising.
 """
@@ -110,10 +110,10 @@ _TIEBACK_CONCEPTS = {ConceptType.SUBSEA_TIEBACK, ConceptType.SUBSEA_TO_SHORE}
 class PerConceptCostEstimate:
     """A transparent per-concept CAPEX/OPEX estimate at Concept-Select fidelity.
 
-    ``capex_mm`` / ``annual_opex_mm`` are ``None`` when the underlying FDAS
+    ``capex_mm`` / ``annual_opex_mm`` are ``None`` when the underlying project_economics
     economics could not be classified (graceful degrade); ``note`` then explains
     why. ``capex_adjustment`` and ``opex_factor`` are the multipliers applied to
-    the FDAS field-level base; ``depth_fit_penalty`` and ``tieback_penalty_pct``
+    the project_economics field-level base; ``depth_fit_penalty`` and ``tieback_penalty_pct``
     expose the two CAPEX penalty components so they can be audited.
     """
 
@@ -164,7 +164,7 @@ def capex_adjustment_for(
     depth_fit: float = 1.0,
     tieback_km: Optional[float] = None,
 ) -> float:
-    """Per-concept CAPEX multiplier on the FDAS field-level base (~[0.8, 1.5]).
+    """Per-concept CAPEX multiplier on the project_economics field-level base (~[0.8, 1.5]).
 
     Combines three documented priors multiplicatively: the concept's relative
     CAPEX prior, the depth-fit penalty, and the long-tieback flow-assurance
@@ -195,7 +195,7 @@ def _reserves_opex_scale(reserves_mmboe: Optional[float]) -> float:
 def opex_factor_for(
     concept: ConceptType, reserves_mmboe: Optional[float] = None
 ) -> float:
-    """Per-concept annual-OPEX multiplier on the FDAS fixed-OPEX base (~[0.5, 2]).
+    """Per-concept annual-OPEX multiplier on the project_economics fixed-OPEX base (~[0.5, 2]).
 
     Combines the concept's relative-OPEX prior with a reserves-based size scale,
     clamped to a defensive envelope.
@@ -207,13 +207,13 @@ def opex_factor_for(
 
 
 def _base_annual_opex_mm(concept: FieldConcept) -> Optional[float]:
-    """FDAS fixed annual OPEX for the depth-classified dev system; None if N/A."""
+    """project_economics fixed annual OPEX for the depth-classified dev system; None if N/A."""
     sysname = dev_system_for(concept)
     if sysname in (None, "unknown"):
         return None
     try:
-        from worldenergydata.fdas.core.config import AssumptionsManager
-    except Exception:  # pragma: no cover - defensive, FDAS optional
+        from worldenergydata.project_economics.core.config import AssumptionsManager
+    except Exception:  # pragma: no cover - defensive, project_economics optional
         return None
     return AssumptionsManager().get(sysname, "FIXED_OPEX_MM_PER_YEAR", 0.0)
 
@@ -227,9 +227,9 @@ def estimate_per_concept_costs(
     """Estimate CAPEX/OPEX for one scored concept against a field's parameters.
 
     Reuses :func:`integrations.estimate_economics` for the field-level CAPEX base
-    and the FDAS fixed-OPEX assumption for the base annual OPEX, then applies the
+    and the project_economics fixed-OPEX assumption for the base annual OPEX, then applies the
     per-concept :func:`capex_adjustment_for` and :func:`opex_factor_for`
-    multipliers. Degrades gracefully (capex/opex ``None`` + ``note``) when FDAS
+    multipliers. Degrades gracefully (capex/opex ``None`` + ``note``) when project_economics
     cannot classify a dev system.
     """
     ct = scored.concept_type
@@ -252,7 +252,7 @@ def estimate_per_concept_costs(
         dev_system=eco.dev_system,
     )
 
-    # --- CAPEX (graceful degrade if FDAS yielded no field-level CAPEX) ---
+    # --- CAPEX (graceful degrade if project_economics yielded no field-level CAPEX) ---
     if eco.capex_mm is None:
         est.note = (
             eco.note or "field-level CAPEX unavailable — per-concept CAPEX skipped"

@@ -39,5 +39,5 @@ uv run python scripts/field_development/build_fdp_portfolio.py \
 Concept-Select / FEL-1 fidelity — not sanctioned designs. Facts are
 web-researched (sources in `_research.json`) but the ~2014 SubseaIQ baseline and
 dated public records mean some figures are approximate. The engine's economics
-are rough order-of-magnitude (generic FDAS assumptions), shown beside as-built
+are rough order-of-magnitude (generic project_economics assumptions), shown beside as-built
 actuals to make the fidelity gap explicit.

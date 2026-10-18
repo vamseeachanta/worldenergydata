@@ -1,11 +1,11 @@
-# ABOUTME: Tests for the Python query API (BSEE, FDAS, marine_safety).
+# ABOUTME: Tests for the Python query API (BSEE, project_economics, marine_safety).
 # ABOUTME: Validates import paths, function signatures, filter logic, and calculations.
 
 """Tests for the worldenergydata query API layer.
 
 Covers:
   - BSEE: ProductionQuery, WellsQuery, CompaniesQuery
-  - FDAS: EconomicsQuery (NPV, IRR, MIRR, payback, all_metrics)
+  - project_economics: EconomicsQuery (NPV, IRR, MIRR, payback, all_metrics)
   - Marine Safety: IncidentsQuery
 
 Uses mocking to avoid dependency on actual binary data files.
@@ -283,22 +283,22 @@ class TestBSEECompaniesQuery:
 
 
 # ==========================================================================
-# FDAS Economics Query API Tests
+# project_economics Economics Query API Tests
 # ==========================================================================
 
 
-class TestFDASEconomicsQuery:
-    """Tests for worldenergydata.fdas.api.EconomicsQuery."""
+class TestProjectEconomicsEconomicsQuery:
+    """Tests for worldenergydata.project_economics.api.EconomicsQuery."""
 
     def test_import_economics_query(self):
-        """EconomicsQuery is importable from fdas.api."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        """EconomicsQuery is importable from project_economics.api."""
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         assert EconomicsQuery is not None
 
     def test_npv_method_signature(self):
         """EconomicsQuery.npv has the expected parameters."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         sig = inspect.signature(EconomicsQuery.npv)
         params = list(sig.parameters.keys())
@@ -309,7 +309,7 @@ class TestFDASEconomicsQuery:
 
     def test_npv_calculation(self):
         """NPV calculation returns a reasonable float value."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         # Simple annual cashflow: -1000 today, +600 year 1, +600 year 2
         cashflows = [-1000, 600, 600]
@@ -320,7 +320,7 @@ class TestFDASEconomicsQuery:
 
     def test_npv_negative_result(self):
         """NPV returns negative for poor cashflows."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         cashflows = [-1000, 50, 50]
         npv = EconomicsQuery.npv(cashflows, discount_rate=0.10, period="annual")
@@ -328,14 +328,14 @@ class TestFDASEconomicsQuery:
 
     def test_npv_accepts_list(self):
         """NPV accepts plain Python list (not just numpy arrays)."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         npv = EconomicsQuery.npv([-100, 50, 50, 50], 0.05, period="annual")
         assert isinstance(npv, float)
 
     def test_npv_accepts_numpy_array(self):
         """NPV accepts numpy array input."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         cf = np.array([-100, 50, 50, 50])
         npv = EconomicsQuery.npv(cf, 0.05, period="annual")
@@ -343,7 +343,7 @@ class TestFDASEconomicsQuery:
 
     def test_irr_calculation(self):
         """IRR returns a tuple of (period_irr, annual_irr)."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         cashflows = [-1000, 200, 300, 400, 500]
         result = EconomicsQuery.irr(cashflows, period="annual")
@@ -357,7 +357,7 @@ class TestFDASEconomicsQuery:
 
     def test_mirr_calculation(self):
         """MIRR returns a tuple of (monthly_mirr, annual_mirr)."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         cashflows = [-1000, 100, 200, 300, 400, 500]
         result = EconomicsQuery.mirr(cashflows, discount_rate=0.10)
@@ -369,7 +369,7 @@ class TestFDASEconomicsQuery:
 
     def test_payback_period_calculation(self):
         """payback_period returns (periods, years)."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         # -100 + 50 + 50 = 0 at period 2
         cashflows = [-100, 50, 50, 50]
@@ -380,7 +380,7 @@ class TestFDASEconomicsQuery:
 
     def test_all_metrics(self):
         """all_metrics returns a dict with expected keys."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         cashflows = [-1000, 100, 200, 300, 400, 500]
         result = EconomicsQuery.all_metrics(cashflows, 0.10, period="annual")
@@ -392,7 +392,7 @@ class TestFDASEconomicsQuery:
 
     def test_validate_cashflows(self):
         """validate_cashflows returns diagnostic dict."""
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
 
         info = EconomicsQuery.validate_cashflows([-1000, 100, 200])
         assert isinstance(info, dict)
@@ -402,36 +402,36 @@ class TestFDASEconomicsQuery:
 
 
 # ==========================================================================
-# FDAS Disclosure Analytics Query API Tests (issue #338)
+# project_economics Disclosure Analytics Query API Tests (issue #338)
 # ==========================================================================
 
 
-class TestFDASDisclosureAnalyticsQuery:
-    """Tests for worldenergydata.fdas.api.DisclosureAnalyticsQuery (issue #338)."""
+class TestProjectEconomicsDisclosureAnalyticsQuery:
+    """Tests for worldenergydata.project_economics.api.DisclosureAnalyticsQuery (issue #338)."""
 
     def test_import_disclosure_analytics_query(self):
-        """DisclosureAnalyticsQuery is importable from fdas.api."""
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        """DisclosureAnalyticsQuery is importable from project_economics.api."""
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         assert DisclosureAnalyticsQuery is not None
 
     def test_project_revision_method_signature(self):
         """DisclosureAnalyticsQuery.project_revision accepts a records iterable."""
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         sig = inspect.signature(DisclosureAnalyticsQuery.project_revision)
         params = list(sig.parameters.keys())
         assert "records" in params
 
     def test_operator_capex_method_signature(self):
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         sig = inspect.signature(DisclosureAnalyticsQuery.operator_capex)
         params = list(sig.parameters.keys())
         assert "records" in params
 
     def test_benchmark_method_signature(self):
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         sig = inspect.signature(DisclosureAnalyticsQuery.benchmark)
         params = list(sig.parameters.keys())
@@ -441,13 +441,13 @@ class TestFDASDisclosureAnalyticsQuery:
         assert "project_name" in params
 
     def test_project_revision_returns_derived_rows(self):
-        """End-to-end: FDAS seam delegates to cost.disclosure_analytics."""
+        """End-to-end: project_economics seam delegates to cost.disclosure_analytics."""
         from worldenergydata.cost.disclosure_analytics import (
             SCOPE_PROJECT,
             DisclosureRecord,
             ProjectRevisionRow,
         )
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         records = [
             DisclosureRecord(
@@ -465,12 +465,12 @@ class TestFDASDisclosureAnalyticsQuery:
         assert view[0].yoy_delta_usd_mm is None
 
     def test_benchmark_refuses_non_comparable_rows(self):
-        """Comparability gating is enforced at the FDAS seam too."""
+        """Comparability gating is enforced at the project_economics seam too."""
         from worldenergydata.cost.disclosure_analytics import (
             SCOPE_PROJECT,
             DisclosureRecord,
         )
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
         records = [
             DisclosureRecord(
@@ -630,25 +630,25 @@ class TestPackageLevelImports:
         assert bsee_mod.wells is not None
         assert bsee_mod.companies is not None
 
-    def test_fdas_api_accessible(self):
-        """wed.fdas.economics should be accessible."""
+    def test_project_economics_api_accessible(self):
+        """wed.project_economics.economics should be accessible."""
         import worldenergydata as wed
 
-        fdas_mod = wed.fdas
-        # Lazy-loaded via fdas/__init__.py __getattr__
-        assert fdas_mod.economics is not None
+        project_economics_mod = wed.project_economics
+        # Lazy-loaded via project_economics/__init__.py __getattr__
+        assert project_economics_mod.economics is not None
 
-    def test_fdas_disclosure_analytics_accessible(self):
-        """wed.fdas.disclosure_analytics should be accessible (issue #338)."""
+    def test_project_economics_disclosure_analytics_accessible(self):
+        """wed.project_economics.disclosure_analytics should be accessible (issue #338)."""
         import worldenergydata as wed
 
-        fdas_mod = wed.fdas
-        # Lazy-loaded via fdas/__init__.py __getattr__
-        assert fdas_mod.disclosure_analytics is not None
-        # Must be the same class as defined in fdas.api — no divergent surface.
-        from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+        project_economics_mod = wed.project_economics
+        # Lazy-loaded via project_economics/__init__.py __getattr__
+        assert project_economics_mod.disclosure_analytics is not None
+        # Must be the same class as defined in project_economics.api — no divergent surface.
+        from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
-        assert isinstance(fdas_mod.disclosure_analytics, DisclosureAnalyticsQuery)
+        assert isinstance(project_economics_mod.disclosure_analytics, DisclosureAnalyticsQuery)
 
     def test_marine_safety_api_accessible(self):
         """wed.marine_safety_api should resolve to marine_safety.api module."""
@@ -663,17 +663,17 @@ class TestPackageLevelImports:
 
         assert callable(wed.bsee.production.query)
 
-    def test_fdas_economics_npv_callable(self):
-        """wed.fdas.economics.npv is callable."""
+    def test_project_economics_economics_npv_callable(self):
+        """wed.project_economics.economics.npv is callable."""
         import worldenergydata as wed
 
-        assert callable(wed.fdas.economics.npv)
+        assert callable(wed.project_economics.economics.npv)
 
-    def test_fdas_disclosure_analytics_callables(self):
-        """wed.fdas.disclosure_analytics exposes project_revision/operator_capex/benchmark."""
+    def test_project_economics_disclosure_analytics_callables(self):
+        """wed.project_economics.disclosure_analytics exposes project_revision/operator_capex/benchmark."""
         import worldenergydata as wed
 
-        ns = wed.fdas.disclosure_analytics
+        ns = wed.project_economics.disclosure_analytics
         assert callable(ns.project_revision)
         assert callable(ns.operator_capex)
         assert callable(ns.benchmark)

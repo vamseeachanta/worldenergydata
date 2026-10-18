@@ -10,7 +10,7 @@
 
 The repo's documented capability surface is materially smaller than what is actually shipped, and what is shipped is materially less complete than the manifest implies. Three simultaneous drifts are at work:
 
-1. **Under-claim drift (README → reality).** `README.md` headlines only `bsee`, `marine-safety`, and `fdas`, but `cli/main.py` registers 15 sub-apps and `src/worldenergydata/` contains ~40 module directories.
+1. **Under-claim drift (README → reality).** `README.md` headlines only `bsee`, `marine-safety`, and `project_economics`, but `cli/main.py` registers 15 sub-apps and `src/worldenergydata/` contains ~40 module directories.
 2. **Over-claim drift (MODULE_INDEX/manifest → reality).** `MODULE_INDEX.md` and `module-manifest.yaml` advertise **27 modules at `stable`**, but
    - `data/catalog.yaml` only knows **12 modules / 44 datasets / 10.5 MB**, of which **4 (`hse`, `oil_price`, `pipeline_safety`, `wind`) have empty `datasets:` lists** and most BSEE CSVs are 100-row sample fragments;
    - several `stable`-tagged modules (`brazil_anp`, `ukcs`, `hse`, `pipeline_safety`, `lower_tertiary`, `vessel_fleet`, `vessel_hull_models`, `well_production_dashboard`, `eia_us`) have **no Typer CLI sub-app registered** in `cli/main.py`;
@@ -19,7 +19,7 @@ The repo's documented capability surface is materially smaller than what is actu
 
 Net effect: an agent using `MODULE_INDEX.md` as a contract will silently miss live capability (off-manifest packages), recommend untrustworthy data (sample-row catalog entries flagged `stable`), or attempt unscheduled modules as if scheduled. Each of these drifts is independently fixable but should be treated as a single index reconciliation lane before downstream automation lanes proceed.
 
-The four highest-leverage capability gaps are: (a) `MODULE_INDEX.md` reconciliation (27 vs 40+ vs 12), (b) catalog-empty modules tagged `stable` (`hse`, `pipeline_safety`), (c) CLI sub-app coverage gaps for nine `stable` manifest modules, (d) scheduler-flag drift on three modules. Top execution-ready modules are `bsee`, `metocean`, `marine_safety`, `safety_analysis`, `lng_terminals`, `fdas`, and `well_production_dashboard` (each has substantial source + tests + at least one usable surface).
+The four highest-leverage capability gaps are: (a) `MODULE_INDEX.md` reconciliation (27 vs 40+ vs 12), (b) catalog-empty modules tagged `stable` (`hse`, `pipeline_safety`), (c) CLI sub-app coverage gaps for nine `stable` manifest modules, (d) scheduler-flag drift on three modules. Top execution-ready modules are `bsee`, `metocean`, `marine_safety`, `safety_analysis`, `lng_terminals`, `project_economics`, and `well_production_dashboard` (each has substantial source + tests + at least one usable surface).
 
 ## 2. Methodology and commands used
 
@@ -60,7 +60,7 @@ This repo has four sources of truth (README, MODULE_INDEX, manifest, catalog) an
 
 | Surface | Module count | Last touched | Notes |
 |---|---|---|---|
-| `README.md` | 3 (`bsee`, `marine-safety`, `fdas`) | 2026-02-11 | Heavy under-claim; "Modules" section describes only the BSEE/marine/FDAS triad. |
+| `README.md` | 3 (`bsee`, `marine-safety`, `project_economics`) | 2026-02-11 | Heavy under-claim; "Modules" section describes only the BSEE/marine/project_economics triad. |
 | `MODULE_INDEX.md` | 27 (18 data + 7 infrastructure + 2 analysis/viz) | 2026-02-20 | Agent-facing canon; matches `module-manifest.yaml` structurally. |
 | `module-manifest.yaml` | 27 | 2026-02-20 | All 27 tagged `stable` except `lng_terminals` (`beta`) and `analysis` (`stub`). |
 | `data/catalog.yaml` | 12 modules / 44 datasets / 10.5 MB | 2026-04-16 | Reflects filesystem only; 4 modules have empty `datasets:`. |
@@ -120,7 +120,7 @@ This repo has four sources of truth (README, MODULE_INDEX, manifest, catalog) an
 ### Drift D — README ↔ CLI registry
 
 `README.md` documents three modules; `cli/main.py` registers 15 sub-apps:
-`bsee`, `dashboard`, `eia`, `marine-safety`, `fdas`, `sodir`, `metocean`, `ndbc`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, `forecast` (production_forecast). Plus root commands: `version`, `info`, `status`, `--help`. The README does not mention any of `sodir`, `eia`, `metocean`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, `forecast`, `ndbc`, `dashboard`.
+`bsee`, `dashboard`, `eia`, `marine-safety`, `project_economics`, `sodir`, `metocean`, `ndbc`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, `forecast` (production_forecast). Plus root commands: `version`, `info`, `status`, `--help`. The README does not mention any of `sodir`, `eia`, `metocean`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, `forecast`, `ndbc`, `dashboard`.
 
 ### Drift E — manifest `stable` ↔ CLI sub-app coverage
 
@@ -157,12 +157,12 @@ Lane legend:
 | `texas_rrc` | full (`api_client.py`, `processors/`, `validators.py`) | yes | 10 | none | **manifest drift** (claims yes; not in scheduler_config) | partial | docs-stale |
 | `eia_us` | `client`, `data`, `production`, `international`, `analysis` | **no (different `eia` registered)** | 7 | none | yes (monthly) | partial | docs-stale + planning-needed (name collision with `eia/`) |
 | `eia` (off-manifest) | `client.py`, `ingestion.py`, `ingestion_runner.py` | yes | 1 | none | no | minimal | planning-needed (clarify vs `eia_us`) |
-| `lower_tertiary` | `latest_runner.py`, `npv.py`, `production_classifier.py`, `v30_*` | **no** | 10 | none in catalog (uses BSEE-derived enhanced data via `fdas`) | no | partial | planning-needed (CLI gap; data dependency on `fdas`/`bsee`) |
+| `lower_tertiary` | `latest_runner.py`, `npv.py`, `production_classifier.py`, `v30_*` | **no** | 10 | none in catalog (uses BSEE-derived enhanced data via `project_economics`) | no | partial | planning-needed (CLI gap; data dependency on `project_economics`/`bsee`) |
 | `hse` | `acquirers/`, `database/`, `importers/` (10 files) | **no** (only via `safety-analysis`) | 17 | **empty** in `data/catalog.yaml` (`datasets: []`) | no | partial | data-missing + planning-needed |
 | `pipeline_safety` | `database/`, `importers/`, `workflow.py` | **no** | 3 | **empty** in catalog | no | examples present | data-missing + planning-needed |
 | `marine_safety` | full (`scrapers/` for USCG/NTSB/ATSB+ATSB pipeline 8 files, `acquirers/`, `analysis/`, `database/`, `processors/`, `reports/`, `cli.py` + 7 cli_*.py modules) | yes | 51 | catalog has 14 datasets but mostly small JSON manifests + 20–30-row sample CSVs | no (manifest acknowledges Phase-2 gap) | extensive (`examples/marine_safety/`, `notebooks/quickstart_marine_safety.py`, `docs/marine-safety-data-sources-comprehensive.md`) | execution-ready (caveat: scheduler gap, #153 USCG MISLE blocker) |
 | `safety_analysis` | full (`adapters/`, `analysis/`, `core/`, `nlp/`, `risk_index/`, `taxonomy/`, `cli.py`) | yes | 38 | none | no | partial | execution-ready |
-| `fdas` | `core/`, `analysis/`, `adapters/`, `data/`, `reports/`, `api.py` | yes | 13 | 1 dataset (`well_data_enhanced.csv`, 57k rows, derived from `bsee`) | no (consumes `bsee` output) | `notebooks/quickstart_fdas.py`, `examples/fdas_complete_workflow.py` | execution-ready |
+| `project_economics` | `core/`, `analysis/`, `adapters/`, `data/`, `reports/`, `api.py` | yes | 13 | 1 dataset (`well_data_enhanced.csv`, 57k rows, derived from `bsee`) | no (consumes `bsee` output) | `notebooks/quickstart_project_economics.py`, `examples/project_economics_complete_workflow.py` | execution-ready |
 | `metocean` | full (`clients/`, `cache/`, `database/`, `extrapolation/`, `processors/`, `statistics/`, `unified/`, `well_datasets/`, `cli.py` + 6 cli_*.py modules, `ndbc_analysis.py`) | yes (`metocean` + sibling `ndbc`) | 34 | none in catalog (fetched live) | yes (daily) | partial | execution-ready |
 | `lng_terminals` | full (`collectors/`, `loaders/`, `processors/`, `exporters/`, `models/`, `query.py`, `cli.py`) | yes | 26 | 227-row seed in `data/modules/lng_terminals/curated/terminals_seed.csv` | yes (manifest drift: claims `false`) | partial | execution-ready (manifest reconciliation needed) |
 | `vessel_fleet` | full (`collectors/`, `loaders/`, `parsers/`, `dedup/`, `quality/`, `schemas/`, `storage/`, `bridge/`) | **no** | 34 | catalog has 7 datasets (incl. 2210-row `drilling_rigs.csv`) | no | partial | execution-ready (CLI gap is the only blocker) |
@@ -210,8 +210,8 @@ Status of known test-infra blockers (orchestrator brief):
 | `module-manifest.yaml:54,167,272` | `lng_terminals.in_scheduler: false`; `texas_rrc` and `mexico_cnh` implied scheduled | `scheduler_config.yml` enables `lng_terminals_refresh` weekly; does NOT list `texas_rrc_refresh` or `mexico_cnh_refresh` | Flip `lng_terminals.in_scheduler` to `true`; reword `texas_rrc`/`mexico_cnh` notes to clarify "config present, no scheduler job" — or add the missing job files. |
 | `module-manifest.yaml:77, 145` | `hse` and `pipeline_safety` `status: stable` | `data/catalog.yaml` has `datasets: []` for both | Downgrade to `beta` or add an `data_status: empty` field; document that `make data` is required. |
 | `MODULE_INDEX.md:147` | "Modules wired into the WRK-076 automated refresh scheduler" lists 7 incl. `texas_rrc` | `scheduler_config.yml` lists 7 jobs but **`texas_rrc` is not among them**; `lng_terminals` is. | Replace the `texas_rrc` row with `lng_terminals`, and add a "config-only, no job adapter" section for `canada`, `texas_rrc`, `mexico_cnh`. |
-| `README.md:57–99` | Modules section names only `bsee`, `marine-safety`, `fdas` | 15 sub-apps registered, 27+ modules in manifest | Add a "Full module list" reference link to `MODULE_INDEX.md` and a one-line summary of each registered CLI sub-app. |
-| `README.md:101–133` | Project Structure shows `modules/bsee/`, `modules/marine_safety/`, `modules/fdas/` only | The flat namespace migration (WRK-096) moved everything to `worldenergydata.<name>` | Update to reflect flat package layout; remove obsolete `modules/<name>/data/...` tree. |
+| `README.md:57–99` | Modules section names only `bsee`, `marine-safety`, `project_economics` | 15 sub-apps registered, 27+ modules in manifest | Add a "Full module list" reference link to `MODULE_INDEX.md` and a one-line summary of each registered CLI sub-app. |
+| `README.md:101–133` | Project Structure shows `modules/bsee/`, `modules/marine_safety/`, `modules/project_economics/` only | The flat namespace migration (WRK-096) moved everything to `worldenergydata.<name>` | Update to reflect flat package layout; remove obsolete `modules/<name>/data/...` tree. |
 | `data/catalog.yaml:701–705, 1120–1124, 1176–1180, 2052–2056` | Modules `hse`, `oil_price`, `pipeline_safety`, `wind` listed with empty `datasets:` | No data files; only a "run 'make data'" stub note | Either remove these from catalog until data lands, or add a `status: stub` flag so consumers can filter. |
 | `data/catalog.yaml:1125–1180, 1181–1281, 2052–2056, 1120–1124` | Modules `pipeline`, `subsea`, `oil_price`, `wind` are not in `module-manifest.yaml` | Reference data + empty stubs | Add manifest records (probably under "Reference data" section) or move them out of the catalog into `data/reference/`. |
 | `MODULE_INDEX.md:122–134` | Agent Quick Reference uses `from worldenergydata.<X>` paths | Per `__init__.py`, the package warns on `worldenergydata.modules.X` imports via `_compat.py` | Verify each Quick Reference snippet imports the canonical path; add a "deprecated patterns" section so agents avoid the `modules.X` shim (#278). |

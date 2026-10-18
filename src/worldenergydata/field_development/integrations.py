@@ -1,4 +1,4 @@
-# ABOUTME: Enrichment layer wiring the playbook to FDAS/vessel/subsea catalogs.
+# ABOUTME: Enrichment layer wiring the playbook to project_economics/vessel/subsea catalogs.
 # ABOUTME: Issue #575 (epic #567) — lazy, graceful cross-module integration.
 """
 worldenergydata.field_development.integrations
@@ -7,7 +7,7 @@ worldenergydata.field_development.integrations
 Turns a recommended concept into an *economics + execution* view by reusing
 existing repo modules rather than rebuilding them:
 
-* **FDAS** (`worldenergydata.fdas`) — depth → dev-system classification and a
+* **project_economics** (`worldenergydata.project_economics`) — depth → dev-system classification and a
   rough NPV via the cashflow/economics API.
 * **Vessel fleet** (`worldenergydata.vessel_fleet`) — installation feasibility
   (which construction vessels can reach the water depth and lift/lay).
@@ -19,7 +19,7 @@ All cross-module imports are **lazy** (inside functions) and every integration
 function returns ``None``/empty instead of raising, so the core engine and
 ``import field_development`` stay usable in a minimal environment.
 
-Note on FDAS: dev-system classification is *depth-driven* (dry / subsea15 /
+Note on project_economics: dev-system classification is *depth-driven* (dry / subsea15 /
 subsea20), not concept-driven, so economics attach at the **field** level; vessel
 feasibility and hardware picks vary per **candidate concept**.
 """
@@ -100,21 +100,21 @@ class EnrichedConcept:
 
 
 # --------------------------------------------------------------------------- #
-# FDAS economics (field-level)
+# project_economics economics (field-level)
 # --------------------------------------------------------------------------- #
 def dev_system_for(concept: FieldConcept) -> Optional[str]:
-    """Classify the FDAS dev system from water depth (converted m → ft)."""
+    """Classify the project_economics dev system from water depth (converted m → ft)."""
     if concept.water_depth_m is None:
         return None
     try:
-        from worldenergydata.fdas.core.config import classify_dev_system_by_depth
+        from worldenergydata.project_economics.core.config import classify_dev_system_by_depth
     except Exception:
         return None
     return classify_dev_system_by_depth(concept.water_depth_m * M_TO_FT)
 
 
 def estimate_economics(concept: FieldConcept) -> Economics:
-    """Rough, field-level economics using FDAS assumptions + the NPV API.
+    """Rough, field-level economics using project_economics assumptions + the NPV API.
 
     Best-effort: CAPEX from dev-system assumptions; NPV only when enough inputs
     (plateau rate, price, field life) are present to build a simple cashflow.
@@ -126,9 +126,9 @@ def estimate_economics(concept: FieldConcept) -> Economics:
         eco.note = "water depth unknown — cannot classify dev system"
         return eco
     try:
-        from worldenergydata.fdas.core.config import AssumptionsManager
+        from worldenergydata.project_economics.core.config import AssumptionsManager
     except Exception:
-        eco.note = "FDAS unavailable"
+        eco.note = "project_economics unavailable"
         return eco
 
     mgr = AssumptionsManager()
@@ -154,7 +154,7 @@ def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> Optional[float
     ):
         return None
     try:
-        from worldenergydata.fdas.api import EconomicsQuery
+        from worldenergydata.project_economics.api import EconomicsQuery
     except Exception:
         return None
     annual_rev = concept.plateau_rate_boed * 365.0 * concept.oil_price_usd_bbl / 1e6

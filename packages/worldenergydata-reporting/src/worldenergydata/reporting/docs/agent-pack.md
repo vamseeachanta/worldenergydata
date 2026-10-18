@@ -198,7 +198,7 @@ Search scope is the owning repository, including `scripts/`, using the symbols `
 | Definition | Classification and evidence |
 | --- | --- |
 | `common.data_resolver._get_project_root` | Separate root-discovery implementation; prefers a workspace declaration rather than a fixed ancestor count. [packages/worldenergydata-core/src/worldenergydata/common/data_resolver.py:L26-L52] |
-| `scripts/fdas/generate_production_report.py::generate_html_report` | Separate report assembly with its own aggregations, outside this package; candidate map gap. [scripts/fdas/generate_production_report.py:L67-L87] |
+| `scripts/project_economics/generate_production_report.py::generate_html_report` | Separate report assembly with its own aggregations, outside this package; candidate map gap. [scripts/project_economics/generate_production_report.py:L67-L87] |
 | `bsee.pipeline.pipeline_runner._export_report` | Adapter and delegate to the listed `export_report`, not a further implementation of its writers. [packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/pipeline_runner.py:L174-L191] |
 
 This discovery table is a bounded map follow-up rather than an exhaustive claim that all reporting implementations have been reconciled; issue pending (6).

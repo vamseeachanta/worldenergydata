@@ -1,6 +1,6 @@
 # Monthly gas revenue
 
-The shared FDAS cashflow engine accepts `gas_prices`, an optional dictionary
+The shared project_economics cashflow engine accepts `gas_prices`, an optional dictionary
 mapping `YYYY-MM` to realized **USD/Mcf**. This uses the same monthly time base
 as the oil deck. Monthly gas revenue equals `MONTHLY_GAS_MCF * gas_prices[month]`.
 Oil and gas revenue are added before the existing royalty and net-cashflow

@@ -5,9 +5,9 @@
 # economics components that already exist in isolation:
 #
 # - BSEE current dataset (real wells, real water depths, real operators)
-# - FDAS dev-system classification (water depth → dry / subsea15 / subsea20 / floating)
-# - FDAS `EconomicsQuery` (100% Excel-validated NPV / IRR / MIRR / payback)
-# - FDAS `AssumptionsManager` (per-system opex defaults)
+# - project_economics dev-system classification (water depth → dry / subsea15 / subsea20 / floating)
+# - project_economics `EconomicsQuery` (100% Excel-validated NPV / IRR / MIRR / payback)
+# - project_economics `AssumptionsManager` (per-system opex defaults)
 # - DisclosureAnalyticsQuery surface (#338 — operator capex benchmarking)
 # - Inline citations panel sourcing every numeric input
 #
@@ -19,7 +19,7 @@
 # ## What this isn't (yet)
 # - Cashflow is built from documented decline-curve assumptions, not from
 #   monthly BSEE production aggregation. Production-grounded cashflow is
-#   tracked under #367 (ProductionAPI12 → FDAS forward path).
+#   tracked under #367 (ProductionAPI12 → project_economics forward path).
 # - The disclosure-benchmark cell is illustrative; the real operator
 #   registry lands with #343, restatement lineage with #344.
 # - The citations panel uses a flat dict; full `Citation` schema adoption
@@ -37,9 +37,9 @@ from __future__ import annotations
 import pandas as pd
 
 from worldenergydata.common.data_resolver import get_module_data
-from worldenergydata.fdas.adapters.bsee_adapter import WellDataAdapter
-from worldenergydata.fdas.api import EconomicsQuery
-from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.project_economics.adapters.bsee_adapter import WellDataAdapter
+from worldenergydata.project_economics.api import EconomicsQuery
+from worldenergydata.project_economics.core.config import AssumptionsManager
 
 econ = EconomicsQuery()
 assumptions = AssumptionsManager()
@@ -79,7 +79,7 @@ print(f"  Dev system:   {target['DEV_SYSTEM']}")
 # %% [markdown]
 # ## 3. Resolve per-system assumptions
 #
-# `AssumptionsManager` returns the FDAS-calibrated opex defaults for the
+# `AssumptionsManager` returns the project_economics-calibrated opex defaults for the
 # dev system classification.
 
 # %%
@@ -105,7 +105,7 @@ n_years = 20
 oil_price = 70.0  # $/bbl, EIA STEO Q1 2026 reference
 peak_production_mmbbl_per_year = 5.0  # representative deepwater peak
 annual_decline = 0.08  # 8% — typical deepwater decline
-dev_capex_mm = -1500.0  # $M, FDAS deepwater calibration
+dev_capex_mm = -1500.0  # $M, project_economics deepwater calibration
 
 production_mmbbl = [
     peak_production_mmbbl_per_year * (1 - annual_decline) ** y for y in range(n_years)
@@ -129,7 +129,7 @@ cashflow_table = pd.DataFrame(
 print(cashflow_table.head(10).to_string(index=False))
 
 # %% [markdown]
-# ## 5. Compute economics via FDAS
+# ## 5. Compute economics via project_economics
 
 # %%
 metrics = econ.all_metrics(cashflows_mm, discount_rate=0.10, period="annual")
@@ -225,7 +225,7 @@ print(citations.to_string(index=False))
 # disclosure records, this cell would call:
 #
 # ```python
-# from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+# from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 # disclosures = DisclosureAnalyticsQuery()
 # benchmark = disclosures.benchmark(
 #     project_revision_view=...,

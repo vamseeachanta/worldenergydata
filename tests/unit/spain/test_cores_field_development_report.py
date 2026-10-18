@@ -256,7 +256,7 @@ def test_spain_package_declares_reference_chain_dependencies():
     deps = set(data["project"]["dependencies"])
 
     assert "worldenergydata-production" in deps
-    assert "worldenergydata-fdas" in deps
+    assert "worldenergydata-project_economics" in deps
 
 
 def _write_cache(

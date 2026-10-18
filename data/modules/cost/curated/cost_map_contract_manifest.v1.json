@@ -74,8 +74,8 @@
       "sha256": "6e339cc7f4a8590e8b31eb76f087cb35af26843bfaf1433fba231073b07d290b"
     },
     {
-      "path": "data/modules/cost/curated/fdas_project_cost_crosswalk.csv",
-      "sha256": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236"
+      "path": "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv",
+      "sha256": "e0979bafd77f5b80a34e7b048bb29042044e5770ca7c74445d369b8a8e4b72a8"
     },
     {
       "path": "data/modules/cost/curated/project_asset_requirements.csv",
@@ -86,15 +86,15 @@
       "sha256": "f938afc20d9aa3e173686e74dfda4ba19c4d41ccc1a3ae36b03b4074202807bb"
     },
     {
-      "path": "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx",
+      "path": "docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx",
       "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f"
     },
     {
-      "path": "docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx",
+      "path": "docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx",
       "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04"
     },
     {
-      "path": "docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx",
+      "path": "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx",
       "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407"
     },
     {
@@ -107,11 +107,11 @@
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack.py",
-      "sha256": "bbef7d50ff8ba90c5b2b1af9b3e2bcfd3998308d720a77978f4b2c09799371f5"
+      "sha256": "0e42855ae93d404f440ab5e8c00de528686d33d8b798069daeea57a5d755a7ec"
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/evidence_pack_render.py",
-      "sha256": "6f29fae7a443d8d8ff19927da6f0c8743895ee14dd4da5500de0dbbbbf7d59af"
+      "sha256": "14b9e0043302e666e3cc4d68ae59aa5b643fc6162c4a938cdb7c1ff2ee9747da"
     },
     {
       "path": "packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/project_trace.py",
@@ -119,17 +119,17 @@
     },
     {
       "path": "scripts/cost/build_big_foot_cost_map.py",
-      "sha256": "1c97155bca9a57aadc0e1dd51feb8ba4986340df286fc69cd3aff014e92dc2fa"
+      "sha256": "1a818396e701bd077e757bba1ad2c445a505daf501ed57bb297dc6516aa0e622"
     }
   ],
   "outputs": [
     {
       "path": "reports/cost/big_foot_cost_map.html",
-      "sha256": "f541c0f8b5bd1d54d67baed2c56b0d70df3122641c20730bc1e1ef22a2135768"
+      "sha256": "9d2991fd2250c001722c910dbe3072f249b66a2e8529930d8033bcb726bc6044"
     },
     {
       "path": "reports/cost/big_foot_cost_map_reconciliation.csv",
-      "sha256": "5312315baa7dc59233910dc093cb5c1515b1b71c2e91d383fd85ebfea1959a35"
+      "sha256": "5362262bcda9fb097197a71b49d718d3a5f57ec0898d7e3a03a536e007bc8523"
     }
   ],
   "owner_decision": {
@@ -149,7 +149,7 @@
   },
   "producer": {
     "builder_path": "scripts/cost/build_big_foot_cost_map.py",
-    "builder_sha256": "1c97155bca9a57aadc0e1dd51feb8ba4986340df286fc69cd3aff014e92dc2fa",
+    "builder_sha256": "1a818396e701bd077e757bba1ad2c445a505daf501ed57bb297dc6516aa0e622",
     "commit": "66ce9d6808492a01f6a7cac60415304bcc6e6ef5",
     "commit_policy": "exact_builder_containing_commit",
     "tool_version": "1.2.0"

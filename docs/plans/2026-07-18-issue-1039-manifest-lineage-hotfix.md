@@ -43,7 +43,7 @@ Implementation will not begin from the original 2026-07-16 approval marker. Afte
 - Production code and validation semantics will not change.
 - The only implementation paths will be new `tests/unit/cost/test_big_foot_cost_lineage.py` and `data/modules/cost/curated/cost_map_contract_manifest.v1.json`.
 - `reports/cost/big_foot_cost_map.html` and `reports/cost/big_foot_cost_map_reconciliation.csv` will remain byte-identical; any byte drift will stop implementation and return the issue to plan review.
-- The FDAS workbooks will remain read-only and retain their current SHA-256 values.
+- The project_economics workbooks will remain read-only and retain their current SHA-256 values.
 - No email, external circulation, accounting-data rewrite, or unrelated full-suite repair will occur.
 - Every commit will use a pathspec to prevent sweep contamination.
 
@@ -217,9 +217,9 @@ Expected: the new file will be at most 400 lines, every function will be at most
 sha256sum \
   reports/cost/big_foot_cost_map.html \
   reports/cost/big_foot_cost_map_reconciliation.csv \
-  docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx \
-  docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx \
-  docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx \
   > /tmp/issue-1039-lineage-before.sha256
 ```
 

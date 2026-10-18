@@ -2314,15 +2314,15 @@ modules:
     documentation:
       readme: data/modules/bsee/README.md
       data_dictionary: data/modules/bsee/DATA_DICTIONARY.md
-  fdas:
-    name: fdas
+  project_economics:
+    name: project_economics
     description: Floating production data advisory system
-    path: data/modules/fdas
+    path: data/modules/project_economics
     domains:
     - drilling
     datasets:
     - name: well_data_enhanced
-      path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+      path: data/modules/project_economics/enhanced/wells/well_data_enhanced.csv
       format: csv
       domain: drilling
       size_bytes: 4593879

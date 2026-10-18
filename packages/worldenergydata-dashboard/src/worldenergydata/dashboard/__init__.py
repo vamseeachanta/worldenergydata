@@ -1,5 +1,5 @@
 """
-Dashboard package — Plotly Dash web application for BSEE and FDAS data.
+Dashboard package — Plotly Dash web application for BSEE and project_economics data.
 
 Entry points (imported lazily to avoid Dash startup cost on plain data use):
     run_server()   Start the Dash application on localhost.

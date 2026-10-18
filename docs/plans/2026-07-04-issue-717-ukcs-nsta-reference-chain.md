@@ -50,7 +50,7 @@ implementation.
 This slice will prove one fixture UK field through:
 
 1. `UkcsAdapter.fetch` using a fixture-backed NSTA production loader path.
-2. `to_fdas_production` producing the FDAS monthly-production schema.
+2. `to_project_economics_production` producing the project_economics monthly-production schema.
 3. Sparse UK `FieldMetaMapping` producing a valid `FieldConcept`.
 4. `recommend()` returning a deterministic ranked list.
 5. `CashflowEngine` returning finite pre-tax metrics labeled
@@ -65,7 +65,7 @@ EPL/RFCT wiring and reconciliation with `UKFiscalRegime` remain deferred to
 - UKCS loader-to-`STANDARD_COLUMNS` bridge:
   field titlecasing, `region="ukcs"`, `source="nsta"`, real `water_bbl`,
   and `condensate_bbl` as `NaN`.
-- `UkcsAdapter.fetch` fixture path converts to FDAS production.
+- `UkcsAdapter.fetch` fixture path converts to project_economics production.
 - Existing UKCS adapter/router/registration compatibility tests remain green.
 - UK sparse field metadata maps to `FieldConcept` with `region="uk"`.
 - Sparse UK FieldConcept produces a deterministic ranked concept list.

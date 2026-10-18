@@ -17,12 +17,12 @@ from typing import Any, Dict, Optional
 import pandas as pd
 
 from worldenergydata.australia.field_concept import build_australia_field_concept
-from worldenergydata.fdas.adapters.contract import to_fdas_production
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     dev_system_from_water_depth_m,
 )
-from worldenergydata.fdas.analysis.cashflow import CashflowEngine
-from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.project_economics.analysis.cashflow import CashflowEngine
+from worldenergydata.project_economics.core.config import AssumptionsManager
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 
@@ -45,7 +45,7 @@ def run_australia_reference_chain(
             end=end,
         )
     )
-    fdas_production = to_fdas_production(unified)
+    project_economics_production = to_project_economics_production(unified)
     field_concept = build_australia_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
@@ -55,12 +55,12 @@ def run_australia_reference_chain(
         dev_system = "subsea15"
     price_deck = {
         str(year_month): oil_price_usd_bbl
-        for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
+        for year_month in project_economics_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
     cashflows = CashflowEngine(
         AssumptionsManager(), dev_system=dev_system
     ).generate_monthly_cashflow(
-        fdas_production,
+        project_economics_production,
         {"drilling_monthly": {}},
         price_deck,
         datetime(1970, 1, 1),
@@ -69,7 +69,7 @@ def run_australia_reference_chain(
     return {
         "field_name": field_name,
         "unified_production": unified,
-        "fdas_production": fdas_production,
+        "project_economics_production": project_economics_production,
         "field_concept": field_concept,
         "ranked_concepts": ranked_concepts,
         "dev_system": dev_system,

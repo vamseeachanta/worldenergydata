@@ -1,10 +1,10 @@
-# Golden Baseline: FDAS V30 Financial Project Summary
-# Source: docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx
+# Golden Baseline: project_economics V30 Financial Project Summary
+# Source: docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx
 # Extracted: 2026-01-30
 # Purpose: Repeatability verification target for WRK-009
 
 metadata:
-  source_file: docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx
+  source_file: docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx
   extraction_date: "2026-01-30"
   time_period: "2000-09 through 2025-05"
   note: "V30 uses historical WTI prices, pre-tax cashflow, trimmed NPV at 10% annual discount"

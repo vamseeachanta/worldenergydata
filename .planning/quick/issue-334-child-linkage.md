@@ -24,4 +24,4 @@ Parent issue #334 is being narrowed to a foundation-only disclosure layer. Cross
 - Automated ingestion
 - Derived analytics or dashboards
 - Broad historical backfill
-- `fdas` / `lower_tertiary` code integration
+- `project_economics` / `lower_tertiary` code integration

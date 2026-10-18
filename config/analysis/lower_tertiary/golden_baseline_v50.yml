@@ -1,4 +1,4 @@
-# Golden Baseline: FDAS V50 Financial Project Summary
+# Golden Baseline: project_economics V50 Financial Project Summary
 # V50 = V30 methodology re-run at the latest BSEE OGOR-A window (2026-04).
 # Source: BSEE OGOR-A (latest .bin) + frozen V30 lease mappings & assumptions
 # OGOR source: BSEE OGOR-A pickled .bin DataFrames (zip archives absent in checkout)

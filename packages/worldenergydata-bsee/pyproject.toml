@@ -37,12 +37,12 @@ classifiers = [
 # plus its in-cluster dependents (hse, well_production_dashboard) ship as ONE
 # distribution.
 #
-# fdas was CARVED OUT to its own member (worldenergydata-fdas, #714) on
-# 2026-07-02: the documented `bsee <--> fdas` cycle was REFUTED — two
-# independent module-level greps found ZERO fdas -> bsee / fdas ->
-# lower_tertiary edges (fdas is a shared LEAF; bsee.analysis and
-# lower_tertiary.portfolio_* import fdas, not vice-versa). This cluster now
-# DEPENDS ON worldenergydata-fdas (below) instead of shipping it.
+# project_economics was CARVED OUT to its own member (worldenergydata-project_economics, #714) on
+# 2026-07-02: the documented `bsee <--> project_economics` cycle was REFUTED — two
+# independent module-level greps found ZERO project_economics -> bsee / project_economics ->
+# lower_tertiary edges (project_economics is a shared LEAF; bsee.analysis and
+# lower_tertiary.portfolio_* import project_economics, not vice-versa). This cluster now
+# DEPENDS ON worldenergydata-project_economics (below) instead of shipping it.
 #
 # Dependencies are a deliberate SUBSET of the root package's flat dependency
 # list, measured from this cluster's live (non-_legacy) import footprint, plus:
@@ -51,8 +51,8 @@ classifiers = [
 #                                     / processors (decline analysis + adapters)
 #   * worldenergydata-reporting    -> bsee.pipeline imports reporting.export_report
 #   * worldenergydata-texas_rrc    -> bsee.pipeline.adapters imports texas_rrc.processors
-#   * worldenergydata-fdas         -> bsee.analysis.production_api12 + lower_tertiary.
-#                                     portfolio_{economics,analytics} import fdas (#714)
+#   * worldenergydata-project_economics         -> bsee.analysis.production_api12 + lower_tertiary.
+#                                     portfolio_{economics,analytics} import project_economics (#714)
 #
 # Note: worldenergydata.engine (engine.py), .validation and .analysis are
 # imported by this cluster but stay in the ROOT distribution; the root depends
@@ -64,7 +64,7 @@ dependencies = [
     "worldenergydata-sodir",
     "worldenergydata-reporting",
     "worldenergydata-texas_rrc",
-    "worldenergydata-fdas",
+    "worldenergydata-project_economics",
     "assetutilities>=0.1.0,<1.0",
     "numpy>=2.2.6,<3.0",
     "numpy-financial>=1.0.0",

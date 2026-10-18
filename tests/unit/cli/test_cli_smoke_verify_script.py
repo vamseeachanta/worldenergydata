@@ -31,7 +31,7 @@ def test_smoke_command_matrix_covers_registered_subapp_help():
         "dashboard",
         "eia",
         "marine-safety",
-        "fdas",
+        "project_economics",
         "lower-tertiary",
         "forecast",
         "sodir",

@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.worldenergydata.modules.fdas.core.config import classify_dev_system_by_depth
+from src.worldenergydata.modules.project_economics.core.config import classify_dev_system_by_depth
 
 
 def create_anchor_demo_data():
@@ -396,7 +396,7 @@ def generate_html_report(field_name: str, wells: pd.DataFrame,
         </div>
 
         <div class="footer">
-            <p><strong>WorldEnergyData - FDAS Module Report</strong></p>
+            <p><strong>WorldEnergyData - project_economics Module Report</strong></p>
             <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Module Version: 1.0.0</p>
             <p style="font-size: 0.9em; margin-top: 5px;">Demonstration report with synthetic production data</p>
         </div>

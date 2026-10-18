@@ -12,7 +12,7 @@
 ## Resource Intelligence Summary
 
 ### Existing repo code
-- `src/worldenergydata/fdas/api.py:EconomicsQuery.all_metrics` returns NPV/IRR/MIRR/payback in a single call (Excel-validated; 100% match against legacy benchmarks).
+- `src/worldenergydata/project_economics/api.py:EconomicsQuery.all_metrics` returns NPV/IRR/MIRR/payback in a single call (Excel-validated; 100% match against legacy benchmarks).
 - `src/worldenergydata/lower_tertiary/npv.py` has a per-field NPV pipeline already, but its tests indicate it is the v30-reproducer flavour, not the lease-NPV pattern from #372.
 - `src/worldenergydata/lower_tertiary/wti_prices.py:load_wti_series` provides EIA + FRED WTI history for the price deck.
 - `notebooks/lease_npv_walkthrough.py` (landed via #372) is the canonical pattern: load wells → classify dev system → resolve assumptions → build cashflow → compute metrics → emit citations.

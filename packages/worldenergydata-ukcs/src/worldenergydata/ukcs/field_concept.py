@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     FieldMapEntry,
     FieldMetaMapping,
     number_from,

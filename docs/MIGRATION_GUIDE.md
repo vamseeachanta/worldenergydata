@@ -55,7 +55,7 @@ python -m worldenergydata --help
 # Module-specific commands
 python -m worldenergydata bsee --help
 python -m worldenergydata marine-safety --help
-python -m worldenergydata fdas --help
+python -m worldenergydata project_economics --help
 ```
 
 ## Import Migration
@@ -257,8 +257,8 @@ python -m worldenergydata.bsee.analysis.financial.cli_interface
 # Old Marine Safety commands
 python -m worldenergydata.marine_safety.scrapers.uscg_scraper
 
-# Old FDAS commands
-python -m worldenergydata.fdas.core.financial
+# Old project_economics commands
+python -m worldenergydata.project_economics.core.financial
 ```
 
 ### New CLI Commands
@@ -280,12 +280,12 @@ worldenergydata marine-safety db init --dev-mode
 worldenergydata marine-safety stats --source uscg
 worldenergydata marine-safety export csv --output incidents.csv
 
-# FDAS module
-worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]"
-worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]"
-worldenergydata fdas calculate-all --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
-worldenergydata fdas classify 5000
+# project_economics module
+worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]"
+worldenergydata project_economics calculate-mirr --cashflows "[-5000,1000,1500,2000]"
+worldenergydata project_economics calculate-all --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata project_economics classify 5000
 ```
 
 ### CLI Migration Table
@@ -293,9 +293,9 @@ worldenergydata fdas classify 5000
 | Old Command | New Command |
 |-------------|-------------|
 | `python -m worldenergydata.bsee.analysis.bsee_analysis --block 759` | `worldenergydata bsee analyze --block 759` |
-| `python -m worldenergydata.bsee.analysis.financial.cli_interface` | `worldenergydata fdas analyze` |
+| `python -m worldenergydata.bsee.analysis.financial.cli_interface` | `worldenergydata project_economics analyze` |
 | Direct scraper execution | `worldenergydata marine-safety scrape uscg` |
-| Direct financial calculation scripts | `worldenergydata fdas calculate-npv` |
+| Direct financial calculation scripts | `worldenergydata project_economics calculate-npv` |
 
 ## Summary
 

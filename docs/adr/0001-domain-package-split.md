@@ -37,7 +37,7 @@ Method: walked every `.py` under each top-level subpackage and counted `from wor
 |---|---|---|
 | `common` | **26** | infra (THE core) |
 | `bsee` | 7 | data domain (hub) |
-| `fdas` | 3 | data domain |
+| `project_economics` | 3 | data domain |
 | `sodir` | 3 | data domain |
 | `lower_tertiary`, `texas_rrc`, `metocean`, `eia`, `marine_safety` | 2 each | data domain |
 | everything else | 1 | — |
@@ -47,13 +47,13 @@ Method: walked every `.py` under each top-level subpackage and counted `from wor
 - **ISOLATED (13)** — import *nothing* intra-package (not even `common`): `baker_hughes`, `cost`, `decommissioning`, `drilling`, `drilling_pressure_management`, `economics`, `eia`, `eia_us`, `marine`, `reservoir`, `well_bore_design`, `well_planning`, `west_africa`.
 - **LEAF (16)** — import **only** infra/`common`, no other data domain: `brazil_anp`, `canada`, `landman`, `lng_terminals`, `marine_safety`, `metocean`, `mexico_cnh`, `pipeline_safety`, `production`, `safety_analysis`, `sodir`, `subsea`, `texas_rrc`, `ukcs`, `vessel_fleet`, `vessel_hull_models`.
 - **COUPLED (5)** — import other data domains:
-  - `bsee` → `lower_tertiary`, `fdas`, `sodir`, `texas_rrc`
-  - `lower_tertiary` → `fdas`, `bsee`
+  - `bsee` → `lower_tertiary`, `project_economics`, `sodir`, `texas_rrc`
+  - `lower_tertiary` → `project_economics`, `bsee`
   - `well_production_dashboard` → `bsee`
   - `hse` → `bsee`
-  - `fdas` → `cost`
+  - `project_economics` → `cost`
 
-So **29 of 34 domains (85%) are trivially splittable** (ISOLATED + LEAF). The only real tangle is a small cluster around `bsee` ⇄ `lower_tertiary`/`fdas` (a cycle) plus `bsee`'s satellites (`hse`, `well_production_dashboard`). `bsee` is the one true hub.
+So **29 of 34 domains (85%) are trivially splittable** (ISOLATED + LEAF). The only real tangle is a small cluster around `bsee` ⇄ `lower_tertiary`/`project_economics` (a cycle) plus `bsee`'s satellites (`hse`, `well_production_dashboard`). `bsee` is the one true hub.
 
 ### 2. The root `__init__.py` has runtime side effects (the crux of the namespace question)
 
@@ -84,7 +84,7 @@ Environment: Python 3.12 / 3.11, setuptools build backend, `uv 0.11.21`.
 
 | Consumer | `import worldenergydata.*` (code) | Notes |
 |---|---|---|
-| `digitalmodel` | 16 import lines, into: `economics` (20 refs), `cost` (10), `eia_us` (5), `decommissioning` (4), `west_africa` (2), `ukcs` (2), `sodir` (2), `brazil_anp` (2), `fdas` (1) | **All but `fdas` are in the ISOLATED/LEAF tier.** |
+| `digitalmodel` | 16 import lines, into: `economics` (20 refs), `cost` (10), `eia_us` (5), `decommissioning` (4), `west_africa` (2), `ukcs` (2), `sodir` (2), `brazil_anp` (2), `project_economics` (1) | **All but `project_economics` are in the ISOLATED/LEAF tier.** |
 | `deckhand` | **0** code imports | only a compute-clone path + wiki-repo name; no `import worldenergydata.*`. |
 | `assetutilities` | **0** real code imports | only repo-name strings in agent_os tooling/tests + units adapters documented as "matching" wed (no import). |
 
@@ -126,7 +126,7 @@ One package, one version, flat deps, full rebuild/release on any change.
 **Adopt the combined (a)+(b) — a uv workspace whose member packages publish into a shared `worldenergydata` PEP 420 / pkgutil namespace — as the target architecture, and ship (c) immediately as a low-risk down-payment.** This validates the prior comment on #529, with two refinements the POC earned:
 
 1. **The root `__init__.py` does NOT need to be deleted** (correcting option (b)'s stated con). It must adopt `pkgutil.extend_path` so `__version__` + the `_compat` legacy redirect + lazy `__getattr__` survive a distributed split. (POC 4 proves the *real* `_compat.py` coexists with a split-out domain this way.)
-2. **The graph is clean enough to make the rollout cheap:** 29 of 34 domains are ISOLATED/LEAF; the only real tangle is the `bsee` ⇄ `lower_tertiary`/`fdas` cycle plus `bsee`'s satellites (`hse`, `well_production_dashboard`).
+2. **The graph is clean enough to make the rollout cheap:** 29 of 34 domains are ISOLATED/LEAF; the only real tangle is the `bsee` ⇄ `lower_tertiary`/`project_economics` cycle plus `bsee`'s satellites (`hse`, `well_production_dashboard`).
 
 Rejected:
 - **Pure (a) without (b)** (renaming imports to `worldenergydata_bsee`): rejected — unnecessary downstream blast radius; POC shows the namespace path can be preserved for free.
@@ -141,14 +141,14 @@ Rejected:
 1. **(c) down-payment** (days, low risk, reversible): add per-domain `[project.optional-dependencies]` extras; document per-domain release tagging. Immediate install-weight win, no restructure.
 2. **Carve out the core** (first workspace member): extract `worldenergydata-core` = the shared infra (`common`, `base_configs`, `engine`, `cli`, `reporting`, `validation`, `analysis`, `testing`). Convert the root `__init__.py` to `pkgutil.extend_path` (keep `__version__`/`_compat`/lazy `__getattr__`). Everything else stays in the legacy package depending on core. Validate namespace + editable + CI on this single carve. (POC 4/5 are the rehearsal.)
 3. **Pilot one ISOLATED domain** (cleanest possible — e.g. `eia_us` or `west_africa`, both ISOLATED *and* imported by `digitalmodel`, so the downstream smoke test is real). Publish `worldenergydata-<domain>` into the shared namespace; prove independent version + release + install end-to-end **plus a `digitalmodel` import smoke test.**
-4. **Roll out domain-by-domain, most-isolated first** (ISOLATED → LEAF → COUPLED). Each conversion is its own PR with a downstream-import smoke test. **Ship the `bsee` cluster as a single member** (`bsee` + `lower_tertiary` + `fdas` + `hse` + `well_production_dashboard`) rather than splitting the cycle, OR break the `bsee` ⇄ `lower_tertiary`/`fdas` cycle first (separate refactor) — decide at step 4.
+4. **Roll out domain-by-domain, most-isolated first** (ISOLATED → LEAF → COUPLED). Each conversion is its own PR with a downstream-import smoke test. **Ship the `bsee` cluster as a single member** (`bsee` + `lower_tertiary` + `project_economics` + `hse` + `well_production_dashboard`) rather than splitting the cycle, OR break the `bsee` ⇄ `lower_tertiary`/`project_economics` cycle first (separate refactor) — decide at step 4.
 5. **Wire per-domain build/test/publish into the P1 domain matrix and the P4 reusable workflow.** Keep #526's single aggregate required check.
 
 ## Risks
 
 - **Highest-risk, largest item in the epic.** Explicit owner sign-off required before any code (this section).
 - **Namespace root misconfiguration:** exactly one place may own `worldenergydata/__init__.py`; all others must be `__init__`-less or pure namespace. Mitigated by the `extend_path` core + a CI guard asserting no second root `__init__.py`.
-- **The `bsee` cycle:** `bsee` ⇄ `lower_tertiary`/`fdas` cannot be cleanly split into independent wheels without either (a) shipping them as one member or (b) breaking the cycle first. Do not attempt to split mid-cycle.
+- **The `bsee` cycle:** `bsee` ⇄ `lower_tertiary`/`project_economics` cannot be cleanly split into independent wheels without either (a) shipping them as one member or (b) breaking the cycle first. Do not attempt to split mid-cycle.
 - **Console-script entry point** (`worldenergydata = worldenergydata.cli.main:app`) and `engine.py`/`__main__.py` dispatch must keep working. Decide whether the CLI lives in core and discovers domain plugins, or stays a meta-package depending on all domains. `cli` currently imports 14 domains directly — treat `cli` as core/meta, not a leaf.
 - **Version skew:** independently versioned domains depending on a shared core need a core version-pinning policy, else lockstep returns by the back door.
 - **Editable + namespace finickiness:** historically the sharpest edge; passed in POC 4/5 with `uv 0.11.21` + modern setuptools, but re-validate on the real tree at step 2.
@@ -235,39 +235,39 @@ with a `digitalmodel` downstream smoke test — exactly the phased plan above.
 
 ---
 
-## Amendment — `fdas` carved out of the BSEE cluster (2026-07-02, issue #714)
+## Amendment — `project_economics` carved out of the BSEE cluster (2026-07-02, issue #714)
 
-Batch 3 shipped `fdas` *inside* the `worldenergydata-bsee` cluster member on the
-premise of a **`bsee ⇄ fdas` import cycle** (recorded in the Evidence table and
-the batch-3 pyproject comments). **That premise is refuted for `fdas`.**
+Batch 3 shipped `project_economics` *inside* the `worldenergydata-bsee` cluster member on the
+premise of a **`bsee ⇄ project_economics` import cycle** (recorded in the Evidence table and
+the batch-3 pyproject comments). **That premise is refuted for `project_economics`.**
 
 **Evidence (re-measured on the real tree, two independent module-level greps —
 planner + adversarial reviewer):**
 
 - `grep -rE '^(from|import) worldenergydata\.(bsee|lower_tertiary)'` over the
-  entire `fdas/` tree → **zero hits.** `fdas` imports nothing from `bsee` or
+  entire `project_economics/` tree → **zero hits.** `project_economics` imports nothing from `bsee` or
   `lower_tertiary`.
-- The only inbound edges are *into* `fdas`, from the cluster:
+- The only inbound edges are *into* `project_economics`, from the cluster:
   `bsee/analysis/production_api12.py`, `lower_tertiary/portfolio_economics.py`,
   `lower_tertiary/portfolio_analytics.py`.
-- `fdas`'s only outbound cross-domain edge is `fdas.api → cost.disclosure_analytics`
+- `project_economics`'s only outbound cross-domain edge is `project_economics.api → cost.disclosure_analytics`
   (a leaf; `worldenergydata-cost` depends only on core, so no member cycle).
 
 This matches — and sharpens — the original spike's own Evidence §1, which listed
-`fdas → cost` as `fdas`'s sole outbound edge and never recorded an `fdas → bsee`
-edge. **`fdas` is a shared LEAF, not a member of the `bsee ⇄ lower_tertiary`
+`project_economics → cost` as `project_economics`'s sole outbound edge and never recorded an `project_economics → bsee`
+edge. **`project_economics` is a shared LEAF, not a member of the `bsee ⇄ lower_tertiary`
 strongly-connected component.** The real cycle is `bsee ⇄ lower_tertiary` alone.
 
-**Decision:** carve `fdas` into its own member, `worldenergydata-fdas`
-(`packages/worldenergydata-fdas/`), so non-US sources can run field economics
+**Decision:** carve `project_economics` into its own member, `worldenergydata-project_economics`
+(`packages/worldenergydata-project_economics/`), so non-US sources can run field economics
 without importing the US-GoM `bsee` cluster. The `bsee` cluster now ships FOUR
 subpackages (`bsee`, `lower_tertiary`, `hse`, `well_production_dashboard`) and
-**depends on** `worldenergydata-fdas`; the orphaned `worldenergydata-cost` dep
-(present solely for `fdas.api`) moves to the new member. Import path
-`worldenergydata.fdas` is unchanged (PEP 420). The new member also introduces a
+**depends on** `worldenergydata-project_economics`; the orphaned `worldenergydata-cost` dep
+(present solely for `project_economics.api`) moves to the new member. Import path
+`worldenergydata.project_economics` is unchanged (PEP 420). The new member also introduces a
 source-agnostic **fiscal-terms deck layer** (country royalty/tax decks) — the
 economics substrate for the international field-development epic (#713).
 
-**Guard:** if a real `fdas → bsee` / `fdas → lower_tertiary` back-edge is ever
+**Guard:** if a real `project_economics → bsee` / `project_economics → lower_tertiary` back-edge is ever
 introduced, STOP — it recreates the cycle and invalidates this carve. The
 `bsee ⇄ lower_tertiary` cycle is untouched and still ships as one member.

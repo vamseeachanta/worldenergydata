@@ -1,5 +1,5 @@
 # ABOUTME: Implements Lower Tertiary field-level financial calculations and NPV metrics
-# ABOUTME: Loads modular field configurations and FDAS lease mappings for analysis workflows
+# ABOUTME: Loads modular field configurations and project_economics lease mappings for analysis workflows
 
 """Lower Tertiary NPV analysis utilities."""
 
@@ -25,7 +25,7 @@ def _normalize_lease(value: str) -> str:
 
 
 def load_lease_mapping(path: Path | str) -> Dict[str, Dict[str, object]]:
-    """Load FDAS lease mapping details with normalized lease numbers."""
+    """Load project_economics lease mapping details with normalized lease numbers."""
 
     mapping_path = Path(path)
     data = _read_yaml(mapping_path)

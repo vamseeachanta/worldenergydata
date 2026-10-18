@@ -71,7 +71,7 @@ cd /mnt/github/workspace-hub/worldenergydata
 for brochure in \
   "bsee_data_integration" \
   "economic_evaluation_npv_analysis" \
-  "fdas_field_data_analysis_system" \
+  "project_economics_field_data_analysis_system" \
   "field-specific_analysis" \
   "marine_safety_incident_analysis" \
   "web_scraping_infrastructure" \
@@ -372,7 +372,7 @@ Files:
 ------
 - marketing_brochure_bsee_data_integration.pdf
 - marketing_brochure_economic_evaluation_npv_analysis.pdf
-- marketing_brochure_fdas_field_data_analysis_system.pdf
+- marketing_brochure_project_economics_field_data_analysis_system.pdf
 - marketing_brochure_field-specific_analysis.pdf
 - marketing_brochure_marine_safety_incident_analysis.pdf
 - marketing_brochure_web_scraping_infrastructure.pdf

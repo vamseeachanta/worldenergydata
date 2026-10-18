@@ -42,7 +42,7 @@ empty Form 7 pressure columns as usable pressure evidence.
 ### Parallel work check
 
 Planning-time worktree probes show other active worktrees for Texas RRC source
-catalog, Texas RRC refresh, FDAS, corpus datasets, pages, field equipment, and
+catalog, Texas RRC refresh, project_economics, corpus datasets, pages, field equipment, and
 autorun lanes. This issue will avoid those scopes. It will stay inside:
 
 - `docs/data-sources/onshore/state-well-databases/`

@@ -25,7 +25,7 @@
 
 ### Finding 2 — Water injection must not become produced water
 
-**Risk:** `MonthlyProductionLoader` has `water_injected_sm3`, but FDAS requires `water_bbl`; mapping injection to produced water would contaminate economics inputs.
+**Risk:** `MonthlyProductionLoader` has `water_injected_sm3`, but project_economics requires `water_bbl`; mapping injection to produced water would contaminate economics inputs.
 
 **Resolution:** `SodirAdapter._loader_to_standard_columns` sets `water_bbl` to `NaN`, drops `water_injected_sm3`, and tests assert this behavior.
 
@@ -41,7 +41,7 @@
 
 ## Verification Evidence
 
-- `PYTHONPATH=src:packages/worldenergydata-core/src:packages/worldenergydata-production/src:packages/worldenergydata-fdas/src:packages/worldenergydata-sodir/src /usr/bin/python3 -m pytest tests/unit/production/unified/test_adapters.py tests/unit/production/unified/test_unified_client.py tests/unit/production/unified/test_router.py tests/unit/fdas/adapters/test_contract.py tests/unit/fdas/adapters/test_field_concept_normalizer.py tests/unit/fdas/adapters/test_conformance.py tests/unit/sodir/test_norway_716.py tests/unit/sodir/test_norway_reference_chain.py tests/unit/production/unified/test_sodir_adapter_loader.py --noconftest -o addopts="" -q` -> 161 passed.
+- `PYTHONPATH=src:packages/worldenergydata-core/src:packages/worldenergydata-production/src:packages/worldenergydata-project_economics/src:packages/worldenergydata-sodir/src /usr/bin/python3 -m pytest tests/unit/production/unified/test_adapters.py tests/unit/production/unified/test_unified_client.py tests/unit/production/unified/test_router.py tests/unit/project_economics/adapters/test_contract.py tests/unit/project_economics/adapters/test_field_concept_normalizer.py tests/unit/project_economics/adapters/test_conformance.py tests/unit/sodir/test_norway_716.py tests/unit/sodir/test_norway_reference_chain.py tests/unit/production/unified/test_sodir_adapter_loader.py --noconftest -o addopts="" -q` -> 161 passed.
 - `black --check`, `isort --check-only`, `flake8`, and `ruff check` passed on touched Python files.
 - `git diff --check` passed.
 - `scripts/legal/legal-sanity-scan.sh` passed.

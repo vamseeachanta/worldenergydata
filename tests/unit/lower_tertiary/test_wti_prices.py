@@ -285,7 +285,7 @@ class TestWtiInputGuard:
     @pytest.fixture
     def loader(self) -> Callable[[str | None], pd.DataFrame]:
         path = Path(wti_prices.__file__).resolve().parents[5] / (
-            "docs/modules/bsee/analysis/production/FDAS_V30/"
+            "docs/modules/bsee/analysis/production/project_economics_V30/"
             "ogora_to_chronological.py"
         )
         return cast(

@@ -111,7 +111,7 @@ expose loader/accessor for future ingest workflows
 | Create | `src/worldenergydata/cost/data_collection/operator_statement_registry.py` | machine-readable registry contract + seed data |
 | Modify | `src/worldenergydata/cost/data_collection/__init__.py` | export registry loader/types |
 | Create | `tests/unit/cost/test_operator_statement_registry.py` | validate required fields, coverage map shape, and seed operator set |
-| Create or modify | `docs/research/fdas-quick-reference.md` or a new nearby cost/disclosure doc | short operator-facing usage note for future backfill workflows |
+| Create or modify | `docs/research/project_economics-quick-reference.md` or a new nearby cost/disclosure doc | short operator-facing usage note for future backfill workflows |
 
 ---
 

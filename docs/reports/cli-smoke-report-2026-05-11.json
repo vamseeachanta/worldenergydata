@@ -25,7 +25,7 @@
       "safety": "bounded-safe",
       "exit_code": 0,
       "status": "pass",
-      "stdout_snippet": "WorldEnergyData Modules                             \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Module          \u2503 Description                  \u2503 Key Commands                \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 bsee            \u2502 BSEE data operations and     \u2502 analyze, report, data,      \u2502\n\u2502                 \u2502 analysis                     \u2502 refresh                     \u2502\n\u2502 dashboard       \u2502 Plotly Dash BSEE/FDAS ...",
+      "stdout_snippet": "WorldEnergyData Modules                             \n\u250f\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2533\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2513\n\u2503 Module          \u2503 Description                  \u2503 Key Commands                \u2503\n\u2521\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2547\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2529\n\u2502 bsee            \u2502 BSEE data operations and     \u2502 analyze, report, data,      \u2502\n\u2502                 \u2502 analysis                     \u2502 refresh                     \u2502\n\u2502 dashboard       \u2502 Plotly Dash BSEE/project_economics ...",
       "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
       "source": "README.md"
     },
@@ -52,7 +52,7 @@
       "safety": "bounded-safe",
       "exit_code": 0,
       "status": "pass",
-      "stdout_snippet": "Usage: worldenergydata dashboard [OPTIONS] COMMAND [ARGS]...                   \n                                                                                \n Launch the Plotly Dash BSEE/FDAS web dashboard                                 \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --port   -p      INTEGER  TCP port to listen on [default: 8050]              \u2502\n\u2502 --host       ...",
+      "stdout_snippet": "Usage: worldenergydata dashboard [OPTIONS] COMMAND [ARGS]...                   \n                                                                                \n Launch the Plotly Dash BSEE/project_economics web dashboard                                 \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --port   -p      INTEGER  TCP port to listen on [default: 8050]              \u2502\n\u2502 --host       ...",
       "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
       "source": "docs/CLI.md"
     },
@@ -75,11 +75,11 @@
       "source": "docs/CLI.md"
     },
     {
-      "command": "worldenergydata fdas --help",
+      "command": "worldenergydata project_economics --help",
       "safety": "bounded-safe",
       "exit_code": 0,
       "status": "pass",
-      "stdout_snippet": "Usage: worldenergydata fdas [OPTIONS] COMMAND [ARGS]...                        \n                                                                                \n Field Development Analysis System                                              \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
+      "stdout_snippet": "Usage: worldenergydata project_economics [OPTIONS] COMMAND [ARGS]...                        \n                                                                                \n Field Development Analysis System                                              \n                                                                                \n\u256d\u2500 Options \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 --help          Show this message and exit.                                  \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500...",
       "stderr_snippet": "/mnt/local-analysis/codex-burn-20260511/worldenergydata-bundle/.venv/lib/python3.11/site-packages/pydantic/_internal/_fields.py:198: UserWarning: Field name \"schema\" in \"DatabaseConfig\" shadows an attribute in parent \"BaseSettings\"\n  warnings.warn(",
       "source": "docs/CLI.md"
     },
@@ -183,7 +183,7 @@
       "source": "docs/CLI.md"
     },
     {
-      "command": "worldenergydata fdas calculate-npv --cashflows [-1000,100,200,300] --discount-rate 0.10",
+      "command": "worldenergydata project_economics calculate-npv --cashflows [-1000,100,200,300] --discount-rate 0.10",
       "safety": "fixture-only",
       "exit_code": 0,
       "status": "pass",
@@ -192,7 +192,7 @@
       "source": "README.md"
     },
     {
-      "command": "worldenergydata fdas calculate-all --cashflows [-5000,1000,1500,2000]",
+      "command": "worldenergydata project_economics calculate-all --cashflows [-5000,1000,1500,2000]",
       "safety": "fixture-only",
       "exit_code": 0,
       "status": "pass",
@@ -201,7 +201,7 @@
       "source": "README.md"
     },
     {
-      "command": "worldenergydata fdas classify 5000",
+      "command": "worldenergydata project_economics classify 5000",
       "safety": "fixture-only",
       "exit_code": 0,
       "status": "pass",

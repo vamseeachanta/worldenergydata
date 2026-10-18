@@ -141,7 +141,7 @@ The worldenergydata marketing brochure project has been completed successfully a
 
 **Tier 3: Integration Modules (2 brochures)**
 6. ✅ Web Scraping Infrastructure (2,988 bytes)
-7. ✅ FDAS (Field Data Analysis System) (2,974 bytes)
+7. ✅ project_economics (Field Data Analysis System) (2,974 bytes)
 
 **Total Size:** 22.0KB (reduced from 24.1KB after Wind Energy removal)
 
@@ -325,7 +325,7 @@ python scripts/reporting/generate_marketing_brochures.py --pdf
 - ✅ Economic Evaluation: VERIFIED via `npm search`
 - ✅ Field-Specific: VERIFIED at `src/worldenergydata/modules/data/bsee/field_specific/`
 - ✅ Web Scraping: VERIFIED at `scrapy/scraper/` and `selenium/`
-- ✅ FDAS: VERIFIED at `fdas/`
+- ✅ project_economics: VERIFIED at `project_economics/`
 - ✅ Well Production: VERIFIED (dashboard components)
 - ❌ Wind Energy: MODULE NOT FOUND - brochure deleted ✅
 
@@ -489,7 +489,7 @@ reports/modules/marketing/
 ├── marketing_brochure_field-specific_analysis.md            (3,149 bytes)
 ├── marketing_brochure_well_production_dashboard.md          (3,086 bytes)
 ├── marketing_brochure_web_scraping_infrastructure.md        (2,988 bytes)
-├── marketing_brochure_fdas_field_data_analysis_system.md    (2,974 bytes)
+├── marketing_brochure_project_economics_field_data_analysis_system.md    (2,974 bytes)
 ├── GENERATION_SUMMARY.md                                    (255 lines)
 ├── QUICK_START.md                                           (89 lines)
 ├── VALIDATION_REPORT.md                                     (355 lines)

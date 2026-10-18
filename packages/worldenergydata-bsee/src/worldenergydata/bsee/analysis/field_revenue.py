@@ -57,11 +57,11 @@ _DEFAULT_SUBDIR = "historical_production_yearly"
 # ``packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/field_revenue.py``
 # -> 7 parents (parents[6]) to the repo root (was parents[4] pre-carve).
 _REPO_ROOT = Path(__file__).resolve().parents[6]
-_FDAS_V30_DIR = (
-    _REPO_ROOT / "docs" / "modules" / "bsee" / "analysis" / "production" / "FDAS_V30"
+_PROJECT_ECONOMICS_V30_DIR = (
+    _REPO_ROOT / "docs" / "modules" / "bsee" / "analysis" / "production" / "project_economics_V30"
 )
-_DEFAULT_WTI_PATH = _FDAS_V30_DIR / "wti_monthly.xlsx"
-_DEFAULT_HH_PATH = _FDAS_V30_DIR / "henry_hub_monthly.xlsx"
+_DEFAULT_WTI_PATH = _PROJECT_ECONOMICS_V30_DIR / "wti_monthly.xlsx"
+_DEFAULT_HH_PATH = _PROJECT_ECONOMICS_V30_DIR / "henry_hub_monthly.xlsx"
 
 # Standard EIA average heat content of US natural gas: 1 Mcf ~= 1.037 MMBtu.
 # This is a *labeled conversion assumption* used to translate OGOR-A gas
@@ -119,7 +119,7 @@ def load_wti_monthly(path: Optional[Path] = None) -> Dict[int, float]:
     ----------
     path:
         Path to the WTI ``.xlsx`` (columns ``Month`` datetime month-start and
-        ``WTI_USD``).  Defaults to the committed FDAS_V30 deck under ``docs/``.
+        ``WTI_USD``).  Defaults to the committed project_economics_V30 deck under ``docs/``.
 
     Returns
     -------
@@ -138,7 +138,7 @@ def load_hh_monthly(path: Optional[Path] = None) -> Dict[int, float]:
     ----------
     path:
         Path to the Henry Hub ``.xlsx`` (columns ``Month`` datetime month-start
-        and ``HH_USD`` in $/MMBtu).  Defaults to the committed FDAS_V30 deck
+        and ``HH_USD`` in $/MMBtu).  Defaults to the committed project_economics_V30 deck
         under ``docs/`` (spans 1997-01..2026-05).
 
     Returns

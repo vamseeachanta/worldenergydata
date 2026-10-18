@@ -106,8 +106,8 @@ uv run worldenergydata info
 uv run worldenergydata version
 
 # Financial calculations (no data required)
-uv run worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
-uv run worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]"
+uv run worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
+uv run worldenergydata project_economics calculate-all --cashflows "[-5000,1000,1500,2000]"
 uv run worldenergydata forecast --help
 ```
 
@@ -166,7 +166,7 @@ worldenergydata marine-safety export csv --output incidents.csv
 worldenergydata marine-safety stats --verbose
 ```
 
-### FDAS Module (`worldenergydata fdas`)
+### project_economics Module (`worldenergydata project_economics`)
 Field Development Analysis System for deepwater project economics:
 - Excel-compatible MIRR calculations
 - NPV with customizable discount rates
@@ -174,10 +174,10 @@ Field Development Analysis System for deepwater project economics:
 - Water depth classification
 
 ```bash
-worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
-worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
-worldenergydata fdas classify 5000
+worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+worldenergydata project_economics analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata project_economics classify 5000
 ```
 
 ## Project Structure
@@ -202,7 +202,7 @@ worldenergydata/
 │       │   ├── scrapers/       # Data scrapers
 │       │   ├── database/       # Database operations
 │       │   └── analysis/       # Incident analysis
-│       └── fdas/               # Field Development Analysis
+│       └── project_economics/               # Field Development Analysis
 │           ├── core/           # Financial calculations
 │           ├── adapters/       # BSEE integration
 │           └── analysis/       # Cashflow modeling

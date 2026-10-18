@@ -50,8 +50,8 @@
    - Focus: Automated data collection from public databases
    - Key Features: Scrapy framework, Selenium automation, automated scheduling
 
-8. **FDAS (Field Data Analysis System)**
-   - File: `marketing_brochure_fdas_field_data_analysis_system.md`
+8. **project_economics (Field Data Analysis System)**
+   - File: `marketing_brochure_project_economics_field_data_analysis_system.md`
    - Size: 3.0 KB
    - Focus: Comprehensive field data analysis and reporting
    - Key Features: Field-level aggregation, multi-source integration, automated reports
@@ -221,7 +221,7 @@ worldenergydata/
     ├── marketing_brochure_field-specific_analysis.md
     ├── marketing_brochure_well_production_dashboard.md
     ├── marketing_brochure_web_scraping_infrastructure.md
-    └── marketing_brochure_fdas_field_data_analysis_system.md
+    └── marketing_brochure_project_economics_field_data_analysis_system.md
 ```
 
 ---

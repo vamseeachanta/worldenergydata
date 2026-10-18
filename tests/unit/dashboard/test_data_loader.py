@@ -5,7 +5,7 @@ TDD: Tests written BEFORE implementation.
 Covers:
   - BSEE production data loading
   - BSEE platform/well location data loading
-  - FDAS incident data loading
+  - project_economics incident data loading
   - Sample/fallback data generation when real data absent
 """
 
@@ -126,7 +126,7 @@ class TestLoadPlatformData:
 
 
 # ---------------------------------------------------------------------------
-# FDAS incident data tests
+# project_economics incident data tests
 # ---------------------------------------------------------------------------
 
 

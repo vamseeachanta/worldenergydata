@@ -1,0 +1,7 @@
+basename: project_economics
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: True

@@ -1,7 +1,0 @@
-basename: fdas
-
-default:
-  log_level: INFO
-  config:
-    overwrite:
-      output: True

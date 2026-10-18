@@ -31,7 +31,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import pandas as pd
 import yaml
 
-from worldenergydata.fdas.api import EconomicsQuery
+from worldenergydata.project_economics.api import EconomicsQuery
 from worldenergydata.lower_tertiary.portfolio import (
     LT_FIELDS_2026,
     fields_config_dir,
@@ -43,8 +43,8 @@ logger = logging.getLogger(__name__)
 # Defaults — sourced and surfaced via citations panel per field.
 # ---------------------------------------------------------------------------
 
-DEFAULT_DISCOUNT_RATE = 0.10  # FDAS evaluation default
-DEFAULT_REINVESTMENT_RATE = 0.06  # FDAS MIRR default
+DEFAULT_DISCOUNT_RATE = 0.10  # project_economics evaluation default
+DEFAULT_REINVESTMENT_RATE = 0.06  # project_economics MIRR default
 DEFAULT_OIL_PRICE_USD_PER_BBL = 70.0  # EIA STEO Q1 2026 reference
 DEFAULT_ANNUAL_DECLINE = 0.08  # typical deepwater decline
 DEFAULT_PLATEAU_YEARS = 3  # plateau duration before decline begins

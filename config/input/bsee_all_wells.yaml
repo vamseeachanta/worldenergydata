@@ -9,7 +9,7 @@ metadata:
   status: "production"
   version: "1.0.0"
   author: "worldenergydata"
-  description: "Comprehensive BSEE well production data analysis with FDAS enhancement"
+  description: "Comprehensive BSEE well production data analysis with project_economics enhancement"
 
 # Requirements from user_prompt.md
 requirements:
@@ -18,7 +18,7 @@ requirements:
       priority: "high"
       implemented: true
 
-    - requirement: "Enhance BSEE data with FDAS information"
+    - requirement: "Enhance BSEE data with project_economics information"
       priority: "high"
       implemented: true
 
@@ -61,11 +61,11 @@ processing:
         validate: true
         encoding: "utf-8"
 
-    - name: "enhance_with_fdas"
-      module: "bsee.fdas"
+    - name: "enhance_with_project_economics"
+      module: "bsee.project_economics"
       function: "enhance_bsee_data"
       params:
-        fdas_source: "data/modules/bsee/fdas/"
+        project_economics_source: "data/modules/bsee/project_economics/"
         match_criteria: ["LEASE_NUMBER", "API_WELL_NUMBER"]
 
     - name: "calculate_statistics"
@@ -130,9 +130,9 @@ modules:
     entry_point: "production.py"
     dependencies: ["pandas", "numpy"]
 
-  fdas_enhancement:
+  project_economics_enhancement:
     path: "src/worldenergydata/modules/bsee"
-    entry_point: "fdas.py"
+    entry_point: "project_economics.py"
     dependencies: ["pandas"]
 
   visualization:

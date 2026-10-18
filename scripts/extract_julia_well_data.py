@@ -1,6 +1,6 @@
 """Extract Julia per-wellbore drilling data for the well-engineering report sections.
 
-Source: FDAS V30 drilling_and_completion_days.xlsx (real BSEE-derived D&C days,
+Source: project_economics V30 drilling_and_completion_days.xlsx (real BSEE-derived D&C days,
 spud/TD dates, MD/TVD) for lease G20351, plus the producing APIs from OGOR.
 Emits reports/lower_tertiary/data/julia_wells.json.
 """
@@ -10,7 +10,7 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
-V30 = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
+V30 = REPO / "docs/modules/bsee/analysis/production/project_economics_V30"
 JULIA_LEASE = "G20351"
 WATER_DEPTH_FT = 7335.0
 # producing APIs (oil>0 in OGOR) — last 4-5 digits identify the bore

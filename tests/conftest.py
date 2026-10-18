@@ -569,7 +569,7 @@ def pytest_ignore_collect(collection_path, config):
         tests/
         ├── unit/           # Module-grouped unit tests
         │   ├── bsee/
-        │   ├── fdas/
+        │   ├── project_economics/
         │   ├── marine_safety/
         │   ├── hse/
         │   ├── reporting/
@@ -628,7 +628,7 @@ def pytest_ignore_collect(collection_path, config):
     # Issue #2433: skip known broken collection targets until missing modules/data are restored.
     broken_module_tests = {
         # Duplicate basename clashes with tests/integration/workflows/test_end_to_end.py
-        Path("tests/modules/fdas/integration/test_end_to_end.py"),
+        Path("tests/modules/project_economics/integration/test_end_to_end.py"),
         # Missing sodir_module.* package
         Path("tests/modules/sodir-integration/test_api_client.py"),
         Path("tests/modules/sodir-integration/test_cross_regional_validation.py"),

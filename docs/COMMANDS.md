@@ -2,7 +2,7 @@
 
 > **⚠ This document describes custom agent slash commands (e.g. `/git-sync`), NOT the
 > `worldenergydata` runtime CLI.** For runtime CLI usage (`worldenergydata bsee ...`,
-> `worldenergydata fdas ...`, etc.) see [CLI.md](CLI.md).
+> `worldenergydata project_economics ...`, etc.) see [CLI.md](CLI.md).
 
 Last updated: 2025-08-12 06:26
 Propagated from: assetutilities

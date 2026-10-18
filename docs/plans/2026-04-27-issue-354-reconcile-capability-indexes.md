@@ -11,7 +11,7 @@
 
 The repository has multiple competing capability contracts:
 
-- `README.md` advertises only 3 headline modules (`bsee`, `marine-safety`, `fdas`).
+- `README.md` advertises only 3 headline modules (`bsee`, `marine-safety`, `project_economics`).
 - `MODULE_INDEX.md` and `module-manifest.yaml` advertise 27 modules, mostly as `stable`.
 - `data/catalog.yaml` reports 12 modules / 44 datasets / ~10.5 MB, including empty datasets for `hse`, `oil_price`, `pipeline_safety`, and `wind`.
 - `src/worldenergydata/` contains ~40 top-level packages/directories, including substantial off-manifest capabilities such as `cost`, `dashboard`, `decommissioning`, `drilling_pressure_management`, `economics`, `eia`, `reservoir`, `west_africa`, and others.

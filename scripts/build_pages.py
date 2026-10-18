@@ -609,12 +609,12 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
             encoding="utf-8",
         )
 
-    # --- FDAS revision comparison (V30 -> V50 -> wed) page ---
-    rev_md = REPORTS / "lower_tertiary" / "fdas_revision_comparison.md"
+    # --- project_economics revision comparison (V30 -> V50 -> wed) page ---
+    rev_md = REPORTS / "lower_tertiary" / "project_economics_revision_comparison.md"
     if rev_md.exists():
-        (PUBLIC / "fdas-revision-comparison.html").write_text(
+        (PUBLIC / "project_economics-revision-comparison.html").write_text(
             page(
-                "FDAS Revision Comparison — V30 &rarr; V50 &rarr; wed",
+                "project_economics Revision Comparison — V30 &rarr; V50 &rarr; wed",
                 "Three-way comparison of the Lower-Tertiary economics pipeline: "
                 "scripts, inputs, BSEE-data months, result tables, script differences, "
                 "missed files, and a bug review — the basis for adopting wed as canonical.",
@@ -622,7 +622,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 + md_to_html(rev_md.read_text(encoding="utf-8")),
                 provenance=(
                     "Comparison drawn from the V30/V50 source archives "
-                    "(/mnt/ace/.../fdas_revisions) and the wed reproduction reports; "
+                    "(/mnt/ace/.../project_economics_revisions) and the wed reproduction reports; "
                     "the cost-assumptions diff was recomputed cell-by-cell. Revision "
                     "dates confirmed against Gmail and file vintages."
                 ),
@@ -1151,10 +1151,10 @@ def build_index() -> None:
             "definitions page, with no meaning shown for an undocumented "
             "code.</p></a>"
         )
-    if (PUBLIC / "fdas-revision-comparison.html").exists():
+    if (PUBLIC / "project_economics-revision-comparison.html").exists():
         cards.append(
-            '<a class="card" href="fdas-revision-comparison.html">'
-            "<h3>FDAS Revision Comparison &rarr;</h3>"
+            '<a class="card" href="project_economics-revision-comparison.html">'
+            "<h3>project_economics Revision Comparison &rarr;</h3>"
             "<p>V30 &rarr; V50 &rarr; wed: scripts, inputs, BSEE-data months, result "
             "tables, script differences, missed files, and a bug review &mdash; the "
             "case for wed as the canonical toolset.</p></a>"

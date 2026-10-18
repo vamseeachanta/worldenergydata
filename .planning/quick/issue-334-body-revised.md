@@ -8,7 +8,7 @@ This v1 is limited to:
 - minimum row-level provenance and citation rules
 - an explicit linkage strategy to the existing sanction-point dataset, without downstream integrations yet
 
-This issue does not include derived analytics, currency normalization, automated ingestion, or module-level consumption in `fdas` / field-economics workflows.
+This issue does not include derived analytics, currency normalization, automated ingestion, or module-level consumption in `project_economics` / field-economics workflows.
 
 ## Why
 `src/worldenergydata/cost/data_collection/public_dataset.py` already captures public cost evidence, but it is shaped around one-off sanction-era project datapoints.
@@ -102,7 +102,7 @@ Out of scope for this issue:
 - derived year-over-year views and re-baselining logic
 - normalized downstream analytics such as unit-cost metrics
 - broad multi-operator historical backfill
-- direct integration into `cost`, `fdas`, `lower_tertiary`, or other economics consumers
+- direct integration into `cost`, `project_economics`, `lower_tertiary`, or other economics consumers
 
 Planned follow-up issues:
 - #335 — linkage model hardening between annual disclosure rows and `CostDataPoint`

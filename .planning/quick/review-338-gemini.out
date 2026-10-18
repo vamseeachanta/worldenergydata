@@ -692,7 +692,7 @@ Attempt 5 failed with status 429. Retrying with backoff... _GaxiosError: [{
 - Retrieval adequacy: adequate
 - Strengths:
   - Strong adherence to scope boundaries, specifically deferring schema, linkage, and currency work to their respective parent issues (#334, #335, #336).
-  - Perfectly aligns with existing repository structures (leveraging the `__getattr__` lazy export in `fdas/__init__.py`, respecting `CostPredictor` boundaries, and targeting the summary hook in `lower_tertiary/npv.py`).
+  - Perfectly aligns with existing repository structures (leveraging the `__getattr__` lazy export in `project_economics/__init__.py`, respecting `CostPredictor` boundaries, and targeting the summary hook in `lower_tertiary/npv.py`).
   - Clear architectural separation between raw records and derived analytical views.
 - Findings by severity:
   - Critical: None.

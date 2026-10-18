@@ -17,8 +17,8 @@ from loguru import logger
 
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
-from worldenergydata.fdas.core.config import AssumptionsManager
-from worldenergydata.fdas.core.financial import calculate_npv as fdas_calculate_npv
+from worldenergydata.project_economics.core.config import AssumptionsManager
+from worldenergydata.project_economics.core.financial import calculate_npv as project_economics_calculate_npv
 from worldenergydata.lower_tertiary.wti_prices import load_extended_wti_prices
 
 # Backward-compatible module-level handle used by legacy tests and callers that
@@ -748,8 +748,8 @@ class ProductionAPI12Analysis:
         return df
 
     def _economic_assumptions(self, cfg, dev_system="default"):
-        """Resolve FDAS assumptions plus legacy config overrides."""
-        assumptions_df = cfg.get("fdas_assumptions")
+        """Resolve project_economics assumptions plus legacy config overrides."""
+        assumptions_df = cfg.get("project_economics_assumptions")
         assumptions = (
             AssumptionsManager.from_dict(assumptions_df)
             if assumptions_df is not None
@@ -777,7 +777,7 @@ class ProductionAPI12Analysis:
         return capex, opex, discount_rate
 
     def calculate_npv(self, cfg, revenue_df, dev_system="default", period="monthly"):
-        """Calculate API12 NPV through the FDAS financial layer."""
+        """Calculate API12 NPV through the project_economics financial layer."""
         capex, opex_per_bbl, discount_rate = self._economic_assumptions(
             cfg, dev_system=dev_system
         )
@@ -797,14 +797,14 @@ class ProductionAPI12Analysis:
         cashflows = np.concatenate(
             (np.array([-capex], dtype=float), operating_cashflows)
         )
-        return fdas_calculate_npv(cashflows, discount_rate, period=period)
+        return project_economics_calculate_npv(cashflows, discount_rate, period=period)
 
     def perform_npv_calculation(self, cfg, revenue_df):
-        """Backward-compatible wrapper around the FDAS API12 NPV path."""
+        """Backward-compatible wrapper around the project_economics API12 NPV path."""
         return self.calculate_npv(cfg, revenue_df)
 
     def perform_excel_aligned_npv_calculation(self, cfg, revenue_df):
-        """Backward-compatible wrapper around the FDAS API12 NPV path."""
+        """Backward-compatible wrapper around the project_economics API12 NPV path."""
         return self.calculate_npv(cfg, revenue_df)
 
     def perform_decline_analysis_api12(self, cfg, api12_df):

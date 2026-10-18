@@ -152,7 +152,7 @@ class TestProductionWithCorrectFormat:
         assert True
 
     def test_generate_revenue_table(self, analyzer, tmp_path):
-        """Revenue table builds from lower_tertiary WTI prices (FDAS forward path, #367)."""
+        """Revenue table builds from lower_tertiary WTI prices (project_economics forward path, #367)."""
         prices = pd.DataFrame(
             {
                 "Month": pd.to_datetime(["2024-01-01", "2024-02-01"]),
@@ -178,7 +178,7 @@ class TestProductionWithCorrectFormat:
             assert col in revenue_df.columns
 
     def test_perform_npv_calculation(self, analyzer):
-        """perform_npv_calculation returns a finite NPV via the FDAS layer (#367)."""
+        """perform_npv_calculation returns a finite NPV via the project_economics layer (#367)."""
         cfg = {
             "economics": {
                 "cost": {"discount_rate_annual": 0.12, "CAPEX": 1000.0, "OPEX": 2.0}

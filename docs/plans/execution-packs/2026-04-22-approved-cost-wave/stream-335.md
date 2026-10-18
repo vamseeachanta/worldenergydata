@@ -20,12 +20,12 @@ Read-only paths:
 Forbidden paths:
 - `src/worldenergydata/cost/disclosure_analytics.py`
 - `src/worldenergydata/cost/__init__.py`
-- `src/worldenergydata/fdas/`
+- `src/worldenergydata/project_economics/`
 - `src/worldenergydata/lower_tertiary/`
 - `src/worldenergydata/cost/data_collection/disclosure_ingest_contract.py`
 - `tests/unit/cost/test_disclosure_ingest_contract.py`
 - `tests/unit/cost/test_disclosure_analytics.py`
-- `tests/unit/fdas/`
+- `tests/unit/project_economics/`
 - `tests/test_query_api.py`
 
 TDD targets:

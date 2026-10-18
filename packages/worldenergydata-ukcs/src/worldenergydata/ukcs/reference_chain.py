@@ -1,7 +1,7 @@
 """UKCS NSTA reference-chain runner (#717).
 
 Minimal vertical slice:
-``UkcsAdapter.fetch`` -> ``to_fdas_production`` -> ``CashflowEngine`` and
+``UkcsAdapter.fetch`` -> ``to_project_economics_production`` -> ``CashflowEngine`` and
 ``build_uk_field_concept`` -> ``recommend``. The economics output is explicitly
 pre-tax chain plumbing, not a UK investment NPV headline.
 """
@@ -13,13 +13,13 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 
-from worldenergydata.fdas.adapters.contract import to_fdas_production
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     dev_system_from_water_depth_m,
 )
-from worldenergydata.fdas.analysis.cashflow import CashflowEngine
-from worldenergydata.fdas.core.config import AssumptionsManager
-from worldenergydata.fdas.fiscal import get_fiscal_terms
+from worldenergydata.project_economics.analysis.cashflow import CashflowEngine
+from worldenergydata.project_economics.core.config import AssumptionsManager
+from worldenergydata.project_economics.fiscal import get_fiscal_terms
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 from worldenergydata.ukcs.field_concept import build_uk_field_concept
@@ -43,14 +43,14 @@ def run_ukcs_reference_chain(
             end=end,
         )
     )
-    fdas_production = to_fdas_production(unified)
+    project_economics_production = to_project_economics_production(unified)
     field_concept = build_uk_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
-    first_oil = _first_oil_date(fdas_production)
+    first_oil = _first_oil_date(project_economics_production)
     price_deck = {
         str(year_month): oil_price_usd_bbl
-        for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
+        for year_month in project_economics_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
     dev_system = dev_system_from_water_depth_m(field_concept.water_depth_m)
     if dev_system == "unknown":
@@ -61,7 +61,7 @@ def run_ukcs_reference_chain(
         dev_system=dev_system,
         fiscal_terms=get_fiscal_terms("uk"),
     ).generate_monthly_cashflow(
-        fdas_production,
+        project_economics_production,
         {"drilling_monthly": {}},
         price_deck,
         first_oil,
@@ -70,7 +70,7 @@ def run_ukcs_reference_chain(
     return {
         "field_name": field_name,
         "unified_production": unified,
-        "fdas_production": fdas_production,
+        "project_economics_production": project_economics_production,
         "field_concept": field_concept,
         "ranked_concepts": ranked_concepts,
         "economics_label": "chain_plumbing_pre_tax",
@@ -83,10 +83,10 @@ def build_uk_field_concept_from_meta(field_meta: Dict[str, Any]):
     return build_uk_field_concept(field_meta)
 
 
-def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
-    if fdas_production.empty:
+def _first_oil_date(project_economics_production: pd.DataFrame) -> datetime:
+    if project_economics_production.empty:
         return datetime(1970, 1, 1)
-    first_period = str(fdas_production["YEAR_MONTH"].min())
+    first_period = str(project_economics_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 
 

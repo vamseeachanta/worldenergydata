@@ -103,7 +103,7 @@ def build_yaml(
     period_label = end_date[:7]
 
     lines: list[str] = []
-    lines.append("# Golden Baseline: FDAS V50 Financial Project Summary")
+    lines.append("# Golden Baseline: project_economics V50 Financial Project Summary")
     lines.append(
         "# V50 = V30 methodology re-run at the latest BSEE OGOR-A window "
         f"({period_label})."

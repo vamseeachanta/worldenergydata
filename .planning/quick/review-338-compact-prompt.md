@@ -30,7 +30,7 @@ Required output
 
 ## Deliverable
 
-A derived annual-disclosure analytics layer that produces a project annual cost revision view and an operator annual capex series view, plus thin consumer-facing integration hooks for `cost`, `fdas`, and `lower_tertiary`, while preserving raw-vs-derived separation and leaving raw schema/ingestion/currency-methodology work to prior issues.
+A derived annual-disclosure analytics layer that produces a project annual cost revision view and an operator annual capex series view, plus thin consumer-facing integration hooks for `cost`, `project_economics`, and `lower_tertiary`, while preserving raw-vs-derived separation and leaving raw schema/ingestion/currency-methodology work to prior issues.
 
 ---
 
@@ -38,7 +38,7 @@ A derived annual-disclosure analytics layer that produces a project annual cost 
 
 ### In scope now
 - Derived annual analytics/view definitions built from disclosure foundation
-- Thin consumer-facing integration contracts for `cost`, `fdas`, and `lower_tertiary`
+- Thin consumer-facing integration contracts for `cost`, `project_economics`, and `lower_tertiary`
 - Tests proving downstream consumers can read the derived views
 - Explicit raw-vs-derived separation
 
@@ -48,7 +48,7 @@ A derived annual-disclosure analytics layer that produces a project annual cost 
 - Linkage-model redesign from #335
 - Currency normalization/comparability redesign from #336
 - Broad backfill or dashboard products
-- Replacing existing `CostPredictor`, FDAS financial core, or lower tertiary economics logic wholesale
+- Replacing existing `CostPredictor`, project_economics financial core, or lower tertiary economics logic wholesale
 
 ---
 
@@ -71,7 +71,7 @@ function build_cost_disclosure_benchmark(project_revision_view, predictor_input)
     keep predictor contract unchanged
     compare predictor output against latest matching disclosed project capex
 
-fdas integration:
+project_economics integration:
     expose a disclosure analytics namespace/query object via existing lazy export pattern
 
 lower_tertiary integration:
@@ -86,11 +86,11 @@ lower_tertiary integration:
 |---|---|---|
 | Create | `src/worldenergydata/cost/disclosure_analytics.py` | derived annual project/operator view builders |
 | Modify | `src/worldenergydata/cost/__init__.py` | expose derived disclosure view loaders for cost consumers |
-| Modify | `src/worldenergydata/fdas/__init__.py` | expose disclosure analytics namespace via lazy export |
+| Modify | `src/worldenergydata/project_economics/__init__.py` | expose disclosure analytics namespace via lazy export |
 | Modify | `src/worldenergydata/lower_tertiary/npv.py` | optional disclosure-view consumption hook without changing default behavior |
 | Create | `tests/unit/cost/test_disclosure_analytics.py` | unit tests for derived view construction and raw-vs-derived separation |
 | Modify/Create | `tests/unit/cost/test_field_integration.py` | integration-style tests for cost-side consumer access |
-| Create | `tests/unit/fdas/test_disclosure_api.py` | FDAS integration/export tests |
+| Create | `tests/unit/project_economics/test_disclosure_api.py` | project_economics integration/export tests |
 | Create | `tests/unit/lower_tertiary/test_disclosure_integration.py` | lower tertiary optional-consumption tests |
 | Modify if needed | `tests/test_query_api.py` | package-level API/export regression |
 
@@ -107,7 +107,7 @@ lower_tertiary integration:
 | `test_yoy_delta_only_computed_with_valid_prior_year` | no fake series math | sparse rows | delta only when valid |
 | `test_raw_records_are_not_mutated_by_view_generation` | raw-vs-derived separation | raw dataset | unchanged raw rows |
 | `test_cost_consumer_can_compare_predictor_output_to_latest_disclosed_capex` | cost-side consumer hook works | revision view + predictor input | comparison payload |
-| `test_fdas_exposes_disclosure_analytics_namespace` | FDAS lazy export surface works | package import | namespace/query resolves |
+| `test_project_economics_exposes_disclosure_analytics_namespace` | project_economics lazy export surface works | package import | namespace/query resolves |
 | `test_lower_tertiary_summary_unchanged_without_disclosure_view` | default behavior preserved | existing call path | unchanged summary |
 | `test_lower_tertiary_can_optionally_consume_disclosure_view` | optional enrichment works | disclosure view + matching field/project | enriched summary |
 
@@ -118,7 +118,7 @@ lower_tertiary integration:
 - [ ] Derived layer provides a project annual cost revision view
 - [ ] Derived layer provides an operator annual capex series view
 - [ ] Cost-side consumer hook can use project revision view without changing `CostDataPoint` semantics
-- [ ] FDAS exposes a consumer-facing disclosure analytics surface through its public API/export pattern
+- [ ] project_economics exposes a consumer-facing disclosure analytics surface through its public API/export pattern
 - [ ] Lower tertiary can optionally consume derived disclosure view data without breaking existing call paths
 - [ ] Tests prove raw-vs-derived separation and unchanged non-disclosure workflows
 - [ ] #338 does not redefine raw schema, ingestion rules, linkage rules, or currency methodology from prior issues

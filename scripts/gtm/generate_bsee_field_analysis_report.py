@@ -4,7 +4,7 @@ Generate comprehensive BSEE GoM Lower Tertiary field economics HTML report.
 Uses:
   - worldenergydata.lower_tertiary.portfolio_economics.run_portfolio()
   - All 10 LT field YAML configs (config/analysis/lower_tertiary/fields/)
-  - worldenergydata.fdas.api.EconomicsQuery for metrics
+  - worldenergydata.project_economics.api.EconomicsQuery for metrics
   - Plotly for interactive charts
 
 Output: reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
@@ -632,7 +632,7 @@ def build_html(run: PortfolioEconomicsRun) -> str:
   <h2>7. Methodology &amp; Data Sources</h2>
   <h3>Economics Framework</h3>
   <ul style="font-size:13px;line-height:2">
-    <li><strong>NPV:</strong> Standard discounted cashflow at 10% annual rate (FDAS default)</li>
+    <li><strong>NPV:</strong> Standard discounted cashflow at 10% annual rate (project_economics default)</li>
     <li><strong>IRR:</strong> Internal rate of return via <code>numpy.irr</code>-equivalent root-finding</li>
     <li><strong>MIRR:</strong> Modified IRR: finance rate 10%, reinvestment rate 6%</li>
     <li><strong>Payback:</strong> First year cumulative cashflow crosses zero</li>

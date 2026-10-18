@@ -328,10 +328,10 @@ All runs use code pin `6149361d36373afe24fe1b0c1fe59886375d46b7`. Revision 0 obs
 
 | Revision 1 command scope | Result | Interpretation |
 | --- | --- | --- |
-| Same four test files, initial minimal environment | 36 passed, 1 failed, 1 collection skip | The first FDAS import fails because `numpy-financial` is missing; a direct import probe confirms the missing declared dependency. It is installed before the final run. CAD is initially absent. [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L13-L16] [packages/worldenergydata-fdas/pyproject.toml:L41-L45] |
+| Same four test files, initial minimal environment | 36 passed, 1 failed, 1 collection skip | The first project_economics import fails because `numpy-financial` is missing; a direct import probe confirms the missing declared dependency. It is installed before the final run. CAD is initially absent. [packages/worldenergydata-project_economics/src/worldenergydata/project_economics/core/financial.py:L13-L16] [packages/worldenergydata-project_economics/pyproject.toml:L41-L45] |
 | Same four test files, complete focused environment | 44 passed, 0 failed, 0 skipped | Includes all seven CAD nodes and the recovered integration case; V1 also passes. [tests/modules/field_development/test_equipment_3d.py:L12-L96] [tests/modules/field_development/test_integrations.py:L33-L142] |
 
-The current isolated environment uses Python 3.11.15, pytest 9.1.1, pandas 2.3.3, Pydantic 2.14.1, CadQuery 2.8.0, nlopt 2.11.0 and numpy-financial 1.0.0. These are observed test-environment versions; reproducibility in the locked project and other supported environments remains a follow-up, issue pending (6). [pyproject.toml:L143-L157] [pyproject.toml:L178-L184] [packages/worldenergydata-fdas/pyproject.toml:L41-L45]
+The current isolated environment uses Python 3.11.15, pytest 9.1.1, pandas 2.3.3, Pydantic 2.14.1, CadQuery 2.8.0, nlopt 2.11.0 and numpy-financial 1.0.0. These are observed test-environment versions; reproducibility in the locked project and other supported environments remains a follow-up, issue pending (6). [pyproject.toml:L143-L157] [pyproject.toml:L178-L184] [packages/worldenergydata-project_economics/pyproject.toml:L41-L45]
 
 The seven individual downstream CAD nodes below all pass in the current final run. The historical collection skips above represent unavailable CAD collection, rather than executed nodes. [tests/modules/field_development/test_equipment_3d.py:L12-L96]
 

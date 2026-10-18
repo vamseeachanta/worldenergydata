@@ -22197,7 +22197,7 @@
     "Only fields with explicit field metadata and oil production run economics.",
     "Gas-only revenue is deferred to issue #808.",
     "oil_tonnes_to_bbl_conversion_deferred_to_issue_807",
-    "Ayoluengo uses offshore FDAS plumbing as a wiring check; mismatch is flagged."
+    "Ayoluengo uses offshore project_economics plumbing as a wiring check; mismatch is flagged."
   ],
   "scheduler_manifest": {
     "end_time": "2026-07-05T18:37:12.102990+00:00",

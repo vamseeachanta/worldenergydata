@@ -471,7 +471,7 @@ python -m worldenergydata.well_production_dashboard.cli -v run --config config/d
 
 - [bsee-data-extractor](../bsee-data-extractor/SKILL.md) - BSEE data loading
 - [npv-analyzer](../npv-analyzer/SKILL.md) - Economic analysis
-- [fdas-economics](../fdas-economics/SKILL.md) - Field development economics
+- [project_economics-economics](../project_economics-economics/SKILL.md) - Field development economics
 - [energy-data-visualizer](../energy-data-visualizer/SKILL.md) - Visualizations
 
 ## References

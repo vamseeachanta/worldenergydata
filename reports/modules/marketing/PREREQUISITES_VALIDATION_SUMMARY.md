@@ -26,7 +26,7 @@ All marketing brochures have been validated and are structurally ready for PDF g
 ```
 ✓ marketing_brochure_bsee_data_integration.md               (3,301 bytes)
 ✓ marketing_brochure_economic_evaluation_npv_analysis.md    (3,200 bytes)
-✓ marketing_brochure_fdas_field_data_analysis_system.md     (2,974 bytes)
+✓ marketing_brochure_project_economics_field_data_analysis_system.md     (2,974 bytes)
 ✓ marketing_brochure_field-specific_analysis.md             (3,149 bytes)
 ✓ marketing_brochure_marine_safety_incident_analysis.md     (3,344 bytes)
 ✓ marketing_brochure_web_scraping_infrastructure.md         (2,988 bytes)

@@ -26,7 +26,7 @@ import warnings
 _MOVED_MODULES: set[str] = {
     "bsee",
     "canada",
-    "fdas",
+    "project_economics",
     "hse",
     "landman",
     "lng_terminals",

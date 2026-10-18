@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.fdas.adapters.contract import to_fdas_production
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
@@ -90,15 +90,15 @@ def test_fetch_transforms_nsta_loader_output_to_standard_columns():
     assert "field" not in out.columns
 
 
-def test_fetch_output_is_accepted_by_fdas_production_contract():
+def test_fetch_output_is_accepted_by_project_economics_production_contract():
     adapter = UkcsAdapter(loader=FixtureNstaLoader())
 
     unified = adapter.fetch(ProductionQuery(regions=["ukcs"], fields=["Forties"]))
-    fdas = to_fdas_production(unified)
+    project_economics = to_project_economics_production(unified)
 
-    assert list(fdas["DEV_NAME"].unique()) == ["Forties"]
-    assert list(fdas["YEAR_MONTH"]) == ["1975-09", "1975-10"]
-    assert fdas["MONTHLY_WATER_BBL"].notna().all()
+    assert list(project_economics["DEV_NAME"].unique()) == ["Forties"]
+    assert list(project_economics["YEAR_MONTH"]) == ["1975-09", "1975-10"]
+    assert project_economics["MONTHLY_WATER_BBL"].notna().all()
 
 
 def test_fetch_all_uses_loader_all_path_when_no_field_filter():

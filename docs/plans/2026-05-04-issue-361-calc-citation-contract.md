@@ -11,7 +11,7 @@ The workspace-hub calc-citation-contract requires all standards-derived constant
 
 ## Scope
 Target calc modules for initial adoption:
-1. `fdas/core/financial.py` — NPV/IRR/MIRR (BSEE federal royalty 12.5%, WTI price deck)
+1. `project_economics/core/financial.py` — NPV/IRR/MIRR (BSEE federal royalty 12.5%, WTI price deck)
 2. `lower_tertiary/portfolio_economics.py` — breakeven calculations
 3. `bsee/analysis/production_api10.py` — production analysis constants
 
@@ -30,7 +30,7 @@ Grep for numeric literals with regulatory origin:
 - `0.10` or `0.12` → discount rate (industry convention, not a standard — skip)
 - WTI price deck references
 
-### Task 3 — Wire citations in `fdas/core/financial.py`
+### Task 3 — Wire citations in `project_economics/core/financial.py`
 For BSEE federal royalty rate constant:
 ```python
 BSEE_FEDERAL_ROYALTY_RATE = 0.125
@@ -51,6 +51,6 @@ Calc functions return `(result, citations: list[Citation])` tuple.
 Callers that don't need citations receive `result` only; citations are opt-in.
 
 ## Acceptance Criteria
-- BSEE federal royalty rate (12.5%) emits a `Citation` instance in FDAS calc path
+- BSEE federal royalty rate (12.5%) emits a `Citation` instance in project_economics calc path
 - `CitationResolutionError` raised if wiki page absent
 - No downstream consumer API change (citations in sidecar only)

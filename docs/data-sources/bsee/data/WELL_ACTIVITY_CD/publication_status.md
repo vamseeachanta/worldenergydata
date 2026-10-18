@@ -9,7 +9,7 @@ definition in those sources; a proposed expansion is not a definition.
 
 The raw table is `mv_war_main_prop`, carrying `WELL_ACTIVITY_CD` and the join
 key `SN_WAR`. The repository's
-[load_war_prop](../../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L158)
+[load_war_prop](../../../../modules/bsee/analysis/production/project_economics_V30/extract_drilling_completion_days.py#L158)
 reads CSV or pickle input; lines 166-176 select the key and activity field and
 require both columns. This establishes how the loader reads the field, not
 what the regulator means by its values.

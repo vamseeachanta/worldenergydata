@@ -146,7 +146,7 @@ Each registry entry will carry `accepted_for_conversion`; entries with
   parser/live-loader boundary because they strip citation provenance.
 - Citation/provenance validation will live outside the pure parser in a small
   registry loader module.
-- The unified production adapter and FDAS cashflow code will remain unchanged
+- The unified production adapter and project_economics cashflow code will remain unchanged
   unless tests prove they drop conversion metadata needed by the report.
 - Missing density coverage will not silently masquerade as real per-field
   conversion. Strict conversion will raise on missing cited factors. Legacy

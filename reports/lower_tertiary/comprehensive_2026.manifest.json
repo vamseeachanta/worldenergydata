@@ -59,7 +59,7 @@
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py",
-      "sha256": "c4858e371ed50c6d538e27a5c9e3e9b8fa49cca5fe890ab313275e1e832e9015",
+      "sha256": "09db9bb02abe56ab7f4ae4cb07456abaaa9bd45c250653310e6fcc64641e8e2c",
       "size_bytes": 38485
     },
     {
@@ -69,22 +69,22 @@
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py",
-      "sha256": "504c1161557ae4147dd24d0b235515017a86754e3e9928879f51ff984062f165",
+      "sha256": "19b004121d5a3571f20d407a2b2971f0400a5b67002890801e04871b89b8daa8",
       "size_bytes": 20660
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_economics.py",
-      "sha256": "1611e9fcd6fd3a60580e0bcdf24f2352127299fdafef606dd7d68bd234075d32",
+      "sha256": "3efd8f24c7672fb5cde653fb35e11fc6eca46cd986d25fcbc97b59b6cf1de82e",
       "size_bytes": 19173
     },
     {
-      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py",
-      "sha256": "897cc3ff9ee63b57ee5017fa79389016f5d496bb1b98c8a576d7402900afcdf0",
+      "path": "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/api.py",
+      "sha256": "8a37062a8d2d359f364ac41a5b5a9a4eca86590ff1f58f671eabadf39b8f50a3",
       "size_bytes": 10934
     },
     {
-      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py",
-      "sha256": "3fa582e62b82abc05dfb45ae67ffa532dc292bfa8ee71d87feed4fa7ec020c84",
+      "path": "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/core/financial.py",
+      "sha256": "6fd6d2d38ea3d7619ae80f89abfad70d647afa6ad0054ac48d934dd93d521d0b",
       "size_bytes": 12733
     },
     {
@@ -94,7 +94,7 @@
     },
     {
       "path": "reports/lower_tertiary_field_summary.md",
-      "sha256": "1dfd622a38adc326ff79c5685b3c12b12bae34aff13d506e0a29f22553cc80bd",
+      "sha256": "4f2c8baba2c0f1000c1318eea197b06ca00f5862868636fb14d1a642bde65b98",
       "size_bytes": 4588
     },
     {
@@ -128,7 +128,7 @@
     },
     {
       "path": "reports/lower_tertiary/comprehensive_2026.md",
-      "sha256": "0f955f16a03748742300cf567ea536b585352116d2ad9dde6d17eeb4dd60674e",
+      "sha256": "da65016e58a1da20d59d78a65d2b88f8a218086342f205ae61f121a7e9d83fa7",
       "size_bytes": 113612
     }
   ],

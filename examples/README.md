@@ -4,7 +4,7 @@
 
 | File | Safety Class | Notes |
 |------|-------------|-------|
-| `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
+| `project_economics_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
 | `marine_safety_cause_visualization_demo.py` | `data-required` | Requires local marine safety DB |
 | `llm_classification_demo.py` | `unsafe-unbounded` | Downloads ~1.6 GB BART model; set `WORLDENERGYDATA_RUN_LLM_EXAMPLES=1` |
@@ -41,7 +41,7 @@ Without the variable set, these scripts print a skip message and exit 0.
 
 ```bash
 # Safe — no prerequisites
-uv run python examples/fdas_complete_workflow.py
+uv run python examples/project_economics_complete_workflow.py
 uv run python examples/validation_examples.py
 
 # Requires local data (run `make data` first)

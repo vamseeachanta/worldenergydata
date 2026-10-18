@@ -242,7 +242,7 @@ class TestBSEERealExecution:
         assert "col_x" not in result.columns
 
     def test_generate_revenue_table(self, tmp_path):
-        """Revenue table builds from lower_tertiary WTI prices (FDAS forward path, #367)."""
+        """Revenue table builds from lower_tertiary WTI prices (project_economics forward path, #367)."""
         analyzer = ProductionAPI12Analysis()
         prices = pd.DataFrame(
             {
@@ -269,7 +269,7 @@ class TestBSEERealExecution:
             assert col in revenue_df.columns
 
     def test_perform_npv_calculation(self):
-        """perform_npv_calculation returns a finite NPV via the FDAS layer (#367)."""
+        """perform_npv_calculation returns a finite NPV via the project_economics layer (#367)."""
         analyzer = ProductionAPI12Analysis()
         cfg = {
             "economics": {
@@ -287,7 +287,7 @@ class TestBSEERealExecution:
         assert np.isfinite(npv)
 
     def test_perform_excel_aligned_npv(self):
-        """Excel-aligned wrapper delegates to the same FDAS path as perform_npv_calculation (#367)."""
+        """Excel-aligned wrapper delegates to the same project_economics path as perform_npv_calculation (#367)."""
         analyzer = ProductionAPI12Analysis()
         cfg = {
             "economics": {

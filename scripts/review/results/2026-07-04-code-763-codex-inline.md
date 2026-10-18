@@ -35,7 +35,7 @@ Norway/UKCS fallback logic maps unknown water depth to `subsea15`; applying that
 
 - RED: separate product-frame test failed with `TypeError` before adapter merge support.
 - Focused: `13 passed` for Spain loader/reference-chain + Spain adapter tests.
-- Adjacent: `233 passed` for `tests/unit/spain`, `tests/unit/production/unified`, `tests/unit/fdas/adapters`.
+- Adjacent: `233 passed` for `tests/unit/spain`, `tests/unit/production/unified`, `tests/unit/project_economics/adapters`.
 - Formatting/lint: Black check, isort check, flake8 on touched Python paths passed.
 - Hygiene: `git diff --check` passed.
 - Legal: `scripts/legal/legal-sanity-scan.sh --diff-only` passed.
@@ -44,4 +44,4 @@ Norway/UKCS fallback logic maps unknown water depth to `subsea15`; applying that
 
 - Live CORES download and scheduler refresh are deferred follow-ons.
 - Oil tonnes-to-bbl uses the approved approximate `7.33 bbl/tonne`; per-field density/API remains a follow-on.
-- Gas production is converted to Mcf, but FDAS cashflow still models oil revenue only; gas-revenue economics remain a follow-on.
+- Gas production is converted to Mcf, but project_economics cashflow still models oil revenue only; gas-revenue economics remain a follow-on.

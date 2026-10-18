@@ -104,7 +104,7 @@ This directory contains issue-plan artifacts created during the issue-planning-m
 | [#1041](https://github.com/vamseeachanta/worldenergydata/issues/1041) | [bidirectional-cost-synthesis](2026-07-16-issue-1041-bidirectional-cost-synthesis.md) | plan-approved | 2026-07-16 |
 | [#1042](https://github.com/vamseeachanta/worldenergydata/issues/1042) | [component-cost-time-traces](2026-07-16-issue-1042-component-cost-time-traces.md) | plan-approved | 2026-07-16 |
 | [#1043](https://github.com/vamseeachanta/worldenergydata/issues/1043) | [correlated-capex-estimator](2026-07-16-issue-1043-correlated-capex-estimator.md) | plan-approved | 2026-07-16 |
-| [#1044](https://github.com/vamseeachanta/worldenergydata/issues/1044) | [fdas-workbook-reconciliation](2026-07-16-issue-1044-fdas-workbook-reconciliation.md) | plan-approved | 2026-07-16 |
+| [#1044](https://github.com/vamseeachanta/worldenergydata/issues/1044) | [project_economics-workbook-reconciliation](2026-07-16-issue-1044-project_economics-workbook-reconciliation.md) | plan-approved | 2026-07-16 |
 
 ## Closed / superseded plans
 

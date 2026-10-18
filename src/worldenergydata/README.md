@@ -13,7 +13,7 @@ worldenergydata/
 │   └── commands/            # Module-specific CLI commands
 │       ├── bsee.py          # BSEE CLI commands
 │       ├── marine_safety.py # Marine safety CLI commands
-│       └── fdas.py          # FDAS CLI commands
+│       └── project_economics.py          # project_economics CLI commands
 ├── common/                  # Shared utilities (cross-cutting concerns)
 │   ├── __init__.py          # Re-exports common utilities
 │   ├── logging.py           # Centralized logging configuration
@@ -26,7 +26,7 @@ worldenergydata/
 └── modules/                 # Domain-specific modules
     ├── bsee/                # BSEE data module
     ├── marine_safety/       # Marine safety module
-    ├── fdas/                # Field Development Analysis System
+    ├── project_economics/                # Field Development Analysis System
     ├── hse/                 # HSE (Health, Safety, Environment)
     └── vessel_hull_models/  # Vessel hull model data
 ```
@@ -126,10 +126,10 @@ from worldenergydata.marine_safety.scrapers.uscg_scraper import USCGMarineCasual
 from worldenergydata.marine_safety.database.db_manager import get_db_manager
 ```
 
-### FDAS Module
+### project_economics Module
 
 ```python
-from worldenergydata.fdas import (
+from worldenergydata.project_economics import (
     # Financial functions
     excel_like_mirr,
     calculate_npv,
@@ -158,7 +158,7 @@ from worldenergydata.cli import app
 # python -m worldenergydata --help
 # worldenergydata bsee --help
 # worldenergydata marine-safety --help
-# worldenergydata fdas --help
+# worldenergydata project_economics --help
 ```
 
 ## Best Practices

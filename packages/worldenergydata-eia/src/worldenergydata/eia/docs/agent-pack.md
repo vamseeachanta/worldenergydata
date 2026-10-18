@@ -224,7 +224,7 @@ The discovery index below records whole-word `eia` and `EIA` matches. Historical
 - [docs/data-sources/bsee/data/well/well_count.md:L5-L7]
 - [docs/domains/field-development/gas-revenue.md:L39-L41]
 - [docs/knowledge-base/bsee/data-dictionaries/common/unit-conversions.md:L109-L111]
-- [docs/modules/bsee/analysis/production/FDAS_V30/PRICE_DECKS_SOURCE.md:L3-L5]
+- [docs/modules/bsee/analysis/production/project_economics_V30/PRICE_DECKS_SOURCE.md:L3-L5]
 - [docs/modules/bsee/analysis/production/lt_v30_v50_code_reconciliation.md:L21-L23]
 - [docs/modules/cost/REFRESH_PROCEDURE.md:L82-L84]
 - [docs/modules/dashboard/implementation-guides/full-stack-guide.md:L392-L394]
@@ -253,7 +253,7 @@ The discovery index below records whole-word `eia` and `EIA` matches. Historical
 - [docs/reports/2026-04-26-worldenergydata-scheduler-safe-probe-results.md:L58-L60]
 - [docs/reports/2026-04-27-plan-354-adversarial-review.md:L8-L10]
 - [docs/reports/cli-smoke-report-2026-05-11.md:L15-L17]
-- [docs/research/bsee-fdas-integration-summary.md:L300-L302]
+- [docs/research/bsee-project_economics-integration-summary.md:L300-L302]
 
 Codenaming follow-up: 1 discovery file with identifying names is omitted from the public reading index; [issue pending (8)](ISSUES_DRAFT.md#draft-8).
 

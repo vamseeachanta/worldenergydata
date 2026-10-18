@@ -77,7 +77,7 @@ _MODULE_DESCRIPTIONS: dict[str, str] = {
     "lngc": "LNG carrier fleet data",
     "pipeline_safety": "Pipeline safety incident data",
     "lng_terminals": "LNG terminal infrastructure data",
-    "fdas": "Floating production data advisory system",
+    "project_economics": "Floating production data advisory system",
     "wind": "Wind energy resource and turbine data",
     "oil_price": "Historical oil price data",
     "metocean": "Meteorological and oceanographic data",

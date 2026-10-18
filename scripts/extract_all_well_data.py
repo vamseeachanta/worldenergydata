@@ -1,6 +1,6 @@
 """Per-bore drilling data for ALL Lower Tertiary fields (generalizes extract_julia_well_data).
 
-Reads FDAS V30 drilling_and_completion_days.xlsx, groups by field via lease, and marks
+Reads project_economics V30 drilling_and_completion_days.xlsx, groups by field via lease, and marks
 producing bores using the producing APIs from all_fields_economics.json. Writes
 reports/lower_tertiary/data/all_fields_wells.json.
 """
@@ -11,7 +11,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 MAIN = Path("/mnt/local-analysis/worldenergydata")
-V30 = MAIN / "docs/modules/bsee/analysis/production/FDAS_V30"
+V30 = MAIN / "docs/modules/bsee/analysis/production/project_economics_V30"
 MODU_RATE_MM = {"subsea15": 0.8, "subsea20": 1.1, "dry": 0.8, "tieback15": 0.8, "tieback20": 1.1}
 
 registry = (REPO / "config/ong_field_development/fields_registry.yml")

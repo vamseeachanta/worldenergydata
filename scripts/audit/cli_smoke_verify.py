@@ -54,7 +54,7 @@ def build_smoke_cases(cli: str = "worldenergydata") -> list[SmokeCase]:
         "dashboard",
         "eia",
         "marine-safety",
-        "fdas",
+        "project_economics",
         "lower-tertiary",
         "forecast",
         "sodir",
@@ -83,7 +83,7 @@ def build_smoke_cases(cli: str = "worldenergydata") -> list[SmokeCase]:
             SmokeCase(
                 (
                     cli,
-                    "fdas",
+                    "project_economics",
                     "calculate-npv",
                     "--cashflows",
                     "[-1000,100,200,300]",
@@ -96,7 +96,7 @@ def build_smoke_cases(cli: str = "worldenergydata") -> list[SmokeCase]:
             SmokeCase(
                 (
                     cli,
-                    "fdas",
+                    "project_economics",
                     "calculate-all",
                     "--cashflows",
                     "[-5000,1000,1500,2000]",
@@ -105,7 +105,7 @@ def build_smoke_cases(cli: str = "worldenergydata") -> list[SmokeCase]:
                 "README.md",
             ),
             SmokeCase(
-                (cli, "fdas", "classify", "5000"),
+                (cli, "project_economics", "classify", "5000"),
                 "fixture-only",
                 "README.md",
             ),

@@ -27,7 +27,7 @@ Existing code surface actually inspected:
 - src/worldenergydata/cost/data_collection/__init__.py
 - tests/unit/cost/test_cost_predictor.py
 - tests/unit/cost/test_proxy_comparison.py
-- src/worldenergydata/fdas/__init__.py
+- src/worldenergydata/project_economics/__init__.py
 - src/worldenergydata/lower_tertiary/npv.py
 
 Files in revised plan:

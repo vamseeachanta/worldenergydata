@@ -11,13 +11,13 @@ distributions:
 
 ```
 bsee  <-->  lower_tertiary     (import cycle)
-bsee  <-->  fdas               (import cycle)
+bsee  <-->  project_economics               (import cycle)
 hse    -->  bsee
 well_production_dashboard --> bsee
 ```
 
 A uv workspace member may not contain an import cycle that crosses member
-boundaries, so the strongly-connected core (`bsee`/`lower_tertiary`/`fdas`) plus
+boundaries, so the strongly-connected core (`bsee`/`lower_tertiary`/`project_economics`) plus
 its in-cluster dependents (`hse`, `well_production_dashboard`) ship together as
 this single distribution.
 
@@ -25,7 +25,7 @@ Provides:
 
 - `worldenergydata.bsee` — Bureau of Safety and Environmental Enforcement data
 - `worldenergydata.lower_tertiary` — Lower Tertiary geological / portfolio analysis
-- `worldenergydata.fdas` — facility / field development economic analysis
+- `worldenergydata.project_economics` — facility / field development economic analysis
 - `worldenergydata.hse` — Health, Safety & Environment incident data
 - `worldenergydata.well_production_dashboard` — well production dashboards
 
