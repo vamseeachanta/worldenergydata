@@ -4,19 +4,63 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    # Metadata edits copy the last full result; base changes run the full gate.
+    types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: >-
+    ${{ github.workflow }}-${{ github.event_name == 'pull_request' &&
+    (github.event.action != 'edited' || github.event.changes.base != null) && github.ref || github.run_id }}
+  cancel-in-progress: >-
+    ${{ github.event_name == 'pull_request' &&
+    (github.event.action != 'edited' || github.event.changes.base != null) }}
 
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
+  mode:
+    name: Gate mode
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      replay: ${{ steps.mode.outputs.replay }}
+    steps:
+      - name: Select gate mode
+        id: mode
+        env:
+          REPLAY: >-
+            ${{ github.event_name == 'pull_request' && github.event.action == 'edited' && !github.event.changes.base }}
+          IS_PR: ${{ github.event_name == 'pull_request' }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
+          echo "replay=$REPLAY"
+          if [ "$IS_PR" = true ] && [ "$REPLAY" != true ]; then
+            tip=$(git ls-remote --exit-code "$BASE_URL" "refs/heads/$BASE_REF" | cut -f1)
+            if [[ ! "$tip" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "::error::Cannot record a unique base tip"
+              exit 1
+            fi
+            printf . > "$RUNNER_TEMP/gate-tip"
+            echo "tip=$tip" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Record full-run base tip
+        if: github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: gate-tip-${{ steps.mode.outputs.tip }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate-tip
+          retention-days: 14
+          if-no-files-found: error
+
   # --------------------------------------------------------- PR domain gate --
   # Modular per-domain PR gate (#474, #496, domain-matrix): a PR fans out into
   # one CI job per touched domain (+ the always-on cross-cutting core), so each
@@ -36,39 +80,24 @@ jobs:
   # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
   # passes no `with:` overrides.
   domain-tests:
-    if: github.event_name == 'pull_request'
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
-
-  # Name-preserving gate: the reusable workflow surfaces its own aggregate as
-  # "domain-tests / Aggregate domain results", but the branch ruleset requires a
-  # check literally named "Test (PR gate)". This thin wrapper re-publishes that
-  # exact name and gates on the reusable matrix result, so the migration needs
-  # NO ruleset change and does not break in-flight PRs. (#530)
-  pr-gate:
-    name: Test (PR gate)
-    needs: [domain-tests]
-    if: always() && github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Gate on domain matrix result
-        run: |
-          echo "domain-tests result: ${{ needs.domain-tests.result }}"
-          if [ "${{ needs.domain-tests.result }}" != "success" ]; then
-            echo "::error::domain matrix failed — see the 'domain-tests / *' jobs"
-            exit 1
-          fi
-          echo "All domains green ✅"
 
   # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    needs: [mode]
     if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
       github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'ci-full'))
+       contains(github.event.pull_request.labels.*.name, 'ci-full')))
     strategy:
       fail-fast: false
       matrix:
@@ -77,6 +106,66 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -137,12 +226,75 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
-    name: Lint
+    name: Lint (full)
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -173,12 +325,75 @@ jobs:
             --exclude=__pycache__,*.egg-info,.git,.venv
 
   type-check:
-    name: Type Check
+    name: Type Check (full)
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -201,14 +416,75 @@ jobs:
         continue-on-error: true
 
   security:
-    name: Security Scan
+    name: Security Scan (full)
     runs-on: ubuntu-latest
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 0
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -236,11 +512,74 @@ jobs:
   build:
     name: Build Package
     runs-on: ubuntu-latest
-    needs: [lint] # test job skips on unlabeled PRs (module gate covers them)
+    needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
+      == 'success'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -265,13 +604,76 @@ jobs:
           retention-days: 5
 
   docs:
-    name: Documentation
+    name: Documentation (full)
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    needs: [mode]
+    if: >-
+      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          fetch-depth: 1
+
+      - name: Build local pull request merge
+        id: local_merge
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
+          HEAD_URL: ${{ github.event.pull_request.head.repo.clone_url }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EVENT_BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base_ref="refs/remotes/base/$BASE_REF"
+          git fetch --no-tags "$BASE_URL" "+refs/heads/$BASE_REF:$base_ref"
+          tip=$(git rev-parse "$base_ref")
+          for deepen in 50 100 200; do
+            if git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+              break
+            fi
+            if [ "$(git rev-parse --is-shallow-repository)" != true ]; then
+              break
+            fi
+            git fetch --no-tags --deepen="$deepen" "$HEAD_URL" "$PR_HEAD_SHA"
+            git fetch --no-tags --deepen="$deepen" "$BASE_URL" "$tip"
+          done
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            if [ "$(git rev-parse --is-shallow-repository)" = true ]; then
+              git fetch --no-tags --unshallow "$HEAD_URL" "$PR_HEAD_SHA"
+              git fetch --no-tags "$BASE_URL" "$tip"
+            fi
+          fi
+          if ! git merge-base "$tip" "$PR_HEAD_SHA" > /dev/null; then
+            echo "::error::No merge base for current base tip and pull request head"
+            exit 1
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout --detach "$tip"
+          if ! git merge --no-ff --no-edit "$PR_HEAD_SHA"; then
+            echo "::error::Cannot merge pull request head into current base tip"
+            git merge --abort
+            exit 1
+          fi
+          mapfile -t parents < <(git cat-file -p HEAD | sed -n 's/^parent //p')
+          first_parent=${parents[0]:-}
+          second_parent=${parents[1]:-}
+          if [ "${#parents[@]}" -ne 2 ] || [ "$first_parent" != "$tip" ] || \
+             [ "$second_parent" != "$PR_HEAD_SHA" ]; then
+            echo "::error::Local merge does not have exactly the expected two parents"
+            exit 1
+          fi
+          tested=$(git rev-parse HEAD)
+          tree=$(git rev-parse 'HEAD^{tree}')
+          echo "tested=$tested first_parent=$first_parent second_parent=$second_parent" \
+            "tip=$tip event_base=$EVENT_BASE tree=$tree"
+          echo "tip=$tip" >> "$GITHUB_OUTPUT"
 
       - name: Install uv
         uses: astral-sh/setup-uv@v7
@@ -291,4 +693,174 @@ jobs:
             cd docs && uv run sphinx-build -b html . _build/html
           else
             echo "Skipping Sphinx build: docs/conf.py is not present"
+          fi
+
+  lint-gate:
+    name: Lint
+    needs: [mode, lint]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Lint
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.lint.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  type-check-gate:
+    name: Type Check
+    needs: [mode, type-check]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Type Check
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.type-check.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  security-gate:
+    name: Security Scan
+    needs: [mode, security]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Security Scan
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.security.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  docs-gate:
+    name: Documentation
+    needs: [mode, docs]
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Documentation
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.docs.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
+          fi
+
+  pr-gate:
+    name: Test (PR gate)
+    needs: [mode, domain-tests]
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout replay lookup
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Copy required check conclusion
+        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECK_NAME: Test (PR gate)
+        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+      - name: Gate on full result
+        if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
+        env:
+          FULL_RESULT: ${{ needs.domain-tests.result }}
+        run: |
+          if [ "$FULL_RESULT" != success ]; then
+            echo "::error::Full gate did not succeed: $FULL_RESULT"
+            exit 1
           fi

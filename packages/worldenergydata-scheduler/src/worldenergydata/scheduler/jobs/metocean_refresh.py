@@ -34,6 +34,18 @@ class MetoceanRefreshJob(AbstractJob):
     def run(self, config: dict) -> JobResult:
         """Fetch Open-Meteo forecasts and write one Parquet file per location."""
         start = datetime.now()
+        if "archive" in config:
+            from worldenergydata.metocean.update import update_archive
+
+            report = update_archive(config["archive"], Path(config["data_root"]))
+            return JobResult(
+                job_name=self.name,
+                start_time=start,
+                end_time=datetime.now(),
+                status="failure" if report["failures"] else "success",
+                records_updated=report.get("records_updated", 0),
+                error_msg="Archive resources failed" if report["failures"] else None,
+            )
         output_dir = Path(config.get("output_dir", self.default_output_dir))
         locations = config.get("locations") or []
         forecast_days = int(config.get("forecast_days", 1))

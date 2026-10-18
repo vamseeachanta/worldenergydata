@@ -40,3 +40,8 @@ packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py t
 packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py text eol=lf
 packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py text eol=lf
 packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py text eol=lf
+
+# Preserve the raw-byte digests used by the directional-survey record.
+data/modules/bsee/directional_survey_validation/** -text
+packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf

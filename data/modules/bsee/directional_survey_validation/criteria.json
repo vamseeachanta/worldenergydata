@@ -1,0 +1,13 @@
+{
+  "revision": "1",
+  "intended_use": "One-survey regression comparison only",
+  "tolerances": {
+    "measured_depth_ft": 0.1,
+    "inclination_deg": 0.1,
+    "azimuth_deg": 0.1,
+    "relative_tvd_ft": 1.0
+  },
+  "basis": "assumed, based on previous experience; depth units follow the existing repository feet convention",
+  "comparison_basis": "Unrounded differences; first-station depth datum; angular decoding is a consistency check",
+  "geographic_coordinates": "No acceptance criterion without a qualified native-projection transform"
+}

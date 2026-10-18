@@ -516,12 +516,19 @@ class WellAPI12:
         self.output_data_api12_df["O_CUMMULATIVE_PROD_MMBBL"] = 0
         self.output_data_api12_df["DAYS_ON_PROD"] = 0
         self.output_data_api12_df["O_MEAN_PROD_RATE_BOPD"] = 0
-        self.output_data_api12_df["Total Depth Date"] = pd.to_datetime(
-            self.output_data_api12_df["Total Depth Date"]
-        )
-        self.output_data_api12_df["Spud Date"] = pd.to_datetime(
-            self.output_data_api12_df["Spud Date"]
-        )
+        # Source borehole data uses uppercase names; older merged tables use
+        # display names. Dates are optional metadata, not geometry inputs.
+        for display_column, source_column in (
+            ("Total Depth Date", "TOTAL_DEPTH_DATE"),
+            ("Spud Date", "WELL_SPUD_DATE"),
+        ):
+            dates = self.output_data_api12_df.get(display_column)
+            if dates is None:
+                dates = self.output_data_api12_df.get(
+                    source_column,
+                    pd.Series(pd.NaT, index=self.output_data_api12_df.index),
+                )
+            self.output_data_api12_df[display_column] = pd.to_datetime(dates)
         self.output_data_api12_df["COMPLETION_NAME"] = ""
         self.output_data_api12_df["monthly_production"] = None
         self.output_data_api12_df["xyz"] = None

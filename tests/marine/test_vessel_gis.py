@@ -135,10 +135,18 @@ class TestVesselGISQueryByCoords:
         assert isinstance(result, pd.DataFrame)
 
     def test_query_by_coords_distance_column(self):
-        """Result includes a distance_nm column."""
-        gis = VesselGIS(MOCK_VESSELS)
-        result = gis.query_vessels_by_coords(27.97, -90.55, radius_nm=50.0)
+        """Reported distances use nm, ascend, and stay inside the radius."""
+        vessels = pd.DataFrame({"lat": [2.0, 0.0, 1.0, 3.0], "lon": [0.0] * 4})
+        gis = VesselGIS(vessels)
+        radius_nm = 130.0
+        result = gis.query_vessels_by_coords(0.0, 0.0, radius_nm=radius_nm)
         assert "distance_nm" in result.columns
+        assert len(result) == 3
+        assert result["distance_nm"].is_monotonic_increasing
+        assert (result["distance_nm"] <= radius_nm).all()
+        assert result["distance_nm"].tolist() == pytest.approx(
+            [haversine_nm(0.0, 0.0, lat, 0.0) for lat in (0.0, 1.0, 2.0)]
+        )
 
     def test_query_by_coords_empty_when_no_matches(self):
         """Empty DataFrame returned when no vessels in radius."""
@@ -204,3 +212,13 @@ class TestVesselGISGetMapData:
         result = gis.get_vessel_map_data()
         assert result["type"] == "FeatureCollection"
         assert result["features"] == []
+
+
+def test_haversine_one_degree_closed_form():
+    """A one-degree meridian arc checks the formula relative to its radius."""
+    from worldenergydata.marine.vessel_gis import _EARTH_RADIUS_NM
+
+    expected_nm = _EARTH_RADIUS_NM * math.pi / 180.0
+    assert haversine_nm(0.0, 0.0, 1.0, 0.0) == pytest.approx(
+        expected_nm, rel=1e-9, abs=0.0
+    )
