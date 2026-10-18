@@ -5,13 +5,22 @@ import hashlib
 import os
 import re
 import subprocess
+import sys
 import zipfile
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[3]
 RETIRED_IDENTIFIER = "ef6204f95e580471c2bf651f35d368616a61a7e577e36f7c40c896d176656e12"
 RETIRED_ATTRIBUTION = "c866bbdd751ba22cd6428c1137f759b3ae9d231a53fa8a93af6b96a65c278818"
+RETIRED_LEGAL_ATTRIBUTIONS = {
+    "2cd558e19a4135e71e6d29c0fba2d9eb827bb114e1b24610787b8ff946f78f1e",
+    "95363de81894f4be38adff9b2015ae7f85020be6471799f575050d21c66d87d5",
+    "e82ddc9746b7017dc7c68d734cf0beac054808b596ff7edcb0df728cb9eebb89",
+}
 RETIRED_EXPANSIONS = {
+    "b011b1eef5c5150a314f4e62da8c93eefeb819142d4bce61cd39a9d8d020840e",
     "016846a6779e4810e46cc22a75b6eb8668570493df69a3b80e3e1f71fc04587e",
     "6922579e6f55513e63611cbafe34eddcf735bca10adc520fd54bfdd4056f445e",
     "c870dba519f2756205430c3837a1ab7102c3143988f36655efc2285580766092",
@@ -32,8 +41,21 @@ def has_retired_wording(text):
         for size in (1, 2):
             if digest("".join(words[index : index + size])) == RETIRED_ATTRIBUTION:
                 return True
+        for size in range(2, 7):
+            candidate = "".join(words[index : index + size])
+            if (
+                len(candidate) in (18, 21, 38)
+                and digest(candidate) in RETIRED_LEGAL_ATTRIBUTIONS
+            ):
+                return True
         window = [w for w in words[index : index + 5] if w != "and"][:4]
-        if len(window) == 4 and digest(" ".join(window)) in RETIRED_EXPANSIONS:
+        reporting_window = [
+            w for w in words[index : index + 6] if w not in {"and", "reporting"}
+        ][:4]
+        if any(
+            len(candidate) == 4 and digest(" ".join(candidate)) in RETIRED_EXPANSIONS
+            for candidate in (window, reporting_window)
+        ):
             return True
     return False
 
@@ -43,13 +65,31 @@ def tracked_files():
         key: value for key, value in os.environ.items() if not key.startswith("GIT_")
     }
     result = subprocess.run(
-        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        ["git", "ls-files", "-z", "--cached", "--exclude-standard"],
         cwd=ROOT,
         env=env,
         capture_output=True,
         check=True,
     )
     return [ROOT / os.fsdecode(name) for name in result.stdout.split(b"\0") if name]
+
+
+def test_inventory_includes_staged_files_but_excludes_untracked_scratch(
+    tmp_path, monkeypatch
+):
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    subprocess.run(["git", "init", "-q", str(tmp_path)], env=env, check=True)
+    staged = tmp_path / "public.txt"
+    staged.write_text("Project economics\n")
+    subprocess.run(["git", "add", "--", staged.name], cwd=tmp_path, env=env, check=True)
+    (tmp_path / "scratch.txt").write_text("Temporary local notes\n")
+    monkeypatch.setenv("GIT_DIR", str(ROOT / ".git"))
+    monkeypatch.setenv("GIT_WORK_TREE", str(ROOT))
+    monkeypatch.setenv("GIT_COMMON_DIR", str(ROOT / ".git"))
+    monkeypatch.setattr(sys.modules[__name__], "ROOT", tmp_path)
+    assert tracked_files() == [staged]
 
 
 def test_tracked_public_text_and_paths_use_neutral_wording():
@@ -124,12 +164,58 @@ def test_report_generator_emits_neutral_footer(tmp_path):
 
 
 def test_intervention_renderer_emits_neutral_header(monkeypatch):
+    pytest.importorskip("markdown")
     monkeypatch.syspath_prepend(str(ROOT / "docs/intervention-db"))
     import render_brief
 
     text = render_brief.render_html("## Overview\nPublic summary.", "2026-05-04")
     assert "GoM Subsea Well Intervention" in text
     assert not has_retired_wording(text)
+
+
+def test_renderer_regression_skips_when_optional_markdown_is_absent(tmp_path):
+    script = """
+import importlib.abc
+import sys
+import pytest
+
+class MissingMarkdown(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == "markdown":
+            raise ModuleNotFoundError("Optional dependency absent", name="markdown")
+
+sys.modules.pop("markdown", None)
+sys.meta_path.insert(0, MissingMarkdown())
+raise SystemExit(pytest.main(sys.argv[1:]))
+"""
+    target = (
+        f"{Path(__file__).resolve()}::test_intervention_renderer_emits_neutral_header"
+    )
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            script,
+            target,
+            "--noconftest",
+            "-o",
+            "addopts=",
+            "-q",
+            "-p",
+            "no:cacheprovider",
+        ],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, "Optional-dependency test failed instead of skipping"
+    assert "1 skipped" in result.stdout
 
 
 def test_portfolio_citations_use_neutral_publishers():

@@ -74,9 +74,9 @@ Best wishes,
 
    CWhite
 
-Charles N. White
+Reference contributor
 
-EVP, Reference contributor Appraisal Solutions LLC
+Project economics reference
 
 LP SDP, Fellow IMarEST & SNAME
 

@@ -1,9 +1,9 @@
 # project_economics (Project economics)
-## Comprehensive field data analysis and reporting system
+## Comprehensive project economics and field data reporting
 
 ### Overview
 
-project_economics (Project economics) offers integration capabilities for comprehensive field data analysis and reporting system. This module enhances workflow automation and system connectivity, supporting seamless data exchange and process optimization across energy analysis platforms.
+project_economics (Project economics) offers integration capabilities for comprehensive project economics and field data reporting. This module enhances workflow automation and system connectivity, supporting seamless data exchange and process optimization across energy analysis platforms.
 
 ### Key Capabilities
 

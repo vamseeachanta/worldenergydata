@@ -53,7 +53,7 @@
 8. **project_economics (Project economics)**
    - File: `marketing_brochure_project_economics.md`
    - Size: 3.0 KB
-   - Focus: Comprehensive field data analysis and reporting
+   - Focus: Comprehensive project economics and field data reporting
    - Key Features: Field-level aggregation, multi-source integration, automated reports
 
 ---
