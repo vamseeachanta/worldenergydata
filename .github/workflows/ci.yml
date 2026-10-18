@@ -695,6 +695,8 @@ jobs:
             echo "Skipping Sphinx build: docs/conf.py is not present"
           fi
 
+  # Replay helpers come from the immutable base revision so older PR heads need
+  # no helper of their own. Replay evidence still targets the event's PR head.
   lint-gate:
     name: Lint
     needs: [mode, lint]
@@ -708,8 +710,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -742,8 +744,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -776,8 +778,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -810,8 +812,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -844,8 +846,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
