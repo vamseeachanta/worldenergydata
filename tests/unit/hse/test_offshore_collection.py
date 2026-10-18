@@ -72,9 +72,10 @@ def packet(events=None, sources=None, **changes):
     return rows
 
 
-def approve_test_pilot(importer):
+def approve_test_pilot(importer, **event_changes):
     importer.ingest(
         packet(
+            events=[event(**event_changes)],
             sources=[
                 source(access_status="public"),
                 source(
@@ -90,7 +91,7 @@ def approve_test_pilot(importer):
                     url="https://iadc.org/test",
                     evidence_level="industry alert",
                 ),
-            ]
+            ],
         )
     )
     review = {
@@ -805,6 +806,92 @@ def test_linked_classification_conflict_rolls_back_reviewed_pilot(
         importer.ingest(packet([event(**changes)]), stage=stage)
     with importer.connect() as db:
         assert list(db.iterdump()) == before
+
+
+@pytest.mark.parametrize("route", ["stored", "hse", "marine_safety"])
+@pytest.mark.parametrize("stage", ["pilot", "candidate"])
+@pytest.mark.parametrize("incoming_id", ["test-event", "another"])
+def test_equipment_order_preserves_reviewed_evidence(
+    tmp_path, route, stage, incoming_id
+):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    equipment = ["riser", "hoist"]
+    existing = (
+        []
+        if route == "stored"
+        else [
+            dict(
+                module=route,
+                record_id="42",
+                event_date="2024-02-01",
+                country="GB",
+                installation_name="test installation",
+            )
+        ]
+    )
+    importer.ingest(packet([event(equipment=equipment)]), existing=existing)
+    approve_test_pilot(importer, equipment=equipment)
+    importer = OffshoreImporter(importer.database)
+    digest = importer.content_digest()
+    tables = ("events", "sources", "external_links", "gates")
+    with importer.connect() as db:
+        before = [db.execute(f"SELECT * FROM {table}").fetchall() for table in tables]
+    result = importer.ingest(
+        packet(
+            [event(event_id=incoming_id, equipment=list(reversed(equipment)))],
+            [source(event_id=incoming_id)],
+        ),
+        stage=stage,
+    )
+    assert result == dict(events_added=0, sources_added=0, linked_existing=0)
+    assert importer.content_digest() == digest
+    with importer.connect() as db:
+        assert [
+            db.execute(f"SELECT * FROM {table}").fetchall() for table in tables
+        ] == before
+
+
+@pytest.mark.parametrize("route", ["stored", "hse", "marine_safety"])
+def test_same_packet_equipment_order_matches_one_canonical_event(tmp_path, route):
+    importer = OffshoreImporter(tmp_path / "offshore.db")
+    existing = (
+        []
+        if route == "stored"
+        else [
+            dict(
+                module=route,
+                record_id="42",
+                event_date="2024-02-01",
+                country="GB",
+                installation_name="test installation",
+            )
+        ]
+    )
+    result = importer.ingest(
+        packet(
+            [
+                event(equipment=["riser", "hoist"]),
+                event(event_id="another", equipment=["hoist", "riser"]),
+            ],
+            [source(), source(event_id="another", source_ref="second")],
+        ),
+        existing=existing,
+    )
+    assert result == dict(
+        events_added=int(route == "stored"),
+        sources_added=2,
+        linked_existing=int(route != "stored"),
+    )
+    with importer.connect() as db:
+        assert db.execute("SELECT DISTINCT event_id FROM sources").fetchall() == [
+            ("test-event",)
+        ]
+        payload = db.execute(
+            "SELECT payload FROM events"
+            if route == "stored"
+            else "SELECT annotations FROM external_links"
+        ).fetchone()[0]
+        assert json.loads(payload)["equipment"] == ["riser", "hoist"]
 
 
 def test_legacy_link_migration_exports_empty_annotations_and_accepts_intake(tmp_path):

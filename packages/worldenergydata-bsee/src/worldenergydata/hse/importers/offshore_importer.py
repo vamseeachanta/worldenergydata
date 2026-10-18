@@ -27,6 +27,13 @@ def normalise(value):
     return re.sub(r"[^a-z0-9]", "", (value or "").casefold())
 
 
+def comparison_values(row):
+    """Compare equipment membership without rewriting reviewed payloads."""
+    return {
+        key: set(value) if key == "equipment" else value for key, value in row.items()
+    }
+
+
 def day(value):
     return date.fromisoformat(str(value)[:10])
 
@@ -199,9 +206,24 @@ class OffshoreImporter:
                     (s for s in stored if s["event_id"] == incoming_id), None
                 )
                 if collision and {
-                    k: v for k, v in collision.items() if k != "installation_aliases"
-                } != {k: v for k, v in row.items() if k != "installation_aliases"}:
+                    k: v
+                    for k, v in comparison_values(collision).items()
+                    if k != "installation_aliases"
+                } != {
+                    k: v
+                    for k, v in comparison_values(row).items()
+                    if k != "installation_aliases"
+                }:
                     raise ValueError("conflicting event ID")
+                annotations = {
+                    key: row[key]
+                    for key in (
+                        "operation",
+                        "failure_mode",
+                        "failure_summary",
+                        "equipment",
+                    )
+                }
                 candidates = [
                     (candidate, match(row, candidate))
                     for candidate in [*stored, *indexed.values()]
@@ -223,21 +245,16 @@ class OffshoreImporter:
                             "WHERE module=? AND record_id=?",
                             (target["module"], target["record_id"]),
                         ).fetchone()
-                        annotations = {
-                            key: row[key]
-                            for key in (
-                                "operation",
-                                "failure_mode",
-                                "failure_summary",
-                                "equipment",
-                            )
-                        }
                         if linked:
                             previous = json.loads(linked[2])
-                            if previous and previous != annotations:
-                                raise ValueError(
-                                    "conflicting event classification; explicit review required"
-                                )
+                            if previous:
+                                if comparison_values(previous) != comparison_values(
+                                    annotations
+                                ):
+                                    raise ValueError(
+                                        "conflicting event classification; explicit review required"
+                                    )
+                                annotations = previous
                         if (
                             not linked
                             and db.execute(
@@ -278,14 +295,8 @@ class OffshoreImporter:
                         )
                         stats["linked_existing"] += int(not linked)
                     else:
-                        if any(
-                            row[key] != target[key]
-                            for key in (
-                                "operation",
-                                "failure_mode",
-                                "failure_summary",
-                                "equipment",
-                            )
+                        if comparison_values(annotations) != comparison_values(
+                            {key: target[key] for key in annotations}
                         ):
                             raise ValueError(
                                 "conflicting event classification; explicit review required"
