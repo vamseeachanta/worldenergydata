@@ -45,6 +45,28 @@
     "revision_sha256": "8a2ded781b655e9e1c7da484b757daa0753469c0461a74ba2c164f750e4ee9c8",
     "schema_sha256": "a5237748501bbfaf8ada19192e6fd0b2422ef433f74b403b78febf1db8bca2ba"
   },
+  "current_generator_criteria": {
+    "code_sha256": {
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py": "f9f39d610730266a59deb6732c62a5bc49159ba1351e476b25587920b2165614",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py": "2de8aee0002a0657401a1e4b746db5b4a45a60458f18caa326674ed57c3b1a18",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py": "85699b66840256156632f20934fc60b07965147b2b54b40f1d2c7539f360dc1b",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/units.py": "669419cf5ea20eac3be69ffb7a75bcb50ea13a594ce27d460bb2e717f6b1eb73",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening.py": "eb54cf72e58d66c03c5e109c096002e5fcf842c772c813aecf96e219e6a12555",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_common.py": "ef700e579e4bee33b97637ef6a2f65428cae2f4a7ca48dfee071527cc15f0989",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_environment.py": "0fec3d68c9267b37a86971bbbcff881d4bda58f31955bc3748195a5d0777f0ac",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_io.py": "60fbff484f35b3bd5986fb6b8497aedf54c21b77d8393ab4ef5de6ffecab0ccd",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_metadata.py": "dc4802534d5dd11c8b569caceebbfefa3c36a4fd57924a621c009136720ddf93",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_page.py": "b17b878925a54cdf587fdabba59db6518d66d7d7b6a5ae4e4a294fc8018a8880",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_qa.py": "304b185322706fef742bd928ac868cc1f801534060cf56a2f229aeab29fdba0c",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_sources.py": "5079fd66c6a6c656b111227e06a88563ab8df344fef3b6f37888b7ae5f663dee",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py": "67a1a4f3d2a6db2d58953268630424047945f73f173de90170474626aee5c643",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py": "5217fc9fd2f6f4f7da04c3506a4ca9e22d9ed131b50e4b9e05fa4d538f9ed013",
+      "scripts/bsee/build_pipeline_screening.py": "aae9b4e74df1da1e254c92d2350a3a119aad9617b1e385c442751892a8a8c7e0"
+    },
+    "defaults_sha256": "04d84338d60521f295f93e7f6df37366a8b785c19b0330d6fa3338fea9fbaa19",
+    "revision_sha256": "8a2ded781b655e9e1c7da484b757daa0753469c0461a74ba2c164f750e4ee9c8",
+    "schema_sha256": "96aad9dadf1a95328c040c7a23d56637be066bde7b641fcf531f6530d0bb3c9a"
+  },
   "dataset_id": "pipeline-screening",
   "inputs": [
     {
@@ -8536,6 +8558,25 @@
   "rows": 8576,
   "sample_rows": 100,
   "schema_version": "1",
+  "snapshot": {
+    "built_from_revision": "f5f57e0bb99e8d7910365499b4e259b80323bad5",
+    "changed_since_build": [
+      "data/modules/pipeline/screening/schema.yaml",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_environment.py",
+      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_metadata.py",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py"
+    ],
+    "criteria_field": "criteria",
+    "current_generator_criteria_field": "current_generator_criteria",
+    "limitations": [
+      "The criteria field pins the historical build, not the current generator.",
+      "The current_generator_criteria field records current file digests only; it does not certify a production rebuild or current-output reproducibility.",
+      "The sample, QA, source register and external payload remain the historical snapshot. Rows without a station retain historical zero counts; the source register retains the historical USGS terms link.",
+      "Regeneration requires the digest-pinned station snapshot and retained observation histories; replacement downloads are not equivalent inputs.",
+      "Artifact size and digest checks establish retained file integrity only; external payload readback and two current production builds have not been verified."
+    ],
+    "regeneration_required": true
+  },
   "source_freshness": {
     "reason": "Publisher effective dates and observation coverage are not qualified by the collector.",
     "state": "unverified"
