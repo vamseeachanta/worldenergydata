@@ -39,6 +39,7 @@ from typing import Optional
 
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.integrations import (
+    _required_assumption,
     dev_system_for,
     estimate_economics,
 )
@@ -215,7 +216,7 @@ def _base_annual_opex_mm(concept: FieldConcept) -> Optional[float]:
         from worldenergydata.fdas.core.config import AssumptionsManager
     except Exception:  # pragma: no cover - defensive, FDAS optional
         return None
-    return AssumptionsManager().get(sysname, "FIXED_OPEX_MM_PER_YEAR", 0.0)
+    return _required_assumption(AssumptionsManager(), sysname, "FIXED_OPEX_MM_PER_YEAR")
 
 
 # --------------------------------------------------------------------------- #
@@ -276,10 +277,16 @@ def estimate_per_concept_costs(
             )
 
     # --- OPEX (independent graceful degrade) ---
-    base_opex = _base_annual_opex_mm(concept)
+    opex_note = "dev system unclassified or FDAS unavailable"
+    try:
+        base_opex = _base_annual_opex_mm(concept)
+    except ValueError as exc:
+        base_opex = None
+        opex_note = str(exc)
     if base_opex is None:
-        if not est.note:
-            est.note = "dev system unclassified — annual OPEX skipped"
+        est.note = "; ".join(
+            filter(None, [est.note, f"annual OPEX not evaluated: {opex_note}"])
+        )
     else:
         est.annual_opex_mm = round(base_opex * opex_factor, 1)
         res = concept.recoverable_reserves_mmboe
@@ -294,10 +301,10 @@ def estimate_per_concept_costs(
 
 def _lifecycle_cost(est: PerConceptCostEstimate, field_life_years: float) -> float:
     """Rough lifecycle cost (CAPEX + OPEX×life) for portfolio ranking; inf if N/A."""
-    if est.capex_mm is None:
+    if est.capex_mm is None or est.annual_opex_mm is None:
         return float("inf")
     life = field_life_years or _DEFAULT_FIELD_LIFE_YEARS
-    return est.capex_mm + (est.annual_opex_mm or 0.0) * life
+    return est.capex_mm + est.annual_opex_mm * life
 
 
 def estimate_field_cost_portfolio(
@@ -305,7 +312,7 @@ def estimate_field_cost_portfolio(
 ) -> dict[ConceptType, PerConceptCostEstimate]:
     """Cost every scored concept for a field, ordered by ascending lifecycle cost.
 
-    Concepts whose economics could not be estimated (no CAPEX) sort last. The
+    Concepts with unknown CAPEX or annual OPEX sort last. The
     result is keyed by :class:`ConceptType` for O(1) lookup while preserving the
     cheapest-first ordering (Python dicts are insertion-ordered).
     """

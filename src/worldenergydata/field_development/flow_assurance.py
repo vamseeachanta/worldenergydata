@@ -71,7 +71,10 @@ def _is_gassy(concept: FieldConcept, gor_cutoff: float) -> bool:
 
 
 def _unknown_fluid(concept: FieldConcept) -> bool:
-    return concept.fluid_type is None and concept.gor_scf_stb is None
+    """Unknown GOR cannot establish gas-free oil or an unspecified fluid."""
+    return concept.gor_scf_stb is None and (
+        concept.fluid_type is None or concept.fluid_type.value == "oil"
+    )
 
 
 # Hydrate
@@ -82,7 +85,7 @@ def screen_hydrate_risk(
     risk = FlowAssuranceRisk(hazard="hydrate", severity=RiskSeverity.LOW)
     if _unknown_fluid(concept):
         risk.severity = RiskSeverity.NOT_EVALUATED
-        risk.note = "fluid_type and gor_scf_stb unknown — cannot screen hydrate risk"
+        risk.note = "fluid_type or gor_scf_stb unknown — cannot screen hydrate risk"
         return risk
     seabed = seabed_temperature_c(concept.water_depth_m, th)
     if seabed is None:
@@ -212,7 +215,7 @@ def screen_slugging_risk(
     risk = FlowAssuranceRisk(hazard="slugging", severity=RiskSeverity.LOW)
     if _unknown_fluid(concept):
         risk.severity = RiskSeverity.NOT_EVALUATED
-        risk.note = "fluid_type and gor_scf_stb unknown — cannot screen slugging risk"
+        risk.note = "fluid_type or gor_scf_stb unknown — cannot screen slugging risk"
         return risk
 
     # Slugging needs two-phase (gas+liquid) flow; near-single-phase is stable.

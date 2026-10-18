@@ -111,6 +111,17 @@ class FlowAssuranceAssessment:
     erosion: FlowAssuranceRisk
     overall_severity: RiskSeverity
     mitigations: list[str] = field(default_factory=list)
+    not_evaluated_hazards: list[str] = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.not_evaluated_hazards = [
+            r.hazard for r in self.risks if r.severity == RiskSeverity.NOT_EVALUATED
+        ]
+
+    @property
+    def incomplete(self) -> bool:
+        """Whether any hazard lacks the inputs needed for evaluation."""
+        return bool(self.not_evaluated_hazards)
 
     @property
     def risks(self) -> list[FlowAssuranceRisk]:

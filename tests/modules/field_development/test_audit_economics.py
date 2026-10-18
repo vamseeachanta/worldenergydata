@@ -1,9 +1,17 @@
 """Financial convention and missing-input regressions; pack equations E2–E4."""
 
+from xml.etree import ElementTree as ET
+
 import pytest
 
 from worldenergydata.field_development import FieldConcept, build_fdp_html
+from worldenergydata.field_development.cost_estimator import (
+    PerConceptCostEstimate,
+    estimate_field_cost_portfolio,
+)
+from worldenergydata.field_development.enums import ConceptType, TreeType
 from worldenergydata.field_development.integrations import estimate_economics
+from worldenergydata.field_development.recommendation import ScoredConcept
 
 
 def full_concept(**changes):
@@ -77,6 +85,70 @@ def test_missing_assumption_cannot_be_zero_cost(fdas, monkeypatch, key):
     if key in ("HOST_CAPEX_MM", "SURF_PER_WELL_MM"):
         assert result.capex_mm is None
     assert key in result.note
+    if key == "FIXED_OPEX_MM_PER_YEAR":
+        portfolio = estimate_field_cost_portfolio(
+            full_concept(), [_scored(ConceptType.FPSO)]
+        )
+        est = portfolio[ConceptType.FPSO]
+        assert est.capex_mm is not None
+        assert est.annual_opex_mm is None
+        assert key in est.note
+        table = build_fdp_html(full_concept()).split("Per-concept cost comparison", 1)[
+            1
+        ]
+        table = table.split("</table>", 1)[0]
+        assert "0.0 $MM/yr" not in table
+        assert key in table
+        rows = ET.fromstring("<table" + table.split("<table", 1)[1] + "</table>")
+        assert len(rows.findall("tr")) > 1
+        for row in rows.findall("tr")[1:]:
+            assert row.findall("td")[2].text == "—"
+            assert key in row.findall("td")[5].text
+
+
+def _scored(concept_type):
+    return ScoredConcept(concept_type=concept_type, tree_type=TreeType.WET)
+
+
+@pytest.mark.parametrize("value", [-1, float("inf"), float("nan")])
+def test_invalid_fixed_opex_is_not_evaluated(fdas, monkeypatch, value):
+    manager = fdas.AssumptionsManager()
+    key = "FIXED_OPEX_MM_PER_YEAR"
+    manager.assumptions.loc[manager.assumptions.DEV_SYSTEM == "subsea15", key] = value
+    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    est = estimate_field_cost_portfolio(full_concept(), [_scored(ConceptType.FPSO)])
+    assert est[ConceptType.FPSO].annual_opex_mm is None
+    assert key in est[ConceptType.FPSO].note
+
+
+def test_explicit_zero_fixed_opex_is_evaluated(fdas, monkeypatch):
+    manager = fdas.AssumptionsManager()
+    manager.assumptions.loc[
+        manager.assumptions.DEV_SYSTEM == "subsea15", "FIXED_OPEX_MM_PER_YEAR"
+    ] = 0
+    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    est = estimate_field_cost_portfolio(full_concept(), [_scored(ConceptType.FPSO)])
+    assert est[ConceptType.FPSO].annual_opex_mm == 0.0
+
+
+@pytest.mark.parametrize("known_opex", [0.0, 10.0])
+def test_portfolio_ranks_unknown_opex_after_known_cost(monkeypatch, known_opex):
+    from worldenergydata.field_development import cost_estimator
+
+    unknown = PerConceptCostEstimate(ConceptType.SUBSEA_TIEBACK, capex_mm=1.0)
+    known = PerConceptCostEstimate(
+        ConceptType.FPSO, capex_mm=100.0, annual_opex_mm=known_opex
+    )
+    estimates = {est.concept_type: est for est in (unknown, known)}
+    monkeypatch.setattr(
+        cost_estimator,
+        "estimate_per_concept_costs",
+        lambda concept, scored: estimates[scored.concept_type],
+    )
+    portfolio = estimate_field_cost_portfolio(
+        full_concept(), [_scored(ct) for ct in estimates]
+    )
+    assert list(portfolio) == [ConceptType.FPSO, ConceptType.SUBSEA_TIEBACK]
 
 
 @pytest.mark.parametrize("key", ["HOST_CAPEX_MM", "SURF_PER_WELL_MM"])
