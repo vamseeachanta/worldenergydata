@@ -30,7 +30,10 @@ def test_namespace_spans_multiple_members():
     import worldenergydata.project_economics as project_economics
 
     assert isinstance(list(worldenergydata.__path__), list) and worldenergydata.__path__
-    assert "worldenergydata-project_economics" in Path(project_economics.__file__).resolve().parts
+    assert (
+        "worldenergydata-project_economics"
+        in Path(project_economics.__file__).resolve().parts
+    )
     assert "worldenergydata-core" in Path(common.__file__).resolve().parts
 
 

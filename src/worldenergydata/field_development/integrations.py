@@ -7,7 +7,8 @@ worldenergydata.field_development.integrations
 Turns a recommended concept into an *economics + execution* view by reusing
 existing repo modules rather than rebuilding them:
 
-* **project_economics** (`worldenergydata.project_economics`) — depth → dev-system classification and a
+* **project_economics** (`worldenergydata.project_economics`) — depth → dev-system
+  classification and a
   rough NPV via the cashflow/economics API.
 * **Vessel fleet** (`worldenergydata.vessel_fleet`) — installation feasibility
   (which construction vessels can reach the water depth and lift/lay).
@@ -107,7 +108,9 @@ def dev_system_for(concept: FieldConcept) -> Optional[str]:
     if concept.water_depth_m is None:
         return None
     try:
-        from worldenergydata.project_economics.core.config import classify_dev_system_by_depth
+        from worldenergydata.project_economics.core.config import (
+            classify_dev_system_by_depth,
+        )
     except Exception:
         return None
     return classify_dev_system_by_depth(concept.water_depth_m * M_TO_FT)

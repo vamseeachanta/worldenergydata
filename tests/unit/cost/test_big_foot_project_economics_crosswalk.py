@@ -114,7 +114,9 @@ def test_frozen_big_foot_workbook_fingerprints() -> None:
     assert all(
         row["WORKBOOK_SHA256"] == FROZEN_HASHES[row["WORKBOOK_FILE"]] for row in rows
     )
-    assert {name: _digest(ProjectEconomics / name) for name in FROZEN_HASHES} == FROZEN_HASHES
+    assert {
+        name: _digest(ProjectEconomics / name) for name in FROZEN_HASHES
+    } == FROZEN_HASHES
 
 
 def test_big_foot_crosswalk_covers_every_allowlisted_cost_cell() -> None:
@@ -146,7 +148,9 @@ def test_big_foot_crosswalk_covers_every_allowlisted_cost_cell() -> None:
                 "excluded",
             }
     for name, cells in ALLOWLISTED_COST_CELLS.items():
-        workbook = load_workbook(ProjectEconomics / name, read_only=True, data_only=True)
+        workbook = load_workbook(
+            ProjectEconomics / name, read_only=True, data_only=True
+        )
         sheet_name = (
             "Project_Summary" if name.startswith("financial") else "assumptions"
         )
@@ -173,7 +177,9 @@ def test_drilling_range_citation_resolves_big_foot_rows_and_days() -> None:
     assert references[0]["WORKBOOK_CELL"] == "Sheet1!A17:L54"
 
     workbook = load_workbook(
-        ProjectEconomics / "drilling_and_completion_days.xlsx", read_only=True, data_only=True
+        ProjectEconomics / "drilling_and_completion_days.xlsx",
+        read_only=True,
+        data_only=True,
     )
     rows = list(
         workbook["Sheet1"].iter_rows(
@@ -219,7 +225,9 @@ def test_workbook_values_are_assumptions_not_disclosures() -> None:
     )
 
 
-def test_project_economics_total_is_4517_3_mm_and_stale_5200_mm_config_is_not_disclosure() -> None:
+def test_project_economics_total_is_4517_3_mm_and_stale_5200_mm_config_is_not_disclosure() -> (
+    None
+):
     from openpyxl import load_workbook
 
     path = ProjectEconomics / "financial_project_summary.xlsx"
@@ -279,7 +287,9 @@ def test_installation_and_hookup_are_explicitly_unmapped_in_project_economics() 
     assert rows[0]["COUNTING_DISPOSITION"] == "excluded"
 
 
-def test_project_economics_crosswalk_preserves_workbook_vintage_and_assumption_status() -> None:
+def test_project_economics_crosswalk_preserves_workbook_vintage_and_assumption_status() -> (
+    None
+):
     rows = _rows()
 
     assert {row["ASSUMPTION_VINTAGE"] for row in rows} == {"project_economics_V30"}
@@ -299,7 +309,9 @@ def test_source_workbooks_are_byte_unchanged_after_inspection() -> None:
 
     before = {name: _digest(ProjectEconomics / name) for name in FROZEN_HASHES}
     for name in FROZEN_HASHES:
-        workbook = load_workbook(ProjectEconomics / name, read_only=True, data_only=True)
+        workbook = load_workbook(
+            ProjectEconomics / name, read_only=True, data_only=True
+        )
         for sheet in workbook.worksheets:
             next(sheet.iter_rows(values_only=True), ())
         workbook.close()

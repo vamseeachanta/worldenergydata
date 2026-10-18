@@ -108,7 +108,10 @@ def test_move_is_import_transparent():
         # unchanged and it resolves from the new member.
         from worldenergydata import project_economics
 
-        assert "worldenergydata-project_economics" in Path(project_economics.__file__).resolve().parts
+        assert (
+            "worldenergydata-project_economics"
+            in Path(project_economics.__file__).resolve().parts
+        )
 
         # the final-tail carve (batch 5, #529): scheduler is the orchestrator
         # member; it resolves from packages/worldenergydata-scheduler/.

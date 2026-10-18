@@ -5,12 +5,14 @@ import json
 import pandas as pd
 import pytest
 
-from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
     _EmbeddedCoresFixtureLoader,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.project_economics.adapters.contract import (
+    to_project_economics_production,
+)
 from worldenergydata.spain.production.cores_live import (
     DEFAULT_WORKBOOKS,
     CoresLiveProductionLoader,

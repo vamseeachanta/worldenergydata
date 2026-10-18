@@ -37,7 +37,10 @@ class TestMainCLI:
         result = runner.invoke(app, ["info"])
         # Should list at least the core modules
         assert "bsee" in result.output.lower()
-        assert "marine" in result.output.lower() or "project_economics" in result.output.lower()
+        assert (
+            "marine" in result.output.lower()
+            or "project_economics" in result.output.lower()
+        )
 
     def test_help_command_exits_successfully(self):
         """Test that --help flag runs and exits with code 0."""

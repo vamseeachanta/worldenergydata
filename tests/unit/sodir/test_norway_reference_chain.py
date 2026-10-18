@@ -6,8 +6,10 @@ import pandas as pd
 import pytest
 
 from worldenergydata.common.units import OilUnits
-from worldenergydata.project_economics.adapters.contract import PROJECT_ECONOMICS_PRODUCTION_COLUMNS
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.project_economics.adapters.contract import (
+    PROJECT_ECONOMICS_PRODUCTION_COLUMNS,
+)
 from worldenergydata.sodir.reference_chain import (
     build_norway_field_concept,
     run_norway_reference_chain,
@@ -106,7 +108,9 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics():
     )
 
     assert result["economics_label"] == "chain_plumbing_pre_tax"
-    assert list(result["project_economics_production"].columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
+    assert list(result["project_economics_production"].columns) == list(
+        PROJECT_ECONOMICS_PRODUCTION_COLUMNS
+    )
     assert result["pre_tax_metrics"]["months"] >= 2
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])

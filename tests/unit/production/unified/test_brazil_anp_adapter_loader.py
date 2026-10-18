@@ -3,11 +3,13 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
     BrazilAnpAdapter,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.project_economics.adapters.contract import (
+    to_project_economics_production,
+)
 
 
 class FixtureAnpLoader:

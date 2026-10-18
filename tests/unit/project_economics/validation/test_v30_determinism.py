@@ -17,7 +17,9 @@ import pytest
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-PROJECT_ECONOMICS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
+PROJECT_ECONOMICS_V30_DIR = (
+    PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
+)
 GOLDEN_BASELINE_PATH = (
     PROJECT_ROOT / "config/analysis/lower_tertiary/golden_baseline_v30.yml"
 )

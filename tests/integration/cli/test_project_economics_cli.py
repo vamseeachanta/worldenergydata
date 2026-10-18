@@ -46,14 +46,26 @@ class TestProjectEconomicsCalculateNPV:
     def test_project_economics_calculate_npv_exits_successfully(self):
         """Test that project_economics calculate-npv with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
+            app,
+            [
+                "project_economics",
+                "calculate-npv",
+                "--cashflows",
+                "[-1000,100,200,300]",
+            ],
         )
         assert result.exit_code == 0
 
     def test_project_economics_calculate_npv_shows_result(self):
         """Test that calculate-npv displays NPV result."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-npv", "--cashflows", "[-1000,100,200,300]"]
+            app,
+            [
+                "project_economics",
+                "calculate-npv",
+                "--cashflows",
+                "[-1000,100,200,300]",
+            ],
         )
         # Should show NPV-related output
         output_lower = result.output.lower()
@@ -117,14 +129,26 @@ class TestProjectEconomicsCalculateMIRR:
     def test_project_economics_calculate_mirr_exits_successfully(self):
         """Test that project_economics calculate-mirr with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
+            app,
+            [
+                "project_economics",
+                "calculate-mirr",
+                "--cashflows",
+                "[-1000,100,200,300]",
+            ],
         )
         assert result.exit_code == 0
 
     def test_project_economics_calculate_mirr_shows_result(self):
         """Test that calculate-mirr displays MIRR result."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-mirr", "--cashflows", "[-1000,100,200,300]"]
+            app,
+            [
+                "project_economics",
+                "calculate-mirr",
+                "--cashflows",
+                "[-1000,100,200,300]",
+            ],
         )
         # Should show MIRR-related output
         output_lower = result.output.lower()
@@ -231,7 +255,14 @@ class TestProjectEconomicsInfo:
         output_lower = result.output.lower()
         assert any(
             term in output_lower
-            for term in ["project_economics", "field", "development", "analysis", "npv", "mirr"]
+            for term in [
+                "project_economics",
+                "field",
+                "development",
+                "analysis",
+                "npv",
+                "mirr",
+            ]
         )
 
     def test_project_economics_info_shows_available_metrics(self):
@@ -250,7 +281,13 @@ class TestProjectEconomicsCalculateIRR:
     def test_project_economics_calculate_irr_exits_successfully(self):
         """Test that project_economics calculate-irr with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-irr", "--cashflows", "[-1000,100,200,300,400,500]"]
+            app,
+            [
+                "project_economics",
+                "calculate-irr",
+                "--cashflows",
+                "[-1000,100,200,300,400,500]",
+            ],
         )
         assert result.exit_code == 0
 
@@ -266,7 +303,13 @@ class TestProjectEconomicsCalculateAll:
     def test_project_economics_calculate_all_exits_successfully(self):
         """Test that project_economics calculate-all with valid cashflows exits with code 0."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-all", "--cashflows", "[-1000,100,200,300,400,500]"]
+            app,
+            [
+                "project_economics",
+                "calculate-all",
+                "--cashflows",
+                "[-1000,100,200,300,400,500]",
+            ],
         )
         assert result.exit_code == 0
 
@@ -308,14 +351,18 @@ class TestProjectEconomicsCLIEdgeCases:
 
     def test_project_economics_calculate_npv_empty_cashflows(self):
         """Test that empty cashflows list is handled."""
-        result = runner.invoke(app, ["project_economics", "calculate-npv", "--cashflows", "[]"])
+        result = runner.invoke(
+            app, ["project_economics", "calculate-npv", "--cashflows", "[]"]
+        )
         # Should handle empty cashflows gracefully
         # Either succeed with 0 or fail with error
         assert result.exit_code in [0, 1]
 
     def test_project_economics_calculate_npv_single_cashflow(self):
         """Test that single cashflow is handled."""
-        result = runner.invoke(app, ["project_economics", "calculate-npv", "--cashflows", "[-1000]"])
+        result = runner.invoke(
+            app, ["project_economics", "calculate-npv", "--cashflows", "[-1000]"]
+        )
         # Should handle single cashflow
         assert result.exit_code == 0
 
@@ -327,13 +374,29 @@ class TestProjectEconomicsCLIEdgeCases:
     def test_project_economics_calculate_npv_abbreviated_flags(self):
         """Test that abbreviated flags work for calculate-npv."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-npv", "-c", "[-1000,100,200,300]", "-r", "0.10"]
+            app,
+            [
+                "project_economics",
+                "calculate-npv",
+                "-c",
+                "[-1000,100,200,300]",
+                "-r",
+                "0.10",
+            ],
         )
         assert result.exit_code == 0
 
     def test_project_economics_calculate_mirr_abbreviated_flags(self):
         """Test that abbreviated flags work for calculate-mirr."""
         result = runner.invoke(
-            app, ["project_economics", "calculate-mirr", "-c", "[-1000,100,200,300]", "-r", "0.10"]
+            app,
+            [
+                "project_economics",
+                "calculate-mirr",
+                "-c",
+                "[-1000,100,200,300]",
+                "-r",
+                "0.10",
+            ],
         )
         assert result.exit_code == 0

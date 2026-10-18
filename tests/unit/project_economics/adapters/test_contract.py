@@ -44,7 +44,9 @@ def test_maps_to_exact_project_economics_columns():
 
 
 def test_year_month_is_zero_padded_string():
-    out = to_project_economics_production(_unified([("ncs", "F", 2025, 3, 1.0, 2.0, 3.0, 0.0, "s")]))
+    out = to_project_economics_production(
+        _unified([("ncs", "F", 2025, 3, 1.0, 2.0, 3.0, 0.0, "s")])
+    )
     assert out["YEAR_MONTH"].iloc[0] == "2025-03"
     # parseable as a period
     assert pd.Period(out["YEAR_MONTH"].iloc[0], freq="M").month == 3
@@ -97,9 +99,13 @@ def test_none_input_returns_typed_empty():
 
 def test_bad_month_rejected():
     with pytest.raises(ProjectEconomicsContractError, match="month"):
-        to_project_economics_production(_unified([("ncs", "F", 2025, 13, 1.0, 2.0, 3.0, 0.0, "s")]))
+        to_project_economics_production(
+            _unified([("ncs", "F", 2025, 13, 1.0, 2.0, 3.0, 0.0, "s")])
+        )
 
 
 def test_non_numeric_year_rejected():
     with pytest.raises(ProjectEconomicsContractError):
-        to_project_economics_production(_unified([("ncs", "F", "abcd", 1, 1.0, 2.0, 3.0, 0.0, "s")]))
+        to_project_economics_production(
+            _unified([("ncs", "F", "abcd", 1, 1.0, 2.0, 3.0, 0.0, "s")])
+        )

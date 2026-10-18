@@ -55,7 +55,6 @@ from worldenergydata.cli.commands import (
     canada,
     dashboard,
     eia,
-    project_economics,
     kansas_kgs,
     landman,
     lng_terminals,
@@ -65,6 +64,7 @@ from worldenergydata.cli.commands import (
     mexico_cnh,
     ndbc,
     production_forecast,
+    project_economics,
     sodir,
     texas_rrc,
 )
@@ -99,7 +99,11 @@ app.add_typer(
     name="marine-safety",
     help="Marine safety incident data management",
 )
-app.add_typer(project_economics.app, name="project_economics", help="Field Development Analysis System")
+app.add_typer(
+    project_economics.app,
+    name="project_economics",
+    help="Field Development Analysis System",
+)
 app.add_typer(
     lower_tertiary.app,
     name="lower-tertiary",

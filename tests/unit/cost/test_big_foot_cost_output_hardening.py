@@ -119,7 +119,9 @@ def test_financial_values_derive_from_unique_curated_evidence(
         for row in rows
         if row["row_kind"] == "implied_project_total"
     } == {"766.66", "920.00", "657.14"}
-    crosswalk = root / "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv"
+    crosswalk = (
+        root / "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv"
+    )
     _rewrite(
         crosswalk,
         lambda rows: next(row for row in rows if row["WORKBOOK_CELL"] == "J3").update(
@@ -135,7 +137,8 @@ def test_input_fingerprints_fail_closed_on_workbook_and_toctou(
 ) -> None:
     root, commit = source_repo
     workbook = (
-        root / "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx"
+        root
+        / "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx"
     )
     workbook.write_bytes(workbook.read_bytes() + b"appended")
     with pytest.raises(ValueError, match="workbook fingerprint"):
@@ -246,7 +249,9 @@ def test_failed_staged_build_preserves_all_preexisting_outputs(
     } == sentinels
 
 
-def test_project_economics_coverage_gap_is_source_derived_and_unique(source_repo, tmp_path) -> None:
+def test_project_economics_coverage_gap_is_source_derived_and_unique(
+    source_repo, tmp_path
+) -> None:
     root, commit = source_repo
     output = tmp_path / "gap"
     _generate(root, output, commit)

@@ -4,9 +4,11 @@ import math
 
 import pandas as pd
 
-from worldenergydata.project_economics.adapters.contract import PROJECT_ECONOMICS_PRODUCTION_COLUMNS
 from worldenergydata.production.unified.adapters.spain_cores_adapter import (
     SpainCoresAdapter,
+)
+from worldenergydata.project_economics.adapters.contract import (
+    PROJECT_ECONOMICS_PRODUCTION_COLUMNS,
 )
 from worldenergydata.spain.field_concept import build_spain_field_concept
 from worldenergydata.spain.reference_chain import run_spain_reference_chain
@@ -66,8 +68,13 @@ def test_reference_chain_forces_onshore_dry_system_and_mismatch_flag():
     assert result["dev_system"] == "dry"
     assert result["pre_tax_metrics"]["onshore_model_mismatch"] is True
     assert result["pre_tax_metrics"]["host_capex_usd"] == 0.0
-    assert list(result["project_economics_production"].columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
-    assert list(result["project_economics_production"]["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert list(result["project_economics_production"].columns) == list(
+        PROJECT_ECONOMICS_PRODUCTION_COLUMNS
+    )
+    assert list(result["project_economics_production"]["YEAR_MONTH"]) == [
+        "2024-01",
+        "2024-02",
+    ]
     assert result["pre_tax_metrics"]["gross_revenue_usd"] > 0.0
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
 

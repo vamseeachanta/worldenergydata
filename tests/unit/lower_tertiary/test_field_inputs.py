@@ -31,7 +31,8 @@ class TestLowerTertiaryFieldInputs:
     def config_paths(cls):  # type: ignore[override]
         fields_dir = PROJECT_ROOT / "config/analysis/lower_tertiary/fields"
         lease_mapping_path = (
-            PROJECT_ROOT / "config/analysis/lower_tertiary/lease_mapping_project_economics.yml"
+            PROJECT_ROOT
+            / "config/analysis/lower_tertiary/lease_mapping_project_economics.yml"
         )
         return fields_dir, lease_mapping_path
 

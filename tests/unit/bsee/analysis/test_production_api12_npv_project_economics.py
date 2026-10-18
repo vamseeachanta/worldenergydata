@@ -48,7 +48,9 @@ def test_generate_revenue_table_uses_lower_tertiary_wti_prices(monkeypatch, tmp_
 
 def test_calculate_npv_delegates_to_project_economics_financial_layer(monkeypatch):
     project_economics_npv = Mock(return_value=123.45)
-    monkeypatch.setattr(production_api12, "project_economics_calculate_npv", project_economics_npv)
+    monkeypatch.setattr(
+        production_api12, "project_economics_calculate_npv", project_economics_npv
+    )
 
     analyzer = ProductionAPI12Analysis()
     cfg = {

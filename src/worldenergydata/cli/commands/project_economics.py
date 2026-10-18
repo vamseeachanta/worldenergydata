@@ -84,8 +84,10 @@ def calculate_npv(
 
     Examples:
         worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300,400,500]"
-        worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.08
-        worldenergydata project_economics calculate-npv --cashflows "[-5000,1000,1500,2000]" --period annual
+        worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]" \\
+            --discount-rate 0.08
+        worldenergydata project_economics calculate-npv --cashflows "[-5000,1000,1500,2000]" \\
+            --period annual
     """
     try:
         cf_list = parse_cashflows(cashflows)
@@ -169,7 +171,8 @@ def calculate_mirr(
 
     Examples:
         worldenergydata project_economics calculate-mirr --cashflows "[-1000,100,200,300,400,500]"
-        worldenergydata project_economics calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12  # noqa: E501
+        worldenergydata project_economics calculate-mirr \\
+            --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12  # noqa: E501
     """
     try:
         cf_list = parse_cashflows(cashflows)
@@ -184,7 +187,9 @@ def calculate_mirr(
             try:
                 import numpy as np
 
-                from worldenergydata.project_economics.core.financial import excel_like_mirr
+                from worldenergydata.project_economics.core.financial import (
+                    excel_like_mirr,
+                )
 
                 mirr_monthly, mirr_annual = excel_like_mirr(
                     np.array(cf_list), discount_rate, reinvestment_rate
@@ -249,7 +254,8 @@ def calculate_irr(
 
     Examples:
         worldenergydata project_economics calculate-irr --cashflows "[-1000,100,200,300,400,500]"
-        worldenergydata project_economics calculate-irr --cashflows "[-5000,2000,2000,2000]" --period annual
+        worldenergydata project_economics calculate-irr --cashflows "[-5000,2000,2000,2000]" \\
+            --period annual
     """
     try:
         cf_list = parse_cashflows(cashflows)
@@ -323,7 +329,8 @@ def calculate_all(
 
     Examples:
         worldenergydata project_economics calculate-all --cashflows "[-1000,100,200,300,400,500]"
-        worldenergydata project_economics calculate-all --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+        worldenergydata project_economics calculate-all --cashflows "[-5000,1000,1500,2000]" \\
+            --discount-rate 0.12
     """
     try:
         cf_list = parse_cashflows(cashflows)
@@ -338,7 +345,9 @@ def calculate_all(
             try:
                 import numpy as np
 
-                from worldenergydata.project_economics.core.financial import calculate_all_metrics
+                from worldenergydata.project_economics.core.financial import (
+                    calculate_all_metrics,
+                )
 
                 results = calculate_all_metrics(
                     np.array(cf_list), discount_rate, period.value
@@ -474,11 +483,17 @@ def analyze(
 
             try:
                 progress.update(
-                    task, advance=20, description="[cyan]Loading project_economics modules..."
+                    task,
+                    advance=20,
+                    description="[cyan]Loading project_economics modules...",
                 )
 
-                from worldenergydata.project_economics.analysis.cashflow import CashflowEngine
-                from worldenergydata.project_economics.core.config import AssumptionsManager
+                from worldenergydata.project_economics.analysis.cashflow import (
+                    CashflowEngine,
+                )
+                from worldenergydata.project_economics.core.config import (
+                    AssumptionsManager,
+                )
 
                 progress.update(
                     task, advance=20, description="[cyan]Loading assumptions..."
@@ -603,7 +618,9 @@ def classify(
         worldenergydata project_economics classify 10000
     """
     try:
-        from worldenergydata.project_economics.core.config import classify_dev_system_by_depth
+        from worldenergydata.project_economics.core.config import (
+            classify_dev_system_by_depth,
+        )
 
         classification = classify_dev_system_by_depth(water_depth)
 

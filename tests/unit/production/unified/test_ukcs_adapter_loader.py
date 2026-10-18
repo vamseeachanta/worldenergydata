@@ -3,9 +3,11 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.ukcs_adapter import UkcsAdapter
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.project_economics.adapters.contract import (
+    to_project_economics_production,
+)
 from worldenergydata.ukcs.production.field_production import UKCSFieldProductionLoader
 
 

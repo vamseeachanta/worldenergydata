@@ -252,7 +252,7 @@ Producing responsibility: maintain the package evidence, example results and fai
 | pandas and Pydantic | Upstream; CSV component parsing and all record validation; declared ranges are pandas `>=2.3.3,<3.0`, Pydantic `>=2.13.4,<3.0` | [packages/worldenergydata-subsea/pyproject.toml:L29-L33] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L6-L7] |
 | Dataset `manifold_suppliers` | Supplier-loader default CSV | [packages/worldenergydata-subsea/src/worldenergydata/subsea/suppliers.py:L29-L47] |
 | Datasets `rigid_jumper_specs`, `mooring_components` | Explicit-path component inputs | [tests/unit/curated/test_csv_validation.py:L17-L21] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/rigid_jumper.py:L50-L63] [packages/worldenergydata-subsea/src/worldenergydata/subsea/models/mooring.py:L42-L55] |
-| `field_development.integrations` | Downstream catalog selection via loaders; wraps failures as missing selections | [src/worldenergydata/field_development/integrations.py:L208-L249] |
+| `field_development.integrations` | Downstream catalog selection via loaders; wraps failures as missing selections | [src/worldenergydata/field_development/integrations.py:L211-L252] |
 | `field_development.equipment_3d` | Downstream optional CAD geometry; consumes jumper specs and performs dimensional conversion | [src/worldenergydata/field_development/equipment_3d.py:L27-L37] [src/worldenergydata/field_development/equipment_3d.py:L53-L76] |
 | Supplier builder and report renderer | Upstream CSV/Parquet writer delegates validation to the schema; downstream renderer reads the loader | [scripts/build_manifold_suppliers_db.py:L489-L526] [scripts/generate_manifold_market_report.py:L33-L46] |
 
@@ -284,7 +284,7 @@ rg -n 'subsea|manifold|jumper|mooring' scripts --glob '*.py'
 | --- | --- |
 | Supplier builder `build`, `_pack` | Delegating schema user and list serializer; helper, not an independent supplier validator. [scripts/build_manifold_suppliers_db.py:L489-L526] |
 | Market report `render` | Loader consumer and presentation logic; helper, not a separate CSV loader. [scripts/generate_manifold_market_report.py:L33-L46] |
-| Integration `_pick_jumper`, `_pick_mooring` | Delegating loaders plus independent representative ranking; outside-package selection map gap, issue pending (7). [src/worldenergydata/field_development/integrations.py:L224-L249] |
+| Integration `_pick_jumper`, `_pick_mooring` | Delegating loaders plus independent representative ranking; outside-package selection map gap, issue pending (7). [src/worldenergydata/field_development/integrations.py:L227-L252] |
 | Demo `pick_chain_component` | Separate CSV reader and maximum-MBL chain selection; outside-package map gap, issue pending (7); inspected only, not executed. [scripts/demo/_mooring_live.py:L44-L50] |
 | Emerging-basin schema `_coerce_int` | Separate `int(float(v))` normalization with its own unknown-token policy; outside-package map gap, issue pending (7). [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discovery_schema.py:L97-L109] |
 | CAD `build_jumper_solid`, `build_jumper_from_catalog` | Geometry implementation and delegating catalog selection; not an additional in-package data validator; downstream environment reproducibility follow-up, issue pending (6). [src/worldenergydata/field_development/equipment_3d.py:L53-L106] |

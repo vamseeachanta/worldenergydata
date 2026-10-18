@@ -210,23 +210,32 @@ def test_report_trace_has_no_interpolated_years(source_repo, tmp_path) -> None:
     assert all(row["source_locator"] for row in trace)
 
 
-def test_project_economics_bridge_and_opex_separation_render_exactly(source_repo, tmp_path) -> None:
+def test_project_economics_bridge_and_opex_separation_render_exactly(
+    source_repo, tmp_path
+) -> None:
     output, _, _ = _build(source_repo, tmp_path)
     text, rows = (output / HTML_REL).read_text(encoding="utf-8"), _rows(output)
     assert "2,730.0 + 965.6 + 821.7 = 4,517.3 USD MM" in text
     assert "267,482,624 USD" in text and "790,000,000 USD" in text
     total = [row for row in rows if row["row_kind"] == "project_economics_total"]
     assert len(total) == 1 and total[0]["total_mm"] == "4517.3"
-    project_economics = [row for row in rows if row["row_kind"] == "project_economics_assumption"]
+    project_economics = [
+        row for row in rows if row["row_kind"] == "project_economics_assumption"
+    ]
     assert {row["source_locator"] for row in project_economics} == {
         "Project_Summary!J3",
         "Project_Summary!K3",
         "Project_Summary!L3",
     }
-    assert {row["assumption_vintage"] for row in project_economics} == {"project_economics_V30"}
-    assert {row["comparison_eligibility"] for row in project_economics} == {"ineligible"}
+    assert {row["assumption_vintage"] for row in project_economics} == {
+        "project_economics_V30"
+    }
+    assert {row["comparison_eligibility"] for row in project_economics} == {
+        "ineligible"
+    }
     assert all(
-        row["rounding_policy"] == "native_USD_divided_by_1000000" for row in project_economics
+        row["rounding_policy"] == "native_USD_divided_by_1000000"
+        for row in project_economics
     )
 
 

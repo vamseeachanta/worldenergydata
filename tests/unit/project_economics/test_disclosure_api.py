@@ -69,7 +69,9 @@ def sample_records(analytics_module):
 
 
 class TestDisclosureAnalyticsAPISeam:
-    def test_project_economics_api_module_defines_disclosure_analytics_query_class(self):
+    def test_project_economics_api_module_defines_disclosure_analytics_query_class(
+        self,
+    ):
         api = importlib.import_module("worldenergydata.project_economics.api")
         assert hasattr(api, "DisclosureAnalyticsQuery")
         assert inspect.isclass(api.DisclosureAnalyticsQuery)
@@ -159,7 +161,9 @@ class TestProjectEconomicsDisclosureQueryBehavior:
         # None of the sample records are flagged COMPARABILITY_COMPARABLE.
         assert result is None
 
-    def test_project_economics_benchmark_accepts_comparable_rows(self, analytics_module):
+    def test_project_economics_benchmark_accepts_comparable_rows(
+        self, analytics_module
+    ):
         from worldenergydata.project_economics.api import disclosure_analytics
 
         DR = analytics_module.DisclosureRecord

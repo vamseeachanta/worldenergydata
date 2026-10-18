@@ -5,11 +5,11 @@ from worldenergydata.australia.metadata.field_metadata_loader import (
     AustraliaFieldMetadataLoader,
 )
 from worldenergydata.australia.reference_chain import run_australia_reference_chain
-from worldenergydata.project_economics.adapters.field_concept_normalizer import (
-    dev_system_from_water_depth_m,
-)
 from worldenergydata.production.unified.adapters.australia_adapter import (
     AustraliaAdapter,
+)
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
+    dev_system_from_water_depth_m,
 )
 
 

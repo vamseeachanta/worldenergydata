@@ -585,7 +585,7 @@ These shared-domain files mention the module and were discovered for follow-up; 
 - [tests/modules/marketing/test_hurricane_mooring_risk_infographic.py:L18-L18]
 - [tests/test_query_api.py:L1-L1]
 - [tests/integration/test_data_symlink.py:L5-L5]
-- [tests/integration/cli/test_main_cli.py:L59-L59]
+- [tests/integration/cli/test_main_cli.py:L62-L62]
 - [tests/unit/ci/test_flake8_inventory_report.py:L22-L22]
 - [tests/unit/cli/test_cli_smoke.py:L71-L71]
 - [tests/unit/cli/test_docs_coverage.py:L20-L20]

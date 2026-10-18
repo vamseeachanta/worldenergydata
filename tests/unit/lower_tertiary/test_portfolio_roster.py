@@ -50,7 +50,8 @@ class TestLowerTertiaryRoster:
         ever filters out a field for a non-status reason, this test fails.
         """
         lease_mapping_path = (
-            PROJECT_ROOT / "config/analysis/lower_tertiary/lease_mapping_project_economics.yml"
+            PROJECT_ROOT
+            / "config/analysis/lower_tertiary/lease_mapping_project_economics.yml"
         )
         lease_mapping = load_lease_mapping(lease_mapping_path)
 

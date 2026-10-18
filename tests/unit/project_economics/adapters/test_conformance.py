@@ -61,7 +61,9 @@ def _unified_frame(region, field_name, year, oil, gas):
 @pytest.mark.parametrize("region", sorted(_REGION_FIXTURES))
 def test_country_frame_normalizes_to_valid_project_economics_production(region):
     field_name, year, oil, gas = _REGION_FIXTURES[region]
-    out = to_project_economics_production(_unified_frame(region, field_name, year, oil, gas))
+    out = to_project_economics_production(
+        _unified_frame(region, field_name, year, oil, gas)
+    )
     assert list(out.columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
     assert len(out) == 3
     assert (out["MONTHLY_OIL_BBL"] >= 0).all()
@@ -80,7 +82,9 @@ def test_representative_metadata_normalizes_to_valid_field_concept():
             "year_first_oil": FieldMapEntry("first_oil", year_from),
         }
     )
-    from worldenergydata.project_economics.adapters.field_concept_normalizer import to_field_concept
+    from worldenergydata.project_economics.adapters.field_concept_normalizer import (
+        to_field_concept,
+    )
 
     fc = to_field_concept(
         {"field": "Troll", "area": "North Sea", "wd": "340", "first_oil": "1996"},

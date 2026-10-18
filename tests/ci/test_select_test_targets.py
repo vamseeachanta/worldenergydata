@@ -87,7 +87,9 @@ def test_project_economics_own_member_r_own_member_routes_to_er_routes_to_projec
     subpackage name (project_economics), so _PACKAGE_MEMBER_RE routes it automatically to
     tests/unit/project_economics — WITHOUT a _CLUSTER_MEMBER_RE entry."""
     r = select(
-        ["packages/worldenergydata-project_economics/src/worldenergydata/project_economics/analysis/cashflow.py"],
+        [
+            "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/analysis/cashflow.py"
+        ],
         REPO_ROOT,
     )
     assert r["scope"] == "modules"

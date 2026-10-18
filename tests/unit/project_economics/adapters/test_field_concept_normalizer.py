@@ -8,6 +8,8 @@ and fail-loud on unknown target fields.
 
 import pytest
 
+from worldenergydata.field_development.enums import ConceptType, FluidType
+from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     FieldMapEntry,
     FieldMetaMapping,
@@ -18,8 +20,6 @@ from worldenergydata.project_economics.adapters.field_concept_normalizer import 
     to_field_concept,
     year_from,
 )
-from worldenergydata.field_development.enums import ConceptType, FluidType
-from worldenergydata.field_development.models import FieldConcept
 
 # --- transforms preserved (no declarative-map regression) ------------------
 

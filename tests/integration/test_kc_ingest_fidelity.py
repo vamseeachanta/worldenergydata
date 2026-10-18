@@ -46,7 +46,13 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 PROJECT_ECONOMICS_DIR = (
-    REPO_ROOT / "docs" / "modules" / "bsee" / "analysis" / "production" / "project_economics_V30"
+    REPO_ROOT
+    / "docs"
+    / "modules"
+    / "bsee"
+    / "analysis"
+    / "production"
+    / "project_economics_V30"
 )
 SCRIPT = PROJECT_ECONOMICS_DIR / "extract_drilling_completion_days.py"
 LEASES = PROJECT_ECONOMICS_DIR / "leases_v21_kc.csv"

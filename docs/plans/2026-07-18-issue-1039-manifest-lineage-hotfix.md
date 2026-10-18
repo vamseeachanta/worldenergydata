@@ -53,7 +53,7 @@ Implementation will not begin from the original 2026-07-16 approval marker. Afte
 
 **Files:**
 - Create: `tests/unit/cost/test_big_foot_cost_lineage.py`
-- Verify: `tests/unit/cost/test_big_foot_cost_outputs.py:381`
+- Verify: `tests/unit/cost/test_big_foot_cost_outputs.py:390`
 
 **Interfaces:**
 - Consumes: the existing test-only Git/build helpers from `test_big_foot_cost_output_hardening.py` without modifying that 400-line file.

@@ -4,9 +4,11 @@ import pandas as pd
 import pytest
 
 from worldenergydata.common.units import OilUnits
-from worldenergydata.project_economics.adapters.contract import to_project_economics_production
 from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.project_economics.adapters.contract import (
+    to_project_economics_production,
+)
 
 
 class FixtureMonthlyLoader:

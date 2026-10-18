@@ -52,7 +52,8 @@ def v30_production():
     if not REPRODUCER_AVAILABLE:
         pytest.skip("V30 reproducer not available")
     if not (
-        PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30/leases.xlsx"
+        PROJECT_ROOT
+        / "docs/modules/bsee/analysis/production/project_economics_V30/leases.xlsx"
     ).exists():
         pytest.skip("V30 leases workbook not available in this checkout")
     try:
@@ -67,7 +68,8 @@ def extended_production():
     if not REPRODUCER_AVAILABLE:
         pytest.skip("V30 reproducer not available")
     if not (
-        PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30/leases.xlsx"
+        PROJECT_ROOT
+        / "docs/modules/bsee/analysis/production/project_economics_V30/leases.xlsx"
     ).exists():
         pytest.skip("V30 leases workbook not available in this checkout")
     try:

@@ -9,14 +9,14 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
+from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
+from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 from worldenergydata.project_economics.adapters.contract import (
     PROJECT_ECONOMICS_PRODUCTION_COLUMNS,
     to_project_economics_production,
 )
 from worldenergydata.project_economics.analysis.cashflow import CashflowEngine
 from worldenergydata.project_economics.core.config import AssumptionsManager
-from worldenergydata.production.unified.adapters.sodir_adapter import SodirAdapter
-from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
 from worldenergydata.sodir.field_concept import sodir_field_to_concept
 
 
@@ -129,7 +129,9 @@ def test_chain_slice_runs_and_returns_finite_metrics():
     adapter = SodirAdapter(loader=_FakeLoader(_loader_frame()))
     unified = adapter.fetch(ProductionQuery(regions=["ncs"]))
     project_economics_prod = to_project_economics_production(unified)
-    assert list(project_economics_prod.columns) == list(PROJECT_ECONOMICS_PRODUCTION_COLUMNS)
+    assert list(project_economics_prod.columns) == list(
+        PROJECT_ECONOMICS_PRODUCTION_COLUMNS
+    )
 
     # pre-tax plumbing only (NOT a published Norway NPV — 78% regime, B3)
     engine = CashflowEngine(AssumptionsManager(), dev_system="subsea15")

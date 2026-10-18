@@ -196,7 +196,7 @@ Map follow-up: the uncovered method families are collection, numeric/HTML/PDF pa
 
 Downstream users also include intervention activity matching (a consumer of `identity_resolver.canonicalize_name`), economics, catalog access and taxonomy consumers; these are data dependencies rather than solver calls. Hull-model loading also resolves this package’s curated resources. [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/rlwi_war_coverage.py:L28-L30] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/rlwi_war_coverage.py:L107-L111] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/intervention_economics.py:L160-L175] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/brief_generator.py:L42-L55] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/serviceability_matrix.py:L62-L70] [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/intervention/access_gap.py:L145-L160] [packages/worldenergydata-vessel_hull_models/src/worldenergydata/vessel_hull_models/rig_hulls/hull_loader.py:L25-L48]
 
-The field-development feasibility adapter calls `ConstructionVesselLoader` and applies capability filters to the loaded inventory. [src/worldenergydata/field_development/integrations.py:L175-L215]
+The field-development feasibility adapter calls `ConstructionVesselLoader` and applies capability filters to the loaded inventory. [src/worldenergydata/field_development/integrations.py:L178-L218]
 
 ## 10. Coverage and open items
 

@@ -65,7 +65,10 @@ def test_reference_chain_runs_production_project_economics_cashflow_and_concept_
 
     assert result["field_name"] == "TUPI"
     assert result["economics_label"] == "chain_plumbing_pre_tax"
-    assert list(result["project_economics_production"]["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert list(result["project_economics_production"]["YEAR_MONTH"]) == [
+        "2024-01",
+        "2024-02",
+    ]
     assert result["field_concept"].region == "brazil"
     assert result["ranked_concepts"][0].concept_type == ConceptType.FPSO
     assert result["pre_tax_metrics"]["months"] == 2

@@ -10,7 +10,9 @@ import scripts.build_pages as build_pages
 import scripts.lower_tertiary.regenerate_field_economics_v50 as regen
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-PROJECT_ECONOMICS_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
+PROJECT_ECONOMICS_DIR = (
+    PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
+)
 REPORTS_DIR = PROJECT_ROOT / "reports/lower_tertiary"
 CAPABILITIES_PAGE = PROJECT_ROOT / "reports/capabilities/index.html"
 
@@ -54,7 +56,9 @@ def test_buckskin_v50_report_is_published():
 
 
 def test_project_economics_comparison_replaces_buckskin_wed_placeholder():
-    md = (REPORTS_DIR / "project_economics_revision_comparison.md").read_text(encoding="utf-8")
+    md = (REPORTS_DIR / "project_economics_revision_comparison.md").read_text(
+        encoding="utf-8"
+    )
     row = next(
         line for line in md.splitlines() if line.startswith("| Buckskin | −541.4 |")
     )

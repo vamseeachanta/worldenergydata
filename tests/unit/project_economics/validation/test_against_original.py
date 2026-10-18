@@ -49,7 +49,9 @@ from worldenergydata.project_economics.core.financial import (  # noqa: E402
 )
 
 
-@pytest.mark.skipif(not ORIGINAL_AVAILABLE, reason="Original project_economics code not available")
+@pytest.mark.skipif(
+    not ORIGINAL_AVAILABLE, reason="Original project_economics code not available"
+)
 class TestMIRRAgainstOriginal:
     """Validate MIRR calculation against original implementation"""
 
@@ -115,7 +117,9 @@ class TestMIRRAgainstOriginal:
         assert np.isclose(our_mirr_a, expected_annual, rtol=1e-10)
 
 
-@pytest.mark.skipif(not ORIGINAL_AVAILABLE, reason="Original project_economics code not available")
+@pytest.mark.skipif(
+    not ORIGINAL_AVAILABLE, reason="Original project_economics code not available"
+)
 class TestAssumptionsAgainstOriginal:
     """Validate assumptions loading against original"""
 

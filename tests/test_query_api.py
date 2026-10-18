@@ -648,7 +648,9 @@ class TestPackageLevelImports:
         # Must be the same class as defined in project_economics.api — no divergent surface.
         from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 
-        assert isinstance(project_economics_mod.disclosure_analytics, DisclosureAnalyticsQuery)
+        assert isinstance(
+            project_economics_mod.disclosure_analytics, DisclosureAnalyticsQuery
+        )
 
     def test_marine_safety_api_accessible(self):
         """wed.marine_safety_api should resolve to marine_safety.api module."""
