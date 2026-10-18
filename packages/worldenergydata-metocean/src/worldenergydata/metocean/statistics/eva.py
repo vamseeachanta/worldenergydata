@@ -3,6 +3,7 @@ ABOUTME: Extreme Value Analysis wrapper for metocean-stats EVA methods.
 ABOUTME: Supports POT (Peaks-Over-Threshold) and annual maxima (GEV) fitting.
 
 Uses real metocean-stats library (v1.1.9) as the statistical backend.
+All visualisations use Plotly — metocean-stats matplotlib outputs are converted.
 """
 
 from __future__ import annotations
@@ -43,6 +44,12 @@ class ExtremeValueAnalysis:
     Provides POT and annual-maxima fitting with Plotly visualisation.
     Backed by the real metocean-stats library (v1.1.9).
 
+    Examples
+    --------
+    >>> eva = ExtremeValueAnalysis()
+    >>> result = eva.fit_pot(hs_series)
+    >>> table = eva.return_period_table(result)
+    >>> fig = eva.plot_return_period(result)
     """
 
     # Default return periods (years)
@@ -50,6 +57,10 @@ class ExtremeValueAnalysis:
 
     def __init__(self, distribution: str = "Weibull_2P") -> None:
         self._default_distribution = distribution
+
+    # ------------------------------------------------------------------
+    # Fitting methods
+    # ------------------------------------------------------------------
 
     def fit_pot(
         self,
@@ -192,6 +203,10 @@ class ExtremeValueAnalysis:
             upper_ci=upper_ci,
         )
 
+    # ------------------------------------------------------------------
+    # Output methods
+    # ------------------------------------------------------------------
+
     def return_period_table(
         self,
         result: EVAResult,
@@ -293,6 +308,10 @@ class ExtremeValueAnalysis:
             template="plotly_white",
         )
         return fig
+
+    # ------------------------------------------------------------------
+    # Private helpers
+    # ------------------------------------------------------------------
 
     @staticmethod
     def _series_to_df(series: pd.Series) -> pd.DataFrame:

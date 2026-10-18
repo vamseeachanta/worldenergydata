@@ -103,3 +103,70 @@ def test_eva_requests_95_percent_interval(monkeypatch):
     assert seen == [0.95]
     assert result.lower_ci == {10: 2}
     assert result.upper_ci == {10: 4}
+
+
+@pytest.mark.parametrize("missing", ["stations", "histories", "radius", "position"])
+def test_no_station_has_unknown_counts_and_wave_fields(missing):
+    from pathlib import Path
+
+    import yaml
+
+    from worldenergydata.bsee.pipeline_screening import station_environment
+
+    station = SimpleNamespace(
+        station_id="synthetic", latitude=0, longitude=0, metadata={}
+    )
+    record = SimpleNamespace(
+        observation_time=datetime(2022, 1, 1),
+        wave_height_m=1,
+        dominant_wave_period_s=7,
+    )
+    stations = [] if missing == "stations" else [station]
+    histories = {} if missing == "histories" else {"synthetic": [record]}
+    latitude = None if missing == "position" else 10 if missing == "radius" else 0
+    cache = {}
+    row = station_environment(latitude, 0, stations, histories, cache)
+    fields = [
+        "retained_observations",
+        "complete_annual_maxima",
+        "record_length_years",
+        "observed_maximum_years",
+        "hs_max_observed_m",
+        "tp_at_hs_max_s",
+        *(
+            f"hs_{period}yr_{suffix}"
+            for period in (10, 100)
+            for suffix in ("m", "lower_ci_m", "upper_ci_m", "distribution")
+        ),
+    ]
+    schema = yaml.safe_load(
+        (
+            Path(__file__).parents[4] / "data/modules/pipeline/screening/schema.yaml"
+        ).read_text()
+    )
+    assert row["station_id"] is None
+    for field in fields:
+        assert row[field] is None
+        assert row[field + "_source"] == "UNKNOWN:no_station_within_limit"
+        assert schema["fields"][field]["nullable"]
+    assert cache == {}
+
+
+def test_selected_station_short_record_has_measured_counts():
+    from worldenergydata.bsee.pipeline_screening import station_environment
+
+    station = SimpleNamespace(
+        station_id="synthetic", latitude=0, longitude=0, metadata={}
+    )
+    record = SimpleNamespace(
+        observation_time=datetime(2022, 1, 1),
+        wave_height_m=1,
+        dominant_wave_period_s=7,
+    )
+    row = station_environment(0, 0, [station], {"synthetic": [record]})
+    assert row["retained_observations"] == 1
+    assert row["retained_observations_source"] == "DERIVED:retained_observation_count"
+    assert row["complete_annual_maxima"] == 0
+    assert row["complete_annual_maxima_source"] == "DERIVED:coverage_qualified_maxima"
+    assert row["hs_10yr_m"] is row["hs_100yr_m"] is None
+    assert row["hs_10yr_m_source"] == "UNKNOWN:short_record"

@@ -178,11 +178,25 @@ def station_environment(
     # retained station-depth record may establish this field.
     depth = station.metadata.get("water_depth_m") if station else None
     _known(row, "station_water_depth_m", depth, "PUBLIC:noaa-ndbc")
+    if station is None:
+        for field in (
+            "retained_observations",
+            "complete_annual_maxima",
+            "record_length_years",
+            "observed_maximum_years",
+            "hs_max_observed_m",
+            "tp_at_hs_max_s",
+            *(
+                f"hs_{period}yr_{suffix}"
+                for period in (10, 100)
+                for suffix in ("m", "lower_ci_m", "upper_ci_m", "distribution")
+            ),
+        ):
+            _put(row, field, None, "UNKNOWN:no_station_within_limit")
+        return row
     cache = summary_cache if summary_cache is not None else {}
     if station_id not in cache:
-        atlantic = station is None or (
-            -100 <= station.longitude <= 20 and 0 <= station.latitude <= 65
-        )
+        atlantic = -100 <= station.longitude <= 20 and 0 <= station.latitude <= 65
         cache[station_id] = _station_record_summary(
             histories.get(station_id, []), atlantic=atlantic
         )

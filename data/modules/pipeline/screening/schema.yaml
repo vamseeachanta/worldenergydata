@@ -160,9 +160,11 @@ fields:
     source_column: record_length_years_source
   retained_observations:
     type: integer
-    nullable: false
+    nullable: true
     unit: '1'
     source_column: retained_observations_source
+    description: Distinct retained observation times at the selected station;
+      unknown when no station is within the limit.
   hs_10yr_m:
     type: number
     nullable: true
@@ -199,9 +201,11 @@ fields:
     description: Explicit published water depth only; active-station XML elevation does not establish depth.
   complete_annual_maxima:
     type: integer
-    nullable: false
+    nullable: true
     unit: '1'
     source_column: complete_annual_maxima_source
+    description: Coverage-qualified years at the selected station; zero means none qualify,
+      null means no station within the limit.
   hs_max_observed_m:
     type: number
     nullable: true

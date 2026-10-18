@@ -22,3 +22,10 @@ def test_manifest_declares_partial_readiness_and_unverified_freshness(tmp_path):
     assert manifest["readiness_status"] == "partial"
     assert manifest["intended_use"] == "screening_inventory_only"
     assert manifest["source_freshness"]["state"] == "unverified"
+
+
+def test_usgs_terms_link_to_publication_landing_page():
+    from worldenergydata.bsee.pipeline_screening_metadata import publisher_metadata
+
+    source = publisher_metadata({"source_id": "usgs-layer-register"})
+    assert source["terms_of_use"]["url"] == "https://pubs.usgs.gov/ds/2006/146/"

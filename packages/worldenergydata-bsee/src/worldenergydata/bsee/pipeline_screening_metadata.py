@@ -10,21 +10,26 @@ USGS_TITLE = (
 PUBLISHERS = {
     "bsee-data-center": (
         "Bureau of Safety and Environmental Enforcement",
-        "Generally, materials produced by federal agencies belong to the public domain and may be reproduced without permission.",
+        "Generally, materials produced by federal agencies belong to the public domain "
+        "and may be reproduced without permission.",
         "https://www.bsee.gov/bsee/privacy-policy#copyright",
         "Third-party materials may carry restrictions; no blanket rights warranty is supplied.",
     ),
     "noaa-ndbc": (
         "NOAA National Data Buoy Center",
-        "The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise",
+        "The information on National Weather Service (NWS) Web pages are in the public domain, "
+        "unless specifically noted otherwise",
         "https://www.weather.gov/disclaimer#use",
-        "Credit the source; no implied endorsement; derivatives are not official products. Third-party exceptions apply.",
+        "Credit the source; no implied endorsement; derivatives are not official products. "
+        "Third-party exceptions apply.",
     ),
     "usgs-layer-register": (
         "U.S. Geological Survey",
-        "Public domain data from the U.S. Government are freely redistributable with proper metadata and source attribution.",
-        "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip#gmx_extmeta.txt",
-        "Credit the source; third-party materials may have separate rights. DS 146 extracted-table Use_Constraints requires metadata and source attribution.",
+        "Public domain data from the U.S. Government are freely redistributable "
+        "with proper metadata and source attribution.",
+        "https://pubs.usgs.gov/ds/2006/146/",
+        "Credit the source; third-party materials may have separate rights. "
+        "DS 146 extracted-table Use_Constraints requires metadata and source attribution.",
     ),
 }
 
