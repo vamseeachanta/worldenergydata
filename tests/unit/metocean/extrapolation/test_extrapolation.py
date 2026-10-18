@@ -245,3 +245,18 @@ def test_extrapolation_result_source_auto_populated():
         corrections_applied=[],
     )
     assert result.source == "ndbc_42001"
+
+
+@pytest.mark.parametrize("method", ["nearest", "weighted_average"])
+@pytest.mark.parametrize("source_type", ["model", "reanalysis"])
+def test_spatial_transfer_does_not_claim_buoy_calibration(
+    monkeypatch, method, source_type
+):
+    import worldenergydata.metocean.extrapolation as api
+
+    source = MetoceanSource("synthetic_grid", source_type, 0.0, 0.0, 500)
+    monkeypatch.setattr(api._finder, "find_nearest", lambda *args, **kwargs: [source])
+    result = extrapolate(28.5, -88.5, method=method)
+    assert api._assessor.assess(28.5, -88.5, source).correction_needed
+    assert not any("bias_correction" in c for c in result.corrections_applied)
+    assert "spatial_transfer" in result.corrections_applied
