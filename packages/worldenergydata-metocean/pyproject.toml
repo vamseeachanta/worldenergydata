@@ -45,6 +45,11 @@ dependencies = [
 "Homepage" = "https://github.com/vamseeachanta/worldenergydata"
 "Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
 
+[project.optional-dependencies]
+statistics = [
+    "metocean-stats==1.2.0",
+]
+
 # ---------------------------------------------------------------------------
 # PEP 420 namespace packaging (ADR 0001 — domain-package split)
 # ---------------------------------------------------------------------------
