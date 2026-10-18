@@ -695,6 +695,8 @@ jobs:
             echo "Skipping Sphinx build: docs/conf.py is not present"
           fi
 
+  # Replay helpers come from the live base branch, even when the event base SHA
+  # predates the helper. Replay evidence still targets the event's PR head.
   lint-gate:
     name: Lint
     needs: [mode, lint]
@@ -708,8 +710,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -718,7 +720,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_NAME: Lint
-        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py "$CHECK_NAME"
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -742,8 +746,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -752,7 +756,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_NAME: Type Check
-        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py "$CHECK_NAME"
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -776,8 +782,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -786,7 +792,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_NAME: Security Scan
-        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py "$CHECK_NAME"
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -810,8 +818,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -820,7 +828,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_NAME: Documentation
-        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py "$CHECK_NAME"
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -844,8 +854,8 @@ jobs:
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
           persist-credentials: false
           sparse-checkout: scripts/ci/replay_gate.py
           sparse-checkout-cone-mode: false
@@ -854,7 +864,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           CHECK_NAME: Test (PR gate)
-        run: python scripts/ci/replay_gate.py "$CHECK_NAME"
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py "$CHECK_NAME"
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
