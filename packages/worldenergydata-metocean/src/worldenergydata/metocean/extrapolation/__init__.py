@@ -145,8 +145,7 @@ def _weighted_average(
         if context.correction_needed:
             Hs_t, Tp_t = _wave_model.transfer(Hs_base, Tp_base, context)
             current_t = _current_model.transfer(current_base, context)
-            if src.source_type == "reanalysis":
-                corrections_all.append("reanalysis_bias_correction")
+            corrections_all.append("spatial_transfer")
         else:
             Hs_t, Tp_t = Hs_base, Tp_base
             current_t = current_base * context.sheltering_factor
@@ -208,8 +207,7 @@ def _nearest_extrapolation(lat: float, lon: float) -> "ExtrapolationResult":
             corrections.append("shoaling_correction")
         if context.sheltering_factor < 1.0:
             corrections.append("fetch_correction")
-        if src.source_type in ("reanalysis", "model"):
-            corrections.append("model_bias_correction")
+        corrections.append("spatial_transfer")
     else:
         Hs_t, Tp_t = Hs_base, Tp_base
         current_t = current_base * context.sheltering_factor
