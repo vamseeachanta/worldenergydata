@@ -8,8 +8,9 @@ Renders a **plan-view (map) field layout** to SVG from a :class:`FieldConcept`.
 Unlike the block-diagram renderer (which uses arbitrary auto-layout), this view
 uses *real coordinates*: the manifold sits at the origin, subsea trees are
 placed on a ring around it, and the host is offset north by the actual
-``tieback_distance_km`` — so the drawing is to scale, with a north arrow and a
-scale bar.
+``tieback_distance_km`` or ``distance_to_host_km``. Without either distance,
+the 1.5 km default is labelled schematic. A north arrow and scale bar show the
+drawing convention; well locations remain synthetic.
 
 Positions are computed by deterministic trigonometry (documented in
 :func:`compute_positions`); no LLM and no randomness are involved, so the same
@@ -62,6 +63,13 @@ class Point:
     y_km: float
 
 
+def layout_caption(concept: FieldConcept) -> str:
+    """Disclose assumed geometry on both the SVG and its report caption."""
+    if concept.tieback_distance_km is None and concept.distance_to_host_km is None:
+        return "Plan-view field layout (schematic; assumed host offset 1.5 km)"
+    return "Plan-view field layout (host offset to scale; schematic well positions)"
+
+
 def compute_positions(
     concept: FieldConcept, graph: GraphSpec | None = None
 ) -> dict[str, Point]:
@@ -72,8 +80,8 @@ def compute_positions(
       * subsea trees: on a ring of radius ``TREE_RING_RADIUS_KM`` around their
         owning manifold, angle = ``index * 2π / trees_on_that_manifold``;
       * dry-tree wellheads: ringed directly around the host;
-      * host: north of the field by ``tieback_distance_km`` (or a default offset
-        for a standalone host);
+      * host: north of the field by ``tieback_distance_km``, then ``distance_to_host_km``,
+        then the labelled schematic default;
       * export: ``EXPORT_BEYOND_HOST_KM`` north of the host.
 
     Args:
@@ -105,12 +113,14 @@ def compute_positions(
         for mf in manifolds:
             _ring_around(pos, pos[mf.id], owners[mf.id])
 
-    # Host position: north by tieback distance (or default standalone offset).
+    # Pack section 3, E5: explicit tieback, then host distance, then schematic.
     host_offset = (
         concept.tieback_distance_km
-        if concept.tieback_distance_km and concept.tieback_distance_km > 0
-        else DEFAULT_HOST_OFFSET_KM
+        if concept.tieback_distance_km is not None
+        else concept.distance_to_host_km
     )
+    if host_offset is None:
+        host_offset = DEFAULT_HOST_OFFSET_KM
     pos["host"] = Point(0.0, host_offset)
 
     # Dry-tree wellheads ring around the host (no manifold).
@@ -180,7 +190,7 @@ def render_layout(
     ys = [p[1] for p in px.values()]
     min_x, max_x = min(xs), max(xs)
     min_y, max_y = min(ys), max(ys)
-    width = (max_x - min_x) + 2 * MARGIN_PX
+    width = max(480.0, (max_x - min_x) + 2 * MARGIN_PX)
     height = (max_y - min_y) + 2 * MARGIN_PX
 
     def tx(x: float) -> float:
@@ -219,6 +229,10 @@ def render_layout(
 
     parts.append(_north_arrow(width))
     parts.append(_scale_bar(scale_px_per_km, height))
+    parts.append(
+        f'<text x="10" y="{height - 6:.0f}" font-family="sans-serif" '
+        f'font-size="9">{_esc(layout_caption(concept))}</text>'
+    )
     parts.append("</svg>")
     return "\n".join(parts)
 

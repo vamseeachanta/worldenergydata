@@ -29,7 +29,7 @@ from worldenergydata.field_development.cost_estimator import (
 )
 from worldenergydata.field_development.enums import ConceptType
 from worldenergydata.field_development.integrations import enrich
-from worldenergydata.field_development.layout import render_layout
+from worldenergydata.field_development.layout import layout_caption, render_layout
 from worldenergydata.field_development.models import FieldConcept
 from worldenergydata.field_development.recommendation import recommend
 
@@ -117,7 +117,7 @@ def _economics_block(economics, enriched, actuals: Optional[dict]) -> str:
         f'<div class="v">{_esc(e.dev_system or "—")}</div></div>'
         f'<div class="card"><div class="k">Est. CAPEX</div>'
         f'<div class="v">{_fmt(e.capex_mm, " $MM")}</div></div>'
-        f'<div class="card"><div class="k">Est. NPV</div>'
+        f'<div class="card"><div class="k">Undeclined oil-price proxy NPV</div>'
         f'<div class="v">{_fmt(e.npv_mm, " $MM")}</div></div>'
     )
     # Vessel feasibility from the top enriched concept.
@@ -138,6 +138,8 @@ def _economics_block(economics, enriched, actuals: Optional[dict]) -> str:
                 f'{_esc(h.mooring_component_id or "")}</div></div>'
             )
     out.append("</div>")
+    if e.note:
+        out.append(f'<p class="sub">{_esc(e.note)}</p>')
     if actuals:
         cards = "".join(
             f'<div class="card"><div class="k">{_esc(k)}</div>'
@@ -238,7 +240,7 @@ this field (where known).</p></div>
 <h2>Architecture &amp; layout ({_esc(arch.concept_type.value if arch.concept_type else "—")})</h2>
 <div class="viz">
 <figure>{block_svg}<figcaption>Subsea architecture block diagram</figcaption></figure>
-<figure>{layout_svg}<figcaption>Plan-view field layout (to scale)</figcaption></figure>
+<figure>{layout_svg}<figcaption>{_esc(layout_caption(arch))}</figcaption></figure>
 </div>
 <p class="foot">Sources: SubseaIQ field catalog (~2014) + BSEE + curated vessel/
 subsea catalogs. Schematics are deterministic, generated from the field concept.

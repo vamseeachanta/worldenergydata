@@ -1,86 +1,31 @@
 # ABOUTME: Deterministic flow-assurance risk screening for the field-dev playbook.
 # ABOUTME: Issue #642 (epic #567) — hydrate/wax/slugging/erosion screen of a concept.
-"""
-worldenergydata.field_development.flow_assurance
-================================================
+"""Deterministic hydrate, wax, slugging and liquid-erosion screening.
 
-Given a :class:`~worldenergydata.field_development.models.FieldConcept`, screen the
-four classic subsea production-chemistry / hydraulics hazards and return a
-structured :class:`FlowAssuranceAssessment`:
-
-* **Hydrate** — gas hydrates plug cold, high-pressure flowlines. Driven by low
-  seabed temperature (deep water), free/associated gas, and long tieback offsets
-  that let the fluid cool into the hydrate-stability region.
-* **Wax (paraffin)** — wax deposits once the fluid cools below its Wax Appearance
-  Temperature (WAT, aka cloud point). Driven by ``wax_appearance_temp_c`` sitting
-  above the seabed temperature; worse for long, cold offsets and heavier crudes.
-* **Slugging** — unstable multiphase (gas+liquid) flow; severe/terrain slugging in
-  long flowlines and risers, worst at low turndown rates and high GOR.
-* **Erosional velocity** — sand-free erosion when the bulk fluid velocity exceeds
-  the API RP 14E / RP 14J erosional-velocity limit (~12 ft/s for continuous-
-  service carbon steel, C = 100). Worst for high rates through small-bore lines,
-  high GOR (low mixture density raises velocity), and sour (erosion-corrosion).
-
-Design notes
-------------
-This is a **screening tool**, not a transient multiphase simulator (OLGA / LedaFlow)
-or a PVT package (PVTsim / Multiflash). It returns a *direction and a severity tier*
-to flag which hazards warrant detailed study and which mitigations to scope — it does
-not size insulation, predict plug locations, or compute steady-state hydraulics.
-
-All thresholds live in :class:`FlowAssuranceThresholds` (a frozen dataclass that
-mirrors :class:`recommendation.Thresholds`) so regional/operator signatures are
-*data, not code branches*, and every call is overridable. Screening is fully
-deterministic: identical inputs yield identical assessments. Every screen degrades
-gracefully — missing :class:`FieldConcept` fields yield a ``LOW``/neutral result
-with an explanatory ``note`` and never raise.
-
-References (rules of thumb, public domain):
-* API RP 14E / API RP 14J — erosional velocity. At screening fidelity we apply a
-  fixed limiting velocity (:attr:`FlowAssuranceThresholds.erosional_velocity_fts`,
-  default 12 ft/s for carbon steel, the ``C=100`` continuous-service value) rather
-  than computing ``Ve = C / sqrt(rho_mixture)`` — there is no mixture-density model
-  at this fidelity, so the limit is set directly and overridable per call.
-* NORSOK / general deepwater practice — ~4 C seabed thermal floor below the
-  thermocline; hydrate-stability envelope for natural gas at deepwater pressures.
+Missing essential inputs return NOT_EVALUATED; invalid threshold configuration
+raises ValueError. Incomplete assessments cannot report an overall LOW result.
+Governing equations and conventions: docs/agent-pack.md section 3 (E1 / S1).
+This screen does not calculate multiphase hydraulics or establish API compliance.
 """
 
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from enum import Enum
 from typing import Optional
 
+from worldenergydata.field_development.flow_assurance_types import (
+    FlowAssuranceAssessment,
+    FlowAssuranceRisk,
+    FlowAssuranceThresholds,
+    RiskSeverity,
+)
 from worldenergydata.field_development.models import FieldConcept
 
-# --- Unit conversions ---
 _BBL_TO_M3 = 0.158987
 _SEC_PER_DAY = 86400.0
 _IN_TO_M = 0.0254
 _M_TO_FT = 3.280839895
 
-
-class RiskSeverity(str, Enum):
-    """Ordered flow-assurance severity tier (serializes to a plain string)."""
-
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
-
-    @property
-    def rank(self) -> int:
-        """Integer ordinal for comparison/aggregation (LOW=0 … CRITICAL=3)."""
-        return _SEVERITY_RANK[self]
-
-
-_SEVERITY_RANK: dict[RiskSeverity, int] = {
-    RiskSeverity.LOW: 0,
-    RiskSeverity.MEDIUM: 1,
-    RiskSeverity.HIGH: 2,
-    RiskSeverity.CRITICAL: 3,
-}
 
 # Map an accumulated driver-point count to a severity tier. Each independent
 # physical driver (e.g. "seabed below the hydrate temperature", "long offset")
@@ -99,73 +44,7 @@ def _severity_from_points(points: int) -> RiskSeverity:
     return _POINTS_TO_SEVERITY[max(points, 0)]
 
 
-@dataclass(frozen=True)
-class FlowAssuranceThresholds:
-    """Screening thresholds, sourced to documented offshore practice.
-
-    Overridable per call so regional signatures / fluid systems are data, not code.
-    """
-
-    # Seabed temperature envelope (deepwater thermocline -> ~4 C floor).
-    seabed_temp_surface_c: float = 22.0  # near-surface seabed/intake temp
-    seabed_temp_gradient_c_per_m: float = 0.018  # falls to floor by ~1000 m
-    seabed_temp_floor_c: float = 4.0  # abyssal thermal floor
-
-    # Hydrate: natural-gas hydrate-stability temperature at deepwater pressure.
-    hydrate_formation_temp_c: float = 21.0  # below this (+ gas + water) -> hydrates
-    hydrate_deep_subcool_c: float = 10.0  # deep subcooling escalates risk
-    hydrate_gor_scf_stb: float = 2000.0  # above this, oil is gassy enough to matter
-    hydrate_long_offset_km: float = 30.0  # long offset -> more cooldown
-
-    # Wax / paraffin.
-    wax_margin_warn_c: float = 10.0  # WAT this far above seabed -> escalate
-    wax_heavy_api: float = 25.0  # heavier crudes deposit more readily
-    wax_long_offset_km: float = 30.0
-
-    # Slugging (multiphase hydraulics).
-    slugging_gor_scf_stb: float = 1000.0  # enough free gas for two-phase flow
-    slugging_long_km: float = 15.0  # long flowline -> terrain/severe slugging
-    slugging_low_rate_boed: float = 20000.0  # low turndown -> unstable flow
-
-    # Erosional velocity (API RP 14E / RP 14J). The limit is set directly (the
-    # C=100 carbon-steel continuous-service value already baked into 12 ft/s); we
-    # do not compute Ve = C/sqrt(rho) — no mixture-density model at this fidelity.
-    erosional_velocity_fts: float = 12.0  # carbon steel, continuous service (C=100)
-    erosion_high_gor_scf_stb: float = 3000.0  # high GOR -> lower mixture density
-
-
-@dataclass
-class FlowAssuranceRisk:
-    """One screened hazard: tier + the drivers that set it + scoped mitigations."""
-
-    hazard: str
-    severity: RiskSeverity
-    drivers: list[str] = field(default_factory=list)
-    mitigations: list[str] = field(default_factory=list)
-    note: str = ""
-    metrics: dict[str, float] = field(default_factory=dict)
-
-
-@dataclass
-class FlowAssuranceAssessment:
-    """Full per-hazard screen of a concept plus an aggregated view."""
-
-    hydrate: FlowAssuranceRisk
-    wax: FlowAssuranceRisk
-    slugging: FlowAssuranceRisk
-    erosion: FlowAssuranceRisk
-    overall_severity: RiskSeverity
-    mitigations: list[str] = field(default_factory=list)
-
-    @property
-    def risks(self) -> list[FlowAssuranceRisk]:
-        """The four hazard risks in a fixed, deterministic order."""
-        return [self.hydrate, self.wax, self.slugging, self.erosion]
-
-
-# --------------------------------------------------------------------------- #
 # Seabed temperature model
-# --------------------------------------------------------------------------- #
 def seabed_temperature_c(
     water_depth_m: Optional[float], th: FlowAssuranceThresholds
 ) -> Optional[float]:
@@ -191,16 +70,23 @@ def _is_gassy(concept: FieldConcept, gor_cutoff: float) -> bool:
     return concept.gor_scf_stb is not None and concept.gor_scf_stb >= gor_cutoff
 
 
-# --------------------------------------------------------------------------- #
+def _unknown_fluid(concept: FieldConcept) -> bool:
+    return concept.fluid_type is None and concept.gor_scf_stb is None
+
+
 # Hydrate
-# --------------------------------------------------------------------------- #
 def screen_hydrate_risk(
     concept: FieldConcept, th: FlowAssuranceThresholds
 ) -> FlowAssuranceRisk:
     """Screen gas-hydrate plugging risk (cold + pressure + gas + water)."""
     risk = FlowAssuranceRisk(hazard="hydrate", severity=RiskSeverity.LOW)
+    if _unknown_fluid(concept):
+        risk.severity = RiskSeverity.NOT_EVALUATED
+        risk.note = "fluid_type and gor_scf_stb unknown — cannot screen hydrate risk"
+        return risk
     seabed = seabed_temperature_c(concept.water_depth_m, th)
     if seabed is None:
+        risk.severity = RiskSeverity.NOT_EVALUATED
         risk.note = "water depth unknown — cannot estimate seabed temperature"
         return risk
     risk.metrics["seabed_temp_c"] = round(seabed, 2)
@@ -254,9 +140,7 @@ def screen_hydrate_risk(
     return risk
 
 
-# --------------------------------------------------------------------------- #
 # Wax / paraffin
-# --------------------------------------------------------------------------- #
 def screen_wax_risk(
     concept: FieldConcept, th: FlowAssuranceThresholds
 ) -> FlowAssuranceRisk:
@@ -264,9 +148,11 @@ def screen_wax_risk(
     risk = FlowAssuranceRisk(hazard="wax", severity=RiskSeverity.LOW)
     seabed = seabed_temperature_c(concept.water_depth_m, th)
     if seabed is None:
+        risk.severity = RiskSeverity.NOT_EVALUATED
         risk.note = "water depth unknown — cannot estimate seabed temperature"
         return risk
     if concept.wax_appearance_temp_c is None:
+        risk.severity = RiskSeverity.NOT_EVALUATED
         risk.note = "wax appearance temperature unknown — cannot screen wax risk"
         return risk
     risk.metrics["seabed_temp_c"] = round(seabed, 2)
@@ -318,14 +204,16 @@ def screen_wax_risk(
     return risk
 
 
-# --------------------------------------------------------------------------- #
 # Slugging (multiphase hydraulics)
-# --------------------------------------------------------------------------- #
 def screen_slugging_risk(
     concept: FieldConcept, th: FlowAssuranceThresholds
 ) -> FlowAssuranceRisk:
     """Screen multiphase slugging risk (gas+liquid, long line, low turndown)."""
     risk = FlowAssuranceRisk(hazard="slugging", severity=RiskSeverity.LOW)
+    if _unknown_fluid(concept):
+        risk.severity = RiskSeverity.NOT_EVALUATED
+        risk.note = "fluid_type and gor_scf_stb unknown — cannot screen slugging risk"
+        return risk
 
     # Slugging needs two-phase (gas+liquid) flow; near-single-phase is stable.
     if not _is_gassy(concept, th.slugging_gor_scf_stb):
@@ -378,14 +266,17 @@ def screen_slugging_risk(
     return risk
 
 
-# --------------------------------------------------------------------------- #
-# Erosional velocity (API RP 14E / RP 14J)
-# --------------------------------------------------------------------------- #
-def _bulk_velocity_fts(rate_boed: float, diameter_in: float) -> Optional[float]:
-    """Bulk fluid velocity (ft/s) from volumetric rate through a circular bore."""
-    if diameter_in <= 0:
+# Liquid velocity screening
+def _bulk_velocity_fts(rate_bpd: float, diameter_in: float) -> Optional[float]:
+    """Pack E1: Q/A for liquid bbl/day at line conditions (never gas boe/day)."""
+    if (
+        not math.isfinite(diameter_in)
+        or diameter_in <= 0
+        or not math.isfinite(rate_bpd)
+        or rate_bpd < 0
+    ):
         return None
-    q_m3_s = rate_boed * _BBL_TO_M3 / _SEC_PER_DAY
+    q_m3_s = rate_bpd * _BBL_TO_M3 / _SEC_PER_DAY
     area_m2 = math.pi / 4.0 * (diameter_in * _IN_TO_M) ** 2
     if area_m2 <= 0:
         return None
@@ -395,44 +286,48 @@ def _bulk_velocity_fts(rate_boed: float, diameter_in: float) -> Optional[float]:
 def screen_erosion_risk(
     concept: FieldConcept, th: FlowAssuranceThresholds
 ) -> FlowAssuranceRisk:
-    """Screen erosional-velocity risk vs the API RP 14E/14J limit."""
-    risk = FlowAssuranceRisk(hazard="erosion", severity=RiskSeverity.LOW)
-    if concept.plateau_rate_boed is None or concept.flowline_diameter_in is None:
-        risk.note = "plateau rate or flowline diameter unknown — cannot screen erosion"
+    """Screen one liquid flowline against configured limits; pack E1 / S1."""
+    risk = FlowAssuranceRisk(hazard="erosion", severity=RiskSeverity.NOT_EVALUATED)
+    # Pack section 3, E1: Q/A needs operating volume for one bore, not field boe/d.
+    if (
+        concept.fluid_type is None
+        or concept.fluid_type.value != "oil"
+        or concept.gor_scf_stb != 0
+    ):
+        risk.note = (
+            "liquid-only screen requires oil fluid_type and explicit zero gor_scf_stb; "
+            "gas/multiphase service not evaluated"
+        )
+        return risk
+    if concept.flowline_liquid_rate_bpd is None or concept.flowline_diameter_in is None:
+        risk.note = "flowline_liquid_rate_bpd or flowline diameter unknown — cannot screen erosion"
         return risk
 
     velocity = _bulk_velocity_fts(
-        concept.plateau_rate_boed, concept.flowline_diameter_in
+        concept.flowline_liquid_rate_bpd, concept.flowline_diameter_in
     )
     if velocity is None:
         risk.note = "invalid flowline geometry — cannot screen erosion"
         return risk
     risk.metrics["velocity_fts"] = round(velocity, 2)
     risk.metrics["erosional_velocity_fts"] = th.erosional_velocity_fts
-    ratio = velocity / th.erosional_velocity_fts if th.erosional_velocity_fts else 0.0
+    ratio = velocity / th.erosional_velocity_fts
     risk.metrics["velocity_ratio"] = round(ratio, 3)
 
     points = 0
-    if ratio >= 0.7:
+    if ratio >= th.erosion_warn_ratio:
         points += 1
         risk.drivers.append(
             f"bulk velocity {velocity:.1f} ft/s approaches the "
-            f"~{th.erosional_velocity_fts:g} ft/s erosional limit (API RP 14J)"
+            f"~{th.erosional_velocity_fts:g} ft/s configured screening limit"
         )
-    if ratio >= 1.0:
+    if ratio >= th.erosion_high_ratio:
         points += 1
-        risk.drivers.append("bulk velocity exceeds the erosional-velocity limit")
-    if ratio >= 1.5:
-        points += 1
-        risk.drivers.append("velocity well above the limit — severe erosion expected")
-    if (
-        concept.gor_scf_stb is not None
-        and concept.gor_scf_stb >= th.erosion_high_gor_scf_stb
-    ):
+        risk.drivers.append("bulk velocity reaches the configured high screening ratio")
+    if ratio >= th.erosion_critical_ratio:
         points += 1
         risk.drivers.append(
-            f"high GOR ({concept.gor_scf_stb:g} scf/stb) lowers mixture density / "
-            "raises actual velocity"
+            "bulk velocity reaches the configured critical screening ratio"
         )
     if concept.sour:
         points += 1
@@ -440,31 +335,21 @@ def screen_erosion_risk(
 
     risk.severity = _severity_from_points(points)
     if points == 0:
-        risk.note = "bulk velocity comfortably below the erosional-velocity limit"
+        risk.note = (
+            "liquid velocity below the configured screening warning ratio; "
+            "no code-compliance finding"
+        )
     else:
         risk.mitigations = [
             "increase flowline diameter to lower bulk velocity",
-            "corrosion-resistant alloy / higher API RP 14E C-factor material",
+            "review materials and corrosion allowance for the service",
             "flow-rate management / choking to stay below the erosional limit",
             "erosion-corrosion monitoring (ER probes / sand detection)",
         ]
     return risk
 
 
-# --------------------------------------------------------------------------- #
 # Top-level assessment
-# --------------------------------------------------------------------------- #
-def _dedup(items: list[str]) -> list[str]:
-    """Order-preserving de-duplication."""
-    seen: set[str] = set()
-    out: list[str] = []
-    for it in items:
-        if it not in seen:
-            seen.add(it)
-            out.append(it)
-    return out
-
-
 def assess_flow_assurance(
     concept: FieldConcept, thresholds: Optional[FlowAssuranceThresholds] = None
 ) -> FlowAssuranceAssessment:
@@ -476,8 +361,9 @@ def assess_flow_assurance(
 
     Returns:
         A :class:`FlowAssuranceAssessment` with per-hazard risks, the overall
-        (max) severity, and de-duplicated aggregated mitigations. Never raises on
-        missing inputs — unscreenable hazards return ``LOW`` with an explanatory
+        maximum evaluated severity, and aggregated mitigations. An incomplete
+        assessment with no elevated hazard returns NOT_EVALUATED. Never raises on
+        missing inputs — unscreenable hazards return ``NOT_EVALUATED`` with an explanatory
         note.
     """
     th = thresholds or FlowAssuranceThresholds()
@@ -488,7 +374,11 @@ def assess_flow_assurance(
 
     risks = [hydrate, wax, slugging, erosion]
     overall = max((r.severity for r in risks), key=lambda s: s.rank)
-    mitigations = _dedup([m for r in risks for m in r.mitigations])
+    if overall == RiskSeverity.LOW and any(
+        r.severity == RiskSeverity.NOT_EVALUATED for r in risks
+    ):
+        overall = RiskSeverity.NOT_EVALUATED
+    mitigations = list(dict.fromkeys(m for r in risks for m in r.mitigations))
     return FlowAssuranceAssessment(
         hydrate=hydrate,
         wax=wax,
