@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -27,7 +28,7 @@ def _git(root, *args):
     for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
         env.pop(key, None)
     return subprocess.run(
-        ["git", "-C", str(root), *args],
+        ["git", "-c", "core.autocrlf=false", "-C", str(root), *args],
         env=env,
         check=True,
         capture_output=True,
@@ -49,20 +50,52 @@ def _snapshot(root):
     env = os.environ.copy()
     for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
         env.pop(key, None)
-    return subprocess.run(
-        ["git", "-C", str(root), "hash-object", "-t", "commit", "-w", "--stdin"],
-        input=commit,
-        env=env,
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=30,
-    ).stdout.strip()
+    return (
+        subprocess.run(
+            ["git", "-C", str(root), "hash-object", "-t", "commit", "-w", "--stdin"],
+            input=commit.encode(),
+            env=env,
+            check=True,
+            capture_output=True,
+            timeout=30,
+        )
+        .stdout.decode("ascii")
+        .strip()
+    )
+
+
+def test_snapshot_survives_windows_stdin_translation(tmp_path, monkeypatch):
+    """Text-mode CRLF translation must not corrupt raw Git commit headers."""
+    _git(tmp_path, "init", "-q")
+    (tmp_path / "README.md").write_bytes(b"fixture\n")
+    run = subprocess.run
+
+    def windows_run(args, **kwargs):
+        if "hash-object" in args and kwargs.get("text"):
+            kwargs["input"] = kwargs["input"].replace("\n", "\r\n")
+        return run(args, **kwargs)
+
+    monkeypatch.setattr(subprocess, "run", windows_run)
+    revision = _snapshot(tmp_path)
+    assert _git(tmp_path, "cat-file", "-t", revision) == "commit"
+
+
+def test_git_preserves_lf_with_autocrlf_enabled(tmp_path):
+    """Inherited autocrlf settings must not alter checked-out helper bytes."""
+    _git(tmp_path, "init", "-q")
+    _git(tmp_path, "config", "core.autocrlf", "true")
+    script = tmp_path / "helper.py"
+    contents = b"print('fixture')\n"
+    script.write_bytes(contents)
+    revision = _snapshot(tmp_path)
+    script.unlink()
+    _git(tmp_path, "checkout", revision, "--", script.name)
+    assert script.read_bytes() == contents
 
 
 @pytest.fixture(scope="module")
 def history(tmp_path_factory):
-    """Create immutable base and head snapshots with different helper contents."""
+    """Create a live base and older event/head snapshots around helper adoption."""
     source = tmp_path_factory.mktemp("replay-history")
     _git(source, "init", "-q")
     (source / "README.md").write_text("fixture\n", encoding="utf-8")
@@ -73,8 +106,10 @@ def history(tmp_path_factory):
         "raise RuntimeError('PR helper must not execute')\n", encoding="utf-8"
     )
     with_helper = _snapshot(source)
+    # The helper is unchanged by this PR; use its bytes as the base fixture.
     helper.write_bytes((ROOT / HELPER).read_bytes())
     base = _snapshot(source)
+    _git(source, "update-ref", "refs/heads/main", base)
     return source, base, {False: without_helper, True: with_helper}
 
 
@@ -88,16 +123,53 @@ def _wrapper(job_id):
     assert checkout["uses"].startswith("actions/checkout@")
     assert checkout["if"] == replay["if"]
     assert replay["env"]["CHECK_NAME"] == job["name"]
-    assert replay["run"] == 'python scripts/ci/replay_gate.py "$CHECK_NAME"'
+    assert replay["run"].splitlines() == [
+        'echo "Replay helper revision: $(git rev-parse HEAD)"',
+        'python scripts/ci/replay_gate.py "$CHECK_NAME"',
+    ]
     assert not replay.get("continue-on-error", False)
     return checkout["with"], job["name"]
 
 
-def _checkout(tmp_path, history, has_helper, config):
+@pytest.mark.parametrize("job_id", REQUIRED)
+@pytest.mark.skipif(os.name == "nt", reason="Workflow shell runs on Linux")
+def test_replay_command_logs_revision_and_preserves_failure(tmp_path, history, job_id):
+    """Run each wrapper command; log the helper SHA and retain the CLI exit code."""
+    config, name = _wrapper(job_id)
+    runner = _checkout(tmp_path, history, False, False, config)
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    command = workflow["jobs"][job_id]["steps"][1]["run"]
+    env = os.environ.copy()
+    # Invalid context exercises the real CLI's failure without any API request.
+    env["GITHUB_EVENT_PATH"] = str(tmp_path / "absent-event.json")
+    env["CHECK_NAME"] = name
+    result = subprocess.run(
+        [
+            "bash",
+            "-e",
+            "-c",
+            f'python() {{ {shlex.quote(sys.executable)} "$@"; }}\n{command}',
+        ],
+        cwd=runner,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 1, result.stderr
+    revision, audit = result.stdout.splitlines()
+    assert revision == f"Replay helper revision: {history[1]}"
+    assert json.loads(audit) == {"decision": "FAIL", "reason": "invalid replay context"}
+
+
+def _checkout(tmp_path, history, has_helper, event_base_has_helper, config):
     """Resolve workflow inputs and sparse-check out their selected snapshot."""
     source, base, heads = history
     values = {
-        "${{ github.event.pull_request.base.sha }}": base,
+        "${{ github.event.pull_request.base.sha }}": (
+            base if event_base_has_helper else heads[False]
+        ),
+        "${{ github.event.pull_request.base.ref }}": "refs/heads/main",
         "${{ github.event.pull_request.head.sha }}": heads[has_helper],
         "${{ github.event.pull_request.base.repo.full_name }}": "example/base",
         "${{ github.event.pull_request.head.repo.full_name }}": "example/fork",
@@ -145,6 +217,9 @@ def _evidence(base, head, name, condition):
 @pytest.mark.parametrize("job_id", REQUIRED)
 @pytest.mark.parametrize("has_helper", [False, True], ids=["old-head", "helper-head"])
 @pytest.mark.parametrize(
+    "event_base_has_helper", [False, True], ids=["old-event-base", "helper-event-base"]
+)
+@pytest.mark.parametrize(
     "condition",
     [
         "valid",
@@ -157,11 +232,20 @@ def _evidence(base, head, name, condition):
     ],
 )
 def test_metadata_replay_checkout(
-    tmp_path, monkeypatch, capsys, history, job_id, has_helper, condition
+    tmp_path,
+    monkeypatch,
+    capsys,
+    history,
+    job_id,
+    has_helper,
+    event_base_has_helper,
+    condition,
 ):
     """Only exact, current evidence passes, regardless of the PR helper's presence."""
     config, name = _wrapper(job_id)
-    runner = _checkout(tmp_path, history, has_helper, config)
+    runner = _checkout(tmp_path, history, has_helper, event_base_has_helper, config)
+    _, base, heads = history
+    assert _git(runner, "rev-parse", "HEAD") == base
     script = runner / HELPER
     assert script.read_bytes() == (ROOT / HELPER).read_bytes()
     # Distinct identities catch accidental checkout of a fork's base revision.
@@ -171,7 +255,6 @@ def test_metadata_replay_checkout(
     spec = importlib.util.spec_from_file_location("checked_out_replay", script)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    _, base, heads = history
     head = heads[has_helper]
     event_path = tmp_path / "event.json"
     event_path.write_text(
@@ -181,7 +264,11 @@ def test_metadata_replay_checkout(
                 "pull_request": {
                     "number": 7,
                     "head": {"sha": head},
-                    "base": {"ref": "main", "sha": base, "repo": {"id": 1}},
+                    "base": {
+                        "ref": "main",
+                        "sha": base if event_base_has_helper else heads[False],
+                        "repo": {"id": 1},
+                    },
                 },
             }
         ),
@@ -197,6 +284,8 @@ def test_metadata_replay_checkout(
     assert result == (0 if condition == "valid" else 1), audit
     assert audit["decision"] == ("PASS" if condition == "valid" else "FAIL")
     assert audit["head"] == head  # Evidence stays bound to the PR, not the helper SHA.
+    if condition == "missing_marker":
+        assert audit["reason"] == "full run without base-tip evidence"
     if condition == "valid":
         assert audit["run_id"] == 90
         assert audit["attempt"] == 2
