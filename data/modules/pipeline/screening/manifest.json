@@ -1,51 +1,27 @@
 {
   "artifacts": [
     {
-      "bytes": 50705,
+      "bytes": 50947,
       "path": "qa.html",
-      "sha256": "211cbd3ced2077761a7bbf32cef68ea811d577879645540615fbc7d3c24afb22"
+      "sha256": "cae6c186a99b814bb6ce7823d3a3e9de93553943be735bcada90e13de7b85a85"
     },
     {
-      "bytes": 39032,
+      "bytes": 39037,
       "path": "qa.json",
-      "sha256": "7781436a19a072f81641f203f65172ca10c2ac9d2feec513a386dacfa7ed4b10"
+      "sha256": "81fdb80d1ff2f405063da73831b1c42ba14315e2a2adbf344712dabe46f0e3ae"
     },
     {
-      "bytes": 137129,
+      "bytes": 147191,
       "path": "sample.csv",
-      "sha256": "82e2a267fece051c2e24755f3feaca4009d9d3b39b3a8194355548ec33a6399a"
+      "sha256": "340e90d84e5e04698369a22fc7f7e5863520929e3d8e9ce8f7cd36a3ac401544"
     },
     {
-      "bytes": 400255,
+      "bytes": 400223,
       "path": "sources.json",
-      "sha256": "772e6c68fa9a82f598a83839151bad854aa552fb137a6ee4a0fedfa4a3befcaf"
+      "sha256": "74990f63b9b55c7b73e4e5f60b677634bf36a4431cd31538faf6a134e869ae3a"
     }
   ],
   "criteria": {
-    "code_sha256": {
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py": "f9f39d610730266a59deb6732c62a5bc49159ba1351e476b25587920b2165614",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py": "2de8aee0002a0657401a1e4b746db5b4a45a60458f18caa326674ed57c3b1a18",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py": "85699b66840256156632f20934fc60b07965147b2b54b40f1d2c7539f360dc1b",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/units.py": "669419cf5ea20eac3be69ffb7a75bcb50ea13a594ce27d460bb2e717f6b1eb73",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening.py": "eb54cf72e58d66c03c5e109c096002e5fcf842c772c813aecf96e219e6a12555",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_common.py": "ef700e579e4bee33b97637ef6a2f65428cae2f4a7ca48dfee071527cc15f0989",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_environment.py": "6db38522ac9969350c40e8424557cafedb2a818e160eef1534f733dae354189d",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_io.py": "60fbff484f35b3bd5986fb6b8497aedf54c21b77d8393ab4ef5de6ffecab0ccd",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_metadata.py": "d04a0cf9be745ec41447490758d5b2a7757e9631b622b4731dc788b591ae20f8",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_page.py": "b17b878925a54cdf587fdabba59db6518d66d7d7b6a5ae4e4a294fc8018a8880",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_qa.py": "304b185322706fef742bd928ac868cc1f801534060cf56a2f229aeab29fdba0c",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_sources.py": "5079fd66c6a6c656b111227e06a88563ab8df344fef3b6f37888b7ae5f663dee",
-      "packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py": "67a1a4f3d2a6db2d58953268630424047945f73f173de90170474626aee5c643",
-      "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py": "3806f7ffc9e0515a273f3045a0bcf93884af68c4fffafa99acd7b5b248fedc89",
-      "scripts/bsee/build_pipeline_screening.py": "aae9b4e74df1da1e254c92d2350a3a119aad9617b1e385c442751892a8a8c7e0"
-    },
-    "defaults_sha256": "04d84338d60521f295f93e7f6df37366a8b785c19b0330d6fa3338fea9fbaa19",
-    "first_run_started_at": "2026-10-18T00:00:31.306677+00:00",
-    "recorded_at": "2026-10-18T00:00:31.306280+00:00",
-    "revision_sha256": "8a2ded781b655e9e1c7da484b757daa0753469c0461a74ba2c164f750e4ee9c8",
-    "schema_sha256": "a5237748501bbfaf8ada19192e6fd0b2422ef433f74b403b78febf1db8bca2ba"
-  },
-  "current_generator_criteria": {
     "code_sha256": {
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py": "f9f39d610730266a59deb6732c62a5bc49159ba1351e476b25587920b2165614",
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py": "2de8aee0002a0657401a1e4b746db5b4a45a60458f18caa326674ed57c3b1a18",
@@ -59,12 +35,14 @@
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_page.py": "b17b878925a54cdf587fdabba59db6518d66d7d7b6a5ae4e4a294fc8018a8880",
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_qa.py": "304b185322706fef742bd928ac868cc1f801534060cf56a2f229aeab29fdba0c",
       "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_sources.py": "5079fd66c6a6c656b111227e06a88563ab8df344fef3b6f37888b7ae5f663dee",
-      "packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py": "67a1a4f3d2a6db2d58953268630424047945f73f173de90170474626aee5c643",
+      "packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py": "b164bcdc4a37663e68883d7fbef2a9917ba84c3d109ad4f585bd54c87507dda3",
       "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py": "5217fc9fd2f6f4f7da04c3506a4ca9e22d9ed131b50e4b9e05fa4d538f9ed013",
-      "scripts/bsee/build_pipeline_screening.py": "aae9b4e74df1da1e254c92d2350a3a119aad9617b1e385c442751892a8a8c7e0"
+      "scripts/bsee/build_pipeline_screening.py": "bb0f7dcd84483175fb70d0dea014e9d635e56ab0f6e9c32b523cdda388208ede"
     },
     "defaults_sha256": "04d84338d60521f295f93e7f6df37366a8b785c19b0330d6fa3338fea9fbaa19",
-    "revision_sha256": "8a2ded781b655e9e1c7da484b757daa0753469c0461a74ba2c164f750e4ee9c8",
+    "first_run_started_at": "2026-10-18T13:51:27.955121+00:00",
+    "recorded_at": "2026-10-18T13:51:27.954835+00:00",
+    "revision_sha256": "2ee30d47fa5124e7e824843baeda6357a03ee33a8310392a88dd7364ae213ede",
     "schema_sha256": "96aad9dadf1a95328c040c7a23d56637be066bde7b641fcf531f6530d0bb3c9a"
   },
   "dataset_id": "pipeline-screening",
@@ -174,7 +152,7 @@
       "terms_of_use": {
         "limitations": "Credit the source; third-party materials may have separate rights. DS 146 extracted-table Use_Constraints requires metadata and source attribution.",
         "statement": "Public domain data from the U.S. Government are freely redistributable with proper metadata and source attribution.",
-        "url": "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip#gmx_extmeta.txt"
+        "url": "https://pubs.usgs.gov/ds/2006/146/"
       },
       "title": "usSEABED: Gulf of Mexico and Caribbean (Puerto Rico and U.S. Virgin Islands) Offshore Surficial Sediment Data Release, version 1.0",
       "url": "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip"
@@ -8543,40 +8521,21 @@
   "intended_use": "screening_inventory_only",
   "owner": "worldenergydata",
   "payload": {
-    "blob": "data/worldenergydata/blobs/sha256/57/5782577eaf53a4f3233ff8a5fe688c5836f08574cdfb898c88ff1d3825233433.csv",
-    "bytes": 12156405,
+    "blob": "data/worldenergydata/blobs/sha256/76/76bd156164d10f8b34651ab7297ff7635331e0486be49a47fa775d4b6294818f.csv",
+    "bytes": 12987165,
     "disposition": "MOVE",
     "path": "full.csv",
     "path_scope": "external_destination",
     "re_downloadable": false,
     "regenerator": "scripts/bsee/build_pipeline_screening.py",
     "second_copy_status": "not_verified",
-    "sha256": "5782577eaf53a4f3233ff8a5fe688c5836f08574cdfb898c88ff1d3825233433"
+    "sha256": "76bd156164d10f8b34651ab7297ff7635331e0486be49a47fa775d4b6294818f"
   },
   "readiness_status": "partial",
-  "revision": "2",
+  "revision": "3",
   "rows": 8576,
   "sample_rows": 100,
   "schema_version": "1",
-  "snapshot": {
-    "built_from_revision": "f5f57e0bb99e8d7910365499b4e259b80323bad5",
-    "changed_since_build": [
-      "data/modules/pipeline/screening/schema.yaml",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_environment.py",
-      "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening_metadata.py",
-      "packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py"
-    ],
-    "criteria_field": "criteria",
-    "current_generator_criteria_field": "current_generator_criteria",
-    "limitations": [
-      "The criteria field pins the historical build, not the current generator.",
-      "The current_generator_criteria field records current file digests only; it does not certify a production rebuild or current-output reproducibility.",
-      "The sample, QA, source register and external payload remain the historical snapshot. Rows without a station retain historical zero counts; the source register retains the historical USGS terms link.",
-      "Regeneration requires the digest-pinned station snapshot and retained observation histories; replacement downloads are not equivalent inputs.",
-      "Artifact size and digest checks establish retained file integrity only; external payload readback and two current production builds have not been verified."
-    ],
-    "regeneration_required": true
-  },
   "source_freshness": {
     "reason": "Publisher effective dates and observation coverage are not qualified by the collector.",
     "state": "unverified"

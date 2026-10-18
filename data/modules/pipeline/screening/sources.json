@@ -104,7 +104,7 @@
     "terms_of_use": {
       "limitations": "Credit the source; third-party materials may have separate rights. DS 146 extracted-table Use_Constraints requires metadata and source attribution.",
       "statement": "Public domain data from the U.S. Government are freely redistributable with proper metadata and source attribution.",
-      "url": "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip#gmx_extmeta.txt"
+      "url": "https://pubs.usgs.gov/ds/2006/146/"
     },
     "title": "usSEABED: Gulf of Mexico and Caribbean (Puerto Rico and U.S. Virgin Islands) Offshore Surficial Sediment Data Release, version 1.0",
     "url": "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip"

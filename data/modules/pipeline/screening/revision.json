@@ -1,5 +1,5 @@
 {
-  "revision": "2",
+  "revision": "3",
   "history": [
     {
       "revision": "1",
@@ -12,6 +12,12 @@
       "date": "2026-10-17",
       "changed": "Apply I-0248 and resolve screening review findings",
       "why": "Separate unknown installed properties from assumptions and qualify environmental estimates and provenance"
+    },
+    {
+      "revision": "3",
+      "date": "2026-10-18",
+      "changed": "Replay retained inputs with corrected missing-station counts and source terms link",
+      "why": "Align the committed sample, QA and payload with the current generator and portable criteria digests"
     }
   ]
 }

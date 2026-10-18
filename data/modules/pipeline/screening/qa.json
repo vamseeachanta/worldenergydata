@@ -2,9 +2,9 @@
   "by_field": {
     "complete_annual_maxima": {
       "DEFAULT": 0,
-      "DERIVED": 8576,
+      "DERIVED": 2136,
       "PUBLIC": 0,
-      "UNKNOWN": 0
+      "UNKNOWN": 6440
     },
     "concrete_density_kg_m3": {
       "DEFAULT": 0,
@@ -188,9 +188,9 @@
     },
     "retained_observations": {
       "DEFAULT": 0,
-      "DERIVED": 8576,
+      "DERIVED": 2136,
       "PUBLIC": 0,
-      "UNKNOWN": 0
+      "UNKNOWN": 6440
     },
     "route_rejection_reason": {
       "DEFAULT": 0,
@@ -1493,8 +1493,8 @@
   },
   "source_classes": {
     "DEFAULT": 62600,
-    "DERIVED": 109452,
+    "DERIVED": 96572,
     "PUBLIC": 43910,
-    "UNKNOWN": 187110
+    "UNKNOWN": 199990
   }
 }

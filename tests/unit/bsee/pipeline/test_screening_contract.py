@@ -7,17 +7,15 @@ from pathlib import Path
 import pytest
 
 
-def test_committed_snapshot_identifies_historical_build():
+def test_committed_snapshot_artifacts_match_current_build():
     root = Path(__file__).parents[4]
     directory = root / "data/modules/pipeline/screening"
     manifest = json.loads((directory / "manifest.json").read_text())
-    snapshot = manifest["snapshot"]
-    assert snapshot["built_from_revision"].startswith("f5f57e0b")
-    assert len(snapshot["built_from_revision"]) == 40
-    assert snapshot["regeneration_required"] is True
-    assert snapshot["criteria_field"] == "criteria"
-    assert snapshot["current_generator_criteria_field"] == "current_generator_criteria"
-    assert snapshot["limitations"]
+    # A replayed snapshot uses its actual build criteria, without a second
+    # inventory that describes a generator which did not produce the data.
+    assert "snapshot" not in manifest
+    assert "current_generator_criteria" not in manifest
+    assert manifest["criteria"]["first_run_started_at"]
     for artifact in manifest["artifacts"]:
         content = (directory / artifact["path"]).read_bytes()
         assert len(content) == artifact["bytes"]
@@ -34,23 +32,17 @@ def test_committed_manifest_tracks_current_generator_criteria(tmp_path):
     build = runpy.run_path(str(root / "scripts/bsee/build_pipeline_screening.py"))
     current = build["_criteria"](tmp_path / "criteria.json")
     expected = {key: value for key, value in current.items() if key.endswith("sha256")}
-    assert manifest["current_generator_criteria"] == expected
-    historical = manifest["criteria"]
-    differences = {
-        path
-        for path, digest in expected["code_sha256"].items()
-        if historical["code_sha256"][path] != digest
+    committed = {
+        key: value
+        for key, value in manifest["criteria"].items()
+        if key.endswith("sha256")
     }
-    differences.update(
-        "data/modules/pipeline/screening/" + name
-        for name, key in (
-            ("schema.yaml", "schema_sha256"),
-            ("defaults.yaml", "defaults_sha256"),
-            ("revision.json", "revision_sha256"),
-        )
-        if historical[key] != expected[key]
+    changed = build["criteria_changes"](committed, expected)
+    assert committed == expected, (
+        f"Screening criteria differ at {', '.join(changed)}. "
+        "Reconcile the changed paths and regenerate the committed snapshot "
+        "with a new execution record; do not replace digests without replay."
     )
-    assert sorted(differences) == manifest["snapshot"]["changed_since_build"]
 
 
 @pytest.fixture

@@ -65,6 +65,26 @@ def _arguments():
     return parser.parse_args()
 
 
+def criteria_changes(saved, current):
+    """Name criteria paths requiring reconciliation, including shared modules."""
+    previous, actual = saved.get("code_sha256", {}), current["code_sha256"]
+    paths = {
+        path
+        for path in previous.keys() | actual.keys()
+        if previous.get(path) != actual.get(path)
+    }
+    paths.update(
+        f"data/modules/pipeline/screening/{name}"
+        for name, key in (
+            ("schema.yaml", "schema_sha256"),
+            ("defaults.yaml", "defaults_sha256"),
+            ("revision.json", "revision_sha256"),
+        )
+        if saved.get(key) != current[key]
+    )
+    return sorted(paths)
+
+
 def _criteria(path):
     files = [
         CONFIG / name for name in ("schema.yaml", "defaults.yaml", "revision.json")
@@ -106,8 +126,13 @@ def _criteria(path):
     }
     if path.exists():
         saved = json.loads(path.read_text())
-        if any(saved[key] != value for key, value in current.items()):
-            raise ValueError("Criteria or code digest mismatch")
+        changed = criteria_changes(saved, current)
+        if changed:
+            raise ValueError(
+                "Criteria or code digest mismatch: "
+                + ", ".join(changed)
+                + ". Reconcile changed inputs and regenerate with a new execution record."
+            )
         return saved
     current["recorded_at"] = datetime.now(timezone.utc).isoformat()
     _write_once(path, _json_bytes(current))

@@ -26,3 +26,17 @@
 *.o binary
 *.a binary
 
+# Screening digests and readback use these exact LF bytes on every platform.
+data/modules/pipeline/screening/*.yaml text eol=lf
+data/modules/pipeline/screening/*.json text eol=lf
+data/modules/pipeline/screening/*.csv text eol=lf
+data/modules/pipeline/screening/*.html text eol=lf
+scripts/bsee/*pipeline_screening.py text eol=lf
+tests/unit/bsee/pipeline/test_screening*.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline_screening*.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/units.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py text eol=lf
+packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py text eol=lf
+packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/ndbc_client.py text eol=lf
+packages/worldenergydata-metocean/src/worldenergydata/metocean/statistics/eva.py text eol=lf
