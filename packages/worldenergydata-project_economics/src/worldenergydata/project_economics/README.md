@@ -1,8 +1,8 @@
-# project_economics - Field Development Analysis System
+# Project economics
 
 ## Overview
 
-The Field Development Analysis System (project_economics) module provides comprehensive economic analysis for offshore oil & gas field developments. It calculates financial metrics (NPV, MIRR, IRR, payback) based on production forecasts, drilling schedules, and cost assumptions.
+The project economics module provides comprehensive economic analysis for offshore oil & gas field developments. It calculates financial metrics (NPV, MIRR, IRR, payback) based on production forecasts, drilling schedules, and cost assumptions.
 
 **Key Features:**
 - ✅ Excel-compatible NPV/MIRR/IRR calculations (100% validated)

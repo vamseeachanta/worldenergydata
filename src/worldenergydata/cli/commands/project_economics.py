@@ -1,7 +1,7 @@
 """
 project_economics CLI Commands
 
-Provides command-line interface for Field Development Analysis System (project_economics)
+Provides command-line interface for project economics (project_economics)
 including NPV calculations, MIRR analysis, and comprehensive financial modeling.
 
 Usage:
@@ -30,7 +30,7 @@ console = Console()
 # Create project_economics Typer app
 app = typer.Typer(
     name="project_economics",
-    help="Field Development Analysis System",
+    help="Project economics",
     no_args_is_help=True,
 )
 
@@ -442,7 +442,7 @@ def analyze(
     ),
 ) -> None:
     """
-    Perform comprehensive field development analysis.
+    Perform comprehensive project economics analysis.
 
     Integrates BSEE data with financial modeling to provide complete
     economic analysis of field development.
@@ -660,7 +660,7 @@ def classify(
 def info() -> None:
     """Display information about the project_economics module."""
     info_panel = Panel(
-        """[bold cyan]Field Development Analysis System (project_economics)[/bold cyan]
+        """[bold cyan]Project economics (project_economics)[/bold cyan]
 
 [yellow]Purpose:[/yellow]
 Comprehensive financial analysis for deepwater field development,
@@ -699,7 +699,7 @@ See project_economics module documentation for detailed usage""",
 @app.callback()
 def callback() -> None:
     """
-    Field Development Analysis System (project_economics).
+    Project economics (project_economics).
 
     Perform comprehensive financial analysis for deepwater field development
     including NPV, MIRR, IRR calculations, and integration with BSEE data.

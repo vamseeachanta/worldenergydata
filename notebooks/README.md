@@ -35,4 +35,4 @@ SODIR and EIA fetch from public APIs and require network access (or cached data)
 
 | File | Description |
 |------|-------------|
-| `gtm_production_decline_forecast.ipynb` | GTM demo: Arps decline curve + EUR + project_economics economics |
+| `gtm_production_decline_forecast.ipynb` | GTM demo: Arps decline curve + EUR + project economics |

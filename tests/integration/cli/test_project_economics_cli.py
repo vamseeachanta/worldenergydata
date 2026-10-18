@@ -1,7 +1,7 @@
 """
 Integration tests for the project_economics CLI commands.
 
-Tests Field Development Analysis System (project_economics) CLI functionality
+Tests Project economics (project_economics) CLI functionality
 including NPV, MIRR, IRR calculations, and classification commands.
 """
 
@@ -28,16 +28,24 @@ class TestProjectEconomicsCLIHelp:
         output_lower = result.output.lower()
         assert any(cmd in output_lower for cmd in ["npv", "mirr", "irr", "classify"])
 
-    def test_project_economics_help_shows_description(self):
-        """Test that project_economics --help shows module description."""
-        result = runner.invoke(app, ["project_economics", "--help"])
-        # Should include project_economics-related description
-        output_lower = result.output.lower()
-        assert (
-            "project_economics" in output_lower
-            or "field" in output_lower
-            or "development" in output_lower
-        )
+    @pytest.mark.parametrize(
+        "args",
+        [
+            ["--help"],
+            ["info"],
+            ["project_economics", "--help"],
+            ["project_economics", "info"],
+            ["project_economics", "analyze", "--help"],
+        ],
+    )
+    def test_project_economics_help_shows_description(self, args):
+        """Public help and information use the neutral module description."""
+        result = runner.invoke(app, args)
+        assert result.exit_code == 0
+        output_lower = " ".join(result.output.lower().split())
+        assert "project economics" in output_lower
+        legacy_expansion = " ".join(["field", "development", "analysis", "system"])
+        assert legacy_expansion not in output_lower
 
 
 class TestProjectEconomicsCalculateNPV:

@@ -17,7 +17,7 @@ Modules:
 --------
     bsee          - BSEE data operations and analysis
     marine-safety - Marine safety incident data
-    project_economics          - Field Development Analysis System
+    project_economics          - Project economics
 
 Examples:
 ---------

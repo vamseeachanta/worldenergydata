@@ -29,7 +29,7 @@ Modules:
     bsee          - BSEE (Bureau of Safety and Environmental Enforcement) data
                     including well production, directional surveys, and reports
     marine-safety - Marine safety incident data from USCG, NTSB, MAIB, TSB
-    project_economics          - Field Development Analysis System for NPV, MIRR, IRR
+    project_economics          - Project economics for NPV, MIRR, IRR
 
 Global Commands:
     version       - Display version information
@@ -102,7 +102,7 @@ app.add_typer(
 app.add_typer(
     project_economics.app,
     name="project_economics",
-    help="Field Development Analysis System",
+    help="Project economics",
 )
 app.add_typer(
     lower_tertiary.app,
@@ -206,7 +206,7 @@ def info() -> None:
     )
     table.add_row(
         "project_economics",
-        "Field Development Analysis System",
+        "Project economics",
         "calculate-npv, calculate-mirr, analyze",
     )
     table.add_row(

@@ -307,7 +307,7 @@ class TestCalculateAllMetrics:
         assert metrics_15["npv"] < metrics_10["npv"]
 
 
-class TestRegressionAgainstproject_economics:
+class TestRegressionAgainstProjectEconomics:
     """Regression tests against known project_economics results"""
 
     def test_anchor_field_example(self):

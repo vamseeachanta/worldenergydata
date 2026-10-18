@@ -38,8 +38,8 @@
 
 **Changes Made:**
 ```markdown
-BEFORE: "project_economics (Field Development Analysis System) V30 is Roy's latest..."
-AFTER:  "project_economics (Field Development Analysis System) is Roy's financial..."
+BEFORE: "Project economics V30 is the latest..."
+AFTER:  "Project economics is the financial..."
 
 BEFORE: "**ROI:** > 250x in first year (if decision quality benefit realized)"
 AFTER:  "**ROI:** 25-250x in first year (conservative to optimistic scenarios)"

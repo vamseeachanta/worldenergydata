@@ -116,7 +116,7 @@ modules:
     related_wrk: [WRK-163, WRK-198, WRK-249]
 
   - id: project_economics
-    name: "Field Development Analysis System"
+    name: "Project economics"
     package: "worldenergydata.project_economics"
     region: [gulf_of_mexico, usa]
     domain: [economics, production]

@@ -167,7 +167,7 @@ worldenergydata marine-safety stats --verbose
 ```
 
 ### project_economics Module (`worldenergydata project_economics`)
-Field Development Analysis System for deepwater project economics:
+Project economics for deepwater developments:
 - Excel-compatible MIRR calculations
 - NPV with customizable discount rates
 - IRR calculations (monthly/annual)

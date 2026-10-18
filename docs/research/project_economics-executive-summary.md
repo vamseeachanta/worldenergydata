@@ -3,7 +3,7 @@
 
 ## What is project_economics?
 
-project_economics (Field Development Analysis System) is Roy's financial analysis codebase for deepwater oil & gas field development. It provides:
+Project economics is the financial analysis codebase for deepwater oil & gas field development. It provides:
 
 - **NPV/MIRR Analysis:** Excel-compatible financial metrics
 - **Cashflow Modeling:** Monthly cashflow projections by development

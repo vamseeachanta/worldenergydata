@@ -1,5 +1,5 @@
 """
-project_economics (Field Development Analysis System) Module
+Project economics module
 
 Provides comprehensive financial analysis capabilities for deepwater field
 development, including NPV/MIRR calculations, cashflow modeling, and

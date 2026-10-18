@@ -1,6 +1,6 @@
 # worldenergydata-project_economics
 
-Source-agnostic **Field Development Analysis System (project_economics)** economics engine
+Source-agnostic **project economics** engine
 for the `worldenergydata` namespace — NPV / MIRR / IRR, monthly cashflow
 modelling, and a **country fiscal-terms deck layer**.
 

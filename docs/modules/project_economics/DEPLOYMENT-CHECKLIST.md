@@ -2,7 +2,7 @@
 
 ## Overview
 
-This checklist documents the complete implementation and deployment of the Field Development Analysis System (project_economics) module into the WorldEnergyData repository.
+This checklist documents the complete implementation and deployment of the project economics module into the WorldEnergyData repository.
 
 **Source**: Roy's latest project_economics code from `/home/vamsee/Downloads/project_economics_V30`
 **Target**: `src/worldenergydata/modules/project_economics/`

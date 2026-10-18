@@ -26,7 +26,7 @@ worldenergydata/
 └── modules/                 # Domain-specific modules
     ├── bsee/                # BSEE data module
     ├── marine_safety/       # Marine safety module
-    ├── project_economics/                # Field Development Analysis System
+    ├── project_economics/                # Project economics
     ├── hse/                 # HSE (Health, Safety, Environment)
     └── vessel_hull_models/  # Vessel hull model data
 ```

@@ -5,7 +5,7 @@ Each module provides subcommands for a specific domain:
 - dashboard: Plotly Dash web dashboard for BSEE/project_economics data
 - eia: EIA API v2 weekly petroleum and gas feed ingestion
 - marine_safety: Marine safety incident data
-- project_economics: Field development analysis system
+- project_economics: Project economics
 - ndbc: NDBC buoy data — scatter matrices, Weibull fits, wave roses (WRK-316)
 - sodir: SODIR (Norwegian Offshore Directorate) data operations
 - metocean: Metocean data (buoys, tides, marine weather)

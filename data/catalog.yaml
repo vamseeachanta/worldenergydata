@@ -882,7 +882,7 @@ modules:
       last_modified: '2026-01-18T13:52:22+00:00'
   project_economics:
     module: project_economics
-    description: Field Development Analysis System - enhanced well data [4.4 MB]
+    description: Project economics - enhanced well data [4.4 MB]
     datasets:
     - name: well_data_enhanced.csv
       path: data/modules/project_economics/enhanced/wells/well_data_enhanced.csv

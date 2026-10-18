@@ -294,7 +294,7 @@ worldenergydata marine-safety info
 
 ## project_economics Module
 
-Field Development Analysis System.
+Project economics.
 
 ```bash
 worldenergydata project_economics --help

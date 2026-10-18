@@ -92,7 +92,7 @@ _UNIT_HINTS = {
 }
 _MODULE_DESC = {
     "bsee": "Bureau of Safety and Environmental Enforcement - GOM data",
-    "project_economics": "Field Development Analysis System - enhanced well data",
+    "project_economics": "Project economics - enhanced well data",
     "hse": "Health, Safety and Environment incident data",
     "lng_terminals": "Global LNG terminal infrastructure data",
     "marine_safety": "Maritime casualty and safety incident data",

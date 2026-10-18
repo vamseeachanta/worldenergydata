@@ -287,7 +287,7 @@ class TestBSEECompaniesQuery:
 # ==========================================================================
 
 
-class TestProjectEconomicsEconomicsQuery:
+class TestProjectEconomicsQuery:
     """Tests for worldenergydata.project_economics.api.EconomicsQuery."""
 
     def test_import_economics_query(self):
