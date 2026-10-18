@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import csv
 import hashlib
-import html
 import io
 import json
 import math
@@ -12,15 +11,18 @@ import re
 from collections import Counter
 from pathlib import Path
 
-_SOURCE = re.compile(r"^(PUBLIC|DERIVED|DEFAULT):[A-Za-z0-9_.-]+$")
-_CLASSES = ("PUBLIC", "DERIVED", "DEFAULT")
+from worldenergydata.bsee.pipeline_screening_page import _qa_page
+from worldenergydata.bsee.pipeline_screening_qa import engineering_qa, stratified_sample
+
+_SOURCE = re.compile(r"^(PUBLIC|DERIVED|DEFAULT|UNKNOWN):[A-Za-z0-9_.-]+$")
+_CLASSES = ("PUBLIC", "DERIVED", "DEFAULT", "UNKNOWN")
 
 
 def qa_counts(rows):
     """Count data cells by provenance class; reject missing or orphan sources."""
     classes = Counter()
     fields = {key for key in rows[0] if not key.endswith("_source")} if rows else set()
-    by_field = {key: dict.fromkeys((*_CLASSES, "unknown"), 0) for key in sorted(fields)}
+    by_field = {key: dict.fromkeys(_CLASSES, 0) for key in sorted(fields)}
     expected = fields | {key + "_source" for key in fields}
     for row in rows:
         if set(row) != expected:
@@ -34,8 +36,12 @@ def qa_counts(rows):
             category = source.split(":", 1)[0]
             classes[category] += 1
             by_field[key][category] += 1
-            by_field[key]["unknown"] += row[key] is None
+            if (row[key] is None) != (category == "UNKNOWN"):
+                raise ValueError(
+                    "Null values require UNKNOWN provenance, and UNKNOWN requires null"
+                )
     return {
+        **engineering_qa(rows),
         "rows": len(rows),
         "segments": len({row["segment_id"] for row in rows}),
         "source_classes": {key: classes[key] for key in _CLASSES},
@@ -79,69 +85,17 @@ def _write_once(path, payload):
         raise ValueError("Output readback differs")
 
 
-def _table(headers, rows, caption):
-    headings = "".join(f"<th>{html.escape(str(value))}</th>" for value in headers)
-    body = "".join(
-        "<tr>"
-        + "".join(f"<td>{html.escape(str(value))}</td>" for value in row)
-        + "</tr>"
-        for row in rows
-    )
-    return f"<table><thead><tr>{headings}</tr></thead><tbody>{body}</tbody></table><p>{html.escape(caption)}</p>"
-
-
-def _qa_page(counts, revision):
-    history = _table(
-        ("Revision", "Date", "What changed", "Why"),
-        [
-            [row[key] for key in ("revision", "date", "changed", "why")]
-            for row in revision["history"]
-        ],
-        "Table 1. Revision history.",
-    )
-    classes = _table(
-        ("Source class", "Cells (count)"),
-        counts["source_classes"].items(),
-        "Table 2. Data cells by source class; source columns are excluded.",
-    )
-    fields = _table(
-        (
-            "Field",
-            "Public (cells)",
-            "Derived (cells)",
-            "Default (cells)",
-            "Unknown (cells)",
-        ),
-        [
-            [key, *(values[k] for k in (*_CLASSES, "unknown"))]
-            for key, values in counts["by_field"].items()
-        ],
-        "Table 3. Provenance and unknown values by field. Unknown is a null, distinct from zero.",
-    )
-    return (
-        '<!doctype html>\n<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">'
-        "<title>Pipeline screening database QA</title><style>body{font:16px system-ui;margin:2rem;max-width:90rem;color:#17212b}"
-        "table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:.4rem;text-align:left}h2{margin-top:2rem}</style>"
-        f'<body data-revision="{html.escape(revision["revision"])}"><h1>Pipeline screening database QA</h1>'
-        f'<h2>Summary</h2><p>{counts["rows"]} case rows represent {counts["segments"]} screening-selected segments. '
-        "This is a screening input inventory. It does not establish installed properties or stability acceptance.</p>"
-        "<h2>Revision history</h2>"
-        + history
-        + "<h2>Source counts</h2>"
-        + classes
-        + fields
-        + "<h2>Limits</h2><ul><li>Published abandoned, removed and out meanings supplement the existing inactive-status rule. Dictionary-undefined codes are excluded. Cancelled, combined and proposed statuses can remain under this exclusion rule; selection does not establish installation or present operation. Identical permit engineering joins collapse; conflicting values reject.</li>"
-        "<li>Geometry uses published coordinates and spherical distances; no datum transformation is performed.</li><li>Maximum depth cannot establish minimum depth; absent burial design is not exposed design.</li>"
-        "<li>Nominal size can be an OD proxy. Hoop sizing includes no design factor, corrosion allowance, tolerance or collapse check.</li>"
-        "<li>Local schedule lookup does not establish installed wall. Public outputs require source rights and edition qualification.</li>"
-        "<li>NDBC fits are independent marginal extrapolations. Retained record span does not establish coverage, coincident design conditions or site transfer.</li>"
-        "<li>Nearest sediment texture does not establish route geotechnical properties. Sample distance is retained; friction is a labelled assumption.</li>"
-        "<li>Unknown coating, concrete and contents properties require an evidenced basis before use in stability calculations.</li>"
-        "<li>Current and wave direction defaults do not establish seabed storm conditions.</li></ul></body></html>\n"
-    ).encode()
-
-
 def _source_metadata(entry):
+    required = ("title", "publisher", "terms_of_use", "url", "retrieved_at")
+    if any(not entry.get(key) for key in required):
+        raise ValueError("Missing required source metadata")
+    terms = entry["terms_of_use"]
+    if (
+        not isinstance(terms, dict)
+        or not terms.get("statement")
+        or not terms.get("url")
+    ):
+        raise ValueError("Missing required source metadata terms")
     value = dict(entry)
     value.setdefault(
         "source_version",
@@ -181,17 +135,24 @@ def _payload_manifest(rows, revision, inputs, full):
         "sample_rows": min(100, len(rows)),
         "inputs": [_source_metadata(entry) for entry in inputs],
         "payload": {
-            "path": "data/modules/pipeline/screening/full.csv",
+            "path": "full.csv",
+            "path_scope": "external_destination",
             "bytes": len(full),
             "sha256": digest,
             "blob": blob,
             "disposition": "MOVE",
-            "re_downloadable": True,
+            "re_downloadable": False,
             "regenerator": "scripts/bsee/build_pipeline_screening.py",
             "second_copy_status": "not_verified",
         },
     }
     return manifest
+
+
+def _validate_revision(revision):
+    history = revision.get("history", [])
+    if not history or history[-1].get("revision") != revision.get("revision"):
+        raise ValueError("Declared revision differs from newest revision history row")
 
 
 def write_artifacts(
@@ -204,12 +165,12 @@ def write_artifacts(
     store_root=None,
     criteria=None,
     source_register=None,
+    selection_counts=None,
 ):
     """Build a bounded sample and QA; keep full bytes in an external CAS layout."""
-    history = revision.get("history", [])
-    if not history or history[-1].get("revision") != revision.get("revision"):
-        raise ValueError("Declared revision differs from newest revision history row")
+    _validate_revision(revision)
     counts = qa_counts(rows)
+    counts["selection"] = selection_counts or {}
     output, repository = Path(output_dir).resolve(), Path(repository_root).resolve()
     if output == repository or repository in output.parents:
         raise ValueError("Full dataset must remain outside the repository")
@@ -223,7 +184,7 @@ def write_artifacts(
         raise ValueError("External store must remain outside the repository")
     _write_once(store / blob, full)
     artifacts = {
-        "sample.csv": _csv_bytes(rows[:100]),
+        "sample.csv": _csv_bytes(stratified_sample(rows)),
         "qa.json": _json_bytes(counts),
         "qa.html": _qa_page(counts, revision),
     }
@@ -266,15 +227,24 @@ def read_bulk_archive(path, kind, expected_sha256):
             raise ValueError("Expected one pipeline bulk member")
         with archive.open(names[0]) as stream:
             reader = csv.DictReader(io.TextIOWrapper(stream, encoding="utf-8-sig"))
-            if not reader.fieldnames or "SEGMENT_NUM" not in reader.fieldnames:
-                raise ValueError("Missing pipeline identifier header")
+            required = {
+                "permit": {
+                    "SEGMENT_NUM",
+                    "STATUS_CODE",
+                    "PPL_SIZE_CODE",
+                    "PROD_CODE",
+                    "SEG_LENGTH",
+                    "MAOP_PRSS",
+                },
+                "location": {"SEGMENT_NUM", "ASBUILT_SEQ_NUM", "LATITUDE", "LONGITUDE"},
+            }[kind]
+            if not reader.fieldnames or not required <= set(reader.fieldnames):
+                raise ValueError("Missing required bulk header columns")
             if len(reader.fieldnames) != len(set(reader.fieldnames)):
                 raise ValueError("Duplicate bulk header")
             for record in reader:
                 if kind == "location":
-                    record["POINT_NUM"] = record.get("POINT_NUM") or record.get(
-                        "ASBUILT_SEQ_NUM"
-                    )
+                    record["POINT_NUM"] = record["ASBUILT_SEQ_NUM"]
                 yield record
 
 
@@ -332,19 +302,29 @@ def fetch_payload(manifest, store, destination):
     return Path(destination)
 
 
-def cached_station_summaries(histories, store, criteria):
+def cached_station_summaries(histories, store, criteria, stations=()):
     """Reuse completed station computations only for identical inputs and code."""
     from worldenergydata.bsee.pipeline_screening import _station_record_summary
 
     summaries = {}
+    positions = {s.station_id: s for s in stations}
     for station_id, records in sorted(histories.items()):
+        station = positions.get(station_id)
+        atlantic = station is None or (
+            -100 <= station.longitude <= 20 and 0 <= station.latitude <= 65
+        )
         values = [
             [r.observation_time.isoformat(), r.wave_height_m, r.dominant_wave_period_s]
             for r in records
         ]
         key = hashlib.sha256(
             _json_bytes(
-                {"station": station_id, "records": values, "criteria": criteria}
+                {
+                    "station": station_id,
+                    "records": values,
+                    "criteria": criteria,
+                    "atlantic": atlantic,
+                }
             )
         ).hexdigest()
         path = Path(store) / "station-results" / (key + ".json")
@@ -359,7 +339,7 @@ def cached_station_summaries(histories, store, criteria):
             summary = saved["result"]
             state = "reused"
         else:
-            summary = _station_record_summary(records)
+            summary = _station_record_summary(records, atlantic=atlantic)
             saved = {
                 "key": key,
                 "result": summary,

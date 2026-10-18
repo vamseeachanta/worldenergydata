@@ -20,7 +20,6 @@ from worldenergydata.bsee.pipeline_screening import (
     build_rows,
     enrich_rows,
     read_ndbc_stations,
-    station_environment,
 )
 from worldenergydata.bsee.pipeline_screening_io import (
     _json_bytes,
@@ -29,6 +28,11 @@ from worldenergydata.bsee.pipeline_screening_io import (
     read_bulk_archive,
     validate_rows,
     write_artifacts,
+)
+from worldenergydata.bsee.pipeline_screening_metadata import (
+    publisher_metadata,
+    status_table,
+    status_table_digest,
 )
 from worldenergydata.bsee.pipeline_screening_sources import (
     fetch_ndbc_histories,
@@ -77,12 +81,18 @@ def _criteria(path):
                 "pipeline_screening.py",
                 "pipeline_screening_io.py",
                 "pipeline_screening_sources.py",
+                "pipeline_screening_common.py",
+                "pipeline_screening_environment.py",
+                "pipeline_screening_metadata.py",
+                "pipeline_screening_qa.py",
+                "pipeline_screening_page.py",
             )
         ),
     ]
     code.extend(
         ROOT / relative
         for relative in (
+            "packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/units.py",
             "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/schemas/pipeline.py",
             "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/models/pipeline.py",
             "packages/worldenergydata-bsee/src/worldenergydata/bsee/data/scrapers/bsee_web.py",
@@ -118,20 +128,32 @@ def _runtime_paths(store):
         os.environ[key] = str(store / relative)
 
 
-def _input_refs(args):
-    ledger = {
-        entry["file"]: entry for entry in json.loads(args.source_ledger.read_text())
-    }
+def _expected_urls(args):
     from worldenergydata.bsee.data.scrapers.bsee_web import BSEEWebScraper
 
     expected_urls = {
         args.permit_zip.name: BSEEWebScraper.URLS["pipeline_permit"],
         args.location_zip.name: BSEEWebScraper.URLS["pipeline_location"],
+        args.station_xml.name: "https://www.ndbc.noaa.gov/activestations.xml",
     }
+    if args.sediment_zip:
+        expected_urls[args.sediment_zip.name] = (
+            "https://pubs.usgs.gov/ds/2006/146/data/gmx_ext.zip"
+        )
     if args.status_dictionary:
         expected_urls[args.status_dictionary.name] = (
             "https://www.data.bsee.gov/Pipeline/PipelinePermits/FieldValues.aspx?domain=STATUS_CODES"
         )
+    return expected_urls
+
+
+def _input_refs(args):
+    ledger = {
+        entry["file"]: entry
+        for entry in json.loads(args.source_ledger.read_text())
+        if "file" in entry
+    }
+    expected_urls = _expected_urls(args)
     refs = []
     paths = [
         (args.permit_zip, "bsee-data-center"),
@@ -144,6 +166,8 @@ def _input_refs(args):
         paths.append((args.status_dictionary, "bsee-data-center"))
     for path, source_id in paths:
         entry = ledger[path.name]
+        if path == args.status_dictionary:
+            source_id = "bsee-status-dictionary"
         if (
             path.name in expected_urls
             and entry.get("url") is not None
@@ -158,6 +182,7 @@ def _input_refs(args):
         _write_once(args.cache / blob, raw)
         refs.append(
             {
+                **entry,
                 "path": "sources/" + path.name,
                 "blob": blob,
                 "bytes": len(raw),
@@ -165,6 +190,10 @@ def _input_refs(args):
                 "source_id": source_id,
             }
         )
+    # Missing provenance is a build error, never silently reconstructed.
+    from worldenergydata.bsee.pipeline_screening_io import _source_metadata
+
+    refs = [_source_metadata(entry) for entry in refs]
     return ledger, refs
 
 
@@ -184,20 +213,21 @@ def _sediment(path):
         )
 
 
-def _nearest_ids(rows, stations):
-    ids = set()
-    empty = {}
-    for row in rows[::2]:
-        station = station_environment(
-            row["midpoint_latitude_deg"],
-            row["midpoint_longitude_deg"],
-            stations,
-            {},
-            empty,
-        )
-        if station["station_id"] is not None:
-            ids.add(station["station_id"])
-    return ids
+def _nearest_ids(rows, stations, max_distance_km=50):
+    from worldenergydata.metocean.utils.coordinates import haversine_distance
+
+    positions = {
+        (r["midpoint_latitude_deg"], r["midpoint_longitude_deg"]) for r in rows
+    }
+    return {
+        s.station_id
+        for s in stations
+        for lat, lon in positions
+        if lat is not None
+        and lon is not None
+        and abs(s.latitude - lat) <= max_distance_km / 110
+        and haversine_distance(lat, lon, s.latitude, s.longitude) <= max_distance_km
+    }
 
 
 def _core_rows(args, defaults, ledger):
@@ -219,14 +249,29 @@ def _core_rows(args, defaults, ledger):
         f"Core: {len(rows)} case rows; {len(active)} screening-selected segments",
         flush=True,
     )
-    return rows
+    from collections import Counter
+
+    from worldenergydata.bsee.pipeline_screening import status_selected
+
+    counts = Counter(str(p.get("STATUS_CODE") or "").strip() for p in permits)
+    selection = {
+        "raw_records_by_code": dict(sorted(counts.items())),
+        "excluded_raw_records_by_code": {
+            code: n
+            for code, n in sorted(counts.items())
+            if not status_selected(code, defaults)
+        },
+        "selected_unique_segments_by_code": dict(
+            sorted(
+                Counter(r["status"] for r in rows if r["load_case"] == "empty").items()
+            )
+        ),
+    }
+    return rows, selection
 
 
 def _history_provenance(args, defaults, ids, ledger, refs):
-    source_register = [
-        {**ledger[Path(ref["path"]).name], "source_id": ref["source_id"]}
-        for ref in refs
-    ]
+    source_register = list(refs)
     refs.extend(
         retained_input_refs(args.cache, ids, defaults["history_years"]["value"])
     )
@@ -236,7 +281,7 @@ def _history_provenance(args, defaults, ids, ledger, refs):
         for year in defaults["history_years"]["value"]
     }
     source_register.extend(
-        entry
+        publisher_metadata(entry)
         for path in sorted((args.cache / "responses").glob("*.json"))
         if (entry := json.loads(path.read_text()))["url"] in urls
     )
@@ -254,14 +299,16 @@ def main():
     schema = yaml.safe_load((CONFIG / "schema.yaml").read_text())
     revision = json.loads((CONFIG / "revision.json").read_text())
     ledger, refs = _input_refs(args)
-    if args.status_dictionary and (
-        ledger[args.status_dictionary.name]["sha256"]
-        != defaults["status_meanings"]["basis_sha256"]
-    ):
-        raise ValueError("Status dictionary input digest mismatch")
-    rows = _core_rows(args, defaults, ledger)
+    if args.status_dictionary:
+        table = status_table(args.status_dictionary)
+        if (
+            table != defaults["status_meanings"]["value"]
+            or status_table_digest(table) != defaults["status_meanings"]["basis_sha256"]
+        ):
+            raise ValueError("Status dictionary semantic digest mismatch")
+    rows, selection_counts = _core_rows(args, defaults, ledger)
     stations = read_ndbc_stations(args.station_xml)
-    ids = _nearest_ids(rows, stations)
+    ids = _nearest_ids(rows, stations, defaults["spatial_match_limit_km"]["value"])
     histories = fetch_ndbc_histories(
         ids,
         defaults["history_years"]["value"],
@@ -269,7 +316,7 @@ def main():
         allow_network=not args.offline,
     )
     source_register = _history_provenance(args, defaults, ids, ledger, refs)
-    summaries = cached_station_summaries(histories, args.cache, criteria)
+    summaries = cached_station_summaries(histories, args.cache, criteria, stations)
     rows = enrich_rows(
         rows, defaults, stations, histories, _sediment(args.sediment_zip), summaries
     )
@@ -283,6 +330,7 @@ def main():
         store_root=args.cache,
         criteria=criteria,
         source_register=source_register,
+        selection_counts=selection_counts,
     )
     print(
         f"Export: {manifest['rows']} rows; SHA-256 {manifest['payload']['sha256']}",

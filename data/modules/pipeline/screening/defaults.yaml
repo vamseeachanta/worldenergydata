@@ -20,26 +20,23 @@ product_densities:
     H2O: null
     LIFT: null
     G/C: null
-  rationale: Product codes select cases, but composition and operating conditions do not establish
-    numeric densities.
+  rationale: Product codes select cases, but composition and operating conditions do not establish numeric densities.
 empty_case_governs:
   value: empty
-  rationale: The empty case is assumed governing for minimum internal mass; the product case is retained
-    separately.
+  rationale: The empty case is assumed governing for minimum internal mass; the product case is retained separately.
 grade:
   value: assumed_X52
-  rationale: Assumed, based on previous experience represented by the existing pipeline safety workflow;
-    no certificate is supplied.
+  rationale: Assumed, based on previous experience represented by the existing pipeline safety workflow; no certificate
+    is supplied.
   basis: pipeline_safety.workflow:_DEFAULT_SMYS_MPA
 smys_pa:
   value: 358530000
-  rationale: The existing workflow strength default is converted from MPa to Pa; it does not establish
-    material certification.
+  rationale: The existing workflow strength default is converted from MPa to Pa; it does not establish material
+    certification.
   basis: pipeline_safety.workflow:_DEFAULT_SMYS_MPA
 schedule:
   value: STD
-  rationale: A local lookup preference only; the public build does not reuse an unqualified dimensional
-    table.
+  rationale: A local lookup preference only; the public build does not reuse an unqualified dimensional table.
 nominal_od_proxy:
   value: nominal_size
   rationale: Inch-coded nominal size is an OD proxy when no qualified dimensional lookup is supplied.
@@ -53,38 +50,22 @@ concrete_density_kg_m3:
   value: null
   rationale: No evidenced concrete density is supplied; unknown concrete is not zero density.
 seabed_current_m_s:
-  value: 0.3
-  rationale: Assumed, based on previous experience; the existing background current baseline does
-    not establish seabed storm current.
-  basis: metocean.extrapolation.__init__:_BASELINE
+  value: null
+  rationale: The retained public inputs do not establish seabed storm current.
 normal_wave_direction:
   value: normal_to_route
-  rationale: Cross-route direction is assumed for screening; no measured storm direction is implied.
+  rationale: 'Assumed coming-from direction, clockwise from north, route bearing +90 degrees: right-hand side following
+    increasing point sequence.'
 friction_coefficient:
   value: 0
-  rationale: No sliding resistance is credited; this is an assumed lower bound rather than a measured
-    coefficient.
-soil_depth_boundary_m:
-  value: 304.8
-  rationale: The existing 1000-foot depth classification is converted to metres; it is not a geotechnical
-    boundary.
-  basis: bsee.data.models.pipeline:_DEEPWATER_DEPTH_THRESHOLD
-soil_shallow:
-  value: assumed sand
-  rationale: Assumed, based on previous experience, only when public sediment evidence is unavailable;
-    site geology is unqualified.
-soil_deep:
-  value: assumed clay
-  rationale: Assumed, based on previous experience, only when public sediment evidence is unavailable;
-    site geology is unqualified.
+  rationale: No sliding resistance is credited; this is an assumed lower bound rather than a measured coefficient.
 history_years:
   value:
   - 2022
   - 2023
   - 2024
   - 2025
-  rationale: Four completed calendar archives allow a span beyond the EVA tool's three-year minimum;
-    completeness remains unqualified.
+  rationale: Retained 2022-2025 archives cannot qualify return levels under I-0248; annual coverage is counted explicitly.
 status_meanings:
   value:
     A/C: ABANDONED AND COMBINED
@@ -102,8 +83,18 @@ status_meanings:
     R/R: RELINQUISHED AND REMOVED
     RELQ: RELINQUISHED
     REM: REMOVED
-  rationale: Published meanings define the abandoned, removed and out exclusions. Codes absent from
-    this dictionary remain unqualified and are excluded; selection alone does not establish installation
-    or operation.
+  rationale: Explicit allow-list ACT, OUT, PABN and PREM under I-0248; all other codes are excluded and counted.
+    Selection does not establish present operation.
   basis: https://www.data.bsee.gov/Pipeline/PipelinePermits/FieldValues.aspx?domain=STATUS_CODES
-  basis_sha256: 4b790c6d53a455fd8ddb403ca84d47de3a9e82bda0e145260144cdccdd0e081b
+  basis_sha256: 040d7b7654ee06176d1d9e29e427175a392928931934548bdc22cbdccb7ae737
+  digest_scope: canonical-json code-to-meaning table, excluding page hidden state
+spatial_match_limit_km:
+  value: 50
+  rationale: Assumed screening radius, narrower reading of the review; a match does not qualify site transfer.
+annual_coverage_fraction:
+  value: 0.8
+  rationale: Declared I-0248 policy for calendar-year and Atlantic June-November unique-hour coverage; no standard
+    clause fixes this value.
+minimum_annual_maxima:
+  value: 10
+  rationale: Declared I-0248 policy; Hs100 additionally needs 25 years because T <= 4n.

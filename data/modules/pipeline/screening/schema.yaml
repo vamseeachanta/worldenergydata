@@ -1,191 +1,249 @@
 schema_version: 1
 dataset_id: pipeline-screening
 owner: worldenergydata
-source_pattern: "^(PUBLIC|DERIVED|DEFAULT):[A-Za-z0-9_.-]+$"
+source_pattern: ^(PUBLIC|DERIVED|DEFAULT|UNKNOWN):[A-Za-z0-9_.-]+$
 null_encoding: Empty CSV cells represent null; zero and false remain explicit.
 fields:
   segment_id:
     type: string
     nullable: false
-    unit: "1"
+    unit: '1'
     source_column: segment_id_source
   status:
     type: string
     nullable: false
-    unit: "1"
+    unit: '1'
     source_column: status_source
   size_code:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: size_code_source
   product_code:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: product_code_source
   nominal_size_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: nominal_size_m_source
-  min_water_depth_m:
-    type: number
-    nullable: true
-    unit: "m"
-    source_column: min_water_depth_m_source
-  buried_design:
-    type: boolean
-    nullable: true
-    unit: "1"
-    source_column: buried_design_source
   length_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: length_m_source
   midpoint_latitude_deg:
     type: number
     nullable: true
-    unit: "degree"
+    unit: degree
     source_column: midpoint_latitude_deg_source
   midpoint_longitude_deg:
     type: number
     nullable: true
-    unit: "degree"
+    unit: degree
     source_column: midpoint_longitude_deg_source
   mean_bearing_deg:
     type: number
     nullable: true
-    unit: "degree"
+    unit: degree
     source_column: mean_bearing_deg_source
   permit_length_unit:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: permit_length_unit_source
   permit_length_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: permit_length_m_source
   grade:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: grade_source
   smys_pa:
     type: number
     nullable: true
-    unit: "Pa"
+    unit: Pa
     source_column: smys_pa_source
   maop_pa:
     type: number
     nullable: true
-    unit: "Pa"
+    unit: Pa
     source_column: maop_pa_source
   od_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: od_m_source
   wall_thickness_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: wall_thickness_m_source
+    description: Only an evidenced published dimension or a rights- and edition-qualified dimensional table; otherwise
+      UNKNOWN:no_evidenced_wall.
   load_case:
     type: string
     nullable: false
-    unit: "1"
+    unit: '1'
     source_column: load_case_source
   governing_case:
     type: boolean
     nullable: false
-    unit: "1"
+    unit: '1'
     source_column: governing_case_source
   contents_density_kg_m3:
     type: number
     nullable: true
-    unit: "kg/m^3"
+    unit: kg/m^3
     source_column: contents_density_kg_m3_source
   corrosion_coating:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: corrosion_coating_source
   corrosion_coating_thickness_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: corrosion_coating_thickness_m_source
   concrete_density_kg_m3:
     type: number
     nullable: true
-    unit: "kg/m^3"
+    unit: kg/m^3
     source_column: concrete_density_kg_m3_source
   seabed_current_m_s:
     type: number
     nullable: true
-    unit: "m/s"
+    unit: m/s
     source_column: seabed_current_m_s_source
   friction_coefficient:
     type: number
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: friction_coefficient_source
   wave_direction_deg:
     type: number
     nullable: true
-    unit: "degree"
+    unit: degree
     source_column: wave_direction_deg_source
+    description: Coming-from direction clockwise from north; route bearing +90 degrees, right-hand side following
+      increasing route sequence; assumed.
   soil_type:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: soil_type_source
   soil_sample_distance_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: soil_sample_distance_m_source
   station_id:
     type: string
     nullable: true
-    unit: "1"
+    unit: '1'
     source_column: station_id_source
   station_distance_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: station_distance_m_source
   record_length_years:
     type: number
     nullable: true
-    unit: "year"
+    unit: year
     source_column: record_length_years_source
   retained_observations:
     type: integer
     nullable: false
-    unit: "1"
+    unit: '1'
     source_column: retained_observations_source
   hs_10yr_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: hs_10yr_m_source
   hs_100yr_m:
     type: number
     nullable: true
-    unit: "m"
+    unit: m
     source_column: hs_100yr_m_source
-  tp_10yr_s:
+  service_state:
+    type: string
+    nullable: false
+    unit: '1'
+    source_column: service_state_source
+  route_rejection_reason:
+    type: string
+    nullable: true
+    unit: '1'
+    source_column: route_rejection_reason_source
+  hoop_yield_wall_at_assumed_smys_m:
     type: number
     nullable: true
-    unit: "s"
-    source_column: tp_10yr_s_source
-  tp_100yr_s:
+    unit: m
+    source_column: hoop_yield_wall_at_assumed_smys_m_source
+    description: Wall at which hoop stress reaches assumed SMYS (358.53 MPa, assumed X52) at MAOP, with nominal
+      size as OD; not an installed wall; a lower bound on installed wall only where installed SMYS does not exceed
+      assumed SMYS; no design factor, corrosion allowance, mill tolerance or collapse check.
+  station_water_depth_m:
     type: number
     nullable: true
-    unit: "s"
-    source_column: tp_100yr_s_source
+    unit: m
+    source_column: station_water_depth_m_source
+    description: Explicit published water depth only; active-station XML elevation does not establish depth.
+  complete_annual_maxima:
+    type: integer
+    nullable: false
+    unit: '1'
+    source_column: complete_annual_maxima_source
+  hs_max_observed_m:
+    type: number
+    nullable: true
+    unit: m
+    source_column: hs_max_observed_m_source
+  observed_maximum_years:
+    type: string
+    nullable: true
+    unit: year
+    source_column: observed_maximum_years_source
+  tp_at_hs_max_s:
+    type: number
+    nullable: true
+    unit: s
+    source_column: tp_at_hs_max_s_source
+  hs_10yr_lower_ci_m:
+    type: number
+    nullable: true
+    unit: m
+    source_column: hs_10yr_lower_ci_m_source
+  hs_10yr_upper_ci_m:
+    type: number
+    nullable: true
+    unit: m
+    source_column: hs_10yr_upper_ci_m_source
+  hs_10yr_distribution:
+    type: string
+    nullable: true
+    unit: '1'
+    source_column: hs_10yr_distribution_source
+  hs_100yr_lower_ci_m:
+    type: number
+    nullable: true
+    unit: m
+    source_column: hs_100yr_lower_ci_m_source
+  hs_100yr_upper_ci_m:
+    type: number
+    nullable: true
+    unit: m
+    source_column: hs_100yr_upper_ci_m_source
+  hs_100yr_distribution:
+    type: string
+    nullable: true
+    unit: '1'
+    source_column: hs_100yr_distribution_source

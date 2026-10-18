@@ -1,11 +1,17 @@
 {
-  "revision": "1",
+  "revision": "2",
   "history": [
     {
       "revision": "1",
       "date": "2026-10-15",
       "changed": "Initial screening database and source QA",
       "why": "Expose derived geometry, assumptions and missing evidence before stability calculations"
+    },
+    {
+      "revision": "2",
+      "date": "2026-10-17",
+      "changed": "Apply I-0248 and resolve screening review findings",
+      "why": "Separate unknown installed properties from assumptions and qualify environmental estimates and provenance"
     }
   ]
 }
