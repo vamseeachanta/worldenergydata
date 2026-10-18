@@ -5,7 +5,7 @@
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 1 |
+| Pack revision | 2 |
 | Pack date | 2026-10-17 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
@@ -120,6 +120,7 @@ Historical ingestion references are #228 and #247; neither establishes detection
 | --- | --- | --- | --- | --- | --- |
 | 2026-10-17 | Initial pack | Numeric dtype checks alone do not establish preservation of missing/invalid counts | Coercion precedes integer casting. [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L60-L64] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L105-L107] | F1–F6 and F11–F12 recorded | Not assigned; #1334 |
 | 2026-10-17 | Revision 1 review | Search outside the package for independent download paths and test missing/extra columns before claiming sweep completeness | Separate collector and permissive rename. [packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/baker_hughes_collector.py:L38-L74] [packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py:L56-L57] | Collector/export map gap and F17–F19 recorded | Not assigned; #1335 |
+| 2026-10-17 | Revision 2: issue references filed | Filed follow-ups provide durable tracking without establishing engineering qualification | #1334–#1338 | Replaced draft references and advanced the pack revision | Not assigned; #1336 |
 
 ## 8. Ownership
 
