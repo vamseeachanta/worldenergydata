@@ -26,12 +26,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 import tempfile
 from pathlib import Path
 
 import pandas as pd
-from huggingface_hub import HfApi, hf_hub_download
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASET = "aceengineer/worldenergydata-explorer"
@@ -50,17 +50,59 @@ ECON_COLS = [
     "eur_confidence",
     "eur_source",
 ]
+# Basis and release status defined by the reviewed contract in #976 (2026).
+# This exporter introduces no new price or reserve-fraction acceptance limits.
+ECON_LEVELS = ("npv_mm", "breakeven_wti", "sens_mm_per_dollar")
+ECONOMICS_BASIS = "life_to_date_pretax_npv_at_10pct"
+PARAMETRIC_COLS = [
+    "field",
+    "wti_price_multiplier",
+    "discount_rate",
+    "npv_musd",
+    "breakeven_multiplier",
+    "economics_basis",
+]
 
 
 def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _released_economics(slug: str, performance: dict) -> dict:
+    """Enforce the #976 contract again at the publication boundary.
+
+    Only an explicit surfaced status permits numbers. Stale populated values
+    on withheld, early-life, unknown or absent records are always nulled.
+    A surfaced record with an unknown basis or invalid numbers stops release;
+    negative life-to-date NPV remains valid (see #971 diagnosis, 2026).
+    """
+    if performance.get("economics_status") != "surfaced":
+        return dict.fromkeys(ECON_LEVELS)
+    if performance.get("economics_basis") != ECONOMICS_BASIS:
+        raise ValueError(f"{slug}: unsupported economics_basis")
+    values = {key: performance.get(key) for key in ECON_LEVELS}
+    for key, value in values.items():
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            raise ValueError(f"{slug}: {key} must be a finite number")
+    return values
+
+
 def build_fields(live_parquet: Path) -> pd.DataFrame:
     fields = pd.read_parquet(live_parquet)
     perf_by_slug = json.loads(PERFORMANCE.read_text())["fields"]
+    # Validate and mask before assigning any economics column to the live table.
+    released = {
+        slug: _released_economics(slug, perf_by_slug.get(slug, {}))
+        for slug in fields["id"]
+    }
 
     def col(slug: str, key: str):
+        if key in ECON_LEVELS:
+            return released[slug][key]
         return perf_by_slug.get(slug, {}).get(key)
 
     fields["eur_mmbbl"] = fields["id"].map(lambda s: col(s, "eur_mmbbl")).astype("Float64")
@@ -73,18 +115,26 @@ def build_fields(live_parquet: Path) -> pd.DataFrame:
             )
         else:
             fields[c] = fields["id"].map(lambda s, k=c: col(s, k))
-    for c in ("npv_mm", "breakeven_wti", "sens_mm_per_dollar"):
+    for c in ECON_LEVELS:
         fields[c] = fields[c].astype("Float64")
     return fields
 
 
 def build_parametric() -> pd.DataFrame:
     grid = json.loads(PARAMETRIC_JSON.read_text())
+    performance = json.loads(PERFORMANCE.read_text())["fields"]
     rows = []
     for slug, f in grid["fields"].items():
-        if f["economics_status"] != "surfaced":
+        current = performance.get(slug, {})
+        if (
+            f.get("economics_status") != "surfaced"
+            or current.get("economics_status") != "surfaced"
+        ):
             continue  # withheld per #971/#976 life-to-date gating
+        _released_economics(slug, current)
         for g in f["grid"]:
+            if g.get("economics_status") != "surfaced":
+                continue
             rows.append(
                 {
                     "field": slug,
@@ -97,7 +147,7 @@ def build_parametric() -> pd.DataFrame:
                     "economics_basis": "life_to_date_pretax_npv",
                 }
             )
-    return pd.DataFrame(rows)
+    return pd.DataFrame(rows, columns=PARAMETRIC_COLS)
 
 
 def build_readme(n_param_rows: int, param_fields: list[str]) -> str:
@@ -150,6 +200,13 @@ Live Explorer: https://vamseeachanta.github.io/worldenergydata/field-atlas/
 - `parametric_economics` sweeps a uniform multiplier on the historical monthly WTI deck and
   the annual discount rate over the same sanctioned cashflow model. NPV is exact (affine) in
   the price multiplier. Fields with withheld economics are excluded from the grid.
+- Release requires an explicit `economics_status = surfaced` and the known life-to-date
+  basis in the current performance contract. Every other status suppresses all economics
+  levels, even if a stale input contains numbers. Missing or non-finite surfaced values
+  stop the refresh. Negative life-to-date NPV alone does not imply an error.
+- The sensitivity grid must also be surfaced in its own snapshot; a stale grid cannot
+  override withholding in the current performance contract. Full-cycle economics remain
+  unevaluated. See `docs/data-sources/economics-release.md` for the release decision.
 
 ## Provenance
 
@@ -172,6 +229,8 @@ Schema version `1.0.0`. Derived from the committed Explorer results bundle
 
 
 def main() -> int:
+    from huggingface_hub import HfApi, hf_hub_download
+
     dry = "--dry-run" in sys.argv
     api = HfApi()
 

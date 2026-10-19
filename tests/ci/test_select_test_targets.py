@@ -38,6 +38,22 @@ def test_selector_self_change_is_core():
     assert select(["scripts/ci/select_test_targets.py"], REPO_ROOT)["scope"] == "full"
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/hf_export/publish_explorer_refresh_to_hf.py",
+        "reports/field-atlas/atlas_template.html",
+        "reports/field-atlas/index.html",
+        "reports/lower_tertiary/lifecycle/_performance.json",
+        "reports/lower_tertiary/parametric/lt_economics_parametric.json",
+        "reports/field-atlas/results/explorer_results_bundle.json",
+    ],
+)
+def test_economics_release_inputs_always_run_site_contracts(path):
+    result = select([path], REPO_ROOT)
+    assert "tests/unit/site" in result["xdist"]
+
+
 def test_hse_change_is_module_scoped_not_full():
     r = select(["src/worldenergydata/hse/grounding.py"], REPO_ROOT)
     assert r["scope"] == "modules"

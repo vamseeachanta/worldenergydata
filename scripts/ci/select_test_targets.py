@@ -76,6 +76,13 @@ CORE_PREFIXES = (
 
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
+    # Keep export and display withholding under CI when only an input changes.
+    "scripts/hf_export/publish_explorer_refresh_to_hf.py": "tests/unit/site",
+    "reports/field-atlas/atlas_template.html": "tests/unit/site",
+    "reports/field-atlas/index.html": "tests/unit/site",
+    "reports/lower_tertiary/lifecycle/_performance.json": "tests/unit/site",
+    "reports/lower_tertiary/parametric/lt_economics_parametric.json": "tests/unit/site",
+    "reports/field-atlas/results/explorer_results_bundle.json": "tests/unit/site",
     "config/repo_structure.yml": "tests/repo_structure",
     "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
     "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
