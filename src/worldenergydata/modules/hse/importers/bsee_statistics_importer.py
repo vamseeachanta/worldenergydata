@@ -74,8 +74,13 @@ class BSEEStatisticsImporter(BaseImporter):
             raise FileNotFoundError(f"CSV file not found: {self.csv_file_path}")
 
         try:
-            # Read CSV file with pandas
-            df = pd.read_csv(csv_path)
+            # Issue #1308 defines NA and empty cells as missing. Keep other
+            # tokens literal and counts as text until integer normalization.
+            # pandas 2.3 read_csv: dtype, na_values and keep_default_na:
+            # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.read_csv.html
+            df = pd.read_csv(
+                csv_path, dtype=str, na_values=["NA", ""], keep_default_na=False
+            )
 
             # Convert DataFrame to list of dictionaries
             records = df.to_dict("records")
@@ -117,6 +122,13 @@ class BSEEStatisticsImporter(BaseImporter):
         Returns:
             Normalized dictionary matching HSEIncident schema
         """
+        # Normalize scalar missingness before the is-not-None field guards;
+        # copying also leaves the caller's record unchanged.
+        # pandas 2.3 isna (None, NaN, NA and NaT):
+        # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.isna.html
+        raw_data = {
+            key: None if pd.isna(value) else value for key, value in raw_data.items()
+        }
         normalized = {}
 
         # Required field: bsee_incident_id
