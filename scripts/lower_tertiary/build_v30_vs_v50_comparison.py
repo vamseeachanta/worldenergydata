@@ -82,6 +82,13 @@ def main() -> None:
     )
     L.append("")
     L.append(
+        "> **Assumptions gate:** Read the [V50 assumptions change log]"
+        "(../../config/analysis/lower_tertiary/v50_assumptions_change_log.html) "
+        "before adopting V50. This window-only comparison does not approve the "
+        "cost/after-tax V50 basis."
+    )
+    L.append("")
+    L.append(
         "> **Reproduction gate (before update):** V30 reproduces from raw OGOR within"
     )
     L.append(
