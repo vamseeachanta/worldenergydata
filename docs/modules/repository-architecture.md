@@ -2,17 +2,28 @@
 
 This is a source inspection of the committed repository, not a live-data or deployment audit.
 Scope: [issue 1083](https://github.com/vamseeachanta/worldenergydata/issues/1083).
-Inspection baseline: `7f645ac5844b25a79374f62fb0230ef1dbb4b143` on 2026-10-12.
+Initial source inspection: `7f645ac5844b25a79374f62fb0230ef1dbb4b143` on 2026-10-12.
+Report inventory reconciliation: `648d6de46081ad98a06504a25ec8a222acbd41b1` on 2026-10-19.
 It extends the module-level drawings in [BSEE architecture](bsee/bsee_architecture.puml)
 and [BSEE refresh flow](bsee/data-refresh-architecture/data-flow-diagram.md).
 Paths below are relative to the repository root; colon suffixes are source line numbers.
+Source line ranges outside Table 4 belong to the initial inspection; use the named
+files and symbols when reading newer revisions.
 
-The tree contains **272 report HTML files and zero API capability HTML pages**.
+The tree contains **299 report HTML files and zero API capability HTML pages**,
+enumerated in [report-inventory.csv](report-inventory.csv).
 The former API capability directory was intentionally removed by
 [PR 1141](https://github.com/vamseeachanta/worldenergydata/pull/1141).
 The surviving builder defines **21 work specifications**, including **seven economics fields**,
 plus five section summaries. These are not 21 surviving API pages.
 The issue's earlier report counts are therefore not the inventory baseline.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| Initial | 2026-10-12 | Source inspection and report classification established the repository map. |
+| Inventory reconciliation | 2026-10-19 | Counts and Pages selections are reconciled with the current tree; the README embeds the drawing and regression checks detect drift. |
 
 ## Drawing
 
@@ -23,10 +34,10 @@ Capability nodes represent the surviving builder specifications, not live API en
 
 ```mermaid
 flowchart TB
-  public_sources["Public regulatory and environmental sources"]
+  public_sources["BSEE; IMO GISIS; Texas RRC; other public sources"]
   scheduler["Configured scheduler: eight implemented adapters; LNG stub"]
   manual["Manual and on-demand acquisition; other automation not established"]
-  bulk["Bulk data outside git: WED_DATA_ROOT override"]
+  bulk["Bulk data outside git: WED_DATA_ROOT override; no bulk LFS"]
   bsee["BSEE and HSE: ingestion, validation, analysis"]
   marine["Marine safety: importers, normalization, analysis"]
   regional["Regional and environmental packages: acquisition and processing"]
@@ -181,7 +192,8 @@ Rules are evaluated in this order by `scripts/maintenance/classify_report_invent
 
 An explicit unverified paragraph is classified as **unverified** before the current,
 one-off and undetermined rules. Published availability does not establish reproducibility.
-The counts below retain the earlier inspection; the generated CSV records current status.
+The counts below reconcile the current tree with the generated CSV. An unverified
+notice takes precedence over publication selection; those reports are not counted as current.
 
 1. **Superseded:** the HTML explicitly declares a `link` with `rel="successor-version"`
    and an `href` resolving to an existing file inside the repository. That replacement is
@@ -204,47 +216,48 @@ The index exists in this tree; the one-pagers therefore meet the current rule.
 
 | Repository-relative selection glob | Existence gates | Builder function and lines |
 | --- | --- | --- |
-| `reports/lower_tertiary/lifecycle/*_lifecycle.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/index.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/wells/*_well.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/wells/index.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/assets/*_assets.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/assets` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/norms/*.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/norms` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/drilling_insights.html` | `reports/lower_tertiary/drilling_insights.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/dc-drilldown.html` | `reports/lower_tertiary/dc-drilldown.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/roy-rig-days-validation.html` | `reports/lower_tertiary/roy-rig-days-validation.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/war-activity-codes.html` | `reports/lower_tertiary/war-activity-codes.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `scripts/build_pages.py:416-695 (build_lower_tertiary)` |
-| `reports/field_development/showcase/index.html` | `reports/field_development/showcase/index.html` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/interactive/playbook.html` | `reports/field_development/interactive/playbook.html` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/spain_cores.html` | `reports/field_development/spain_cores.html` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/region_devtype_comparison.html` | `reports/field_development/region_devtype_comparison.html` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/all_regions_atlas.html` | `reports/field_development/all_regions_atlas.html` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/portfolio/**/*.html` | `reports/field_development/portfolio` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/field_development/bsee_matched/**/*.html` | `reports/field_development/bsee_matched` | `scripts/build_pages.py:698-741 (build_field_development)` |
-| `reports/capabilities/index.html` | `reports/capabilities/index.html` | `scripts/build_pages.py:744-781 (build_capabilities)` |
-| `reports/capabilities/insights.html` | `reports/capabilities/index.html`, `reports/capabilities/insights.html` | `scripts/build_pages.py:744-781 (build_capabilities)` |
-| `reports/capabilities/pdf/**/*.html` | `reports/capabilities/index.html`, `reports/capabilities/pdf` | `scripts/build_pages.py:744-781 (build_capabilities)` |
-| `reports/completion/*.html` | `reports/completion/index.html` | `scripts/build_pages.py:784-801 (build_completion)` |
-| `reports/hse/*.html` | `reports/hse` | `scripts/build_pages.py:826-838 (build_hse)` |
-| `reports/marine_safety/*.html` | `reports/marine_safety` | `scripts/build_pages.py:804-823 (build_marine_safety)` |
-| `reports/IMO_GISIS_Executive_Report.html` | `reports/IMO_GISIS_Executive_Report.html` | `scripts/build_pages.py:804-823 (build_marine_safety)` |
-| `reports/field-atlas/index.html` | `reports/field-atlas/index.html` | `scripts/build_pages.py:841-864 (build_field_atlas)` |
-| `reports/field-atlas/onepagers/**/*.html` | `reports/field-atlas/index.html`, `reports/field-atlas/onepagers` | `scripts/build_pages.py:841-864 (build_field_atlas)` |
-| `reports/pressure-atlas/index.html` | `reports/pressure-atlas/index.html` | `scripts/build_pages.py:867-875 (build_pressure_atlas)` |
-| `reports/field_benchmark/index.html` | `reports/field_benchmark/index.html` | `scripts/build_pages.py:902-922 (build_field_benchmark)` |
-| `reports/decommissioning/pa_liability_wave.html` | `reports/decommissioning/pa_liability_wave.html` | `scripts/build_pages.py:878-899 (build_decommissioning)` |
-| `reports/decommissioning/regional_liability.html` | `reports/decommissioning/regional_liability.html` | `scripts/build_pages.py:878-899 (build_decommissioning)` |
+| `reports/lower_tertiary/lifecycle/*_lifecycle.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/lifecycle/index.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/lifecycle/wells/*_well.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/lifecycle/wells/index.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/lifecycle/assets/*_assets.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/assets` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/lifecycle/norms/*.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/norms` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/drilling_insights.html` | `reports/lower_tertiary/drilling_insights.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/dc-drilldown.html` | `reports/lower_tertiary/dc-drilldown.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/roy-rig-days-validation.html` | `reports/lower_tertiary/roy-rig-days-validation.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/war-activity-codes.html` | `reports/lower_tertiary/war-activity-codes.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
+| `reports/field_development/showcase/index.html` | `reports/field_development/showcase/index.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/interactive/playbook.html` | `reports/field_development/interactive/playbook.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/spain_cores.html` | `reports/field_development/spain_cores.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/region_devtype_comparison.html` | `reports/field_development/region_devtype_comparison.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/all_regions_atlas.html` | `reports/field_development/all_regions_atlas.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/portfolio/**/*.html` | `reports/field_development/portfolio` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/field_development/bsee_matched/**/*.html` | `reports/field_development/bsee_matched` | `scripts/build_pages.py:700-743 (build_field_development)` |
+| `reports/capabilities/index.html` | `reports/capabilities/index.html` | `scripts/build_pages.py:746-783 (build_capabilities)` |
+| `reports/capabilities/insights.html` | `reports/capabilities/index.html`, `reports/capabilities/insights.html` | `scripts/build_pages.py:746-783 (build_capabilities)` |
+| `reports/capabilities/pdf/**/*.html` | `reports/capabilities/index.html`, `reports/capabilities/pdf` | `scripts/build_pages.py:746-783 (build_capabilities)` |
+| `reports/completion/*.html` | `reports/completion/index.html` | `scripts/build_pages.py:786-803 (build_completion)` |
+| `reports/hse/*.html` | `reports/hse` | `scripts/build_pages.py:828-840 (build_hse)` |
+| `reports/marine_safety/*.html` | `reports/marine_safety` | `scripts/build_pages.py:806-825 (build_marine_safety)` |
+| `reports/IMO_GISIS_Executive_Report.html` | `reports/IMO_GISIS_Executive_Report.html` | `scripts/build_pages.py:806-825 (build_marine_safety)` |
+| `reports/field-atlas/index.html` | `reports/field-atlas/index.html` | `scripts/build_pages.py:843-866 (build_field_atlas)` |
+| `reports/field-atlas/onepagers/**/*.html` | `reports/field-atlas/index.html`, `reports/field-atlas/onepagers` | `scripts/build_pages.py:843-866 (build_field_atlas)` |
+| `reports/pressure-atlas/index.html` | `reports/pressure-atlas/index.html` | `scripts/build_pages.py:869-877 (build_pressure_atlas)` |
+| `reports/field_benchmark/index.html` | `reports/field_benchmark/index.html` | `scripts/build_pages.py:904-924 (build_field_benchmark)` |
+| `reports/decommissioning/pa_liability_wave.html` | `reports/decommissioning/pa_liability_wave.html` | `scripts/build_pages.py:880-901 (build_decommissioning)` |
+| `reports/decommissioning/regional_liability.html` | `reports/decommissioning/regional_liability.html` | `scripts/build_pages.py:880-901 (build_decommissioning)` |
 
 Table 4. Existing inputs selected by the Pages builder at inspection. Absent optional inputs
 are not counted. Re-evaluate the builder and its gates when the tree changes.
 
 | Classification | HTML files |
 | --- | --- |
-| current | 238 |
+| current | 259 |
 | superseded | 0 |
+| unverified | 5 |
 | one-off | 3 |
-| undetermined | 31 |
+| undetermined | 32 |
 
 Table 5. Reproduced counts; per-file evidence is in [report-inventory.csv](report-inventory.csv).
 
@@ -268,6 +281,9 @@ does not establish a surviving replacement for the corresponding HTML file.
 Table 6. Publication configuration and bulk-data boundary. Targets are described by role;
 no workstation, mount or host location is required to use the data-root contract.
 
+The drawing's no-bulk-LFS constraint follows the issue's data-boundary requirement;
+it does not assert a measured quota or a verified history-rewrite event.
+
 ## Verification and limitations
 
 The committed standard-library script reproduces the CSV and classification counts:
@@ -277,6 +293,13 @@ python3 scripts/maintenance/classify_report_inventory.py --write
 python3 scripts/maintenance/classify_report_inventory.py --check
 python3 scripts/maintenance/classify_report_inventory.py --summary
 ```
+
+`tests/repo_structure/test_repository_architecture.py` independently enumerates HTML
+paths, tallies the CSV, checks the README drawing against this source, and extracts
+work IDs from the capability builder's syntax tree without executing it. Every work
+ID must occur once in the provenance table and resolve to a drawn node; economics
+remains one node with a field dimension. Provenance source files must exist. These
+checks establish coverage and traceability, not the validity of underlying figures.
 
 The module-level `DOMAINS` registry, literal selection tables and direct-copy
 source paths are parsed from the builder's
