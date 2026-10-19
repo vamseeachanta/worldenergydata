@@ -331,7 +331,7 @@ class CashflowEngine:
 
         A sliding-scale deck requires monthly production rates and selects its
         band for each month; an explicit flat-rate argument cannot bypass it.
-        For flat, none and deckless paths, precedence is highest first:
+        For flat, none, not_evaluated and deckless paths, precedence is highest first:
             1. explicit ``royalty_rate`` argument;
             2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
                per-dev-system rate, ``none`` resolves to 0.0;
@@ -340,7 +340,8 @@ class CashflowEngine:
 
         Args:
             revenue_monthly: Dict mapping year-month to revenue
-            royalty_rate: Royalty rate override for flat, none or deckless paths.
+            royalty_rate: Explicit fraction for flat, none, not_evaluated or
+                deckless paths. Required when the deck is not_evaluated.
             production_rate_bpd_monthly: Calendar-day average per month in bpd.
                 Required for every revenue month under sliding_scale.
 
@@ -355,6 +356,15 @@ class CashflowEngine:
             ...     0.188
             ... )
         """
+        # Same unit-fraction contract as fiscal.schema._validate_royalty;
+        # these bounds are not a country-specific fiscal assumption.
+        if royalty_rate is not None and (
+            isinstance(royalty_rate, bool)
+            or not isinstance(royalty_rate, (int, float))
+            or not 0 <= royalty_rate <= 1
+            or not math.isfinite(royalty_rate)
+        ):
+            raise ValueError("royalty_rate: expected a finite fraction in [0, 1]")
         if self._uses_sliding_scale():
             royalty = SlidingScaleRoyalties()
             for month, revenue in revenue_monthly.items():
@@ -460,6 +470,8 @@ class CashflowEngine:
         wti_prices: Dict[str, float],
         first_oil_date: datetime,
         gas_prices: Optional[Dict[str, float]] = None,
+        *,
+        royalty_rate: float | None = None,
     ) -> List[MonthlyCashflowModel]:
         """
         Generate complete monthly cashflow projection.
@@ -473,6 +485,9 @@ class CashflowEngine:
                 MONTHLY_GAS_MCF and a finite nonnegative price for each
                 production month are required. No hidden heating-value factor
                 or escalation is applied; no deck preserves legacy oil output.
+                A gas_au fiscal marker requires this explicit gas deck.
+            royalty_rate: Optional explicit royalty fraction; required for
+                not_evaluated fiscal decks. Sliding-scale decks retain their bands.
 
         Returns:
             List of MonthlyCashflowModel objects
@@ -486,6 +501,13 @@ class CashflowEngine:
             ...     datetime(2025, 1, 1)
             ... )
         """
+        if (
+            self.fiscal_terms is not None
+            and self.fiscal_terms.price_marker == "gas_au"
+            and gas_prices is None
+        ):
+            raise CashflowError("gas_au requires explicit gas_prices in USD/Mcf")
+
         # Extract parameters from assumptions
         host_capex_mm = self.assumptions.get(self.dev_system, "HOST_CAPEX_MM")
         self.assumptions.get(self.dev_system, "SURF_PER_WELL_MM")
@@ -543,7 +565,9 @@ class CashflowEngine:
                 month: oil_revenues[month] + gas_revenues[month] for month in prod_dict
             }
         royalty_monthly = self.calculate_royalty(
-            revenue_monthly, production_rate_bpd_monthly=production_rates
+            revenue_monthly,
+            royalty_rate=royalty_rate,
+            production_rate_bpd_monthly=production_rates,
         )
         variable_opex_monthly = self.calculate_variable_opex(prod_dict)
 
@@ -614,7 +638,9 @@ def generate_monthly_cashflow(
         ...     'subsea15'
         ... )
     """
-    engine = CashflowEngine(assumptions_mgr, dev_system)
+    engine = CashflowEngine(
+        assumptions_mgr, dev_system, fiscal_terms=kwargs.get("fiscal_terms")
+    )
 
     # Extract required parameters from kwargs
     drilling_timeline = kwargs.get("drilling_timeline", {})
@@ -627,6 +653,7 @@ def generate_monthly_cashflow(
         wti_prices,
         first_oil_date,
         gas_prices=kwargs.get("gas_prices"),
+        royalty_rate=kwargs.get("royalty_rate"),
     )
 
     # Convert to DataFrame

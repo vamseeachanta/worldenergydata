@@ -7,13 +7,15 @@ data and validates it fail-closed. Strictness is deliberate — a mis-authored
 deck must raise, never silently degrade to a wrong royalty:
 
 * unknown top-level or royalty fields are rejected (typo guard);
-* ``royalty.model`` must be ``flat``, ``none`` or ``sliding_scale``;
+* ``royalty.model`` must be ``flat``, ``none``, ``sliding_scale`` or
+  ``not_evaluated`` (which requires a caller-supplied rate at calculation);
 * production-rate bands are ordered, bounded rates with an unbounded last band;
 * a ``flat`` model must carry ``rate_by_dev_system`` with *exactly* the four
   canonical dev systems, each rate in ``[0.0, 1.0]``;
 * provenance fields (``source_url``, ``source_ref``, ``revision``,
   ``effective_date``, ``schema_version``) are required and non-empty;
-* ``price_marker`` / ``currency`` are validated but *declarative* in v1.
+* ``price_marker`` / ``currency`` are validated; ``gas_au`` additionally
+  requires an explicit gas-price deck at monthly cashflow time.
 
 Author: WorldEnergyData Team
 Issue:  https://github.com/vamseeachanta/worldenergydata/issues/714
@@ -129,12 +131,12 @@ def _validate_royalty(raw: Any) -> RoyaltyTerms:
         )
         return RoyaltyTerms(model=model, bands=_validate_bands(raw.get("bands")))
     _require("bands" not in raw, "royalty.bands requires sliding_scale")
-    if model == "none":
+    if model in ("none", "not_evaluated"):
         _require(
             rate_map is None,
-            "royalty.rate_by_dev_system must be omitted when model is 'none'",
+            f"royalty.rate_by_dev_system must be omitted when model is {model!r}",
         )
-        return RoyaltyTerms(model="none", rate_by_dev_system=None)
+        return RoyaltyTerms(model=model, rate_by_dev_system=None)
 
     # model == "flat"
     _require(
