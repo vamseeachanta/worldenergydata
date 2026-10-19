@@ -77,6 +77,15 @@ class FieldConcept(BaseModel):
 
     # --- Production ---
     plateau_rate_boed: Optional[float] = None
+    flowline_liquid_rate_bpd: Optional[float] = Field(
+        None,
+        ge=0,
+        allow_inf_nan=False,
+        description=(
+            "Liquid volume per individual flowline at operating conditions "
+            "(bbl/day), not boe/day."
+        ),
+    )
     per_well_rate_boed: Optional[float] = None
     num_wells: Optional[int] = None
     num_trees: Optional[int] = None
