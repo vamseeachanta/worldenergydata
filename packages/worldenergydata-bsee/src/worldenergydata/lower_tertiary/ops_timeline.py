@@ -295,9 +295,10 @@ def derive_first_production_dates(
 def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.DataFrame:
     """Critical well operations from WAR data for a lease.
 
-    Returns drilling/completion spud-style milestones plus interventions
-    (workover/recompletion/sidetrack). Each row: API_WELL_NUMBER, date,
-    operation, detail.
+    Returns completion and intervention milestones, including temporary and
+    permanent abandonment. Each row: API_WELL_NUMBER, date, operation, detail.
+    WAR labels are legacy display strings; their inferred/unknown provenance
+    is recorded in ``bsee/analysis/data/war_activity_codes.yml``.
     """
     main = _read_war_bin("mv_war_main.bin")
     prop = _read_war_bin("mv_war_main_prop.bin")
@@ -316,6 +317,9 @@ def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.Da
     j["act"] = j["WELL_ACTIVITY_CD"].astype(str).str.strip().str.upper()
     j["date"] = pd.to_datetime(j["WAR_START_DT"], errors="coerce")
     j["API_WELL_NUMBER"] = j["API_WELL_NUMBER"].astype(str).str.strip()
+    # A missing display name must not discard a dated operation for a known
+    # API. Normalize before grouping so null and blank names share a group.
+    j["WELL_NAME"] = j["WELL_NAME"].fillna("").astype(str).str.strip()
     j = j.dropna(subset=["date"])
     j = j[j["date"] <= end_date]
 
@@ -340,7 +344,11 @@ def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.Da
                     "API_WELL_NUMBER": r["API_WELL_NUMBER"],
                     "date": r["date"],
                     "operation": label,
-                    "detail": f"{well} ({r['API_WELL_NUMBER']})",
+                    "detail": (
+                        f"{well} ({r['API_WELL_NUMBER']})"
+                        if well
+                        else f"API {r['API_WELL_NUMBER']}"
+                    ),
                 }
             )
     return pd.DataFrame(
