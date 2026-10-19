@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "repository": "worldenergydata",
+  "revision": "648d6de46081ad98a06504a25ec8a222acbd41b1",
+  "scope": "Package-local enrollment proposal; external map and reviewed inventory unchanged.",
+  "families": [
+    {
+      "id": "mobilization-allocation",
+      "title": "Equal allocation of fixed mobilization cost per well",
+      "counted": false,
+      "status": "pending_review",
+      "equation": "allocated_cost_usd_per_well = mob_cost_usd / n_wells",
+      "source": {
+        "title": "Principles of Accounting, Volume 2: Managerial Accounting",
+        "publisher": "OpenStax",
+        "year": 2019,
+        "section": "2.2, Average fixed cost",
+        "url": "https://openstax.org/books/principles-managerial-accounting/pages/2-2-identify-and-apply-basic-cost-behavior-patterns",
+        "accessed": "2026-10-19",
+        "application": "Treat mobilization as one fixed cost and wells as equal allocation units; not a calibrated cost estimate."
+      },
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+          "symbol": "BatchDrillingEconomics.mobilization_savings",
+          "line": 68,
+          "end_line": 90,
+          "kind": "method",
+          "relation": "independent",
+          "module": "drilling",
+          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+        }
+      ],
+      "tests": [
+        "tests/unit/drilling/test_implementation_map.py::test_mobilization_hand_calculation",
+        "tests/unit/drilling/test_implementation_map.py::test_mobilization_nonpositive_count"
+      ],
+      "duplicate_discovery": {
+        "scope": "All tracked Python blobs at revision; bounded name and literal-division search.",
+        "pattern": "mobilization_savings|mob_cost / n_wells_batch",
+        "command": "git grep -l -E 'mobilization_savings|mob_cost / n_wells_batch' <revision> -- '*.py'",
+        "results": [
+          {
+            "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+            "classification": "implementation",
+            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          },
+          {
+            "path": "tests/drilling/test_batch_economics.py",
+            "classification": "test_consumer",
+            "file_sha256": "df9adfcdbc4ca42cda5bba5b9750b96cdc3f57acbb9bc035cd217ab94a414b20"
+          },
+          {
+            "path": "tests/unit/drilling/test_pack_numeric_gates.py",
+            "classification": "test_consumer",
+            "file_sha256": "a7bffd58e73b8f640b2fedba9b3041241bdce9f59ec1623c5bbaed35e9ae7c80"
+          }
+        ],
+        "conclusion": "No additional definition in this search; not a proof of algorithmic uniqueness."
+      },
+      "limits": [
+        "The return is allocated cost, despite the savings method name.",
+        "n_wells_standalone is accepted but unused; semantics remain tracked in #1345.",
+        "Only the existing nonpositive batch-count guard is recorded; finiteness and integer-count contracts remain tracked in #1344.",
+        "Engineering qualification and counted-family review are NOT_EVALUATED."
+      ]
+    }
+  ]
+}
