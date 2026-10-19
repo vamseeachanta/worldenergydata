@@ -47,11 +47,14 @@ Adjacency merging
 
 Grain
 -----
-BSEE reports at API12 -- the *wellbore*, including each sidetrack as its own
-suffix.  Rolling up to API10 (the *well*) must UNION the underlying WAR weeks
-rather than sum per-bore days: at each sidetrack transition a single WAR week
-is attributed to both bores, so summing double-counts roughly seven days per
-boundary.  Both grains are emitted so consumers can state which one they mean.
+BSEE bore keys are API-12: a well-family prefix plus a WB code for numbered
+sidetracks and bypasses (NTL 2009-G33, 2009, attachment p. 3). Inputs must carry
+the complete key; API-10 and event-suffixed keys are rejected before grouping.
+The API-10 output unions calendar coverage across bores; its additive columns
+separately sum bore days. Overlap is reported, without inferring that it proves
+a shared rig or simultaneous operations. Re-entry gaps stay outside either
+union. Completion production needs a separate producing interval (NTL pp. 4-5),
+and bore rig-days must not be replicated across those completion keys.
 
 ``PND`` caveat
 --------------
@@ -68,6 +71,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from worldenergydata.bsee.analysis.well_identifier_grain import normalize_bsee_api12
 from worldenergydata.lower_tertiary.ops_timeline import WAR_ACTIVITY_LABELS
 
 __all__ = [
@@ -210,17 +214,17 @@ def union_days(intervals) -> int:
 
 
 def normalize_api12(values) -> pd.Series:
-    """Coerce an API well number column to its canonical 12-digit string form.
+    """Normalize complete BSEE bore keys; reject ambiguous identifier grain.
 
     A numeric API column stringifies with a float tail -- ``608124009500.0`` --
     which matches no population entry. Because a non-match is reported as
     "this bore has no WAR activity", the failure is silent and total: every
     bore comes back null and the result looks like a coverage gap rather than
-    a dtype mismatch. Callers reach this legitimately, since concatenating
-    heterogeneous WAR members widens the column to float64.
+    a dtype mismatch. Accept that numeric tail, but require the full API-12
+    format defined in NTL 2009-G33 (2009), attachment p. 3. Never pad API-10
+    or truncate an event suffix. Preserve Series indices for row alignment.
     """
-    s = pd.Series(values).astype(str).str.strip()
-    return s.str.replace(r"\.0+$", "", regex=True)
+    return pd.Series(values).map(normalize_bsee_api12)
 
 
 def _parse_war_date(values) -> pd.Series:
@@ -644,8 +648,9 @@ def rig_days_by_well(
     """Rig-days per API10 well, unioning the WAR weeks of all its bores.
 
     ``*_additive`` columns (the per-bore sums) are emitted alongside the union
-    so the difference stays visible: it is dominated by the single WAR week
-    that straddles each sidetrack transition, and is not parallel operations.
+    so overlapping coverage stays visible. The union measures calendar
+    coverage; neither measure alone establishes shared rigs, rig moves, or
+    parallel operations.
     """
     prepared = _prepare(war)
     if population is not None:

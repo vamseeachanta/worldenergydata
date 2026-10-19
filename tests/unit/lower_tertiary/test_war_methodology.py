@@ -45,6 +45,10 @@ def assert_limits(text):
         "20–23 days per 10,000 ft",
         "87117-MS",
         "comparability",
+        "API-12 wellbore",
+        "API-10 well family",
+        "PROD_INTERVAL_CD",
+        "well-identifier-grain.md",
     ):
         assert fragment in text, f"missing methodology disclosure: {fragment}"
 

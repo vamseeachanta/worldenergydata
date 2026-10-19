@@ -12,6 +12,19 @@ count is quantized at each boundary by up to one reporting week. This is an
 inference from the cadence, not a measured error bound on every report date;
 daily narratives or more frequent reports can refine the boundaries.
 
+Identifier grain: the shared WAR engine groups rig activity by API-12 wellbore.
+An API-10 well family count is distinct from a bore count; legacy surfaces can
+still count bore rows, as recorded in the linked metric inventory. A nonzero
+wellbore code can represent a bypass or a sidetrack. Completion production
+instead uses API-12 plus PROD_INTERVAL_CD
+and the reporting month; API-14 is not substituted for that key. Bore-day sums
+and family calendar-coverage unions are separate measures, and re-entry gaps
+are excluded from the WAR union. See the decision record at
+docs/data-sources/bsee/analysis/well-identifier-grain.md, including its metric
+inventory and unresolved populations. Numbering source: NTL 2009-G33 (2009),
+attachment pp. 3-5, API Well Number and Producing Interval Code:
+https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf
+
 Coverage floor: the repository records reports submitted since April 2004
 (Makefile, comment above the data target, attributed to issue 1066). This is
 reported, not confirmed from an agency page; the bulk-file start date remains
