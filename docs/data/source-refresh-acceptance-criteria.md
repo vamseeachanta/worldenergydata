@@ -175,12 +175,83 @@ hexadecimal characters, without whitespace or a prefix. Upper and mixed case
 are accepted; returned digests remain lower-case. Malformed pins fail with
 `pin-mismatch`.
 
-The helper does not provide private output staging, output-mutation detection,
-canonical-output preservation or atomic publication. Those controls require
-separate integration and validation before canonical output paths are touched.
+### Private staging and output snapshots
 
-The producer-identity policy is not settled by this slice. Snapshot hashes establish
-input identity, not authenticated producer provenance. A hash dictionary controlled
-by the same pull request is not producer provenance. Durable producer ancestry,
-exact executable Git blobs, shallow-checkout history hydration, squash merges,
-rebases and source-branch deletion remain subject to a separate policy and tests.
+`worldenergydata.common.artifact_snapshot.build_artifacts` combines input freezing
+with private staging for a caller-declared output set. The renderer receives only
+`FrozenInputs` and `StagedOutputs`; every semantic input read shall use the frozen
+bytes. `stage.write(identity, data)` writes immutable bytes to the private area
+and seals their SHA-256 immediately. Each declared output must be written exactly
+once. Undeclared, duplicate, missing, unavailable, nonregular or changed outputs
+fail the build. Identities are opaque keys and are never used as file paths.
+
+After rendering, the helper first revalidates all input paths, then reads and
+validates every staged output against its sealed digest. It returns an immutable
+`ArtifactSnapshot` containing the frozen inputs and the validated output `bytes`,
+`sha256` and `size` mappings. The hash and returned bytes come from the same read
+buffer. Staging is removed on success or failure. `staging_parent` can select the
+temporary storage location; otherwise the configured temporary directory is used.
+
+A manifest can serialize `inputs.sha256` and `stage.sha256` before writing itself.
+It shall not embed its own digest. Publish only `result.bytes` after the helper
+returns successfully; never reopen staging files for publication. This removes a
+second output read between validation and use. Renderers shall not write canonical
+paths. With that contract, integrity failures preserve existing canonical outputs
+byte-for-byte and leave absent outputs absent.
+
+```python
+import json
+
+from worldenergydata.common.artifact_snapshot import build_artifacts
+
+
+def render(inputs, stage):
+    stage.write("report", inputs.bytes["source"].upper())
+    manifest = {"inputs": dict(inputs.sha256), "outputs": dict(stage.sha256)}
+    stage.write("manifest", json.dumps(manifest, sort_keys=True).encode())
+
+
+result = build_artifacts(input_paths, ("report", "manifest"), render)
+# The caller now publishes result.bytes through its transactional writer.
+```
+
+The helper does not publish, implement multi-file atomic replacement or roll back
+publication I/O failures. Callers own those controls. It is a cooperative integrity
+guard, not a sandbox for hostile renderers or concurrent processes with access to
+private staging. Input and output snapshots reside in memory; large binary
+pipelines require a separate storage strategy. Endpoint checks cannot detect a
+change restored to identical bytes, but the returned byte basis stays fixed.
+
+The hash definition and the independent ASCII `abc` test vector come from
+[RFC 6234 (2011), sections 6 and 8.5](https://www.rfc-editor.org/rfc/rfc6234.html).
+There are no engineering coefficients, tolerances or acceptance thresholds in
+this helper: equality of byte fingerprints is required by the integrity contract.
+
+### Producer identity
+
+Snapshot hashes establish input identity, not authenticated producer provenance.
+A hash dictionary controlled by the same pull request is not producer provenance.
+The declared producer must exist on the published artifact ancestry and contain
+the exact executable Git blobs used by the build. Normal generation shall fail
+closed when that cannot be proven and shall never fetch history implicitly.
+
+For shallow checkouts, CI or test orchestration must hydrate the exact artifact
+head ancestry from the configured trusted origin, then prove the producer exists,
+is an ancestor and has matching executable blobs. An unsigned hash attestation
+cannot substitute for those checks. The producer must remain reachable after
+squash merges, rebases and source-branch deletion. Choose a durable ancestor
+containing the executable inputs and record its identity in a later artifact
+change; do not embed an artifact commit that must hash itself. Generalized
+producer validation and its shallow-history matrix remain follow-up work.
+
+### Generator migration inventory
+
+This is a bounded inventory of inspected entry points, not a claim that every
+manifest producer is covered. No generator is migrated by the snapshot helper.
+
+| Entry point | Observed integrity handling | Follow-up migration |
+| --- | --- | --- |
+| Cost evidence builder under `scripts/cost/`, `build_outputs` | Frozen bytes, private staging, closing input/output checks and transactional replacement already exist locally | Reuse the shared snapshots; preserve output schemas and audit producer lineage separately |
+| `scripts/hf_export/build_explorer_results_bundle.py` | Hashes source buffers while loading; writes bundle and dataset card directly | Declare all inputs first; stage both outputs; revalidate and publish returned bytes |
+| `scripts/reporting/build_completion_intervention.py` | Checks archive pins, then parses live paths and later records source/code digests | Extract frozen archive bytes, capture all code/criteria inputs, stage the complete output set |
+| `scripts/lower_tertiary/build_phase_norms.py` | Records workbook and benchmark digests in generated metadata | Freeze before parsing, validate binary pins, close input/output checks before publication |
