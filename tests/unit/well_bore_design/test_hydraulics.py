@@ -75,7 +75,9 @@ class TestPressureLoss:
             pipe_od_in=5.0,
         )
         dp_low = hydro.pressure_loss_psi_per_100ft(flow_rate_gpm=200, **common)
-        dp_high = hydro.pressure_loss_psi_per_100ft(flow_rate_gpm=600, **common)
+        # Synthetic high-flow fixture: leave the yield-floor plateau so this
+        # still checks a strict increase (agent-pack.md r1, 2026, section 5 C11).
+        dp_high = hydro.pressure_loss_psi_per_100ft(flow_rate_gpm=5000, **common)
         assert dp_high > dp_low
 
     def test_slim_hole_higher_loss_than_standard(self, hydro):
@@ -99,15 +101,19 @@ class TestPressureLoss:
 
     def test_higher_viscosity_gives_higher_laminar_loss(self, hydro):
         common = dict(
-            flow_rate_gpm=100,  # keep laminar
+            # Synthetic fixtures keep the legacy branch laminar and its loss
+            # above the yield floor (agent-pack.md r1, 2026, section 5 C11).
+            flow_rate_gpm=1,
             mud_weight_ppg=9.0,
             yield_point_lbf_100ft2=10,
             hole_od_in=8.5,
             pipe_od_in=5.0,
         )
-        dp_low_pv = hydro.pressure_loss_psi_per_100ft(plastic_viscosity_cp=10, **common)
+        dp_low_pv = hydro.pressure_loss_psi_per_100ft(
+            plastic_viscosity_cp=10000, **common
+        )
         dp_high_pv = hydro.pressure_loss_psi_per_100ft(
-            plastic_viscosity_cp=40, **common
+            plastic_viscosity_cp=40000, **common
         )
         assert dp_high_pv > dp_low_pv
 
@@ -247,3 +253,113 @@ class TestCompareBoreTypes:
         result = hydro.compare_bore_types(500, 10.0, 8000.0)
         for key, data in result.items():
             assert data["hole_cleaning_index"] > 0.0, f"Non-positive HCI for {key}"
+
+
+# Yield-floor regressions with independent force-balance hand calculations.
+#
+# Source: annular laminar-flow derivation (2025), Appendix A4, A6 and A9,
+# https://doi.org/10.1007/s13202-024-01919-z. With radial gap h, those equations
+# give tau_wall = h/2 * dP/dL and tau_wall >= tau_y for positive flow.
+# Thus dP/dL >= 4*tau_y/(hole_diameter - pipe_diameter).
+# The repository agent-pack.md, revision 1 (2026), section 5, C11, writes out
+# the field-unit conversion: 4*(YP/100)*12*100/(144*diameter_gap), giving
+# YP/(3*diameter_gap) psi per 100 ft. The factors are unit definitions,
+# not fitted coefficients. The synthetic cases below reproduce C11 and add
+# a low-flow case. Expected values are rational hand results, independent
+# of the implementation. Assertions use the unrounded bounds.
+
+
+@pytest.mark.parametrize(
+    "flow,mud,pv,yp,hole,pipe,expected_floor",
+    [
+        (500, 10, 20, 15, 8.5, 5.0, 10 / 7),
+        (100, 9, 10, 10, 8.5, 5.0, 20 / 21),
+        (100, 9, 40, 10, 8.5, 5.0, 20 / 21),
+        (500, 10, 20, 15, 6.0, 3.5, 2.0),
+        (1, 10, 20, 15, 8.5, 5.0, 10 / 7),
+    ],
+)
+def test_flowing_pressure_loss_obeys_yield_floor(
+    flow, mud, pv, yp, hole, pipe, expected_floor
+):
+    """Hand: 15/(3*3.5)=10/7; 10/(3*3.5)=20/21; 15/(3*2.5)=2.
+
+    The first four cases exercise the existing turbulent branch; the last
+    exercises its laminar branch. These are bounds, not exact flow solutions.
+    """
+    loss = WellBoreHydraulics().pressure_loss_psi_per_100ft(
+        flow, mud, pv, yp, hole, pipe
+    )
+    assert loss >= expected_floor
+
+
+def test_yield_floor_reaches_ecd_and_pressure_window():
+    """C11 hand calculation, agent-pack.md r1 (2026), section 5.
+
+    Standard annulus: loss >= 10/7 psi/100 ft, so at 10000 ft total loss
+    >= 1000/7 psi. The existing ECD definition (pack R2) uses 0.052:
+    ECD >= 10 + (1000/7)/(0.052*10000) = 10 + 25/91 ppg.
+    The synthetic fracture limit 10.2 is below this bound. The existing
+    pressure-window function rounds its returned ECD; the comparison
+    interface exposes the unrounded result for the numerical assertion.
+    """
+    from worldenergydata.well_bore_design.decision_framework import BoreTypeDecision
+
+    comparison = WellBoreHydraulics().compare_bore_types(500, 10, 10000)
+    standard = comparison[BoreType.STANDARD.value]
+    assert standard["total_pressure_loss_psi"] >= 1000 / 7
+    assert standard["ecd_ppg"] >= 10 + 25 / 91
+    result = BoreTypeDecision().pressure_window_check(
+        BoreType.STANDARD, 10, 10.2, 9.5, 500, 10000
+    )
+    assert result["compatible"] is False
+    assert result["limiting_factor"] == "ecd_exceeds_fracture_gradient"
+
+
+def test_zero_flow_has_no_circulating_loss():
+    """Zero imposed flow has no circulating loss; the yield floor is inactive."""
+    assert WellBoreHydraulics().pressure_loss_psi_per_100ft(0, 10, 20, 15, 8.5, 5) == 0
+
+
+def test_zero_yield_point_still_has_viscous_loss():
+    """A synthetic yield-free viscous fluid has positive loss at positive flow."""
+    assert WellBoreHydraulics().pressure_loss_psi_per_100ft(500, 10, 20, 0, 8.5, 5) > 0
+
+
+def test_zero_density_is_invalid():
+    """Zero density is outside the retained correlation's physical domain."""
+    with pytest.raises(ValueError, match="mud_weight_ppg"):
+        WellBoreHydraulics().pressure_loss_psi_per_100ft(500, 0, 20, 15, 8.5, 5)
+
+
+def test_zero_viscosity_and_yield_point_are_invalid():
+    """The retained correlation has no inviscid, yield-free fluid model."""
+    with pytest.raises(ValueError, match="rheology"):
+        WellBoreHydraulics().pressure_loss_psi_per_100ft(500, 10, 0, 0, 8.5, 5)
+
+
+@pytest.mark.parametrize(
+    "parameter",
+    [
+        "flow_rate_gpm",
+        "mud_weight_ppg",
+        "plastic_viscosity_cp",
+        "yield_point_lbf_100ft2",
+        "hole_od_in",
+        "pipe_od_in",
+    ],
+)
+@pytest.mark.parametrize("invalid", [-1.0, float("nan"), float("inf")])
+def test_invalid_inputs_cannot_bypass_yield_floor(parameter, invalid):
+    """Synthetic invalid scalars violate finite, nonnegative physical inputs."""
+    inputs = {
+        "flow_rate_gpm": 500,
+        "mud_weight_ppg": 10,
+        "plastic_viscosity_cp": 20,
+        "yield_point_lbf_100ft2": 15,
+        "hole_od_in": 8.5,
+        "pipe_od_in": 5,
+    }
+    inputs[parameter] = invalid
+    with pytest.raises(ValueError, match=parameter):
+        WellBoreHydraulics().pressure_loss_psi_per_100ft(**inputs)
