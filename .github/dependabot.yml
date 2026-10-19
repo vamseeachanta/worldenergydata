@@ -10,6 +10,10 @@ updates:
       time: "06:00"
       timezone: "America/Chicago"
     open-pull-requests-limit: 5
+    # GitHub Dependabot options reference, rebase-strategy (accessed 2026-10-19):
+    # https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#rebase-strategy
+    # Keep automatic refresh explicit; strict required checks still apply.
+    rebase-strategy: "auto"
     commit-message:
       prefix: "chore(deps)"
     labels:
@@ -24,10 +28,12 @@ updates:
           - "pytest*"
           - "black"
           - "flake8"
+          - "isort"
           - "mypy"
           - "pre-commit"
           - "faker"
           - "factory-boy"
+          - "types-*"
         update-types:
           - "minor"
           - "patch"
@@ -49,6 +55,22 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      # Same reference, groups and update-types: related version updates share
+      # a PR. These groups admit only minor/patch version updates.
+      validation:
+        patterns:
+          - "pydantic"
+          - "pydantic-settings"
+        update-types:
+          - "minor"
+          - "patch"
+      documentation:
+        patterns:
+          - "sphinx*"
+          - "mkdocs*"
+        update-types:
+          - "minor"
+          - "patch"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -59,6 +81,8 @@ updates:
       time: "06:00"
       timezone: "America/Chicago"
     open-pull-requests-limit: 3
+    # Keep the documented default explicit for action updates as well.
+    rebase-strategy: "auto"
     commit-message:
       prefix: "chore(ci)"
     labels:
