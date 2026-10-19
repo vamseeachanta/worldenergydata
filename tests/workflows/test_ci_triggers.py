@@ -234,13 +234,22 @@ def test_required_names_have_single_result_job() -> None:
         assert "!cancelled()" in gate["if"]
         assert "needs.mode.outputs.replay" not in gate["if"]
         assert gate["permissions"] == {"contents": "read", "actions": "read"}
-        checkout, replay, full = gate["steps"]
-        assert (
-            checkout["if"]
-            == replay["if"]
-            == ("needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'")
+        replay, full = gate["steps"]
+        assert replay["if"] == (
+            "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
         )
-        assert replay["env"]["CHECK_NAME"] == name
+        assert replay["env"]["REPLAY_RESULT"] == (
+            "${{ fromJSON(needs.mode.outputs.evidence)['" + name + "'].decision }}"
+        )
+        assert "GH_TOKEN" not in replay["env"]
+        for decision, expected in [("PASS", 0), ("FAIL", 1), ("", 1)]:
+            completed = subprocess.run(
+                ["bash", "-e", "-c", replay["run"]],
+                env={**os.environ, "REPLAY_RESULT": decision},
+                capture_output=True,
+                check=False,
+            )
+            assert completed.returncode == expected
         assert full["if"] == (
             "needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'"
         )
@@ -289,9 +298,6 @@ def test_full_jobs_honor_cancellation() -> None:
         assert "mode" in jobs[key]["needs"]
     assert "needs.lint.result == 'success'" in jobs["build"]["if"]
     assert jobs["mode"]["permissions"] == {"contents": "read", "actions": "read"}
-    assert not any(
-        "checkout@" in step.get("uses", "") for step in jobs["mode"]["steps"]
-    )
     artifact = jobs["mode"]["steps"][-1]
     assert artifact["with"]["retention-days"] == 14
     assert artifact["with"]["name"].startswith("gate-tip-")
@@ -451,3 +457,58 @@ def test_local_merge_behavior(
             f"tested={tested} first_parent={tip} second_parent={head} "
             f"tip={tip} event_base={event_base} tree={tree}"
         ) in result.stdout
+
+
+@pytest.mark.parametrize("evidence", ["true", "false", ""])
+def test_mode_evidence_controls_full_gate_fallback(tmp_path, evidence):
+    """Issue #1350 truth table: only all-PASS evidence can disable full jobs.
+
+    Hand calculation: true selects replay; false or missing selects full CI.
+    Every full job contains the same replay != true guard, so false opens it.
+    """
+    mode = _load_workflow()["jobs"]["mode"]
+    assert mode["outputs"]["evidence"] == "${{ steps.lookup.outputs.evidence }}"
+    candidate, checkout, lookup, select, artifact = mode["steps"]
+    assert candidate["id"] == "candidate"
+    assert checkout["if"] == lookup["if"] == "steps.candidate.outputs.replay == 'true'"
+    assert lookup["id"] == "lookup"
+    assert lookup["env"]["GH_TOKEN"] == "${{ github.token }}"
+    assert lookup["run"].endswith("python scripts/ci/replay_gate.py --mode\n")
+    assert select["id"] == "mode"
+    assert select["env"]["REPLAY"] == "${{ steps.lookup.outputs.replay || 'false' }}"
+    assert artifact["if"] == (
+        "github.event_name == 'pull_request' && steps.mode.outputs.replay != 'true'"
+    )
+    output = tmp_path / "output"
+    tools = tmp_path / "tools"
+    tools.mkdir()
+    # Synthetic Git response; the digest content is arbitrary, not a design value.
+    tip = "b" * 40
+    git = tools / "git"
+    git.write_text("#!/bin/sh\nprintf '%s\trefs/heads/main\n' " + tip + "\n")
+    git.chmod(0o755)
+    result = subprocess.run(
+        ["bash", "-e", "-o", "pipefail", "-c", select["run"]],
+        env={
+            **os.environ,
+            "PATH": str(tools) + os.pathsep + os.environ["PATH"],
+            "REPLAY": evidence or "false",
+            "IS_PR": "true",
+            "BASE_URL": "unused",
+            "BASE_REF": "main",
+            "GITHUB_OUTPUT": str(output),
+            "RUNNER_TEMP": str(tmp_path),
+        },
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert result.returncode == 0
+    values = dict(line.split("=", 1) for line in output.read_text().splitlines())
+    assert values["replay"] == ("true" if evidence == "true" else "false")
+    if evidence != "true":
+        assert values["tip"] == tip
+        assert (tmp_path / "gate-tip").read_text() == "."
+    else:
+        assert "tip" not in values
+        assert not (tmp_path / "gate-tip").exists()

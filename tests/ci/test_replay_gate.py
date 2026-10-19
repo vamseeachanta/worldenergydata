@@ -381,3 +381,120 @@ def test_transport_rejects_non_https_before_auth(replay, monkeypatch):
     monkeypatch.delenv("GH_TOKEN", raising=False)
     with pytest.raises(ValueError):
         replay.request_json("repos/example/repository")
+
+
+# Required names and the all-PASS rule come from issue #1350, section 1.
+REQUIRED_NAMES = (
+    "Lint",
+    "Type Check",
+    "Security Scan",
+    "Documentation",
+    "Test (PR gate)",
+)
+
+
+def full_gate_api():
+    """Build independent successful evidence for each required name."""
+    api = FakeAPI()
+    api.jobs[90] = [
+        {"id": index, "name": name, "conclusion": "success"}
+        for index, name in enumerate(REQUIRED_NAMES)
+    ]
+    return api
+
+
+def test_select_mode_snapshots_all_required_checks(replay):
+    """Hand truth table: PASS AND PASS AND PASS AND PASS AND PASS = true."""
+    api = full_gate_api()
+    result = replay.select_mode(api, CONTEXT)
+    assert result["replay"] is True
+    assert set(result["evidence"]) == set(REQUIRED_NAMES)
+    assert all(item["decision"] == "PASS" for item in result["evidence"].values())
+    assert {item["run_id"] for item in result["evidence"].values()} == {90}
+    assert len(api.calls) == len(set(api.calls))
+
+
+@pytest.mark.parametrize("name", REQUIRED_NAMES)
+@pytest.mark.parametrize("conclusion", ["failure", "skipped", None])
+def test_select_mode_requires_every_check_to_pass(replay, name, conclusion):
+    """Hand truth table: the conjunction is false with any non-PASS operand."""
+    api = full_gate_api()
+    next(job for job in api.jobs[90] if job["name"] == name)["conclusion"] = conclusion
+    result = replay.select_mode(api, CONTEXT)
+    assert result["replay"] is False
+    assert result["evidence"][name]["decision"] == "FAIL"
+
+
+@pytest.mark.parametrize(
+    "condition",
+    ["moved_base", "fork", "old_attempt", "expired", "active_full", "missing", "api"],
+)
+def test_select_mode_falls_back_when_evidence_is_unavailable(replay, condition):
+    """Issue #1350 cases lack a valid conjunction, so each selects full CI."""
+    api = full_gate_api()
+    if condition == "moved_base":
+        api.tip = "c" * 40
+    elif condition == "fork":
+        api.runs[0]["pull_requests"] = []
+    elif condition == "old_attempt":
+        api.runs[0]["run_attempt"] += 1
+    elif condition == "expired":
+        api.artifacts[90][0]["expired"] = True
+    elif condition == "active_full":
+        api.runs[0].update(status="in_progress", conclusion=None)
+    elif condition == "missing":
+        api.runs = []
+    else:
+
+        def api(path):
+            raise OSError("unavailable")
+
+    assert replay.select_mode(api, CONTEXT)["replay"] is False
+
+
+def test_select_mode_reads_one_evidence_snapshot(replay):
+    """Changing responses cannot mix passing jobs from different lookups."""
+    api = full_gate_api()
+
+    def changing_api(path):
+        if path in api.calls:
+            raise AssertionError("evidence must be read once")
+        return api(path)
+
+    result = replay.select_mode(changing_api, CONTEXT)
+    assert result["replay"] is True
+
+
+@pytest.mark.parametrize("valid", [True, False])
+def test_mode_cli_outputs_fallback_without_failing(
+    replay, tmp_path, monkeypatch, valid
+):
+    """Missing context selects full CI; valid context publishes the PASS snapshot."""
+    import json
+    import sys
+
+    event = tmp_path / "event.json"
+    if valid:
+        event.write_text(
+            json.dumps(
+                {
+                    "pull_request": {
+                        "number": CONTEXT["pr"],
+                        "head": {"sha": HEAD},
+                        "base": {"ref": "main", "repo": {"id": 1}},
+                    }
+                }
+            )
+        )
+    output = tmp_path / "output"
+    monkeypatch.setenv("GITHUB_EVENT_PATH", str(event))
+    monkeypatch.setenv("GITHUB_REPOSITORY", CONTEXT["repository"])
+    monkeypatch.setenv("GITHUB_RUN_ID", str(CONTEXT["run_id"]))
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output))
+    monkeypatch.setattr(sys, "argv", [str(SCRIPT), "--mode"])
+    monkeypatch.setattr(replay, "request_json", full_gate_api())
+    assert replay.main() == 0
+    values = dict(line.split("=", 1) for line in output.read_text().splitlines())
+    assert values["replay"] == str(valid).lower()
+    evidence = json.loads(values["evidence"])
+    assert set(evidence) == (set(REQUIRED_NAMES) if valid else set())

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, develop]
   pull_request:
-    # Metadata edits copy the last full result; base changes run the full gate.
+    # Metadata edits reuse validated evidence or run the full gate.
     types: [opened, synchronize, reopened, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
@@ -30,12 +30,35 @@ jobs:
       actions: read
     outputs:
       replay: ${{ steps.mode.outputs.replay }}
+      evidence: ${{ steps.lookup.outputs.evidence }}
     steps:
-      - name: Select gate mode
-        id: mode
+      - name: Check replay eligibility
+        id: candidate
         env:
           REPLAY: >-
             ${{ github.event_name == 'pull_request' && github.event.action == 'edited' && !github.event.changes.base }}
+        run: echo "replay=$REPLAY" >> "$GITHUB_OUTPUT"
+      - name: Checkout replay lookup
+        if: steps.candidate.outputs.replay == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          repository: ${{ github.event.pull_request.base.repo.full_name }}
+          persist-credentials: false
+          sparse-checkout: scripts/ci/replay_gate.py
+          sparse-checkout-cone-mode: false
+      - name: Evaluate replay evidence
+        id: lookup
+        if: steps.candidate.outputs.replay == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Replay helper revision: $(git rev-parse HEAD)"
+          python scripts/ci/replay_gate.py --mode
+      - name: Select gate mode
+        id: mode
+        env:
+          REPLAY: ${{ steps.lookup.outputs.replay || 'false' }}
           IS_PR: ${{ github.event_name == 'pull_request' }}
           BASE_URL: ${{ github.event.pull_request.base.repo.clone_url }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -695,8 +718,8 @@ jobs:
             echo "Skipping Sphinx build: docs/conf.py is not present"
           fi
 
-  # Replay helpers come from the live base branch, even when the event base SHA
-  # predates the helper. Replay evidence still targets the event's PR head.
+  # Gate mode validates evidence once using the maintained live-base helper.
+  # Result jobs consume that snapshot, avoiding races between repeated lookups.
   lint-gate:
     name: Lint
     needs: [mode, lint]
@@ -706,23 +729,13 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Checkout replay lookup
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
-          persist-credentials: false
-          sparse-checkout: scripts/ci/replay_gate.py
-          sparse-checkout-cone-mode: false
-      - name: Copy required check conclusion
+      - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          CHECK_NAME: Lint
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Lint'].decision }}
         run: |
-          echo "Replay helper revision: $(git rev-parse HEAD)"
-          python scripts/ci/replay_gate.py "$CHECK_NAME"
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -742,23 +755,13 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Checkout replay lookup
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
-          persist-credentials: false
-          sparse-checkout: scripts/ci/replay_gate.py
-          sparse-checkout-cone-mode: false
-      - name: Copy required check conclusion
+      - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          CHECK_NAME: Type Check
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Type Check'].decision }}
         run: |
-          echo "Replay helper revision: $(git rev-parse HEAD)"
-          python scripts/ci/replay_gate.py "$CHECK_NAME"
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -778,23 +781,13 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Checkout replay lookup
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
-          persist-credentials: false
-          sparse-checkout: scripts/ci/replay_gate.py
-          sparse-checkout-cone-mode: false
-      - name: Copy required check conclusion
+      - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          CHECK_NAME: Security Scan
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Security Scan'].decision }}
         run: |
-          echo "Replay helper revision: $(git rev-parse HEAD)"
-          python scripts/ci/replay_gate.py "$CHECK_NAME"
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -814,23 +807,13 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Checkout replay lookup
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
-          persist-credentials: false
-          sparse-checkout: scripts/ci/replay_gate.py
-          sparse-checkout-cone-mode: false
-      - name: Copy required check conclusion
+      - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          CHECK_NAME: Documentation
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Documentation'].decision }}
         run: |
-          echo "Replay helper revision: $(git rev-parse HEAD)"
-          python scripts/ci/replay_gate.py "$CHECK_NAME"
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
@@ -850,23 +833,13 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Checkout replay lookup
-        if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          repository: ${{ github.event.pull_request.base.repo.full_name }}
-          persist-credentials: false
-          sparse-checkout: scripts/ci/replay_gate.py
-          sparse-checkout-cone-mode: false
-      - name: Copy required check conclusion
+      - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
-          CHECK_NAME: Test (PR gate)
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Test (PR gate)'].decision }}
         run: |
-          echo "Replay helper revision: $(git rev-parse HEAD)"
-          python scripts/ci/replay_gate.py "$CHECK_NAME"
+          echo "Selected replay result: $REPLAY_RESULT"
+          test "$REPLAY_RESULT" = PASS
       - name: Gate on full result
         if: needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'
         env:
