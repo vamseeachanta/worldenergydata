@@ -40,6 +40,7 @@ VALID_COMPONENT_TYPES = (
     "lmrp",
     "flex_joint",
     "telescopic_joint",
+    "rotating_control_device",
 )
 
 
@@ -97,7 +98,9 @@ class DrillingRiserLoader:
         # cannot introduce unchecked rows between preflight and pandas.
         content = csv_path.read_text(encoding="utf-8-sig")
         _validate_row_widths(content)
-        df = pd.read_csv(StringIO(content))
+        # Convert IDs before pandas' numeric/null inference; other fields retain
+        # their existing missing-value semantics for numeric filtering.
+        df = pd.read_csv(StringIO(content), converters={"COMPONENT_ID": str})
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
@@ -106,6 +109,12 @@ class DrillingRiserLoader:
             if missing.any():
                 ids = df.loc[missing, "COMPONENT_ID"].tolist()
                 raise ValueError(f"{field} must be populated for components {ids}")
+        ids = df["COMPONENT_ID"]
+        invalid_ids = ids.isna() | ids.str.strip().eq("") | ids.ne(ids.str.strip())
+        if invalid_ids.any():
+            raise ValueError("COMPONENT_ID values must be nonempty unpadded strings")
+        if ids.duplicated().any():
+            raise ValueError("COMPONENT_ID values must be unique")
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df
@@ -125,8 +134,7 @@ class DrillingRiserLoader:
         """Get all components of a given type.
 
         Args:
-            component_type: One of riser_joint, bop, lmrp,
-                flex_joint, telescopic_joint.
+            component_type: A type listed in VALID_COMPONENT_TYPES.
         """
         df = self.load()
         if df.empty:
@@ -187,8 +195,7 @@ class DrillingRiserLoader:
         Each kwarg filters the result; omit to skip that filter.
 
         Args:
-            component_type: One of riser_joint, bop, lmrp,
-                flex_joint, telescopic_joint.
+            component_type: A type listed in VALID_COMPONENT_TYPES.
             od_in: OD filter (tolerance ±0.1" applied automatically).
             manufacturer: Exact manufacturer name match.
             min_pressure_psi: Minimum pressure rating filter.

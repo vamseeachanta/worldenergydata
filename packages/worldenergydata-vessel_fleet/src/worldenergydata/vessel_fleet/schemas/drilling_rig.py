@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
+from pydantic_core import PydanticCustomError
 
 from worldenergydata.vessel_fleet.schemas.base import BaseVesselSchema
 
@@ -44,6 +45,18 @@ class DrillingRigSchema(BaseVesselSchema):
     # Riser
     RISER_SIZE_IN: Optional[float] = None
     RISER_LENGTH_FT: Optional[float] = None
+
+    # Riser-handling vocabulary: issue 698. Capacity is per tensioner;
+    # aggregate ratings require source clarification before ingestion.
+    # Zero is a mathematical domain bound, not an engineering acceptance limit.
+    N_TENSIONERS: int | None = Field(default=None, ge=0)
+    TENSIONER_TYPE: str | None = None
+    TENSIONER_CAPACITY_KIPS: float | None = Field(
+        default=None, ge=0, allow_inf_nan=False
+    )
+    TENSIONER_STROKE_FT: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    TJ_STROKE_FT: float | None = Field(default=None, ge=0, allow_inf_nan=False)
+    N_TENSION_WIRES: int | None = Field(default=None, ge=0)
 
     # Moonpool
     MOONPOOL_LENGTH_M: Optional[float] = None
@@ -105,6 +118,27 @@ class DrillingRigSchema(BaseVesselSchema):
     # --- Validators ---
 
     @field_validator(
+        "N_TENSIONERS",
+        "TENSIONER_CAPACITY_KIPS",
+        "TENSIONER_STROKE_FT",
+        "TJ_STROKE_FT",
+        "N_TENSION_WIRES",
+        mode="before",
+    )
+    @classmethod
+    def _normalize_riser_handling_numbers(cls, v: object) -> object:
+        """Keep unknown cells null and reject boolean numeric substitutions."""
+        if isinstance(v, bool):
+            raise PydanticCustomError(
+                "riser_handling_number", "Riser-handling numbers cannot be booleans"
+            )
+        if isinstance(v, str):
+            v = v.strip()
+            if not v:
+                return None
+        return v
+
+    @field_validator(
         "RIG_TYPE",
         "RIG_STATUS",
         "RIG_DESIGN",
@@ -120,6 +154,7 @@ class DrillingRigSchema(BaseVesselSchema):
         "HULL_FORM_TYPE",
         "HULL_LIBRARY_REF",
         "GENERATION",
+        "TENSIONER_TYPE",
         mode="before",
     )
     @classmethod
