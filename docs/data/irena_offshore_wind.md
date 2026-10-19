@@ -98,3 +98,6 @@ export and readable current source terms are needed to verify native headers,
 country keys, source coverage and reuse rights. Automated fetching will require
 an independently verified permitted access method and a successful bounded live
 run before any claim that it works.
+
+For country/year selection and explicit generation output units, see
+[Offline offshore wind queries](irena_offshore_queries.md).
