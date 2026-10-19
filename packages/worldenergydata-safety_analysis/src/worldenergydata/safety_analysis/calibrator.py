@@ -271,6 +271,7 @@ class EnigmaCalibrator:
         Generate a realistic synthetic HSE DataFrame for testing.
         Produces incidents with realistic equipment_type/incident_type distributions
         matching BSEE GoM historical patterns.
+        Operator labels are neutral codenames with no real organisation mapping.
         """
         rng = np.random.default_rng(42)
 
@@ -336,7 +337,14 @@ class EnigmaCalibrator:
                 "severity": chosen_severities,
                 "incident_date": incident_dates,
                 "operator": rng.choice(
-                    ["Shell", "BP", "Chevron", "ExxonMobil", "ConocoPhillips"],
+                    # Issue #1240 (2026): synthetic rows use neutral codenames.
+                    [
+                        "OPERATOR-A",
+                        "OPERATOR-B",
+                        "OPERATOR-C",
+                        "OPERATOR-D",
+                        "OPERATOR-E",
+                    ],
                     size=n_incidents,
                 ),
                 "facility_name": [
