@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Build the ALL-REGIONS FIELD ATLAS front-door page (issue #779).
 
@@ -13,6 +12,7 @@ Every number rendered is computed from a real data file:
   - reports/field_development/bsee_matched/*.html               (concept-matched page count)
   - reports/lower_tertiary/lt_well_benchmark_*_latest.csv       (LT benchmark well count)
   - reports/lower_tertiary/lifecycle/*.html                     (field life-cycle page count)
+  - reports/bsee/all_fields/gom_all_fields_atlas.csv             (optional GoM counts)
 
 BADGE RULE (from freshness-scorecard catalog_status of each country's dedicated
 national-regulator ingest module):
@@ -22,8 +22,7 @@ the Gulf of Mexico -- the ONLY RICH region. Countries with a scaffolded national
 module still at runtime_fetched (UK/Norway/Brazil/Mexico/Canada) are ROADMAP.
 Every other country carries the shared curated reference inventory only -> SAMPLE.
 
-Outputs (only these three files are written):
-  scripts/field_development/build_all_regions_atlas.py   (this file)
+Outputs:
   reports/field_development/all_regions_coverage.csv
   reports/field_development/all_regions_atlas.html
 """
@@ -39,10 +38,10 @@ from pathlib import Path
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
-import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+import site_nav
 
 # Country badge rule shared with the field-atlas Explorer feed (#947).
-from catalog_badges import badge_for, load_scorecard  # noqa: E402
+from catalog_badges import badge_for, load_scorecard
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
@@ -50,6 +49,9 @@ COVERAGE_CSV = CURATED / "coverage_summary.csv"
 FIELDS_CSV = CURATED / "fields.csv"
 CENTROIDS_CSV = CURATED / "country_centroids.csv"
 SCORECARD = PROJECT_ROOT / "data" / "freshness-scorecard.json"
+GOM_ATLAS_CSV = (
+    PROJECT_ROOT / "reports" / "bsee" / "all_fields" / "gom_all_fields_atlas.csv"
+)
 
 BSEE_MATCHED_DIR = PROJECT_ROOT / "reports" / "field_development" / "bsee_matched"
 LT_BENCHMARK_CSV = (
@@ -90,17 +92,95 @@ def read_coverage():
     return by_country, by_region, totals
 
 
-def count_glob_html(d: Path, exclude={"index.html"}) -> int:
+def count_glob_html(d: Path, exclude=frozenset({"index.html"})) -> int | None:
     if not d.is_dir():
-        return 0
-    return sum(1 for p in d.glob("*.html") if p.name not in exclude)
+        return None
+    return sum(1 for p in d.glob("*.html") if p.is_file() and p.name not in exclude)
 
 
-def count_data_rows(p: Path) -> int:
+def count_data_rows(p: Path) -> int | None:
+    """Count CSV records, not physical lines; missing evidence is not zero."""
     if not p.is_file():
-        return 0
-    with p.open(newline="", encoding="utf-8", errors="replace") as f:
-        return max(sum(1 for _ in f) - 1, 0)
+        return None
+    with p.open(newline="", encoding="utf-8") as f:
+        records = (row for row in csv.reader(f) if any(cell.strip() for cell in row))
+        if next(records, None) is None:
+            return None
+        return sum(1 for _ in records)
+
+
+def gom_atlas_counts(path: Path) -> tuple[int | None, int | None]:
+    """Return fields and field-well memberships, or unavailable evidence.
+
+    Schema and summation basis: AllFieldsRunner._compute_field_production in
+    packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/all_fields_runner.py.
+    WELL_COUNT counts distinct wells within each field, not across the basin.
+    """
+    if not path.is_file():
+        return None, None
+    with path.open(newline="", encoding="utf-8") as handle:
+        reader = csv.DictReader(handle)
+        if not {"FIELD_CODE", "WELL_COUNT"}.issubset(reader.fieldnames or []):
+            raise ValueError("GoM atlas requires FIELD_CODE and WELL_COUNT columns")
+        codes = set()
+        wells = 0
+        for row in reader:
+            code = (row.get("FIELD_CODE") or "").strip()
+            count = (row.get("WELL_COUNT") or "").strip()
+            if not code or code in codes or not count.isascii() or not count.isdecimal():
+                raise ValueError("GoM atlas requires unique field codes and integer well counts")
+            codes.add(code)
+            wells += int(count)
+    return len(codes), wells
+
+
+def format_count(value: int | None) -> str:
+    return "NOT_EVALUATED" if value is None else f"{value:,}"
+
+
+def choropleth(rows) -> str:
+    """Render counts without inferring coverage for countries absent from the source.
+
+    API source: Plotly.js documentation, World Choropleth Map (Robinson Projection),
+    accessed 2026-10-19: https://plotly.com/javascript/choropleth-maps/.
+    Country aliases expand the US/UK labels in coverage_summary.csv.
+    """
+    aliases = {"US": "United States", "UK": "United Kingdom"}
+    trace = {
+        "type": "choropleth",
+        "locationmode": "country names",
+        "locations": [aliases.get(r["country"], r["country"]) for r in rows],
+        "z": [r["fields"] for r in rows],
+        "text": [html.escape(r["country"]) for r in rows],
+        "customdata": [[r["facilities"], r["badge"]] for r in rows],
+        "colorbar": {"title": {"text": "Fields"}},
+        "hovertemplate": (
+            "%{text}<br>Fields: %{z}<br>Facilities: %{customdata[0]}"
+            "<br>Badge: %{customdata[1]}<extra></extra>"
+        ),
+    }
+    # A country string must never terminate the non-executable JSON script element.
+    payload = json.dumps(trace, ensure_ascii=True).replace("<", "\\u003c")
+    return f'''<div id="atlas-map" aria-label="World offshore field counts"></div>
+  <p id="atlas-map-fallback" class="note">Map unavailable until external map assets load.
+  All source records remain available in the sortable table below. Unshaded countries
+  have no mapped observation; this does not establish zero fields. Map names that
+  the geography provider does not recognize remain in the table.</p>
+  <script id="atlas-map-data" type="application/json">{payload}</script>
+  <script src="https://cdn.plot.ly/plotly-4.1.1.min.js"></script>
+  <script>
+  if (window.Plotly) {{
+    Plotly.newPlot('atlas-map',
+      [JSON.parse(document.getElementById('atlas-map-data').textContent)],
+      {{geo: {{projection: {{type: 'robinson'}}}}}},
+      {{responsive: true, displayModeBar: false}}
+    ).then(function() {{
+      document.getElementById('atlas-map-fallback').textContent =
+        'Unshaded countries have no mapped observation, not necessarily zero fields. '
+        + 'All records, including unrecognized map names, remain in the table.';
+    }}).catch(function() {{ /* Keep the table fallback visible. */ }});
+  }}
+  </script>'''
 
 
 def distinct_field_countries() -> int:
@@ -114,7 +194,10 @@ def distinct_field_countries() -> int:
 
 
 def centroid_country_count() -> int:
-    return count_data_rows(CENTROIDS_CSV)
+    count = count_data_rows(CENTROIDS_CSV)
+    if count is None:
+        raise ValueError("Geographic atlas requires an available country roster")
+    return count
 
 
 # ---------------------------------------------------------------------------
@@ -139,13 +222,15 @@ def svg_bar(top, max_fields):
     total_w = label_w + bar_w + 60
     colors = {"RICH": "#0b6b3a", "SAMPLE": "#0b3d5c", "ROADMAP": "#9a6a00"}
     parts = [
-        f'<svg viewBox="0 0 {total_w} {height}" width="100%" '
-        f'preserveAspectRatio="xMinYMin meet" role="img" '
-        f'aria-label="Top countries by offshore field count">'
+        (
+            f'<svg viewBox="0 0 {total_w} {height}" width="100%" '
+            f'preserveAspectRatio="xMinYMin meet" role="img" '
+            f'aria-label="Top countries by offshore field count">'
+        )
     ]
     for i, r in enumerate(top):
         y = pad_top + i * (row_h + gap)
-        w = max(2, round(bar_w * r["fields"] / max_fields))
+        w = round(bar_w * r["fields"] / max_fields) if max_fields else 0
         c = colors[r["badge"]]
         name = html.escape(r["country"])
         parts.append(
@@ -201,6 +286,7 @@ def build_html(
             f'<td class="num">{dens}</td>'
             f'<td>{badge_span(r["badge"])}</td>'
             f'<td class="mod">{html.escape(r["module"])}</td>'
+            f'<td class="mod">{html.escape(r["catalog_status"])}</td>'
             f"</tr>"
         )
     table_body = "\n".join(table_body)
@@ -295,15 +381,20 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
   </div>
 
   <h1>All-Regions Field Atlas</h1>
-  <p class="thesis">We cover <span class="big">{atlas_countries} countries</span> at
-  reference depth; the <span class="big">Gulf of Mexico</span> at full life-cycle depth —
-  here's the honest map.</p>
+  <p class="thesis">The geographic atlas includes <span class="big">{atlas_countries}
+  countries</span>; reference counts are available for {len(rows)} countries.
+  The <span class="big">Gulf of Mexico</span> links to the field and well deep dives.</p>
+
+  <h2>Revision history</h2>
+  <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>Evidence and map</td><td>2026-10-19</td><td>Country counts are mapped,
+  badge provenance is exposed, and unsupported GoM counts are marked NOT_EVALUATED.</td></tr></tbody></table>
 
   <div class="kpis">
     <div class="kpi"><div class="v">{atlas_countries}</div><div class="l">Countries in atlas scope</div></div>
     <div class="kpi"><div class="v">{totals['fields']:,}</div><div class="l">Offshore fields catalogued</div></div>
     <div class="kpi"><div class="v">{totals['facilities']:,}</div><div class="l">Production facilities</div></div>
-    <div class="kpi rich"><div class="v">1</div><div class="l">RICH region (US Gulf of Mexico)</div></div>
+    <div class="kpi rich"><div class="v">{counts['RICH']}</div><div class="l">RICH badges (US applies to GoM only)</div></div>
   </div>
 
   <div class="legend">{legend}</div>
@@ -315,17 +406,22 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
   depth ({counts['RICH']} RICH); {counts['SAMPLE']} countries carry the reference inventory
   only (SAMPLE) and {counts['ROADMAP']} have a national deep-ingest pipeline scaffolded but
   not yet materialised (ROADMAP).</p>
+  <p class="note"><strong>GoM-only override.</strong> The shared badge contract reserves
+  RICH for the US Gulf of Mexico deep dives, even when the BSEE scorecard says SAMPLE.
+  This is not a country-wide depth claim. For dedicated modules, catalog status is
+  the unmodified scorecard value; reference denotes the shared inventory fallback.
+  A badge does not establish freshness or engineering readiness.</p>
 
   <div class="gom">
     <h3>Gulf of Mexico — the one region at full life-cycle depth</h3>
     <p class="sub">Real BSEE fields &amp; wells, concept-matched development pages, and a
     Lower Tertiary economics benchmark — the depth we intend to bring to every basin.</p>
     <div class="gomgrid">
-      <div class="gomstat"><div class="v">~1,390</div><div class="l">BSEE Gulf of Mexico fields<sup>&dagger;</sup></div></div>
-      <div class="gomstat"><div class="v">~30k</div><div class="l">BSEE offshore wells<sup>&dagger;</sup></div></div>
-      <div class="gomstat"><div class="v">{gom_proof['matched']}</div><div class="l">Concept-matched field pages</div></div>
-      <div class="gomstat"><div class="v">{gom_proof['bench']}</div><div class="l">Lower Tertiary benchmark wells</div></div>
-      <div class="gomstat"><div class="v">{gom_proof['lifecycle']}</div><div class="l">Field life-cycle pages</div></div>
+      <div class="gomstat"><div class="v">{format_count(gom_proof.get('fields'))}</div><div class="l">BSEE Gulf of Mexico fields<sup>&dagger;</sup></div></div>
+      <div class="gomstat"><div class="v">{format_count(gom_proof.get('wells'))}</div><div class="l">BSEE field-well memberships<sup>&dagger;</sup></div></div>
+      <div class="gomstat"><div class="v">{format_count(gom_proof['matched'])}</div><div class="l">Concept-matched field pages</div></div>
+      <div class="gomstat"><div class="v">{format_count(gom_proof['bench'])}</div><div class="l">Lower Tertiary benchmark wells</div></div>
+      <div class="gomstat"><div class="v">{format_count(gom_proof['lifecycle'])}</div><div class="l">Field life-cycle pages</div></div>
       <div class="gomstat"><div class="v">{gom['fields']}</div><div class="l">GoM fields in reference catalog</div></div>
     </div>
     <div class="gomlinks">
@@ -335,6 +431,11 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
       <a href="field-development/showcase.html">Concept-match showcase &rarr;</a>
     </div>
   </div>
+
+  <h2>World coverage by catalogued field count</h2>
+  <p>Color represents field counts, not ingest depth. The badge in each hover label
+  uses the same rule as the table; the US RICH label applies to GoM only.</p>
+  {choropleth(rows)}
 
   <h2>Top {len(top)} countries by offshore field count</h2>
   <div class="chartwrap">{svg_bar(top, max_fields)}</div>
@@ -354,6 +455,7 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
       <th class="num" data-k="dens" data-t="n">Density</th>
       <th data-k="badge" data-t="s">Badge</th>
       <th data-k="mod" data-t="s">Source module</th>
+      <th data-k="status" data-t="s">Catalog status</th>
     </tr></thead>
     <tbody>
 {table_body}
@@ -379,11 +481,15 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
     Mexico&rarr;mexico_cnh, Canada&rarr;canada; all other countries carry the shared
     curated reference inventory (SAMPLE). RICH is asserted only for US Gulf of Mexico,
     where BSEE is materialised to full life-cycle depth.
-    <sup>&dagger;</sup> The ~1,390-field / ~30k-well figures are the BSEE Gulf of Mexico
-    program catalogue scope; the ~300&nbsp;MB BSEE binary is not carried in this worktree
-    (run <code>make data</code>), so these two figures are the documented BSEE catalogue
-    scope rather than recomputed here. The four right-hand GoM stats and every per-country
-    number are computed directly from files listed above.</p>
+    <sup>&dagger;</sup> GoM field counts are CSV records in
+    reports/bsee/all_fields/gom_all_fields_atlas.csv. Field-well memberships sum its
+    WELL_COUNT column; a well associated with multiple fields can be counted more
+    than once, so this is not a basin-wide unique well count. NOT_EVALUATED means
+    the source is unavailable, not zero. Page counts measure available HTML files,
+    not validated analyses. Map rendering requires external Plotly and geography
+    assets; the table remains available without them.</p>
+    <p>Map API: <a href="https://plotly.com/javascript/choropleth-maps/">Plotly.js,
+    World Choropleth Map (Robinson Projection)</a>, accessed 2026-10-19.</p>
   </div>
 </div>
 <script>
@@ -440,7 +546,10 @@ def main():
 
     atlas_countries = centroid_country_count()
     field_countries = distinct_field_countries()
+    gom_fields, gom_wells = gom_atlas_counts(GOM_ATLAS_CSV)
     gom_proof = {
+        "fields": gom_fields,
+        "wells": gom_wells,
         "matched": count_glob_html(BSEE_MATCHED_DIR),
         "bench": count_data_rows(LT_BENCHMARK_CSV),
         "lifecycle": count_glob_html(
