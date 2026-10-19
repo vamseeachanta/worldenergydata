@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESG carbon inventory module</title>
+  <style>
+    body { max-width: 64rem; margin: 2rem auto; padding: 0 1rem;
+      font: 1rem/1.6 system-ui, sans-serif; color: #182b35; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #b5c4cb; padding: .5rem; text-align: left; }
+    caption { caption-side: bottom; text-align: left; }
+    pre { overflow: auto; padding: 1rem; background: #edf2f4; }
+    code { font-family: monospace; }
+  </style>
+</head>
+<body>
+  <h1>ESG carbon inventory module</h1>
+  <p>The <code>worldenergydata.esg_carbon</code> module reads a supplied Climate
+    TRACE source-level CSV, provides facility lookup, and calculates mass totals
+    for observations with the same reporting basis. Missing emissions remain
+    unknown. A complete selected-row total does not establish national coverage.</p>
+
+  <h2>Revision history</h2>
+  <table>
+    <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+    <tbody><tr><td>1</td><td>2026-10-19</td><td>Local ingestion, lookup and
+      qualified summaries establish the initial carbon inventory interface.</td></tr></tbody>
+    <caption>Table 1. Module documentation revisions.</caption>
+  </table>
+
+  <h2>Source and qualification</h2>
+  <p>The schema basis is Climate TRACE (2026), Climate TRACE Emissions Inventory
+    v5.11.0, September 2026, <a href="https://media.climatetrace.org/about_the_data_latest_b6e7b8d419.pdf">Data
+    Licensing, Schema, and Citation Guide</a>, section
+    <code>&lt;subsector-name&gt;_emissions_sources.csv</code> metadata, accessed
+    2026-10-19. The guide defines reported mass in metric tonnes and distinguishes
+    reported zero from blank, null and N-A observations. Its gas metadata
+    distinguishes species from separate CO2-equivalent horizons. No GWP or
+    emission-factor coefficients are included in this module.</p>
+  <p>The retrieved guide has SHA-256
+    <code>e0f88eda2e8d127961c7d91fcc1d5eb31bb1fa96e22da56e166fb6c859d33c3e</code>.
+    The URL is mutable; this digest identifies the edition inspected for the
+    implementation. The <a href="https://climatetrace.org/data">download page</a>
+    and <a href="https://climatetrace.org/terms">terms</a> were also opened.
+    The guide states CC BY 4.0 except where otherwise noted; sector-specific
+    restrictions and attribution remain applicable to supplied data.
+    No measured dataset or downloaded source document is distributed here.</p>
+  <p>The catalog metadata was unavailable in the inspected workspace. No catalog
+    source ID is assigned. The input edition is required and caller-declared;
+    it is not authenticated against an upstream release. The input SHA-256
+    records the original bytes, including any byte-order mark. Original inputs
+    shall be retained by the caller. Parsing establishes schema compatibility,
+    not freshness, independent accuracy or suitability for regulatory use.</p>
+
+  <h2>Use</h2>
+  <pre><code>from worldenergydata.esg_carbon import read_climate_trace_csv
+
+inventory = read_climate_trace_csv(
+    "inputs/emissions_sources.csv", edition="v5.11.0"
+)
+observations = inventory.select(source_id="source-identifier", gas="co2")
+summary = inventory.summarize(
+    iso3_country="USA",
+    gas="co2",
+    subsector="oil-and-gas-production-and-transport",
+)
+print(summary.status, summary.total_tonnes)
+print(summary.known_subtotal_tonnes, summary.missing_count)
+print(summary.edition, summary.sha256)</code></pre>
+  <p>Filters use exact matches. A summary selection spanning different periods
+    will raise <code>ValueError</code>; matching timezone-aware
+    <code>start_time</code> and <code>end_time</code> filters can select a period.
+    Unfiltered queries do not silently select the latest year or a gas.</p>
+
+  <h2>Validation and calculation</h2>
+  <p>Required fields are source_id, source_name, iso3_country, sector, subsector,
+    start_time, end_time, gas, emissions_quantity and temporal_granularity.
+    Additional columns are ignored, except an explicit emissions_quantity_units
+    column shall contain tonnes. Required identifiers are nonempty. Country
+    labels require three uppercase letters; membership in an ISO registry is
+    not established. Datetimes without offsets are interpreted as UTC per the
+    guide; explicit offsets are normalized to UTC. End time shall follow start
+    time. Masses shall be finite and nonnegative within this slice. Carbon
+    removals and non-GHG pollutants are outside the supported domain.</p>
+  <p>Supported labels are co2, ch4, n2o, co2e_100gwp and co2e_20gwp. Duplicate
+    source/gas/period observations, duplicate headers and ragged rows are rejected.
+    A UTF-8 byte-order mark and additional published columns are supported.</p>
+  <p>For one country, sector, subsector, gas, start time, end time and temporal
+    granularity, the equation is <code>total = sum(reported mass)</code> in metric
+    tonnes, provided every selected mass is available. The dimensional basis is
+    the guide's emissions_quantity definition. No units, gas horizons, periods
+    or sector boundaries are converted. Floating-point overflow is rejected.</p>
+  <table>
+    <thead><tr><th>Status</th><th>Criterion</th><th>Total</th></tr></thead>
+    <tbody>
+      <tr><td>COMPLETE</td><td>Every selected observation reports a mass</td>
+        <td>Sum of selected masses, including true zeros</td></tr>
+      <tr><td>INCOMPLETE</td><td>One or more selected masses are unavailable</td>
+        <td>None; known subtotal and missing count are provided separately</td></tr>
+      <tr><td>NOT_EVALUATED</td><td>No matching observations</td>
+        <td>None; the empty known subtotal is zero</td></tr>
+    </tbody>
+    <caption>Table 2. Selected-row completeness criteria.</caption>
+  </table>
+
+  <h2>Verification and later slices</h2>
+  <p>Synthetic schema fixtures test parsing, provenance, lookup, duplicate
+    rejection and completeness. Independent hand calculations are written in
+    test docstrings: for example, reported masses of 12.5 and 2.5 tonnes sum to
+    15.0 tonnes; adding an unknown mass cannot establish a total. These fixtures
+    are not measured or published emissions examples.</p>
+  <p>Live API access, automated downloads, national inventory comparisons,
+    IEA methane ingestion, carbon intensity, CLI integration and regulatory
+    limits remain outside these slices. EDGAR and other comparisons require
+    matching periods, geography, sector boundaries, units and GWP basis before
+    implementation. No compliance verdict is supplied.</p>
+</body>
+</html>
