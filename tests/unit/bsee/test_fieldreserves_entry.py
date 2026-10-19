@@ -43,6 +43,13 @@ def cache(root: Path) -> None:
                 "mastproddelimit.txt", (FIXTURES / "synthetic_master.csv").read_bytes()
             ),
         ),
+        (
+            "appendbdelimit.zip",
+            archive(
+                "appendbdelimit.txt",
+                b'"G00001","ZZ001","ZZ","001","ZZ 001"\n',
+            ),
+        ),
     ]:
         (root / name).write_bytes(body)
         records.append(
@@ -57,11 +64,21 @@ def cache(root: Path) -> None:
 
 def test_cached_entry_emits_schema_and_complete_rows(tmp_path: Path) -> None:
     cache(tmp_path)
-    assert entry.curate_cache(tmp_path) == {"history": 3, "production_master": 2}
+    # Input rows: three synthetic history, two master, one Appendix B mapping.
+    assert entry.curate_cache(tmp_path) == {
+        "history": 3,
+        "production_master": 2,
+        "appendix": 1,
+    }
     data = json.loads((tmp_path / "schema.json").read_text())
     assert data["history"]["FIELD_NAME_CODE"] == "string"
     assert data["monthly"]["status"] == "fetch_only"
+    assert data["appendix"]["BLOCK_NUMBER"] == "string"
+    assert data["units"]["appendix"] == "Identifiers only; no physical quantities"
     assert (tmp_path / "curated_history.csv").read_text().count("\n") == 4
+    assert (
+        "G00001,ZZ001,ZZ,001,ZZ 001," in (tmp_path / "curated_appendix.csv").read_text()
+    )
 
 
 def test_cached_entry_rejects_tampered_original(tmp_path: Path) -> None:
@@ -94,3 +111,22 @@ def test_existing_schema_preserved_before_any_writes(tmp_path: Path) -> None:
         entry.curate_cache(tmp_path)
     assert (tmp_path / "schema.json").read_text() == "preserved synthetic schema"
     assert not list(tmp_path.glob("curated_*.csv"))
+
+
+def test_appendix_digest_failure_leaves_no_curated_output(tmp_path: Path) -> None:
+    cache(tmp_path)
+    (tmp_path / "appendbdelimit.zip").write_bytes(b"tampered synthetic")
+    with pytest.raises(ValueError, match="digest/size"):
+        entry.curate_cache(tmp_path)
+    assert not list(tmp_path.glob("curated_*.csv"))
+    assert not (tmp_path / "schema.json").exists()
+
+
+def test_existing_appendix_output_is_preserved(tmp_path: Path) -> None:
+    cache(tmp_path)
+    target = tmp_path / "curated_appendix.csv"
+    target.write_text("preserved synthetic output")
+    with pytest.raises(FileExistsError):
+        entry.curate_cache(tmp_path)
+    assert target.read_text() == "preserved synthetic output"
+    assert not (tmp_path / "curated_history.csv").exists()

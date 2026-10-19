@@ -1,4 +1,4 @@
-"""Typed FieldReserves history and field-lease cumulative production.
+"""Typed FieldReserves history, cumulative production and lease-to-field index.
 
 Monthly production is distributed solely as Access; decoding is explicitly
 unsupported rather than silently substituting lease production or fake rows.
@@ -16,6 +16,17 @@ from worldenergydata.bsee.fieldreserves_fetch import BASE
 
 HISTORY_MEMBER = "2023 HIST/2023 OFFLDHIST.xlsx"
 MASTER_MEMBER = "mastproddelimit.txt"
+APPENDIX_MEMBER = "appendbdelimit.txt"
+# BOEM, Field Definitions for FIELDLEASEAPENLEASE, undated, accessed 2026-10-19:
+# https://www.data.boem.gov/Main/HtmlPage.aspx?page=appendixB
+# Ordered aliases LEASE, FIELD, AREA, BLOCK, AR/BLK; identifiers, not quantities.
+APPENDIX_COLUMNS = [
+    "LEASE_NUMBER",
+    "FIELD_NAME_CODE",
+    "AREA_CODE",
+    "BLOCK_NUMBER",
+    "AREA_BLOCK",
+]
 MONTHLY_MEMBER = "2023 FldMoPro/2023 FldMoProd.accdb"
 HISTORY_COLUMNS = {
     "FIELD": "FIELD_NAME_CODE",
@@ -120,3 +131,16 @@ def load_master(archive: bytes, *, retrieved_utc: str) -> pd.DataFrame:
 def load_monthly(archive: bytes, *, retrieved_utc: str) -> pd.DataFrame:
     _member(archive, MONTHLY_MEMBER)
     raise NotImplementedError("Monthly production requires an Access database decoder")
+
+
+def load_appendix(archive: bytes, *, retrieved_utc: str) -> pd.DataFrame:
+    """Read all Appendix B relationships without inferring a unique lease map."""
+    raw = _member(archive, APPENDIX_MEMBER)
+    df = pd.read_csv(
+        io.BytesIO(raw), header=None, dtype="string", keep_default_na=False
+    )
+    if len(df.columns) != len(APPENDIX_COLUMNS):
+        raise ValueError("Appendix B columns differ from BOEM field definitions")
+    df.columns = APPENDIX_COLUMNS
+    df = _codes(df, APPENDIX_COLUMNS)
+    return _cite(df, archive, "appendbdelimit.zip", APPENDIX_MEMBER, retrieved_utc)

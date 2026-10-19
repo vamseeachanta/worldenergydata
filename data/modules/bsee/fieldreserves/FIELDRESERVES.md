@@ -20,13 +20,19 @@ caller-configured cache. No original archive or full curated table is in Git.
 | `2023 Hist.zip` | `2023 HIST/2023 OFFLDHIST.xlsx`, sheet `2023 OFFLDHIST`; also an Access copy | Typed history loader; 42,044 rows and 1,336 fields at retrieval |
 | `mastproddelimit.zip` | Headerless ten-column `mastproddelimit.txt` | Typed production-master loader; 4,044 field-lease rows at retrieval |
 | `2023 FldMoPro.zip` | Only `2023 FldMoPro/2023 FldMoProd.accdb` | Fetch-only; monthly typed loader is unfulfilled pending an Access decoder |
-| `appendbdelimit.zip` | Five-column `appendbdelimit.txt` | Verified lease-to-field index; no reserves or reservoir loader is added |
+| `appendbdelimit.zip` | Five-column `appendbdelimit.txt` | Typed lease-to-field index with archive provenance; no reserves or reservoir quantities |
 
 Table 1. Archive classifications are based on downloaded content.
 
 Appendix B columns are lease number, field code, area, block and combined
 area/block, matching the [BOEM definition page](https://www.data.boem.gov/Main/HtmlPage.aspx?page=appendixB).
 The previous hypothesis of reservoir-level content is not supported.
+The Appendix B loader preserves all five columns as strings, including leading
+zeros in block numbers. Whitespace around identifiers is stripped; empty
+identifiers, changed column counts and renamed or duplicate archive members are
+rejected. Each source relationship is retained: a lease is not assumed to map
+to only one field. Combined area/block text is preserved without reconstruction.
+These identifiers carry no physical units and require no conversion constants.
 
 The master grain is **field and lease**, with cumulative production and a
 first-production month. It is not a monthly field production time series.
@@ -51,6 +57,13 @@ in the cache and checked against manifest size/digest before cached curation.
 Run `scripts/bsee/fetch_fieldreserves_family.py --cache-root <configured-cache>`
 with the package importable. A fresh empty output directory is required.
 `--cached` verifies previous downloads and curates without network access.
+Cached curation now requires provenance and bytes for Appendix B as well as
+history and the production master. It emits `curated_appendix.csv` alongside
+the existing curated tables, with per-column dtypes in `schema.json`. Every
+archive is verified and parsed before any curated output is written. Existing
+curated files, including the Appendix B output, are preserved by refusing a
+repeat run. A previously curated cache therefore requires a fresh output
+directory rather than an overwrite.
 The annual standalone catalog in `config/bsee.yml` follows the existing reserves
 workbook pattern. It does not install a scheduler or widen the weekly BSEE host
 allowlist. The weekly scheduler reads its configured or built-in dataset list,
@@ -78,4 +91,4 @@ from their bytes and fixed retrieval metadata, and compared in an offline test.
 Remaining scope: Access decoding and monthly schema qualification; vintages
 2001–2022; consumers in issue 844; oil/gas unit qualification for history and water
 unit qualification for the production master. Appendix B classification is
-settled; downstream index consumption remains separate work.
+settled and typed curation is supported; downstream joins remain separate work.
