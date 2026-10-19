@@ -261,6 +261,7 @@ def test_netcdf_reads_only_bbox(
     class Variable:
         dimensions = ("lat", "lon")
         units = "m"
+        shape = (3, 3)
 
         def __getitem__(self, key: Any) -> Any:
             reads.append(key)
@@ -269,6 +270,7 @@ def test_netcdf_reads_only_bbox(
     class Coordinate:
         def __init__(self, units: str) -> None:
             self.units = units
+            self.dimensions = ("lon" if units == "degrees_east" else "lat",)
 
         def __getitem__(self, key: Any) -> Any:
             return np.array([0.0, 1.0, 2.0])
