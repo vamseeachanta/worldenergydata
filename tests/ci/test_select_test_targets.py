@@ -13,7 +13,7 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT / "scripts" / "ci"))
 
-from select_test_targets import (  # noqa: E402
+from select_test_targets import (
     ALWAYS_XDIST,
     _has_tests,
     select,
@@ -36,6 +36,21 @@ def test_core_change_runs_full_tree():
 
 def test_selector_self_change_is_core():
     assert select(["scripts/ci/select_test_targets.py"], REPO_ROOT)["scope"] == "full"
+
+
+@pytest.mark.parametrize(
+    "path", ["tests/ci/test_domain_matrix.py", "tests/ci/test_select_test_targets.py"]
+)
+def test_selector_tests_trigger_full_gate(path):
+    """Selector contract changes must exercise every domain, like the engine."""
+    assert select([path], REPO_ROOT)["scope"] == "full"
+
+
+def test_portable_template_routes_to_its_contract_tests():
+    """The copyable adapter's subprocess examples run when its contents change."""
+    result = select(["docs/ci/templates/select_test_targets.py"], REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert "tests/ci" in result["xdist"]
 
 
 def test_hse_change_is_module_scoped_not_full():
