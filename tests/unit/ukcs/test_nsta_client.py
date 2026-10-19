@@ -149,6 +149,13 @@ class TestNSTAClientDownload:
 
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
     def test_download_paginates_official_arcgis_endpoint(self, mock_requests, tmp_path):
+        """Hand calculation: offset 0 + one returned row = next offset 1.
+
+        Source: ArcGIS REST API, Query (Feature Service/Layer), resultOffset
+        and resultRecordCount (online reference, accessed 2026-10-19):
+        https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
+        The requested count is an upper bound, not the number consumed.
+        """
         client = NSTAClient(cache_dir=str(tmp_path))
         first_response = MagicMock()
         first_response.json.return_value = {
@@ -172,13 +179,99 @@ class TestNSTAClientDownload:
             mock_requests.get.call_args_list[0].kwargs["params"]["resultRecordCount"]
             == 2000
         )
-        assert (
-            mock_requests.get.call_args_list[1].kwargs["params"]["resultOffset"] == 2000
-        )
+        assert mock_requests.get.call_args_list[1].kwargs["params"]["resultOffset"] == 1
         assert (
             mock_requests.get.call_args_list[1].kwargs["params"]["resultRecordCount"]
             == 2000
         )
+
+    @pytest.mark.parametrize(
+        "server_limit,max_records,expected_ids,expected_offsets,expected_counts",
+        [
+            (2, None, [1, 2, 3, 4, 5], [0, 2, 4], [2000, 2000, 2000]),
+            (1, None, [1, 2, 3, 4, 5], [0, 1, 2, 3, 4], [2000] * 5),
+            (2, 3, [1, 2, 3], [0, 2], [3, 1]),
+            (2, 4, [1, 2, 3, 4], [0, 2], [4, 2]),
+            (2, 5, [1, 2, 3, 4, 5], [0, 2, 4], [5, 3, 1]),
+        ],
+    )
+    @patch("worldenergydata.ukcs.production.nsta_client.requests")
+    def test_short_pages_preserve_rows_and_record_cap(
+        self,
+        mock_requests,
+        tmp_path,
+        server_limit,
+        max_records,
+        expected_ids,
+        expected_offsets,
+        expected_counts,
+    ):
+        """Independent hand calculation for a synthetic five-row service.
+
+        Source: ArcGIS REST API, Query (Feature Service/Layer), resultOffset
+        and resultRecordCount (online reference, accessed 2026-10-19):
+        https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
+        Offsets count consumed rows; requested counts are upper bounds.
+        The fixture's IDs 1..5, year 2022, and service limits 1 or 2 are
+        arbitrary test inputs, not production measurements or API limits.
+
+        With pages of two rows: 0 + 2 = 2, then 2 + 2 = 4; the final
+        page contains ID 5. With pages of one row: offsets 0, 1, 2, 3, 4.
+        Caps 3, 4 and 5 leave 3 - 2 = 1, 4 - 2 = 2 and 5 - 2 = 3
+        rows after the first page; cap 5 then leaves 5 - 4 = 1 row.
+        Uncapped requests retain the existing implementation default of
+        2000 rows (source above, Example six: default maxRecordCount).
+        This is a regression expectation, not a service limit guarantee.
+        """
+        client = NSTAClient(cache_dir=str(tmp_path))
+        features = [{"attributes": {"OBJECTID": row_id}} for row_id in [1, 2, 3, 4, 5]]
+
+        def query_page(url, *, params, timeout):
+            offset = params["resultOffset"]
+            count = min(server_limit, params["resultRecordCount"])
+            response = MagicMock()
+            response.json.return_value = {
+                "features": features[offset : offset + count],
+                "exceededTransferLimit": offset + count < len(features),
+            }
+            return response
+
+        mock_requests.get.side_effect = query_page
+
+        df = client.download(year=2022, max_records=max_records, force_refresh=True)
+
+        assert df["OBJECTID"].tolist() == expected_ids
+        assert [
+            call.kwargs["params"]["resultOffset"]
+            for call in mock_requests.get.call_args_list
+        ] == expected_offsets
+        assert [
+            call.kwargs["params"]["resultRecordCount"]
+            for call in mock_requests.get.call_args_list
+        ] == expected_counts
+        pd.testing.assert_frame_equal(df, client.load_cached(year=2022))
+
+    @pytest.mark.parametrize("exceeded_transfer_limit", [False, True])
+    @patch("worldenergydata.ukcs.production.nsta_client.requests")
+    def test_empty_page_stops_pagination(
+        self, mock_requests, tmp_path, exceeded_transfer_limit
+    ):
+        """Hand calculation: zero returned rows cannot advance an offset.
+
+        An empty synthetic response must stop after one request regardless
+        of the transfer-limit flag, preserving the existing loop guard.
+        Year 2022 is an arbitrary request input.
+        """
+        client = NSTAClient(cache_dir=str(tmp_path))
+        mock_requests.get.return_value.json.return_value = {
+            "features": [],
+            "exceededTransferLimit": exceeded_transfer_limit,
+        }
+
+        df = client.download(year=2022, force_refresh=True)
+
+        assert df.empty
+        mock_requests.get.assert_called_once()
 
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
     def test_download_saves_to_cache(self, mock_requests, tmp_path):

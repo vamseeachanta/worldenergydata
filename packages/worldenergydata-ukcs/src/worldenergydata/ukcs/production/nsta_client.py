@@ -136,7 +136,11 @@ class NSTAClient:
             rows.extend(page_rows)
             if not payload.get("exceededTransferLimit") or not page_rows:
                 break
-            offset += record_count
+            # ArcGIS REST API, Query (Feature Service/Layer), resultOffset and
+            # resultRecordCount (online reference, accessed 2026-10-19):
+            # https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
+            # The requested count is an upper bound; advance by consumed rows.
+            offset += len(page_rows)
         df = pd.DataFrame(rows)
         cache_path = self.cache_dir / self._cache_key(year, dataset)
         df.to_csv(cache_path, index=False)
