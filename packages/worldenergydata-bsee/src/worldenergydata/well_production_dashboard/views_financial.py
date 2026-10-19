@@ -10,6 +10,8 @@ from typing import Any, Dict
 import numpy as np
 from scipy import optimize
 
+from worldenergydata.common.finance import net_present_value
+
 from .views_utils import PLOTLY_AVAILABLE
 
 # Import plotly components if available
@@ -36,9 +38,7 @@ class EconomicMetricsCalculator:
         self, cash_flows: np.ndarray, discount_rate: float = 0.1
     ) -> float:
         """Calculate Net Present Value."""
-        periods = np.arange(len(cash_flows))
-        discount_factors = (1 + discount_rate) ** periods
-        return np.sum(cash_flows / discount_factors)
+        return net_present_value(cash_flows, discount_rate)
 
     def calculate_irr(self, cash_flows: np.ndarray) -> float:
         """Calculate Internal Rate of Return."""

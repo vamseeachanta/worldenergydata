@@ -21,6 +21,8 @@ from typing import List, Optional
 
 import numpy as np
 
+from worldenergydata.common.finance import discounted_cash_flows
+
 # ---------------------------------------------------------------------------
 # Data structures
 # ---------------------------------------------------------------------------
@@ -167,10 +169,7 @@ def calculate_npv(
 
     net_cf = revenue - opex - capex - carbon
 
-    n = len(net_cf)
-    t = np.arange(n, dtype=float)
-    discount_factors = (1.0 + discount_rate) ** t
-    discounted_cf = net_cf / discount_factors
+    discounted_cf = discounted_cash_flows(net_cf, discount_rate)
 
     npv_value = float(np.sum(discounted_cf))
 

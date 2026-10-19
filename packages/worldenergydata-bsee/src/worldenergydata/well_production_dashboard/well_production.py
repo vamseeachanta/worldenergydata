@@ -37,6 +37,7 @@ from worldenergydata.bsee.reports.comprehensive.visualizations.dashboard_builder
     DashboardConfig,
 )
 from worldenergydata.common import get_logger
+from worldenergydata.common.finance import net_present_value
 from worldenergydata.well_production_dashboard.cache_config import (
     DashboardCacheManager,
 )
@@ -97,10 +98,7 @@ class WellMetrics:
         Returns:
             NPV value
         """
-        npv = 0
-        for i, cf in enumerate(cash_flows):
-            npv += cf / ((1 + discount_rate) ** i)
-        return npv
+        return net_present_value(cash_flows, discount_rate)
 
     @staticmethod
     def calculate_decline_rate(production: List[float]) -> float:
