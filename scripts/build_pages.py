@@ -1063,6 +1063,13 @@ def _insights_section() -> str:
             "development wellbores burned 11,124 rig-days; depth explains only 11% "
             "of the spread &mdash; execution, not geology, drives the curve.</p></a>"
         )
+    if (PUBLIC / "intervention-db" / "intervention-stats-brief.html").exists():
+        cards.append(
+            '<a class="card" href="intervention-db/intervention-stats-brief.html#serviceability">'
+            "<h3>Subsea intervention serviceability &rarr;</h3><p>GoM subsea well "
+            "inventory, light and heavy intervention capability, and forward-looking "
+            "access risk. Open the existing brief for sources and limitations.</p></a>"
+        )
     if (PUBLIC / "region-devtype-comparison.html").exists():
         cards.append(
             '<a class="card" href="region-devtype-comparison.html">'
