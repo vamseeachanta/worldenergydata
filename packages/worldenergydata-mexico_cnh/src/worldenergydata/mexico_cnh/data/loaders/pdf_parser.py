@@ -253,8 +253,19 @@ class CNHPDFParser:
 
             # Try numeric conversion
             try:
-                # Handle Spanish number format (comma as decimal separator)
-                numeric_values = df[col].str.replace(",", ".", regex=False)
+                # UTS #35, LDML Part 3: Numbers, v48.2, Number Symbols
+                # (group) and Special Pattern Characters define 3-digit
+                # thousands groups. Issue #1282 requires comma grouping to
+                # take precedence over the legacy decimal-comma fallback.
+                # https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Symbols
+                text_values = df[col].str.strip()
+                grouped = text_values.str.fullmatch(
+                    r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?", na=False
+                )
+                numeric_values = text_values.str.replace(",", ".", regex=False)
+                numeric_values = numeric_values.mask(
+                    grouped, text_values.str.replace(",", "", regex=False)
+                )
                 numeric_values = pd.to_numeric(numeric_values, errors="coerce")
 
                 # Only apply if most values are numeric
