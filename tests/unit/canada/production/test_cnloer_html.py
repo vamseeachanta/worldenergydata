@@ -1,5 +1,7 @@
 """Offline synthetic modal tests; no regulator production volumes are retained."""
 
+from sys import float_info
+
 import pandas as pd
 import pytest
 
@@ -168,3 +170,98 @@ def test_parser_excludes_numeric_superscript_annotations():
     frame = parse(html)
     assert frame.iloc[0].oil_bbl == pytest.approx(100 * M3_TO_BBL)
     assert frame.iloc[0].gas_mcf == pytest.approx(10 * E3M3_TO_MCF)
+
+
+# Layout source: C-NLOER Statistical Information, pshf97–pshf01,
+# https://www.cnloer.ca/information/statistics/ (opened 2026-10-19).
+# The observed group header is Production; the section is Monthly Details.
+@pytest.mark.parametrize(
+    "old,new",
+    [
+        ('<th colspan="3">Production</td>', '<th colspan="3">Injection</td>'),
+        ('<th colspan="3">Production</td>', ""),
+        ('<th rowspan="3">Amendment Date*</td>', ""),
+        (
+            '<th colspan="6">Monthly Details</td>',
+            '<th colspan="6">Annual Details</td>',
+        ),
+    ],
+)
+def test_parser_rejects_changed_production_header(old, new):
+    with pytest.raises(CnloerParseError, match="production.*header"):
+        parse(synthetic_html().replace(old, new, 1))
+
+
+# Python 3 Library Reference, sys.float_info table, max / DBL_MAX:
+# https://docs.python.org/3/library/sys.html#sys.float_info (opened 2026-10-19).
+@pytest.mark.parametrize(
+    "value",
+    [str(int(float_info.max)) + "0", str(int(float_info.max))],
+    ids=["source-overflow", "conversion-overflow"],
+)
+@pytest.mark.parametrize(
+    "cell",
+    ["<strong>100</strong>", "<td>10</td>", "<td>50</td>"],
+    ids=["oil", "gas", "water"],
+)
+def test_parser_rejects_nonfinite_volumes(value, cell):
+    """Independent overflow construction from the runtime's largest float.
+
+    Appending a decimal zero multiplies that positive integer by ten, so it
+    exceeds the largest finite float before conversion. Without that zero,
+    it remains finite but the barrel and cubic-foot factors (both greater
+    than one, common/units.py) overflow when applied to a selected volume.
+    """
+    replacement = value if cell.startswith("<strong>") else f"<td>{value}</td>"
+    html = synthetic_html().replace(cell, replacement, 1)
+    with pytest.raises(CnloerParseError, match="nonfinite.*production"):
+        parse(html)
+
+
+def test_parser_rejects_nonfinite_reservoir_subrow():
+    """The same max-float times ten construction must fail even in a subrow
+    that is excluded in favour of the published field total.
+    """
+    value = str(int(float_info.max)) + "0"
+    html = synthetic_html().replace("<td>20</td>", f"<td>{value}</td>", 1)
+    with pytest.raises(CnloerParseError, match="nonfinite.*production"):
+        parse(html)
+
+
+def test_parser_conversions_have_independent_hand_calculated_expectations():
+    """Hand calculation for synthetic cells; no expected value uses parser code.
+
+    Factors: common/units.py, OilUnits.SM3_TO_BBL, GasUnits.SM3_TO_SCF,
+    WaterUnits.M3_TO_BBL (repository conversion contract). Source table units:
+    C-NLOER Statistical Information, pshf97–pshf01 (opened 2026-10-19).
+    Oil = 100 m3 * 6.2898 = 628.98 bbl.
+    Gas = 10 thousand m3 * 35.3147 = 353.147 Mcf.
+    Water = 50 m3 * 6.2898 = 314.49 bbl.
+    Reservoir total oil = (100 + 20) * 6.2898 = 754.776 bbl per month;
+    annual oil = 12 * 754.776 = 9057.312 bbl. The published Total row is
+    selected once; the two reservoir rows are not added to that Total.
+    """
+    frame = parse(synthetic_html())
+    assert frame.iloc[0].oil_bbl == pytest.approx(628.98)
+    assert frame.iloc[0].gas_mcf == pytest.approx(353.147)
+    assert frame.iloc[0].water_bbl == pytest.approx(314.49)
+    assert frame.loc[frame.year == 2000, "oil_bbl"].sum() == pytest.approx(9057.312)
+
+
+def test_loader_pdf_overlap_has_independent_expected_values():
+    """Hand calculation: PDF_TEXT supplies oil 999 bbl, gas 3 MMscf,
+    water 777 bbl for December; 3 MMscf * 1000 = 3000 Mcf, using the
+    repository common/units.py GasUnits.MMSCF_TO_MCF contract. January's
+    PDF oil/water are 998/776 bbl. Five calendar years give 5 * 12 = 60
+    HTML periods; the overlapping December adds none, January adds one.
+    """
+    frame = CnloerProductionLoader(
+        field_name=loader_module.FIELD_CODES["h"],
+        raw_text=PDF_TEXT,
+        raw_html=synthetic_html(),
+    ).load()
+    assert len(frame) == 61
+    assert frame.tail(2)[["oil_bbl", "gas_mcf", "water_bbl"]].values.tolist() == [
+        [999.0, 3000.0, 777.0],
+        [998.0, 3000.0, 776.0],
+    ]

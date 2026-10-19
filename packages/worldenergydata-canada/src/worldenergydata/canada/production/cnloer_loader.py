@@ -31,6 +31,7 @@ import json
 import re
 from html.parser import HTMLParser
 from importlib.resources import files
+from math import isfinite
 from pathlib import Path
 from typing import List, Optional
 
@@ -250,7 +251,10 @@ def _modal_number(cell: str) -> str:
     value = cell.strip().replace("\xa0", " ")
     if not re.fullmatch(r"(?:\d+|\d{1,3}(?:[ ,]\d{3})+)(?:\.\d+)?", value):
         raise CnloerParseError("malformed monthly production value")
-    return value.replace(" ", "").replace(",", "")
+    normalized = value.replace(" ", "").replace(",", "")
+    if not isfinite(float(normalized)):
+        raise CnloerParseError("nonfinite monthly production value")
+    return normalized
 
 
 def _validate_modal_headers(rows, year):
@@ -258,6 +262,16 @@ def _validate_modal_headers(rows, year):
         raise CnloerParseError("unexpected production columns")
     if [re.sub(r"\s+", "", c) for c in rows[2]] != ["m3", "103m3", "m3"]:
         raise CnloerParseError("unsupported production units")
+    # C-NLOER Statistical Information, pshf97–pshf01 table headers,
+    # https://www.cnloer.ca/information/statistics/ (opened 2026-10-19).
+    # Validate the group and section too: matching units alone cannot establish
+    # that these are monthly production volumes rather than another quantity.
+    group_headers = [" ".join(cell.split()) for cell in rows[0][2:]]
+    section_header = [" ".join(cell.split()) for cell in rows[3]]
+    if group_headers != ["Production", "Amendment Date*"] or section_header != [
+        "Monthly Details"
+    ]:
+        raise CnloerParseError("unexpected production table header")
     expected_header = ["Year", "Month"] if year < 2000 else ["Year/Month", "Reservoir"]
     headers = rows[0][:2]
     if year == 2000 and headers == ["Year/Month", "Reservoir**"]:
@@ -344,7 +358,12 @@ def parse_cnloer_production_html(html: str, *, field_name: str) -> pd.DataFrame:
                 name for name, number in _MONTHS.items() if number == int(month)
             )
             lines.append(f"{name} {rest}")
-    return parse_cnloer_production_text("\n".join(lines), field_name=field_name)
+    out = parse_cnloer_production_text("\n".join(lines), field_name=field_name)
+    # Finite source values can overflow during the existing unit conversions.
+    for column in ("oil_bbl", "gas_mcf", "water_bbl"):
+        if not out[column].map(isfinite).all():
+            raise CnloerParseError("nonfinite converted production value")
+    return out
 
 
 class CnloerProductionLoader:
