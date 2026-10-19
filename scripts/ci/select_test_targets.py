@@ -31,13 +31,17 @@ Usage::
 
 Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 ``$GITHUB_OUTPUT`` format).
+
+The default ``--tier full`` preserves historical targets. ``--tier core``
+leaves broad integration/performance targets to auxiliary CI while keeping
+reporting contracts. The PR workflow opts in through the core adapter.
 """
 
 from __future__ import annotations
 
 import argparse
-import re
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -51,6 +55,11 @@ ALWAYS_XDIST = [
     "tests/governance",
     "tests/integration/reporting",
 ]
+
+# Issue #466 (2026 update): broad integration and performance suites belong to
+# the auxiliary tier. Reporting publication contracts remain core, as required
+# by the existing ALWAYS_XDIST policy. Main/nightly still execute the full suite.
+CORE_AUXILIARY_EXCEPTIONS = ["tests/integration/reporting"]
 
 # Changing any of these can affect every module -> run the whole tree.
 CORE_EXACT = {
@@ -169,14 +178,22 @@ def _has_tests(directory: Path) -> bool:
     return False
 
 
-def select(changed: list[str], root: Path) -> dict:
-    """Return {scope, xdist, seq} for the given changed files."""
+def select(changed: list[str], root: Path, *, tier: str = "full") -> dict:
+    """Return {scope, xdist, seq}; full preserves the historical selection.
+
+    Core retains all existing parallel targets and reporting contracts, but
+    leaves the broad sequential integration/performance suites to auxiliary CI.
+    """
+    if tier not in {"core", "full"}:
+        raise ValueError(f"Unknown test tier: {tier}")
     if any(_is_core(p) for p in changed):
         full = _full_tree(root)
+        if tier == "core":
+            full.extend(_existing_unique(CORE_AUXILIARY_EXCEPTIONS, root))
         return {
             "scope": "full",
             "xdist": full,
-            "seq": ["tests/integration", "tests/performance"],
+            "seq": ["tests/integration", "tests/performance"] if tier == "full" else [],
         }
 
     modules: set[str] = set()
@@ -185,6 +202,12 @@ def select(changed: list[str], root: Path) -> dict:
     relevant = False
 
     for p in changed:
+        # Routing regressions must run when their own tests change, even if
+        # no selector source file changed (issue #466 core-tier contract).
+        if p.startswith("tests/ci/"):
+            contracts.add("tests/ci")
+            relevant = True
+            continue
         if p in CONTRACT_ROUTES:
             contracts.add(CONTRACT_ROUTES[p])
             relevant = True
@@ -221,7 +244,7 @@ def select(changed: list[str], root: Path) -> dict:
 
     # keep existing directories and test files, dedupe, preserve order
     xdist = _existing_unique(xdist, root)
-    seq = _existing_unique(seq, root)
+    seq = _existing_unique(seq, root) if tier == "full" else []
     return {"scope": "modules" if relevant else "skip", "xdist": xdist, "seq": seq}
 
 
@@ -229,7 +252,11 @@ def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
         target = root / t
-        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        is_test_file = (
+            target.is_file()
+            and target.name.startswith("test_")
+            and target.suffix == ".py"
+        )
         if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
@@ -240,20 +267,25 @@ def _full_tree(root: Path) -> list[str]:
     tests = root / "tests"
     out = []
     for child in sorted(tests.iterdir()):
-        if child.is_dir() and child.name not in {
-            "performance",
-            "integration",
-            "__pycache__",
-        }:
-            out.append(f"tests/{child.name}")
-        elif (
-            child.is_file() and child.name.startswith("test_") and child.suffix == ".py"
+        if (
+            child.is_dir()
+            and child.name
+            not in {
+                "performance",
+                "integration",
+                "__pycache__",
+            }
+            or (
+                child.is_file()
+                and child.name.startswith("test_")
+                and child.suffix == ".py"
+            )
         ):
             out.append(f"tests/{child.name}")
     return out
 
 
-def to_matrix(changed: list[str], root: Path) -> dict:
+def to_matrix(changed: list[str], root: Path, *, tier: str = "full") -> dict:
     """Build a GitHub-Actions matrix of per-domain shards from changed files.
 
     Each shard is ``{"name", "targets", "mode"}`` where ``mode`` is ``xdist``
@@ -268,8 +300,11 @@ def to_matrix(changed: list[str], root: Path) -> dict:
     * ``scope=modules`` -> the always-on shard + one shard per touched module +
       one per routed contract; seq shards per touched integration module.
     * ``scope=skip`` -> just the always-on shard (never empty).
+
+    In the core tier, full scope still fans out every unit domain and parallel
+    suite; only broad sequential suites are replaced by reporting contracts.
     """
-    result = select(changed, root)
+    result = select(changed, root, tier=tier)
     scope = result["scope"]
     shards: list[dict] = []
 
@@ -277,11 +312,7 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if (
-                    child.is_dir()
-                    and child.name != "__pycache__"
-                    and _has_tests(child)
-                ):
+                if child.is_dir() and child.name != "__pycache__" and _has_tests(child):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",
@@ -320,7 +351,16 @@ def to_matrix(changed: list[str], root: Path) -> dict:
             shards.append(
                 {"name": "_root", "targets": " ".join(root_files), "mode": "xdist"}
             )
-        for seq in ("tests/integration", "tests/performance"):
+        if tier == "core":
+            for target in _existing_unique(CORE_AUXILIARY_EXCEPTIONS, root):
+                shards.append(
+                    {
+                        "name": "integration-reporting",
+                        "targets": target,
+                        "mode": "xdist",
+                    }
+                )
+        for seq in result["seq"]:
             if (root / seq).is_dir():
                 shards.append(
                     {
@@ -366,6 +406,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     ap.add_argument("--root", default=str(Path(__file__).resolve().parents[2]))
     ap.add_argument(
+        "--tier",
+        choices=("core", "full"),
+        default="full",
+        help="core omits broad integration/performance targets; full keeps all targets",
+    )
+    ap.add_argument(
         "--emit-matrix",
         action="store_true",
         help="emit a per-domain GitHub Actions matrix (matrix=<json>) instead "
@@ -374,11 +420,11 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     changed = _read_changed(a)
     if a.emit_matrix:
-        matrix = to_matrix(changed, Path(a.root))
+        matrix = to_matrix(changed, Path(a.root), tier=a.tier)
         print(f"scope={matrix['scope']}")
         print(f"matrix={json.dumps({'include': matrix['include']})}")
         return 0
-    result = select(changed, Path(a.root))
+    result = select(changed, Path(a.root), tier=a.tier)
     print(f"scope={result['scope']}")
     print(f"xdist_targets={' '.join(result['xdist'])}")
     print(f"seq_targets={' '.join(result['seq'])}")
