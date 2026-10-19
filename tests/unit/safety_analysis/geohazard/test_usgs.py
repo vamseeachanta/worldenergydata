@@ -245,6 +245,8 @@ def test_count_query_drift_is_bounded(api: Module, monkeypatch: Patch) -> None:
     client = api.USGSClient()
     payload = json.loads(synthetic_payload())
     payload["features"] *= 2
+    # Distinct synthetic IDs isolate overflow from duplicate-identity rejection.
+    payload["features"][1] = {**payload["features"][1], "id": "synthetic-other"}
     monkeypatch.setattr(
         client,
         "_get",
