@@ -85,3 +85,45 @@ Reviewed evidence can be ingested offline with
 Ingest validates roster coverage and provenance before writing the JSON, crane
 CSV and manifest, then reads the outputs back. It makes no network or solver call.
 Tests are in `tests/unit/vessel_fleet/test_construction_evidence.py`.
+
+## Evidence-qualified lookups
+
+`find_by_imo(imo, bundle=evidence)` returns a detached accepted record or `None`.
+The input follows the existing seven-ASCII-digit evidence contract. Candidate
+identifiers and the historical roster's identifiers cannot resolve an identity.
+This is an evidence lookup; it does not verify the checksum or query a registry.
+The returned record keeps its identity disposition, limitations, provenance and
+hull disposition. `none` remains an unconfirmed hull link.
+
+`screen_crane(vessel_name, crane=..., mode=..., radius_m=...,
+minimum_capacity_t=..., bundle=evidence)` requires exact roster, hoist and
+configuration labels. It returns the detached record, selected configuration,
+requested radius and capacity, matched ratings, and their source metadata.
+Publisher intervals and points follow the printed tables in the
+[equipment folder](https://www.heerema.com/hubfs/HMC%20Equipment%20Folder_20211108.pdf?hsLang=en)
+(2021, Main Hoist Capacity table):
+
+- A printed point covers only its exact radius.
+- A bounded interval covers `radius_min_m <= radius_m <= radius_max_m`.
+- `up_to` retains an unknown lower bound and cannot establish interval coverage.
+- No interpolation, extrapolation, tandem sum or configuration substitution occurs.
+
+The comparison `capacity_t >= minimum_capacity_t` returns `MATCH`; a smaller
+printed capacity returns `BELOW_CAPACITY`. Missing coverage or contradictory
+capacities returns `NOT_EVALUATED`, with a reason and no accepted capacity.
+Overlapping ratings with the same capacity keep all matching provenance.
+These are screening results, not engineering acceptance or current crane limits.
+The caller supplies the demand; no engineering coefficient or limit is assumed.
+
+`find_pipelay(..., rating_basis=...)` optionally restricts results to an exact
+published basis label. Read the label from the evidence record; no synonyms,
+case folding or equivalence between holding and lay tension are inferred.
+Omitting the filter preserves the existing unqualified lookup, which can compare
+different published bases. Every result retains `matched_capability` and its
+basis for review. Missing ratings never qualify.
+
+The offline lookup tests are in
+`tests/unit/vessel_fleet/test_construction_lookup.py`. Synthetic capability inputs
+are marked as test fixtures; their expected results follow the independent
+comparison calculations in the fixture and test docstrings. No vessel facts or
+source documents are added by these query extensions.
