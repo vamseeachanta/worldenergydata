@@ -12,6 +12,11 @@ Usage::
     python scripts/demo/generate_riser_grounded_card.py \
         [--out reports/hse/riser-fatigue-grounded-card.html] [--illustrative]
 
+Use ``--summary-csv`` with ``--required-life-years`` and ``--basis-source``
+to render previously generated results without executing an analysis. The criterion
+is a required factored life, not the unfactored service life. Imported results
+retain their byte digest and are never labelled live.
+
 The grounding numbers are 100% real public BSEE records; the engineering panel is a
 live digitalmodel run unless ``--illustrative`` is set or digitalmodel is unavailable.
 """
@@ -23,6 +28,7 @@ import datetime as dt
 from pathlib import Path
 
 from _riser_live import build_live_analysis
+from _riser_results import analysis_from_csv
 
 from worldenergydata.hse.grounding_card import AnalysisSummary, render_html
 from worldenergydata.hse.grounding_demand import ground_and_log
@@ -30,12 +36,12 @@ from worldenergydata.hse.grounding_demand import ground_and_log
 # Fallback (illustrative) panel — used only with --illustrative or if dm is unavailable.
 ANALYSIS = AnalysisSummary(
     title="Riser Fatigue — SCR touchdown zone",
-    headline="Illustrative riser fatigue screening — replace with a live run.",
+    headline="NOT_EVALUATED — fatigue life and design criterion are not supplied.",
     metrics=[
         ("— yr", "Min fatigue life"),
         ("—", "Wave damage"),
         ("—", "VIV damage"),
-        ("25 yr", "Design basis"),
+        ("NOT_EVALUATED", "Required factored life"),
     ],
     method="T-N / S-N wave + VIV screening (DNV-RP-C203, DNV-OS-F201)",
     basis="Illustrative placeholder; replace with a live digitalmodel run.",
@@ -45,14 +51,36 @@ ANALYSIS = AnalysisSummary(
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--out", default="reports/hse/riser-fatigue-grounded-card.html")
+    modes = ap.add_mutually_exclusive_group()
+    modes.add_argument(
+        "--summary-csv", type=Path, help="Import results without running a solver."
+    )
     ap.add_argument(
+        "--required-life-years",
+        type=float,
+        help="Required factored fatigue life in years.",
+    )
+    ap.add_argument(
+        "--basis-source",
+        help="Document, edition and clause for the supplied criterion.",
+    )
+    modes.add_argument(
         "--illustrative",
         action="store_true",
         help="Use the illustrative panel instead of a live digitalmodel run.",
     )
     a = ap.parse_args(argv)
 
-    if a.illustrative:
+    if a.summary_csv is not None:
+        if a.required_life_years is None or not a.basis_source:
+            ap.error("--summary-csv requires --required-life-years and --basis-source")
+        analysis = analysis_from_csv(
+            a.summary_csv, a.required_life_years, a.basis_source
+        )
+        print("  engineering  : imported summary (no solver executed)")
+    elif a.required_life_years is not None or a.basis_source is not None:
+        ap.error("criterion options require --summary-csv")
+    elif a.illustrative:
         analysis = ANALYSIS
         print("  engineering  : illustrative (--illustrative)")
     else:
