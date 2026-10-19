@@ -397,3 +397,207 @@ def test_completion_strata_sidecar_preserves_every_record(tmp_path):
         rows = list(csv.DictReader(stream))
     assert rows == [{k: str(v) for k, v in x.items()} for x in r["completion_strata"]]
     assert sum(int(x["records"]) for x in rows) == r["summary"]["completion_records"]
+
+
+def area_scenario():
+    """Synthetic inventory: two conflicting areas for one API, one unique area.
+
+    Independent tally: three WAR rows have reported areas A, A, blank;
+    three EOR rows have B, blank, A. Two completion rows belong to the
+    ambiguous API and one belongs to the unique-area API. Counts use
+    NIST/SEMATECH e-Handbook (2012), section 1.3.3.14: count each bin.
+    """
+    t = scenario()
+    apis = ["177114156300", "608074031400"]
+    for name, key, date in [
+        ("mv_war_main", "SN_WAR", "WAR_START_DT"),
+        ("mv_eor_mainquery", "SN_EOR", "BOREHOLE_STAT_DT"),
+    ]:
+        frame = t[name].iloc[:3].copy().reset_index(drop=True)
+        frame[key] = ["1", "2", "3"]
+        frame["API_WELL_NUMBER"] = [apis[0], apis[0], apis[1]]
+        frame[date] = ["1/1/2010", "1/1/2010", "invalid"]
+        frame["BOTM_AREA_CODE"] = (
+            [" A ", "A", ""] if key == "SN_WAR" else ["B", "", "A"]
+        )
+        t[name] = frame
+    t["mv_war_main_prop"] = pd.DataFrame(
+        {"SN_WAR": ["1", "2", "3"], "WELL_ACTIVITY_CD": ["COM", "COM", "NEW"]}
+    )
+    t["mv_eor_mainquery"]["EOR_OPERATION_CD"] = ["W", "W", ""]
+    t["mv_boreholes_all"] = pd.DataFrame(
+        {
+            "API_WELL_NUMBER": [apis[0], apis[0], apis[1]],
+            "BOTM_AREA_CODE": ["A", "B", "C"],
+        }
+    )
+    comp = t["mv_api_wellcomps_all"].iloc[:3].copy().reset_index(drop=True)
+    comp["API_WELL_NUMBER"] = [apis[0], apis[0], apis[1]]
+    comp["COMPLETION_DATE"] = ["1/1/2010"] * 3
+    comp["COMP_STATUS_CD"] = ["X", "X", "X"]
+    t["mv_api_wellcomps_all"] = comp
+    return t
+
+
+def test_area_counts_preserve_report_grain_and_unknowns():
+    """Hand tally: A/COM has two WAR reports but one distinct API.
+
+    Blank-area NEW has one report and one API. EOR has one row in each
+    of B/W, unknown/W and A/unknown; missing codes stay explicit.
+    """
+    r = activity().analyse(area_scenario())
+    assert r["war_by_year_area_type"] == [
+        {"year": "2010", "area": "A", "code": "COM", "records": 2, "wells": 1},
+        {"year": "unknown", "area": "unknown", "code": "NEW", "records": 1, "wells": 1},
+    ]
+    assert r["eor_by_year_area_type"] == [
+        {"year": "2010", "area": "B", "code": "W", "records": 1, "wells": 1},
+        {"year": "2010", "area": "unknown", "code": "W", "records": 1, "wells": 1},
+        {"year": "unknown", "area": "A", "code": "unknown", "records": 1, "wells": 1},
+    ]
+    assert r["quality"]["war_unknown_area"] == 1
+    assert r["quality"]["eor_unknown_area"] == 1
+
+
+def test_completion_area_conflicts_remain_unknown():
+    """Hand tally: two rows map to ambiguous A/B; one maps uniquely to C."""
+    r = activity().analyse(area_scenario())
+    assert r["completion_by_year_area_status"] == [
+        {"year": "2010", "area": "C", "status": "X", "records": 1},
+        {"year": "2010", "area": "unknown", "status": "X", "records": 2},
+    ]
+    assert r["quality"]["conflicting_borehole_area_apis"] == 1
+    assert r["quality"]["completion_unknown_area"] == 2
+
+
+@pytest.mark.parametrize(
+    "name", ["mv_war_main", "mv_eor_mainquery", "mv_boreholes_all"]
+)
+def test_missing_area_column_does_not_invent_area(name):
+    """Three reports lack areas when their source column is absent."""
+    t = area_scenario()
+    t[name] = t[name].drop(columns="BOTM_AREA_CODE")
+    r = activity().analyse(t)
+    kind = {
+        "mv_war_main": "war",
+        "mv_eor_mainquery": "eor",
+        "mv_boreholes_all": "completion",
+    }[name]
+    assert r["quality"][kind + "_unknown_area"] == 3
+
+
+def test_area_missing_api_counts_record_but_not_well():
+    """Two COM rows minus one missing API still represent one known API."""
+    t = area_scenario()
+    t["mv_war_main"].loc[0, "API_WELL_NUMBER"] = ""
+    r = activity().analyse(t)
+    assert r["war_by_year_area_type"][0]["records"] == 2
+    assert r["war_by_year_area_type"][0]["wells"] == 1
+
+
+def test_area_results_reconcile_and_are_order_independent():
+    """Sum of disjoint area/year/code bins equals each source count."""
+    t = area_scenario()
+    r = activity().analyse(t)
+    shuffled = {key: value.iloc[::-1] for key, value in t.items()}
+    assert activity().analyse(shuffled) == r
+    for key, summary in [
+        ("war_by_year_area_type", "war_records"),
+        ("eor_by_year_area_type", "eor_records"),
+        ("completion_by_year_area_status", "completion_records"),
+    ]:
+        assert sum(row["records"] for row in r[key]) == r["summary"][summary]
+
+
+def test_operator_class_is_not_evaluated_without_sourced_mapping():
+    r = activity().analyse(area_scenario())
+    assert r["operator_class_analysis"]["status"] == "NOT_EVALUATED"
+    assert r["operator_class_analysis"]["counts"] is None
+    assert "mapping" in r["operator_class_analysis"]["reason"]
+
+
+def test_area_report_and_saved_results_expose_coverage(tmp_path):
+    r = activity().analyse(area_scenario())
+    r["war_by_year_area_type"][0]["area"] = "<raw>"
+    report().write_products(r, revision(), tmp_path)
+    page = (tmp_path / "report.html").read_text()
+    assert 'id="area-characterisation"' in page
+    assert "&lt;raw&gt;" in page and "<raw>" not in page
+    assert "NOT_EVALUATED" in page
+    saved = json.loads((tmp_path / "results.json").read_text())
+    assert saved["war_by_year_area_type"] == r["war_by_year_area_type"]
+    assert saved["operator_class_analysis"] == r["operator_class_analysis"]
+
+
+@pytest.mark.parametrize(
+    "name,key", [("mv_war_main", "SN_WAR"), ("mv_eor_mainquery", "SN_EOR")]
+)
+def test_conflicting_report_areas_rejected(name, key):
+    """One report key cannot have two areas; exact repeats count once."""
+    t = area_scenario()
+    duplicate = t[name].iloc[:1].copy()
+    t[name] = pd.concat([t[name], duplicate])
+    result = activity().analyse(t)
+    assert (
+        result["quality"][
+            (
+                "war_duplicate_rows_removed"
+                if key == "SN_WAR"
+                else "eor_duplicate_rows_removed"
+            )
+        ]
+        == 1
+    )
+    duplicate["BOTM_AREA_CODE"] = "different"
+    t[name] = pd.concat([t[name], duplicate])
+    with pytest.raises(ValueError, match="conflicting"):
+        activity().analyse(t)
+
+
+def test_area_note_charts_match_independent_fixture_tallies():
+    """Independent tally uses CSV rows, sets and integer addition only.
+
+    NIST/SEMATECH e-Handbook (2012), section 1.3.3.14: each observation
+    contributes once to its bin. Completion attribution requires one
+    distinct nonblank borehole area; otherwise the bin is unknown.
+    """
+    import csv
+    from collections import Counter, defaultdict
+    from html.parser import HTMLParser
+
+    class Bars(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.counts = {}
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if "data-records" in attrs:
+                key = (attrs["data-source"], attrs["data-area"])
+                assert key not in self.counts
+                self.counts[key] = int(attrs["data-records"])
+
+    areas = defaultdict(set)
+    with (FIXTURES / "mv_boreholes_all.csv").open() as stream:
+        for row in csv.DictReader(stream):
+            area = row["BOTM_AREA_CODE"].strip()
+            if area:
+                areas[row["API_WELL_NUMBER"]].add(area)
+    expected = Counter()
+    for name in ["mv_war_main", "mv_eor_mainquery", "mv_api_wellcomps_all"]:
+        with (FIXTURES / (name + ".csv")).open() as stream:
+            for row in csv.DictReader(stream):
+                if name == "mv_api_wellcomps_all":
+                    candidates = areas[row["API_WELL_NUMBER"]]
+                    area = next(iter(candidates)) if len(candidates) == 1 else "unknown"
+                else:
+                    area = row["BOTM_AREA_CODE"].strip() or "unknown"
+                expected[name, area] += 1
+    path = Path(
+        "docs/modules/bsee/analysis/completion_intervention/area_characterisation.html"
+    )
+    page = path.read_text()
+    parser = Bars()
+    parser.feed(page)
+    assert parser.counts == expected
+    assert "fixture" in page.lower() and "NOT_EVALUATED" in page
