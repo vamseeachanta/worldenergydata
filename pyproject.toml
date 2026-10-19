@@ -167,7 +167,7 @@ llm = [
 safety-ml = [
     "scikit-learn>=1.7.2",
     "xgboost>=2.0.0",
-    "hyperopt>=0.2.5",
+    "hyperopt>=0.3.0",
     "joblib>=1.3.0",
 ]
 safety-bert = [
