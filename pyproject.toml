@@ -122,6 +122,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+metocean-api = [
+    # Forward the opt-in LGPL dependency to its owning domain distribution.
+    "worldenergydata-metocean[metocean-api]",
+]
 dev = [
     "pytest>=8.4.2",
     "pytest-cov>=7.1.0",

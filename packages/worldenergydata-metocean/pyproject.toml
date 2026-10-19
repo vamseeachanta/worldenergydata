@@ -41,6 +41,13 @@ dependencies = [
     "typer>=0.9.0,<1.0",
 ]
 
+[project.optional-dependencies]
+metocean-api = [
+    # LGPL; keep optional. Pin the inspected release, published in 2026:
+    # https://pypi.org/project/metocean-api/1.1.14/
+    "metocean-api==1.1.14",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/vamseeachanta/worldenergydata"
 "Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
