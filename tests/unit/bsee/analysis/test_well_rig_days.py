@@ -10,11 +10,12 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-
 from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_DRL_COM_PND,
     STATUS_COVERED,
+    STATUS_COVERED_UNATTRIBUTED,
     STATUS_NO_ACTIVITY,
+    STATUS_NO_ACTIVITY_CODED,
 )
 from worldenergydata.bsee.analysis.well_rig_days import WellRigDays
 
@@ -150,13 +151,14 @@ class TestAbsentCoverageIsNullNotZero:
         assert result["drilling_days"] is None
         assert result["days_status"] == STATUS_NO_ACTIVITY
 
-    def test_a_genuine_zero_is_distinguishable_from_no_coverage(self, well):
+    def test_no_drl_code_is_unknown_drilling_time(self, well):
+        """July 6..12 holds seven COM dates and no evidence of DRL duration."""
         # WAR covers this bore but records no DRL week at all.
         only_com = [("2014-07-06", "2014-07-12", "COM")]
         result = well.rig_days_from_milestone(
             CFG, None, None, _merged_war(weeks=only_com)
         )
-        assert result["drilling_days"] == 0
+        assert result["drilling_days"] is None
         assert result["days_status"] == STATUS_COVERED
 
 
@@ -266,3 +268,111 @@ class TestRigAnalysisEndToEnd:
         assert {"drilling_days", "completion_days", "rig_days"} <= set(
             out["rig_days_from_milestone"]
         )
+
+
+class TestActivityCoverageSurvivesTheAdapter:
+    """Independent hand calculations on synthetic WAR intervals.
+
+    Source: Form BSEE-0133, header (OMB expiry 2024), limits a report to
+    seven days: https://www.bsee.gov/sites/bsee.gov/files/form-0133-exp-2024.pdf
+    Inclusive counting is the declared policy in war_rig_days.union_days,
+    consistent with that cadence, rather than an independently validated basis.
+    January 7 through January 13 includes 13 - 7 + 1 = 7 dates. Each fixture
+    below uses that interval; missing activity attribution cannot establish
+    zero time spent drilling or completing. No engineering limit is assumed.
+    """
+
+    @pytest.mark.parametrize(
+        "code,measured,missing",
+        [
+            ("COM", "completion", "drilling"),
+            ("DRL", "drilling", "completion"),
+        ],
+    )
+    def test_missing_phase_keeps_null_and_status(self, well, code, measured, missing):
+        """One coded week measures 7 dates; the other phase is unknown."""
+        result = well.rig_days_from_milestone(
+            CFG, None, None, _merged_war([("2024-01-07", "2024-01-13", code)])
+        )
+        assert result[f"{measured}_days"] == 7
+        assert result[f"{measured}_days_status"] == STATUS_COVERED
+        assert result[f"{missing}_days"] is None
+        assert result[f"{missing}_days_status"] == STATUS_NO_ACTIVITY_CODED
+        assert result["rig_days"] is None
+        assert result["war_days_total"] == 7
+        assert json.loads(json.dumps(result))[f"{missing}_days"] is None
+
+    @pytest.mark.parametrize("code", [None, "", float("nan")])
+    def test_unattributed_week_is_coverage_with_unknown_phases(self, well, code):
+        """The interval holds 7 dates, with no evidence allocating any phase."""
+        result = well.rig_days_from_milestone(
+            CFG, None, None, _merged_war([("2024-01-07", "2024-01-13", code)])
+        )
+        assert result["days_status"] == STATUS_COVERED_UNATTRIBUTED
+        assert result["drilling_days"] is None
+        assert result["completion_days"] is None
+        assert result["rig_days"] is None
+        assert result["war_days_total"] == 7
+        assert result["drilling_days_status"] == STATUS_NO_ACTIVITY_CODED
+        assert result["completion_days_status"] == STATUS_NO_ACTIVITY_CODED
+
+    @pytest.mark.parametrize("code", ["PND", "TA", "WO"])
+    def test_other_codes_do_not_measure_drilling_or_completion(self, well, code):
+        """Seven dates in a separate code bucket establish neither D&C phase."""
+        result = well.rig_days_from_milestone(
+            CFG, None, None, _merged_war([("2024-01-07", "2024-01-13", code)])
+        )
+        assert result["drilling_days"] is None
+        assert result["completion_days"] is None
+        assert result["rig_days"] is None
+        assert result["days_by_code"] == {code: 7}
+        assert result["war_days_total"] == 7
+        assert result["days_status"] == STATUS_COVERED
+
+    def test_no_coverage_keeps_phase_statuses(self, well):
+        """No intervals means no measured dates, rather than a measured zero."""
+        result = well.rig_days_from_milestone(CFG, None, None, _merged_war([]))
+        assert result["drilling_days_status"] == STATUS_NO_ACTIVITY
+        assert result["completion_days_status"] == STATUS_NO_ACTIVITY
+
+    def test_code_breakdown_keeps_other_activity_out_of_completion(self, well):
+        """Five disjoint 7-date intervals total 35 dates, of which 7 are COM.
+
+        DRL, COM, PND, TA and WO each cover one interval. Default D&C is
+        7 + 7 = 14; crediting PND explicitly makes completion 7 + 7 = 14.
+        TA and WO remain separate raw tokens, without assigning new meanings.
+        """
+        weeks = [
+            ("2024-01-07", "2024-01-13", "DRL"),
+            ("2024-01-14", "2024-01-20", "COM"),
+            ("2024-01-21", "2024-01-27", "PND"),
+            ("2024-01-28", "2024-02-03", "TA"),
+            ("2024-02-04", "2024-02-10", "WO"),
+        ]
+        default = well.rig_days_from_milestone(CFG, None, None, _merged_war(weeks))
+        with_pnd = well.rig_days_from_milestone(
+            CFG, None, None, _merged_war(weeks), basis=BASIS_DRL_COM_PND
+        )
+        assert default["days_by_code"] == dict.fromkeys(
+            ["DRL", "COM", "PND", "TA", "WO"], 7
+        )
+        assert default["pnd_days"] == with_pnd["pnd_days"] == 7
+        assert default["completion_days"] == 7
+        assert with_pnd["completion_days"] == 14
+        assert default["rig_days"] == 14
+        assert default["war_days_total"] == 35
+        assert default["days_by_code"] == with_pnd["days_by_code"]
+
+    def test_missing_property_rows_survive_the_full_join(self, well):
+        """A left join retains one 7-date WAR interval with no property row."""
+        main, prop = _war_frames(
+            [("2024-01-07", "2024-01-13", "DRL")], rig_name="Synthetic rig"
+        )
+        out = well.rig_analysis(CFG, _api12_df(), main, prop.iloc[:0])
+        result = out["rig_days_from_milestone"]
+        assert result["days_status"] == STATUS_COVERED_UNATTRIBUTED
+        assert result["war_days_total"] == 7
+        assert result["drilling_days"] is None
+        assert result["completion_days"] is None
+        assert result["days_by_code"] == {}
+        assert out["api12_war_days"] == {"total_rig_days": 7}

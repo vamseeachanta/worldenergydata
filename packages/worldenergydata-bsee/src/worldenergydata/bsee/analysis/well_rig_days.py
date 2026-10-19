@@ -26,11 +26,12 @@ from __future__ import annotations
 import pandas as pd
 from dateutil.parser import parse
 from loguru import logger
-
 from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_DRL_COM,
     STATUS_COVERED,
+    STATUS_COVERED_UNATTRIBUTED,
     STATUS_NO_ACTIVITY,
+    STATUS_NO_ACTIVITY_CODED,
     Basis,
     rig_days_by_bore,
 )
@@ -48,6 +49,25 @@ def _calendar_span_days(start, end):
         return int((end - start).days) + 1
     except TypeError:  # pragma: no cover - defensive against odd date types
         return None
+
+
+def _sum_days(values):
+    """Keep an unmeasured phase null, as in war_rig_days.rig_days_by_well.
+
+    The shared calculator uses min_count=1: an all-null group is unknown,
+    whereas the pandas default would turn it into a measured zero.
+    """
+    total = values.sum(min_count=1)
+    return None if pd.isna(total) else int(total)
+
+
+def _code_totals(bore):
+    """Add code buckets at bore grain, preserving raw activity tokens."""
+    totals = {}
+    for by_code in bore["days_by_code"]:
+        for code, days in by_code.items():
+            totals[code] = totals.get(code, 0) + int(days)
+    return totals
 
 
 class WellRigDays:
@@ -146,7 +166,9 @@ class WellRigDays:
             logger.warning(f"WAR frame unusable for rig-days: {exc}")
             return None
 
-        covered = bores[bores["days_status"].eq(STATUS_COVERED)]
+        covered = bores[
+            bores["days_status"].isin((STATUS_COVERED, STATUS_COVERED_UNATTRIBUTED))
+        ]
         if covered.empty:
             return None
         if len(covered) > 1:
@@ -175,8 +197,12 @@ class WellRigDays:
         ``war_days_total`` and ``spud_to_td_calendar_days`` are added so a
         consumer can tell what it is looking at.
 
-        ``drilling_days`` and ``completion_days`` are ``None`` -- not ``0`` --
-        when WAR reports no activity for the bore.
+        ``drilling_days`` and ``completion_days`` stay ``None`` when their
+        activity is unmeasured, even if other WAR activity covers the bore.
+        ``rig_days`` is unknown unless both phases are measured. Per-phase
+        statuses and raw code totals retain the shared calculator's evidence;
+        PND is separate unless the caller explicitly selects a basis using it.
+        The inclusive-day equation remains in ``war_rig_days.union_days``.
         """
         result = {
             "drilling_days": None,
@@ -184,6 +210,10 @@ class WellRigDays:
             "rig_days": None,
             "war_days_total": None,
             "days_status": STATUS_NO_ACTIVITY,
+            "drilling_days_status": STATUS_NO_ACTIVITY,
+            "completion_days_status": STATUS_NO_ACTIVITY,
+            "days_by_code": {},
+            "pnd_days": None,
             "basis": basis.describe(),
             "spud_to_td_calendar_days": _calendar_span_days(spud_date, td_date),
         }
@@ -193,15 +223,36 @@ class WellRigDays:
         if bore is None or len(bore) == 0:
             return result
 
-        drilling_days = int(bore["drilling_days"].sum())
-        completion_days = int(bore["completion_days"].sum())
+        drilling_days = _sum_days(bore["drilling_days"])
+        completion_days = _sum_days(bore["completion_days"])
+        coverage_status = (
+            STATUS_COVERED_UNATTRIBUTED
+            if bore["days_status"].eq(STATUS_COVERED_UNATTRIBUTED).all()
+            else STATUS_COVERED
+        )
         result.update(
             {
                 "drilling_days": drilling_days,
                 "completion_days": completion_days,
-                "rig_days": drilling_days + completion_days,
-                "war_days_total": int(bore["war_days_total"].sum()),
-                "days_status": STATUS_COVERED,
+                "rig_days": (
+                    drilling_days + completion_days
+                    if drilling_days is not None and completion_days is not None
+                    else None
+                ),
+                "war_days_total": _sum_days(bore["war_days_total"]),
+                "days_status": coverage_status,
+                "drilling_days_status": (
+                    STATUS_COVERED
+                    if drilling_days is not None
+                    else STATUS_NO_ACTIVITY_CODED
+                ),
+                "completion_days_status": (
+                    STATUS_COVERED
+                    if completion_days is not None
+                    else STATUS_NO_ACTIVITY_CODED
+                ),
+                "days_by_code": _code_totals(bore),
+                "pnd_days": _sum_days(bore["pnd_days"]),
             }
         )
         return result
@@ -234,10 +285,7 @@ class WellRigDays:
         if bore is None or len(bore) == 0:
             return rig_str, None
 
-        api12_war_days_dict = {}
-        for by_code in bore["days_by_code"]:
-            for code, days in by_code.items():
-                api12_war_days_dict[code] = api12_war_days_dict.get(code, 0) + int(days)
+        api12_war_days_dict = _code_totals(bore)
         api12_war_days_dict["total_rig_days"] = int(bore["war_days_total"].sum())
 
         return rig_str, api12_war_days_dict
