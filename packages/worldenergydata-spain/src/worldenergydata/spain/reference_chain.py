@@ -32,6 +32,9 @@ def run_spain_reference_chain(
 
     Gas volume already uses the loader's GWh-to-Mcf conversion. Supplying a
     deck enables gas revenue; omission retains oil-only pre-tax plumbing.
+
+    Raises:
+        ValueError: production is empty for the requested field and period.
     """
     unified = adapter.fetch(
         ProductionQuery(
@@ -42,10 +45,10 @@ def run_spain_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
+    first_oil = _first_oil_date(fdas_production)
     field_concept = build_spain_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
-    first_oil = _first_oil_date(fdas_production)
     price_deck = {
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
@@ -94,7 +97,7 @@ def _is_onshore(field_meta: Dict[str, Any]) -> bool:
 
 def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     if fdas_production.empty:
-        return datetime(1970, 1, 1)
+        raise ValueError("production is empty; cannot determine first-oil date")
     first_period = str(fdas_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 
