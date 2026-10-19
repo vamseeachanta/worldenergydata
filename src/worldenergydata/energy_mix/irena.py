@@ -119,6 +119,26 @@ def load_export(raw: bytes) -> list[dict[str, Any]]:
     return records
 
 
+def generation_gwh_to_mwh(generation_gwh: float | None) -> float | None:
+    """Convert supplied generation to MWh, preserving unavailable values.
+
+    Pass a record's ``generation_gwh`` field from :func:`load_export`.
+    The returned scalar leaves the CSV schema and provenance unchanged.
+    This conversion does not verify the supplied observation's unit label.
+    """
+    if generation_gwh is None:
+        return None
+    # docs/data/irena_offshore_wind.md, "Input contract": finite and nonnegative.
+    if not math.isfinite(generation_gwh) or generation_gwh < 0:
+        raise ValueError("Generation must be finite and nonnegative")
+    # NIST SP 330 (2019), section 3, table 7: giga = 10**9; mega = 10**6.
+    # https://www.nist.gov/pml/special-publication-330/sp-330-section-3
+    generation_mwh = generation_gwh * 1000.0
+    if not math.isfinite(generation_mwh):
+        raise ValueError("Converted generation must be finite")
+    return generation_mwh
+
+
 def write_table(records: list[dict[str, Any]]) -> bytes:
     """Serialize a tidy table to the same CSV contract and validate it."""
     out = io.StringIO(newline="")
