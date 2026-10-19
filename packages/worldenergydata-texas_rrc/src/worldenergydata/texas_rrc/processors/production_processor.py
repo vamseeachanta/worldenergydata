@@ -481,6 +481,9 @@ class ProductionProcessor:
         """
         Aggregate production by RRC district.
 
+        Missing district keys are retained as a group so that unassigned
+        production remains in the totals. They are not a valid district code.
+
         Args:
             data: Production data
 
@@ -506,13 +509,14 @@ class ProductionProcessor:
         # Filter to columns that exist
         agg_cols = {k: v for k, v in agg_cols.items() if k in df.columns}
 
-        result = df.groupby("district").agg(agg_cols).reset_index()
+        # pandas 2.3 DataFrame.groupby, dropna parameter: False retains NA keys.
+        # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.groupby.html
+        grouped = df.groupby("district", dropna=False)
+        result = grouped.agg(agg_cols).reset_index()
 
         # Add lease count if available
         if "lease_number" in df.columns:
-            lease_counts = (
-                df.groupby("district")["lease_number"].nunique().reset_index()
-            )
+            lease_counts = grouped["lease_number"].nunique().reset_index()
             lease_counts.columns = ["district", "lease_count"]
             result = result.merge(lease_counts, on="district", how="left")
 
