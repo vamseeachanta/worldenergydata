@@ -184,7 +184,7 @@ class PressureWindowAnalyzer:
         fracture_gradient_psi: float,
         mud_weight_ppg: float,
         flow_rate_gpm: float,
-        annular_pressure_drop_psi: float = 200.0,
+        annular_pressure_drop_psi: float,
         threshold_psi: float = 200.0,
     ) -> PressureWindow:
         """Return a PressureWindow for the given well conditions.
@@ -195,11 +195,17 @@ class PressureWindowAnalyzer:
             fracture_gradient_psi: Formation fracture gradient pressure in psi.
             mud_weight_ppg: Drilling fluid weight in pounds per gallon.
             flow_rate_gpm: Circulating flow rate in gallons per minute.
-            annular_pressure_drop_psi: Annular friction pressure loss in psi.
+            annular_pressure_drop_psi: Required annular friction pressure loss in psi.
+                Supply an explicit zero for a case with no annular loss; unknown
+                loss must be determined by the caller. The flow rate is not used
+                to estimate it.
             threshold_psi: Pressure window below which MPD is considered required.
 
         Returns:
             PressureWindow dataclass with calculated values.
+
+        Raises:
+            TypeError: If annular_pressure_drop_psi is omitted.
         """
         ecd = self.ecd_pressure(mud_weight_ppg, depth_m, annular_pressure_drop_psi)
         window = fracture_gradient_psi - pore_pressure_psi
