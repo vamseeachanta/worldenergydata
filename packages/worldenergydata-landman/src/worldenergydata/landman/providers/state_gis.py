@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
+    ParsingError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -135,6 +136,16 @@ class StateGISProvider(BaseProvider):
         """Get list of supported state codes."""
         return list(self.SUPPORTED_STATES.keys())
 
+    @staticmethod
+    def _sql_literal(value: str) -> str:
+        """Quote a GIS SQL string while preserving LIKE wildcard semantics.
+
+        ArcGIS Pro SQL reference, latest online edition, "Strings" (accessed
+        2026-10-19): escape a single quotation mark with another quotation mark.
+        https://doc.esri.com/en/arcgis-pro/latest/help/mapping/navigation/sql-reference-for-elements-used-in-query-expressions.html
+        """
+        return "'" + value.replace("'", "''") + "'"
+
     def get_state_info(self, state: str) -> Dict[str, str]:
         """
         Get information about a state's regulatory agency.
@@ -213,13 +224,13 @@ class StateGISProvider(BaseProvider):
         service = config["well_service"]
         query_url = urljoin(base_url, f"{service}/0/query")
 
-        where_clauses = [f"UPPER(COUNTY) = '{county.upper()}'"]
+        where_clauses = [f"UPPER(COUNTY) = {self._sql_literal(county.upper())}"]
         if section:
-            where_clauses.append(f"SECTION = '{section}'")
+            where_clauses.append(f"SECTION = {self._sql_literal(section)}")
         if township:
-            where_clauses.append(f"TOWNSHIP = '{township}'")
+            where_clauses.append(f"TOWNSHIP = {self._sql_literal(township)}")
         if range_:
-            where_clauses.append(f"RANGE = '{range_}'")
+            where_clauses.append(f"RANGE = {self._sql_literal(range_)}")
 
         params = {
             "where": " AND ".join(where_clauses),
@@ -230,8 +241,10 @@ class StateGISProvider(BaseProvider):
         }
 
         try:
-            data = self._get_json(query_url, params=params)
+            data = self._get_record_json(query_url, ("features",), params=params)
             return self._parse_esri_wells(data, config)
+        except ParsingError:
+            raise
         except Exception as e:
             self.logger.warning(f"ESRI query failed: {e}")
             return []
@@ -241,7 +254,7 @@ class StateGISProvider(BaseProvider):
     ) -> List[WellInfo]:
         """Parse ESRI REST response into WellInfo objects."""
         wells = []
-        features = data.get("features", [])
+        features = self._require_record_list(data, ("features",))
 
         for feature in features:
             attrs = feature.get("attributes", {})
@@ -344,7 +357,7 @@ class StateGISProvider(BaseProvider):
             query_url = urljoin(base_url, f"{service}/0/query")
 
             params = {
-                "where": f"UPPER(OPERATOR) LIKE '%{operator_name.upper()}%'",
+                "where": f"UPPER(OPERATOR) LIKE {self._sql_literal(f'%{operator_name.upper()}%')}",
                 "outFields": "*",
                 "returnGeometry": "true",
                 "f": "json",
@@ -352,8 +365,10 @@ class StateGISProvider(BaseProvider):
             }
 
             try:
-                data = self._get_json(query_url, params=params)
+                data = self._get_record_json(query_url, ("features",), params=params)
                 wells = self._parse_esri_wells(data, config)
+            except ParsingError:
+                raise
             except Exception as e:
                 self.logger.warning(f"Operator search failed: {e}")
 
@@ -396,17 +411,24 @@ class StateGISProvider(BaseProvider):
 
             cleaned_api = api_number.replace("-", "")
             params = {
-                "where": f"API_NUMBER = '{api_number}' OR API_NUMBER = '{cleaned_api}'",
+                "where": (
+                    f"API_NUMBER = {self._sql_literal(api_number)} "
+                    f"OR API_NUMBER = {self._sql_literal(cleaned_api)}"
+                ),
                 "outFields": "*",
                 "returnGeometry": "true",
                 "f": "json",
             }
 
             try:
-                data = self._get_json(query_url, params=params, use_cache=False)
+                data = self._get_record_json(
+                    query_url, ("features",), params=params, use_cache=False
+                )
                 wells = self._parse_esri_wells(data, config)
                 if wells:
                     return wells[0]
+            except ParsingError:
+                raise
             except Exception as e:
                 self.logger.error(f"Well detail query failed: {e}")
 
@@ -484,9 +506,13 @@ class StateGISProvider(BaseProvider):
 
             where_clauses = ["1=1"]
             if county:
-                where_clauses.append(f"UPPER(COUNTY) = '{county.upper()}'")
+                where_clauses.append(
+                    f"UPPER(COUNTY) = {self._sql_literal(county.upper())}"
+                )
             if operator:
-                where_clauses.append(f"UPPER(OPERATOR) LIKE '%{operator.upper()}%'")
+                where_clauses.append(
+                    f"UPPER(OPERATOR) LIKE {self._sql_literal(f'%{operator.upper()}%')}"
+                )
 
             params = {
                 "where": " AND ".join(where_clauses),
@@ -497,8 +523,10 @@ class StateGISProvider(BaseProvider):
             }
 
             try:
-                data = self._get_json(query_url, params=params)
+                data = self._get_record_json(query_url, ("features",), params=params)
                 permits = self._parse_esri_permits(data, state_upper)
+            except ParsingError:
+                raise
             except Exception as e:
                 self.logger.warning(f"Permit search failed: {e}")
 
@@ -512,7 +540,7 @@ class StateGISProvider(BaseProvider):
     def _parse_esri_permits(self, data: Dict[str, Any], state: str) -> List[PermitInfo]:
         """Parse ESRI REST response into PermitInfo objects."""
         permits = []
-        features = data.get("features", [])
+        features = self._require_record_list(data, ("features",))
 
         for feature in features:
             attrs = feature.get("attributes", {})
