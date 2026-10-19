@@ -108,9 +108,15 @@ FAILURE_MODES: dict[str, FailureMode] = {
         key="riser_viv_fatigue",
         label="Riser VIV / fatigue candidates (cause unconfirmed)",
         sources=("bsee",),
+        # Keyword candidates, not causal findings: docs/hse/grounding-riser-matches.md,
+        # revision 2 (2026), Classification limits. Explicit mechanism terms can
+        # occur in either order; existing exclusions remain in effect.
         include=re.compile(
-            r"^(?!.*\b(?:weather|emergency|dropped)\b).*\briser\s+disconnect\b",
-            re.I,
+            r"^(?!.*\b(?:weather|emergency|dropped)\b)"
+            r"(?:(?=.*\brisers?\b)"
+            r"(?=.*\b(?:VIV|vortex[-\s]+induced\s+vibration|fatigue)\b)"
+            r"|.*\briser\s+disconnect\b)",
+            re.IGNORECASE,
         ),
     ),
     "structural_overpressure": FailureMode(
