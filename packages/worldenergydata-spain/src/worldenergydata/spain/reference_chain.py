@@ -72,7 +72,9 @@ def run_spain_reference_chain(
         "concept_screening_label": "wiring_only_onshore_sparse_metadata",
         "economics_label": "chain_plumbing_pre_tax",
         "dev_system": dev_system,
-        "pre_tax_metrics": _pre_tax_metrics(cashflows, onshore_flag),
+        "pre_tax_metrics": _pre_tax_metrics(
+            cashflows, onshore_flag, gas_priced=gas_prices is not None
+        ),
     }
 
 
@@ -99,9 +101,20 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     return datetime.strptime(first_period, "%Y-%m")
 
 
-def _pre_tax_metrics(cashflows, onshore_model_mismatch: bool) -> Dict[str, float]:
+def _pre_tax_metrics(
+    cashflows, onshore_model_mismatch: bool, *, gas_priced: bool
+) -> Dict[str, Any]:
+    """Sum existing engine revenue lines; unpriced gas has no established value.
+
+    Basis: docs/domains/field-development/gas-revenue.md, Monthly gas revenue.
+    No new price, volume conversion, or fiscal assumption is introduced.
+    """
     return {
         "months": len(cashflows),
+        "oil_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
+        "gas_revenue_usd": (
+            float(sum(cf.gas_revenue_usd for cf in cashflows)) if gas_priced else None
+        ),
         "gross_revenue_usd": float(sum(cf.total_revenue_usd for cf in cashflows)),
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),
