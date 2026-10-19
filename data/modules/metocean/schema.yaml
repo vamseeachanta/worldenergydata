@@ -2,6 +2,7 @@ module: metocean
 description: Metocean reference structures and user-supplied licensed tables.
 datasets:
 - name: api_rp2met_hurricane_gom_extremes.csv
+  source_record: table_sources.json#/tables/api_rp2met_hurricane_gom_extremes.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -46,6 +47,7 @@ datasets:
     description: ''
     unit: ''
 - name: api_rp2met_us_zone_100yr_waves.csv
+  source_record: table_sources.json#/tables/api_rp2met_us_zone_100yr_waves.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -98,6 +100,7 @@ datasets:
     description: ''
     unit: ''
 - name: marine_growth_terminal_thickness.csv
+  source_record: table_sources.json#/tables/marine_growth_terminal_thickness.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -126,6 +129,7 @@ datasets:
     description: ''
     unit: ''
 - name: api_rp2met_gom_extremes_by_region.csv
+  source_record: table_sources.json#/tables/api_rp2met_gom_extremes_by_region.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -149,6 +153,7 @@ datasets:
   - {name: RP_1000YR, type: float, description: '', unit: ''}
   - {name: RP_2000YR, type: float, description: '', unit: ''}
 - name: metocean_regional_extremes.csv
+  source_record: table_sources.json#/tables/metocean_regional_extremes.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -172,6 +177,7 @@ datasets:
   - {name: RP_50YR, type: string, description: '', unit: ''}
   - {name: RP_100YR, type: string, description: '', unit: ''}
 - name: metocean_hs_tp_occurrence.csv
+  source_record: table_sources.json#/tables/metocean_hs_tp_occurrence.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -190,6 +196,7 @@ datasets:
   - {name: TP_BAND_S, type: string, description: spectral peak period band, unit: s}
   - {name: OCCURRENCE_PCT, type: float, description: percentage occurrence, unit: '%'}
 - name: metocean_temperature_ranges.csv
+  source_record: table_sources.json#/tables/metocean_temperature_ranges.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
@@ -208,6 +215,7 @@ datasets:
   - {name: SEA_TEMP_C, type: string, description: sea-surface temperature range, unit: degC}
   - {name: SEAFLOOR_TEMP_C, type: string, description: sea-floor temperature range, unit: degC}
 - name: api_rp2met_us_zone_100yr_winds.csv
+  source_record: table_sources.json#/tables/api_rp2met_us_zone_100yr_winds.csv
   format: csv
   distributed: false
   availability: Not distributed; a user-supplied licensed copy is required.
