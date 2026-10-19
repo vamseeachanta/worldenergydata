@@ -37,13 +37,18 @@ jobs:
             --cov=src \
             --cov-report=xml:coverage.xml \
             --cov-report=html:coverage-report \
+            --junitxml=test-results.xml \
             --durations=20
 
       - name: Upload coverage report
+        if: always()
         uses: actions/upload-artifact@v7
         with:
           name: coverage-report
-          path: coverage-report/
+          path: |
+            coverage-report/
+            coverage.xml
+            test-results.xml
           retention-days: 7
 
   dependency-audit:
