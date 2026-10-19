@@ -1,18 +1,16 @@
-"""Suite 5 — us_gom deck parity (do-not-ship-without gate, #714).
+"""Suite 5 — Gulf deck correction and component regressions (#1233).
 
-The `us_gom` deck holds the SAME per-dev-system royalty rates as the legacy
-``AssumptionsManager`` path. Therefore, for every development system, a
-deck-driven ``CashflowEngine`` must produce a cashflow stream that is
-byte-identical to the deckless (legacy) engine — the deck overrides royalty
-ONLY, every other assumption still flows through the untouched
-``AssumptionsManager``. We assert on the FULL component vectors (not just NPV
-totals) so a divergence in any line item is caught.
+Original us_gom.yml revision 1 source_ref states 12.5% and 18.75%; hence the
+deck fractions are 0.125 and 0.1875. core/config.py DEFAULT_ASSUMPTIONS retains
+0.188 for historical deep-water runs. Only royalty and net cashflow change;
+all other component vectors must remain identical.
 """
 
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
@@ -45,7 +43,12 @@ def _fixture():
     return prod, timeline, wti, first_oil
 
 
-def test_deckless_vs_us_gom_identical_component_vectors():
+def test_deckless_vs_us_gom_only_royalty_and_net_change():
+    """Hand calculation: royalty = gross * source percentage / 100.
+
+    Net cashflow increases by the royalty saving, with other costs unchanged.
+    Source percentages and legacy fraction are cited in the module docstring.
+    """
     us_gom = get_fiscal_terms("us_gom")
     prod, timeline, wti, first_oil = _fixture()
 
@@ -66,10 +69,37 @@ def test_deckless_vs_us_gom_identical_component_vectors():
         for a, b in zip(cf_legacy, cf_decked):
             assert a.year_month == b.year_month, ds
             for field in _COMPONENT_FIELDS:
-                assert getattr(a, field) == getattr(b, field), (ds, field, a.year_month)
+                if field not in {"royalty_usd", "net_cashflow_usd"}:
+                    assert getattr(a, field) == getattr(b, field), (
+                        ds,
+                        field,
+                        a.year_month,
+                    )
+            rate = 0.125 if ds == "dry" else 0.1875
+            assert b.royalty_usd == a.oil_revenue_usd * rate
+            assert b.net_cashflow_usd == pytest.approx(
+                a.net_cashflow_usd + a.royalty_usd - b.royalty_usd
+            )
 
 
-def test_deckless_vs_us_gom_identical_npv():
+@pytest.mark.parametrize("discount_rate", [0.0, 0.10])
+def test_deckless_vs_us_gom_npv_saving(discount_rate):
+    """Independent hand calculation using the synthetic fixture:
+
+    Gross revenue = 120000*75 + 110000*78.5 + 95000*72 + 80000*80
+    = 30875000 USD. At zero discount NPV is the sum of cashflows, so the
+    deep-water saving is 30875000 * (0.188 - 18.75/100) = 15437.5 USD.
+    Dry-tree rates agree, giving zero saving. Rate sources: module docstring.
+
+    Nonzero-discount case: OpenStax, Principles of Finance (2022), section
+    16.2, discounts each cashflow to its present value. The synthetic annual
+    rate is 0.10. Monthly savings are 4500, 4317.5, 3420, 3200 USD, obtained
+    by multiplying each fixture revenue by (0.188 - 0.1875). The existing
+    calculate_host_capex_timing contract spans 24 months including first oil,
+    leaving 23 pre-production rows. Thus expected delta NPV is independently
+    sum(saving_t / (1 + annual_rate)**(t/12)) for t = 23, 24, 25, 26.
+    This also retains the original nonzero-discount regression input.
+    """
     us_gom = get_fiscal_terms("us_gom")
     prod, timeline, wti, first_oil = _fixture()
 
@@ -90,23 +120,35 @@ def test_deckless_vs_us_gom_identical_npv():
                 prod.copy(), timeline, wti, first_oil
             )
         ]
-        assert calculate_npv(np.array(v_legacy), 0.10) == calculate_npv(
-            np.array(v_decked), 0.10
-        ), ds
-
-
-def test_calculate_royalty_parity_direct():
-    """Direct royalty parity: deck vs legacy across all dev systems."""
-    us_gom = get_fiscal_terms("us_gom")
-    revenue = {"2025-01": 9_000_000.0, "2025-02": 7_050_000.0}
-    for ds in DEV_SYSTEMS:
-        legacy = CashflowEngine(AssumptionsManager(), dev_system=ds)
-        decked = CashflowEngine(
-            AssumptionsManager(), dev_system=ds, fiscal_terms=us_gom
+        # Independent hand-calculated payments and timing: docstring above.
+        saving = (
+            0.0
+            if ds == "dry"
+            else sum(
+                amount / (1 + discount_rate) ** (month / 12)
+                for month, amount in zip(range(23, 27), (4500, 4317.5, 3420, 3200))
+            )
         )
-        assert legacy.calculate_royalty(revenue) == decked.calculate_royalty(
-            revenue
-        ), ds
+        assert calculate_npv(np.array(v_decked), discount_rate) - calculate_npv(
+            np.array(v_legacy), discount_rate
+        ) == pytest.approx(saving), ds
+
+
+@pytest.mark.parametrize("dev_system", (*DEV_SYSTEMS, "unmapped"))
+def test_calculate_royalty_source_note_hand_calculation(dev_system):
+    """Hand calculation on synthetic gross revenue of 1000000 USD:
+
+    Original us_gom.yml revision 1 source_ref gives 12.5% shallow-water and
+    18.75% deep-water. Payments = 1000000 * percentage / 100, hence
+    125000 USD dry and 187500 USD deep-water (including the default fallback).
+    """
+    us_gom = get_fiscal_terms("us_gom")
+    revenue = {"2025-01": 1_000_000.0}
+    decked = CashflowEngine(
+        AssumptionsManager(), dev_system=dev_system, fiscal_terms=us_gom
+    )
+    expected = 125000.0 if dev_system == "dry" else 187500.0
+    assert decked.calculate_royalty(revenue) == {"2025-01": expected}
 
 
 def test_explicit_rate_arg_overrides_deck():
