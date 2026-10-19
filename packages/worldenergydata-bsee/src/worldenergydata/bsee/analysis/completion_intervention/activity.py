@@ -177,6 +177,21 @@ def _annual(frame, code):
     )
 
 
+def _activity_strata(frame, code):
+    """Count reports by raw code and the existing metadata dimensions.
+
+    Frequency is the number of occurrences: OpenStax, Introductory Statistics
+    2e (2023), section 1.3, Frequency. Each reconciled report contributes once
+    to its occupied group; EOR and WAR are counted separately. Source grains
+    are SN_EOR and SN_WAR in the BSEE projections documented in
+    tests/fixtures/bsee/completion_intervention/manifest.json (2026 snapshot).
+    No code selection, event inference or exposure denominator is applied.
+    """
+    result = frame.copy()
+    result["code"] = result[code].replace("", UNKNOWN)
+    return _counts(result, ["field", "water_depth_band", "era", "code"])
+
+
 def outlier_flags(values, quantiles):
     """Strict linear empirical quantiles; equal values are never flagged."""
     if not values:
@@ -406,6 +421,10 @@ def _summary_statistics(war, eor, comp, eor_comp, wells, parameters):
 def _method():
     return {
         "frequency_basis": "records per recorded API12; no exposure-time denominator",
+        "activity_strata_basis": (
+            "separate reconciled EOR and WAR report counts by raw code, field, "
+            "water-depth band and calendar era; not intervention events"
+        ),
         "completion_era_basis": "API Lookup COMPLETION_DATE",
         "eor_year_basis": "BOREHOLE_STAT_DT; not intervention event date",
         "war_year_basis": "WAR_START_DT; not an intervention start",
@@ -465,6 +484,8 @@ def _results(
         ),
         "eor_by_year_type": _annual(eor, "EOR_OPERATION_CD"),
         "war_by_year_type": _annual(war, "WELL_ACTIVITY_CD"),
+        "eor_activity_strata": _activity_strata(eor, "EOR_OPERATION_CD"),
+        "war_activity_strata": _activity_strata(war, "WELL_ACTIVITY_CD"),
         "war_vocabulary": [
             {
                 "code": c,
