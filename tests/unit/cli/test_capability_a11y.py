@@ -32,5 +32,6 @@ def test_pdf_template_has_no_screen_only_a11y():
 
 def test_generator_emits_no_external_api_artifacts():
     s = _src().lower()
+    assert "deckhand" not in s
     assert "/api/run" not in s
     assert not _API_DIR.exists(), "reports/capabilities/api/ must not be regenerated"
