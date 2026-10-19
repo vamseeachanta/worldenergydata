@@ -1,12 +1,22 @@
 # Baker Hughes module knowledge pack
 
+Summary: section 11 defines date-range completeness for issue #1335, slice 1.
+Sections 1–10 retain the historical evidence at the code revision below;
+section 11 supersedes the F13/F19 dispositions for the current implementation.
+
+## Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- |
+| 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
+
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 2 |
-| Pack date | 2026-10-17 |
+| Pack revision | 3 |
+| Pack date | 2026-10-19 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -165,3 +175,53 @@ Documentation discovery readback:
 - The package-split ADR lists it among isolated packages. [docs/adr/0001-domain-package-split.md:L47-L47]
 
 These discovery claims will not replace source qualification or current test evidence; #1336.
+
+## 11. Date completeness contract (issue #1335, slice 1)
+
+`generate_report` adds `completeness.date_range` with `status`, `reason` and
+`missing_count`. This is a date-only assessment, independent of the source
+label. It establishes neither schema completeness nor source accuracy.
+The contract is implementation-defined for #1335 (2026-10-19), F13 and F19;
+no engineering equation, coefficient or tolerance is used. Counts are direct
+row enumeration. Test docstrings independently enumerate synthetic inputs;
+they do not qualify a source workbook.
+
+| Input condition, in precedence order | Status | Reason | Missing count | Bounds |
+| --- | --- | --- | --- | --- |
+| No rows | incomplete | `empty_input` | Count if date column exists; otherwise null | Omitted |
+| Rows but no date column | incomplete | `missing_date_column` | null (unknown) | Omitted |
+| All dates missing | incomplete | `all_dates_missing` | Number of rows | Omitted |
+| Some dates missing | incomplete | `missing_dates` | Number of missing dates | Observed dates only |
+| Nonempty input with no missing dates | complete | null | No missing dates | Observed minimum and maximum |
+
+Dates must already be parsed, as returned by the loaders. No dates are filled
+or inferred. Available bounds remain calendar-date strings, and existing
+record counts and dimension inventories are preserved. All-missing input now
+omits `date_range` instead of publishing `"NaT"` strings. Consumers must read
+the status before treating partially observed bounds as complete. No overall
+report completeness flag is provided because dimension checks remain open.
+
+Detection tests are in `tests/unit/baker_hughes/test_report.py`:
+
+| Case | Detection test or retained limitation |
+| --- | --- |
+| F7 | Retained: unmatched country filter returns empty data; the report detects empty input but cannot identify the filter cause. |
+| F8 | Retained: unmatched basin filter returns empty data; filter-specific diagnostics remain open. |
+| F9 | Retained: summary identifier column schema remains unchecked. |
+| F10 | Retained: summary date-header selection remains unchecked. |
+| F13 | `test_empty_input_reports_incomplete_dates` and `test_missing_date_column_reports_unknown_missing_count`. |
+| F14 | Retained: null basin values still disappear from dimension inventory. |
+| F15 | Retained: null state values still disappear from dimension inventory. |
+| F16 | Retained: null country values still disappear from dimension inventory. |
+| F17 | Retained: pivot missing/extra column detection remains open. |
+| F18 | Retained: absent dimension columns still omit their inventories. |
+| F19 | `test_partial_missing_dates_flag_observed_bounds` and `test_all_missing_dates_omit_bounds`. |
+
+`test_complete_dates_preserve_report_fields` checks complete dates, existing
+fields, source-label independence, input preservation and scalar serialization.
+Expected values use reversed calendar dates to establish min/max independently;
+partial and all-missing cases count the explicitly listed missing entries.
+The new file has ten parametrized cases. Together with the existing loader
+and package smoke tests, 25 cases pass. Later slices of #1335 address the
+retained schema, filter and dimension checks above; #1334 and #1336 retain
+numeric and independent source-qualification gaps.
