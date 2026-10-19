@@ -41,6 +41,65 @@ def make_observations(rows):
 
 
 class TestEstimateBhp:
+    @pytest.mark.parametrize("column", ["reference_depth_ft", "pressure_psia"])
+    @pytest.mark.parametrize("invalid", [math.inf, -math.inf, math.nan])
+    @pytest.mark.parametrize(
+        "pressure_kind",
+        ["BHP_measured", "WHP_shut_in", "WHP_flowing_tubing_initial_test"],
+    )
+    def test_nonfinite_inputs_are_not_evaluated(self, column, invalid, pressure_kind):
+        """Non-finite observations cannot supply a physical pressure gradient.
+
+        Source: NumPy 2.2 manual, numpy.isfinite, definition and Notes
+        (https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html).
+        Both infinities and NaN are non-finite, so the expected result is
+        NOT_EVALUATED, without a BHP, gradient, vacuum flag or selected well.
+
+        Independent hand calculation for the synthetic finite control:
+        reported BHP / depth = 1200 psia / 5000 ft = 0.24 psi/ft.
+        There are two observations and only the control is usable, hence one
+        selected well and one ranked well with a synthetic minimum of one.
+        The rejected row uses a synthetic 40 psia, below the existing 50 psia
+        fixture cutoff, so invalid depth must also suppress a vacuum flag.
+        The existing tier settings are regression fixtures, not a validation
+        of their engineering basis. No gas-column expected value is inferred.
+        """
+        # Synthetic inputs and counts are derived in the hand calculation above.
+        control = {
+            "well_key": "control",
+            "test_year": 2024,
+            "pressure_kind": "BHP_measured",
+            "pressure_psia": 1200.0,
+            "reference_depth_ft": 5000.0,
+        }
+        invalid_row = {
+            **control,
+            "well_key": "invalid",
+            "pressure_kind": pressure_kind,
+            "pressure_psia": 40.0,
+            column: invalid,
+        }
+        observations = make_observations([invalid_row, control])
+        original = observations.copy(deep=True)
+        with np.errstate(all="raise"):
+            estimated = estimate_bhp(observations, BHP_SETTINGS)
+            screened = classify_tiers(estimated, TIERS)
+
+        rejected = screened.set_index("well_key").loc["invalid"]
+        assert rejected["bhp_method"] == "NOT_EVALUATED"
+        assert pd.isna(rejected["bhp_psia_est"])
+        assert pd.isna(rejected["bhp_gradient_psi_ft"])
+        assert rejected["pressure_tier"] == "NOT_EVALUATED"
+        assert not rejected["near_vacuum"]
+        pd.testing.assert_frame_equal(observations, original)
+
+        wells = earliest_per_well(screened)
+        assert wells["well_key"].tolist() == ["control"]
+        assert wells["bhp_gradient_psi_ft"].tolist() == [0.24]
+        ranking = rank_fields(wells, {"min_wells_per_field": 1})
+        assert ranking["well_count"].tolist() == [1]
+        assert ranking["median_gradient_psi_ft"].tolist() == [0.24]
+
     def test_whp_gets_static_column_correction(self):
         obs = make_observations(
             [

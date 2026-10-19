@@ -42,22 +42,30 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
 
     Shut-in wellhead readings get the average-temperature-and-z static gas-column
     correction; measured BHP and non-shut-in WHP values pass through unchanged.
+    Non-finite depth or pressure yields null estimates and a NOT_EVALUATED method.
     """
     frame = observations.copy()
+    # NumPy 2.2 manual, numpy.isfinite (definition and Notes): exclude both
+    # infinities and NaN before arithmetic, including the pass-through path.
+    # https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html
+    finite_inputs = np.isfinite(frame["reference_depth_ft"]) & np.isfinite(
+        frame["pressure_psia"]
+    )
+    depth = frame["reference_depth_ft"].where(finite_inputs)
+    pressure = frame["pressure_psia"].where(finite_inputs)
     exponent = (
         0.01875
         * settings["gas_sg"]
-        * frame["reference_depth_ft"]
+        * depth
         / (settings["z_avg"] * settings["t_avg_rankine"])
     )
     multiplier = np.exp(exponent)
     is_shut_in_whp = frame["pressure_kind"].fillna("").astype(str).eq("WHP_shut_in")
-    frame["bhp_psia_est"] = frame["pressure_psia"].where(
-        ~is_shut_in_whp, frame["pressure_psia"] * multiplier
-    )
+    frame["bhp_psia_est"] = pressure.where(~is_shut_in_whp, pressure * multiplier)
     frame["bhp_method"] = np.where(
         is_shut_in_whp, "static_gas_column_avg_zt", "as_reported"
     )
+    frame.loc[~finite_inputs, "bhp_method"] = "NOT_EVALUATED"
     has_depth = frame["reference_depth_ft"] > 0
     frame["bhp_gradient_psi_ft"] = np.where(
         has_depth, frame["bhp_psia_est"] / frame["reference_depth_ft"], np.nan
@@ -80,6 +88,10 @@ def classify_tiers(frame: pd.DataFrame, tiers: dict) -> pd.DataFrame:
     frame["near_vacuum"] = (frame["pressure_kind"] == "WHP_shut_in") & (
         frame["pressure_psia"] < tiers["near_vacuum_whp_psia"]
     )
+    if "bhp_method" in frame:
+        not_evaluated = frame["bhp_method"].eq("NOT_EVALUATED")
+        frame.loc[not_evaluated, "pressure_tier"] = "NOT_EVALUATED"
+        frame.loc[not_evaluated, "near_vacuum"] = False
     return frame
 
 
