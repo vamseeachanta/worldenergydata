@@ -1,8 +1,7 @@
-"""Suite 6 — non-US decks + declarative-fields fences (#714).
+"""Non-US royalty decks and independence from revenue/discount metadata.
 
 Norway (`none`) and UK (flat 0.0) royalty regimes run through the engine; and
-the declarative metadata fields (price_marker, currency, discount_rate) are
-provably NOT consumed by the v1 royalty seam — editing them changes nothing.
+price_marker, currency and discount_rate do not affect the royalty seam.
 """
 
 import dataclasses
@@ -50,6 +49,7 @@ def test_norway_full_cashflow_runs():
         {"drilling_monthly": {}},
         {"2025-01": 75.0, "2025-02": 76.0},
         datetime(2025, 1, 1),
+        oil_prices_by_marker={"brent": {"2025-01": 75.0, "2025-02": 76.0}},
     )
     assert cashflows
     # every royalty line is zero under the `none` regime
@@ -57,9 +57,7 @@ def test_norway_full_cashflow_runs():
 
 
 def test_declarative_fields_are_not_consumed():
-    """Editing declarative metadata (price_marker/currency/discount_rate) must
-    NOT change the royalty the engine computes — proving they are unconsumed in
-    v1 (the revenue/NPV seam is deferred to #716)."""
+    """Revenue and discount metadata must not change the royalty calculation."""
     us_gom = get_fiscal_terms("us_gom")
     mutated = dataclasses.replace(
         us_gom, price_marker="brent", currency="EUR", discount_rate=0.99

@@ -2,10 +2,9 @@
 FDAS Fiscal-Terms domain model.
 
 Frozen, source-agnostic representations of a country's field-economics fiscal
-regime. In v1 only the *royalty* layer is consumed by the cashflow engine
-(``CashflowEngine.calculate_royalty``); every other field is declarative
-metadata that documents provenance and reserves seams for later slices
-(revenue/NPV price-marker + discount in #716, sliding-scale royalty in #718).
+regime. The cashflow engine consumes royalties, oil price markers and discount
+rates. Currency is constrained to USD when revenue or NPV is calculated;
+income-tax terms remain declarative pending country tax-basis reconciliation.
 
 The types here carry no I/O and no validation logic beyond dataclass field
 typing — construction and strict validation live in ``schema.py`` so that the
@@ -32,7 +31,7 @@ DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
 RESERVED_ROYALTY_MODELS = ()
 
-# Declarative price markers (not consumed in v1 — revenue seam is #716).
+# Fiscal oil revenue consumes wti/brent; gas markers require a separate seam.
 SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf")
 
 
@@ -111,13 +110,13 @@ class RoyaltyTerms:
 
 @dataclass(frozen=True)
 class FiscalTerms:
-    """Country fiscal regime (v1: royalty consumed, rest declarative).
+    """Country fiscal regime with pre-tax revenue and discounting support.
 
-    Consumed in v1:
-        country, royalty
+    Consumed by the cashflow engine:
+        country, royalty, price_marker, discount_rate; currency must be USD
 
-    Declarative metadata (readable, provably *not* consumed — see Suite 6):
-        currency, price_marker, discount_rate, income_tax, notes
+    Declarative metadata:
+        income_tax, notes
 
     Provenance (machine-verifiable, required non-empty by the loader):
         source_url, source_ref, revision, effective_date, schema_version
@@ -131,7 +130,7 @@ class FiscalTerms:
     revision: str
     effective_date: str
     schema_version: int
-    # declarative metadata (not consumed in v1)
+    # Pricing and discount inputs; tax metadata remains declarative.
     currency: str = "USD"
     price_marker: str = "wti"
     discount_rate: Optional[float] = None
