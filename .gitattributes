@@ -30,3 +30,6 @@
 data/modules/bsee/directional_survey_validation/** -text
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf
+
+# Issue #1355: preserve the inventory's strict LF byte contract on checkout.
+docs/modules/report-inventory.csv text eol=lf
