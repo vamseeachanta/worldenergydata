@@ -85,15 +85,15 @@ class TestConvertValue:
 
     def test_integer_field(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "5") == 5
+        assert loader._convert_value("county_code", "5") == 5
 
     def test_integer_field_float_input(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "5.0") == 5
+        assert loader._convert_value("county_code", "5.0") == 5
 
     def test_integer_field_invalid(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "abc") is None
+        assert loader._convert_value("county_code", "abc") is None
 
     def test_string_field(self):
         loader = CSVLoader()
@@ -160,7 +160,8 @@ class TestLoadFromFile:
         loader = CSVLoader()
         mapping = {"OG_DIST_NO": "district", "OG_OIL_PROD": "oil_production"}
         records = loader.load(f, field_mapping=mapping)
-        assert records[0]["district"] == 3
+        # District text is preserved; normalization belongs to the processor.
+        assert records[0]["district"] == "3"
         assert records[0]["oil_production"] == 150.5
 
 
@@ -176,6 +177,6 @@ class TestConstants:
         assert "latitude" in CSVLoader.NUMERIC_FIELDS
 
     def test_integer_fields(self):
-        assert "district" in CSVLoader.INTEGER_FIELDS
+        assert "district" not in CSVLoader.INTEGER_FIELDS
         assert "county_code" in CSVLoader.INTEGER_FIELDS
         assert "lease_number" in CSVLoader.INTEGER_FIELDS

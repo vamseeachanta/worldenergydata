@@ -485,7 +485,9 @@ class ProductionProcessor:
             data: Production data
 
         Returns:
-            DataFrame with district-level aggregates
+            DataFrame with district-level aggregates, including a missing-key
+            group for unclassified records. This group also counts toward the
+            district_count in local CSV workflow summaries.
         """
         if isinstance(data, list):
             df = pd.DataFrame(data)
@@ -506,13 +508,15 @@ class ProductionProcessor:
         # Filter to columns that exist
         agg_cols = {k: v for k, v in agg_cols.items() if k in df.columns}
 
-        result = df.groupby("district").agg(agg_cols).reset_index()
+        # Retain unclassified production rather than silently reducing totals.
+        # pandas 2.3.3 (2025), DataFrame.groupby, dropna parameter:
+        # https://pandas.pydata.org/pandas-docs/version/2.3.3/reference/api/pandas.DataFrame.groupby.html
+        districts = df.groupby("district", dropna=False)
+        result = districts.agg(agg_cols).reset_index()
 
         # Add lease count if available
         if "lease_number" in df.columns:
-            lease_counts = (
-                df.groupby("district")["lease_number"].nunique().reset_index()
-            )
+            lease_counts = districts["lease_number"].nunique().reset_index()
             lease_counts.columns = ["district", "lease_count"]
             result = result.merge(lease_counts, on="district", how="left")
 

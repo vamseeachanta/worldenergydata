@@ -40,8 +40,9 @@ class CSVLoader:
         "well_count",
     }
 
+    # Districts are text codes, including alphanumeric values; see
+    # TexasDataValidator.VALID_DISTRICTS and normalize_district in validators.py.
     INTEGER_FIELDS = {
-        "district",
         "county_code",
         "lease_number",
         "operator_number",
