@@ -426,7 +426,7 @@ kept separate in the activity-code breakdown and combined figures derived from
 the granular ones. The decision requires confirmation across the wider well
 population once the weekly records are obtained, before any published figure
 is replaced. This note replaces no figure and infers no additional code meanings.
-Decision: https://github.com/vamseeachanta/worldenergydata/issues/1064#issuecomment-6132640847
+Decision: repository issue 1064#issuecomment-6132640847
 
 Sanity reference: the public publisher-deposited abstract of SPE-87117-MS,
 Deepwater Success Through Predictable and Distinctive Drilling and Completion

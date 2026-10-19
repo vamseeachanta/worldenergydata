@@ -49,7 +49,18 @@ def assert_limits(text):
         assert fragment in text, f"missing methodology disclosure: {fragment}"
 
 
-@pytest.mark.parametrize("surface", ["validation", "listing", "drilldown", "card"])
+@pytest.mark.parametrize(
+    "surface",
+    [
+        "validation",
+        "listing",
+        "drilldown",
+        "card",
+        "insights",
+        "completion",
+        "reconciliation",
+    ],
+)
 def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
     if surface == "validation":
         mod = load_script("scripts/build_pages.py")
@@ -63,16 +74,53 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
     elif surface == "drilldown":
         mod = load_script("scripts/lower_tertiary/build_dc_drilldown.py")
         text = mod.build_html(mod.load_payload())
-    else:
+    elif surface == "card":
         mod = load_script("scripts/hf_export/publish_dc_days_to_hf.py")
         card = (
             "---\nconfigs:\n- config_name: parametric_economics\n"
             "  data_files: parametric_economics.parquet\n---\n"
         )
         text = mod.patch_readme(card)
+    elif surface == "insights":
+        mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+        wells = mod.load_wells(mod.DEFAULT_SOURCE)
+        stats = mod.compute_stats(wells)
+        stats["learning"] = mod.compute_learning(wells)
+        text = mod.render_html(stats, mod.DEFAULT_SOURCE)
+    else:
+        mod = load_script("scripts/completion/build_completion_report.py")
+        wells = mod._load()
+        reconciliation = mod.compute_reconciliation(wells)
+        if surface == "completion":
+            text = mod.render(mod.compute(wells), reconciliation)
+        else:
+            text = mod.render_verification(reconciliation, wells)
     assert_limits(text)
     assert text.count("WAR methodology limits") == 1
     assert_source_list(text)
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "reports/lower_tertiary/drilling_insights.html",
+        "reports/completion/index.html",
+        "reports/completion/verification.html",
+    ],
+)
+def test_committed_duration_pages_disclose_all_limits(relative):
+    """These pages are copied verbatim by the site builder; test saved output too.
+
+    Disclosure expectations come from 30 CFR 250.743(a), the repository's
+    Makefile coverage caveat, the depth-column declarations and the superseding
+    decision cited by assert_limits. No duration calculation changes here.
+    """
+    text = (REPO / relative).read_text(encoding="utf-8")
+    assert_limits(text)
+    assert text.count("WAR methodology limits") == 1
+    assert_source_list(text)
+    assert text.count("Revision history") == 1
+    assert text.index("Revision history") < text.index("WAR methodology limits")
 
 
 def test_existing_dataset_card_acquires_note_once():

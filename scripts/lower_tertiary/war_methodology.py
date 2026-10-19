@@ -2,6 +2,13 @@
 
 from html import escape
 
+# Publication revision for the duration pages extended by issue #1078.
+WAR_REVISION_HTML = """<section class="war-revision"><h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-10-19</td><td>Added the sourced WAR methodology
+limits so day counts carry their coverage, boundary and basis caveats.
+Published numerical results are retained.</td></tr></tbody></table></section>"""
+
 WAR_METHODOLOGY = """## WAR methodology limits
 
 Weekly boundary quantization: 30 CFR 250.743(a) requires weekly WARs for the
@@ -40,7 +47,7 @@ kept separate in the activity-code breakdown and combined figures derived from
 the granular ones. The decision requires confirmation across the wider well
 population once the weekly records are obtained, before any published figure
 is replaced. This note replaces no figure and infers no additional code meanings.
-Decision: https://github.com/vamseeachanta/worldenergydata/issues/1064#issuecomment-6132640847
+Decision: repository issue 1064#issuecomment-6132640847
 
 Sanity reference: the public publisher-deposited abstract of SPE-87117-MS,
 Deepwater Success Through Predictable and Distinctive Drilling and Completion

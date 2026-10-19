@@ -43,6 +43,7 @@ if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
 
+from lower_tertiary.war_methodology import WAR_REVISION_HTML, methodology_html
 from worldenergydata.lower_tertiary.drilling_learning import (  # noqa: E402
     compute_learning,
 )
@@ -597,6 +598,8 @@ def render_html(s: dict, source: Path) -> str:
     </p>
   </header>
 
+  {WAR_REVISION_HTML}
+
   <div class="metrics">
     <div class="metric"><div class="k">Wellbores (drill-days derivable)</div>
       <div class="v">{s['n_drill']}<small> / {s['n_wellbores']}</small></div></div>
@@ -751,6 +754,8 @@ def render_html(s: dict, source: Path) -> str:
         <tbody>{field_rows}</tbody></table></div>
     </section>
   </div>
+
+  {methodology_html()}
 
   <footer class="foot">
     <div><b>Source:</b> <code>{esc(str(src_rel))}</code> (Sheet1) &mdash;
