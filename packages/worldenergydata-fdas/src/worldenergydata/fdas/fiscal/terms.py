@@ -2,10 +2,9 @@
 FDAS Fiscal-Terms domain model.
 
 Frozen, source-agnostic representations of a country's field-economics fiscal
-regime. In v1 only the *royalty* layer is consumed by the cashflow engine
-(``CashflowEngine.calculate_royalty``); every other field is declarative
-metadata that documents provenance and reserves seams for later slices
-(revenue/NPV price-marker + discount in #716, sliding-scale royalty in #718).
+regime. The cashflow engine consumes the royalty layer and requires explicit
+gas pricing for the ``gas_au`` marker. Other markers, discount rates and tax
+fields remain declarative metadata for later integration.
 
 The types here carry no I/O and no validation logic beyond dataclass field
 typing — construction and strict validation live in ``schema.py`` so that the
@@ -32,8 +31,9 @@ DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
 RESERVED_ROYALTY_MODELS = ()
 
-# Declarative price markers (not consumed in v1 — revenue seam is #716).
-SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf")
+# gas_au requires an explicit normalized USD/Mcf deck in monthly cashflow.
+# Other markers remain declarative (revenue seam is #716).
+SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf", "gas_au")
 
 
 class FiscalTermsError(Exception):
@@ -111,13 +111,13 @@ class RoyaltyTerms:
 
 @dataclass(frozen=True)
 class FiscalTerms:
-    """Country fiscal regime (v1: royalty consumed, rest declarative).
+    """Country fiscal regime with royalty terms and pricing metadata.
 
     Consumed in v1:
-        country, royalty
+        country, royalty; price_marker="gas_au" requires an explicit gas deck.
 
-    Declarative metadata (readable, provably *not* consumed — see Suite 6):
-        currency, price_marker, discount_rate, income_tax, notes
+    Declarative metadata:
+        currency, other price markers, discount_rate, income_tax, notes
 
     Provenance (machine-verifiable, required non-empty by the loader):
         source_url, source_ref, revision, effective_date, schema_version
@@ -131,7 +131,7 @@ class FiscalTerms:
     revision: str
     effective_date: str
     schema_version: int
-    # declarative metadata (not consumed in v1)
+    # Pricing marker and declarative metadata
     currency: str = "USD"
     price_marker: str = "wti"
     discount_rate: Optional[float] = None

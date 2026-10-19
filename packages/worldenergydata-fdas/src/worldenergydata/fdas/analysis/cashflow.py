@@ -472,7 +472,8 @@ class CashflowEngine:
             gas_prices: Optional YYYY-MM realized USD/Mcf deck. When supplied,
                 MONTHLY_GAS_MCF and a finite nonnegative price for each
                 production month are required. No hidden heating-value factor
-                or escalation is applied; no deck preserves legacy oil output.
+                or escalation is applied. The gas_au fiscal marker requires a
+                deck; other markers preserve legacy oil output without one.
 
         Returns:
             List of MonthlyCashflowModel objects
@@ -486,6 +487,16 @@ class CashflowEngine:
             ...     datetime(2025, 1, 1)
             ... )
         """
+        if (
+            self.fiscal_terms is not None
+            and self.fiscal_terms.price_marker == "gas_au"
+            and gas_prices is None
+        ):
+            raise CashflowError(
+                "AU gas marker requires explicit gas prices in USD/Mcf; "
+                "supply a normalized AU gas deck"
+            )
+
         # Extract parameters from assumptions
         host_capex_mm = self.assumptions.get(self.dev_system, "HOST_CAPEX_MM")
         self.assumptions.get(self.dev_system, "SURF_PER_WELL_MM")
