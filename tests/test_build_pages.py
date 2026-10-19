@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -201,3 +203,81 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
     assert 'content="noindex, follow"' in html
     # the old hand-authored overview copy must not return to this page
     assert "Capability Showcase" not in html
+
+
+def test_insights_publish_without_capabilities_overview(bp, tmp_path, monkeypatch):
+    """Issue #780: retained technical pages do not depend on a redirect stub."""
+    reports = tmp_path / "reports"
+    capabilities = reports / "capabilities"
+    capabilities.mkdir(parents=True)
+    source = Path(bp.REPORTS) / "capabilities" / "insights.html"
+    (capabilities / "insights.html").write_bytes(source.read_bytes())
+    monkeypatch.setattr(bp, "REPORTS", reports)
+
+    bp.build_capabilities({})
+    published = bp.PUBLIC / "capabilities" / "insights.html"
+    assert published.is_file()
+    bp.build_index()
+    assert published.read_bytes() == source.read_bytes()
+    assert not (bp.PUBLIC / "capabilities" / "index.html").exists()
+    landing = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
+    assert 'href="capabilities/insights.html"' in landing
+
+
+def test_capabilities_redirect_retains_insights_navigation(bp):
+    """Issue #780: the redirect fallback keeps the local hub discoverable."""
+    bp.build_capabilities({})
+    stub = (bp.PUBLIC / "capabilities" / "index.html").read_text(encoding="utf-8")
+    assert '<a href="insights.html">Life-cycle Insights</a>' in stub
+
+
+def test_insights_landing_card_requires_published_hub(bp):
+    """A partial build must not advertise a hub it has not published."""
+    bp.PUBLIC.mkdir(parents=True)
+    assert 'href="capabilities/insights.html"' not in bp._insights_section()
+    bp.build_capabilities({})
+    assert 'href="capabilities/insights.html"' in bp._insights_section()
+
+
+def test_intervention_landing_card_requires_published_brief(bp):
+    """The Workover front door is advertised only after its brief is copied."""
+    href = 'href="intervention-db/intervention-stats-brief.html#serviceability"'
+    assert href not in bp._insights_section()
+    bp.build_capabilities({})
+    assert href in bp._insights_section()
+
+
+def test_insights_front_doors_resolve_in_full_build(bp):
+    """Issue #780 defines the stage order and independent comparison URLs.
+
+    Expected links are the published routes from the linked insight issues,
+    not computed engineering values. Every local hub href and fragment must
+    resolve in the built site, including the Workover serviceability anchor.
+    """
+    bp.build()
+    hub = bp.PUBLIC / "capabilities" / "insights.html"
+    text = hub.read_text(encoding="utf-8")
+    stages = re.findall(r'<a class="stage" href="([^"]+)"', text)
+    assert stages == [
+        "../drilling-insights.html",
+        "../completion/",
+        "../benchmark.html",
+        "../intervention-db/intervention-stats-brief.html#serviceability",
+        "../decommissioning/pa-liability-wave.html",
+    ]
+    for comparison in (
+        "../region-devtype-comparison.html",
+        "../all-regions-atlas.html",
+    ):
+        assert f'href="{comparison}"' in text
+    for href in re.findall(r'href="([^"]+)"', text):
+        url = urlsplit(href)
+        if url.scheme or url.netloc:
+            continue
+        target = hub.parent / url.path
+        if target.is_dir():
+            target = target / "index.html"
+        assert target.is_file(), href
+        if url.fragment:
+            destination = target.read_text(encoding="utf-8")
+            assert f'id="{url.fragment}"' in destination, href
