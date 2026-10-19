@@ -278,6 +278,43 @@ def _outliers(result):
     return body + "</section>"
 
 
+def _activity_strata(result):
+    if "activity_strata" not in result:
+        return ""
+    classification = result["operator_classification"]
+    body = (
+        '<section id="activity-strata"><h2>Area and operator-class record counts</h2>'
+        "<p>Each source is partitioned separately by its declared year, bottom area, "
+        "operator class and raw code. Completion codes describe status. "
+        "Distinct well counts are not additive across cells.</p>"
+        f'<p>Operator classification: {_text(classification["status"])}. '
+        f'{_text(classification["basis"])}</p><ul>'
+        + "".join(f"<li>{_text(s)}</li>" for s in classification["sources"])
+        + "</ul>"
+    )
+    for source, rows in sorted(result["activity_strata"].items()):
+        body += f"<h3>{_text(source.upper())}</h3>"
+        body += _chart(rows, "area", f"{source.upper()} records by bottom area code.")
+        body += _chart(
+            rows,
+            "operator_class",
+            f"{source.upper()} records by supplied operator class.",
+        )
+        body += _table(
+            rows,
+            [
+                ("year", "Year or unknown"),
+                ("area", "Bottom area code"),
+                ("operator_class", "Operator class"),
+                ("code", "Raw code"),
+                ("records", "Records"),
+                ("wells", "Recorded API12 groups"),
+            ],
+            "All records retained, including unknown dimensions; cell well counts exclude missing APIs.",
+        )
+    return body + "</section>"
+
+
 def render_report(result, revision):
     _validate_revision(revision)
     style = "body{font:16px system-ui,sans-serif;max-width:1200px;margin:auto;padding:2rem;color:#243746;background:#fff}h1,h2{color:#243746}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #ccd4dc;padding:6px;text-align:left;overflow-wrap:anywhere}th{background:#eef4f5}.table-wrap{overflow:auto}.caption,figcaption{font-size:13px;color:#475569}svg{width:100%;max-width:780px}svg rect{fill:#167d8d}svg text{font-size:13px}details{margin:1rem 0}"
@@ -302,6 +339,7 @@ def render_report(result, revision):
         + _catalogue(result)
         + _completion_distributions(result)
         + _activity_distributions(result)
+        + _activity_strata(result)
         + _outliers(result)
         + _coverage(result)
         + "</body></html>\n"

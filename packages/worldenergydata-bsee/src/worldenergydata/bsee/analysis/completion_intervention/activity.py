@@ -177,6 +177,67 @@ def _annual(frame, code):
     )
 
 
+def _operator_classes(frame):
+    """Require caller evidence instead of inferring a class from a name."""
+    columns = ["API_WELL_NUMBER", "OPERATOR_CLASS", "SOURCE"]
+    if frame is None:
+        frame = pd.DataFrame(columns=columns)
+    if set(columns) - set(frame.columns):
+        raise ValueError(
+            "operator classification requires API, class and source columns"
+        )
+    classes = _columns(frame, columns).drop_duplicates()
+    if classes.eq("").any(axis=None):
+        raise ValueError(
+            "operator classification requires valid API12, class and source"
+        )
+    grouped = classes.groupby("API_WELL_NUMBER")["OPERATOR_CLASS"]
+    if grouped.nunique().gt(1).any():
+        raise ValueError("conflicting operator classification for an API12")
+    return grouped.first().to_dict(), {
+        "status": "SUPPLIED" if len(classes) else "NOT_EVALUATED",
+        "sources": sorted(classes["SOURCE"].unique().tolist()),
+        "basis": "Caller-supplied API12 snapshot classes; historical attribution is not established.",
+    }
+
+
+def _activity_strata(frames, areas, classes, quality):
+    """Partition records without discarding unknowns or multiplying joins.
+
+    Count basis: NIST/SEMATECH e-Handbook, online edition retrieved 2026,
+    section 1.3.3.14, Histogram, definition of frequency as counts per bin:
+    https://www.itl.nist.gov/div898/handbook/eda/section3/histogra.htm
+    N(cell) = sum of indicators that each source row belongs to the cell.
+    Wells are the cardinality of valid API12 values within a cell; they are
+    not additive across cells. No engineering coefficient or limit is used.
+    """
+    result = {}
+    for name, (frame, code) in frames.items():
+        enriched = frame.copy()
+        if name == "completion":
+            enriched["area"] = enriched["API_WELL_NUMBER"].map(areas).fillna(UNKNOWN)
+        else:
+            enriched["area"] = enriched["BOTM_AREA_CODE"].replace("", UNKNOWN)
+        enriched["operator_class"] = (
+            enriched["API_WELL_NUMBER"].map(classes).fillna(UNKNOWN)
+        )
+        enriched["code"] = enriched[code].replace("", UNKNOWN)
+        enriched["valid_api"] = enriched["API_WELL_NUMBER"].replace("", pd.NA)
+        dimensions = ["year", "area", "operator_class", "code"]
+        result[name] = (
+            enriched.groupby(dimensions, dropna=False)
+            .agg(records=("code", "size"), wells=("valid_api", "nunique"))
+            .reset_index()
+            .sort_values(dimensions)
+            .to_dict("records")
+        )
+        for dimension in ["area", "operator_class"]:
+            quality[name + "_unknown_" + dimension] = int(
+                enriched[dimension].eq(UNKNOWN).sum()
+            )
+    return result
+
+
 def outlier_flags(values, quantiles):
     """Strict linear empirical quantiles; equal values are never flagged."""
     if not values:
@@ -280,7 +341,13 @@ def _validate_tables(tables):
 
 
 def _war_frame(tables, fields, depths, parameters, quality):
-    columns = ["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]
+    columns = [
+        "SN_WAR",
+        "API_WELL_NUMBER",
+        "WAR_START_DT",
+        "WAR_END_DT",
+        "BOTM_AREA_CODE",
+    ]
     main = _unique(_columns(tables["mv_war_main"], columns), ["SN_WAR"], "war", quality)
     prop = _unique(
         _columns(tables["mv_war_main_prop"], ["SN_WAR", "WELL_ACTIVITY_CD"]),
@@ -304,6 +371,7 @@ def _eor_frames(tables, fields, depths, parameters, quality):
         "EOR_OPERATION_CD",
         "BOREHOLE_STAT_DT",
         "SUBSEA_COMPLETION_FLAG",
+        "BOTM_AREA_CODE",
     ]
     eor = _unique(
         _columns(tables["mv_eor_mainquery"], columns), ["SN_EOR"], "eor", quality
@@ -333,13 +401,23 @@ def _eor_frames(tables, fields, depths, parameters, quality):
     return eor, comp
 
 
-def analyse(tables, parameters=None):
-    """Reconcile reporting grains and return JSON-compatible characterisation."""
+def analyse(tables, parameters=None, *, operator_classes=None):
+    """Return record characterisation, optionally using sourced API12 classes.
+
+    ``operator_classes`` is a DataFrame with API_WELL_NUMBER, OPERATOR_CLASS
+    and SOURCE. It describes a caller-supplied snapshot, not historical
+    operators. Missing classifications remain unknown, never inferred.
+    """
     p = parameters or Parameters()
     _validate_tables(tables)
     quality = {}
     api = _columns(tables["mv_api_list_all"], ["API_WELL_NUMBER", "BOTM_FLD_NAME_CD"])
-    bore = _columns(tables["mv_boreholes_all"], ["API_WELL_NUMBER", "WATER_DEPTH"])
+    bore = _columns(
+        tables["mv_boreholes_all"],
+        ["API_WELL_NUMBER", "WATER_DEPTH", "BOTM_AREA_CODE"],
+    )
+    areas = _mapping(bore, "BOTM_AREA_CODE", quality, "conflicting_borehole_area_apis")
+    classes, classification = _operator_classes(operator_classes)
     fields = _mapping(api, "BOTM_FLD_NAME_CD", quality, "conflicting_field_apis")
     depths = _mapping(
         bore, "WATER_DEPTH", quality, "conflicting_borehole_depth_apis", numeric=True
@@ -367,7 +445,17 @@ def analyse(tables, parameters=None):
             )
     wells, well_thresholds = _well_frequencies(eor, war, p)
     fields_result, field_thresholds = _field_frequencies(wells, p)
-    return _results(
+    strata = _activity_strata(
+        {
+            "war": (war, "WELL_ACTIVITY_CD"),
+            "eor": (eor, "EOR_OPERATION_CD"),
+            "completion": (comp, "COMP_STATUS_CD"),
+        },
+        areas,
+        classes,
+        quality,
+    )
+    result = _results(
         war,
         eor,
         comp,
@@ -379,6 +467,9 @@ def analyse(tables, parameters=None):
         quality,
         p,
     )
+    result["activity_strata"] = strata
+    result["operator_classification"] = classification
+    return result
 
 
 def _summary_statistics(war, eor, comp, eor_comp, wells, parameters):
@@ -411,6 +502,9 @@ def _method():
         "war_year_basis": "WAR_START_DT; not an intervention start",
         "depth_basis": "unique nonnegative borehole WATER_DEPTH, in feet",
         "field_basis": "unique API Lookup BOTM_FLD_NAME_CD; ambiguous and unmatched are unknown",
+        "area_basis": "WAR/EOR row BOTM_AREA_CODE; completions use unique borehole BOTM_AREA_CODE per API12; absent or conflicting metadata is unknown",
+        "operator_class_basis": "explicit sourced API12 snapshot mapping supplied by caller; otherwise NOT_EVALUATED",
+        "activity_strata_basis": "records by year, bottom area, operator class and raw code; completion code is status, not design type; distinct well counts are not additive across cells",
         "bin_basis": "descriptive water-depth boundaries and calendar cohorts; no design criterion",
         "candidate_basis": "legacy intervention selection in lower_tertiary.ops_timeline; raw codes only",
         "outlier_basis": "strict below lower or above upper linear empirical quantile; ties excluded; flags use unrounded values; observed records only",
@@ -427,6 +521,8 @@ def _limits():
         "Plug-back classification and intervention triggers are not established by the selected structured data; narrative text is not interpreted.",
         "Recorded zero workovers indicate no W reports in this archive for an observed API12, not absence of interventions over the well life. Observation exposure and well-age effects are not established.",
         "Field and depth attribution use a current snapshot; ambiguous metadata stays unknown. Historical reassignment is not reconstructed.",
+        "Bottom area is taken directly from WAR/EOR records; completion area uses unambiguous borehole snapshot metadata. Areas are codes, not inferred geographic regions.",
+        "Operator classes require a caller-supplied API12 mapping with sources. The ingested projections do not establish operator size classes or historical operator attribution; without that input the dimension is NOT_EVALUATED.",
         "Rates, durations, production correlations and exposure-normalised outliers wait for issue #1063. Completion-type, well-age and field correlations are not computed here.",
         "Coverage is the supplied snapshot, not a census of all operations. Calendar changes can reflect reporting coverage and cannot establish changes in engineering practice.",
     ]
