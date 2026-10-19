@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infrastructure loader verification example</title>
+<style>
+body{font:16px system-ui,sans-serif;max-width:1000px;margin:auto;padding:2rem;color:#243746;background:white}
+h1,h2{color:#243746}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccd4dc;padding:.5rem;text-align:left}
+pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height:8rem}button{padding:.6rem;margin:.4rem}
+.caption,figcaption{font-size:14px;color:#475569}svg{width:100%;max-width:900px}code{overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<h1>Infrastructure loader verification example</h1>
+<p>Draft for client review</p>
+<section id="summary"><h2>1. Executive summary</h2>
+<p>The infrastructure loader is a local reader of platform and pipeline tables. Analysis is performed to determine whether file selection, caching and filtering preserve the specified rows; key results are summarized below.</p>
+<ul><li>Reproduce the expected row selection using the synthetic example.
+<ul><li>Compare the selected labels against the complete input table.</li></ul></li>
+<li>Keep execution acceptance open.<ul><li>Automated execution is not established because a required import dependency is unavailable.</li></ul></li></ul>
+<p>Revision history: initial edition; synthetic examples and explicit execution limitations were added to define reproducible checks.</p>
+</section>
+<section id="basis"><h2>2. Basis and criteria</h2>
+<p>The implemented reader predicates are used as the behavioral basis. Exact equality of values, columns, row indices and data types is required for the selected synthetic table.</p>
+<p>Area and block conditions are combined with logical AND. Block, complex and lease query arguments are converted to strings; stored columns are not normalized. Status is compared directly. No physical equations, dimensional coefficients or engineering acceptance limits are used.</p>
+</section>
+<section id="inputs"><h2>3. Inputs</h2>
+<p>Synthetic labels are used to isolate each predicate. The input register is provided in the appendix; no field measurements are represented.</p>
+<p>Only temporary pickle files produced from these fixtures are consumed. Pickle is intended here for trusted test-generated objects; this example provides no qualification of externally supplied pickle files.</p>
+</section>
+<section id="method"><h2>4. Method</h2>
+<p>Files with the binary suffix are read from the selected directory. DataFrames are concatenated with a fresh row index, while other deserialized objects are ignored.</p>
+<figure><svg viewBox="0 0 900 100" role="img" aria-label="Local table reader and query boundaries">
+<g fill="#eef4f5" stroke="#243746"><rect x="5" y="15" width="190" height="55"/><rect x="240" y="15" width="180" height="55"/><rect x="470" y="15" width="180" height="55"/><rect x="700" y="15" width="190" height="55"/></g>
+<g text-anchor="middle" font-size="16"><text x="100" y="47">Temporary files</text><text x="330" y="47">Concatenated table</text><text x="560" y="47">Cached table</text><text x="795" y="47">Exact-match query</text></g>
+<path d="M195 43h45m180 0h50m180 0h50" stroke="#243746"/>
+</svg><figcaption>Reader boundaries. No physical geometry, mesh or licensed solver is involved.</figcaption></figure>
+<p>A successful table is cached. Later configuration changes do not replace that cache. Permit and location tables have separate caches.</p>
+</section>
+<section id="example"><h2>5. Worked selection</h2>
+<p>The platform query is evaluated for area EI and block 330. Each appendix row is compared independently.</p>
+<p>The label “match” satisfies both conditions. The label “other_area” fails the area condition, and “other_block” fails the block condition. The returned label list is [“match”].</p>
+<p>For complex 330, the returned labels are [“match”, “other_area”]. For lease 330, the returned labels are [“match”, “other_block”]. For pipeline status ACT, the returned labels are [“match”, “other_area”]. These answers are derived by direct comparison with the appendix, without a calculation library.</p>
+</section>
+<section id="limits"><h2>6. Error and boundary behavior</h2>
+<p>Missing directories, empty directories and files containing no DataFrame return no table. A read error also returns no table and leaves the cache unset.</p>
+<p>An empty DataFrame is a successfully cached table, but its public queries return no result. A corrupt file following a valid file prevents publication of a partial cache. Directory enumeration order is not specified, so concatenation checks compare sorted complete rows while separately checking the fresh index.</p>
+</section>
+<section id="validation"><h2>7. Validation and pre-flight checklist</h2>
+<p>Static inspection is distinguished from executed verification. Acceptance remains conditional on execution in an environment with the repository dependencies installed.</p>
+<ul><li>Input provenance: synthetic values explicitly declared; no measured values or engineering constants.</li>
+<li>Expected answers: derived from explicit equality predicates and full-table comparisons.</li>
+<li>Isolation: the data resolver is replaced with a temporary directory before construction.</li>
+<li>Production changes: none.</li>
+<li>Execution: not established; required imports and temporary-directory access failed. Test collection succeeds.</li>
+<li>Presentation: ten sections, captions below objects, source locators in section 9.2.</li>
+<li>Physical charts and geometry: not applicable to table-reader behavior.</li>
+<li>Comment persistence: a save control is provided; browser interaction is not verified.</li></ul>
+</section>
+<section id="disposition"><h2>8. Disposition</h2>
+<p>The example establishes a hand-checkable expected selection. It does not establish an executed pass count or a coverage percentage.</p>
+<p>Execution of the listed checks is required before accepting the automated verification result. Changes to cache invalidation, schema validation and exception policy remain outside this characterization.</p>
+</section>
+<section id="appendix"><h2>9. Appendix</h2>
+<h3>9.1 Synthetic input register</h3>
+<p>The rows below define the selection example. Identifiers are dimensionless strings, including numeric-looking block, complex and lease identifiers.</p>
+<table><thead><tr><th>Label</th><th>Area</th><th>Block</th><th>Complex</th><th>Lease</th><th>Status</th></tr></thead>
+<tbody><tr><td>match</td><td>EI</td><td>330</td><td>330</td><td>330</td><td>ACT</td></tr>
+<tr><td>other_area</td><td>other</td><td>330</td><td>330</td><td>other</td><td>ACT</td></tr>
+<tr><td>other_block</td><td>EI</td><td>other</td><td>other</td><td>330</td><td>other</td></tr></tbody></table>
+<p class="caption">Synthetic selection inputs; no operational interpretation is assigned.</p>
+<h3>9.2 Sources and executable locators</h3>
+<p>Behavioral sources: World Energy Data repository, current source edition inspected for this example:</p>
+<ul><li><a href="../../packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/infrastructure/platform_loader.py">Platform loader</a>: constructor, binary reader and public query methods.</li>
+<li><a href="../../packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/infrastructure/pipeline_loader.py">Pipeline loader</a>: permit and location readers and public query methods.</li>
+<li><a href="../../tests/unit/bsee/data/loaders/test_infrastructure_loaders.py">Executable synthetic fixtures</a>: query_frame, QUERIES and reader parameterization.</li>
+<li><a href="../../tests/unit/bsee/models/test_platform_model.py">Existing platform model examples</a> and <a href="../../tests/unit/bsee/models/test_pipeline_model.py">pipeline model examples</a>: identifier spelling only.</li>
+<li><a href="../modules/bsee/analysis/completion_intervention/report.html">Layout reference</a>: summary, revision history and captioned tables. No family-specific writer reference was supplied inside the permitted repository.</li></ul>
+<p>With the repository packages and test dependencies available, execute from the repository root; direct temporary output to a new disposable directory:</p>
+<pre>python -m pytest tests/unit/bsee/data/loaders/test_infrastructure_loaders.py --noconftest -q -o addopts=--strict-markers -p no:cacheprovider --basetemp TEMP_DIRECTORY</pre>
+<p>The repository AGENTS.md prescribes the no-conftest route. The explicit options keep generated output out of the repository. Coverage can be added for both infrastructure loader modules with output directed to temporary storage.</p>
+</section>
+<section id="comments"><h2>10. Comments and changes</h2>
+<p>Comments are entered below and saved as a separate JSON file. Select the directory containing this document when saving; browsers without a file picker use a download whose destination is controlled by the browser.</p>
+<label for="comment">Comment</label><textarea id="comment"></textarea>
+<button id="save" type="button">Save comments beside document</button><p id="save-status" role="status"></p>
+<details><summary>Changes</summary><p>Initial edition: synthetic reader behavior, worked equality selections and explicit verification limitations.</p><a href="infrastructure-loader-tests.changes.json">Structured change record</a></details>
+</section>
+<script>
+document.getElementById('save').addEventListener('click',async()=>{
+ const data=JSON.stringify({document:document.title,comment:document.getElementById('comment').value},null,2)+'\n';
+ const status=document.getElementById('save-status');
+ try{
+  if(window.showSaveFilePicker){
+   const handle=await window.showSaveFilePicker({suggestedName:'infrastructure-loader-tests.comments.json',types:[{description:'JSON comments',accept:{'application/json':['.json']}}]});
+   const writer=await handle.createWritable();await writer.write(data);await writer.close();status.textContent='Comments saved to the selected file.';
+  }else{
+   const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+   const link=document.createElement('a');link.href=url;link.download='infrastructure-loader-tests.comments.json';link.click();
+   setTimeout(()=>URL.revokeObjectURL(url),1000);status.textContent='Download requested; verify its destination.';
+  }
+ }catch(error){status.textContent='Comments were not saved: '+error.message;}
+});
+</script>
+</body>
+</html>

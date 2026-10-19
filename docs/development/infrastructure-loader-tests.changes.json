@@ -1,0 +1,17 @@
+{
+  "document": "infrastructure-loader-tests.html",
+  "changes": [
+    {
+      "section": "summary",
+      "description": "Added synthetic loader characterization and explicit execution limitations."
+    },
+    {
+      "section": "example",
+      "description": "Added hand-repeatable exact-match selections with a synthetic input register."
+    },
+    {
+      "section": "validation",
+      "description": "Added verification checklist and comment export controls."
+    }
+  ]
+}
