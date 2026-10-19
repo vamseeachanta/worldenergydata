@@ -34,15 +34,19 @@ SCHEMAS = json.loads(Path(__file__).with_name("feature_schemas.json").read_text(
 
 def parse_metadata(metadata: dict[str, Any]) -> dict[str, str]:
     """Extract ArcGIS property names and types without guessing missing fields."""
+    if not isinstance(metadata, dict):
+        raise TypeError("metadata must be an object")
     fields = metadata.get("fields")
     if not isinstance(fields, list) or not fields:
         raise ValueError("missing metadata fields")
     result = {}
     for field in fields:
-        name, kind = field["name"], field["type"]
-        if not isinstance(name, str) or name in result:
+        if not isinstance(field, dict):
+            raise TypeError("invalid metadata field")
+        name, kind = field.get("name"), field.get("type")
+        if not isinstance(name, str) or not name.strip() or name in result:
             raise ValueError("invalid metadata field")
-        if kind not in {
+        if not isinstance(kind, str) or kind not in {
             "esriFieldTypeOID",
             "esriFieldTypeInteger",
             "esriFieldTypeSmallInteger",
@@ -54,6 +58,52 @@ def parse_metadata(metadata: dict[str, Any]) -> dict[str, str]:
             raise ValueError("unsupported metadata type")
         result[name] = kind
     return result
+
+
+def _entity_schema(client: Any, entity: str) -> dict[str, Any]:
+    if client.base_url != "https://factmaps.sodir.no/api/rest":
+        raise ValueError("unexpected service base")
+    if not isinstance(entity, str) or entity not in SCHEMAS:
+        raise ValueError("unknown entity")
+    return SCHEMAS[entity]
+
+
+def _validate_limits(client: Any, *limits: int) -> None:
+    for value in (*limits, client.timeout):
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or value <= 0
+        ):
+            raise ValueError("limits and timeout must be positive")
+    if not all(isinstance(value, int) for value in limits):
+        raise ValueError("count limits must be integers")
+
+
+def get_entity_metadata(client: Any, entity: str, *, max_bytes: int) -> dict[str, str]:
+    """Read one bounded layer definition and check the committed schema.
+
+    Source: Esri REST API, Layer (Feature Service), JSON response syntax,
+    accessed 2026-10-19:
+    https://developers.arcgis.com/rest/services-reference/enterprise/layer-feature-service/
+    Layer IDs and required properties retain feature_schemas.json provenance.
+    Additional supported properties are returned; missing properties, changed
+    types or a different object ID field raise ValueError. The byte budget is
+    a required caller resource limit, not an advertised service capacity.
+    This explicit check does not run automatically before query_entity.
+    """
+    schema = _entity_schema(client, entity)
+    _validate_limits(client, max_bytes)
+    client.feature_observations = []
+    url = client.base_url + SERVICE + f"/{schema['layer_id']}"
+    payload, _, _ = _read_response(client, url, {"f": "json"}, max_bytes)
+    properties = parse_metadata(payload)
+    if payload.get("objectIdField") != schema["object_id_field"]:
+        raise ValueError("metadata object ID field mismatch")
+    if any(properties.get(key) != kind for key, kind in schema["properties"].items()):
+        raise ValueError("metadata schema mismatch")
+    return properties
 
 
 def validate_record(entity: str, record: Any) -> None:
@@ -203,24 +253,19 @@ def _query_parameters(
     max_pages: int,
     max_bytes: int,
 ) -> tuple[str, dict[str, Any], str]:
-    if client.base_url != "https://factmaps.sodir.no/api/rest":
-        raise ValueError("unexpected service base")
-    schema = SCHEMAS[entity]
-    for value in (page_size, max_pages, max_bytes, client.timeout):
-        if (
-            isinstance(value, bool)
-            or not isinstance(value, (int, float))
-            or not math.isfinite(value)
-            or value <= 0
-        ):
-            raise ValueError("limits and timeout must be positive")
-    if not all(isinstance(v, int) for v in (page_size, max_pages, max_bytes)):
-        raise ValueError("count limits must be integers")
+    schema = _entity_schema(client, entity)
+    _validate_limits(client, page_size, max_pages, max_bytes)
     if not isinstance(where, str) or not where.strip():
         raise ValueError("where must be nonempty")
+    if select is not None and not isinstance(select, (list, tuple)):
+        raise ValueError("select must be a list or tuple of field names")
     fields = list(DEFAULT_FIELDS[entity]) if select is None else list(select)
-    if not fields or any(f not in schema["properties"] for f in fields):
+    if not fields or any(
+        not isinstance(f, str) or f not in schema["properties"] for f in fields
+    ):
         raise ValueError("unknown or empty select")
+    if len(set(fields)) != len(fields):
+        raise ValueError("duplicate select fields")
     oid = schema["object_id_field"]
     if oid not in fields:
         raise ValueError("select must include object ID for stable paging")
@@ -251,6 +296,7 @@ def query_entity(
     The production default, including the kind key, was exercised in a two-row probe.
     Select additional schema properties explicitly for processor adaptation,
     including each additional production volume needed by the caller.
+    Every requested attribute must be present, although its value may be null.
     """
     url, params, oid = _query_parameters(
         client, entity, select, where, page_size, max_pages, max_bytes
@@ -271,6 +317,8 @@ def query_entity(
             validate_record(entity, record)
             if not isinstance(record, dict):
                 raise ValueError("invalid attributes")
+            if not set(params["outFields"].split(",")).issubset(record):
+                raise ValueError("missing requested attributes")
             identifier = record.get(oid)
             if identifier is None or (
                 previous_oid is not None and identifier <= previous_oid
