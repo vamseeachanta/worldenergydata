@@ -24,6 +24,10 @@ This revision documents the screening and schematic main path in detail; catalog
 
 UNVERIFIED: U1 — conformity to the named engineering standards, their governing editions and clauses, and citation-sidecar completeness have not been established; #1322.
 
+The [standards provenance](standards-provenance.md) register separates verified
+publication metadata from unresolved applicability for the screening, XML and
+symbol references. U1 remains open; no engineering conformity is established.
+
 UNVERIFIED: U2 — independent engineering validation, comprehensive coverage of the supporting paths, and deployment suitability beyond the offline checks remain open; #1323.
 
 Routing audit record: no `docs/registry/module-routing.yaml` exists at the code pin; no registry maturity is asserted.

@@ -1,0 +1,116 @@
+{
+  "schema_version": "1",
+  "sources": {
+    "dexpi_pid": {
+      "metadata_status": "VERIFIED",
+      "title": "DEXPI P&ID Specification",
+      "edition": "1.4",
+      "publisher": "DEXPI",
+      "url": "https://dexpi.org/specifications/",
+      "locator": "DEXPI P&ID Specification 1.4",
+      "checked_on": "2026-10-19",
+      "access_status": "OPENED",
+      "reason": "Publisher index confirms title and version only; the adapter has no selected governing edition or schema validation."
+    },
+    "iso_15926": {
+      "metadata_status": "UNVERIFIED",
+      "title": null,
+      "edition": null,
+      "claimed_reference": "ISO 15926",
+      "url": "https://www.iso.org/standard/29556.html",
+      "checked_on": "2026-10-19",
+      "access_status": "HTTP_403",
+      "reason": "Candidate catalog locator could not be opened. Neither its identity nor a governing part, edition or clause was verified."
+    },
+    "isa_symbols": {
+      "metadata_status": "UNVERIFIED",
+      "title": null,
+      "edition": null,
+      "claimed_reference": "ANSI/ISA-5.1-2024 (briefing section B3)",
+      "url": "https://blog.ansi.org/ansi/ansi-isa-5-1-2024-instrumentation-symbols/",
+      "checked_on": "2026-10-19",
+      "access_status": "HTTP_403",
+      "reason": "The briefing's public reference could not be opened; a candidate ISA product page also returned HTTP 404. Publication identity and clauses remain unverified."
+    },
+    "erosion_basis": {
+      "metadata_status": "UNVERIFIED",
+      "title": null,
+      "edition": null,
+      "claimed_reference": "Former API RP 14J attribution, removed in agent-pack.md section 3",
+      "url": null,
+      "checked_on": "2026-10-19",
+      "access_status": "REPOSITORY_ONLY",
+      "reason": "The pack records a configurable convention, not a standards-derived acceptance limit. No external API publication, edition or clause was verified."
+    }
+  },
+  "claims": {
+    "liquid_velocity_screen": {
+      "source_id": "erosion_basis",
+      "basis": "CONFIGURABLE_HEURISTIC",
+      "applicability_status": "UNVERIFIED",
+      "conformity_check": "NOT_EVALUATED",
+      "governing_edition": null,
+      "governing_clause": null,
+      "citation_sidecar": "NO_STANDARDS_DERIVATION_ESTABLISHED",
+      "code_evidence": [
+        {
+          "path": "src/worldenergydata/field_development/flow_assurance.py",
+          "anchor": "def screen_erosion_risk("
+        },
+        {
+          "path": "src/worldenergydata/field_development/flow_assurance_types.py",
+          "anchor": "# Pack section 3, table S1: configurable conventions, not API limits."
+        }
+      ],
+      "remaining_evidence": "Qualify the configured limit and tier ratios for the intended service; establish any proposed standards derivation separately from the continuity equation. No engineering clearance follows from this register."
+    },
+    "dexpi_structure": {
+      "source_id": "dexpi_pid",
+      "basis": "STRUCTURAL_INTEROPERABILITY_SUBSET",
+      "applicability_status": "UNVERIFIED",
+      "conformity_check": "NOT_EVALUATED",
+      "governing_edition": null,
+      "governing_clause": null,
+      "citation_sidecar": "NOT_A_NUMERIC_CALCULATION",
+      "code_evidence": [
+        {
+          "path": "src/worldenergydata/field_development/dexpi.py",
+          "anchor": "info.set(\"SchemaVersion\", \"dexpi-aligned-1.0\")"
+        }
+      ],
+      "remaining_evidence": "Select an external DEXPI edition and validate its schema, class mapping and extension rules. The adapter's dexpi-aligned-1.0 marker is local, not evidence of a DEXPI publication version. A local XML round trip proves neither schema nor external-tool compatibility."
+    },
+    "iso_data_integration": {
+      "source_id": "iso_15926",
+      "basis": "BACKGROUND_REFERENCE",
+      "applicability_status": "UNVERIFIED",
+      "conformity_check": "NOT_EVALUATED",
+      "governing_edition": null,
+      "governing_clause": null,
+      "citation_sidecar": "NOT_A_NUMERIC_CALCULATION",
+      "code_evidence": [
+        {
+          "path": "src/worldenergydata/field_development/dexpi.py",
+          "anchor": "It is not full ISO-15926 conformance"
+        }
+      ],
+      "remaining_evidence": "Identify applicable ISO parts, publication titles, editions and clauses, then compare the implemented mapping against them with authorized access. No family-wide conformance is established by a DEXPI-shaped XML document."
+    },
+    "symbol_style": {
+      "source_id": "isa_symbols",
+      "basis": "ORIGINAL_SCHEMATIC_ARTWORK",
+      "applicability_status": "UNVERIFIED",
+      "conformity_check": "NOT_EVALUATED",
+      "governing_edition": null,
+      "governing_clause": null,
+      "citation_sidecar": "NOT_A_NUMERIC_CALCULATION",
+      "code_evidence": [
+        {
+          "path": "src/worldenergydata/field_development/symbols/__init__.py",
+          "anchor": "ANSI/ISA-5.1 informs style only"
+        }
+      ],
+      "remaining_evidence": "Confirm publication metadata and applicable clauses before claiming symbol conformity. The original glyphs and their drawing dimensions are not certified standard symbols or engineering acceptance limits."
+    }
+  }
+}
