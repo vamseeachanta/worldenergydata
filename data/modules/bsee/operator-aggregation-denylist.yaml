@@ -1,0 +1,140 @@
+# Source and scope: see operator-aggregation-denylist.md.
+# The twenty-row selection is specified by issue 420; names follow BSEE p. 1.
+version: '1.0'
+sources:
+- title: BSEE PDRANKOP, CY2024, order by Total Oil, p. 1, first twenty rows
+  edition: 01-OCT-2026
+  url: https://www.data.bsee.gov/Production/Files/Rank%20File%20Oil%202024.pdf
+- title: 'Issue 420: requested alternate name, abbreviations and placeholders'
+  url: https://github.com/vamseeachanta/worldenergydata/issues/420
+default_severity: block
+operator_names:
+- pattern: Shell Offshore Inc.
+  case_sensitive: false
+  severity: block
+- pattern: BP Exploration & Production Inc.
+  case_sensitive: false
+  severity: block
+- pattern: Anadarko Petroleum Corporation
+  case_sensitive: false
+  severity: block
+- pattern: Chevron U.S.A. Inc.
+  case_sensitive: false
+  severity: block
+- pattern: Murphy Exploration & Production Co
+  case_sensitive: false
+  severity: block
+- pattern: LLOG Exploration Offshore, L.L.C.
+  case_sensitive: false
+  severity: block
+- pattern: Union Oil Company of California
+  case_sensitive: false
+  severity: block
+- pattern: Hess Corporation
+  case_sensitive: false
+  severity: block
+- pattern: Talos QN Exploration LLC
+  case_sensitive: false
+  severity: block
+- pattern: Woodside Energy (GOM) Inc.
+  case_sensitive: false
+  severity: block
+- pattern: Exxon Mobil Corporation
+  case_sensitive: false
+  severity: block
+- pattern: Arena Offshore, LP
+  case_sensitive: false
+  severity: block
+- pattern: Kosmos Energy Gulf of Mexico Opera
+  case_sensitive: false
+  severity: block
+- pattern: Talos Energy Ventures, LLC
+  case_sensitive: false
+  severity: block
+- pattern: Talos Petroleum LLC
+  case_sensitive: false
+  severity: block
+- pattern: Cantium, LLC
+  case_sensitive: false
+  severity: block
+- pattern: Beacon Growthco Operating Company,
+  case_sensitive: false
+  severity: block
+- pattern: Walter Oil & Gas Corporation
+  case_sensitive: false
+  severity: block
+- pattern: Shell Gulf of Mexico Inc.
+  case_sensitive: false
+  severity: block
+- pattern: Talos ERT LLC
+  case_sensitive: false
+  severity: block
+operator_aliases:
+- pattern: Shell
+  case_sensitive: false
+  severity: block
+- pattern: BP
+  case_sensitive: false
+  severity: block
+- pattern: Anadarko
+  case_sensitive: false
+  severity: block
+- pattern: Chevron
+  case_sensitive: false
+  severity: block
+- pattern: Murphy
+  case_sensitive: false
+  severity: block
+- pattern: LLOG
+  case_sensitive: false
+  severity: block
+- pattern: Union Oil
+  case_sensitive: false
+  severity: block
+- pattern: Hess
+  case_sensitive: false
+  severity: block
+- pattern: Talos
+  case_sensitive: false
+  severity: block
+- pattern: Woodside
+  case_sensitive: false
+  severity: block
+- pattern: Exxon Mobil
+  case_sensitive: false
+  severity: block
+- pattern: ExxonMobil
+  case_sensitive: false
+  severity: block
+- pattern: Arena Offshore
+  case_sensitive: false
+  severity: block
+- pattern: Kosmos Energy
+  case_sensitive: false
+  severity: block
+- pattern: Cantium
+  case_sensitive: false
+  severity: block
+- pattern: Beacon Growthco
+  case_sensitive: false
+  severity: block
+- pattern: Walter Oil & Gas
+  case_sensitive: false
+  severity: block
+- pattern: BP America
+  case_sensitive: false
+  severity: block
+- pattern: WPX
+  case_sensitive: false
+  severity: block
+- pattern: EOG
+  case_sensitive: false
+  severity: block
+- pattern: OXY
+  case_sensitive: false
+  severity: block
+placeholder_patterns:
+- pattern: (?:operator|company)\s+[A-Z]
+  case_sensitive: false
+  severity: block
+  regex: true
