@@ -46,7 +46,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from worldenergydata.cost.timeseries.schema import CostComponent, CostObservation
+from worldenergydata.cost.timeseries.schema import (
+    CostComponent,
+    CostObservation,
+    PriceBasis,
+)
 from worldenergydata.cost.timeseries.series import MARKET_RATE_LENS, annual_means
 
 __all__ = [
@@ -84,6 +88,10 @@ class Deflator:
     #: (left_anchor, right_anchor) pairs whose gap was too wide to bridge. The
     #: years strictly between them are NOT in `values` and cannot be deflated.
     unbridged_gaps: tuple[tuple[int, int], ...] = ()
+    #: Currency whose purchasing power this index measures; no FX conversion.
+    #: USD preserves the built-in reference-series contract in
+    #: data/modules/cost/curated/cost_component_timeseries.csv (CURRENCY column).
+    currency: str = "USD"
 
     @property
     def min_year(self) -> int:
@@ -161,7 +169,9 @@ def build_deflator(
 
     CPI comes back as a complete measured series. UCCI comes back as
     anchor-and-interpolate, with the inferred years flagged — see the module
-    docstring.
+    docstring. Built-in reference rows must be nominal USD, as declared in
+    ``data/modules/cost/curated/cost_component_timeseries.csv``. Incompatible
+    valued anchors raise ``ValueError`` rather than contaminating the index.
     """
     component = (
         CostComponent.INDEX_CPI
@@ -175,6 +185,7 @@ def build_deflator(
     buckets: dict[int, list[float]] = {}
     for obs in observations:
         if obs.component is component and obs.value is not None:
+            _require_nominal_currency(obs, "USD")
             buckets.setdefault(obs.year, []).append(obs.value)
     anchors = {year: sum(v) / len(v) for year, v in buckets.items()}
 
@@ -230,6 +241,11 @@ def to_real(
 
         real = nominal x (deflator[basis_year] / deflator[from_year])
 
+    Method: OpenStax, Principles of Economics, 3rd edition (2022), section 19.2,
+    "Adjusting Nominal Values to Real Values"; re-express its nominal/index
+    equation in the selected base year's purchasing power:
+    https://openstax.org/books/principles-economics-3e/pages/19-2-adjusting-nominal-values-to-real-values
+
     Returns ``None`` — not a guess — when the deflator does not cover either
     year. A caller that needs a number must widen the deflator's sourced range,
     not paper over the gap.
@@ -244,7 +260,13 @@ def to_real(
 
 @dataclass(frozen=True)
 class RealSeriesPoint:
-    """One nominal figure alongside its real counterpart on a stated basis."""
+    """One nominal figure alongside its real counterpart on a stated basis.
+
+    ``currency`` applies to both amounts. ``price_basis`` describes the target
+    ``real`` amount (including when coverage leaves it unavailable); ``nominal``
+    always holds the unconverted nominal input. ``basis`` identifies the index,
+    while ``basis_year`` identifies the target purchasing-power year.
+    """
 
     year: int
     component: CostComponent
@@ -255,6 +277,23 @@ class RealSeriesPoint:
     basis_year: int
     deflator_is_interpolated: bool
     unit: str
+    currency: str
+    price_basis: PriceBasis
+
+
+def _require_nominal_currency(obs: CostObservation, currency: str) -> None:
+    """Reject incompatible money semantics before applying an index ratio."""
+    if obs.price_basis is not PriceBasis.NOMINAL:
+        raise ValueError(
+            f"{obs.component.value} ({obs.year}): price_basis "
+            f"{obs.price_basis.value!r}; expected nominal money for deflation"
+        )
+    if obs.currency != currency:
+        raise ValueError(
+            f"{obs.component.value} ({obs.year}): currency {obs.currency!r} "
+            f"does not match deflator currency {currency!r}; "
+            "supply a compatible index or convert currency explicitly first"
+        )
 
 
 def deflate_series(
@@ -267,6 +306,10 @@ def deflate_series(
 
     Rows whose deflator year is uncovered still come back, with ``real=None``.
     Dropping them would quietly shrink the series and hide the coverage gap.
+    Selected valued rows must be NOMINAL and in ``deflator.currency``; otherwise
+    ``ValueError`` is raised and no partial series is returned. REAL rebasing
+    and FX conversion require separate explicit operations. Missing-value and
+    excluded-component rows are ignored before checking money semantics.
     """
     points: list[RealSeriesPoint] = []
     for obs in observations:
@@ -274,6 +317,7 @@ def deflate_series(
             continue
         if components is not None and obs.component not in components:
             continue
+        _require_nominal_currency(obs, deflator.currency)
         points.append(
             RealSeriesPoint(
                 year=obs.year,
@@ -288,6 +332,8 @@ def deflate_series(
                     or basis_year in deflator.interpolated_years
                 ),
                 unit=obs.unit,
+                currency=obs.currency,
+                price_basis=PriceBasis.REAL,
             )
         )
     return points
