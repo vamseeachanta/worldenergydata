@@ -1,7 +1,7 @@
 """PDF spec sheet collector for contractor fleet data.
 
-Downloads and parses spec sheet PDFs from contractor websites,
-extracting structured vessel data from key-value text pairs.
+Downloads and parses spec sheet PDFs from contractor websites using the
+rig-summary parser and optional key-value mappings.
 """
 
 from __future__ import annotations
@@ -16,6 +16,7 @@ from worldenergydata.vessel_fleet.parsers.pdf import (
     extract_key_value_from_text,
     extract_text_from_pdf,
 )
+from worldenergydata.vessel_fleet.parsers.rig_summary import parse_rig_summary_text
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +24,10 @@ logger = logging.getLogger(__name__)
 class SpecPdfCollector(BaseCollector):
     """Collect vessel specs from PDF spec sheets.
 
-    Downloads PDFs from URLs, extracts text, and parses key-value
-    pairs into schema-compatible records.
+    Downloads PDFs from URLs and parses drilling-rig specifications into
+    typed fields with the existing rig-summary parser. Optional mappings
+    add fields without replacing normalized values or source identity.
+    Non-rig categories use only the explicit mappings.
     """
 
     def __init__(
@@ -51,7 +54,9 @@ class SpecPdfCollector(BaseCollector):
     ) -> list[dict[str, Any]]:
         """Collect specs from a dict of {vessel_name: pdf_url}.
 
-        Returns a list of schema-compatible dicts.
+        Returns only records with extracted specifications. Empty, image-only,
+        unrecognized and failed PDFs are warned about and omitted, leaving
+        any separately collected source-table records available to the caller.
         """
         records: list[dict[str, Any]] = []
         for vessel_name, url in pdf_urls.items():
@@ -99,10 +104,20 @@ class SpecPdfCollector(BaseCollector):
             "DATA_SOURCE": "contractor_spec_pdf",
             "DATA_SOURCE_URL": url,
         }
+        specs = (
+            parse_rig_summary_text(text)
+            if self.vessel_category == "drilling_rig"
+            else {}
+        )
 
         for pdf_key, schema_field in self.field_mapping.items():
             value = pairs.get(pdf_key)
-            if value and value.strip():
-                record[schema_field] = value.strip()
+            if value and value.strip() and schema_field not in record:
+                specs.setdefault(schema_field, value.strip())
 
+        if not specs:
+            logger.warning("No recognized PDF specifications for %s", vessel_name)
+            return None
+
+        record.update(specs)
         return record
