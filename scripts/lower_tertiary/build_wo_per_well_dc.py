@@ -26,7 +26,12 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    carries_basis, markdown_labels, provenance, validate_day_schema, validate_vintage_row,
+    carries_basis,
+    markdown_labels,
+    provenance,
+    require_publication_provenance,
+    validate_day_schema,
+    validate_vintage_row,
 )
 from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
@@ -373,6 +378,8 @@ def _anchor(title: str) -> str:
 def main() -> None:
     devs = load_bores()
     vintage = load_vintage_diff()
+    require_publication_provenance(b for bores in devs.values() for b in bores)
+    require_publication_provenance(r for rows in vintage.values() for r in rows)
     OUT_MD.write_text(build_markdown(devs, vintage), encoding="utf-8")
     total = sum(b["drill"] + b["compl"] for bores in devs.values() for b in bores)
     bores_n = sum(len(bores) for bores in devs.values())

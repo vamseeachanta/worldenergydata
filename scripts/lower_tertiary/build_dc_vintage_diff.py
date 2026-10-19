@@ -21,7 +21,12 @@ import pandas as pd
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from lower_tertiary.dc_provenance import carries_basis, validate_day_schema, vintage_labels
+from lower_tertiary.dc_provenance import (
+    carries_basis,
+    require_publication_provenance,
+    validate_day_schema,
+    vintage_labels,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 V30_DIR = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
@@ -116,6 +121,7 @@ def main() -> None:
     frozen = pd.ExcelFile(FROZEN_XLSX).parse("Sheet1")
     cand = pd.read_csv(CANDIDATE_CSV, dtype={"API_WELL_NUMBER": str})
     out = build_diff(frozen, cand)
+    require_publication_provenance(out.to_dict("records"))
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(OUT_CSV, index=False)
     n_changed = (out["category"] == "drilling_changed").sum()

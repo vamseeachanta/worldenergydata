@@ -27,8 +27,10 @@ Outputs:
   Columns (sorted):
     LEASE_NAME, SURF_LEASE_NUM, WATER_DEPTH, API_WELL_NUMBER, WELL_NAME,
     WELL_SPUD_DATE, TOTAL_DEPTH_DATE, DRILLING_DAYS, COMPLETION_DAYS,
-    MAX_BH_TOTAL_MD, MAX_WELL_BORE_TVD, MAX_DRILL_FLUID_WGT
+    PND_DAYS, MAX_BH_TOTAL_MD, MAX_WELL_BORE_TVD, MAX_DRILL_FLUID_WGT,
+    DAYS_STATUS, BASIS
   Tabs: Sheet1 (data), Lease_List, Diagnostics
+  Both day-bearing sheets carry PND_DAYS, DAYS_STATUS and BASIS.
 
 Requires: Python 3.9+, pandas, openpyxl, numpy
 """
@@ -442,7 +444,13 @@ def main():
     with pd.ExcelWriter(args.out, engine="openpyxl") as xw:
         out.to_excel(xw, sheet_name="Sheet1", index=False)
         leases.to_excel(xw, sheet_name="Lease_List", index=False)
-        diag = base[["API_WELL_NUMBER","WELL_SPUD_DATE","TOTAL_DEPTH_DATE","DRILLING_DAYS","COMPLETION_DAYS","LAST_COMPLETION_ACTIVITY","MAX_DRILL_FLUID_WGT"]]
+        # Issue #1076: diagnostics must identify the same rule and coverage
+        # as the data sheet rather than expose unlabelled day counts.
+        diag = base[[
+            "API_WELL_NUMBER", "WELL_SPUD_DATE", "TOTAL_DEPTH_DATE",
+            "DRILLING_DAYS", "COMPLETION_DAYS", "PND_DAYS", "DAYS_STATUS", "BASIS",
+            "LAST_COMPLETION_ACTIVITY", "MAX_DRILL_FLUID_WGT",
+        ]]
         diag.to_excel(xw, sheet_name="Diagnostics", index=False)
 
     print(f"✅ Wrote {args.out} with {len(out)} rows.")
