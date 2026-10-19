@@ -1,0 +1,85 @@
+"""Synthetic Canada gas-chain examples with independent hand calculations.
+
+All volumes, prices, dates and depth here are invented test inputs. No source
+production is reproduced, and no gas-equivalent conversion is performed.
+"""
+
+import pandas as pd
+import pytest
+
+from worldenergydata.canada.reference_chain import run_canada_reference_chain
+from worldenergydata.fdas.analysis.cashflow import CashflowError
+from worldenergydata.production.unified.adapters.canada_adapter import CanadaAdapter
+
+
+class SyntheticGasLoader:
+    def __init__(self, oil=(0.0, 0.0)):
+        self.oil = oil
+
+    def load_field_production(self, field_name):
+        return pd.DataFrame(
+            {
+                "field_name": [field_name, field_name],
+                "year": [2018, 2018],
+                "month": [1, 2],
+                "oil_bbl": self.oil,
+                "gas_mcf": [100.0, 200.0],
+                "water_bbl": [0.0, 0.0],
+                "source": ["synthetic", "synthetic"],
+            }
+        )
+
+
+def run_chain(gas_prices=None, oil=(0.0, 0.0)):
+    return run_canada_reference_chain(
+        adapter=CanadaAdapter(loader=SyntheticGasLoader(oil)),
+        field_meta={"field_name": "Synthetic gas field", "water_depth_m": 0.0},
+        field_name="Synthetic gas field",
+        oil_price_usd_bbl=2.0,
+        gas_prices=gas_prices,
+    )
+
+
+def test_pure_gas_revenue_reaches_chain_metrics():
+    """Hand calculation: 100 Mcf * 3 USD/Mcf + 200 * 4 = 1100 USD.
+
+    Oil is zero, so combined revenue is also 1100 USD. No royalty or cost
+    expectation is asserted from the default non-Canadian assumptions.
+    """
+    metrics = run_chain({"2018-01": 3.0, "2018-02": 4.0})["pre_tax_metrics"]
+    assert metrics["oil_revenue_usd"] == 0.0
+    assert metrics["gas_revenue_usd"] == 1100.0
+    assert metrics["gross_revenue_usd"] == 1100.0
+
+
+def test_mixed_revenues_sum_without_double_counting():
+    """Hand calculation: oil = (10 + 20) * 2 = 60 USD; gas = 1100 USD.
+
+    Total revenue is 60 + 1100 = 1160 USD, independently of cashflow costs.
+    """
+    metrics = run_chain({"2018-01": 3.0, "2018-02": 4.0}, (10.0, 20.0))[
+        "pre_tax_metrics"
+    ]
+    assert metrics["oil_revenue_usd"] == 60.0
+    assert metrics["gas_revenue_usd"] == 1100.0
+    assert metrics["gross_revenue_usd"] == 1160.0
+
+
+def test_absent_gas_deck_preserves_oil_only_revenue():
+    """Hand calculation: no priced gas; oil = (10 + 20) * 2 = 60 USD."""
+    metrics = run_chain(oil=(10.0, 20.0))["pre_tax_metrics"]
+    assert metrics["gross_revenue_usd"] == 60.0
+    assert metrics["gas_revenue_usd"] == 0.0
+
+
+@pytest.mark.parametrize("deck", [{}, {"2018-01": 3.0}, {"2018-01": -1.0}])
+def test_explicit_deck_keeps_existing_strict_gas_price_validation(deck):
+    with pytest.raises(CashflowError, match="gas price"):
+        run_chain(deck)
+
+
+def test_explicit_zero_gas_prices_are_evaluated_as_zero_revenue():
+    """Hand calculation: 100 * 0 + 200 * 0 = 0 USD."""
+    metrics = run_chain({"2018-01": 0.0, "2018-02": 0.0})["pre_tax_metrics"]
+    assert metrics["gross_revenue_usd"] == 0.0
+    assert metrics["gas_revenue_usd"] == 0.0
