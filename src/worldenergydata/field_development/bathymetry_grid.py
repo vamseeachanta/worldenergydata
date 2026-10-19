@@ -134,10 +134,18 @@ def read_depth_grid(
     No reader dependency is added to the project. Both readers reject grids
     with unknown units/CRS rather than guessing. netCDF is opened read-only;
     only coordinate axes and clipped values are read, without derived files.
+    ``max_cells`` must be a positive integer count; booleans and floats are
+    refused before archive verification or optional reader imports.
     """
     _validate_bbox(bbox)
-    if max_cells <= 0:
-        raise ValueError("max_cells must be positive")
+    # Issue #936's bounded-read contract: a cell count is positive and integral.
+    # This is a resource budget, not a source-resolution or depth criterion.
+    if (
+        isinstance(max_cells, (bool, np.bool_))
+        or not isinstance(max_cells, (int, np.integer))
+        or max_cells <= 0
+    ):
+        raise ValueError("max_cells must be a positive integer")
     _qualify_conventions(entry)
     verify_file(archive, entry)
     if entry["source_id"] == "boem_gom_bathymetry":
@@ -150,6 +158,9 @@ def read_depth_grid(
 
 def _depth(elevation: Any, convention: str) -> Any:
     values = np.ma.asarray(elevation, dtype=float).filled(np.nan)
+    # NumPy 2.3 isfinite, Notes/Examples (2025): NaN and +/-infinity are nonfinite.
+    # https://numpy.org/doc/2.3/reference/generated/numpy.isfinite.html
+    values = np.where(np.isfinite(values), values, np.nan)
     if convention == "elevation_positive_up":
         return np.where(values <= 0, -values, np.nan)
     if convention == "depth_positive_down":
