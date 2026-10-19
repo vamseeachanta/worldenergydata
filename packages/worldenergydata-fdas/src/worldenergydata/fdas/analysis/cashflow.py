@@ -335,8 +335,8 @@ class CashflowEngine:
             1. explicit ``royalty_rate`` argument;
             2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
                per-dev-system rate, ``none`` resolves to 0.0;
-            3. the legacy ``AssumptionsManager`` ROYALTY_RATE path (deckless =
-               byte-identical to the pre-carve behavior).
+            3. the legacy ``AssumptionsManager`` ROYALTY_RATE lookup,
+               including its corrected default rates when deckless.
 
         Args:
             revenue_monthly: Dict mapping year-month to revenue
@@ -374,8 +374,10 @@ class CashflowEngine:
             if self.fiscal_terms is not None:
                 royalty_rate = self.fiscal_terms.royalty.rate_for(self.dev_system)
             else:
+                # fiscal/decks/us_gom.yml source_ref (2026-07-03 BOEM note):
+                # deepwater 18.75 / 100, also used for missing assumptions.
                 royalty_rate = self.assumptions.get(
-                    self.dev_system, "ROYALTY_RATE", 0.188
+                    self.dev_system, "ROYALTY_RATE", 0.1875
                 )
 
         royalty = {}

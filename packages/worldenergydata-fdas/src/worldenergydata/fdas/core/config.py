@@ -33,7 +33,9 @@ DEFAULT_ASSUMPTIONS = {
     "SURF_PER_WELL_MM": [0.0, 8.0, 12.0, 8.0],
     "MODU_LOADED_DAYRATE_MM": [0.6, 0.8, 1.0, 0.8],
     "DRY_TREE_RIG_RATE_MM": [0.5, 0.5, 0.5, 0.5],
-    "ROYALTY_RATE": [0.125, 0.188, 0.188, 0.188],
+    # fiscal/decks/us_gom.yml source_ref (2026-07-03 BOEM note):
+    # shallow-water 12.5 / 100; deepwater 18.75 / 100.
+    "ROYALTY_RATE": [0.125, 0.1875, 0.1875, 0.1875],
     "VARIABLE_OPEX_$/BBL": [8.0, 12.0, 15.0, 12.0],
     "FIXED_OPEX_MM_PER_YEAR": [10.0, 25.0, 40.0, 25.0],
     "DISCOUNT_RATE_ANNUAL": [0.10, 0.10, 0.10, 0.10],

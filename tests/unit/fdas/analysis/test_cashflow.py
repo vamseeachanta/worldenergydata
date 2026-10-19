@@ -233,8 +233,8 @@ class TestCalculateRoyalty:
 
     def test_default_rate_from_assumptions(self):
         result = self._engine().calculate_royalty({"2024-01": 1000000})
-        # subsea15 default royalty rate = 0.188
-        assert result["2024-01"] == pytest.approx(188000.0)
+        # us_gom.yml source_ref BOEM note: USD 1,000,000 * 18.75/100 = 187,500.
+        assert result["2024-01"] == pytest.approx(187500.0)
 
 
 # ---------------------------------------------------------------------------
