@@ -4,8 +4,10 @@
 """
 Metocean Extrapolation Package
 
-Public interface for extrapolating site-specific wave, wind, and current
-conditions from the nearest available public data sources.
+Offline demonstration of spatial transfer for wave, wind, and current values.
+The catalogue selects representative source locations; observations and
+reanalysis samples are not loaded. Outputs use a fixed synthetic baseline,
+not measured or bias-corrected site conditions.
 
 Usage
 -----
@@ -33,9 +35,9 @@ from worldenergydata.metocean.extrapolation.spatial import SpatialAssessor
 _VALID_CONFIDENCE = {"high", "medium", "low"}
 _DEFAULT_PARAMETERS = ["Hs", "Tp", "wind_speed", "current_speed"]
 
-# Baseline environmental values used when no real-time data is available.
-# These represent typical open-ocean conditions for each parameter and are
-# used as starting points before spatial corrections are applied.
+# Legacy synthetic demonstration inputs, not sourced environmental estimates.
+# See calibration/README.md, Methods and API, synthetic-baseline paragraph.
+# Their engineering suitability is NOT_EVALUATED; no data are loaded here.
 _BASELINE = {
     "Hs": 2.5,  # m   (moderate sea state)
     "Tp": 9.0,  # s   (moderate swell / wind sea)
@@ -49,12 +51,14 @@ class ExtrapolationResult:
     """
     Result of extrapolating metocean conditions to a target location.
 
-    All physical parameters are at the target location after corrections.
+    The extrapolate() facade returns synthetic demonstration values after
+    spatial transfer. These are not qualified site conditions.
 
     Attributes:
         target_lat: Target latitude (degrees)
         target_lon: Target longitude (degrees)
-        source_used: The MetoceanSource driving the extrapolation
+        source_used: Catalogue entry used for the spatial assessment, not
+            evidence that its observations or reanalysis samples were loaded
         distance_km: Distance from target to source (km)
         Hs_m: Significant wave height at target (m)
         Tp_s: Peak wave period at target (s)
@@ -63,6 +67,9 @@ class ExtrapolationResult:
         confidence: "high" | "medium" | "low"
         corrections_applied: Human-readable list of corrections made
         source: Source name string for quick reference
+        data_basis: "synthetic_baseline" for extrapolate() output; "unknown"
+            for directly constructed results unless explicitly supplied.
+            Independent of catalogue source type and corrections_applied.
     """
 
     target_lat: float
@@ -76,6 +83,7 @@ class ExtrapolationResult:
     confidence: str
     corrections_applied: list = field(default_factory=list)
     source: str = ""
+    data_basis: str = "unknown"
 
     def __post_init__(self) -> None:
         if self.confidence not in _VALID_CONFIDENCE:
@@ -179,6 +187,7 @@ def _weighted_average(
         confidence=confidence,
         corrections_applied=corrections_all,
         source=best.name,
+        data_basis="synthetic_baseline",
     )
 
 
@@ -226,6 +235,7 @@ def _nearest_extrapolation(lat: float, lon: float) -> "ExtrapolationResult":
         confidence=confidence,
         corrections_applied=corrections,
         source=src.name,
+        data_basis="synthetic_baseline",
     )
 
 
@@ -241,10 +251,14 @@ def extrapolate(
     method: str = "nearest",
 ) -> ExtrapolationResult:
     """
-    Extrapolate site-specific metocean conditions to (lat, lon).
+    Demonstrate spatial transfer of synthetic metocean values to (lat, lon).
 
-    Works entirely offline — uses the built-in source catalog and
-    physics-based correction models.  No network access is required.
+    Works entirely offline using the built-in source catalogue and spatial
+    transfer models. No observations or reanalysis samples are loaded and no
+    buoy-based bias correction is fitted or applied. The returned data_basis
+    is "synthetic_baseline" even when source_used identifies a buoy or a
+    reanalysis entry. The legacy baseline and spatial heuristics have not
+    been qualified for engineering use.
 
     Args:
         lat: Target latitude (degrees, -90 to 90)
@@ -255,7 +269,7 @@ def extrapolate(
                 "weighted_average" (IDW over 3 nearest sources)
 
     Returns:
-        ExtrapolationResult with all corrected parameters.
+        ExtrapolationResult with synthetic values and explicit data_basis.
 
     Raises:
         ValueError: If lat/lon are out of range or method is unknown.

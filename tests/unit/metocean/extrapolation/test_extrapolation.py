@@ -5,6 +5,9 @@
 Tests for worldenergydata.metocean.extrapolation (public API)
 """
 
+from dataclasses import asdict, replace
+from unittest.mock import Mock
+
 import pytest
 
 from worldenergydata.metocean.extrapolation import (
@@ -245,18 +248,44 @@ def test_extrapolation_result_source_auto_populated():
         corrections_applied=[],
     )
     assert result.source == "ndbc_42001"
+    assert result.data_basis == "unknown"
 
 
 @pytest.mark.parametrize("method", ["nearest", "weighted_average"])
-@pytest.mark.parametrize("source_type", ["model", "reanalysis"])
-def test_spatial_transfer_does_not_claim_buoy_calibration(
-    monkeypatch, method, source_type
+@pytest.mark.parametrize("source_type", ["buoy", "tide_gauge", "model", "reanalysis"])
+@pytest.mark.parametrize("correction_needed", [False, True])
+def test_extrapolation_reports_synthetic_basis_and_actual_transfer(
+    monkeypatch, method, source_type, correction_needed
 ):
+    """Metadata oracle: no observations enter either facade method.
+
+    Source: calibration/README.md, Methods and API, synthetic-baseline paragraph.
+    Therefore the data basis is synthetic even for a buoy catalogue entry.
+    A forced assessment selects each branch: transfer labels must appear iff
+    the wave and current transfer functions run. No numerical accuracy or
+    engineering acceptance limit is asserted by this metadata test.
+    """
     import worldenergydata.metocean.extrapolation as api
 
     source = MetoceanSource("synthetic_grid", source_type, 0.0, 0.0, 500)
     monkeypatch.setattr(api._finder, "find_nearest", lambda *args, **kwargs: [source])
+    context = replace(
+        api._assessor.assess(28.5, -88.5, source),
+        correction_needed=correction_needed,
+    )
+    monkeypatch.setattr(api._assessor, "assess", lambda *args: context)
+    wave_transfer = Mock(wraps=api._wave_model.transfer)
+    current_transfer = Mock(wraps=api._current_model.transfer)
+    monkeypatch.setattr(api._wave_model, "transfer", wave_transfer)
+    monkeypatch.setattr(api._current_model, "transfer", current_transfer)
+
     result = extrapolate(28.5, -88.5, method=method)
-    assert api._assessor.assess(28.5, -88.5, source).correction_needed
+
+    assert result.source_used is source
+    assert result.source == source.name
+    assert result.data_basis == "synthetic_baseline"
+    assert asdict(result)["data_basis"] == "synthetic_baseline"
     assert not any("bias_correction" in c for c in result.corrections_applied)
-    assert "spatial_transfer" in result.corrections_applied
+    assert ("spatial_transfer" in result.corrections_applied) == correction_needed
+    assert wave_transfer.called == correction_needed
+    assert current_transfer.called == correction_needed
