@@ -18,7 +18,7 @@ def metadata():
         git_commit="a" * 40,
         production_cutoff=date(2026, 4, 30),
         wti_deck_source="Synthetic test input; no market prices",
-        npv_reference_convention="First material expenditure; monthly period zero",
+        npv_reference_convention="First material expenditure; annual period zero",
         generated_at=datetime(2026, 10, 19, tzinfo=timezone.utc),
     )
 
