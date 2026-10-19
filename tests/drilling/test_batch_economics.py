@@ -130,42 +130,36 @@ class TestBreakEven:
     def setup_method(self):
         self.calc = BatchDrillingEconomics()
 
-    def test_break_even_at_1_is_no_savings(self):
-        """Break-even of 1 well means batch = standalone (no additional benefit)."""
-        n = self.calc.break_even_n_wells(
-            mob_cost=20_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-            lc_factor=1.0,  # No learning, so break-even is 1
-        )
-        # With no learning curve, there is no saving from batching — break-even is 1
-        assert n >= 1
+    def test_no_learning_saves_one_mobilization_at_two_wells(self):
+        """Hand calculation: M=100, R=10, T=20, LC=1 (synthetic inputs).
 
-    def test_break_even_increases_with_higher_mob_cost(self):
-        """Higher mobilization cost requires more wells to reach break-even."""
-        n_low = self.calc.break_even_n_wells(
-            mob_cost=5_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-        )
-        n_high = self.calc.break_even_n_wells(
-            mob_cost=50_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-        )
-        assert (
-            n_high >= n_low
-        ), f"Higher mob cost should need >= wells: got n_low={n_low}, n_high={n_high}"
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1: B=S=100+10*20=300. At N=2: B=100+10*40=500,
+        S=2*(100+10*20)=600. Strict savings first occur at two wells.
+        """
+        assert self.calc.break_even_n_wells(100.0, 10.0, 20.0, 1.0) == 2
 
-    def test_break_even_positive_integer(self):
-        """Break-even result must be a positive integer."""
-        n = self.calc.break_even_n_wells(
-            mob_cost=20_000_000.0,
-            day_rate=350_000.0,
-            base_well_days=60.0,
-        )
+    @pytest.mark.parametrize("mobilization", [100.0, 1000.0])
+    def test_higher_mobilization_still_saves_at_two_wells(self, mobilization):
+        """Hand calculation with synthetic R=10, T=20, LC=0.5.
+
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1 both costs are M+200. At N=2, T_2=10, B=M+300,
+        S=2*M+400, so savings=M+100: 200 for M=100, 1100 for M=1000.
+        Both cases first save at two wells; greater M increases the saving.
+        """
+        assert self.calc.break_even_n_wells(mobilization, 10.0, 20.0, 0.5) == 2
+
+    def test_learning_alone_saves_at_two_wells(self):
+        """Hand calculation: M=0, R=10, T=20, LC=0.5 (synthetic inputs).
+
+        Source: drilling/docs/agent-pack.md, revision 2 (2026), section 3.
+        At N=1: B=S=200. At N=2: B=10*(20+10)=300, S=2*200=400.
+        The exact integer threshold is two wells even without mobilization.
+        """
+        n = self.calc.break_even_n_wells(0.0, 10.0, 20.0, 0.5)
         assert isinstance(n, int)
-        assert n >= 1
+        assert n == 2
 
 
 # ---------------------------------------------------------------------------
