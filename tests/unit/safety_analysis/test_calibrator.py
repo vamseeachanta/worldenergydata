@@ -2,7 +2,7 @@
 Tests for EnigmaCalibrator — data-driven ENIGMA risk score calibration.
 
 Covers:
-    TestSyntheticDataFrame  (5 tests)
+    TestSyntheticDataFrame  (9 tests)
     TestFit                 (8 tests)
     TestCalibrationReport   (8 tests)
     TestRiskScore           (5 tests)
@@ -10,7 +10,7 @@ Covers:
     TestCalibratedMatrix    (4 tests)
     TestIntegrationWithSkill (3 tests)
 
-Total: 38 tests
+Total: 42 tests
 """
 
 from __future__ import annotations
@@ -72,6 +72,22 @@ class TestSyntheticDataFrame:
         valid_types = {"equipment_failure", "spill", "injury", "violation"}
         actual = set(synthetic_df["incident_type"].dropna().unique())
         assert actual.issubset(valid_types)
+
+    @pytest.mark.parametrize("n_incidents", [0, 1, 50, 200])
+    def test_operators_use_only_codenames(self, n_incidents: int) -> None:
+        """Issue #1240 (2026): synthetic operators use neutral codenames.
+
+        The allowed set spells out OPERATOR-A through OPERATOR-E independently
+        of the generator. Cases cover empty and singleton boundaries plus the
+        custom and default row counts in the existing tests above; these are
+        test inputs, not engineering limits or measured incident frequencies.
+        """
+        allowed = {"OPERATOR-A", "OPERATOR-B", "OPERATOR-C", "OPERATOR-D", "OPERATOR-E"}
+        df = EnigmaCalibrator.synthetic_hse_dataframe(n_incidents=n_incidents)
+
+        assert len(df) == n_incidents
+        assert df["operator"].notna().all()
+        assert df["operator"].isin(allowed).all()
 
 
 # ---------------------------------------------------------------------------

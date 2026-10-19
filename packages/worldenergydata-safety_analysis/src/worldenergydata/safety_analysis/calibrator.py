@@ -335,8 +335,15 @@ class EnigmaCalibrator:
                 "injury_type": injury_type_col,
                 "severity": chosen_severities,
                 "incident_date": incident_dates,
+                # Issue #1240 (2026): synthetic rows use neutral operator codenames.
                 "operator": rng.choice(
-                    ["Shell", "BP", "Chevron", "ExxonMobil", "ConocoPhillips"],
+                    [
+                        "OPERATOR-A",
+                        "OPERATOR-B",
+                        "OPERATOR-C",
+                        "OPERATOR-D",
+                        "OPERATOR-E",
+                    ],
                     size=n_incidents,
                 ),
                 "facility_name": [
