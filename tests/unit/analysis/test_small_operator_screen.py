@@ -222,6 +222,143 @@ def test_reproducible_order_and_inputs_not_mutated():
     json.dumps(first, allow_nan=False)
 
 
+@pytest.mark.parametrize("history_months", [2.0, 3.0])
+def test_integral_numeric_lookback_preserves_caller_policy(history_months):
+    """Integral JSON numbers define whole months without changing the caller.
+
+    Rates (10,5,2) give a fractional decline of .6 over two months and .8
+    over three months. The output retains a normalized integer lookback.
+    """
+    settings = config()
+    settings["history_months"] = history_months
+    original = copy.deepcopy(settings)
+    result = run_screen(inputs(), settings)
+    expected_decline = 0.6 if history_months == 2 else 0.8
+    assert target(result)["signals"]["decline"]["value"] == pytest.approx(
+        expected_decline
+    )
+    assert type(result["config"]["history_months"]) is int
+    assert json.dumps(settings, sort_keys=True) == json.dumps(original, sort_keys=True)
+    assert type(settings["history_months"]) is float
+
+
+def test_integral_numeric_policy_fields_are_normalized_without_mutation():
+    """Whole-number policy inputs retain integer semantics, including groups."""
+    settings = config()
+    for field in (
+        "history_months",
+        "min_operator_wells",
+        "max_operator_wells",
+        "min_peers",
+    ):
+        settings[field] = float(settings[field])
+    settings["peer_group"]["vintage_years"] = 5.0
+    settings["sensitivity_peer_group"]["vintage_years"] = 1.0
+    settings["thresholds"]["idle"] = 1.0
+    original = json.dumps(settings, sort_keys=True)
+    result = run_screen(inputs(), settings)
+    retained = result["config"]
+    assert type(retained["history_months"]) is int
+    assert type(retained["min_operator_wells"]) is int
+    assert type(retained["max_operator_wells"]) is int
+    assert type(retained["min_peers"]) is int
+    assert type(retained["peer_group"]["vintage_years"]) is int
+    assert type(retained["sensitivity_peer_group"]["vintage_years"]) is int
+    assert type(retained["thresholds"]["idle"]) is int
+    assert target(result)["peer_group"] == ["f-a", 404, None]
+    assert type(target(result)["peer_group"][1]) is int
+    assert target(result)["score"] == 4
+    assert json.dumps(settings, sort_keys=True) == original
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 11), reason="Additional ISO formats require Python 3.11."
+)
+@pytest.mark.parametrize(
+    "older,newer",
+    [
+        ("20240101", "2024-02-01"),
+        ("2024-01-01", "20240201"),
+        ("2024-W01-1", "2024-02-01"),
+        ("20240101", "2024-W05-4"),
+        ("20240203", "2024-02-15"),
+    ],
+)
+def test_pressure_mixed_iso_dates_select_latest_observation(older, newer):
+    """The later dated 200 psia observation wins across accepted ISO formats."""
+    data = inputs()
+    data["pressure"] = [
+        {
+            "api14": "a",
+            "test_date": tested,
+            "pressure_psia": pressure,
+            "pressure_kind": "BHP_measured",
+            "reference_depth_ft": 2000,
+            "source_file": "Synthetic pressure table",
+        }
+        for tested, pressure in ((older, 100), (newer, 200), ("20240401", 999))
+    ]
+    original = copy.deepcopy(data)
+    result = run_screen(data, config())
+    context = target(result)["pressure"]
+    assert context["test_date"] == newer
+    assert context["pressure_psia"] == 200
+    assert context["gradient_psi_ft"] == 0.1
+    assert target(result)["score"] == 4
+    assert data == original
+    data["pressure"].reverse()
+    assert run_screen(data, config()) == result
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 11), reason="Additional ISO formats require Python 3.11."
+)
+def test_pressure_equivalent_dates_keep_deterministic_tie_breakers():
+    """Equal dates use record values before date spelling, in either order."""
+    data = inputs()
+    data["pressure"] = [
+        {
+            "api14": "a",
+            "test_date": tested,
+            "pressure_psia": pressure,
+            "pressure_kind": "BHP_measured",
+            "source_file": "Synthetic pressure table",
+        }
+        for tested, pressure in (("20240201", 100), ("2024-02-01", 200))
+    ]
+    result = run_screen(data, config())
+    assert target(result)["pressure"]["pressure_psia"] == 200
+    assert target(result)["pressure"]["test_date"] == "2024-02-01"
+    data["pressure"].reverse()
+    assert run_screen(data, config()) == result
+    data["pressure"].append({**data["pressure"][0], "test_date": "20240201"})
+    result = run_screen(data, config())
+    assert target(result)["pressure"]["test_date"] == "20240201"
+    data["pressure"].reverse()
+    assert run_screen(data, config()) == result
+
+
+def test_pressure_equal_numeric_values_have_stable_json_output():
+    """Equal int/float pressures retain the same JSON representation on reversal."""
+    data = inputs()
+    data["pressure"] = [
+        {
+            "api14": "a",
+            "test_date": "2024-02-01",
+            "pressure_psia": pressure,
+            "pressure_kind": "BHP_measured",
+            "source_file": "Synthetic pressure table",
+        }
+        for pressure in (100, 100.0)
+    ]
+    result = run_screen(data, config())
+    assert target(result)["pressure"]["pressure_psia"] == 100
+    data["pressure"].reverse()
+    assert json.dumps(run_screen(data, config()), sort_keys=True) == json.dumps(
+        result, sort_keys=True
+    )
+
+
 @pytest.mark.parametrize(
     "change", ["duplicate_well", "duplicate_month", "negative", "nan"]
 )
@@ -319,6 +456,37 @@ def test_cli_writes_example_and_nonzero_validation_status(tmp_path):
     assert result["validation"]["status"] == "NOT_EVALUATED"
     assert target(result)["score"] == 4
     assert result["input_sha256"]
+
+
+def test_cli_accepts_integral_numeric_lookback(tmp_path):
+    """The shipped JSON example accepts 3.0 months and retains its gate status."""
+    example = Path("examples/analysis/small_operator_screen.json")
+    payload = json.loads(example.read_text())
+    payload["config"]["history_months"] = 3.0
+    source, output = tmp_path / "input.json", tmp_path / "output.json"
+    raw = json.dumps(payload)
+    source.write_text(raw)
+    completed = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "worldenergydata.analysis.small_operator_screen",
+            "--input",
+            str(source),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 2, completed.stderr
+    result = json.loads(output.read_text())
+    assert result["config"]["history_months"] == 3
+    assert type(result["config"]["history_months"]) is int
+    assert result["validation"]["status"] == "NOT_EVALUATED"
+    assert target(result)["score"] == 4
+    assert source.read_text() == raw
 
 
 def test_missing_peer_depth_does_not_pool_unknown_depths():

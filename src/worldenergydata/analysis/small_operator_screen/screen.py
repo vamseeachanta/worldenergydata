@@ -58,7 +58,7 @@ def _month(value: str) -> int:
 
 
 def _group_policy(policy: dict) -> None:
-    _integer(policy["vintage_years"], "vintage_years")
+    policy["vintage_years"] = _integer(policy["vintage_years"], "vintage_years")
     if policy["depth_band_ft"] is not None:
         width = _number(policy["depth_band_ft"], "depth_band_ft")
         if width == 0:
@@ -69,12 +69,16 @@ def _check_policy(config: dict) -> None:
     try:
         _month(config["as_of"])
         # Two observations are the mathematical minimum for sample variance.
-        _integer(config["history_months"], "history_months", 2)
+        config["history_months"] = _integer(
+            config["history_months"], "history_months", 2
+        )
         low = _integer(config["min_operator_wells"], "min_operator_wells")
         high = _integer(config["max_operator_wells"], "max_operator_wells")
         if high < low:
             raise ValueError("operator size band is reversed")
-        _integer(config["min_peers"], "min_peers")
+        config["min_operator_wells"] = low
+        config["max_operator_wells"] = high
+        config["min_peers"] = _integer(config["min_peers"], "min_peers")
         _group_policy(config["peer_group"])
         _group_policy(config["sensitivity_peer_group"])
         for signal in SIGNALS:
@@ -85,7 +89,9 @@ def _check_policy(config: dict) -> None:
                 and threshold > 1
             ):
                 raise ValueError("fraction threshold exceeds one")
-        _integer(config["thresholds"]["idle"], "idle months")
+        config["thresholds"]["idle"] = _integer(
+            config["thresholds"]["idle"], "idle months"
+        )
         _number(config["min_prior_rate_bopd"], "min_prior_rate_bopd")
         _number(config["concentration_weight"], "concentration_weight")
         _text(config["policy_source"], "policy_source")
@@ -330,11 +336,13 @@ def _pressure_context(well_key: str, observations: list[dict], as_of: str) -> di
     row = max(
         eligible,
         key=lambda item: (
-            item["test_date"],
+            date.fromisoformat(item["test_date"]),
             item["pressure_kind"],
             item["source_file"],
             item["pressure_psia"],
             str(item.get("reference_depth_ft")),
+            repr(item["pressure_psia"]),
+            item["test_date"],
         ),
     )
     depth = row.get("reference_depth_ft")
@@ -422,6 +430,7 @@ def run_screen(data: dict, config: dict) -> dict:
     Larger operators remain in the peer pool. Well scores are weighted signal
     flags, not production forecasts, probabilities or monetary estimates.
     """
+    config = deepcopy(config)
     _check_policy(config)
     registry, wells, excluded = _prepare(data, config)
     base = _rank_wells(wells, config, config["peer_group"])
