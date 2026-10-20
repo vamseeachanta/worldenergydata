@@ -98,7 +98,8 @@ def _measure(
 
 
 def _validate_sources(bundle: dict) -> dict:
-    if bundle.get("schema_version") != 1:
+    version = bundle.get("schema_version")
+    if isinstance(version, bool) or not isinstance(version, int) or version != 1:
         raise ValueError("Unsupported snapshot schema version")
     if bundle.get("data_status") not in {"public", "synthetic"}:
         raise ValueError("data_status must be public or synthetic")
@@ -195,9 +196,9 @@ def _peers(peer: dict | None, sources: dict) -> str:
         raise ValueError("Peer comparison requires matching reporting periods")
     bars = []
     for name, item, label in zip(("Operator", "Peer median"), values, labels):
-        # Contract: width (%) = 100 * value / max(values), or zero if all zero.
+        # Contract: width (%) = (value / max(values)) * 100, or zero if all zero.
         # This is display scaling, not a recovery factor or an uplift estimate.
-        width = 100 * item["value"] / maximum if maximum else 0
+        width = (item["value"] / maximum) * 100 if maximum else 0
         bars.append(
             f'<p>{name}: {label}</p><div class="bar" style="width:{width:.1f}%"></div>'
         )

@@ -11,6 +11,7 @@ periods. Missing figures say `not captured`; missing conclusions say
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-20 | Add the snapshot contract, build targets and worked example for repeatable sourced pages. |
+| 2 | 2026-10-20 | Add browser-backed PDF acceptance tests, reject non-integer schema versions and keep bar scaling finite for large inputs. |
 
 ## Build
 
@@ -108,9 +109,10 @@ economic or uplift claims. Statistical comparison is not a diagnosis.
 No domain equation, coefficient or acceptance threshold is introduced. Supplied
 figures and ranks are preserved. Counts display as integers; other observations
 display to one decimal place. Source measurements retain their input precision
-in the snapshot. A bar's width is `100 * value / max(operator, median)` percent;
+in the snapshot. A bar's width is `(value / max(operator, median)) * 100` percent;
 both widths are zero when both values are zero. This is a normalized visual
-scale, not an uplift percentage. Its independent hand calculation appears below
+scale, not an uplift percentage. Division precedes multiplication to keep
+finite inputs from overflowing. Its independent hand calculation appears below
 and in the test docstring.
 
 A supplied false-positive fraction is displayed as `100 * fraction` percent to
@@ -152,11 +154,15 @@ checked-in HTML golden file records the complete expected presentation.
 The contract tests cover the golden page, zero versus missing figures,
 provenance, ranking, escaping and absence of external assets, candidate omission,
 registry members without screens, chart scaling, CLI and Make integration, and
-PDF readback accepting one page and rejecting overflow. Browser calls in unit
-tests are substituted; these tests do not establish actual Chrome pagination.
-Actual rendering requires an installed browser and `pdfinfo` and must be checked
-on the intended rendering environment. No production registry or screen output
-was available for this example; the upstream parquet adapter remains follow-up.
+PDF readback accepting one page and rejecting overflow. Browser-backed integration
+tests render the worked example and independently read its PDF page count. An
+intentionally overflowing snapshot is rejected, its real page count is read back,
+and the previously accepted PDF is preserved byte for byte. These tests require
+Chrome or Chromium and `pdfinfo`; they are skipped if either executable is absent.
+Substituted browser calls remain in unit tests for command and error handling.
+Pagination is specific to the installed rendering environment. No production
+registry or screen output was available for this example; the upstream parquet
+adapter remains follow-up.
 
 ## Sources
 

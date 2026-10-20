@@ -2,6 +2,8 @@
 
 import copy
 import json
+import re
+import shutil
 import subprocess
 import sys
 from html.parser import HTMLParser
@@ -102,6 +104,13 @@ def test_invalid_figures_rejected(bundle, value):
         report.render_html(bundle, "001")
 
 
+@pytest.mark.parametrize("version", [True, False, 1.0, 0.0])
+def test_non_integer_schema_versions_rejected(bundle, version):
+    bundle["schema_version"] = version
+    with pytest.raises(ValueError, match="Unsupported snapshot schema version"):
+        report.render_html(bundle, "001")
+
+
 @pytest.mark.parametrize("field", ["source", "value"])
 def test_partial_measurement_rejected(bundle, field):
     del bundle["operators"][0]["summary"]["oil_bbl_last12"][field]
@@ -148,6 +157,13 @@ def test_zero_peer_rates_do_not_divide_by_zero(bundle):
     peer = bundle["operators"][0]["screen"]["peer_comparison"]
     peer["operator"]["value"] = peer["median"]["value"] = 0
     assert report.render_html(bundle, "001").count("width:0.0%") == 2
+
+
+def test_large_finite_peer_rates_produce_finite_bar_widths(bundle):
+    """Ratios 1e308/1e308 and 8/1e308 round to 100.0% and 0.0%."""
+    bundle["operators"][0]["screen"]["peer_comparison"]["operator"]["value"] = 1e308
+    page = report.render_html(bundle, "001")
+    assert re.findall(r'style="width:([^"]+)"', page) == ["100.0%", "0.0%"]
 
 
 def test_mismatched_peer_periods_rejected(bundle):
@@ -228,6 +244,68 @@ def test_pdf_overflow_or_invalid_readback_is_not_published(
     with pytest.raises(ValueError, match="exactly one page"):
         report.render_pdf(html, pdf, chrome="chrome", pdfinfo="pdfinfo")
     assert pdf.read_bytes() == b"previous accepted output"
+
+
+@pytest.fixture
+def pdf_tools():
+    chrome = next(
+        (
+            path
+            for name in (
+                "google-chrome",
+                "google-chrome-stable",
+                "chromium",
+                "chromium-browser",
+            )
+            if (path := shutil.which(name))
+        ),
+        None,
+    )
+    pdfinfo = shutil.which("pdfinfo")
+    if chrome is None or pdfinfo is None:
+        pytest.skip("PDF integration requires Chrome or Chromium and pdfinfo")
+    return {"chrome": chrome, "pdfinfo": pdfinfo}
+
+
+def _pdf_page_count(pdf, pdfinfo):
+    info = subprocess.run(
+        [pdfinfo, str(pdf)], check=True, capture_output=True, text=True
+    )
+    pages = re.search(r"^Pages:\s+(\d+)\s*$", info.stdout, re.MULTILINE)
+    assert pages is not None, info.stdout
+    return int(pages.group(1))
+
+
+@pytest.mark.integration
+def test_worked_example_pdf_is_one_real_page(bundle, tmp_path, pdf_tools):
+    html = tmp_path / "onepager.html"
+    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
+    pdf = tmp_path / "onepager.pdf"
+
+    report.render_pdf(html, pdf, **pdf_tools)
+
+    assert pdf.read_bytes().startswith(b"%PDF-")
+    assert _pdf_page_count(pdf, pdf_tools["pdfinfo"]) == 1
+
+
+@pytest.mark.integration
+def test_real_pdf_overflow_preserves_accepted_destination(bundle, tmp_path, pdf_tools):
+    html = tmp_path / "onepager.html"
+    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
+    pdf = tmp_path / "onepager.pdf"
+    report.render_pdf(html, pdf, **pdf_tools)
+    accepted = pdf.read_bytes()
+
+    bundle["operators"][0]["screen"]["method"] = "Synthetic screen evidence. " * 1000
+    html.write_text(report.render_html(bundle, "001"), encoding="utf-8")
+    with pytest.raises(ValueError, match="exactly one page"):
+        report.render_pdf(html, pdf, **pdf_tools)
+
+    assert pdf.read_bytes() == accepted
+    assert _pdf_page_count(pdf, pdf_tools["pdfinfo"]) == 1
+    rejected = [path for path in tmp_path.glob("*.pdf") if path != pdf]
+    assert len(rejected) == 1
+    assert _pdf_page_count(rejected[0], pdf_tools["pdfinfo"]) > 1
 
 
 def test_cli_html_only(bundle, tmp_path):
