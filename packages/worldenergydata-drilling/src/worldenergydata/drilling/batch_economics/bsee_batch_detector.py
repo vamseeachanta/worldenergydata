@@ -173,13 +173,15 @@ class BSEEBatchDetector:
         for position, (index, row) in enumerate(bsee_df.iterrows()):
             normalized, reasons = {}, []
             for key in ("well_id", "rig_name", "field_name"):
-                value = row[key]
+                # iterrows can widen float32 to float; retain source precision.
+                value = bsee_df[key].iat[position]
                 if key == "well_id" and not isinstance(value, (bool, np.bool_)):
                     if isinstance(value, Integral):
                         value = str(int(value))
                     elif (
-                        isinstance(value, (float, np.floating))
+                        isinstance(value, (float, np.float64))
                         and np.isfinite(value)
+                        and abs(value) < 2**53
                         and value == np.floor(value)
                     ):
                         value = str(int(value))
@@ -190,7 +192,7 @@ class BSEEBatchDetector:
                         value is None
                         or value is pd.NA
                         or (isinstance(value, str) and not value.strip())
-                        or (isinstance(value, float) and math.isnan(value))
+                        or (isinstance(value, (float, np.floating)) and np.isnan(value))
                     )
                     reasons.append(f"{'missing' if missing else 'invalid'}_{key}")
             parsed = _parse_date(row["spud_date"])

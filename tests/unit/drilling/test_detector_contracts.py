@@ -312,3 +312,56 @@ def test_infinite_learning_values_remain_nonfinite(column, value):
     df[column] = value
     result = BSEEBatchDetector().fit_learning_curve_with_diagnostics(df)
     assert result.records.reason.tolist() == [f"nonfinite_{column}"]
+
+
+@pytest.mark.parametrize("dtype", ["float32", object])
+def test_float32_well_ids_are_rejected_before_duplicate_detection(dtype):
+    """Rounded float32 API values must not invent a shared well identity."""
+    df = activities(["2024-01-01"] * 2)
+    df["well_id"] = pd.Series(
+        [np.float32(608124005800), np.float32(608124005801)], dtype=dtype
+    )
+    before = df.copy(deep=True)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.counts == {"accepted": 0, "rejected": 2, "excluded": 0}
+    assert result.records.reason.tolist() == ["invalid_well_id"] * 2
+    assert result.batches.empty
+    pd.testing.assert_frame_equal(df, before)
+
+
+@pytest.mark.parametrize("scalar", [float, np.float64])
+@pytest.mark.parametrize("value", [2**53, -(2**53), 2**53 + 2])
+def test_float_well_ids_outside_exact_integer_range_are_rejected(scalar, value):
+    df = activities(["2024-01-01"])
+    df["well_id"] = pd.Series([scalar(value)], dtype=object)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.records.reason.tolist() == ["invalid_well_id"]
+    assert result.counts == {"accepted": 0, "rejected": 1, "excluded": 0}
+
+
+@pytest.mark.parametrize("scalar", [float, np.float64])
+@pytest.mark.parametrize("value", [2**53 - 1, -(2**53 - 1)])
+def test_float_well_ids_inside_exact_integer_range_are_preserved(scalar, value):
+    df = activities(["2024-01-01"])
+    df["well_id"] = pd.Series([scalar(value)], dtype=object)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.counts == {"accepted": 1, "rejected": 0, "excluded": 0}
+    assert result.batches.iloc[0].well_ids == [str(value)]
+
+
+@pytest.mark.parametrize("column", ["well_id", "rig_name", "field_name"])
+@pytest.mark.parametrize("scalar", [np.float32, np.float64])
+def test_numpy_nan_identifiers_are_missing(column, scalar):
+    df = activities(["2024-01-01"])
+    df[column] = pd.Series([scalar("nan")], dtype=object)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.records.reason.tolist() == [f"missing_{column}"]
+    assert result.counts == {"accepted": 0, "rejected": 1, "excluded": 0}
+
+
+def test_leading_zero_text_well_ids_are_not_inferred_from_numeric_ids():
+    df = activities(["2024-01-01"] * 2)
+    df["well_id"] = pd.Series([423456789012, "0423456789012"], dtype=object)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.counts == {"accepted": 2, "rejected": 0, "excluded": 0}
+    assert result.batches.iloc[0].well_ids == ["423456789012", "0423456789012"]

@@ -38,9 +38,16 @@ incomplete report. Empty frames still require the declared columns.
 
 Identifiers (`well_id`, `rig_name`, `field_name`) accept nonblank strings;
 surrounding whitespace is removed. `well_id` also accepts non-Boolean integral
-numbers and finite integral floats, normalized with `str(int(value))`. Numeric
-and text forms of the same well ID share duplicate identity. Fractional or
-nonfinite numeric well IDs are rejected; rig and field keys still require text. No case folding, identity inference or
+numbers and finite integral Python `float` or NumPy `float64` values with
+`abs(value) < 2**53`, normalized with `str(int(value))`. Other floating types
+(including `float32`) are rejected because their precision may already have
+lost identifier digits. Fractional or nonfinite numeric well IDs are rejected.
+Numeric and text forms share duplicate identity only when their normalized
+decimal strings match. Numeric inputs cannot preserve leading zeros: for example,
+`423456789012` and text `"0423456789012"` remain distinct. Supply IDs as text
+when leading zeros matter; no API width or zero padding is inferred.
+Native and NumPy floating NaNs are reported as `missing_<column>` for identifier
+columns. Rig and field keys still require text. No case folding, identity inference or
 cross-field well deduplication is performed. Multiple distinct events for the
 same well remain accepted. **`batch_size` counts event rows, not unique wells**;
 `well_ids` can therefore contain repeated IDs.
