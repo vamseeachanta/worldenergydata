@@ -19,7 +19,7 @@ DOCS = ROOT / "src/worldenergydata/field_development/docs"
 
 @pytest.fixture
 def register():
-    return json.loads((DOCS / "standards-provenance.json").read_text())
+    return json.loads((DOCS / "standards-provenance.json").read_text(encoding="utf-8"))
 
 
 def test_register_covers_each_requested_claim(register):
@@ -64,7 +64,7 @@ def test_code_evidence_resolves_offline(register, claim_id):
     for evidence in register["claims"][claim_id]["code_evidence"]:
         path = ROOT / evidence["path"]
         assert path.is_file()
-        assert evidence["anchor"] in path.read_text()
+        assert evidence["anchor"] in path.read_text(encoding="utf-8")
 
 
 def test_metadata_verification_has_an_open_publisher_locator(register):
@@ -98,9 +98,9 @@ def test_sidecar_scope_does_not_promote_heuristics_to_standard_values(register):
 
 
 def test_pack_links_register_and_explanation():
-    pack = (DOCS / "agent-pack.md").read_text()
+    pack = (DOCS / "agent-pack.md").read_text(encoding="utf-8")
     assert "[standards provenance](standards-provenance.md)" in pack
-    explanation = (DOCS / "standards-provenance.md").read_text()
+    explanation = (DOCS / "standards-provenance.md").read_text(encoding="utf-8")
     assert "[machine-readable register](standards-provenance.json)" in explanation
     assert "UNVERIFIED" in explanation
     assert "NOT_EVALUATED" in explanation

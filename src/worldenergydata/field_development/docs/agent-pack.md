@@ -6,7 +6,7 @@
 | Repository | `worldenergydata` |
 | Path | `src/worldenergydata/field_development` (package scope) |
 | Pack | `src/worldenergydata/field_development/docs/agent-pack.md` |
-| Pack revision | 2, 2026-10-18 |
+| Pack revision | 3, 2026-10-20 |
 | Code revision | Audit corrections based on `7ea5f6600dc8a7c7f4739dd948bbcf0356e9b26a`; the containing commit binds the revised functions and tests. Historical records below retain their original pins. |
 | Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10 Python calculations gate set |
 | Quality manager role | Calculations quality manager, interim data-pipeline coverage |

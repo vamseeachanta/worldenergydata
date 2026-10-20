@@ -16,17 +16,18 @@
       "metadata_status": "UNVERIFIED",
       "title": null,
       "edition": null,
-      "claimed_reference": "ISO 15926",
-      "url": "https://www.iso.org/standard/29556.html",
+      "claimed_reference": "ISO 15926 (docs/domains/field-development/concept-selection-and-ai-cad-briefing.md section B6, Feature 9)",
+      "url": null,
+      "candidate_url": "https://www.iso.org/standard/29556.html",
       "checked_on": "2026-10-19",
       "access_status": "HTTP_403",
-      "reason": "Candidate catalog locator could not be opened. Neither its identity nor a governing part, edition or clause was verified."
+      "reason": "The candidate address returned HTTP 403; its origin and identity remain unverified, so it is not an evidence locator. No governing part, edition or clause was verified."
     },
     "isa_symbols": {
       "metadata_status": "UNVERIFIED",
       "title": null,
       "edition": null,
-      "claimed_reference": "ANSI/ISA-5.1-2024 (briefing section B3)",
+      "claimed_reference": "ANSI/ISA-5.1-2024 (docs/domains/field-development/concept-selection-and-ai-cad-briefing.md section B3)",
       "url": "https://blog.ansi.org/ansi/ansi-isa-5-1-2024-instrumentation-symbols/",
       "checked_on": "2026-10-19",
       "access_status": "HTTP_403",
