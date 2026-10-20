@@ -746,18 +746,16 @@ def build_field_development(available_viz: dict[str, bool]) -> list[tuple]:
 def build_capabilities(available_viz: dict[str, bool]) -> list[tuple]:
     """Publish the self-contained capabilities overview at ``/capabilities/``.
 
-    The page is a hand-authored, fully self-contained HTML file (inline CSS, no
-    external assets) that summarises what the repo can do and links the live
-    dashboards. Like the field-development surfaces it is copied verbatim &mdash; no
-    template wrapping &mdash; so its internal ``../`` links to the sibling dashboards
-    resolve against the site root. Returns ``[]``; the landing index keys off the
+    The overview redirects to the canonical capabilities site. The retained
+    technical pages are published independently of that optional redirect stub.
+    Like the field-development surfaces they are copied verbatim, so relative
+    links resolve against the site root. Returns ``[]``; the landing index keys off the
     file existing in ``public/`` (see :func:`build_index`)."""
     src = REPORTS / "capabilities" / "index.html"
-    if not src.exists():
-        return []
     dst = PUBLIC / "capabilities"
     dst.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(src, dst / "index.html")
+    if src.exists():
+        shutil.copyfile(src, dst / "index.html")
     # Life-cycle Insights HUB (self-contained, hand-authored). Copied verbatim so
     # its sibling link (index.html) and its ../ links to the published front
     # doors resolve under /capabilities/.
@@ -1076,6 +1074,14 @@ def _insights_section() -> str:
             "<h3>All-regions field atlas &rarr;</h3><p>205 countries at reference "
             "depth, the Gulf of Mexico at full life-cycle depth &mdash; the honest "
             "coverage map with RICH / SAMPLE / ROADMAP density badges.</p></a>"
+        )
+    if (PUBLIC / "intervention-db" / "intervention-stats-brief.html").exists():
+        cards.append(
+            '<a class="card" '
+            'href="intervention-db/intervention-stats-brief.html#serviceability">'
+            "<h3>Subsea intervention serviceability &rarr;</h3><p>Explore the "
+            "Workover stage: subsea well inventory, intervention-asset access, "
+            "and the brief's stated coverage and uncertainty.</p></a>"
         )
     if (PUBLIC / "decommissioning" / "pa-liability-wave.html").exists():
         cards.append(

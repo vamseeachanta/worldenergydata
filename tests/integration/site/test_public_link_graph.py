@@ -209,8 +209,10 @@ def test_bfs_reachability_from_capabilities(public):
     stub = (public / "capabilities/index.html").read_text(encoding="utf-8")
     stub_links = re.findall(r"""href=["']([^"']+)["']""", stub, re.IGNORECASE)
     assert stub_links, "redirect stub links absent"
+    assert "insights.html" in stub_links
     assert all(
-        target == "https://www.aceengineer.com/capabilities/" for target in stub_links
+        target in {"https://www.aceengineer.com/capabilities/", "insights.html"}
+        for target in stub_links
     ), stub_links
     while q:
         cur = q.popleft()
