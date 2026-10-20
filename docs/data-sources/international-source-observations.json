@@ -1,0 +1,210 @@
+{
+  "purpose": "Task-scoped access observations, not an authoritative source registry or engineering input dataset.",
+  "catalog_identity": "The shared source catalogue was unavailable; no new catalogue identities are assigned.",
+  "criteria": "Native source discovery only; no complete production history, field crosswalk or fiscal model is qualified.",
+  "observations": [
+    {
+      "candidate": "argentina-http",
+      "url": "http://datos.energia.gob.ar/api/3/action/package_search?q=produccion%20petroleo%20gas%20pozo&rows=3",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:22:49.813191+00:00",
+      "http_status": null,
+      "transport_exit_code": 28,
+      "readiness": "NOT_EVALUATED",
+      "limitation": "Request timed out without a response; source availability is not established."
+    },
+    {
+      "candidate": "argentina",
+      "url": "https://datos.energia.gob.ar/api/3/action/package_search?q=produccion%20petroleo%20gas%20pozo&rows=3",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:20:18.639625+00:00",
+      "http_status": null,
+      "transport_exit_code": 28,
+      "readiness": "NOT_EVALUATED",
+      "limitation": "Request timed out without a response; source availability is not established."
+    },
+    {
+      "candidate": "colombia-gas-sample",
+      "url": "https://www.datos.gov.co/resource/5dux-bfvx.json?$limit=100&$order=:id",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:22:50.794562+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "2ca1db95cc4da020b2f08199bacae7da93cac95e2beccd56305799df232a3422",
+      "digest_scope": "response-body",
+      "retained_bytes": 43024,
+      "raw_retention": "local research evidence; not included in this change"
+    },
+    {
+      "candidate": "colombia-gas",
+      "url": "https://www.datos.gov.co/api/views/5dux-bfvx.json",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:20:19.986374+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "e32e9269fd321f05ee0ad0fc0f4274112b23f13c11dd09ec10c1eabc2e5a5c15",
+      "digest_scope": "response-body",
+      "retained_bytes": 32206,
+      "raw_retention": "local research evidence; not included in this change",
+      "publisher_metadata": {
+        "dataset_id": "5dux-bfvx",
+        "license": "Creative Commons Attribution | Share Alike 4.0 International",
+        "license_url": "http://creativecommons.org/licenses/by-sa/4.0/legalcode",
+        "rows_updated_at": 1780433263,
+        "update_frequency": "Trimestral",
+        "volume_column": [
+          {
+            "fieldName": "produccionkpc",
+            "dataTypeName": "text",
+            "description": "Valor en kilo pies cúbicos de la producción de gas "
+          }
+        ]
+      }
+    },
+    {
+      "candidate": "colombia-oil-sample",
+      "url": "https://www.datos.gov.co/resource/fdvb-hsrf.json?$limit=100&$order=:id",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:22:50.307152+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "cf86cac8ac9e1a2d511f3f6949a01879814884e74eb4c1b660106563c561a55a",
+      "digest_scope": "response-body",
+      "retained_bytes": 44698,
+      "raw_retention": "local research evidence; not included in this change"
+    },
+    {
+      "candidate": "colombia-oil",
+      "url": "https://www.datos.gov.co/api/views/fdvb-hsrf.json",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:20:19.062274+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "bbadeb5f60621a54ea23d86d413062bd3c2003e10b370ee2765d297f01749883",
+      "digest_scope": "response-body",
+      "retained_bytes": 32979,
+      "raw_retention": "local research evidence; not included in this change",
+      "publisher_metadata": {
+        "dataset_id": "fdvb-hsrf",
+        "license": "Creative Commons Attribution | Share Alike 4.0 International",
+        "license_url": "http://creativecommons.org/licenses/by-sa/4.0/legalcode",
+        "rows_updated_at": 1780432964,
+        "update_frequency": "Trimestral",
+        "volume_column": [
+          {
+            "fieldName": "produccion_bls",
+            "dataTypeName": "text",
+            "description": "Barriles de crudo producidos en el mes"
+          }
+        ]
+      }
+    },
+    {
+      "candidate": "denmark",
+      "url": "https://ens.dk/media/7167/download",
+      "method": "HEAD",
+      "observed_at": "2026-10-20T10:20:22.950394+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "d6783b35927f92a94ff9dffff25d1cb7fd8a27e062fcc49440360f6ce6eaf480",
+      "digest_scope": "http-header-output",
+      "retained_bytes": 677,
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "Header-only request; dataset contents, rights and production access are not established."
+    },
+    {
+      "candidate": "ghana",
+      "url": "https://petrocom.gov.gh/",
+      "method": "HEAD",
+      "observed_at": "2026-10-20T10:20:24.184347+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "1578134bb00896aee0d3351a3b2f30039d3187bd8d6c5f2716d9db5e776955cc",
+      "digest_scope": "http-header-output",
+      "retained_bytes": 508,
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "Header-only request; dataset contents, rights and production access are not established."
+    },
+    {
+      "candidate": "india",
+      "url": "https://www.ndrdgh.gov.in/",
+      "method": "HEAD",
+      "observed_at": "2026-10-20T10:20:44.073370+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "1b2dc47a9b9d0cde7f1d3b2342b5510ba17b03abc971f74d79c7bdf1d87f8cf1",
+      "digest_scope": "http-header-output",
+      "retained_bytes": 1673,
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "Header-only request; dataset contents, rights and production access are not established."
+    },
+    {
+      "candidate": "netherlands",
+      "url": "https://www.nlog.nl/nlog-mapviewer/rest/field/fields",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:20:21.209540+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "58b02a0ca02751d94c44e3c80ed14f8da8463aecb1ee6c83d4b2a6bc484eaa01",
+      "digest_scope": "response-body",
+      "retained_bytes": 39211,
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "HTTP 200 returned an HTML application shell, not verified JSON production data."
+    },
+    {
+      "candidate": "new-zealand",
+      "url": "https://www.nzpam.govt.nz/",
+      "method": "HEAD",
+      "observed_at": "2026-10-20T10:20:45.538425+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "971a3c8582aed71c463946f5ec4a71094a8a5acb5068d9cc93a0ff8aa39c351f",
+      "digest_scope": "http-header-output",
+      "retained_bytes": 1854,
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "Header-only request; dataset contents, rights and production access are not established."
+    },
+    {
+      "candidate": "nlog-terms",
+      "url": "https://www.nlog.nl/en/disclaimer",
+      "method": "GET",
+      "observed_at": "2026-10-20T10:20:22.154111+00:00",
+      "http_status": 200,
+      "transport_exit_code": 0,
+      "readiness": "NOT_EVALUATED",
+      "sha256": "565d74a17608ee76aa1b9a9ddf16abeba32dc64f17fafffe4ac9aab4ccc53e4a",
+      "digest_scope": "response-body",
+      "retained_bytes": 79491,
+      "raw_retention": "local research evidence; not included in this change"
+    }
+  ],
+  "sample_validation": {
+    "oil": {
+      "rows_parsed": 100,
+      "unknown_volumes": 0,
+      "source_modified": "2026-06-02T20:42:44+00:00",
+      "update_frequency": "Trimestral",
+      "sample_sha256": "cf86cac8ac9e1a2d511f3f6949a01879814884e74eb4c1b660106563c561a55a",
+      "complete": false,
+      "production_readiness": "NOT_EVALUATED"
+    },
+    "gas": {
+      "rows_parsed": 100,
+      "unknown_volumes": 0,
+      "source_modified": "2026-06-02T20:47:43+00:00",
+      "update_frequency": "Trimestral",
+      "sample_sha256": "2ca1db95cc4da020b2f08199bacae7da93cac95e2beccd56305799df232a3422",
+      "complete": false,
+      "production_readiness": "NOT_EVALUATED"
+    }
+  }
+}

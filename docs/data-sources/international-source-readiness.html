@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>International country source readiness</title>
+<style>
+body { max-width: 72rem; margin: 2rem auto; padding: 0 1rem; font: 1rem/1.6 sans-serif; color: #172b3a; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #bdc9d2; padding: .6rem; text-align: left; vertical-align: top; }
+caption { caption-side: bottom; text-align: left; margin: .5rem 0 1rem; }
+code, pre { background: #f0f4f7; overflow: auto; }
+pre { padding: 1rem; }
+a { color: #075b91; }
+</style>
+</head>
+<body>
+<h1>International country source readiness</h1>
+<h2>Summary</h2>
+<p>Argentina catalogue discovery and Colombia native monthly observation collection
+are implemented in <code>worldenergydata.international_sources</code>. Colombia metadata
+and a bounded sample for each commodity were read on 2026-10-20: 100 oil rows and
+100 gas rows parsed successfully. These samples do not establish complete coverage.
+Production readiness remains <strong>NOT_EVALUATED</strong> against the required
+coverage, field-identity, rights and fiscal-input criteria.</p>
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td><td>Source access observations, bounded discovery and
+native monthly parsing are documented to distinguish available samples from
+qualified analysis inputs.</td></tr>
+<caption>Table 1. Document revisions.</caption>
+</table>
+<h2>Plan-lite</h2>
+<ul>
+<li>Slice 1 will discover Argentina CSV resources from a supplied CKAN package response,
+retain licence and refresh metadata, and rank known declared byte sizes before unknown sizes.</li>
+<li>Slice 2 will collect Colombia metadata and one explicitly bounded page, preserving
+source bytes, digests, vintage, contract, operator, commodity, units and unknown volumes.</li>
+<li>Slice 3 will record the remaining candidate dispositions and demonstrate input,
+method and answer with an offline synthetic example.</li>
+<li>The implementation will remain in the root distribution's
+<code>international_sources</code> module; existing country packages and engines will remain untouched.</li>
+<li>No engineering equation or conversion constant will be introduced. The test subtotal
+will follow direct arithmetic: 10.5 + 2.5 = 13.0 bbl; an unknown value will remain unknown.</li>
+<li>Later slices will qualify full histories, field crosswalks, scheduler acceptance,
+FieldConcept metadata and country fiscal decks before FDAS results are emitted.</li>
+</ul>
+<h2>Ranked source dispositions</h2>
+<p>The order below is the proposed implementation order after the current probes.
+It differs from the historical shortlist because only Colombia returned inspected
+production rows. HTTP success alone is not a dataset-access criterion.</p>
+<table>
+<tr><th>Priority / country</th><th>Access evidence at the time of inspection</th><th>Rights, refresh and credential evidence</th><th>Disposition</th></tr>
+<tr><td>1 / Colombia</td><td>Both metadata endpoints and explicitly limited JSON
+row requests returned HTTP 200. The saved samples each contain 100 monthly rows.</td>
+<td>Metadata states Creative Commons Attribution | Share Alike 4.0 International
+and <q>Trimestral</q>. The row-update timestamps are 2026-06-02. No credential was supplied.</td>
+<td>Bounded collection and native parsing implemented. Quarterly refresh is distinct
+from monthly observation grain. Dataset freshness for an analysis date remains a caller decision.</td></tr>
+<tr><td>2 / Argentina</td><td>HTTPS and HTTP catalogue searches timed out without a response.
+This is a request timeout; a specific DNS, network or application failure is not established.</td>
+<td>The historical issue note records CC BY 4.0 and monthly refresh, not reverified here.
+Unknown metadata remains absent rather than defaulted to those historical values.</td>
+<td>Offline CKAN package discovery implemented. Live catalogue and production schema
+qualification remain NOT_EVALUATED. No CSV was downloaded.</td></tr>
+<tr><td>3 / Netherlands NLOG</td><td>The earlier REST locator now returns an HTML
+application shell with HTTP 200 to GET. No POST was sent.</td>
+<td>The opened disclaimer permits reuse with attribution, including
+<q>provided NLOG.NL is quoted as the source</q>. Refresh frequency is not established.</td>
+<td>JSON schema and production access remain NOT_EVALUATED; no guessed POST body
+or adapter is provided.</td></tr>
+<tr><td>4 / Denmark DEA</td><td>A header-only request returned HTTP 200 with workbook
+filename <code>1972-2025.xlsx</code>, declared size 62,704 bytes and
+Last-Modified 2026-09-25.</td><td>No credential was supplied. Reuse terms and refresh
+frequency are unverified. A filename is not evidence of the workbook contents.</td>
+<td>Workbook ingestion remains NOT_EVALUATED pending terms and schema inspection.</td></tr>
+<tr><td>5 / Ghana</td><td>The regulator homepage answered a header-only request with
+HTTP 200, unlike the earlier issue note's refusals.</td><td>Dataset files, reuse terms,
+refresh frequency and data credentials were not inspected.</td><td>Homepage access has
+changed; production-file access remains NOT_EVALUATED.</td></tr>
+<tr><td>Hold / India DGH</td><td>The NDR landing page answered a header-only request
+with HTTP 200 after redirects.</td><td>The historical issue note records registration
+and paid data access; those gates were not exercised or reverified.</td><td>No dataset
+access is established; production ingestion remains NOT_EVALUATED.</td></tr>
+<tr><td>Hold / New Zealand</td><td>The NZPAM landing page answered a header-only request
+with HTTP 200.</td><td>The historical issue note records an account requirement for the
+well catalogue and aggregate-only production. Neither was reverified.</td><td>No per-field
+monthly source or reuse terms are established; ingestion remains NOT_EVALUATED.</td></tr>
+<caption>Table 2. Observed access is scoped to the listed requests, not all publisher services.</caption>
+</table>
+<p>Guyana, Angola, Senegal, Indonesia, Malaysia, Ireland and Congo remain historical
+watch-list entries from the issue; no fresh access or licence claim is made. Italy is
+covered by the linked European-source investigation. Brazil's dataset-level rights
+remain a separate investigation; no catalogue request or production duplication is introduced.</p>
+<h2>Inputs, method and answer</h2>
+<p>The executable example uses three synthetic contracts for one synthetic field and
+one month. The oil inputs are 10.5 bbl, 2.5 bbl and an unknown volume. The method parses
+the year/month and native decimal values, retains contract identity, sums the known
+values only, and counts unknowns separately. The answer is a <strong>known subtotal of
+13.0 bbl and one unknown</strong>; a complete field total is not established.</p>
+<pre><code>PYTHONPATH=src python examples/international_sources.py</code></pre>
+<p>The example is offline and contains no live production values. Its regression test
+compares the output with the hand calculation written in the test docstring.</p>
+<h2>Collection interface</h2>
+<pre><code>from worldenergydata.international_sources.client import SourceClient
+
+# Explicit operational choices, not engineering limits or source defaults.
+client = SourceClient(timeout_seconds=20, max_bytes=1000000)
+page = client.colombia_page("oil", limit=100, offset=0)
+# page.complete is False; metadata.source_modified is the publisher's vintage.
+# page.rows_evidence.raw_bytes is the original response for separate retention.
+# No request is repeated or paginated automatically.
+</code></pre>
+<p>The byte and timeout limits are required caller inputs. JSON media type, response
+size, duplicate keys, non-finite numbers and dataset identity are checked before data
+is returned. HTML application shells fail validation even with HTTP 200. Reuse terms
+are exposed as evidence, not interpreted as blanket redistribution permission.</p>
+<p>ANH's oil column description identifies barrels produced in the month. The gas
+column description identifies thousand cubic feet. Those native quantities are retained
+as <code>bbl</code> and <code>Mcf</code>, without scaling or daily-rate multiplication.
+Plain decimal text and the observed comma-grouped decimal format are parsed strictly;
+ambiguous group-only text, malformed separators and signed adjustments are rejected
+pending qualification. Missing volume columns are schema failures; null values stay unknown.
+Oil and gas are not joined, contracts are not combined, and missing water is never zero-filled.</p>
+<h2>Analysis and scheduler boundary</h2>
+<p>The existing country contract normalizes unified production columns for FDAS.
+These observations deliberately precede that contract: water coverage, cross-commodity
+joining, source completeness, well metadata, field crosswalks and fiscal inputs are
+not established. No empty or fabricated cashflow is emitted. Scheduler registration
+will require retained raw-data ownership, rights and freshness criteria, normalized
+coverage checks and the repository's source-refresh acceptance contract.</p>
+<p>The shared source catalogue and domain-database index were unavailable in the
+inspected checkout. This note is task-scoped evidence, not a replacement catalogue;
+no authoritative source identity or new allocation registry is created.</p>
+<h2>Sources and retained evidence</h2>
+<ul>
+<li><a href="https://www.datos.gov.co/api/views/fdvb-hsrf.json">ANH oil metadata</a> and
+<a href="https://www.datos.gov.co/api/views/5dux-bfvx.json">ANH gas metadata</a>:
+column descriptions, dataset identifiers, reuse terms, refresh and source vintage.</li>
+<li><a href="https://www.datos.gov.co/resource/fdvb-hsrf.json?$limit=100&amp;$order=:id">ANH oil sample query</a> and
+<a href="https://www.datos.gov.co/resource/5dux-bfvx.json?$limit=100&amp;$order=:id">ANH gas sample query</a>:
+observed row schema and decimal representation.</li>
+<li><a href="https://www.nlog.nl/nlog-mapviewer/rest/field/fields">NLOG locator</a> and
+<a href="https://www.nlog.nl/en/disclaimer">NLOG disclaimer</a>: response type and attribution terms.</li>
+<li><a href="https://ens.dk/media/7167/download">DEA workbook locator</a>:
+HTTP header evidence only.</li>
+<li><a href="https://petrocom.gov.gh/">Ghana regulator</a>,
+<a href="https://www.ndrdgh.gov.in/">India NDR</a> and
+<a href="https://www.nzpam.govt.nz/">NZPAM</a>: landing-page headers only.</li>
+<li><a href="international-source-observations.json">Machine-readable observations</a>:
+request addresses, UTC timestamps, status codes, digest scopes and sample readback results.
+Raw responses remain local research evidence and are not included in this change.</li>
+</ul>
+</body>
+</html>
