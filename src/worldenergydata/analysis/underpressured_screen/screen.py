@@ -45,14 +45,22 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
     Non-finite depth or pressure yields null estimates and a NOT_EVALUATED method.
     """
     frame = observations.copy()
+    # Empty and all-null loader columns may be object-typed. Normalize working
+    # values to floats with explicit missing values, retaining the source index.
+    depth = pd.Series(
+        frame["reference_depth_ft"].to_numpy(dtype=float, na_value=np.nan),
+        index=frame.index,
+    )
+    pressure = pd.Series(
+        frame["pressure_psia"].to_numpy(dtype=float, na_value=np.nan),
+        index=frame.index,
+    )
     # NumPy 2.2 manual, numpy.isfinite (definition and Notes): exclude both
     # infinities and NaN before arithmetic, including the pass-through path.
     # https://numpy.org/doc/2.2/reference/generated/numpy.isfinite.html
-    finite_inputs = np.isfinite(frame["reference_depth_ft"]) & np.isfinite(
-        frame["pressure_psia"]
-    )
-    depth = frame["reference_depth_ft"].where(finite_inputs)
-    pressure = frame["pressure_psia"].where(finite_inputs)
+    finite_inputs = np.isfinite(depth) & np.isfinite(pressure)
+    depth = depth.where(finite_inputs)
+    pressure = pressure.where(finite_inputs)
     exponent = (
         0.01875
         * settings["gas_sg"]
@@ -66,9 +74,9 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
         is_shut_in_whp, "static_gas_column_avg_zt", "as_reported"
     )
     frame.loc[~finite_inputs, "bhp_method"] = "NOT_EVALUATED"
-    has_depth = frame["reference_depth_ft"] > 0
+    has_depth = depth > 0
     frame["bhp_gradient_psi_ft"] = np.where(
-        has_depth, frame["bhp_psia_est"] / frame["reference_depth_ft"], np.nan
+        has_depth, frame["bhp_psia_est"] / depth, np.nan
     )
     return frame
 

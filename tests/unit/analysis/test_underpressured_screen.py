@@ -6,6 +6,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from worldenergydata.analysis.underpressured_screen.observations import (
+    load_observations,
+)
 from worldenergydata.analysis.underpressured_screen.screen import (
     TIER_MILD,
     TIER_NORMAL,
@@ -41,6 +44,72 @@ def make_observations(rows):
 
 
 class TestEstimateBhp:
+    def test_empty_loader_output_remains_empty(self):
+        observations, _ = load_observations([])
+        original = observations.copy(deep=True)
+
+        estimated = estimate_bhp(observations, BHP_SETTINGS)
+        screened = classify_tiers(estimated, TIERS)
+
+        assert screened.empty
+        assert {"bhp_psia_est", "bhp_gradient_psi_ft", "bhp_method"} <= set(
+            screened.columns
+        )
+        assert earliest_per_well(screened).empty
+        pd.testing.assert_frame_equal(observations, original)
+
+    @pytest.mark.parametrize("missing", [None, pd.NA])
+    @pytest.mark.parametrize(
+        "pressure_kind",
+        ["BHP_measured", "WHP_shut_in", "WHP_flowing_tubing_initial_test"],
+    )
+    def test_all_null_pressure_is_not_evaluated(self, missing, pressure_kind):
+        observations = pd.DataFrame(
+            {
+                "well_key": ["missing-a", "missing-b"],
+                "test_year": [2024, 2024],
+                "pressure_kind": pressure_kind,
+                "pressure_psia": [missing, missing],
+                "reference_depth_ft": [5000.0, 2800.0],
+            },
+            index=[17, 5],
+        )
+        original = observations.copy(deep=True)
+
+        screened = classify_tiers(estimate_bhp(observations, BHP_SETTINGS), TIERS)
+
+        pd.testing.assert_index_equal(screened.index, observations.index)
+        assert screened["bhp_method"].tolist() == ["NOT_EVALUATED"] * 2
+        assert screened[["bhp_psia_est", "bhp_gradient_psi_ft"]].isna().all().all()
+        assert screened["pressure_tier"].tolist() == ["NOT_EVALUATED"] * 2
+        assert not screened["near_vacuum"].any()
+        assert earliest_per_well(screened).empty
+        pd.testing.assert_frame_equal(observations, original)
+
+    def test_object_numeric_inputs_preserve_row_alignment(self):
+        """Synthetic measured BHP gives 1200 psia / 5000 ft = 0.24 psi/ft."""
+        observations = pd.DataFrame(
+            {
+                "pressure_kind": ["BHP_measured", "BHP_measured"],
+                "pressure_psia": [1200.0, None],
+                "reference_depth_ft": [5000.0, 2800.0],
+            },
+            index=[17, 5],
+            dtype=object,
+        )
+        original = observations.copy(deep=True)
+
+        estimated = estimate_bhp(observations, BHP_SETTINGS)
+
+        pd.testing.assert_index_equal(estimated.index, observations.index)
+        assert estimated.loc[17, "bhp_method"] == "as_reported"
+        assert estimated.loc[17, "bhp_psia_est"] == 1200.0
+        assert estimated.loc[17, "bhp_gradient_psi_ft"] == 0.24
+        assert estimated.loc[5, "bhp_method"] == "NOT_EVALUATED"
+        assert pd.isna(estimated.loc[5, "bhp_psia_est"])
+        assert pd.isna(estimated.loc[5, "bhp_gradient_psi_ft"])
+        pd.testing.assert_frame_equal(observations, original)
+
     @pytest.mark.parametrize("column", ["reference_depth_ft", "pressure_psia"])
     @pytest.mark.parametrize("invalid", [math.inf, -math.inf, math.nan])
     @pytest.mark.parametrize(
