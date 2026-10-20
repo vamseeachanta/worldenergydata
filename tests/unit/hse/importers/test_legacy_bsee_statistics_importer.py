@@ -194,3 +194,58 @@ def test_malformed_csv_raises_parse_error(importer, tmp_path):
 def test_invalid_integer_text_remains_none(importer, field):
     """The nonnumeric word cannot denote an integer; the legacy result is None."""
     assert importer.normalize_data({field: "invalid"})[field] is None
+
+
+@pytest.mark.parametrize("token", ["NA", ""])
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+def test_csv_integral_decimal_counts_and_missing_rows(importer, tmp_path, field, token):
+    """Decimal '1.0' = 1 and '2.0' = 2, including beside missing CSV cells."""
+    importer.csv_file_path = write_csv(
+        tmp_path, [{field: "1.0"}, {field: token}, {field: "2.0"}]
+    )
+    first, missing, last = map(importer.normalize_data, importer.fetch_data())
+
+    assert first[field] == 1
+    assert type(first[field]) is int
+    assert missing[field] is None
+    assert last[field] == 2
+    assert type(last[field]) is int
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+@pytest.mark.parametrize(
+    "text,expected",
+    [("0.0", 0), ("-1.0", -1), ("1e2", 100), ("9007199254740993.0", 9007199254740993)],
+)
+def test_integral_decimal_count_text_is_exact(importer, field, text, expected):
+    """Integral decimals retain their value, including beyond float precision."""
+    actual = importer.normalize_data({field: text})[field]
+
+    assert actual == expected
+    assert type(actual) is int
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+@pytest.mark.parametrize(
+    "text",
+    ["1.5", "1.0000000000000000000000000001", "NaN", "sNaN", "Infinity", "-Infinity"],
+)
+def test_fractional_and_nonfinite_count_text_remains_none(importer, field, text):
+    """Fractions and nonfinite text cannot denote integer counts; never round."""
+    assert importer.normalize_data({field: text})[field] is None
+
+
+@pytest.mark.parametrize("value", [[], [None], ["first", "second"]])
+@pytest.mark.parametrize("field", ["unused", "operator_name"])
+def test_direct_dictionary_lists_are_preserved(importer, field, value):
+    """Only scalar nulls become None; unrelated list keys remain ignorable."""
+    raw = {field: value, "incident_id": "synthetic-record"}
+
+    normalized = importer.normalize_data(raw)
+
+    assert normalized["bsee_incident_id"] == "synthetic-record"
+    if field == "unused":
+        assert field not in normalized
+    else:
+        assert normalized["operator"] is value
+    assert raw[field] is value
