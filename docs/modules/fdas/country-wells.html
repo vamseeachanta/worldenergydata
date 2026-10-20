@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Country wells and drilling inputs</title>
+<main><h1>Country wells and drilling inputs</h1>
+<p>FDAS accepts source-scoped well records and explicitly supplied active drilling
+intervals. The DataVic adapter supplies Australian well metadata from complete
+local WFS GeoJSON exports. Spud and rig-release dates alone do not establish
+drilling activity; that case is NOT_EVALUATED and cannot be exported to cashflow.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td><td>Country well identities, explicit activity
+coverage and a synthetic cost example are introduced to replace missing inputs
+without fabricating drilling durations.</td></tr></table>
+<h2>Inputs and contract</h2>
+<p><code>WellRecord</code> in <code>fdas.adapters.wells</code> requires country,
+source, well ID and development. Its key is the tuple (country, source, well ID).
+Spud is a nullable calendar date and water depth is nullable metres. Zero depth
+is distinct from missing depth. Foreign IDs are not US API well numbers.</p>
+<p><code>read_datavic_wells(raw, development_by_site_id=..., water_depth_unit=...)</code>
+in <code>fdas.adapters.datavic_wells</code> accepts bytes of a complete WFS
+FeatureCollection. Both numberMatched and numberReturned shall equal the feature
+count; a next-page link or duplicate ID is rejected. Completeness refers only to
+the query supplied by the caller, not to Australia or an entire development.</p>
+<p>The source's <code>siteid</code> identifies wells. An explicit site-ID-to-development
+mapping is required; well names, leases and title polygons are not field links.
+The source record IDs and raw SHA-256 are retained in the returned DataVicWells.
+The caller shall retain the original export, query URL, UTC retrieval time,
+source vintage, licence and evidence for the field links and units.</p>
+<p>DataVic's schema names <code>spud_date</code>, <code>rig_release_date</code> and
+<code>abswaterdepth</code> but does not establish water-depth units or datum.
+The adapter requires a caller-selected unit (m or international ft); None retains
+unknown depth as None. The international foot is exactly 0.3048 m according to
+the cited NIST table. Datum-dependent interpretation remains unqualified.
+ISO dates and datetimes preserve the source calendar day without UTC shifting.</p>
+<h2>Method and coverage</h2>
+<p><code>DrillingActivity</code> in <code>fdas.data.country_drilling</code> requires
+the same source-scoped key, a start date, an exclusive end date and an evidence
+reference. These are active drilling intervals supplied from activity records or
+explicitly labelled scenario assumptions, not spans inferred from milestones.
+Completion, suspension and inactive gaps shall be excluded by the caller.</p>
+<p><code>build_drilling_timeline(wells, activities, development=...)</code> rejects
+unknown well IDs, missing spud evidence, pre-spud activity and overlapping
+intervals for the same well. Adjacent intervals are permitted. Concurrent wells
+contribute separate well-days. Every supplied well in the selected development
+shall have activity; otherwise the monthly result is None, the missing keys are
+listed and <code>as_cashflow_input()</code> raises ValueError. EVALUATED establishes
+coverage of the supplied inventory only; gaps in source activity are not detectable.</p>
+<p>Monthly days are the count of active calendar dates in the intersection of each
+half-open interval with each month. Gregorian date subtraction supplies that count;
+no utilization or duration coefficient is applied. The evaluated timeline exports
+the existing <code>drilling_monthly</code> cashflow dictionary.</p>
+<h2>Worked example: synthetic inputs</h2>
+<p>Run <code>examples/fdas/country_wells.py</code> with the FDAS package available.
+One synthetic well is explicitly linked to Example. The supplied drilling
+interval is [2024-01-30, 2024-02-03), and the selected scenario daily rate is
+0.5 million USD/day. Water depth is unknown and is not used in this calculation.</p>
+<table><tr><th>Month</th><th>Active dates</th><th>Days</th><th>CAPEX (million USD)</th></tr>
+<tr><td>2024-01</td><td>30, 31</td><td>2</td><td>1.0</td></tr>
+<tr><td>2024-02</td><td>1, 2</td><td>2</td><td>1.0</td></tr>
+<tr><td>Total</td><td></td><td>4</td><td>2.0</td></tr></table>
+<p>Table 1. Hand-counted activity and cost at the selected scenario rate.</p>
+<p>The dimensional equation is CAPEX = active days × daily rate, as implemented
+by the existing <code>CashflowEngine.calculate_drilling_capex</code>. Each month's
+answer is 2 × 0.5 = 1.0 million USD. This example calls that method directly and
+keeps its documented million-USD units explicit; it does not qualify the legacy
+monthly cashflow model's currency-labelled fields or a country's fiscal terms.</p>
+<h2>Sources and limits</h2>
+<ul><li><a href="https://discover.data.vic.gov.au/dataset/petroleum-wells-from-geological-survey-of-victorias-dbmap-database">DataVic petroleum wells catalogue</a>:
+dataset ID 37083d2f-f6ea-4813-af54-ca8cd754262d, Creative Commons Attribution 4.0
+International; metadata modified 2026-07-30, inspected 2026-10-20.</li>
+<li><a href="https://opendata.maps.vic.gov.au/geoserver/wfs?service=WFS&amp;version=2.0.0&amp;request=DescribeFeatureType&amp;typeNames=open-data-platform:pet_wells">DataVic WFS schema</a>:
+field names and nullable types, inspected 2026-10-20. No live well records are
+reproduced; the example and fixtures are synthetic.</li>
+<li><a href="https://www.nist.gov/pml/us-surveyfoot/revised-unit-conversion-factors">NIST revised unit conversion factors</a>:
+2023 adoption, international-foot row, inspected 2026-10-20.</li></ul>
+<p>The source observations and digests are recorded in country-wells-sources.json.
+The earlier combined DataVic dataset URL returns HTTP 404; the current catalogue
+entry above supersedes that locator for this adapter. Existing shared source
+catalogues were unavailable in the inspected checkout, so catalog reconciliation
+is not established. No downloader, scheduler job, national well inventory,
+measured activity series, production data or Australian fiscal deck is supplied.
+DataVic spud-only economics remains NOT_EVALUATED until activity evidence is supplied.</p>
+</main></html>

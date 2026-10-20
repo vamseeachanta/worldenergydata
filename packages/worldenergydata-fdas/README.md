@@ -87,12 +87,16 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
 
 ### Consumed vs. deferred
 
-Production is **consumed now** — `to_fdas_production` output drives monthly
-cashflow. Wells / drilling-timeline inputs are **deferred to #783**
-(`STANDARD_COLUMNS` cannot carry them). When a drilling timeline is absent the
-cashflow engine's empty-timeline **honesty guard** emits a WARNING
-("drilling CAPEX is 0") so the silent-zero-drilling-CAPEX case is visible; the
-value is still `0`.
+Production is consumed through `to_fdas_production`. Country well metadata is
+available through `adapters.wells.WellRecord`, with a local DataVic WFS export
+reader in `adapters.datavic_wells`. Explicit active drilling intervals are
+allocated by `data.country_drilling.build_drilling_timeline`; its evaluated
+output feeds the cashflow engine's `drilling_monthly` input.
+
+Spud dates alone do not establish active drilling days. Missing activity for a
+supplied well yields `NOT_EVALUATED`, and cashflow export is refused. Direct
+cashflow calls without a timeline retain the existing zero-CAPEX warning.
+See the [input contract, sources and worked example](../../docs/modules/fdas/country-wells.html).
 
 Onboarding a new country: see
 [`docs/modules/fdas/country-adapter-checklist.md`](../../docs/modules/fdas/country-adapter-checklist.md).

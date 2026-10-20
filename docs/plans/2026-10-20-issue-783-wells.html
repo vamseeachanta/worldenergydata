@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Country wells input plan</title>
+<main><h1>Country wells input plan</h1>
+<p>The implementation will supply per-well inputs for FDAS without inferring
+active drilling days from milestone dates.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td><td>The initial scope will separate well
+metadata from drilling activity to preserve the existing day-basis rule.</td></tr></table>
+<h2>Scope and verification</h2>
+<ol><li>A country-neutral wells contract will validate identities, development
+assignments, nullable spud dates and water depths.</li>
+<li>A DataVic adapter will read complete local WFS GeoJSON exports, retain their
+digest, and require explicit development links and depth units.</li>
+<li>An activity allocator will split supplied, non-overlapping active drilling
+intervals at calendar month boundaries. It will expose incomplete well coverage
+as NOT_EVALUATED and refuse cashflow export in that state.</li></ol>
+<p>Tests will precede implementation and will cover invalid identities, missing
+dates, unknown units, duplicate records, truncated exports, interval overlap,
+leap days, year boundaries, missing coverage and nonzero drilling CAPEX.</p>
+<h2>Basis</h2>
+<p>DataVic WFS DescribeFeatureType (observed 2026-10-20) will govern source field
+names. The existing FDAS CashflowEngine.calculate_drilling_capex method will
+govern multiplication of activity days by a caller-supplied daily rate.
+Expected allocations will follow independent calendar counts in test docstrings.
+No default duration, rate or engineering acceptance limit will be introduced.</p>
+<h2>Adversarial plan assessment</h2>
+<p>The design will guard against treating rig release as a drilling endpoint,
+assigning fields by name similarity, assuming water-depth units, double counting
+overlapping intervals, and admitting partial coverage to cashflow. It will avoid
+an FDAS dependency on BSEE or Australia. Cross-provider review will remain pending
+for the draft pull request because this execution will not call other models.</p>
+</main></html>
