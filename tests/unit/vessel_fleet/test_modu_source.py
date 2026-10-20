@@ -124,7 +124,6 @@ def test_canonical_commitment_and_source_verification():
     reversed_keys = dict(reversed(list(complete_record().items())))
     other = SourceRecord.model_validate(reversed_keys)
     assert canonical_bytes(record) == canonical_bytes(other)
-    assert commitment(record) == hashlib.sha256(canonical_bytes(record)).hexdigest()
     changed = copy.deepcopy(complete_record())
     changed["quantities"]["draft"]["value"] = 6
     assert commitment(SourceRecord.model_validate(changed)) != commitment(record)
@@ -132,6 +131,83 @@ def test_canonical_commitment_and_source_verification():
         verify_source_bytes(record, {"example": b"tampered"})
     with pytest.raises(ValueError, match="SOURCE_BYTES_MISSING"):
         verify_source_bytes(record, {})
+
+
+def test_canonical_record_fixed_oracle():
+    """Handwritten v1 bytes; digest established with sha256sum and OpenSSL.
+
+    Unicode stays UTF-8, nested keys sort, integers differ from floats, signed
+    zero stays negative, and aliases retain the meaningful z-before-é order.
+    Neither expected bytes nor the digest is derived from the implementation.
+    """
+    citation = {"source_id": "example", "locator": "β"}
+    binding = {**citation, "physical_id": "unit-a", "condition_id": "c"}
+    data = {
+        "schema_version": "1",
+        "record_id": "canonical-é",
+        "rig_source_id": "fixture:a",
+        "rig_class": "drillship",
+        "rig_evidence": citation,
+        "physical_id": None,
+        "imo": None,
+        "fallback": None,
+        "aliases": [
+            {"alias": alias, "physical_id": "unit-a", "imo": None, "evidence": citation}
+            for alias in ("z", "é")
+        ],
+        "identity_evidence": None,
+        "geometry_evidence": None,
+        "condition": None,
+        "frame": None,
+        "quantities": {
+            "length": {"value": 100, "unit": "m", "evidence": binding},
+            "draft": {"value": 5.0, "unit": "m", "evidence": binding},
+            "cog_x": {"value": -0.0, "unit": "m", "evidence": binding},
+        },
+        "sources": [
+            {
+                "source_id": "example",
+                "url": "https://example.org/reference",
+                "captured_at": "2026-01-01T00:00:00Z",
+                "http_status": 200,
+                "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+                "size_bytes": 3,
+                "origin": "synthetic",
+                "redistribution": "facts_only",
+                "rights_evidence": "Synthetic",
+            }
+        ],
+        "missing_evidence": {"loading_condition": "Unknown", "geometry": "Non établi"},
+    }
+    expected_bytes = (
+        '{"aliases":[{"alias":"z","evidence":{"locator":"β","source_id":"example"},'
+        '"imo":null,"physical_id":"unit-a"},{"alias":"é","evidence":{"locator":"β",'
+        '"source_id":"example"},"imo":null,"physical_id":"unit-a"}],"condition":null,'
+        '"fallback":null,"frame":null,"geometry_evidence":null,"identity_evidence":null,'
+        '"imo":null,"missing_evidence":{"geometry":"Non établi","loading_condition":"Unknown"},'
+        '"physical_id":null,"quantities":{"cog_x":{"evidence":{"condition_id":"c",'
+        '"locator":"β","physical_id":"unit-a","source_id":"example"},"unit":"m","value":-0.0},'
+        '"draft":{"evidence":{"condition_id":"c","locator":"β","physical_id":"unit-a",'
+        '"source_id":"example"},"unit":"m","value":5.0},"length":{"evidence":{"condition_id":"c",'
+        '"locator":"β","physical_id":"unit-a","source_id":"example"},"unit":"m","value":100}},'
+        '"record_id":"canonical-é","rig_class":"drillship","rig_evidence":{"locator":"β",'
+        '"source_id":"example"},"rig_source_id":"fixture:a","schema_version":"1",'
+        '"sources":[{"captured_at":"2026-01-01T00:00:00Z","http_status":200,"origin":"synthetic",'
+        '"redistribution":"facts_only","rights_evidence":"Synthetic",'
+        '"sha256":"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",'
+        '"size_bytes":3,"source_id":"example","url":"https://example.org/reference"}]}'
+    ).encode("utf-8")
+    expected_digest = "81396d5a90692ee3b46e13ecbe84e14abb8e336489242f080938cc9eb805cfba"
+    record = SourceRecord.model_validate(data)
+    assert canonical_bytes(record) == expected_bytes
+    assert commitment(record) == expected_digest
+    other = SourceRecord.model_validate(dict(reversed(list(data.items()))))
+    assert canonical_bytes(other) == expected_bytes
+    assert commitment(other) == expected_digest
+    data["aliases"].reverse()
+    reordered = SourceRecord.model_validate(data)
+    assert canonical_bytes(reordered) != expected_bytes
+    assert commitment(reordered) != expected_digest
 
 
 @pytest.mark.parametrize("field", list(complete_record()["quantities"]))
@@ -292,6 +368,85 @@ def test_missing_and_contradictory_dispositions():
         "CONTRADICTORY_DISPOSITION:length"
         in assess(SourceRecord.model_validate(data)).reasons
     )
+
+
+@pytest.mark.parametrize(
+    "key,expected_reason",
+    [
+        ("physical_identity", "CONTRADICTORY_DISPOSITION:physical_identity"),
+        ("loading_condition", "CONTRADICTORY_DISPOSITION:loading_condition"),
+        ("geometry", "CONTRADICTORY_DISPOSITION:geometry"),
+        ("coordinate_frame", "CONTRADICTORY_DISPOSITION:coordinate_frame"),
+        ("aliases", "CONTRADICTORY_DISPOSITION:aliases"),
+        ("rig_class", "CONTRADICTORY_DISPOSITION:rig_class"),
+        ("public_eligibility", "CONTRADICTORY_DISPOSITION:public_eligibility"),
+    ],
+)
+def test_populated_metadata_rejects_missing_disposition(key, expected_reason):
+    data = complete_record()
+    data["sources"][0]["origin"] = "public"
+    data["missing_evidence"][key] = "Not established by source evidence"
+    result = assess(SourceRecord.model_validate(data), source_bytes={"example": b"abc"})
+    assert result.status == "REJECTED"
+    assert not result.promotable
+    assert expected_reason in result.reasons
+
+
+@pytest.mark.parametrize(
+    "key,absent_facts,expected_reason",
+    [
+        (
+            "physical_identity",
+            {"physical_id": None, "fallback": None, "identity_evidence": None},
+            "UNRESOLVED_DISPOSITION:physical_identity",
+        ),
+        (
+            "loading_condition",
+            {"condition": None},
+            "UNRESOLVED_DISPOSITION:loading_condition",
+        ),
+        ("geometry", {"geometry_evidence": None}, "UNRESOLVED_DISPOSITION:geometry"),
+        (
+            "coordinate_frame",
+            {"frame": None},
+            "UNRESOLVED_DISPOSITION:coordinate_frame",
+        ),
+        ("aliases", {"aliases": []}, "UNRESOLVED_DISPOSITION:aliases"),
+        (
+            "rig_class",
+            {"rig_class": "floater_unspecified"},
+            "UNRESOLVED_DISPOSITION:rig_class",
+        ),
+        ("public_eligibility", {}, "UNRESOLVED_DISPOSITION:public_eligibility"),
+    ],
+)
+def test_unresolved_metadata_disposition_blocks(key, absent_facts, expected_reason):
+    data = complete_record()
+    data["sources"][0]["origin"] = "public"
+    data.update(absent_facts)
+    if key == "physical_identity":
+        data["aliases"] = []
+        data["condition"] = None
+        data["frame"] = None
+        data["quantities"] = {}
+    if key == "public_eligibility":
+        data["sources"][0]["redistribution"] = "unknown"
+    data["missing_evidence"][key] = "Not established by source evidence"
+    result = assess(SourceRecord.model_validate(data), source_bytes={"example": b"abc"})
+    assert result.status == "NOT_EVALUATED"
+    assert not result.promotable
+    assert expected_reason in result.reasons
+    assert f"CONTRADICTORY_DISPOSITION:{key}" not in result.reasons
+
+
+def test_unknown_disposition_rejected():
+    data = complete_record()
+    data["sources"][0]["origin"] = "public"
+    data["missing_evidence"]["loading_conditon"] = "Unresolved"
+    result = assess(SourceRecord.model_validate(data), source_bytes={"example": b"abc"})
+    assert result.status == "REJECTED"
+    assert not result.promotable
+    assert "UNKNOWN_DISPOSITION:loading_conditon" in result.reasons
 
 
 def test_public_example_inputs_method_and_answer(monkeypatch, capsys):

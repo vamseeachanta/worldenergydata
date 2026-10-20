@@ -41,6 +41,17 @@ REQUIRED_UNITS = {
     "i_xz": "t*m^2",
     "i_yz": "t*m^2",
 }
+METADATA_DISPOSITIONS = frozenset(
+    {
+        "physical_identity",
+        "loading_condition",
+        "geometry",
+        "coordinate_frame",
+        "aliases",
+        "rig_class",
+        "public_eligibility",
+    }
+)
 
 
 class EvidenceModel(BaseModel):
@@ -314,6 +325,32 @@ def assess(
             rejected.add("NONPOSITIVE:" + key)
     if set(record.quantities) - set(REQUIRED_UNITS):
         rejected.add("UNKNOWN_QUANTITY")
+    metadata_present = {
+        "physical_identity": bool(
+            record.physical_id
+            or record.imo
+            or record.fallback
+            or record.identity_evidence
+        ),
+        "loading_condition": record.condition is not None,
+        "geometry": record.geometry_evidence is not None,
+        "coordinate_frame": record.frame is not None,
+        "aliases": bool(record.aliases),
+        "rig_class": record.rig_class != "floater_unspecified",
+        "public_eligibility": all(
+            source.origin == "public"
+            and source.redistribution == "facts_only"
+            and source.http_status == 200
+            for source in record.sources
+        ),
+    }
+    for key in record.missing_evidence:
+        if key in METADATA_DISPOSITIONS:
+            missing.add("UNRESOLVED_DISPOSITION:" + key)
+            if metadata_present[key]:
+                rejected.add("CONTRADICTORY_DISPOSITION:" + key)
+        elif key not in REQUIRED_UNITS:
+            rejected.add("UNKNOWN_DISPOSITION:" + key)
     if source_bytes is not None:
         verify_source_bytes(record, source_bytes)
     else:

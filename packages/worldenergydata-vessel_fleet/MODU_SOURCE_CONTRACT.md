@@ -12,6 +12,7 @@ created. The roster-wide riser-handling columns remain under #698.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-20 | Add the evidence contract and blocked candidate to expose source gaps. |
+| 2 | 2026-10-20 | Reject unresolved metadata dispositions and add a fixed canonical-record oracle. |
 
 ## Three slices
 
@@ -54,6 +55,20 @@ Each `SourceRecord` requires the schema version, source record and rig source
 identifiers, rig class, citations and source commitments. Optional engineering
 fields must be explicitly null or absent from `quantities`, with dispositions in
 `missing_evidence`. Unknown is never represented by zero.
+
+Supported disposition keys are the required quantity names and
+`physical_identity`, `loading_condition`, `geometry`, `coordinate_frame`,
+`aliases`, `rig_class` and `public_eligibility`. Unknown keys are rejected with
+`UNKNOWN_DISPOSITION:<key>`. Every metadata disposition adds
+`UNRESOLVED_DISPOSITION:<key>` and blocks promotion. A disposition conflicting
+with a populated fact also adds `CONTRADICTORY_DISPOSITION:<key>` and yields
+`REJECTED`. Physical identity conflicts if any physical identifier, IMO, fallback
+or identity citation is populated; loading, geometry and coordinate dispositions
+conflict with their respective condition, geometry citation and frame. Aliases
+conflict with a nonempty alias list; rig class conflicts with a class other than
+`floater_unspecified`. Public eligibility conflicts when every source asserts
+public origin, cleared fact redistribution and HTTP 200. These assertions still
+require matching bytes and independent authentication before use.
 
 A complete record carries:
 
@@ -103,6 +118,13 @@ consumer's future physical-host identity. No consumer identity algorithm is
 defined here. The independent hash fixture comes from the
 [NIST SHA-256 One Block Message Sample](https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Standards-and-Guidelines/documents/examples/SHA256.pdf),
 whose input is `abc`.
+
+A separate handwritten canonical-record byte fixture in
+`tests/unit/vessel_fleet/test_modu_source.py` has a fixed SHA-256 established with
+`sha256sum` and OpenSSL, independently of the encoder. It checks unescaped
+Unicode, nested object-key ordering, integer and floating-point representation
+(including negative zero), and meaningful alias-array order. Both
+`canonical_bytes` and `commitment` are compared with those fixed expectations.
 
 The IMO format check uses the
 [IMO Ship Identification Number Scheme explanatory page](https://www.imo.org/en/OurWork/MSAS/Pages/IMO-identification-number-scheme.aspx),
