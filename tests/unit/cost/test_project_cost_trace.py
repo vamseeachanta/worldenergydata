@@ -262,6 +262,9 @@ def test_builder_cli_writes_readable_outputs_and_protects_inputs(tmp_path):
     run = subprocess.run(command, capture_output=True, text=True, env=env, check=True)
     manifest = json.loads((tmp_path / "project_trace_manifest.json").read_text())
     assert f"Projects: {manifest['project_count']}" in run.stdout
+    assert (manifest["revision"], manifest["revision_date"]) == ("2", "2026-10-20")
+    html = (tmp_path / "project_cost_traces.html").read_text()
+    assert "<td>2</td><td>2026-10-20</td>" in html
     assert (tmp_path / "project_cost_events.csv").read_text().startswith("event_id,")
     rejected = subprocess.run(
         command[:-1] + [str(CURATED / "outputs")],
@@ -352,9 +355,19 @@ def test_award_link_source_locator_must_match_the_observation(tmp_path):
         ("midstream", "10", "20", "NOT_EVALUATED"),
         ("combined", "10", "20", "NOT_EVALUATED"),
         ("backlog", "10", "20", "NOT_EVALUATED"),
+        ("lease_contract", "10", "10", "NOT_EVALUATED"),
+        ("midstream", "10", "10", "NOT_EVALUATED"),
+        ("combined", "10", "10", "NOT_EVALUATED"),
+        ("backlog", "10", "10", "NOT_EVALUATED"),
         ("range", "10", "", "NOT_EVALUATED"),
+        ("range", "", "20", "NOT_EVALUATED"),
+        ("range", "", "", "NOT_EVALUATED"),
+        ("band", "10", "", "NOT_EVALUATED"),
         ("band", "", "20", "NOT_EVALUATED"),
+        ("band", "", "", "NOT_EVALUATED"),
         ("point", "10", "", "NOT_EVALUATED"),
+        ("point", "", "20", "NOT_EVALUATED"),
+        ("point", "", "", "NOT_EVALUATED"),
     ],
 )
 def test_award_bound_qualification_requires_comparable_complete_bounds(
@@ -397,6 +410,37 @@ def test_library_output_collision_preserves_existing_files(tmp_path, name):
         write_trace_outputs(_build([_trail()]), tmp_path)
     assert existing.read_bytes() == b"retained evidence"
     assert list(tmp_path.iterdir()) == [existing]
+
+
+@pytest.mark.parametrize("target_exists", [False, True])
+@pytest.mark.parametrize(
+    "name",
+    [
+        "project_cost_events.json",
+        "project_cost_events.csv",
+        "project_cost_traces.html",
+        "project_trace_manifest.json",
+    ],
+)
+def test_library_output_symlink_collision_preserves_target(
+    tmp_path, name, target_exists
+):
+    """Occupied names include dangling links; their targets must remain untouched."""
+    target = tmp_path / "retained-evidence"
+    if target_exists:
+        target.write_bytes(b"retained evidence")
+    output = tmp_path / "outputs"
+    output.mkdir()
+    existing = output / name
+    existing.symlink_to(target)
+    with pytest.raises(FileExistsError):
+        write_trace_outputs(_build([_trail()]), output)
+    assert existing.is_symlink()
+    assert list(output.iterdir()) == [existing]
+    if target_exists:
+        assert target.read_bytes() == b"retained evidence"
+    else:
+        assert not target.exists()
 
 
 def test_revision_metadata_is_supplied_and_retained_in_manifest(tmp_path):
