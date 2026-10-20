@@ -131,6 +131,11 @@ temporary_exceptions:
       - reports/cost/big_foot_cost_map_reconciliation.csv
       - reports/cost/cost_basis_timeseries.html
       - reports/cost/cost_timeseries_presentation.html
+      - reports/cost/fdas_workbook_reconciliation/index.html
+      - reports/cost/fdas_workbook_reconciliation/manifest.json
+      - reports/cost/fdas_workbook_reconciliation/monthly.csv
+      - reports/cost/fdas_workbook_reconciliation/reconciliation.csv
+      - reports/cost/fdas_workbook_reconciliation/reconciliation.json
       - reports/cost/inflation_verdicts.csv
       - reports/cost/reconciliation.csv
       - reports/cost/stage_allocations.csv

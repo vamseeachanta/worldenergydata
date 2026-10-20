@@ -1,0 +1,183 @@
+{
+  "assumption_vintage": "FDAS_V30",
+  "comparison_policy": "Exact native basis only; no automatic normalization; unknown basis is NOT_EVALUATED",
+  "contract_version": "1.0",
+  "materiality_policy": null,
+  "source": "docs/plans/2026-07-16-issue-1044-fdas-workbook-reconciliation.md#resource-intelligence-summary",
+  "time_basis": "Explicit monthly cells; summary totals over the matching project sheet window",
+  "units": {
+    "assumption_cost": "USD MM; row-specific denominator",
+    "monthly_cost": "USD",
+    "summary_cost": "USD"
+  },
+  "workbooks": {
+    "drilling_and_completion_days.xlsx": {
+      "sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f",
+      "sheets": [
+        {
+          "dimensions": [
+            220,
+            12
+          ],
+          "formula_cells": [
+            "H220",
+            "I220"
+          ],
+          "schema_sha256": "8ccc4c13bfdfe69773f3b17f57f9aa06c2480eb4043388e9d103fa4dca290d9f",
+          "sheet_id": "sheet-000",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            21,
+            4
+          ],
+          "formula_cells": [],
+          "schema_sha256": "4dcd34abb07185b3cee22e2925a09ce2fe19b04877df71cb7c983025c4505db0",
+          "sheet_id": "sheet-001",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            218,
+            7
+          ],
+          "formula_cells": [],
+          "schema_sha256": "d6909c3448ff474b572a8fc7e7541a31c14a9850a1cc228ad38582a4d7c7e880",
+          "sheet_id": "sheet-002",
+          "uncached_formula_cells": []
+        }
+      ]
+    },
+    "financial_project_summary.xlsx": {
+      "sha256": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04",
+      "sheets": [
+        {
+          "dimensions": [
+            11,
+            28
+          ],
+          "formula_cells": [],
+          "schema_sha256": "70927863172f330168f421e82d72dabeb56b315e4326de3052809997491d7177",
+          "sheet_id": "sheet-000",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "58c23f7241d6fb0a9a212d2f510cb509963c8cb4cd3a2024a88df5552d5d1433",
+          "sheet_id": "sheet-001",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "928788ae4c3fd265d359ec8e2bc2dfccea30b0854484779e8db4ad2ef2113129",
+          "sheet_id": "sheet-002",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "4c87fba01400725deefb9bb492c72f3c0a1d8cbc1bbf88fd34a13cf20cbd91a4",
+          "sheet_id": "sheet-003",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "1672e4ac9178e80943c2d486137f9b3e4491d320422a85fe4ca0559b9f3354d6",
+          "sheet_id": "sheet-004",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "6edb2f432da80b395c4a877de142b8fea5dbe7b8085fdc5e9346cfb1cb87ed43",
+          "sheet_id": "sheet-005",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "7d43e83d82e8f785a4620d1a6f515ab400f6e7c0a532d6828d3466cd9a47c672",
+          "sheet_id": "sheet-006",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "b61bcbbf21bdc6c7e781010fcd9ab11968fa3d30aa8acbe7c8f5a39aae4a6360",
+          "sheet_id": "sheet-007",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "fda1ec15b5d3be091ff120f86f44d2ce4e2a68e47646d8d9701b7eaa1e8114a1",
+          "sheet_id": "sheet-008",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "c7d35e1b83f23982581fe0860845288a5bf2feb6a22fd6ae51bc3c384a48f719",
+          "sheet_id": "sheet-009",
+          "uncached_formula_cells": []
+        },
+        {
+          "dimensions": [
+            298,
+            13
+          ],
+          "formula_cells": [],
+          "schema_sha256": "cfe8ab04ef0c2d229b8f067599620a0f0e6e6341deb883a540aa417ed9f952a5",
+          "sheet_id": "sheet-010",
+          "uncached_formula_cells": []
+        }
+      ]
+    },
+    "lease_assumptions.xlsx": {
+      "sha256": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407",
+      "sheets": [
+        {
+          "dimensions": [
+            40,
+            7
+          ],
+          "formula_cells": [],
+          "schema_sha256": "b41f4d62111a43f9e63cba06a9a8c160fd5f35e2393c0dc5f1fd632f1429c200",
+          "sheet_id": "sheet-000",
+          "uncached_formula_cells": []
+        }
+      ]
+    }
+  }
+}

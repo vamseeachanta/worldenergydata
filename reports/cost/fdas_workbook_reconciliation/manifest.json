@@ -1,0 +1,53 @@
+{
+  "contract_version": "1.0",
+  "decimal_policy": "native Decimal strings; exact sums; one decimal in HTML only",
+  "generated_at_policy": "omitted for deterministic output",
+  "inputs": {
+    "config/analysis/lower_tertiary/fdas_workbook_vintages.json": "6f73036def1e95017c17bc6de936686098af7b3466a6ff2303fcc5da4c84f30a",
+    "data/modules/cost/curated/cost_requirement_identity.csv": "acdaa530a1ba1659e933420a1132cbab089c73270524b1efee84b379967c0c6d",
+    "data/modules/cost/curated/fdas_project_cost_crosswalk.csv": "f5e2fb5f0f3619964e100bee02c12bc4bd1c6e5be102d02f606d238ec093c236",
+    "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f",
+    "docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04",
+    "docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407",
+    "packages/worldenergydata-cost/src/worldenergydata/cost/workbook_reconciliation/__init__.py": "aa6611d79576f68645b0577523a4ba3275acb9b1bd9bdcd068f778cc07eb1309",
+    "packages/worldenergydata-cost/src/worldenergydata/cost/workbook_reconciliation/models.py": "a3971c2979fb5a0463df8bc3cb5be47e1a502678f74519bea91f9fbe8a03a3dd",
+    "packages/worldenergydata-cost/src/worldenergydata/cost/workbook_reconciliation/reconcile.py": "7e59c8f41142f668a977c6ca88eb9cdd0201b29d5ef4df928e4668b04be28cb5",
+    "packages/worldenergydata-cost/src/worldenergydata/cost/workbook_reconciliation/report.py": "4cdfe778d37e74d3a56c4d9a26ea4bf91651a67751ee9dc9fd48570670e68983",
+    "packages/worldenergydata-cost/src/worldenergydata/cost/workbook_reconciliation/workbook_reader.py": "0d7a4e35bb58b14202259639252eb33ed6aa46e6db5a65bfd287d479e69ce623",
+    "reports/cost/big_foot_cost_map_reconciliation.csv": "5312315baa7dc59233910dc093cb5c1515b1b71c2e91d383fd85ebfea1959a35",
+    "scripts/cost/build_fdas_workbook_reconciliation.py": "ab372ce7a547ccf741df03c1042e358ea3b781848b6df292539b451f61125819"
+  },
+  "known_limits": [
+    "No full V30 financial-engine reproduction",
+    "V50 adoption excluded (#899)",
+    "External project identity, scope and basis equivalence not established",
+    "Stakeholder circulation requires maintainer approval (#1017)"
+  ],
+  "materiality_policy": null,
+  "outputs": {
+    "index.html": "1f290adac72cb16544f12e7367a334a5b3ae779ff7f8d5fa7180fc5af69c821d",
+    "monthly.csv": "88298fbf004ab56e9b847b5485047559f20919e53fc31dce6e420b700f83e8f3",
+    "reconciliation.csv": "618244967a76f9d49651d3fabea09640de970f4b1875401e66992fdc3b9beb83",
+    "reconciliation.json": "c5f310f1e7a73e3cf2cdc7bb03af73956eeff4210945490db6bfb70abb9c5341"
+  },
+  "upstream": [
+    {
+      "path": "data/modules/cost/derived/cost_synthesis_manifest.v3.json",
+      "reason": "required manifest unavailable",
+      "sha256": "",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "path": "data/modules/cost/derived/project_trace_contract_manifest.v3.json",
+      "reason": "required manifest unavailable",
+      "sha256": "",
+      "status": "NOT_EVALUATED"
+    },
+    {
+      "path": "data/modules/cost/derived/capex_estimator_manifest.json",
+      "reason": "required manifest unavailable",
+      "sha256": "",
+      "status": "NOT_EVALUATED"
+    }
+  ]
+}
