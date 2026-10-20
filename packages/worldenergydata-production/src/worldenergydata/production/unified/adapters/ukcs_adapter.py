@@ -123,7 +123,11 @@ class UkcsAdapter(AbstractProductionAdapter):
         out["oil_bbl"] = pd.to_numeric(loader_df["oil_bbl"], errors="coerce")
         out["gas_mcf"] = pd.to_numeric(loader_df["gas_mcf"], errors="coerce")
         out["water_bbl"] = pd.to_numeric(loader_df["water_bbl"], errors="coerce")
-        out["condensate_bbl"] = np.nan
+        out["condensate_bbl"] = (
+            pd.to_numeric(loader_df["condensate_bbl"], errors="coerce")
+            if "condensate_bbl" in loader_df
+            else np.nan
+        )
         out["source"] = "nsta"
         return out[list(STANDARD_COLUMNS)]
 
