@@ -515,7 +515,11 @@ def build_screen(bundle: dict, policy: Policy, *, as_of: str) -> dict:
     units = _rank_units(units, policy)
     operators = _registry(inventory, units, months, policy)
     ranked = sorted(
-        (o for o in operators if o["operator_size_band"] == "in_band"),
+        (
+            o
+            for o in operators
+            if o["selection_status"] in {"SELECTED", "NOT_EVALUATED"}
+        ),
         key=lambda o: (-o["signal_count"], o["operator_no"]),
     )
     canonical_bundle = dict(bundle)

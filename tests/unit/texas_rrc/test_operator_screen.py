@@ -9,6 +9,7 @@ These are hand calculations, not estimates of recoverable production.
 """
 
 import copy
+import csv
 import json
 from pathlib import Path
 
@@ -160,6 +161,54 @@ def test_well_grain_supports_stripper_classification(bundle):
     assert a["stripper_share"] == 1
     assert a["bopd_per_well_median"] == 1
     assert a["selection_status"] == "SELECTED"
+
+
+@pytest.mark.parametrize(
+    "qualifying_wells,min_share,selected",
+    [(0, 0.5, False), (0, 0.0, True), (1, 0.5, True), (1, 0.75, False)],
+)
+def test_stripper_share_controls_ranked_exports(
+    bundle, tmp_path, qualifying_wells, min_share, selected
+):
+    """Well rates of 1 or 10 bbl/day give shares of 0/2 or 1/2 at cutoff 2."""
+    import pyarrow.parquet as pq
+
+    rows = bundle["production"][:2]
+    bundle["production"] = bundle["production"][2:]
+    for index, well in enumerate(bundle["wells"][:2]):
+        rate = 1 if index < qualifying_wells else 10
+        for row in rows:
+            days = 31 if row["month"] == "2025-01" else 28
+            bundle["production"].append(
+                {
+                    **row,
+                    "granularity": "well",
+                    "api_number": well["api_number"],
+                    "oil_bbl": rate * days,
+                }
+            )
+    result = run(bundle, min_stripper_share=min_share)
+    operator = result["operators"][0]
+    assert operator["stripper_share"] == qualifying_wells / 2
+    assert operator["selection_status"] == (
+        "SELECTED" if selected else "BELOW_STRIPPER_SHARE"
+    )
+    expected = {"000001", "000002", "000003"} if selected else {"000002", "000003"}
+    assert {o["operator_no"] for o in result["ranked_operators"]} == expected
+    assert all(
+        o["selection_status"] == "NOT_EVALUATED" for o in result["operators"][1:]
+    )
+    write_outputs(result, tmp_path)
+    for name, ids in (
+        ("operator_registry", {"000001", "000002", "000003"}),
+        ("ranked_operators", expected),
+    ):
+        json_rows = json.loads((tmp_path / f"{name}.json").read_text())
+        with (tmp_path / f"{name}.csv").open(newline="") as stream:
+            csv_rows = list(csv.DictReader(stream))
+        parquet_rows = pq.read_table(tmp_path / f"{name}.parquet").to_pylist()
+        for exported in (json_rows, csv_rows, parquet_rows):
+            assert {o["operator_no"] for o in exported} == ids
 
 
 @pytest.mark.parametrize(
