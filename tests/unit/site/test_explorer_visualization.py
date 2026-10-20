@@ -159,6 +159,30 @@ def test_malformed_requests_are_rejected(release, payload):
     assert result["status"] == 400
 
 
+@pytest.mark.parametrize("depth", [1, 1100])
+def test_array_field_ids_are_rejected_before_download(release, depth):
+    config, _ = release
+    # Construct raw JSON so decoder recursion, rather than encoder recursion,
+    # is exercised while the request remains below the configured byte limit.
+    payload = (
+        b'{"dataset_revision":"'
+        + DATA_REV.encode()
+        + b'","field_id":'
+        + b"[" * depth
+        + b"0"
+        + b"]" * depth
+        + b"}"
+    )
+    assert len(payload) <= config["limits"]["request_bytes"]
+    app = mod.create_app(
+        config, fetch=lambda *a, **k: pytest.fail("unexpected download")
+    )
+    result = request(app, payload)
+    assert result["status"] == 400
+    assert result["body"]["issue"].endswith("/issues/966")
+    assert "svg" not in result["body"]
+
+
 def test_request_limits_and_methods(release):
     config, raw = release
     app = mod.create_app(config, fetch=lambda *a, **k: raw)

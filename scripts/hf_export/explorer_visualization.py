@@ -286,7 +286,7 @@ def create_app(config, *, fetch=download):
             field_id = payload.get("field_id")
             if field_id is not None and not isinstance(field_id, str):
                 raise ValueError("Invalid field id")
-        except (ValueError, UnicodeError):
+        except (ValueError, UnicodeError, RecursionError):
             return error(
                 HTTPStatus.BAD_REQUEST,
                 "Use an approved full dataset revision and optional field id",
