@@ -19,10 +19,16 @@ same incoming batch.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping, Sequence
 from enum import Enum
-from typing import Any, Iterable, Mapping, Optional, Sequence, Tuple
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+
+from worldenergydata.cost.data_collection.disclosure_revision_contract import (
+    DisclosureRevision,
+    revision_lineage_depths,
+)
 
 # ---------------------------------------------------------------------------
 # Enums
@@ -94,6 +100,8 @@ class ConflictReasonCode(str, Enum):
     VALUE_MISMATCH = "value_mismatch"
     CITATION_MISMATCH = "citation_mismatch"
     SOURCE_PRIORITY_CONFLICT = "source_priority_conflict"
+    VERSION_ID_CONFLICT = "version_id_conflict"
+    REVISION_LINEAGE_CONFLICT = "revision_lineage_conflict"
 
 
 # ---------------------------------------------------------------------------
@@ -129,7 +137,7 @@ class DisclosureCitation(BaseModel):
     @field_validator("source_url")
     @classmethod
     def _require_absolute_http(cls, value: str) -> str:
-        if not (value.startswith("http://") or value.startswith("https://")):
+        if not (value.startswith(("http://", "https://"))):
             raise ValueError("source_url must be an absolute http(s) URL")
         return value
 
@@ -151,7 +159,8 @@ class DisclosureRow(BaseModel):
     metric_value: float
     metric_unit: str = Field(..., min_length=1)
     citation: DisclosureCitation
-    project_name: Optional[str] = None
+    project_name: str | None = None
+    revision: DisclosureRevision | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +174,7 @@ class CitationValidationResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     is_valid: bool
-    errors: Tuple[str, ...] = ()
+    errors: tuple[str, ...] = ()
 
 
 def validate_disclosure_citation(row: DisclosureRow) -> CitationValidationResult:
@@ -199,7 +208,7 @@ def validate_disclosure_citation(row: DisclosureRow) -> CitationValidationResult
 # ---------------------------------------------------------------------------
 
 
-BusinessKey = Tuple[str, int, DisclosureScope, str, Optional[str]]
+BusinessKey = tuple[str, int, DisclosureScope, str, str | None]
 
 
 def disclosure_business_key(row: DisclosureRow) -> BusinessKey:
@@ -219,10 +228,11 @@ class ClassificationDecision(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     status: DisclosureIngestStatus
-    reason_code: Optional[ConflictReasonCode] = None
-    matched_row: Optional[DisclosureRow] = None
-    existing_priority: Optional[SourcePriority] = None
-    incoming_priority: Optional[SourcePriority] = None
+    reason_code: ConflictReasonCode | None = None
+    matched_row: DisclosureRow | None = None
+    existing_priority: SourcePriority | None = None
+    incoming_priority: SourcePriority | None = None
+    lineage_error: str | None = None
 
 
 def _citation_payload_equal(a: DisclosureCitation, b: DisclosureCitation) -> bool:
@@ -245,10 +255,45 @@ def classify_disclosure_row(
     """Classify `new_row` against existing dataset rows + earlier batch rows.
 
     Search order is: dataset rows first, then earlier rows in the same
-    batch. The first business-key collision determines the outcome — there
-    is no merging across multiple matches.
+    batch. Revision identity and lineage are checked before legacy business-key
+    conflicts. Invalid existing lineage raises ValueError; a new invalid edge
+    is a conflict with a diagnostic. For legacy rows, the first business-key
+    collision determines the outcome; there is no merging across matches.
     """
     new_key = disclosure_business_key(new_row)
+    corpus = list(existing_rows) + list(batch_seen_rows)
+    revision_lineage_depths(corpus, business_key=disclosure_business_key)
+    if new_row.revision is not None:
+        for candidate in corpus:
+            if (
+                candidate.revision is not None
+                and candidate.revision.version_id == new_row.revision.version_id
+            ):
+                return ClassificationDecision(
+                    status=(
+                        DisclosureIngestStatus.DUPLICATE
+                        if candidate == new_row
+                        else DisclosureIngestStatus.CONFLICT
+                    ),
+                    reason_code=(
+                        None
+                        if candidate == new_row
+                        else ConflictReasonCode.VERSION_ID_CONFLICT
+                    ),
+                    matched_row=candidate,
+                )
+    try:
+        revision_lineage_depths(
+            [*corpus, new_row], business_key=disclosure_business_key
+        )
+    except ValueError as exc:
+        return ClassificationDecision(
+            status=DisclosureIngestStatus.CONFLICT,
+            reason_code=ConflictReasonCode.REVISION_LINEAGE_CONFLICT,
+            lineage_error=str(exc),
+        )
+    if new_row.revision is not None:
+        return ClassificationDecision(status=DisclosureIngestStatus.ACCEPTED)
     for candidate in list(existing_rows) + list(batch_seen_rows):
         if disclosure_business_key(candidate) != new_key:
             continue
@@ -333,16 +378,16 @@ class InvalidRecord(BaseModel):
 
     index: int
     raw: Any
-    errors: Tuple[str, ...]
+    errors: tuple[str, ...]
 
 
 class IngestResult(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    accepted: Tuple[AcceptedRecord, ...] = ()
-    duplicates: Tuple[DuplicateRecord, ...] = ()
-    conflicts: Tuple[ConflictRecord, ...] = ()
-    invalid: Tuple[InvalidRecord, ...] = ()
+    accepted: tuple[AcceptedRecord, ...] = ()
+    duplicates: tuple[DuplicateRecord, ...] = ()
+    conflicts: tuple[ConflictRecord, ...] = ()
+    invalid: tuple[InvalidRecord, ...] = ()
 
 
 def _coerce_row(raw: Any) -> DisclosureRow:
@@ -377,6 +422,7 @@ def ingest_disclosure_rows(
     invalid: list[InvalidRecord] = []
 
     accepted_rows: list[DisclosureRow] = []
+    revision_lineage_depths(existing_rows, business_key=disclosure_business_key)
 
     for index, raw in enumerate(raw_rows):
         try:
