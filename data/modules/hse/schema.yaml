@@ -1,5 +1,19 @@
 module: hse
-description: "Health, Safety and Environment incident data (no data files present\
-  \ \u2014 run 'make data' to populate)"
-datasets: []
+description: >-
+  HSE holdings from BSEE, OSHA and EPA; source-neutral public offshore evidence
+  is a separate curated collection.
+actual_authorities: [BSEE, OSHA, EPA]
+uk_hse_offshore_statistics_status: not_acquired
+source_registry: offshore/source_registry.json
+datasets:
+  - id: offshore_public_evidence
+    model: worldenergydata.hse.offshore.Event
+    source_model: worldenergydata.hse.offshore.SourceDocument
+    importer: worldenergydata.hse.importers.offshore_importer.OffshoreImporter
+    storage: external
+    relative_path: offshore
+    sample: offshore/pilot.json
+    status: pilot_recheck_incomplete_bulk_pending
+    personal_names: prohibited
+    raw_report_text: prohibited
 binary_stores: []

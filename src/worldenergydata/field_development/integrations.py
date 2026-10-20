@@ -27,6 +27,7 @@ feasibility and hardware picks vary per **candidate concept**.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -116,61 +117,86 @@ def dev_system_for(concept: FieldConcept) -> Optional[str]:
     return classify_dev_system_by_depth(concept.water_depth_m * M_TO_FT)
 
 
-def estimate_economics(concept: FieldConcept) -> Economics:
-    """Rough, field-level economics using project_economics assumptions + the NPV API.
+def _required_assumption(mgr, sysname: str, key: str) -> float:
+    """Reject missing/non-finite project_economics inputs instead of inventing zero costs."""
+    value = mgr.get(sysname, key, None)
+    if value is None or not math.isfinite(value) or value < 0:
+        raise ValueError(f"{key} missing, non-finite or negative")
+    if key in ("HOST_CAPEX_MM", "SURF_PER_WELL_MM") and value == 0:
+        raise ValueError(f"{key} is zero; CAPEX basis not established")
+    if key in ("ROYALTY_RATE", "DISCOUNT_RATE_ANNUAL") and value >= 1:
+        raise ValueError(f"{key} must be a fraction in [0, 1)")
+    return value
 
-    Best-effort: CAPEX from dev-system assumptions; NPV only when enough inputs
-    (plateau rate, price, field life) are present to build a simple cashflow.
+
+def estimate_economics(concept: FieldConcept) -> Economics:
+    """project_economics CAPEX and labelled undeclined oil-price proxy; pack E2–E4.
+
+    A missing input suppresses its dependent result and names the missing basis.
     """
-    eco = Economics()
-    sysname = dev_system_for(concept)
-    eco.dev_system = sysname
-    if sysname in (None, "unknown"):
-        eco.note = "water depth unknown — cannot classify dev system"
+    eco = Economics(dev_system=dev_system_for(concept))
+    if eco.dev_system in (None, "unknown"):
+        eco.note = (
+            "water depth unknown or project_economics unavailable "
+            "— cannot classify dev system"
+        )
         return eco
     try:
         from worldenergydata.project_economics.core.config import AssumptionsManager
-    except Exception:
+    except ImportError:
         eco.note = "project_economics unavailable"
         return eco
-
+    if concept.num_wells is None:
+        eco.note = "CAPEX and NPV not evaluated: num_wells missing"
+        return eco
     mgr = AssumptionsManager()
-    host_capex = mgr.get(sysname, "HOST_CAPEX_MM", 0.0)
-    per_well = mgr.get(sysname, "SURF_PER_WELL_MM", 0.0)
-    wells = concept.num_wells or 0
-    eco.capex_mm = round(host_capex + per_well * wells, 1)
-    eco.discount_rate = concept.discount_rate or mgr.get(
-        sysname, "DISCOUNT_RATE_ANNUAL", 0.10
+    sysname = eco.dev_system
+    try:
+        host = _required_assumption(mgr, sysname, "HOST_CAPEX_MM")
+        per_well = _required_assumption(mgr, sysname, "SURF_PER_WELL_MM")
+        eco.capex_mm = round(host + per_well * concept.num_wells, 1)
+        eco.discount_rate = concept.discount_rate
+        if eco.discount_rate is None:
+            eco.discount_rate = _required_assumption(
+                mgr, sysname, "DISCOUNT_RATE_ANNUAL"
+            )
+        eco.npv_mm = _rough_npv(concept, eco.capex_mm, eco.discount_rate, mgr, sysname)
+    except ValueError as exc:
+        eco.note = f"Not evaluated: {exc}"
+        return eco
+    eco.note = (
+        "NPV is an undeclined oil-price proxy: all boe valued at oil price; "
+        "gas price unused; flat production for whole years, end-year receipts; "
+        "CAPEX at time zero; no tax, abandonment or decline."
     )
-    eco.npv_mm = _rough_npv(concept, eco.capex_mm, eco.discount_rate, mgr, sysname)
-    if eco.npv_mm is None:
-        eco.note = "CAPEX estimated; NPV needs plateau rate, price deck, field life"
     return eco
 
 
-def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> Optional[float]:
-    """A coarse annual-cashflow NPV; None if inputs are insufficient."""
-    if not (
-        concept.plateau_rate_boed
-        and concept.oil_price_usd_bbl
-        and concept.field_life_years
-    ):
-        return None
-    try:
-        from worldenergydata.project_economics.api import EconomicsQuery
-    except Exception:
-        return None
-    annual_rev = concept.plateau_rate_boed * 365.0 * concept.oil_price_usd_bbl / 1e6
-    fixed_opex = mgr.get(sysname, "FIXED_OPEX_MM_PER_YEAR", 0.0)
-    var_opex = mgr.get(sysname, "VARIABLE_OPEX_$/BBL", 0.0)
-    annual_opex = fixed_opex + var_opex * concept.plateau_rate_boed * 365.0 / 1e6
-    royalty = mgr.get(sysname, "ROYALTY_RATE", 0.0)
-    net_annual = annual_rev * (1 - royalty) - annual_opex
+def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> float:
+    """Pack E3–E4: annual oil-price proxy; invalid/missing basis raises."""
+    for key in ("plateau_rate_boed", "oil_price_usd_bbl", "field_life_years"):
+        value = getattr(concept, key)
+        if value is None or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"NPV needs finite positive {key}")
+    if not float(concept.field_life_years).is_integer():
+        raise ValueError(
+            "NPV requires whole field_life_years; fractional years not evaluated"
+        )
+    fixed_opex = _required_assumption(mgr, sysname, "FIXED_OPEX_MM_PER_YEAR")
+    var_opex = _required_assumption(mgr, sysname, "VARIABLE_OPEX_$/BBL")
+    royalty = _required_assumption(mgr, sysname, "ROYALTY_RATE")
+    annual_volume_mm = concept.plateau_rate_boed * 365.0 / 1e6
+    net_annual = (
+        annual_volume_mm * (concept.oil_price_usd_bbl * (1 - royalty) - var_opex)
+        - fixed_opex
+    )
     cashflows = [-capex_mm] + [net_annual] * int(concept.field_life_years)
     try:
+        from worldenergydata.project_economics.api import EconomicsQuery
+
         return round(EconomicsQuery.npv(cashflows, discount_rate, period="annual"), 1)
-    except Exception:
-        return None
+    except ImportError as exc:
+        raise ValueError("project_economics NPV API unavailable") from exc
 
 
 # --------------------------------------------------------------------------- #

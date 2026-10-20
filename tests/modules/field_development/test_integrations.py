@@ -9,6 +9,8 @@ written to accept either the populated result or a documented ``note``.
 
 from __future__ import annotations
 
+import pytest
+
 from worldenergydata.field_development import (
     ConceptType,
     Economics,
@@ -53,13 +55,15 @@ def test_dev_system_none_when_depth_unknown():
 # Economics
 # --------------------------------------------------------------------------- #
 def test_economics_returns_capex_for_known_depth():
+    pytest.importorskip("worldenergydata.project_economics.api")
     eco = estimate_economics(FieldConcept(name="X", water_depth_m=1500.0, num_wells=6))
     assert isinstance(eco, Economics)
     assert eco.dev_system == "subsea15"
-    assert eco.capex_mm is not None and eco.capex_mm > 0
+    assert eco.capex_mm == 348.0  # DEFAULT_ASSUMPTIONS: 300 + 6 * 8 MM
 
 
 def test_economics_npv_present_with_full_inputs():
+    pytest.importorskip("worldenergydata.project_economics.api")
     eco = estimate_economics(
         FieldConcept(
             name="X",
@@ -71,10 +75,9 @@ def test_economics_npv_present_with_full_inputs():
             discount_rate=0.10,
         )
     )
-    # With plateau rate + price + life, an NPV should be computable.
-    assert eco.npv_mm is None or isinstance(eco.npv_mm, float)
-    if eco.npv_mm is None:
-        assert "NPV" in eco.note
+    # Pack E3–E4: 956.996 MM/year; discounted annual annuity less 348 MM.
+    assert eco.npv_mm == pytest.approx(6931.0, abs=0.05)
+    assert "undeclined oil-price proxy" in eco.note
 
 
 def test_economics_unknown_depth_has_note():

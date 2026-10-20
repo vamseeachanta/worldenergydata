@@ -1,0 +1,565 @@
+{
+  "status": "not_admitted_pending_existing_dataset_dedup",
+  "events": [
+    {
+      "event_id": "uk-20240201-riser-001",
+      "event_date": "2024-02-01",
+      "sources": [
+        {
+          "source": "opred",
+          "source_ref": "IRS/2024/4023/PON1",
+          "url": "https://itportal.energysecurity.gov.uk/irs/publications/pon1/2024/notification/4966"
+        },
+        {
+          "source": "iadc",
+          "source_ref": "24-6",
+          "url": "https://iadc.org/safety-alerts/alert-24-6-uncontrolled-release-of-lower-marine-riser-package/"
+        },
+        {
+          "source": "uk_hse",
+          "source_ref": "314115322",
+          "url": "https://resources.hse.gov.uk/notices/notices/notice_details.asp?SF=CN&SV=314115322"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20250923-001",
+      "event_date": "2025-09-23",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor---deepsea-bollsta---investigation-of-well-control-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2026/equinor---deepsea-bollsta---investigation-of-well-control-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20251008-002",
+      "event_date": "2025-10-08",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "odfjell-drilling--deepsea-nordkapp--investigation-of-a-lifting-incident-resulting-in-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2026/odfjell-drilling--deepsea-nordkapp--investigation-of-a-lifting-incident-resulting-in-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20240705-003",
+      "event_date": "2024-07-05",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "saipem--scarabeo-8--investigation-of-incident-with-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2025/saipem--scarabeo-8--investigation-of-incident-with-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20231121-004",
+      "event_date": "2023-11-21",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "order-to-okea-following-the-investigation-of-an-incident-involving-personal-injury-at-the-brage-field",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2024/order-to-okea-following-the-investigation-of-an-incident-involving-personal-injury-at-the-brage-field/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20230125-005",
+      "event_date": "2023-01-25",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor--gullfaks-c--investigation-of-fractures-in-coiled-tubing",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2023/equinor--gullfaks-c--investigation-of-fractures-in-coiled-tubing/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20221110-006",
+      "event_date": "2022-11-10",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "odfjell--linus--investigation-of-incident-with-personal-injury-during-work-on-drag-chain",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2023/odfjell--linus--investigation-of-incident-with-personal-injury-during-work-on-drag-chain/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20210513-007",
+      "event_date": "2021-05-13",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor--johan-sverdrup--investigation-of-lifting-incident-with-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/equinor--johan-sverdrup--investigation-of-lifting-incident-with-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20200920-008",
+      "event_date": "2020-09-20",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "neptuneodfjell--gjoadeepsea-yantai--investigation-of-well-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/neptuneodfjell--gjoadeepsea-yantai--investigation-of-well-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20210117-009",
+      "event_date": "2021-01-17",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor--heidrun--investigation-of-lifting-incident-with-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/equinor--heidrun--investigation-of-lifting-incident-with-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20210210-010",
+      "event_date": "2021-02-10",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "kca-deutag-askeladden-investigation-of-incident-with-dropped-object-and-serious-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/kca-deutag-askeladden-investigation-of-incident-with-dropped-object-and-serious-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20200914-011",
+      "event_date": "2020-09-14",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "order-to-valaris--investigation-of-incident-with-bop-ram-door-on-rowan-stavanger",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/order-to-valaris--investigation-of-incident-with-bop-ram-door-on-rowan-stavanger/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20201017-012",
+      "event_date": "2020-10-17",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "seadrill--west-bollsta--investigation-of-incident-with-dropped-riser-joint",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2021/seadrill--west-bollsta--investigation-of-incident-with-dropped-riser-joint/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20200416-013",
+      "event_date": "2020-04-16",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor--oseberg-b--investigation-of-serious-lifting-incident-with-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2020/equinor--oseberg-b--investigation-of-serious-lifting-incident-with-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20200314-014",
+      "event_date": "2020-03-14",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "seadrill--west-mira--investigation-of-unintentional-disconnection-of-lmrp",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2020/seadrill--west-mira--investigation-of-unintentional-disconnection-of-lmrp/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20190515-015",
+      "event_date": "2019-05-15",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "repsol--gyda--investigation-of-an-incident-involving-a-dropped-object",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2019/repsol--gyda--investigation-of-an-incident-involving-a-dropped-object/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20190313-016",
+      "event_date": "2019-03-13",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "equinor-asgard-b-order-following-investigation-of-incident-involving-dropped-object",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2019/equinor-asgard-b-order-following-investigation-of-incident-involving-dropped-object/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20190116-017",
+      "event_date": "2019-01-16",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "Seadrill-West-Hercules-investigation-lmrp",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2019/Seadrill-West-Hercules-investigation-lmrp/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20181111-018",
+      "event_date": "2018-11-11",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "maersk-drilling-maersk-invincible-investigation-of-incident-on-drill-floor",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2019/maersk-drilling-maersk-invincible-investigation-of-incident-on-drill-floor/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20171207-019",
+      "event_date": "2017-12-07",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "maersk---maersk-interceptor---investigation-report-after-fatal-accident-on-maersk-interceptor",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2018/maersk---maersk-interceptor---investigation-report-after-fatal-accident-on-maersk-interceptor/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20180519-020",
+      "event_date": "2018-05-19",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "point-resources-jotun-b-investigation-of-incident-involving-dropped-object",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2018/point-resources-jotun-b-investigation-of-incident-involving-dropped-object/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20170307-021",
+      "event_date": "2017-03-07",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil-gullfaks-b-investigation-of-crane-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2017/statoil-gullfaks-b-investigation-of-crane-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20161015-022",
+      "event_date": "2016-10-15",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil-troll-songa-endurance-investigation-of-well-control-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2017/statoil-troll-songa-endurance-investigation-of-well-control-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20160625-023",
+      "event_date": "2016-06-25",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "eni-goliat-investigation-of-a-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2017/eni-goliat-investigation-of-a-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20160316-024",
+      "event_date": "2016-03-16",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil---visund---investigation-of-well-control-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2016/statoil---visund---investigation-of-well-control-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20150922-025",
+      "event_date": "2015-09-22",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil---heidrun---investigation-of-falling-object-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2016/statoil---heidrun---investigation-of-falling-object-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20150323-026",
+      "event_date": "2015-03-23",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "north-atlantic-drilling---west-venture---investigation-of-incident-involving-dropped-object",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2015/north-atlantic-drilling---west-venture---investigation-of-incident-involving-dropped-object/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20150304-027",
+      "event_date": "2015-03-04",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "transocean-offshore---transocean-barents---investigation-into-an-incident-involving-personal-injury",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2015/transocean-offshore---transocean-barents---investigation-into-an-incident-involving-personal-injury/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20130930-028",
+      "event_date": "2013-09-30",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil---statfjord-c---investigation-of-lifting-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2013/statoil---statfjord-c---investigation-of-lifting-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20130622-029",
+      "event_date": "2013-06-22",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "marathontechnip---alvheimskandi-arctic---investigation-into-diving-incident",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2013/marathontechnip---alvheimskandi-arctic---investigation-into-diving-incident/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20220508-030",
+      "event_date": "2022-05-08",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "odfjell-drilling--deepsea-atlantic--gransking-av-loftehendelse",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2022/odfjell-drilling--deepsea-atlantic--gransking-av-loftehendelse/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20110228-031",
+      "event_date": "2011-02-28",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil-gransking-etter-hendelse-pa-gullfaks-a",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/statoil-gransking-etter-hendelse-pa-gullfaks-a/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20090228-032",
+      "event_date": "2009-02-28",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "odfjell-drilling-gransking-etter-hendelse-pa-deepsea-bergen",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/odfjell-drilling-gransking-etter-hendelse-pa-deepsea-bergen/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20070914-033",
+      "event_date": "2007-09-14",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil-gransking-etter-hendelse-pa-west-epsilon",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/statoil-gransking-etter-hendelse-pa-west-epsilon/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20101204-034",
+      "event_date": "2010-12-04",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "as-norske-shell-gransking-etter-hendelse-pa-draugen2",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/as-norske-shell-gransking-etter-hendelse-pa-draugen2/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20070812-035",
+      "event_date": "2007-08-12",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil-gransking-av-hendelse-pa-tordis",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/statoil-gransking-av-hendelse-pa-tordis/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20070602-036",
+      "event_date": "2007-06-02",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "transocean-offshore-ltd",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/transocean-offshore-ltd/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20070530-037",
+      "event_date": "2007-05-30",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "stena-drilling-as-gransking-etter-hendelse-pa-stena-don",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/stena-drilling-as-gransking-etter-hendelse-pa-stena-don/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20060113-038",
+      "event_date": "2006-01-13",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "conocophillip-gransking-av-hendelse-ekofisk-24-x",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/conocophillip-gransking-av-hendelse-ekofisk-24-x/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20050426-039",
+      "event_date": "2005-04-26",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "hydro-oseberg-b-gransking-etter-hendelse-med-personskade",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/hydro-oseberg-b-gransking-etter-hendelse-med-personskade/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20050907-040",
+      "event_date": "2005-09-07",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "conocophillips-gransking-etter-hendelse-pa-ekofisk",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/conocophillips-gransking-etter-hendelse-pa-ekofisk/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20170310-041",
+      "event_date": "2017-03-10",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoil---asgard-a---investigation-of-hydrocarbon-leak",
+          "url": "https://www.havtil.no/en/supervision/investigation-reports/2017/statoil---asgard-a---investigation-of-hydrocarbon-leak/"
+        }
+      ]
+    },
+    {
+      "event_id": "havtil-20041128-042",
+      "event_date": "2004-11-28",
+      "sources": [
+        {
+          "source": "havtil",
+          "source_ref": "statoilgassco-gransking-etter-hendelse-pa-snorre-a",
+          "url": "https://www.havtil.no/tilsyn/granskingsrapporter/2012/statoilgassco-gransking-etter-hendelse-pa-snorre-a/"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20140814-001",
+      "event_date": "2014-08-14",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "DC-398-2014-08-14",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/reports/safety/dc-398-shell-14-aug-2014.pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20240118-002",
+      "event_date": "2024-01-18",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "GC-478-2024-01-18",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/2024-07/18%20Jan%202024_GC%20478_Murphy_%20EV2010R.pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20240216-003",
+      "event_date": "2024-02-16",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "WR-29-2024-02-16",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/2024-06/16%20Feb%202024_WR%2029%20_Chevron_EV2010R.pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20240307-004",
+      "event_date": "2024-03-07",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "KC-785-2024-03-07",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/2024-07/07-MAR-2024_KC%20785_LLOG_EV2010R%20(1).pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20240313-005",
+      "event_date": "2024-03-13",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "SS-189-2024-03-13",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/2024-05/13-MAR-2024_SS189_WOG_EV2010.pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20240319-006",
+      "event_date": "2024-03-19",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "MC-607-2024-03-19",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/2024-12/MC%20607%20Chevron%2019-MAR-24.pdf"
+        }
+      ]
+    },
+    {
+      "event_id": "bsee-20211120-007",
+      "event_date": "2021-11-20",
+      "sources": [
+        {
+          "source": "bsee",
+          "source_ref": "MC-764-2021-11-20",
+          "url": "https://www.bsee.gov/sites/bsee.gov/files/shell-mc-764-20-nov-2021_0.pdf"
+        }
+      ]
+    }
+  ]
+}

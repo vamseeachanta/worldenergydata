@@ -33,6 +33,7 @@ lower_snake_case string `value`s shown below.
 ## Production
 | Field | Type | Units | Notes |
 |---|---|---|---|
+| `flowline_liquid_rate_bpd` | float | bbl/day at operating conditions | Per individual flowline, finite and nonnegative. Erosion requires oil with explicit zero GOR; no field boe/day conversion or inferred flow split. |
 | `plateau_rate_boed` | float | boe/d | Field plateau production rate. |
 | `per_well_rate_boed` | float | boe/d | Per-well rate. |
 | `num_wells` | int | count | Producer/injector well count. |

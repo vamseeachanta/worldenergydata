@@ -4,6 +4,9 @@
 
 from __future__ import annotations
 
+import re
+from xml.etree import ElementTree as ET
+
 from worldenergydata.field_development import (
     ConceptType,
     FieldConcept,
@@ -49,7 +52,11 @@ def test_embeds_both_visualizations():
     html = build_fdp_html(_julia())
     # Two inline SVGs (block diagram + plan-view layout).
     assert html.count("<svg") >= 2
-    assert "block diagram" in html and "layout" in html.lower()
+    roots = [ET.fromstring(svg) for svg in re.findall(r"<svg\b.*?</svg>", html, re.S)]
+    titles = [root.find("{http://www.w3.org/2000/svg}title").text for root in roots]
+    assert any(title.startswith("Subsea architecture") for title in titles)
+    assert any(title.startswith("Field layout") for title in titles)
+    assert all(len(list(root)) > 2 for root in roots)
 
 
 def test_actuals_rendered_when_given():
