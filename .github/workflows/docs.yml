@@ -8,6 +8,7 @@ on:
       - 'docs/api/**'
       - 'mkdocs.yml'
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'src/**'
       - 'docs/api/**'
@@ -16,6 +17,7 @@ on:
 
 jobs:
   docs:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
 
     steps:

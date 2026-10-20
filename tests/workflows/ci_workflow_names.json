@@ -1,0 +1,289 @@
+{
+  "brand-guard.yml": {
+    "name": "Brand Guard",
+    "on": {
+      "pull_request": {
+        "paths": [
+          "reports/**",
+          "scripts/**",
+          ".github/workflows/brand-guard.yml"
+        ]
+      },
+      "push": {
+        "branches": [
+          "main"
+        ],
+        "paths": [
+          "reports/**",
+          "scripts/**"
+        ]
+      }
+    },
+    "jobs": {
+      "brand-guard": {
+        "name": null,
+        "if": null
+      }
+    }
+  },
+  "ci.yml": {
+    "name": "CI",
+    "on": {
+      "push": {
+        "branches": [
+          "main",
+          "develop"
+        ]
+      },
+      "pull_request": {
+        "types": [
+          "opened",
+          "synchronize",
+          "reopened",
+          "edited"
+        ]
+      },
+      "schedule": [
+        {
+          "cron": "17 9 * * *"
+        }
+      ],
+      "workflow_dispatch": ""
+    },
+    "jobs": {
+      "mode": {
+        "name": "Gate mode",
+        "if": null
+      },
+      "domain-tests": {
+        "name": null,
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name == 'pull_request'"
+      },
+      "test": {
+        "name": "Test Python ${{ matrix.python-version }}",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && ( github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' &&\n contains(github.event.pull_request.labels.*.name, 'ci-full')))"
+      },
+      "lint": {
+        "name": "Lint (full)",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
+      },
+      "type-check": {
+        "name": "Type Check (full)",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
+      },
+      "security": {
+        "name": "Security Scan (full)",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')"
+      },
+      "build": {
+        "name": "Build Package",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result == 'success'"
+      },
+      "docs": {
+        "name": "Documentation (full)",
+        "if": "!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name == 'pull_request'"
+      },
+      "lint-gate": {
+        "name": "Lint",
+        "if": "${{ !cancelled() }}"
+      },
+      "type-check-gate": {
+        "name": "Type Check",
+        "if": "${{ !cancelled() }}"
+      },
+      "security-gate": {
+        "name": "Security Scan",
+        "if": "${{ !cancelled() }}"
+      },
+      "docs-gate": {
+        "name": "Documentation",
+        "if": "${{ !cancelled() && github.event_name == 'pull_request' }}"
+      },
+      "pr-gate": {
+        "name": "Test (PR gate)",
+        "if": "${{ !cancelled() && github.event_name == 'pull_request' }}"
+      }
+    }
+  },
+  "docs.yml": {
+    "name": "Build API Docs",
+    "on": {
+      "push": {
+        "branches": [
+          "main"
+        ],
+        "paths": [
+          "src/**",
+          "docs/api/**",
+          "mkdocs.yml"
+        ]
+      },
+      "pull_request": {
+        "paths": [
+          "src/**",
+          "docs/api/**",
+          "mkdocs.yml"
+        ]
+      },
+      "workflow_dispatch": ""
+    },
+    "jobs": {
+      "docs": {
+        "name": null,
+        "if": null
+      }
+    }
+  },
+  "nightly.yml": {
+    "name": "Nightly",
+    "on": {
+      "schedule": [
+        {
+          "cron": "0 2 * * *"
+        }
+      ],
+      "workflow_dispatch": ""
+    },
+    "jobs": {
+      "full-test-suite": {
+        "name": "Full Test Suite",
+        "if": null
+      },
+      "dependency-audit": {
+        "name": "Dependency Audit",
+        "if": null
+      },
+      "performance-benchmark": {
+        "name": "Performance Benchmark",
+        "if": null
+      },
+      "notify-failure": {
+        "name": "Notify on Failure",
+        "if": "failure()"
+      }
+    }
+  },
+  "pages.yml": {
+    "name": "Deploy Data Outputs to Pages",
+    "on": {
+      "push": {
+        "branches": [
+          "main"
+        ],
+        "paths": [
+          "reports/**",
+          "site_assets/**",
+          "scripts/build_pages.py",
+          ".github/workflows/pages.yml"
+        ]
+      },
+      "workflow_dispatch": ""
+    },
+    "jobs": {
+      "build": {
+        "name": null,
+        "if": null
+      },
+      "deploy": {
+        "name": null,
+        "if": null
+      }
+    }
+  },
+  "pr-validation.yml": {
+    "name": "PR Validation",
+    "on": {
+      "pull_request": {
+        "types": [
+          "opened",
+          "synchronize",
+          "reopened",
+          "edited"
+        ]
+      }
+    },
+    "jobs": {
+      "pr-title": {
+        "name": "Validate PR Title",
+        "if": null
+      },
+      "file-size": {
+        "name": "Check File Sizes",
+        "if": null
+      },
+      "sensitive-files": {
+        "name": "Check Sensitive Files",
+        "if": null
+      },
+      "changelog-check": {
+        "name": "Changelog Check",
+        "if": null
+      },
+      "code-owners": {
+        "name": "Code Owners Check",
+        "if": null
+      },
+      "pack-lint": {
+        "name": "Lint Changed Knowledge Packs",
+        "if": null
+      }
+    }
+  },
+  "release.yml": {
+    "name": "Release",
+    "on": {
+      "push": {
+        "tags": [
+          "v*.*.*"
+        ]
+      },
+      "workflow_dispatch": {
+        "inputs": {
+          "version": {
+            "description": "Version to release (e.g., 1.0.0)",
+            "required": "true",
+            "type": "string"
+          },
+          "publish_pypi": {
+            "description": "Publish to PyPI",
+            "required": "true",
+            "type": "boolean",
+            "default": "true"
+          },
+          "publish_testpypi": {
+            "description": "Publish to Test PyPI first",
+            "required": "true",
+            "type": "boolean",
+            "default": "true"
+          }
+        }
+      }
+    },
+    "jobs": {
+      "validate": {
+        "name": "Validate Release",
+        "if": null
+      },
+      "test": {
+        "name": "Run Tests",
+        "if": null
+      },
+      "build": {
+        "name": "Build Package",
+        "if": null
+      },
+      "publish-testpypi": {
+        "name": "Publish to Test PyPI",
+        "if": "(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||\n(github.event_name == 'workflow_dispatch' && github.event.inputs.publish_testpypi == 'true')\n"
+      },
+      "publish-pypi": {
+        "name": "Publish to PyPI",
+        "if": "always() &&\nneeds.build.result == 'success' &&\n((github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||\n (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_pypi == 'true'))\n"
+      },
+      "github-release": {
+        "name": "Create GitHub Release",
+        "if": "always() &&\nneeds.build.result == 'success' &&\ngithub.event_name == 'push' &&\nstartsWith(github.ref, 'refs/tags/')\n"
+      }
+    }
+  }
+}
