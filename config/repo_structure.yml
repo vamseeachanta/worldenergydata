@@ -292,6 +292,12 @@ temporary_exceptions:
       - reports/field_development/portfolio/stones.html
       - reports/field_development/portfolio/tobago.html
       - reports/field_development/showcase/index.html
+      - reports/field_development/transactions/na_kika_coulomb/index.html
+      - reports/field_development/transactions/na_kika_coulomb/lifecycle.html
+      - reports/field_development/transactions/na_kika_coulomb/metrics.json
+      - reports/field_development/transactions/na_kika_coulomb/lifecycle.json
+      - reports/field_development/transactions/na_kika_coulomb/economics_readiness.json
+      - reports/field_development/transactions/na_kika_coulomb/provenance.json
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
       - reports/gtm/2026-05-04-fdas-field-development-economics.html
       - reports/gtm/2026-05-04-gtm-production-decline-forecast.html

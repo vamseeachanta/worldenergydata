@@ -1,0 +1,170 @@
+{
+  "screening_status": "NOT_EVALUATED",
+  "criterion": "Field economics require qualified production, reserves and explicit assumptions; transaction ratios alone are not a valuation opinion.",
+  "bases": {
+    "shell_total": {
+      "usd_per_boe": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe)",
+        "reason": "Reserves for this exact acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": 1700000000,
+            "unit": "USD",
+            "basis": "shell_total",
+            "subject": "All interests in the announced sale",
+            "as_of": "2026-10-20",
+            "citation": {
+              "source_id": "shell_release",
+              "locator": "meta[name=description]: total consideration; subject to adjustments and contingent payments"
+            }
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe",
+            "reason": "Reserves for this exact acquired-interest scope are not verified"
+          }
+        }
+      },
+      "usd_per_flowing_boe_day": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe/d)",
+        "reason": "Production period and acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": 1700000000,
+            "unit": "USD",
+            "basis": "shell_total",
+            "subject": "All interests in the announced sale",
+            "as_of": "2026-10-20",
+            "citation": {
+              "source_id": "shell_release",
+              "locator": "meta[name=description]: total consideration; subject to adjustments and contingent payments"
+            }
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe/d",
+            "reason": "Production period and acquired-interest scope are not verified"
+          }
+        }
+      }
+    },
+    "talos_announced": {
+      "usd_per_boe": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe",
+            "reason": "Reserves for this exact acquired-interest scope are not verified"
+          }
+        }
+      },
+      "usd_per_flowing_boe_day": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe/d)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe/d",
+            "reason": "Production period and acquired-interest scope are not verified"
+          }
+        }
+      }
+    },
+    "talos_net": {
+      "usd_per_boe": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe",
+            "reason": "Reserves for this exact acquired-interest scope are not verified"
+          }
+        }
+      },
+      "usd_per_flowing_boe_day": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe/d)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe/d",
+            "reason": "Production period and acquired-interest scope are not verified"
+          }
+        }
+      }
+    },
+    "ridgewood": {
+      "usd_per_boe": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Reserves for this exact acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe",
+            "reason": "Reserves for this exact acquired-interest scope are not verified"
+          }
+        }
+      },
+      "usd_per_flowing_boe_day": {
+        "status": "NOT_EVALUATED",
+        "value": null,
+        "unit": "USD/(boe/d)",
+        "reason": "Buyer allocation or net consideration not verified from an accessible source; Production period and acquired-interest scope are not verified",
+        "inputs": {
+          "consideration": {
+            "value": null,
+            "unit": "USD",
+            "reason": "Buyer allocation or net consideration not verified from an accessible source"
+          },
+          "denominator": {
+            "value": null,
+            "unit": "boe/d",
+            "reason": "Production period and acquired-interest scope are not verified"
+          }
+        }
+      }
+    }
+  }
+}
