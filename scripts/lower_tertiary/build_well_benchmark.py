@@ -45,8 +45,8 @@ _MD_COLUMNS = [
     ("well", "Wellbore (API12)"),
     ("spud", "Spud"),
     ("first_oil", "First oil"),
-    ("drilling_days", "Drill days"),
-    ("completion_days", "Compl. days"),
+    ("spud_to_completion_calendar_days", "Spud to completion (calendar days)"),
+    ("completion_days", "Completion to first oil (calendar days)"),
     ("cum_oil_mmbbl", "Cum oil (MMbbl)"),
     ("uptime_pct", "Uptime %"),
     ("decline_annual_pct", "Decline %/yr"),
@@ -57,7 +57,7 @@ _MD_COLUMNS = [
 
 
 def _fmt(value) -> str:
-    if value is None or (isinstance(value, float) and pd.isna(value)):
+    if value is None or value == "" or (isinstance(value, float) and pd.isna(value)):
         return "—"  # flag-don't-fake: a blank cell, never a fabricated number
     if isinstance(value, float):
         return f"{value:,.1f}" if abs(value) >= 1 else f"{value:,.3f}"
@@ -84,7 +84,7 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
     lines.append("")
     lines.append(
         f"Per-well benchmark for **{len(df)} producing wells**, sorted by "
-        f"cumulative oil. Drilling/completion timing and interventions are "
+        f"cumulative oil. Calendar timing and interventions are "
         f"derived from BSEE WAR + V30 drilling data; first oil, cumulative oil "
         f"and uptime from OGOR-A production; decline (D, EUR) from the "
         f"forecasting module; estimated revenue from monthly oil × the "
@@ -93,12 +93,36 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
     )
     lines.append("")
 
+    lines.extend(
+        [
+            "## Revision history",
+            "",
+            "| Revision | Date | What changed and why |",
+            "|---|---|---|",
+            "| 1 | 2026-10-19 | Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged. |",
+            "",
+            "Spud to completion is the first completion operation date minus spud; "
+            "completion to first oil is first oil minus that completion date. "
+            "Both are elapsed calendar intervals, including suspensions, not rig-days. "
+            "The benchmark population includes only producing wells in the stated "
+            "spud window; it differs from the workbook and article populations on the "
+            "[calendar cycle-time page](https://vamseeachanta.github.io/worldenergydata/drilling-insights.html).",
+            "",
+        ]
+    )
     header = "| " + " | ".join(h for _, h in _MD_COLUMNS) + " |"
     sep = "|" + "|".join("---" for _ in _MD_COLUMNS) + "|"
     lines.append(header)
     lines.append(sep)
     for _, r in df.iterrows():
-        cells = [_fmt(r.get(col)) for col, _ in _MD_COLUMNS]
+        cells = [
+            _fmt(
+                r.get(col)
+                if col in {"field", "well", "spud", "first_oil"}
+                else pd.to_numeric(r.get(col), errors="coerce")
+            )
+            for col, _ in _MD_COLUMNS
+        ]
         lines.append("| " + " | ".join(cells) + " |")
     lines.append("")
 
@@ -150,6 +174,24 @@ def _load_cfg(args: argparse.Namespace) -> BenchmarkConfig:
     )
 
 
+def read_saved_benchmark(path: Path) -> pd.DataFrame:
+    """Migrate saved public cells without recomputing or inventing raw inputs.
+
+    Read as strings to preserve identifiers, empty cells and numeric precision.
+    """
+    df = pd.read_csv(path, dtype=str, keep_default_na=False)
+    calendar = "spud_to_completion_calendar_days"
+    if "drilling_days" in df:
+        if calendar in df:
+            if not df[calendar].equals(df["drilling_days"]):
+                raise ValueError("Calendar column and legacy alias conflict")
+            return df.drop(columns="drilling_days")
+        return df.rename(columns={"drilling_days": calendar})
+    if calendar not in df:
+        raise ValueError("Saved benchmark has no calendar duration column")
+    return df
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None, help="Saved benchmark YAML.")
@@ -158,17 +200,27 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--spud-year-max", type=int, default=None, dest="spud_year_max")
     parser.add_argument("--fields", nargs="+", default=None)
     parser.add_argument("--end-date", default=None, dest="end_date")
+    parser.add_argument(
+        "--saved-csv",
+        type=Path,
+        help="Relabel a saved benchmark without raw-data recomputation; requires --end-date.",
+    )
     args = parser.parse_args(argv)
 
     cfg = _load_cfg(args)
-    from worldenergydata.lower_tertiary import ops_timeline
+    if args.saved_csv:
+        if not args.end_date:
+            parser.error("--saved-csv requires --end-date from the saved report")
+        df = read_saved_benchmark(args.saved_csv)
+        end_date = args.end_date
+    else:
+        from worldenergydata.lower_tertiary import ops_timeline
 
-    ops_timeline.ensure_ogor_loader()
-    end_date = cfg.end_date or ops_timeline.month_end_str(
-        ops_timeline.detect_latest_ogor_month()
-    )
-
-    df = run_well_benchmark(cfg)
+        ops_timeline.ensure_ogor_loader()
+        end_date = cfg.end_date or ops_timeline.month_end_str(
+            ops_timeline.detect_latest_ogor_month()
+        )
+        df = run_well_benchmark(cfg)
     if df.empty:
         print("No producing wells matched the benchmark config.", flush=True)
         return 1

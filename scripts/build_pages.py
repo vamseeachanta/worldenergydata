@@ -475,6 +475,9 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     drill_src = REPORTS / "lower_tertiary" / "drilling_insights.html"
     if drill_src.exists():
         shutil.copyfile(drill_src, PUBLIC / "drilling-insights.html")
+        calendar_csv = drill_src.with_name("lt_drilling_insights.csv")
+        if calendar_csv.exists():
+            shutil.copyfile(calendar_csv, PUBLIC / calendar_csv.name)
 
     # --- Economics pages (one unlabelled result per field) ---
     npv_re = re.compile(r"Terminal cumulative NPV = \*\*([^*]+)\*\*")
@@ -1059,9 +1062,9 @@ def _insights_section() -> str:
     if (PUBLIC / "drilling-insights.html").exists():
         cards.append(
             '<a class="card" href="drilling-insights.html">'
-            "<h3>Drilling learning curve &rarr;</h3><p>184 GoM Lower-Tertiary "
-            "development wellbores burned 11,124 rig-days; depth explains only 11% "
-            "of the spread &mdash; execution, not geology, drives the curve.</p></a>"
+            "<h3>Calendar cycle time &rarr;</h3><p>Spud-to-TD calendar intervals "
+            "for GoM Lower-Tertiary wellbores, with date coverage and an explicit "
+            "comparison of workbook and article populations.</p></a>"
         )
     if (PUBLIC / "region-devtype-comparison.html").exists():
         cards.append(

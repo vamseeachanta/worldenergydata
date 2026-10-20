@@ -201,3 +201,13 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
     assert 'content="noindex, follow"' in html
     # the old hand-authored overview copy must not return to this page
     assert "Capability Showcase" not in html
+
+
+def test_calendar_insight_download_and_labels(bp):
+    """Published report downloads must resolve beside their HTML page."""
+    bp.build(domains=["lower_tertiary"])
+    page = (bp.PUBLIC / "drilling-insights.html").read_text()
+    assert (bp.PUBLIC / "lt_drilling_insights.csv").is_file()
+    assert "Calendar cycle time" in page
+    assert "Calendar cycle time" in (bp.PUBLIC / "index.html").read_text()
+    assert "burned 11,124 rig-days" not in (bp.PUBLIC / "index.html").read_text()
