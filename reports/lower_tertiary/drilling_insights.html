@@ -19,7 +19,7 @@ th,td { text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }
  and include suspension and waiting between milestones.</p>
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-10-19</td><td>Replace mixed drilling-day claims with dated
-calendar intervals; explain populations and remove unsupported learning conclusions.</td></tr><tr><td>2</td><td>2026-10-20</td><td>Separate historical snapshot counts from the current workbook population and document the retained completion_days name.</td></tr></table>
+calendar intervals; explain populations and remove unsupported learning conclusions.</td></tr><tr><td>2</td><td>2026-10-20</td><td>Separate historical snapshot counts from the current workbook population and document the retained completion_days name.</td></tr><tr><td>3</td><td>2026-10-20</td><td>Use the issued revision date in the footer to keep regeneration dates consistent.</td></tr></table>
 </header>
 <section><h2>Definition and population</h2>
 <p>For each named lease row in workbook Sheet1, calendar days = TD date minus spud
@@ -66,7 +66,7 @@ calendar intervals; explain populations and remove unsupported learning conclusi
  rig-days. Missing milestones leave their intervals not evaluated.</p>
 <p>Method source: <a href="https://docs.python.org/3/library/datetime.html#timedelta-objects">
  Python 3 datetime, timedelta objects</a> (date subtraction).</p></section>
-<footer>Input: <code>docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx</code>, Sheet1. Generated 2026-10-19.
+<footer>Input: <code>docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx</code>, Sheet1. Report revision date 2026-10-20.
  Source dates are preserved in <a href="lt_drilling_insights.csv">the calendar CSV</a>.
  Regenerate with <code>python scripts/lower_tertiary/build_drilling_insights.py</code>.
  No activity-coded rig-time result is inferred; those require a separately qualified basis.</footer>

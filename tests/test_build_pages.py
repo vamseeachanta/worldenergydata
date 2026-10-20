@@ -209,8 +209,17 @@ def test_calendar_insight_download_and_labels(bp):
     hub = (bp.PUBLIC / "capabilities" / "insights.html").read_text().lower()
     assert "rig-days" not in hub
     assert "learning curve" not in hub
-    assert "186 of 217" in hub
-    assert "47.5" in hub
+    spec = importlib.util.spec_from_file_location(
+        "calendar_insights", SCRIPT.parent / "lower_tertiary/build_drilling_insights.py"
+    )
+    insights = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(insights)
+    stats = insights.compute_stats(insights.load_wells(insights.DEFAULT_SOURCE))
+    assert f"{stats['n_calendar']} of {stats['n_wellbores']}" in hub
+    assert (
+        f'<div class="v">{stats["median_days"]:.1f} <small>median calendar days</small>'
+        in hub
+    )
     page = (bp.PUBLIC / "drilling-insights.html").read_text()
     assert (bp.PUBLIC / "lt_drilling_insights.csv").is_file()
     assert "Calendar cycle time" in page

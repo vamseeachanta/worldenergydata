@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import html
 import sys
-from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -48,6 +47,11 @@ REVISION_HISTORY = (
         2,
         "2026-10-20",
         "Separate historical snapshot counts from the current workbook population and document the retained completion_days name.",
+    ),
+    (
+        3,
+        "2026-10-20",
+        "Use the issued revision date in the footer to keep regeneration dates consistent.",
     ),
 )
 
@@ -294,7 +298,7 @@ th,td {{ text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }}
  rig-days. Missing milestones leave their intervals not evaluated.</p>
 <p>Method source: <a href="https://docs.python.org/3/library/datetime.html#timedelta-objects">
  Python 3 datetime, timedelta objects</a> (date subtraction).</p></section>
-<footer>Input: <code>{esc(src)}</code>, Sheet1. Generated {date.today().isoformat()}.
+<footer>Input: <code>{esc(src)}</code>, Sheet1. Report revision date {esc(REVISION_HISTORY[-1][1])}.
  Source dates are preserved in <a href="lt_drilling_insights.csv">the calendar CSV</a>.
  Regenerate with <code>python scripts/lower_tertiary/build_drilling_insights.py</code>.
  No activity-coded rig-time result is inferred; those require a separately qualified basis.</footer>

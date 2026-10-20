@@ -3,6 +3,8 @@
 import hashlib
 import importlib.util
 import json
+import os
+import subprocess
 from pathlib import Path
 
 import pandas as pd
@@ -166,3 +168,81 @@ def test_report_revisions_are_rendered_from_versioned_history(name, monkeypatch)
         assert str(revision) in page
         assert issued in page
         assert reason in page
+
+
+def test_benchmark_digest_survives_autocrlf_checkout(tmp_path):
+    """The provenance digest must survive a checkout with autocrlf enabled."""
+    source = json.loads(
+        (REPO / "reports/lower_tertiary/lifecycle/_norms.json").read_text()
+    )["provenance"]["sources"][1]
+    env = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
+    git_dir = subprocess.run(
+        ["git", "rev-parse", "--absolute-git-dir"],
+        cwd=REPO,
+        env=env,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    index = Path(git_dir) / "index"
+    index_before = index.read_bytes()
+    head_before = (Path(git_dir) / "HEAD").read_bytes()
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "core.autocrlf=true",
+            "checkout-index",
+            f"--prefix={tmp_path.as_posix()}/",
+            "--",
+            source["path"],
+        ],
+        cwd=REPO,
+        env=env,
+        check=True,
+        capture_output=True,
+    )
+    assert index.read_bytes() == index_before
+    assert (Path(git_dir) / "HEAD").read_bytes() == head_before
+    data = (tmp_path / source["path"]).read_bytes()
+    assert b"\r\n" not in data
+    assert hashlib.sha256(data).hexdigest() == source["sha256"]
+
+
+def test_phase_norm_rebuild_preserves_provenance_note(tmp_path, monkeypatch):
+    """A rebuild must retain the issued digest revision and unchanged norm values."""
+    mod = _script("build_phase_norms")
+    monkeypatch.setattr(mod, "LIFECYCLE", tmp_path)
+    monkeypatch.setattr(mod, "NORMS_DIR", tmp_path / "norms")
+    previous = json.loads(
+        (REPO / "reports/lower_tertiary/lifecycle/_norms.json").read_text()
+    )
+    write_text = Path.write_text
+
+    def legacy_write_text(path, data, encoding=None, **kwargs):
+        return write_text(path, data, encoding=encoding or "cp1252", **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", legacy_write_text)
+    assert mod.main() == 0
+    rebuilt = json.loads((tmp_path / "_norms.json").read_text(encoding="utf-8"))
+    assert (
+        rebuilt["provenance"]["revision_note"]
+        == previous["provenance"]["revision_note"]
+    )
+    assert rebuilt["entries"] == previous["entries"]
+    assert rebuilt["chips"] == previous["chips"]
+
+
+def test_insight_date_matches_latest_issued_revision(monkeypatch):
+    """Regeneration must keep the issued revision date independent of wall time."""
+    mod = _script("build_drilling_insights")
+    monkeypatch.setattr(
+        mod,
+        "REVISION_HISTORY",
+        (*mod.REVISION_HISTORY, (99, "2030-01-01", "Synthetic revision reason")),
+    )
+    frame = pd.DataFrame(columns=["calendar_days", "MAX_WELL_BORE_TVD", "LEASE_NAME"])
+    page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE)
+    assert "Report revision date 2030-01-01." in page
