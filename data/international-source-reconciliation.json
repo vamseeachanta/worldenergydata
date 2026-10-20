@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.0",
+  "observed_on": "2026-10-20",
+  "basis": {
+    "issue_states": "Public issue bodies, closeout comments and states read on the observation date. Issue closure is not evidence of a completed scheduled refresh.",
+    "capabilities": "Repository files listed in each row; existence is checked without importing clients.",
+    "scheduler": "config/scheduler/scheduler_config.yml and the corresponding scheduler job implementations.",
+    "prior_storage_observation": "Bounded inventory reported in #917 and #909; historical, not independently repeated.",
+    "current_external_storage": "NOT_EVALUATED: the external data root is unavailable in this checkout; no remote access or country download was performed."
+  },
+  "issue_states": {
+    "#713": "OPEN",
+    "#716": "CLOSED",
+    "#717": "CLOSED",
+    "#718": "CLOSED",
+    "#719": "CLOSED",
+    "#720": "OPEN",
+    "#721": "CLOSED",
+    "#722": "OPEN",
+    "#753": "OPEN",
+    "#763": "CLOSED",
+    "#806": "CLOSED",
+    "#807": "CLOSED",
+    "#809": "CLOSED",
+    "#810": "CLOSED",
+    "#831": "CLOSED",
+    "#459": "CLOSED",
+    "#910": "OPEN",
+    "#918": "OPEN",
+    "#919": "OPEN"
+  },
+  "sources": [
+    {
+      "module_id": "sodir",
+      "implementation_issues": [
+        "#716"
+      ],
+      "implementation_status": "reference_chain_complete",
+      "capability_evidence": [
+        "packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py",
+        "packages/worldenergydata-sodir/src/worldenergydata/sodir/api_client.py"
+      ],
+      "scheduler_job": "sodir_refresh",
+      "data_path": "modules/sodir",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Fixture-backed chain completion does not install data. The scheduled job persists blocks, wellbores and fields, not monthly production; the chain loader cache is separate."
+    },
+    {
+      "module_id": "ukcs",
+      "implementation_issues": [
+        "#717"
+      ],
+      "implementation_status": "reference_chain_complete",
+      "capability_evidence": [
+        "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/reference_chain.py",
+        "packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py"
+      ],
+      "scheduler_job": "ukcs_refresh",
+      "data_path": "modules/ukcs",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Loader-backed chain and synthetic compatibility path coexist. Scheduled raw and normalized outputs require an explicit output directory and an actual successful run."
+    },
+    {
+      "module_id": "brazil_anp",
+      "implementation_issues": [
+        "#718",
+        "#459"
+      ],
+      "implementation_status": "reference_chain_complete",
+      "capability_evidence": [
+        "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/reference_chain.py",
+        "packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/production/anp_client.py"
+      ],
+      "scheduler_job": "brazil_anp_refresh",
+      "data_path": "modules/brazil_anp",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "#459 closed with the monthly official ZIP endpoint repair. Missing accepted output is not an active endpoint blocker; no current source vintage is proven."
+    },
+    {
+      "module_id": "canada",
+      "implementation_issues": [
+        "#719"
+      ],
+      "implementation_status": "fixture_chain_complete",
+      "capability_evidence": [
+        "packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py",
+        "packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py"
+      ],
+      "scheduler_job": null,
+      "data_path": "modules/canada",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "The default loader uses a labeled synthetic offshore fixture. A production-text parser exists; live PDF fetch/cache is deferred and redistribution restrictions apply. No registered refresh job."
+    },
+    {
+      "module_id": "mexico_cnh",
+      "implementation_issues": [
+        "#720"
+      ],
+      "implementation_status": "implementation_pending",
+      "capability_evidence": [
+        "packages/worldenergydata-mexico_cnh/src/worldenergydata/mexico_cnh/scrapers/sih_scraper.py"
+      ],
+      "scheduler_job": null,
+      "data_path": "modules/mexico_cnh",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Existing SIH scraper does not establish the replacement direct-source loader or a scheduled chain. #720 remains open; no registered refresh job."
+    },
+    {
+      "module_id": "west_africa",
+      "implementation_issues": [
+        "#919"
+      ],
+      "implementation_status": "clients_only",
+      "capability_evidence": [
+        "packages/worldenergydata-west_africa/src/worldenergydata/west_africa/nigeria/nuprc_client.py",
+        "packages/worldenergydata-west_africa/src/worldenergydata/west_africa/eiti/eiti_api.py"
+      ],
+      "scheduler_job": null,
+      "data_path": "modules/west_africa",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Regulator and EITI clients are package capability only. Scheduled ingestion and the country chain remain tracked by #919; no registered refresh job."
+    },
+    {
+      "module_id": "spain_cores",
+      "implementation_issues": [
+        "#763",
+        "#806",
+        "#807",
+        "#809",
+        "#810"
+      ],
+      "implementation_status": "reference_chain_complete",
+      "capability_evidence": [
+        "packages/worldenergydata-spain/src/worldenergydata/spain/reference_chain.py",
+        "packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_live.py"
+      ],
+      "scheduler_job": "spain_cores_refresh",
+      "data_path": "spain/cores",
+      "prior_storage_observation": "observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Historical cache/success evidence is in #806/#809/#810, outside data/modules. Strict configured refresh remains limited by accepted density coverage; #807 closure records the unresolved source gap."
+    },
+    {
+      "module_id": "australia",
+      "implementation_issues": [
+        "#721"
+      ],
+      "implementation_status": "screening_only",
+      "capability_evidence": [
+        "packages/worldenergydata-australia/src/worldenergydata/australia/reference_chain.py",
+        "packages/worldenergydata-australia/src/worldenergydata/australia/metadata/nopta_wells.py"
+      ],
+      "scheduler_job": null,
+      "data_path": "modules/australia",
+      "prior_storage_observation": "not_observed",
+      "current_external_storage_status": "NOT_EVALUATED",
+      "interpretation": "Metadata screening chain exists but production is unavailable. #831 distinguishes screening-only and seed results from real production; no registered refresh job."
+    }
+  ],
+  "follow_up_issues": {
+    "external_inventory": "#910",
+    "materialization_badges": "#918",
+    "west_africa_chain": "#919",
+    "mexico_loader": "#720",
+    "new_sources": "#722",
+    "eu_source_characterization": "#753",
+    "benchmark_provenance": "#831"
+  }
+}
