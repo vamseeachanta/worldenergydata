@@ -178,6 +178,41 @@
           "confidence": "modeled",
           "basis": "facility removal (not well P&A)",
           "label": "Decommission ~$43.2M"
+        },
+        "well_pa": {
+          "field_id": "big_foot",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G16942"
+          ],
+          "borehole_count": 37,
+          "ta_count": 0,
+          "com_count": 9,
+          "candidate_boreholes": 9,
+          "other_status_counts": {
+            "DSI": 5,
+            "PA": 3,
+            "ST": 20
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 9 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
         }
       },
       "landman": {
@@ -466,7 +501,44 @@
           "basis": "reservoir",
           "label": "ultra-HPHT · 25k vs 20k psi (+25%)"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "anchor",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G31751",
+            "G31752"
+          ],
+          "borehole_count": 18,
+          "ta_count": 0,
+          "com_count": 5,
+          "candidate_boreholes": 5,
+          "other_status_counts": {
+            "AST": 1,
+            "DSI": 1,
+            "PA": 4,
+            "ST": 7
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 5 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -738,7 +810,42 @@
           "basis": "reservoir",
           "label": "HPHT · 19.5k psi"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "cascade_chinook",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G16965",
+            "G16997"
+          ],
+          "borehole_count": 11,
+          "ta_count": 0,
+          "com_count": 3,
+          "candidate_boreholes": 3,
+          "other_status_counts": {
+            "PA": 3,
+            "ST": 5
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 3 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -1037,6 +1144,46 @@
           "confidence": "low",
           "basis": "facility removal (not well P&A)",
           "label": "Decommission ~$80M (FPSO base)"
+        },
+        "well_pa": {
+          "field_id": "jack_st_malo",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G17015",
+            "G17016",
+            "G18745",
+            "G18753",
+            "G20394",
+            "G21245"
+          ],
+          "borehole_count": 76,
+          "ta_count": 4,
+          "com_count": 23,
+          "candidate_boreholes": 27,
+          "other_status_counts": {
+            "CNL": 1,
+            "PA": 9,
+            "ST": 39
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 4 / COM 23 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
         }
       },
       "landman": {
@@ -1361,7 +1508,41 @@
           "basis": "subsea_system",
           "label": "HPHT · subsea system 13.5k / 15k-psi trees"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "julia",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G20351"
+          ],
+          "borehole_count": 8,
+          "ta_count": 0,
+          "com_count": 4,
+          "candidate_boreholes": 4,
+          "other_status_counts": {
+            "PA": 1,
+            "ST": 3
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 4 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -1621,7 +1802,43 @@
           "basis": "reservoir",
           "label": "ultra-HPHT · 20k vs 20k psi (0%)"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "kaskida",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G19555",
+            "G25792"
+          ],
+          "borehole_count": 13,
+          "ta_count": 1,
+          "com_count": 0,
+          "candidate_boreholes": 1,
+          "other_status_counts": {
+            "APD": 6,
+            "PA": 1,
+            "ST": 5
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 1 / COM 0 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -1853,7 +2070,46 @@
           "basis": "reservoir",
           "label": "ultra-HPHT · 20k-psi equipment"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "north_platte",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G30876",
+            "G32460"
+          ],
+          "borehole_count": 28,
+          "ta_count": 1,
+          "com_count": 0,
+          "candidate_boreholes": 1,
+          "other_status_counts": {
+            "APD": 1,
+            "CNL": 3,
+            "DRL": 1,
+            "DSI": 7,
+            "PA": 7,
+            "ST": 8
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 1 / COM 0 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -2116,7 +2372,43 @@
           "basis": "reservoir",
           "label": "ultra-HPHT · 22k vs 20k psi (+10%)"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "shenandoah",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G25232",
+            "G31938"
+          ],
+          "borehole_count": 23,
+          "ta_count": 1,
+          "com_count": 4,
+          "candidate_boreholes": 5,
+          "other_status_counts": {
+            "DSI": 1,
+            "PA": 6,
+            "ST": 11
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 1 / COM 4 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [
@@ -2409,6 +2701,41 @@
           "confidence": "low",
           "basis": "facility removal (not well P&A)",
           "label": "Decommission ~$80M (FPSO base)"
+        },
+        "well_pa": {
+          "field_id": "stones",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G17001"
+          ],
+          "borehole_count": 24,
+          "ta_count": 0,
+          "com_count": 8,
+          "candidate_boreholes": 8,
+          "other_status_counts": {
+            "DSI": 1,
+            "PA": 9,
+            "ST": 6
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "missing_unit_cost_basis",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 8 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
         }
       },
       "landman": {
@@ -2656,7 +2983,40 @@
           "basis": "reservoir",
           "label": "ultra-HPHT · 20k vs 20k psi (0%)"
         },
-        "decommissioning": null
+        "decommissioning": null,
+        "well_pa": {
+          "field_id": "tiber",
+          "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+          "registered_leases": [
+            "G25782"
+          ],
+          "borehole_count": 2,
+          "ta_count": 0,
+          "com_count": 0,
+          "candidate_boreholes": 0,
+          "other_status_counts": {
+            "PA": 2
+          },
+          "availability": "boreholes_present",
+          "cost": {
+            "status": "NOT_EVALUATED",
+            "reason": "no_ta_com_boreholes",
+            "total_usd": null
+          },
+          "label": "P&A screen · TA 0 / COM 0 boreholes",
+          "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: no_ta_com_boreholes.",
+          "provenance": {
+            "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+            "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+            "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+            "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+            "source_boreholes": 55570,
+            "joined_boreholes": 266,
+            "unmatched_counts": {
+              "lease_not_in_registry": 55304
+            }
+          }
+        }
       },
       "landman": {
         "leases": [

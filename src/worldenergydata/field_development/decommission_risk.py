@@ -9,9 +9,9 @@ Surface the per-facility decommissioning liability already modeled in
 signal, by matching a curated facility name.
 
 HONESTY (per the #949 review):
-  * This is **facility removal** liability, NOT well-plugging (P&A). Per-field
-    well-plugging counts are not attributable (BSEE ``well_data.csv`` has no
-    lease column and only 23 shelf field codes, none Lower Tertiary).
+  * This is **facility removal** liability. The separate ``well_pa_risk``
+    screen uses the curated API12 bottom-lease join for TA/COM borehole counts
+    and requires explicit unit-cost inputs for a monetary scenario.
   * The source CSV flags "FPSO base low-confidence": an FPSO/FPU facility
     carries a flat placeholder cost, so its estimate is ``confidence="low"``;
     a depth-differentiated host (e.g. Big Foot's Mini-TLP) is ``"modeled"``.

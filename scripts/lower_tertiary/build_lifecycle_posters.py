@@ -38,6 +38,9 @@ from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
+from worldenergydata.field_development.well_pa_risk import (
+    build_well_pa_signals,
+)
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
 )
@@ -74,6 +77,23 @@ def _load_decom_rows() -> list[dict]:
 
 
 _DECOM_ROWS = _load_decom_rows()
+_BOREHOLE_SUMMARY = (
+    Path(__file__).resolve().parents[2]
+    / "data/modules/bsee/borehole_status/summary.json"
+)
+
+
+def _load_well_pa_signals(cost_inputs: dict | None = None) -> dict:
+    if not _BOREHOLE_SUMMARY.exists():
+        if cost_inputs:
+            raise ValueError("Cost inputs require a borehole attribution snapshot")
+        return {}
+    return build_well_pa_signals(
+        json.loads(_BOREHOLE_SUMMARY.read_text()), cost_inputs
+    )
+
+
+_WELL_PA_SIGNALS = _load_well_pa_signals()
 TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
 FIELDS_REGISTRY = load_fields()
 
@@ -424,6 +444,7 @@ def facts_to_field(f: dict) -> dict:
             "decommissioning": classify_decommissioning(
                 f.get("decommissioning_facility"), _DECOM_ROWS
             ),
+            "well_pa": _WELL_PA_SIGNALS.get(f["id"]),
         },
         "landman": build_landman(
             f,
@@ -453,7 +474,8 @@ def facts_to_field(f: dict) -> dict:
 def render(field: dict) -> str:
     tpl = TEMPLATE.read_text()
     html = tpl.replace(
-        "__FIELD_JSON__", json.dumps(field, indent=2, ensure_ascii=False)
+        "__FIELD_JSON__",
+        json.dumps(field, indent=2, ensure_ascii=False).replace("<", "\\u003c"),
     )
     return site_nav.inject_for(
         html, "poster", {"field_id": field["id"], "field_name": field["name"]}
@@ -534,9 +556,18 @@ BIG_FOOT_FACTS = {
 
 
 def main():
+    global _WELL_PA_SIGNALS
     ap = argparse.ArgumentParser()
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument(
+        "--well-pa-costs",
+        type=Path,
+        help="Optional field-keyed JSON with TA/COM USD prices, source and price_basis",
+    )
     args = ap.parse_args()
+    _WELL_PA_SIGNALS = _load_well_pa_signals(
+        json.loads(args.well_pa_costs.read_text()) if args.well_pa_costs else None
+    )
 
     facts = (
         [BIG_FOOT_FACTS]
@@ -599,6 +630,15 @@ def main():
         + "\n"
     )
     print(f"  wrote _explorer.json  ({len(fields)} fields)")
+    (HERE / "_risk.json").write_text(
+        json.dumps(
+            {"fields": {fl["id"]: fl["risk"] for fl in fields}},
+            indent=2,
+            ensure_ascii=False,
+        )
+        + "\n"
+    )
+    print(f"  wrote _risk.json  ({len(fields)} fields)")
 
 
 if __name__ == "__main__":
