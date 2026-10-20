@@ -266,7 +266,8 @@ class TestCompareBoreTypes:
 # YP/(3*diameter_gap) psi per 100 ft. The factors are unit definitions,
 # not fitted coefficients. The synthetic cases below reproduce C11 and add
 # a low-flow case. Expected values are rational hand results, independent
-# of the implementation. Assertions use the unrounded bounds.
+# of the implementation. Assertions pin the floor-dominated outputs; they
+# do not establish exact physical pressure losses.
 
 
 @pytest.mark.parametrize(
@@ -285,12 +286,13 @@ def test_flowing_pressure_loss_obeys_yield_floor(
     """Hand: 15/(3*3.5)=10/7; 10/(3*3.5)=20/21; 15/(3*2.5)=2.
 
     The first four cases exercise the existing turbulent branch; the last
-    exercises its laminar branch. These are bounds, not exact flow solutions.
+    exercises its laminar branch. The floor dominates the retained estimate
+    in each case; these outputs are not exact physical flow solutions.
     """
     loss = WellBoreHydraulics().pressure_loss_psi_per_100ft(
         flow, mud, pv, yp, hole, pipe
     )
-    assert loss >= expected_floor
+    assert loss == pytest.approx(expected_floor, rel=1e-12)
 
 
 def test_yield_floor_reaches_ecd_and_pressure_window():
@@ -307,13 +309,32 @@ def test_yield_floor_reaches_ecd_and_pressure_window():
 
     comparison = WellBoreHydraulics().compare_bore_types(500, 10, 10000)
     standard = comparison[BoreType.STANDARD.value]
-    assert standard["total_pressure_loss_psi"] >= 1000 / 7
-    assert standard["ecd_ppg"] >= 10 + 25 / 91
+    assert standard["total_pressure_loss_psi"] == pytest.approx(1000 / 7, rel=1e-12)
+    assert standard["ecd_ppg"] == pytest.approx(10 + 25 / 91, rel=1e-12)
     result = BoreTypeDecision().pressure_window_check(
         BoreType.STANDARD, 10, 10.2, 9.5, 500, 10000
     )
     assert result["compatible"] is False
     assert result["limiting_factor"] == "ecd_exceeds_fracture_gradient"
+
+
+@pytest.mark.parametrize("plastic_viscosity_cp", [10, 20, 80])
+def test_realistic_flow_and_viscosity_remain_on_yield_floor(plastic_viscosity_cp):
+    """Record the unresolved plateau tracked by #1288, not physical invariance.
+
+    At 200 and 600 gpm with 10, 20 or 80 cP, the standard-annulus estimate
+    stays below the 10/7 psi/100 ft floor. Its ECD therefore also stays fixed.
+    """
+    hydro = WellBoreHydraulics()
+    for flow_rate_gpm in (200, 600):
+        comparison = hydro.compare_bore_types(
+            flow_rate_gpm, 10, 10000, plastic_viscosity_cp, 15
+        )
+        standard = comparison[BoreType.STANDARD.value]
+        assert standard["pressure_loss_psi_per_100ft"] == pytest.approx(
+            10 / 7, rel=1e-12
+        )
+        assert standard["ecd_ppg"] == pytest.approx(10 + 25 / 91, rel=1e-12)
 
 
 def test_zero_flow_has_no_circulating_loss():

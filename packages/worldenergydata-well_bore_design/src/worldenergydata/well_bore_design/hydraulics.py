@@ -72,6 +72,11 @@ class WellBoreHydraulics:
           - Turbulent: fanning friction factor applied
 
         Positive-flow results are bounded below by YP / (3 * Dh).
+        The floor can dominate practical inputs and mask flow/PV sensitivity
+        (see #1288): an 8.5-in/5-in annulus at 10 ppg and YP=15 gives the
+        same loss and ECD at 200 and 600 gpm with PV of 10, 20 or 80 cP.
+        Flow/PV sensitivity remains unresolved until the legacy estimate
+        exceeds the floor.
         This repairs a force-balance violation; it does not validate the
         correlation or establish a conservative total loss or safe ECD.
         Assumes steady flow in a concentric annulus with stationary walls.
