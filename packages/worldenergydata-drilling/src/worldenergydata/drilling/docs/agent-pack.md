@@ -28,6 +28,12 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | 0 | 2026-10-17 | Initial inputs, methods, regression examples and failure inventory to guide package use. |
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
 
+Current detector behavior is documented in the [detector contract](detector-contract.md)
+and exercised by `tests/unit/drilling/test_detector_contracts.py` and
+`examples/drilling_detector_contract.py` for #1343. The code ranges, digests and
+recorded test outcomes below remain historical evidence at the header code pin;
+they do not describe the updated detector or confer independent clearance.
+
 ## 2. Inputs and outputs
 
 ### Inputs
