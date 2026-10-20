@@ -132,6 +132,9 @@ temporary_exceptions:
       - reports/cost/cost_basis_timeseries.html
       - reports/cost/cost_timeseries_presentation.html
       - reports/cost/inflation_verdicts.csv
+      - reports/cost/portfolio_example.html
+      - reports/cost/portfolio_example.json
+      - reports/cost/portfolio_example_manifest.json
       - reports/cost/reconciliation.csv
       - reports/cost/stage_allocations.csv
       - reports/field-atlas/onepagers/field-anchor.html
