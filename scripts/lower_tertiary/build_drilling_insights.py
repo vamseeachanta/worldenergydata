@@ -294,7 +294,9 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(df, CSV_PATH)
     stats = compute_stats(df)
     HTML_PATH.write_text(
-        site_nav.inject_for(render_html(stats, args.source), "drilling_insights").rstrip()
+        site_nav.inject_for(
+            render_html(stats, args.source), "drilling_insights"
+        ).rstrip()
         + "\n",
         encoding="utf-8",
     )
