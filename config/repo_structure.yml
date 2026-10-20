@@ -335,6 +335,7 @@ temporary_exceptions:
       - reports/lower_tertiary/lifecycle/_facts.json
       - reports/lower_tertiary/lifecycle/_norms.json
       - reports/lower_tertiary/lifecycle/_performance.json
+      - reports/lower_tertiary/lifecycle/_decommissioning.json
       - reports/lower_tertiary/lifecycle/anchor_lifecycle.html
       - reports/lower_tertiary/lifecycle/big_foot_lifecycle.html
       - reports/lower_tertiary/lifecycle/cascade_chinook_lifecycle.html

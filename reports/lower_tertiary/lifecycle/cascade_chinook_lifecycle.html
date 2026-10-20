@@ -331,6 +331,16 @@
             <h3>Field performance · BSEE life-to-date</h3>
             <dl class="kv" id="f-performance"></dl>
           </div>
+          <div class="card" id="f-decommissioning-card" hidden>
+            <h3>Abandon outlook · decommissioning</h3>
+            <dl class="kv" id="f-decommissioning"></dl>
+            <p id="f-decommissioning-basis"></p>
+            <ul id="f-decommissioning-regulations"></ul>
+            <p id="f-decommissioning-regulatory-status"></p>
+            <p><a href="../decommissioning/pa-liability-wave.html">P&amp;A liability context →</a>
+              · <a href="../decommissioning/regional-liability.html">Regional liability →</a>
+              · <a href="norms/abandon.html">Abandon engineering context →</a></p>
+          </div>
           <div class="card econ-card" id="f-economics-card" hidden>
             <h3>Field economics · monthly cash-flow model</h3>
             <p>Monthly cash-flow detail, NPV narrative, and price-sensitivity context. Headline figures remain in the performance card above.</p>
@@ -597,7 +607,7 @@ const FIELD = {
     "fdp_issue": 962
   },
   "architecture": {
-    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"1140\" viewBox=\"0 0 120 1140\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Chinook</title>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1040.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1040.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1080.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1080.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"48.0\" y=\"1052.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"52.8\" y1=\"1067.2\" x2=\"52.8\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"57.6\" y1=\"1067.2\" x2=\"57.6\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"62.4\" y1=\"1067.2\" x2=\"62.4\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"67.2\" y1=\"1067.2\" x2=\"67.2\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"75.0\" y=\"1063.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1048.0\" x2=\"60.0\" y2=\"1032.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1044.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1034.8 64.0,1039.6 64.0,1034.8 56.0,1039.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1038.8 64.0,1043.6 64.0,1038.8 56.0,1043.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1043.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1088.0\" x2=\"60.0\" y2=\"1072.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1084.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1074.8 64.0,1079.6 64.0,1074.8 56.0,1079.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1078.8 64.0,1083.6 64.0,1078.8 56.0,1083.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1083.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"44.0\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"52.0\" y1=\"88.8\" x2=\"52.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"68.0\" y1=\"88.8\" x2=\"68.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"79.0\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"50.0,55.0 63.0,55.0 63.0,50.0 70.0,60.0 63.0,70.0 63.0,65.0 50.0,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"73.0\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"92\" y1=\"46\" x2=\"92\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"92,14 87,24 97,24\"/><text x=\"88\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1116\" x2=\"60\" y2=\"1116\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1112\" x2=\"20\" y2=\"1120\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1112\" x2=\"60\" y2=\"1120\" stroke-width=\"2\"/><text x=\"20\" y=\"1108\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n</svg>",
+    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"480\" height=\"1140\" viewBox=\"0 0 480 1140\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Chinook</title>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1040.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1040.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1080.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1080.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"48.0\" y=\"1052.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"52.8\" y1=\"1067.2\" x2=\"52.8\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"57.6\" y1=\"1067.2\" x2=\"57.6\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"62.4\" y1=\"1067.2\" x2=\"62.4\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"67.2\" y1=\"1067.2\" x2=\"67.2\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"75.0\" y=\"1063.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1048.0\" x2=\"60.0\" y2=\"1032.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1044.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1034.8 64.0,1039.6 64.0,1034.8 56.0,1039.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1038.8 64.0,1043.6 64.0,1038.8 56.0,1043.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1043.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1088.0\" x2=\"60.0\" y2=\"1072.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1084.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1074.8 64.0,1079.6 64.0,1074.8 56.0,1079.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1078.8 64.0,1083.6 64.0,1078.8 56.0,1083.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1083.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"44.0\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"52.0\" y1=\"88.8\" x2=\"52.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"68.0\" y1=\"88.8\" x2=\"68.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"79.0\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"50.0,55.0 63.0,55.0 63.0,50.0 70.0,60.0 63.0,70.0 63.0,65.0 50.0,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"73.0\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"452\" y1=\"46\" x2=\"452\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"452,14 447,24 457,24\"/><text x=\"448\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1116\" x2=\"60\" y2=\"1116\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1112\" x2=\"20\" y2=\"1120\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1112\" x2=\"60\" y2=\"1120\" stroke-width=\"2\"/><text x=\"20\" y=\"1108\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n<text x=\"10\" y=\"1134\" font-family=\"sans-serif\" font-size=\"9\">Plan-view field layout (host offset to scale; schematic well positions)</text>\n</svg>",
     "source": "render_layout",
     "caption": "Chinook subsea tieback"
   },
@@ -664,6 +674,46 @@ const FIELD = {
     "npv_mm": null,
     "sens_mm_per_dollar": null,
     "wells": 3
+  },
+  "decommissioning": {
+    "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+    "bsee_decom_band": null,
+    "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+    "pa_estimate_musd": 636.8656,
+    "pa_per_well_musd": 45.4904,
+    "pa_reason": null,
+    "projected_cop_year": null,
+    "provenance": {
+      "cost_reference_year": 2025,
+      "generated_on": "2026-10-20",
+      "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+      "region": "gom",
+      "source_digests": {
+        "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+        "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+        "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+        "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+      },
+      "wellbore_source": "config/ong_field_development/fields_registry.yml"
+    },
+    "regulations": [
+      {
+        "name": "well plugging",
+        "reference": "BSEE NTL 2018-N02"
+      },
+      {
+        "name": "structure removal",
+        "reference": "30 CFR 250.1725"
+      },
+      {
+        "name": "pipeline decommission",
+        "reference": "30 CFR 250.1750"
+      }
+    ],
+    "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+    "water_depth_ft": 8200,
+    "water_depth_m": 2499.36,
+    "wellbores": 14
   }
 };
 
@@ -943,6 +993,36 @@ if (FIELD.performance) {
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;
   $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + economics (life-to-date, not full-cycle); EUR = curated recoverable reserves (#973)";
+}
+
+if (FIELD.decommissioning) {
+  const d = FIELD.decommissioning;
+  const list = $("f-decommissioning");
+  const row = (label, value) => {
+    const term = document.createElement("dt");
+    const detail = document.createElement("dd");
+    term.textContent = label;
+    detail.textContent = value == null ? "—" : String(value);
+    list.append(term, detail);
+  };
+  const money = value => value == null ? "—" : `$${Number(value).toFixed(1)}M`;
+  row("Projected COP · supplied outlook, not decline-fit", d.projected_cop_year);
+  row("Recorded wellbores", d.wellbores);
+  row("Field water depth (ft)", d.water_depth_ft);
+  row("P&A · wells-only parametric estimate", money(d.pa_estimate_musd));
+  if (d.pa_reason) row("P&A coverage", d.pa_reason);
+  if (d.bsee_decom_band) {
+    for (const [band, value] of Object.entries(d.bsee_decom_band)) row(`BSEE ${band}`, money(value));
+  } else row("BSEE liability band", d.bsee_reason);
+  $("f-decommissioning-basis").textContent = d.basis;
+  for (const regulation of d.regulations || []) {
+    const item = document.createElement("li");
+    item.textContent = `${regulation.name} · ${regulation.reference}`;
+    $("f-decommissioning-regulations").append(item);
+  }
+  $("f-decommissioning-regulatory-status").textContent = d.regulatory_status;
+  $("f-decommissioning-card").hidden = false;
+  $("f-prov").textContent += ` · Decommissioning: ${d.provenance.model}, ${d.provenance.region}, reference year ${d.provenance.cost_reference_year}; inputs and digests in _decommissioning.json`;
 }
 
 if (FIELD.economics_href) {

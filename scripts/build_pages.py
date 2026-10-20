@@ -460,6 +460,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_src / "_performance.json",
                 lifecycle_dst / "_performance.json",
             )
+        if (lifecycle_src / "_decommissioning.json").exists():
+            shutil.copy2(
+                lifecycle_src / "_decommissioning.json",
+                lifecycle_dst / "_decommissioning.json",
+            )
         if (lifecycle_src / "_explorer.json").exists():
             # enriched field payloads + wells contract fetched by the
             # field-atlas one-page Explorer shell (#946)
