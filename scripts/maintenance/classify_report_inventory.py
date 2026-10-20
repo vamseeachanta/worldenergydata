@@ -222,14 +222,19 @@ def replacement_evidence(path, root):
 
 
 def classify_tree(root, builder=BUILDER):
+    # Issue #1355: compare case-preserving repository-relative strings, since
+    # Path ordering depends on the platform and compares whole path components.
+    def inventory_key(path):
+        return path.relative_to(root).as_posix()
+
     selected = {}
     for pattern, gates, evidence in selection_rows(root, builder):
         if all((root / gate).exists() for gate in gates):
-            for path in sorted(root.glob(pattern)):
+            for path in sorted(root.glob(pattern), key=inventory_key):
                 if path.is_file():
                     selected.setdefault(path.relative_to(root).as_posix(), evidence)
     rows = []
-    for path in sorted((root / "reports").rglob("*.html")):
+    for path in sorted((root / "reports").rglob("*.html"), key=inventory_key):
         if not path.is_file():
             continue
         relative = path.relative_to(root).as_posix()

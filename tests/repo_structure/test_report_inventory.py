@@ -1,7 +1,8 @@
 """Report classification, reproducibility and publication agreement."""
 
 import importlib.util
-from pathlib import Path
+import subprocess
+from pathlib import Path, PureWindowsPath
 
 import pytest
 
@@ -164,3 +165,105 @@ def test_removed_domain_is_not_current(tmp_path):
     put(tmp_path, "reports/hse/card.html")
     rows = module.classify_tree(tmp_path, changed_builder)
     assert rows[0]["classification"] == "undetermined"
+
+
+class WindowsOrderedPath(type(Path())):
+    """Use Windows path ordering while reading the native temporary tree."""
+
+    def __lt__(self, other):
+        return PureWindowsPath(self.as_posix()) < PureWindowsPath(other.as_posix())
+
+
+@pytest.mark.parametrize("path_type", [Path, WindowsOrderedPath])
+@pytest.mark.parametrize("newline", ["\n", "\r\n"], ids=["lf", "crlf"])
+def test_portable_inventory_bytes(tmp_path, path_type, newline):
+    """Issue #1355: derive exact bytes independently from literal fixture rows.
+
+    Repository-relative string order is Zebra.html, alpha.html, alpha/card.html, zulu.html:
+    uppercase Z precedes lowercase a, and '.' precedes '/'. Every fixture is
+    unselected, with no replacement or demo/test token: see the final rule in
+    docs/modules/repository-architecture.md, 'Report classification rules'.
+    LF and CRLF report inputs are equivalent; names differ beyond case so the
+    fixture also works on case-insensitive filesystems.
+    """
+    module = inventory_module()
+    paths = [
+        "reports/zulu.html",
+        "reports/alpha/card.html",
+        "reports/alpha.html",
+        "reports/Zebra.html",
+    ]
+    originals = {}
+    for path in paths:
+        target = put(tmp_path, path)
+        target.write_bytes(("<!doctype html>" + newline).encode("utf-8"))
+        originals[path] = target.read_bytes()
+    root = path_type(tmp_path)
+    expected = (
+        b"path,classification,evidence\n"
+        b"reports/Zebra.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+        b"reports/alpha.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+        b"reports/alpha/card.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+        b"reports/zulu.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+    )
+    assert module.inventory_bytes(root, BUILDER) == expected
+    assert {path: (tmp_path / path).read_bytes() for path in paths} == originals
+
+
+@pytest.mark.parametrize("autocrlf", ["false", "true"])
+def test_inventory_checkout_is_lf(autocrlf):
+    """Issue #1355: checkout conversion must retain the exact committed LF blob.
+
+    cat-file --filters applies checkout conversion without changing the tree
+    or index. Its expected bytes are the committed blob, independently read
+    without filters. Both autocrlf settings must produce that same LF payload.
+    """
+    path = "docs/modules/report-inventory.csv"
+    blob = subprocess.check_output(["git", "show", f"HEAD:{path}"], cwd=ROOT)
+    checkout = subprocess.check_output(
+        [
+            "git",
+            "-c",
+            f"core.autocrlf={autocrlf}",
+            "cat-file",
+            "--filters",
+            f"HEAD:{path}",
+        ],
+        cwd=ROOT,
+    )
+    assert b"\r" not in checkout
+    assert checkout == blob
+
+
+@pytest.mark.parametrize("change", ["crlf", "content", "order"])
+def test_check_preserves_byte_equality(tmp_path, monkeypatch, change):
+    """Issue #1355 requires byte equality, including row order and line endings.
+
+    Each mutation independently changes the canonical bytes: CRLF adds CR;
+    content substitutes a classification; order reverses the two data rows.
+    --check must reject each without writing; --write must restore LF bytes.
+    """
+    module = inventory_module()
+    put(tmp_path, "reports/a.html")
+    put(tmp_path, "reports/z.html")
+    monkeypatch.setattr(module, "ROOT", tmp_path)
+    monkeypatch.setattr(module, "BUILDER", BUILDER)
+    canonical = module.inventory_bytes(tmp_path, BUILDER)
+    if change == "crlf":
+        changed = canonical.replace(b"\n", b"\r\n")
+    elif change == "content":
+        changed = canonical.replace(b"undetermined", b"current")
+    else:
+        header, first, second = canonical.splitlines(keepends=True)
+        changed = header + second + first
+    target = put(tmp_path, module.INVENTORY)
+    target.write_bytes(changed)
+    assert module.main(["--check"]) == 1
+    assert target.read_bytes() == changed
+    assert module.main(["--write"]) == 0
+    assert target.read_bytes() == canonical
+    assert module.main(["--check"]) == 0
