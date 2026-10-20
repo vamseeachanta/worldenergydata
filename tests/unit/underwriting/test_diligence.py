@@ -213,6 +213,62 @@ def test_invalid_input_does_not_create_output(tmp_path):
     assert not output.exists()
 
 
+@pytest.mark.parametrize("member", ["publication", "value", "observations"])
+def test_duplicate_json_members_rejected_before_output(tmp_path, payload, member):
+    payload["sources"][0].update(kind="regulator", publication="public-approved")
+    raw = json.dumps(payload)
+    if member == "publication":
+        raw = raw.replace(
+            '"publication": "public-approved"',
+            '"publication": "unreviewed", "publication": "public-approved"',
+            1,
+        )
+    elif member == "value":
+        raw = raw.replace('"value": 12', '"value": 99, "value": 12', 1)
+    else:
+        raw = raw.replace(
+            '"observations": [', '"observations": [], "observations": [', 1
+        )
+    source = tmp_path / "ambiguous.json"
+    source.write_text(raw, encoding="utf-8")
+    output = tmp_path / "output"
+    with pytest.raises(ValueError, match="Duplicate JSON member"):
+        write_pack(source, output)
+    assert not output.exists()
+
+
+@pytest.mark.parametrize("target", ["sources", "references"])
+@pytest.mark.parametrize(
+    "url",
+    [
+        "docs/%2e%2e/%2e%2e/outside.txt",
+        "docs/%2E%2E/outside.txt",
+        "docs/.%2e/outside.txt",
+        "docs/%2e./outside.txt",
+        "docs/%2e/outside.txt",
+        "docs/sub%2f..%2foutside.txt",
+        "docs/sub%2F..%2Foutside.txt",
+        "docs/sub%5c..%5coutside.txt",
+        "docs/sub%5C..%5Coutside.txt",
+    ],
+)
+def test_encoded_relative_link_traversal_rejected(payload, target, url):
+    payload[target][0]["url"] = url
+    if target == "references":
+        payload[target][0]["status"] = "AVAILABLE"
+    with pytest.raises(ValueError, match="URL"):
+        build_pack(payload)
+
+
+@pytest.mark.parametrize("target", ["sources", "references"])
+def test_encoded_relative_filename_preserved(payload, target):
+    payload[target][0]["url"] = "docs/source%20notes.txt"
+    if target == "references":
+        payload[target][0]["status"] = "AVAILABLE"
+    report = render_html(build_pack(payload), "https://example.org/repository/")
+    assert 'href="https://example.org/repository/docs/source%20notes.txt"' in report
+
+
 @pytest.mark.parametrize(
     "root", ["javascript:alert(1)", "file:sample", "//example.org"]
 )

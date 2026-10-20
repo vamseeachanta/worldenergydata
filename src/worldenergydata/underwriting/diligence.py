@@ -13,7 +13,7 @@ import math
 from datetime import date, datetime
 from html import escape
 from pathlib import Path, PurePosixPath
-from urllib.parse import urlsplit
+from urllib.parse import unquote, urlsplit
 
 SECTIONS = {
     "asset_location": "Asset/location",
@@ -94,6 +94,7 @@ def _url(value: object) -> str:
     # Repository-relative references are resolved by the renderer to its supplied
     # repository root. Local filesystem paths and parent traversal are excluded.
     path = PurePosixPath(value)
+    decoded_parts = unquote(parsed.path).split("/")
     if (
         not parsed.scheme
         and not parsed.netloc
@@ -101,6 +102,8 @@ def _url(value: object) -> str:
         and path.parts[0] in {"docs", "src", "packages", "examples"}
         and ".." not in path.parts
         and "\\" not in value
+        and not any(part in {".", ".."} for part in decoded_parts)
+        and not any(token in parsed.path.lower() for token in ("%2f", "%5c"))
     ):
         return value
     raise ValueError("Unsafe or unsupported URL")
@@ -431,6 +434,16 @@ def render_html(pack: dict, repository_url: str = "../../") -> str:
     return "".join(parts)
 
 
+def _unique_json_members(pairs: list[tuple[str, object]]) -> dict:
+    """Reject ambiguous declarations before JSON object members are discarded."""
+    record = {}
+    for key, value in pairs:
+        if key in record:
+            raise ValueError("Duplicate JSON member")
+        record[key] = value
+    return record
+
+
 def write_pack(
     input_path: Path, output_dir: Path, repository_url: str = "../../"
 ) -> None:
@@ -440,7 +453,7 @@ def write_pack(
     Input bytes are hashed; externally declared source digests are not verified.
     """
     raw = Path(input_path).read_bytes()
-    pack = build_pack(json.loads(raw))
+    pack = build_pack(json.loads(raw, object_pairs_hook=_unique_json_members))
     report = render_html(pack, repository_url)
     pack["input_sha256"] = hashlib.sha256(raw).hexdigest()
     output_dir = Path(output_dir)
