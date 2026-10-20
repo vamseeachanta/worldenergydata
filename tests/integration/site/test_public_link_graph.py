@@ -389,18 +389,22 @@ def test_concept_fdp_links(public):
 
 
 def test_landman_lease_panel(public):
-    # #951: all 10 LT fields carry a landman panel; 20 leases total; field-level
-    # blocks only (NO per-lease block — false-precision guard); placeholders link
-    # the ingest issue.
+    # Coverage is recorded in data/modules/bsee/leases/extract_manifest.json.
+    # Per-lease blocks now come from that snapshot, never registry list order.
     fields = _explorer(public)["fields"]
     total = 0
     for fid, f in fields.items():
         lm = f["landman"]
         assert lm and lm["leases"], fid
         assert lm["blocks"] and lm["ingest_issue"] == 959
-        assert "per_lease_block" in lm["pending"]
+        assert "per_lease_block" not in lm["pending"]
+        assert lm["source"]["freshness_status"] == "unknown"
+        assert "Owner assignment interest (%)" in lm["table_html"]
         for r in lm["leases"]:
-            assert "block" not in r  # never a per-lease block
+            assert r["per_lease_block"] and r["status"] and r["effective_date"]
+            assert "expiration_date" in r
+            assert "expected_expiration_date" in r
+            assert isinstance(r["per_lease_working_interest"], list)
         total += lm["n_leases"]
     assert total == 20, f"expected 20 LT leases, got {total}"
     # Every canonical LT lease resolves through the registry.

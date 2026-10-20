@@ -97,6 +97,35 @@ def _fixture_readiness(project_root: Path, manifest_entry: dict[str, Any]) -> st
     return "none"
 
 
+def lease_snapshot_entry(project_root: Path) -> dict[str, Any]:
+    """Describe the curated lease subset without assuming an update interval.
+
+    Basis: data/modules/bsee/leases/source_manifest.json (retrieval receipts)
+    and extract_manifest.json (curated row count). The receipts do not supply
+    a database update date or an acceptance limit for source age.
+    """
+    directory = project_root / "data/modules/bsee/leases"
+    source = _load_json(directory / "source_manifest.json")
+    extract = _load_json(directory / "extract_manifest.json")
+    if not source or not extract:
+        return {}
+    return {
+        "bsee_leases": {
+            "module": "bsee",
+            "path": "data/modules/bsee/leases",
+            "coverage": "Canonical lifecycle-poster leases only",
+            "record_count": extract["leases_ingested"],
+            "retrieved_at_utc": sorted(
+                {r["retrieved_at_utc"] for r in source["files"]}
+            ),
+            "source_vintage": None,
+            "freshness_status": "unknown",
+            "reason": "Retrieval time does not establish database freshness",
+            "source_manifest_sha256": extract["source_manifest_sha256"],
+        }
+    }
+
+
 def build_scorecard(
     project_root: Path, report_date: str | None = None
 ) -> dict[str, Any]:
@@ -147,6 +176,7 @@ def build_scorecard(
         "report_date": report_date,
         "module_count": len(modules),
         "modules": modules,
+        "datasets": lease_snapshot_entry(project_root),
     }
 
 
@@ -174,6 +204,21 @@ def write_markdown(scorecard: dict[str, Any], output_path: Path) -> None:
                 scheduler_last_success_ts=entry.get("scheduler_last_success_ts") or "",
                 fixture_readiness=entry.get("fixture_readiness", "none"),
             )
+        )
+    lease_entry = scorecard.get("datasets", {}).get("bsee_leases")
+    if lease_entry:
+        lines.extend(
+            [
+                "",
+                "## Dataset snapshots",
+                "",
+                f"BSEE lease snapshot: {lease_entry['record_count']} curated leases; "
+                "source update date unknown; freshness unknown. "
+                "Retrieval receipts: "
+                + ", ".join(lease_entry["retrieved_at_utc"])
+                + ". "
+                "Coverage: canonical lifecycle-poster leases only.",
+            ]
         )
     output_path.write_text("\n".join(lines) + "\n")
 

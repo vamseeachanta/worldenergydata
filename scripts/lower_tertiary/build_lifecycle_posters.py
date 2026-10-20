@@ -31,17 +31,18 @@ _SRC = Path(__file__).resolve().parents[2] / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
-from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
-    classify_tree_type,
-)
+from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.decommission_risk import (  # noqa: E402
     classify_decommissioning,
+)
+from worldenergydata.field_development.host_text_classifier import (  # noqa: E402
+    classify_tree_type,
 )
 from worldenergydata.field_development.hpht_risk import classify_hpht  # noqa: E402
 from worldenergydata.field_development.landman import (  # noqa: E402
     build_landman,
+    load_lease_snapshot,
 )
-from worldenergydata.field_development.concept import build_concept  # noqa: E402
 from worldenergydata.field_development.layout import render_layout  # noqa: E402
 from worldenergydata.field_development.portfolio_concepts import (  # noqa: E402
     concept_for,
@@ -77,10 +78,11 @@ _DECOM_ROWS = _load_decom_rows()
 TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on the axis
 FIELDS_REGISTRY = load_fields()
 
-# BSEE lease attributes for the landman panel (#951). Committed source is the
-# FDAS V30 lease workbook (name/depth/dev-system only); status/dates/WI/block are
-# placeholders linking the ingest issue below. Build-time only (pandas); the
-# published site just copies the frozen posters + _explorer.json.
+# Lease attributes use the digest-checked BSEE snapshot. The workbook remains
+# the source for name/depth/development-system attributes only.
+_LEASE_SNAPSHOT = load_lease_snapshot(
+    Path(__file__).resolve().parents[2] / "data/modules/bsee/leases"
+)
 _LEASE_INGEST_ISSUE = 959
 # FDP-authoring backlog for the 7 LT fields without a portfolio page (#759).
 _FDP_INGEST_ISSUE = 962
@@ -432,6 +434,7 @@ def facts_to_field(f: dict) -> dict:
             _LEASE_ROWS,
             _LEASE_INGEST_ISSUE,
             registry_field.bsee_block_note,
+            lease_snapshot=_LEASE_SNAPSHOT,
         ),
         "concept": build_concept(
             concept_label=concept_label,
@@ -453,7 +456,8 @@ def facts_to_field(f: dict) -> dict:
 def render(field: dict) -> str:
     tpl = TEMPLATE.read_text()
     html = tpl.replace(
-        "__FIELD_JSON__", json.dumps(field, indent=2, ensure_ascii=False)
+        "__FIELD_JSON__",
+        json.dumps(field, indent=2, ensure_ascii=False).replace("<", "\\u003c"),
     )
     return site_nav.inject_for(
         html, "poster", {"field_id": field["id"], "field_name": field["name"]}
@@ -536,7 +540,15 @@ BIG_FOOT_FACTS = {
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--self-test", action="store_true")
+    ap.add_argument("--output-dir", type=Path, default=HERE)
+    ap.add_argument(
+        "--lease-panels-only",
+        action="store_true",
+        help="Refresh lease panels while preserving other frozen field payloads",
+    )
     args = ap.parse_args()
+    output = args.output_dir
+    output.mkdir(parents=True, exist_ok=True)
 
     facts = (
         [BIG_FOOT_FACTS]
@@ -560,18 +572,27 @@ def main():
         perf_fields = json.loads(perf_path.read_text()).get("fields", {})
 
     fields = []
+    frozen_fields = (
+        json.loads((HERE / "_explorer.json").read_text())["fields"]
+        if args.lease_panels_only
+        else {}
+    )
     for f in facts:
-        field = facts_to_field(f)
-        field["norms"] = norms_chips.get(f["id"], [])
-        field["performance"] = perf_fields.get(f["id"])
-        out = HERE / f"{f['id']}_lifecycle.html"
+        if args.lease_panels_only:
+            field = dict(frozen_fields[f["id"]])
+            field["landman"] = facts_to_field(f)["landman"]
+        else:
+            field = facts_to_field(f)
+            field["norms"] = norms_chips.get(f["id"], [])
+            field["performance"] = perf_fields.get(f["id"])
+        out = output / f"{f['id']}_lifecycle.html"
         out.write_text(render(field))
         fields.append(field)
         print(
             f"  wrote {out.name}  ({field['statusLabel']}, "
             f"phase={field['currentPhase']}, gates={len(field['gates'])})"
         )
-    (HERE / "index.html").write_text(build_index(fields))
+    (output / "index.html").write_text(build_index(fields))
     print(f"  wrote index.html  ({len(fields)} fields)")
 
     # Explorer sidecar (issue #946): the SAME post-enrichment payloads the
@@ -583,7 +604,7 @@ def main():
     wells_facts = HERE / "wells" / "_wells.json"
     if wells_facts.exists():
         wells_contract = json.loads(wells_facts.read_text())
-    (HERE / "_explorer.json").write_text(
+    (output / "_explorer.json").write_text(
         json.dumps(
             {
                 "meta": {
