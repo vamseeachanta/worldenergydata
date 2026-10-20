@@ -160,6 +160,8 @@ temporary_exceptions:
       - reports/field_benchmark/_facts.json
       - reports/field_benchmark/index.html
       - reports/field_benchmark/README.md
+      - reports/ukcs_reference/_facts.json
+      - reports/ukcs_reference/index.html
       - reports/field_development/bsee_matched/_summary.json
       - reports/field_development/bsee_matched/aconcagua.html
       - reports/field_development/bsee_matched/allegheny.html

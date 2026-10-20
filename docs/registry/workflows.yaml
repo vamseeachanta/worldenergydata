@@ -267,3 +267,25 @@ workflows:
       network_required: false
       fixtures:
         - examples/workflows/federal-acreage-evidence/fixture_records.json
+  - id: ukcs-reference-report
+    basename: ukcs
+    title: UKCS reference-chain report with synthetic inputs and pre-tax metrics
+    input: examples/workflows/ukcs-reference-report/input.yml
+    result:
+      kind: files
+    outputs:
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_report.html
+      - examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+    assertions:
+      json:
+        - path: examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
+          equals:
+            economics_label: chain_plumbing_pre_tax
+            provenance: fixture
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[ukcs-reference-report]
+    runtime: offline
+    data_source:
+      type: bundled-fixture
+      network_required: false
+      fixtures:
+        - examples/workflows/ukcs-reference-report/sample_nsta_production.csv

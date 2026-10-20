@@ -1,0 +1,18 @@
+basename: ukcs
+meta:
+  label: ukcs_reference_report
+file_management:
+  flag: false
+  output_directory: outputs
+data:
+  source: csv
+  input_path: sample_nsta_production.csv
+report:
+  field_name: Example
+  field_meta:
+    field_name: EXAMPLE
+    # Explicit synthetic scenario depth; no measured field metadata is claimed.
+    water_depth_m: 100.0
+    source: synthetic scenario
+  # Explicit synthetic price input, not a forecast or fiscal assumption.
+  oil_price_usd_bbl: 75.0

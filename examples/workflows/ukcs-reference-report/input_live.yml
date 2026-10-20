@@ -1,0 +1,23 @@
+# Opt-in template: select a field present in the bounded extract before running.
+basename: ukcs
+meta:
+  label: ukcs_reference_live
+file_management:
+  flag: false
+  output_directory: outputs
+data:
+  source: nsta_live
+  # Relative to this input file; raw regenerable data remain ignored.
+  cache_dir: ../../../data/modules/ukcs/raw
+  # Explicit reporting-year choice, not a claim of complete current-year data.
+  year: 2026
+  # Operational request bound, not an engineering acceptance limit.
+  max_records: 2000
+  force_refresh: true
+report:
+  field_name: REPLACE_WITH_FIELD
+  field_meta:
+    # Missing depth remains missing; the chain assumptions are not qualified.
+    source: NSTA
+  # Explicit scenario price; replace with the intended analysis input.
+  oil_price_usd_bbl: 75.0
