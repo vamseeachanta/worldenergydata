@@ -248,19 +248,17 @@ class CNHPDFParser:
         """
         for col in df.columns:
             # Skip if column looks like an identifier
-            if any(kw in col.lower() for kw in ["nombre", "name", "id", "clave"]):
+            if re.search(r"\b(id|clave|nombre|name)\b", col.lower()):
                 continue
 
             # Try numeric conversion
             try:
-                # UTS #35, LDML Part 3: Numbers, v48.2, Number Symbols
-                # (group) and Special Pattern Characters define 3-digit
-                # thousands groups. Issue #1282 requires comma grouping to
-                # take precedence over the legacy decimal-comma fallback.
-                # https://www.unicode.org/reports/tr35/tr35-numbers.html#Number_Symbols
+                # Parser policy for issue #1282: three-digit comma groups
+                # with a nonzero first group take precedence over the legacy
+                # decimal-comma fallback. Grouping size is locale-dependent.
                 text_values = df[col].str.strip()
                 grouped = text_values.str.fullmatch(
-                    r"[+-]?[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?", na=False
+                    r"[+-]?[1-9][0-9]{0,2}(?:,[0-9]{3})+(?:\.[0-9]+)?", na=False
                 )
                 numeric_values = text_values.str.replace(",", ".", regex=False)
                 numeric_values = numeric_values.mask(
