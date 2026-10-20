@@ -2,9 +2,19 @@
 
 **Play:** Lower Tertiary &middot; **Fields:** all producing fields &middot; **Spud window:** 2010–latest &middot; **Data through:** 2026-04-30 (BSEE OGOR-A)
 
-Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Drilling/completion timing and interventions are derived from BSEE WAR + V30 drilling data; first oil, cumulative oil and uptime from OGOR-A production; decline (D, EUR) from the forecasting module; estimated revenue from monthly oil × the historical WTI deck. Cells shown as `—` are not derivable from the public data for that well (flagged, not fabricated).
+Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Calendar milestones and interventions are derived from BSEE WAR + V30 drilling data; first oil, cumulative oil and uptime from OGOR-A production; decline (D, EUR) from the forecasting module; estimated revenue from monthly oil × the historical WTI deck. Cells shown as `—` are not derivable from the public data for that well (flagged, not fabricated).
 
-| Field | Wellbore (API12) | Spud | First oil | Drill days | Compl. days | Cum oil (MMbbl) | Uptime % | Decline %/yr | EUR (MMbbl) | Est. revenue ($MM) | Interventions |
+Timing uses elapsed calendar days: first completion minus spud, then first oil minus first completion. These intervals include suspensions and waiting, not active drilling or rig occupancy. A missing or reversed endpoint leaves that component blank. Source: issue #1077 (2026), date-arithmetic definition.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+|---|---|---|
+| 1 | 2026-10-19 | Identify elapsed calendar intervals to prevent interpretation as rig time. |
+
+## Well benchmark
+
+| Field | Wellbore (API12) | Spud | First oil | Spud to completion (calendar days) | Completion to first oil (calendar days) | Cum oil (MMbbl) | Uptime % | Decline %/yr | EUR (MMbbl) | Est. revenue ($MM) | Interventions |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Jack St Malo | 608124005800 | 2011-12-05 | 2016-04-01 | 1,532.0 | 47.0 | 39.7 | 96.9 | 8.5 | 69.1 | 2,469.8 | 0 |
 | Jack St Malo | 608124005103 | 2012-06-02 | 2015-07-01 | — | — | 39.5 | 95.1 | 5.9 | 84.6 | 2,413.4 | 0 |

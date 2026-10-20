@@ -23,6 +23,8 @@ faked.
 from __future__ import annotations
 
 import argparse
+import csv
+import io
 import sys
 from pathlib import Path
 
@@ -45,8 +47,8 @@ _MD_COLUMNS = [
     ("well", "Wellbore (API12)"),
     ("spud", "Spud"),
     ("first_oil", "First oil"),
-    ("drilling_days", "Drill days"),
-    ("completion_days", "Compl. days"),
+    ("spud_to_completion_calendar_days", "Spud to completion (calendar days)"),
+    ("completion_days", "Completion to first oil (calendar days)"),
     ("cum_oil_mmbbl", "Cum oil (MMbbl)"),
     ("uptime_pct", "Uptime %"),
     ("decline_annual_pct", "Decline %/yr"),
@@ -84,7 +86,7 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
     lines.append("")
     lines.append(
         f"Per-well benchmark for **{len(df)} producing wells**, sorted by "
-        f"cumulative oil. Drilling/completion timing and interventions are "
+        f"cumulative oil. Calendar milestones and interventions are "
         f"derived from BSEE WAR + V30 drilling data; first oil, cumulative oil "
         f"and uptime from OGOR-A production; decline (D, EUR) from the "
         f"forecasting module; estimated revenue from monthly oil × the "
@@ -92,6 +94,27 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
         f"public data for that well (flagged, not fabricated)."
     )
     lines.append("")
+
+    lines.append(
+        "Timing uses elapsed calendar days: first completion minus spud, then "
+        "first oil minus first completion. These intervals include suspensions "
+        "and waiting, not active drilling or rig occupancy. "
+        "A missing or reversed endpoint leaves that component blank. "
+        "Source: issue #1077 (2026), date-arithmetic definition."
+    )
+    lines.append("")
+    lines.extend(
+        [
+            "## Revision history",
+            "",
+            "| Revision | Date | Change and reason |",
+            "|---|---|---|",
+            "| 1 | 2026-10-19 | Identify elapsed calendar intervals to prevent interpretation as rig time. |",
+            "",
+            "## Well benchmark",
+            "",
+        ]
+    )
 
     header = "| " + " | ".join(h for _, h in _MD_COLUMNS) + " |"
     sep = "|" + "|".join("---" for _ in _MD_COLUMNS) + "|"
@@ -150,6 +173,39 @@ def _load_cfg(args: argparse.Namespace) -> BenchmarkConfig:
     )
 
 
+def migrate_saved_csv(path: Path) -> None:
+    """Rename the saved calendar column without recalculating any source cell.
+
+    This schema-only migration supports checkouts without raw OGOR/WAR inputs.
+    Reject conflicting aliases before writing. Repeated migrations are inert.
+    """
+    with path.open(newline="", encoding="utf-8") as stream:
+        reader = csv.DictReader(stream)
+        columns = reader.fieldnames or []
+        rows = list(reader)
+    canonical = "spud_to_completion_calendar_days"
+    legacy = "drilling_days"
+    if len(columns) != len(set(columns)):
+        raise ValueError("Duplicate benchmark columns")
+    if legacy not in columns:
+        if canonical not in columns:
+            raise ValueError("No calendar column in saved benchmark")
+        return
+    if canonical in columns:
+        if any(row[canonical] != row[legacy] for row in rows):
+            raise ValueError("Calendar column and legacy alias disagree")
+        columns.remove(legacy)
+    else:
+        columns[columns.index(legacy)] = canonical
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=columns, lineterminator="\n")
+    writer.writeheader()
+    for row in rows:
+        row[canonical] = row.pop(legacy)
+        writer.writerow(row)
+    path.write_text(output.getvalue(), encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", default=None, help="Saved benchmark YAML.")
@@ -158,7 +214,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--spud-year-max", type=int, default=None, dest="spud_year_max")
     parser.add_argument("--fields", nargs="+", default=None)
     parser.add_argument("--end-date", default=None, dest="end_date")
+    parser.add_argument(
+        "--migrate-saved-csv",
+        type=Path,
+        help="Rename the saved calendar column only; preserve all source cells.",
+    )
     args = parser.parse_args(argv)
+    if args.migrate_saved_csv:
+        migrate_saved_csv(args.migrate_saved_csv)
+        return 0
 
     cfg = _load_cfg(args)
     from worldenergydata.lower_tertiary import ops_timeline

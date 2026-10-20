@@ -156,27 +156,23 @@ def _calendar_benchmark_row(completion_date: str | None) -> dict:
 
 
 class TestCalendarCycleTime:
-    def test_leap_year_calendar_span_and_alias(self):
+    def test_leap_year_calendar_span(self):
         """Jan 1 to Mar 1 = 31 + 29 = 60 days in leap year 2020.
 
         Mar 1 to Jun 9 = 31 + 30 + 31 + 8 = 100 days; 60 + 100 = 160,
-        the Jan 1 to Jun 9 span. The alias carries the same calendar time.
+        the Jan 1 to Jun 9 span. The exported name identifies calendar time.
         """
         row = _calendar_benchmark_row("2020-03-01")
         assert row["spud_to_completion_calendar_days"] == 60
-        assert row["drilling_days"] == row["spud_to_completion_calendar_days"]
+        assert "drilling_days" not in row
         assert row["completion_days"] == 100
         assert (
             row["spud_to_completion_calendar_days"] + row["completion_days"]
             == (pd.Timestamp(row["first_oil"]) - pd.Timestamp(row["spud"])).days
             == 160
         )
-        columns = list(row)
-        assert columns.index("spud_to_completion_calendar_days") + 1 == columns.index(
-            "drilling_days"
-        )
 
-    def test_no_completion_calendar_span_and_alias_are_null(self):
+    def test_no_completion_calendar_span_is_null(self):
         """Without completion, Jan 1 to completion cannot be calculated.
 
         Jan 1 to Jun 9 = 31 + 29 + 31 + 30 + 31 + 8 = 160 days, but
@@ -184,13 +180,13 @@ class TestCalendarCycleTime:
         """
         row = _calendar_benchmark_row(None)
         assert row["spud_to_completion_calendar_days"] is None
-        assert row["drilling_days"] is None
+        assert "drilling_days" not in row
         assert row["completion_days"] is None
 
-    def test_completion_before_spud_calendar_span_and_alias_are_null(self):
+    def test_completion_before_spud_calendar_span_is_null(self):
         """Dec 31 to Jan 1 gives completion minus spud = -1 day.
 
-        The existing guard rejects that span; the new field and alias are null.
+        The existing guard rejects that span; the calendar field is null.
         Jan 1 to Jun 9 still spans 31 + 29 + 31 + 30 + 31 + 8 = 160 days.
         Existing-behaviour pin: Dec 31 to Jun 9 = 1 + 160 = 161 days.
         When completion precedes spud, the span is null while the completion
@@ -199,26 +195,19 @@ class TestCalendarCycleTime:
         """
         row = _calendar_benchmark_row("2019-12-31")
         assert row["spud_to_completion_calendar_days"] is None
-        assert row["drilling_days"] is None
+        assert "drilling_days" not in row
         assert row["completion_days"] == 161
 
 
-def test_committed_csv_calendar_alias_matches_row_by_row():
-    """The generated calendar column equals its alias, including empty cells."""
+def test_committed_csv_uses_calendar_name():
+    """Schema regression: calendar spans must not be exported as drilling time."""
     csv_path = (
         Path(__file__).resolve().parents[3]
         / "reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv"
     )
-    column = "spud_to_completion_calendar_days"
     with csv_path.open(newline="", encoding="utf-8") as stream:
         reader = csv.DictReader(stream)
         header = reader.fieldnames or []
-        if column not in header:
-            pytest.skip(
-                "committed CSV not yet regenerated: column "
-                "spud_to_completion_calendar_days absent"
-            )
-        assert header.count(column) == 1
-        assert header.index(column) + 1 == header.index("drilling_days")
-        for row in reader:
-            assert row[column] == row["drilling_days"], row["api12"]
+        assert header.count("spud_to_completion_calendar_days") == 1
+        assert "drilling_days" not in header
+        assert list(reader)

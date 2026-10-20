@@ -221,6 +221,10 @@ def load_publications(root: Path) -> list:
         (benchmark, BENCHMARK.as_posix(), False),
     ]:
         columns = ["api12", "drilling_days", "completion_days"]
+        if source == BENCHMARK.as_posix():
+            # Issue #1077 (2026): read the explicit calendar name. This audit
+            # retains historical diagnostic output keys, not a rig-time claim.
+            columns[1] = "spud_to_completion_calendar_days"
         if workbook_columns:
             columns = ["API_WELL_NUMBER", "DRILLING_DAYS", "COMPLETION_DAYS"]
         rows.extend(_publication_rows(frame, source, *columns))

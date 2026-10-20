@@ -201,3 +201,22 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
     assert 'content="noindex, follow"' in html
     # the old hand-authored overview copy must not return to this page
     assert "Capability Showcase" not in html
+
+
+def test_calendar_insight_publishes_download_and_reconciles_population(bp):
+    """The corrected page and entry cards must identify the calendar basis."""
+    bp.build(domains=["lower_tertiary", "capabilities"])
+    page = (bp.PUBLIC / "drilling-insights.html").read_text(encoding="utf-8")
+    index = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
+    assert (bp.PUBLIC / "lt_drilling_insights.csv").exists()
+    assert 'href="lt_drilling_insights.csv"' in page
+    assert "calendar cycle time" in page
+    assert "184" in page and "211" in page
+    assert "NOT_EVALUATED" in page
+    assert "burned 11,124 rig-days" not in index
+    benchmark = (bp.PUBLIC / "benchmark.html").read_text(encoding="utf-8")
+    assert "Spud to completion (calendar days)" in benchmark
+    assert "Drill days" not in benchmark
+    hub = (bp.PUBLIC / "capabilities/insights.html").read_text(encoding="utf-8")
+    assert "11,124 rig-days" not in hub
+    assert "calendar cycle time" in hub

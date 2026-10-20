@@ -309,3 +309,23 @@ def test_new_csv_columns_append_and_statistics_keep_three_bases_paired():
         ]
         assert {s["rule"] for s in paired} == {"ratified", "interim", "milestone"}
         assert len({s["wells"] for s in paired}) == 1
+
+
+def test_benchmark_consumer_reads_explicit_calendar_column():
+    """The historical comparison preserves its diagnostic values after rename.
+
+    The expected value is the saved calendar cell itself, not a rig-time
+    calculation. The diagnostic schema retains its historical metric names.
+    """
+    module = comparison_module()
+    source = pd.read_csv(REPO / module.BENCHMARK, dtype=str).fillna("")
+    expected = source.set_index("api12")["spud_to_completion_calendar_days"]
+    rows = [
+        row
+        for row in module.load_publications(REPO)
+        if row["published_table"] == module.BENCHMARK.as_posix()
+    ]
+    assert len(rows) == len(source)
+    for row in rows:
+        value = expected[row["api12"]]
+        assert row["published_drilling_days"] == (float(value) if value else None)
