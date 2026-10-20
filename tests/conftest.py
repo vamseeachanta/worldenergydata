@@ -662,11 +662,14 @@ def pytest_ignore_collect(collection_path, config):
         return False
 
     # Statistics is an optional member extra (#1313). Collect its tests whenever
-    # installed, and let import errors in an installed backend surface normally.
+    # installed. CI requires collection so a missing backend fails visibly.
     if rel_path.parts[:4] == ("tests", "unit", "metocean", "statistics"):
         from importlib.util import find_spec
 
-        if find_spec("metocean_stats") is None:
+        if (
+            os.environ.get("WED_REQUIRE_METOCEAN_STATS") != "1"
+            and find_spec("metocean_stats") is None
+        ):
             return True
 
     if rel_path in broken_module_tests:

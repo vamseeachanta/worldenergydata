@@ -2,7 +2,7 @@
 ABOUTME: Weather window and operability analysis wrapping metocean-stats.
 ABOUTME: Computes operability %, persistence statistics, and monthly heatmaps.
 
-Uses real metocean-stats library (v1.1.9) as the statistical backend.
+Uses real metocean-stats library (v1.2.0) as the statistical backend.
 All visualisations use Plotly.
 """
 

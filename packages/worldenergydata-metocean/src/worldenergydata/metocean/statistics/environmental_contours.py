@@ -37,7 +37,7 @@ class EnvironmentalContour:
     IFORM and ISORM environmental contour computation.
 
     Leverages the joint model fitted by ``JointProbabilityModel.fit``.
-    Uses virocon (bundled with metocean-stats 1.1.9) for contour
+    Uses virocon (bundled with metocean-stats 1.2.0) for contour
     computation, with a Plotly-based visualisation layer.
 
     Examples

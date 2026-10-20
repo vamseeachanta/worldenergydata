@@ -14,11 +14,15 @@ Install it with `uv sync --package worldenergydata-metocean --extra statistics`.
 For repository tests, retain the root test tooling as well:
 
 ```sh
-uv sync --frozen --package worldenergydata --package worldenergydata-metocean --extra test --extra statistics
+uv sync --frozen --package worldenergydata --package worldenergydata-metocean --all-extras
 uv run --no-sync pytest tests/unit/metocean/statistics
 ```
 
-The PR domain workflow installs this extra only in the metocean shard.
+The PR metocean shard explicitly installs the member extras and requires statistics
+test collection. BSEE screening depends on this statistics extra, so root installs
+(including the full CI matrix on Python 3.10–3.12) also install the backend.
+Metocean-only installs can omit it. CI sets `WED_REQUIRE_METOCEAN_STATS=1` so a
+missing backend fails collection instead of silently excluding statistics tests.
 
 ## Reanalysis calibration
 
