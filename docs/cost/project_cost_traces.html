@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Project component cost traces</title>
+<h1>Project component cost traces</h1>
+<p>The trace combines sanction estimates, contract awards, project statements and
+revision trails into dated observations. Each observation retains the complete
+curated source row. It supports evidence inspection; portfolio component-to-total
+accounting remains NOT_EVALUATED until comparable bases and asset links are established.</p>
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
+<tr><td>1</td><td>2026-10-19</td><td>Documented portfolio event histories, reproducible outputs and accounting limitations.</td></tr>
+</table>
+<h2>Build and inspect</h2>
+<pre>PYTHONPATH=src:packages/worldenergydata-cost/src python scripts/cost/build_project_cost_traces.py \
+  --output-dir "$TMPDIR/project-cost-traces"</pre>
+<p>The output directory receives project_cost_events.csv, project_cost_events.json,
+project_cost_traces.html and project_trace_manifest.json. The manifest enumerates the
+actual project union, per-table row counts, trail-only projects, missing years,
+SHA-256 digests of every consumed input and output digests. No clock or local path
+is embedded. The same input bytes produce the same output bytes. Inputs are read
+once for parsing and hashing; outputs are read back to verify their digests.</p>
+<h2>Slices and method</h2>
+<ol>
+<li>Events: each table has an explicit natural key. Exact duplicate rows collapse;
+conflicting rows with the same key fail. Content-derived trace IDs do not allocate
+canonical registry identities. Cross-table corroborating rows remain separate.</li>
+<li>Evidence lanes: date precision, native currency when explicitly available,
+value basis, scope text and provenance remain distinct. Existing controlled award
+links are checked against project and requirement ownership. Unmapped awards remain
+unlinked; no development taxonomy or project alias is inferred.</li>
+<li>Outputs: the HTML lists events without connecting lines. CSV and JSON preserve
+raw observations. Exact project coverage and missing years are reported at build time.</li>
+</ol>
+<p>Chronology is established only when event A's latest possible date precedes event
+B's earliest possible date. Sorting overlapping intervals is for display only.
+Gregorian year/month intervals are used; a year-only observation is not a January
+publication. SOURCE_PUBLISHED_DATE, when explicitly supplied, is independent of the
+effective date. ACCESSED_DATE is never substituted. Historical availability indicates
+only that this date is supplied; it does not qualify the amount for model training.</p>
+<p>Missing years = integer years between the first and last observation, minus the
+observed years. This set operation introduces no estimated values. Separate lanes
+are keyed by project, total/component, component class, currency, nominal price
+basis, value basis and scope text. Awards are never accumulated as project spend.</p>
+<h2>Worked example: synthetic inputs, method and answer</h2>
+<p>The following values are illustrative inputs, not public project evidence or
+engineering acceptance limits. The independent hand calculation is also specified
+in tests/unit/cost/test_project_cost_trace.py.</p>
+<table>
+<tr><th>Date</th><th>Kind</th><th>Value (million currency units)</th><th>Currency</th><th>Basis</th></tr>
+<tr><td>2020-02</td><td>Sanction estimate</td><td>100</td><td>USD</td><td>Gross development</td></tr>
+<tr><td>2022</td><td>Final outturn</td><td>100</td><td>USD</td><td>Gross development</td></tr>
+<tr><td>2022-03</td><td>Revised estimate</td><td>100</td><td>USD</td><td>Gross development</td></tr>
+</table>
+<p>Table 1. Synthetic chronology example; scalar bounds remain unqualified.</p>
+<p>Hand answer: three distinct observations, one missing year (2021). February
+2020 ends on February 29. The 2022 annual interval overlaps March 2022, so their
+chronology is unresolved. Adding a NOK 200 observation creates a separate currency
+lane; USD 100 and NOK 200 have no meaningful combined amount. A band of 10–20
+retains both bounds. An undisclosed award retains blank bounds, rather than zero.
+Repeating a source row adds no event; changing its amount under the same key raises
+a conflict.</p>
+<h2>Source basis and limits</h2>
+<ul>
+<li><a href="../../data/modules/cost/curated/AWARD_REGISTRY.md">Award registry provenance, 2026-07-15</a>:
+point, band, range, backlog, combined, lease, midstream and not-public semantics.
+Legacy awards lack structured currency; all such currencies remain unknown,
+including any import-time conversion. No numeric comparison uses them.</li>
+<li><a href="../../data/modules/cost/curated/COST_REVISION_TRAILS.md">Revision trail provenance, 2026-07-15</a>:
+nominal currency lanes and low confidence for trade-press figures.</li>
+<li><a href="https://github.com/vamseeachanta/worldenergydata/issues/1042">Trace requirements</a> and
+<a href="https://github.com/vamseeachanta/worldenergydata/issues/1038">accounting contract</a>:
+no silent FX, deflation, double counting or interpolation.</li>
+</ul>
+<p>No fitted coefficients, deflators, monetary conversion factors or acceptance
+limits are introduced. Total-value fields may contain floors, ceilings or collapsed
+ranges. Their exact curated scalar text is retained, but bound qualification is
+NOT_EVALUATED; the original quote is displayed. No scalar is promoted into a
+validated point. Existing statement rows without confidence remain not_evaluated.
+Trade-press confidence is capped at low without changing the retained raw row.</p>
+<p>Later work requires the portfolio asset-map dependency, structured total bounds,
+explicit native award currency, ownership/scope and change classifications, and
+publication dates. Scope changes or basis changes are retained when explicitly
+classified by the input; they are not inferred from prose. The unavailable v2
+asset-map contract is not claimed as verified by this trace manifest. Deflated
+comparisons, reconciliation residuals and historical model-feature qualification
+remain outside this build. The existing pilot trace remains unchanged.</p>
+</html>
