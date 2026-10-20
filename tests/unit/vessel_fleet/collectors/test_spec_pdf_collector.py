@@ -38,7 +38,7 @@ def stub_pdf(collector, monkeypatch, module):
     paths = []
     monkeypatch.setattr(collector, "get_bytes", lambda url: b"synthetic bytes")
 
-    def extract(path):
+    def extract(path, **kwargs):
         paths.append(Path(path))
         assert paths[-1].read_bytes() == b"synthetic bytes"
         return TEXT
@@ -104,7 +104,7 @@ def test_non_rig_mapping_is_preserved(collector, stub_pdf):
 def test_no_specs_returns_no_high_priority_record(
     collector, stub_pdf, monkeypatch, caplog, text, module
 ):
-    monkeypatch.setattr(module, "extract_text_from_pdf", lambda path: text)
+    monkeypatch.setattr(module, "extract_text_from_pdf", lambda path, **kwargs: text)
     assert collector.collect_from_urls({"synthetic": URL}) == []
     assert "synthetic" in caplog.text
 
@@ -114,7 +114,7 @@ def test_failed_extraction_cleans_temporary_file(
 ):
     paths = []
 
-    def fail(path):
+    def fail(path, **kwargs):
         paths.append(Path(path))
         raise ValueError("synthetic extraction failure")
 
@@ -134,7 +134,7 @@ def test_failed_download_does_not_stop_batch(collector, monkeypatch, caplog, mod
         return b"synthetic bytes"
 
     monkeypatch.setattr(collector, "get_bytes", download)
-    monkeypatch.setattr(module, "extract_text_from_pdf", lambda path: TEXT)
+    monkeypatch.setattr(module, "extract_text_from_pdf", lambda path, **kwargs: TEXT)
     records = collector.collect_from_urls(
         {"missing": "https://example.org/missing.pdf", "synthetic": URL}
     )
@@ -225,3 +225,28 @@ def test_real_malformed_pdf_does_not_stop_batch(collector, monkeypatch, caplog):
     )
     assert [record["VESSEL_NAME"] for record in records] == ["synthetic"]
     assert "Failed to collect bad" in caplog.text
+
+
+def test_real_pdf_preserves_wide_gap_dimensions_and_mapping(collector, monkeypatch):
+    """Synthetic metric inputs are retained directly, without conversion.
+
+    Separate positioned strings reproduce a table's wide label/value gap.
+    Collapsed extraction removes that gap and loses the typed dimensions.
+    """
+    from reportlab.pdfgen.canvas import Canvas
+
+    stream = BytesIO()
+    canvas = Canvas(stream)
+    canvas.drawString(40, 700, "DIMENSIONS")
+    canvas.drawString(220, 700, "100 m (Long) x 50 m (Wide) x 20 m")
+    canvas.drawString(40, 680, "Custom Equipment: synthetic equipment")
+    canvas.save()
+    monkeypatch.setattr(collector, "get_bytes", lambda url: stream.getvalue())
+    collector.field_mapping = {"Custom Equipment": "EQUIPMENT"}
+
+    [record] = collector.collect_from_urls({"synthetic": URL})
+
+    assert record["LOA_M"] == 100.0
+    assert record["BEAM_M"] == 50.0
+    assert record["DEPTH_M"] == 20.0
+    assert record["EQUIPMENT"] == "synthetic equipment"

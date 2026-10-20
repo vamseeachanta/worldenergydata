@@ -87,7 +87,9 @@ class SpecPdfCollector(BaseCollector):
             tmp_path = tmp.name
 
         try:
-            text = extract_text_from_pdf(tmp_path)
+            text = extract_text_from_pdf(
+                tmp_path, layout=self.vessel_category == "drilling_rig"
+            )
         finally:
             Path(tmp_path).unlink(missing_ok=True)
 
