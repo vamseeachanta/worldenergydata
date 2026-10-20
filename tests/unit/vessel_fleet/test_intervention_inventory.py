@@ -200,6 +200,88 @@ def test_class_and_residency_conflicts_widen_observed_upper_bound(tmp_path):
     assert summary["conflicted_assets"] == 1
 
 
+_UNKNOWN_TYPES = [
+    {},
+    {"rig_type": None, "vessel_type": None},
+    {"rig_type": " ", "vessel_type": " "},
+    {"rig_type": "unclassified"},
+    {"vessel_type": "unclassified"},
+]
+
+
+@pytest.mark.parametrize("unknown_type", _UNKNOWN_TYPES)
+@pytest.mark.parametrize("known_field", ["rig_type", "vessel_type"])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_unknown_class_does_not_oppose_known_class(
+    tmp_path, unknown_type, known_field, reverse
+):
+    """One known resident RLWI hull plus no class evidence gives [1, 1]."""
+    rows = [
+        {"name": "synthetic-alpha", known_field: "rlwi_monohull", "gom_resident": True},
+        {"name": "synthetic-alpha", **unknown_type, "gom_resident": True},
+    ]
+    if reverse:
+        rows.reverse()
+    path = write_roster(tmp_path, "roster.yml", rows)
+    assets = load_intervention_inventory([path])
+    assert len(assets) == 1
+    asset = assets[0]
+    assert asset.asset_class == "rlwi_monohull"
+    assert "ASSET_CLASS" not in asset.conflicts
+    assert {o.asset_class for o in asset.observations} == {"rlwi_monohull", None}
+    if known_field == "vessel_type" and not unknown_type.get("vessel_type", ""):
+        assert asset.vessel.VESSEL_TYPE == "rlwi_monohull"
+    assert len(query_intervention_inventory(assets, asset_class="rlwi_monohull")) == 1
+    summary = summarize_intervention_inventory(assets)
+    assert summary["gom_dedicated_observed"] == {"lower": 1, "upper": 1}
+
+
+@pytest.mark.parametrize("unknown_type", _UNKNOWN_TYPES)
+def test_unclassified_observation_stays_distinct_from_explicit_other(
+    tmp_path, unknown_type
+):
+    path = write_roster(
+        tmp_path, "roster.yml", [{"name": "synthetic-alpha", **unknown_type}]
+    )
+    assets = load_intervention_inventory([path])
+    assert assets[0].observations[0].asset_class is None
+    assert assets[0].asset_class == "other"
+    assert "ASSET_CLASS" not in assets[0].conflicts
+    assert not query_intervention_inventory(assets, asset_class="rlwi_monohull")
+    assert summarize_intervention_inventory(assets)["gom_dedicated_observed"] == {
+        "lower": 0,
+        "upper": 0,
+    }
+
+
+@pytest.mark.parametrize("other_field", ["rig_type", "vessel_type"])
+def test_explicit_other_class_still_conflicts_with_dedicated_class(
+    tmp_path, other_field
+):
+    """A positive other label opposes RLWI: no confirmed hull, one possible."""
+    path = write_roster(
+        tmp_path,
+        "roster.yml",
+        [
+            {
+                "name": "synthetic-alpha",
+                "vessel_type": "rlwi_monohull",
+                "gom_resident": True,
+            },
+            {"name": "synthetic-alpha", other_field: " OTHER ", "gom_resident": True},
+        ],
+    )
+    assets = load_intervention_inventory([path])
+    assert assets[0].asset_class == "other"
+    assert "ASSET_CLASS" in assets[0].conflicts
+    assert {o.asset_class for o in assets[0].observations} == {"rlwi_monohull", "other"}
+    assert not query_intervention_inventory(assets, asset_class="rlwi_monohull")
+    assert summarize_intervention_inventory(assets)["gom_dedicated_observed"] == {
+        "lower": 0,
+        "upper": 1,
+    }
+
+
 @pytest.mark.parametrize("depth", [-1, float("nan"), float("inf")])
 def test_invalid_query_depth_rejected(depth):
     with pytest.raises(ValueError):

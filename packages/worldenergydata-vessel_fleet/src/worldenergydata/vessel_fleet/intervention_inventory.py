@@ -45,10 +45,14 @@ _FIELDS = (
 
 @dataclass(frozen=True)
 class InventoryObservation:
-    """One source listing, with a portable locator and unchanged capabilities."""
+    """One source listing, with a portable locator and unchanged capabilities.
+
+    A missing or unclassified type has no asset class. An explicit ``other``
+    type remains positive evidence and can disagree with a dedicated class.
+    """
 
     vessel: InterventionVesselSchema
-    asset_class: str
+    asset_class: str | None
     locator: str
     source: str | None
     confidence: str | None
@@ -103,12 +107,19 @@ def load_intervention_inventory(
                 OPERATOR=row.get("operator"),
                 **fields,
             )
+            asset_class = classify_asset_class(
+                rig_type=row.get("rig_type"),
+                vessel_type=vessel.VESSEL_TYPE,
+            )
+            # The classifier's fallback is not positive evidence of a class.
+            if asset_class == "other" and not any(
+                (value or "").strip().lower() == "other"
+                for value in (row.get("rig_type"), vessel.VESSEL_TYPE)
+            ):
+                asset_class = None
             observation = InventoryObservation(
                 vessel=vessel,
-                asset_class=classify_asset_class(
-                    rig_type=row.get("rig_type"),
-                    vessel_type=vessel.VESSEL_TYPE,
-                ),
+                asset_class=asset_class,
                 locator=f"{path.name}:vessels[{index}]",
                 source=row.get("source_url") or row.get("source"),
                 confidence=row.get("confidence"),
