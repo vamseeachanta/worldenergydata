@@ -1,0 +1,85 @@
+{
+  "contract_version": "3.0.0",
+  "decimal_policy": {
+    "allocation_arithmetic": "exact rational units",
+    "allocation_rounding": "largest_remainder",
+    "interval_precision": 50,
+    "interval_rounding": "outward",
+    "output_quantum": "0.01"
+  },
+  "evidence_status": "synthetic",
+  "generated_at_policy": "input revision_date; no wall clock",
+  "inputs": [
+    {
+      "path": "portfolio_input",
+      "sha256": "5a537414b326027c5db792f9ab2c1ab6165c0c1fb54d6168d1b4e30834da04ce"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "project_cost_map.csv",
+      "sha256": "747aa2b46bc2814cb1b66e4fb41800963a25b7bc390a8cdf620eb81ed2dd1a26"
+    },
+    {
+      "path": "project_cost_map.html",
+      "sha256": "71a7682120f8b4bec0f540c42c000bd4b2fd7c667d0274804982b5b3e34a0528"
+    }
+  ],
+  "producer": [
+    {
+      "path": "__init__.py",
+      "sha256": "16236e7c09a35e879b083cb42973210612c5020d93e890d8ad6a2a8c1deac53a"
+    },
+    {
+      "path": "basis.py",
+      "sha256": "a5b0735d7d7be15105be378aa2a001f8d19cbe378e11c603ca6cbdf793e6d694"
+    },
+    {
+      "path": "intervals.py",
+      "sha256": "b9ee95cbd60698bd5b732f76e8e404422719e426bdfad51a4214b7a917dc0a72"
+    },
+    {
+      "path": "reporting.py",
+      "sha256": "8efe8ec198a7298e5e3247ed58e534a40277004ae242513f5598079f4dba80f2"
+    },
+    {
+      "path": "scenarios.py",
+      "sha256": "78b4e7ab2e32da7dd4fac43b56b705b67e714fd09e708d442c49619a99e7cfb2"
+    },
+    {
+      "path": "synthesis.py",
+      "sha256": "e72838187cc1ed10c9a25ed7c6e8542ca280e7c2a0502205d4c7ddf484d031c2"
+    }
+  ],
+  "revision_date": "2026-10-19",
+  "scenarios": [
+    {
+      "architecture": "subsea_tieback",
+      "derivation": "allocated",
+      "scenario_id": "scn-reference",
+      "shares": {
+        "req-host": "0.6",
+        "req-wells": "0.3"
+      },
+      "source": "Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026)",
+      "unallocated_share": "0.1"
+    },
+    {
+      "architecture": "subsea_tieback",
+      "derivation": "modeled",
+      "scenario_id": "scn-alternative",
+      "shares": {
+        "req-host": "0.2",
+        "req-wells": "0.7"
+      },
+      "source": "Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026)",
+      "unallocated_share": "0.1"
+    }
+  ],
+  "schema": {
+    "path": "reporting.py",
+    "sha256": "8efe8ec198a7298e5e3247ed58e534a40277004ae242513f5598079f4dba80f2",
+    "version": "1.0"
+  },
+  "upstream_manifest_sha256": null
+}

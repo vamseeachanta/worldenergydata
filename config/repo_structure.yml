@@ -131,7 +131,11 @@ temporary_exceptions:
       - reports/cost/big_foot_cost_map_reconciliation.csv
       - reports/cost/cost_basis_timeseries.html
       - reports/cost/cost_timeseries_presentation.html
+      # Reproducible synthetic example: scripts/cost/build_project_cost_map.py.
+      - reports/cost/cost_synthesis_manifest.v3.json
       - reports/cost/inflation_verdicts.csv
+      - reports/cost/project_cost_map.csv
+      - reports/cost/project_cost_map.html
       - reports/cost/reconciliation.csv
       - reports/cost/stage_allocations.csv
       - reports/field-atlas/onepagers/field-anchor.html

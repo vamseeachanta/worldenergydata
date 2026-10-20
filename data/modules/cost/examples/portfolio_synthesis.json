@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "evidence_status": "synthetic",
+  "revision_date": "2026-10-19",
+  "quantum": "0.01",
+  "source": "Synthetic hand calculation, documented in docs/modules/cost/portfolio-synthesis.md (2026). All amounts and shares are demonstration inputs, not industry estimates. The quantum is an explicit output policy.",
+  "projects": [
+    {
+      "project_id": "prj-demo",
+      "architecture": "subsea_tieback",
+      "basis": {
+        "currency": "USD",
+        "price_basis": "nominal",
+        "ownership": "gross",
+        "scope": "development",
+        "capex": "project_capex",
+        "phase": "FID"
+      },
+      "total": {
+        "low": "100",
+        "high": "100"
+      },
+      "requirement_ids": [
+        "req-host",
+        "req-wells"
+      ],
+      "source": "Synthetic total: 100 monetary units; hand calculation (2026)",
+      "contributions": [
+        {
+          "award_id": "awd-demo",
+          "requirement_ids": [
+            "req-host",
+            "req-wells"
+          ],
+          "amount": {
+            "low": "20",
+            "high": "30"
+          },
+          "disposition": "included",
+          "value_basis": "range",
+          "source": "Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)",
+          "basis": {
+            "currency": "USD",
+            "price_basis": "nominal",
+            "ownership": "gross",
+            "scope": "development",
+            "capex": "project_capex",
+            "phase": "FID"
+          }
+        },
+        {
+          "award_id": "awd-lease",
+          "requirement_ids": [
+            "req-host"
+          ],
+          "amount": {
+            "low": "50",
+            "high": "50"
+          },
+          "disposition": "excluded",
+          "value_basis": "lease_contract",
+          "reason": "non_capex",
+          "source": "Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)",
+          "basis": {
+            "currency": "USD",
+            "price_basis": "nominal",
+            "ownership": "gross",
+            "scope": "development",
+            "capex": "project_capex",
+            "phase": "FID"
+          }
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "scn-reference",
+      "architecture": "subsea_tieback",
+      "shares": {
+        "req-host": "0.6",
+        "req-wells": "0.3"
+      },
+      "unallocated_share": "0.1",
+      "source": "Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026)",
+      "derivation": "allocated"
+    },
+    {
+      "scenario_id": "scn-alternative",
+      "architecture": "subsea_tieback",
+      "shares": {
+        "req-host": "0.2",
+        "req-wells": "0.7"
+      },
+      "unallocated_share": "0.1",
+      "source": "Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026)",
+      "derivation": "modeled"
+    }
+  ]
+}
