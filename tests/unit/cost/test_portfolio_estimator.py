@@ -205,3 +205,28 @@ def test_target_future_features_and_extrapolation_fail_closed():
             ("v-1",),
             policy(),
         )
+
+
+@pytest.mark.parametrize("field", tuple(Basis.__dataclass_fields__))
+@pytest.mark.parametrize("sentinel", [" UNKNOWN ", " unavailable\t", " not_disclosed "])
+@pytest.mark.parametrize("unknown_target", [False, True])
+def test_padded_unknown_basis_excludes_comparables(field, sentinel, unknown_target):
+    unknown = replace(BASIS, **{field: sentinel})
+    # Matching unknown dimensions must still be ineligible; equality is insufficient.
+    rows = (
+        dataset()
+        if unknown_target
+        else tuple(replace(row, basis=unknown) for row in dataset())
+    )
+    result = estimate(
+        request(basis=unknown),
+        rows,
+        ("t-1", "t-2", "t-3", "t-4", "t-5"),
+        ("c-1", "c-2"),
+        ("v-1", "v-2"),
+        policy(),
+    )
+    assert result.status == "NOT_EVALUATED"
+    assert result.interval is None
+    assert not result.comparables
+    assert result.excluded == {row.project: "basis" for row in rows}

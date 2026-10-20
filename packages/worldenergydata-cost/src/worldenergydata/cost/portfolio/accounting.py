@@ -45,7 +45,7 @@ class Basis:
     @property
     def known(self) -> bool:
         return all(
-            value.casefold() not in {"unknown", "unavailable", "not_disclosed"}
+            value.strip().casefold() not in {"unknown", "unavailable", "not_disclosed"}
             for value in self.__dict__.values()
         )
 

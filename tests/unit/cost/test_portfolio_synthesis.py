@@ -238,3 +238,16 @@ def test_nonadditive_commercial_bases_cannot_be_relabelled(value_basis):
             (item(value_basis=value_basis),),
             ("host", "installation"),
         )
+
+
+@pytest.mark.parametrize("field", tuple(Basis.__dataclass_fields__))
+@pytest.mark.parametrize("sentinel", [" UNKNOWN ", " unavailable\t", " not_disclosed "])
+def test_padded_unknown_basis_rejects_reconciliation(field, sentinel):
+    unknown = basis(**{field: sentinel})
+    with pytest.raises(ValueError, match="basis"):
+        reconcile(
+            Interval(D(100), D(100)),
+            unknown,
+            (item(basis=unknown),),
+            ("host", "installation"),
+        )

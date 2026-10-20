@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, is_dataclass
 from datetime import date
-from decimal import Decimal
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal, localcontext
 from hashlib import sha256
 from html import escape
 from pathlib import Path
@@ -59,10 +59,14 @@ def canonical_json(payload: dict) -> str:
     )
 
 
-def _table(value, as_percent=False):
+def _table(value, as_percent=False, rounding=None):
     if is_dataclass(value):
         value = asdict(value)
     if isinstance(value, dict):
+        # asdict recursively converts Interval objects, so recognize their bounds.
+        interval = set(value) == {"low", "high"} and all(
+            isinstance(bound, Decimal) for bound in value.values()
+        )
         fraction_keys = {
             "coverage",
             "residual_fraction",
@@ -73,19 +77,28 @@ def _table(value, as_percent=False):
             "validation_coverage",
             "ape",
         }
+        directions = {"low": ROUND_FLOOR, "high": ROUND_CEILING} if interval else {}
         return (
             "<table>"
             + "".join(
                 f"<tr><th>{escape(str(key))}</th><td>"
-                f"{_table(item, as_percent or key in fraction_keys)}</td></tr>"
+                f"{_table(item, as_percent or key in fraction_keys, directions.get(key))}"
+                "</td></tr>"
                 for key, item in value.items()
             )
             + "</table>"
         )
     if isinstance(value, (tuple, list)):
-        return "<ol>" + "".join(f"<li>{_table(item)}</li>" for item in value) + "</ol>"
+        return (
+            "<ol>"
+            + "".join(f"<li>{_table(item, as_percent)}</li>" for item in value)
+            + "</ol>"
+        )
     if isinstance(value, Decimal):
-        return escape(format(value, ".1%" if as_percent else ".1f"))
+        with localcontext() as context:
+            if rounding is not None:
+                context.rounding = rounding
+            return escape(format(value, ".1%" if as_percent else ".1f"))
     return escape("unavailable" if value is None else str(value))
 
 

@@ -2,8 +2,11 @@
 
 import importlib.util
 import json
+import re
 from decimal import Decimal as D
 from pathlib import Path
+
+import pytest
 
 from worldenergydata.cost.portfolio.accounting import Interval
 from worldenergydata.cost.portfolio.report import (
@@ -66,3 +69,27 @@ def test_html_escapes_input_and_shows_provenance_and_revision():
     assert "NOT_EVALUATED" in html
     assert "Marginal bands are not additive" in html
     assert "assumed" in html
+
+
+@pytest.mark.parametrize(
+    "key,low,high,expected",
+    [
+        ("amount", "0.06", "0.14", ["0.0", "0.2"]),
+        ("amount", "-0.14", "-0.06", ["-0.2", "-0.0"]),
+        ("amount", "-0.06", "0.06", ["-0.1", "0.1"]),
+        ("amount", "1.2", "1.3", ["1.2", "1.3"]),
+        ("coverage", "0.0006", "0.0014", ["0.0%", "0.2%"]),
+        ("residual_fraction", "-0.0014", "-0.0006", ["-0.2%", "-0.0%"]),
+    ],
+)
+@pytest.mark.parametrize("inside_list", [False, True])
+def test_html_interval_display_encloses_exact_bounds(
+    key, low, high, expected, inside_list
+):
+    payload = example_module().build_example()
+    interval = Interval(D(low), D(high))
+    payload["bottom_up"] = {key: [interval] if inside_list else interval}
+    html = render_html(payload)
+    section = html.split('<section id="bottom_up">', 1)[1].split("</section>", 1)[0]
+    endpoints = re.findall(r"<th>(?:low|high)</th><td>([^<]+)</td>", section)
+    assert endpoints == expected
