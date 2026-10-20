@@ -268,11 +268,28 @@ def test_dry_run_is_deterministic_and_performs_no_io(bundle, monkeypatch):
     def forbidden(*args, **kwargs):
         pytest.fail("dry-run attempted filesystem or network access")
 
-    monkeypatch.setattr(builtins, "open", forbidden)
-    monkeypatch.setattr(io, "open", forbidden)
-    monkeypatch.setattr(Path, "mkdir", forbidden)
-    monkeypatch.setattr(socket, "socket", forbidden)
-    assert plan_publication(bundle) == plan_publication(bundle)
+    with monkeypatch.context() as guard:
+        guard.setattr(builtins, "open", forbidden)
+        guard.setattr(io, "open", forbidden)
+        guard.setattr(Path, "mkdir", forbidden)
+        guard.setattr(socket, "socket", forbidden)
+        assert plan_publication(bundle) == plan_publication(bundle)
+
+
+def test_no_io_guard_is_restored_before_reporting(bundle, monkeypatch):
+    import builtins
+    import io
+    import socket
+    from pathlib import Path
+
+    original = (builtins.open, io.open, Path.mkdir, socket.socket)
+    try:
+        test_dry_run_is_deterministic_and_performs_no_io(bundle, monkeypatch)
+        restored = (builtins.open, io.open, Path.mkdir, socket.socket)
+    finally:
+        # Restore even on regression so pytest can report the assertion failure.
+        monkeypatch.undo()
+    assert all(actual is expected for actual, expected in zip(restored, original))
 
 
 @pytest.mark.parametrize("target", list(Target))
