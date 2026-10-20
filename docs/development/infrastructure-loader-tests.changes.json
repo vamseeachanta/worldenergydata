@@ -2,14 +2,20 @@
   "document": "infrastructure-loader-tests.html",
   "changes": [
     {
+      "revision": 1,
+      "date": "2026-10-19",
       "section": "summary",
       "description": "Added synthetic loader characterization and explicit execution limitations."
     },
     {
+      "revision": 1,
+      "date": "2026-10-19",
       "section": "example",
       "description": "Added hand-repeatable exact-match selections with a synthetic input register."
     },
     {
+      "revision": 1,
+      "date": "2026-10-19",
       "section": "validation",
       "description": "Added verification checklist and comment export controls."
     },
@@ -30,6 +36,12 @@
       "date": "2026-10-20",
       "section": "appendix",
       "description": "Removed repository-access wording and supplied the path-based coverage command to avoid the dotted-module NumPy reload error."
+    },
+    {
+      "revision": 3,
+      "date": "2026-10-20",
+      "section": "revision-history",
+      "description": "Recorded the initial commit date and completed revision metadata for the three original change entries."
     }
   ]
 }
