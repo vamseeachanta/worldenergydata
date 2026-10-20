@@ -331,6 +331,8 @@ class CashflowEngine:
 
         A sliding-scale deck requires monthly production rates and selects its
         band for each month; an explicit flat-rate argument cannot bypass it.
+        A contractual deck requires an explicit finite fractional royalty_rate;
+        no default rate or development-system assumption is used.
         For flat, none and deckless paths, precedence is highest first:
             1. explicit ``royalty_rate`` argument;
             2. ``self.fiscal_terms`` deck, if set — ``flat`` model resolves the
@@ -340,7 +342,8 @@ class CashflowEngine:
 
         Args:
             revenue_monthly: Dict mapping year-month to revenue
-            royalty_rate: Royalty rate override for flat, none or deckless paths.
+            royalty_rate: Required contract rate for contractual decks; optional
+                override for flat, none or deckless paths.
             production_rate_bpd_monthly: Calendar-day average per month in bpd.
                 Required for every revenue month under sliding_scale.
 
@@ -355,6 +358,27 @@ class CashflowEngine:
             ...     0.188
             ... )
         """
+        if (
+            self.fiscal_terms is not None
+            and self.fiscal_terms.royalty.model == "contractual"
+        ):
+            # Contractual percentages are required inputs, never jurisdictional
+            # defaults: Decreto 2.705/1998, art. 12, paragraph 2.
+            # [0, 1] is the mathematical domain of a fractional royalty rate.
+            if (
+                not isinstance(royalty_rate, (int, float))
+                or isinstance(royalty_rate, bool)
+                or not math.isfinite(royalty_rate)
+                or not 0 <= royalty_rate <= 1
+            ):
+                raise ValueError(
+                    "contract royalty rate must be a finite fraction in [0, 1]"
+                )
+            return {
+                month: revenue * royalty_rate
+                for month, revenue in revenue_monthly.items()
+            }
+
         if self._uses_sliding_scale():
             royalty = SlidingScaleRoyalties()
             for month, revenue in revenue_monthly.items():
@@ -460,6 +484,8 @@ class CashflowEngine:
         wti_prices: Dict[str, float],
         first_oil_date: datetime,
         gas_prices: Optional[Dict[str, float]] = None,
+        *,
+        royalty_rate: Optional[float] = None,
     ) -> List[MonthlyCashflowModel]:
         """
         Generate complete monthly cashflow projection.
@@ -473,6 +499,10 @@ class CashflowEngine:
                 MONTHLY_GAS_MCF and a finite nonnegative price for each
                 production month are required. No hidden heating-value factor
                 or escalation is applied; no deck preserves legacy oil output.
+            royalty_rate: Explicit fractional contract rate, required by a
+                contractual deck. Other models retain calculate_royalty precedence.
+                Revenue is a screening sales-value base; statutory reference-price
+                valuation, special participation and income tax are not evaluated.
 
         Returns:
             List of MonthlyCashflowModel objects
@@ -543,7 +573,9 @@ class CashflowEngine:
                 month: oil_revenues[month] + gas_revenues[month] for month in prod_dict
             }
         royalty_monthly = self.calculate_royalty(
-            revenue_monthly, production_rate_bpd_monthly=production_rates
+            revenue_monthly,
+            royalty_rate=royalty_rate,
+            production_rate_bpd_monthly=production_rates,
         )
         variable_opex_monthly = self.calculate_variable_opex(prod_dict)
 
