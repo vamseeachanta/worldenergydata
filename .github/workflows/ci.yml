@@ -407,6 +407,17 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Check typed common modules
+        env:
+          MYPYPATH: src:packages/worldenergydata-core/src
+        run: |
+          uv run mypy --explicit-package-bases --follow-imports=silent \
+            --ignore-missing-imports \
+            packages/worldenergydata-core/src/worldenergydata/common/exceptions.py \
+            packages/worldenergydata-core/src/worldenergydata/common/logging.py \
+            packages/worldenergydata-core/src/worldenergydata/common/types.py \
+            examples/typed_common.py
+
       - name: Run mypy
         run: |
           uv run mypy src/worldenergydata/ \

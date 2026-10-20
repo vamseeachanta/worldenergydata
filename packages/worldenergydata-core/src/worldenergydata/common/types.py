@@ -24,19 +24,15 @@ Example usage:
         ...
 """
 
+from collections.abc import Callable
 from datetime import date, datetime
 from pathlib import Path
 from typing import (
     Any,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
     Protocol,
-    Tuple,
+    TypeAlias,
     TypeVar,
-    Union,
     runtime_checkable,
 )
 
@@ -44,8 +40,8 @@ from typing import (
 try:
     import pandas as pd
 
-    DataFrame = pd.DataFrame
-    Series = pd.Series
+    DataFrame: TypeAlias = pd.DataFrame
+    Series: TypeAlias = pd.Series
 except ImportError:
     DataFrame = Any  # type: ignore
     Series = Any  # type: ignore
@@ -56,30 +52,30 @@ except ImportError:
 # =============================================================================
 
 # JSON types
-JSONPrimitive = Union[str, int, float, bool, None]
-JSONDict = Dict[str, Any]
-JSONList = List[Any]
-JSONValue = Union[JSONPrimitive, JSONDict, JSONList]
+JSONPrimitive: TypeAlias = str | int | float | bool | None
+JSONDict: TypeAlias = dict[str, Any]
+JSONList: TypeAlias = list[Any]
+JSONValue: TypeAlias = JSONPrimitive | JSONDict | JSONList
 
 # Path types
-PathLike = Union[str, Path]
-PathList = List[PathLike]
+PathLike: TypeAlias = str | Path
+PathList: TypeAlias = list[PathLike]
 
 # DataFrame types
-DataFrameLike = Union[DataFrame, Dict[str, List[Any]], List[Dict[str, Any]]]
-SeriesLike = Union[Series, List[Any], Dict[str, Any]]
+DataFrameLike: TypeAlias = DataFrame | dict[str, list[Any]] | list[dict[str, Any]]
+SeriesLike: TypeAlias = Series | list[Any] | dict[str, Any]
 
 # Date types
-DateLike = Union[str, date, datetime]
-DateRange = Tuple[DateLike, DateLike]
+DateLike: TypeAlias = str | date | datetime
+DateRange: TypeAlias = tuple[DateLike, DateLike]
 
 # Numeric types
-Number = Union[int, float]
-NumberOrNone = Optional[Number]
+Number: TypeAlias = int | float
+NumberOrNone: TypeAlias = Number | None
 
 # API types
-APIResponse = Dict[str, Any]
-Headers = Dict[str, str]
+APIResponse: TypeAlias = dict[str, Any]
+Headers: TypeAlias = dict[str, str]
 
 # Energy data specific types
 APINumber = str  # API well number (10, 12, or 14 digits)
@@ -88,12 +84,12 @@ BlockNumber = str  # OCS block number
 FieldName = str  # Field name
 
 # Production data types
-ProductionRecord = Dict[str, Any]
-ProductionData = List[ProductionRecord]
+ProductionRecord: TypeAlias = dict[str, Any]
+ProductionData: TypeAlias = list[ProductionRecord]
 
 # Callback types
-ProgressCallback = Callable[[int, int, str], None]
-ErrorCallback = Callable[[Exception, Dict[str, Any]], None]
+ProgressCallback: TypeAlias = Callable[[int, int, str], None]
+ErrorCallback: TypeAlias = Callable[[Exception, dict[str, Any]], None]
 
 # Generic type variables
 T = TypeVar("T")
@@ -101,8 +97,8 @@ T_co = TypeVar("T_co", covariant=True)
 DataT = TypeVar("DataT", bound=DataFrameLike)
 
 # Status types
-ProcessingStatus = Literal["pending", "running", "completed", "failed"]
-DataQuality = Literal["high", "medium", "low", "unknown"]
+ProcessingStatus: TypeAlias = Literal["pending", "running", "completed", "failed"]
+DataQuality: TypeAlias = Literal["high", "medium", "low", "unknown"]
 
 
 # =============================================================================
@@ -131,7 +127,7 @@ class DataSourceProtocol(Protocol):
 
     def fetch(
         self,
-        query: Dict[str, Any],
+        query: dict[str, Any],
         **kwargs: Any,
     ) -> DataFrameLike:
         """
@@ -146,7 +142,7 @@ class DataSourceProtocol(Protocol):
         """
         ...
 
-    def validate_query(self, query: Dict[str, Any]) -> bool:
+    def validate_query(self, query: dict[str, Any]) -> bool:
         """
         Validate a query before execution.
 
@@ -172,7 +168,7 @@ class ValidatorProtocol(Protocol):
         self,
         data: DataFrameLike,
         **kwargs: Any,
-    ) -> Tuple[bool, List[Dict[str, Any]]]:
+    ) -> tuple[bool, list[dict[str, Any]]]:
         """
         Validate the provided data.
 
@@ -185,7 +181,7 @@ class ValidatorProtocol(Protocol):
         """
         ...
 
-    def get_schema(self) -> Dict[str, Any]:
+    def get_schema(self) -> dict[str, Any]:
         """
         Get the validation schema.
 
@@ -204,7 +200,7 @@ class CacheProtocol(Protocol):
     consistent caching behavior.
     """
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """
         Get a value from the cache.
 
@@ -220,7 +216,7 @@ class CacheProtocol(Protocol):
         self,
         key: str,
         value: Any,
-        ttl: Optional[int] = None,
+        ttl: int | None = None,
     ) -> None:
         """
         Set a value in the cache.
@@ -320,7 +316,7 @@ class ExporterProtocol(Protocol):
         ...
 
     @property
-    def supported_formats(self) -> List[str]:
+    def supported_formats(self) -> list[str]:
         """Return list of supported export formats."""
         ...
 
@@ -376,9 +372,9 @@ class DataResult:
         data: DataFrameLike,
         success: bool = True,
         message: str = "",
-        metadata: Optional[Dict[str, Any]] = None,
-        errors: Optional[List[Dict[str, Any]]] = None,
-    ):
+        metadata: dict[str, Any] | None = None,
+        errors: list[dict[str, Any]] | None = None,
+    ) -> None:
         self.data = data
         self.success = success
         self.message = message
@@ -397,7 +393,7 @@ class DataResult:
             return len(self.data)
         return 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert result to dictionary."""
         return {
             "success": self.success,
@@ -423,7 +419,7 @@ class PaginatedResult:
         total_count: int,
         has_next: bool,
         has_previous: bool,
-    ):
+    ) -> None:
         self.data = data
         self.page = page
         self.page_size = page_size
@@ -438,7 +434,7 @@ class PaginatedResult:
             return 0
         return (self.total_count + self.page_size - 1) // self.page_size
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert result to dictionary."""
         return {
             "page": self.page,
