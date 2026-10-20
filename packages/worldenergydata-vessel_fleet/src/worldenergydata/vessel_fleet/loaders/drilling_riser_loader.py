@@ -1,6 +1,6 @@
 """Load drilling riser component data from curated dataset.
 
-Validates CSV widths, required query/provenance columns and populated provenance.
+Validates CSV widths, unambiguous headers, identities and populated provenance.
 Empty physical lines are skipped; whitespace and delimiter-only records are checked.
 Queries cover component type, size and pressure rating.
 """
@@ -44,12 +44,21 @@ VALID_COMPONENT_TYPES = (
 
 
 def _validate_row_widths(content: str) -> None:
-    """Check widths except empty physical lines; retain physical start numbers."""
+    """Check header mapping and widths; retain physical record start numbers."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
     except csv.Error as exc:
         raise ValueError(f"Malformed CSV at line 1: {exc}") from exc
+    # Issue #1046 requires aligned columns: pandas would silently rename
+    # duplicate or unnamed labels, hiding an ambiguous field mapping.
+    seen_columns: set[str] = set()
+    for field in header:
+        if not field.strip():
+            raise ValueError("CSV header at line 1: blank column name")
+        if field in seen_columns:
+            raise ValueError(f"CSV header at line 1: duplicate column {field}")
+        seen_columns.add(field)
     expected = len(header)
     while True:
         line_number = reader.line_num + 1
@@ -80,7 +89,7 @@ class DrillingRiserLoader:
         self._df: Optional[pd.DataFrame] = None
 
     def load(self) -> pd.DataFrame:
-        """Validate widths, required columns and provenance before caching.
+        """Validate widths, headers, provenance and unique IDs before caching.
 
         Only empty physical lines are exempt from record-width validation.
         """
@@ -101,11 +110,18 @@ class DrillingRiserLoader:
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
-        for field in ("DATA_SOURCE", "NOTES"):
+        for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
                 ids = df.loc[missing, "COMPONENT_ID"].tolist()
                 raise ValueError(f"{field} must be populated for components {ids}")
+        # Issue #1046 requires unique component IDs; get_by_id must not select
+        # an arbitrary first record when more than one component has that ID.
+        duplicate_ids = df.loc[
+            df["COMPONENT_ID"].duplicated(keep=False), "COMPONENT_ID"
+        ].unique()
+        if len(duplicate_ids):
+            raise ValueError(f"Duplicate COMPONENT_ID values: {duplicate_ids.tolist()}")
         self._df = df
         logger.info("Loaded %d drilling riser components", len(df))
         return self._df
