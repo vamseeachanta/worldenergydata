@@ -1,7 +1,7 @@
 """Contract tests; all measurements are invented inputs, not field evidence.
 
-Independent hand calculation: two well records plus one production record give
-three observations. A supplied monthly oil volume of 12 bbl is copied unchanged;
+Independent hand calculation: one location, two wells and one production record
+give four observations. A monthly oil volume of 12 bbl is copied unchanged;
 there is no conversion, decline model, depletion estimate or acceptance limit.
 Missing pressure and ownership evidence must remain NOT_EVALUATED.
 """
@@ -202,6 +202,44 @@ def test_reproducible_separate_outputs_and_input_digest(tmp_path, payload):
     assert "input_sha256" not in (first / "index.html").read_text()
     with pytest.raises(FileExistsError):
         write_pack(EXAMPLE, first)
+
+
+@pytest.mark.parametrize("name", ["index.html", "summary.json"])
+def test_output_bytes_use_lf_on_windows(tmp_path, monkeypatch, name):
+    original_open = Path.open
+
+    def windows_open(path, mode="r", *args, **kwargs):
+        # Exercise real text I/O with the Windows default newline translation.
+        if "w" in mode and "b" not in mode and kwargs.get("newline") is None:
+            kwargs["newline"] = "\r\n"
+        return original_open(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", windows_open)
+    output = tmp_path / "pack"
+    write_pack(EXAMPLE, output)
+    raw = (output / name).read_bytes()
+    assert raw.endswith(b"\n")
+    assert b"\r" not in raw
+
+
+@pytest.mark.parametrize(
+    "retrieved_at,rejected",
+    [
+        ("2026-10-20T23:30:00-01:00", True),
+        ("2026-10-21T00:30:00+01:00", False),
+        ("2026-10-20T23:59:59+00:00", False),
+        ("2026-10-21T00:00:00+00:00", True),
+        ("2026-10-20T12:00:00", True),
+    ],
+)
+def test_retrieval_cutoff_uses_utc(payload, retrieved_at, rejected):
+    payload["as_of"] = "2026-10-20"
+    payload["sources"][0]["retrieved_at"] = retrieved_at
+    if rejected:
+        with pytest.raises(ValueError, match="retrieval"):
+            build_pack(payload)
+    else:
+        assert build_pack(payload)["sources"][0]["retrieved_at"] == retrieved_at
 
 
 def test_invalid_input_does_not_create_output(tmp_path):

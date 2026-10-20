@@ -10,7 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from html import escape
 from pathlib import Path, PurePosixPath
 from urllib.parse import unquote, urlsplit
@@ -139,7 +139,7 @@ def _source(record: dict, as_of: date) -> dict:
         raise ValueError("Explicit publication clearance required")
     _url(record["url"])
     retrieved = datetime.fromisoformat(record["retrieved_at"])
-    if retrieved.tzinfo is None or retrieved.date() > as_of:
+    if retrieved.tzinfo is None or retrieved.astimezone(timezone.utc).date() > as_of:
         raise ValueError("Source retrieval needs a timezone and must not follow as_of")
     # SHA-256 byte length is supplied by Python's hashlib algorithm definition;
     # each byte is represented by a pair of hexadecimal characters.
@@ -157,6 +157,8 @@ def build_pack(payload: dict) -> dict:
     Publication clearance and source digests are declarations by the caller,
     not proof of rights or byte verification against external source artifacts.
     Dates and subject keys remain explicit to avoid unqualified cross-source joins.
+    as_of is both the UTC evidence cutoff date and the issue date. A reissue
+    advances as_of to its issue date while retaining earlier observation dates.
     """
     _fields(
         payload,
@@ -458,8 +460,9 @@ def write_pack(
     pack["input_sha256"] = hashlib.sha256(raw).hexdigest()
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=False)
-    (output_dir / "index.html").write_text(report, encoding="utf-8")
+    (output_dir / "index.html").write_text(report, encoding="utf-8", newline="\n")
     (output_dir / "summary.json").write_text(
         json.dumps(pack, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
