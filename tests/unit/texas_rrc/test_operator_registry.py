@@ -9,6 +9,7 @@ import pytest
 
 from worldenergydata.texas_rrc.operators.io import (
     load_operator_inputs,
+    normalize_input_columns,
     write_operator_registry,
 )
 from worldenergydata.texas_rrc.operators.registry import (
@@ -326,8 +327,6 @@ def test_native_pdq_zip_and_total_gas(inputs, tmp_path):
     """
     import zipfile
 
-    from worldenergydata.texas_rrc.operators.io import normalize_input_columns
-
     production, wells = inputs
     native = (
         production.iloc[[1]]
@@ -356,6 +355,85 @@ def test_native_pdq_zip_and_total_gas(inputs, tmp_path):
         normalize_input_columns(
             pd.DataFrame({"operator_no": ["1"], "OPERATOR_NO": ["2"]})
         )
+
+
+@pytest.mark.parametrize("gas_column", ["gas_mcf", " GAS_MCF "])
+def test_canonical_total_gas_excludes_retained_casinghead(gas_column):
+    frame = pd.DataFrame({gas_column: [25], "LEASE_CSGD_PROD_VOL": [5]})
+
+    normalized = normalize_input_columns(frame)
+
+    assert normalized.gas_mcf.iloc[0] == 25
+    pd.testing.assert_frame_equal(normalize_input_columns(normalized), normalized)
+    assert frame[gas_column].iloc[0] == 25
+
+
+def test_native_gas_normalization_is_idempotent():
+    frame = pd.DataFrame({" LEASE_GAS_PROD_VOL ": [20], "LEASE_CSGD_PROD_VOL": [5]})
+
+    normalized = normalize_input_columns(frame)
+
+    assert normalized.gas_mcf.iloc[0] == 25
+    pd.testing.assert_frame_equal(normalize_input_columns(normalized), normalized)
+    assert frame[" LEASE_GAS_PROD_VOL "].iloc[0] == 20
+
+
+@pytest.mark.parametrize("file_type", ["csv", "parquet"])
+@pytest.mark.parametrize("native", [False, True], ids=["canonical", "native"])
+def test_normalized_gas_file_round_trip(inputs, policy, tmp_path, file_type, native):
+    """Each of 24 rows totals 25 Mcf; gas well rate is 12*25/365."""
+    production, wells = inputs
+    production = production.assign(gas_mcf=25, LEASE_CSGD_PROD_VOL=5)
+    if native:
+        production = production.rename(columns={"gas_mcf": "LEASE_GAS_PROD_VOL"})
+        production["LEASE_GAS_PROD_VOL"] = 20
+    normalized = normalize_input_columns(production)
+    path = tmp_path / f"production.{file_type}"
+    if file_type == "csv":
+        normalized.to_csv(path, index=False)
+    else:
+        normalized.to_parquet(path, index=False)
+    wells_path = tmp_path / "wells.csv"
+    wells.to_csv(wells_path, index=False)
+
+    loaded = load_operator_inputs(path, wells_path)
+
+    assert pd.to_numeric(loaded.production.gas_mcf).eq(25).all()
+    row = build_operator_registry(
+        loaded.production, loaded.wells, policy
+    ).registry.iloc[0]
+    assert row.gas_mcf_last12 == 600
+    assert row.gas_mcfd_per_well_median == pytest.approx(300 / 365)
+
+
+@pytest.mark.parametrize("gas_column", ["gas_production", "og_gas_prod"])
+def test_ambiguous_gas_alias_with_casinghead_is_rejected(gas_column):
+    frame = pd.DataFrame({gas_column: [20], "LEASE_CSGD_PROD_VOL": [5]})
+
+    with pytest.raises(ValueError, match="native gas components"):
+        normalize_input_columns(frame)
+
+
+@pytest.mark.parametrize("column", ["LEASE_GAS_PROD_VOL", "LEASE_CSGD_PROD_VOL"])
+@pytest.mark.parametrize("bad", [-1, float("inf"), "not numeric"])
+def test_invalid_native_gas_component_is_rejected(column, bad):
+    frame = pd.DataFrame(
+        {"LEASE_GAS_PROD_VOL": [20], "LEASE_CSGD_PROD_VOL": [5]}, dtype=object
+    )
+    frame.loc[0, column] = bad
+
+    with pytest.raises(ValueError):
+        normalize_input_columns(frame)
+
+
+@pytest.mark.parametrize("column", ["LEASE_GAS_PROD_VOL", "LEASE_CSGD_PROD_VOL"])
+def test_missing_native_gas_component_keeps_total_unknown(column):
+    frame = pd.DataFrame(
+        {"LEASE_GAS_PROD_VOL": [20], "LEASE_CSGD_PROD_VOL": [5]}, dtype=object
+    )
+    frame.loc[0, column] = ""
+
+    assert pd.isna(normalize_input_columns(frame).gas_mcf.iloc[0])
 
 
 def test_leap_year_calendar_rate(inputs, policy):

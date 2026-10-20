@@ -11,6 +11,7 @@ claimed until actual snapshots have been processed.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add operator roll-up with explicit lease allocation and coverage limits. |
+| 1 | 2026-10-20 | Preserve total gas through repeated normalization and file reloads to prevent double counting. |
 
 ## Sources and production granularity
 
@@ -116,7 +117,7 @@ No technical coefficients or regulatory screening limits are embedded.
 | --- | --- |
 | Last12 oil, gas, water | Sum observed monthly volumes attributed to each operator; issue #1126 output contract. A missing value makes that volume total null; absent rows remain a coverage gap. |
 | Oil vs other liquids | Oil is crude oil, not condensate; RRC PDQ FAQ, question on crude oil and condensate. No condensate-to-oil or BOE conversion is made. |
-| Gas | Supplied `gas_mcf` is total gas. Native separately reported `LEASE_CSGD_PROD_VOL` is added to gas; missing components remain unknown. |
+| Gas | Supplied `gas_mcf` is total gas, including any retained casinghead component. Only explicit native `LEASE_GAS_PROD_VOL` and `LEASE_CSGD_PROD_VOL` components are summed; the casinghead column is then removed so reloading cannot add it again. Missing native components remain unknown; other gas aliases paired with casinghead are rejected as ambiguous. |
 | Calendar-day rate | Eligible gas-well window gas volume divided by actual calendar days in that window, including leap days. This is an arithmetic definition, not an operating-day rate. |
 | Water cut estimate | Sum(water) / (sum(oil) + sum(water)); volume-fraction definition on the same window. Missing water or a zero denominator returns null. |
 | First/last production | Earliest/latest supplied month with positive oil or gas through `as_of`; not evidence of production before the supplied history. |

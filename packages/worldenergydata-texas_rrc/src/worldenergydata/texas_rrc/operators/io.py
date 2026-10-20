@@ -114,13 +114,11 @@ def normalize_input_columns(frame: pd.DataFrame) -> pd.DataFrame:
 
     A native lease-cycle table without operator names/IDs must first be joined
     to the appropriate dated reference table; current inventory cannot supply
-    historical operator attribution.
+    historical operator attribution. Canonical gas_mcf is already total gas;
+    only explicit native gas components are summed, and casinghead is consumed.
     """
-    renamed = frame.rename(
-        columns=lambda column: ALIASES.get(
-            str(column).strip().lower(), str(column).strip().lower()
-        )
-    )
+    source = frame.rename(columns=lambda column: str(column).strip().lower())
+    renamed = source.rename(columns=ALIASES)
     if renamed.columns.duplicated().any():
         raise ValueError(
             "Ambiguous input aliases: multiple columns for one canonical name"
@@ -135,14 +133,17 @@ def normalize_input_columns(frame: pd.DataFrame) -> pd.DataFrame:
             + "-"
             + renamed.cycle_month.astype(str).str.zfill(2)
         )
-    if "lease_csgd_prod_vol" in renamed:
-        if "gas_mcf" not in renamed:
-            raise ValueError("gas_mcf is required alongside casinghead gas")
+    if "lease_csgd_prod_vol" in renamed and "gas_mcf" not in source:
+        if "lease_gas_prod_vol" not in source:
+            raise ValueError(
+                "Casinghead gas requires explicit native gas components "
+                "or a canonical gas_mcf total"
+            )
         # RRC PDQ FAQ, crude oil vs condensate: keep liquids separate;
         # total gas includes separately reported casinghead gas without BOE conversion.
         # Validate each component before summing; missing gas remains unknown.
         for column in ("gas_mcf", "lease_csgd_prod_vol"):
-            raw = renamed[column].replace("", float("nan"))
+            raw = renamed[column].mask(renamed[column].eq(""))
             values = pd.to_numeric(raw, errors="raise")
             if (
                 (values < 0)
@@ -154,6 +155,7 @@ def normalize_input_columns(frame: pd.DataFrame) -> pd.DataFrame:
                 raise ValueError("Invalid gas component")
             renamed[column] = values
         renamed["gas_mcf"] = renamed.gas_mcf + renamed.lease_csgd_prod_vol
+        renamed = renamed.drop(columns="lease_csgd_prod_vol")
     return renamed
 
 
