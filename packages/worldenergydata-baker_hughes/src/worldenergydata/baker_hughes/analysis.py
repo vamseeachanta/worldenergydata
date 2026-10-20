@@ -1,7 +1,7 @@
 """Aggregate disjoint rig-count records and calculate trailing means."""
 
 import math
-from numbers import Integral
+from numbers import Integral, Number
 
 import pandas as pd
 from pandas.api.types import is_any_real_numeric_dtype, is_bool_dtype, is_numeric_dtype
@@ -52,9 +52,11 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
         raise ValueError("rig_count must contain finite nonnegative whole numbers")
 
     try:
-        if is_numeric_dtype(df["date"].dtype):
+        if is_numeric_dtype(df["date"].dtype) or any(
+            isinstance(value, Number) for value in df["date"]
+        ):
             raise ValueError("numeric epochs are not calendar dates")
-        dates = pd.to_datetime(df["date"], errors="raise")
+        dates = df["date"].map(pd.Timestamp)
         if dates.isna().any() or dates.dt.tz is not None:
             raise ValueError("missing or timezone-aware date")
         dates = dates.dt.normalize()

@@ -146,3 +146,49 @@ def test_required_column_is_rejected_when_absent(column):
     rows = pd.DataFrame({"date": ["2026-01-02"], "rig_count": [1]}).drop(columns=column)
     with pytest.raises(ValueError, match=column):
         aggregate_rig_counts(rows, window=1)
+
+
+@pytest.mark.parametrize("numeric_date", [1, 1.5])
+@pytest.mark.parametrize("numeric_first", [True, False])
+def test_numeric_date_in_mixed_column_is_rejected(numeric_date, numeric_first):
+    """Numeric epochs must not invent observation dates in mixed columns."""
+    dates = [numeric_date, "2026-01-09"]
+    if not numeric_first:
+        dates.reverse()
+    rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
+    with pytest.raises(ValueError, match="date"):
+        aggregate_rig_counts(rows, window=1)
+
+
+@pytest.mark.parametrize("time_first", [True, False])
+def test_mixed_date_formats_share_calendar_date(time_first):
+    """Date-only and intraday counts total 4+5=9 rigs, with mean 9/1=9."""
+    dates = ["2026-01-02 08:00", "2026-01-02"]
+    if not time_first:
+        dates.reverse()
+    rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
+    original = rows.copy(deep=True)
+
+    result = aggregate_rig_counts(rows, window=1)
+
+    expected = pd.DataFrame(
+        {
+            "date": [pd.Timestamp("2026-01-02")],
+            "rig_count": [9],
+            "rolling_mean": [9.0],
+        }
+    )
+    assert_frame_equal(result, expected, check_exact=True)
+    assert_frame_equal(rows, original, check_exact=True)
+
+
+@pytest.mark.parametrize("invalid_date", [None, "2026-01-02T08:00:00+01:00"])
+@pytest.mark.parametrize("invalid_first", [True, False])
+def test_mixed_dates_still_reject_missing_or_zoned_values(invalid_date, invalid_first):
+    """Mixed-format parsing must not hide missing dates or timezone changes."""
+    dates = [invalid_date, "2026-01-02"]
+    if not invalid_first:
+        dates.reverse()
+    rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
+    with pytest.raises(ValueError, match="date"):
+        aggregate_rig_counts(rows, window=1)
