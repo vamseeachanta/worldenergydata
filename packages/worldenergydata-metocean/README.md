@@ -20,6 +20,8 @@ pip install 'worldenergydata-metocean[metocean-api]'
 Default installations do not request this library. The root extra forwards to
 the domain extra, which pins the inspected
 [metocean-api release](https://pypi.org/project/metocean-api/1.1.14/).
+The optional library requires Python 3.11 or newer. Its requirement is ignored on
+Python 3.10, preserving the distributions' declared Python >=3.10 range.
 That release's wheel includes the LGPL license in its distribution metadata.
 Its transitive dependencies include geospatial and NetCDF packages; platform
 availability must be checked before installing the extra.
