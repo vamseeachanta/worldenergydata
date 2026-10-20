@@ -12,6 +12,24 @@
     {
       "section": "validation",
       "description": "Added verification checklist and comment export controls."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "summary",
+      "description": "Corrected maintainer review wording and recorded 58 passed on Linux with Python 3.11.14, pandas 2.3.3 and NumPy 2.3.3."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "validation",
+      "description": "Recorded 100 % line and branch coverage for platform_loader.py and pipeline_loader.py and replaced stale execution limitations in validation and disposition."
+    },
+    {
+      "revision": 2,
+      "date": "2026-10-20",
+      "section": "appendix",
+      "description": "Removed repository-access wording and supplied the path-based coverage command to avoid the dotted-module NumPy reload error."
     }
   ]
 }

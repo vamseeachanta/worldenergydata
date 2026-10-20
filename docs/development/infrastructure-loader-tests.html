@@ -13,13 +13,19 @@ pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height
 </head>
 <body>
 <h1>Infrastructure loader verification example</h1>
-<p>Draft for client review</p>
+<p>Draft for maintainer review</p>
 <section id="summary"><h2>1. Executive summary</h2>
 <p>The infrastructure loader is a local reader of platform and pipeline tables. Analysis is performed to determine whether file selection, caching and filtering preserve the specified rows; key results are summarized below.</p>
 <ul><li>Reproduce the expected row selection using the synthetic example.
 <ul><li>Compare the selected labels against the complete input table.</li></ul></li>
-<li>Keep execution acceptance open.<ul><li>Automated execution is not established because a required import dependency is unavailable.</li></ul></li></ul>
-<p>Revision history: initial edition; synthetic examples and explicit execution limitations were added to define reproducible checks.</p>
+<li>Automated characterization: 58 passed on Linux with Python 3.11.14, pandas 2.3.3 and NumPy 2.3.3.<ul><li>Both platform_loader.py and pipeline_loader.py reach 100 % line and branch coverage using the path-based command in section 9.2.</li></ul></li></ul>
+</section>
+<section id="revision-history"><h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr></thead><tbody>
+<tr><td>Initial</td><td>Not recorded</td><td>Revision history: initial edition; synthetic examples and explicit execution limitations were added to define reproducible checks.</td></tr>
+<tr><td>2</td><td>2026-10-20</td><td>Executed results and a path-based coverage recipe replace stale limitations; review wording is corrected.</td></tr>
+</tbody></table>
+<p class="caption">Document revisions. The initial issue date was not recorded in the original document.</p>
 </section>
 <section id="basis"><h2>2. Basis and criteria</h2>
 <p>The implemented reader predicates are used as the behavioral basis. Exact equality of values, columns, row indices and data types is required for the selected synthetic table.</p>
@@ -48,19 +54,19 @@ pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height
 <p>An empty DataFrame is a successfully cached table, but its public queries return no result. A corrupt file following a valid file prevents publication of a partial cache. Directory enumeration order is not specified, so concatenation checks compare sorted complete rows while separately checking the fresh index.</p>
 </section>
 <section id="validation"><h2>7. Validation and pre-flight checklist</h2>
-<p>Static inspection is distinguished from executed verification. Acceptance remains conditional on execution in an environment with the repository dependencies installed.</p>
+<p>Execution on Linux with Python 3.11.14, pandas 2.3.3 and NumPy 2.3.3 gives 58 passed. Path-based measurement gives 100 % line and branch coverage for platform_loader.py and pipeline_loader.py; the directory total also includes the router and is not the loader acceptance criterion.</p>
 <ul><li>Input provenance: synthetic values explicitly declared; no measured values or engineering constants.</li>
 <li>Expected answers: derived from explicit equality predicates and full-table comparisons.</li>
 <li>Isolation: the data resolver is replaced with a temporary directory before construction.</li>
 <li>Production changes: none.</li>
-<li>Execution: not established; required imports and temporary-directory access failed. Test collection succeeds.</li>
-<li>Presentation: ten sections, captions below objects, source locators in section 9.2.</li>
+<li>Execution: 58 passed using the no-conftest route and the path-based coverage command in section 9.2.</li>
+<li>Presentation: ten numbered sections and revision history, captions below objects, source locators in section 9.2.</li>
 <li>Physical charts and geometry: not applicable to table-reader behavior.</li>
 <li>Comment persistence: a save control is provided; browser interaction is not verified.</li></ul>
 </section>
 <section id="disposition"><h2>8. Disposition</h2>
-<p>The example establishes a hand-checkable expected selection. It does not establish an executed pass count or a coverage percentage.</p>
-<p>Execution of the listed checks is required before accepting the automated verification result. Changes to cache invalidation, schema validation and exception policy remain outside this characterization.</p>
+<p>The example establishes a hand-checkable expected selection. All 58 characterization cases pass; platform_loader.py and pipeline_loader.py each reach 100 % line and branch coverage in the stated environment.</p>
+<p>The automated result meets the exact-row comparison criterion for the synthetic inputs. Changes to cache invalidation, schema validation and exception policy remain outside this characterization; externally supplied data and browser comment persistence are not qualified by these tests.</p>
 </section>
 <section id="appendix"><h2>9. Appendix</h2>
 <h3>9.1 Synthetic input register</h3>
@@ -76,16 +82,17 @@ pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height
 <li><a href="../../packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/infrastructure/pipeline_loader.py">Pipeline loader</a>: permit and location readers and public query methods.</li>
 <li><a href="../../tests/unit/bsee/data/loaders/test_infrastructure_loaders.py">Executable synthetic fixtures</a>: query_frame, QUERIES and reader parameterization.</li>
 <li><a href="../../tests/unit/bsee/models/test_platform_model.py">Existing platform model examples</a> and <a href="../../tests/unit/bsee/models/test_pipeline_model.py">pipeline model examples</a>: identifier spelling only.</li>
-<li><a href="../modules/bsee/analysis/completion_intervention/report.html">Layout reference</a>: summary, revision history and captioned tables. No family-specific writer reference was supplied inside the permitted repository.</li></ul>
+<li><a href="../modules/bsee/analysis/completion_intervention/report.html">Layout reference</a>: summary, revision history and captioned tables.</li></ul>
 <p>With the repository packages and test dependencies available, execute from the repository root; direct temporary output to a new disposable directory:</p>
 <pre>python -m pytest tests/unit/bsee/data/loaders/test_infrastructure_loaders.py --noconftest -q -o addopts=--strict-markers -p no:cacheprovider --basetemp TEMP_DIRECTORY</pre>
-<p>The repository AGENTS.md prescribes the no-conftest route. The explicit options keep generated output out of the repository. Coverage can be added for both infrastructure loader modules with output directed to temporary storage.</p>
+<p>The repository AGENTS.md prescribes the no-conftest route. For coverage, use the directory path below; dotted-module coverage targets can trigger a NumPy reload error. Set TEMP_DIRECTORY and COVERAGE_FILE to disposable output locations before execution. Coverage output is limited to the terminal.</p>
+<pre>python -m pytest tests/unit/bsee/data/loaders/test_infrastructure_loaders.py --noconftest -q -o addopts=--strict-markers -p no:cacheprovider --basetemp TEMP_DIRECTORY --cov=packages/worldenergydata-bsee/src/worldenergydata/bsee/data/loaders/infrastructure --cov-branch --cov-report=term-missing</pre>
 </section>
 <section id="comments"><h2>10. Comments and changes</h2>
 <p>Comments are entered below and saved as a separate JSON file. Select the directory containing this document when saving; browsers without a file picker use a download whose destination is controlled by the browser.</p>
 <label for="comment">Comment</label><textarea id="comment"></textarea>
 <button id="save" type="button">Save comments beside document</button><p id="save-status" role="status"></p>
-<details><summary>Changes</summary><p>Initial edition: synthetic reader behavior, worked equality selections and explicit verification limitations.</p><a href="infrastructure-loader-tests.changes.json">Structured change record</a></details>
+<details><summary>Changes</summary><p>Initial edition: synthetic reader behavior, worked equality selections and explicit verification limitations.</p><p>Revision 2: maintainer review wording, 58 passing tests, 100 % line and branch coverage for both loaders, and a path-based coverage recipe.</p><a href="infrastructure-loader-tests.changes.json">Structured change record</a></details>
 </section>
 <script>
 document.getElementById('save').addEventListener('click',async()=>{
