@@ -161,7 +161,7 @@ assert worldenergydata.__version__
 assert 'metocean_api' not in sys.modules
 """
     result = subprocess.run(
-        [sys.executable, "-I", "-S", "-c", script, str(REPO_ROOT / "src")],
+        [sys.executable, "-I", "-S", "-B", "-c", script, str(REPO_ROOT / "src")],
         capture_output=True,
         text=True,
         check=False,
