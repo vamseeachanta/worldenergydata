@@ -107,3 +107,39 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
     assert result["ranked_concepts"]
+
+
+def test_enriched_reference_chain_retains_metadata_evidence():
+    """Synthetic matching-well depths give median(100, 140) = 120 m.
+
+    Startup year 2001 and operator are literal synthetic metadata inputs.
+    Production is supplied by the existing offline loader; no field result is
+    qualified by this integration test.
+    """
+    from worldenergydata.ukcs.field_metadata import enrich_ukcs_field_metadata
+
+    name = _field_meta()["field_name"]
+    meta = enrich_ukcs_field_metadata(
+        name,
+        fields=[
+            {
+                "FIELDNAME": name,
+                "FIELDTYPE": "OIL",
+                "CURR_OPER": "Example operator",
+                "PROD_DATE": "2001/06",
+            }
+        ],
+        wells=[{"TARGETFLD": name, "WATDEP_M": depth} for depth in (100, 140)],
+    )
+    result = run_ukcs_reference_chain(
+        adapter=UkcsAdapter(loader=FixtureNstaLoader()),
+        field_meta=meta,
+        field_name=name,
+    )
+    assert result["field_concept"].water_depth_m == 120.0
+    assert result["field_concept"].operator == "Example operator"
+    assert result["field_concept"].year_first_oil == 2001
+    assert result["metadata_provenance"] == meta["metadata_provenance"]
+    assert result["metadata_coverage"] == meta["metadata_coverage"]
+    assert result["recommendation_ready"] is False
+    assert result["screening_label"] == "metadata_screening_only"
