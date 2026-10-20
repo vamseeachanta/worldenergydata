@@ -97,7 +97,9 @@ class Fetcher:
         if permission is None:
             raise TermsDenied(f"No recorded bulk permission for {origin_of(url)}")
         atomic_json(
-            self.store.root / "terms-checks.json", [asdict(t) for t in self.terms]
+            self.store.root / "terms-checks.json",
+            [asdict(t) for t in self.terms],
+            root=self.store.root,
         )
         for attempt in range(self.config.max_retries + 1):
             self._reserve(url)

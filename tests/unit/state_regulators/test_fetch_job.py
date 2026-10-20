@@ -4,6 +4,7 @@ All pacing/budget numbers here are synthetic inputs, not regulator limits.
 HTTP status meanings: RFC 9110 (2022); retry semantics: RFC 6585 (2012) §4.
 """
 
+import hashlib
 import json
 from pathlib import Path
 from typing import Any
@@ -239,3 +240,126 @@ def test_cli_executes_and_reports_cached_results(
         "cached_urls": 3,
     }
     assert state["requests"] == ["/a", "/b", "/c"]
+
+
+@pytest.mark.parametrize("child", ["objects", "records"])
+@pytest.mark.parametrize("destination", ["outside", "inside", "dangling"])
+def test_cache_child_symlink_refused_before_execution(
+    tmp_path: Path, monkeypatch: Any, child: str, destination: str
+) -> None:
+    data = tmp_path / "data"
+    cache = data / "cache"
+    cache.mkdir(parents=True)
+    target = (data if destination == "inside" else tmp_path) / "other"
+    if destination != "dangling":
+        target.mkdir()
+    (cache / child).symlink_to(target, target_is_directory=True)
+    job = FetchJob(
+        settings(data, "https://records.example.org"), execution_role="regulator-fetch"
+    )
+    monkeypatch.setattr(
+        Fetcher, "run", lambda *args, **kwargs: pytest.fail("Unexpected execution")
+    )
+    with pytest.raises(ValueError, match="Cache path"):
+        job.run(job.fetcher(), execute=True)
+    assert not target.exists() or not list(target.iterdir())
+
+
+@pytest.mark.parametrize("child", ["objects", "records"])
+@pytest.mark.parametrize("operation", ["get", "put"])
+def test_cache_child_rechecked_after_initialization(
+    tmp_path: Path, child: str, operation: str
+) -> None:
+    job = FetchJob(
+        settings(tmp_path / "data", "https://records.example.org"),
+        execution_role="regulator-fetch",
+    )
+    store = job.fetcher().store
+    url = job.urls[0]
+    store.put(url, b"retained", {}, {})
+    target = tmp_path / "other"
+    (store.root / child).rename(target)
+    (store.root / child).symlink_to(target, target_is_directory=True)
+    before = {path.name: path.read_bytes() for path in target.iterdir()}
+    with pytest.raises(ValueError, match="Cache path"):
+        if operation == "get":
+            store.get(url)
+        else:
+            store.put(url, b"replacement", {}, {})
+    assert {path.name: path.read_bytes() for path in target.iterdir()} == before
+
+
+@pytest.mark.parametrize("entry", ["progress", "record", "object"])
+@pytest.mark.parametrize("dangling", [False, True])
+def test_cache_read_refuses_file_symlinks(
+    tmp_path: Path, entry: str, dangling: bool
+) -> None:
+    job = FetchJob(
+        settings(tmp_path / "data", "https://records.example.org"),
+        execution_role="regulator-fetch",
+    )
+    store = job.fetcher().store
+    url = job.urls[0]
+    result = store.put(url, b"retained", {}, {})
+    paths = {
+        "progress": store.progress,
+        "record": store.records / (hashlib.sha256(url.encode()).hexdigest() + ".json"),
+        "object": result.path,
+    }
+    path = paths[entry]
+    retained = tmp_path / "retained"
+    path.rename(retained)
+    original = retained.read_bytes()
+    path.symlink_to(tmp_path / "missing" if dangling else retained)
+    with pytest.raises(ValueError, match="Cache path"):
+        if entry == "progress":
+            job.fetcher()
+        else:
+            store.get(url)
+    assert retained.read_bytes() == original
+    assert not (tmp_path / "missing").exists()
+
+
+@pytest.mark.parametrize("entry", ["progress", "terms", "record", "object"])
+@pytest.mark.parametrize("pending", [False, True])
+@pytest.mark.parametrize("dangling", [False, True])
+def test_cache_write_refuses_file_and_pending_symlinks(
+    tmp_path: Path, monkeypatch: Any, entry: str, pending: bool, dangling: bool
+) -> None:
+    job = FetchJob(
+        settings(tmp_path / "data", "https://records.example.org"),
+        execution_role="regulator-fetch",
+    )
+    fetcher = job.fetcher()
+    store = fetcher.store
+    url, payload = job.urls[0], b"new payload"
+    paths = {
+        "progress": store.progress,
+        "terms": store.root / "terms-checks.json",
+        "record": store.records / (hashlib.sha256(url.encode()).hexdigest() + ".json"),
+        "object": store.objects / hashlib.sha256(payload).hexdigest(),
+    }
+    path = paths[entry]
+    if pending:
+        path = path.with_suffix(path.suffix + ".pending")
+    target = tmp_path / "other"
+    if not dangling:
+        target.write_bytes(b"preserved")
+    path.symlink_to(target)
+
+    def unexpected_request(*args: Any, **kwargs: Any) -> None:
+        pytest.fail("Cache refusal must precede network access")
+
+    monkeypatch.setattr(fetcher.opener, "open", unexpected_request)
+    with pytest.raises(ValueError, match="Cache path"):
+        if entry == "progress":
+            store.save()
+        elif entry == "terms":
+            fetcher.fetch(url)
+        else:
+            store.put(url, payload, {}, {})
+    assert path.is_symlink()
+    if dangling:
+        assert not target.exists()
+    else:
+        assert target.read_bytes() == b"preserved"

@@ -17,9 +17,27 @@ class FetchResult:
     cached: bool
 
 
-def atomic_json(path: Path, value: Any) -> None:
+def _checked_path(path: Path, root: Path) -> Path:
+    """Refuse symlinks, including dangling links, before cache filesystem access.
+
+    This checks a stable directory tree; concurrent replacement is unsupported.
+    """
+    if not path.is_relative_to(root):
+        raise ValueError("Cache path must remain within the cache root")
+    current = root
+    for part in ("", *path.relative_to(root).parts):
+        current = current / part
+        if current.is_symlink():
+            raise ValueError("Cache path must not contain symlinks")
+    if not path.resolve().is_relative_to(root):
+        raise ValueError("Cache path must remain within the cache root")
+    return path
+
+
+def atomic_json(path: Path, value: Any, *, root: Path) -> None:
     """Publish only a complete JSON record; scratch stays beside the target."""
-    scratch = path.with_suffix(path.suffix + ".pending")
+    path = _checked_path(path, root)
+    scratch = _checked_path(path.with_suffix(path.suffix + ".pending"), root)
     with scratch.open("w", encoding="utf-8") as stream:
         json.dump(value, stream, sort_keys=True, indent=2)
         stream.write("\n")
@@ -28,8 +46,9 @@ def atomic_json(path: Path, value: Any) -> None:
     scratch.replace(path)
 
 
-def read_record(path: Path, *, progress: bool = False) -> dict[str, Any]:
+def read_record(path: Path, *, root: Path, progress: bool = False) -> dict[str, Any]:
     """Reject damaged evidence without replacing or removing the original."""
+    path = _checked_path(path, root)
     recovery = (
         "Move it aside explicitly, then wait one full budget window before resuming; "
         "cached objects and per-URL records remain verified on read."
@@ -82,33 +101,36 @@ class CacheStore:
     """One cache root per execution owner; simultaneous writers unsupported."""
 
     def __init__(self, root: Path | str) -> None:
-        self.root = Path(root)
-        self.objects = self.root / "objects"
-        self.records = self.root / "records"
+        self.root = Path(root).absolute()
+        self.objects = _checked_path(self.root / "objects", self.root)
+        self.records = _checked_path(self.root / "records", self.root)
         self.objects.mkdir(parents=True, exist_ok=True)
         self.records.mkdir(parents=True, exist_ok=True)
-        self.progress = self.root / "progress.json"
+        self.progress = _checked_path(self.root / "progress.json", self.root)
         self.state: dict[str, Any] = (
-            read_record(self.progress, progress=True)
+            read_record(self.progress, root=self.root, progress=True)
             if self.progress.exists()
             else {"completed": {}, "hosts": {}}
         )
 
     def save(self) -> None:
-        atomic_json(self.progress, self.state)
+        atomic_json(self.progress, self.state, root=self.root)
 
     def _record(self, url: str) -> Path:
-        return self.records / (hashlib.sha256(url.encode()).hexdigest() + ".json")
+        return _checked_path(
+            self.records / (hashlib.sha256(url.encode()).hexdigest() + ".json"),
+            self.root,
+        )
 
     def get(self, url: str) -> FetchResult | None:
         record = self._record(url)
         if not record.exists():
             return None
-        metadata = read_record(record)
+        metadata = read_record(record, root=self.root)
         digest = metadata["sha256"]
         if len(digest) != 64 or any(c not in "0123456789abcdef" for c in digest):
             raise ValueError("Cache integrity: invalid digest")
-        path = self.objects / digest
+        path = _checked_path(self.objects / digest, self.root)
         payload = path.read_bytes()
         if (
             metadata["url"] != url
@@ -126,8 +148,8 @@ class CacheStore:
         terms_check: dict[str, Any],
     ) -> FetchResult:
         digest = hashlib.sha256(payload).hexdigest()
-        path = self.objects / digest
-        scratch = path.with_suffix(".pending")
+        path = _checked_path(self.objects / digest, self.root)
+        scratch = _checked_path(path.with_suffix(".pending"), self.root)
         with scratch.open("wb") as stream:
             stream.write(payload)
             stream.flush()
@@ -141,7 +163,7 @@ class CacheStore:
             "response_headers": dict(headers),
             "terms_check": terms_check,
         }
-        atomic_json(self._record(url), metadata)
+        atomic_json(self._record(url), metadata, root=self.root)
         verified = self.get(url)
         assert verified is not None
         self.state["completed"][url] = digest
