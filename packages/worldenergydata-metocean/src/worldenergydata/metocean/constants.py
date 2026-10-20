@@ -196,7 +196,11 @@ NDBC_BASE_URL = "https://www.ndbc.noaa.gov"
 COOPS_BASE_URL = "https://api.tidesandcurrents.noaa.gov/api/prod"
 OPEN_METEO_BASE_URL = "https://marine-api.open-meteo.com/v1/marine"
 ERDDAP_BASE_URL = "https://erddap.ioos.us/erddap"
-CMEMS_BASE_URL = "https://nrt.cmems-du.eu/motu-web/Motu"
+# Marine's migration guide documents removal of MOTU; use Toolbox for downloads:
+# https://help.marine.copernicus.eu/en/articles/8612591-switching-from-old-to-new-services
+CMEMS_CATALOGUE_URL = "https://stac.marine.copernicus.eu/metadata/catalog.stac.json"
+# Compatibility alias for source discovery: metadata only, not a download API.
+CMEMS_BASE_URL = CMEMS_CATALOGUE_URL
 MET_NORWAY_BASE_URL = "https://api.met.no/weatherapi"
 HYCOM_BASE_URL = "https://ncss.hycom.org/thredds/ncss"
 

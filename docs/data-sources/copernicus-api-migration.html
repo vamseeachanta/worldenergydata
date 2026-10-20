@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Copernicus metocean access migration</title>
+</head>
+<body>
+<main>
+<h1>Copernicus metocean access migration</h1>
+<p>The CDS setup guide specifies the current <code>/api</code> endpoint and
+<code>cdsapi</code> client. Copernicus Marine documents removal of MOTU and its
+replacement with the Marine Toolbox. The adapters in
+<code>worldenergydata.metocean.clients.copernicus_clients</code> use these SDKs.
+Public catalogue checks diagnose service availability without requesting data
+or loading credentials. Catalogue success does not establish download access.</p>
+
+<h2>Revision history</h2>
+<table>
+  <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>Initial</td><td>2026-10-19</td><td>Document current access,
+  endpoint diagnostics and worked examples because legacy services changed.</td></tr></tbody>
+</table>
+
+<h2>Inputs and method</h2>
+<p><code>check_endpoint(source, timeout=...)</code> accepts <code>era5</code> or
+<code>cmems</code> and a required positive finite timeout in seconds. The timeout
+is an operational input, not a scientific acceptance criterion. A single GET
+requests the fixed publisher catalogue; redirects are not followed. The method
+checks the HTTP status, JSON object, expected catalogue identity and type,
+STAC version presence and nonempty metadata links. Disabled CDS collections
+fail explicitly. There are no engineering equations, coefficients or limits.</p>
+<p>The ERA5 metadata target is the
+<a href="https://cds.climate.copernicus.eu/api/catalogue/v1/collections/reanalysis-era5-single-levels">single-levels collection</a>;
+the Marine target is the
+<a href="https://stac.marine.copernicus.eu/metadata/catalog.stac.json">Marine Data Store catalogue</a>.
+<code>CMEMS_BASE_URL</code> remains a compatibility alias for this metadata URL;
+it is no longer a MOTU download address. Use the SDK adapter for downloads.</p>
+
+<table>
+  <thead><tr><th>Response</th><th>Diagnostic</th><th>Next action</th></tr></thead>
+  <tbody>
+    <tr><td>200 with matching catalogue</td><td>Return catalogue identity</td><td>Assess download access separately</td></tr>
+    <tr><td>301, 302, 303, 307 or 308</td><td>moved</td><td>Check the publisher migration guide before changing URLs</td></tr>
+    <tr><td>401 or 403</td><td>authentication</td><td>Check publisher access requirements</td></tr>
+    <tr><td>404 or 410</td><td>unavailable_or_retired</td><td>Check for retirement or a changed route</td></tr>
+    <tr><td>429</td><td>rate_limited</td><td>Retry according to publisher guidance</td></tr>
+    <tr><td>5xx</td><td>service</td><td>Check service status and retry later</td></tr>
+    <tr><td>Other HTTP response</td><td>http</td><td>Inspect publisher API documentation</td></tr>
+    <tr><td>Invalid JSON or catalogue</td><td>schema</td><td>Review the publisher schema or service response</td></tr>
+    <tr><td>Disabled collection</td><td>disabled</td><td>Check collection status</td></tr>
+    <tr><td>Connection or timeout failure</td><td>transport</td><td>Check connectivity and the supplied timeout</td></tr>
+  </tbody>
+</table>
+<p>HTTP meanings follow <a href="https://www.rfc-editor.org/rfc/rfc9110.html">RFC 9110
+(2022), sections 15.3–15.6</a>, and
+<a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">RFC 6585 (2012), section 4</a>.
+A missing route alone does not prove retirement. Diagnostic exceptions omit
+response bodies, redirect locations and underlying transport exception text.</p>
+
+<h2>Executable offline worked example</h2>
+<p>Input: a synthetic metadata response containing the identity and type
+independently transcribed from the public Marine catalogue. Method: inject
+that response using HTTPX's mock transport and validate it through the same
+function used by the live test. Expected answer: <code>MDS</code>. The timeout
+below is an arbitrary test input; no network request or waiting occurs.</p>
+<pre><code id="offline-example">import httpx
+from worldenergydata.metocean.clients.copernicus_clients import check_endpoint
+
+payload = {
+    "id": "MDS",
+    "type": "Catalog",
+    "stac_version": "1.0.0",  # Publisher catalogue, accessed 2026-10-19.
+    "links": [{"rel": "self", "href": "https://example.org/catalogue"}],
+}
+transport = httpx.MockTransport(lambda request: httpx.Response(200, json=payload))
+answer = check_endpoint("cmems", timeout=1, transport=transport)
+assert answer == "MDS"
+print(answer)
+</code></pre>
+<p>The contract tests also check the published CDS retrieval example and Marine
+subset example against fake SDKs. Expected answers are unchanged request
+arguments and explicit sentinel return values, not fabricated weather results.</p>
+
+<h2>SDK configuration and retrieval</h2>
+<p>Install the optional publisher packages <code>cdsapi</code> and
+<code>copernicusmarine</code> in the consuming application. They are imported
+only when their adapters are constructed. Follow the
+<a href="https://cds.climate.copernicus.eu/en/how-to-api">CDS setup guide</a>
+for the supported client version, external credential configuration and manual
+dataset terms acceptance. Use publisher-generated selection requests:
+<code>Era5Client().retrieve(dataset, request, target)</code> forwards the
+request to <code>cdsapi.Client(url=CDS_API_URL).retrieve</code>.</p>
+<p>Follow the <a href="https://help.marine.copernicus.eu/en/articles/8612591-switching-from-old-to-new-services">Marine migration guide</a>
+and <a href="https://help.marine.copernicus.eu/en/articles/8283072-copernicus-marine-toolbox-api-subset">Python subset tutorial</a>
+for authentication and dataset selections.
+<code>CopernicusMarineClient().subset(**selection)</code> forwards the current
+Toolbox keyword interface. SDKs handle authentication, selection validation and
+download files. Keep credentials outside source control. Source pages and public
+catalogues were inspected on 2026-10-19.</p>
+
+<h2>Opt-in network smoke tests</h2>
+<p>With the package and test dependencies installed, set
+<code>METOCEAN_LIVE_TESTS=1</code> and supply
+<code>METOCEAN_LIVE_TIMEOUT_SECONDS</code>, then run:</p>
+<pre><code>python -m pytest tests/unit/metocean/test_copernicus_live.py -m network -q
+</code></pre>
+<p>Both tests carry the <code>network</code> marker and skip by default, including
+offline CI. They check the current public endpoints without credentials.
+Environment proxy settings are not loaded by the diagnostic client; networks
+that require a proxy need an explicitly reviewed transport configuration.
+Failure reports distinguish endpoint changes from access and service failures.</p>
+
+<h2>Known limits and later work</h2>
+<p>Authenticated retrieval, credentials, licence acceptance, downloaded-data
+readback, scientific qualification and integration into unified gridded queries
+are <strong>NOT_EVALUATED</strong>. No default location, time selection or
+engineering acceptance limit is inferred. Neither SDK adapter implements
+<code>BaseClient</code>'s station-observation interface: these are separate
+gridded-data request adapters. Independent review is required before merge.</p>
+</main>
+</body>
+</html>
