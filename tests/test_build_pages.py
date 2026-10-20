@@ -46,6 +46,21 @@ def test_full_build_renders_whole_site(bp):
     assert econ, "expected per-field economics pages"
 
 
+def test_probabilistic_report_is_copied_and_indexed(bp, tmp_path, monkeypatch):
+    reports = tmp_path / "reports"
+    report = reports / "production_forecast" / "index.html"
+    report.parent.mkdir(parents=True)
+    report.write_text(
+        "<h1>Synthetic probabilistic production analysis</h1>", encoding="utf-8"
+    )
+    monkeypatch.setattr(bp, "REPORTS", reports)
+    bp.build(domains=["production_forecast"])
+    assert (
+        bp.PUBLIC / "production_forecast" / "index.html"
+    ).read_bytes() == report.read_bytes()
+    assert 'href="production_forecast/"' in (bp.PUBLIC / "index.html").read_text()
+
+
 def test_lower_tertiary_publishes_explorer_sidecar(bp):
     # Explorer shell contract (#946): the enriched-payload sidecar deploys
     # next to the posters so /field-atlas/ can fetch ../lifecycle/_explorer.json.

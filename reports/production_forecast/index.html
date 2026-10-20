@@ -1,0 +1,87 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<title>Probabilistic production analysis</title>
+<style>body{font:16px sans-serif;max-width:960px;margin:2em auto;padding:1em}
+img{width:100%}td,th{padding:.5em;border:1px solid gray}pre{white-space:pre-wrap}</style>
+<h1>Probabilistic production analysis — Synthetic example</h1>
+<p>Data basis: synthetic; screening: NOT_EVALUATED.
+Criterion: No minimum NPV criterion was supplied. EUR is future recovery to the rate limit,
+not booked reserves. NPV covers the configured horizon only.</p>
+<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-20</td><td>Initial configured uncertainty example.</td></tr></table>
+<h2>Production fan</h2><img alt="Production fan: p10 to p90 shaded, p50 line" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgMzAwIiByb2xlPSJpbWciPjxwb2x5Z29uIHBvaW50cz0iMzUuMCw2OS42IDY2LjcsODcuNiA5OC41LDEwMy41IDEzMC4yLDExNy42IDE2Mi4wLDEzMC42IDE5My43LDE0MS44IDIyNS40LDE1MS4zIDI1Ny4yLDE2MC4wIDI4OC45LDE2Ny42IDMyMC43LDE3NC4zIDM1Mi40LDE4MC4zIDM4NC4xLDE4Ni4wIDQxNS45LDE5MS4wIDQ0Ny42LDE5NS44IDQ3OS4zLDIwMC4xIDUxMS4xLDIwNC4yIDU0Mi44LDIwOC4yIDU3NC42LDIxMS42IDYwNi4zLDIxNC42IDYzOC4wLDIxNy42IDY2OS44LDIyMC4yIDcwMS41LDIyMi44IDczMy4zLDIyNS4yIDc2NS4wLDIyNy4zIDc2NS4wLDIwNC41IDczMy4zLDIwMi4xIDcwMS41LDE5OS42IDY2OS44LDE5Ni45IDYzOC4wLDE5NC4wIDYwNi4zLDE5MC42IDU3NC42LDE4Ny4xIDU0Mi44LDE4My4zIDUxMS4xLDE3OS4xIDQ3OS4zLDE3NC43IDQ0Ny42LDE2OS43IDQxNS45LDE2NC4zIDM4NC4xLDE1OC43IDM1Mi40LDE1Mi4zIDMyMC43LDE0NS4zIDI4OC45LDEzNy41IDI1Ny4yLDEyOS42IDIyNS40LDEyMC40IDE5My43LDEwOS43IDE2Mi4wLDk4LjQgMTMwLjIsODUuOCA5OC41LDcxLjcgNjYuNyw1NC44IDM1LjAsMzUuMCIgZmlsbD0ibGlnaHRibHVlIi8+PHBvbHlsaW5lIHBvaW50cz0iMzUuMCw1MS41IDY2LjcsNzAuNSA5OC41LDg2LjcgMTMwLjIsMTAxLjUgMTYyLjAsMTE0LjggMTkzLjcsMTI1LjkgMjI1LjQsMTM1LjggMjU3LjIsMTQ0LjkgMjg4LjksMTUyLjggMzIwLjcsMTYwLjMgMzUyLjQsMTY3LjAgMzg0LjEsMTczLjIgNDE1LjksMTc4LjYgNDQ3LjYsMTgzLjYgNDc5LjMsMTg4LjMgNTExLjEsMTkyLjcgNTQyLjgsMTk2LjYgNTc0LjYsMjAwLjMgNjA2LjMsMjAzLjYgNjM4LjAsMjA2LjggNjY5LjgsMjA5LjUgNzAxLjUsMjEyLjIgNzMzLjMsMjE0LjUgNzY1LjAsMjE2LjciIGZpbGw9Im5vbmUiIHN0cm9rZT0ibmF2eSIvPjx0ZXh0IHg9IjM1IiB5PSIyMCI+TW9udGgtZW5kIHJhdGUgKGJibC9tb250aCk7IHVwcGVyIHNjYWxlIDk3OS4yPC90ZXh0Pjx0ZXh0IHg9IjM1IiB5PSIyOTUiPk1vbnRoIDE8L3RleHQ+PHRleHQgeD0iNzAwIiB5PSIyOTUiPk1vbnRoIDI0PC90ZXh0Pjwvc3ZnPg==">
+<p>Figure 1. Month-end rates (bbl/month); p10–p90 band and p50 line.</p>
+<p>Non-exceedance convention: p10 is the 10th percentile (low), p90 the 90th (high).
+These labels are reversed relative to petroleum exceedance probabilities.
+Pointwise bands do not form a single realizable production trajectory.</p>
+<table><tr><th>Quantity</th><th>p10</th><th>p50</th><th>p90</th></tr><tr><th>eur_bbl</th><td>11,106.0</td><td>13,612.7</td><td>17,340.3</td></tr><tr><th>npv_usd</th><td>-39,865.2</td><td>52,243.6</td><td>182,156.3</td></tr></table>
+<p>Table 1. Future recovery (bbl) and horizon NPV (USD), linear empirical percentiles.</p>
+<h2>NPV distribution</h2><img alt="NPV histogram" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgMzAwIj48cmVjdCB4PSI1MC4wIiB5PSIyNDcuNCIgd2lkdGg9IjQxLjIiIGhlaWdodD0iMi42IiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSI5MS4yIiB5PSIyMjkuMiIgd2lkdGg9IjQxLjIiIGhlaWdodD0iMjAuOCIgZmlsbD0ic3RlZWxibHVlIi8+PHJlY3QgeD0iMTMyLjQiIHk9IjIyMS40IiB3aWR0aD0iNDEuMiIgaGVpZ2h0PSIyOC42IiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSIxNzMuNSIgeT0iMTYxLjciIHdpZHRoPSI0MS4yIiBoZWlnaHQ9Ijg4LjMiIGZpbGw9InN0ZWVsYmx1ZSIvPjxyZWN0IHg9IjIxNC43IiB5PSIxMDkuNyIgd2lkdGg9IjQxLjIiIGhlaWdodD0iMTQwLjMiIGZpbGw9InN0ZWVsYmx1ZSIvPjxyZWN0IHg9IjI1NS45IiB5PSI3OC42IiB3aWR0aD0iNDEuMiIgaGVpZ2h0PSIxNzEuNCIgZmlsbD0ic3RlZWxibHVlIi8+PHJlY3QgeD0iMjk3LjEiIHk9IjUwLjAiIHdpZHRoPSI0MS4yIiBoZWlnaHQ9IjIwMC4wIiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSIzMzguMiIgeT0iMTA3LjEiIHdpZHRoPSI0MS4yIiBoZWlnaHQ9IjE0Mi45IiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSIzNzkuNCIgeT0iMTM1LjciIHdpZHRoPSI0MS4yIiBoZWlnaHQ9IjExNC4zIiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSI0MjAuNiIgeT0iNzguNiIgd2lkdGg9IjQxLjIiIGhlaWdodD0iMTcxLjQiIGZpbGw9InN0ZWVsYmx1ZSIvPjxyZWN0IHg9IjQ2MS44IiB5PSIxNzkuOSIgd2lkdGg9IjQxLjIiIGhlaWdodD0iNzAuMSIgZmlsbD0ic3RlZWxibHVlIi8+PHJlY3QgeD0iNTAyLjkiIHk9IjE5Mi45IiB3aWR0aD0iNDEuMiIgaGVpZ2h0PSI1Ny4xIiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSI1NDQuMSIgeT0iMjAzLjIiIHdpZHRoPSI0MS4yIiBoZWlnaHQ9IjQ2LjgiIGZpbGw9InN0ZWVsYmx1ZSIvPjxyZWN0IHg9IjU4NS4zIiB5PSIyMjEuNCIgd2lkdGg9IjQxLjIiIGhlaWdodD0iMjguNiIgZmlsbD0ic3RlZWxibHVlIi8+PHJlY3QgeD0iNjI2LjUiIHk9IjIzOS42IiB3aWR0aD0iNDEuMiIgaGVpZ2h0PSIxMC40IiBmaWxsPSJzdGVlbGJsdWUiLz48cmVjdCB4PSI2NjcuNiIgeT0iMjUwLjAiIHdpZHRoPSI0MS4yIiBoZWlnaHQ9IjAuMCIgZmlsbD0ic3RlZWxibHVlIi8+PHJlY3QgeD0iNzA4LjgiIHk9IjI0NC44IiB3aWR0aD0iNDEuMiIgaGVpZ2h0PSI1LjIiIGZpbGw9InN0ZWVsYmx1ZSIvPjx0ZXh0IHg9IjUwIiB5PSIyMCI+U2FtcGxlcyBwZXIgYmluOyB1cHBlciBzY2FsZSA3NzwvdGV4dD48dGV4dCB4PSI1MCIgeT0iMjg1Ij5OUFYgKFVTRCk6IC0xNDksMDI4LjQgdG8gMzQxLDg2OC43PC90ZXh0Pjwvc3ZnPg==">
+<p>Figure 2. Horizon NPV histogram (USD); counts reflect configured samples.</p>
+<h2>NPV sensitivity</h2><img alt="NPV sensitivity: signed Spearman rho" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgMjE1Ij48cGF0aCBkPSJNNDAwIDAgVjIxNSIgc3Ryb2tlPSJibGFjayIvPjxyZWN0IHg9IjQwMC4wIiB5PSIxNSIgd2lkdGg9IjE3Mi43IiBoZWlnaHQ9IjIwIiBmaWxsPSJzdGVlbGJsdWUiLz48dGV4dCB4PSI1IiB5PSIzMCI+b2lsX3ByaWNlOiAwLjc8L3RleHQ+PHJlY3QgeD0iMzAwLjUiIHk9IjUwIiB3aWR0aD0iOTkuNSIgaGVpZ2h0PSIyMCIgZmlsbD0ic3RlZWxibHVlIi8+PHRleHQgeD0iNSIgeT0iNjUiPkRpOiAtMC40PC90ZXh0PjxyZWN0IHg9IjQwMC4wIiB5PSI4NSIgd2lkdGg9IjkxLjQiIGhlaWdodD0iMjAiIGZpbGw9InN0ZWVsYmx1ZSIvPjx0ZXh0IHg9IjUiIHk9IjEwMCI+cWk6IDAuNDwvdGV4dD48cmVjdCB4PSIzMDguNiIgeT0iMTIwIiB3aWR0aD0iOTEuNCIgaGVpZ2h0PSIyMCIgZmlsbD0ic3RlZWxibHVlIi8+PHRleHQgeD0iNSIgeT0iMTM1Ij5vcGV4OiAtMC40PC90ZXh0PjxyZWN0IHg9IjQwMC4wIiB5PSIxNTUiIHdpZHRoPSI0Ni42IiBoZWlnaHQ9IjIwIiBmaWxsPSJzdGVlbGJsdWUiLz48dGV4dCB4PSI1IiB5PSIxNzAiPmI6IDAuMjwvdGV4dD48L3N2Zz4=">
+<p>Figure 3. Spearman rho, sorted by absolute value; association is not causation.
+Undefined ranks identify constant inputs or outputs.</p>
+<h2>Inputs and provenance</h2><pre>{
+  &quot;field&quot;: &quot;Synthetic example&quot;,
+  &quot;data_basis&quot;: &quot;synthetic&quot;,
+  &quot;engine&quot;: &quot;builtin&quot;,
+  &quot;seed&quot;: 42,
+  &quot;n_samples&quot;: 500,
+  &quot;forecast_months&quot;: 24,
+  &quot;base&quot;: {
+    &quot;qi&quot;: 1000,
+    &quot;Di&quot;: 0.1,
+    &quot;b&quot;: 0.5,
+    &quot;economic_limit&quot;: 100,
+    &quot;oil_price&quot;: 70,
+    &quot;opex&quot;: 15,
+    &quot;capex&quot;: 500000,
+    &quot;discount_rate&quot;: 0.1
+  },
+  &quot;priors&quot;: [
+    {
+      &quot;name&quot;: &quot;qi&quot;,
+      &quot;dist&quot;: &quot;uniform&quot;,
+      &quot;low&quot;: 900,
+      &quot;high&quot;: 1100
+    },
+    {
+      &quot;name&quot;: &quot;Di&quot;,
+      &quot;dist&quot;: &quot;uniform&quot;,
+      &quot;low&quot;: 0.08,
+      &quot;high&quot;: 0.12
+    },
+    {
+      &quot;name&quot;: &quot;b&quot;,
+      &quot;dist&quot;: &quot;uniform&quot;,
+      &quot;low&quot;: 0.3,
+      &quot;high&quot;: 0.7
+    },
+    {
+      &quot;name&quot;: &quot;oil_price&quot;,
+      &quot;dist&quot;: &quot;uniform&quot;,
+      &quot;low&quot;: 60,
+      &quot;high&quot;: 80
+    },
+    {
+      &quot;name&quot;: &quot;opex&quot;,
+      &quot;dist&quot;: &quot;uniform&quot;,
+      &quot;low&quot;: 10,
+      &quot;high&quot;: 20
+    }
+  ]
+}</pre>
+<p>Input SHA-256: 47fb31629192e7e654bfb361a818cfca3f12a6744db3efb830fd209ef673c87c; backend: builtin.naive-mc;
+package version: 0.1.0; generated: 2026-10-20 (UTC).
+Methods: ArpsDeclineCurve.simulate, ProbabilisticForecast.run and EconomicsQuery.npv.</p>
+<h2>Method and sources</h2>
+<p>Arps rate and cumulative equations: <a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve Analysis</a> (accessed 2026).
+Exact monthly volumes are integrated to the rate limit, including partial months.
+Time-zero CAPEX and month-end net operating cash are discounted through FDAS;
+<a href="https://numpy.org/numpy-financial/latest/npv.html">numpy-financial NPV</a> (accessed 2026).
+Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">NumPy 2.2 linear percentiles</a>;
+ranks use <a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">SciPy 1.15.2 Spearman correlation</a>.</p>
+<h2>Limits and way forward</h2><p>Independent priors; empirical decline with no pressure,
+facility constraints, tax, royalties, fixed operating costs or terminal value.
+Synthetic inputs do not establish public-field reserve distributions. Calibrated public
+production data, documented priors and a governing acceptance criterion are required
+before field screening. No reserve classification is established. Charts are static vectors.</p></html>

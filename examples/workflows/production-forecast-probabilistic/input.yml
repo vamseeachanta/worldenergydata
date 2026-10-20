@@ -1,0 +1,34 @@
+basename: production_forecast
+meta:
+  label: production_forecast_probabilistic
+file_management:
+  flag: false
+  output_directory: outputs
+analysis:
+  flag: true
+  type: probabilistic
+probabilistic:
+  field: Synthetic example
+  data_basis: synthetic
+  engine: builtin
+  # Reproducibility and study dimensions follow the example plan in issue 833.
+  seed: 42
+  n_samples: 500
+  forecast_months: 24
+  # All values below are required illustrative inputs, not measured field priors.
+  # Rate basis follows the existing production-forecast-arps worked example.
+  base:
+    qi: 1000
+    Di: 0.1
+    b: 0.5
+    economic_limit: 100
+    oil_price: 70
+    opex: 15
+    capex: 500000
+    discount_rate: 0.1
+  priors:
+    - {name: qi, dist: uniform, low: 900, high: 1100}
+    - {name: Di, dist: uniform, low: 0.08, high: 0.12}
+    - {name: b, dist: uniform, low: 0.3, high: 0.7}
+    - {name: oil_price, dist: uniform, low: 60, high: 80}
+    - {name: opex, dist: uniform, low: 10, high: 20}
