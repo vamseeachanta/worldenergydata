@@ -27,6 +27,10 @@ SOURCES = (
         "MARSISdb_MDOTW_VW_OCCURRENCE_PUBLIC.csv",
         "landing_url": "https://open.canada.ca/data/en/dataset/"
         "ad8d1b73-df09-4521-9bdb-61c529328218",
+        "license": "Open Government Licence - Canada",
+        "license_url": "https://open.canada.ca/en/open-government-licence-canada",
+        "license_evidence_url": "https://open.canada.ca/data/en/dataset/"
+        "ad8d1b73-df09-4521-9bdb-61c529328218",
     },
     {
         "id": "dlp_historical",
@@ -36,6 +40,21 @@ SOURCES = (
         "e637c182915bdc441e63a13641eaaf9a2c541463/data/converted/Accidents.csv",
         "landing_url": "https://github.com/data-liberation-project/"
         "boating-accident-reports-1995-2012-muckrock",
+        "upstream_name": "Accidents.csv",
+        "count_reconciliation": {
+            "issue": 1529,
+            "previously_reported_rows": 93237,
+            "cause": "NOT_ESTABLISHED",
+            "note": "The measured 80,340 records do not reproduce the 93,237 "
+            "reported in #1529. Different exports or line versus record counts "
+            "are possible explanations, not established causes. The archived "
+            "historical filename does not establish equivalence.",
+        },
+        "license": "CC0-1.0 (converted CSV); public domain (original records)",
+        "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "license_evidence_url": "https://raw.githubusercontent.com/"
+        "data-liberation-project/boating-accident-reports-1995-2012-muckrock/"
+        "e637c182915bdc441e63a13641eaaf9a2c541463/README.md",
     },
 )
 REQUIRED_COLUMNS = {
@@ -171,11 +190,66 @@ def load_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
     return result
 
 
+def download_input(source, temporary):
+    """Retry an HTTP access rejection once with an explicit application agent."""
+    source["attempts"] = []
+    for attempt in range(2):
+        headers = {"User-Agent": "PublicIncidentInputs/1.0"} if attempt else {}
+        record = {"user_agent": headers.get("User-Agent", "requests default")}
+        source["attempts"].append(record)
+        try:
+            with get(
+                source["url"], timeout=60, stream=True, headers=headers
+            ) as response:
+                status = response.status_code
+                layer = "http-access" if status in (401, 403) else "http"
+                record.update(http_status=status, response_layer=layer)
+                source["response_layer"] = layer
+                response.raise_for_status()
+                response.raw.decode_content = True
+                with temporary.open("wb") as stream:
+                    shutil.copyfileobj(response.raw, stream)
+            return
+        except HTTPError as error:
+            status = error.response.status_code
+            layer = "http-access" if status in (401, 403) else "http"
+            record.update(http_status=status, response_layer=layer)
+            source["response_layer"] = layer
+            if status != 403 or attempt:
+                raise
+        except (RequestException, TimeoutError):
+            record["response_layer"] = source["response_layer"] = "network"
+            raise
+
+
+def reuse_verified_archive(root, source, previous):
+    """Preserve provenance only when the previous bytes and row count verify."""
+    if previous.get("status") != "FETCHED" or previous.get("url") != source["url"]:
+        return None
+    path = (root / previous["path"]).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        source["archive_error"] = "Previous archive missing or outside input directory"
+        return None
+    if sha256(path) != previous["sha256"]:
+        source["archive_error"] = "Previous archive digest mismatch"
+        return None
+    frame = read_source(path, source["id"])
+    if len(frame) != previous["row_count"]:
+        source["archive_error"] = "Previous archive row count mismatch"
+        return None
+    for key in ("status", "path", "sha256", "row_count", "download_date_utc"):
+        source[key] = previous[key]
+    return frame
+
+
 def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
     """Retain immutable downloads and record unavailable sources explicitly."""
     root = Path(raw_dir).resolve()
     if root == REPO_ROOT or REPO_ROOT in root.parents:
         raise ValueError("Raw input directory must be outside the repository")
+    output = Path(manifest_path)
+    previous = json.loads(output.read_text()) if output.exists() else {}
+    prior_sources = {source["id"]: source for source in previous.get("sources", [])}
     manifest = {
         "schema_version": 1,
         "dataset": "public-marine-incident-inputs",
@@ -190,6 +264,9 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
             }
         ],
         "counts": UNKNOWN,
+        "revisions": previous.get(
+            "revisions", json.loads(DEFAULT_MANIFEST.read_text()).get("revisions", [])
+        ),
     }
     frames = {}
     for definition in SOURCES:
@@ -204,13 +281,7 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
         try:
             with tempfile.TemporaryDirectory(prefix="marine-input-") as scratch:
                 temporary = Path(scratch) / "input.csv"
-                with (
-                    get(source["url"], timeout=60, stream=True) as response,
-                    temporary.open("wb") as stream,
-                ):
-                    response.raise_for_status()
-                    response.raw.decode_content = True
-                    shutil.copyfileobj(response.raw, stream)
+                download_input(source, temporary)
                 frame = read_source(temporary, source["id"])
                 digest = sha256(temporary)
                 relative = Path("sha256") / digest / Path(source["path"]).name
@@ -243,11 +314,16 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
             )
         except (RequestException, TimeoutError):
             source["error"] = "Network request failed or timed out"
+        if source["status"] != "FETCHED":
+            frame = reuse_verified_archive(
+                root, source, prior_sources.get(source["id"], {})
+            )
+            if frame is not None:
+                frames[source["id"]] = frame
         manifest["sources"].append(source)
     if len(frames) == len(SOURCES):
         manifest["counts"] = analyse_frames(frames)["counts"]
         manifest["readiness"] = "count-agreement-only"
-    output = Path(manifest_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(manifest, indent=2) + "\n")
     if json.loads(output.read_text()) != manifest:
@@ -257,6 +333,15 @@ def fetch_inputs(raw_dir, manifest_path=DEFAULT_MANIFEST):
 
 def provenance_html(manifest):
     """Render the same provenance and count definitions used by agreement checks."""
+    revisions = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{escape(str(revision[key]))}</td>"
+            for key in ("revision", "date", "changes")
+        )
+        + "</tr>"
+        for revision in manifest.get("revisions", [])
+    )
     rows = "".join(
         "<tr>"
         + "".join(
@@ -284,8 +369,7 @@ def provenance_html(manifest):
 <p>Summary: combined and filtered record counts: {count_text}</p>
 <h3>Revision history</h3>
 <table><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
-<tr><td>1</td><td>2026-10-19</td><td>Public-input provenance and count agreement
-are recorded because the historical total could not be sourced.</td></tr></table>
+{revisions}</table>
 <h3>Sources and counts</h3>
 <table><tr><th>Source</th><th>Download URL</th><th>Downloaded (UTC)</th>
 <th>SHA-256</th><th>Records</th><th>Status</th></tr>{rows}</table>

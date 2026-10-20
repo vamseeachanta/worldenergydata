@@ -174,6 +174,8 @@ def test_successful_fetch_counts_and_readback(inputs, tmp_path, monkeypatch):
     )
 
     class Response(io.BytesIO):
+        status_code = 200
+
         def raise_for_status(self):
             pass
 
@@ -283,3 +285,123 @@ def test_archive_escape_rejected(inputs):
     manifest_path.write_text(json.dumps(manifest))
     with pytest.raises(ValueError, match="inside the raw input directory"):
         module("incident_inputs").load_inputs(root, manifest_path)
+
+
+def test_source_identity_rights_and_count_discrepancy():
+    fetcher = module("incident_inputs")
+    manifest = json.loads(fetcher.DEFAULT_MANIFEST.read_text())
+    for source in (*fetcher.SOURCES, *manifest["sources"]):
+        assert source["license"]
+        assert source["license_url"].startswith("https://")
+        assert source["license_evidence_url"].startswith("https://")
+        if source["id"] == "dlp_historical":
+            assert source["upstream_name"] == "Accidents.csv"
+            note = source["count_reconciliation"]
+            assert note["previously_reported_rows"] == 93237
+            assert note["issue"] == 1529
+            assert note["cause"] == "NOT_ESTABLISHED"
+
+
+@pytest.mark.parametrize("damage", [None, "bytes", "count", "escape", "missing"])
+def test_transient_failure_reuses_only_verified_archive(inputs, monkeypatch, damage):
+    from requests import RequestException
+
+    root, manifest_path, manifest = inputs
+    fetcher = module("incident_inputs")
+    manifest["revisions"] = [
+        {"revision": "7", "date": "2026-01-01", "changes": "Earlier issue."}
+    ]
+    for item, definition in zip(manifest["sources"], fetcher.SOURCES):
+        item["url"] = definition["url"]
+    source = manifest["sources"][0]
+    if damage == "bytes":
+        (root / source["path"]).write_text("tampered\n")
+    elif damage == "count":
+        source["row_count"] += 1
+    elif damage == "escape":
+        source["path"] = "../outside.csv"
+    elif damage == "missing":
+        source["path"] = "missing.csv"
+    manifest_path.write_text(json.dumps(manifest))
+
+    def failed(*args, **kwargs):
+        raise RequestException("temporary outage")
+
+    monkeypatch.setattr(fetcher, "get", failed)
+    result = fetcher.fetch_inputs(root, manifest_path)
+    assert result["revisions"] == manifest["revisions"]
+    retained = result["sources"][0]
+    assert retained["response_layer"] == "network"
+    if damage is None:
+        for key in ("status", "path", "sha256", "row_count", "download_date_utc"):
+            assert retained[key] == source[key]
+        assert result["counts"] == manifest["counts"]
+        assert fetcher.load_inputs(root, manifest_path)["counts"] == manifest["counts"]
+    else:
+        assert retained["status"] == "NOT_EVALUATED"
+        assert result["counts"] == "NOT_EVALUATED"
+    assert result["sources"][1]["status"] == "FETCHED"
+    assert json.loads(manifest_path.read_text()) == result
+
+
+def test_revision_history_is_manifest_driven_and_escaped(inputs):
+    _, _, manifest = inputs
+    manifest["revisions"] = [
+        {"revision": "9", "date": "2030-01-02", "changes": "Change <criteria>."},
+        {"revision": "10", "date": "2030-02-03", "changes": "Next issue."},
+    ]
+    html = module("incident_inputs").provenance_html(manifest)
+    assert "<td>9</td><td>2030-01-02</td>" in html
+    assert "<td>10</td><td>2030-02-03</td>" in html
+    assert "Change &lt;criteria&gt;." in html
+    assert "2026-10-19" not in html
+
+
+@pytest.mark.parametrize("retry_succeeds", [False, True])
+def test_forbidden_retried_once_with_explicit_agent(
+    inputs, monkeypatch, retry_succeeds
+):
+    import io
+
+    from requests import HTTPError, Response
+
+    root, _, manifest = inputs
+    fetcher = module("incident_inputs")
+    calls = []
+
+    class Download(io.BytesIO):
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        @property
+        def raw(self):
+            return self
+
+    def download(url, **kwargs):
+        calls.append((url, kwargs))
+        definition = next(source for source in fetcher.SOURCES if source["url"] == url)
+        attempts = sum(previous == url for previous, _ in calls)
+        if definition["id"] == "canadian_tsb" and (attempts == 1 or not retry_succeeds):
+            response = Response()
+            response.status_code = 403
+            response.reason = "Forbidden"
+            raise HTTPError(response=response)
+        source = next(
+            item for item in manifest["sources"] if item["id"] == definition["id"]
+        )
+        return Download((root / source["path"]).read_bytes())
+
+    monkeypatch.setattr(fetcher, "get", download)
+    result = fetcher.fetch_inputs(root / "new", root / "new.json")
+    tsb_calls = [kw for url, kw in calls if url == fetcher.SOURCES[0]["url"]]
+    assert len(tsb_calls) == 2
+    assert tsb_calls[1]["headers"]["User-Agent"]
+    tsb = result["sources"][0]
+    assert tsb["attempts"][0]["response_layer"] == "http-access"
+    assert tsb["attempts"][0]["http_status"] == 403
+    assert tsb["response_layer"] == ("http" if retry_succeeds else "http-access")
+    assert tsb["status"] == ("FETCHED" if retry_succeeds else "NOT_EVALUATED")
+    if retry_succeeds:
+        assert result["counts"] == manifest["counts"]

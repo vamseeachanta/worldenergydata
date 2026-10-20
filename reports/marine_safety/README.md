@@ -9,6 +9,7 @@ could not be sourced. Earlier charts remain unverified.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-19 | Record public-input provenance and require count agreement because the historical total could not be sourced. |
+| 2 | 2026-10-20 | Record the unresolved count difference and licences; retain verified provenance and retry HTTP 403 once with an explicit User-Agent. Disclose that whitespace-only descriptions are now excluded and `capsiz` replaces `capsize` to include Capsizing; move generated revision history into the manifest. |
 
 ## Inputs and measured counts
 
@@ -25,7 +26,11 @@ no raw payload is committed. The manifest paths are relative to that archive.
 
 The DLP release is the historical **BARD recreational boating** dataset, rather
 than the separate MISLE investigation dataset. The upstream file is named
-`Accidents.csv`; its archived name identifies the historical release.
+`Accidents.csv`; `upstream_name` records this separately from the historical
+archive filename. The measured 80,340 records do not reproduce the 93,237
+reported in #1529, a difference of 12,897 records. The cause is not established:
+different exports or line counts versus record counts are possible explanations.
+The historical archive filename does not establish equivalence.
 Its exact URL and revision are pinned in the manifest.
 
 The one open input is the [TSB occurrence CSV](https://www.tsb.gc.ca/sites/default/files/stats/MARSISdb_MDOTW_VW_OCCURRENCE_PUBLIC.csv).
@@ -34,7 +39,12 @@ identifies that download. Its digest, retrieval date and row count are
 `NOT_EVALUATED`; an attempt date is recorded separately. A source update must be
 fetched and recorded before it can be used, rather than silently changing counts.
 The existing shared catalog did not identify either of these exact releases;
-the manifest is the collection record owned by this repository.
+the manifest is the collection record maintained in this repository.
+
+The [DLP release README](https://raw.githubusercontent.com/data-liberation-project/boating-accident-reports-1995-2012-muckrock/e637c182915bdc441e63a13641eaaf9a2c541463/README.md)
+identifies original records as public domain and converted CSVs as CC0.
+The TSB catalog states [Open Government Licence – Canada](https://open.canada.ca/en/open-government-licence-canada).
+Licence names, terms URLs and evidence URLs are recorded per source in the manifest.
 
 ## Worked example
 
@@ -58,7 +68,13 @@ bash scripts/marine_safety/analyze_incidents.sh
 ```
 
 The fetch command attempts both sources and writes the manifest even if a
-network request fails; it exits nonzero when either source is unavailable.
+network request fails. An HTTP 403 response is recorded as an HTTP access
+rejection, without assuming that the file has been withdrawn, and is retried
+once with an explicit application User-Agent. Network failures are recorded
+separately. If a download fails, a previously fetched source is retained only
+when its archived bytes, schema and row count still verify; its original
+download date is preserved alongside the new attempt and failure details.
+The command exits nonzero when either verified source is unavailable.
 The loader requires both sources, the expected columns, matching digests,
 matching source row counts and matching analysis counts. Missing or invalid
 inputs cause a clear error and nonzero exit before report creation. Fetching a
@@ -67,7 +83,10 @@ new release deliberately updates the manifest; review its count changes.
 The method concatenates the two source tables without deduplication or date
 filtering. It removes missing, empty and whitespace-only descriptions.
 Foundering selects incident types matching `founder|capsiz|sinking` without case
-sensitivity. Fatal incidents have deaths greater than zero. Missing death counts
+sensitivity. Relative to the earlier method, whitespace-only descriptions are
+now excluded and `capsiz` replaces `capsize` to include Capsizing; both changes
+can move counts relative to earlier pages. Fatal incidents have deaths greater
+than zero. Missing death counts
 are treated as zero for selection; unreported deaths cannot be counted. These
 are **record counts**, not unique worldwide incidents or population risk rates.
 Hatch classification and detailed charts are outside the count agreement claim.

@@ -14,8 +14,24 @@
       "sha256": "NOT_EVALUATED",
       "row_count": "NOT_EVALUATED",
       "status": "NOT_EVALUATED",
-      "attempted_at_utc": "2026-10-19T22:54:03.221975Z",
-      "error": "HTTP 403: Forbidden"
+      "attempted_at_utc": "2026-10-20T03:38:32.327537Z",
+      "error": "HTTP 403: Forbidden",
+      "license": "Open Government Licence - Canada",
+      "license_url": "https://open.canada.ca/en/open-government-licence-canada",
+      "license_evidence_url": "https://open.canada.ca/data/en/dataset/ad8d1b73-df09-4521-9bdb-61c529328218",
+      "attempts": [
+        {
+          "user_agent": "requests default",
+          "http_status": 403,
+          "response_layer": "http-access"
+        },
+        {
+          "user_agent": "PublicIncidentInputs/1.0",
+          "http_status": 403,
+          "response_layer": "http-access"
+        }
+      ],
+      "response_layer": "http-access"
     },
     {
       "id": "dlp_historical",
@@ -26,7 +42,17 @@
       "sha256": "22ea88bc10d1f2756c011f936d0e620a26a8adbe67faa12c340adb355f5945f5",
       "row_count": 80340,
       "status": "FETCHED",
-      "attempted_at_utc": "2026-10-19T22:54:03.438937Z"
+      "attempted_at_utc": "2026-10-19T22:54:03.438937Z",
+      "license": "CC0-1.0 (converted CSV); public domain (original records)",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "license_evidence_url": "https://raw.githubusercontent.com/data-liberation-project/boating-accident-reports-1995-2012-muckrock/e637c182915bdc441e63a13641eaaf9a2c541463/README.md",
+      "upstream_name": "Accidents.csv",
+      "count_reconciliation": {
+        "issue": 1529,
+        "previously_reported_rows": 93237,
+        "cause": "NOT_ESTABLISHED",
+        "note": "The measured 80,340 records do not reproduce the 93,237 reported in #1529. Different exports or line versus record counts are possible explanations, not established causes. The archived historical filename does not establish equivalence."
+      }
     }
   ],
   "excluded_sources": [
@@ -35,5 +61,17 @@
       "reason": "Requires an account and manual export; excluded."
     }
   ],
-  "counts": "NOT_EVALUATED"
+  "counts": "NOT_EVALUATED",
+  "revisions": [
+    {
+      "revision": "1",
+      "date": "2026-10-19",
+      "changes": "Public-input provenance and count agreement are recorded because the historical total could not be sourced."
+    },
+    {
+      "revision": "2",
+      "date": "2026-10-20",
+      "changes": "Record the unresolved DLP count difference, upstream filename and source licences; retain verified archives after transient failures and retry HTTP 403 once with an explicit User-Agent. Disclose method changes: whitespace-only descriptions are now excluded and capsiz replaces capsize to include Capsizing. Render revision history from the manifest."
+    }
+  ]
 }
