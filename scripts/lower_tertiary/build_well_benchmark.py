@@ -39,6 +39,20 @@ from worldenergydata.lower_tertiary.well_benchmark import (  # noqa: E402
 
 REPORTS_DIR = PROJECT_ROOT / "reports" / "lower_tertiary"
 
+# Append one row per issued report change; preserve earlier revision text.
+REVISION_HISTORY = (
+    (
+        1,
+        "2026-10-19",
+        "Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged.",
+    ),
+    (
+        2,
+        "2026-10-20",
+        "Document the retained completion_days name and its calendar basis for compatibility.",
+    ),
+)
+
 # Columns rendered in the markdown table (order matters), with headers.
 _MD_COLUMNS = [
     ("field", "Field"),
@@ -99,7 +113,10 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
             "",
             "| Revision | Date | What changed and why |",
             "|---|---|---|",
-            "| 1 | 2026-10-19 | Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged. |",
+            *(
+                f"| {rev} | {issued} | {reason} |"
+                for rev, issued, reason in REVISION_HISTORY
+            ),
             "",
             "Spud to completion is the first completion operation date minus spud; "
             "completion to first oil is first oil minus that completion date. "
@@ -107,6 +124,16 @@ def render_markdown(df: pd.DataFrame, cfg: BenchmarkConfig, end_date: str) -> st
             "The benchmark population includes only producing wells in the stated "
             "spud window; it differs from the workbook and article populations on the "
             "[calendar cycle-time page](https://vamseeachanta.github.io/worldenergydata/drilling-insights.html).",
+            "",
+        ]
+    )
+    lines.extend(
+        [
+            "## Limits",
+            "",
+            "The CSV column `completion_days` retains its name for compatibility with existing consumers. "
+            "It means first oil minus first completion, in calendar days, including waiting and suspension; "
+            "it does not measure active completion time. A schema rename is deferred to a coordinated consumer migration.",
             "",
         ]
     )

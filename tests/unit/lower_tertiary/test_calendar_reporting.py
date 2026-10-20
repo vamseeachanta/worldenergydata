@@ -1,6 +1,8 @@
 """Calendar reporting regression tests; synthetic dates use hand arithmetic."""
 
+import hashlib
 import importlib.util
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -114,6 +116,8 @@ def test_insight_csv_and_page_state_definition_and_population(tmp_path):
     assert "184" in page and "211" in page
     assert "not rig-days" in page
     assert "2 of 3" in page
+    assert "among 217 workbook wellbores" not in page
+    assert "Current population: 3 workbook wellbores" in page
     assert "Revision history" in page
 
 
@@ -123,3 +127,42 @@ def test_saved_benchmark_rejects_conflicting_aliases(tmp_path):
     path.write_text("drilling_days,spud_to_completion_calendar_days\n60,61\n")
     with pytest.raises(ValueError, match="conflict"):
         mod.read_saved_benchmark(path)
+
+
+@pytest.mark.parametrize(
+    "source",
+    json.loads((REPO / "reports/lower_tertiary/lifecycle/_norms.json").read_text())[
+        "provenance"
+    ]["sources"],
+)
+def test_phase_norm_source_digests_match_committed_bytes(source):
+    assert (
+        hashlib.sha256((REPO / source["path"]).read_bytes()).hexdigest()
+        == source["sha256"]
+    )
+
+
+@pytest.mark.parametrize("name", ["build_well_benchmark", "build_drilling_insights"])
+def test_report_revisions_are_rendered_from_versioned_history(name, monkeypatch):
+    mod = _script(name)
+    previous = tuple(mod.REVISION_HISTORY)
+    monkeypatch.setattr(
+        mod,
+        "REVISION_HISTORY",
+        (*previous, (99, "2030-01-01", "Synthetic revision reason")),
+    )
+    if name == "build_well_benchmark":
+        frame = pd.DataFrame(columns=["uptime_flag", "revenue_flag", "decline_flag"])
+        page = mod.render_markdown(frame, mod.BenchmarkConfig(), "2020-06-30")
+        assert "completion_days" in page
+        assert "compatibility" in page
+    else:
+        frame = pd.DataFrame(
+            columns=["calendar_days", "MAX_WELL_BORE_TVD", "LEASE_NAME"]
+        )
+        page = mod.render_html(mod.compute_stats(frame), mod.DEFAULT_SOURCE)
+    assert "Synthetic revision reason" in page
+    for revision, issued, reason in previous:
+        assert str(revision) in page
+        assert issued in page
+        assert reason in page

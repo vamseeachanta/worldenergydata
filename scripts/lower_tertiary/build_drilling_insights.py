@@ -37,6 +37,20 @@ CSV_PATH = REPORTS_DIR / "lt_drilling_insights.csv"
 HTML_PATH = REPORTS_DIR / "drilling_insights.html"
 EM = "—"
 
+# Append one row per issued report change; preserve earlier revision text.
+REVISION_HISTORY = (
+    (
+        1,
+        "2026-10-19",
+        "Replace mixed drilling-day claims with dated\ncalendar intervals; explain populations and remove unsupported learning conclusions.",
+    ),
+    (
+        2,
+        "2026-10-20",
+        "Separate historical snapshot counts from the current workbook population and document the retained completion_days name.",
+    ),
+)
+
 
 def load_wells(source: Path) -> pd.DataFrame:
     """Exclude blank/TOTALS rows; derive one consistent calendar interval."""
@@ -210,6 +224,10 @@ def render_html(s: dict, source: Path) -> str:
         src = source.relative_to(PROJECT_ROOT).as_posix()
     except ValueError:
         src = "supplied workbook"
+    revisions = "".join(
+        f"<tr><td>{rev}</td><td>{esc(issued)}</td><td>{esc(reason)}</td></tr>"
+        for rev, issued, reason in REVISION_HISTORY
+    )
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -229,8 +247,7 @@ th,td {{ text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }}
  median {_n(s['median_days'], 1)} days. These are elapsed intervals, not rig-days,
  and include suspension and waiting between milestones.</p>
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
-<tr><td>1</td><td>2026-10-19</td><td>Replace mixed drilling-day claims with dated
-calendar intervals; explain populations and remove unsupported learning conclusions.</td></tr></table>
+{revisions}</table>
 </header>
 <section><h2>Definition and population</h2>
 <p>For each named lease row in workbook Sheet1, calendar days = TD date minus spud
@@ -239,8 +256,9 @@ calendar intervals; explain populations and remove unsupported learning conclusi
  zero. {s['n_missing']} rows lack an ordered pair; {len(lc)} also have TVD and appear
  below. No positive-duration filter or producing-well filter is applied.</p>
 <p>The historical <b>184</b> figure counted positive legacy DRILLING_DAYS entries
- among 217 workbook wellbores; the remaining 33 were zero/missing entries.
- Its 11,124-day total mixed milestone spans and WAR-union values and is withdrawn
+ in the historical 217-wellbore workbook snapshot; the remaining 33 were zero/missing entries.
+ Current population: {s['n_wellbores']} workbook wellbores.
+ The historical 11,124-day total mixed milestone spans and WAR-union values and is withdrawn
  as a rig-time claim. The article's <b>211</b> wellbores and 21,944 days cover a
  different development population (excluding Big Foot), and count drilling plus
  completion, rather than this page's spud-to-TD interval. Neither the difference
@@ -254,7 +272,11 @@ calendar intervals; explain populations and remove unsupported learning conclusi
 <p>The producing-well benchmark is a third population, restricted by its configured
  spud window and OGOR-A production. Its <code>spud_to_completion_calendar_days</code>
  ends at the first completion operation, not TD. Its <code>completion_days</code>
- ends at first oil. Neither benchmark interval is rig-time.</p></section>
+ ends at first oil. Neither benchmark interval is rig-time.</p>
+<h3>Limits</h3><p>The name <code>completion_days</code> is retained for compatibility
+ with existing CSV consumers. It means first oil minus first completion in calendar
+ days, including waiting and suspension; a rename requires a coordinated consumer
+ migration. Active completion time is not established.</p></section>
 <section><h2>Calendar cycle time vs true vertical depth</h2><figure>{chart}
 <figcaption>Spud-to-TD calendar days against maximum wellbore TVD (ft);
  {len(lc)} dated wellbores. Calendar intervals do not establish drilling efficiency,

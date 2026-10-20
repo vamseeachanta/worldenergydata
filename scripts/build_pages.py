@@ -468,7 +468,7 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_dst / "_explorer.json",
             )
 
-    # --- Drilling learning-curve front door (issue #775) ---
+    # --- Calendar cycle-time front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by
     # scripts/lower_tertiary/build_drilling_insights.py; copied verbatim so its
     # thesis page is reachable at /drilling-insights.html.

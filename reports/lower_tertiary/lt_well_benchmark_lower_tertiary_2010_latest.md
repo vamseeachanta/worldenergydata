@@ -9,8 +9,13 @@ Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Calenda
 | Revision | Date | What changed and why |
 |---|---|---|
 | 1 | 2026-10-19 | Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged. |
+| 2 | 2026-10-20 | Document the retained completion_days name and its calendar basis for compatibility. |
 
 Spud to completion is the first completion operation date minus spud; completion to first oil is first oil minus that completion date. Both are elapsed calendar intervals, including suspensions, not rig-days. The benchmark population includes only producing wells in the stated spud window; it differs from the workbook and article populations on the [calendar cycle-time page](https://vamseeachanta.github.io/worldenergydata/drilling-insights.html).
+
+## Limits
+
+The CSV column `completion_days` retains its name for compatibility with existing consumers. It means first oil minus first completion, in calendar days, including waiting and suspension; it does not measure active completion time. A schema rename is deferred to a coordinated consumer migration.
 
 | Field | Wellbore (API12) | Spud | First oil | Spud to completion (calendar days) | Completion to first oil (calendar days) | Cum oil (MMbbl) | Uptime % | Decline %/yr | EUR (MMbbl) | Est. revenue ($MM) | Interventions |
 |---|---|---|---|---|---|---|---|---|---|---|---|

@@ -205,7 +205,12 @@ def test_capabilities_overview_is_a_redirect_stub_to_the_hub(bp):
 
 def test_calendar_insight_download_and_labels(bp):
     """Published report downloads must resolve beside their HTML page."""
-    bp.build(domains=["lower_tertiary"])
+    bp.build(domains=["lower_tertiary", "capabilities"])
+    hub = (bp.PUBLIC / "capabilities" / "insights.html").read_text().lower()
+    assert "rig-days" not in hub
+    assert "learning curve" not in hub
+    assert "186 of 217" in hub
+    assert "47.5" in hub
     page = (bp.PUBLIC / "drilling-insights.html").read_text()
     assert (bp.PUBLIC / "lt_drilling_insights.csv").is_file()
     assert "Calendar cycle time" in page
