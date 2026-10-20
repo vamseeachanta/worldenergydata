@@ -114,6 +114,113 @@ def test_duplicate_reports_and_order_do_not_change_result(inputs):
     assert build_calibration(**inputs) == expected
 
 
+@pytest.mark.parametrize(
+    "column,value",
+    [
+        ("API_WELL_NUMBER", "12345678901300"),
+        ("API_WELL_NUMBER", "12345678901201"),
+        ("WAR_START_DT", "2020-01-12"),
+        ("WAR_END_DT", "2020-01-22"),
+        ("INTERVENTION_TYPE", "recompletion"),
+        ("INTERVENTION_TYPE", ""),
+        ("CLASSIFICATION_BASIS", "Different synthetic evidence"),
+        ("WELL_ACTIVITY_CD", "REC"),
+        ("RIG_NAME", "WIRELINE UNIT"),
+    ],
+)
+def test_conflicting_report_identity_rejected(inputs, column, value):
+    inputs["war"]["RIG_NAME"] = ""
+    other = inputs["war"].iloc[[0]].copy()
+    other[column] = value
+    inputs["war"] = pd.concat([inputs["war"], other], ignore_index=True)
+    with pytest.raises(ValueError, match="Conflicting WAR report"):
+        build_calibration(**inputs)
+
+
+def test_conflicting_inferred_report_classification_rejected(inputs):
+    inputs["war"]["INTERVENTION_TYPE"] = ""
+    inputs["war"]["RIG_NAME"] = ""
+    other = inputs["war"].iloc[[0]].copy()
+    other["RIG_NAME"] = "WIRELINE UNIT"
+    inputs["war"] = pd.concat([inputs["war"], other], ignore_index=True)
+    with pytest.raises(ValueError, match="Conflicting WAR report"):
+        build_calibration(**inputs)
+
+
+@pytest.mark.parametrize("report_id", [None, pd.NA, "", "  "])
+def test_missing_report_identity_rejected(inputs, report_id):
+    inputs["war"].loc[0, "SN_WAR"] = report_id
+    with pytest.raises(ValueError, match="SN_WAR"):
+        build_calibration(**inputs)
+
+
+def test_missing_report_identity_column_rejected(inputs):
+    inputs["war"] = inputs["war"].drop(columns=["SN_WAR"])
+    with pytest.raises(ValueError, match="SN_WAR"):
+        build_calibration(**inputs)
+
+
+def test_equivalent_report_identity_preserves_result(inputs):
+    expected = build_calibration(**inputs)
+    other = inputs["war"].iloc[[0]].copy()
+    other["SN_WAR"] = " 1 "
+    other["API_WELL_NUMBER"] = " 12345678901200 "
+    other["WAR_START_DT"] = "2020-01-11T00:00:00"
+    other["WAR_END_DT"] = "2020-01-21T00:00:00"
+    other["note"] = "Additional metadata"
+    inputs["war"] = pd.concat([inputs["war"], other], ignore_index=True)
+    assert build_calibration(**inputs) == expected
+
+
+@pytest.mark.parametrize("table", ["wells", "war", "production"])
+@pytest.mark.parametrize(
+    "api",
+    [
+        "123456789012AB",
+        "123456789013AB",
+        "12345678901201text",
+        "1234567890120",
+        "123456789012000",
+        "12345678901",
+        "123456789012.0",
+        "１２３４５６７８９０１２",
+        "",
+        None,
+        pd.NA,
+    ],
+)
+def test_invalid_full_api_rejected(inputs, table, api):
+    inputs[table].loc[0, "API_WELL_NUMBER"] = api
+    with pytest.raises(ValueError, match="API|analog identity"):
+        build_calibration(**inputs)
+
+
+def test_malformed_suffix_cannot_infer_recompletion(inputs):
+    inputs["war"]["INTERVENTION_TYPE"] = ""
+    inputs["war"].loc[1, "API_WELL_NUMBER"] = "123456789012AB"
+    with pytest.raises(ValueError, match="API"):
+        build_calibration(**inputs)
+
+
+@pytest.mark.parametrize("table", ["wells", "war", "production"])
+@pytest.mark.parametrize(
+    "api", ["123456789012", "12345678901200", " 12345678901200 ", 12345678901200]
+)
+def test_supported_full_api_forms_preserve_result(inputs, table, api):
+    expected = build_calibration(**inputs)
+    inputs[table].loc[0, "API_WELL_NUMBER"] = api
+    assert build_calibration(**inputs) == expected
+
+
+def test_validation_preserves_input_frames(inputs):
+    before = {
+        key: inputs[key].copy(deep=True) for key in ("wells", "war", "production")
+    }
+    build_calibration(**inputs)
+    for key, frame in before.items():
+        pd.testing.assert_frame_equal(inputs[key], frame)
+
+
 def test_gap_boundary(inputs):
     # [10,20), [22,25): gap=2 merges, covered duration=10+3=13 days.
     inputs["war"].loc[1, "WAR_START_DT"] = "2020-01-23"
@@ -138,6 +245,7 @@ def test_observation_clipping_and_age_boundary(inputs):
 
 def test_subsea_excluded_even_with_war_events(inputs):
     wet = inputs["war"].copy()
+    wet["SN_WAR"] = ["3", "4"]
     wet["API_WELL_NUMBER"] = "12345678901300"
     inputs["war"] = pd.concat([inputs["war"], wet])
     assert build_calibration(**inputs)["diagnostics"]["workover"]["event_count"] == 1
@@ -365,7 +473,7 @@ def test_workflow_join_properties_and_input_digest(inputs, tmp_path):
     for key in ("wells", "war", "production"):
         frame = inputs[key]
         if key == "war":
-            props = frame[["SN_WAR", "WELL_ACTIVITY_CD"]]
+            props = frame[["SN_WAR", "WELL_ACTIVITY_CD"]].copy()
             path = tmp_path / "properties.csv"
             props.to_csv(path, index=False)
             cfg["war_properties_csv"] = str(path)
@@ -383,6 +491,30 @@ def test_workflow_join_properties_and_input_digest(inputs, tmp_path):
     props.loc[1, "SN_WAR"] = props.loc[0, "SN_WAR"]
     props.loc[1, "WELL_ACTIVITY_CD"] = "ST"
     props.to_csv(cfg["war_properties_csv"], index=False)
+    with pytest.raises(pd.errors.MergeError):
+        run_calibration(cfg)
+
+
+@pytest.mark.parametrize("padded_table", ["war", "war_properties"])
+def test_workflow_join_normalizes_report_ids(inputs, tmp_path, padded_table):
+    cfg = copy.deepcopy(inputs["parameters"])
+    frames = {key: inputs[key].copy() for key in ("wells", "war", "production")}
+    frames["war_properties"] = frames["war"][["SN_WAR", "WELL_ACTIVITY_CD"]].copy()
+    frames["war"] = frames["war"].drop(columns=["WELL_ACTIVITY_CD"])
+    frames[padded_table]["SN_WAR"] = " " + frames[padded_table]["SN_WAR"] + " "
+    for key, frame in frames.items():
+        path = tmp_path / f"{key}.csv"
+        frame.to_csv(path, index=False)
+        cfg[f"{key}_csv"] = str(path)
+    result = run_calibration(cfg)
+    assert result["base_rates"] == build_calibration(**inputs)["base_rates"]
+    # Normalization must still reject conflicting properties for one report.
+    other = frames["war_properties"].iloc[[0]].copy()
+    other["SN_WAR"] = "1" if padded_table == "war_properties" else " 1 "
+    other["WELL_ACTIVITY_CD"] = "ST"
+    pd.concat([frames["war_properties"], other]).to_csv(
+        cfg["war_properties_csv"], index=False
+    )
     with pytest.raises(pd.errors.MergeError):
         run_calibration(cfg)
 

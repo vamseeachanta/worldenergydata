@@ -10,6 +10,7 @@ it is not an empirical calibration of any field or play.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add evidence requirements, equations and a hand-calculated example. |
+| 1 | 2026-10-20 | Reject conflicting report identities and malformed APIs before selection to prevent contradictory event rates. |
 
 ## Inputs and invocation
 
@@ -21,7 +22,11 @@ Configure `outputs.calibration_yml` and `outputs.report_html` to retain results
 outside the checkout. The HTML contains no external assets.
 
 The example CSVs under `examples/well_access_calibration/` define the input
-columns. API identifiers must be read as strings. The well manifest supplies
+columns. API identifiers must be read as strings containing 12 ASCII digits
+(wellbore) or 14 ASCII digits (wellbore and completion suffix). Surrounding
+whitespace is stripped; missing values, nonnumeric suffixes and other lengths
+are rejected in all three tables before cohort selection or wellbore truncation.
+The well manifest supplies
 `API_WELL_NUMBER`, `LEASE_NUMBER`, `tree_type`, and `first_production`, with optional
 `last_observed` (exclusive). First production must be independently evidenced;
 the first record in an incomplete production extract is not sufficient.
@@ -38,7 +43,13 @@ multipliers are not estimated here.
 WAR requires `SN_WAR`, `API_WELL_NUMBER`, `WELL_ACTIVITY_CD`, `WAR_START_DT` and
 `WAR_END_DT`. An optional `war_properties_csv` supplies the raw activity column
 by a validated many-to-one `SN_WAR` join instead. Raw activity tokens are retained
-as opaque source data. The canonical
+as opaque source data. Report IDs must be nonempty after whitespace is stripped.
+Repeated `SN_WAR` values must agree on the full normalized API, parsed start and
+end dates, and explicit intervention label, together with any supplied
+classification evidence, activity code and rig name. Conflicts are rejected
+before cohort selection or inferred classification, including conflicts with
+excluded wells. Exact duplicates and differences in unrelated metadata do not
+add events or duration. The canonical
 `bsee/analysis/data/war_activity_codes.yml` (2026, data vintage 2026-02-19)
 records that no published WELL_ACTIVITY_CD domain was found, and that `WO` and
 `REC` have unknown meanings. Legacy display strings in `ops_timeline.py` are

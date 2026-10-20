@@ -44,7 +44,10 @@ def run_calibration(config):
         content = path.read_bytes()
         prop = pd.read_csv(BytesIO(content), dtype=str, keep_default_na=False)
         digests["war_properties"] = hashlib.sha256(content).hexdigest()
-        prop = prop[["SN_WAR", "WELL_ACTIVITY_CD"]].drop_duplicates()
+        prop = prop[["SN_WAR", "WELL_ACTIVITY_CD"]].copy()
+        prop["SN_WAR"] = prop["SN_WAR"].str.strip()
+        frames["war"]["SN_WAR"] = frames["war"]["SN_WAR"].str.strip()
+        prop = prop.drop_duplicates()
         frames["war"] = frames["war"].merge(
             prop, on="SN_WAR", how="left", validate="many_to_one"
         )

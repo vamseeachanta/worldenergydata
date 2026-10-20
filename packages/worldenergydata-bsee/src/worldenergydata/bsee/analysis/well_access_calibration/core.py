@@ -24,8 +24,15 @@ DRY_TREE_CODES = {"SPAR", "TLP", "MTLP"}
 WELLBORE_DIGITS = 12
 
 
+def _apis(values: pd.Series) -> pd.Series:
+    apis = values.astype("string").str.strip()
+    if not apis.str.fullmatch(r"[0-9]{12}(?:[0-9]{2})?", na=False).all():
+        raise ValueError("API identifiers must contain 12 or 14 ASCII digits")
+    return apis
+
+
 def _ids(values: pd.Series) -> pd.Series:
-    return values.astype("string").str.strip().str.slice(stop=WELLBORE_DIGITS)
+    return _apis(values).str.slice(stop=WELLBORE_DIGITS)
 
 
 def _dates(values: pd.Series) -> pd.Series:
@@ -72,8 +79,6 @@ def select_analogs(wells, dry_tree_codes):
     if df[["API_WELL_NUMBER", "LEASE_NUMBER", "tree_type"]].isna().any().any():
         raise ValueError("Missing analog identity or tree evidence")
     df["well"] = _ids(df["API_WELL_NUMBER"])
-    if not df["well"].str.fullmatch(r"\d{12}").all():
-        raise ValueError("Analog API must identify a wellbore")
     if df["well"].duplicated().any():
         raise ValueError("Duplicate analog wellbore")
     df = df[df["tree_type"].isin(dry_tree_codes)].copy()
@@ -87,15 +92,32 @@ def select_analogs(wells, dry_tree_codes):
     return df.sort_values("well")
 
 
+def _validate_report_identity(df):
+    if "SN_WAR" not in df:
+        raise ValueError("SN_WAR report identity is required")
+    df["SN_WAR"] = df["SN_WAR"].astype("string").str.strip()
+    if df["SN_WAR"].isna().any() or df["SN_WAR"].eq("").any():
+        raise ValueError("SN_WAR report identity is required")
+    identity = ["API_WELL_NUMBER", "start", "end", "kind"]
+    identity += [
+        column
+        for column in ("CLASSIFICATION_BASIS", "WELL_ACTIVITY_CD", "RIG_NAME")
+        if column in df
+    ]
+    if df.groupby("SN_WAR")[identity].nunique(dropna=False).gt(1).any().any():
+        raise ValueError("Conflicting WAR report identity or classification")
+
+
 def extract_events(war, wells, event_gap_days):
     """Merge same-type windows, count clusters, measure union of report spans.
 
+    Report identities are validated before cohort selection or inference.
     Duplicate reports and overlapping weekly windows must not inflate durations.
     Suffix changes count only when an earlier completion is actually observed.
     """
     df = war.copy().drop_duplicates()
-    df["well"] = _ids(df["API_WELL_NUMBER"])
-    df = df[df["well"].isin(wells["well"])].copy()
+    df["API_WELL_NUMBER"] = _apis(df["API_WELL_NUMBER"])
+    df["well"] = df["API_WELL_NUMBER"].str.slice(stop=WELLBORE_DIGITS)
     df["start"] = _dates(df["WAR_START_DT"])
     df["end"] = _dates(df["WAR_END_DT"])
     if df[["start", "end"]].isna().any().any() or (df["end"] < df["start"]).any():
@@ -111,6 +133,8 @@ def extract_events(war, wells, event_gap_days):
         or df.loc[selected, "CLASSIFICATION_BASIS"].fillna("").str.strip().eq("").any()
     ):
         raise ValueError("Explicit event labels require classification evidence")
+    _validate_report_identity(df)
+    df = df[df["well"].isin(wells["well"])].copy()
     df["kind"] = df["kind"].replace("", None)
     # Reuse the existing rig vocabulary and name classifier.
     if "RIG_NAME" in df:
