@@ -3,11 +3,11 @@
 import logging
 import math
 import os
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from typing import Mapping
 from urllib.parse import urlsplit
 
 
@@ -74,11 +74,21 @@ class FetchConfig:
         if type(self.max_response_bytes) is not int or self.max_response_bytes <= 0:
             raise ValueError("Maximum response bytes must be a positive integer")
         for value in (self.fallback_interval, self.budget_window, self.timeout):
-            if not math.isfinite(value) or value <= 0:
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+                or value <= 0
+            ):
                 raise ValueError(
                     "Pacing, window and timeout must be finite and positive"
                 )
-        if self.budget_requests < 1 or self.max_retries < 0:
+        if (
+            type(self.budget_requests) is not int
+            or type(self.max_retries) is not int
+            or self.budget_requests < 1
+            or self.max_retries < 0
+        ):
             raise ValueError("Invalid request or retry budget")
 
     @classmethod
@@ -133,6 +143,9 @@ def header_delay(
 ) -> float:
     """Return minimum spacing; reset values are delta seconds, not epoch time.
 
+    Protocol basis: RFC 9110 (2022), §10.2.3 (Retry-After); RateLimit Fields
+    for HTTP, draft-ietf-httpapi-ratelimit-headers-03 (2022), §5 (legacy
+    RateLimit fields). The max of applicable waits is local pacing policy.
     Vendor max tokens alone do not establish window duration or numerator
     semantics. Use the configured window and the smaller possible remaining
     balance. This is a conservative assumption, not measured capacity.

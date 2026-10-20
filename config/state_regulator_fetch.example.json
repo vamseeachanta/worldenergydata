@@ -1,0 +1,24 @@
+{
+  "_comment": "Synthetic worked-example inputs, not source limits or permission. See the independent calculation in docs/data-sources/state-regulator-fetch.html. Replace all operating limits with reviewed inputs before collection.",
+  "execution_role": "regulator-fetch",
+  "storage_root": "${STATE_FETCH_DATA_ROOT}",
+  "fetch": {
+    "cache_root": "${STATE_FETCH_DATA_ROOT}/regulator-cache",
+    "user_agent": "public-records/1.0 (+https://records.example.org/contact)",
+    "fallback_interval": 2,
+    "budget_requests": 3,
+    "budget_window": 10,
+    "timeout": 5,
+    "max_retries": 1,
+    "max_sleep_seconds": 30,
+    "max_response_bytes": 1024
+  },
+  "terms": [],
+  "bulk_urls": [],
+  "crawl_urls": [
+    "https://records.example.org/a",
+    "https://records.example.org/b",
+    "https://records.example.org/c"
+  ],
+  "use_crawl": false
+}

@@ -2,9 +2,10 @@
 
 import socket
 import time
+from collections.abc import Callable, Iterable
 from dataclasses import asdict
 from datetime import datetime, timezone
-from typing import Any, Callable, Iterable
+from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -191,7 +192,7 @@ class Fetcher:
             float(t) for t in state["attempts"] if t > now - self.config.budget_window
         )
         projected = max(now, float(state["next_at"]))
-        for _ in range(requests):
+        for index in range(requests):
             attempts = [
                 t for t in attempts if t > projected - self.config.budget_window
             ]
@@ -201,5 +202,8 @@ class Fetcher:
                     t for t in attempts if t > projected - self.config.budget_window
                 ]
             attempts.append(projected)
-            projected += self.config.fallback_interval
+            # Independent scheduling identity: n starts have n-1 intervening gaps.
+            # The estimate ends at the last request, excluding response latency.
+            if index < requests - 1:
+                projected += self.config.fallback_interval
         return projected - now
