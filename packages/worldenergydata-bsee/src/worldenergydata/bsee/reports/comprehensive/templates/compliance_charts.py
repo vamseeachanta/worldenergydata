@@ -5,6 +5,9 @@ This module contains chart generation functions for compliance dashboards,
 production quota charts, environmental trends, safety metrics, and milestone timelines.
 """
 
+from collections.abc import Mapping
+from math import isfinite
+from numbers import Real
 from typing import Any, Dict, List
 
 import plotly.graph_objects as go
@@ -14,9 +17,37 @@ from plotly.subplots import make_subplots
 from .compliance_models import RegulatoryMilestone
 
 
+def _chart_number(value: Any, maximum: float | None = None) -> float | None:
+    """Accept finite, nonnegative real measurements; unknown stays unknown."""
+    if isinstance(value, bool) or not isinstance(value, Real):
+        return None
+    try:
+        number = float(value)
+    except (ValueError, OverflowError):
+        return None
+    if not isfinite(number) or number < 0:
+        return None
+    if maximum is not None and number > maximum:
+        return None
+    return number
+
+
 def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
-    """Create compliance dashboard with gauge charts"""
-    # Create subplot with gauge charts
+    """Create gauges, marking missing or invalid metrics NOT_EVALUATED.
+
+    Production is already a percentage and can exceed full production.
+    Other scores are fractions within the repository model's unit interval.
+    Numeric strings and booleans are not treated as measurements.
+    """
+    compliance_data = compliance_data if isinstance(compliance_data, Mapping) else {}
+    # Presentation policy retained from this function at d867ba1e (2026).
+    # The bands and markers below are not sourced regulatory acceptance limits.
+    gauges = [
+        ("production_compliance", "Production Compliance", "darkblue", 70, 90, 90),
+        ("environmental_score", "Environmental Score", "green", 70, 90, 80),
+        ("safety_score", "Safety Score", "orange", 75, 90, 85),
+        ("overall_compliance_score", "Overall Compliance", "purple", 80, 95, 90),
+    ]
     fig = make_subplots(
         rows=2,
         cols=2,
@@ -24,146 +55,92 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
             [{"type": "indicator"}, {"type": "indicator"}],
             [{"type": "indicator"}, {"type": "indicator"}],
         ],
-        subplot_titles=[
-            "Production Compliance",
-            "Environmental Score",
-            "Safety Score",
-            "Overall Compliance",
-        ],
+        subplot_titles=[gauge[1] for gauge in gauges],
     )
-
-    # Production Compliance Gauge
-    fig.add_trace(
-        go.Indicator(
-            mode="gauge+number+delta",
-            value=compliance_data.get("production_compliance", 0),
-            domain={"x": [0, 1], "y": [0, 1]},
-            title={"text": "Production Compliance (%)"},
-            gauge={
-                "axis": {"range": [None, 100]},
-                "bar": {"color": "darkblue"},
-                "steps": [
-                    {"range": [0, 70], "color": "lightgray"},
-                    {"range": [70, 90], "color": "gray"},
-                ],
-                "threshold": {
-                    "line": {"color": "red", "width": 4},
-                    "thickness": 0.75,
-                    "value": 90,
+    for index, (key, title, color, lower, upper, threshold) in enumerate(gauges):
+        row, col = divmod(index, 2)
+        production = key == "production_compliance"
+        # Unit bounds: compliance_models.py score clamps, d867ba1e (2026).
+        value = _chart_number(compliance_data.get(key), None if production else 1.0)
+        if value is None:
+            fig.add_annotation(
+                text=f"{title}<br>NOT_EVALUATED",
+                x=(col + 0.5) / 2,
+                y=1 - (row + 0.5) / 2,
+                xref="paper",
+                yref="paper",
+                showarrow=False,
+            )
+            continue
+        # Percent conversion: NIST SP 811, section 7.10.2, online revision 2025.
+        fig.add_trace(
+            go.Indicator(
+                mode="gauge+number+delta" if production else "gauge+number",
+                value=value if production else value * 100,
+                title={"text": f"{title} (%)"},
+                gauge={
+                    "axis": {"range": [None, 100]},
+                    "bar": {"color": color},
+                    "steps": [
+                        {"range": [0, lower], "color": "lightgray"},
+                        {"range": [lower, upper], "color": "gray"},
+                    ],
+                    "threshold": {
+                        "line": {"color": "red", "width": 4},
+                        "thickness": 0.75,
+                        "value": threshold,
+                    },
                 },
-            },
-        ),
-        row=1,
-        col=1,
-    )
-
-    # Environmental Score Gauge
-    fig.add_trace(
-        go.Indicator(
-            mode="gauge+number",
-            value=compliance_data.get("environmental_score", 0) * 100,
-            domain={"x": [0, 1], "y": [0, 1]},
-            title={"text": "Environmental Score (%)"},
-            gauge={
-                "axis": {"range": [None, 100]},
-                "bar": {"color": "green"},
-                "steps": [
-                    {"range": [0, 70], "color": "lightgray"},
-                    {"range": [70, 90], "color": "gray"},
-                ],
-                "threshold": {
-                    "line": {"color": "red", "width": 4},
-                    "thickness": 0.75,
-                    "value": 80,
-                },
-            },
-        ),
-        row=1,
-        col=2,
-    )
-
-    # Safety Score Gauge
-    fig.add_trace(
-        go.Indicator(
-            mode="gauge+number",
-            value=compliance_data.get("safety_score", 0) * 100,
-            domain={"x": [0, 1], "y": [0, 1]},
-            title={"text": "Safety Score (%)"},
-            gauge={
-                "axis": {"range": [None, 100]},
-                "bar": {"color": "orange"},
-                "steps": [
-                    {"range": [0, 75], "color": "lightgray"},
-                    {"range": [75, 90], "color": "gray"},
-                ],
-                "threshold": {
-                    "line": {"color": "red", "width": 4},
-                    "thickness": 0.75,
-                    "value": 85,
-                },
-            },
-        ),
-        row=2,
-        col=1,
-    )
-
-    # Overall Compliance Gauge
-    fig.add_trace(
-        go.Indicator(
-            mode="gauge+number",
-            value=compliance_data.get("overall_compliance_score", 0) * 100,
-            domain={"x": [0, 1], "y": [0, 1]},
-            title={"text": "Overall Compliance (%)"},
-            gauge={
-                "axis": {"range": [None, 100]},
-                "bar": {"color": "purple"},
-                "steps": [
-                    {"range": [0, 80], "color": "lightgray"},
-                    {"range": [80, 95], "color": "gray"},
-                ],
-                "threshold": {
-                    "line": {"color": "red", "width": 4},
-                    "thickness": 0.75,
-                    "value": 90,
-                },
-            },
-        ),
-        row=2,
-        col=2,
-    )
-
+            ),
+            row=row + 1,
+            col=col + 1,
+        )
     fig.update_layout(title="Compliance Dashboard", height=600, showlegend=False)
-
     return pio.to_html(fig, include_plotlyjs="cdn")
 
 
 def create_production_quota_chart(quota_data: Dict[str, Any]) -> str:
-    """Create production quota vs actual chart"""
-    categories = ["Oil Production", "Gas Production"]
-    quota_values = [
-        quota_data["oil_quota"],
-        quota_data["gas_quota"] / 1000,
-    ]  # Convert gas to Mcf
-    actual_values = [quota_data["oil_actual"], quota_data["gas_actual"] / 1000]
-
+    """Create quota bars with gaps for unavailable measurements."""
+    quota_data = quota_data if isinstance(quota_data, Mapping) else {}
+    categories = ["Oil Production (bbl)", "Gas Production (thousand Mcf)"]
+    # Retain this function's gas display divisor from d867ba1e (2026).
+    # Inputs are Mcf per ComplianceTemplate.add_production_quota_analysis;
+    # this is display scaling, not a conversion to Mcf.
+    values = {
+        key: _chart_number(quota_data.get(key))
+        for key in ("oil_quota", "gas_quota", "oil_actual", "gas_actual")
+    }
     fig = go.Figure()
-
-    fig.add_trace(
-        go.Bar(name="Quota", x=categories, y=quota_values, marker_color="lightblue")
-    )
-
-    fig.add_trace(
-        go.Bar(name="Actual", x=categories, y=actual_values, marker_color="darkblue")
-    )
-
+    for label, suffix, color in (
+        ("Quota", "quota", "lightblue"),
+        ("Actual", "actual", "darkblue"),
+    ):
+        gas = values[f"gas_{suffix}"]
+        fig.add_trace(
+            go.Bar(
+                name=label,
+                x=categories,
+                y=[values[f"oil_{suffix}"], gas / 1000 if gas is not None else None],
+                marker_color=color,
+            )
+        )
+    missing = [key for key, value in values.items() if value is None]
+    if missing:
+        fig.add_annotation(
+            text="NOT_EVALUATED: " + ", ".join(missing),
+            x=0.5,
+            y=1.1,
+            xref="paper",
+            yref="paper",
+            showarrow=False,
+        )
     fig.update_layout(
         title="Production Quota vs Actual",
         xaxis_title="Production Type",
-        yaxis_title="Volume",
+        yaxis_title="Volume (units shown by category)",
         barmode="group",
         height=400,
     )
-
     return pio.to_html(fig, include_plotlyjs="cdn")
 
 

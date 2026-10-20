@@ -2,8 +2,7 @@
 Tests for compliance metrics calculations and validation
 """
 
-from datetime import date, datetime
-from unittest.mock import Mock, patch
+from datetime import date, timedelta
 
 import pytest
 
@@ -39,19 +38,17 @@ class TestComplianceCalculations:
         assert not metrics.is_over_production()
         assert metrics.over_production_amount() == 0.0
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "production_compliance_percentage() returns 110.00000000000001 due to "
-        "floating-point; test should use pytest.approx — see #314 follow-up",
-        strict=False,
-    )
     def test_production_compliance_calculation_over_production(self):
-        """Test production compliance with over-production"""
+        """Hand calculation: 110000 / 100000 * 100 = 110.0 percent.
+
+        Percent basis: NIST SP 811, section 7.10.2 (online revision 2025).
+        Inputs are synthetic; the difference is 110000 - 100000 = 10000.
+        """
         metrics = ComplianceMetrics(
             permitted_production_bbls=100000, actual_production_bbls=110000
         )
 
-        assert metrics.production_compliance_percentage() == 110.0
+        assert metrics.production_compliance_percentage() == pytest.approx(110.0)
         assert metrics.is_over_production()
         assert metrics.over_production_amount() == 10000.0
 
@@ -248,15 +245,14 @@ class TestSafetyComplianceCalculations:
         ltir = metrics.calculate_ltir()
         assert ltir == 0.0
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "test asserts score > 1.0 before capping, but calculate_safety_score() "
-        "returns a pre-capped value of exactly 1.0 for perfect records — "
-        "assertion is wrong, not the implementation; see #314 follow-up",
-        strict=False,
-    )
     def test_safety_score_perfect(self):
-        """Test safety score with perfect safety record"""
+        """Existing policy caps the perfect record at unity.
+
+        Source: compliance_models.py::SafetyMetrics.calculate_safety_score,
+        revision d867ba1e (2026): 1 + min(0.1, 12 * 0.01)
+        + min(0.05, 1000 * 0.001) = 1.15, capped to 1.0.
+        These are repository policy coefficients, not regulatory limits.
+        """
         metrics = SafetyMetrics(
             incident_count=0,
             lost_time_incidents=0,
@@ -266,8 +262,6 @@ class TestSafetyComplianceCalculations:
         )
 
         score = metrics.calculate_safety_score()
-        assert score > 1.0  # Should be capped at 1.0
-        # After capping
         assert score == 1.0
 
     def test_safety_score_with_incidents(self):
@@ -485,15 +479,13 @@ class TestRegulatoryMilestoneCalculations:
 
         assert milestone.is_overdue() is False
 
-    @pytest.mark.xfail(
-        reason="pre-existing bug surfaced after exec-hack removal (#314): "
-        "test hardcodes due_date=2025-12-31 as a 'future' date, but that date "
-        "is now in the past — test needs a dynamic future date; see #314 follow-up",
-        strict=False,
-    )
     def test_is_overdue_false_future_date(self):
-        """Test overdue detection - future due date"""
-        future_date = date(2025, 12, 31)
+        """Tomorrow is later than today, independent of the calendar year.
+
+        Source: compliance_models.py::RegulatoryMilestone.is_overdue,
+        revision d867ba1e (2026); the synthetic offset is one day.
+        """
+        future_date = date.today() + timedelta(days=1)
         milestone = RegulatoryMilestone(
             milestone_id="TEST_001", due_date=future_date, status="pending"
         )
