@@ -9,13 +9,17 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
 from collections import Counter
 from collections.abc import Mapping, Sequence
-from numbers import Real
+from decimal import Decimal
+from numbers import Number, Rational
 from pathlib import Path
 from typing import Any
+
+import numpy as np
+import pandas as pd
+from pandas.api.types import is_scalar
 
 from worldenergydata.vessel_fleet.dedup.deduplicator import deduplicate_fleet
 from worldenergydata.vessel_fleet.dedup.normalizer import normalize_vessel_name
@@ -34,8 +38,15 @@ def _present(value: Any) -> bool:
         return False
     if isinstance(value, str):
         return bool(value.strip())
-    if isinstance(value, Real):
-        return math.isfinite(value)
+    if isinstance(value, Decimal):
+        return value.is_finite()
+    if is_scalar(value) and pd.isna(value):
+        return False
+    # Rational values are finite; avoid coercing large integers to floats.
+    if isinstance(value, Rational):
+        return True
+    if isinstance(value, Number):
+        return bool(np.isfinite(value))
     return True
 
 
@@ -58,7 +69,8 @@ def assess_merge_readiness(
     loss already blocks it. Duplicate counts count names, not excess rows.
 
     Field presence is separate and requires explicit caller-selected fields.
-    None, blank strings and nonfinite numbers are missing; zero is present.
+    Null scalars (including pandas sentinels), blank strings and nonfinite
+    numbers are missing; zero is present.
     Presence does not establish valid units, values, provenance or freshness.
     """
     base_counts = _name_counts(baseline or [])
@@ -123,7 +135,6 @@ def assess_data_directory(
     schema validation or persistence. CSV is the human-readable baseline;
     CSV/parquet agreement is not established by this assessment.
     """
-    import pandas as pd
 
     def records(frame: pd.DataFrame) -> list[dict[str, Any]]:
         # Object dtype permits None in numeric columns before deduplication.

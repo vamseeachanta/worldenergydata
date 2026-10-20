@@ -6,7 +6,11 @@ synthetic; field presence is tested separately from engineering validity.
 
 import json
 from copy import deepcopy
+from decimal import Decimal
+from fractions import Fraction
 
+import numpy as np
+import pandas as pd
 import pytest
 
 from worldenergydata.vessel_fleet.quality.merge_readiness import (
@@ -203,3 +207,59 @@ def test_known_loss_blocks_even_when_other_names_are_unusable():
     )
     assert result["name_coverage"]["status"] == "BLOCKED"
     assert result["name_coverage"]["removed_names"] == 1
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        pd.NA,
+        pd.NaT,
+        np.datetime64("NaT"),
+        np.timedelta64("NaT"),
+        np.float32("nan"),
+        np.float32("inf"),
+        np.float32("-inf"),
+        Decimal("NaN"),
+        Decimal("sNaN"),
+        Decimal("Infinity"),
+        Decimal("-Infinity"),
+        complex(float("inf"), 0),
+        complex(0, float("inf")),
+        complex(float("nan"), 0),
+    ],
+)
+def test_scalar_missing_and_nonfinite_values_block_presence(value):
+    """Each scalar is missing, so one selected cell must block replacement."""
+    candidate = [row("Synthetic A", RATING=value)]
+    result = assess_merge_readiness(candidate, candidate, required_fields=("RATING",))
+    assert result["field_presence"] == {
+        "status": "BLOCKED",
+        "missing_by_field": {"RATING": 1},
+    }
+    json.dumps(result, allow_nan=False)
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        0,
+        False,
+        np.float32(0),
+        Decimal(0),
+        Decimal("1e10000"),
+        10**1000,
+        Fraction(1, 3),
+        complex(1, 2),
+        np.finfo(np.longdouble).max,
+        pd.Timestamp("2026-01-01"),
+        [1, 2],
+    ],
+)
+def test_finite_and_non_numeric_values_remain_present(value):
+    """Presence counts supplied values without imposing engineering validation."""
+    candidate = [row("Synthetic A", RATING=value)]
+    result = assess_merge_readiness(candidate, candidate, required_fields=("RATING",))
+    assert result["field_presence"] == {
+        "status": "PASS",
+        "missing_by_field": {"RATING": 0},
+    }
