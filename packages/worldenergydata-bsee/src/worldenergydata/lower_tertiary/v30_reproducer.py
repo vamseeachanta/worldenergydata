@@ -6,6 +6,7 @@ ABOUTME: Uses V30 assumptions and methodology for WRK-009 repeatability verifica
 
 from __future__ import annotations
 
+import math
 import zipfile
 from pathlib import Path
 
@@ -74,8 +75,52 @@ def load_v50_kc_leases() -> pd.DataFrame:
 
 
 def load_v50_kc_drilling() -> pd.DataFrame:
-    """Load V50 D&C days generated from raw WAR ``.bin`` + ``leases_v21_kc.csv``."""
-    return pd.read_csv(V50_KC_DRILLING_PATH)
+    """Load the retained KC candidate, rejecting incomplete or ambiguous inputs.
+
+    This validates table integrity, not the WAR activity-code basis or field
+    benchmark agreement. See issue 842 and the retained candidate CSV.
+    """
+    df = pd.read_csv(V50_KC_DRILLING_PATH, dtype={"API_WELL_NUMBER": str})
+    required = {
+        "API_WELL_NUMBER",
+        "SURF_LEASE_NUM",
+        "LEASE_NAME",
+        "DRILLING_DAYS",
+        "COMPLETION_DAYS",
+    }
+    if not required.issubset(df.columns):
+        raise ValueError(
+            f"KC drilling input missing columns: {sorted(required - set(df))}"
+        )
+    apis = df["API_WELL_NUMBER"].str.strip()
+    if (
+        df.empty
+        or apis.isna().any()
+        or not apis.str.fullmatch(r"\d+").all()
+        or apis.duplicated().any()
+    ):
+        raise ValueError(
+            "KC drilling input requires unique nonempty API_WELL_NUMBER values"
+        )
+    df["API_WELL_NUMBER"] = apis
+    for column in ("DRILLING_DAYS", "COMPLETION_DAYS"):
+        values = pd.to_numeric(df[column], errors="coerce")
+        # Count-domain invariant: zero is a measured count, not missing evidence.
+        if not values.map(math.isfinite).all() or (values < 0).any():
+            raise ValueError(f"KC drilling input requires finite nonnegative {column}")
+        df[column] = values
+    df["SURF_LEASE_NUM"] = _normalise_lease_numbers(
+        df.rename(columns={"SURF_LEASE_NUM": "LEASE_NUM"})
+    )["LEASE_NUM"]
+    leases = load_v50_kc_leases()
+    if leases["LEASE_NUM"].duplicated().any():
+        raise ValueError("KC lease mapping contains duplicate lease numbers")
+    expected_names = df["SURF_LEASE_NUM"].map(
+        leases.set_index("LEASE_NUM")["LEASE_NAME"]
+    )
+    if expected_names.isna().any() or not expected_names.eq(df["LEASE_NAME"]).all():
+        raise ValueError("KC drilling input contains an unmapped or inconsistent lease")
+    return df
 
 
 def load_v30_assumptions() -> pd.DataFrame:
