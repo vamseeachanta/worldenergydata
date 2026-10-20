@@ -675,6 +675,7 @@ def validate_snapshot(files):
         "card integrity mismatch",
     )
     combined = {k: [] for k in COLLECTIONS}
+    browser_collections = set()
     analytical = {}
     for entry in m["artifacts"]:
         path = safe_path(entry["path"])
@@ -717,6 +718,7 @@ def validate_snapshot(files):
                 "shard bound exceeded",
             )
             combined[name].extend(rows)
+            browser_collections.add(name)
         else:
             require(
                 entry["kind"] == "analytical"
@@ -726,7 +728,9 @@ def validate_snapshot(files):
             )
             analytical[name] = rows
     require(
-        set(files) == expected and set(analytical) == set(COLLECTIONS),
+        set(files) == expected
+        and set(analytical) == set(COLLECTIONS)
+        and browser_collections == set(COLLECTIONS),
         "incomplete artifact inventory",
     )
     for name, rows in combined.items():
@@ -753,20 +757,24 @@ def validate_snapshot(files):
             ]
         }
     )
-    field_ids = {r["field_id"] for r in combined["fields"]}
+    fields_by_id = {r["field_id"]: r for r in combined["fields"]}
     for well in combined["wells"]:
         require(
             isinstance(well["api"], str) and re.fullmatch(r"[0-9]{12}", well["api"]),
             "API12 required",
         )
-        require(well["parent_field_id"] in field_ids, "orphan well")
+        require(well["parent_field_id"] in fields_by_id, "orphan well")
         require(
             well["well_id"] == "bsee-api12:" + well["api"]
             and well["well_route_key"] == route_key(well["well_id"]),
             "well identity mismatch",
         )
     for row in combined["parametric_economics"]:
-        require(row["field_id"] in field_ids, "orphan economics record")
+        require(row["field_id"] in fields_by_id, "orphan economics record")
+        require(
+            fields_by_id[row["field_id"]]["economics_status"] == "surfaced",
+            "conflicting economics admission",
+        )
     for field in combined["fields"]:
         require(field["id"] == field["field_id"], "field ID disagreement")
         require(

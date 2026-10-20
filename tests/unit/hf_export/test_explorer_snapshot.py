@@ -309,18 +309,37 @@ def test_deterministic_shards_beyond_legacy_cap(case):
     assert sizes == [2] * 50 + [1]
 
 
-def test_byte_bounded_sharding(case):
-    baseline = build(case)
-    # Set an exact bound from independent single-row JSON serialization.
-    rows = records(baseline, "fields")
-    case[0]["shard_max_bytes"] = max(len(snapshot.canonical_json([r])) for r in rows)
-    files = build(case)
-    m = json.loads(files["browser/manifest.json"])
-    assert all(
-        a["byte_count"] <= case[0]["shard_max_bytes"]
-        for a in m["artifacts"]
-        if a["kind"] == "browser"
+@pytest.mark.parametrize(
+    "max_bytes,shard_sizes", [(57, [2]), (56, [1, 1]), (30, [1, 1])]
+)
+def test_byte_bounded_sharding(max_bytes, shard_sizes):
+    """Literal rows occupy 26/27 bytes; brackets and LF add 3, comma adds 1."""
+    pair = b'[{"country":"A","fields":1},{"country":"\xc3\xa9","fields":1}]\n'
+    first = b'[{"country":"A","fields":1}]\n'
+    second = b'[{"country":"\xc3\xa9","fields":1}]\n'
+    assert len(pair) == 57
+    assert len(first) == 29
+    assert len(second) == 30
+    shards = list(snapshot._shards(json.loads(pair), 2, max_bytes))
+    assert [len(shard) for shard in shards] == shard_sizes
+    assert [snapshot.canonical_json(shard) for shard in shards] == (
+        [pair] if max_bytes == 57 else [first, second]
     )
+
+
+def test_single_utf8_record_one_byte_over_bound():
+    # The 27-byte object plus two brackets and LF requires exactly 30 bytes.
+    record = b'[{"country":"\xc3\xa9","fields":1}]\n'
+    with pytest.raises(ValueError, match="single record exceeds byte bound"):
+        list(snapshot._shards(json.loads(record), 2, 29))
+
+
+def test_empty_shard_byte_bound():
+    assert [snapshot.canonical_json(part) for part in snapshot._shards([], 2, 3)] == [
+        b"[]\n"
+    ]
+    with pytest.raises(ValueError, match="empty shard exceeds byte bound"):
+        list(snapshot._shards([], 2, 2))
 
 
 @pytest.mark.parametrize("mutation", ["bytes", "count", "schema", "missing", "extra"])
@@ -394,6 +413,50 @@ def test_invalid_parent_never_uploads(case):
     backend = Backend(files)
     with pytest.raises(ValueError):
         snapshot.publish_snapshot(files, "main", backend)
+    assert not backend.calls
+
+
+@pytest.mark.parametrize("status", ["early_life", "unlisted", "not_evaluated"])
+def test_publish_rejects_scenario_with_withheld_parent(case, status):
+    files = build(case)
+    manifest = json.loads(files["browser/manifest.json"])
+    for entry in manifest["artifacts"]:
+        if entry["collection"] == "fields":
+            rows = json.loads(files[entry["path"]])
+            for row in rows:
+                if row["field_id"] == "alpha":
+                    row.update(
+                        economics_status=status,
+                        npv_mm=None,
+                        breakeven_wti=None,
+                        sens_mm_per_dollar=None,
+                    )
+            data = snapshot.canonical_json(rows)
+            files[entry["path"]] = data
+            entry.update(sha256=hashlib.sha256(data).hexdigest(), byte_count=len(data))
+    files["browser/manifest.json"] = snapshot.canonical_json(manifest)
+    backend = Backend(files)
+    with pytest.raises(ValueError, match="conflicting economics admission"):
+        snapshot.publish_snapshot(files, "c" * 40, backend)
+    assert not backend.calls
+
+
+def test_publish_rejects_missing_empty_browser_shard(case):
+    change_source(case, "parametric", lambda d: d.update(fields={}))
+    files = build(case)
+    manifest = json.loads(files["browser/manifest.json"])
+    empty = [
+        entry
+        for entry in manifest["artifacts"]
+        if entry["collection"] == "parametric_economics" and entry["kind"] == "browser"
+    ]
+    assert len(empty) == 1
+    assert files.pop(empty[0]["path"]) == b"[]\n"
+    manifest["artifacts"].remove(empty[0])
+    files["browser/manifest.json"] = snapshot.canonical_json(manifest)
+    backend = Backend(files)
+    with pytest.raises(ValueError, match="incomplete artifact inventory"):
+        snapshot.publish_snapshot(files, "c" * 40, backend)
     assert not backend.calls
 
 
