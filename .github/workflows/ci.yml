@@ -704,12 +704,11 @@ jobs:
 
   # Replay helpers come from the live base branch, even when the event base SHA
   # predates the helper. Replay evidence still targets the event's PR head.
+  # Required aggregates reject skipped draft results until full checks succeed.
   lint-gate:
     name: Lint
     needs: [mode, lint]
-    if: >-
-      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-      (!cancelled())
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -745,9 +744,7 @@ jobs:
   type-check-gate:
     name: Type Check
     needs: [mode, type-check]
-    if: >-
-      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-      (!cancelled())
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -783,9 +780,7 @@ jobs:
   security-gate:
     name: Security Scan
     needs: [mode, security]
-    if: >-
-      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-      (!cancelled())
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -821,9 +816,7 @@ jobs:
   docs-gate:
     name: Documentation
     needs: [mode, docs]
-    if: >-
-      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-      (!cancelled() && github.event_name == 'pull_request')
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -859,9 +852,7 @@ jobs:
   pr-gate:
     name: Test (PR gate)
     needs: [mode, domain-tests]
-    if: >-
-      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
-      (!cancelled() && github.event_name == 'pull_request')
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
