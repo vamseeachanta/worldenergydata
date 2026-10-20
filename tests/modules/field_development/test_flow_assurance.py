@@ -4,7 +4,7 @@
 
 The module is *screening-grade* (not OLGA/PVTsim simulation), so assertions check
 the direction of the heuristics (cold deepwater gas → hydrate risk; flow above the
-API RP 14J erosional velocity → erosion risk) and the contract (never raises on
+configured liquid screening velocity → erosion risk) and the contract (never raises on
 missing inputs, deterministic, threshold-overridable) rather than precise values.
 """
 
@@ -72,9 +72,9 @@ def test_hydrate_low_for_warm_shallow_dead_oil():
     assert risk.severity == RiskSeverity.LOW
 
 
-def test_hydrate_unknown_depth_is_low_and_noted():
+def test_hydrate_unknown_depth_is_not_evaluated_and_noted():
     risk = screen_hydrate_risk(FieldConcept(name="X"), TH)
-    assert risk.severity == RiskSeverity.LOW
+    assert risk.severity == RiskSeverity.NOT_EVALUATED
     assert risk.note
 
 
@@ -122,9 +122,9 @@ def test_wax_low_when_wat_below_seabed():
     assert risk.severity == RiskSeverity.LOW
 
 
-def test_wax_unknown_wat_is_low_and_noted():
+def test_wax_unknown_wat_is_not_evaluated_and_noted():
     risk = screen_wax_risk(FieldConcept(name="X", water_depth_m=1500.0), TH)
-    assert risk.severity == RiskSeverity.LOW
+    assert risk.severity == RiskSeverity.NOT_EVALUATED
     assert risk.note
 
 
@@ -157,14 +157,15 @@ def test_slugging_low_for_short_oil_line():
 
 
 # --------------------------------------------------------------------------- #
-# Erosion (API RP 14J / 14E erosional velocity)
+# Erosion (configured liquid-only screening)
 # --------------------------------------------------------------------------- #
 def test_erosion_high_for_high_rate_small_bore():
     c = FieldConcept(
         name="Erosive",
-        plateau_rate_boed=400000.0,  # very high
+        flowline_liquid_rate_bpd=400000.0,  # very high
         flowline_diameter_in=6.0,  # small bore
-        gor_scf_stb=6000.0,
+        fluid_type=FluidType.OIL,
+        gor_scf_stb=0.0,
         sour=True,
     )
     risk = screen_erosion_risk(c, TH)
@@ -175,17 +176,18 @@ def test_erosion_high_for_high_rate_small_bore():
 def test_erosion_low_for_modest_rate_large_bore():
     c = FieldConcept(
         name="Gentle",
-        plateau_rate_boed=20000.0,
+        flowline_liquid_rate_bpd=20000.0,
         flowline_diameter_in=16.0,
-        gor_scf_stb=200.0,
+        fluid_type=FluidType.OIL,
+        gor_scf_stb=0.0,
     )
     risk = screen_erosion_risk(c, TH)
     assert risk.severity == RiskSeverity.LOW
 
 
-def test_erosion_unknown_inputs_low_and_noted():
+def test_erosion_unknown_inputs_not_evaluated_and_noted():
     risk = screen_erosion_risk(FieldConcept(name="X"), TH)
-    assert risk.severity == RiskSeverity.LOW
+    assert risk.severity == RiskSeverity.NOT_EVALUATED
     assert risk.note
 
 
@@ -215,11 +217,11 @@ def test_assess_returns_all_hazards_and_overall():
     assert a.mitigations and len(a.mitigations) == len(set(a.mitigations))
 
 
-def test_assess_empty_concept_never_raises_all_low():
+def test_assess_empty_concept_never_raises_all_not_evaluated():
     a = assess_flow_assurance(FieldConcept(name="Bare"))
     assert isinstance(a, FlowAssuranceAssessment)
-    assert a.overall_severity == RiskSeverity.LOW
-    assert all(r.severity == RiskSeverity.LOW for r in a.risks)
+    assert a.overall_severity == RiskSeverity.NOT_EVALUATED
+    assert all(r.severity == RiskSeverity.NOT_EVALUATED for r in a.risks)
 
 
 def test_assessment_is_deterministic():
@@ -241,7 +243,9 @@ def test_assessment_is_deterministic():
 def test_threshold_override_changes_outcome():
     c = FieldConcept(
         name="Borderline",
-        plateau_rate_boed=60000.0,
+        fluid_type=FluidType.OIL,
+        gor_scf_stb=0.0,
+        flowline_liquid_rate_bpd=60000.0,
         flowline_diameter_in=10.0,
     )
     strict = FlowAssuranceThresholds(erosional_velocity_fts=1.0)  # trip easily

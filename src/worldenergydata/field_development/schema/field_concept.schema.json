@@ -189,6 +189,20 @@
       "default": null,
       "title": "Flowline Diameter In"
     },
+    "flowline_liquid_rate_bpd": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Liquid volume per individual flowline at operating conditions (bbl/day), not boe/day.",
+      "title": "Flowline Liquid Rate Bpd"
+    },
     "flowline_material": {
       "anyOf": [
         {
