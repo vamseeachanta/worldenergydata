@@ -97,6 +97,64 @@ value is still `0`.
 Onboarding a new country: see
 [`docs/modules/fdas/country-adapter-checklist.md`](../../docs/modules/fdas/country-adapter-checklist.md).
 
+## BSEE monthly-column migration
+
+`ProductionAdapter.aggregate_monthly` and the public
+`BseeAdapter.get_development_production` now return `MONTHLY_OIL_BBL`,
+`MONTHLY_WATER_BBL`, and, when `GAS_VOLUME` is supplied, `MONTHLY_GAS_MCF`.
+Existing `MONTHLY_OIL_VOLUME`, `MONTHLY_WATER_VOLUME`, and
+`MONTHLY_GAS_VOLUME` columns remain equal-valued deprecated aliases for a
+deprecation cycle. Migrate column lookups to the explicit-unit names before
+alias removal in a future release. Each successful aggregation emits one
+`DeprecationWarning`; Python normally hides this category, so enable it with
+`-W default::DeprecationWarning` when checking migration readiness.
+
+Inputs must already contain oil/water in barrels and gas in Mcf. No unit
+conversion, gas-energy factor, or financial assumption is introduced. Gas
+columns are omitted when source gas is absent; absence does not establish zero
+gas production. `YEAR_MONTH` remains a pandas monthly Period. Consumers requiring
+string dates can use `monthly["YEAR_MONTH"].astype(str)`.
+
+### Worked example: two observations in one month
+
+The following inputs are synthetic demonstration data. The method is the
+per-development, per-month sum already defined by
+[`ProductionProcessor.aggregate_monthly`](src/worldenergydata/fdas/data/production.py);
+column units follow
+[`FDAS_PRODUCTION_COLUMNS`](src/worldenergydata/fdas/adapters/contract.py).
+The independent hand calculation is oil = 10 + 20 = 30 bbl,
+water = 2 + 3 = 5 bbl, and gas = 100 + 200 = 300 Mcf.
+No empirical coefficients or acceptance limits are required.
+
+```python
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from worldenergydata.fdas import BseeAdapter
+from worldenergydata.fdas.adapters.bsee_adapter import ProductionAdapter
+
+with TemporaryDirectory() as directory:
+    path = Path(directory) / "production.csv"
+    path.write_text(
+        "DEV_NAME,PROD_DATE,OIL_VOLUME,WATER_VOLUME,GAS_VOLUME\n"
+        "Dev-A,2024-01-01,10,2,100\n"
+        "Dev-A,2024-01-15,20,3,200\n"
+    )
+    adapter = BseeAdapter(directory)
+    adapter.production_adapter = ProductionAdapter(str(path))
+    adapter.production_adapter.load()
+    monthly = adapter.get_development_production("Dev-A")
+    columns = ["MONTHLY_OIL_BBL", "MONTHLY_WATER_BBL", "MONTHLY_GAS_MCF"]
+    assert monthly[columns].iloc[0].tolist() == [30, 5, 300]
+    # The unchanged cashflow engine uses this canonical oil-column lookup.
+    oil = monthly.set_index("YEAR_MONTH")["MONTHLY_OIL_BBL"]
+    assert {str(month): value for month, value in oil.items()} == {"2024-01": 30}
+```
+
+This example establishes schema compatibility and aggregation only. A financial
+projection also requires the engine's drilling timeline, price deck, dates, and
+cost/fiscal assumptions; none is inferred from these demonstration volumes.
+
 ## Handoff
 
 Country fiscal-terms coverage expands per the international field-development
