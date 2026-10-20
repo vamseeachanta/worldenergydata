@@ -113,7 +113,9 @@ def test_finite_values_including_zero_are_preserved(tmp_path, value):
     assert f"REPORTED | {value} test-unit" in report.build_report(path)
 
 
-@pytest.mark.parametrize("value", [None, True, "0", [], {}, float("nan"), float("inf")])
+@pytest.mark.parametrize(
+    "value", [None, True, "0", [], {}, float("nan"), float("inf"), float("-inf")]
+)
 def test_invalid_metric_values_fail_closed(tmp_path, value):
     (tmp_path / "metrics.json").write_text(json.dumps({"test": value}))
     path = manifest(
@@ -169,7 +171,14 @@ def test_symlink_escape_is_rejected(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "content", ['{"provenance":{},"provenance":{}}', '{"artifacts": NaN}', "[]"]
+    "content",
+    [
+        '{"provenance":{},"provenance":{}}',
+        '{"artifacts": NaN}',
+        '{"artifacts": Infinity}',
+        '{"artifacts": -Infinity}',
+        "[]",
+    ],
 )
 def test_ambiguous_or_invalid_json_is_rejected(tmp_path, content):
     path = tmp_path / "manifest.json"
@@ -325,3 +334,65 @@ def test_markdown_images_are_inert(tmp_path):
         manifest(tmp_path, provenance={"openlane_version": "![label](example)"})
     )
     assert "![label]" not in text
+
+
+@pytest.mark.parametrize("token", ["NaN", "Infinity", "-Infinity"])
+def test_unselected_nonfinite_metric_does_not_block_finite_evidence(tmp_path, token):
+    (tmp_path / "metrics.json").write_text('{"selected": 0, "unused": ' + token + "}")
+    path = manifest(
+        tmp_path,
+        artifacts={"metrics": {"path": "metrics.json"}},
+        observations={
+            "drc": {"key": "selected", "unit": "count", "basis": "literal fixture"}
+        },
+    )
+    assert "| DRC | REPORTED | 0 count |" in report.build_report(path)
+
+
+def test_cli_digest_error_names_artifact_without_echoing_path(tmp_path):
+    (tmp_path / "private-input.v").write_bytes(b"changed")
+    path = manifest(
+        tmp_path,
+        artifacts={"rtl": {"path": "private-input.v", "sha256": HASH_EXPECTED}},
+    )
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert "invalid evidence: digest mismatch: rtl" in result.stderr
+    assert "private-input" not in result.stderr
+    assert str(tmp_path) not in result.stderr
+
+
+def test_cli_io_error_does_not_echo_path(tmp_path):
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), str(tmp_path / "private-missing.json")],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert "invalid evidence:" in result.stderr
+    assert "private-missing" not in result.stderr
+    assert str(tmp_path) not in result.stderr
+
+
+def test_cli_decoding_error_does_not_echo_evidence(tmp_path):
+    path = tmp_path / "private-input.json"
+    path.write_bytes(b"\xff")
+    result = subprocess.run(
+        [sys.executable, str(SCRIPT), str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 1
+    assert result.stdout == ""
+    assert "invalid evidence:" in result.stderr
+    assert "private-input" not in result.stderr
+    assert "0xff" not in result.stderr

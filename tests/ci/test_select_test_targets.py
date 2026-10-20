@@ -273,3 +273,22 @@ def test_reporting_contracts_join_always_on_targets(path):
     assert target in always["targets"].split()
     targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
     assert targets.count(target) == 1
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/eda/report.py",
+        "docs/examples/eda/README.md",
+        "docs/examples/eda/manifest.json",
+        "docs/examples/eda/report.md",
+    ],
+)
+def test_eda_contract_paths_select_unit_eda(path):
+    result = select([path], REPO_ROOT)
+    assert "tests/unit/eda" in result["xdist"]
+    matrix = to_matrix([path], REPO_ROOT)
+    assert any(
+        shard["name"] == "unit-eda" and shard["targets"] == "tests/unit/eda"
+        for shard in matrix["include"]
+    )

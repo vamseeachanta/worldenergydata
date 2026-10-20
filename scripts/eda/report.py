@@ -57,14 +57,14 @@ def _constant(value: str) -> None:
     raise ValueError("non-finite JSON number")
 
 
-def _load(path: Path) -> dict:
+def _load(path: Path, *, metrics: bool = False) -> dict:
     # Python 3 json, Decoding JSON / parse_float (retrieved 2026-10-19):
     # https://docs.python.org/3/library/json.html#json.load
     # Decimal preserves metric precision and avoids float overflow/underflow.
     data = json.loads(
         path.read_text(encoding="utf-8"),
         object_pairs_hook=_pairs,
-        parse_constant=_constant,
+        parse_constant=Decimal if metrics else _constant,
         parse_float=Decimal,
     )
     if not isinstance(data, dict):
@@ -168,7 +168,9 @@ def build_report(manifest: Path) -> str:
                     raise ValueError(f"cannot verify expected digest: {name}")
         inventory.append((name, status, display_path, digest, meaning))
 
-    metrics = _load(available["metrics"]) if "metrics" in available else {}
+    metrics = (
+        _load(available["metrics"], metrics=True) if "metrics" in available else {}
+    )
     results = []
     for category, title in CATEGORIES.items():
         entry = observations.get(category)
@@ -306,12 +308,16 @@ def main() -> int:
     args = parser.parse_args()
     try:
         text = build_report(args.manifest)
-    except (OSError, TypeError, ValueError, UnicodeError):
+    except (OSError, UnicodeError):
         # Do not echo evidence contents, raw paths or potentially sensitive values.
         print(
             "invalid evidence: check manifest schema, artifact paths, digests and metric types",
             file=sys.stderr,
         )
+        return 1
+    except (TypeError, ValueError) as error:
+        # Validation messages contain schema labels, never raw evidence values.
+        print(f"invalid evidence: {error}", file=sys.stderr)
         return 1
     sys.stdout.write(text)
     return 0
