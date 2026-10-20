@@ -122,6 +122,9 @@
       "fluid": "black oil",
       "api": null,
       "source_note": "OGJ 2024: initial reservoir (BHP) 23,000–27,000 psi — higher than the 20,000-psi equipment rating; 275F max flowing temp; pay 30,000–34,000 ft TVD (Wilcox 1–4)."
+    },
+    "fdp_reconciliation": {
+      "water_depth_m": "Sanction report gives 1,524 m; the lifecycle record gives 5,180 ft as a block-level estimate. An identical measurement location is not established; these depths remain unresolved, so the portfolio depth stays null."
     }
   },
   {
@@ -424,6 +427,10 @@
       "fluid": "black oil",
       "api": null,
       "source_note": "World Oil/JPT: Sparta (ex-North Platte) is a 20,000-psi-rated development. All public '20,000 psi' figures are the equipment rating; true reservoir pore pressure not publicly disclosed — shown as —."
+    },
+    "fdp_reconciliation": {
+      "water_depth_m": "Partner fact box gives approximately 1,310 m; the lifecycle record gives 4,265 ft. These depths remain unresolved, so the portfolio depth stays null rather than choosing one source precision or location.",
+      "plateau_boed": "Partner announcement gives 100,000 boe/d designed peak capacity. The lifecycle prose instead states approximately 90,000 boe/d expected peak, whose basis is not established by this announcement. The separate oil plateau is a legacy model input, not a conversion of designed capacity. Economics is not run."
     }
   },
   {

@@ -33,7 +33,7 @@ SPEC.loader.exec_module(builder)
 
 
 def profiles():
-    return json.loads((PORTFOLIO / "_research.json").read_text())
+    return json.loads((PORTFOLIO / "_research.json").read_text(encoding="utf-8"))
 
 
 def registry():
@@ -55,7 +55,7 @@ def test_documented_page_and_registry_link(field_id):
     profile = profile_for(field_id)
     assert builder.to_concept(profile).concept_type is not None
     page = PORTFOLIO / f"{field.fdp_slug}.html"
-    assert page.read_text() == builder.build_profile_page(profile)
+    assert page.read_text(encoding="utf-8") == builder.build_profile_page(profile)
     panel = build_concept(
         concept_label=profile["concept_type"],
         host_type=profile["host_facility"],
@@ -67,14 +67,13 @@ def test_documented_page_and_registry_link(field_id):
         fdp_issue=962,
     )
     assert panel["fdp_href"].endswith(f"/{page.name}")
-    assert (
-        panel["fdp_href"]
-        in (
-            ROOT / "reports/lower_tertiary/lifecycle" / f"{field_id}_lifecycle.html"
-        ).read_text()
-    )
+    assert panel["fdp_href"] in (
+        ROOT / "reports/lower_tertiary/lifecycle" / f"{field_id}_lifecycle.html"
+    ).read_text(encoding="utf-8")
     explorer = json.loads(
-        (ROOT / "reports/lower_tertiary/lifecycle/_explorer.json").read_text()
+        (ROOT / "reports/lower_tertiary/lifecycle/_explorer.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert explorer["fields"][field_id]["concept"]["fdp_href"] == panel["fdp_href"]
 
@@ -123,13 +122,14 @@ def test_sparta_published_example():
     """Equinor, 'Final Investment Decision for Sparta', 20 December 2023.
 
     The Facts about Sparta box states eight subsea wells, 1,310 metres of water,
-    and 100,000 boe/d designed peak capacity. Direct transcription gives
-    FieldConcept(8, 1310, 100000); capacity is not measured production. No
-    equation, conversion or inferred reserve midpoint is involved.
+    and 100,000 boe/d designed peak capacity. The conflicting lifecycle depth
+    remains unresolved, so the concept depth stays unknown. Designed capacity
+    is distinct from the lifecycle's earlier expected-peak statement; neither
+    is measured production or an inferred reserve midpoint.
     """
     concept = builder.to_concept(profile_for("north_platte"))
     assert concept.num_wells == 8
-    assert concept.water_depth_m == 1310
+    assert concept.water_depth_m is None
     assert concept.plateau_rate_boed == 100000
     assert concept.recoverable_reserves_mmboe is None
     assert concept.year_first_oil is None
@@ -213,3 +213,86 @@ def test_known_value_without_citation_is_rejected():
     profile = dict(profile_for("anchor"), input_sources={})
     with pytest.raises(ValueError, match="Missing input citation"):
         builder.build_profile_page(profile)
+
+
+@pytest.mark.parametrize("field_id", (REMAINING[1], REMAINING[4]))
+def test_conflicting_depths_remain_unknown_on_both_records(field_id):
+    profile = profile_for(field_id)
+    facts = json.loads(
+        (ROOT / "reports/lower_tertiary/lifecycle/_facts.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    record = next(row for row in facts if row["id"] == field_id)
+    assert profile["water_depth_m"] is None
+    note = profile["input_sources"]["water_depth_m"]["comment"]
+    assert "unresolved" in note
+    assert f'{record["water_depth_ft"]:,} ft' in note
+    assert record["fdp_reconciliation"]["water_depth_m"] == note
+    assert note in builder.build_profile_page(profile)
+
+
+def test_designed_capacity_is_distinct_from_legacy_expected_peak():
+    profile = profile_for(REMAINING[4])
+    note = profile["input_sources"]["plateau_boed"]["comment"]
+    assert "100,000 boe/d designed" in note
+    assert "90,000 boe/d" in note
+    assert "not established" in note
+    facts = json.loads(
+        (ROOT / "reports/lower_tertiary/lifecycle/_facts.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    record = next(row for row in facts if row["id"] == REMAINING[4])
+    assert record["fdp_reconciliation"]["plateau_boed"] == note
+
+
+def test_startup_unknown_explains_snapshot_difference():
+    profile = profile_for(REMAINING[1])
+    assert profile["first_oil_year"] is None
+    page = builder.build_profile_page(profile)
+    assert "August 2024" in page
+    assert "2019 sanction" in page
+    assert "startup source" in page
+
+
+def test_readers_use_utf8_under_non_utf8_locale(monkeypatch):
+    original = Path.open
+
+    def windows_open(path, mode="r", buffering=-1, encoding=None, **kwargs):
+        if encoding in (None, "locale"):
+            encoding = "cp1252"
+        return original(path, mode, buffering, encoding=encoding, **kwargs)
+
+    monkeypatch.setattr(Path, "open", windows_open)
+    for field_id in REMAINING:
+        test_documented_page_and_registry_link(field_id)
+
+
+def test_generation_preserves_lf_on_windows(tmp_path, monkeypatch):
+    original = Path.open
+
+    def windows_open(path, mode="r", *args, **kwargs):
+        if "w" in mode and kwargs.get("newline") is None:
+            kwargs["newline"] = "\r\n"
+        return original(path, mode, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "open", windows_open)
+    test_documented_only_build_is_reproducible(tmp_path, monkeypatch)
+
+
+def test_numeric_display_retains_precision_without_decimal_padding():
+    profile = dict(profile_for(REMAINING[4]), water_depth_m=1310.25)
+    page = builder.build_profile_page(profile)
+    assert "<td>1310.25</td>" in page
+    assert "<td>100000</td>" in page
+    assert "100000.0" not in page
+
+
+def test_index_scopes_models_and_unknown_depth_units():
+    page = builder.build_index(profiles())
+    assert "— m" not in page
+    assert "Water depth (m)" in page
+    assert "Each plan is generated" not in page
+    assert "Legacy examples" in page
+    assert "Documented profiles" in page

@@ -287,14 +287,21 @@
         "source": "S1",
         "comment": "Overview reports the field came on stream in November 2018."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Formatted whole-number inputs without decimal padding for readability."
+      }
+    ]
   },
   {
     "name": "Anchor",
     "operator_current": "Chevron",
     "host_facility": "Semisubmersible floating production unit",
     "concept_type": "semisub_fps",
-    "water_depth_m": 1524,
+    "water_depth_m": null,
     "tieback_distance_km": null,
     "num_wells": 7,
     "recoverable_reserves_mmboe": null,
@@ -309,7 +316,7 @@
     "summary": "The sanction-date concept is a subsea development served by a semisubmersible production unit.",
     "narrative": "The sanction report describes subsea wells feeding a floating production unit in the Lower Tertiary Wilcox trend. This separates seafloor completions from surface processing; the cited selection does not by itself establish equipment qualification or installation feasibility.",
     "architecture": "The sanctioned subsea wells connect to a semisubmersible floating production unit. Detailed tree ratings, manifold arrangement and riser geometry require the design basis.",
-    "limitations": "This is the sanction-date scope, not a current well inventory. The report forecasts first oil but does not document actual startup; actual first-oil year stays null. Resource figures stated as a lower bound are not entered as an exact reserve estimate. Update with a startup source and qualified equipment data before detailed assessment.",
+    "limitations": "This page records the 2019 sanction snapshot, not a current well inventory. The lifecycle Explorer reports first oil in August 2024; the cited sanction report only forecasts startup, so it cannot substantiate an actual first-oil year here. A startup source is required before replacing null. The published metric depth and lifecycle block-level estimate remain unresolved, so depth also stays null. Resource lower bounds are not exact reserve estimates. Obtain qualified equipment data before detailed assessment.",
     "sources": [
       "https://www.ogj.com/exploration-development/article/14073529/chevron-sanctions-anchor-project-in-deepwater-us-gulf-of-mexico"
     ],
@@ -339,7 +346,7 @@
       },
       "water_depth_m": {
         "source": "S1",
-        "comment": "Field-location paragraph states water depths of 1,524 m; retain the source precision."
+        "comment": "Sanction report gives 1,524 m; the lifecycle record gives 5,180 ft as a block-level estimate. An identical measurement location is not established; these depths remain unresolved, so the portfolio depth stays null."
       },
       "num_wells": {
         "source": "S1",
@@ -349,7 +356,14 @@
         "source": "S1",
         "comment": "Design capacity is 75,000 bbl of crude oil per day; separate gas capacity is not converted to boe/d."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Kept conflicting depths unknown, distinguished source quantities and snapshot dates, and removed decimal padding to avoid inconsistent interpretation."
+      }
+    ]
   },
   {
     "name": "Jack/St. Malo",
@@ -407,7 +421,14 @@
         "source": "S1",
         "comment": "Article dated December 2, 2014 reports production has started."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Formatted whole-number inputs without decimal padding for readability."
+      }
+    ]
   },
   {
     "name": "Kaskida",
@@ -465,14 +486,21 @@
         "source": "S1",
         "comment": "Nameplate production capacity is 80,000 BOPD; this is oil capacity, not a measured boe/d plateau."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Formatted whole-number inputs without decimal padding for readability."
+      }
+    ]
   },
   {
     "name": "North Platte",
     "operator_current": "Shell",
     "host_facility": "Sparta semisubmersible floating production unit",
     "concept_type": "semisub_fps",
-    "water_depth_m": 1310,
+    "water_depth_m": null,
     "tieback_distance_km": null,
     "num_wells": 8,
     "recoverable_reserves_mmboe": null,
@@ -487,7 +515,7 @@
     "summary": "North Platte is represented by the subsequently sanctioned Sparta concept, with subsea wells feeding a semisubmersible host.",
     "narrative": "The partner announcement describes a standardized floating production design following earlier host designs, with all-electric compression. Subsea wells connect to the new host. The design rationale is reported from the announcement rather than established by a new optimization.",
     "architecture": "The reported development has eight subsea production wells tied back to the Sparta semisubmersible. Well positions, manifold counts and tieback lengths are not supplied.",
-    "limitations": "The source is a sanction-date snapshot and its startup date is a forecast. Capacity is a design target, not observed production. Resources are reported as exceeding a value, so no exact reserve number is entered. Obtain detailed layout and current scope before quantitative assessment.",
+    "limitations": "The source is a sanction-date snapshot and its startup date is a forecast. Capacity is a design target, not observed production. Resources are reported as exceeding a value, so no exact reserve number is entered. Obtain detailed layout and current scope before quantitative assessment. The published metric depth conflicts with the lifecycle depth, so the concept depth remains unknown. Designed capacity is distinct from the legacy expected-peak statement; its basis requires a separately dated source.",
     "sources": [
       "https://www.equinor.com/news/20231220-final-investment-decision-sparta"
     ],
@@ -517,7 +545,7 @@
       },
       "water_depth_m": {
         "source": "S1",
-        "comment": "Facts about Sparta gives approximately 1,310 meters directly; no conversion is performed."
+        "comment": "Partner fact box gives approximately 1,310 m; the lifecycle record gives 4,265 ft. These depths remain unresolved, so the portfolio depth stays null rather than choosing one source precision or location."
       },
       "num_wells": {
         "source": "S1",
@@ -525,9 +553,16 @@
       },
       "plateau_boed": {
         "source": "S1",
-        "comment": "Opening capacity paragraph and fact box give designed peak capacity of 100,000 boe/d. Model plateau input is used only as a capacity transcription; economics is not run."
+        "comment": "Partner announcement gives 100,000 boe/d designed peak capacity. The lifecycle prose instead states approximately 90,000 boe/d expected peak, whose basis is not established by this announcement. The separate oil plateau is a legacy model input, not a conversion of designed capacity. Economics is not run."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Kept conflicting depths unknown, distinguished source quantities and snapshot dates, and removed decimal padding to avoid inconsistent interpretation."
+      }
+    ]
   },
   {
     "name": "Shenandoah",
@@ -589,7 +624,14 @@
         "source": "S1",
         "comment": "Article reports first production on July 25, 2025."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Formatted whole-number inputs without decimal padding for readability."
+      }
+    ]
   },
   {
     "name": "Tiber",
@@ -647,6 +689,13 @@
         "source": "S1",
         "comment": "80,000 bpd crude capacity belongs to the combined hub; no Tiber boe/d plateau is inferred."
       }
-    }
+    },
+    "revisions": [
+      {
+        "revision": "1",
+        "date": "2026-10-20",
+        "change": "Formatted whole-number inputs without decimal padding for readability."
+      }
+    ]
   }
 ]
