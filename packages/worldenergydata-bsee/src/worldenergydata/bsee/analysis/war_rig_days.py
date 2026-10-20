@@ -65,25 +65,26 @@ explicitly or does not.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 
 import pandas as pd
 
 from worldenergydata.lower_tertiary.ops_timeline import WAR_ACTIVITY_LABELS
 
 __all__ = [
-    "WAR_ACTIVITY_LABELS",
-    "Basis",
     "BASIS_DRL_COM",
     "BASIS_DRL_COM_PND",
     "BASIS_METHOD_1",
-    "PRESET_BASES",
     "DEFAULT_PHASES",
-    "STATUS_COVERED_UNATTRIBUTED",
     "MAX_PLAUSIBLE_SPAN_DAYS",
+    "PRESET_BASES",
+    "STATUS_COVERED_UNATTRIBUTED",
+    "WAR_ACTIVITY_LABELS",
+    "Basis",
     "normalize_api12",
-    "union_days",
     "rig_days_by_bore",
     "rig_days_by_well",
+    "union_days",
 ]
 
 # Emitted when a bore appears in the target population but has no WAR
@@ -407,11 +408,16 @@ def _max_drill_fluid_wgt(group: pd.DataFrame):
 
     Returns null, never 0, when nothing was reported: a bore with no recorded
     fluid weight is not a bore drilled on water.
+
+    Units: Form BSEE-0133 (expiration 2024), item 10, MW / PPG. The input
+    policy is finite positive values, not an engineering acceptance range;
+    see docs/modules/bsee/analysis/legacy_component_retirement.md,
+    "Fluid-weight contract" (2026-10-20). No upper limit is assumed.
     """
     if "drill_fluid_wgt" not in group.columns:
         return pd.NA
     values = pd.to_numeric(group["drill_fluid_wgt"], errors="coerce").dropna()
-    values = values[values > 0]
+    values = values[values.map(isfinite) & (values > 0)]
     return float(values.max()) if len(values) else pd.NA
 
 
@@ -458,8 +464,8 @@ DEFAULT_PHASES: dict[str, frozenset[str]] = {
 def rig_days_by_bore(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
-    population: "list[str] | None" = None,
-    phases: "dict[str, frozenset[str]] | None" = None,
+    population: list[str] | None = None,
+    phases: dict[str, frozenset[str]] | None = None,
 ) -> pd.DataFrame:
     """Rig-days per API12 wellbore.
 
@@ -524,10 +530,10 @@ def rig_days_by_bore(
             # weeks we do hold, not a claim about the bore's history.
             "pnd_days": by_code.get("PND", 0),
             "war_days_total": union_days(zip(group["start"], group["end"])),
-            "war_weeks": int(len(group)),
+            "war_weeks": len(group),
             "days_by_code": by_code,
             "days_status": coverage_status,
-            "war_weeks_unattributed": int(len(unattributed)),
+            "war_weeks_unattributed": len(unattributed),
             "war_weeks_rejected": rejected,
             "war_weeks_implausible": implausible,
             "drilling_days_status": drilling_status,
@@ -639,7 +645,7 @@ _DAY_COLUMNS = ("drilling_days", "completion_days", "pnd_days", "war_days_total"
 def rig_days_by_well(
     war: pd.DataFrame,
     basis: Basis = BASIS_DRL_COM,
-    population: "list[str] | None" = None,
+    population: list[str] | None = None,
 ) -> pd.DataFrame:
     """Rig-days per API10 well, unioning the WAR weeks of all its bores.
 
