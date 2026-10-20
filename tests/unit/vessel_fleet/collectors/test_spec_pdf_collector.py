@@ -250,3 +250,28 @@ def test_real_pdf_preserves_wide_gap_dimensions_and_mapping(collector, monkeypat
     assert record["BEAM_M"] == 50.0
     assert record["DEPTH_M"] == 20.0
     assert record["EQUIPMENT"] == "synthetic equipment"
+
+
+@pytest.mark.parametrize(
+    "font_size, mapping_key",
+    [(12, "Custom Equipment"), (16, "Custom Equipment"), (16, "Custom  Equipment")],
+)
+def test_real_pdf_mapping_handles_expanded_key_spacing(
+    collector, monkeypatch, font_size, mapping_key
+):
+    """Synthetic labels retain their mapping when layout expands word spacing."""
+    from reportlab.pdfgen.canvas import Canvas
+
+    stream = BytesIO()
+    canvas = Canvas(stream)
+    canvas.setFont("Helvetica", font_size)
+    canvas.drawString(40, 700, "Length: 100 ft")
+    canvas.drawString(40, 670, "Custom Equipment: synthetic equipment")
+    canvas.save()
+    monkeypatch.setattr(collector, "get_bytes", lambda url: stream.getvalue())
+    collector.field_mapping = {mapping_key: "EQUIPMENT"}
+
+    [record] = collector.collect_from_urls({"synthetic": URL})
+
+    assert record["LOA_M"] == 30.5  # Hand calculation in the first test.
+    assert " ".join(record["EQUIPMENT"].split()) == "synthetic equipment"

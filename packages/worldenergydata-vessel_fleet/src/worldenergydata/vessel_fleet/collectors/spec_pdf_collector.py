@@ -97,7 +97,10 @@ class SpecPdfCollector(BaseCollector):
             logger.warning("Empty PDF text for %s", vessel_name)
             return None
 
-        pairs = extract_key_value_from_text(text)
+        pairs = {
+            " ".join(key.split()): value
+            for key, value in extract_key_value_from_text(text).items()
+        }
 
         record: dict[str, Any] = {
             "VESSEL_NAME": vessel_name,
@@ -113,7 +116,7 @@ class SpecPdfCollector(BaseCollector):
         )
 
         for pdf_key, schema_field in self.field_mapping.items():
-            value = pairs.get(pdf_key)
+            value = pairs.get(" ".join(pdf_key.split()))
             if value and value.strip() and schema_field not in record:
                 specs.setdefault(schema_field, value.strip())
 
