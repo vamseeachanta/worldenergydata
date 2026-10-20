@@ -343,6 +343,8 @@ disallow_untyped_defs = true
 # un-hidden; see the triage notes on PR #529.
 minversion = "7.0"
 testpaths = ["tests"]
+# Make shared test helpers importable by their qualified package names.
+pythonpath = ["."]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
@@ -391,16 +393,13 @@ norecursedirs = [
 # separately by CI. Individual broken node-ids go to scripts/ci/quarantine.txt.
 addopts = """\
 --strict-markers \
+--import-mode=importlib \
 --cov=worldenergydata \
 --cov-report=term-missing \
 --cov-report=html:reports/coverage/htmlcov \
 --cov-report=xml:reports/coverage/coverage.xml \
 --cov-report=json:reports/coverage/coverage.json \
 --ignore=tests/performance \
---ignore=tests/modules/fdas/integration/test_end_to_end.py \
---ignore=tests/modules/sodir-integration \
---ignore=tests/modules/well_production_dashboard/test_monitoring.py \
---ignore=tests/modules/well_production_dashboard/test_well_production_dashboard.py \
 --ignore=tests/unit/bsee/analysis/query_api_01_wells_api12_rig_days_Tiber_test.py \
 --ignore=tests/unit/bsee/analysis/query_api_01_wells_api12_test.py \
 --ignore=tests/unit/bsee/analysis/query_api_01_wells_directional_survey_test.py \

@@ -63,6 +63,9 @@ the outer guard and is restored at session end.
 Parallel workers do not repeat the controlling session's check. Outside a Git
 checkout, or without Git, the check prints a note and does not fail.
 
+See [Test collection](test-collection.md) for canonical package imports and a
+worked example of collecting duplicate test filenames.
+
 ## Project Structure
 
 ### Core Architecture
