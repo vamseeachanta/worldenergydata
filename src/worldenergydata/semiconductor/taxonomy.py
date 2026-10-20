@@ -120,7 +120,7 @@ SKILLS = (
     Skill(
         "process_design_kit",
         "Process design kit configuration",
-        ("pdk", "process design kit"),
+        ("pdk", "process design kit", "pdks", "process design kits"),
         "openlane",
     ),
     Skill(
@@ -150,7 +150,7 @@ SKILLS = (
     Skill(
         "thermal_stress",
         "Thermomechanical stress",
-        ("thermal stress", "thermal stresses", "thermomechanical"),
+        ("thermal stress", "thermal stresses", "thermomechanical", "thermo mechanical"),
         "elmer_models",
     ),
 )
@@ -218,8 +218,8 @@ ROLES = (
 
 
 def _tokens(text: str) -> str:
-    """Treat punctuation and whitespace as separators for ASCII technical terms."""
-    return " " + " ".join(re.findall(r"[a-z0-9]+", text.casefold())) + " "
+    """Separate technical terms on punctuation and whitespace, preserving letters."""
+    return " " + " ".join(re.findall(r"[^\W_]+", text.casefold())) + " "
 
 
 def match_roles(text: str) -> tuple[RoleMatch, ...]:

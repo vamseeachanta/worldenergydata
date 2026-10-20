@@ -121,7 +121,8 @@ def test_phrase_separators_and_case(text):
 
 
 @pytest.mark.parametrize(
-    "text", ["", "  \t\n", "offshore engineering", "OpenROADmap", "DRCish"]
+    "text",
+    ["", "  \t\n", "offshore engineering", "OpenROADmap", "DRCish", "éDRC", "DRCé"],
 )
 def test_no_keyword_or_substring_match(text):
     """None of these synthetic inputs contains a complete catalog keyword."""
@@ -155,3 +156,36 @@ def test_negated_and_generic_terms_remain_literal_evidence():
 def test_non_text_is_rejected(text):
     with pytest.raises(TypeError, match="text must be a string"):
         match_roles(text)
+
+
+@pytest.mark.parametrize(
+    "text, role_ids, skill_id, keyword",
+    [
+        (
+            "PDKs",
+            ("physical_design", "layout_automation", "physical_verification"),
+            "process_design_kit",
+            "pdks",
+        ),
+        (
+            "process design kits",
+            ("physical_design", "layout_automation", "physical_verification"),
+            "process_design_kit",
+            "process design kits",
+        ),
+        (
+            "thermo-mechanical",
+            ("packaging_mechanical",),
+            "thermal_stress",
+            "thermo mechanical",
+        ),
+    ],
+)
+def test_common_keyword_variants(text, role_ids, skill_id, keyword):
+    """Plural PDK phrases and separated thermo-mechanical retain exact evidence."""
+    matches = match_roles(text)
+    assert tuple(match.role_id for match in matches) == role_ids
+    for match in matches:
+        assert len(match.hits) == 1
+        assert match.hits[0].skill_id == skill_id
+        assert match.hits[0].keywords == (keyword,)
