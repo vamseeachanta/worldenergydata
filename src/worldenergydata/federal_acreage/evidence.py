@@ -9,6 +9,7 @@ from itertools import combinations
 from typing import Literal
 
 from .models import (
+    QUARTER_QUARTER_ACRES,
     AcreageEvidenceResult,
     AcreageException,
     AcreageRollup,
@@ -19,7 +20,14 @@ from .models import (
     TractOfInterest,
 )
 
+# NIST Handbook 44 (2026), Appendix C, Units of Area:
+# 1 international acre = 0.40468564224 hectares exactly; reciprocal rounded.
+# https://www.nist.gov/document/2026-nist-handbook-44-appendix-c
+# Survey-foot acres are outside this synthetic pilot conversion contract.
 HECTARES_TO_ACRES = 2.4710538147
+# Existing synthetic pilot policy, not a cadastral acceptance criterion:
+# examples/workflows/federal-acreage-evidence/README.md, Hand-derived acreage.
+PILOT_AREA_TOLERANCE_ACRES = 0.5
 ROLLUP_KEYS = tuple(AcreageRollup.model_fields)
 
 
@@ -55,7 +63,11 @@ def _check_area(
 ) -> tuple[SourcedValue, bool]:
     area_value = available(area, record.source_id)
     uncertain = False
-    if record.aliquots is not None and abs(area - 40 * len(record.aliquots)) > 0.5:
+    if (
+        record.aliquots
+        and abs(area - QUARTER_QUARTER_ACRES * len(record.aliquots))
+        > PILOT_AREA_TOLERANCE_ACRES
+    ):
         detail = "Converted record area differs from quarter-quarter geometry by over 0.5 acres."
         exceptions.append(
             AcreageException(
@@ -77,9 +89,11 @@ def _inspect_record(
         HECTARES_TO_ACRES if record.area.unit == "hectares" else 1
     )
     intersect = tract_set & set(record.aliquots or [])
-    intersect_value = available(len(intersect) * 40.0, record.source_id)
+    intersect_value = available(
+        len(intersect) * QUARTER_QUARTER_ACRES, record.source_id
+    )
     kind: Literal["missing_geometry", "non_intersecting"] | None
-    if record.aliquots is None:
+    if not record.aliquots:
         kind, detail = (
             "missing_geometry",
             "Geometry is unavailable; excluded from rollup.",
@@ -96,6 +110,19 @@ def _inspect_record(
             )
         )
     area_value, uncertain = _check_area(record, area, intersect, exceptions)
+    # A located parcel supplies public-record coverage, not a lease conclusion.
+    if intersect and record.record_type == "parcel":
+        uncertain = True
+        exceptions.append(
+            AcreageException(
+                kind="lease_status_not_established",
+                record_serials=[record.record_serial],
+                detail="Parcel geometry does not establish whether acreage is leased.",
+            )
+        )
+    # An unlocated lease may cover any tract cell; do not emit a definite split.
+    if not record.aliquots and record.record_type == "lease":
+        uncertain = True
     stale = _stale_status(record, source.retrieved_at.date())
     if stale:
         exceptions.append(
@@ -168,11 +195,15 @@ def _rollup(
         )
     values = dict(
         gross_area_acres=available(tract.gross_area_acres, "tract-input"),
-        federal_record_coverage_acres=available(len(coverage) * 40.0, source),
-        leased_acres=available(len(leased) * 40.0, source),
-        expired_or_nonleased_acres=available(len(nonleased) * 40.0, source),
+        federal_record_coverage_acres=available(
+            len(coverage) * QUARTER_QUARTER_ACRES, source
+        ),
+        leased_acres=available(len(leased) * QUARTER_QUARTER_ACRES, source),
+        expired_or_nonleased_acres=available(
+            len(nonleased) * QUARTER_QUARTER_ACRES, source
+        ),
         no_record_acres=SourcedValue(
-            value=tract.gross_area_acres - len(coverage) * 40.0,
+            value=tract.gross_area_acres - len(coverage) * QUARTER_QUARTER_ACRES,
             status="available",
             source_id="derived-no-record",
             note=(
@@ -184,7 +215,8 @@ def _rollup(
     if uncertain or leased & nonleased:
         for key in ("leased_acres", "expired_or_nonleased_acres"):
             values[key] = marker(
-                "Units or status prevent an unambiguous lease split.", "ambiguous"
+                "Geometry, units or status prevent an unambiguous lease split.",
+                "ambiguous",
             )
     return AcreageRollup(**values)
 
@@ -228,7 +260,7 @@ def _summarize_records(
                 AcreageException(
                     kind="overlap",
                     record_serials=[a, b],
-                    acres=len(left & right) * 40.0,
+                    acres=len(left & right) * QUARTER_QUARTER_ACRES,
                     detail="Double-claimed geometry; coverage union counts it once.",
                 )
             )
