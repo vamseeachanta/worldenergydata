@@ -88,6 +88,9 @@ temporary_exceptions:
     justification: Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
     allowed_paths:
       - reports/.gitkeep
+      - reports/gtm/README.md
+      - reports/gtm/operator_cost_benchmarking.html
+      - reports/gtm/operator_cost_benchmarking_facts.json
       - reports/IMO_GISIS_Executive_Report.html
       - reports/REPORT_SUMMARY.md
       - reports/anchor_field_demo_report.html
