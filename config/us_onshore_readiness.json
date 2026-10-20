@@ -123,8 +123,10 @@
       "source_id": "landman_TX",
       "state": "TX",
       "source": "Texas landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "land/lease/mineral + regulator",
       "coverage": [
+        "abstract_info",
+        "survey_plats",
         "lease",
         "mineral",
         "permits"
@@ -133,175 +135,176 @@
       "evidence": "config/landman.yml state_endpoints.TX; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured surveys, mineral leases and well permits; discover mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: abstract_info, survey_plats, mineral_leases, well_permits. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_NM",
       "state": "NM",
       "source": "New Mexico landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "land/lease + regulator",
       "coverage": [
+        "township_range",
         "lease",
-        "mineral",
-        "permits"
+        "wells"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.NM; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured township/range, state leases and well data; discover mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: township_range, state_leases, well_data. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_OK",
       "state": "OK",
       "source": "Oklahoma landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator + lease reference",
       "coverage": [
-        "lease",
-        "mineral",
-        "permits"
+        "permits",
+        "production",
+        "lease"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.OK; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured permits, production and lease references; discover mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_permits, production_data, lease_info. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_ND",
       "state": "ND",
       "source": "North Dakota landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator",
       "coverage": [
-        "lease",
-        "mineral",
-        "permits"
+        "wells",
+        "production",
+        "spacing_units"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.ND; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured wells, production and spacing units; discover lease records, mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_data, production, spacing_units. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_CO",
       "state": "CO",
       "source": "Colorado landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator",
       "coverage": [
-        "lease",
-        "mineral",
-        "permits"
+        "permits",
+        "production",
+        "spacing_orders"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.CO; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured permits, production and spacing orders; discover lease records, mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_permits, production, spacing_orders. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_WY",
       "state": "WY",
       "source": "Wyoming landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator",
       "coverage": [
-        "lease",
-        "mineral",
+        "wells",
+        "production",
         "permits"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.WY; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured wells, production and permits; discover lease records, mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_data, production, permits. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_LA",
       "state": "LA",
       "source": "Louisiana landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator + lease reference",
       "coverage": [
+        "wells",
+        "production",
         "lease",
-        "mineral",
-        "permits"
+        "coastal_permits"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.LA; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured wells, production, lease references and coastal permits; discover mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_data, production, lease_info, coastal_permits. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "landman_UT",
       "state": "UT",
       "source": "Utah landman GIS endpoints",
-      "domain": "land/lease/mineral",
+      "domain": "regulator",
       "coverage": [
-        "lease",
-        "mineral",
+        "wells",
+        "production",
         "permits"
       ],
       "status": "configured-only",
       "evidence": "config/landman.yml state_endpoints.UT; #909 Current evidence snapshot",
       "evidence_scope": "repository configuration",
       "observed_at": "2026-10-20T08:17:16+00:00",
-      "discovery_required": false,
+      "discovery_required": true,
       "priority": "next",
-      "reason": "Acquire tract, legal-description and lease links for regulator well joins.",
+      "reason": "Inspect configured wells, production and permits; discover lease records, mineral ownership and title instruments.",
       "issues": [
         "#911",
         "#462"
       ],
-      "limitations": "Endpoint configuration only; no downloaded landman records established. Data types vary by state; configured URLs are not current access evidence. No chain of title or mineral ownership qualification."
+      "limitations": "Configured data types: well_data, production, permits. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
     },
     {
       "source_id": "arkansas_regulator",

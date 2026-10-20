@@ -208,6 +208,10 @@ def render_markdown(rows: list[dict[str, Any]]) -> str:
         "| Revision | Date | Change and reason |",
         "| --- | --- | --- |",
         "| Initial | 2026-10-20 | Separate reported materialization from qualification. |",
+        (
+            "| 1 | 2026-10-20 | Align state endpoint domains and coverage with "
+            "configured data types; identify unsupported land records for discovery. |"
+        ),
         "",
         "## Sources",
         "",

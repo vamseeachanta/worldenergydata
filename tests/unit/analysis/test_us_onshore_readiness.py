@@ -37,7 +37,7 @@ def test_required_downloaded_and_derived_sources():
     assert all(row["completeness"] == "unknown" for row in rows.values())
 
 
-def test_all_configured_land_endpoints_and_county_references_are_separate():
+def test_all_configured_state_endpoints_and_county_references_are_separate():
     """Expected states come independently from config/landman.yml, state_endpoints."""
     config = yaml.safe_load((ROOT / "config/landman.yml").read_text())
     rows = build_matrix(load_catalog(CATALOG))
@@ -46,13 +46,68 @@ def test_all_configured_land_endpoints_and_county_references_are_separate():
     }
     assert set(land) == set(config["state_endpoints"])
     assert all(row["status"] == "configured-only" for row in land.values())
-    assert all(row["domain"] == "land/lease/mineral" for row in land.values())
     by_id = {row["source_id"]: row for row in rows}
     assert by_id["blm_mlrs"]["status"] == "configured-only"
     assert by_id["county_reference"]["status"] == "configured-only"
     assert by_id["county_title"]["status"] == "missing"
     assert by_id["texas_rrc"]["domain"] == "regulator"
     assert land["TX"]["source_id"] != by_id["texas_rrc"]["source_id"]
+
+
+# Hand classifications of config/landman.yml state_endpoints data_types:
+# mineral_leases supports lease/mineral coverage, not mineral ownership;
+# lease_info supports a lease reference, not a qualified title instrument.
+# Spacing units, spacing orders and coastal permits retain distinct meanings.
+@pytest.mark.parametrize(
+    "state,domain,coverage",
+    [
+        (
+            "TX",
+            "land/lease/mineral + regulator",
+            {"abstract_info", "survey_plats", "lease", "mineral", "permits"},
+        ),
+        ("NM", "land/lease + regulator", {"township_range", "lease", "wells"}),
+        ("OK", "regulator + lease reference", {"permits", "production", "lease"}),
+        ("ND", "regulator", {"wells", "production", "spacing_units"}),
+        ("CO", "regulator", {"permits", "production", "spacing_orders"}),
+        ("WY", "regulator", {"wells", "production", "permits"}),
+        (
+            "LA",
+            "regulator + lease reference",
+            {"wells", "production", "lease", "coastal_permits"},
+        ),
+        ("UT", "regulator", {"wells", "production", "permits"}),
+    ],
+)
+def test_state_endpoint_domains_and_coverage_follow_cited_types(
+    state, domain, coverage
+):
+    rows = {row["source_id"]: row for row in build_matrix(load_catalog(CATALOG))}
+    row = rows[f"landman_{state}"]
+    assert row["domain"] == domain
+    assert set(row["coverage"]) == coverage
+
+
+@pytest.mark.parametrize(
+    "state,gap",
+    [
+        ("TX", "Mineral ownership and title instruments"),
+        ("NM", "Mineral ownership and title instruments"),
+        ("OK", "Mineral ownership and title instruments"),
+        ("ND", "Lease records, mineral ownership and title instruments"),
+        ("CO", "Lease records, mineral ownership and title instruments"),
+        ("WY", "Lease records, mineral ownership and title instruments"),
+        ("LA", "Mineral ownership and title instruments"),
+        ("UT", "Lease records, mineral ownership and title instruments"),
+    ],
+)
+def test_state_endpoint_land_gaps_require_discovery(state, gap):
+    rows = {row["source_id"]: row for row in build_matrix(load_catalog(CATALOG))}
+    row = rows[f"landman_{state}"]
+    assert row["discovery_required"] is True
+    assert f"{gap} are not configured here and need discovery." in row["limitations"]
+    assert row["status"] == "configured-only"
+    assert row["qualification"] == "NOT_EVALUATED"
 
 
 def test_arkansas_gaps_topics_priorities_and_existing_issues():
