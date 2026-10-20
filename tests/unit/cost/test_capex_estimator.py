@@ -246,3 +246,88 @@ def test_model_selection_does_not_use_outer_label_or_calibration_labels():
     before, after = original.backtests[0], changed.backtests[0]
     for key in ("estimate", "lower", "upper", "selection", "method"):
         assert before[key] == after[key]
+
+
+@pytest.mark.parametrize("curved", [False, True])
+def test_calibration_extreme_does_not_extend_fitted_feature_range(curved):
+    target = snapshot(features={"well_count": Feature(value=1, available_on=DAY)})
+    result = CapexEstimator(corpus(curved), policy(split_salt="s4"), DAY).predict(
+        target
+    )
+    assert result.status == "NOT_EVALUATED"
+    assert "extrapolation beyond proper-training feature range" in result.reason
+    assert result.estimate is result.lower is result.upper is None
+
+
+@pytest.mark.parametrize("curved", [False, True])
+def test_outer_folds_record_extrapolation_against_their_own_fit_rows(curved):
+    rows = corpus(curved)
+    result = CapexEstimator(rows, policy(split_salt="s4"), DAY).predict(snapshot())
+    assert result.status == "modeled"
+    by_group = {r.snapshot.validation_group_id: r for r in rows}
+    for fold in result.backtests:
+        fitted = [
+            by_group[g].snapshot.features["well_count"].value
+            for g in fold["fit_groups"]
+        ]
+        held_out = by_group[fold["held_out"]].snapshot.features["well_count"].value
+        expected = ["well_count"] if not min(fitted) <= held_out <= max(fitted) else []
+        assert fold["extrapolation_features"] == expected
+    assert any(fold["extrapolation_features"] for fold in result.backtests)
+    assert any(not fold["extrapolation_features"] for fold in result.backtests)
+
+
+@pytest.mark.parametrize("curved", [False, True])
+def test_calibration_label_does_not_change_model_selection(curved):
+    rows = corpus(curved)
+    original = CapexEstimator(rows, policy(), DAY).predict(snapshot())
+    group = original.calibration_groups[0]
+    changed_rows = [
+        (
+            r.model_copy(update={"amount": r.amount * 10})
+            if r.snapshot.validation_group_id == group
+            else r
+        )
+        for r in rows
+    ]
+    changed = CapexEstimator(changed_rows, policy(), DAY).predict(snapshot())
+    assert changed.status == original.status == "modeled"
+    for key in ("selection", "method", "estimate", "model_parameters", "fit_groups"):
+        assert getattr(changed, key) == getattr(original, key)
+
+
+@pytest.mark.parametrize(
+    "amount, displayed", [(0.01, "&lt;0.1"), (0.0, "0.0"), (-0.01, "&gt;-0.1")]
+)
+def test_report_distinguishes_small_costs_from_true_zero(amount, displayed):
+    result = CapexEstimator(corpus(), policy(), DAY).predict(snapshot())
+    result = replace(result, estimate=amount, lower=amount, upper=amount)
+    result.backtests[0].update(observed=amount, estimate=amount)
+    reconciliation = dict(
+        project_id="target",
+        relation="overlap",
+        bottom_up=amount,
+        lower=amount,
+        upper=amount,
+        variance=amount,
+    )
+    report = render_report(
+        [result], revision="initial", issued_on=DAY, reconciliations=[reconciliation]
+    )
+    assert (
+        f"<td>{displayed}</td>"
+        in report.split("<h2>Predictions</h2>")[1].split("<h2>")[0]
+    )
+    assert (
+        f"<td>{displayed}</td>"
+        in report.split("<h2>Known-project backtests</h2>")[1].split("<h2>")[0]
+    )
+    assert (
+        f"<td>{displayed}</td>"
+        in report.split("<h2>Reconciliation</h2>")[1].split("<h2>")[0]
+    )
+    assert (
+        f"&quot;estimate&quot;: &quot;{displayed}&quot;" in report
+        if amount
+        else "&quot;estimate&quot;: 0.0" in report
+    )

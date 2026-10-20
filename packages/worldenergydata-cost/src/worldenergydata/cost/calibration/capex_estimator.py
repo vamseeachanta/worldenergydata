@@ -126,7 +126,7 @@ def _select(rows, names, policy):
     return degree, {str(k): v if math.isfinite(v) else None for k, v in scores.items()}
 
 
-def _procedure(rows, target, names, policy):
+def _procedure(rows, target, names, policy, *, retrospective=False):
     """Outcome-independent hash partition; salt shall be fixed before evaluation.
 
     Split-conformal marginal coverage requires exchangeable projects. A hash
@@ -142,6 +142,16 @@ def _procedure(rows, target, names, policy):
     proper = ordered[policy.calibration_projects :]
     if len(calibration) != policy.calibration_projects:
         raise ValueError("insufficient calibration projects")
+    if not proper:
+        raise ValueError("insufficient training projects")
+    x = _features([r.snapshot for r in proper], names)
+    requested = _features([target], names)[0]
+    outside = (requested < x.min(axis=0)) | (requested > x.max(axis=0))
+    extrapolation_features = [name for name, flag in zip(names, outside) if flag]
+    if extrapolation_features and not retrospective:
+        raise ValueError(
+            "target requires extrapolation beyond proper-training feature range"
+        )
     degree, scores = _select(proper, names, policy)
     model = _fit(proper, names, degree, policy.min_training_projects)
     predicted = _predict_log(model, [r.snapshot for r in calibration], names)
@@ -159,6 +169,7 @@ def _procedure(rows, target, names, policy):
         selection=scores,
         fit_groups=[r.snapshot.validation_group_id for r in proper],
         calibration_groups=[r.snapshot.validation_group_id for r in calibration],
+        extrapolation_features=extrapolation_features,
         model_parameters=dict(
             feature_center=model[0].tolist(),
             feature_scale=model[1].tolist(),
@@ -236,12 +247,6 @@ class CapexEstimator:
     def _evaluate(self, result, target, rows, names):
         if not names or not rows:
             raise ValueError("insufficient comparable evidence or available features")
-        x = _features([r.snapshot for r in rows], names)
-        requested = _features([target], names)[0]
-        if ((requested < x.min(axis=0)) | (requested > x.max(axis=0))).any():
-            raise ValueError(
-                "target requires extrapolation beyond comparable feature range"
-            )
         for i, row in enumerate(rows):
             fold = dict(
                 held_out=row.snapshot.validation_group_id,
@@ -253,7 +258,11 @@ class CapexEstimator:
             try:
                 fold.update(
                     _procedure(
-                        rows[:i] + rows[i + 1 :], row.snapshot, names, self.policy
+                        rows[:i] + rows[i + 1 :],
+                        row.snapshot,
+                        names,
+                        self.policy,
+                        retrospective=True,
                     )
                 )
                 fold["status"] = "modeled"
@@ -379,7 +388,13 @@ def render_report(
         return f"<table><thead><tr>{head}</tr></thead><tbody>{body}</tbody></table>"
 
     def number(value):
-        return "Not Evaluated" if value is None else f"{value:.1f}"
+        if value is None:
+            return "Not Evaluated"
+        if 0 < value < 0.1:
+            return "<0.1"
+        if -0.1 < value < 0:
+            return ">-0.1"
+        return f"{value:.1f}"
 
     predictions, backtests, details = [], [], []
     for result in results:
@@ -418,7 +433,7 @@ def render_report(
                     "errors",
                 }:
                     return f"{value * 100:.1f}%"
-                return round(value, 1)
+                return number(value) if 0 < abs(value) < 0.1 else round(value, 1)
             if isinstance(value, dict):
                 return {k: rounded(v, k) for k, v in value.items()}
             if isinstance(value, (list, tuple)):

@@ -72,7 +72,11 @@ separately and is not a guarantee for a particular region or project.
 Outer errors, failure cases and counts are reported overall and by region and
 architecture. Any failed outer fold blocks a modeled target result. Supplied
 validation limits, finite intervals, identifiable fits and target features within
-the comparable coordinate ranges are required. Coordinate range checks do not
+the proper-training coordinate ranges are required; calibration rows do not extend
+those ranges. Each retrospective outer fold records `extrapolation_features`
+against its own proper-training rows. These folds remain in the validation metrics,
+including extrapolating extreme holdouts; the flag does not authorize extrapolation
+for a target prediction. Coordinate range checks do not
 establish multivariate support. Holdouts are retrospective at the common training
 cutoff, not rolling historical forecasts. Every training label must already have
 been disclosed by that cutoff, which cannot follow the target prediction date.
@@ -87,6 +91,10 @@ log-cost relation has zero residual in exact arithmetic. For a target with
 `x=2`, `ln(C)=1+2/10=1.2`, hence the answer is `exp(1.2)`, displayed as **3.3
 currency million**. Exact-arithmetic interval endpoints equal the answer;
 floating-point roundoff may create a small interval.
+
+Positive report values below 0.1 currency million are displayed as `<0.1`,
+and negative reconciliation differences above -0.1 as `>-0.1`; a true zero
+is displayed as `0.0`. Machine-readable results retain numeric precision.
 
 The executable version is
 `tests/unit/cost/test_capex_estimator.py::test_deterministic_prediction_matches_hand_calculated_line`.
