@@ -136,57 +136,29 @@
   },
   "nightly.yml": {
     "name": "Nightly",
-    "on": {
-      "schedule": [
-        {
-          "cron": "0 2 * * *"
-        }
-      ],
-      "workflow_dispatch": ""
-    },
     "jobs": {
       "full-test-suite": {
-        "name": "Full Test Suite",
-        "if": null
+        "name": "Full Test Suite"
       },
       "dependency-audit": {
-        "name": "Dependency Audit",
-        "if": null
+        "name": "Dependency Audit"
       },
       "performance-benchmark": {
-        "name": "Performance Benchmark",
-        "if": null
+        "name": "Performance Benchmark"
       },
       "notify-failure": {
-        "name": "Notify on Failure",
-        "if": "failure()"
+        "name": "Notify on Failure"
       }
     }
   },
   "pages.yml": {
     "name": "Deploy Data Outputs to Pages",
-    "on": {
-      "push": {
-        "branches": [
-          "main"
-        ],
-        "paths": [
-          "reports/**",
-          "site_assets/**",
-          "scripts/build_pages.py",
-          ".github/workflows/pages.yml"
-        ]
-      },
-      "workflow_dispatch": ""
-    },
     "jobs": {
       "build": {
-        "name": null,
-        "if": null
+        "name": null
       },
       "deploy": {
-        "name": null,
-        "if": null
+        "name": null
       }
     }
   },
@@ -231,58 +203,24 @@
   },
   "release.yml": {
     "name": "Release",
-    "on": {
-      "push": {
-        "tags": [
-          "v*.*.*"
-        ]
-      },
-      "workflow_dispatch": {
-        "inputs": {
-          "version": {
-            "description": "Version to release (e.g., 1.0.0)",
-            "required": "true",
-            "type": "string"
-          },
-          "publish_pypi": {
-            "description": "Publish to PyPI",
-            "required": "true",
-            "type": "boolean",
-            "default": "true"
-          },
-          "publish_testpypi": {
-            "description": "Publish to Test PyPI first",
-            "required": "true",
-            "type": "boolean",
-            "default": "true"
-          }
-        }
-      }
-    },
     "jobs": {
       "validate": {
-        "name": "Validate Release",
-        "if": null
+        "name": "Validate Release"
       },
       "test": {
-        "name": "Run Tests",
-        "if": null
+        "name": "Run Tests"
       },
       "build": {
-        "name": "Build Package",
-        "if": null
+        "name": "Build Package"
       },
       "publish-testpypi": {
-        "name": "Publish to Test PyPI",
-        "if": "(github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||\n(github.event_name == 'workflow_dispatch' && github.event.inputs.publish_testpypi == 'true')\n"
+        "name": "Publish to Test PyPI"
       },
       "publish-pypi": {
-        "name": "Publish to PyPI",
-        "if": "always() &&\nneeds.build.result == 'success' &&\n((github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||\n (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_pypi == 'true'))\n"
+        "name": "Publish to PyPI"
       },
       "github-release": {
-        "name": "Create GitHub Release",
-        "if": "always() &&\nneeds.build.result == 'success' &&\ngithub.event_name == 'push' &&\nstartsWith(github.ref, 'refs/tags/')\n"
+        "name": "Create GitHub Release"
       }
     }
   }
