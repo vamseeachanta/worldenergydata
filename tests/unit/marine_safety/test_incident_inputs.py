@@ -153,7 +153,7 @@ def test_manifest_has_explicit_publication_limitations():
 
 
 def test_provenance_report_marks_unavailable_counts(inputs):
-    root, _, manifest = inputs
+    _root, _, manifest = inputs
     fetcher = module("incident_inputs")
     manifest["counts"] = "NOT_EVALUATED"
     html = fetcher.provenance_html(manifest)
@@ -167,23 +167,24 @@ def test_provenance_report_marks_unavailable_counts(inputs):
 def test_successful_fetch_counts_and_readback(inputs, tmp_path, monkeypatch):
     import io
 
+    from requests import Response
+    from urllib3.response import HTTPResponse
+
     root, _, fixture_manifest = inputs
     fetcher = module("incident_inputs")
     payloads = iter(
         (root / source["path"]).read_bytes() for source in fixture_manifest["sources"]
     )
 
-    class Response(io.BytesIO):
-        status_code = 200
+    def download(*args, **kwargs):
+        response = Response()
+        response.status_code = 200
+        response.raw = HTTPResponse(
+            body=io.BytesIO(next(payloads)), preload_content=False
+        )
+        return response
 
-        def raise_for_status(self):
-            pass
-
-        @property
-        def raw(self):
-            return self
-
-    monkeypatch.setattr(fetcher, "get", lambda *a, **kw: Response(next(payloads)))
+    monkeypatch.setattr(fetcher, "get", download)
     external = tmp_path / "archive"
     output = tmp_path / "fetched.json"
     manifest = fetcher.fetch_inputs(external, output)
@@ -344,6 +345,75 @@ def test_transient_failure_reuses_only_verified_archive(inputs, monkeypatch, dam
     assert json.loads(manifest_path.read_text()) == result
 
 
+@pytest.mark.parametrize("read_error", [TimeoutError, OSError])
+@pytest.mark.parametrize("reuse_archive", [False, True])
+def test_body_read_failure_records_attempts_and_reuses_verified_archives(
+    inputs, monkeypatch, read_error, reuse_archive
+):
+    import io
+
+    from requests import Response
+    from urllib3.response import HTTPResponse
+
+    root, manifest_path, manifest = inputs
+    fetcher = module("incident_inputs")
+    for source, definition in zip(manifest["sources"], fetcher.SOURCES):
+        source["url"] = definition["url"]
+    if reuse_archive:
+        manifest_path.write_text(json.dumps(manifest))
+    else:
+        manifest_path = root / "new-manifest.json"
+    calls = []
+    responses = []
+
+    class InterruptedBody(io.BytesIO):
+        def read(self, *args, **kwargs):
+            if self.tell():
+                raise read_error("Response body interrupted")
+            return super().read(*args, **kwargs)
+
+    def interrupted_download(url, **kwargs):
+        calls.append(url)
+        response = Response()
+        response.status_code = 200
+        response.raw = HTTPResponse(
+            body=InterruptedBody(b"partial response\n"), preload_content=False
+        )
+        responses.append(response)
+        return response
+
+    monkeypatch.setattr(fetcher, "get", interrupted_download)
+    result = fetcher.fetch_inputs(root, manifest_path)
+
+    assert calls == [definition["url"] for definition in fetcher.SOURCES]
+    assert json.loads(manifest_path.read_text()) == result
+    assert all(response.raw.closed for response in responses)
+    assert not (root / "sha256").exists()
+    for source, previous in zip(result["sources"], manifest["sources"]):
+        assert source["error"] == "Network request failed or timed out"
+        assert source["response_layer"] == "network"
+        assert source["attempted_at_utc"]
+        assert source["attempts"] == [
+            {
+                "user_agent": "requests default",
+                "http_status": 200,
+                "response_layer": "network",
+            }
+        ]
+        assert fetcher.sha256(root / previous["path"]) == previous["sha256"]
+        for key in ("status", "path", "sha256", "row_count", "download_date_utc"):
+            if reuse_archive:
+                assert source[key] == previous[key]
+            elif key != "path":
+                assert source[key] == "NOT_EVALUATED"
+    if reuse_archive:
+        assert result["counts"] == manifest["counts"]
+        assert fetcher.load_inputs(root, manifest_path)["counts"] == manifest["counts"]
+    else:
+        assert result["counts"] == "NOT_EVALUATED"
+        assert result["readiness"] == "unavailable"
+
+
 def test_revision_history_is_manifest_driven_and_escaped(inputs):
     _, _, manifest = inputs
     manifest["revisions"] = [
@@ -364,20 +434,11 @@ def test_forbidden_retried_once_with_explicit_agent(
     import io
 
     from requests import HTTPError, Response
+    from urllib3.response import HTTPResponse
 
     root, _, manifest = inputs
     fetcher = module("incident_inputs")
     calls = []
-
-    class Download(io.BytesIO):
-        status_code = 200
-
-        def raise_for_status(self):
-            pass
-
-        @property
-        def raw(self):
-            return self
 
     def download(url, **kwargs):
         calls.append((url, kwargs))
@@ -391,7 +452,12 @@ def test_forbidden_retried_once_with_explicit_agent(
         source = next(
             item for item in manifest["sources"] if item["id"] == definition["id"]
         )
-        return Download((root / source["path"]).read_bytes())
+        response = Response()
+        response.status_code = 200
+        response.raw = HTTPResponse(
+            body=io.BytesIO((root / source["path"]).read_bytes()), preload_content=False
+        )
+        return response
 
     monkeypatch.setattr(fetcher, "get", download)
     result = fetcher.fetch_inputs(root / "new", root / "new.json")

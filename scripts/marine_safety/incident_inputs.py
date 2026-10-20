@@ -206,9 +206,9 @@ def download_input(source, temporary):
                 record.update(http_status=status, response_layer=layer)
                 source["response_layer"] = layer
                 response.raise_for_status()
-                response.raw.decode_content = True
                 with temporary.open("wb") as stream:
-                    shutil.copyfileobj(response.raw, stream)
+                    for chunk in response.iter_content(chunk_size=64 * 1024):
+                        stream.write(chunk)
             return
         except HTTPError as error:
             status = error.response.status_code
