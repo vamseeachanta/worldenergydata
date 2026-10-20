@@ -14,3 +14,10 @@ The curated dataset (construction vessels, drilling rigs, riser components;
 is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
+
+## Riser metadata
+
+Riser joints support drilling, lift/mining and production classes, optional
+auxiliary-line geometry and a derived buoyancy OD ratio. See the
+[field definitions and worked example](../../docs/vessel_fleet/riser_metadata.md)
+for the catalog basis and assessment limits.

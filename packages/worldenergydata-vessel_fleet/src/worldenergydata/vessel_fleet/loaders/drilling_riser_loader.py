@@ -14,6 +14,11 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
+from worldenergydata.vessel_fleet.models.drilling_riser import (
+    RiserClass,
+    RiserJointEntry,
+)
+from worldenergydata.vessel_fleet.schemas.drilling_riser import RiserJointSchema
 
 logger = logging.getLogger(__name__)
 
@@ -63,8 +68,7 @@ def _validate_row_widths(content: str) -> None:
             continue
         if len(row) != expected:
             raise ValueError(
-                f"CSV line {line_number}: expected {expected} fields, "
-                f"actual {len(row)}"
+                f"CSV line {line_number}: expected {expected} fields, actual {len(row)}"
             )
 
 
@@ -137,6 +141,40 @@ class DrillingRiserLoader:
     def get_riser_joints(self) -> pd.DataFrame:
         """Get all riser joints."""
         return self.get_by_type("riser_joint")
+
+    def get_riser_joint_entries(
+        self,
+        riser_class: RiserClass | None = None,
+    ) -> list[RiserJointEntry]:
+        """Validate joint records and return typed entries, optionally by class.
+
+        Existing CSVs need no additional columns. Empty optional class and
+        bundle cells default to drilling and no auxiliary lines. Tabular APIs
+        retain their original columns and values.
+        """
+        entries = []
+        for row in self.get_riser_joints().to_dict(orient="records"):
+            values = {
+                key: None if pd.isna(value) else value
+                for key, value in row.items()
+                if key in RiserJointSchema.model_fields
+            }
+            try:
+                record = RiserJointSchema.model_validate(values)
+            except ValueError as exc:
+                raise ValueError(
+                    f"Invalid riser joint {row['COMPONENT_ID']}: {exc}"
+                ) from exc
+            if riser_class is None or record.RISER_CLASS == riser_class:
+                entries.append(
+                    RiserJointEntry(
+                        **{
+                            name.lower(): getattr(record, name)
+                            for name in RiserJointSchema.model_fields
+                        }
+                    )
+                )
+        return entries
 
     def get_bops(self) -> pd.DataFrame:
         """Get all BOPs."""

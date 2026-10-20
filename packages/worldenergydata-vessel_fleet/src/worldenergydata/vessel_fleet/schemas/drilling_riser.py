@@ -2,18 +2,33 @@
 
 from __future__ import annotations
 
+import json
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from worldenergydata.vessel_fleet.models.drilling_riser import (
+    AuxiliaryLineEntry,
+    RiserClass,
+)
 
 
 class RiserJointSchema(BaseModel):
-    """Schema for a marine drilling riser joint.
+    """Schema for a drilling, lift/mining or production riser joint.
 
     Field names are UPPERCASE to match tabular column headers.
-    Units: OD/ID/WT in inches, lengths in feet, weights in kips.
+    Units: OD/ID/WT in inches, joint lengths in feet, weights in kips;
+    design water depth is in metres. OD/ID/WT describe the main tube.
+
+    GRADE preserves the source designation. The catalog mixes line-pipe
+    designations (API Spec 5L) and drill-pipe designations (API Spec 5DP);
+    they are separate vocabularies, not interchangeable material properties.
+    See the API 2025 Publications Catalog, Tubular Goods entries cited below.
     """
 
+    # GRADE is source text, not a common strength vocabulary. API's public
+    # 2025 Publications Catalog, Tubular Goods, distinguishes Spec 5L (Line
+    # Pipe, 46th edition, 2018) from Spec 5DP (Drill Pipe, 2nd edition, 2020).
+    # No equivalence or material property follows from a designation alone.
     model_config = ConfigDict(str_strip_whitespace=True)
 
     COMPONENT_ID: str
@@ -35,6 +50,34 @@ class RiserJointSchema(BaseModel):
 
     DATA_SOURCE: Optional[str] = None
     NOTES: Optional[str] = None
+
+    RISER_CLASS: RiserClass = "drilling"
+    AUXILIARY_LINES: tuple[AuxiliaryLineEntry, ...] = ()
+    # Depth is an input describing intended use, not a qualified depth rating.
+    DESIGN_WATER_DEPTH_M: float | None = Field(default=None, gt=0, allow_inf_nan=False)
+    INTERNAL_MEDIUM: str | None = None
+
+    @field_validator("RISER_CLASS", mode="before")
+    @classmethod
+    def _legacy_class(cls, value: object) -> object:
+        if isinstance(value, str):
+            value = value.strip()
+        return "drilling" if value is None or value == "" else value
+
+    @field_validator("AUXILIARY_LINES", mode="before")
+    @classmethod
+    def _bundle_json(cls, value: object) -> object:
+        """Optional CSV cell: JSON array of line objects with lower-case keys."""
+        if value is None or (isinstance(value, str) and not value.strip()):
+            return ()
+        return json.loads(value) if isinstance(value, str) else value
+
+    @field_validator("DESIGN_WATER_DEPTH_M", "INTERNAL_MEDIUM", mode="before")
+    @classmethod
+    def _blank_metadata(cls, value: object) -> object:
+        if isinstance(value, str) and not value.strip():
+            return None
+        return value
 
     @field_validator(
         "MANUFACTURER",
@@ -80,13 +123,14 @@ class RiserJointSchema(BaseModel):
         "WALL_THICKNESS_IN",
         "LENGTH_FT",
         "WEIGHT_AIR_KIPS",
-        "WEIGHT_WATER_KIPS",
         "BUOYANCY_COVERAGE_PCT",
         "BUOYANCY_OD_IN",
         "PRESSURE_RATING_PSI",
     )
     @classmethod
     def _validate_non_negative(cls, v: Optional[float]) -> Optional[float]:
+        # Submerged weight is deliberately signed: packaged catalog record
+        # RJ-21-75-BUOY has net uplift (WEIGHT_WATER_KIPS = -4.2).
         if v is not None and v < 0:
             raise ValueError("Value must be >= 0")
         return v

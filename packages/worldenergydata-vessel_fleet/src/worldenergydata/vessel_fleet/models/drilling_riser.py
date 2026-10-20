@@ -3,14 +3,43 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
+from math import isfinite
+from typing import Literal, Optional
 
 from worldenergydata.vessel_fleet.constants import FT_TO_M
+
+RiserClass = Literal["drilling", "lift", "production"]
+
+
+@dataclass(frozen=True)
+class AuxiliaryLineEntry:
+    """One strapped line; dimensions and duty are caller-supplied inputs.
+
+    No line placement, bundle envelope, pressure or erosion rating is implied.
+    """
+
+    function: str
+    od_in: float
+    wall_thickness_in: float
+
+    def __post_init__(self) -> None:
+        if not self.function.strip():
+            raise ValueError("Auxiliary line function must be populated")
+        dimensions = (self.od_in, self.wall_thickness_in)
+        if any(not isfinite(value) or value <= 0 for value in dimensions):
+            raise ValueError("Auxiliary line dimensions must be finite and positive")
+        # Hollow circular tube identity: ID = OD - wall - wall > 0.
+        if self.od_in - self.wall_thickness_in - self.wall_thickness_in <= 0:
+            raise ValueError("Auxiliary line wall must leave a positive bore")
 
 
 @dataclass
 class RiserJointEntry:
-    """A marine drilling riser joint."""
+    """A top-supported riser joint, optionally with strapped auxiliary lines.
+
+    OD refers to the main tube, not the full bundle or connection envelope.
+    Legacy records default to the drilling class.
+    """
 
     component_id: str
     component_type: str = "riser_joint"
@@ -32,6 +61,11 @@ class RiserJointEntry:
     data_source: Optional[str] = None
     notes: Optional[str] = None
 
+    riser_class: RiserClass = "drilling"
+    auxiliary_lines: tuple[AuxiliaryLineEntry, ...] = ()
+    design_water_depth_m: float | None = None
+    internal_medium: str | None = None
+
     @property
     def od_m(self) -> Optional[float]:
         if self.od_in is None:
@@ -47,6 +81,20 @@ class RiserJointEntry:
     @property
     def has_buoyancy(self) -> bool:
         return (self.buoyancy_coverage_pct or 0) > 0
+
+    @property
+    def buoyancy_od_ratio(self) -> float | None:
+        """Buoyancy OD / main-tube OD, as defined in issue #1138 (2026).
+
+        Returns None for bare joints or missing/nonfinite/nonpositive inputs.
+        Catalog observations do not establish an industry acceptance limit or
+        full bundle clearance. No rounding is applied to the derived value.
+        """
+        values = (self.od_in, self.buoyancy_od_in, self.buoyancy_coverage_pct)
+        if any(value is None or not isfinite(value) or value <= 0 for value in values):
+            return None
+        ratio = self.buoyancy_od_in / self.od_in
+        return ratio if isfinite(ratio) else None
 
     @property
     def is_pup_joint(self) -> bool:
