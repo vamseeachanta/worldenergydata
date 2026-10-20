@@ -251,6 +251,66 @@ class TestNSTAClientDownload:
         ] == expected_counts
         pd.testing.assert_frame_equal(df, client.load_cached(year=2022))
 
+    @pytest.mark.parametrize(
+        "invalid_feature,server_limit,max_records,expected_offsets,expected_counts",
+        [
+            ({"attributes": None}, 4, 4, [0, 4], [4, 1]),
+            (None, 4, 4, [0, 4], [4, 1]),
+            ({"attributes": None}, 4, None, [0, 4], [2000, 2000]),
+            ({"attributes": None}, 2, 4, [0, 2, 4], [4, 3, 1]),
+        ],
+    )
+    @patch("worldenergydata.ukcs.production.nsta_client.requests")
+    def test_mixed_validity_pages_advance_by_raw_feature_count(
+        self,
+        mock_requests,
+        tmp_path,
+        invalid_feature,
+        server_limit,
+        max_records,
+        expected_offsets,
+        expected_counts,
+    ):
+        """Hand calculation for five synthetic entries, with entry 2 invalid.
+
+        A four-entry page consumes positions 0..3 but retains IDs 1, 3, 4.
+        The next offset is 4 and a four-row cap leaves 4 - 3 = 1 row.
+        Two-entry pages consume offsets 0, 2, 4 and retain 1, 2, 1 rows;
+        remaining counts are 4, 3, 1. Uncapped requests keep count 2000.
+        Every case returns and caches exactly IDs 1, 3, 4, 5.
+        """
+        client = NSTAClient(cache_dir=str(tmp_path))
+        features = [
+            {"attributes": {"OBJECTID": 1}},
+            invalid_feature,
+            *[{"attributes": {"OBJECTID": row_id}} for row_id in [3, 4, 5]],
+        ]
+
+        def query_page(url, *, params, timeout):
+            offset = params["resultOffset"]
+            count = min(server_limit, params["resultRecordCount"])
+            response = MagicMock()
+            response.json.return_value = {
+                "features": features[offset : offset + count],
+                "exceededTransferLimit": offset + count < len(features),
+            }
+            return response
+
+        mock_requests.get.side_effect = query_page
+
+        df = client.download(year=2022, max_records=max_records, force_refresh=True)
+
+        assert df["OBJECTID"].tolist() == [1, 3, 4, 5]
+        assert [
+            call.kwargs["params"]["resultOffset"]
+            for call in mock_requests.get.call_args_list
+        ] == expected_offsets
+        assert [
+            call.kwargs["params"]["resultRecordCount"]
+            for call in mock_requests.get.call_args_list
+        ] == expected_counts
+        pd.testing.assert_frame_equal(df, client.load_cached(year=2022))
+
     @pytest.mark.parametrize("exceeded_transfer_limit", [False, True])
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
     def test_empty_page_stops_pagination(

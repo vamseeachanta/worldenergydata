@@ -127,9 +127,10 @@ class NSTAClient:
             )
             response.raise_for_status()
             payload = response.json()
+            features = payload.get("features", [])
             page_rows = [
                 feature["attributes"]
-                for feature in payload.get("features", [])
+                for feature in features
                 if isinstance(feature, dict)
                 and isinstance(feature.get("attributes"), dict)
             ]
@@ -139,8 +140,8 @@ class NSTAClient:
             # ArcGIS REST API, Query (Feature Service/Layer), resultOffset and
             # resultRecordCount (online reference, accessed 2026-10-19):
             # https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
-            # The requested count is an upper bound; advance by consumed rows.
-            offset += len(page_rows)
+            # The requested count is an upper bound; advance by raw features.
+            offset += len(features)
         df = pd.DataFrame(rows)
         cache_path = self.cache_dir / self._cache_key(year, dataset)
         df.to_csv(cache_path, index=False)
