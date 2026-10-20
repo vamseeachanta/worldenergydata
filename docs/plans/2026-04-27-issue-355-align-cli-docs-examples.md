@@ -11,11 +11,11 @@
 
 The public CLI and example documentation does not match the runtime surface:
 
-- `docs/CLI.md` and README document only `bsee`, `marine-safety`, and `fdas`.
-- `src/worldenergydata/cli/main.py` registers 15 sub-apps: `bsee`, `dashboard`, `eia`, `marine-safety`, `fdas`, `sodir`, `metocean`, `ndbc`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, and `forecast`.
+- `docs/CLI.md` and README document only `bsee`, `marine-safety`, and `project_economics`.
+- `src/worldenergydata/cli/main.py` registers 15 sub-apps: `bsee`, `dashboard`, `eia`, `marine-safety`, `project_economics`, `sodir`, `metocean`, `ndbc`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, and `forecast`.
 - `docs/COMMANDS.md` is unrelated to the worldenergydata CLI; it documents legacy propagated slash commands from `assetutilities`.
 - README Basic Usage mixes safe commands, data-required commands, and unsafe/unbounded scraping commands without labels.
-- `examples/fdas_complete_workflow.py` uses stale `src.worldenergydata.modules.fdas` imports related to #278.
+- `examples/project_economics_complete_workflow.py` uses stale `src.worldenergydata.modules.project_economics` imports related to #278.
 - `examples/validation_examples.py` imports a missing `validator_template`.
 - Several LLM examples can download ~1.6 GB on first run without sufficiently early script-level guardrails.
 
@@ -57,7 +57,7 @@ Critical findings from the audit:
 | `worldenergydata info` omits 4 sub-apps | `cli/main.py` rows vs registrations | Coordinate with #354 or include small fix if approved. |
 | README commands are not safety-labelled | README Basic Usage | Add safety labels and a cold-start safe sequence. |
 | `docs/COMMANDS.md` is unrelated | file header says custom slash commands / assetutilities | Add a banner clarifying it is not runtime CLI docs; no rename/delete in this issue. |
-| FDAS complete workflow has stale imports | `examples/fdas_complete_workflow.py` | Rewrite to canonical `worldenergydata.fdas.*` paths or quarantine with warning. |
+| project_economics complete workflow has stale imports | `examples/project_economics_complete_workflow.py` | Rewrite to canonical `worldenergydata.project_economics.*` paths or quarantine with warning. |
 | validation example imports missing file | `examples/validation_examples.py` | Delete, rebuild, or mark broken pending source. |
 | LLM examples download ~1.6 GB | audit + example text | Add early warnings and opt-in flags/dry-run behavior. |
 
@@ -92,7 +92,7 @@ Use one table across README, `docs/CLI.md`, and examples:
   - `worldenergydata --help`
   - `worldenergydata info`
   - `worldenergydata version`
-  - FDAS pure calculations/classification.
+  - project_economics pure calculations/classification.
 - Label existing README Basic Usage commands individually.
 - Mark `bsee analyze/report/data` as data-required.
 - Mark `bsee refresh` and `marine-safety scrape` as unsafe/unbounded unless users provide deliberate bounded options.
@@ -106,7 +106,7 @@ Use one table across README, `docs/CLI.md`, and examples:
   - safety classification,
   - data/network/credential prerequisites,
   - examples limited to safe or clearly labelled commands.
-- Existing detailed sections for `bsee`, `marine-safety`, and `fdas` should gain safety labels rather than being rewritten from scratch.
+- Existing detailed sections for `bsee`, `marine-safety`, and `project_economics` should gain safety labels rather than being rewritten from scratch.
 - Add missing sections for `dashboard`, `eia`, `sodir`, `metocean`, `ndbc`, `texas-rrc`, `canada`, `mexico-cnh`, `landman`, `lng-terminals`, `safety-analysis`, and `forecast`.
 - If command detail is uncertain, document `worldenergydata <module> --help` as the authoritative runtime help and mark examples as pending live smoke.
 
@@ -117,7 +117,7 @@ Add a top-of-file banner: "This document describes custom slash commands / agent
 ### Phase 4 — Examples cleanup
 
 - Add `examples/README.md` with safety matrix for all examples.
-- `examples/fdas_complete_workflow.py`: mark/quarantine as `stale/broken` in `examples/README.md` with link to #278; only rewrite imports if a focused smoke test proves the canonical API works.
+- `examples/project_economics_complete_workflow.py`: mark/quarantine as `stale/broken` in `examples/README.md` with link to #278; only rewrite imports if a focused smoke test proves the canonical API works.
 - `examples/validation_examples.py`: mark/quarantine as `stale/broken` in `examples/README.md`; rebuild is a future issue unless a minimal real `worldenergydata.validation` replacement is obvious and test-backed.
 - LLM examples: add early warning/opt-in guard before model-loading paths in exactly these files: `examples/llm_classification_demo.py`, `examples/marine_safety/batch_llm_processing.py`, `examples/marine_safety/llm_detection_example.py`; document approximate first-run download size.
 - Ensure generated example outputs are written under a temp/output path and not repo root unless documented.
@@ -133,11 +133,11 @@ Add static pytest/docs tests as the required smoke contract. Optional runtime sm
   - `worldenergydata version`
   - `worldenergydata info`
   - exclude `worldenergydata status` from required runtime smoke until its no-data behavior is confirmed after #353.
-- Pure FDAS commands:
-  - `fdas classify`
-  - `fdas calculate-npv`
-  - `fdas calculate-mirr`
-  - `fdas calculate-all`
+- Pure project_economics commands:
+  - `project_economics classify`
+  - `project_economics calculate-npv`
+  - `project_economics calculate-mirr`
+  - `project_economics calculate-all`
 - Example import-only/fixture-only commands where confirmed safe.
 
 The smoke contract must explicitly skip or assert-skip unsafe/data/credential commands.
@@ -150,7 +150,7 @@ The smoke contract must explicitly skip or assert-skip unsafe/data/credential co
 | `docs/CLI.md` | Expand coverage to every registered sub-app and add safety/prereq labels. |
 | `docs/COMMANDS.md` | Add banner disambiguating custom slash commands from runtime CLI; no rename/delete. |
 | `examples/README.md` | New safety matrix for examples. |
-| `examples/fdas_complete_workflow.py` | Optional trivial rewrite only if smoke-backed; otherwise classify stale in `examples/README.md`. |
+| `examples/project_economics_complete_workflow.py` | Optional trivial rewrite only if smoke-backed; otherwise classify stale in `examples/README.md`. |
 | `examples/validation_examples.py` | Classify stale in `examples/README.md`; rebuild only if minimal and test-backed. |
 | LLM example scripts | Add exact early opt-in guard before model loading. |
 | `tests/...` | Static pytest/docs tests for docs parity and safety classification. |
@@ -169,10 +169,10 @@ The smoke contract must explicitly skip or assert-skip unsafe/data/credential co
 5. `test_llm_examples_require_explicit_opt_in`
    - Static test that the three target LLM examples check `WORLDENERGYDATA_RUN_LLM_EXAMPLES` or equivalent before model pipeline execution.
 6. `test_stale_examples_are_not_presented_as_safe`
-   - FDAS/validation examples are rewritten or explicitly marked stale/quarantined.
+   - project_economics/validation examples are rewritten or explicitly marked stale/quarantined.
 7. Optional smoke execution after #353:
    - all help-only commands exit 0 within a bounded timeout,
-   - pure FDAS commands exit 0,
+   - pure project_economics commands exit 0,
    - unsafe/data/credential commands are skipped with explicit reason.
 
 ## Acceptance Criteria

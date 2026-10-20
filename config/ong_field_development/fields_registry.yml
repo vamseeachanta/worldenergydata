@@ -3,7 +3,7 @@
 # (worldenergydata.common.fields_registry, #755). Kept as the SOURCE of the
 # structured bsee area_blocks/leases + validated economics per field.
 meta:
-  source: aceengineercode boem_fields + worldenergydata lease_mapping_fdas + golden_baseline_v30
+  source: aceengineercode boem_fields + worldenergydata lease_mapping_project_economics + golden_baseline_v30
   discount_rate_annual: 0.1
   price_basis: EIA WTI historical deck
   validation: field economics reproduce golden_baseline_v30.yml to ~0.001%

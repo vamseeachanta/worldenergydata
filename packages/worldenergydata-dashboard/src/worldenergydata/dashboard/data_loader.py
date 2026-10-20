@@ -1,5 +1,5 @@
 """
-Dashboard data loader — BSEE production, platform, and FDAS incident data.
+Dashboard data loader — BSEE production, platform, and project_economics incident data.
 
 Each public function returns a pandas DataFrame with a guaranteed schema.
 When the real data files are absent, a synthetic sample is returned so the
@@ -146,9 +146,9 @@ def load_incident_data(
     data_dir: Optional[Path] = None,
 ) -> pd.DataFrame:
     """
-    Load FDAS incident severity data.
+    Load project_economics incident severity data.
 
-    Attempts to read from <data_dir>/modules/fdas/incidents.csv.
+    Attempts to read from <data_dir>/modules/project_economics/incidents.csv.
     Falls back to synthetic sample data when the file does not exist.
 
     Args:
@@ -160,7 +160,7 @@ def load_incident_data(
           SEVERITY, AREA_NAME, OPERATOR, DESCRIPTION
     """
     root = Path(data_dir) if data_dir is not None else _DEFAULT_DATA_ROOT
-    csv_path = root / "modules" / "fdas" / "incidents.csv"
+    csv_path = root / "modules" / "project_economics" / "incidents.csv"
 
     if csv_path.exists():
         try:
@@ -307,7 +307,7 @@ def _sample_platform_data(n_records: int = 60) -> pd.DataFrame:
 
 def _sample_incident_data(n_records: int = 150) -> pd.DataFrame:
     """
-    Generate synthetic FDAS incident data for heatmap visualisation.
+    Generate synthetic project_economics incident data for heatmap visualisation.
 
     Args:
         n_records: Number of rows to generate.

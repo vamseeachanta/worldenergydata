@@ -38,7 +38,7 @@ parallel analysis path.
 ### Parallel work check
 
 Planning-time worktree probes show other active worktrees for Texas RRC source
-catalog, Texas RRC refresh, FDAS, corpus datasets, pages, field equipment, and
+catalog, Texas RRC refresh, project_economics, corpus datasets, pages, field equipment, and
 autorun lanes. This issue will avoid those scopes. It will stay inside:
 
 - `src/worldenergydata/modules/state_regulators/colorado_ecmc/`

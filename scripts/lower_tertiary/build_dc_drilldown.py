@@ -38,7 +38,7 @@ from lower_tertiary.war_methodology import methodology_html
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
     REPO
-    / "docs/modules/bsee/analysis/production/FDAS_V30"
+    / "docs/modules/bsee/analysis/production/project_economics_V30"
     / "drilling_and_completion_days_v21_kc.csv"
 )
 BENCHMARK_CSV = (

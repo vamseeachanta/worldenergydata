@@ -1,5 +1,9 @@
 # Safety analysis module knowledge pack
 
+sweep: 18 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | safety_analysis |
@@ -166,7 +170,7 @@ Escalate tolerance changes, unsupported references and conflicting input evidenc
 | Optional runtime | sklearn, XGBoost, Hyperopt and joblib in safety-ml; torch, transformers and sentencepiece in safety-bert | [packages/worldenergydata-safety_analysis/pyproject.toml:L49-L62] |
 | Input collections | Five accepted incident-source IDs: bsee, osha, marine_safety, phmsa, epa_tri; files or SQLite passed to assembler loaders | [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/risk_index/data_assembler.py:L35-L51] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/risk_index/data_assembler.py:L386-L551] |
 | Shared services | Common logger, exception hierarchy and data-root resolver | [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/exceptions.py:L20-L24] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/config.py:L52-L58] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/adapters/base_adapter.py:L48-L55] |
-| Downstream CLI | Root CLI registers the safety-analysis sub-app | [src/worldenergydata/cli/main.py:L145-L149] |
+| Downstream CLI | Root CLI registers the safety-analysis sub-app | [src/worldenergydata/cli/main.py:L149-L153] |
 | Script consumer | Exploration script loads taxonomy modules from the package tree | [scripts/exploration/drilling_hse_patterns_analysis.py:L99-L134] |
 | Geohazard fixture | Recorded GeoJSON and provenance manifest used by offline parser/reproduction tests | [tests/unit/safety_analysis/geohazard/test_usgs.py:L216-L233] |
 

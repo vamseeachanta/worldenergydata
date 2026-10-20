@@ -37,5 +37,5 @@ validated_economics:
 public_metadata: {}
 provenance:
   boem_source: aceengineercode/config/ong_field_development/Shenandoah.yml
-  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_project_economics.yml
   economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

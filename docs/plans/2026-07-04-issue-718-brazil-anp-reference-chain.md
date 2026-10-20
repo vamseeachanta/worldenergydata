@@ -44,7 +44,7 @@ Current repo state:
 - `field_development.basin` already maps `region="brazil"` to a Brazil basin
   prior that favors FPSO and disfavors fixed jackets, spars, TLPs, and compliant
   towers.
-- FDAS #714/#715 are on main. `to_fdas_production` requires unified rows with
+- project_economics #714/#715 are on main. `to_project_economics_production` requires unified rows with
   `region`, `field_name`, `year`, `month`, `oil_bbl`, `gas_mcf`, and `water_bbl`.
 
 Official direct-source evidence:
@@ -113,7 +113,7 @@ Runtime baseline:
   `build_brazil_field_concept`.
 - New `packages/worldenergydata-brazil_anp/src/worldenergydata/brazil_anp/reference_chain.py`
   will run one fixture Brazil field through production normalization, concept
-  screening, and FDAS cashflow plumbing.
+  screening, and project_economics cashflow plumbing.
 - Tests will pin the source resolver, current CSV schema bridge, unified adapter
   bridge, scheduler refresh behavior, Brazil FieldConcept mapping, and one-field
   reference-chain output.
@@ -125,16 +125,16 @@ This slice will prove one Brazil field through:
 1. Official ANP direct-source resolution for production-by-well monthly files.
 2. Current ANP CSV normalization from well rows to field-month totals.
 3. `BrazilAnpAdapter.fetch` using fixture-backed real ANP loader output.
-4. `to_fdas_production` producing the FDAS monthly-production schema.
+4. `to_project_economics_production` producing the project_economics monthly-production schema.
 5. Brazil `FieldMetaMapping` producing a `FieldConcept` with `region="brazil"`.
 6. `recommend()` returning a deterministic Brazil/FPSO-prior ranked list.
 7. `CashflowEngine` returning finite metrics labeled `chain_plumbing_pre_tax`.
 
 The implementation will not publish a Brazil investment NPV headline. Unified
-production will preserve `condensate_bbl`, but `to_fdas_production` currently
-maps only `oil_bbl` into `MONTHLY_OIL_BBL`; therefore the first FDAS cashflow
+production will preserve `condensate_bbl`, but `to_project_economics_production` currently
+maps only `oil_bbl` into `MONTHLY_OIL_BBL`; therefore the first project_economics cashflow
 pass will be oil-only and will not claim full-liquids revenue for pre-salt
-fields. Brazil fiscal terms are not yet representable by the current FDAS deck
+fields. Brazil fiscal terms are not yet representable by the current project_economics deck
 schema because
 `royalty.model="sliding_scale"` is reserved and rejected. The first economics
 pass will therefore be explicitly pre-tax chain plumbing, while royalty/special
@@ -152,7 +152,7 @@ field_rows = FieldProductionAggregator().aggregate(well_rows)
 
 adapter = BrazilAnpAdapter(loader=FakeBrazilProductionLoader(field_rows))
 unified = adapter.fetch(ProductionQuery(regions=["brazil"], fields=["Marlim"]))
-fdas_production = to_fdas_production(unified)
+project_economics_production = to_project_economics_production(unified)
 
 field_meta = build_brazil_field_meta(fields_csv, platforms_csv, wells_csv, "Marlim")
 concept = build_brazil_field_concept(field_meta)
@@ -220,7 +220,7 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
     first production year, water depth, well count, and region;
   - `region="brazil"` triggers a deterministic FPSO-favored recommendation.
 - Reference chain:
-  - one fixture field runs `fetch -> to_fdas_production -> CashflowEngine`;
+  - one fixture field runs `fetch -> to_project_economics_production -> CashflowEngine`;
   - one fixture field runs `FieldConcept -> recommend`;
   - output metrics are finite and labeled `chain_plumbing_pre_tax`.
 
@@ -246,7 +246,7 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
 - The reference-chain runner returns finite pre-tax plumbing metrics and a
   deterministic concept ranking.
 - No Brazil after-tax economics, full-liquids revenue, or investor-value headline
-  is claimed until the condensate FDAS seam plus sliding-scale royalty and
+  is claimed until the condensate project_economics seam plus sliding-scale royalty and
   special-participation fiscal seam are reviewed.
 - Focused local tests, format/lint on touched Python files, whitespace/diff
   checks, legal scan, adversarial code review, PR CI, and issue closeout comment
@@ -266,7 +266,7 @@ assert result["economics_label"] == "chain_plumbing_pre_tax"
   explicitly.
 - Brazil fiscal modeling is materially more complex than Norway/UK royalty
   plumbing. This plan will fail closed as pre-tax plumbing until #737 or its
-  successor extends FDAS to sliding-scale royalty and special participation.
+  successor extends project_economics to sliding-scale royalty and special participation.
 - Sparse field metadata can still produce coarse concept rankings. Acceptance is
   deterministic screening output, not a final engineering concept-select report.
 

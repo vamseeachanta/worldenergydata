@@ -664,7 +664,7 @@ Numeric-input and calculation references; source digests are in the companion ma
 
 ## Caveats
 
-- **Cashflow basis:** documented decline-curve (plateau×K years → exponential decline). OGOR-grounded forward path is #367 (ProductionAPI12 → FDAS migration).
+- **Cashflow basis:** documented decline-curve (plateau×K years → exponential decline). OGOR-grounded forward path is #367 (ProductionAPI12 → project_economics migration).
 - **HSE coverage:** placeholder rows pending #366 (HSE bulk dedup + ingest).
 - **Cost benchmarking:** every field flagged `no_data_pending_#343` until the operator registry seeds disclosures.
 - **Pre-FID economics:** configured capital estimates are assumptions; treat NPV / breakeven as scenario-grade, not commitment-grade.

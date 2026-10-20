@@ -27,7 +27,7 @@ cd /mnt/github/workspace-hub/worldenergydata
 - **All wells** production data analysis
 - **Lower Tertiary** deepwater fields (Anchor, Julia, Jack, St. Malo)
 - **NPV calculations** with economic modeling
-- **FDAS enhancement** with field-level data
+- **project_economics enhancement** with field-level data
 
 ### 2. Marine Safety Analysis
 - **Comprehensive** incident database analysis
@@ -36,7 +36,7 @@ cd /mnt/github/workspace-hub/worldenergydata
 - **AI classification** (optional)
 
 ### 3. Production Analysis
-- **FDAS production** data retrieval
+- **project_economics production** data retrieval
 - **Historical trends** and forecasting
 - **Economic metrics**
 

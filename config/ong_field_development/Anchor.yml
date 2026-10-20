@@ -44,5 +44,5 @@ public_metadata:
   plateau_bopd: 75000
 provenance:
   boem_source: aceengineercode/config/ong_field_development/CVX_Anchor.yml
-  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_project_economics.yml
   economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

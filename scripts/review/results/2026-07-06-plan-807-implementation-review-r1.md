@@ -33,7 +33,7 @@
    `Boquerón` and `Viura (1)`. Required change: define and test a shared
    field-normalization helper and conversion audit object/helper.
 
-4. **MAJOR - Adapter/FDAS fallback divergence was not addressed.**
+4. **MAJOR - Adapter/project_economics fallback divergence was not addressed.**
 
    The production adapter has hardcoded embedded Ayoluengo oil values for
    production-only installs. If committed fixture values change but fallback does

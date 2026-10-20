@@ -107,7 +107,7 @@ the workbook but is not wired into the engine.
 ### 5.2 Three assumption decks exist and are not consistent
 | Deck | Role | Key divergence |
 |---|---|---|
-| `docs/.../FDAS_V30/lease_assumptions.xlsx` (39×7) | Canonical — V30 & V50 gold standard | WTI fallback $60 · per-dev-system · pre-tax |
+| `docs/.../project_economics_V30/lease_assumptions.xlsx` (39×7) | Canonical — V30 & V50 gold standard | WTI fallback $60 · per-dev-system · pre-tax |
 | `config/analysis/lower_tertiary/economic_assumptions.yml` | Older (2024) deck — read by `analyze_lower_tertiary_npv.py`, `lower_tertiary_analysis.py`, `production_api12.py` | Base WTI **$75**, scenarios $50/75/100 |
 | `tests/.../financial-analysis-sme-code/scripts/leases_assumptions.xlsx` (41×3) | Test fixture | Stale — different shape |
 

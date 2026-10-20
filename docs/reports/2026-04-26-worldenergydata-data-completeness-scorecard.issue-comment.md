@@ -16,7 +16,7 @@
 
 ### Top 10 Data Completeness Gaps
 1. **sodir / ukcs / brazil_anp / mexico_cnh / canada / texas_rrc / eia_us / metocean / landman** — declared modules with **no `data/modules/<name>/` directory**.
-2. **BSEE `current/*.csv` 100-row stubs** — 12 of 16 CSVs are sample stubs from 2025-07-31; downstream fdas + dashboards consume stub data silently.
+2. **BSEE `current/*.csv` 100-row stubs** — 12 of 16 CSVs are sample stubs from 2025-07-31; downstream project_economics + dashboards consume stub data silently.
 3. **Catalog drift** — 15 declared modules absent from `data/catalog.yaml`; generator (`scripts/generate_data_catalog.py`) does not enumerate full source tree.
 4. **Scheduler output_dir mismatch** — `eia_us_refresh.output_dir = data/modules/eia` (module is `eia_us`); 4 other jobs land in non-existent dirs.
 5. **Marine safety SQLite DBs >180 days stale** — `marine_safety.db` 2025-10-08, `database/marine_safety.db` 2025-10-06.

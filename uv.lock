@@ -26,7 +26,6 @@ members = [
     "worldenergydata-economics",
     "worldenergydata-eia",
     "worldenergydata-eia-us",
-    "worldenergydata-fdas",
     "worldenergydata-kansas-kgs",
     "worldenergydata-landman",
     "worldenergydata-lng-terminals",
@@ -36,6 +35,7 @@ members = [
     "worldenergydata-mexico-cnh",
     "worldenergydata-pipeline-safety",
     "worldenergydata-production",
+    "worldenergydata-project-economics",
     "worldenergydata-reporting",
     "worldenergydata-reservoir",
     "worldenergydata-safety-analysis",
@@ -7663,7 +7663,6 @@ dependencies = [
     { name = "worldenergydata-economics" },
     { name = "worldenergydata-eia" },
     { name = "worldenergydata-eia-us" },
-    { name = "worldenergydata-fdas" },
     { name = "worldenergydata-kansas-kgs" },
     { name = "worldenergydata-landman" },
     { name = "worldenergydata-lng-terminals" },
@@ -7673,6 +7672,7 @@ dependencies = [
     { name = "worldenergydata-mexico-cnh" },
     { name = "worldenergydata-pipeline-safety" },
     { name = "worldenergydata-production" },
+    { name = "worldenergydata-project-economics" },
     { name = "worldenergydata-reporting" },
     { name = "worldenergydata-reservoir" },
     { name = "worldenergydata-safety-analysis" },
@@ -7857,7 +7857,6 @@ requires-dist = [
     { name = "worldenergydata-economics", editable = "packages/worldenergydata-economics" },
     { name = "worldenergydata-eia", editable = "packages/worldenergydata-eia" },
     { name = "worldenergydata-eia-us", editable = "packages/worldenergydata-eia_us" },
-    { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
     { name = "worldenergydata-kansas-kgs", editable = "packages/worldenergydata-kansas_kgs" },
     { name = "worldenergydata-landman", editable = "packages/worldenergydata-landman" },
     { name = "worldenergydata-lng-terminals", editable = "packages/worldenergydata-lng_terminals" },
@@ -7867,6 +7866,7 @@ requires-dist = [
     { name = "worldenergydata-mexico-cnh", editable = "packages/worldenergydata-mexico_cnh" },
     { name = "worldenergydata-pipeline-safety", editable = "packages/worldenergydata-pipeline_safety" },
     { name = "worldenergydata-production", editable = "packages/worldenergydata-production" },
+    { name = "worldenergydata-project-economics", editable = "packages/worldenergydata-project_economics" },
     { name = "worldenergydata-reporting", editable = "packages/worldenergydata-reporting" },
     { name = "worldenergydata-reservoir", editable = "packages/worldenergydata-reservoir" },
     { name = "worldenergydata-safety-analysis", editable = "packages/worldenergydata-safety_analysis" },
@@ -7988,8 +7988,8 @@ dependencies = [
     { name = "seaborn" },
     { name = "sqlalchemy" },
     { name = "worldenergydata-core" },
-    { name = "worldenergydata-fdas" },
     { name = "worldenergydata-metocean" },
+    { name = "worldenergydata-project-economics" },
     { name = "worldenergydata-reporting" },
     { name = "worldenergydata-sodir" },
     { name = "worldenergydata-texas-rrc" },
@@ -8017,8 +8017,8 @@ requires-dist = [
     { name = "seaborn", specifier = ">=0.13.0,<1.0" },
     { name = "sqlalchemy", specifier = ">=2.0.49,<3.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
-    { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
     { name = "worldenergydata-metocean", editable = "packages/worldenergydata-metocean" },
+    { name = "worldenergydata-project-economics", editable = "packages/worldenergydata-project_economics" },
     { name = "worldenergydata-reporting", editable = "packages/worldenergydata-reporting" },
     { name = "worldenergydata-sodir", editable = "packages/worldenergydata-sodir" },
     { name = "worldenergydata-texas-rrc", editable = "packages/worldenergydata-texas_rrc" },
@@ -8216,32 +8216,6 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
-]
-
-[[package]]
-name = "worldenergydata-fdas"
-version = "0.1.0"
-source = { editable = "packages/worldenergydata-fdas" }
-dependencies = [
-    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "numpy-financial" },
-    { name = "openpyxl" },
-    { name = "pandas" },
-    { name = "pyyaml" },
-    { name = "worldenergydata-core" },
-    { name = "worldenergydata-cost" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "numpy", specifier = ">=2.2.6,<3.0" },
-    { name = "numpy-financial", specifier = ">=1.0.0" },
-    { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
-    { name = "pandas", specifier = ">=2.3.3,<3.0" },
-    { name = "pyyaml", specifier = ">=6.0,<7.0" },
-    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
-    { name = "worldenergydata-cost", editable = "packages/worldenergydata-cost" },
 ]
 
 [[package]]
@@ -8468,6 +8442,32 @@ requires-dist = [
 ]
 
 [[package]]
+name = "worldenergydata-project-economics"
+version = "0.1.0"
+source = { editable = "packages/worldenergydata-project_economics" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "numpy-financial" },
+    { name = "openpyxl" },
+    { name = "pandas" },
+    { name = "pyyaml" },
+    { name = "worldenergydata-core" },
+    { name = "worldenergydata-cost" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "numpy-financial", specifier = ">=1.0.0" },
+    { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.0" },
+    { name = "pyyaml", specifier = ">=6.0,<7.0" },
+    { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+    { name = "worldenergydata-cost", editable = "packages/worldenergydata-cost" },
+]
+
+[[package]]
 name = "worldenergydata-reporting"
 version = "0.1.0"
 source = { editable = "packages/worldenergydata-reporting" }
@@ -8628,8 +8628,8 @@ dependencies = [
     { name = "openpyxl" },
     { name = "pandas" },
     { name = "worldenergydata-core" },
-    { name = "worldenergydata-fdas" },
     { name = "worldenergydata-production" },
+    { name = "worldenergydata-project-economics" },
 ]
 
 [package.metadata]
@@ -8637,8 +8637,8 @@ requires-dist = [
     { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
-    { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
     { name = "worldenergydata-production", editable = "packages/worldenergydata-production" },
+    { name = "worldenergydata-project-economics", editable = "packages/worldenergydata-project_economics" },
 ]
 
 [[package]]

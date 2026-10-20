@@ -6,7 +6,7 @@ Companion drill-down to the field-level reconciliation matrix in
 wellbore so each development's D&C total can be audited bore by bore against
 the article's Table 1.
 
-Source of truth: ``docs/modules/bsee/analysis/production/FDAS_V30/
+Source of truth: ``docs/modules/bsee/analysis/production/project_economics_V30/
 drilling_and_completion_days_v21_kc.csv`` — the canonical extractor output on
 the V50/wed basis (253 wellbores, 25,404 D&C days). Producer markers come from
 the OGOR-A well benchmark CSV (api12 match only; its day columns are calendar
@@ -33,7 +33,7 @@ from lower_tertiary.war_methodology import WAR_METHODOLOGY
 REPO = Path(__file__).resolve().parents[2]
 SOURCE_CSV = (
     REPO
-    / "docs/modules/bsee/analysis/production/FDAS_V30"
+    / "docs/modules/bsee/analysis/production/project_economics_V30"
     / "drilling_and_completion_days_v21_kc.csv"
 )
 BENCHMARK_CSV = (

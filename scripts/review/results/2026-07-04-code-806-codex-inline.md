@@ -46,7 +46,7 @@ None blocking.
 - Raw workbook writes use temp-file replacement and record byte count, content type, Last-Modified, SHA-256, and source URL metadata (`packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_source.py:147`, `packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_source.py:250`, `packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_source.py:282`).
 - The live loader selects the `Production` worksheet through `CoresProductionLoader(..., sheet_name="Production")` (`packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_live.py:93`, `packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_loader.py:150`).
 - The live loader writes `cores_oil_production.csv`, `cores_gas_production.csv`, and `cores_all_production.csv` under the caller-supplied cache root, without a library hardcode of `/mnt/ace` (`packages/worldenergydata-spain/src/worldenergydata/spain/production/cores_live.py:106`).
-- Tests cover missing workbook-link fail-closed behavior, atomic write cleanup, metadata fields, explicit `Production` worksheet reads, fixture refresh metadata, and adapter compatibility (`tests/unit/spain/test_cores_live.py:24`, `tests/unit/spain/test_cores_live.py:45`, `tests/unit/spain/test_cores_live.py:58`, `tests/unit/spain/test_cores_live.py:119`, `tests/unit/spain/test_cores_live.py:164`, `tests/unit/production/unified/test_spain_cores_adapter_loader.py:172`).
+- Tests cover missing workbook-link fail-closed behavior, atomic write cleanup, metadata fields, explicit `Production` worksheet reads, fixture refresh metadata, and adapter compatibility (`tests/unit/spain/test_cores_live.py:24`, `tests/unit/spain/test_cores_live.py:45`, `tests/unit/spain/test_cores_live.py:58`, `tests/unit/spain/test_cores_live.py:119`, `tests/unit/spain/test_cores_live.py:164`, `tests/unit/production/unified/test_spain_cores_adapter_loader.py:174`).
 
 ## Residual Risks
 
@@ -59,7 +59,7 @@ None blocking.
 
 - RED: missing `worldenergydata.spain.production.cores_live` import failed as expected before implementation.
 - RED: `CoresProductionLoader(..., sheet_name="Production")` failed as expected before implementation.
-- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=packages/worldenergydata-spain/src:packages/worldenergydata-production/src:packages/worldenergydata-fdas/src:packages/worldenergydata-core/src .venv/bin/python -m pytest tests/unit/spain tests/unit/production/unified/test_spain_cores_adapter_loader.py --noconftest -o addopts='' -q`  
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=packages/worldenergydata-spain/src:packages/worldenergydata-production/src:packages/worldenergydata-project_economics/src:packages/worldenergydata-core/src .venv/bin/python -m pytest tests/unit/spain tests/unit/production/unified/test_spain_cores_adapter_loader.py --noconftest -o addopts='' -q`  
   Result: `20 passed in 43.95s`.
 - `.venv/bin/python -m ruff check ...`  
   Result: `All checks passed!`.

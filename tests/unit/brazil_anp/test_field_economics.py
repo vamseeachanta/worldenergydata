@@ -216,7 +216,7 @@ def test_shipped_fiscal_decks_exclude_scale_regression_pin(monkeypatch):
     import yaml
 
     from worldenergydata.brazil_anp.analysis import field_economics
-    from worldenergydata.fdas.fiscal import (
+    from worldenergydata.project_economics.fiscal import (
         available_countries,
         get_fiscal_terms,
         schema,
@@ -238,7 +238,7 @@ def test_shipped_fiscal_decks_exclude_scale_regression_pin(monkeypatch):
     )
     countries = available_countries()
     assert countries == ["norway", "uk", "us_gom"]
-    decks = resources.files("worldenergydata.fdas.fiscal.decks")
+    decks = resources.files("worldenergydata.project_economics.fiscal.decks")
     for country in countries:
         raw = yaml.safe_load(decks.joinpath(country + ".yml").read_text())
         loaded = get_fiscal_terms(country)

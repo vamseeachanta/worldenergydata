@@ -66,7 +66,7 @@ ASSUM = _load_assumptions_wide()
 
 registry = yaml.safe_load((REPO / "config/ong_field_development/fields_registry.yml").read_text())["fields"]
 ogor = _patched(2000, 2025)
-wti = pd.read_excel(MAIN / "docs/modules/bsee/analysis/production/FDAS_V30/wti_monthly.xlsx")[["Month","WTI_USD"]]
+wti = pd.read_excel(MAIN / "docs/modules/bsee/analysis/production/project_economics_V30/wti_monthly.xlsx")[["Month","WTI_USD"]]
 wti["Month"] = pd.to_datetime(wti["Month"])
 
 def month_floor(ts): return pd.Timestamp(ts).to_period("M").to_timestamp()

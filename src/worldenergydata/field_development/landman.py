@@ -9,7 +9,7 @@ Explorer field panel.
 
 What is real (committed data):
   * lease numbers + blocks — ``config/fields.yml`` (the canonical registry, #755);
-  * per-lease water depth + development system — the FDAS V30 lease workbook;
+  * per-lease water depth + development system — the project_economics V30 lease workbook;
   * field-level operator + working-interest partners — ``_facts.json``.
 
 What is NOT in committed data (→ grabbable placeholders linking an ingest issue,

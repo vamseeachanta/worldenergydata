@@ -73,7 +73,7 @@ def test_load_wti_monthly_missing_file_returns_empty(tmp_path):
 
 @unit
 def test_load_wti_monthly_reads_real_deck():
-    """The committed FDAS_V30 WTI deck loads to a YYYYMM->price map."""
+    """The committed project_economics_V30 WTI deck loads to a YYYYMM->price map."""
     wti = load_wti_monthly()
     assert isinstance(wti, dict)
     # Real deck spans 1986-01..2025-07.
@@ -207,7 +207,7 @@ def test_load_hh_monthly_missing_file_returns_empty(tmp_path):
 
 @unit
 def test_load_hh_monthly_reads_real_deck():
-    """The committed FDAS_V30 Henry Hub deck loads to a YYYYMM->price map."""
+    """The committed project_economics_V30 Henry Hub deck loads to a YYYYMM->price map."""
     hh = load_hh_monthly()
     assert isinstance(hh, dict)
     # Real deck starts 1997-01.

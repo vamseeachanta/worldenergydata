@@ -8,7 +8,7 @@
 
 ## Summary
 
-Reproduced Roy's FDAS V30 lower tertiary financial results using raw BSEE OGOR production data. Production totals match the V30 golden baseline within ±0.1% tolerance for all 7 producing developments.
+Reproduced Roy's project_economics V30 lower tertiary financial results using raw BSEE OGOR production data. Production totals match the V30 golden baseline within ±0.1% tolerance for all 7 producing developments.
 
 ## Phase A: V30 Determinism
 
@@ -50,7 +50,7 @@ Reproduced V30 production totals from raw BSEE OGOR zip files using V30 lease ma
 |---|---|---|
 | BSEE OGOR-A zips | `data/modules/bsee/zip/historical_production_yearly/` | 2026-01-30 |
 | V30 Golden Baseline | `config/analysis/lower_tertiary/golden_baseline_v30.yml` | 2026-01-30 |
-| V30 Source Files | `docs/modules/bsee/analysis/production/FDAS_V30/` | FDAS V30 (Oct 2024) |
+| V30 Source Files | `docs/modules/bsee/analysis/production/project_economics_V30/` | project_economics V30 (Oct 2024) |
 
 ## Tolerances Applied
 
@@ -58,15 +58,15 @@ Reproduced V30 production totals from raw BSEE OGOR zip files using V30 lease ma
 |---|---|---|
 | Production | ±0.1% | golden_baseline_v30.yml |
 | Revenue | ±0.1% | golden_baseline_v30.yml |
-| NPV | ±1.0% | FDAS spec |
-| MIRR | ±0.1% abs | FDAS spec |
+| NPV | ±1.0% | project_economics spec |
+| MIRR | ±0.1% abs | project_economics spec |
 | Cashflow | ±0.5% | golden_baseline_v30.yml |
 
 ## Test Artifacts
 
 | File | Purpose |
 |---|---|
-| `tests/modules/fdas/validation/test_v30_determinism.py` | Phase A: 21 determinism tests |
+| `tests/modules/project_economics/validation/test_v30_determinism.py` | Phase A: 21 determinism tests |
 | `tests/modules/lower_tertiary/test_repeatability_v30.py` | Phase B: 12 repeatability tests |
 | `src/worldenergydata/analysis/lower_tertiary/v30_reproducer.py` | V30-aligned production reproducer |
 | `config/analysis/lower_tertiary/golden_baseline_v30.yml` | Structured golden baseline |

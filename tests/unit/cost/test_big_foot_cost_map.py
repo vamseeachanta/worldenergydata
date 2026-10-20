@@ -266,7 +266,7 @@ def test_thirty_eight_wellbores_does_not_fill_blank_sanctioned_well_count() -> N
     from openpyxl import load_workbook
 
     workbook = ROOT / (
-        "docs/modules/bsee/analysis/production/FDAS_V30/"
+        "docs/modules/bsee/analysis/production/project_economics_V30/"
         "drilling_and_completion_days.xlsx"
     )
     sheet = load_workbook(workbook, read_only=True, data_only=True)["Sheet1"]

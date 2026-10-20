@@ -1,8 +1,8 @@
-# ABOUTME: Tests for the FDAS/vessel/subsea enrichment layer (issue #575).
+# ABOUTME: Tests for the project_economics/vessel/subsea enrichment layer (issue #575).
 # ABOUTME: Exercises real sibling packages; tolerant of missing data/deps.
 """Tests for ``worldenergydata.field_development.integrations``.
 
-These wire into sibling packages (fdas, vessel_fleet, subsea). Where a package
+These wire into sibling packages (project_economics, vessel_fleet, subsea). Where a package
 or its data is unavailable the functions degrade gracefully, so assertions are
 written to accept either the populated result or a documented ``note``.
 """
@@ -30,7 +30,7 @@ from worldenergydata.field_development.recommendation import ScoredConcept
 
 
 # --------------------------------------------------------------------------- #
-# FDAS dev-system classification (depth in feet)
+# project_economics dev-system classification (depth in feet)
 # --------------------------------------------------------------------------- #
 def test_dev_system_shallow_is_dry():
     # 90 m ≈ 295 ft < 500 ft → dry
@@ -55,7 +55,7 @@ def test_dev_system_none_when_depth_unknown():
 # Economics
 # --------------------------------------------------------------------------- #
 def test_economics_returns_capex_for_known_depth():
-    pytest.importorskip("worldenergydata.fdas.api")
+    pytest.importorskip("worldenergydata.project_economics.api")
     eco = estimate_economics(FieldConcept(name="X", water_depth_m=1500.0, num_wells=6))
     assert isinstance(eco, Economics)
     assert eco.dev_system == "subsea15"
@@ -63,7 +63,7 @@ def test_economics_returns_capex_for_known_depth():
 
 
 def test_economics_npv_present_with_full_inputs():
-    pytest.importorskip("worldenergydata.fdas.api")
+    pytest.importorskip("worldenergydata.project_economics.api")
     eco = estimate_economics(
         FieldConcept(
             name="X",

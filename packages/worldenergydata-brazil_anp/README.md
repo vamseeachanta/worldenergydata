@@ -43,10 +43,10 @@ Sources examined on 2026-10-12:
 - ANP, [Royalties](https://www.gov.br/anp/pt-br/assuntos/royalties-e-outras-participacoes/royalties), opening calculation factors and variable definitions: contractual field percentage multiplied by monthly field production and reference prices; oil and gas volumes are in cubic metres. The page's general 5–15% range does not provide the five production-rate bands or establish their concession case.
 - ANP, [Participação especial](https://www.gov.br/anp/pt-br/assuntos/royalties-e-outras-participacoes/participacao-especial), opening calculation paragraphs: progressive rates on quarterly net revenue depend on field location, years of production and quarterly production volume.
 
-The shipped `fdas/fiscal/decks/` resources (`norway.yml`, `uk.yml`, `us_gom.yml`)
-and production builders `fdas.fiscal.schema` and `fdas.fiscal.terms` exclude this
+The shipped `project_economics/fiscal/decks/` resources (`norway.yml`, `uk.yml`, `us_gom.yml`)
+and production builders `project_economics.fiscal.schema` and `project_economics.fiscal.terms` exclude this
 scale. The synthetic runtime parity test in
-`tests/unit/fdas/fiscal/test_deck_parity.py` checks agreement with existing code;
+`tests/unit/project_economics/fiscal/test_deck_parity.py` checks agreement with existing code;
 it does not establish regulatory qualification and does not ship a country deck.
 These illustrative values shall not be copied into a fiscal deck until the
 applicable contract, units, period and governing case are source-qualified.

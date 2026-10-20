@@ -27,7 +27,7 @@ import figures
 import markdown
 
 HEADER_TITLE = (
-    "Frontier Deepwater / ACE Engineering "
+    "Reference contributor / ACE Engineering "
     "— GoM Subsea Well Intervention &amp; Maintenance"
 )
 SOURCES_LINE = "sources: committed YAMLs #583/#586/#587/#596/#598/#629/#630/#638"

@@ -45,9 +45,9 @@ STAGE_TITLES = {
 }
 
 STAGE_POP_NOTE = {
-    "drill": "Population: FDAS V30 Lower Tertiary development wellbores "
+    "drill": "Population: project_economics V30 Lower Tertiary development wellbores "
     "(calendar TD−spud days; curated workbook, TOTALS/blank rows dropped).",
-    "complete": "Population: FDAS V30 Lower Tertiary development wellbores "
+    "complete": "Population: project_economics V30 Lower Tertiary development wellbores "
     "with completion-day values.",
     "produce": "Population: producing LT wells in the well benchmark "
     "(survivor population — fields without producing wells show no data).",

@@ -13,7 +13,7 @@ max_days: 1000        # duration censor ceiling (calendar days)
 join_coverage_min: 0.9
 
 sources:
-  lt_dc_xlsx: docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx
+  lt_dc_xlsx: docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx
   benchmark_csv: reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv
   well_data_csv: data/modules/bsee/current/wells/well_data.csv
   facts_json: reports/lower_tertiary/lifecycle/_facts.json
@@ -36,7 +36,7 @@ field_ids:
   - stones
   - tiber
 
-# FDAS V30 xlsx LEASE_NAME -> canonical field id (name-split fields enumerated;
+# project_economics V30 xlsx LEASE_NAME -> canonical field id (name-split fields enumerated;
 # census 2026-07-06: 12 lease names, 217 data rows, all 10 fields covered).
 lease_name_to_field:
   "Anchor": anchor

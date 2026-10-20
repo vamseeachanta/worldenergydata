@@ -292,15 +292,15 @@ worldenergydata marine-safety info
 
 ---
 
-## FDAS Module
+## project_economics Module
 
-Field Development Analysis System.
+Project economics.
 
 ```bash
-worldenergydata fdas --help
+worldenergydata project_economics --help
 ```
 
-### `fdas calculate-npv`
+### `project_economics calculate-npv`
 
 Calculate Net Present Value.
 
@@ -311,12 +311,12 @@ Calculate Net Present Value.
 --period, -p [monthly|annual]  Cashflow period [default: monthly]
 
 # Examples
-worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.08
-worldenergydata fdas calculate-npv --cashflows "[-5000,1000,1500,2000]" --period annual
+worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.08
+worldenergydata project_economics calculate-npv --cashflows "[-5000,1000,1500,2000]" --period annual
 ```
 
-### `fdas calculate-mirr`
+### `project_economics calculate-mirr`
 
 Calculate Modified Internal Rate of Return.
 
@@ -327,11 +327,11 @@ Calculate Modified Internal Rate of Return.
 --reinvestment-rate FLOAT     Annual reinvestment rate
 
 # Examples
-worldenergydata fdas calculate-mirr --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+worldenergydata project_economics calculate-mirr --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics calculate-mirr --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
 ```
 
-### `fdas calculate-irr`
+### `project_economics calculate-irr`
 
 Calculate Internal Rate of Return.
 
@@ -341,11 +341,11 @@ Calculate Internal Rate of Return.
 --period, -p [monthly|annual]  Cashflow period [default: monthly]
 
 # Examples
-worldenergydata fdas calculate-irr --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas calculate-irr --cashflows "[-5000,2000,2000,2000]" --period annual
+worldenergydata project_economics calculate-irr --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics calculate-irr --cashflows "[-5000,2000,2000,2000]" --period annual
 ```
 
-### `fdas calculate-all`
+### `project_economics calculate-all`
 
 Calculate all financial metrics.
 
@@ -356,11 +356,11 @@ Calculate all financial metrics.
 --period, -p [monthly|annual]  Cashflow period [default: monthly]
 
 # Examples
-worldenergydata fdas calculate-all --cashflows "[-1000,100,200,300,400,500]"
-worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
+worldenergydata project_economics calculate-all --cashflows "[-1000,100,200,300,400,500]"
+worldenergydata project_economics calculate-all --cashflows "[-5000,1000,1500,2000]" --discount-rate 0.12
 ```
 
-### `fdas analyze`
+### `project_economics analyze`
 
 Perform comprehensive field development analysis.
 
@@ -377,12 +377,12 @@ Perform comprehensive field development analysis.
 --verbose, -v             Enable verbose output
 
 # Examples
-worldenergydata fdas analyze --field "Thunder Horse" --discount-rate 0.10
-worldenergydata fdas analyze --lease OCS-G-12345 --oil-price 80
-worldenergydata fdas analyze --field "Jack" --dev-system subsea20 --verbose
+worldenergydata project_economics analyze --field "Thunder Horse" --discount-rate 0.10
+worldenergydata project_economics analyze --lease OCS-G-12345 --oil-price 80
+worldenergydata project_economics analyze --field "Jack" --dev-system subsea20 --verbose
 ```
 
-### `fdas classify`
+### `project_economics classify`
 
 Classify development system by water depth.
 
@@ -391,17 +391,17 @@ Classify development system by water depth.
 WATER_DEPTH               Water depth in feet (required)
 
 # Examples
-worldenergydata fdas classify 500    # shelf
-worldenergydata fdas classify 5000   # deepwater
-worldenergydata fdas classify 10000  # ultra_deepwater
+worldenergydata project_economics classify 500    # shelf
+worldenergydata project_economics classify 5000   # deepwater
+worldenergydata project_economics classify 10000  # ultra_deepwater
 ```
 
-### `fdas info`
+### `project_economics info`
 
 Display module information.
 
 ```bash
-worldenergydata fdas info
+worldenergydata project_economics info
 ```
 
 ---

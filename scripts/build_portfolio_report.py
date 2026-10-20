@@ -42,7 +42,7 @@ def kpis():
         ("Gross revenue", b2(tot_rev), "historical WTI"),
         ("CAPEX", b2(tot_cap), "D&C + facilities"),
         ("Portfolio NPV@10%", b2(tot_npv), "full-cycle", True),
-        ("Validation", "±0.001%", "vs FDAS V30 baseline"),
+        ("Validation", "±0.001%", "vs project_economics V30 baseline"),
     ]
     return "".join(
         f'<div class="kpi-card {"neg" if (len(c)>3 and c[3]) else ""}"><div class="label">{c[0]}</div>'
@@ -126,7 +126,7 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
 </style></head><body>
 <div class="report-header">
   <h1>Gulf of Mexico Lower Tertiary — Portfolio Field Economics</h1>
-  <div class="subtitle">{len(PORT)} ultra-deepwater fields · NPV/MIRR reproduced end-to-end from public BSEE OGOR-A production × WTI · FDAS V30 methodology</div>
+  <div class="subtitle">{len(PORT)} ultra-deepwater fields · NPV/MIRR reproduced end-to-end from public BSEE OGOR-A production × WTI · project_economics V30 methodology</div>
 </div>
 <div class="navstrip">
   <a class="active">▸ Portfolio (all fields)</a>
@@ -136,7 +136,7 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
 <div class="kpi-row">{kpis()}</div>
 <div class="content">
   <div class="section"><div class="callout">✓ <b>Authoritative + independently reproduced.</b> Field economics are the
-    FDAS V30 golden baseline; an independent rebuild from local OGOR <code>.bin</code> production via the sanctioned
+    project_economics V30 golden baseline; an independent rebuild from local OGOR <code>.bin</code> production via the sanctioned
     <code>reproduce_v30_financials()</code> matches every field to ~0.001% <b>except {WORST_TXT}</b> (a known D&amp;C-timing
     edge case, max deviation {MAX_DELTA:.1f}%). Per-field input files: <code>config/ong_field_development/</code>.</div></div>
   <div class="section">

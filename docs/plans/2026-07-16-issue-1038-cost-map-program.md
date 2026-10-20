@@ -13,7 +13,7 @@
 - The program will extend the four curated tables in `data/modules/cost/curated/`: 80 sanctioned projects (67 with disclosed USD CAPEX), 110 awards across 29 projects, 19 project cost statements across 11 projects, and 49 revision-trail points across 21 projects at the planning baseline.
 - Current `timeseries.reconciliation` distinguishes capex-comparable award bases, coverage, partner-net checks, award stage anchors, and sanction-to-outturn evidence. Current `timeseries.back_allocation` exposes six lifecycle stages and architecture-specific, banded priors.
 - Current `CostObservation` enforces sourced/fitted/allocated/assumed/TODO provenance and native-currency semantics. The new work will preserve, not weaken, those contracts.
-- The frozen FDAS references will be `lease_assumptions.xlsx`, `financial_project_summary.xlsx`, and `drilling_and_completion_days.xlsx` under `docs/modules/bsee/analysis/production/FDAS_V30/`.
+- The frozen project_economics references will be `lease_assumptions.xlsx`, `financial_project_summary.xlsx`, and `drilling_and_completion_days.xlsx` under `docs/modules/bsee/analysis/production/project_economics_V30/`.
 - Big Foot provides a useful tracer bullet because the live corpus contains a $4,000MM sanction total, a $5,100MM outturn point, one $45MM point award, one excluded $200MM midstream award, major award-coverage gaps, and 3,033 observed drilling/completion days.
 - No external engineering standard will govern the accounting model. The authoritative inputs will be cited disclosures, the accepted pilot contract, the repository provenance rules, and explicit empirical validation. Stakeholder circulation will remain paused under #1017.
 - Generated coverage metadata will replace hand-maintained counts in decision surfaces because the current curated Markdown summaries will lag the live CSVs.
@@ -31,7 +31,7 @@
 
 ## Deliverable
 
-The epic will coordinate one versioned accounting contract and a gated execution sequence for requirements, award linkage, bidirectional synthesis, dated traces, correlated estimation, and FDAS reconciliation. It will own no implementation file; #1039 will produce the first contract manifest. The epic will not itself authorize child implementation.
+The epic will coordinate one versioned accounting contract and a gated execution sequence for requirements, award linkage, bidirectional synthesis, dated traces, correlated estimation, and project_economics reconciliation. It will own no implementation file; #1039 will produce the first contract manifest. The epic will not itself authorize child implementation.
 
 ## Shared Contract to Freeze
 
@@ -54,7 +54,7 @@ The epic will coordinate one versioned accounting contract and a gated execution
 2. #1040 will scale required assets and award linkage across the empirical portfolio.
 3. #1041 and #1042 will consume the approved linkage surface and may proceed in parallel.
 4. #1043 will train only after synthesis and historical feature availability are defined.
-5. #1044 will compare the completed outputs to frozen FDAS workbooks and generate the integrated decision surface.
+5. #1044 will compare the completed outputs to frozen project_economics workbooks and generate the integrated decision surface.
 6. #1017 will remain outside the execution graph until the owner separately authorizes circulation.
 7. Each producing child will emit a manifest with one common required envelope: `contract_version`, schema hash, ordered input hashes, producer commit, generated-at policy, Decimal/rounding policy, and output hashes. Each consumer will name the exact upstream path/version/hash and fail closed on a missing or mismatched field.
 

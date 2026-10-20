@@ -1,5 +1,9 @@
 # Legacy BSEE module knowledge pack
 
+sweep: 0 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' src/worldenergydata/modules/bsee --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `modules/bsee` |
@@ -17,7 +21,7 @@ The legacy package initializer re-exports `worldenergydata.bsee`; it contains no
 
 Normal imports are intercepted by `_ModulesRedirectFinder`, which rewrites the legacy prefix, checks the canonical module exists and returns a redirect loader. [src/worldenergydata/_compat.py:L76-L123]
 
-The loader imports the canonical module and binds the old name to that same module object; the namespace test explicitly checks legacy BSEE identity. [src/worldenergydata/_compat.py:L60-L73] [tests/unit/common/test_namespace_workspace.py:L119-L122]
+The loader imports the canonical module and binds the old name to that same module object; the namespace test explicitly checks legacy BSEE identity. [src/worldenergydata/_compat.py:L60-L73] [tests/unit/common/test_namespace_workspace.py:L122-L125]
 
 Scope covers the legacy import surface and its offline regression checks; canonical processing, forecasting and reporting remain outside this package's implementation boundary. [src/worldenergydata/modules/bsee/__init__.py:L1-L1] [src/worldenergydata/_compat.py:L95-L123]
 
@@ -57,11 +61,11 @@ No standards-derived coefficient is emitted by these import operations; a calcul
 
 ## 4. Validated worked examples
 
-Validated examples: 0; the cases below exercise import contracts and synthetic expectations, rather than an independently qualified engineering dataset. [tests/unit/common/test_namespace_workspace.py:L75-L122] [tests/unit/test_modules_compat.py:L8-L36]
+Validated examples: 0; the cases below exercise import contracts and synthetic expectations, rather than an independently qualified engineering dataset. [tests/unit/common/test_namespace_workspace.py:L75-L125] [tests/unit/test_modules_compat.py:L8-L36]
 
 | Regression case | Input / expected value / tolerance | Test node ID | Offline result |
 | --- | --- | --- | --- |
-| R1 canonical identity | Legacy and canonical BSEE imports; 1 identical object; 0 identity mismatches | `tests/unit/common/test_namespace_workspace.py::test_move_is_import_transparent` | BASE PASS; AFTER PASS. [tests/unit/common/test_namespace_workspace.py:L75-L122] |
+| R1 canonical identity | Legacy and canonical BSEE imports; 1 identical object; 0 identity mismatches | `tests/unit/common/test_namespace_workspace.py::test_move_is_import_transparent` | BASE PASS; AFTER PASS. [tests/unit/common/test_namespace_workspace.py:L75-L125] |
 | R2 unknown attribute | `nonexistent_module_xyz_12345`; 1 `AttributeError`; exact exception match | `tests/unit/test_modules_compat.py::TestModulesCompat::test_getattr_unknown_raises` | BASE PASS; AFTER PASS. [tests/unit/test_modules_compat.py:L32-L36] |
 | R3 sorted exports | `dir(modules)`; 0 ordering mismatches against `sorted(names)` | `tests/unit/test_modules_compat.py::TestModulesCompat::test_dir_returns_moved_modules` | BASE PASS; AFTER PASS. [tests/unit/test_modules_compat.py:L9-L14] |
 
@@ -72,12 +76,12 @@ Family set: AQG r0 section 10, Python calculations; G0, G1, G2 and G5 apply, whi
 | Gate | Check ID | Module-specific pass criterion and unit | Evidence |
 | --- | --- | --- | --- |
 | G0 applicable | C0 | Hand-derive `worldenergydata.bsee` from `worldenergydata.modules.bsee`; 0 string mismatches, dimensionless count | Prefix and suffix operations. [src/worldenergydata/_compat.py:L85-L104] |
-| G1 applicable | C1 | Import both names in the namespace test; 1 shared object and 0 import exceptions, dimensionless count | R1; offline Python route, no target solver. [tests/unit/common/test_namespace_workspace.py:L119-L122] |
+| G1 applicable | C1 | Import both names in the namespace test; 1 shared object and 0 import exceptions, dimensionless count | R1; offline Python route, no target solver. [tests/unit/common/test_namespace_workspace.py:L122-L125] |
 | G1 applicable | C2 | Unknown attribute raises exactly 1 `AttributeError`, dimensionless count | R2. [tests/unit/test_modules_compat.py:L32-L36] |
 | G2 applicable | C3 | Hand-sort the namespace export list; 0 mismatches, dimensionless count | Independent ordering operation compared with `__dir__`; this checks the adapter, not reservoir physics. [src/worldenergydata/modules/__init__.py:L36-L37] [tests/unit/test_modules_compat.py:L9-L14] |
 | G3 NOT_APPLICABLE | none | No dynamics performed by the import adapter | Import operations only. [src/worldenergydata/_compat.py:L60-L73] |
 | G4 NOT_APPLICABLE | none | No diffraction model or mesh produced by the import adapter | Import operations only. [src/worldenergydata/_compat.py:L60-L73] |
-| G5 applicable | C5 | 3 of 3 listed regression cases have node IDs and paired offline results; 0 unaccounted cases, dimensionless count | R1–R3 evidence contract; no engineering clearance follows from import identity alone. [tests/unit/common/test_namespace_workspace.py:L119-L122] [tests/unit/test_modules_compat.py:L9-L14] [tests/unit/test_modules_compat.py:L32-L36] |
+| G5 applicable | C5 | 3 of 3 listed regression cases have node IDs and paired offline results; 0 unaccounted cases, dimensionless count | R1–R3 evidence contract; no engineering clearance follows from import identity alone. [tests/unit/common/test_namespace_workspace.py:L122-L125] [tests/unit/test_modules_compat.py:L9-L14] [tests/unit/test_modules_compat.py:L32-L36] |
 
 ## 6. Known failure modes and pitfalls
 sweep: not run (legacy pack)
@@ -96,7 +100,7 @@ No historical lesson is imported as a new event; the current boundary separates 
 
 | Date | Change reference | Lesson | Evidence | Shared-log entry |
 | --- | --- | --- | --- | --- |
-| 2026-10-15 | Initial pack revision | Check canonical identity before treating legacy source directories as executable duplicates | [tests/unit/common/test_namespace_workspace.py:L119-L122] | issue pending (1) |
+| 2026-10-15 | Initial pack revision | Check canonical identity before treating legacy source directories as executable duplicates | [tests/unit/common/test_namespace_workspace.py:L122-L125] | issue pending (1) |
 
 ## 8. Ownership
 
@@ -108,7 +112,7 @@ The root package installs the redirect finder during initialization; the finder 
 
 Attribute access through the old namespace also delegates to the canonical module. [src/worldenergydata/modules/__init__.py:L21-L33]
 
-The namespace regression checks that canonical BSEE resolves from its workspace member, while legacy BSEE is the same object. [tests/unit/common/test_namespace_workspace.py:L98-L104] [tests/unit/common/test_namespace_workspace.py:L119-L122]
+The namespace regression checks that canonical BSEE resolves from its workspace member, while legacy BSEE is the same object. [tests/unit/common/test_namespace_workspace.py:L98-L104] [tests/unit/common/test_namespace_workspace.py:L122-L125]
 
 ### Implementation inventory and second implementations
 
@@ -127,7 +131,7 @@ Map follow-up: prefix rewriting, module-object aliasing, idempotent finder insta
 | Item | Evidence / boundary | Tracking |
 | --- | --- | --- |
 | U1 UNVERIFIED: routing maturity and routing index availability | The adapter export does not establish analytical maturity. [src/worldenergydata/modules/bsee/__init__.py:L1-L1] | issue pending (1) |
-| U2 UNVERIFIED: complete canonical analytical validation | Import identity provides no independent engineering expected value; validated examples remain 0. [tests/unit/common/test_namespace_workspace.py:L119-L122] | issue pending (1) |
+| U2 UNVERIFIED: complete canonical analytical validation | Import identity provides no independent engineering expected value; validated examples remain 0. [tests/unit/common/test_namespace_workspace.py:L122-L125] | issue pending (1) |
 | Warning-count detection, canonical test coverage and shared lesson indexing | The known-module test asserts only a non-null module. [tests/unit/test_modules_compat.py:L16-L30] | issue pending (1) |
 | Implementation-map follow-up | Prefix replacement, aliasing and installation reside outside the package. [src/worldenergydata/_compat.py:L95-L132] | issue pending (2) |
 | Stale paleowell test command | The documentation still names the legacy test directory. [docs/domains/bsee/paleowells-readme.md:L128-L134] | issue pending (3) |
@@ -141,7 +145,7 @@ Read supporting files: `_compat.py`, namespace initializer, root initializer, na
 
 The paleowell documentation describes a processing implementation, while this legacy initializer only imports two classes; that documentation is not used to infer processing behaviour inside the adapter. [docs/domains/bsee/paleowells-readme.md:L7-L22] [src/worldenergydata/modules/bsee/paleowells/__init__.py:L8-L11]
 
-Tests selected for the adapter main path: `tests/unit/test_modules_compat.py`, `tests/unit/common/test_namespace_workspace.py`, `tests/modules/bsee/analysis/test_type_curves.py`, and `tests/unit/bsee/paleowells/`; canonical data-pipeline clearance remains issue pending (1). [tests/unit/test_modules_compat.py:L8-L36] [tests/unit/common/test_namespace_workspace.py:L75-L122] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22] [tests/unit/bsee/paleowells/test_field_era.py:L1-L16]
+Tests selected for the adapter main path: `tests/unit/test_modules_compat.py`, `tests/unit/common/test_namespace_workspace.py`, `tests/modules/bsee/analysis/test_type_curves.py`, and `tests/unit/bsee/paleowells/`; canonical data-pipeline clearance remains issue pending (1). [tests/unit/test_modules_compat.py:L8-L36] [tests/unit/common/test_namespace_workspace.py:L75-L125] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22] [tests/unit/bsee/paleowells/test_field_era.py:L1-L16]
 
 ### Documentation discovery requiring canonical coverage follow-up
 
@@ -161,18 +165,18 @@ The following discovery files require separate canonical review; discovery does 
 - `docs/knowledge-base/bsee/README.md`
 - `docs/domains/field-development/README.md`
 - `docs/reports/2026-04-26-worldenergydata-scheduler-runtime-readiness.md`
-- `docs/research/fdas-code-comparison.md`
+- `docs/research/project_economics-code-comparison.md`
 - `docs/reports/2026-04-26-issue-353-timeout-isolation-probe.md`
-- `docs/research/bsee-fdas-integration-summary.md`
+- `docs/research/bsee-project_economics-integration-summary.md`
 - `docs/reports/2026-04-26-worldenergydata-cli-example-smoke-matrix.md`
-- `docs/research/fdas-implementation-plan.md`
+- `docs/research/project_economics-implementation-plan.md`
 - `docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md`
 - `docs/reports/2026-04-26-worldenergydata-data-completeness-scorecard.md`
 - `docs/plans/2026-05-04-issue-339-legacy-npv-test-resolution.md`
 - `docs/plans/2026-05-04-issue-271-scheduler-output-dir.md`
 - `docs/reports/2026-04-26-worldenergydata-scheduler-overnight-commands.md`
 - `docs/plans/2026-05-18-issue-427-seasonal-intervention-risk.md`
-- `docs/research/docs/research/fdas-integration-index.md`
+- `docs/research/docs/research/project_economics-integration-index.md`
 - `docs/plans/2026-05-04-issue-365-bsee-binary-ingest.md`
 - `docs/plans/2026-05-18-issue-424-decommissioning-market-outlook.md`
 - `docs/plans/2026-05-04-issue-313-test-infra-cleanup.md`
@@ -197,10 +201,10 @@ The following discovery files require separate canonical review; discovery does 
 - `docs/development/development_history.md`
 - `docs/modules/bsee/data-refresh-architecture/data-flow-diagram.md`
 - `docs/modules/bsee/data-refresh-architecture/README.md`
-- `docs/modules/bsee/analysis/production/FDAS_V30/README_PRODUCTION_RETRIEVAL.md`
-- `docs/modules/bsee/analysis/production/FDAS_V30/QUICKSTART.md`
+- `docs/modules/bsee/analysis/production/project_economics_V30/README_PRODUCTION_RETRIEVAL.md`
+- `docs/modules/bsee/analysis/production/project_economics_V30/QUICKSTART.md`
 - `docs/data-sources/bsee/analysis/rig_days/day_basis_comparison.md`
-- `docs/modules/fdas/USER-GUIDE.md`
+- `docs/modules/project_economics/USER-GUIDE.md`
 - `docs/data-sources/bsee/data/WELL_ACTIVITY_CD/publication_status.md`
 - `docs/ci/flake8-inventory-2026-04-23.md`
 - `docs/data-sources/bsee/data/local_field_development_sources.md`
@@ -216,8 +220,8 @@ The following discovery files require separate canonical review; discovery does 
 
 ### Offline execution record
 
-Selected baseline: 60 passed, 0 failed, 0 skipped, 0 NOT_RUN at the header code pin; AFTER: 60 passed, 0 failed, 0 skipped, 0 NOT_RUN at the same code pin. The selection is an adapter main-path check, not the complete canonical BSEE test suite. [tests/unit/common/test_namespace_workspace.py:L75-L122] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22]
+Selected baseline: 60 passed, 0 failed, 0 skipped, 0 NOT_RUN at the header code pin; AFTER: 60 passed, 0 failed, 0 skipped, 0 NOT_RUN at the same code pin. The selection is an adapter main-path check, not the complete canonical BSEE test suite. [tests/unit/common/test_namespace_workspace.py:L75-L125] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22]
 
-The inventory estimate is not used as an execution count: the selected namespace test checks import identity, while type-curve tests exercise a canonical implementation through its legacy spelling; complete canonical collection and count reconciliation remain issue pending (1). [tests/unit/common/test_namespace_workspace.py:L119-L122] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22]
+The inventory estimate is not used as an execution count: the selected namespace test checks import identity, while type-curve tests exercise a canonical implementation through its legacy spelling; complete canonical collection and count reconciliation remain issue pending (1). [tests/unit/common/test_namespace_workspace.py:L122-L125] [tests/modules/bsee/analysis/test_type_curves.py:L9-L22]
 
 The ordinary `uv run python -m pytest` form is used, with `-q -rA -p no:cacheprovider` and a separate scratch basetemp per run; the after-check uses the existing-tree preservation option to verify the uncommitted pack is unchanged by tests. No source-resolution fallback or addopts override is used. [tests/conftest.py:L394-L421] [tests/conftest.py:L425-L449]

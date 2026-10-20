@@ -25,7 +25,7 @@ Create a comprehensive, standalone execution framework for worldenergydata repos
 2. **BSEE Analysis**
    - All wells production analysis
    - Lower Tertiary deepwater field analysis (Anchor, Julia, Jack, St. Malo)
-   - FDAS-enhanced BSEE data processing
+   - project_economics-enhanced BSEE data processing
    - NPV (Net Present Value) economic evaluation
    - Interactive HTML reports with Plotly visualizations
 
@@ -119,7 +119,7 @@ Create a comprehensive, standalone execution framework for worldenergydata repos
 2. **BSEE All Wells Analysis**
    - Given: BSEE production data available
    - When: Execute `./scripts/bsee/run_all_wells_analysis.sh`
-   - Then: Generates production analysis, FDAS enhancement, and production reports
+   - Then: Generates production analysis, project_economics enhancement, and production reports
 
 3. **Lower Tertiary Analysis**
    - Given: Lower Tertiary field data available
@@ -197,7 +197,7 @@ reports/complete_analysis_20251022_140530/
 │   ├── all_wells/
 │   │   ├── production_analysis/
 │   │   │   └── index.html
-│   │   ├── fdas_enhanced/
+│   │   ├── project_economics_enhanced/
 │   │   └── production_reports/
 │   │       └── index.html
 │   └── lower_tertiary/
@@ -221,7 +221,7 @@ reports/complete_analysis_20251022_140530/
 │   │   └── flooding/index.html
 │   └── llm_classification/
 └── production/
-    └── fdas/
+    └── project_economics/
 ```
 
 ---

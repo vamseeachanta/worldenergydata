@@ -47,5 +47,5 @@ public_metadata:
   plateau_bopd: 80000
 provenance:
   boem_source: aceengineercode/config/ong_field_development/Cascade.yml + Chinook.yml
-  lease_source: config/analysis/lower_tertiary/lease_mapping_fdas.yml
+  lease_source: config/analysis/lower_tertiary/lease_mapping_project_economics.yml
   economics_source: config/analysis/lower_tertiary/golden_baseline_v30.yml

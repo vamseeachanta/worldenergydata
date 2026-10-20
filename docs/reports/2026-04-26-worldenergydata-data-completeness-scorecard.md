@@ -63,7 +63,7 @@ GitHub issue lookups were attempted via `gh issue view` but blocked by sandbox p
 | pipeline_safety | yes | yes | yes | yes (25 MB) | yes |
 | marine_safety | yes | yes | yes | yes (108 MB) | yes |
 | safety_analysis | yes | yes | **no** | **no** | **no** |
-| fdas | yes | yes | yes | yes (4.4 MB) | **no** |
+| project_economics | yes | yes | yes | yes (4.4 MB) | **no** |
 | metocean | yes | yes | **no** | **no** | yes |
 | lng_terminals | yes (beta) | yes | yes | yes (229 KB) | yes |
 | vessel_fleet | yes | yes | yes | yes (316 KB) | **no** |
@@ -111,7 +111,7 @@ Lanes: **complete-enough** (production-scale, fresh), **sample-only** (stub rows
 
 | Module | Local size | Catalog datasets | Last refresh | Lane | Notes |
 |---|---|---|---|---|---|
-| fdas | 4.4 MB | yes | per file mtime | **complete-enough** | enhanced wells CSV ~4.6 MB present; downstream of BSEE |
+| project_economics | 4.4 MB | yes | per file mtime | **complete-enough** | enhanced wells CSV ~4.6 MB present; downstream of BSEE |
 
 ### 4.4 Environment / metocean
 
@@ -251,7 +251,7 @@ The following defects fall outside the current audit's allowed-write paths and a
 
 1. **Catalog regeneration drift** — `data/catalog.yaml` is missing 15 of 27 declared modules. Owner: catalog generator (`scripts/generate_data_catalog.py`). Fix: extend generator to traverse all `data/modules/*` plus `MODULE_INDEX.md` declared modules, emit "missing" stub records for absent dirs. (Possibly tracked by #336 / #344.)
 2. **Scheduler output_dir vs data dir mismatch** — `eia_us_refresh.output_dir = data/modules/eia` while module is `eia_us`; `sodir`, `ukcs`, `brazil_anp`, `metocean`, `landman` jobs declare output_dirs that don't exist on disk. (Possibly #266-#273.)
-3. **BSEE current/* sample-only stale** — 12 CSVs are 100-row 2025-07-31 stubs; downstream consumers (`fdas`, `well_production_dashboard`) silently consume stub data. (Possibly #334.)
+3. **BSEE current/* sample-only stale** — 12 CSVs are 100-row 2025-07-31 stubs; downstream consumers (`project_economics`, `well_production_dashboard`) silently consume stub data. (Possibly #334.)
 4. **Marine safety scrape failure backlog** — 4+ zero-byte HTML files and 22 IMO GISIS no-results placeholders. (Possibly #343 cluster.)
 5. **EIA API key not provisioned** — scheduler job enabled but `api_key: null`. (Possibly #128 / #151.)
 6. **Marine safety DB staleness >180 days** — both `marine_safety.db` files are 6 months old; no automated refresh. (Possibly #153.)

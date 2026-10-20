@@ -1,5 +1,9 @@
 # Cost module knowledge pack
 
+sweep: 3 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-cost/src/worldenergydata/cost --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `cost` |
@@ -99,7 +103,7 @@ Results recorded on 2026-10-15 at execution revision `e51cf42f31b67348d50e43c5cd
 | Selection / form | BASE | AFTER |
 | --- | --- | --- |
 | `tests/unit/cost`; within the combined ordinary `uv run python -m pytest` selection | 356 / 356 / 0 / 0 / 0 | 356 / 356 / 0 / 0 / 0 |
-| `tests/unit/fdas/test_disclosure_api.py`, `tests/test_query_api.py::TestFDASDisclosureAnalyticsQuery`, `tests/contracts`; within the same combined selection | 24 / 24 / 0 / 0 / 0 | 24 / 24 / 0 / 0 / 0 |
+| `tests/unit/project_economics/test_disclosure_api.py`, `tests/test_query_api.py::TestProjectEconomicsDisclosureAnalyticsQuery`, `tests/contracts`; within the same combined selection | 24 / 24 / 0 / 0 / 0 | 24 / 24 / 0 / 0 / 0 |
 | Union of the two disjoint selections above; combined ordinary form with `--allow-existing-tree-changes` | 380 / 380 / 0 / 0 / 0; exit 0 | 380 / 380 / 0 / 0 / 0; exit 0 |
 | `tests/unit/cost/test_proxy_comparison.py`; AGENTS form with `--noconftest --continue-on-collection-errors` | 0 / 0 / 0 / 0 / 0; 1 collection error; exit 1 | 0 / 0 / 0 / 0 / 0; 1 collection error; exit 1 |
 
@@ -180,7 +184,7 @@ UNVERIFIED: A named deputy and module maturity assignment are not established by
 
 The package declares `worldenergydata-core`, NumPy, Pydantic and scikit-learn dependencies; `cost_predictor` also imports pandas when converting feature rows. [packages/worldenergydata-cost/pyproject.toml:L30-L35] [packages/worldenergydata-cost/src/worldenergydata/cost/calibration/cost_predictor.py:L146-L150]
 
-The downstream `fdas.api` benchmark delegates to `build_cost_disclosure_benchmark`; report builders call `annual_means`, while the presentation builder also repeats component-versus-oil Pearson correlation. [packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py:L320-L345] [scripts/cost/build_cost_basis_report.py:L131-L145] [scripts/cost/build_stakeholder_presentation.py:L244-L260]
+The downstream `project_economics.api` benchmark delegates to `build_cost_disclosure_benchmark`; report builders call `annual_means`, while the presentation builder also repeats component-versus-oil Pearson correlation. [packages/worldenergydata-project_economics/src/worldenergydata/project_economics/api.py:L320-L345] [scripts/cost/build_cost_basis_report.py:L131-L145] [scripts/cost/build_stakeholder_presentation.py:L244-L260]
 
 Inventory scope: cost escalation/deflation, cost-model fitting and bootstrap bounds, cost-component trend selection and component-versus-oil correlation, plus direct consumers. Search terms at the code revision: `_inflate_to_base|escalation_rate|inflation_adjust|to_base_year|base_year_cost|def .*deflat|def .*escalat`, `bootstrap`, and `polyfit|adjusted_r|adj_r2|r_squared_adj|linregress`; searches cover tracked text across the repository, including `scripts/`, excluding CSV, HTML, JSON, lock files and binary content. Production-decline fits are context only, not cost-method inventory; both previously named and review-named examples are retained below without claiming exhaustive decline coverage. [packages/worldenergydata-cost/src/worldenergydata/cost/calibration/cost_predictor.py:L77-L93] [packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/trend_fit.py:L146-L237] [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L273-L284] [packages/worldenergydata-bsee/src/worldenergydata/well_production_dashboard/well_production.py:L158-L188]
 
@@ -194,7 +198,7 @@ Map boundary: the `digitalmodel` implementation map, `docs/registry/implementati
 | `calibration/cost_predictor.py`, `CostPredictor.fit`, L198 | Preprocessed log-cost linear fit. [packages/worldenergydata-cost/src/worldenergydata/cost/calibration/cost_predictor.py:L198-L249] | Independent main implementation | no: mixed target-scope eligibility remains unchecked, section 6 | This pack, sections 1–6 |
 | `calibration/cost_predictor.py`, `CostPredictor._bootstrap_ci`, L369 | Row-resampled refits and fallback bounds. [packages/worldenergydata-cost/src/worldenergydata/cost/calibration/cost_predictor.py:L369-L410] | Independent main implementation | no: silent fallback lacks status, section 6 | This pack, sections 3 and 6 |
 | `timeseries/trend_fit.py`, `fit_component`, L146 | Candidate cost trends and component/oil Pearson r. [packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/trend_fit.py:L146-L237] | Independent main implementation | yes: minimum retained-year and nonzero-variance controls | This pack, V1 and section 3 |
-| `packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py`, `DisclosureAnalyticsQuery.benchmark`, L320 | Delegates disclosure comparison. [packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py:L320-L345] | Caller | yes: forwards scope/year arguments; no extra basis validation | This pack, boundary only |
+| `packages/worldenergydata-project_economics/src/worldenergydata/project_economics/api.py`, `DisclosureAnalyticsQuery.benchmark`, L320 | Delegates disclosure comparison. [packages/worldenergydata-project_economics/src/worldenergydata/project_economics/api.py:L320-L345] | Caller | yes: forwards scope/year arguments; no extra basis validation | This pack, boundary only |
 | `scripts/cost/build_cost_basis_report.py`, `_annual_means`, L131 | Delegates currency/lens/region filters. [scripts/cost/build_cost_basis_report.py:L131-L145] | Wrapper | yes: shared aggregation policy | This pack, boundary only |
 | `scripts/cost/build_stakeholder_presentation.py`, `_pearson_vs_brent`, L244 | Calls `annual_means`, then independently calculates Pearson r from common years and centered sums. [scripts/cost/build_stakeholder_presentation.py:L244-L260] | Caller and independent calculation | yes: at least 5 common years and positive variances; numerical equivalence not checked | This pack, boundary only |
 | `packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/cost/cost_calibration.py`, `MultivariateCalibration.fit`, L120 | Direct least-squares cost fit. [packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/cost/cost_calibration.py:L120-L149] | Independent | not checked: a different feature/target formulation | none |
@@ -245,7 +249,7 @@ Document search finds 32 references under `docs/`: 29 listed below, 2 read above
 - [docs/plans/2026-07-16-issue-1038-cost-map-program.md:L13-L13] — discovery reference; deeper qualification: issue pending (2).
 - [docs/plans/2026-07-18-issue-1039-manifest-lineage-hotfix.md:L208-L208] — discovery reference; deeper qualification: issue pending (2).
 - [docs/plans/2026-04-21-issue-334-annual-operator-disclosures-dataset.md:L14-L14] — discovery reference; deeper qualification: issue pending (2).
-- [docs/plans/2026-07-16-issue-1044-fdas-workbook-reconciliation.md:L29-L29] — discovery reference; deeper qualification: issue pending (2).
+- [docs/plans/2026-07-16-issue-1044-project_economics-workbook-reconciliation.md:L29-L29] — discovery reference; deeper qualification: issue pending (2).
 
 Test scope: all `tests/unit/cost/test_*.py` files discovered; package-local test directory absent; adjacent BSEE/decommissioning/field-development cost domains are separate coverage, not included in the test-count claim. Node outcomes and collection gaps are recorded in section 4.
 

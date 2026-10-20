@@ -2,14 +2,14 @@
 - Parent: #334
 
 ## Summary
-Add derived analytics views and consumer integration surface for annual disclosure data in `cost`, `fdas`, and `lower_tertiary` workflows.
+Add derived analytics views and consumer integration surface for annual disclosure data in `cost`, `project_economics`, and `lower_tertiary` workflows.
 
 ## Why
 The parent issue originally bundled downstream integration and analytics into the same approval surface. Cross-review required that work to be deferred until the raw disclosure schema, linkage, and comparability layers are stable.
 
 ## Scope
 - Define derived views for project cost revisions and operator annual capex series
-- Define consumer-facing integration contracts for `cost`, `fdas`, and `lower_tertiary`
+- Define consumer-facing integration contracts for `cost`, `project_economics`, and `lower_tertiary`
 - Add tests demonstrating downstream consumers can use the linked/normalized disclosure views
 - Document raw-vs-derived separation clearly
 

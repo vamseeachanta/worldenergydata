@@ -141,9 +141,9 @@ _PACKAGE_MEMBER_RE = re.compile(
 # `common` subpackage must stay full-tree, fail-safe), and captures the inner
 # subpackage (group 2) as the routed domain.
 #
-# fdas is NO LONGER here: it was carved to its own member
-# (packages/worldenergydata-fdas/, #714) where distribution name == subpackage
-# name (fdas), so _PACKAGE_MEMBER_RE routes it automatically — no cluster entry.
+# project_economics is NO LONGER here: it was carved to its own member
+# (packages/worldenergydata-project_economics/, #714) where distribution name == subpackage
+# name (project_economics), so _PACKAGE_MEMBER_RE routes it automatically — no cluster entry.
 _CLUSTER_MEMBER_RE = re.compile(
     r"^packages/worldenergydata-(bsee)/src/worldenergydata/"
     r"(bsee|lower_tertiary|hse|well_production_dashboard)/"

@@ -18,10 +18,10 @@ Runs only `bounded-safe` and `fixture-only` commands (no network, no credentials
 worldenergydata --help
 worldenergydata version
 worldenergydata info
-worldenergydata fdas --help
-worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
-worldenergydata fdas calculate-all --cashflows "[-5000,1000,1500,2000]"
-worldenergydata fdas classify 5000
+worldenergydata project_economics --help
+worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]" --discount-rate 0.10
+worldenergydata project_economics calculate-all --cashflows "[-5000,1000,1500,2000]"
+worldenergydata project_economics classify 5000
 worldenergydata lower-tertiary --help
 worldenergydata marine-safety --help
 worldenergydata bsee --help

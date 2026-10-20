@@ -36,7 +36,7 @@ def fixed_fields(spec: str) -> dict:
     return dict(item.split("=", 1) for item in spec.split())
 
 
-def fdas_gap_row(source: dict[str, str]) -> dict[str, str]:
+def project_economics_gap_row(source: dict[str, str]) -> dict[str, str]:
     fields = {
         target: source[origin]
         for target, origin in (
@@ -46,12 +46,12 @@ def fdas_gap_row(source: dict[str, str]) -> dict[str, str]:
     }
     return csv_row(
         **fields,
-        accounting_view="fdas_development_capex",
+        accounting_view="project_economics_development_capex",
         direction="project_to_asset",
-        row_kind="fdas_gap",
+        row_kind="project_economics_gap",
         additive="false",
         value_basis="not_public",
-        source_identity=f"FDAS_V30:{source['WORKBOOK_CATEGORY']}",
+        source_identity=f"project_economics_V30:{source['WORKBOOK_CATEGORY']}",
         source_locator=f"{source['WORKBOOK_FILE']}:{source['WORKBOOK_SHEET']}",
     )
 
@@ -103,8 +103,8 @@ def _html_sections(context: dict) -> dict[str, str]:
     }
 
 
-def _fdas_sections(context: dict) -> tuple[str, str, str]:
-    add, opex = context["fdas_additive"], context["fdas_opex"]
+def _project_economics_sections(context: dict) -> tuple[str, str, str]:
+    add, opex = context["project_economics_additive"], context["project_economics_opex"]
     values = [Decimal(row["WORKBOOK_VALUE"]) / Decimal("1000000") for row in add]
     bridge = (
         " + ".join(f"{value:,.1f}" for value in values)
@@ -123,7 +123,7 @@ def _fdas_sections(context: dict) -> tuple[str, str, str]:
 
 def render_html(context: dict) -> str:
     sections = _html_sections(context)
-    bridge, opex, sources = _fdas_sections(context)
+    bridge, opex, sources = _project_economics_sections(context)
     envelopes = {
         event: {
             rid: (str(band.low), str(band.high))
@@ -137,12 +137,12 @@ def render_html(context: dict) -> str:
 <h2>Required assets</h2><table><tr><th>ID</th><th>Lane</th><th>Asset</th><th>Quantity</th></tr>{sections["required"]}</table><h2>Awards</h2><ul>{sections["links"]}</ul>
 <h2>Bottom-up ledgers</h2><table><tr><th>Event</th><th>Total</th><th>eligible</th><th>excluded</th><th>overlap</th><th>residual</th><th>value coverage</th><th>eligible requirement coverage</th><th>linked requirement coverage</th></tr>{sections["ledger"]}</table><p>residual, unallocated, and unreconciled variance remain distinct.</p>
 <h2>Joint scenarios</h2><ul>{sections["scenarios"]}</ul><p>Component envelopes are non-additive: {_esc(envelopes)}</p><h2>Dated trace</h2><p>{len(context["trace"])} events; no interpolation.</p><table><tr><th>Date</th><th>Event</th><th>Lane</th><th>Type</th><th>Value</th><th>Source identity</th></tr>{sections["trace"]}</table>
-<h2>FDAS assumption bridge</h2><p class="allocated">{_esc(bridge)}. Native workbook USD divided by 1,000,000 to USD MM; assumed/workbook_assumption; FDAS_V30; comparison ineligible; not a disclosure.</p><p><b>OPEX — excluded from development CAPEX:</b> {_esc(opex)}.</p><p><b>installation/hookup:</b> req-000007 unmapped. {Decimal(stale["value"]):,.0f} USD MM is a {_esc(stale["classification"])}, not workbook truth.</p>
+<h2>project_economics assumption bridge</h2><p class="allocated">{_esc(bridge)}. Native workbook USD divided by 1,000,000 to USD MM; assumed/workbook_assumption; project_economics_V30; comparison ineligible; not a disclosure.</p><p><b>OPEX — excluded from development CAPEX:</b> {_esc(opex)}.</p><p><b>installation/hookup:</b> req-000007 unmapped. {Decimal(stale["value"]):,.0f} USD MM is a {_esc(stale["classification"])}, not workbook truth.</p>
 <h2>Sources and gaps</h2><ul>{sources}</ul><p>Unknown/not_public/unmapped findings remain visible.</p><ul><li>taxonomy — pending</li><li>accounting — pending</li><li>scenarios — pending</li><li>portfolio reuse — pending; reuse_allowed=false</li><li>external send — pending owner authorization; email not sent</li></ul></body></html>"""
 
 
 def workbook_manifest(context: dict, version: str) -> list[dict]:
-    rows, result = context["fdas_all"], []
+    rows, result = context["project_economics_all"], []
     for filename in sorted({row["WORKBOOK_FILE"] for row in rows}):
         selected = [row for row in rows if row["WORKBOOK_FILE"] == filename]
         cells = sorted(

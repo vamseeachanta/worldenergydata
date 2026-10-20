@@ -46,7 +46,7 @@ modules:
     docs_examples:
       - notebooks/quickstart_bsee.py
       - docs/modules/bsee/
-      - examples/fdas_complete_workflow.py (consumer)
+      - examples/project_economics_complete_workflow.py (consumer)
     related_issues: [266, 267, 326, 313, 327, 328, 124, 128]
     readiness_lane: execution-ready
     evidence_notes: "Largest test count in repo. CLI most fully fleshed out (28 KB). Catalog data is mostly samples — full BSEE drop requires `make data`."
@@ -227,13 +227,13 @@ modules:
       test_file_count_on_disk: 10
     data_catalog:
       module_present: false
-      notes: "Consumes BSEE/FDAS-derived enhanced well data."
+      notes: "Consumes BSEE/project_economics-derived enhanced well data."
     scheduler:
       manifest_in_scheduler: false
     docs_examples: []
     related_issues: []
     readiness_lane: planning-needed
-    evidence_notes: "Programmatic only; downstream consumer of bsee + fdas."
+    evidence_notes: "Programmatic only; downstream consumer of bsee + project_economics."
 
   - module: hse
     source_paths:
@@ -349,19 +349,19 @@ modules:
     related_issues: []
     readiness_lane: execution-ready
 
-  - module: fdas
+  - module: project_economics
     source_paths:
-      - src/worldenergydata/fdas/
-      - src/worldenergydata/fdas/core/
-      - src/worldenergydata/fdas/analysis/
-      - src/worldenergydata/fdas/adapters/
-      - src/worldenergydata/fdas/data/
-      - src/worldenergydata/fdas/reports/
+      - src/worldenergydata/project_economics/
+      - src/worldenergydata/project_economics/core/
+      - src/worldenergydata/project_economics/analysis/
+      - src/worldenergydata/project_economics/adapters/
+      - src/worldenergydata/project_economics/data/
+      - src/worldenergydata/project_economics/reports/
     cli_entrypoints:
-      - "worldenergydata fdas (registered)"
-      - file: src/worldenergydata/cli/commands/fdas.py
+      - "worldenergydata project_economics (registered)"
+      - file: src/worldenergydata/cli/commands/project_economics.py
     tests:
-      directory: tests/unit/fdas/
+      directory: tests/unit/project_economics/
       test_file_count_on_disk: 13
     data_catalog:
       module_present: true
@@ -371,8 +371,8 @@ modules:
       manifest_in_scheduler: false
       notes: "Consumes bsee output."
     docs_examples:
-      - notebooks/quickstart_fdas.py
-      - examples/fdas_complete_workflow.py
+      - notebooks/quickstart_project_economics.py
+      - examples/project_economics_complete_workflow.py
     related_issues: []
     readiness_lane: execution-ready
 

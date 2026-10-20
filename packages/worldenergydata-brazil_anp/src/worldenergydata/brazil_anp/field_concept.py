@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     FieldMapEntry,
     FieldMetaMapping,
     to_field_concept,

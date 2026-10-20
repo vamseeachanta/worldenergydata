@@ -203,12 +203,12 @@ code{{background:#ECEFF1;padding:1px 6px;border-radius:4px;font-size:12px}}
   <a href="2026-06-17-julia-field-economics-by-well-block-field.html">▸ Julia flagship</a>
 </div>
 <div class="selbar"><label for="fsel">Field</label><select id="fsel" onchange="pick(this.value)">{OPTIONS}</select>
-  <span class="rsub">10 fields · field economics validated vs FDAS V30 golden baseline (~0.001%)</span></div>
+  <span class="rsub">10 fields · field economics validated vs project_economics V30 golden baseline (~0.001%)</span></div>
 <div id="panels">{PANELS}</div>
 <div class="foot">
   Field economics = sanctioned golden baseline (independently reproduced from local OGOR <code>.bin</code>). Per-well/block =
   indicative decomposition (real production/revenue; shared CAPEX + fixed OPEX allocated by production share). Drilling: real
-  FDAS V30 per-bore record; 3D is indicative (real MD/TVD + water depth; schematic wellhead/azimuth — no public deviation survey).
+  project_economics V30 per-bore record; 3D is indicative (real MD/TVD + water depth; schematic wellhead/azimuth — no public deviation survey).
   Vintage OGOR+WTI through 2025-05. Input files: <code>config/ong_field_development/</code>. ACE Engineer · worldenergydata.
 </div>
 <script>

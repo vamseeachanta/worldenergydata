@@ -12,7 +12,7 @@
 
 ### Existing repo code
 
-- Found: `src/worldenergydata/fdas/api.py` — `EconomicsQuery.npv(cashflows, discount_rate, *, period, trimmed)` is the canonical post-refactor entry point; accepts plain lists or numpy arrays, returns `float`
+- Found: `src/worldenergydata/project_economics/api.py` — `EconomicsQuery.npv(cashflows, discount_rate, *, period, trimmed)` is the canonical post-refactor entry point; accepts plain lists or numpy arrays, returns `float`
 - Found: `src/worldenergydata/bsee/analysis/production_api12.py` — `ProductionAPI12Analysis.perform_npv_calculation(cfg, revenue_df)` still exists as a thin delegation wrapper; class is not removed but is the legacy surface
 - Found: `src/worldenergydata/bsee/analysis/legacy/production_api12_original.py` — original implementation moved to `legacy/`; confirms the refactor is structural and complete
 - Found: `tests/modules/bsee/analysis/npv-data-source-comparison/test_cash_flow_components.py` — lines 444–453: `TestProductionAPI12CashFlowMethods` class gated behind `@pytest.mark.skipif(not PRODUCTION_API12_AVAILABLE, …)` — one live skip marker targeting the legacy class
@@ -58,7 +58,7 @@
 - EXISTS: `tests/modules/bsee/analysis/npv-data-source-comparison/investigate_excel_npv_structure.py`
 - EXISTS: `tests/_archive/modules/bsee/analysis/test_excel_aligned_npv.py`
 - EXISTS: `tests/_archive/modules/bsee/analysis/test_npv_accuracy_validation.py`
-- EXISTS: `src/worldenergydata/fdas/api.py` — contains `EconomicsQuery.npv()`
+- EXISTS: `src/worldenergydata/project_economics/api.py` — contains `EconomicsQuery.npv()`
 - EXISTS: `src/worldenergydata/bsee/analysis/production_api12.py` — `perform_npv_calculation` present (delegation wrapper)
 - EXISTS: `src/worldenergydata/bsee/analysis/legacy/production_api12_original.py`
 
@@ -84,7 +84,7 @@ from worldenergydata.modules.bsee.analysis.production_api12 import (
     ProductionAPI12Analysis,
 ```
 
-**EconomicsQuery.npv() signature** (`src/worldenergydata/fdas/api.py` lines 53–60):
+**EconomicsQuery.npv() signature** (`src/worldenergydata/project_economics/api.py` lines 53–60):
 ```python
 @staticmethod
 def npv(
@@ -96,7 +96,7 @@ def npv(
 ) -> float:
 ```
 
-<!-- Verification: distinct sources — issue body (1), production_api12.py (2), fdas/api.py (3), test_cash_flow_components.py (4), test_current_npv_implementation.py (5), test_npv_integration_workflow.py (6), test_oil_price_extraction.py (7), archive tests (8), prior plan #342 (9). Count: 9. Minimum 3 met. -->
+<!-- Verification: distinct sources — issue body (1), production_api12.py (2), project_economics/api.py (3), test_cash_flow_components.py (4), test_current_npv_implementation.py (5), test_npv_integration_workflow.py (6), test_oil_price_extraction.py (7), archive tests (8), prior plan #342 (9). Count: 9. Minimum 3 met. -->
 
 ---
 
@@ -112,7 +112,7 @@ def npv(
 | Delete | `tests/modules/bsee/analysis/npv-data-source-comparison/investigate_excel_npv_structure.py` |
 | Already archived | `tests/_archive/modules/bsee/analysis/test_excel_aligned_npv.py` |
 | Already archived | `tests/_archive/modules/bsee/analysis/test_npv_accuracy_validation.py` |
-| Reference implementation | `src/worldenergydata/fdas/api.py` — `EconomicsQuery.npv()` |
+| Reference implementation | `src/worldenergydata/project_economics/api.py` — `EconomicsQuery.npv()` |
 | Plan review — Claude | `scripts/review/results/2026-05-04-plan-339-claude.md` |
 | Plan review — Codex | `scripts/review/results/2026-05-04-plan-339-codex.md` |
 | Plan review — Gemini | `scripts/review/results/2026-05-04-plan-339-gemini.md` |

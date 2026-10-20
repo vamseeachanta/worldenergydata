@@ -17,13 +17,13 @@ Modules:
 --------
     bsee          - BSEE data operations and analysis
     marine-safety - Marine safety incident data
-    fdas          - Field Development Analysis System
+    project_economics          - Project economics
 
 Examples:
 ---------
     worldenergydata bsee analyze --block 759
     worldenergydata marine-safety stats --source uscg
-    worldenergydata fdas calculate-npv --cashflows "[-1000,100,200,300]"
+    worldenergydata project_economics calculate-npv --cashflows "[-1000,100,200,300]"
 
 For legacy YAML-based engine usage:
     python -m worldenergydata <config.yaml>

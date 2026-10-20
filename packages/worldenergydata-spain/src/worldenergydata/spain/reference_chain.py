@@ -7,12 +7,12 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 
-from worldenergydata.fdas.adapters.contract import to_fdas_production
-from worldenergydata.fdas.adapters.field_concept_normalizer import (
+from worldenergydata.project_economics.adapters.contract import to_project_economics_production
+from worldenergydata.project_economics.adapters.field_concept_normalizer import (
     dev_system_from_water_depth_m,
 )
-from worldenergydata.fdas.analysis.cashflow import CashflowEngine
-from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.project_economics.analysis.cashflow import CashflowEngine
+from worldenergydata.project_economics.core.config import AssumptionsManager
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 from worldenergydata.spain.field_concept import build_spain_field_concept
@@ -41,21 +41,21 @@ def run_spain_reference_chain(
             end=end,
         )
     )
-    fdas_production = to_fdas_production(unified)
+    project_economics_production = to_project_economics_production(unified)
     field_concept = build_spain_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
-    first_oil = _first_oil_date(fdas_production)
+    first_oil = _first_oil_date(project_economics_production)
     price_deck = {
         str(year_month): oil_price_usd_bbl
-        for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
+        for year_month in project_economics_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
     dev_system = _spain_dev_system(field_meta, field_concept.water_depth_m)
     cashflows = CashflowEngine(
         AssumptionsManager(),
         dev_system=dev_system,
     ).generate_monthly_cashflow(
-        fdas_production,
+        project_economics_production,
         {"drilling_monthly": {}},
         price_deck,
         first_oil,
@@ -66,7 +66,7 @@ def run_spain_reference_chain(
     return {
         "field_name": field_name,
         "unified_production": unified,
-        "fdas_production": fdas_production,
+        "project_economics_production": project_economics_production,
         "field_concept": field_concept,
         "ranked_concepts": ranked_concepts,
         "concept_screening_label": "wiring_only_onshore_sparse_metadata",
@@ -92,10 +92,10 @@ def _is_onshore(field_meta: Dict[str, Any]) -> bool:
     return env in {"onshore", "land", "terra"}
 
 
-def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
-    if fdas_production.empty:
+def _first_oil_date(project_economics_production: pd.DataFrame) -> datetime:
+    if project_economics_production.empty:
         return datetime(1970, 1, 1)
-    first_period = str(fdas_production["YEAR_MONTH"].min())
+    first_period = str(project_economics_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 
 

@@ -15,7 +15,7 @@
 - Verified the current ANP Portuguese well schema converts daily oil, condensate, water, and Brazilian `Mm3/dia` gas rates into monthly `oil_bbl`, `condensate_bbl`, `water_bbl`, and `gas_mcf`.
 - Verified `BrazilAnpAdapter(loader=...)` maps normalized ANP production into `STANDARD_COLUMNS` with `source="anp_producao_poco"` while preserving the no-loader synthetic compatibility fixture.
 - Verified `BrazilAnpRefreshJob` calls `download_month`, writes month-keyed raw and normalized parquet, and maps legacy semester config to the final month of the semester without calling the stale semester client path.
-- Verified Brazil `FieldConcept` mapping reduces ANP field/platform/well metadata into a sparse field concept and the reference-chain runner performs `adapter.fetch -> to_fdas_production -> CashflowEngine` plus `FieldConcept -> recommend`.
+- Verified Brazil `FieldConcept` mapping reduces ANP field/platform/well metadata into a sparse field concept and the reference-chain runner performs `adapter.fetch -> to_project_economics_production -> CashflowEngine` plus `FieldConcept -> recommend`.
 
 ## Findings
 

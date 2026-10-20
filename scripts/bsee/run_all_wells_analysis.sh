@@ -43,13 +43,13 @@ python "$PROJECT_ROOT/scripts/analyze_production_by_lease.py" \
 echo -e "${GREEN}✓ Production analysis complete${NC}"
 echo ""
 
-# Run FDAS enhanced BSEE data analysis
-echo -e "${YELLOW}Step 2: Enhancing BSEE data with FDAS information...${NC}"
-python "$PROJECT_ROOT/scripts/fdas_enhance_bsee_data.py" \
-    --output "$OUTPUT_DIR/fdas_enhanced" \
+# Run project_economics enhanced BSEE data analysis
+echo -e "${YELLOW}Step 2: Enhancing BSEE data with project_economics information...${NC}"
+python "$PROJECT_ROOT/scripts/project_economics_enhance_bsee_data.py" \
+    --output "$OUTPUT_DIR/project_economics_enhanced" \
     --format html
 
-echo -e "${GREEN}✓ FDAS enhancement complete${NC}"
+echo -e "${GREEN}✓ project_economics enhancement complete${NC}"
 echo ""
 
 # Run production report generation
@@ -71,7 +71,7 @@ echo -e "${GREEN}Results saved to: $OUTPUT_DIR${NC}"
 echo ""
 echo "Reports generated:"
 echo "  • Production Analysis: $OUTPUT_DIR/production_analysis/"
-echo "  • FDAS Enhanced Data: $OUTPUT_DIR/fdas_enhanced/"
+echo "  • project_economics Enhanced Data: $OUTPUT_DIR/project_economics_enhanced/"
 echo "  • Production Reports: $OUTPUT_DIR/production_reports/"
 echo ""
 echo -e "${BLUE}View reports in your browser:${NC}"

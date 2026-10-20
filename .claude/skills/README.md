@@ -14,7 +14,7 @@ This collection provides **10 specialized skills** for energy industry data work
 |-------|-------------|
 | [bsee-data-extractor](bsee-data-extractor/SKILL.md) | Extract and process US offshore oil/gas data from BSEE public database |
 | [energy-data-visualizer](energy-data-visualizer/SKILL.md) | Create interactive energy data visualizations with Plotly |
-| [fdas-economics](fdas-economics/SKILL.md) | FDAS economic analysis with production profiles, capex, opex, and NPV calculations |
+| [project-economics](project-economics/SKILL.md) | project_economics economic analysis with production profiles, capex, opex, and NPV calculations |
 | [field-analyzer](field-analyzer/SKILL.md) | Analyze oil/gas field performance, production trends, and reserves |
 | [marine-safety-incidents](marine-safety-incidents/SKILL.md) | Analyze BSEE marine safety incidents including injuries, fatalities, and pollution events |
 | [npv-analyzer](npv-analyzer/SKILL.md) | Calculate NPV, IRR, and economic metrics for energy projects |
@@ -33,7 +33,7 @@ This collection provides **10 specialized skills** for energy industry data work
 
 ### Economic Analysis
 
-- **fdas-economics**: Full cycle economics (FDAS format) with production profiles and cashflows
+- **project-economics**: Full cycle economics (project_economics format) with production profiles and cashflows
 - **npv-analyzer**: Net present value, internal rate of return, breakeven calculations
 
 ### Production Analysis
@@ -75,7 +75,7 @@ Claude: [Activates marine-safety-incidents skill]
 Reference skills directly in prompts:
 
 ```
-"Using the fdas-economics skill, calculate project economics"
+"Using the project-economics skill, calculate project economics"
 "Apply the production-forecaster skill for EUR estimation"
 "Use the well-production-dashboard skill to analyze monthly trends"
 ```
@@ -89,7 +89,7 @@ worldenergydata/.claude/skills/
 │   └── SKILL.md
 ├── energy-data-visualizer/
 │   └── SKILL.md
-├── fdas-economics/
+├── project-economics/
 │   └── SKILL.md
 ├── field-analyzer/
 │   └── SKILL.md

@@ -32,7 +32,7 @@ Total modules indexed: **27** (18 data-source + 7 infrastructure + 2 analysis/vi
 
 | Module | Region | Key Data Types | Status |
 |--------|--------|---------------|--------|
-| `fdas` | Gulf of Mexico | NPV, MIRR, IRR, cashflow, development systems | stable |
+| `project_economics` | Gulf of Mexico | NPV, MIRR, IRR, cashflow, development systems | stable |
 
 ## Environment and Metocean Modules
 
@@ -130,7 +130,7 @@ from worldenergydata.safety_analysis import SafetyDataLoader, RiskScorer
 
 ### Run field economics
 ```python
-from worldenergydata.fdas import calculate_npv, calculate_all_metrics
+from worldenergydata.project_economics import calculate_npv, calculate_all_metrics
 results = calculate_all_metrics(cashflows, discount_rate=0.10)
 ```
 

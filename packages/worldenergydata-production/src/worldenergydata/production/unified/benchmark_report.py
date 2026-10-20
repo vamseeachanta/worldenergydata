@@ -3,7 +3,7 @@
 Provenance-badged benchmark across the unified production regions, REUSING the
 tested analytics: ``cross_basin.compare_peak_rates`` / ``fiscal_sensitivity``
 (per-country ``_FISCAL_REGIMES``, illustrative), ``router.RegionRouter``, and
-``fdas.core.config.classify_dev_system_by_depth``.
+``project_economics.core.config.classify_dev_system_by_depth``.
 
 Design (Option A — never label mock as real). Only US/GoM has a real data path
 today; other adapters return MOCK rows. Provenance is FAIL-CLOSED: a region is
@@ -147,7 +147,7 @@ def concept_mix_by_region(depth_by_field: dict) -> dict[str, dict[str, int]]:
     Returns:
         ``{region: {"dry": n, "subsea15": n, "subsea20": n, "unknown": n}}``.
     """
-    from worldenergydata.fdas.core.config import classify_dev_system_by_depth
+    from worldenergydata.project_economics.core.config import classify_dev_system_by_depth
 
     mix: dict[str, dict[str, int]] = {}
     for region, fields in (depth_by_field or {}).items():

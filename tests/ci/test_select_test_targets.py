@@ -81,17 +81,19 @@ def test_bsee_cluster_member_routes_each_subpackage_to_its_own_shard():
         assert all(t in r["xdist"] for t in ALWAYS_XDIST), subpkg
 
 
-def test_fdas_own_member_routes_to_fdas_shard():
-    """fdas was carved out of the bsee cluster into its own member
-    (packages/worldenergydata-fdas/, #714). Its distribution name equals its
-    subpackage name (fdas), so _PACKAGE_MEMBER_RE routes it automatically to
-    tests/unit/fdas — WITHOUT a _CLUSTER_MEMBER_RE entry."""
+def test_project_economics_own_member_r_own_member_routes_to_er_routes_to_project_economics_shard():
+    """project_economics was carved out of the bsee cluster into its own member
+    (packages/worldenergydata-project_economics/, #714). Its distribution name equals its
+    subpackage name (project_economics), so _PACKAGE_MEMBER_RE routes it automatically to
+    tests/unit/project_economics — WITHOUT a _CLUSTER_MEMBER_RE entry."""
     r = select(
-        ["packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/cashflow.py"],
+        [
+            "packages/worldenergydata-project_economics/src/worldenergydata/project_economics/analysis/cashflow.py"
+        ],
         REPO_ROOT,
     )
     assert r["scope"] == "modules"
-    assert "tests/unit/fdas" in r["xdist"]
+    assert "tests/unit/project_economics" in r["xdist"]
     assert all(t in r["xdist"] for t in ALWAYS_XDIST)
 
 

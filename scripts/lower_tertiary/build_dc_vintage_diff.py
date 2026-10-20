@@ -24,7 +24,7 @@ if __package__ in (None, ""):
 from lower_tertiary.dc_provenance import carries_basis, validate_day_schema, vintage_labels
 
 REPO = Path(__file__).resolve().parents[2]
-V30_DIR = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
+V30_DIR = REPO / "docs/modules/bsee/analysis/production/project_economics_V30"
 FROZEN_XLSX = V30_DIR / "drilling_and_completion_days.xlsx"
 CANDIDATE_CSV = V30_DIR / "drilling_and_completion_days_v21_kc.csv"
 OUT_CSV = REPO / "reports/lower_tertiary/data/dc_vintage_diff.csv"

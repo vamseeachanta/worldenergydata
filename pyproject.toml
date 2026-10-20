@@ -61,11 +61,11 @@ dependencies = [
     # (bsee + lower_tertiary + hse + well_production_dashboard ship together —
     # bsee<->lower_tertiary import cycle + hse/wpd import bsee).
     "worldenergydata-bsee",
-    # fdas carved out to its own source-agnostic economics member (#714); the
+    # project_economics carved out to its own source-agnostic economics member (#714); the
     # bsee cluster and this root meta-package both depend on it. The documented
-    # `bsee<->fdas` cycle was refuted — fdas is a shared LEAF (nothing in fdas
+    # `bsee<->project_economics` cycle was refuted — project_economics is a shared LEAF (nothing in project_economics
     # imports bsee/lower_tertiary), so it splits cleanly.
-    "worldenergydata-fdas",
+    "worldenergydata-project_economics",
     # Phase 2 batch 4 (#529): two un-ignored leaf domains (marine_safety,
     # safety_analysis) + the data-coupled trio. vessel_fleet & lng_terminals
     # ship their curated data inside the member (option i); vessel_hull_models
@@ -265,15 +265,15 @@ exclude = [
     "worldenergydata.subsea.*",
     # Phase 2 batch 3 (#529): the coupled BSEE cluster, carved as ONE member
     # (packages/worldenergydata-bsee/ ships bsee, lower_tertiary, hse,
-    # well_production_dashboard). fdas was carved to its OWN member
-    # (packages/worldenergydata-fdas/, #714). Exclude all of them so the root
+    # well_production_dashboard). project_economics was carved to its OWN member
+    # (packages/worldenergydata-project_economics/, #714). Exclude all of them so the root
     # wheel does not duplicate code now shipped by those members.
     "worldenergydata.bsee",
     "worldenergydata.bsee.*",
     "worldenergydata.lower_tertiary",
     "worldenergydata.lower_tertiary.*",
-    "worldenergydata.fdas",
-    "worldenergydata.fdas.*",
+    "worldenergydata.project_economics",
+    "worldenergydata.project_economics.*",
     "worldenergydata.hse",
     "worldenergydata.hse.*",
     "worldenergydata.well_production_dashboard",
@@ -397,7 +397,7 @@ addopts = """\
 --cov-report=xml:reports/coverage/coverage.xml \
 --cov-report=json:reports/coverage/coverage.json \
 --ignore=tests/performance \
---ignore=tests/modules/fdas/integration/test_end_to_end.py \
+--ignore=tests/modules/project_economics/integration/test_end_to_end.py \
 --ignore=tests/modules/sodir-integration \
 --ignore=tests/modules/well_production_dashboard/test_monitoring.py \
 --ignore=tests/modules/well_production_dashboard/test_well_production_dashboard.py \
@@ -467,12 +467,12 @@ exclude_lines = [
 #   packages/worldenergydata-core/  -> worldenergydata-core  (worldenergydata.common; this PR)
 #   packages/worldenergydata-<domain>/ -> per-leaf-domain members, later PRs,
 #                                      rolled out ISOLATED -> LEAF -> COUPLED
-#   (the bsee <-> lower_tertiary cycle ships as ONE member; fdas was carved out
-#    to its own member — worldenergydata-fdas, #714 — after its purported cycle
-#    with bsee was refuted: fdas is a shared leaf imported BY bsee/lower_tertiary)
+#   (the bsee <-> lower_tertiary cycle ships as ONE member; project_economics was carved out
+#    to its own member — worldenergydata-project_economics, #714 — after its purported cycle
+#    with bsee was refuted: project_economics is a shared leaf imported BY bsee/lower_tertiary)
 #
 # Scope note (this PR): core is `common/` ONLY. base_configs/ is per-domain
-# config DATA (bsee/fdas/sodir/... yml) referenced by filename, not shared
+# config DATA (bsee/project_economics/sodir/... yml) referenced by filename, not shared
 # infra, so it stays in the root distribution with the domains. _compat.py and
 # the namespace root __init__.py stay in the root distribution because exactly
 # one distribution may own worldenergydata/__init__.py (ADR risk note), and the
@@ -490,8 +490,8 @@ worldenergydata-core = { workspace = true }
 # in-repo workspace (the members glob `packages/*` already discovers them).
 worldenergydata-economics = { workspace = true }
 worldenergydata-cost = { workspace = true }
-# fdas carved out of the bsee cluster into its own source-agnostic member (#714)
-worldenergydata-fdas = { workspace = true }
+# project_economics carved out of the bsee cluster into its own source-agnostic member (#714)
+worldenergydata-project_economics = { workspace = true }
 worldenergydata-eia = { workspace = true }
 worldenergydata-eia_us = { workspace = true }
 worldenergydata-decommissioning = { workspace = true }

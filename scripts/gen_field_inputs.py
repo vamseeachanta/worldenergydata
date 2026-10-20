@@ -2,7 +2,7 @@
 
 Mirrors the aceengineercode `config/ong_field_development` pattern (field_nickname,
 boem_fields, well_type) and enriches with worldenergydata data: BSEE leases
-(lease_mapping_fdas.yml), dev_system / first_oil / status / validated economics
+(lease_mapping_project_economics.yml), dev_system / first_oil / status / validated economics
 (golden_baseline_v30.yml). Writes:
   config/ong_field_development/<Field>.yml      (per-field input, one per field)
   config/ong_field_development/fields_registry.yml  (canonical combined registry)
@@ -68,13 +68,13 @@ ENRICH = {
               "reported_capex_usd": 5.7e9, "plateau_bopd": 75000},
 }
 
-lease_map = yaml.safe_load((LT / "lease_mapping_fdas.yml").read_text())
+lease_map = yaml.safe_load((LT / "lease_mapping_project_economics.yml").read_text())
 baseline = yaml.safe_load((LT / "golden_baseline_v30.yml").read_text())
 base_by_id = baseline["projects"]
 
 producing = set(lease_map.get("producing_fields", []))
 
-registry = {"meta": {"source": "aceengineercode boem_fields + worldenergydata lease_mapping_fdas + golden_baseline_v30",
+registry = {"meta": {"source": "aceengineercode boem_fields + worldenergydata lease_mapping_project_economics + golden_baseline_v30",
                      "discount_rate_annual": 0.10, "price_basis": "EIA WTI historical deck",
                      "validation": "field economics reproduce golden_baseline_v30.yml to ~0.001%"},
             "fields": {}}
@@ -133,7 +133,7 @@ for fid, fdata in lease_map["fields"].items():
         "public_metadata": ENRICH.get(fid, {}),  # operator press releases + offshore trade press
         "provenance": {
             "boem_source": "aceengineercode/config/ong_field_development/" + ACE_REF[fid],
-            "lease_source": "config/analysis/lower_tertiary/lease_mapping_fdas.yml",
+            "lease_source": "config/analysis/lower_tertiary/lease_mapping_project_economics.yml",
             "economics_source": "config/analysis/lower_tertiary/golden_baseline_v30.yml",
         },
     }

@@ -347,7 +347,13 @@ def test_verified_requires_sentence_reference() -> None:
         [("page", "blurb", "Verified. Against reference values.")], "absolutes"
     )
     assert not wording_findings(
-        [("page", "blurb", "Verified against FDAS V30 Financial Project Summary.")],
+        [
+            (
+                "page",
+                "blurb",
+                "Verified against project_economics V30 Financial Project Summary.",
+            )
+        ],
         "absolutes",
     )
 
@@ -439,7 +445,7 @@ def test_country_name_is_spelled_out_in_source_basis() -> None:
 
 
 NAMED_REFERENCES = (
-    "FDAS V30 Financial Project Summary",
+    "project_economics V30 Financial Project Summary",
     "World Oil April 2026 article",
 )
 

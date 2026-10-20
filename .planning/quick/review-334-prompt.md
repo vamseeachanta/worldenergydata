@@ -59,8 +59,8 @@ Here is the full plan under review:
 ### Documents consulted
 - Issue `#334` — defines the requested outcome: annual-statement-driven year-over-year operator/project cost tracking.
 - Issue `#143` (`WRK-261: BSEE field economics case study — rebuild on calibrated cost data`) — confirms there is already downstream demand for richer cost/calibration inputs.
-- `README.md` — confirms WorldEnergyData positions economics/reporting as core capabilities and already exposes BSEE/FDAS economic workflows.
-- `module-manifest.yaml` — confirms economics-relevant modules already exist in `bsee`, `fdas`, `lower_tertiary`, `sodir`, `ukcs`, and `brazil_anp`, so the new disclosure layer should be designed as reusable data infrastructure rather than a one-off BSEE-only feature.
+- `README.md` — confirms WorldEnergyData positions economics/reporting as core capabilities and already exposes BSEE/project_economics economic workflows.
+- `module-manifest.yaml` — confirms economics-relevant modules already exist in `bsee`, `project_economics`, `lower_tertiary`, `sodir`, `ukcs`, and `brazil_anp`, so the new disclosure layer should be designed as reusable data infrastructure rather than a one-off BSEE-only feature.
 
 ### Gaps identified
 - No schema exists for annual operator disclosures with `fiscal_year`, filing/report type, page references, quoted text, or metric-level provenance.

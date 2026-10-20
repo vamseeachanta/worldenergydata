@@ -42,7 +42,7 @@ def test_synthetic_pure_gas_chain_uses_existing_volume_conversion():
         field_name="Synthetic gas field",
         gas_prices={"2025-01": 3.0, "2025-02": 3.0},
     )
-    assert result["fdas_production"]["MONTHLY_GAS_MCF"].tolist() == [
+    assert result["project_economics_production"]["MONTHLY_GAS_MCF"].tolist() == [
         GWH_TO_MCF,
         2 * GWH_TO_MCF,
     ]

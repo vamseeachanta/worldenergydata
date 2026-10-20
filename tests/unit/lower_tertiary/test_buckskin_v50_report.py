@@ -10,7 +10,9 @@ import scripts.build_pages as build_pages
 import scripts.lower_tertiary.regenerate_field_economics_v50 as regen
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
-FDAS_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
+PROJECT_ECONOMICS_DIR = (
+    PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
+)
 REPORTS_DIR = PROJECT_ROOT / "reports/lower_tertiary"
 CAPABILITIES_PAGE = PROJECT_ROOT / "reports/capabilities/index.html"
 
@@ -22,7 +24,7 @@ def _norm_lease(value: str) -> str:
 
 
 def test_v50_kc_dnc_input_exists_with_buckskin_totals():
-    path = FDAS_DIR / "drilling_and_completion_days_v21_kc.csv"
+    path = PROJECT_ECONOMICS_DIR / "drilling_and_completion_days_v21_kc.csv"
     assert path.exists(), "V50 KC D&C input CSV must be committed"
 
     rows = list(csv.DictReader(path.open(newline="", encoding="utf-8")))
@@ -53,8 +55,10 @@ def test_buckskin_v50_report_is_published():
     assert re.search(r"\| \*\*NPV @ 10%\*\* \| \*\*\$-?[0-9,]+\.[0-9] M\*\* \|", md)
 
 
-def test_fdas_comparison_replaces_buckskin_wed_placeholder():
-    md = (REPORTS_DIR / "fdas_revision_comparison.md").read_text(encoding="utf-8")
+def test_project_economics_comparison_replaces_buckskin_wed_placeholder():
+    md = (REPORTS_DIR / "project_economics_revision_comparison.md").read_text(
+        encoding="utf-8"
+    )
     row = next(
         line for line in md.splitlines() if line.startswith("| Buckskin | −541.4 |")
     )
@@ -79,7 +83,7 @@ def test_capabilities_page_redirects_to_canonical_hub():
     # C10 (workspace-hub#3494, decision A): the worldenergydata capabilities OVERVIEW is now
     # a redirect stub to the single canonical surface (aceengineer.com/capabilities). The
     # former in-page "validation" section is intentionally gone; the deep validation reports
-    # it linked (wo-april-2026-validation, completion/verification, fdas-revision-comparison,
+    # it linked (wo-april-2026-validation, completion/verification, project_economics-revision-comparison,
     # economics-buckskin) still exist as standalone pages. This guards the redirect + that the
     # divergent overview copy does not creep back. (Repairs the regression from the C10 stub.)
     html = CAPABILITIES_PAGE.read_text(encoding="utf-8")

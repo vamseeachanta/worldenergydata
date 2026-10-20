@@ -13,7 +13,7 @@ Module catalog (flat namespace, WRK-096):
     worldenergydata.marine_safety  - Marine safety incident analysis
     worldenergydata.pipeline_safety - Pipeline safety data and analysis
     worldenergydata.safety_analysis - Safety analysis utilities
-    worldenergydata.fdas           - Facility data analysis
+    worldenergydata.project_economics           - Facility data analysis
 
   Production & Markets:
     worldenergydata.sodir          - Norwegian Shelf Directorate data
@@ -81,7 +81,7 @@ def __getattr__(name: str):
     * ``hse_api`` — :mod:`worldenergydata.hse.api`
       (incidents/penalties/statistics/epa_tri)
 
-    Note: ``bsee`` and ``fdas`` are real subpackages whose ``__init__.py``
+    Note: ``bsee`` and ``project_economics`` are real subpackages whose ``__init__.py``
     files expose query API singletons (``production``, ``wells``,
     ``companies``, ``economics``) via their own ``__getattr__``.
 
@@ -89,7 +89,7 @@ def __getattr__(name: str):
     --------
     >>> import worldenergydata as wed
     >>> df = wed.bsee.production.query(year=2022)
-    >>> npv = wed.fdas.economics.npv([-1000, 100, 200], 0.10)
+    >>> npv = wed.project_economics.economics.npv([-1000, 100, 200], 0.10)
     >>> df = wed.marine_safety_api.incidents.query(source="maib")
     """
     if name == "marine_safety_api":
@@ -107,11 +107,11 @@ def __getattr__(name: str):
     # members and are contributed to this namespace via ``pkgutil.extend_path``.
     # ``import worldenergydata.<domain>`` has always worked, but bare attribute
     # access (``worldenergydata.<domain>`` without a prior submodule import — as
-    # the docstring examples ``wed.bsee.production`` / ``wed.fdas.economics``
+    # the docstring examples ``wed.bsee.production`` / ``wed.project_economics.economics``
     # show) only resolved if something had already imported the submodule.
     # Resolve any real subpackage on this namespace's ``__path__`` on first
     # attribute access so behavior is identical for in-root and carved domains
-    # (e.g. the batch-3 cluster: bsee/fdas/lower_tertiary/hse/
+    # (e.g. the batch-3 cluster: bsee/project_economics/lower_tertiary/hse/
     # well_production_dashboard now ship from packages/worldenergydata-bsee/).
     # This runs only for attributes that would otherwise raise AttributeError,
     # so it never shadows a real module-level attribute.

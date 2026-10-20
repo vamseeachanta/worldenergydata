@@ -40,7 +40,7 @@ from typing import Dict, List, Optional, Sequence
 import pandas as pd
 import yaml
 
-from worldenergydata.fdas.api import DisclosureAnalyticsQuery
+from worldenergydata.project_economics.api import DisclosureAnalyticsQuery
 from worldenergydata.lower_tertiary.portfolio import (
     LT_FIELDS_2026,
     fields_config_dir,

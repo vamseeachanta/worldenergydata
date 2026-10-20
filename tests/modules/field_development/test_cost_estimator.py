@@ -1,10 +1,10 @@
 # ABOUTME: Tests for the parametric per-concept CAPEX/OPEX estimator (issue #643).
-# ABOUTME: Verifies reuse of FDAS economics + recommendation priors, not new factors.
+# ABOUTME: Verifies reuse of project_economics economics + recommendation priors, not new factors.
 """Tests for ``worldenergydata.field_development.cost_estimator``.
 
 The estimator layers a *per-concept* adjustment on top of the field-level,
-depth-driven FDAS CAPEX (``integrations.estimate_economics``) and scales OPEX by
-the FDAS fixed-OPEX assumption. Tests assert the documented behaviours from the
+depth-driven project_economics CAPEX (``integrations.estimate_economics``) and scales OPEX by
+the project_economics fixed-OPEX assumption. Tests assert the documented behaviours from the
 issue acceptance criteria: tieback cheaper than FPSO, measurable depth-fit and
 long-tieback penalties, reserves-scaled OPEX, bounded factors, graceful degrade,
 and ordered portfolios with costs rounded to 0.1 MM.
@@ -177,7 +177,7 @@ def test_costs_rounded_to_point_one():
 # Graceful degradation
 # --------------------------------------------------------------------------- #
 def test_graceful_degrade_unknown_depth():
-    # No water depth → FDAS cannot classify a dev system → no CAPEX, but the
+    # No water depth → project_economics cannot classify a dev system → no CAPEX, but the
     # estimator must return a noted struct rather than raise.
     est = estimate_per_concept_costs(FieldConcept(name="X"), _scored(ConceptType.FPSO))
     assert est.capex_mm is None

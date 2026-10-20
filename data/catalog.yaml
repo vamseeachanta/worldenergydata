@@ -880,12 +880,12 @@ modules:
       - dsptsdelimit.txt
       contents_count: 1
       last_modified: '2026-01-18T13:52:22+00:00'
-  fdas:
-    module: fdas
-    description: Field Development Analysis System - enhanced well data [4.4 MB]
+  project_economics:
+    module: project_economics
+    description: Project economics - enhanced well data [4.4 MB]
     datasets:
     - name: well_data_enhanced.csv
-      path: data/modules/fdas/enhanced/wells/well_data_enhanced.csv
+      path: data/modules/project_economics/enhanced/wells/well_data_enhanced.csv
       format: csv
       columns:
       - name: API_WELL_NUMBER

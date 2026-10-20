@@ -15,7 +15,7 @@
 - `cost_revision_trails.csv` provides the $4,000MM sanction and $5,100MM final/outturn observations in separate dated rows.
 - `contract_awards.csv` provides exactly two current Big Foot rows: a 2009 $45MM riser-tensioner point award and a $200MM midstream export system that must be excluded from Chevron project CAPEX. Host design/hull references remain research leads outside the curated registry and will therefore appear as award-coverage gaps unless separately imported through a sourced issue.
 - `drilling_and_completion_days.xlsx` and the deterministic completion report provide 38 Big Foot wellbores and 3,033 D&C days. Big Foot is WED-only in the current World Oil comparison, so that workbook comparison will require explicit status rather than a forced match.
-- The frozen FDAS assumption workbook provides the legacy dry-system cost representation to crosswalk, not disclosure evidence.
+- The frozen project_economics assumption workbook provides the legacy dry-system cost representation to crosswalk, not disclosure evidence.
 
 ## Artifact Map
 
@@ -29,7 +29,7 @@
 | Create | `data/modules/cost/curated/cost_requirement_identity.csv` |
 | Create | `data/modules/cost/curated/cost_event_identity.csv` |
 | Create | `data/modules/cost/curated/cost_map_contract_manifest.v1.json` |
-| Create | `data/modules/cost/curated/fdas_project_cost_crosswalk.csv` |
+| Create | `data/modules/cost/curated/project_economics_project_cost_crosswalk.csv` |
 | Create | `packages/worldenergydata-cost/src/worldenergydata/cost/timeseries/cost_map.py` |
 | Create | `scripts/cost/build_big_foot_cost_map.py` |
 | Create | `tests/unit/cost/test_cost_map_schema.py` |
@@ -39,7 +39,7 @@
 
 ## Deliverable
 
-The pilot will enumerate Big Foot’s required physical assets and commercial work packages, link every known award, reconcile eligible bottom-up values to both sanction and outturn totals, allocate each total back to assets as uncertainty bands, produce a dated trace, and compare the result with frozen FDAS inputs. The resulting schema and accounting choices will become the proposed portfolio contract.
+The pilot will enumerate Big Foot’s required physical assets and commercial work packages, link every known award, reconcile eligible bottom-up values to both sanction and outturn totals, allocate each total back to assets as uncertainty bands, produce a dated trace, and compare the result with frozen project_economics inputs. The resulting schema and accounting choices will become the proposed portfolio contract.
 
 ## Planned Tasks and TDD Order
 
@@ -70,10 +70,10 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 - `test_top_down_allocations_are_banded_and_marked_allocated`
 - `test_each_joint_allocation_scenario_sums_exactly_to_project_total`
 - `test_trace_is_ordered_and_never_interpolates_missing_values`
-- `test_fdas_crosswalk_preserves_workbook_vintage_and_assumption_status`
-- `test_fdas_total_is_4517_3_mm_and_stale_5200_mm_config_is_not_disclosure`
-- `test_installation_and_hookup_are_explicitly_unmapped_in_fdas`
-- `test_dnc_workbook_hash_is_3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f`
+- `test_project_economics_crosswalk_preserves_workbook_vintage_and_assumption_status`
+- `test_project_economics_total_is_4517_3_mm_and_stale_5200_mm_config_is_not_disclosure`
+- `test_installation_and_hookup_are_explicitly_unmapped_in_project_economics`
+- `test_dnc_workbook_hash_is_6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb`
 - `test_big_foot_outputs_are_byte_deterministic`
 
 ## Acceptance Criteria
@@ -84,7 +84,7 @@ The pilot will enumerate Big Foot’s required physical assets and commercial wo
 - [ ] Value coverage and requirement coverage will be reported separately.
 - [ ] Sanction and outturn reconciliations will show eligible, excluded, overlap, unallocated, and residual amounts.
 - [ ] Top-down allocations will remain ranges and will never masquerade as disclosures.
-- [ ] FDAS differences will be classified by component, basis, vintage, timing, or missing evidence.
+- [ ] project_economics differences will be classified by component, basis, vintage, timing, or missing evidence.
 - [ ] The $5,100MM outturn will retain `trade_press` provenance and low confidence; it will not be relabeled as operator disclosure.
 - [ ] The HTML and CSV outputs will regenerate deterministically.
 - [ ] The owner will explicitly approve or revise the pilot contract before #1040 starts.

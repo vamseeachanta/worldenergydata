@@ -1,6 +1,6 @@
-# Frontier Deepwater Basins — Discovery Dataset
+# Emerging Basins — Discovery Dataset
 
-Discovery-level catalog of the three frontier deepwater oil plays that are
+Discovery-level catalog of the three emerging deepwater oil plays that are
 reshaping global exploration and absorbing the high-day-rate deepwater drillship
 fleet: **Guyana** (Stabroek + adjacent blocks), **Suriname** (Block 58 + adjacent
 blocks), and **Namibia** (Orange Basin). Prompted by issue #603.

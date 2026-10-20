@@ -173,7 +173,8 @@ def _cost_comparison_table(concept: FieldConcept, ranked) -> str:
         + "".join(rows)
         + "</table>"
         '<p class="sub" style="font-size:12px">CAPEX layers a concept adjustment '
-        "onto the field-level FDAS estimate; OPEX scales the FDAS fixed-OPEX "
+        "onto the field-level project_economics estimate; "
+        "OPEX scales the project_economics fixed-OPEX "
         "assumption by concept and reserves. Qualitative priors, not a calibrated "
         "cost model.</p>"
     )

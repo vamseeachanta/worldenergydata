@@ -78,7 +78,7 @@ TODAY_YEAR = 2026.5  # generated 2026-07-03; a fixed "you are here" marker on th
 FIELDS_REGISTRY = load_fields()
 
 # BSEE lease attributes for the landman panel (#951). Committed source is the
-# FDAS V30 lease workbook (name/depth/dev-system only); status/dates/WI/block are
+# project_economics V30 lease workbook (name/depth/dev-system only); status/dates/WI/block are
 # placeholders linking the ingest issue below. Build-time only (pandas); the
 # published site just copies the frozen posters + _explorer.json.
 _LEASE_INGEST_ISSUE = 959
@@ -115,7 +115,7 @@ def _architecture_for(field_id: str) -> dict:
 
 _V30_DIR = (
     Path(__file__).resolve().parents[2]
-    / "docs/modules/bsee/analysis/production/FDAS_V30"
+    / "docs/modules/bsee/analysis/production/project_economics_V30"
 )
 
 

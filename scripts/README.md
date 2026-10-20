@@ -62,12 +62,12 @@ scripts/
 
 **What it does:**
 - Analyzes production data for all BSEE wells
-- Enhances BSEE data with FDAS (Field and Development Area System) information
+- Enhances BSEE data with project_economics (Project economics) information
 - Generates comprehensive production reports with interactive visualizations
 
 **Outputs:**
 - Production analysis reports (HTML)
-- FDAS-enhanced datasets
+- project_economics-enhanced datasets
 - Time-series production charts
 - Well performance metrics
 
@@ -195,7 +195,7 @@ reports/complete_analysis_YYYYMMDD_HHMMSS/
 ├── bsee/
 │   ├── all_wells/
 │   │   ├── production_analysis/
-│   │   ├── fdas_enhanced/
+│   │   ├── project_economics_enhanced/
 │   │   └── production_reports/
 │   └── lower_tertiary/
 │       ├── field_analysis/
@@ -217,7 +217,7 @@ reports/complete_analysis_YYYYMMDD_HHMMSS/
 │   ├── llm_classification/
 │   └── imports/
 └── production/
-    └── fdas/
+    └── project_economics/
 ```
 
 ---
@@ -342,7 +342,7 @@ chmod +x scripts/marine_safety/*.sh
 Scripts process data from:
 
 - **BSEE** - Bureau of Safety and Environmental Enforcement
-- **FDAS** - Field and Development Area System
+- **project_economics** - Project economics
 - **USCG MISLE** - US Coast Guard Marine Information
 - **NOAA** - National Oceanic and Atmospheric Administration
 - **MAIB** - UK Marine Accident Investigation Branch

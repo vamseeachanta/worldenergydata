@@ -284,8 +284,7 @@ reports/marine_safety/*/*.html
 reports/coverage/
 results/modules/marine_safety/
 
-# Nested clones (not submodules)
-frontierdeepwater/
+# Local nested checkouts belong in .git/info/exclude.
 
 # Claude Flow artifacts (transient)
 **/.claude-flow/

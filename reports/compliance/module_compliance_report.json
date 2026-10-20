@@ -168,49 +168,49 @@
       ]
     },
     {
-      "module_name": "fdas",
+      "module_name": "project_economics",
       "is_compliant": true,
       "issues": [
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/adapters/bsee_adapter.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/adapters/bsee_adapter.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/analysis/cashflow.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/analysis/cashflow.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/core/config.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/core/config.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/core/financial.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/core/financial.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/data/drilling.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/data/drilling.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/data/production.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/data/production.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         },
         {
           "rule": "common_layer",
           "severity": "warning",
-          "message": "Local custom exception in src/worldenergydata/modules/fdas/reports/excel_generator.py",
+          "message": "Local custom exception in src/worldenergydata/modules/project_economics/reports/excel_generator.py",
           "suggestion": "Use worldenergydata.common instead of local custom exception"
         }
       ],

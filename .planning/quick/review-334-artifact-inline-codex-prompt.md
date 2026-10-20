@@ -53,7 +53,7 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
 
 ### Explicitly out of scope for this issue
 - Any changes to `cost_predictor.py`
-- Any integration into `fdas`, `lower_tertiary`, or field-economics consumers
+- Any integration into `project_economics`, `lower_tertiary`, or field-economics consumers
 - Currency normalization, inflation adjustment, rebasing, or cross-currency comparability logic
 - Derived analytics/views such as re-baselining, unit-cost metrics, or benchmarking dashboards
 - Helper query APIs like `get_project_timeseries()` or `get_operator_annual_metrics()`
@@ -74,7 +74,7 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
 
 ## Downstream Integration Surface
 
-- After this issue, downstream consumers in `cost`, `fdas`, and field-economics modules can rely on a stable disclosure schema/loader existing in `worldenergydata.cost.data_collection`.
+- After this issue, downstream consumers in `cost`, `project_economics`, and field-economics modules can rely on a stable disclosure schema/loader existing in `worldenergydata.cost.data_collection`.
 - The only supported relationship to the current sanction-point model is the exact `(operator, project_name)` linkage contract for project-scope rows.
 - No downstream consumer code changes are part of this issue.
 - Follow-up issues will separately cover linkage expansion, normalization/comparability, ingestion hardening, and consumer analytics/integration.
@@ -164,7 +164,7 @@ update data_collection exports:
 - Child issue #335: linkage model hardening between annual disclosure records and `CostDataPoint` sanction records
 - Child issue #336: currency normalization and comparability policy for annual disclosures
 - Child issue #337: citation standards and automated ingestion for annual operator disclosures
-- Child issue #338: downstream analytics views and integration surface for `cost`, `fdas`, and `lower_tertiary`
+- Child issue #338: downstream analytics views and integration surface for `cost`, `project_economics`, and `lower_tertiary`
 
 ---
 

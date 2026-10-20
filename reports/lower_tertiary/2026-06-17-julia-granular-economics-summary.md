@@ -6,7 +6,7 @@
 ## What this is
 The marketing demo no longer uses a toy cashflow. It now consumes the **full BSEE workflow**:
 real OGOR-A monthly production (local `ogora*delimit` pickles, 1996–2025) → WTI historical price deck →
-royalty / OPEX / D&C / facilities (FDAS V30 `tieback15` assumptions) → NPV / MIRR / payback, queryable
+royalty / OPEX / D&C / facilities (project_economics V30 `tieback15` assumptions) → NPV / MIRR / payback, queryable
 **by well, by block, and by field**, for two data vintages.
 
 ## Validation (both baselines)
@@ -63,7 +63,7 @@ matters for multi-block/multi-lease fields (e.g. Jack/St. Malo spans 6 leases).
   the field NPV (per-unit discounting is non-linear).
 
 ## Well & drilling engineering sections (added)
-The report now includes well-engineering views built from the real FDAS V30 per-bore
+The report now includes well-engineering views built from the real project_economics V30 per-bore
 drilling record (`reports/lower_tertiary/data/julia_wells.json`, via `scripts/extract_julia_well_data.py`):
 - **Drilling campaign timeline** (Gantt, inline SVG) — spud→TD + completion per bore; one 2008 wildcat then the 2014–2019 development campaign.
 - **Rig days by wellbore** (inline SVG) — drilling + completion days, normalized days/10,000 ft; 9 bores, 1,687 rig-days (~$1.35B MODU time).

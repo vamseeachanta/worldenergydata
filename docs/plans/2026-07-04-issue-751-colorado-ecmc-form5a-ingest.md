@@ -43,7 +43,7 @@ worktrees, including `worldenergydata-autorun`, and no active job using
 `/mnt/local-analysis/wt-wed-669`. This plan branch is
 `plan/colorado-ecmc-form5a-ingest-751`.
 
-Implementation will avoid unrelated Texas RRC, FDAS, pages, and field-portfolio
+Implementation will avoid unrelated Texas RRC, project_economics, pages, and field-portfolio
 work. The expected write surfaces are limited to:
 
 - `config/colorado_ecmc_facility_detail_ingest.yml`

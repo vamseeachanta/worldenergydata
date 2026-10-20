@@ -23,7 +23,6 @@ documentation:
 name: orcaflex
 repositories:
   - digitalmodel
-  - frontierdeepwater
 specialization:
   domain: offshore-engineering
   tools:

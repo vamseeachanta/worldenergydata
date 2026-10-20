@@ -69,7 +69,7 @@ def test_info_lists_all_registered_public_subapps():
         "dashboard",
         "eia",
         "marine-safety",
-        "fdas",
+        "project_economics",
         "lower-tertiary",
         "forecast",
         "sodir",

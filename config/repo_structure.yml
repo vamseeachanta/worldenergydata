@@ -293,7 +293,7 @@ temporary_exceptions:
       - reports/field_development/portfolio/tobago.html
       - reports/field_development/showcase/index.html
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html
-      - reports/gtm/2026-05-04-fdas-field-development-economics.html
+      - reports/gtm/2026-05-04-project_economics-field-development-economics.html
       - reports/gtm/2026-05-04-gtm-production-decline-forecast.html
       - reports/gtm/decommissioning-market-outlook-2026-07-05.html
       - reports/gtm/decommissioning-market-outlook-2026-07-05.json
@@ -318,8 +318,8 @@ temporary_exceptions:
       - reports/lower_tertiary/comprehensive_2026.md
       - reports/lower_tertiary/comprehensive_2026.pdf
       - reports/lower_tertiary/comprehensive_2026.manifest.json
-      - reports/lower_tertiary/fdas_revision_comparison.md
-      - reports/lower_tertiary/fdas_v50_roy_project_summary.csv
+      - reports/lower_tertiary/project_economics_revision_comparison.md
+      - reports/lower_tertiary/project_economics_v50_project_summary.csv
       - reports/lower_tertiary/field_economics_anchor.md
       - reports/lower_tertiary/field_economics_big_foot.md
       - reports/lower_tertiary/field_economics_buckskin.md
@@ -391,7 +391,7 @@ temporary_exceptions:
       - reports/modules/marketing/hurricane_mooring_risk_avoidance_infographic_stats.json
       - reports/modules/marketing/marketing_brochure_bsee_data_integration.md
       - reports/modules/marketing/marketing_brochure_economic_evaluation_npv_analysis.md
-      - reports/modules/marketing/marketing_brochure_fdas_field_data_analysis_system.md
+      - reports/modules/marketing/marketing_brochure_project_economics.md
       - reports/modules/marketing/marketing_brochure_field-specific_analysis.md
       - reports/modules/marketing/marketing_brochure_marine_safety_incident_analysis.md
       - reports/modules/marketing/marketing_brochure_web_scraping_infrastructure.md

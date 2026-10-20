@@ -46,7 +46,7 @@ from worldenergydata.cost.timeseries.evidence_pack import (
 )
 from worldenergydata.cost.timeseries.evidence_pack_render import (
     canonical_manifest,
-    fdas_gap_row,
+    project_economics_gap_row,
     fixed_fields,
     manifest_payload,
     render_html,
@@ -73,7 +73,7 @@ SCENARIO = fixed_fields(
 INVERSE = fixed_fields(
     "direction=asset_to_project row_kind=implied_project_total additive=false currency=USD price_basis=nominal ownership_basis=gross scope_basis=project capex_basis=project_capex value_basis=range evidence_derivation=allocated source_provenance=assumed confidence=low counting_disposition=overlap mapping_status=mapped scenario_status=proposed reuse_allowed=false rounding_policy=outward_0.01_USD_MM"
 )
-FDAS_COMMON = fixed_fields(
+PROJECT_ECONOMICS_COMMON = fixed_fields(
     "direction=project_to_asset value_basis=point comparison_eligibility=ineligible rounding_policy=native_USD_divided_by_1000000"
 )
 TRACE_COMMON = fixed_fields(
@@ -199,50 +199,50 @@ def _reverse_rows(awards: list[dict[str, str]]) -> list[dict[str, str]]:
     return rows
 
 
-def _fdas_rows(context: dict) -> list[dict[str, str]]:
-    additive, opex = context["fdas_additive"], context["fdas_opex"]
+def _project_economics_rows(context: dict) -> list[dict[str, str]]:
+    additive, opex = context["project_economics_additive"], context["project_economics_opex"]
     rows = []
     for source in additive + opex:
         value = Decimal(source["WORKBOOK_VALUE"]) / Decimal("1000000")
         rows.append(
             _row(
-                **FDAS_COMMON,
+                **PROJECT_ECONOMICS_COMMON,
                 **select_fields(
                     source,
                     "project_id:PROJECT_ID requirement_id:REQUIREMENT_IDS currency:CURRENCY price_basis:PRICE_BASIS ownership_basis:OWNERSHIP_BASIS scope_basis:SCOPE_BASIS capex_basis:CAPEX_BASIS evidence_derivation:EVIDENCE_DERIVATION source_provenance:SOURCE_PROVENANCE counting_disposition:COUNTING_DISPOSITION mapping_status:MAPPING_STATUS assumption_vintage:ASSUMPTION_VINTAGE",
                 ),
                 accounting_view=(
-                    "fdas_development_capex" if source in additive else "fdas_opex"
+                    "project_economics_development_capex" if source in additive else "project_economics_opex"
                 ),
-                row_kind="fdas_assumption" if source in additive else "fdas_opex",
+                row_kind="project_economics_assumption" if source in additive else "project_economics_opex",
                 additive=str(source in additive).lower(),
                 value_low_mm=value,
                 value_high_mm=value,
-                source_identity=f"FDAS_V30:{source['WORKBOOK_CATEGORY']}",
+                source_identity=f"project_economics_V30:{source['WORKBOOK_CATEGORY']}",
                 source_locator=f"{source['WORKBOOK_SHEET']}!{source['WORKBOOK_CELL']}",
             )
         )
     gaps = [
-        row for row in context["fdas_all"] if row["WORKBOOK_ROLE"] == "coverage_gap"
+        row for row in context["project_economics_all"] if row["WORKBOOK_ROLE"] == "coverage_gap"
     ]
     if len(gaps) != 1:
-        raise ValueError("FDAS coverage gap must resolve uniquely")
-    return rows + [_fdas_total(rows), fdas_gap_row(gaps[0])]
+        raise ValueError("project_economics coverage gap must resolve uniquely")
+    return rows + [_project_economics_total(rows), project_economics_gap_row(gaps[0])]
 
 
-def _fdas_total(rows: list[dict[str, str]]) -> dict[str, str]:
+def _project_economics_total(rows: list[dict[str, str]]) -> dict[str, str]:
     total = sum(
         (
             Decimal(row["value_low_mm"])
             for row in rows
-            if row["accounting_view"] == "fdas_development_capex"
+            if row["accounting_view"] == "project_economics_development_capex"
         ),
         Decimal(),
     )
     return _row(
-        accounting_view="fdas_development_capex",
+        accounting_view="project_economics_development_capex",
         direction="project_to_asset",
-        row_kind="fdas_total",
+        row_kind="project_economics_total",
         additive="false",
         project_id="prj-000001",
         total_mm=total,
@@ -251,8 +251,8 @@ def _fdas_total(rows: list[dict[str, str]]) -> dict[str, str]:
         evidence_derivation="assumed",
         source_provenance="workbook_assumption",
         counting_disposition="aggregate",
-        source_identity="FDAS_V30",
-        assumption_vintage="FDAS_V30",
+        source_identity="project_economics_V30",
+        assumption_vintage="project_economics_V30",
         comparison_eligibility="ineligible",
         rounding_policy="native_USD_divided_by_1000000",
     )
@@ -293,7 +293,7 @@ def _rows(context: dict) -> list[dict[str, str]]:
         _award_rows(context)
         + _scenario_rows(context)
         + _reverse_rows(context["awards"])
-        + _fdas_rows(context)
+        + _project_economics_rows(context)
         + _trace_rows(context["trace"])
     )
 

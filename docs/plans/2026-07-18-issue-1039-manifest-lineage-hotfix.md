@@ -43,7 +43,7 @@ Implementation will not begin from the original 2026-07-16 approval marker. Afte
 - Production code and validation semantics will not change.
 - The only implementation paths will be new `tests/unit/cost/test_big_foot_cost_lineage.py` and `data/modules/cost/curated/cost_map_contract_manifest.v1.json`.
 - `reports/cost/big_foot_cost_map.html` and `reports/cost/big_foot_cost_map_reconciliation.csv` will remain byte-identical; any byte drift will stop implementation and return the issue to plan review.
-- The FDAS workbooks will remain read-only and retain their current SHA-256 values.
+- The project_economics workbooks will remain read-only and retain their current SHA-256 values.
 - No email, external circulation, accounting-data rewrite, or unrelated full-suite repair will occur.
 - Every commit will use a pathspec to prevent sweep contamination.
 
@@ -53,7 +53,7 @@ Implementation will not begin from the original 2026-07-16 approval marker. Afte
 
 **Files:**
 - Create: `tests/unit/cost/test_big_foot_cost_lineage.py`
-- Verify: `tests/unit/cost/test_big_foot_cost_outputs.py:381`
+- Verify: `tests/unit/cost/test_big_foot_cost_outputs.py:390`
 
 **Interfaces:**
 - Consumes: the existing test-only Git/build helpers from `test_big_foot_cost_output_hardening.py` without modifying that 400-line file.
@@ -217,18 +217,18 @@ Expected: the new file will be at most 400 lines, every function will be at most
 sha256sum \
   reports/cost/big_foot_cost_map.html \
   reports/cost/big_foot_cost_map_reconciliation.csv \
-  docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx \
-  docs/modules/bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx \
-  docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/financial_project_summary.xlsx \
+  docs/modules/bsee/analysis/production/project_economics_V30/drilling_and_completion_days.xlsx \
   > /tmp/issue-1039-lineage-before.sha256
 ```
 
 Expected workbook hashes:
 
 ```text
-a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407  lease_assumptions.xlsx
-00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04  financial_project_summary.xlsx
-3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f  drilling_and_completion_days.xlsx
+eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb  lease_assumptions.xlsx
+1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b  financial_project_summary.xlsx
+6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb  drilling_and_completion_days.xlsx
 ```
 
 - [ ] **Step 2: Regenerate through the production builder**

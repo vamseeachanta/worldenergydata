@@ -88,15 +88,15 @@ echo ""
 PRODUCTION_OUTPUT="$OUTPUT_DIR/production"
 mkdir -p "$PRODUCTION_OUTPUT"
 
-echo -e "${YELLOW}3.1: FDAS Production Retrieval${NC}"
-if [ -f "$SCRIPT_DIR/run_fdas_production_retrieval.py" ]; then
-    python "$SCRIPT_DIR/run_fdas_production_retrieval.py" \
-        --output "$PRODUCTION_OUTPUT/fdas" \
+echo -e "${YELLOW}3.1: project_economics Production Retrieval${NC}"
+if [ -f "$SCRIPT_DIR/run_project_economics_production_retrieval.py" ]; then
+    python "$SCRIPT_DIR/run_project_economics_production_retrieval.py" \
+        --output "$PRODUCTION_OUTPUT/project_economics" \
         --format html \
         --interactive
-    echo -e "${GREEN}✓ FDAS production analysis complete${NC}"
+    echo -e "${GREEN}✓ project_economics production analysis complete${NC}"
 else
-    echo -e "${YELLOW}⚠ FDAS script not found, skipping${NC}"
+    echo -e "${YELLOW}⚠ project_economics script not found, skipping${NC}"
 fi
 echo ""
 
@@ -126,7 +126,7 @@ cat > "$SUMMARY_FILE" << EOF
 Key Outputs:
 - Production data analysis for all BSEE wells
 - NPV analysis for Lower Tertiary fields (Anchor, Julia, Jack, St. Malo)
-- FDAS-enhanced BSEE data
+- project_economics-enhanced BSEE data
 - Comprehensive production reports
 
 ### 2. Marine Safety Analysis
@@ -139,7 +139,7 @@ Key Outputs:
 - Multi-source data integration (USCG, NOAA, MAIB, TSB)
 
 ### 3. Production Analysis
-- **FDAS Production:** $PRODUCTION_OUTPUT/fdas/
+- **project_economics Production:** $PRODUCTION_OUTPUT/project_economics/
 
 Key Outputs:
 - Field-specific production retrieval

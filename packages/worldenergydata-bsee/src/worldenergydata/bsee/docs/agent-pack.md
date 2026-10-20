@@ -1,5 +1,9 @@
 # BSEE module knowledge pack
 
+sweep: 202 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-bsee/src/worldenergydata/bsee --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `bsee` |
@@ -150,7 +154,7 @@ UNVERIFIED: Role appointments, deputy availability and shared-log/index registra
 | Dependency | Route / boundary | Evidence |
 | --- | --- | --- |
 | `assetutilities` | YAML path resolution and ZIP-to-DataFrame conversion used by production ingestion | Imports and executed adapter calls. [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/sources/zip/production_data.py:L97-L114] [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/sources/zip/production_data.py:L160-L175] |
-| Common, forecasting, reporting, regional adapters and economics distributions | Declared dependencies include core, sodir, reporting, texas_rrc and fdas | Distribution dependency list. [packages/worldenergydata-bsee/pyproject.toml:L62-L67] |
+| Common, forecasting, reporting, regional adapters and economics distributions | Declared dependencies include core, sodir, reporting, texas_rrc and project_economics | Distribution dependency list. [packages/worldenergydata-bsee/pyproject.toml:L62-L67] |
 | Adjacent `lower_tertiary` (inventory row `bsee:lower_tertiary`) | Main router delegates the well-benchmark special route; adjacent package internals are outside this pack's detailed main-path review | Explicit delegation. [packages/worldenergydata-bsee/src/worldenergydata/bsee/bsee.py:L22-L42] |
 | BSEE production ZIPs / historical OGOR-A pickles | Production source directories and positional 19-column adaptation; local fixtures do not establish live coverage | Main adapters. [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/sources/zip/production_data.py:L116-L184] [packages/worldenergydata-bsee/src/worldenergydata/bsee/data/sources/bin/ogor_production_loader.py:L83-L120] |
 | `scripts/bsee` inventory row | R7 and G5.1 execute `fetch_leases.py` through `runpy`; panel HTML and its manifest digest are produced by the script | Test delegation and renderer. [tests/unit/bsee/data/test_lease_ingest.py:L164-L186] [scripts/bsee/fetch_leases.py:L144-L178] |
@@ -336,13 +340,13 @@ The following paths were discovered and read as text by the inventory; a listed 
 - [docs/knowledge-base/bsee/regions/pacific.md:L6-L6]
 - [docs/marine-safety-data-sources-comprehensive.md:L149-L149]
 - [docs/modules/bsee/PRODUCTION_DATA_RETRIEVAL_GUIDE.md:L1-L1]
-- [docs/modules/bsee/analysis/production/FDAS_V30/PRICE_DECKS_SOURCE.md:L3-L3]
-- [docs/modules/bsee/analysis/production/FDAS_V30/QUICKSTART.md:L14-L14]
-- [docs/modules/bsee/analysis/production/FDAS_V30/README_PRODUCTION_RETRIEVAL.md:L26-L26]
+- [docs/modules/bsee/analysis/production/project_economics_V30/PRICE_DECKS_SOURCE.md:L3-L3]
+- [docs/modules/bsee/analysis/production/project_economics_V30/QUICKSTART.md:L14-L14]
+- [docs/modules/bsee/analysis/production/project_economics_V30/README_PRODUCTION_RETRIEVAL.md:L26-L26]
 - [docs/modules/bsee/analysis/production/lt_v30_v50_code_reconciliation.md:L4-L4]
 - [docs/modules/bsee/chunk_refresh_mechanism.md:L5-L5]
 - [docs/modules/bsee/communications/email-review/reviewed/2025-08-01.md:L27-L27]
-- [docs/modules/bsee/communications/email-review/reviewed/2026-07-08-fdas-canonicalization.md:L3-L3]
+- [docs/modules/bsee/communications/email-review/reviewed/2026-07-08-project_economics-canonicalization.md:L3-L3]
 - [docs/modules/bsee/comprehensive-report-system/README.md:L1-L1]
 - [docs/modules/bsee/comprehensive-report-system/api-documentation.md:L17-L17]
 - [docs/modules/bsee/comprehensive-report-system/performance-tuning-guide.md:L17-L17]
@@ -365,10 +369,10 @@ The following paths were discovered and read as text by the inventory; a listed 
 - [docs/modules/data_sodir/api_guide.md:L471-L471]
 - [docs/modules/data_sodir/config_guide.md:L346-L346]
 - [docs/modules/data_sodir/cross_regional_tutorial.md:L23-L23]
-- [docs/modules/fdas/DEPLOYMENT-CHECKLIST.md:L88-L88]
-- [docs/modules/fdas/USER-GUIDE.md:L13-L13]
-- [docs/modules/fdas/VALIDATION-REPORT.md:L317-L317]
-- [docs/modules/fdas/country-adapter-checklist.md:L41-L41]
+- [docs/modules/project_economics/DEPLOYMENT-CHECKLIST.md:L88-L88]
+- [docs/modules/project_economics/USER-GUIDE.md:L13-L13]
+- [docs/modules/project_economics/VALIDATION-REPORT.md:L317-L317]
+- [docs/modules/project_economics/country-adapter-checklist.md:L41-L41]
 - [docs/modules/marine_safety/INCIDENT_CAUSE_ANALYSIS_MODULE.md:L33-L33]
 - [docs/modules/repository-architecture.md:L6-L6]
 - [docs/modules/well-production-dashboard/USER_GUIDE.md:L334-L334]
@@ -412,7 +416,7 @@ The following paths were discovered and read as text by the inventory; a listed 
 - [docs/plans/2026-06-09-issue-462-source-refresh-acceptance-contract.md:L27-L27]
 - [docs/plans/2026-07-01-issue-666-texas-rrc-onshore-field-atlas-reports.md:L48-L48]
 - [docs/plans/2026-07-02-issue-695-texas-rrc-field-opportunity-architecture-ranking.md:L57-L57]
-- [docs/plans/2026-07-03-issue-714-fdas-source-agnostic.md:L9-L9]
+- [docs/plans/2026-07-03-issue-714-project_economics-source-agnostic.md:L9-L9]
 - [docs/plans/2026-07-04-issue-715-adapter-contract.md:L11-L11]
 - [docs/plans/2026-07-05-issue-809-spain-cores-refresh-job.md:L49-L49]
 - [docs/plans/2026-07-05-issue-810-spain-cores-field-development-report.md:L358-L358]
@@ -440,14 +444,14 @@ The following paths were discovered and read as text by the inventory; a listed 
 - [docs/reports/data-freshness-scorecard-2026-06-08.md:L6-L6]
 - [docs/reports/scheduler-health-2026-W16.md:L12-L12]
 - [docs/reports/scheduler-health-2026-W24.md:L11-L11]
-- [docs/research/bsee-fdas-integration-summary.md:L1-L1]
-- [docs/research/docs/research/FDAS-INTEGRATION-STATUS.md:L18-L18]
-- [docs/research/docs/research/fdas-documentation-review-summary.md:L18-L18]
-- [docs/research/docs/research/fdas-integration-index.md:L10-L10]
-- [docs/research/fdas-code-comparison.md:L216-L216]
-- [docs/research/fdas-executive-summary.md:L11-L11]
-- [docs/research/fdas-implementation-plan.md:L9-L9]
-- [docs/research/fdas-quick-reference.md:L27-L27]
+- [docs/research/bsee-project_economics-integration-summary.md:L1-L1]
+- [docs/research/docs/research/project_economics-INTEGRATION-STATUS.md:L18-L18]
+- [docs/research/docs/research/project_economics-documentation-review-summary.md:L18-L18]
+- [docs/research/docs/research/project_economics-integration-index.md:L10-L10]
+- [docs/research/project_economics-code-comparison.md:L216-L216]
+- [docs/research/project_economics-executive-summary.md:L11-L11]
+- [docs/research/project_economics-implementation-plan.md:L9-L9]
+- [docs/research/project_economics-quick-reference.md:L27-L27]
 - [docs/user-guide/index.md:L35-L35]
 - [packages/worldenergydata-bsee/README.md:L1-L1]
 

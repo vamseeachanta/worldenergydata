@@ -1,6 +1,6 @@
 """Generate the Julia field-economics demo report.
 
-Field/block rows anchored on the VALIDATED FDAS V30 golden baseline; by-well is an
+Field/block rows anchored on the VALIDATED project_economics V30 golden baseline; by-well is an
 exact production/revenue/net-operating-cashflow decomposition with an indicative
 full-cycle NPV. By-field / by-block / by-well + V30/Latest vintage toggles.
 """
@@ -9,7 +9,7 @@ from pathlib import Path
 
 DATA = json.loads((Path(__file__).resolve().parents[1] / "reports/lower_tertiary/data/julia_granular_economics.json").read_text())
 
-# Authoritative FDAS V30 golden baseline (config/analysis/lower_tertiary/golden_baseline_v30.yml)
+# Authoritative project_economics V30 golden baseline (config/analysis/lower_tertiary/golden_baseline_v30.yml)
 GOLDEN = {
     "oil_bbl": 70936158, "revenue_usd": 4715155663.31, "royalty_usd": 884091686.87,
     "variable_opex_usd": 425616948.0, "fixed_opex_usd": 693750000.0,
@@ -220,7 +220,7 @@ WELL_SECTIONS = """
     <h2>Well &amp; drilling engineering</h2>
     <div class="lead">Julia's development is %d wellbores (%d producing) drilled to ~30,000 ft MD beneath %s ft of
       water, %s total rig-days (≈ $%.2fB of MODU time at $0.8M/day). Campaign %s → %s. Drilling data is the
-      real BSEE/FDAS V30 per-well record; methodology mirrors aceengineercode <code>ong_field_development</code>.</div>
+      real BSEE/project_economics V30 per-well record; methodology mirrors aceengineercode <code>ong_field_development</code>.</div>
     <h3>Drilling campaign timeline</h3>
     <div class="lead2">spud → TD (solid) plus completion (faded); ★ = producing bore. A lone 2008 wildcat, then the 2014–2019 development campaign.</div>
     %s
@@ -301,7 +301,7 @@ svg{{display:block;margin:4px 0 6px}}
   <div class="badges">
     <span class="badge">Source: BSEE OGOR-A · production through {LATEST_FRIENDLY}</span>
     <span class="badge">EIA WTI historical deck</span>
-    <span class="badge">FDAS V30 tieback15 assumptions</span>
+    <span class="badge">project_economics V30 tieback15 assumptions</span>
     <span class="badge">Validated vs golden baseline</span>
   </div>
 </div>
@@ -313,7 +313,7 @@ svg{{display:block;margin:4px 0 6px}}
 <div class="kpi-row">{kpi_cards()}</div>
 <div class="content">
   <div class="section"><div class="callout">✓ <b>Reproduced from raw public data.</b>
-    Field NPV@10% reproduced to <b>{val_delta:+.3f}%</b> of the FDAS&nbsp;V30 golden baseline
+    Field NPV@10% reproduced to <b>{val_delta:+.3f}%</b> of the project_economics&nbsp;V30 golden baseline
     (${REPRO_NPV/1e6:,.1f}M vs ${GOLDEN['npv_usd']/1e6:,.1f}M); gross revenue, D&amp;C and facilities match to ~0.001%.
     Latest OGOR cross-check: oil {lat_oil/1e6:,.1f} MMbbl / revenue {m(lat_rev)} through {LATEST_FRIENDLY}
     (vs published latest baseline 74.0 MMbbl / $4,917M).</div></div>
@@ -321,7 +321,7 @@ svg{{display:block;margin:4px 0 6px}}
     <h2>Economics by granularity</h2>
     <div class="lead">Switch between field, block and well. Oil, gas, revenue, royalty (18.75%) and net operating
       cashflow are computed per-unit directly from OGOR production. D&amp;C is the well's own drilling+completion
-      cost; the field row carries shared facilities ($1,375M). <b>Field &amp; block NPV/MIRR are the validated FDAS V30
+      cost; the field row carries shared facilities ($1,375M). <b>Field &amp; block NPV/MIRR are the validated project_economics V30
       figures</b>; per-well full-cycle NPV (marked ≈) is an indicative allocation of shared CAPEX &amp; OPEX.</div>
     <div class="toggles">
       <div class="toggle active" data-g="field" onclick="setG('field')">By Field</div>

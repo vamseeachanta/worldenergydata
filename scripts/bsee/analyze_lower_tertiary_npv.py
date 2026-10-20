@@ -144,7 +144,7 @@ def main(argv: list[str] | None = None) -> None:
     econ_path = project_root / "config/analysis/lower_tertiary/economic_assumptions.yml"
     econ_config = load_yaml(econ_path)
 
-    lease_mapping_path = project_root / "config/analysis/lower_tertiary/lease_mapping_fdas.yml"
+    lease_mapping_path = project_root / "config/analysis/lower_tertiary/lease_mapping_project_economics.yml"
     lease_mapping = load_lease_mapping(lease_mapping_path)
 
     fields_dir = project_root / "config/analysis/lower_tertiary/fields"

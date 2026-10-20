@@ -103,12 +103,15 @@ def test_move_is_import_transparent():
 
         assert "worldenergydata-bsee" in Path(bsee.__file__).resolve().parts
 
-        # fdas was carved OUT of the bsee cluster into its own source-agnostic
-        # member (packages/worldenergydata-fdas/, #714); the import path is
+        # project_economics was carved OUT of the bsee cluster into its own source-agnostic
+        # member (packages/worldenergydata-project_economics/, #714); the import path is
         # unchanged and it resolves from the new member.
-        from worldenergydata import fdas
+        from worldenergydata import project_economics
 
-        assert "worldenergydata-fdas" in Path(fdas.__file__).resolve().parts
+        assert (
+            "worldenergydata-project_economics"
+            in Path(project_economics.__file__).resolve().parts
+        )
 
         # the final-tail carve (batch 5, #529): scheduler is the orchestrator
         # member; it resolves from packages/worldenergydata-scheduler/.

@@ -140,7 +140,7 @@ class DevelopmentSystemBand(str, Enum):
 
     Issue #844 asks for segmentation "by water-depth / development-system band
     where the cost basis differs (subsea15/subsea20/tieback/dry)" — those four
-    names come from the FDAS ``lease_assumptions.xlsx`` deck this dataset is
+    names come from the project_economics ``lease_assumptions.xlsx`` deck this dataset is
     meant to supersede, so they are reproduced verbatim rather than renamed.
     ``NOT_APPLICABLE`` is for rows (rig day rates, indices) whose cost basis is
     a market-wide rate and genuinely does not vary by band.

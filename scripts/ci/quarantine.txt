@@ -20,21 +20,21 @@
 tests/unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
 unit/cli/test_capability_drift.py::TestSchedulerIndexMatchesConfig::test_scheduler_config_wired_modules_in_index
 
-# worldenergydata package-level lazy attribute access for bsee/fdas — issue #561
+# worldenergydata package-level lazy attribute access for bsee/project_economics — issue #561
 # (pre-existing on main; surfaced by un-hiding the _root shard in #529; needs a
 # src/worldenergydata/__init__.py __getattr__ change — carve-sensitive)
 tests/test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
 test_query_api.py::TestPackageLevelImports::test_bsee_api_accessible
 tests/test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
 test_query_api.py::TestPackageLevelImports::test_bsee_production_query_callable
-tests/test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
-test_query_api.py::TestPackageLevelImports::test_fdas_api_accessible
-tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
-test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_accessible
-tests/test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
-test_query_api.py::TestPackageLevelImports::test_fdas_economics_npv_callable
-tests/test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
-test_query_api.py::TestPackageLevelImports::test_fdas_disclosure_analytics_callables
+tests/test_query_api.py::TestPackageLevelImports::test_project_economics_api_accessible
+test_query_api.py::TestPackageLevelImports::test_project_economics_api_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_project_economics_disclosure_analytics_accessible
+test_query_api.py::TestPackageLevelImports::test_project_economics_disclosure_analytics_accessible
+tests/test_query_api.py::TestPackageLevelImports::test_project_economics_economics_npv_callable
+test_query_api.py::TestPackageLevelImports::test_project_economics_economics_npv_callable
+tests/test_query_api.py::TestPackageLevelImports::test_project_economics_disclosure_analytics_callables
+test_query_api.py::TestPackageLevelImports::test_project_economics_disclosure_analytics_callables
 
 # perf: financial-calc wall-clock budget too tight for shared CI runners — issue #560
 # (the two sibling freq='H'/resample('M') FutureWarning errors in the same file

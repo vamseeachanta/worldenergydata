@@ -20,7 +20,7 @@
 - Verified the reference-chain runner uses `get_fiscal_terms("uk")`, exercising
   the UK flat-zero royalty deck while keeping metrics labeled
   `chain_plumbing_pre_tax`.
-- Verified compatibility surface with existing adapter/router/FDAS/UKCS loader
+- Verified compatibility surface with existing adapter/router/project_economics/UKCS loader
   tests.
 
 ## Findings

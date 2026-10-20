@@ -25,7 +25,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
 
 NOTES = Path("docs/data-sources/bsee/analysis/rig_days")
 WEEKLY = Path("docs/modules/bsee/analysis/rig_days")
-TABLES = Path("docs/modules/bsee/analysis/production/FDAS_V30")
+TABLES = Path("docs/modules/bsee/analysis/production/project_economics_V30")
 EXPORT = TABLES / "drilling_and_completion_days_v21_kc.csv"
 WORKBOOK = TABLES / "drilling_and_completion_days.xlsx"
 QA = Path("reports/lower_tertiary/data/roy_rig_days_qa.csv")

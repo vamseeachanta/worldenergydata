@@ -1,5 +1,9 @@
 # SODIR module knowledge pack
 
+sweep: 60 found
+
+Candidate sweep: `rg -n 'except\s+(Exception|BaseException)|except\s*:' packages/worldenergydata-sodir/src/worldenergydata/sodir --glob '*.py'`. The count records broad exception handlers for review; it does not establish a failure or qualify their behavior.
+
 | Header | Value |
 | --- | --- |
 | Module | `sodir` |
@@ -162,7 +166,7 @@ Inspection date for all entries: 2026-10-15. A diagnostic defined above is not c
 | Future curve restarts from initial production; confidence option does not select bands | Decline and ensemble forecasts call `predict(forecast_years)` from zero; EUR also begins at zero after summing history; band helper always emits 80/95 levels and ignores its confidence argument; failed fitting can silently substitute a curve. [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L385-L398] [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L498-L509] [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L637-L678] [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L439-L468] [packages/worldenergydata-sodir/src/worldenergydata/sodir/forecasting.py:L150-L193] | D02; fit fallback is tested but horizon continuity is not; issue pending (3). [tests/unit/sodir/test_forecasting.py:L343-L362] |
 | Comparison/dashboard outputs can appear data-derived while using placeholders | Regional significance helper returns threshold-selected constants; production-rate comparison chart uses hard-coded series; dashboard generation does not draw supplied charts into its axes. [packages/worldenergydata-sodir/src/worldenergydata/sodir/cross_regional.py:L491-L527] [packages/worldenergydata-sodir/src/worldenergydata/sodir/visualization.py:L442-L460] [packages/worldenergydata-sodir/src/worldenergydata/sodir/visualization.py:L89-L113] | Compare outputs against changed input samples and require >= 1 changed plotted value and >= 1 artist per populated panel (counts); no detection check exists for this dependence; issue pending (4) |
 | Batch CSV path returned without a file | `_save_batch_data` constructs a CSV filename but contains no CSV write; the separate multi-format formatter path does write content. [packages/worldenergydata-sodir/src/worldenergydata/sodir/batch.py:L624-L646] [packages/worldenergydata-sodir/src/worldenergydata/sodir/batch.py:L648-L665] | D03; issue pending (5) |
-| Distribution includes documentation and undeclared imports | Recursive Markdown package-data patterns include this pack; `reference_chain` imports FDAS, field-development and production packages absent from the member dependency list. [packages/worldenergydata-sodir/pyproject.toml:L59-L60] [packages/worldenergydata-sodir/pyproject.toml:L29-L38] [packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py:L16-L23] | Require 0 undeclared dependency import failures (count) in an isolated member install; no detection check exists; issue pending (6) |
+| Distribution includes documentation and undeclared imports | Recursive Markdown package-data patterns include this pack; `reference_chain` imports project_economics, field-development and production packages absent from the member dependency list. [packages/worldenergydata-sodir/pyproject.toml:L59-L60] [packages/worldenergydata-sodir/pyproject.toml:L29-L38] [packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py:L16-L23] | Require 0 undeclared dependency import failures (count) in an isolated member install; no detection check exists; issue pending (6) |
 | Legacy tests do not collect | Imports name absent `sodir_module.api_client` or `sodir_module.processors`; normal configuration ignores the legacy directory. [tests/modules/sodir-integration/test_api_client.py:L22-L30] [tests/modules/sodir-integration/test_cross_regional_validation.py:L15-L23] [pyproject.toml:L392-L402] | Explicit file-level collection; 0 collection errors (count); no detection check exists in the normal suite; confirmed baseline, existing #313 |
 
 #273 describes a historical scheduler invalid-endpoint incident; `test_fetches_current_sodir_featureserver_contract` checks its corrected URL/parameter contract offline, while #271 is output wiring work and #716/#736 describe reference-chain and fiscal scope rather than newly confirmed live incidents. [tests/unit/scheduler/test_sodir_adapter.py:L83-L102] (worldenergydata issues #273, endpoint failure; #271, output-directory wiring; #716, reference chain; #736, fiscal consumption.)
@@ -190,8 +194,8 @@ Producing role: module documentation contributor. Escalate evidence classificati
 | Shared core | Module errors derive from the common SODIR exception; monthly conversions import common unit classes. [packages/worldenergydata-sodir/src/worldenergydata/sodir/errors.py:L31-L36] [packages/worldenergydata-sodir/src/worldenergydata/sodir/production/monthly_loader.py:L12-L22] |
 | Python numeric and tabular libraries | Member dependencies declare NumPy, pandas, SciPy, scikit-learn, seaborn, Matplotlib and numpy-financial with version ranges. [packages/worldenergydata-sodir/pyproject.toml:L29-L38] |
 | HTTP and projection | Transport conditionally imports requests and provides a fallback response if unavailable; coordinates select pyproj opportunistically. [packages/worldenergydata-sodir/src/worldenergydata/sodir/transport.py:L18-L28] [packages/worldenergydata-sodir/src/worldenergydata/sodir/transport.py:L298-L338] [packages/worldenergydata-sodir/src/worldenergydata/sodir/utils/coordinates.py:L39-L59] |
-| Production / FDAS / concept screening | Reference chain consumes `ProductionQuery`, FDAS normalization and cashflow, and concept recommendations; field metadata mapping imports FDAS normalizer types. [packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py:L16-L24] [packages/worldenergydata-sodir/src/worldenergydata/sodir/field_concept.py:L25-L30] |
-| Scheduler and other adapters | The BSEE pipeline adapter lazily imports the SODIR API client and processors. [packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/sodir_adapter.py:L76-L93] Scheduler uses a FeatureServer endpoint contract, while the production adapter tests exercise loader normalization into unified and FDAS output schemas. [tests/unit/scheduler/test_sodir_adapter.py:L83-L124] [tests/unit/production/unified/test_sodir_adapter_loader.py:L58-L106] |
+| Production / project_economics / concept screening | Reference chain consumes `ProductionQuery`, project_economics normalization and cashflow, and concept recommendations; field metadata mapping imports project_economics normalizer types. [packages/worldenergydata-sodir/src/worldenergydata/sodir/reference_chain.py:L16-L24] [packages/worldenergydata-sodir/src/worldenergydata/sodir/field_concept.py:L25-L30] |
+| Scheduler and other adapters | The BSEE pipeline adapter lazily imports the SODIR API client and processors. [packages/worldenergydata-bsee/src/worldenergydata/bsee/pipeline/adapters/sodir_adapter.py:L76-L93] Scheduler uses a FeatureServer endpoint contract, while the production adapter tests exercise loader normalization into unified and project_economics output schemas. [tests/unit/scheduler/test_sodir_adapter.py:L83-L124] [tests/unit/production/unified/test_sodir_adapter_loader.py:L60-L108] |
 | Source and fixture data | Feature schemas are loaded from `feature_schemas.json`; unit tests read curated observation and manifest fixtures, distinct from live retrieval evidence. [packages/worldenergydata-sodir/src/worldenergydata/sodir/feature_service.py:L16-L32] [tests/unit/sodir/test_feature_service.py:L222-L225] |
 
 Inventory cross-reference (Module inventory, 2026-10-15, rows named below; inventory estimates are not test results):
@@ -199,7 +203,7 @@ Inventory cross-reference (Module inventory, 2026-10-15, rows named below; inven
 | Boundary | Inventory row and package path |
 | --- | --- |
 | Shared core | `core:common`, row 98, `packages/worldenergydata-core/src/worldenergydata/common` |
-| Financial normalization | `fdas`, row 101, `packages/worldenergydata-fdas/src/worldenergydata/fdas` |
+| Financial normalization | `project_economics`, row 101, `packages/worldenergydata-project_economics/src/worldenergydata/project_economics` |
 | Concept screening | `field_development`, row 218, `src/worldenergydata/field_development` |
 | Production query | `production`, row 230, `packages/worldenergydata-production/src/worldenergydata/production` |
 | Scheduler consumer | `scheduler`, row 303, `packages/worldenergydata-scheduler/src/worldenergydata/scheduler` |
@@ -224,7 +228,7 @@ Search scope: tracked Python sources throughout this repository, including `scri
 | Legacy analysis copy under tests | Independent arithmetic definitions, outside the package; map gap. [tests/modules/sodir-integration/sodir_module/analysis.py:L526-L541] [tests/modules/sodir-integration/sodir_module/analysis.py:L750-L762] |
 | Legacy regional-analysis copy under tests | Independent normalization/statistics definitions, outside the package; map gap. [tests/modules/sodir-integration/sodir_module/cross_regional.py:L142-L225] |
 | Legacy dataset generator copy under tests | Independent production aggregation, outside the package; map gap. [tests/modules/sodir-integration/sodir_module/datasets.py:L191-L251] |
-| FDAS NPV | Separate financial implementation, outside the package; map gap, with period convention to compare before consolidation. [packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py:L118-L166] |
+| project_economics NPV | Separate financial implementation, outside the package; map gap, with period convention to compare before consolidation. [packages/worldenergydata-project_economics/src/worldenergydata/project_economics/core/financial.py:L118-L166] |
 | Economics NPV | Separate financial implementation, outside the package; map gap. [packages/worldenergydata-economics/src/worldenergydata/economics/dcf.py:L137-L182] |
 | Concept alias | `build_norway_field_concept` delegates to `sodir_field_to_concept`; helper, not an independent implementation. [packages/worldenergydata-sodir/src/worldenergydata/sodir/field_concept.py:L84-L86] |
 
@@ -443,7 +447,7 @@ Documentation found by case-insensitive module-name search under `docs/`, read a
 - [docs/modules/data_sodir/api_guide.md:L1-L1]
 - [docs/modules/data_sodir/config_guide.md:L1-L1]
 - [docs/modules/data_sodir/cross_regional_tutorial.md:L3-L3]
-- [docs/modules/fdas/country-adapter-checklist.md:L47-L47]
+- [docs/modules/project_economics/country-adapter-checklist.md:L47-L47]
 
 - [docs/modules/repository-architecture.md:L92-L92]
 - [docs/plans/2026-04-26-issue-353-diagnose-uv-scheduler-noop-timeouts.md:L19-L19]

@@ -1,11 +1,11 @@
 """
-Plotly Dash web application — BSEE production and FDAS incident dashboard.
+Plotly Dash web application — BSEE production and project_economics incident dashboard.
 
 Layout:
   Tab 1 (Production)  — oil / gas / water trend charts, selectable by field /
                          lease / operator
   Tab 2 (Platforms)   — interactive GOM scatter-mapbox coloured by status
-  Tab 3 (Incidents)   — FDAS severity heatmap (type vs year), filterable
+  Tab 3 (Incidents)   — project_economics severity heatmap (type vs year), filterable
 
 Usage (programmatic):
     from worldenergydata.dashboard.app import app, run_server
@@ -99,7 +99,7 @@ app.layout = html.Div(
                     style={"color": "#ecf0f1", "marginBottom": "4px"},
                 ),
                 html.P(
-                    "BSEE production data • Platform locations • FDAS incidents",
+                    "BSEE production data • Platform locations • project_economics incidents",
                     style={"color": "#95a5a6", "marginTop": "0"},
                 ),
             ],

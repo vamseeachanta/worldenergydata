@@ -141,7 +141,7 @@ require `/mnt/ace` or a live dependency sync in CI.
   and `date_range()`.
 - `packages/worldenergydata-spain/src/worldenergydata/spain/reference_chain.py`
   exposes `run_spain_reference_chain(...)`, which returns unified production,
-  FDAS production, ranked concepts, `dev_system`, and `pre_tax_metrics`.
+  project_economics production, ranked concepts, `dev_system`, and `pre_tax_metrics`.
 - `tests/unit/spain/test_reference_chain.py` already proves the sparse
   Ayoluengo onshore chain, `dev_system == "dry"`, and
   `onshore_model_mismatch is True` through a fixture loader.
@@ -199,7 +199,7 @@ require `/mnt/ace` or a live dependency sync in CI.
   `scripts/build_pages.py` comments that field-development surfaces have no
   external assets.
 - The report/reference-chain import path depends on `worldenergydata-production`
-  and `worldenergydata-fdas`. The implementation will declare those dependencies
+  and `worldenergydata-project_economics`. The implementation will declare those dependencies
   explicitly in `packages/worldenergydata-spain/pyproject.toml` and refresh
   `uv.lock` because `worldenergydata.spain.reference_chain` already imports
   those packages. The Python process may still import Plotly transitively through
@@ -357,7 +357,7 @@ def render_spain_cores_html(summary: ReportSummary) -> str:
   surfaces that include offshore playbooks and the Spain CORES country chain,
   without implying Spain CORES is BSEE/SubseaIQ-derived.
 - `packages/worldenergydata-spain/pyproject.toml` will declare
-  `worldenergydata-production` and `worldenergydata-fdas`; `uv.lock` will be
+  `worldenergydata-production` and `worldenergydata-project_economics`; `uv.lock` will be
   refreshed with the dependency metadata change.
 - `packages/worldenergydata-spain/README.md` will document the report-generation
   command and source caveats.
@@ -481,7 +481,7 @@ def render_spain_cores_html(summary: ReportSummary) -> str:
 | `/mnt/ace` leaks into tracked report artifacts | Accept `/mnt/ace` only as an operator CLI argument; test tracked output for absence of absolute local paths. |
 | Report misses workbook-level provenance | Require `metadata/cores_refresh_metadata.json`, surface workbook URLs/status/hashes/last-modified values, and test failure when detailed metadata is missing. |
 | Inline template braces break rendering | Use sentinel replacement or `string.Template`; include a test with CSS/JS braces. |
-| Spain reference-chain dependencies stay implicit | Declare `worldenergydata-production` and `worldenergydata-fdas` in the Spain package and test the declaration. |
+| Spain reference-chain dependencies stay implicit | Declare `worldenergydata-production` and `worldenergydata-project_economics` in the Spain package and test the declaration. |
 | Report generator becomes hard to review | Split source assembly, economics summary, HTML rendering, and CLI into focused files under the repo line-size guardrails. |
 | First-run dependency setup is slow | Keep CI tests fixture-backed and reserve live `/mnt/ace` report generation for the operator command. |
 | Public page index drifts | Add a build-pages test that proves the Spain report is copied and linked only when present. |

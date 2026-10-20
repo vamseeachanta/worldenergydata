@@ -1,6 +1,6 @@
 """KC-deepwater ingest fidelity (#842).
 
-The canonical FDAS extractor (``docs/modules/bsee/analysis/production/FDAS_V30/
+The canonical project_economics extractor (``docs/modules/bsee/analysis/production/project_economics_V30/
 extract_drilling_completion_days.py``) now reads the raw BSEE WAR ``.bin``
 pickles on the data share directly, and the lease list gained Buckskin's six
 Keathley Canyon leases (``leases_v21_kc.csv``).
@@ -45,11 +45,17 @@ import pandas as pd
 import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
-FDAS_DIR = (
-    REPO_ROOT / "docs" / "modules" / "bsee" / "analysis" / "production" / "FDAS_V30"
+PROJECT_ECONOMICS_DIR = (
+    REPO_ROOT
+    / "docs"
+    / "modules"
+    / "bsee"
+    / "analysis"
+    / "production"
+    / "project_economics_V30"
 )
-SCRIPT = FDAS_DIR / "extract_drilling_completion_days.py"
-LEASES = FDAS_DIR / "leases_v21_kc.csv"
+SCRIPT = PROJECT_ECONOMICS_DIR / "extract_drilling_completion_days.py"
+LEASES = PROJECT_ECONOMICS_DIR / "leases_v21_kc.csv"
 
 WAR_BIN_DIR = Path("/mnt/ace/worldenergydata/data/modules/bsee/bin/war")
 WAR_MAIN = WAR_BIN_DIR / "mv_war_main.bin"
@@ -88,7 +94,7 @@ def extract(tmp_path_factory):
             str(out),
         ],
         capture_output=True,
-        cwd=FDAS_DIR,
+        cwd=PROJECT_ECONOMICS_DIR,
     )
     assert proc.returncode == 0, proc.stderr.decode()
     df = pd.read_excel(out, sheet_name="Sheet1")

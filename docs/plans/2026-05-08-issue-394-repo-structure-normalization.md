@@ -80,7 +80,7 @@ No broad file moves, generated artifact deletion, package-source reshuffle, docs
 - `reports/compliance/module_compliance_report.json`
 - `reports/field_analysis_report.html`
 - `reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html`
-- `reports/gtm/2026-05-04-fdas-field-development-economics.html`
+- `reports/gtm/2026-05-04-project_economics-field-development-economics.html`
 - `reports/gtm/2026-05-04-gtm-production-decline-forecast.html`
 - `reports/hse/wrk012_hse_data_audit.md`
 - `reports/hse/wrk013_hse_mishap_analysis.md`
@@ -105,7 +105,7 @@ No broad file moves, generated artifact deletion, package-source reshuffle, docs
 - `reports/modules/marketing/VALIDATION_REPORT.md`
 - `reports/modules/marketing/marketing_brochure_bsee_data_integration.md`
 - `reports/modules/marketing/marketing_brochure_economic_evaluation_npv_analysis.md`
-- `reports/modules/marketing/marketing_brochure_fdas_field_data_analysis_system.md`
+- `reports/modules/marketing/marketing_brochure_project_economics.md`
 - `reports/modules/marketing/marketing_brochure_field-specific_analysis.md`
 - `reports/modules/marketing/marketing_brochure_marine_safety_incident_analysis.md`
 - `reports/modules/marketing/marketing_brochure_web_scraping_infrastructure.md`

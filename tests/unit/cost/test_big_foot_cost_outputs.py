@@ -21,9 +21,9 @@ HTML_REL = Path("reports/cost/big_foot_cost_map.html")
 CSV_REL = Path("reports/cost/big_foot_cost_map_reconciliation.csv")
 MANIFEST_REL = Path("data/modules/cost/curated/cost_map_contract_manifest.v1.json")
 WORKBOOK_HASHES = {
-    "lease_assumptions.xlsx": "a1193f669db49ac33b87481733fb13af409844fed890e763b4e8726e329a1407",
-    "financial_project_summary.xlsx": "00f200def283d307293bb93033f070718722618b9a8ace2bbbe11bfbffeddf04",
-    "drilling_and_completion_days.xlsx": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f",
+    "lease_assumptions.xlsx": "eba3a04fee5ce3f5b49849b10648417a25c87e394b311bfec37d8b4a7e8117cb",
+    "financial_project_summary.xlsx": "1a6351a7cdd1b6cfbe37169e9cc5bc69dcf20bad3f5be7722b0ae8b3ec866b7b",
+    "drilling_and_completion_days.xlsx": "6d95b927cc1af2c2d0006d9addac59dcd0756c761a37f3d8b75276a5428a44bb",
 }
 
 
@@ -131,7 +131,7 @@ def test_big_foot_output_contains_all_required_accounting_lanes(
         "aggregate_reconciliation",
         "scenario_allocation",
         "implied_project_total",
-        "fdas_total",
+        "project_economics_total",
         "trace_event",
     } <= kinds
     assert all(
@@ -210,23 +210,32 @@ def test_report_trace_has_no_interpolated_years(source_repo, tmp_path) -> None:
     assert all(row["source_locator"] for row in trace)
 
 
-def test_fdas_bridge_and_opex_separation_render_exactly(source_repo, tmp_path) -> None:
+def test_project_economics_bridge_and_opex_separation_render_exactly(
+    source_repo, tmp_path
+) -> None:
     output, _, _ = _build(source_repo, tmp_path)
     text, rows = (output / HTML_REL).read_text(encoding="utf-8"), _rows(output)
     assert "2,730.0 + 965.6 + 821.7 = 4,517.3 USD MM" in text
     assert "267,482,624 USD" in text and "790,000,000 USD" in text
-    total = [row for row in rows if row["row_kind"] == "fdas_total"]
+    total = [row for row in rows if row["row_kind"] == "project_economics_total"]
     assert len(total) == 1 and total[0]["total_mm"] == "4517.3"
-    fdas = [row for row in rows if row["row_kind"] == "fdas_assumption"]
-    assert {row["source_locator"] for row in fdas} == {
+    project_economics = [
+        row for row in rows if row["row_kind"] == "project_economics_assumption"
+    ]
+    assert {row["source_locator"] for row in project_economics} == {
         "Project_Summary!J3",
         "Project_Summary!K3",
         "Project_Summary!L3",
     }
-    assert {row["assumption_vintage"] for row in fdas} == {"FDAS_V30"}
-    assert {row["comparison_eligibility"] for row in fdas} == {"ineligible"}
+    assert {row["assumption_vintage"] for row in project_economics} == {
+        "project_economics_V30"
+    }
+    assert {row["comparison_eligibility"] for row in project_economics} == {
+        "ineligible"
+    }
     assert all(
-        row["rounding_policy"] == "native_USD_divided_by_1000000" for row in fdas
+        row["rounding_policy"] == "native_USD_divided_by_1000000"
+        for row in project_economics
     )
 
 
@@ -338,7 +347,7 @@ def test_big_foot_outputs_are_byte_deterministic(source_repo, tmp_path) -> None:
 def test_source_workbooks_are_byte_unchanged_after_build(source_repo, tmp_path) -> None:
     output, root, _ = _build(source_repo, tmp_path)
     assert output.exists()
-    prefix = root / "docs/modules/bsee/analysis/production/FDAS_V30"
+    prefix = root / "docs/modules/bsee/analysis/production/project_economics_V30"
     assert {name: _digest(prefix / name) for name in WORKBOOK_HASHES} == WORKBOOK_HASHES
 
 

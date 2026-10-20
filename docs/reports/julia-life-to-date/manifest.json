@@ -6,7 +6,7 @@
     },
     {
       "path": "packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py",
-      "sha256": "47859c363dcfe727dfffb54ef977e01580aed9d6d143e3bcca6c4e57b86e98e8"
+      "sha256": "85a943791f8a07bfc5732f75374455f8e3d067d7af6c98cc7920d1628b767689"
     },
     {
       "path": "scripts/lower_tertiary/collect_life_to_date.py",

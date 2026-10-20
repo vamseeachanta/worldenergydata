@@ -28,13 +28,13 @@ def full_concept(**changes):
 
 
 @pytest.fixture
-def fdas():
-    config = pytest.importorskip("worldenergydata.fdas.core.config")
-    pytest.importorskip("worldenergydata.fdas.api")
+def project_economics():
+    config = pytest.importorskip("worldenergydata.project_economics.core.config")
+    pytest.importorskip("worldenergydata.project_economics.api")
     return config
 
 
-def test_proxy_has_hand_checked_npv_and_label(fdas):
+def test_proxy_has_hand_checked_npv_and_label(project_economics):
     result = estimate_economics(full_concept())
     # DEFAULT_ASSUMPTIONS subsea15: 300 + 6*8 = 348 MM.
     # E3: 60,000*365/1e6 * (70*(1-.188)-12) - 25 = 956.996 MM/yr.
@@ -46,20 +46,20 @@ def test_proxy_has_hand_checked_npv_and_label(fdas):
     assert "Undeclined oil-price proxy NPV" in build_fdp_html(full_concept())
 
 
-def test_fractional_life_is_not_silently_truncated(fdas):
+def test_fractional_life_is_not_silently_truncated(project_economics):
     result = estimate_economics(full_concept(field_life_years=15.5))
     assert result.capex_mm == 348.0
     assert result.npv_mm is None
     assert "whole" in result.note and "field_life_years" in result.note
 
 
-def test_explicit_zero_discount_preserved(fdas):
+def test_explicit_zero_discount_preserved(project_economics):
     result = estimate_economics(full_concept(discount_rate=0.0))
     assert result.discount_rate == 0.0
     assert result.npv_mm == pytest.approx(14006.9, abs=0.05)
 
 
-def test_missing_well_count_blocks_economics(fdas):
+def test_missing_well_count_blocks_economics(project_economics):
     result = estimate_economics(full_concept(num_wells=None))
     assert result.capex_mm is None and result.npv_mm is None
     assert "num_wells" in result.note
@@ -76,10 +76,10 @@ def test_missing_well_count_blocks_economics(fdas):
         "DISCOUNT_RATE_ANNUAL",
     ],
 )
-def test_missing_assumption_cannot_be_zero_cost(fdas, monkeypatch, key):
-    manager = fdas.AssumptionsManager()
+def test_missing_assumption_cannot_be_zero_cost(project_economics, monkeypatch, key):
+    manager = project_economics.AssumptionsManager()
     manager.assumptions = manager.assumptions.drop(columns=[key])
-    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    monkeypatch.setattr(project_economics, "AssumptionsManager", lambda: manager)
     result = estimate_economics(full_concept(discount_rate=None))
     assert result.npv_mm is None
     if key in ("HOST_CAPEX_MM", "SURF_PER_WELL_MM"):
@@ -111,22 +111,22 @@ def _scored(concept_type):
 
 
 @pytest.mark.parametrize("value", [-1, float("inf"), float("nan")])
-def test_invalid_fixed_opex_is_not_evaluated(fdas, monkeypatch, value):
-    manager = fdas.AssumptionsManager()
+def test_invalid_fixed_opex_is_not_evaluated(project_economics, monkeypatch, value):
+    manager = project_economics.AssumptionsManager()
     key = "FIXED_OPEX_MM_PER_YEAR"
     manager.assumptions.loc[manager.assumptions.DEV_SYSTEM == "subsea15", key] = value
-    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    monkeypatch.setattr(project_economics, "AssumptionsManager", lambda: manager)
     est = estimate_field_cost_portfolio(full_concept(), [_scored(ConceptType.FPSO)])
     assert est[ConceptType.FPSO].annual_opex_mm is None
     assert key in est[ConceptType.FPSO].note
 
 
-def test_explicit_zero_fixed_opex_is_evaluated(fdas, monkeypatch):
-    manager = fdas.AssumptionsManager()
+def test_explicit_zero_fixed_opex_is_evaluated(project_economics, monkeypatch):
+    manager = project_economics.AssumptionsManager()
     manager.assumptions.loc[
         manager.assumptions.DEV_SYSTEM == "subsea15", "FIXED_OPEX_MM_PER_YEAR"
     ] = 0
-    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    monkeypatch.setattr(project_economics, "AssumptionsManager", lambda: manager)
     est = estimate_field_cost_portfolio(full_concept(), [_scored(ConceptType.FPSO)])
     assert est[ConceptType.FPSO].annual_opex_mm == 0.0
 
@@ -152,10 +152,10 @@ def test_portfolio_ranks_unknown_opex_after_known_cost(monkeypatch, known_opex):
 
 
 @pytest.mark.parametrize("key", ["HOST_CAPEX_MM", "SURF_PER_WELL_MM"])
-def test_zero_capex_component_blocks_economics(fdas, monkeypatch, key):
-    manager = fdas.AssumptionsManager()
+def test_zero_capex_component_blocks_economics(project_economics, monkeypatch, key):
+    manager = project_economics.AssumptionsManager()
     manager.assumptions.loc[manager.assumptions.DEV_SYSTEM == "subsea15", key] = 0
-    monkeypatch.setattr(fdas, "AssumptionsManager", lambda: manager)
+    monkeypatch.setattr(project_economics, "AssumptionsManager", lambda: manager)
     result = estimate_economics(full_concept())
     assert result.capex_mm is None and result.npv_mm is None
     assert key in result.note

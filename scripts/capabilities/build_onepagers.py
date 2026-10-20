@@ -412,7 +412,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
  {'id': 'sec-validation',
   'kind': 'section',
   'title': 'Analysis sources and limitations',
-  'std': 'Bureau of Safety and Environmental Enforcement production and activity records; FDAS V30 '
+  'std': 'Bureau of Safety and Environmental Enforcement production and activity records; project_economics V30 '
          'Financial Project Summary · data as of: 2026-01-30 (reference extraction); production '
          'through 2025-05',
   'path': 'capabilities/#validation',
@@ -420,7 +420,7 @@ SPECS: list[dict] = [{'id': 'sec-economics',
            'reported results so their basis and limitations can be examined.',
   'figures': [],
   'bullets': ['Production and economic inputs identified alongside results',
-              'Economics checked against the FDAS V30 Financial Project Summary',
+              'Economics checked against the project_economics V30 Financial Project Summary',
               'Missing inputs and indicative cost allocations identified']}]
 
 _FONT_DIR = _REPO / "reports/capabilities/assets/fonts/OpenSans"

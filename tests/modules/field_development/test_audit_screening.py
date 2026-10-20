@@ -98,7 +98,7 @@ def test_complete_assessment_has_no_unevaluated_hazards():
 
 
 def test_shallow_economics_rejects_zero_capex_basis():
-    pytest.importorskip("worldenergydata.fdas.core.config")
+    pytest.importorskip("worldenergydata.project_economics.core.config")
     concept = FieldConcept(
         name="Synthetic",
         water_depth_m=100,

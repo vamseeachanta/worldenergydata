@@ -4,7 +4,7 @@
 
 The cost components used in offshore field economics, traced **through time**, with
 a source citation on every figure. Built to supersede the single-point cost deck in
-`docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx`, which is a
+`docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx`, which is a
 frozen assumption set rather than a sourced, time-varying basis.
 
 ## Datasets

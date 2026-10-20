@@ -17,7 +17,7 @@
 
 ### Tier 3: Integration Modules
 - [Web Scraping Infrastructure](marketing_brochure_web_scraping_infrastructure.md)
-- [FDAS (Field Data Analysis System)](marketing_brochure_fdas_field_data_analysis_system.md)
+- [project_economics (Project economics)](marketing_brochure_project_economics.md)
 
 ## 🎯 Common Tasks
 

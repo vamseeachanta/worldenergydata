@@ -215,7 +215,7 @@ The enhanced workflow integrates with the AssetUtilities hub to share components
 **Project Management:** acma-projects, client_projects, investments, teamresumes
 **Infrastructure:** assethold, pyproject-starter, worldenergydata
 **Development:** ai-native-traditional-eng
-**Documentation:** frontierdeepwater, OGManufacturing
+**Documentation:** Reference contributor, OGManufacturing
 
 #### Reference Patterns
 
@@ -555,7 +555,7 @@ EOF
 
 ```bash
 # Find all cross-references to migrated specs
-grep -r "@specs/20.*user.*auth" . 
+grep -r "@specs/20.*user.*auth" .
 
 # Update to new module-based paths
 # @specs/modules/authentication/YYYY-MM-DD-enhanced-user-auth/

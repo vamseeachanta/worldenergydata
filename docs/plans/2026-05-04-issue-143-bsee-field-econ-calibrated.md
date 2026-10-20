@@ -2,7 +2,7 @@
 
 **Issue:** https://github.com/vamseeachanta/worldenergydata/issues/143
 **Status:** plan-review
-**Tier:** T3 (case study report using cost disclosure + FDAS)
+**Tier:** T3 (case study report using cost disclosure + project_economics)
 **Depends on:** #334–#338 (disclosure dataset), #367 (API12 NPV migration)
 
 ## Context
@@ -13,7 +13,7 @@ and WRK-171 (disclosure dataset). Both are now available via the annual disclosu
 
 ### Task 1 — Select case study field
 Recommend: `Thunder Horse` or `Atlantis` — both have complete production history and
-are covered by the FDAS portfolio analysis.
+are covered by the project_economics portfolio analysis.
 
 ### Task 2 — Load calibrated cost data
 ```python
@@ -23,9 +23,9 @@ thunder_horse = df[df["field"].str.contains("Thunder Horse", case=False)]
 print(thunder_horse[["year", "capex_mm", "opex_mm", "operator"]].to_string())
 ```
 
-### Task 3 — Run FDAS analysis with calibrated costs
+### Task 3 — Run project_economics analysis with calibrated costs
 ```python
-from worldenergydata.fdas.api import EconomicsQuery
+from worldenergydata.project_economics.api import EconomicsQuery
 q = EconomicsQuery()
 result = q.analyze(field="Thunder Horse", capex=thunder_horse["capex_mm"].sum(), ...)
 ```
@@ -39,4 +39,4 @@ result = q.analyze(field="Thunder Horse", capex=thunder_horse["capex_mm"].sum(),
 ## Acceptance Criteria
 - Case study HTML report generated for at least 1 field
 - Uses calibrated cost data from annual disclosure dataset
-- NPV/IRR computed via FDAS forward layer (not legacy path)
+- NPV/IRR computed via project_economics forward layer (not legacy path)

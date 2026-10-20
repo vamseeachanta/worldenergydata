@@ -74,9 +74,9 @@ Best wishes,
 
    CWhite
 
-Charles N. White
+Reference contributor
 
-EVP, Frontier Deepwater Appraisal Solutions LLC
+Project economics reference
 
 LP SDP, Fellow IMarEST & SNAME
 

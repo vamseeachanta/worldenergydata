@@ -3,11 +3,13 @@
 import pandas as pd
 import pytest
 
-from worldenergydata.fdas.adapters.contract import to_fdas_production
 from worldenergydata.production.unified.adapters.brazil_anp_adapter import (
     BrazilAnpAdapter,
 )
 from worldenergydata.production.unified.query import STANDARD_COLUMNS, ProductionQuery
+from worldenergydata.project_economics.adapters.contract import (
+    to_project_economics_production,
+)
 
 
 class FixtureAnpLoader:
@@ -92,15 +94,15 @@ def test_fetch_transforms_anp_loader_output_to_standard_columns():
     assert "field" not in out.columns
 
 
-def test_fetch_output_is_accepted_by_fdas_production_contract():
+def test_fetch_output_is_accepted_by_project_economics_production_contract():
     adapter = BrazilAnpAdapter(loader=FixtureAnpLoader())
 
     unified = adapter.fetch(ProductionQuery(regions=["brazil"], fields=["TUPI"]))
-    fdas = to_fdas_production(unified)
+    project_economics = to_project_economics_production(unified)
 
-    assert list(fdas["DEV_NAME"].unique()) == ["TUPI"]
-    assert list(fdas["YEAR_MONTH"]) == ["2024-01", "2024-02"]
-    assert fdas["MONTHLY_WATER_BBL"].notna().all()
+    assert list(project_economics["DEV_NAME"].unique()) == ["TUPI"]
+    assert list(project_economics["YEAR_MONTH"]) == ["2024-01", "2024-02"]
+    assert project_economics["MONTHLY_WATER_BBL"].notna().all()
 
 
 def test_fetch_all_uses_loader_all_path_when_no_field_filter():

@@ -2,7 +2,7 @@
 
 > **Data Vintage**: OGOR through Oct 2025, WTI through Oct 2025
 > **Time Period**: Sep 2000 through Oct 2025
-> **Baseline**: FDAS V30 (Sep 2000 through May 2025)
+> **Baseline**: project_economics V30 (Sep 2000 through May 2025)
 > **Generated**: 2026-01-31
 
 ## Summary

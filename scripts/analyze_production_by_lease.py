@@ -174,7 +174,7 @@ def main():
     
     # Find the most recent production by lease file
     project_root = Path(__file__).parent.parent
-    results_dir = project_root / 'results' / 'fdas_production'
+    results_dir = project_root / 'results' / 'project_economics_production'
     
     # Find latest file
     lease_files = list(results_dir.glob('b_production_by_lease_*.csv'))

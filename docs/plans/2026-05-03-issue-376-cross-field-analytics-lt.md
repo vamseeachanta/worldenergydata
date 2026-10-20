@@ -14,7 +14,7 @@
 ### Existing repo code
 - `src/worldenergydata/lower_tertiary/production_classifier.py` already classifies wells by dev system; reusable.
 - `src/worldenergydata/marine_safety/cross_database.py` shows the pattern for cross-cutting analytics — consume per-field results and emit aggregated views.
-- `src/worldenergydata/fdas/api.py:DisclosureAnalyticsQuery` — `benchmark()`, `operator_capex()`, `project_revision()` already shipped via #338. Returns `None` unless comparable disclosures exist.
+- `src/worldenergydata/project_economics/api.py:DisclosureAnalyticsQuery` — `benchmark()`, `operator_capex()`, `project_revision()` already shipped via #338. Returns `None` unless comparable disclosures exist.
 - `src/worldenergydata/hse/` — incident database; query API not yet exposed (tracked under #363). Phase 3 must work with what's available.
 - `reports/lower_tertiary_field_summary.md:"Production by Development System"` already breaks down by Subsea 15K / Tieback 15K / Dry Tree / Subsea 20K — useful baseline for technology-generation analysis.
 

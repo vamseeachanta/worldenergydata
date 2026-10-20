@@ -5,7 +5,7 @@
 **Owner:** cost module (`packages/worldenergydata-cost`)
 
 This dataset is explicitly a **living** one. Issue #844's whole point is that the
-FDAS cost deck went stale because nobody owned refreshing it. This document exists
+project_economics cost deck went stale because nobody owned refreshing it. This document exists
 so that does not happen again.
 
 ---

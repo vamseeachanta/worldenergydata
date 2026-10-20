@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ABOUTME: Reproduces FDAS V30 lower tertiary results from raw BSEE OGOR data
+ABOUTME: Reproduces project_economics V30 lower tertiary results from raw BSEE OGOR data
 ABOUTME: Uses V30 assumptions and methodology for WRK-009 repeatability verification
 """
 
@@ -20,13 +20,13 @@ logger = get_logger(__name__)
 # Phase 2 batch-3 carve (#529): now 2 levels deeper under
 # packages/worldenergydata-bsee/; repo root is parents[5] (was [3]).
 PROJECT_ROOT = Path(__file__).resolve().parents[5]
-FDAS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/FDAS_V30"
+PROJECT_ECONOMICS_V30_DIR = PROJECT_ROOT / "docs/modules/bsee/analysis/production/project_economics_V30"
 OGOR_ZIP_DIR = get_module_data_safe("bsee") / "zip" / "historical_production_yearly"
 GOLDEN_BASELINE_PATH = (
     PROJECT_ROOT / "config/analysis/lower_tertiary/golden_baseline_v30.yml"
 )
-V50_KC_LEASES_PATH = FDAS_V30_DIR / "leases_v21_kc.csv"
-V50_KC_DRILLING_PATH = FDAS_V30_DIR / "drilling_and_completion_days_v21_kc.csv"
+V50_KC_LEASES_PATH = PROJECT_ECONOMICS_V30_DIR / "leases_v21_kc.csv"
+V50_KC_DRILLING_PATH = PROJECT_ECONOMICS_V30_DIR / "drilling_and_completion_days_v21_kc.csv"
 
 
 def load_v30_leases() -> pd.DataFrame:
@@ -35,7 +35,7 @@ def load_v30_leases() -> pd.DataFrame:
     Columns: LEASE_NUM, Lease_Numeric, LEASE_NAME, DEV_NAME,
              WATER_DEPTH, DEV_SYSTEM
     """
-    leases_path = FDAS_V30_DIR / "leases.xlsx"
+    leases_path = PROJECT_ECONOMICS_V30_DIR / "leases.xlsx"
     df = pd.read_excel(leases_path)
     # Normalize LEASE_NUM: strip, uppercase, remove quotes/spaces
     df["LEASE_NUM"] = (
@@ -50,7 +50,7 @@ def load_v30_leases() -> pd.DataFrame:
 
 
 def _normalise_lease_numbers(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalise the FDAS lease-number column in-place-compatible form."""
+    """Normalise the project_economics lease-number column in-place-compatible form."""
     df = df.copy()
     df["LEASE_NUM"] = (
         df["LEASE_NUM"]
@@ -84,7 +84,7 @@ def load_v30_assumptions() -> pd.DataFrame:
     Returns transposed DataFrame with DEV_SYSTEM as index and assumption
     rows as columns (subsea15, subsea20, dry, tieback15, tieback20).
     """
-    assumptions_path = FDAS_V30_DIR / "lease_assumptions.xlsx"
+    assumptions_path = PROJECT_ECONOMICS_V30_DIR / "lease_assumptions.xlsx"
     df = pd.read_excel(assumptions_path)
     return df
 
@@ -94,7 +94,7 @@ def load_v30_wti_prices() -> pd.DataFrame:
 
     Columns: Month (datetime), WTI_USD (float)
     """
-    wti_path = FDAS_V30_DIR / "wti_monthly.xlsx"
+    wti_path = PROJECT_ECONOMICS_V30_DIR / "wti_monthly.xlsx"
     df = pd.read_excel(wti_path)
     df["Month"] = pd.to_datetime(df["Month"])
     return df
@@ -108,7 +108,7 @@ def load_v30_drilling() -> pd.DataFrame:
              COMPLETION_DAYS, MAX_BH_TOTAL_MD, MAX_WELL_BORE_TVD,
              MAX_DRILL_FLUID_WGT
     """
-    dnc_path = FDAS_V30_DIR / "drilling_and_completion_days.xlsx"
+    dnc_path = PROJECT_ECONOMICS_V30_DIR / "drilling_and_completion_days.xlsx"
     df = pd.read_excel(dnc_path)
     return df
 

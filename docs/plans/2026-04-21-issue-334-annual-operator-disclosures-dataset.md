@@ -16,7 +16,7 @@
 - Found: `src/worldenergydata/cost/calibration/cost_predictor.py` — current model consumes `CostDataPoint` records and extracts features from sanction-oriented fields (`water_depth_m`, `well_depth_m`, `year_sanction`, `hpht`, `subsea`, `region`, `rig_type`, `water_depth_band`).
 - Found: `src/worldenergydata/cost/data_collection/__init__.py` — current public exports for the data-collection layer are limited to `CostDataPoint` and `load_public_dataset()`.
 - Found: `tests/unit/cost/test_cost_predictor.py` and `tests/unit/cost/test_proxy_comparison.py` — existing cost tests assume the sanction-point dataset and predictor workflow.
-- Found: `src/worldenergydata/fdas/__init__.py` and `src/worldenergydata/lower_tertiary/npv.py` — downstream economics surfaces already exist, but no actual disclosure-layer consumer exists yet; integration claims must therefore be documented as future-facing, not implemented in this issue.
+- Found: `src/worldenergydata/project_economics/__init__.py` and `src/worldenergydata/lower_tertiary/npv.py` — downstream economics surfaces already exist, but no actual disclosure-layer consumer exists yet; integration claims must therefore be documented as future-facing, not implemented in this issue.
 - Gap: no annual disclosure schema, no annual operator/project time-series dataset, no explicit linkage model from recurring disclosures to `CostDataPoint`, and no dedicated tests for disclosure-style cost tracking.
 
 ### Standards
@@ -28,7 +28,7 @@
 ### Documents consulted
 - Issue `#334` — defines the requested outcome: annual-statement-driven year-over-year operator/project cost tracking.
 - Issue `#143` (`WRK-261: BSEE field economics case study — rebuild on calibrated cost data`) — confirms there is already downstream demand for richer cost/calibration inputs.
-- `README.md` — confirms WorldEnergyData positions economics/reporting as core capabilities and already exposes BSEE/FDAS economic workflows.
+- `README.md` — confirms WorldEnergyData positions economics/reporting as core capabilities and already exposes BSEE/project_economics economic workflows.
 - Prior review artifacts `scripts/review/results/2026-04-21-plan-334-codex.md` and `...-gemini.md` — identify the main blockers: overly generic value typing, weak provenance/testing, unclear operator-vs-project row separation, missing linkage/defer strategy, and over-broad v1 scope.
 
 ### Gaps identified
@@ -48,7 +48,7 @@
 - EXISTS: `src/worldenergydata/cost/data_collection/public_dataset.py`
 - EXISTS: `src/worldenergydata/cost/data_collection/calibration_schema.py`
 - EXISTS: `src/worldenergydata/cost/calibration/cost_predictor.py`
-- EXISTS: `src/worldenergydata/fdas/__init__.py`
+- EXISTS: `src/worldenergydata/project_economics/__init__.py`
 - EXISTS: `src/worldenergydata/lower_tertiary/npv.py`
 - EXISTS: `tests/unit/cost/test_cost_predictor.py`
 - MISSING (new — this plan creates): `src/worldenergydata/cost/data_collection/operator_disclosures_schema.py`
@@ -161,7 +161,7 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
 
 ### Explicitly out of scope for this issue
 - Any changes to `cost_predictor.py`
-- Any integration into `fdas`, `lower_tertiary`, or field-economics consumers
+- Any integration into `project_economics`, `lower_tertiary`, or field-economics consumers
 - Currency normalization, inflation adjustment, rebasing, or cross-currency comparability logic
 - Derived analytics/views such as re-baselining, unit-cost metrics, or benchmarking dashboards
 - Helper query APIs like `get_project_timeseries()` or `get_operator_annual_metrics()`
@@ -184,7 +184,7 @@ A foundation-only v1 disclosure data layer in `worldenergydata.cost.data_collect
 
 ## Downstream Integration Surface
 
-- After this issue, downstream consumers in `cost`, `fdas`, and field-economics modules can rely on a stable disclosure schema/loader existing in `worldenergydata.cost.data_collection`.
+- After this issue, downstream consumers in `cost`, `project_economics`, and field-economics modules can rely on a stable disclosure schema/loader existing in `worldenergydata.cost.data_collection`.
 - The only supported relationship to the current sanction-point model is the exact `(operator, project_name)` linkage contract for project-scope rows.
 - No downstream consumer code changes are part of this issue.
 - Follow-up issues will separately cover linkage expansion, normalization/comparability, ingestion hardening, and consumer analytics/integration.
@@ -277,7 +277,7 @@ update data_collection exports:
 - Child issue #335: linkage model hardening between annual disclosure records and `CostDataPoint` sanction records
 - Child issue #336: currency normalization and comparability policy for annual disclosures
 - Child issue #337: citation standards and automated ingestion for annual operator disclosures
-- Child issue #338: downstream analytics views and integration surface for `cost`, `fdas`, and `lower_tertiary`
+- Child issue #338: downstream analytics views and integration surface for `cost`, `project_economics`, and `lower_tertiary`
 
 ---
 

@@ -119,7 +119,9 @@ def test_financial_values_derive_from_unique_curated_evidence(
         for row in rows
         if row["row_kind"] == "implied_project_total"
     } == {"766.66", "920.00", "657.14"}
-    crosswalk = root / "data/modules/cost/curated/fdas_project_cost_crosswalk.csv"
+    crosswalk = (
+        root / "data/modules/cost/curated/project_economics_project_cost_crosswalk.csv"
+    )
     _rewrite(
         crosswalk,
         lambda rows: next(row for row in rows if row["WORKBOOK_CELL"] == "J3").update(
@@ -135,7 +137,8 @@ def test_input_fingerprints_fail_closed_on_workbook_and_toctou(
 ) -> None:
     root, commit = source_repo
     workbook = (
-        root / "docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx"
+        root
+        / "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx"
     )
     workbook.write_bytes(workbook.read_bytes() + b"appended")
     with pytest.raises(ValueError, match="workbook fingerprint"):
@@ -143,7 +146,7 @@ def test_input_fingerprints_fail_closed_on_workbook_and_toctou(
     workbook.write_bytes(
         (
             ROOT
-            / "docs/modules/bsee/analysis/production/FDAS_V30/lease_assumptions.xlsx"
+            / "docs/modules/bsee/analysis/production/project_economics_V30/lease_assumptions.xlsx"
         ).read_bytes()
     )
     source = root / "data/modules/cost/curated/project_asset_requirements.csv"
@@ -246,18 +249,20 @@ def test_failed_staged_build_preserves_all_preexisting_outputs(
     } == sentinels
 
 
-def test_fdas_coverage_gap_is_source_derived_and_unique(source_repo, tmp_path) -> None:
+def test_project_economics_coverage_gap_is_source_derived_and_unique(
+    source_repo, tmp_path
+) -> None:
     root, commit = source_repo
     output = tmp_path / "gap"
     _generate(root, output, commit)
     rows = list(csv.DictReader((output / CSV).open(encoding="utf-8", newline="")))
-    gaps = [row for row in rows if row["row_kind"] == "fdas_gap"]
+    gaps = [row for row in rows if row["row_kind"] == "project_economics_gap"]
     assert len(gaps) == 1
     assert gaps[0] == {
         **{field: "" for field in gaps[0]},
-        "accounting_view": "fdas_development_capex",
+        "accounting_view": "project_economics_development_capex",
         "direction": "project_to_asset",
-        "row_kind": "fdas_gap",
+        "row_kind": "project_economics_gap",
         "additive": "false",
         "project_id": "prj-000001",
         "requirement_id": "req-000007",
@@ -271,9 +276,9 @@ def test_fdas_coverage_gap_is_source_derived_and_unique(source_repo, tmp_path) -
         "source_provenance": "workbook_assumption",
         "counting_disposition": "excluded",
         "mapping_status": "unmapped",
-        "source_identity": "FDAS_V30:installation/hookup",
+        "source_identity": "project_economics_V30:installation/hookup",
         "source_locator": "financial_project_summary.xlsx:Project_Summary",
-        "assumption_vintage": "FDAS_V30",
+        "assumption_vintage": "project_economics_V30",
         "comparison_eligibility": "ineligible",
     }
 

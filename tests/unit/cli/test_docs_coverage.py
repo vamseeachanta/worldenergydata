@@ -37,7 +37,7 @@ _EXPECTED_CLI_SUBAPPS = {
     "dashboard",
     "eia",
     "marine-safety",
-    "fdas",
+    "project_economics",
     "lower-tertiary",
     "sodir",
     "metocean",

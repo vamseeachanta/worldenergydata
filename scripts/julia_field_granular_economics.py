@@ -2,7 +2,7 @@
 
 Reuses the validated V30 tieback15 methodology (matched to golden baseline to
 ~0.001%). Production from local OGOR-A .bin pickles; WTI deck + assumptions +
-D&C days from FDAS_V30 workbooks. Two vintages: V30 (through 2025-05) and
+D&C days from project_economics_V30 workbooks. Two vintages: V30 (through 2025-05) and
 LATEST (through last available OGOR month).
 """
 from __future__ import annotations
@@ -14,7 +14,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 BIN_DIR = REPO / "data/modules/bsee/bin/historical_production_yearly"
-V30 = REPO / "docs/modules/bsee/analysis/production/FDAS_V30"
+V30 = REPO / "docs/modules/bsee/analysis/production/project_economics_V30"
 JULIA_LEASE = "G20351"
 FIRST_OIL = pd.Timestamp("2016-03-01")
 

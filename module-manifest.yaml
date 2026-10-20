@@ -120,9 +120,9 @@ modules:
     capability_source: manifest
     related_wrk: [WRK-163, WRK-198, WRK-249]
 
-  - id: fdas
-    name: "Field Development Analysis System"
-    package: "worldenergydata.fdas"
+  - id: project_economics
+    name: "Project economics"
+    package: "worldenergydata.project_economics"
     region: [gulf_of_mexico, usa]
     domain: [economics, production]
     data_types:
@@ -142,7 +142,7 @@ modules:
       - BseeAdapter
       - classify_dev_system_by_depth
     status: stable
-    entry_point: "from worldenergydata.fdas import calculate_npv, excel_like_mirr, calculate_all_metrics"
+    entry_point: "from worldenergydata.project_economics import calculate_npv, excel_like_mirr, calculate_all_metrics"
     notes: "NPV, MIRR, IRR, and payback calculations for deepwater GOM fields with BSEE production data integration and water-depth-based development classification."
     in_scheduler: false
     public_cli: true
@@ -516,7 +516,7 @@ modules:
   # ── FRONTIER BASINS ──────────────────────────────────────────────────────────
 
   - id: frontier_basins
-    name: "Frontier Deepwater Basins"
+    name: "Emerging Basins"
     package: "worldenergydata.canada.emerging_basins"
     region: [guyana, suriname, namibia]
     domain: [exploration, deepwater, discoveries]
@@ -527,7 +527,7 @@ modules:
       - DiscoverySchema
     status: stable
     entry_point: "from worldenergydata.canada.emerging_basins import FrontierDiscoveryLoader"
-    notes: "Discovery-level catalog of the three frontier deepwater oil plays — Guyana (Stabroek + adjacent), Suriname (Block 58 + adjacent), Namibia (Orange Basin) — with operator, partners, year, water depth, public resource estimates, and a high/medium/low confidence tier, each row source-attributed (issue #603)."
+    notes: "Discovery-level catalog of the three emerging deepwater oil plays — Guyana (Stabroek + adjacent), Suriname (Block 58 + adjacent), Namibia (Orange Basin) — with operator, partners, year, water depth, public resource estimates, and a high/medium/low confidence tier, each row source-attributed (issue #603)."
     in_scheduler: false
     public_cli: false
     catalog_status: full
@@ -703,7 +703,7 @@ modules:
     key_classes: []
     status: stable
     entry_point: "from worldenergydata.reporting import ..."
-    notes: "Shared report generation infrastructure — HTML/Excel/JSON templates and utility functions used by bsee, fdas, marine_safety, and safety_analysis."
+    notes: "Shared report generation infrastructure — HTML/Excel/JSON templates and utility functions used by bsee, project_economics, marine_safety, and safety_analysis."
     in_scheduler: false
     public_cli: false
     catalog_status: not_applicable

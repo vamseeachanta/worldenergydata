@@ -58,15 +58,15 @@ Will respond this morning with details in our dedicated thread limited audience 
 
 Vamsee
 
-On Wed, Feb 12, 2025 at 6:59 AM <roy.shilling@frontierdeepwater.com> wrote:
+On Wed, Feb 12, 2025 at 6:59 AM <reference@example.invalid> wrote:
 Vamsee is it possible to just download all the data associated with Julia into multiple files.  We may be able to feed those into ai and get faster processing rather than trying to generate more complicated python scripts?
 
 r
 
 From: Vamsee Achanta <vamsee.achanta@aceengineer.com>
 Sent: Tuesday, February 11, 2025 9:00 PM
-To: roy.shilling@frontierdeepwater.com
-Cc: chuck.white@frontierdeepwater.com; terrance.ivers@gmail.com; Howard Day <howardday7777@gmail.com>; paul.hyatt@tdsolutions.com.au
+To: reference@example.invalid
+Cc: reference@example.invalid terrance.ivers@gmail.com; Howard Day <howardday7777@gmail.com>; paul.hyatt@tdsolutions.com.au
 Subject: Re: Average DAILY OIL PRODUCTION data for WILCOX fields
 
 Yes, I (and my assistant programmer, Samdan) are working on Julia first.

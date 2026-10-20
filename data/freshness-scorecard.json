@@ -63,8 +63,8 @@
       "scheduler_last_success_ts": null,
       "refresh_interval_days": null
     },
-    "fdas": {
-      "module": "fdas",
+    "project_economics": {
+      "module": "project_economics",
       "catalog_status": "not_applicable",
       "freshness_status": "not_applicable",
       "in_scheduler": false,

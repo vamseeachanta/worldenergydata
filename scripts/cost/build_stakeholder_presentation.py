@@ -467,7 +467,7 @@ ASSUMPTIONS = [
         "The disclosed totals imply very different well costs by region "
         "(section 3). Turning that into the model means region-specific "
         "days-per-well instead of one global constant.",
-        "The FDAS time-varying deck (#651) — the first consumer of this dataset.",
+        "The project_economics time-varying deck (#651) — the first consumer of this dataset.",
         "Corroborated independently: the award reconciliation found SURF share "
         "also varies by region (Guyana below band, Suriname in-band) — the same "
         "regional signal, from a different measurement.",
@@ -736,7 +736,7 @@ the charts or tables above.</p>
 <a href="https://github.com/vamseeachanta/worldenergydata/issues/1017">#1017</a>).</li>
 <li>Decisions A1–A4 are approved or revised — each recorded as an issue
 comment, one at a time.</li>
-<li>Only then does the time-varying deck flow into the FDAS field-economics
+<li>Only then does the time-varying deck flow into the project_economics field-economics
 model (issue <a href="https://github.com/vamseeachanta/worldenergydata/issues/651">#651</a>),
 starting with per-region drilling durations.</li>
 <li>The dataset stays living: sources are re-pulled on the documented refresh

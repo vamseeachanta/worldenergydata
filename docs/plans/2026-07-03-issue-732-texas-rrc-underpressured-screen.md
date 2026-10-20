@@ -40,7 +40,7 @@ Planning-time worktree probes show these related lanes:
 
 | Worktree | Branch | Scope impact |
 |---|---|---|
-| `/mnt/local-analysis/wt-wed-714-fdas` | `feat/fdas-714-source-agnostic-package` locked | Avoid FDAS/package-generalization changes |
+| `/mnt/local-analysis/wt-wed-714-project_economics` | `feat/project_economics-714-source-agnostic-package` locked | Avoid project_economics/package-generalization changes |
 | `/mnt/local-analysis/wt-wed-660` | `feat/onshore-rrc-source-catalog-660` | Avoid source-catalog rewrites |
 | `/mnt/local-analysis/wt-wed-661` | `feat/onshore-rrc-refresh-661` | Avoid Texas raw-refresh changes |
 | `/mnt/local-analysis/wt-wed-779` | `feat/corpus-datasets-779` | No pressure-screen overlap observed |

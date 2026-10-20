@@ -140,7 +140,7 @@ def _summary(
             "Only fields with explicit field metadata and oil production run economics.",
             "Gas-only revenue is deferred to issue #808.",
             *oil_conversion_limitations(source.oil_conversion_audit),
-            "Ayoluengo uses offshore FDAS plumbing as a wiring check; mismatch is flagged.",
+            "Ayoluengo uses offshore project_economics plumbing as a wiring check; mismatch is flagged.",
         ],
     }
     if source.oil_conversion_audit is not None:

@@ -91,7 +91,7 @@ def _drilldown_extras() -> dict[str, dict]:
 
     src = (
         REPO_ROOT
-        / "docs/modules/bsee/analysis/production/FDAS_V30"
+        / "docs/modules/bsee/analysis/production/project_economics_V30"
         / "drilling_and_completion_days_v21_kc.csv"
     )
     vin_path = REPO_ROOT / "reports/lower_tertiary/data/dc_vintage_diff.csv"
@@ -270,7 +270,7 @@ def main() -> None:
     src_sha = hashlib.sha256(
         (
             REPO_ROOT
-            / "docs/modules/bsee/analysis/production/FDAS_V30"
+            / "docs/modules/bsee/analysis/production/project_economics_V30"
             / "drilling_and_completion_days_v21_kc.csv"
         ).read_bytes()
     ).hexdigest()

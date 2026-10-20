@@ -31,7 +31,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import pandas as pd
 import yaml
 
-from worldenergydata.fdas.api import EconomicsQuery
+from worldenergydata.project_economics.api import EconomicsQuery
 from worldenergydata.lower_tertiary.portfolio import (
     LT_FIELDS_2026,
     fields_config_dir,
@@ -43,8 +43,8 @@ logger = logging.getLogger(__name__)
 # Defaults — sourced and surfaced via citations panel per field.
 # ---------------------------------------------------------------------------
 
-DEFAULT_DISCOUNT_RATE = 0.10  # FDAS evaluation default
-DEFAULT_REINVESTMENT_RATE = 0.06  # FDAS MIRR default
+DEFAULT_DISCOUNT_RATE = 0.10  # project_economics evaluation default
+DEFAULT_REINVESTMENT_RATE = 0.06  # project_economics MIRR default
 DEFAULT_OIL_PRICE_USD_PER_BBL = 70.0  # EIA STEO Q1 2026 reference
 DEFAULT_ANNUAL_DECLINE = 0.08  # typical deepwater decline
 DEFAULT_PLATEAU_YEARS = 3  # plateau duration before decline begins
@@ -317,7 +317,7 @@ def analyze_field(
             },
             {
                 "input": f"Opex ${opex_per_boe:.2f}/boe",
-                "publisher": "FDAS / yaml override",
+                "publisher": "Project economics reference / yaml override",
                 "code_id": f"yaml: field.opex_per_boe ({field_id}) or default",
                 "revision": "embedded",
             },
@@ -335,19 +335,19 @@ def analyze_field(
             },
             {
                 "input": f"Annual decline {annual_decline:.1%}",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "deepwater_default_decline (lower_tertiary.portfolio_economics)",
                 "revision": "embedded",
             },
             {
                 "input": f"Plateau duration {plateau_years} years",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "DEFAULT_PLATEAU_YEARS",
                 "revision": "embedded",
             },
             {
                 "input": f"Discount rate {discount_rate:.1%}",
-                "publisher": "FDAS",
+                "publisher": "Project economics reference",
                 "code_id": "evaluation_default",
                 "revision": "embedded",
             },
