@@ -230,5 +230,423 @@
       "https://en.wikipedia.org/wiki/ATP_Oil_and_Gas",
       "https://www.sec.gov/Archives/edgar/data/0001123647/000115752310001534/a6212267ex99-1.htm"
     ]
+  },
+  {
+    "name": "Big Foot",
+    "operator_current": "Chevron",
+    "host_facility": "Extended tension-leg drilling and production platform",
+    "concept_type": "tlp",
+    "water_depth_m": null,
+    "tieback_distance_km": null,
+    "num_wells": null,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 75000,
+    "first_oil_year": 2018,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "A dry-tree tension-leg development with reported first oil in November 2018.",
+    "narrative": "The reported arrangement combines drilling, workover and production on an extended tension-leg platform. Dry trees and top-tensioned risers provide direct well access from the facility. This is a description of the reported selection, not a fresh comparison of host concepts.",
+    "architecture": "Dry-tree wellheads on the platform connect through top-tensioned risers; processed fluids leave through export infrastructure. No subsea wet-tree layout is implied.",
+    "limitations": "The source gives inconsistent water-depth figures, so metric water depth is unknown here. Initial producer and injector plans are not an installed-well inventory; well count remains null. Obtain a dated well inventory and facility design basis before drawing a detailed layout or evaluating costs.",
+    "sources": [
+      "https://www.offshore-technology.com/projects/bigfootoilfield/"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "Big Foot Oil Field, Gulf of Mexico",
+        "url": "https://www.offshore-technology.com/projects/bigfootoilfield/",
+        "publication_date": "2018-12-10",
+        "accessed_at": "2026-10-20T06:51:51.539338+00:00",
+        "http_status": 200,
+        "sha256": "12736919cc83bf08a005adba71dc29331fedb810087832a2e905192952803bf7",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Operator identified in the project overview."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Floating, drilling and production facility section identifies the extended tension-leg platform and dry trees."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Floating, drilling and production facility section; no vessel identity is needed."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "Facility section reports 75,000 barrels of oil per day; gas capacity is separate. This is facility capacity, not a boe/d production plateau."
+      },
+      "first_oil_year": {
+        "source": "S1",
+        "comment": "Overview reports the field came on stream in November 2018."
+      }
+    }
+  },
+  {
+    "name": "Anchor",
+    "operator_current": "Chevron",
+    "host_facility": "Semisubmersible floating production unit",
+    "concept_type": "semisub_fps",
+    "water_depth_m": 1524,
+    "tieback_distance_km": null,
+    "num_wells": 7,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 75000,
+    "first_oil_year": null,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "The sanction-date concept is a subsea development served by a semisubmersible production unit.",
+    "narrative": "The sanction report describes subsea wells feeding a floating production unit in the Lower Tertiary Wilcox trend. This separates seafloor completions from surface processing; the cited selection does not by itself establish equipment qualification or installation feasibility.",
+    "architecture": "The sanctioned subsea wells connect to a semisubmersible floating production unit. Detailed tree ratings, manifold arrangement and riser geometry require the design basis.",
+    "limitations": "This is the sanction-date scope, not a current well inventory. The report forecasts first oil but does not document actual startup; actual first-oil year stays null. Resource figures stated as a lower bound are not entered as an exact reserve estimate. Update with a startup source and qualified equipment data before detailed assessment.",
+    "sources": [
+      "https://www.ogj.com/exploration-development/article/14073529/chevron-sanctions-anchor-project-in-deepwater-us-gulf-of-mexico"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "Chevron sanctions Anchor project in deepwater US Gulf of Mexico",
+        "url": "https://www.ogj.com/exploration-development/article/14073529/chevron-sanctions-anchor-project-in-deepwater-us-gulf-of-mexico",
+        "publication_date": "2019-12-12",
+        "accessed_at": "2026-10-20T06:51:48.572828+00:00",
+        "http_status": 200,
+        "sha256": "433d88b3e4bf12002ec5d91e6d1234418269b1f20f892eafee30cf658f7c8092",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Operator named in the sanction announcement."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Opening development-scope paragraph states a semi-submersible floating production unit."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Opening development-scope paragraph; subsea wells feed the FPU."
+      },
+      "water_depth_m": {
+        "source": "S1",
+        "comment": "Field-location paragraph states water depths of 1,524 m; retain the source precision."
+      },
+      "num_wells": {
+        "source": "S1",
+        "comment": "Stage 1 scope is a seven-well subsea development; planned scope, not an operating inventory."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "Design capacity is 75,000 bbl of crude oil per day; separate gas capacity is not converted to boe/d."
+      }
+    }
+  },
+  {
+    "name": "Jack/St. Malo",
+    "operator_current": "Chevron",
+    "host_facility": "Shared semisubmersible floating production unit",
+    "concept_type": "semisub_fps",
+    "water_depth_m": null,
+    "tieback_distance_km": null,
+    "num_wells": null,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 170000,
+    "first_oil_year": 2014,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "Two fields share a semisubmersible host through subsea completions; the source reports startup in December 2014.",
+    "narrative": "The co-development places the floating production unit between the fields and routes subsea production to a shared processing facility. The source also describes seafloor boosting. Shared-host capacity is not allocated to either field here.",
+    "architecture": "Jack and St. Malo subsea completions feed the shared floating production unit. The source does not establish a complete well and manifold inventory or measured connection lengths.",
+    "limitations": "The published host capacity is distinct from the development-stage ramp-up rate. No current capacity allocation, well inventory, water depth or scope-matched reserves are inferred. Obtain those inputs and a dated operating basis before ranking alternatives or evaluating economics.",
+    "sources": [
+      "https://worldoil.com/news/2014/12/2/jack-st-malo-partners-announce-first-oil-from-deepwater-gulf-of-mexico-project"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "Jack, St. Malo partners announce first oil from deepwater Gulf of Mexico project",
+        "url": "https://worldoil.com/news/2014/12/2/jack-st-malo-partners-announce-first-oil-from-deepwater-gulf-of-mexico-project",
+        "publication_date": "2014-12-02",
+        "accessed_at": "2026-10-20T06:51:50.646127+00:00",
+        "http_status": 200,
+        "sha256": "621f3bb94654776468d4a7e4ee8883ce1efa3513712eff3d80187dff6cb3af5b",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Opening announcement names Chevron as operator."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Co-development paragraph identifies the single semi-submersible host and subsea completions."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Shared host sits between the fields; no per-field host split is assigned."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "Shared FPU capacity is 170,000 bpd; not the separate first-stage ramp-up rate and not an individual field plateau."
+      },
+      "first_oil_year": {
+        "source": "S1",
+        "comment": "Article dated December 2, 2014 reports production has started."
+      }
+    }
+  },
+  {
+    "name": "Kaskida",
+    "operator_current": "BP",
+    "host_facility": "Semisubmersible production facility",
+    "concept_type": "semisub_fps",
+    "water_depth_m": null,
+    "tieback_distance_km": null,
+    "num_wells": 6,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 80000,
+    "first_oil_year": null,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "The initial sanctioned phase uses subsea wells and a semisubmersible production host.",
+    "narrative": "The reported development depended on commercial availability of high-pressure production technology. The initial scope pairs subsea wells with a semisubmersible and preserves expansion as a future decision. No pressure qualification is inferred from the announcement.",
+    "architecture": "Initial-phase subsea wells feed a semisubmersible production facility. Later-phase wells are outside the well count recorded here.",
+    "limitations": "The source gives water depth in feet; no conversion is introduced. Startup is a forecast rather than first oil. Obtain an updated schedule, well inventory, metric depth and qualified equipment requirements before evaluating layout, delivery or costs.",
+    "sources": [
+      "https://jpt.spe.org/bp-oks-20k-psi-kaskida-project-in-gulf-of-mexico"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "BP OKs 20K-psi Kaskida Project in Gulf of Mexico",
+        "url": "https://jpt.spe.org/bp-oks-20k-psi-kaskida-project-in-gulf-of-mexico",
+        "publication_date": "2024-07-30",
+        "accessed_at": "2026-10-20T06:51:49.196200+00:00",
+        "http_status": 200,
+        "sha256": "545f82679d096b8becf6ea6addb697d7d9dfe3837c066ce8bd2da68c7f3547f2",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "FID paragraph identifies BP as operator."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Opening paragraph and rendering caption identify a production semisubmersible."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Initial development uses the production semisubmersible described in the article."
+      },
+      "num_wells": {
+        "source": "S1",
+        "comment": "Initial phase states six subsea wells; future wells are excluded."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "Nameplate production capacity is 80,000 BOPD; this is oil capacity, not a measured boe/d plateau."
+      }
+    }
+  },
+  {
+    "name": "North Platte",
+    "operator_current": "Shell",
+    "host_facility": "Sparta semisubmersible floating production unit",
+    "concept_type": "semisub_fps",
+    "water_depth_m": 1310,
+    "tieback_distance_km": null,
+    "num_wells": 8,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": 100000,
+    "reported_oil_capacity_bpd": null,
+    "first_oil_year": null,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "North Platte is represented by the subsequently sanctioned Sparta concept, with subsea wells feeding a semisubmersible host.",
+    "narrative": "The partner announcement describes a standardized floating production design following earlier host designs, with all-electric compression. Subsea wells connect to the new host. The design rationale is reported from the announcement rather than established by a new optimization.",
+    "architecture": "The reported development has eight subsea production wells tied back to the Sparta semisubmersible. Well positions, manifold counts and tieback lengths are not supplied.",
+    "limitations": "The source is a sanction-date snapshot and its startup date is a forecast. Capacity is a design target, not observed production. Resources are reported as exceeding a value, so no exact reserve number is entered. Obtain detailed layout and current scope before quantitative assessment.",
+    "sources": [
+      "https://www.equinor.com/news/20231220-final-investment-decision-sparta"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "Final Investment Decision for Sparta in the US Gulf of Mexico",
+        "url": "https://www.equinor.com/news/20231220-final-investment-decision-sparta",
+        "publication_date": "2023-12-20",
+        "accessed_at": "2026-10-20T06:51:01.114036+00:00",
+        "http_status": 200,
+        "sha256": "08e45728677a8dfa1cf7eecfd605e5705d6b71d28ca502774e303661666a6ff4",
+        "kind": "primary partner announcement"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Opening paragraph names Shell as the operating co-owner."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Development-plan paragraph and Facts about Sparta box identify the semi-submersible FPU."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Development-plan paragraph names the Sparta platform."
+      },
+      "water_depth_m": {
+        "source": "S1",
+        "comment": "Facts about Sparta gives approximately 1,310 meters directly; no conversion is performed."
+      },
+      "num_wells": {
+        "source": "S1",
+        "comment": "Development plan and fact box state eight production/subsea wells."
+      },
+      "plateau_boed": {
+        "source": "S1",
+        "comment": "Opening capacity paragraph and fact box give designed peak capacity of 100,000 boe/d. Model plateau input is used only as a capacity transcription; economics is not run."
+      }
+    }
+  },
+  {
+    "name": "Shenandoah",
+    "operator_current": "Beacon Offshore Energy",
+    "host_facility": "Floating production system",
+    "concept_type": "semisub_fps",
+    "water_depth_m": null,
+    "tieback_distance_km": null,
+    "num_wells": 4,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 120000,
+    "first_oil_year": 2025,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "The startup report describes initial-phase subsea production flowing to a floating production system.",
+    "narrative": "The initial development uses high-pressure subsea technology with production routed to a floating processing system. Later-phase producers and the nearby southern discovery are separate scopes. The startup oil-deliverability target is distinct from host nameplate capacity.",
+    "architecture": "Initial-phase subsea producers feed the floating production system. The semisubmersible classification follows the committed lifecycle research; the opened startup report calls the host an FPS. Additional-phase and southern-discovery tiebacks are excluded from the recorded well count.",
+    "limitations": "The initial-phase well count is not the complete later development inventory. The article gives water depth in feet and does not establish metric depth or the full detailed layout. Confirm host classification against its design basis and obtain current phase-specific scope before detailed assessment.",
+    "sources": [
+      "https://www.offshore-mag.com/production/news/55305650/beacon-starts-oil-and-gas-production-at-offshore-shenandoah-field-in-the-gom"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "Beacon starts oil and gas production at offshore Shenandoah Field in the GoM",
+        "url": "https://www.offshore-mag.com/production/news/55305650/beacon-starts-oil-and-gas-production-at-offshore-shenandoah-field-in-the-gom",
+        "publication_date": "2025-07-25",
+        "accessed_at": "2026-10-20T06:51:49.592802+00:00",
+        "http_status": 200,
+        "sha256": "eba6cea3bb18f753c64d6da735429d42d7d22b53c3e45bd995acac24f456dbda",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Startup report identifies Beacon Offshore Energy."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Opened report identifies a floating production system; semisubmersible classification is from reports/lower_tertiary/lifecycle/_facts.json, shenandoah.host_type (repository snapshot)."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Startup report identifies the Shenandoah floating production system."
+      },
+      "num_wells": {
+        "source": "S1",
+        "comment": "First production is from the first of four producing wells in Phase 1; later phases excluded."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "FPS nameplate is 120,000 bbl/d of oil, distinct from the Phase 1 aggregate deliverability target."
+      },
+      "first_oil_year": {
+        "source": "S1",
+        "comment": "Article reports first production on July 25, 2025."
+      }
+    }
+  },
+  {
+    "name": "Tiber",
+    "operator_current": "BP",
+    "host_facility": "Shared Tiber-Guadalupe floating production platform",
+    "concept_type": "semisub_fps",
+    "water_depth_m": null,
+    "tieback_distance_km": null,
+    "num_wells": 6,
+    "recoverable_reserves_mmboe": null,
+    "plateau_boed": null,
+    "reported_oil_capacity_bpd": 80000,
+    "first_oil_year": null,
+    "fluid": "oil",
+    "reservoir_play": "Lower Tertiary / Wilcox",
+    "authored_date": "2026-10-19",
+    "confidence": "source snapshot; scope-limited",
+    "evaluation_status": "NOT_EVALUATED",
+    "summary": "Tiber is part of the sanctioned Tiber-Guadalupe shared-host development; hub totals are not assigned to Tiber alone.",
+    "narrative": "The announcement describes a new production hub with Tiber wells and a Guadalupe tieback, reusing Kaskida platform and subsea designs. Design reuse is the reported rationale for delivery efficiencies; no independent cost saving or feasibility calculation is made here.",
+    "architecture": "Tiber wells and the separate Guadalupe tieback feed one floating production platform. The semisubmersible classification follows the committed lifecycle research; the opened announcement establishes a floating platform and reuse of the Kaskida design, not a detailed hull specification.",
+    "limitations": "The reported oil capacity and resource totals cover the combined hub. Only the Tiber well count is mapped to FieldConcept; hub resources and forecast startup remain null in Tiber field inputs. Obtain the host design basis, metric depth and scope-specific production allocation before detailed assessment.",
+    "sources": [
+      "https://www.oilfieldtechnology.com/drilling-and-production/30092025/bp-approves-tiber-guadalupe-project-in-the-gulf-of-mexico/"
+    ],
+    "evidence": {
+      "S1": {
+        "title": "bp approves Tiber-Guadalupe project in the Gulf of Mexico",
+        "url": "https://www.oilfieldtechnology.com/drilling-and-production/30092025/bp-approves-tiber-guadalupe-project-in-the-gulf-of-mexico/",
+        "publication_date": "2025-09-30",
+        "accessed_at": "2026-10-20T06:51:50.038919+00:00",
+        "http_status": 200,
+        "sha256": "9b6fb068c0b6ded0480de62cab03ea7882e9d7afbf62636eafb3297ef19f58e3",
+        "kind": "secondary publisher report"
+      }
+    },
+    "input_sources": {
+      "operator_current": {
+        "source": "S1",
+        "comment": "Announcement identifies the development as BP operated."
+      },
+      "concept_type": {
+        "source": "S1",
+        "comment": "Announcement identifies a floating platform using Kaskida designs; semisubmersible classification is from reports/lower_tertiary/lifecycle/_facts.json, tiber.host_type (repository snapshot)."
+      },
+      "host_facility": {
+        "source": "S1",
+        "comment": "Announcement covers the combined Tiber-Guadalupe hub, not a standalone Tiber facility."
+      },
+      "num_wells": {
+        "source": "S1",
+        "comment": "Scope states six Tiber wells plus a separate two-well Guadalupe tieback; only Tiber wells enter this field count."
+      },
+      "reported_oil_capacity_bpd": {
+        "source": "S1",
+        "comment": "80,000 bpd crude capacity belongs to the combined hub; no Tiber boe/d plateau is inferred."
+      }
+    }
   }
 ]
