@@ -5,6 +5,7 @@
 Tests for worldenergydata.metocean.extrapolation (public API)
 """
 
+import json
 from dataclasses import asdict, replace
 from unittest.mock import Mock
 
@@ -289,3 +290,60 @@ def test_extrapolation_reports_synthetic_basis_and_actual_transfer(
     assert ("spatial_transfer" in result.corrections_applied) == correction_needed
     assert wave_transfer.called == correction_needed
     assert current_transfer.called == correction_needed
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_basline", "observed", "", None, []])
+def test_extrapolation_result_rejects_invalid_data_basis(data_basis):
+    with pytest.raises(ValueError, match="data_basis"):
+        replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_baseline", "unknown"])
+def test_extrapolation_result_accepts_supported_data_basis(data_basis):
+    result = replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+    assert result.data_basis == data_basis
+
+
+@pytest.mark.parametrize("data_basis", ["synthetic_baseline", "unknown"])
+def test_correction_breakdown_preserves_data_basis_in_export(data_basis):
+    from worldenergydata.metocean.extrapolation.visualization import (
+        plot_correction_breakdown,
+    )
+
+    result = replace(extrapolate(28.5, -88.5), data_basis=data_basis)
+    exported = json.loads(plot_correction_breakdown(result).to_json())
+
+    assert f"Basis: {data_basis}" in exported["layout"]["title"]["text"]
+    expected_target = (
+        "Target (synthetic baseline)"
+        if data_basis == "synthetic_baseline"
+        else "Target"
+    )
+    assert [trace["name"] for trace in exported["data"]] == [
+        "Synthetic baseline",
+        expected_target,
+    ]
+
+
+def test_correction_breakdown_uses_shared_baseline(monkeypatch):
+    import worldenergydata.metocean.extrapolation as api
+    from worldenergydata.metocean.extrapolation.visualization import (
+        plot_correction_breakdown,
+    )
+
+    # Controlled demonstration inputs test the consumer, not engineering accuracy.
+    for key, value in zip(
+        ["Hs", "Tp", "wind_speed", "current_speed"], [4.0, 7.0, 12.0, 0.5]
+    ):
+        monkeypatch.setitem(api._BASELINE, key, value)
+    result = extrapolate(28.5, -88.5)
+    figure = plot_correction_breakdown(result)
+
+    assert list(figure.data[0].x) == ["Hs (m)", "Tp (s)", "Wind (m/s)", "Current (m/s)"]
+    assert list(figure.data[0].y) == [4.0, 7.0, 12.0, 0.5]
+    assert list(figure.data[1].y) == [
+        result.Hs_m,
+        result.Tp_s,
+        result.wind_speed_ms,
+        result.current_speed_ms,
+    ]

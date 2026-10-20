@@ -33,6 +33,7 @@ from worldenergydata.metocean.extrapolation.spatial import SpatialAssessor
 # ---------------------------------------------------------------------------
 
 _VALID_CONFIDENCE = {"high", "medium", "low"}
+_VALID_DATA_BASIS = {"synthetic_baseline", "unknown"}
 _DEFAULT_PARAMETERS = ["Hs", "Tp", "wind_speed", "current_speed"]
 
 # Legacy synthetic demonstration inputs, not sourced environmental estimates.
@@ -90,6 +91,14 @@ class ExtrapolationResult:
             raise ValueError(
                 f"confidence must be one of {_VALID_CONFIDENCE}, "
                 f"got '{self.confidence}'"
+            )
+        if (
+            not isinstance(self.data_basis, str)
+            or self.data_basis not in _VALID_DATA_BASIS
+        ):
+            raise ValueError(
+                f"data_basis must be one of {sorted(_VALID_DATA_BASIS)}, "
+                f"got {self.data_basis!r}"
             )
         if not self.source:
             self.source = self.source_used.name
