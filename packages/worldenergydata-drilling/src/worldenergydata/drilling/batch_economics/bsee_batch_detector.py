@@ -121,6 +121,8 @@ def _parse_number(value: object, column: str) -> tuple[float | None, str | None]
         number = float(value)
     except (ValueError, TypeError, OverflowError):
         return None, f"invalid_{column}"
+    if math.isnan(number):
+        return None, f"missing_{column}"
     if not math.isfinite(number):
         return None, f"nonfinite_{column}"
     if number <= 0:
@@ -155,7 +157,8 @@ class BSEEBatchDetector:
     ) -> DetectionResult:
         """Reconcile all rows, then group inclusive windows from the first row.
 
-        Keys must be nonblank strings. Exact normalized required-column
+        Keys must be nonblank strings; integral numeric well IDs become text.
+        Exact normalized required-column
         duplicates are excluded after their first valid occurrence. Distinct
         events for a repeated well remain accepted; batch_size counts events.
         """
@@ -171,6 +174,15 @@ class BSEEBatchDetector:
             normalized, reasons = {}, []
             for key in ("well_id", "rig_name", "field_name"):
                 value = row[key]
+                if key == "well_id" and not isinstance(value, (bool, np.bool_)):
+                    if isinstance(value, Integral):
+                        value = str(int(value))
+                    elif (
+                        isinstance(value, (float, np.floating))
+                        and np.isfinite(value)
+                        and value == np.floor(value)
+                    ):
+                        value = str(int(value))
                 if isinstance(value, str) and value.strip():
                     normalized[key] = value.strip()
                 else:

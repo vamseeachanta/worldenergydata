@@ -10,6 +10,7 @@ learning fit, fallback and bounds is **NOT_EVALUATED**.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 0 | 2026-10-19 | Define row reconciliation, date and numeric parsing, and learning-fit dispositions to expose omitted data and substituted factors. |
+| 1 | 2026-10-20 | Restore numeric well-ID ingestion, distinguish missing numeric values and document the empty-frame exception. |
 
 ## Record accounting
 
@@ -35,8 +36,11 @@ participate in duplicate detection. The first occurrence is retained. Missing
 columns or duplicate column labels raise `ValueError` rather than producing an
 incomplete report. Empty frames still require the declared columns.
 
-Identifiers (`well_id`, `rig_name`, `field_name`) must be nonblank strings;
-surrounding whitespace is removed. No case folding, identity inference or
+Identifiers (`well_id`, `rig_name`, `field_name`) accept nonblank strings;
+surrounding whitespace is removed. `well_id` also accepts non-Boolean integral
+numbers and finite integral floats, normalized with `str(int(value))`. Numeric
+and text forms of the same well ID share duplicate identity. Fractional or
+nonfinite numeric well IDs are rejected; rig and field keys still require text. No case folding, identity inference or
 cross-field well deduplication is performed. Multiple distinct events for the
 same well remain accepted. **`batch_size` counts event rows, not unique wells**;
 `well_ids` can therefore contain repeated IDs.
@@ -88,7 +92,8 @@ trimming. Thousands separators, locale decimal commas, units, Booleans and
 nonfinite values are rejected, with explicit field reasons. Missing values are
 rejected, not replaced with zero. No comma removal or unit conversion occurs.
 Numeric text such as `NaN` and `inf` is invalid under the numeric grammar;
-native nonfinite numbers are classified as nonfinite. Repeated valid positions
+native numeric NaN is classified as `missing_<column>` and positive or negative
+infinity as `nonfinite_<column>`. Repeated valid positions
 are retained as observations, not deduplicated. No learning rows are excluded.
 
 The fitted model is `log(T) = a + b log(N)`. Centered least squares gives
@@ -112,6 +117,11 @@ epsilon scaled by row count and log magnitude to avoid false clipping at an
 endpoint. The unrounded raw factor is retained. Extreme slopes can produce zero or infinity in
 the raw floating-point doubling ratio; those values remain exposed alongside
 the bounded result. The roundoff guard is not an engineering acceptance limit.
+
+`fit_learning_curve(pd.DataFrame())` now raises `ValueError` for missing required
+columns; the previous entry point returned 0.85. An empty frame declaring both
+`well_position` and `days_to_drill` still returns the default with
+`insufficient_data`.
 
 `fit_learning_curve` returns only `factor` and logs when filtering, defaulting
 or clipping occurs. Consumers needing disposition evidence should retain the
@@ -164,3 +174,13 @@ Learning method and answer: the valid two-point observations give
 rejected. The legacy lower bound changes the reported factor to 0.5; both the
 raw factor and clipping disposition remain visible. This result is a hand
 calculation of a synthetic numerical case, not engineering validation.
+
+
+## Limits
+
+Knowledge pack revision 2 describes the earlier detector. Its approximate month,
+integer-span and missing-check descriptions do not govern this contract; only
+its legacy policy values are retained here. The pack revision, code pin, digests
+and resolved failure rows will be refreshed in the
+[knowledge-pack follow-up](https://github.com/vamseeachanta/worldenergydata/issues/1549).
+Physical duration-law qualification remains separate from this parser fix.

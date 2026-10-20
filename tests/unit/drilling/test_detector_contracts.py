@@ -6,6 +6,7 @@ or returning a clipped/default fit without its status must fail these tests.
 
 import math
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -50,7 +51,7 @@ def test_reconciliation_preserves_positions_and_does_not_mutate():
 
 
 @pytest.mark.parametrize("column", ["well_id", "rig_name", "field_name"])
-@pytest.mark.parametrize("value", [None, "", "  ", 5])
+@pytest.mark.parametrize("value", [None, "", "  "])
 def test_invalid_identifiers_are_reconciled(column, value):
     """Each synthetic invalid key accounts for one rejected input row."""
     df = activities(["2024-01-01"])
@@ -245,3 +246,69 @@ def test_partial_or_compact_dates_do_not_infer_missing_components(text):
     """Only complete extended calendar dates are accepted as text."""
     result = BSEEBatchDetector().detect_batches_with_diagnostics(activities([text]))
     assert result.counts["rejected"] == 1
+
+
+@pytest.mark.parametrize("dtype", ["int64", "float64", "Int64"])
+def test_numeric_api12_ids_are_canonicalized_without_mutation(dtype):
+    df = activities(["2024-01-01", "2024-02-01"])
+    df["well_id"] = pd.Series([608124005800, 608124005801], dtype=dtype)
+    before = df.copy(deep=True)
+    detector = BSEEBatchDetector()
+    result = detector.detect_batches_with_diagnostics(df)
+    assert result.counts == {"accepted": 2, "rejected": 0, "excluded": 0}
+    assert result.batches.iloc[0].well_ids == ["608124005800", "608124005801"]
+    assert result.batches.iloc[0].batch_size == 2
+    pd.testing.assert_frame_equal(detector.detect_batches(df), result.batches)
+    pd.testing.assert_frame_equal(df, before)
+
+
+def test_numeric_and_text_well_ids_share_duplicate_identity():
+    df = activities(["2024-01-01"] * 3)
+    df["well_id"] = pd.Series(
+        [608124005800, 608124005800.0, " 608124005800 "], dtype=object
+    )
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.counts == {"accepted": 1, "rejected": 0, "excluded": 2}
+    assert result.records.reason.tolist() == [
+        "accepted",
+        "duplicate_record",
+        "duplicate_record",
+    ]
+
+
+@pytest.mark.parametrize(
+    "value", [True, np.bool_(False), 1.5, np.float64(1.5), float("inf"), -float("inf")]
+)
+def test_nonintegral_or_boolean_well_ids_are_rejected(value):
+    df = activities(["2024-01-01"])
+    df["well_id"] = pd.Series([value], dtype=object)
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.records.reason.tolist() == ["invalid_well_id"]
+    assert result.counts["rejected"] == 1
+
+
+@pytest.mark.parametrize("column", ["rig_name", "field_name"])
+def test_numeric_grouping_keys_remain_invalid(column):
+    df = activities(["2024-01-01"])
+    df[column] = 5
+    result = BSEEBatchDetector().detect_batches_with_diagnostics(df)
+    assert result.records.reason.tolist() == [f"invalid_{column}"]
+
+
+@pytest.mark.parametrize("column", ["well_position", "days_to_drill"])
+@pytest.mark.parametrize("value", [float("nan"), np.float32("nan"), np.float64("nan")])
+def test_native_nan_learning_values_are_missing(column, value):
+    df = pd.DataFrame({"well_position": [1, 2], "days_to_drill": [8, 4]})
+    df[column] = pd.Series([value, 2], dtype=object)
+    result = BSEEBatchDetector().fit_learning_curve_with_diagnostics(df)
+    assert result.records.reason.tolist() == [f"missing_{column}", "accepted"]
+    assert result.counts == {"accepted": 1, "rejected": 1, "excluded": 0}
+
+
+@pytest.mark.parametrize("column", ["well_position", "days_to_drill"])
+@pytest.mark.parametrize("value", [float("inf"), -float("inf")])
+def test_infinite_learning_values_remain_nonfinite(column, value):
+    df = pd.DataFrame({"well_position": [1], "days_to_drill": [8]})
+    df[column] = value
+    result = BSEEBatchDetector().fit_learning_curve_with_diagnostics(df)
+    assert result.records.reason.tolist() == [f"nonfinite_{column}"]
