@@ -31,6 +31,15 @@ from worldenergydata.cost.data_collection.linkage import (
     disclosure_row_is_linkable,
     resolve_cost_datapoint_link,
 )
+from worldenergydata.cost.data_collection.operator_disclosures_dataset import (
+    load_operator_disclosures_dataset,
+)
+from worldenergydata.cost.data_collection.operator_disclosures_schema import (
+    FilingType,
+    NormalizedMetricName,
+    OperatorDisclosureRecord,
+    ScopeType,
+)
 from worldenergydata.cost.data_collection.operator_statement_registry import (
     DocumentEvidence,
     OperatorStatement,
@@ -43,13 +52,6 @@ from worldenergydata.cost.data_collection.operator_statement_registry import (
 from worldenergydata.cost.data_collection.public_dataset import load_public_dataset
 
 __all__ = [
-    "DocumentEvidence",
-    "OperatorStatement",
-    "StatementRegistry",
-    "YearCoverage",
-    "derive_coverage",
-    "emit_registry",
-    "load_registry",
     "AcceptedRecord",
     "CitationValidationResult",
     "ClassificationDecision",
@@ -62,16 +64,28 @@ __all__ = [
     "DisclosureIngestStatus",
     "DisclosureRow",
     "DisclosureScope",
+    "DocumentEvidence",
     "DuplicateRecord",
+    "FilingType",
     "IngestResult",
     "InvalidRecord",
     "LinkageStatus",
+    "NormalizedMetricName",
+    "OperatorDisclosureRecord",
+    "OperatorStatement",
+    "ScopeType",
     "SourcePriority",
+    "StatementRegistry",
+    "YearCoverage",
     "classify_disclosure_row",
+    "derive_coverage",
     "disclosure_business_key",
     "disclosure_row_is_linkable",
+    "emit_registry",
     "ingest_disclosure_rows",
+    "load_operator_disclosures_dataset",
     "load_public_dataset",
+    "load_registry",
     "resolve_cost_datapoint_link",
     "validate_disclosure_citation",
 ]
