@@ -11,15 +11,20 @@ accounting remains NOT_EVALUATED until comparable bases and asset links are esta
 <table>
 <tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr>
 <tr><td>1</td><td>2026-10-19</td><td>Documented portfolio event histories, reproducible outputs and accounting limitations.</td></tr>
+<tr><td>2</td><td>2026-10-20</td><td>Restricted award bound qualification, protected existing outputs and made build revision metadata explicit.</td></tr>
 </table>
 <h2>Build and inspect</h2>
 <pre>PYTHONPATH=src:packages/worldenergydata-cost/src python scripts/cost/build_project_cost_traces.py \
+  --revision 2 --revision-date 2026-10-20 \
   --output-dir "$TMPDIR/project-cost-traces"</pre>
 <p>The output directory receives project_cost_events.csv, project_cost_events.json,
 project_cost_traces.html and project_trace_manifest.json. The manifest enumerates the
 actual project union, per-table row counts, trail-only projects, missing years,
 SHA-256 digests of every consumed input and output digests. No clock or local path
-is embedded. The same input bytes produce the same output bytes. Inputs are read
+is embedded. Revision and date are supplied explicitly; library calls without them
+are labelled unissued with no issue date. The same input bytes and revision metadata
+produce the same output bytes. Existing output files are rejected, so each build
+requires unused output names. Inputs are read
 once for parsing and hashing; outputs are read back to verify their digests.</p>
 <h2>Slices and method</h2>
 <ol>
@@ -77,7 +82,9 @@ no silent FX, deflation, double counting or interpolation.</li>
 limits are introduced. Total-value fields may contain floors, ceilings or collapsed
 ranges. Their exact curated scalar text is retained, but bound qualification is
 NOT_EVALUATED; the original quote is displayed. No scalar is promoted into a
-validated point. Existing statement rows without confidence remain not_evaluated.
+validated point. Award bounds qualify only for complete band/range pairs or equal
+point bounds. Undisclosed, lease, midstream, combined and backlog awards remain
+NOT_EVALUATED with a reason; their disclosed values and bases are retained. Existing statement rows without confidence remain not_evaluated.
 Trade-press confidence is capped at low without changing the retained raw row.</p>
 <p>Later work requires the portfolio asset-map dependency, structured total bounds,
 explicit native award currency, ownership/scope and change classifications, and

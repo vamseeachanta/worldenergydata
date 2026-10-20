@@ -249,6 +249,10 @@ def test_builder_cli_writes_readable_outputs_and_protects_inputs(tmp_path):
         "scripts/cost/build_project_cost_traces.py",
         "--data-root",
         str(CURATED),
+        "--revision",
+        "2",
+        "--revision-date",
+        "2026-10-20",
         "--output-dir",
         str(tmp_path),
     ]
@@ -335,3 +339,74 @@ def test_award_link_source_locator_must_match_the_observation(tmp_path):
         writer.writerows(rows)
     with pytest.raises(ValueError, match="source locator"):
         build_portfolio_trace(root)
+
+
+@pytest.mark.parametrize(
+    "basis,low,high,expected",
+    [
+        ("point", "10", "10", "structured_award_bounds"),
+        ("range", "10", "20", "structured_award_bounds"),
+        ("band", "10", "20", "structured_award_bounds"),
+        ("not_public", "", "", "NOT_EVALUATED"),
+        ("lease_contract", "10", "20", "NOT_EVALUATED"),
+        ("midstream", "10", "20", "NOT_EVALUATED"),
+        ("combined", "10", "20", "NOT_EVALUATED"),
+        ("backlog", "10", "20", "NOT_EVALUATED"),
+        ("range", "10", "", "NOT_EVALUATED"),
+        ("band", "", "20", "NOT_EVALUATED"),
+        ("point", "10", "", "NOT_EVALUATED"),
+    ],
+)
+def test_award_bound_qualification_requires_comparable_complete_bounds(
+    basis, low, high, expected
+):
+    """Only complete bands/ranges and equal points qualify; no totals are implied."""
+    row = dict(
+        PROJECT="Example development",
+        AWARD_YEAR="2020",
+        CONTRACTOR="Supplier",
+        ASSET_CLASS="surf",
+        SCOPE_DESC="Package",
+        VALUE_LOW_MM=low,
+        VALUE_HIGH_MM=high,
+        VALUE_BASIS=basis,
+    )
+    event = build_portfolio_trace(
+        tables=_tables(**{"contract_awards.csv": [row]})
+    ).events[0]
+    assert event.bound_qualification == expected
+    if expected == "NOT_EVALUATED":
+        assert event.bound_qualification_reason
+    assert (event.low_value, event.high_value) == (low, high)
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "project_cost_events.json",
+        "project_cost_events.csv",
+        "project_cost_traces.html",
+        "project_trace_manifest.json",
+    ],
+)
+def test_library_output_collision_preserves_existing_files(tmp_path, name):
+    """Any occupied output name must reject the build before any output is written."""
+    existing = tmp_path / name
+    existing.write_bytes(b"retained evidence")
+    with pytest.raises(FileExistsError):
+        write_trace_outputs(_build([_trail()]), tmp_path)
+    assert existing.read_bytes() == b"retained evidence"
+    assert list(tmp_path.iterdir()) == [existing]
+
+
+def test_revision_metadata_is_supplied_and_retained_in_manifest(tmp_path):
+    result = _build([_trail()])
+    paths = write_trace_outputs(
+        result, tmp_path, revision="2 <draft>", revision_date="2026-10-20"
+    )
+    html = (tmp_path / "project_cost_traces.html").read_text()
+    assert "<td>2 &lt;draft&gt;</td><td>2026-10-20</td>" in html
+    manifest = json.loads(paths[-1].read_text())
+    assert manifest["revision"] == "2 <draft>"
+    assert manifest["revision_date"] == "2026-10-20"
+    assert "2026-10-19" not in render_trace_html(result)

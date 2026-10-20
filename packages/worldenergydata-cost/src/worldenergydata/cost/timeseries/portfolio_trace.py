@@ -73,6 +73,7 @@ class ProjectCostEvent:
     price_basis: str = "nominal"
     units: str = "million native currency units"
     bound_qualification: str = "NOT_EVALUATED"
+    bound_qualification_reason: str = "total bounds are not structured"
 
     @property
     def historical_feature_eligible(self) -> bool:
@@ -225,9 +226,16 @@ def _event(table, row, tables):
     basis = row.get("VALUE_BASIS", row.get("FIGURE_TYPE", "as_curated"))
     if basis == "not_public" and (low or high):
         raise ValueError("not_public must not carry an amount")
-    qualified = award and basis != "point"
-    if award and basis == "point":
-        qualified = bool(low and high and Decimal(low) == Decimal(high))
+    qualified = bool(award and low and high and basis in {"band", "range"})
+    reason = "total bounds are not structured"
+    if award:
+        reason = "award basis is not eligible for project CAPEX bounds"
+        if basis == "not_public":
+            reason = "award amount is not publicly disclosed"
+        elif basis in {"point", "band", "range"}:
+            reason = "award requires both bounds; point bounds must be equal"
+        if basis == "point":
+            qualified = bool(low and high and Decimal(low) == Decimal(high))
     if low and high and Decimal(low) > Decimal(high):
         raise ValueError("amount lower bound exceeds upper bound")
     award_id, requirement_ids, status = (
@@ -270,6 +278,7 @@ def _event(table, row, tables):
         requirement_ids=requirement_ids,
         link_status=status,
         bound_qualification="structured_award_bounds" if qualified else "NOT_EVALUATED",
+        bound_qualification_reason="" if qualified else reason,
     )
 
 
@@ -355,7 +364,9 @@ def _source_link(row):
     return title
 
 
-def render_trace_html(trace: PortfolioTrace) -> str:
+def render_trace_html(
+    trace: PortfolioTrace, *, revision: str = "unissued", revision_date: str = ""
+) -> str:
     """Render disclosed events as rows; no line joins imply invented observations."""
     parts = [
         "<!doctype html><html lang='en'><meta charset='utf-8'>",
@@ -365,7 +376,8 @@ def render_trace_html(trace: PortfolioTrace) -> str:
         "Nominal values only; currencies and bases remain separate. "
         "Display order does not establish chronology for overlapping date intervals.</p>",
         "<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change</th></tr>"
-        "<tr><td>1</td><td>2026-10-19</td><td>Event trace with source coverage and evidence gaps.</td></tr></table>",
+        f"<tr><td>{escape(revision)}</td><td>{escape(revision_date or 'not supplied')}</td>"
+        "<td>Event trace with source coverage and evidence gaps.</td></tr></table>",
         f"<p>Component-to-total consistency: {trace.consistency_status}. "
         f"{escape(trace.consistency_reason)}</p>",
         "<p>Total-value bounds remain NOT_EVALUATED: curated scalar values can be "
@@ -391,6 +403,7 @@ def render_trace_html(trace: PortfolioTrace) -> str:
                 f"<td>{escape(e.currency)} / {escape(e.value_basis)}</td>"
                 f"<td>{_source_link(e.source_fields)}; confidence: {escape(e.confidence)}; "
                 f"asset link: {escape(e.link_status)}; bounds: {e.bound_qualification}"
+                f"; {escape(e.bound_qualification_reason)}"
                 f"<br>Award: {escape(e.award_id or 'not applicable')}; "
                 f"requirements: {escape(', '.join(e.requirement_ids) or 'unavailable')}; "
                 f"source available: {e.source_available_date.label if e.source_available_date else 'unknown'}"
@@ -401,7 +414,13 @@ def render_trace_html(trace: PortfolioTrace) -> str:
     return "\n".join(parts)
 
 
-def write_trace_outputs(trace: PortfolioTrace, output_dir: Path) -> tuple[Path, ...]:
+def write_trace_outputs(
+    trace: PortfolioTrace,
+    output_dir: Path,
+    *,
+    revision: str = "unissued",
+    revision_date: str = "",
+) -> tuple[Path, ...]:
     """Write deterministic UTF-8 artifacts and verify their digests by readback."""
     if len({e.event_id for e in trace.events}) != len(trace.events):
         raise ValueError("duplicate event identity")
@@ -426,10 +445,14 @@ def write_trace_outputs(trace: PortfolioTrace, output_dir: Path) -> tuple[Path, 
     payloads = {
         "project_cost_events.json": canonical_events(trace).encode(),
         "project_cost_events.csv": stream.getvalue().encode(),
-        "project_cost_traces.html": render_trace_html(trace).encode(),
+        "project_cost_traces.html": render_trace_html(
+            trace, revision=revision, revision_date=revision_date
+        ).encode(),
     }
     manifest = {
         "schema_version": "1",
+        "revision": revision,
+        "revision_date": revision_date,
         "project_count": len(trace.projects),
         "event_count": len(trace.events),
         "projects": trace.projects,
@@ -445,10 +468,15 @@ def write_trace_outputs(trace: PortfolioTrace, output_dir: Path) -> tuple[Path, 
     }
     payloads["project_trace_manifest.json"] = _json(manifest).encode()
     output_dir.mkdir(parents=True, exist_ok=True)
+    for name in payloads:
+        path = output_dir / name
+        if path.exists() or path.is_symlink():
+            raise FileExistsError(f"output already exists: {name}")
     paths = []
     for name, payload in payloads.items():
         path = output_dir / name
-        path.write_bytes(payload)
+        with path.open("xb") as stream:
+            stream.write(payload)
         if _digest(path.read_bytes()) != _digest(payload):
             raise ValueError("output digest mismatch")
         paths.append(path)

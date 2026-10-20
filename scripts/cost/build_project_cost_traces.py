@@ -18,13 +18,17 @@ def main() -> None:
         "--data-root", type=Path, default=Path("data/modules/cost/curated")
     )
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--revision", required=True)
+    parser.add_argument("--revision-date", required=True)
     args = parser.parse_args()
     source = args.data_root.resolve()
     destination = args.output_dir.resolve()
     if destination == source or source in destination.parents:
         parser.error("output directory must be outside the curated input directory")
     trace = build_portfolio_trace(source)
-    write_trace_outputs(trace, destination)
+    write_trace_outputs(
+        trace, destination, revision=args.revision, revision_date=args.revision_date
+    )
     print(f"Projects: {len(trace.projects)}; distinct events: {len(trace.events)}")
     print(f"Component-to-total consistency: {trace.consistency_status}")
 
