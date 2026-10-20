@@ -1,0 +1,34 @@
+# Synthetic worked example, not an empirical BSEE snapshot.
+# Run: uv run python -m worldenergydata config/input/well_access_calibration.yml
+# Set output paths outside the checkout when retaining generated artifacts.
+# For real data, replace CSV paths with reviewed exports from WED_DATA_ROOT.
+basename: bsee
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true
+file_management:
+  flag: false
+analysis:
+  flag: true
+  type: well_access_calibration
+well_access_calibration:
+  data_basis: Synthetic hand-calculated example; not measured BSEE history
+  wells_csv: examples/well_access_calibration/wells.csv
+  war_csv: examples/well_access_calibration/war.csv
+  production_csv: examples/well_access_calibration/production.csv
+  observation_start: '2020-01-01'
+  observation_end: '2020-07-19'
+  # All numeric policies below are synthetic inputs, not recommended thresholds.
+  # Hand calculation and their purpose: docs/bsee/well_access_calibration.md.
+  band_edges_yr: [0, 1, 2]
+  days_per_year: 100
+  event_gap_days: 2
+  min_events: 2
+  min_exposure_years: 1
+  # Allowed code policy: issue #510 implementation plan (2026).
+  dry_tree_codes: [SPAR, TLP, MTLP]
+  coverage_basis: Synthetic complete observation of the listed wells
+  analog_basis: Synthetic well-level tree evidence
+  outputs: {}

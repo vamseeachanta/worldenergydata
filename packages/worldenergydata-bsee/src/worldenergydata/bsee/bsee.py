@@ -25,6 +25,9 @@ class bsee:
         if analysis.get("flag", False) and analysis.get("type") == "well_benchmark":
             return self._run_well_benchmark(cfg)
 
+        if analysis.get("flag") and analysis.get("type") == "well_access_calibration":
+            return self._run_well_access_calibration(cfg)
+
         cfg, data = bsee_data.router(cfg)
         cfg = bsee_analysis.router(cfg, data)
 
@@ -40,4 +43,14 @@ class bsee:
         bench_cfg = BenchmarkConfig.from_mapping(cfg.get("benchmark", {}))
         df = run_well_benchmark(bench_cfg)
         cfg[cfg["basename"]]["well_benchmark"] = df
+        return cfg
+
+    def _run_well_access_calibration(self, cfg):
+        """Build an evidence-qualified calibration before per-group routing."""
+        from worldenergydata.bsee.analysis.well_access_calibration import (
+            run_calibration,
+        )
+
+        result = run_calibration(cfg.get("well_access_calibration", {}))
+        cfg[cfg["basename"]]["well_access_calibration"] = result
         return cfg
