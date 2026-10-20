@@ -1,7 +1,10 @@
 """Report and input integrity tests; expected arithmetic is synthetic and manual."""
 
+import csv
 import hashlib
 import json
+from decimal import Decimal
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
@@ -10,6 +13,161 @@ from worldenergydata.cost.portfolio.reporting import build, load_portfolio
 
 ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE = ROOT / "data/modules/cost/examples/portfolio_synthesis.json"
+
+
+@pytest.mark.parametrize("numeric_field", ["amount", "shares", "quantum"])
+def test_numeric_json_preserves_exact_decimal_accounting(tmp_path, numeric_field):
+    """100 - 0.1 = 99.90; .6 + .3 + .1 = 1; quantum .01 divides 100."""
+    value = json.loads(EXAMPLE.read_text())
+    value["projects"][0]["contributions"][0]["amount"] = {"low": "0.1", "high": "0.1"}
+    if numeric_field == "amount":
+        value["projects"][0]["contributions"][0]["amount"] = {"low": 0.1, "high": 0.1}
+    elif numeric_field == "shares":
+        for scenario in value["scenarios"]:
+            scenario["shares"] = {k: float(v) for k, v in scenario["shares"].items()}
+            scenario["unallocated_share"] = 0.1
+    else:
+        value["quantum"] = 0.01
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value))
+    build(path, tmp_path / "report")
+    with (tmp_path / "report/project_cost_map.csv").open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    residual = next(r for r in rows if r["view"] == "residual")
+    assert (Decimal(residual["low"]), Decimal(residual["high"])) == (
+        Decimal("99.90"),
+        Decimal("99.90"),
+    )
+    manifest = json.loads(
+        (tmp_path / "report/cost_synthesis_manifest.v3.json").read_text()
+    )
+    assert manifest["decimal_policy"]["output_quantum"] == "0.01"
+    assert manifest["scenarios"][0]["shares"]["req-host"] == "0.6"
+    assert manifest["scenarios"][0]["unallocated_share"] == "0.1"
+
+
+@pytest.mark.parametrize(
+    "low_open,high_open", [(False, False), (True, False), (False, True), (True, True)]
+)
+def test_ranged_allocation_cases_retain_target_and_limits(
+    tmp_path, low_open, high_open
+):
+    """90*.6=54 and 110*.6=66 belong to distinct conserving boundary cases."""
+    value = json.loads(EXAMPLE.read_text())
+    value["projects"][0]["total"] = {
+        "low": "90",
+        "high": "110",
+        "low_open": low_open,
+        "high_open": high_open,
+    }
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value))
+    _, results = load_portfolio(path)
+    allocations = [
+        a for a in results[0].allocations if a.scenario_id == "scn-reference"
+    ]
+    assert [
+        (a.case_id, a.total, a.target_endpoint, a.target_open, a.limiting)
+        for a in allocations
+    ] == [
+        ("lower-bound", Decimal(90), "low", low_open, True),
+        ("upper-bound", Decimal(110), "high", high_open, True),
+    ]
+    build(path, tmp_path / "report")
+    with (tmp_path / "report/project_cost_map.csv").open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    joint = [r for r in rows if r["view"] == "scn-reference"]
+    assert len({(r["allocation_case"], r["identity"]) for r in joint}) == 8
+    for case, target, endpoint, is_open, host in [
+        ("lower-bound", "90", "low", low_open, "54.00"),
+        ("upper-bound", "110", "high", high_open, "66.00"),
+    ]:
+        group = [r for r in joint if r["allocation_case"] == case]
+        assert len(group) == 4
+        assert {
+            (r["target_total"], r["target_endpoint"], r["target_open"], r["limiting"])
+            for r in group
+        } == {(target, endpoint, str(is_open).lower(), "true")}
+        assert sum(Decimal(r["low"]) for r in group) == Decimal(target)
+        assert next(r["low"] for r in group if r["identity"] == "req-host") == host
+
+    class Summaries(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.in_summary = False
+            self.rows = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "summary":
+                self.in_summary = True
+
+        def handle_endtag(self, tag):
+            if tag == "summary":
+                self.in_summary = False
+
+        def handle_data(self, text):
+            if self.in_summary:
+                self.rows.append(text)
+
+    parser = Summaries()
+    parser.feed((tmp_path / "report/project_cost_map.html").read_text())
+    summaries = [s for s in parser.rows if "scn-reference" in s]
+    assert len(summaries) == 2
+    for summary, case, endpoint, is_open in zip(
+        summaries,
+        ["lower-bound", "upper-bound"],
+        ["low", "high"],
+        [low_open, high_open],
+    ):
+        assert case in summary and "limiting case" in summary
+        assert f"{endpoint} endpoint {'open' if is_open else 'closed'}" in summary
+
+
+def test_point_allocation_case_is_not_a_limiting_endpoint(tmp_path):
+    _, results = load_portfolio(EXAMPLE)
+    assert all(
+        (a.case_id, a.total, a.target_endpoint, a.target_open, a.limiting)
+        == ("point", Decimal(100), "point", False, False)
+        for a in results[0].allocations
+    )
+    build(EXAMPLE, tmp_path / "report")
+    with (tmp_path / "report/project_cost_map.csv").open(newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    for row in rows:
+        if row["derivation"] == "observed":
+            assert [
+                row[k]
+                for k in (
+                    "allocation_case",
+                    "target_total",
+                    "target_endpoint",
+                    "target_open",
+                    "limiting",
+                )
+            ] == [""] * 5
+        else:
+            assert (
+                row["allocation_case"],
+                row["target_total"],
+                row["target_endpoint"],
+                row["target_open"],
+                row["limiting"],
+            ) == ("point", "100", "point", "false", "false")
+    assert (
+        "limiting case" not in (tmp_path / "report/project_cost_map.html").read_text()
+    )
+
+
+def test_html_retains_exact_target_totals_for_close_endpoints(tmp_path):
+    """One-decimal display would render both targets as [100.0, 100.1]."""
+    value = json.loads(EXAMPLE.read_text())
+    value["projects"][0]["total"] = {"low": "100.01", "high": "100.02"}
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value))
+    build(path, tmp_path / "report")
+    html = (tmp_path / "report/project_cost_map.html").read_text()
+    assert "target 100.01" in html
+    assert "target 100.02" in html
 
 
 def test_deterministic_cost_map_and_manifest(tmp_path):

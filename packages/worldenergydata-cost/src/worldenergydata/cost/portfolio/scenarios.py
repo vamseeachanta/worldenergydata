@@ -50,6 +50,10 @@ class Allocation:
     unreconciled_variance: Decimal
     derivation: str
     source: str
+    case_id: str = "point"
+    target_endpoint: str = "point"
+    target_open: bool = False
+    limiting: bool = False
 
 
 def comparable(

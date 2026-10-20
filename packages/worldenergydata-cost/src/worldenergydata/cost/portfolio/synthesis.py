@@ -7,7 +7,7 @@ requirement. Variance = target - allocated - unallocated, per joint scenario.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from fractions import Fraction
 
@@ -74,7 +74,19 @@ def synthesize(
         if not project.total.low.is_finite() or not project.total.high.is_finite():
             raise ValueError("top-down allocation requires finite total bounds")
         for total in sorted({project.total.low, project.total.high}):
-            allocations.append(allocate(total, scenario, quantum))
+            allocation = allocate(total, scenario, quantum)
+            if project.total.low != project.total.high:
+                lower = total == project.total.low
+                allocation = replace(
+                    allocation,
+                    case_id="lower-bound" if lower else "upper-bound",
+                    target_endpoint="low" if lower else "high",
+                    target_open=(
+                        project.total.low_open if lower else project.total.high_open
+                    ),
+                    limiting=True,
+                )
+            allocations.append(allocation)
     bands = []
     if allocations:
         for key in sorted(project.requirement_ids):

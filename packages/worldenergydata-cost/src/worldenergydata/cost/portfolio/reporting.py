@@ -36,7 +36,11 @@ def _unique(pairs):
 
 
 def _json(path: Path):
-    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique)
+    return json.loads(
+        path.read_text(encoding="utf-8"),
+        object_pairs_hook=_unique,
+        parse_float=Decimal,
+    )
 
 
 def _preflight(
@@ -209,7 +213,8 @@ def render_html(data: dict, results: tuple[Synthesis, ...]) -> str:
             "Observed award values and inferred scenarios are separate accounting views.</p>"
         ),
         "<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>",
-        f'<tr><td>1</td><td>{escape(data["revision_date"])}</td><td>Initial synthesis to expose residuals and inference.</td></tr></table>',
+        f'<tr><td>1</td><td>{escape(data["revision_date"])}</td><td>Initial synthesis to expose residuals and inference.</td></tr>',
+        "<tr><td>2</td><td>2026-10-20</td><td>Required real-money years, preserved JSON decimals and identified allocation cases to retain their comparison basis.</td></tr></table>",
         (
             "<p>Solid green: observed evidence. Dashed amber: inferred allocations. "
             "Ranges are enclosures, not probability intervals. Marginal ranges are non-additive.</p>"
@@ -261,9 +266,16 @@ def render_html(data: dict, results: tuple[Synthesis, ...]) -> str:
                 "<p>unallocated unavailable; unreconciled variance unavailable: no compatible sourced scenario.</p>"
             )
         for a in result.allocations:
+            qualifier = (
+                f"limiting case; {a.target_endpoint} endpoint "
+                f"{'open' if a.target_open else 'closed'}"
+                if a.limiting
+                else "point case"
+            )
             out.append(
                 f"<details><summary>{escape(a.scenario_id)} — {escape(a.derivation)}; "
-                f"target {_display(Interval.point(a.total))}</summary><ul>"
+                f"case {escape(a.case_id)}; target {escape(str(a.total))}; "
+                f"{escape(qualifier)}</summary><ul>"
             )
             for key, value in a.amounts:
                 out.append(
@@ -306,6 +318,11 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
             "low_open",
             "high_open",
             "source",
+            "allocation_case",
+            "target_total",
+            "target_endpoint",
+            "target_open",
+            "limiting",
         )
     )
     quantum = Decimal(data["quantum"])
@@ -332,6 +349,11 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                     "observed",
                     *_bounds(value, q),
                     r.project.source,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
                 )
             )
         for row in r.contributions:
@@ -343,6 +365,11 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                     "observed",
                     *_bounds(row.amount, quantum),
                     row.source,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
                 )
             )
         for a in r.allocations:
@@ -359,6 +386,11 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                         a.derivation,
                         *_bounds(Interval.point(value), quantum),
                         a.source,
+                        a.case_id,
+                        str(a.total),
+                        a.target_endpoint,
+                        str(a.target_open).lower(),
+                        str(a.limiting).lower(),
                     )
                 )
     return stream.getvalue()
@@ -400,6 +432,8 @@ def build(path: Path, output: Path, **qualification) -> dict:
         ],
     }
     (output / "cost_synthesis_manifest.v3.json").write_text(
-        json.dumps(manifest, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        # JSON numeric fractions are retained as exact decimal strings.
+        json.dumps(manifest, sort_keys=True, indent=2, default=str) + "\n",
+        encoding="utf-8",
     )
     return manifest

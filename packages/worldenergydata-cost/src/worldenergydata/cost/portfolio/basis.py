@@ -34,10 +34,21 @@ class Basis:
     scope: str
     capex: str
     phase: str
+    basis_year: int | None = None
 
     def __post_init__(self) -> None:
-        if any(not known(getattr(self, f.name)) for f in fields(self)):
+        if any(
+            not known(getattr(self, f.name))
+            for f in fields(self)
+            if f.name != "basis_year"
+        ):
             raise ValueError("all basis dimensions must be known")
+        if self.basis_year is not None and (
+            type(self.basis_year) is not int or not 1 <= self.basis_year <= 9999
+        ):
+            raise ValueError("basis year must be an integer calendar year")
+        if self.price_basis.strip().lower() == "real" and self.basis_year is None:
+            raise ValueError("real money requires an explicit basis year")
 
 
 @dataclass(frozen=True)

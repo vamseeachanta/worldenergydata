@@ -92,6 +92,26 @@ def test_unknown_basis_rejected(basis, field):
         replace(basis, **{field: "unknown"})
 
 
+def test_real_basis_requires_reference_year(basis):
+    with pytest.raises(ValueError, match="year"):
+        replace(basis, price_basis="real")
+
+
+@pytest.mark.parametrize("year", [True, "2020", D(2020), 0, 10000])
+def test_real_basis_rejects_invalid_reference_year(basis, year):
+    with pytest.raises(ValueError, match="year"):
+        replace(basis, price_basis="real", basis_year=year)
+
+
+def test_real_basis_year_controls_award_eligibility(project, basis):
+    real = replace(basis, price_basis="real", basis_year=2020)
+    target = replace(project, basis=real)
+    result = synthesize(target, (row(real),))
+    assert result.eligible == Interval(D(20), D(30))
+    with pytest.raises(ValueError, match="basis"):
+        synthesize(target, (row(replace(real, basis_year=2021)),))
+
+
 def test_count_once_and_bundle_not_split(project, basis):
     """One 20..30 award linked to both requirements still contributes 20..30."""
     bundled = row(basis, requirement_ids=project.requirement_ids)

@@ -10,6 +10,7 @@ asserting estimates for any real development.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-19 | Introduced explicit basis checks, residuals and conserving scenarios to make inference auditable. |
+| 2 | 2026-10-20 | Required real-money reference years, preserved numeric JSON decimals and identified allocation boundary cases to retain their comparison basis. |
 
 ## Accounting method and sources
 
@@ -60,6 +61,13 @@ applicable), ownership, scope, CAPEX definition and project phase. All must be
 known and must match exactly for a valued included award. No FX conversion,
 price rebasing, gross-up or cross-phase comparison happens automatically. Source
 amounts must already have a documented compatible comparison basis.
+
+For `price_basis="real"`, `basis_year` is required as an integer calendar year;
+the year participates in exact basis matching. Nominal inputs may omit it.
+An explicitly supplied year is validated and compared for either price basis.
+JSON fractional numbers are parsed directly as Decimal, including amounts,
+shares and the output quantum. Manifests retain these fractions as exact decimal
+strings rather than converting them through binary floating point.
 
 A bundled award can reference several requirements but contributes money once
 per award identity. Conflicting versions of one identity fail. A recognized
@@ -116,6 +124,14 @@ inferred panel. Labels also distinguish the views without relying on color.
 The CSV retains open bounds and exact explicit scenario derivations. Money bounds
 serialize outwards at the supplied quantum; fraction bounds serialize to 0.001
 (one tenth of a percent). HTML bounds display outwards to one decimal place.
+Joint allocation rows additionally carry `allocation_case`, `target_total`,
+`target_endpoint`, `target_open` and `limiting`; observed rows leave these columns
+empty. The case key is scoped by project and scenario. Ranged totals have distinct
+`lower-bound` and `upper-bound` limiting cases, including when a target endpoint
+is open. Allocation amount bounds describe the hypothetical joint calculation;
+`target_open` describes whether its target endpoint is attainable. Point totals
+have a single `point` case with `limiting=false`. HTML retains each exact target
+total and the same case qualifiers, separately from rounded monetary displays.
 
 ```bash
 export PYTHONPATH=src:packages/worldenergydata-cost/src
