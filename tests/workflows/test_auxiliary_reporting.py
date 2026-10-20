@@ -83,7 +83,11 @@ const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 new AsyncFunction('github', 'context', 'core', SCRIPT)(github, context, core)
   .then(() => process.stdout.write(JSON.stringify({calls})))
   .catch(error => process.stdout.write(JSON.stringify({calls, error: error.message})));
-""".replace("FIXTURE", fixture).replace("SCRIPT", script)
+""".replace(
+        "FIXTURE", fixture
+    ).replace(
+        "SCRIPT", script
+    )
     result = subprocess.run(
         ["node", "-e", harness], capture_output=True, text=True, check=True
     )
