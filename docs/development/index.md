@@ -169,6 +169,9 @@ pytest tests/integration/
 pytest --benchmark-only
 ```
 
+See [test performance recording](performance-tracking.md) for SQLite contention
+handling, worker database isolation and a lock-recovery example.
+
 ## AI-Assisted Development
 
 ### Agent OS Integration
