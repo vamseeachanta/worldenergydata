@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from math import fsum, isfinite
 
+# Compatibility spellings share one canonical mass basis; no GWP is applied.
+_GAS_ALIASES = {"co2e_100yr": "co2e_100gwp", "co2e_20yr": "co2e_20gwp"}
+
 
 @dataclass(frozen=True)
 class EmissionBasis:
@@ -91,11 +94,14 @@ class EmissionInventory:
         start_time: datetime | None = None,
         end_time: datetime | None = None,
     ) -> tuple[EmissionRecord, ...]:
-        """Return exact matches; omitted filters impose no restriction."""
+        """Match canonical gas aliases; period filters shall be timezone-aware."""
+        for field, value in (("start_time", start_time), ("end_time", end_time)):
+            if value is not None and value.utcoffset() is None:
+                raise ValueError(f"{field} filter must be timezone-aware")
         filters = {
             "source_id": source_id,
             "iso3_country": iso3_country,
-            "gas": gas,
+            "gas": _GAS_ALIASES.get(gas, gas),
             "subsector": subsector,
             "start_time": start_time,
             "end_time": end_time,

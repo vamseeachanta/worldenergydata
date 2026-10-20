@@ -132,3 +132,33 @@ def test_finite_observations_cannot_overflow_to_a_complete_total(tmp_path):
     )
     with pytest.raises(ValueError, match="finite"):
         inventory.summarize()
+
+
+@pytest.mark.parametrize("method", ["select", "summarize"])
+@pytest.mark.parametrize("field", ["start_time", "end_time"])
+@pytest.mark.parametrize("empty", [False, True])
+def test_naive_period_filters_are_rejected(tmp_path, method, field, empty):
+    inventory = read_climate_trace_csv(write_inventory(tmp_path), edition="x")
+    naive = getattr(inventory.records[0], field).replace(tzinfo=None)
+    filters = {field: naive}
+    if empty:
+        filters["source_id"] = "absent"
+    with pytest.raises(ValueError, match=rf"{field}.*timezone-aware"):
+        getattr(inventory, method)(**filters)
+
+
+@pytest.mark.parametrize("method", ["select", "summarize"])
+@pytest.mark.parametrize("horizon", ["100", "20"])
+def test_alias_gas_filters_match_canonical_records(tmp_path, method, horizon):
+    text = HEADER + ROW.replace(",co2,", f",co2e_{horizon}yr,")
+    inventory = read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
+    query = getattr(inventory, method)
+    result = query(gas=f"co2e_{horizon}yr")
+    assert result == query(gas=f"co2e_{horizon}gwp")
+    if method == "select":
+        assert len(result) == 1
+        assert result[0].gas == f"co2e_{horizon}gwp"
+    else:
+        assert result.record_count == 1
+        assert result.status == "COMPLETE"
+        assert result.total_tonnes == 12.5

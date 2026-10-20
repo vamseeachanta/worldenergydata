@@ -3,6 +3,12 @@
 Schema source: Climate TRACE Inventory September 2026, v5.11.0, Data Licensing,
 Schema, and Citation Guide, section emissions_sources.csv metadata:
 https://media.climatetrace.org/about_the_data_latest_b6e7b8d419.pdf
+
+Compatibility mapping: co2e_100yr -> co2e_100gwp and co2e_20yr -> co2e_20gwp.
+Both spellings use the existing canonical horizon labels without mass conversion.
+This mapping is not evidence of the labels in a particular source-file release.
+Inputs shall be pre-filtered to supported GHG labels and nonnegative emissions;
+removals and unsupported pollutants abort the import rather than being skipped.
 """
 
 from __future__ import annotations
@@ -15,7 +21,7 @@ from datetime import datetime, timezone
 from math import isfinite
 from pathlib import Path
 
-from .inventory import EmissionInventory, EmissionRecord
+from .inventory import _GAS_ALIASES, EmissionInventory, EmissionRecord
 
 _REQUIRED = (
     "source_id",
@@ -29,8 +35,8 @@ _REQUIRED = (
     "emissions_quantity",
     "temporal_granularity",
 )
-# Guide v5.11.0, gas metadata and confidence metadata: raw GHG species and
-# separately reported AR6 CO2-equivalent horizons. No GWP factors are inferred.
+# Internal canonical species/horizon labels, with compatibility aliases below.
+# Real v5.11.0 source-file spellings are unverified; no GWP factors are inferred.
 _GASES = frozenset({"co2", "ch4", "n2o", "co2e_100gwp", "co2e_20gwp"})
 # Guide v5.11.0, emissions_quantity metadata; slash spelling is also accepted.
 _MISSING = frozenset({"", "null", "n-a", "n/a"})
@@ -56,11 +62,12 @@ def _record(row: dict[str, str]) -> EmissionRecord:
             raise ValueError(f"{field} must be nonempty")
     if not re.fullmatch(r"[A-Z]{3}", row["iso3_country"]):
         raise ValueError("iso3_country must be three uppercase letters")
-    if row["gas"] not in _GASES:
+    gas = _GAS_ALIASES.get(row["gas"], row["gas"])
+    if gas not in _GASES:
         raise ValueError("gas must be a supported greenhouse-gas label")
     # Guide v5.11.0 fixes source emissions_quantity to metric tonnes. An
     # additional explicit unit column shall not silently contradict that basis.
-    if row.get("emissions_quantity_units", "tonnes") != "tonnes":
+    if row.get("emissions_quantity_units", "") not in {"", "tonnes"}:
         raise ValueError("emissions_quantity_units must be tonnes when supplied")
     mass = None
     if row["emissions_quantity"].casefold() not in _MISSING:
@@ -82,7 +89,7 @@ def _record(row: dict[str, str]) -> EmissionRecord:
         start_time=start,
         end_time=end,
         temporal_granularity=row["temporal_granularity"],
-        gas=row["gas"],
+        gas=gas,
         source_id=row["source_id"],
         source_name=row["source_name"],
         emissions_quantity=mass,
@@ -94,7 +101,8 @@ def read_climate_trace_csv(path: str | Path, *, edition: str) -> EmissionInvento
 
     Additional published columns are ignored. Required fields, rectangular rows
     and unique (source_id, gas, start_time, end_time) observations are enforced.
-    Errors identify the CSV record number without echoing raw field contents.
+    Errors identify the last physical line reached in the CSV record,
+    without echoing raw field contents.
     The caller shall retain the input file and obtain its declared edition.
     Country-level downloads and legacy asset_id schemas are outside this slice.
     """
@@ -102,23 +110,33 @@ def read_climate_trace_csv(path: str | Path, *, edition: str) -> EmissionInvento
         raise ValueError("edition must be supplied")
     payload = Path(path).read_bytes()
     reader = csv.DictReader(io.StringIO(payload.decode("utf-8-sig")), strict=True)
-    fields = reader.fieldnames
-    if not fields or len(fields) != len(set(fields)) or set(_REQUIRED) - set(fields):
-        raise ValueError("CSV requires unique headers and all required columns")
-    records = []
-    seen = set()
-    for number, row in enumerate(reader, start=2):
-        if None in row or any(value is None for value in row.values()):
-            raise ValueError(f"CSV row {number}: column count differs from header")
-        try:
-            record = _record({key: value.strip() for key, value in row.items()})
-        except ValueError as error:
-            raise ValueError(f"CSV row {number}: {error}") from error
-        key = (record.source_id, record.gas, record.start_time, record.end_time)
-        if key in seen:
-            raise ValueError(f"CSV row {number}: duplicate source/gas/period")
-        seen.add(key)
-        records.append(record)
+    try:
+        fields = reader.fieldnames
+        if (
+            not fields
+            or len(fields) != len(set(fields))
+            or set(_REQUIRED) - set(fields)
+        ):
+            raise ValueError("CSV requires unique headers and all required columns")
+        records = []
+        seen = set()
+        for row in reader:
+            number = reader.line_num
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"CSV row {number}: column count differs from header")
+            try:
+                record = _record({key: value.strip() for key, value in row.items()})
+            except ValueError as error:
+                raise ValueError(f"CSV row {number}: {error}") from error
+            key = (record.source_id, record.gas, record.start_time, record.end_time)
+            if key in seen:
+                raise ValueError(f"CSV row {number}: duplicate source/gas/period")
+            seen.add(key)
+            records.append(record)
+    except csv.Error as error:
+        # DictReader.line_num is stale when its underlying reader raises.
+        line = reader.reader.line_num
+        raise ValueError(f"CSV row {line}: malformed CSV") from error
     return EmissionInventory(
         tuple(records), edition.strip(), hashlib.sha256(payload).hexdigest()
     )

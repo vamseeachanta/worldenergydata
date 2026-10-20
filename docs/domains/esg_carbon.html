@@ -25,7 +25,10 @@
   <table>
     <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
     <tbody><tr><td>1</td><td>2026-10-19</td><td>Local ingestion, lookup and
-      qualified summaries establish the initial carbon inventory interface.</td></tr></tbody>
+      qualified summaries establish the initial carbon inventory interface.</td></tr>
+      <tr><td>2</td><td>2026-10-20</td><td>CO2e spelling compatibility, explicit
+        period filters, optional units and CSV error context resolve ingestion
+        and example limitations.</td></tr></tbody>
     <caption>Table 1. Module documentation revisions.</caption>
   </table>
 
@@ -54,7 +57,9 @@
     not freshness, independent accuracy or suitability for regulatory use.</p>
 
   <h2>Use</h2>
-  <pre><code>from worldenergydata.esg_carbon import read_climate_trace_csv
+  <pre><code>from datetime import datetime, timezone
+
+from worldenergydata.esg_carbon import read_climate_trace_csv
 
 inventory = read_climate_trace_csv(
     "inputs/emissions_sources.csv", edition="v5.11.0"
@@ -64,6 +69,8 @@ summary = inventory.summarize(
     iso3_country="USA",
     gas="co2",
     subsector="oil-and-gas-production-and-transport",
+    start_time=datetime(2024, 1, 1, tzinfo=timezone.utc),
+    end_time=datetime(2024, 12, 31, 23, 59, 59, tzinfo=timezone.utc),
 )
 print(summary.status, summary.total_tonnes)
 print(summary.known_subtotal_tonnes, summary.missing_count)
@@ -71,19 +78,31 @@ print(summary.edition, summary.sha256)</code></pre>
   <p>Filters use exact matches. A summary selection spanning different periods
     will raise <code>ValueError</code>; matching timezone-aware
     <code>start_time</code> and <code>end_time</code> filters can select a period.
+    Naive datetime filters raise <code>ValueError</code>. The example dates
+    shall be replaced with the exact reporting period in the supplied file.
     Unfiltered queries do not silently select the latest year or a gas.</p>
 
   <h2>Validation and calculation</h2>
   <p>Required fields are source_id, source_name, iso3_country, sector, subsector,
     start_time, end_time, gas, emissions_quantity and temporal_granularity.
     Additional columns are ignored, except an explicit emissions_quantity_units
-    column shall contain tonnes. Required identifiers are nonempty. Country
+    cell, when nonempty, shall contain tonnes. Blank cells use the schema
+    basis of metric tonnes. Required identifiers are nonempty. Country
     labels require three uppercase letters; membership in an ISO registry is
     not established. Datetimes without offsets are interpreted as UTC per the
     guide; explicit offsets are normalized to UTC. End time shall follow start
     time. Masses shall be finite and nonnegative within this slice. Carbon
-    removals and non-GHG pollutants are outside the supported domain.</p>
-  <p>Supported labels are co2, ch4, n2o, co2e_100gwp and co2e_20gwp. Duplicate
+    removals and non-GHG pollutants are outside the supported domain. Inputs
+    shall be pre-filtered to exclude those rows: any negative mass or unsupported
+    gas aborts the entire import with a row error; no rows are skipped.</p>
+  <p>Canonical labels are co2, ch4, n2o, co2e_100gwp and co2e_20gwp.
+    An explicit compatibility mapping accepts co2e_100yr as co2e_100gwp and
+    co2e_20yr as co2e_20gwp without changing mass. Records store canonical
+    labels; gas filters accept either spelling. Aliases cannot conceal duplicate
+    source/gas/period rows.
+    The two horizons remain separate. A real v5.11.0 source-file excerpt has not
+    been verified; the synthetic tests establish mapping behavior, not the
+    spelling used by any particular release. Duplicate
     source/gas/period observations, duplicate headers and ragged rows are rejected.
     A UTF-8 byte-order mark and additional published columns are supported.</p>
   <p>For one country, sector, subsector, gas, start time, end time and temporal

@@ -170,3 +170,83 @@ def test_conflicting_explicit_units_are_rejected(tmp_path):
     text = HEADER.rstrip() + ",emissions_quantity_units\n" + ROW.rstrip() + ",kg\n"
     with pytest.raises(ValueError, match="units"):
         read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
+
+
+@pytest.mark.parametrize(
+    ("label", "canonical"),
+    [("co2e_100yr", "co2e_100gwp"), ("co2e_20yr", "co2e_20gwp")],
+)
+def test_co2e_aliases_use_the_same_basis_without_converting_mass(
+    tmp_path, label, canonical
+):
+    rows = ROW.replace(",co2,", f",{label},")
+    rows += ROW.replace("synthetic-1", "synthetic-2").replace(",co2,", f",{canonical},")
+    inventory = read_climate_trace_csv(
+        write_inventory(tmp_path, HEADER + rows), edition="x"
+    )
+    assert {row.gas for row in inventory.records} == {canonical}
+    assert inventory.summarize(gas=canonical).total_tonnes == 25.0
+
+
+@pytest.mark.parametrize("horizon", ["100", "20"])
+def test_aliases_cannot_hide_duplicate_observations(tmp_path, horizon):
+    rows = ROW.replace(",co2,", f",co2e_{horizon}yr,")
+    rows += ROW.replace(",co2,", f",co2e_{horizon}gwp,")
+    with pytest.raises(ValueError, match="row 3.*duplicate"):
+        read_climate_trace_csv(write_inventory(tmp_path, HEADER + rows), edition="x")
+
+
+def test_alias_horizons_remain_separate(tmp_path):
+    rows = ROW.replace(",co2,", ",co2e_100yr,")
+    rows += ROW.replace(",co2,", ",co2e_20yr,")
+    inventory = read_climate_trace_csv(
+        write_inventory(tmp_path, HEADER + rows), edition="x"
+    )
+    with pytest.raises(ValueError, match="mixed emissions basis"):
+        inventory.summarize()
+
+
+@pytest.mark.parametrize("units", ["", "   ", "tonnes"])
+def test_optional_units_accept_blank_or_tonnes(tmp_path, units):
+    text = HEADER.rstrip() + ",emissions_quantity_units\n"
+    text += ROW.rstrip() + f",{units}\n"
+    inventory = read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
+    assert inventory.records[0].units == "tonnes"
+    assert inventory.records[0].emissions_quantity == 12.5
+
+
+@pytest.mark.parametrize(
+    ("text", "line"),
+    [
+        ('"source_id,source_name', 1),
+        (HEADER + ROW.replace("Synthetic source", '"Synthetic source'), 2),
+        (HEADER + ROW.replace("Synthetic source", '"Synthetic\nsource'), 3),
+    ],
+)
+def test_malformed_csv_has_line_context(tmp_path, text, line):
+    with pytest.raises(ValueError, match=rf"^CSV row {line}: malformed CSV$"):
+        read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
+
+
+@pytest.mark.parametrize(
+    ("text", "line", "message"),
+    [
+        (HEADER + "\n" + ROW.replace(",12.5,", ",-1,"), 3, "nonnegative"),
+        (HEADER + "\n" + ROW + ROW, 4, "duplicate"),
+        (
+            HEADER + ROW.replace("Synthetic source", '"Synthetic\nsource"') + ROW,
+            4,
+            "duplicate",
+        ),
+        (
+            HEADER
+            + ROW.replace("Synthetic source", '"Synthetic\nsource"')
+            + ROW.replace(",12.5,", ",-1,"),
+            4,
+            "nonnegative",
+        ),
+    ],
+)
+def test_validation_errors_use_physical_line_context(tmp_path, text, line, message):
+    with pytest.raises(ValueError, match=rf"CSV row {line}:.*{message}"):
+        read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
