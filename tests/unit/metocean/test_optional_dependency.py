@@ -12,6 +12,8 @@ import os
 import shutil
 import subprocess
 import sys
+from base64 import urlsafe_b64encode
+from hashlib import sha256
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -102,6 +104,31 @@ def _write_resolution_manifest(path, manifest):
     )
 
 
+def _write_resolution_wheel(path):
+    """Build a metadata-only wheel with complete, hashed wheel records."""
+    dist_info = "metocean_api-1.1.14.dist-info"
+    contents = {
+        f"{dist_info}/METADATA": (
+            b"Metadata-Version: 2.3\nName: metocean-api\nVersion: 1.1.14\n"
+            b"Requires-Python: >=3.11\n"
+        ),
+        f"{dist_info}/WHEEL": (
+            b"Wheel-Version: 1.0\nGenerator: test-fixture\n"
+            b"Root-Is-Purelib: true\nTag: py3-none-any\n"
+        ),
+    }
+    records = []
+    with ZipFile(path, "w") as wheel:
+        for filename, content in contents.items():
+            wheel.writestr(filename, content)
+            digest = urlsafe_b64encode(sha256(content).digest()).rstrip(b"=")
+            records.append(
+                f"{filename},sha256={digest.decode('ascii')},{len(content)}\n"
+            )
+        records.append(f"{dist_info}/RECORD,,\n")
+        wheel.writestr(f"{dist_info}/RECORD", "".join(records))
+
+
 def test_optional_dependency_resolves_for_supported_python_range(tmp_path):
     """Universal resolution must retain Python 3.10 even on newer interpreters.
 
@@ -119,12 +146,7 @@ def test_optional_dependency_resolves_for_supported_python_range(tmp_path):
             "[tool.uv.sources]\nworldenergydata-metocean = {workspace = true}\n"
             'metocean-api = {path = "metocean_api-1.1.14-py3-none-any.whl"}\n'
         )
-    with ZipFile(tmp_path / "metocean_api-1.1.14-py3-none-any.whl", "w") as wheel:
-        wheel.writestr(
-            "metocean_api-1.1.14.dist-info/METADATA",
-            "Metadata-Version: 2.3\nName: metocean-api\nVersion: 1.1.14\n"
-            "Requires-Python: >=3.11\n",
-        )
+    _write_resolution_wheel(tmp_path / "metocean_api-1.1.14-py3-none-any.whl")
     env = os.environ.copy()
     for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"):
         env.pop(key, None)
