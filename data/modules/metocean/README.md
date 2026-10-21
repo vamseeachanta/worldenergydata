@@ -4,6 +4,23 @@ The module documents structures for external licensed tables.
 The repository attributes these tables to API RP 2MET-derived workbooks.
 Their tabulated values are not distributed with the repository.
 
+## Source audit
+
+[table_sources.json](table_sources.json) records a source audit for every table
+listed below. Each schema and metadata entry links to its record using a JSON
+Pointer in `source_record`. The sidecar preserves the repository's attribution
+to API RP 2MET-derived workbooks and pins its evidence to the original README
+revision. This attribution does not establish the source edition or the exact
+publication table or clause for any individual extraction.
+
+All eight records are `NOT_EVALUATED`, with `edition` and `table_or_clause` set
+to `null`. All eight names below therefore require a maintainer decision under
+issue #1262. The required evidence is the source edition, the publication table
+or clause, and confirmation that it corresponds to the attributed extraction.
+Repository section titles are descriptive labels, not verified publication
+locators. The shared citation below remains incomplete. A newer publication's
+edition must not be substituted for the unknown edition used by the workbooks.
+
 ## External licensed tables
 
 These tables are **not distributed**. Their schema entries retain column names,
