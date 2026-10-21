@@ -107,7 +107,9 @@ def test_committed_population_has_distinct_bore_and_family_counts():
     check of that extract, not an independent census of the raw tables.
     """
     root = Path(__file__).resolve().parents[4]
-    with (root / "reports/lower_tertiary/data/dc_vintage_diff.csv").open() as stream:
+    with (root / "reports/lower_tertiary/data/dc_vintage_diff.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
         identifiers = [row["api12"] for row in csv.DictReader(stream)]
     bores = normalize_api12(identifiers)
     assert bores.nunique() == 253
