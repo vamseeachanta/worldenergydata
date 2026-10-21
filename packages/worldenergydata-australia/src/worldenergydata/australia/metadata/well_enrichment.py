@@ -35,12 +35,17 @@ def enrich_field_metadata(
     meta = dict(field_meta)
     name = meta.get("field_name", meta.get("field"))
     identifier = meta.get("well_identifier")
-    linked = isinstance(name, str) and bool(name.strip())
+    # The normalized Uwi identity is textual (nopta_well.schema.json).
+    linked = (
+        isinstance(name, str)
+        and bool(name.strip())
+        and isinstance(identifier, str)
+        and bool(identifier.strip())
+    )
     matches = [
         well
         for well in wells
         if linked
-        and identifier
         and well.get("well_identifier") == identifier
         and well.get("field_name") == name
     ]

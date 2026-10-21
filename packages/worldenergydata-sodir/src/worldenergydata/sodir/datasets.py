@@ -13,6 +13,34 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+def _enrich_fields(records: pd.DataFrame, fields: pd.DataFrame) -> pd.DataFrame:
+    """Add new field columns using explicit, unambiguous field identities.
+
+    Existing observation columns, including unknown values and provenance,
+    remain authoritative. Filling them would need a value/origin policy.
+    """
+    # pandas DataFrame.merge API reference (2026), Warning: null join keys
+    # match each other. Exclude absent right identities before a left join.
+    # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
+    identities = fields["field_id"]
+    valid = identities.notna() & identities.map(
+        lambda value: not isinstance(value, str) or bool(value.strip())
+    )
+    columns = ["field_id"] + [col for col in fields.columns if col not in records]
+    additions = fields.loc[valid, columns]
+    # Compare duplicate rows without hashing/coercing structured origin values.
+    duplicate_keys = additions["field_id"].duplicated(keep=False)
+    for _, group in additions.loc[duplicate_keys].groupby("field_id", sort=False):
+        if any(not group.iloc[0].equals(row) for _, row in group.iterrows()):
+            raise pd.errors.MergeError(
+                "conflicting field metadata; not a many-to-one merge"
+            )
+    additions = additions.drop_duplicates(subset="field_id")
+    # The same reference's validate="many_to_one" prevents row multiplication
+    # when one field identity has conflicting supplemental metadata.
+    return records.merge(additions, on="field_id", how="left", validate="many_to_one")
+
+
 class DatasetGenerator:
     """Generates analysis-ready datasets from SODIR data."""
 
@@ -127,11 +155,13 @@ class DatasetGenerator:
             # Merge with field data if provided
             if field_data is not None and "field_id" in df.columns:
                 field_cols = ["field_id", "field_name", "operator", "discovery_year"]
-                field_subset = field_data[field_cols].drop_duplicates()
-                df = df.merge(field_subset, on="field_id", how="left")
+                df = _enrich_fields(df, field_data[field_cols])
 
             # Add data quality indicators
-            df["data_completeness"] = df.notna().sum(axis=1) / len(df.columns)
+            observed = df.drop(columns="data_completeness", errors="ignore")
+            df["data_completeness"] = observed.notna().sum(axis=1) / len(
+                observed.columns
+            )
 
             logger.info(f"Created wellbore dataset with {len(df)} records")
             return df
@@ -201,7 +231,7 @@ class DatasetGenerator:
         """
         try:
             # Merge production with field data
-            df = production_data.merge(field_data, on="field_id", how="left")
+            df = _enrich_fields(production_data, field_data)
 
             # Convert date columns
             date_cols = ["production_date", "production_start", "discovery_date"]
