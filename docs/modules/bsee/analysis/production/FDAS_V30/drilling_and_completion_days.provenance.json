@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "workbook_sha256": "3ecfa1128b33edf73db3a793f8839c98c50bc27184487a8af579c5ef22795e7f",
+  "sheet": "Sheet1",
+  "basis": "legacy_calendar_or_war_union_post_td_remarks",
+  "rule": {
+    "drilling": "Archived extractor main: calendar (TD - spud).days, missing dates filled with zero. Above 250 calendar days, use union_days on WAR intervals clipped to spud..TD when intervals exist; otherwise retain calendar days. union_days merges overlaps and sums exclusive (end - start).days per merged interval; adjacent intervals stay separate. The 250-day branch is an archived implementation detail, not an engineering acceptance limit.",
+    "completion": "Archived derive_completion_days: count distinct normalized WAR days at or after TD, inclusive, using intervals joined to remarks by SN_WAR; no activity-code filter, first-oil bound or gap cutoff. Fill one missing endpoint from the other. Missing TD, empty joined rows or no qualifying days return zero. Later servicing may be included; remarks-absent WAR intervals may be omitted.",
+    "missing_values": "Preserve original day counts, including historical zero fills. A zero is an archived output value, not evidence of measured zero activity.",
+    "pnd": "No separate historical PND measurement exists in this workbook. Leave PND_DAYS null. The unfiltered post-TD completion rule can include PND-coded intervals when present in its joined input, but their contribution cannot be recovered from these totals. PND remains an opaque code.",
+    "coverage": "The workbook records neither a coverage status nor sufficient weekly history to establish completeness. Apply historical_coverage_unknown to every frozen row; infer no measured, absent-coverage or unattributed-coverage status from dates or zeros."
+  },
+  "sources": [
+    "Repository archive, revision 7493f54316cc1d1ee5b5813afe69c90c873c04e7: docs/modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py; main, section Drilling days (gap-adjust if >250); union_days; derive_completion_days. This revision first contains both the workbook and extractor. It establishes a documented historical implementation, not proof of execution against the frozen inputs.",
+    "docs/data-sources/bsee/analysis/rig_days/day_basis_comparison.md, Rule and conventions; Wells compared and wells not computed. Held weekly records do not certify complete history or whole-population reproduction.",
+    "docs/data-sources/bsee/analysis/rig_days/frozen_dc_provenance.md, Metadata contract, edition 1, 2026-10-21."
+  ],
+  "limitations": [
+    "No run manifest binds the archived extractor execution and raw input vintage to this workbook. Full numerical reproduction is NOT_EVALUATED. The recorded basis describes the archived method and its known defects; it does not ratify it as a current rig-day method.",
+    "A digest binds these labels only to the workbook bytes. It does not authenticate an external assertion or prove raw-data completeness.",
+    "Separate historical PND days and per-bore coverage cannot be reconstructed from aggregate counts. Unknowns remain explicit; no source measurements or replacement totals are manufactured.",
+    "The current candidate requires its own recorded basis, PND column and coverage status. Regeneration of downstream publications remains separate; this metadata does not qualify an unlabelled candidate."
+  ],
+  "pnd_days": null,
+  "days_status": "historical_coverage_unknown",
+  "reproduction_status": "NOT_EVALUATED"
+}
