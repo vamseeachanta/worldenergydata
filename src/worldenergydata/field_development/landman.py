@@ -194,7 +194,7 @@ def render_lease_table(panel: dict) -> str:
             )
         )
         operators = "<br>".join(_text(name) for name in row["operator"])
-        history = "<br>".join(
+        designations = "<br>".join(
             _text(
                 f"{r.get('operator_name') or r.get('operator_name_reason') or 'not reported'} / "
                 f"status {r.get('ASGN_STATUS_CODE') or 'not reported'} / "
@@ -202,13 +202,13 @@ def render_lease_table(panel: dict) -> str:
                 f"effective {r.get('ASGN_EFF_DATE') or 'not reported'} / "
                 f"approved {r.get('ASGN_APRV_DATE') or 'not reported'}"
             )
-            for r in row["operator_of_record_history"]
+            for r in row["current_operators"]
         )
         cells.append(
             (operators or _text(None, missing.get("operator", "Not reported")))
             + (
-                f"<details><summary>Operator assignment history</summary>{history}</details>"
-                if history
+                f"<details><summary>Current operator designations</summary>{designations}</details>"
+                if designations
                 else ""
             )
         )
@@ -230,7 +230,8 @@ def render_lease_table(panel: dict) -> str:
         + "</tbody></table></div>"
         + '<p class="leadin">Owner interests retain source groups and aliquots; no totals '
         + "across groups. Actual and expected expiration dates are distinct. "
-        + "Company names are those resolved at retrieval, including on historical rows. "
+        + "Company names are those resolved at retrieval. Only current operator "
+        + "designations are shown; full history remains in the source snapshot. "
         + "Lease type is not mapped. "
         + "BSEE working database; not a legal document. "
         + '<a href="https://www.data.bsee.gov/Main/Leasing.aspx">BSEE leasing sources</a>.</p>'

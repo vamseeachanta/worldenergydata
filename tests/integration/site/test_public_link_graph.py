@@ -391,29 +391,45 @@ def test_concept_fdp_links(public):
 def test_landman_lease_panel(public):
     # Coverage is recorded in data/modules/bsee/leases/extract_manifest.json.
     # Per-lease blocks now come from that snapshot, never registry list order.
+    from worldenergydata.common.fields_registry import load_fields
+
+    registry = load_fields()
+    source = {
+        r["lease_num"]: r
+        for r in json.loads((REPO / "data/modules/bsee/leases/leases.json").read_text())
+    }
     fields = _explorer(public)["fields"]
     total = 0
     for fid, f in fields.items():
         lm = f["landman"]
-        assert lm and lm["leases"], fid
+        assert lm and lm["n_leases"], fid
+        assert "leases" not in lm
         assert lm["blocks"] and lm["ingest_issue"] == 959
         assert "per_lease_block" not in lm["pending"]
         assert lm["source"]["freshness_status"] == "unknown"
         assert "Owner assignment interest (%)" in lm["table_html"]
-        for r in lm["leases"]:
-            assert r["per_lease_block"] and r["status"] and r["effective_date"]
-            assert "expiration_date" in r
-            assert "expected_expiration_date" in r
-            assert isinstance(r["per_lease_working_interest"], list)
+        assert "Actual expiration" in lm["table_html"]
+        assert "Expected expiration" in lm["table_html"]
+        rows = re.findall(r"<tr>((?:<td>.*?</td>)+)</tr>", lm["table_html"])
+        assert len(rows) == lm["n_leases"]
+        for row in rows:
+            cells = re.findall(r"<td>(.*?)</td>", row)
+            assert len(cells) == 11
+            lease = cells[0]
+            assert registry.by_lease(lease) == fid, lease
+            assert cells[3:6] == [
+                source[lease][key] for key in ("area_block", "status", "effective_date")
+            ]
+            assert cells[6] and cells[7] and cells[8]
         total += lm["n_leases"]
     assert total == 20, f"expected 20 LT leases, got {total}"
-    # Every canonical LT lease resolves through the registry.
-    from worldenergydata.common.fields_registry import load_fields
-
-    registry = load_fields()
-    for fid, f in fields.items():
-        for r in f["landman"]["leases"]:
-            assert registry.by_lease(r["lease_num"]) == fid, r["lease_num"]
+    atlas = (public / "field-atlas/index.html").read_text()
+    landman = atlas.split('let landman = "";', 1)[1].split(
+        "// Concept & development", 1
+    )[0]
+    assert "L.table_html" in landman
+    assert "f.landman.n_leases" in landman
+    assert "— pending" not in landman
 
 
 def test_every_well_has_a_page(public):

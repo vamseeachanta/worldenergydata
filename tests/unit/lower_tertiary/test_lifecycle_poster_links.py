@@ -124,6 +124,16 @@ def test_poster_and_explorer_use_the_same_sourced_lease_table():
 
 
 @unit
+def test_published_explorer_uses_sourced_lease_table():
+    atlas = (PROJECT_ROOT / "reports/field-atlas/index.html").read_text()
+    landman = atlas.split('let landman = "";', 1)[1].split(
+        "// Concept & development", 1
+    )[0]
+    assert "L.table_html" in landman
+    assert "— pending" not in landman
+
+
+@unit
 @pytest.mark.parametrize("lease_panels_only", [False, True])
 def test_generator_can_write_to_a_separate_output_directory(
     tmp_path, monkeypatch, lease_panels_only
@@ -144,6 +154,9 @@ def test_generator_can_write_to_a_separate_output_directory(
             in poster
         )
         assert field["landman"]["source"]["freshness_status"] == "unknown"
+        assert "leases" not in field["landman"]
+        assert field["landman"]["n_leases"] > 0
+        assert '<table class="lease xwells">' in field["landman"]["table_html"]
     if lease_panels_only:
         frozen = json.loads((builder.HERE / "_explorer.json").read_text())
         for field_id, field in explorer["fields"].items():
@@ -154,11 +167,29 @@ def test_generator_can_write_to_a_separate_output_directory(
 
 @unit
 def test_source_names_cannot_close_the_embedded_poster_script():
+    from worldenergydata.field_development.landman import render_lease_table
+
     builder = _load_builder()
     field = builder.facts_to_field(_facts()[0])
     malicious = "</script><script>alert('source name')</script>"
     field["landman"]["leases"][0]["per_lease_working_interest"] = [
         {"owner_name": malicious}
     ]
+    field["landman"]["table_html"] = render_lease_table(field["landman"])
     assert malicious not in builder.render(field)
-    assert "\\u003c/script>" in builder.render(field)
+    assert "&lt;/script&gt;" in builder.render(field)
+
+
+@unit
+def test_poster_serialization_uses_one_lease_representation_without_mutating_input():
+    builder = _load_builder()
+    field = builder.facts_to_field(_facts()[0])
+    original = json.loads(json.dumps(field))
+    poster = builder.render(field)
+    published = json.loads(re.search(r"const FIELD = (\{.*?\n\});", poster, re.S)[1])
+    assert "leases" not in published["landman"]
+    assert published["landman"]["table_html"] == original["landman"]["table_html"]
+    assert {k: v for k, v in published.items() if k != "landman"} == {
+        k: v for k, v in original.items() if k != "landman"
+    }
+    assert field == original

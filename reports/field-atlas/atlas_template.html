@@ -371,7 +371,7 @@ function renderField(x, f){
   }
   // Poster and Explorer consume the same escaped lease snapshot table.
   let landman = "";
-  if (f.landman && f.landman.leases && f.landman.leases.length) {
+  if (f.landman && f.landman.n_leases) {
     const L = f.landman;
     const wi = (L.working_interest||[]).map(w=>`${esc(w.name)} ${w.wi}%${w.operator?" (op)":""}`).join(" · ");
     landman = `<div class="xcardlet"><div class="xh">Lease &amp; landman</div>

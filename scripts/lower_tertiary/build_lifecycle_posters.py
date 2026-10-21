@@ -453,11 +453,21 @@ def facts_to_field(f: dict) -> dict:
     }
 
 
+def _publication_field(field: dict) -> dict:
+    """Publish the rendered lease table once, retaining full rows in the source."""
+    return {
+        **field,
+        "landman": {k: v for k, v in field["landman"].items() if k != "leases"},
+    }
+
+
 def render(field: dict) -> str:
     tpl = TEMPLATE.read_text()
     html = tpl.replace(
         "__FIELD_JSON__",
-        json.dumps(field, indent=2, ensure_ascii=False).replace("<", "\\u003c"),
+        json.dumps(_publication_field(field), indent=2, ensure_ascii=False).replace(
+            "<", "\\u003c"
+        ),
     )
     return site_nav.inject_for(
         html, "poster", {"field_id": field["id"], "field_name": field["name"]}
@@ -587,7 +597,7 @@ def main():
             field["performance"] = perf_fields.get(f["id"])
         out = output / f"{f['id']}_lifecycle.html"
         out.write_text(render(field))
-        fields.append(field)
+        fields.append(_publication_field(field))
         print(
             f"  wrote {out.name}  ({field['statusLabel']}, "
             f"phase={field['currentPhase']}, gates={len(field['gates'])})"

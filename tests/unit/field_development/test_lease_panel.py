@@ -126,6 +126,34 @@ def test_missing_current_owners_and_operators_keep_source_reasons():
     assert source["operator_reason"] in result["table_html"]
 
 
+def test_published_table_shows_current_designations_and_retains_source_history():
+    snapshot = copy.deepcopy(load_lease_snapshot(SOURCE))
+    current = {
+        "operator_name": '<current & "operator">',
+        "ASGN_STATUS_CODE": "C",
+        "LEASE_DESIG_DATE": "2026-01-01",
+        "ASGN_EFF_DATE": "2026-02-01",
+        "ASGN_APRV_DATE": "2026-03-01",
+    }
+    former = dict(current, operator_name="Former designation", ASGN_STATUS_CODE="T")
+    source = snapshot["leases"]["G16942"]
+    source.update(
+        operator=[current["operator_name"]],
+        current_operators=[current],
+        operator_of_record_history=[former, current],
+    )
+    result = panel(snapshot)
+    assert result["leases"][0]["operator_of_record_history"] == [former, current]
+    html = result["table_html"]
+    assert "Former designation" not in html
+    assert "Current operator designations" in html
+    assert "&lt;current &amp; &quot;operator&quot;&gt;" in html
+    assert "designated 2026-01-01" in html
+    assert "effective 2026-02-01" in html
+    assert "approved 2026-03-01" in html
+    assert "full history remains in the source snapshot" in html
+
+
 @pytest.mark.parametrize(
     "filename",
     ["leases.json", "panel_values.json", "operators.json", "source_manifest.json"],
