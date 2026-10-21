@@ -151,7 +151,7 @@ def test_generator_can_write_to_a_separate_output_directory(
     builder.main()
     explorer = json.loads((tmp_path / "_explorer.json").read_text())
     for field_id, field in explorer["fields"].items():
-        poster = (tmp_path / f"{field_id}_lifecycle.html").read_text()
+        poster = (tmp_path / f"{field_id}_lifecycle.html").read_text(encoding="utf-8")
         # The generator embeds exactly this JSON object in the poster script.
         assert (
             json.dumps(field, indent=2, ensure_ascii=False).replace("<", "\\u003c")

@@ -423,7 +423,7 @@ def test_landman_lease_panel(public):
             assert cells[6] and cells[7] and cells[8]
         total += lm["n_leases"]
     assert total == 20, f"expected 20 LT leases, got {total}"
-    atlas = (public / "field-atlas/index.html").read_text()
+    atlas = (public / "field-atlas/index.html").read_text(encoding="utf-8")
     landman = atlas.split('let landman = "";', 1)[1].split(
         "// Concept & development", 1
     )[0]

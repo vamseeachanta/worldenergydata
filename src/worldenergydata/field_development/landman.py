@@ -45,7 +45,9 @@ def load_lease_snapshot(directory: Path) -> dict:
     https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner
     Values retain their source units and codes; no engineering limits are used.
     """
-    manifest = json.loads((directory / "extract_manifest.json").read_text())
+    manifest = json.loads(
+        (directory / "extract_manifest.json").read_text(encoding="utf-8")
+    )
     source_bytes = (directory / "source_manifest.json").read_bytes()
     if hashlib.sha256(source_bytes).hexdigest() != manifest["source_manifest_sha256"]:
         raise ValueError("Lease source manifest digest mismatch")
