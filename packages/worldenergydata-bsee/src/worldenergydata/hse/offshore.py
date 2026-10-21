@@ -186,6 +186,16 @@ class SourceDocument(StrictModel):
             raise ValueError("source URL must identify the official public site")
         if self.issue_date and self.access_date < self.issue_date:
             raise ValueError("access precedes publication")
+        # Notice date fields: issue 1325 (2026-10-17), Fields / Source.
+        # Compare the issued notice, not its later register publication/access.
+        # No statutory compliance period is inferred from these metadata dates.
+        if (
+            self.doc_type in {"improvement notice", "prohibition notice", "direction"}
+            and self.issue_date is not None
+            and self.compliance_date is not None
+            and self.compliance_date < self.issue_date
+        ):
+            raise ValueError("compliance precedes issue")
         level = (
             "company"
             if self.source == Source.SEC

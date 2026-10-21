@@ -15,6 +15,12 @@ from typing import Optional
 
 import pandas as pd
 
+from worldenergydata.vessel_fleet.models.drilling_riser import (
+    RiserJointEntry,
+    RiserLineEntry,
+)
+from worldenergydata.vessel_fleet.schemas.drilling_riser import RiserJointSchema
+
 logger = logging.getLogger(__name__)
 
 # Curated data ships INSIDE this member as package data (ADR 0001 Phase 2,
@@ -137,6 +143,39 @@ class DrillingRiserLoader:
     def get_riser_joints(self) -> pd.DataFrame:
         """Get all riser joints."""
         return self.get_by_type("riser_joint")
+
+    def get_riser_joint_entries(
+        self,
+        riser_class: Optional[str] = None,
+    ) -> list[RiserJointEntry]:
+        """Validate joint records and expose classes, bundle lines and OD ratios.
+
+        Missing optional CSV cells become None before schema validation. Legacy
+        records without RISER_CLASS default to drilling. Tabular methods retain
+        their original columns; no derived value is written into the source CSV.
+        """
+        if riser_class is not None and riser_class not in (
+            "drilling",
+            "lift",
+            "production",
+        ):
+            raise ValueError("Unknown riser_class")
+        entries = []
+        for row in self.get_riser_joints().to_dict(orient="records"):
+            fields = {
+                key: None if pd.api.types.is_scalar(value) and pd.isna(value) else value
+                for key, value in row.items()
+                if key in RiserJointSchema.model_fields
+            }
+            schema = RiserJointSchema(**fields)
+            values = {key.lower(): value for key, value in schema.model_dump().items()}
+            values["auxiliary_lines"] = [
+                RiserLineEntry(**line) for line in values["auxiliary_lines"]
+            ]
+            entry = RiserJointEntry(**values)
+            if riser_class is None or entry.riser_class == riser_class:
+                entries.append(entry)
+        return entries
 
     def get_bops(self) -> pd.DataFrame:
         """Get all BOPs."""
