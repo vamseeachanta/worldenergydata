@@ -123,7 +123,13 @@ class BaseCollector(ABC):
             return None
 
     def _write_cache(self, terminals: list[LNGTerminal]) -> None:
-        """Persist terminal records and metadata to cache."""
+        """Persist non-empty results; retain the last success on empty refreshes."""
+        if not terminals:
+            self.logger.warning(
+                "No valid records from '%s'; cache and metadata left unchanged",
+                self.source_name,
+            )
+            return
         if not self.config.cache.enabled:
             return
         try:
