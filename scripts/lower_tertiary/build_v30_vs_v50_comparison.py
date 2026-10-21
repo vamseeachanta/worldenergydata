@@ -54,8 +54,8 @@ def _sign(v, nd=1):
 
 
 def main() -> None:
-    v30 = yaml.safe_load(V30.read_text())
-    v50 = yaml.safe_load(V50.read_text())
+    v30 = yaml.safe_load(V30.read_text(encoding="utf-8"))
+    v50 = yaml.safe_load(V50.read_text(encoding="utf-8"))
     p30 = v30["projects"]
     p50 = v50["projects"]
     meta50 = v50.get("metadata", {})
@@ -187,10 +187,9 @@ def main() -> None:
     L.append(
         "- Frozen V30 (`golden_baseline_v30.yml`) is unchanged. V50 lives alongside it."
     )
-    L.append("")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text("\n".join(L) + "\n", encoding="utf-8")
+    OUT.write_text("\n".join(L) + "\n", encoding="utf-8", newline="\n")
     print(f"Wrote {OUT}")
 
 
