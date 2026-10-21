@@ -18,6 +18,7 @@ def incidence_rate(incident_count: int, hours_worked: float) -> float:
     must classify cases and supply matching exposure; incident records alone
     do not establish exposure. Pool counts and hours before calling when
     combining disjoint groups, rather than averaging their individual rates.
+    Exposure is normalized to a finite, positive built-in float before use.
 
     BLS (2025 revision, "How to compute incidence rates") defines this base as
     the annual hours of 100 full-time employees. Applying its nonfatal injury
@@ -25,9 +26,9 @@ def incidence_rate(incident_count: int, hours_worked: float) -> float:
     This calculation supplies no acceptance threshold or compliance decision.
 
     Raises:
-        ValueError: The count or exposure is invalid, or the rate cannot be
-            represented as a finite float. Missing or zero exposure must not
-            be interpreted as a zero incidence rate.
+        ValueError: The count or exposure is invalid, exposure is not a finite
+            positive float after conversion, or the rate is not a finite float.
+            Missing or zero exposure must not be interpreted as a zero rate.
     """
     if (
         isinstance(incident_count, bool)
@@ -38,13 +39,23 @@ def incidence_rate(incident_count: int, hours_worked: float) -> float:
     if (
         isinstance(hours_worked, bool)
         or not isinstance(hours_worked, Real)
-        or not isfinite(hours_worked)
         or hours_worked <= 0
     ):
         raise ValueError("hours_worked must be finite, positive employee-hours")
-
+    try:
+        hours_worked = float(hours_worked)
+    except (OverflowError, ValueError) as exc:
+        raise ValueError(
+            "hours_worked must be finite, positive employee-hours"
+        ) from exc
+    if not isfinite(hours_worked) or hours_worked <= 0:
+        raise ValueError("hours_worked must be finite, positive employee-hours")
     # BLS (2025), "How to compute incidence rates": cases * base / hours.
-    rate = incident_count * _BASE_HOURS / hours_worked
-    if not isfinite(rate):
-        raise ValueError("incidence rate cannot be represented as a finite float")
-    return rate
+    # Keep intermediates as integers so only the final quotient is rounded.
+    hours_numerator, hours_denominator = hours_worked.as_integer_ratio()
+    try:
+        return incident_count * _BASE_HOURS * hours_denominator / hours_numerator
+    except OverflowError as exc:
+        raise ValueError(
+            "incidence rate cannot be represented as a finite float"
+        ) from exc

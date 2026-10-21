@@ -7,6 +7,9 @@ The normalization is 200,000 employee-hours. Test data not taken from the
 published example are synthetic; their independent arithmetic is given below.
 """
 
+from fractions import Fraction
+
+import numpy as np
 import pytest
 
 from worldenergydata.hse.incidence_rate import incidence_rate
@@ -48,6 +51,41 @@ def test_fractional_employee_hours():
     assert incidence_rate(1, 12_500.5) == pytest.approx(400_000 / 25_001)
 
 
+@pytest.mark.parametrize("exposure_type", [np.float16, np.float32, np.float64])
+def test_numpy_exposure_uses_builtin_float(exposure_type):
+    """Synthetic: 1 * 200,000 / 40,000 = 5.0, including binary16 exposure."""
+    rate = incidence_rate(1, exposure_type(40_000))
+
+    assert rate == 5.0
+    assert type(rate) is float
+
+
+@pytest.mark.parametrize(
+    "cases, expected",
+    [(10**308, 2e5), (10**400, 2e97)],
+    ids=["large-numerator", "count-beyond-float"],
+)
+def test_large_counts_preserve_finite_rates(cases, expected):
+    """Synthetic: 10**n * 200,000 / 1e308 = 2 * 10**(n - 303).
+
+    The integer numerator exceeds the float range, but these quotients do not.
+    """
+    assert incidence_rate(cases, 1e308) == pytest.approx(expected)
+
+
+@pytest.mark.parametrize(
+    "cases, hours",
+    [(10**400, 1.0), (1, 5e-324)],
+    ids=["large-count", "subnormal-hours"],
+)
+def test_unrepresentable_rate_raises_value_error(cases, hours):
+    """Synthetic quotients exceed the finite float range, including tiny hours."""
+    with pytest.raises(
+        ValueError, match="rate cannot be represented as a finite float"
+    ):
+        incidence_rate(cases, hours)
+
+
 @pytest.mark.parametrize("cases", [-1, 1.5, True, False, "7", None])
 def test_invalid_case_count(cases):
     """Counts must be nonnegative integers; these are API validation cases."""
@@ -60,6 +98,17 @@ def test_unknown_or_invalid_exposure(hours):
     """A denominator must be finite and positive; zero is not a measured rate."""
     with pytest.raises(ValueError, match="hours_worked"):
         incidence_rate(7, hours)
+
+
+@pytest.mark.parametrize(
+    "hours",
+    [10**400, Fraction(1, 10**400)],
+    ids=["float-overflow", "float-underflow"],
+)
+def test_exposure_requires_positive_finite_float(hours):
+    """Synthetic real exposures overflow float or round to zero on conversion."""
+    with pytest.raises(ValueError, match="hours_worked"):
+        incidence_rate(1, hours)
 
 
 @pytest.mark.parametrize("hours", [True, False, "400000", None, 1j])
