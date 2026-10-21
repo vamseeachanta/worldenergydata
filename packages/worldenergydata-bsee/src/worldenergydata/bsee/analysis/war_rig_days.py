@@ -64,6 +64,7 @@ explicitly or does not.
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 import pandas as pd
@@ -209,6 +210,32 @@ def union_days(intervals) -> int:
     return int(total)
 
 
+def _api12_tokens(values) -> pd.Series:
+    return (
+        pd.Series(values).astype(str).str.strip().str.replace(r"\.0+$", "", regex=True)
+    )
+
+
+def quarantine_war_identifiers(war: pd.DataFrame) -> pd.DataFrame:
+    """Exclude malformed WAR keys before aggregation, reporting the row count.
+
+    The input is preserved. Excluded rows contribute no activity; the warning
+    means results cover only records with valid keys, not the entire input.
+    No padding, truncation, or inference of missing wellbore keys is attempted.
+    """
+    keys = _api12_tokens(war["API_WELL_NUMBER"])
+    valid = keys.str.fullmatch(r"[0-9]{12}", na=False)
+    rejected = int((~valid).sum())
+    if rejected:
+        warnings.warn(
+            f"Quarantined {rejected} WAR row(s) with invalid API12 identifiers; "
+            "rig-day results exclude these rows.",
+            UserWarning,
+            stacklevel=2,
+        )
+    return war.assign(API_WELL_NUMBER=keys).loc[valid].copy()
+
+
 def normalize_api12(values) -> pd.Series:
     """Normalize and validate BSEE wellbore keys before deriving well families.
 
@@ -225,8 +252,7 @@ def normalize_api12(values) -> pd.Series:
     leading zeros already lost to numeric conversion cannot be recovered.
     Format validation does not establish that BSEE assigned the identifier.
     """
-    s = pd.Series(values).astype(str).str.strip()
-    normalized = s.str.replace(r"\.0+$", "", regex=True)
+    normalized = _api12_tokens(values)
     # MMS NTL 2009-G33 (2009), attachment pp. 2-3, API Well Number:
     # ten family digits plus two WB digits; interval codes are separate (p. 4).
     # https://www.bsee.gov/sites/bsee.gov/files/notices-to-lessees-ntl/notices-to-lessees/09-g33.pdf

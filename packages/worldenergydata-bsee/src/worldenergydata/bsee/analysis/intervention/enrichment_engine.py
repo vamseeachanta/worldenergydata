@@ -24,6 +24,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     STATUS_NO_ACTIVITY,
     STATUS_NO_ACTIVITY_CODED,
     Basis,
+    quarantine_war_identifiers,
     rig_days_by_bore,
 )
 from worldenergydata.bsee.data.loaders.rig_fleet.constants import (
@@ -243,15 +244,9 @@ class ActivityEnrichmentEngine:
         if not population:
             return bh
 
-        # Normalise the WAR-side API to the same form as the borehole side
-        # before handing the frame over.  ``pd.concat`` over the WAR zip
-        # members widens API_WELL_NUMBER to float64, so it stringifies as
-        # "177084082200.0"; war_rig_days._prepare only does .astype(str)
-        # .str.strip(), which leaves the ".0" on and drives the overlap with
-        # the borehole population to exactly zero.
-        war = war.assign(
-            API_WELL_NUMBER=normalize_api_well_number(war["API_WELL_NUMBER"])
-        ).dropna(subset=["API_WELL_NUMBER"])
+        # Normalize float-form keys and report malformed rows before the
+        # strict aggregation contract is applied to the accepted records.
+        war = quarantine_war_identifiers(war)
 
         days = rig_days_by_bore(war, basis=self._rig_days_basis, population=population)
         covered = days[days["days_status"].eq(STATUS_COVERED)]

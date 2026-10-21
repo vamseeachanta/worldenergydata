@@ -107,7 +107,9 @@ def test_committed_population_has_distinct_bore_and_family_counts():
     check of that extract, not an independent census of the raw tables.
     """
     root = Path(__file__).resolve().parents[4]
-    with (root / "reports/lower_tertiary/data/dc_vintage_diff.csv").open() as stream:
+    with (root / "reports/lower_tertiary/data/dc_vintage_diff.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
         identifiers = [row["api12"] for row in csv.DictReader(stream)]
     bores = normalize_api12(identifiers)
     assert bores.nunique() == 253
@@ -154,3 +156,23 @@ def test_reentry_keeps_bore_identity_and_excludes_idle_years(aggregate):
     )
     assert len(result) == 1
     assert result.squeeze()["drilling_days"] == 14
+
+
+@pytest.mark.parametrize("all_invalid", [False, True])
+def test_quarantine_preserves_input_and_reports_excluded_rows(all_invalid):
+    from worldenergydata.bsee.analysis.war_rig_days import quarantine_war_identifiers
+
+    keys = [None, "1234567890", "12345678901234", "１２３４５６７８９０１２"]
+    if not all_invalid:
+        keys += [" 012345678901.00 ", 123456789012.0]
+    frame = pd.DataFrame(
+        {"API_WELL_NUMBER": keys, "value": range(len(keys))}, index=[5] * len(keys)
+    )
+    original = frame.copy(deep=True)
+    with pytest.warns(UserWarning, match="Quarantined 4 WAR row"):
+        result = quarantine_war_identifiers(frame)
+    pd.testing.assert_frame_equal(frame, original)
+    expected = [] if all_invalid else ["012345678901", "123456789012"]
+    assert result["API_WELL_NUMBER"].tolist() == expected
+    assert result["value"].tolist() == ([] if all_invalid else [4, 5])
+    normalize_api12(result["API_WELL_NUMBER"])

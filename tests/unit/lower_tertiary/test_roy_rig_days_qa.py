@@ -225,3 +225,41 @@ def test_cache_is_committed_and_complete(mod, rows):
     assert len(meta) == 1
     assert meta[0]["war_first_material_month"] == "1997-10"
     assert int(meta[0]["war_returns_before_1998"]) == 867
+
+
+@pytest.mark.parametrize("bad_key", [None, "1234567890", "12345678901234", "invalid"])
+def test_recompute_quarantines_invalid_keys(mod, monkeypatch, bad_key):
+    import pandas as pd
+
+    api = "123456789012"
+    main = pd.DataFrame(
+        {
+            "SN_WAR": [1, 2, 3],
+            "API_WELL_NUMBER": [float(api), bad_key, api],
+            "WAR_START_DT": ["2020-01-01", "2020-01-08", "2020-01-15"],
+            "WAR_END_DT": ["2020-01-07", "2020-01-14", "2020-01-21"],
+        }
+    )
+    prop = pd.DataFrame(
+        {
+            "SN_WAR": [1, 2, 3],
+            "WELL_ACTIVITY_CD": ["DRL", "DRL", "COM"],
+            "DRILLING_MD": [100, 200, 100],
+            "DRILLING_TVD": [100, 200, 100],
+            "DRILL_FLUID_WGT": [10, 10, 10],
+        }
+    )
+    monkeypatch.setattr(
+        pd,
+        "read_pickle",
+        lambda path: (main if path.name == "mv_war_main.bin" else prop),
+    )
+    monkeypatch.setattr(
+        mod, "load_population", lambda: [{"api12": api, "well_name": "synthetic"}]
+    )
+    with pytest.warns(UserWarning, match="Quarantined 1 WAR row.*invalid API12"):
+        rows = mod.recompute(Path("unused"))
+    bore = next(row for row in rows if row["grain"] == "bore")
+    assert bore["drilling_days"] == "7"
+    assert bore["max_md_ft"] == "100"
+    assert {row["grain"] for row in rows} == {"bore", "well", "meta"}

@@ -368,6 +368,7 @@ def recompute(war_dir: Path) -> list[dict]:
 
     from worldenergydata.bsee.analysis.war_rig_days import (  # noqa: E501
         BASIS_DRL_COM,
+        quarantine_war_identifiers,
         rig_days_by_bore,
         rig_days_by_well,
     )
@@ -387,7 +388,7 @@ def recompute(war_dir: Path) -> list[dict]:
         on="SN_WAR",
         how="left",
     )
-    war["API_WELL_NUMBER"] = war["API_WELL_NUMBER"].astype(str).str.strip()
+    war = quarantine_war_identifiers(war)
 
     pop = load_population()
     api12s = [w["api12"] for w in pop]
