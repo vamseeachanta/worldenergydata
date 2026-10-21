@@ -23,11 +23,17 @@ income_tax:
   federal_cit: 0.21          # US federal corporate income tax (declarative)
 
 source_url: https://www.boem.gov/oil-gas-energy/leasing/lease-and-royalty-information
-source_ref: "BOEM GoM federal offshore royalty: 12.5% shallow-water, 18.75% deepwater; ported from FDAS DEFAULT_ASSUMPTIONS ROYALTY_RATE"
-revision: "1"
+source_ref: >
+  BOEM GoM federal offshore royalty: 12.5% shallow-water, 18.75% deepwater;
+  revision 1 was ported from FDAS DEFAULT_ASSUMPTIONS ROYALTY_RATE;
+  revision 2 corrects its rounded deep-water fractions to these percentages.
+revision: "2"
 effective_date: "2026-07-03"
 notes: >
-  Royalty fractions match the percentages in source_ref rather than the
-  rounded legacy DEFAULT_ASSUMPTIONS rates. Current legal applicability is
-  NOT_EVALUATED; source_url is a provenance lead. federal_cit and discount_rate
-  are declarative metadata only in v1.
+  Revision 2 corrects deep-water royalty from 0.188 to 0.1875 to match the
+  percentages in the revision-1 source note; legacy DEFAULT_ASSUMPTIONS rates
+  remain unchanged. The original effective_date is retained, without inferring
+  a new legal effective date. Current legal applicability is NOT_EVALUATED;
+  source_url is a provenance lead. federal_cit has no percentage in source_ref
+  and remains unqualified under #736. federal_cit and discount_rate are
+  declarative metadata only in v1.

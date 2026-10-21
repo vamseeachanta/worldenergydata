@@ -61,21 +61,14 @@ def test_us_gom_royalty_corrects_legacy_rounding():
     """Original us_gom.yml revision 1 source_ref: 12.5% and 18.75%.
 
     Hand calculation: 12.5 / 100 = 0.125; 18.75 / 100 = 0.1875.
-    core/config.py DEFAULT_ASSUMPTIONS retains 0.188 for historical runs.
+    Legacy default-rate correction or explicit versioning is tracked in #1625.
     """
-    from worldenergydata.fdas.core.config import DEFAULT_ASSUMPTIONS
-
-    dev = DEFAULT_ASSUMPTIONS["DEV_SYSTEM"]
-    rates = DEFAULT_ASSUMPTIONS["ROYALTY_RATE"]
-    legacy = dict(zip(dev, rates))
-
     terms = get_fiscal_terms("us_gom")
     assert terms.royalty.model == "flat"
     for ds in DEV_SYSTEMS:
         if ds == "dry":
-            assert terms.royalty.rate_for(ds) == legacy[ds] == 0.125
+            assert terms.royalty.rate_for(ds) == 0.125
         else:
-            assert legacy[ds] == 0.188
             assert terms.royalty.rate_for(ds) == 0.1875
 
 

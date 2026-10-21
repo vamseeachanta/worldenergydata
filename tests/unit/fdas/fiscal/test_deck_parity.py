@@ -92,12 +92,16 @@ def test_deckless_vs_us_gom_npv_saving(discount_rate):
     Dry-tree rates agree, giving zero saving. Rate sources: module docstring.
 
     Nonzero-discount case: OpenStax, Principles of Finance (2022), section
-    16.2, discounts each cashflow to its present value. The synthetic annual
-    rate is 0.10. Monthly savings are 4500, 4317.5, 3420, 3200 USD, obtained
-    by multiplying each fixture revenue by (0.188 - 0.1875). The existing
-    calculate_host_capex_timing contract spans 24 months including first oil,
-    leaving 23 pre-production rows. Thus expected delta NPV is independently
-    sum(saving_t / (1 + annual_rate)**(t/12)) for t = 23, 24, 25, 26.
+    16.2, supplies the general present-value principle. Timing basis:
+    core/financial.py::calculate_npv converts an annual rate to a monthly
+    rate and indexes the first cashflow at zero, giving the t/12 exponent.
+    analysis/cashflow.py::CashflowEngine.calculate_host_capex_timing defaults
+    to 24 months including first oil, leaving 23 pre-production rows in this
+    fixture. These code contracts supply timing, rather than the textbook.
+    The synthetic annual rate is 0.10. Monthly savings are 4500, 4317.5,
+    3420, 3200 USD, obtained from each fixture revenue * (0.188 - 0.1875).
+    Thus expected delta NPV is independently sum(saving_t /
+    (1 + annual_rate)**(t/12)) for t = 23, 24, 25, 26.
     This also retains the original nonzero-discount regression input.
     """
     us_gom = get_fiscal_terms("us_gom")
@@ -120,7 +124,7 @@ def test_deckless_vs_us_gom_npv_saving(discount_rate):
                 prod.copy(), timeline, wti, first_oil
             )
         ]
-        # Independent hand-calculated payments and timing: docstring above.
+        # Hand-calculated payments; code-defined timing contracts cited above.
         saving = (
             0.0
             if ds == "dry"
