@@ -1,7 +1,8 @@
 """Exposure-normalized HSE incidence rates using the BLS convention."""
 
 from math import isfinite
-from numbers import Real
+from numbers import Integral, Real
+from operator import index
 
 # BLS, How To Compute Your Firm's Incidence Rate for Safety Management,
 # 2025-03-10 revision, "How to compute incidence rates": normalization hours.
@@ -18,6 +19,7 @@ def incidence_rate(incident_count: int, hours_worked: float) -> float:
     must classify cases and supply matching exposure; incident records alone
     do not establish exposure. Pool counts and hours before calling when
     combining disjoint groups, rather than averaging their individual rates.
+    Integral counts are normalized to built-in integers before arithmetic.
     Exposure is normalized to a finite, positive built-in float before use.
 
     BLS (2025 revision, "How to compute incidence rates") defines this base as
@@ -32,10 +34,11 @@ def incidence_rate(incident_count: int, hours_worked: float) -> float:
     """
     if (
         isinstance(incident_count, bool)
-        or not isinstance(incident_count, int)
+        or not isinstance(incident_count, Integral)
         or incident_count < 0
     ):
         raise ValueError("incident_count must be a nonnegative integer")
+    incident_count = index(incident_count)
     if (
         isinstance(hours_worked, bool)
         or not isinstance(hours_worked, Real)
