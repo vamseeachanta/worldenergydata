@@ -15,10 +15,17 @@ The LGPL `metocean-api` library is available through a single optional extra:
 pip install 'worldenergydata[metocean-api]'
 # Or install the domain distribution directly:
 pip install 'worldenergydata-metocean[metocean-api]'
+# Or enable the extra from the workspace root:
+uv sync --extra metocean-api
 ```
 
-Default installations do not request this library. The root extra forwards to
-the domain extra, which pins the inspected
+Default installations do not request this library. `uv sync --all-extras`, used
+for workspace setup and in CI, selects the `metocean-api` extra along with every
+other extra. On Python 3.11 and newer, this installs the library and its
+geospatial and NetCDF dependencies. To install the other extras without this
+library, use `uv sync --all-extras --no-extra metocean-api`.
+
+The root extra forwards to the domain extra, which pins the inspected
 [metocean-api release](https://pypi.org/project/metocean-api/1.1.14/).
 The optional library requires Python 3.11 or newer. Its requirement is ignored on
 Python 3.10, preserving the distributions' declared Python >=3.10 range.
