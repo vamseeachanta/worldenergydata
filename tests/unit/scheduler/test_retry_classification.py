@@ -27,7 +27,7 @@ def _http_error(status):
     return requests.HTTPError(status.phrase, response=response)
 
 
-def test_skipped_stub_is_terminal(tmp_path):
+def test_unimplemented_adapter_failure_is_terminal(tmp_path):
     """One stub invocation plus no sleeps; no retry can implement an adapter."""
     from worldenergydata.scheduler.jobs.lng_terminals_refresh import (
         LngTerminalsRefreshJob,
@@ -40,7 +40,8 @@ def test_skipped_stub_is_terminal(tmp_path):
     manager = RetryManager(max_retries=3, backoff_seconds=1)
     with patch("worldenergydata.scheduler.monitor.time.sleep") as sleep:
         result = manager.run_with_retry(run)
-    assert result.status == "skipped"
+    assert result.status == "failure"
+    assert result.retryable is False
     run.assert_called_once_with()
     sleep.assert_not_called()
 
@@ -241,7 +242,7 @@ def test_run_once_records_terminal_source_without_backoff(
             b"<html>missing</html>"
         )
         result = scheduler.run_once(job.name)
-    expected_status = "skipped" if source == "stub" else "failure"
+    expected_status = "failure"
     assert result.status == expected_status
     assert result.job_name == job.name
     run.assert_called_once()
@@ -252,8 +253,7 @@ def test_run_once_records_terminal_source_without_backoff(
     assert detail["status"] == expected_status
     assert detail["error_msg"] == result.error_msg
     assert detail["retryable"] is result.retryable
-    if source != "stub":
-        assert result.retryable is False
+    assert result.retryable is False
     (log_path,) = (tmp_path / "logs").glob("*.json")
     assert json.loads(log_path.read_text())["retryable"] is result.retryable
     assert not (output_dir / "manifest.json").exists()

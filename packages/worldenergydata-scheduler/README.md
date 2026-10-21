@@ -27,3 +27,11 @@ For operator runs that should persist outside the checkout, set:
 output_dir: /mnt/ace/worldenergydata/data/spain/cores
 refresh_fixture: false
 ```
+
+## LNG refresh readiness
+
+`lng_terminals_refresh` remains disabled until upstream collection is implemented.
+Direct or accidentally enabled execution returns a non-retryable failure with a
+corrective message and preserves existing success evidence. See the
+[LNG readiness guide](../../docs/data/lng-scheduler-readiness.md) for the input
+settings, expected results, worked example and requirements before enabling it.
