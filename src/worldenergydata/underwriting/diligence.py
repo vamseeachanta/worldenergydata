@@ -346,6 +346,7 @@ def render_html(pack: dict, repository_url: str = "../../") -> str:
         target = url if urlsplit(url).scheme else repository_url + url
         return f'<a href="{_e(target)}">{_e(label)}</a>'
 
+    noun = "observation" if pack["observation_count"] == 1 else "observations"
     parts = [
         '<!doctype html><html lang="en"><head><meta charset="utf-8">',
         '<meta name="viewport" content="width=device-width,initial-scale=1">',
@@ -356,7 +357,7 @@ def render_html(pack: dict, repository_url: str = "../../") -> str:
         "padding:1em}section{margin-block:2em}a{color:#0645ad}</style></head><body>",
         "<main><h1>Landman diligence pack</h1><h2>Summary</h2>",
         f'<p>{_e(pack["asset"])}; evidence cutoff {_e(pack["as_of"])}. ',
-        f'{pack["observation_count"]} supplied observations; no completeness claim.</p>',
+        f'{pack["observation_count"]} supplied {noun}; no completeness claim.</p>',
         "<aside>Missing data is not evidence of absence. This is an evidence inventory, ",
         "not a title opinion, reserves estimate or environmental clearance.</aside>",
     ]
@@ -376,9 +377,10 @@ def render_html(pack: dict, repository_url: str = "../../") -> str:
         )
     parts.append("</table>")
     for key, section in pack["sections"].items():
+        noun = "observation" if section["observation_count"] == 1 else "observations"
         parts += [
             f'<section id="{key}"><h2>{_e(section["title"])}</h2>',
-            f'<p>{_e(section["status"])}; {section["observation_count"]} observations.</p>',
+            f'<p>{_e(section["status"])}; {section["observation_count"]} {noun}.</p>',
             f'<p>{_e(section["caution"])}</p>',
         ]
         if section["observations"]:
@@ -456,13 +458,12 @@ def write_pack(
     """
     raw = Path(input_path).read_bytes()
     pack = build_pack(json.loads(raw, object_pairs_hook=_unique_json_members))
-    report = render_html(pack, repository_url)
+    report = render_html(pack, repository_url).encode("utf-8")
     pack["input_sha256"] = hashlib.sha256(raw).hexdigest()
+    summary = (
+        json.dumps(pack, indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    ).encode("utf-8")
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=False)
-    (output_dir / "index.html").write_text(report, encoding="utf-8", newline="\n")
-    (output_dir / "summary.json").write_text(
-        json.dumps(pack, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    (output_dir / "index.html").write_bytes(report)
+    (output_dir / "summary.json").write_bytes(summary)

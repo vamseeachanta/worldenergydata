@@ -45,6 +45,18 @@ def test_empty_pack_is_useful(payload):
     assert "not evidence of absence" in render_html(pack)
 
 
+@pytest.mark.parametrize(
+    "count,noun", [(0, "observations"), (1, "observation"), (2, "observations")]
+)
+def test_observation_count_grammar(payload, count, noun):
+    payload["observations"] = [
+        row for row in payload["observations"] if row["section"] == "wells"
+    ][:count]
+    report = render_html(build_pack(payload))
+    assert f"{count} supplied {noun};" in report
+    assert f"; {count} {noun}.</p>" in report
+
+
 def test_html_has_all_sections_provenance_and_revision_history(payload):
     report = render_html(build_pack(payload))
     for title in (
@@ -251,6 +263,17 @@ def test_invalid_input_does_not_create_output(tmp_path):
     assert not output.exists()
 
 
+@pytest.mark.parametrize("surrogate", ["\ud800", "\udfff"])
+def test_unencodable_input_does_not_create_output(tmp_path, payload, surrogate):
+    payload["asset"] = surrogate
+    source = tmp_path / "invalid-unicode.json"
+    source.write_text(json.dumps(payload), encoding="utf-8")
+    output = tmp_path / "new-parent" / "output"
+    with pytest.raises(UnicodeEncodeError):
+        write_pack(source, output)
+    assert not output.parent.exists()
+
+
 @pytest.mark.parametrize("member", ["publication", "value", "observations"])
 def test_duplicate_json_members_rejected_before_output(tmp_path, payload, member):
     payload["sources"][0].update(kind="regulator", publication="public-approved")
@@ -391,9 +414,20 @@ def test_cli(tmp_path):
     assert (tmp_path / "pack/index.html").exists()
 
 
-def test_committed_worked_answer_matches_generator(tmp_path):
-    write_pack(EXAMPLE, tmp_path / "pack")
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"])
+def test_committed_worked_answer_matches_generator(tmp_path, line_ending):
+    checkout = tmp_path / "checkout"
+    checkout.mkdir()
+    for name in ("input.json", "index.html", "summary.json"):
+        raw = (EXAMPLE.parent / name).read_bytes().replace(b"\r\n", b"\n")
+        (checkout / name).write_bytes(raw.replace(b"\n", line_ending))
+    # Git checkout line endings are not part of the worked answer's input digest.
+    normalized_input = tmp_path / "input.json"
+    normalized_input.write_bytes(
+        (checkout / "input.json").read_bytes().replace(b"\r\n", b"\n")
+    )
+    write_pack(normalized_input, tmp_path / "pack")
     for name in ("index.html", "summary.json"):
-        assert (EXAMPLE.parent / name).read_bytes() == (
+        assert (checkout / name).read_bytes().replace(b"\r\n", b"\n") == (
             tmp_path / "pack" / name
         ).read_bytes()
