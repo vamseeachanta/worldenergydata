@@ -105,12 +105,18 @@ Publisher intervals and points follow the printed tables in the
 
 - A printed point covers only its exact radius.
 - A bounded interval covers `radius_min_m <= radius_m <= radius_max_m`.
-- `up_to` retains an unknown lower bound and cannot establish interval coverage.
+- `up_to` retains an unknown lower bound and is excluded at every radius,
+  including its printed endpoint. This conservative query policy requires a
+  separate printed point or bounded interval to screen that endpoint.
 - No interpolation, extrapolation, tandem sum or configuration substitution occurs.
 
 The comparison `capacity_t >= minimum_capacity_t` returns `MATCH`; a smaller
 printed capacity returns `BELOW_CAPACITY`. Missing coverage or contradictory
 capacities returns `NOT_EVALUATED`, with a reason and no accepted capacity.
+An absent exact hoist/configuration selection is reported as no printed rating
+for that selection, rather than a radius-coverage gap. For a selected `up_to`
+rating at or below its printed endpoint, the reason names the unknown lower
+bound and endpoint exclusion; above it, the radius-coverage gap is reported.
 Overlapping ratings with the same capacity keep all matching provenance.
 These are screening results, not engineering acceptance or current crane limits.
 The caller supplies the demand; no engineering coefficient or limit is assumed.

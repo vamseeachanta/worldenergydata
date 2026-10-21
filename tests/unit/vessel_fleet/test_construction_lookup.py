@@ -144,16 +144,48 @@ def test_crane_does_not_interpolate_or_extrapolate(crane_bundle, radius):
     assert result["evaluation"] == "NOT_EVALUATED"
     assert result["capacity_t"] is None
     assert result["matched_ratings"] == []
-    assert result["reason"]
+    assert (
+        result["reason"]
+        == "No printed point or bounded interval covers the requested radius"
+    )
 
 
 @pytest.mark.parametrize("radius", [5, 20])
 def test_unknown_lower_bound_never_becomes_zero(crane_bundle, radius):
+    """A missing lower bound excludes both 5 m and the printed 20 m endpoint.
+
+    The conservative query policy requires a bounded interval or a separate
+    point rating, even at the endpoint; no lower bound is inferred as zero.
+    """
     rating = crane_bundle["cranes"][0]
     rating.update(radius_kind="up_to", radius_min_m=None)
     result = screen(crane_bundle, radius_m=radius)
     assert result["evaluation"] == "NOT_EVALUATED"
     assert result["capacity_t"] is None
+    assert result["matched_ratings"] == []
+    assert result["reason"] == (
+        "Unknown lower bound for up_to rating; its printed endpoint is also excluded"
+    )
+
+
+@pytest.mark.parametrize("radius", [21, 25])
+def test_radius_beyond_up_to_endpoint_is_a_coverage_gap(crane_bundle, radius):
+    """Both radii exceed 20 m and differ from the separate printed 30 m point."""
+    crane_bundle["cranes"][0].update(radius_kind="up_to", radius_min_m=None)
+    result = screen(crane_bundle, radius_m=radius)
+    assert result["evaluation"] == "NOT_EVALUATED"
+    assert result["reason"] == (
+        "No printed point or bounded interval covers the requested radius"
+    )
+
+
+def test_up_to_rating_does_not_exclude_a_separate_printed_point(crane_bundle):
+    """The 60 t point at 30 m qualifies independently of the unbounded rating."""
+    crane_bundle["cranes"][0].update(radius_kind="up_to", radius_min_m=None)
+    result = screen(crane_bundle, radius_m=30, minimum_capacity_t=60)
+    assert result["evaluation"] == "MATCH"
+    assert result["capacity_t"] == 60
+    assert result["matched_ratings"] == crane_bundle["cranes"][1:]
 
 
 @pytest.mark.parametrize("field", ["crane", "mode"])
@@ -161,6 +193,29 @@ def test_other_hoists_and_configurations_never_supply_capacity(crane_bundle, fie
     result = screen(crane_bundle, **{field: "different configuration"})
     assert result["evaluation"] == "NOT_EVALUATED"
     assert result["matched_ratings"] == []
+    assert (
+        result["reason"] == "No printed rating for the selected hoist and configuration"
+    )
+
+
+def test_crane_label_case_mismatch_is_not_a_radius_gap(bundle):
+    """An exact printed bound is covered; changing the hoist label loses selection."""
+    rating = next(r for r in bundle["cranes"] if r["radius_kind"] == "interval")
+    assert rating["crane"].upper() != rating["crane"]
+    result = ce.screen_crane(
+        rating["vessel_name"],
+        crane=rating["crane"].upper(),
+        mode=rating["mode"],
+        radius_m=rating["radius_min_m"],
+        minimum_capacity_t=rating["capacity_t"],
+        bundle=bundle,
+    )
+    assert result["evaluation"] == "NOT_EVALUATED"
+    assert result["capacity_t"] is None
+    assert result["matched_ratings"] == []
+    assert (
+        result["reason"] == "No printed rating for the selected hoist and configuration"
+    )
 
 
 def test_conflicting_overlapping_ratings_remain_not_evaluated(crane_bundle):
@@ -239,6 +294,9 @@ def test_crane_missing_ratings_remain_not_evaluated(crane_bundle):
         bundle=crane_bundle,
     )
     assert result["evaluation"] == "NOT_EVALUATED"
+    assert (
+        result["reason"] == "No printed rating for the selected hoist and configuration"
+    )
 
 
 def test_crane_validates_evidence_before_screening(crane_bundle):

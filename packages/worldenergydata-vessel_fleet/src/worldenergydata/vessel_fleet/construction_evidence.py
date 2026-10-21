@@ -374,8 +374,9 @@ def screen_crane(
 
     MATCH and BELOW_CAPACITY describe the printed rating, not operational
     suitability. A point covers only its exact radius; a bounded interval
-    covers its inclusive bounds. No interpolation, extrapolation, tandem sum
-    or assumed lower bound is applied. Missing or conflicting coverage is
+    covers its inclusive bounds. An up_to rating excludes its printed endpoint
+    as well as its unbounded interior. No interpolation, extrapolation, tandem
+    sum or assumed lower bound is applied. Missing or conflicting coverage is
     NOT_EVALUATED. Identity limitations and source metadata accompany results.
 
     Interval semantics follow the Main Hoist Capacity table in the 2021
@@ -396,14 +397,15 @@ def screen_crane(
     # Exact labels avoid merging configurations or roster spelling variants.
     vessels = [row for row in evidence["vessels"] if row["vessel_name"] == vessel_name]
     _require(bool(vessels), "Unknown vessel")
+    selected_ratings = [
+        rating
+        for rating in evidence["cranes"]
+        if rating["vessel_name"] == vessel_name
+        and rating["crane"] == crane
+        and rating["mode"] == mode
+    ]
     ratings = []
-    for rating in evidence["cranes"]:
-        if (
-            rating["vessel_name"] != vessel_name
-            or rating["crane"] != crane
-            or rating["mode"] != mode
-        ):
-            continue
+    for rating in selected_ratings:
         lo, hi = rating["radius_min_m"], rating["radius_max_m"]
         if rating["radius_kind"] in {"point", "interval"} and lo <= radius_m <= hi:
             ratings.append(rating)
@@ -423,7 +425,17 @@ def screen_crane(
             for sid in sorted({rating["source_id"] for rating in ratings})
         },
     }
+    if not selected_ratings:
+        result["reason"] = "No printed rating for the selected hoist and configuration"
+        return result
     if not ratings:
+        if any(
+            rating["radius_kind"] == "up_to" and radius_m <= rating["radius_max_m"]
+            for rating in selected_ratings
+        ):
+            result["reason"] = (
+                "Unknown lower bound for up_to rating; its printed endpoint is also excluded"
+            )
         return result
     capacities = {rating["capacity_t"] for rating in ratings}
     if len(capacities) != 1:
