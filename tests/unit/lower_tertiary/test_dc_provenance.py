@@ -35,8 +35,7 @@ def write_rows(path, rows):
         writer.writerows(rows)
 
 
-@pytest.fixture
-def synthetic_inputs(tmp_path):
+def make_synthetic_inputs(tmp_path):
     row = dict(
         LEASE_NAME="Anchor",
         SURF_LEASE_NUM="G00001",
@@ -75,6 +74,11 @@ def synthetic_inputs(tmp_path):
         encoding="utf-8",
     )
     return source, benchmark, vintage
+
+
+@pytest.fixture
+def synthetic_inputs(tmp_path):
+    return make_synthetic_inputs(tmp_path)
 
 
 def patch_inputs(monkeypatch, mod, inputs):

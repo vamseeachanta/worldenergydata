@@ -116,8 +116,14 @@ def require_publication_provenance(rows: Iterable[Mapping]) -> None:
         if not isinstance(basis, str) or _basis_value(basis.strip(), allow_mixed=True) is None:
             raise ValueError("missing publication provenance basis")
         status = row["days_status"]
-        if not isinstance(status, str) or not status.strip() or status.strip() in ("nan", "<NA>"):
-            raise ValueError("missing publication provenance status")
+        # Coverage vocabulary from bsee.analysis.war_rig_days, plus aggregates.
+        if not isinstance(status, str) or status not in (
+            "war_covered",
+            "no_war_activity",
+            "war_covered_no_activity_code",
+            "mixed",
+        ):
+            raise ValueError("invalid publication provenance status")
         nullable_days(row["pnd_days"])
         # An overall label cannot supply the missing rule for one vintage's
         # day counts. Outer-join-only rows genuinely have no opposite side.
