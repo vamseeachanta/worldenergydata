@@ -565,9 +565,9 @@ class TexasDataValidator:
 
         normalized = district.strip().upper()
 
-        # Handle single digit districts
-        if normalized.isdigit() and len(normalized) == 1:
-            normalized = normalized.zfill(2)
+        # Accept integer codes with an optional all-zero fractional part.
+        if re.fullmatch(r"\d{1,2}(?:\.0+)?", normalized):
+            normalized = f"{int(normalized.split('.')[0]):02d}"
 
         if normalized not in self.VALID_DISTRICTS:
             return None

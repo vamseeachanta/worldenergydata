@@ -34,15 +34,18 @@ def _run_csv_route(tmp_path, rows):
 
 
 # Codes: validators.py, TexasDataValidator.VALID_DISTRICTS; issue #1246.
-@pytest.mark.parametrize("district", ["7B", "7C", "8A"])
-def test_alphanumeric_district_single_record(tmp_path, district):
+@pytest.mark.parametrize(
+    ("district", "expected"),
+    [("7B", "7B"), ("7C", "7C"), ("8A", "8A"), ("3.0", "03"), ("10.0", "10")],
+)
+def test_district_single_record(tmp_path, district, expected):
     """Issue #1246 example: one 100 BBL record sums to 100 BBL, error 0 BBL.
 
     Each synthetic record has zero gas, one lease and one district. The
     expected total is the input itself, with no conversion or tolerance.
     """
     districts, summary = _run_csv_route(tmp_path, f"{district},1,100,0\n")
-    assert districts["district"].tolist() == [district]
+    assert districts["district"].tolist() == [expected]
     assert districts["oil_production"].tolist() == [100.0]
     assert districts["lease_count"].tolist() == [1]
     assert summary == {
@@ -50,6 +53,9 @@ def test_alphanumeric_district_single_record(tmp_path, district):
         "district_count": 1,
         "oil_production_total": 100.0,
         "gas_production_total": 0.0,
+        "unassigned_records": 0,
+        "unassigned_oil_production_total": 0.0,
+        "unassigned_gas_production_total": 0.0,
     }
 
 
@@ -86,9 +92,12 @@ def test_csv_route_conserves_record_totals(tmp_path, include_unknown):
     assert known["lease_count"].to_dict() == {"7B": 1, "7C": 1, "8A": 1, "03": 1}
     assert summary == {
         "total_records": 7 if include_unknown else 5,
-        "district_count": 5 if include_unknown else 4,
+        "district_count": 4,
         "oil_production_total": 1180.0 if include_unknown else 1050.0,
         "gas_production_total": 118.0 if include_unknown else 105.0,
+        "unassigned_records": 2 if include_unknown else 0,
+        "unassigned_oil_production_total": 130.0 if include_unknown else 0.0,
+        "unassigned_gas_production_total": 13.0 if include_unknown else 0.0,
     }
     assert districts["oil_production"].sum() == summary["oil_production_total"]
     assert districts["gas_production"].sum() == summary["gas_production_total"]
@@ -99,3 +108,20 @@ def test_csv_route_conserves_record_totals(tmp_path, include_unknown):
         assert missing["lease_count"].tolist() == [2]
     else:
         assert missing.empty
+
+
+def test_unassigned_records_are_counted_separately_from_leases(tmp_path):
+    """Two synthetic records on one lease retain 130 BBL and 13 MCF."""
+    districts, summary = _run_csv_route(tmp_path, ",1,60,6\ninvalid,1,70,7\n")
+
+    assert districts["district"].isna().all()
+    assert districts["lease_count"].tolist() == [1]
+    assert summary == {
+        "total_records": 2,
+        "district_count": 0,
+        "oil_production_total": 130.0,
+        "gas_production_total": 13.0,
+        "unassigned_records": 2,
+        "unassigned_oil_production_total": 130.0,
+        "unassigned_gas_production_total": 13.0,
+    }
