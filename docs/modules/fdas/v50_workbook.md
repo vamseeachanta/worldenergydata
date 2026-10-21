@@ -8,22 +8,35 @@ The summary uses the exact `Project_Summary` headers and order in the tracked
 [lineage workbook](../bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx),
 followed by `After-tax NPV USD` and `NPV Reference Date`. The original `NPV USD`
 column explicitly means pre-tax NPV in this interface. Each project carries
-its own reference date. V30 is lineage-only.
+its own reference date. `Net CashFlow USD`, `MIRR monthly` and `MIRR annual`
+also mean pre-tax results; their tax basis is recorded in `Metadata`.
+V30 is lineage-only.
 
-All columns are required. Numeric values must be finite; missing results must
-not be replaced by zero. A true zero is permitted. Project names must be unique.
+All columns are required. `FO Month`, `MIRR monthly` and `MIRR annual` accept
+an explicit `NotApplicable(reason)` marker, exported as an empty cell. Each
+marker requires nonblank text explaining that particular result, such as no
+first oil by the production cutoff or MIRR undefined because cash flows lack
+both signs. The reason is written in `Metadata` under
+`not_applicable:Project_Summary!<cell address>`, identifying the exported cell.
+Bare `None`, NaN and NaT remain errors, including in these three columns.
+All other values are required; numeric values must be finite. Missing results
+must not be replaced by zero. A true zero is permitted. Project names must be unique.
 Input columns may arrive in any order, but unknown columns are rejected so that
 source mapping cannot silently discard a result. Text is stored as literal text,
 including values beginning with a spreadsheet formula prefix.
 
 ```python
 from worldenergydata.fdas.reports.v50_workbook import (
+    NotApplicable,
     V50WorkbookMetadata,
     write_v50_workbook,
 )
 
 # summary is a DataFrame mapped explicitly from the financial engine outputs.
 # Both NPV columns are in USD, discounted on the same stated convention.
+# Net cashflow and both MIRRs are pre-tax engine outputs.
+# Where supported by the actual run, mark a nullable cell explicitly:
+# summary.loc[row_index, "FO Month"] = NotApplicable(first_oil_reason)
 # Dates and provenance below are supplied from the actual run, without defaults.
 metadata = V50WorkbookMetadata(
     assumption_version=assumption_version,
@@ -39,7 +52,9 @@ write_v50_workbook(output_path, summary, metadata)
 The output contains `Project_Summary` and `Metadata`. The metadata records the
 assumption version, full Git object name, production cutoff date, WTI deck source,
 NPV reference convention, generation timestamp, tax-basis column names and USD
-units. The output file must not already exist; its parent directory must exist.
+units. The remaining economics columns use `tax_basis:<column name>` metadata
+entries with the value `pre-tax`. Each intentionally empty cell has its own
+reason entry. The output file must not already exist; its parent directory must exist.
 Neither the source DataFrame nor a previous output file is overwritten.
 
 Canonical acceptance is **NOT_EVALUATED**. The assumptions decision in

@@ -15,6 +15,7 @@ import re
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font
+from openpyxl.utils import get_column_letter
 
 
 # Frozen lineage schema, including its original units and column order.
@@ -51,6 +52,18 @@ LEGACY_SUMMARY_COLUMNS = (
 SUMMARY_COLUMNS = (*LEGACY_SUMMARY_COLUMNS, "After-tax NPV USD", "NPV Reference Date")
 _TEXT_COLUMNS = {"Project Name", "DEV SYSTEM"}
 _DATE_COLUMNS = {"FO Month", "NPV Reference Date"}
+_NULLABLE_COLUMNS = {"FO Month", "MIRR monthly", "MIRR annual"}
+
+
+@dataclass(frozen=True)
+class NotApplicable:
+    """An intentionally empty first-oil or MIRR cell with a required explanation."""
+
+    reason: str
+
+    def __post_init__(self):
+        if not isinstance(self.reason, str) or not self.reason.strip():
+            raise ValueError("Not-applicable reason must be nonblank text")
 
 
 @dataclass(frozen=True)
@@ -95,6 +108,9 @@ class V50WorkbookMetadata:
             "generated_at": self.generated_at.isoformat(),
             "pre_tax_npv_column": "NPV USD",
             "after_tax_npv_column": "After-tax NPV USD",
+            "tax_basis:Net CashFlow USD": "pre-tax",
+            "tax_basis:MIRR monthly": "pre-tax",
+            "tax_basis:MIRR annual": "pre-tax",
             "npv_units": "USD",
             "canonical_acceptance_status": "NOT_EVALUATED",
             "acceptance_limitation": "Assumptions and NPV convention require resolution of issues 899 and 900",
@@ -103,7 +119,7 @@ class V50WorkbookMetadata:
 
 
 def _validated_rows(summary):
-    """Reject missing/ambiguous values rather than manufacturing zero results."""
+    """Validate values and collect reasons for explicitly not-applicable cells."""
     if not summary.columns.is_unique:
         raise ValueError("Summary columns must be unique")
     missing = set(SUMMARY_COLUMNS) - set(summary.columns)
@@ -115,9 +131,20 @@ def _validated_rows(summary):
         raise ValueError("Summary must not be empty")
     if summary["Project Name"].duplicated().any():
         raise ValueError("Project names must be unique")
-    rows = list(summary.loc[:, SUMMARY_COLUMNS].itertuples(index=False, name=None))
-    for row in rows:
-        for name, value in zip(SUMMARY_COLUMNS, row):
+    rows, reasons = [], {}
+    source_rows = summary.loc[:, SUMMARY_COLUMNS].itertuples(index=False, name=None)
+    for row_number, row in enumerate(source_rows, start=2):
+        values = []
+        for column_number, (name, value) in enumerate(
+            zip(SUMMARY_COLUMNS, row), start=1
+        ):
+            if isinstance(value, NotApplicable):
+                if name not in _NULLABLE_COLUMNS:
+                    raise ValueError(f"{name} is not nullable")
+                cell = f"{get_column_letter(column_number)}{row_number}"
+                reasons[f"not_applicable:Project_Summary!{cell}"] = value.reason
+                values.append(None)
+                continue
             if name in _TEXT_COLUMNS:
                 if not isinstance(value, str) or not value.strip():
                     raise ValueError(f"{name} must be nonblank text")
@@ -132,7 +159,9 @@ def _validated_rows(summary):
                 or not isfinite(value)
             ):
                 raise ValueError(f"{name} must be a finite numeric value")
-    return rows
+            values.append(value)
+        rows.append(values)
+    return rows, reasons
 
 
 def _append_literal(sheet, values):
@@ -150,12 +179,15 @@ def write_v50_workbook(
 
     The input table uses the frozen lineage headers plus After-tax NPV USD and
     NPV Reference Date. Both NPVs are required engine outputs in USD, already
-    discounted on the supplied convention. This export does not establish an
-    accepted canonical model or supply missing fiscal terms. Until the basis
-    decisions are resolved, acceptance remains NOT_EVALUATED in every export.
+    discounted on the supplied convention. Net cashflow and both MIRRs are
+    pre-tax. Only first-oil and MIRR cells permit NotApplicable(reason), written
+    as blanks with per-cell explanations in Metadata. This export does not
+    establish an accepted canonical model or supply missing fiscal terms. Until
+    the basis decisions are resolved, acceptance remains NOT_EVALUATED in every export.
     """
     info = metadata.as_rows()
-    rows = _validated_rows(summary)
+    rows, reasons = _validated_rows(summary)
+    info.update(reasons)
     book = Workbook()
     sheet = book.active
     sheet.title = "Project_Summary"
