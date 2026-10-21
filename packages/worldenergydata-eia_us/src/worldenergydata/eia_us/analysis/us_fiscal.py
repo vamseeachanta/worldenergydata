@@ -15,6 +15,7 @@ References:
 
 import logging
 from dataclasses import dataclass
+from math import isfinite
 
 logger = logging.getLogger(__name__)
 
@@ -28,10 +29,6 @@ TEXAS_GAS_SEVERANCE_RATE: float = 0.075  # 7.5% — TX Tax Code §201.052
 
 ND_OIL_EXTRACTION_RATE: float = 0.05  # 5.0% — ND CC 57-51
 ND_OIL_PRODUCTION_RATE: float = 0.065  # 6.5% — ND CC 57-51.1
-
-# GoM crosscheck tolerance: within 5% is considered acceptable agreement
-_GOM_TOLERANCE_PCT: float = 0.05
-
 
 # ── Result dataclass ───────────────────────────────────────────────────────────
 
@@ -208,11 +205,35 @@ class GoMCrosscheck:
 
     EIA reports GoM crude production via the petroleum supply survey.
     BSEE publishes OGOR-A offshore production reports.
-    Differences > 5% may indicate reporting lags or methodology divergence.
+    Tolerances are caller-supplied acceptance criteria, not physical constants.
+    With no applicable tolerance, unequal rates are NOT_EVALUATED. Exact
+    equality, including zero/zero, passes without a tolerance.
+
+    Basis: PEP 485 (2015), "Symmetry" (scaling to a known reference) and
+    "Behavior near zero" (explicit absolute tolerance):
+    https://peps.python.org/pep-0485/
     """
 
-    def __init__(self, tolerance_pct: float = _GOM_TOLERANCE_PCT) -> None:
+    def __init__(
+        self,
+        tolerance_pct: float | None = None,
+        *,
+        absolute_tolerance_kbd: float | None = None,
+    ) -> None:
+        """Set optional relative (fraction) and absolute (thousand bbl/day) limits.
+
+        The legacy name tolerance_pct retains its fractional meaning: a
+        caller-supplied 0.05 means 5.0 %, not 0.05 %. No default acceptance
+        limit is assumed. Both limits must be finite and nonnegative.
+        """
+        for name, value in (
+            ("tolerance_pct", tolerance_pct),
+            ("absolute_tolerance_kbd", absolute_tolerance_kbd),
+        ):
+            if value is not None and (not isfinite(value) or value < 0.0):
+                raise ValueError(f"{name} must be finite and nonnegative")
         self.tolerance_pct = tolerance_pct
+        self.absolute_tolerance_kbd = absolute_tolerance_kbd
 
     def compare(
         self,
@@ -226,13 +247,49 @@ class GoMCrosscheck:
             bsee_production_kbd: BSEE OGOR-A aggregate production (kbd).
 
         Returns:
-            Dict with keys:
-              eia_kbd, bsee_kbd, difference_kbd, pct_difference, within_tolerance.
+            Production and signed difference in kbd (thousand bbl/day).
+            pct_difference retains its legacy dimensionless fractional meaning;
+            it is None for a zero BSEE reference, including zero/zero.
+            within_tolerance is True (PASS), False (FAIL), or None
+            (NOT_EVALUATED). Applied tolerance inputs are included with units
+            in their key names. Either supplied limit can establish agreement;
+            only an absolute limit can evaluate unequal rates against zero.
+
+        Raises:
+            ValueError: Either production rate is negative or non-finite.
         """
+        for name, value in (
+            ("eia_production_kbd", eia_production_kbd),
+            ("bsee_production_kbd", bsee_production_kbd),
+        ):
+            if not isfinite(value) or value < 0.0:
+                raise ValueError(f"{name} must be finite and nonnegative")
+
         difference = eia_production_kbd - bsee_production_kbd
-        reference = bsee_production_kbd if bsee_production_kbd != 0.0 else 1.0
-        pct_diff = abs(difference) / abs(reference)
-        within_tolerance = pct_diff <= self.tolerance_pct
+        # PEP 485 (2015), "Symmetry": use the known BSEE reference magnitude.
+        # Division by zero has no relative-error value; never invent a divisor.
+        pct_diff = (
+            abs(difference) / bsee_production_kbd
+            if bsee_production_kbd != 0.0
+            else None
+        )
+        within_tolerance = None
+        if difference == 0.0:
+            within_tolerance = True
+        else:
+            applicable_checks = []
+            if self.absolute_tolerance_kbd is not None:
+                applicable_checks.append(abs(difference) <= self.absolute_tolerance_kbd)
+            if pct_diff is not None and self.tolerance_pct is not None:
+                applicable_checks.append(pct_diff <= self.tolerance_pct)
+            if applicable_checks:
+                within_tolerance = any(applicable_checks)
+
+        status = (
+            "NOT_EVALUATED"
+            if within_tolerance is None
+            else "PASS" if within_tolerance else "FAIL"
+        )
 
         return {
             "eia_kbd": eia_production_kbd,
@@ -240,4 +297,7 @@ class GoMCrosscheck:
             "difference_kbd": difference,
             "pct_difference": pct_diff,
             "within_tolerance": within_tolerance,
+            "status": status,
+            "relative_tolerance_fraction": self.tolerance_pct,
+            "absolute_tolerance_kbd": self.absolute_tolerance_kbd,
         }

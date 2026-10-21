@@ -145,7 +145,8 @@ class TestNorthDakotaFiscal:
 class TestGoMCrosscheck:
     @pytest.fixture
     def checker(self):
-        return GoMCrosscheck()
+        """Synthetic 5.0 % relative limit, chosen for these regression inputs."""
+        return GoMCrosscheck(tolerance_pct=0.05)
 
     def test_crosscheck_returns_dict(self, checker):
         result = checker.compare(
