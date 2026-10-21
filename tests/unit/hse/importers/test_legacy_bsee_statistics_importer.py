@@ -215,7 +215,7 @@ def test_csv_integral_decimal_counts_and_missing_rows(importer, tmp_path, field,
 @pytest.mark.parametrize("field", COUNT_FIELDS)
 @pytest.mark.parametrize(
     "text,expected",
-    [("0.0", 0), ("-1.0", -1), ("1e2", 100), ("9007199254740993.0", 9007199254740993)],
+    [("0.0", 0), (" +001.00 ", 1), ("9007199254740993.0", 9007199254740993)],
 )
 def test_integral_decimal_count_text_is_exact(importer, field, text, expected):
     """Integral decimals retain their value, including beyond float precision."""
@@ -223,6 +223,28 @@ def test_integral_decimal_count_text_is_exact(importer, field, text, expected):
 
     assert actual == expected
     assert type(actual) is int
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+def test_negative_counts_preserve_legacy_sign_behavior(importer, field):
+    """Legacy parsing preserves signs; count-range validation is separate work."""
+    assert importer.normalize_data({field: "-1.0"})[field] == -1
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+@pytest.mark.parametrize("text", ["1e2", "1e1000000", "1E+10000000", "0e9999999"])
+def test_exponents_rejected_before_integer_conversion(
+    importer, monkeypatch, field, text
+):
+    """Exponent text is invalid and must never reach costly integer expansion."""
+
+    def forbidden_conversion(value):
+        pytest.fail("Exponent text reached integer conversion")
+
+    monkeypatch.setitem(
+        importer.normalize_data.__globals__, "int", forbidden_conversion
+    )
+    assert importer.normalize_data({field: text})[field] is None
 
 
 @pytest.mark.parametrize("field", COUNT_FIELDS)

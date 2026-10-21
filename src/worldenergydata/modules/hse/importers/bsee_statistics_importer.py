@@ -1,8 +1,8 @@
 # ABOUTME: Concrete importer for BSEE safety statistics database CSV data
 # ABOUTME: Implements CSV parsing and field normalization for aggregated HSE statistics records
 
+import re
 from datetime import datetime
-from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -15,14 +15,11 @@ logger = get_logger(__name__)
 
 
 def _parse_integer_count(value: str) -> int:
-    """Accept finite integral decimal text without rounding or float conversion."""
-    try:
-        number = Decimal(value)
-    except InvalidOperation as exc:
-        raise ValueError("Invalid integer count") from exc
-    if not number.is_finite() or number != number.to_integral_value():
-        raise ValueError("Count must be finite and integral")
-    return int(number)
+    """Accept signed digits and zero fractions, without expanding exponents."""
+    text = value.strip()
+    if re.fullmatch(r"[+-]?\d+(?:\.0+)?", text) is None:
+        raise ValueError("Count must contain digits with an optional zero fraction")
+    return int(text.partition(".")[0])
 
 
 class BSEEStatisticsImporter(BaseImporter):
