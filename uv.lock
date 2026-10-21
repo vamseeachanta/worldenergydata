@@ -6992,7 +6992,7 @@ requires-dist = [
     { name = "scikit-learn", marker = "extra == 'safety-ml'", specifier = ">=1.7.2" },
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "scrapy", specifier = ">=2.16.0,<3.0" },
-    { name = "seaborn", specifier = ">=0.13.0,<1.0" },
+    { name = "seaborn", specifier = ">=0.13.2,<1.0" },
     { name = "selenium", specifier = ">=4.15.0,<5.0" },
     { name = "sentencepiece", marker = "extra == 'llm'", specifier = ">=0.1.99" },
     { name = "sentencepiece", marker = "extra == 'safety-bert'", specifier = ">=0.1.99" },
