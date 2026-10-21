@@ -86,6 +86,81 @@ class TestSearchWellFailures:
         monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
         assert client.search_wells(field_name="North") == []
 
+    @pytest.mark.parametrize(
+        "filter_name,column", [("field_name", "Field"), ("operator", "Licensee")]
+    )
+    @pytest.mark.parametrize("term", ["[", ".", "a+b"])
+    def test_partial_matches_are_literal(
+        self, client, monkeypatch, filter_name, column, term
+    ):
+        """Hand evaluation: only a contains the literal term; b has no punctuation.
+
+        Issue 1270 requires applying the requested predicate, not a regex.
+        """
+        frame = pd.DataFrame(
+            {"id": ["a", "b"], column: [f"North{term}area", "Northabarea"]}
+        )
+        monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
+        assert [r["id"] for r in client.search_wells(**{filter_name: term})] == ["a"]
+
+    @pytest.mark.parametrize(
+        "filter_name,column",
+        [("field_name", "Field"), ("operator", "Operator"), ("well_status", "Status")],
+    )
+    @pytest.mark.parametrize("term", ["none", "nan", "<NA>"])
+    def test_missing_values_never_match(
+        self, client, monkeypatch, filter_name, column, term
+    ):
+        """Hand evaluation: missing cells contain no text; only the literal cell matches.
+
+        None, NaN and pandas NA must not become searchable sentinel strings.
+        """
+        frame = pd.DataFrame(
+            {"id": ["a", "b", "c", "d"], column: [None, float("nan"), pd.NA, term]}
+        )
+        monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
+        assert [r["id"] for r in client.search_wells(**{filter_name: term})] == ["d"]
+
+    @pytest.mark.parametrize(
+        "filter_name,columns",
+        [
+            ("field_name", ["FieldCode", "FieldName"]),
+            ("operator", ["Operator", "Licensee"]),
+            ("well_status", ["WellStatus", "LicenceStatus"]),
+        ],
+    )
+    @pytest.mark.parametrize("empty_source", [False, True])
+    def test_ambiguous_filter_columns_raise(
+        self, client, monkeypatch, filter_name, columns, empty_source
+    ):
+        """Two candidate columns cannot identify one intended predicate (issue 1270).
+
+        Even an empty table must report the unsupported schema, not no matches.
+        """
+        frame = pd.DataFrame(
+            {c: [] if empty_source else ["requested"] for c in columns}
+        )
+        monkeypatch.setattr(client, "download_well_infrastructure", lambda **kw: frame)
+        with pytest.raises(CanadaValidationError, match="ambiguous") as exc:
+            client.search_wells(**{filter_name: "requested"})
+        assert exc.value.code == "AER_UNSUPPORTED_FILTER"
+        assert exc.value.context["filter"] == filter_name
+        assert exc.value.context["columns"] == columns
+
+    @pytest.mark.parametrize("filter_name", ["field_name", "operator", "well_status"])
+    @pytest.mark.parametrize("value", ["", "   ", False])
+    def test_invalid_filter_is_rejected_before_download(
+        self, client, monkeypatch, filter_name, value
+    ):
+        """An explicitly supplied blank/non-text predicate must not be dropped."""
+
+        def unexpected_download(**kw):
+            pytest.fail("Invalid filters must be rejected before retrieval")
+
+        monkeypatch.setattr(client, "download_well_infrastructure", unexpected_download)
+        with pytest.raises(CanadaValidationError, match=filter_name):
+            client.search_wells(**{filter_name: value})
+
 
 # ---------------------------------------------------------------------------
 # Init and defaults

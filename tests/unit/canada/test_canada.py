@@ -1,5 +1,6 @@
 """Tests for Canada module."""
 
+import pandas as pd
 import pytest
 
 from worldenergydata.canada.canada import Canada
@@ -193,3 +194,43 @@ def test_router_success_remains_completed(monkeypatch):
     assert result["status"] == "completed"
     assert result["data_collected"] == {"aer_wells": 1}
     assert result["errors"] == {}
+
+
+@pytest.mark.parametrize("failure", ["missing", "ambiguous", "download", "parse"])
+def test_search_failure_reaches_collection_status(monkeypatch, tmp_path, failure):
+    """Issue 1270, hand count: failed AER search = 0, one BCER well = 1.
+
+    Exercise the real search, provincial error envelope and Canada summary
+    together. No failed search can become a successful empty collection.
+    """
+    from worldenergydata.canada.aer.aer import AER
+    from worldenergydata.canada.aer.api_client import AERClient
+    from worldenergydata.canada.bcer.bcer import BCER
+
+    def download(**kw):
+        if failure == "download":
+            raise RuntimeError("synthetic download failure")
+        if failure == "parse":
+            raise pd.errors.ParserError("synthetic parse failure")
+        if failure == "ambiguous":
+            return pd.DataFrame({"FieldCode": ["X"], "FieldName": ["North"]})
+        return pd.DataFrame({"id": ["well"]})
+
+    with AERClient(cache_dir=tmp_path) as client:
+        monkeypatch.setattr(client, "download_well_infrastructure", download)
+        monkeypatch.setattr(
+            AER,
+            "_collect_wells",
+            lambda self, cfg: client.search_wells(field_name="North"),
+        )
+        monkeypatch.setattr(
+            BCER, "_collect_wells", lambda self, cfg: [{"id": "synthetic-well"}]
+        )
+        result = Canada().router({"provinces": ["ab", "bc"], "data_types": ["wells"]})[
+            "canada"
+        ]
+
+    assert result["status"] == "error"
+    assert result["data_collected"] == {"aer_wells": 0, "bcer_wells": 1}
+    assert set(result["errors"]) == {"aer_wells"}
+    assert result["errors"]["aer_wells"]

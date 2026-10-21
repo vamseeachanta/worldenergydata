@@ -807,9 +807,9 @@ class AERClient:
         Search for wells with filters.
 
         Args:
-            field_name: Filter by field name (partial match)
-            operator: Filter by operator name (partial match)
-            well_status: Filter by well status
+            field_name: Filter by literal field name text (case-insensitive substring)
+            operator: Filter by literal operator text (case-insensitive substring)
+            well_status: Filter by exact status text (case-insensitive)
             limit: Maximum records to return
             use_cache: Whether to use cached data
 
@@ -817,7 +817,9 @@ class AERClient:
             List of matching well records
 
         Raises:
-            CanadaValidationError: A requested filter has no matching column.
+            CanadaValidationError: A supplied filter is blank or not a string,
+                or does not identify exactly one source column. Only None
+                omits a filter. Missing cells never match a supplied filter.
             Exception: Download, parsing and filtering failures propagate to the caller.
         """
         logger.info(
@@ -825,59 +827,60 @@ class AERClient:
             f"status: {well_status}, limit: {limit}"
         )
 
+        filters = {
+            "field_name": field_name,
+            "operator": operator,
+            "well_status": well_status,
+        }
+        for name, value in filters.items():
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise CanadaValidationError(
+                    f"Cannot apply {name} filter: expected a nonblank string",
+                    code="AER_INVALID_FILTER",
+                    context={"filter": name},
+                )
+
         try:
             df = self.download_well_infrastructure(use_cache=use_cache)
 
-            # Apply filters
+            # Issue 1270: every supplied predicate must be applied unambiguously.
             mask = pd.Series(True, index=df.index, dtype=bool)
-
-            if field_name:
-                field_cols = [c for c in df.columns if "field" in c.lower()]
-                if not field_cols:
-                    raise CanadaValidationError(
-                        "Cannot apply field_name filter: no matching column",
-                        code="AER_UNSUPPORTED_FILTER",
-                        context={"filter": "field_name"},
-                    )
-                if field_cols:
-                    mask &= (
-                        df[field_cols[0]]
-                        .astype(str)
-                        .str.contains(field_name, case=False, na=False)
-                    )
-
-            if operator:
-                op_cols = [
+            column_terms = {
+                "field_name": ("field",),
+                "operator": ("operator", "licensee"),
+                "well_status": ("status",),
+            }
+            for name, value in filters.items():
+                if value is None:
+                    continue
+                columns = [
                     c
                     for c in df.columns
-                    if "operator" in c.lower() or "licensee" in c.lower()
+                    if any(term in c.lower() for term in column_terms[name])
                 ]
-                if not op_cols:
+                if not columns:
                     raise CanadaValidationError(
-                        "Cannot apply operator filter: no matching column",
+                        f"Cannot apply {name} filter: no matching column",
                         code="AER_UNSUPPORTED_FILTER",
-                        context={"filter": "operator"},
+                        context={"filter": name},
                     )
-                if op_cols:
-                    mask &= (
-                        df[op_cols[0]]
-                        .astype(str)
-                        .str.contains(operator, case=False, na=False)
+                if len(columns) > 1:
+                    raise CanadaValidationError(
+                        f"Cannot apply {name} filter: ambiguous columns",
+                        code="AER_UNSUPPORTED_FILTER",
+                        context={"filter": name, "columns": columns},
                     )
 
-            if well_status:
-                status_cols = [c for c in df.columns if "status" in c.lower()]
-                if not status_cols:
-                    raise CanadaValidationError(
-                        "Cannot apply well_status filter: no matching column",
-                        code="AER_UNSUPPORTED_FILTER",
-                        context={"filter": "well_status"},
+                # Nullable strings preserve missing cells instead of matching
+                # their Python sentinel spellings as if they were source data.
+                values = df[columns[0]].astype("string")
+                if name == "well_status":
+                    predicate = values.str.upper().eq(value.upper()).fillna(False)
+                else:
+                    predicate = values.str.contains(
+                        value, case=False, na=False, regex=False
                     )
-                if status_cols:
-                    mask &= (
-                        df[status_cols[0]].astype(str).str.upper()
-                        == well_status.upper()
-                    )
+                mask &= predicate
 
             filtered = df[mask].head(limit)
             return filtered.to_dict("records")
