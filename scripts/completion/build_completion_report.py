@@ -17,10 +17,15 @@ Run:
     .venv/bin/python scripts/completion/build_completion_report.py
 
 Output: reports/completion/index.html (self-contained, no external assets).
+
+For the retained KC candidate, use ``--input-set v50_kc --output-dir <directory>``.
+Candidate output is separate and does not qualify a change to the frozen default.
+See ``docs/modules/bsee/analysis/production/kc_completion_inputs.md``.
 """
 
 from __future__ import annotations
 
+import argparse
 import html
 import statistics
 from collections import defaultdict
@@ -89,6 +94,19 @@ def _load() -> list[dict]:
     header = rows[0]
     # A row is a real well record iff it carries an API well number (col 3).
     return [dict(zip(header, r)) for r in rows[1:] if r[3]]
+
+
+def load_report_data(input_set: str = "v30") -> list[dict]:
+    """Select a retained input explicitly; the frozen default is unchanged."""
+    if input_set == "v30":
+        return _load()
+    if input_set == "v50_kc":
+        from worldenergydata.lower_tertiary.v30_reproducer import load_v50_kc_drilling
+
+        # Optional measurements stay missing rather than becoming NaN statistics.
+        frame = load_v50_kc_drilling()
+        return frame.astype(object).where(frame.notna(), None).to_dict("records")
+    raise ValueError(f"Unknown completion input set: {input_set}")
 
 
 def _num(values: list) -> list[float]:
@@ -178,7 +196,7 @@ def compute(data: list[dict]) -> dict:
     }
 
 
-def compute_reconciliation(data: list[dict]) -> dict:
+def compute_reconciliation(data: list[dict], benchmark: dict | None = None) -> dict:
     """Reconcile the live WED extract against the frozen World Oil April 2026 article benchmark.
 
     Rolls the per-lease workbook records up to WO *development* granularity
@@ -188,6 +206,7 @@ def compute_reconciliation(data: list[dict]) -> dict:
     ``wed_only`` (e.g. Big Foot). For paired rows, ``match`` means the D&C-day
     totals agree exactly; any non-zero day delta is flagged ``investigate``.
     """
+    benchmark = WO_APRIL_2026_ARTICLE if benchmark is None else benchmark
     by_dev: dict[str, dict] = defaultdict(
         lambda: {"bores": 0, "drill": 0.0, "comp": 0.0}
     )
@@ -201,12 +220,12 @@ def compute_reconciliation(data: list[dict]) -> dict:
             b["comp"] += d["COMPLETION_DAYS"]
 
     # WO developments in article order, then any WED-only development alphabetically.
-    order = list(WO_APRIL_2026_ARTICLE) + sorted(set(by_dev) - set(WO_APRIL_2026_ARTICLE))
+    order = list(benchmark) + sorted(set(by_dev) - set(benchmark))
 
     rows = []
     for dev in order:
         wed = by_dev.get(dev)
-        wo = WO_APRIL_2026_ARTICLE.get(dev)
+        wo = benchmark.get(dev)
         wed_bores = wed["bores"] if wed else None
         wed_drill = int(round(wed["drill"])) if wed else None
         wed_comp = int(round(wed["comp"])) if wed else None
@@ -249,8 +268,8 @@ def compute_reconciliation(data: list[dict]) -> dict:
     }
     wed_total["dc"] = wed_total["drill"] + wed_total["comp"]
     wo_total = {
-        "bores": sum(v["bores"] for v in WO_APRIL_2026_ARTICLE.values()),
-        "dc": sum(v["d_and_c"] for v in WO_APRIL_2026_ARTICLE.values()),
+        "bores": sum(v["bores"] for v in benchmark.values()),
+        "dc": sum(v["d_and_c"] for v in benchmark.values()),
     }
     # Like-for-like: only developments BOTH sides carry (drop WED-only Big Foot and
     # WO-only Buckskin). This is the honest apples-to-apples reconciliation; the raw
@@ -500,36 +519,50 @@ def _signed(v) -> str:
 
 def _recon_note(r: dict) -> str:
     dev, s = r["dev"], r["status"]
-    if dev == "Buckskin":
+    if dev == "Buckskin" and s == "wo_only":
         return (
-            "Identity recovered (2026-07): Keathley Canyon 785/828/829/830/871/872, "
-            "leases G25806/G25813/G25814/G25815/G25823/G32650, ~25 wellbores in "
-            "<code>reports/bsee/buckskin/buckskin_war_activity.csv</code>. Not yet in "
-            "the extract &mdash; the pipeline's BSEE slice is shelf-only, so Keathley "
-            "Canyon deepwater must be ingested before its D&amp;C days reconcile "
+            "Absent from the frozen V30 workbook. KC ingest is retained separately "
+            "in the opt-in v50_kc input set, including lease G25823. "
+            "Replacement of the frozen default remains subject to validation "
             "(tracked in "
             '<a href="https://github.com/vamseeachanta/worldenergydata/issues/842">#842</a>).'
         )
     if dev == "Big Foot":
         return "In the WED extract; the WO article excluded it from its comparison set."
     if s == "days_match":
+        difference = r["delta_bores"]
+        direction = "additional" if difference > 0 else "fewer"
         return (
-            f"D&amp;C days reconcile exactly, but WED has {-r['delta_bores']} fewer "
-            "wellbores &mdash; WO counts extra zero-day sidetracks. A bore-count gap, "
-            "not a day gap."
+            f"D&amp;C days reconcile exactly, but WED has {abs(difference)} {direction} "
+            "wellbores. The bore-count difference requires population review."
         )
     if s == "match":
         return "Exact match (days and wellbore count)."
     if s == "investigate":
         return (
-            "Same wellbore count, different day total &mdash; recompletion-interval "
-            "accounting; chase well-by-well."
+            "Day totals differ; compare the well population, source vintage and "
+            "day-count basis before attributing a cause."
         )
     return ""
 
 
-def render_verification(recon: dict, data: list[dict]) -> str:
+def render_verification(recon: dict, data: list[dict], input_set: str = "v30") -> str:
     wed, wo = recon["wed_total"], recon["wo_total"]
+    kc = input_set == "v50_kc"
+    source_name = (
+        "drilling_and_completion_days_v21_kc.csv"
+        if kc
+        else "drilling_and_completion_days.xlsx"
+    )
+    source_note = (
+        "Retained KC candidate (v50_kc), not a fresh WAR activity-code extraction. "
+        "Producer count and validation against the current rig-day basis: "
+        "NOT_EVALUATED. Producer counts cannot be derived from this D&amp;C table. "
+        "This comparison does not approve replacement of V30 defaults."
+        if kc
+        else "Frozen V30 workbook; the opt-in KC candidate is separate."
+    )
+    absent = ", ".join(r["dev"] for r in recon["rows"] if r["status"] == "wo_only")
 
     summary_rows = ""
     for r in recon["rows"]:
@@ -560,8 +593,12 @@ def render_verification(recon: dict, data: list[dict]) -> str:
         "<td></td>"
         '<td class="nte">The developments both sources carry &mdash; the honest '
         "apples-to-apples reconciliation: WED runs "
-        f'{(wed_c["dc"] - wo_c["dc"]) / wo_c["dc"] * 100:+.1f}% and at/below the '
-        "benchmark on every matched field.</td></tr>"
+        + (
+            f'{(wed_c["dc"] - wo_c["dc"]) / wo_c["dc"] * 100:+.1f}% in aggregate.'
+            if wo_c["dc"]
+            else "Percentage difference NOT_EVALUATED: zero benchmark total."
+        )
+        + " Individual field differences remain visible.</td></tr>"
     )
     summary_rows += (
         '<tr class="tot"><td>Raw total (mixed sets)</td><td></td>'
@@ -570,8 +607,8 @@ def render_verification(recon: dict, data: list[dict]) -> str:
         f'<td class="val">{wed["bores"]:,}</td>'
         f'<td class="val">{wed["dc"]:,}</td>'
         "<td></td><td></td><td></td>"
-        '<td class="nte">Spans different field sets (WED +Big&nbsp;Foot, WO +Buckskin); '
-        "the ~2% closeness is coincidental offsetting, <em>not</em> like-for-like. "
+        '<td class="nte">Union of the source populations; use the common-development '
+        "row for the like-for-like comparison. "
         f'WED = {wed["drill"]:,} drilling + {wed["comp"]:,} completion.</td></tr>'
     )
 
@@ -617,6 +654,12 @@ def render_verification(recon: dict, data: list[dict]) -> str:
 
 <div class="wrap">
 
+  <p class="note">{source_note}</p>
+  <h2>Revision history</h2>
+  <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>1</td><td>2026-10-19</td><td>Explicit input selection and
+  population-aware reconciliation to expose retained KC data.</td></tr></tbody></table>
+
   <h2>How to read this</h2>
   <p class="note"><b>Metric.</b> D&amp;C&nbsp;days = drilling + completion days
   (spud&rarr;total-depth plus total-depth&rarr;final-completion). Wellbores = unique
@@ -625,13 +668,11 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   D&amp;C total so it is directly comparable to the WO benchmark.<br>
   <b>Like-for-like.</b> The headline reconciliation is the {recon['common_n']}
   developments both sources carry (WED {wed_c['dc']:,} vs WO {wo_c['dc']:,} D&amp;C days).
-  WED-only Big&nbsp;Foot and WO-only Buckskin are shown as separate, non-comparable line
-  items; the raw grand totals ({wed['dc']:,} vs {wo['dc']:,}) span different field sets,
-  so a near-match there is coincidental offsetting, not agreement.<br>
-  <b>V30 vs V50.</b> Drilling/completion days and wellbore counts are derived from
-  BSEE Well Activity Reports and are <em>identical</em> under V30 and the V50
-  latest-OGOR rerun &mdash; V50 extends only the production window (economics), not
-  these day counts. So this reconciliation is version-independent.</p>
+  Developments present on only one side remain separate line items.
+  The raw grand totals ({wed['dc']:,} vs {wo['dc']:,}) describe their own populations.<br>
+  <b>Input basis.</b> {source_note} Day totals are read as stored; no calendar-to-rig-day
+  conversion is performed. Benchmark agreement is not independent validation of
+  the extraction methodology.</p>
 
   <h2>Field-level reconciliation (WED vs World Oil April 2026 article)</h2>
   <div class="table-wrap"><table>
@@ -646,16 +687,15 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   </table></div>
   <p class="legend"><span class="match">Match</span> = days <em>and</em> wellbore count agree &middot;
   <span class="days_match">Days match / bore gap</span> = D&amp;C days agree but wellbore counts differ &middot;
-  <span class="investigate">Investigate</span> = same wellbore count, day gap to chase &middot;
+  <span class="investigate">Investigate</span> = day totals differ &middot;
   <span class="wo_only">WO only</span> = in the article, not yet in the WED extract &middot;
   <span class="wed_only">WED only</span> = in the extract, excluded from the article set.
   &Delta; = WED minus WO.</p>
 
   <h2>Well-by-well listing ({wed['bores']} wellbores)</h2>
   <p class="note">Every wellbore in the WED extract with its BSEE milestones &mdash;
-  the line-by-line audit trail behind each field total above. Buckskin's wellbores are
-  absent here &mdash; its identity is recovered (see its row above), but the Keathley
-  Canyon deepwater data is not yet ingested (#842); every other WO development is present.</p>
+  the line-by-line audit trail behind each field total above.
+  Benchmark developments absent from the selected input: {html.escape(absent) or 'none'}.</p>
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Development</th><th>Lease</th><th>Well</th><th class="val">API</th>
@@ -666,11 +706,12 @@ def render_verification(recon: dict, data: list[dict]) -> str:
   </table></div>
 
   <h2>Provenance</h2>
-  <p class="note">WED figures are computed deterministically from the frozen workbook
-  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx"><code>drilling_and_completion_days.xlsx</code></a>
-  (BSEE Well Activity Reports, V30 methodology). World Oil April 2026 article figures are transcribed
+  <p class="note">WED figures are computed deterministically from the selected input
+  <a href="https://github.com/vamseeachanta/worldenergydata/blob/main/docs/modules/bsee/analysis/production/FDAS_V30/{source_name}"><code>{source_name}</code></a>.
+  World Oil April 2026 article figures are transcribed
   verbatim from World Oil Lower-Tertiary Table&nbsp;1 (BSEE-derived summary thru
-  Nov&nbsp;2025) and are held fixed as an external benchmark.</p>
+  Nov&nbsp;2025) and are held fixed as a historical comparator. Agreement does
+  not independently validate the underlying extraction.</p>
 
   <footer>
     Part of <a href="../capabilities/">worldenergydata &middot; Open Energy-Data
@@ -683,19 +724,32 @@ def render_verification(recon: dict, data: list[dict]) -> str:
 """
 
 
-def main() -> None:
-    data = _load()
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input-set", choices=("v30", "v50_kc"), default="v30")
+    parser.add_argument("--output-dir", type=Path)
+    args = parser.parse_args(argv)
+    if args.input_set == "v50_kc" and args.output_dir is None:
+        parser.error("v50_kc requires --output-dir to preserve the frozen report")
+    output_dir = args.output_dir or _OUT.parent
+    if args.input_set == "v50_kc" and output_dir.resolve() == _OUT.parent.resolve():
+        parser.error("v50_kc output must be separate from the frozen report directory")
+    data = load_report_data(args.input_set)
     c = compute(data)
     recon = compute_reconciliation(data)
-    _OUT.parent.mkdir(parents=True, exist_ok=True)
-    _OUT.write_text(render(c, recon), encoding="utf-8")
-    _OUT_VERIFY.write_text(render_verification(recon, data), encoding="utf-8")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    page = render_verification(recon, data, input_set=args.input_set)
+    # The candidate index uses the same sourced comparison rather than V30-only prose.
+    (output_dir / "index.html").write_text(
+        page if args.input_set == "v50_kc" else render(c, recon), encoding="utf-8"
+    )
+    (output_dir / "verification.html").write_text(page, encoding="utf-8")
     print(
-        f"Wrote {_OUT.relative_to(_REPO)} — {c['wells']} wells, {c['fields']} fields, "
+        f"Wrote index.html — {c['wells']} wells, {c['fields']} fields, "
         f"median drill {c['drill']['median']:.0f}d / completion {c['comp']['median']:.0f}d."
     )
     print(
-        f"Wrote {_OUT_VERIFY.relative_to(_REPO)} — WED D&C {recon['wed_total']['dc']:,}d "
+        f"Wrote verification.html — WED D&C {recon['wed_total']['dc']:,}d "
         f"vs WO {recon['wo_total']['dc']:,}d across {len(recon['rows'])} developments."
     )
 
