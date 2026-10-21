@@ -51,6 +51,48 @@ def test_fractional_employee_hours():
     assert incidence_rate(1, 12_500.5) == pytest.approx(400_000 / 25_001)
 
 
+@pytest.mark.parametrize(
+    "count_type",
+    [np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64],
+)
+def test_numpy_integral_case_count(count_type):
+    """Synthetic: NumPy integer scalars retain 7 * 200,000 / 400,000 = 3.5."""
+    rate = incidence_rate(count_type(7), 400_000)
+
+    assert rate == 3.5
+    assert type(rate) is float
+
+
+def test_numpy_aggregated_case_count():
+    """Synthetic: an integer array sum pools 4 + 3 cases before normalization."""
+    cases = np.array([4, 3], dtype=np.int64).sum()
+
+    assert incidence_rate(cases, 400_000) == 3.5
+
+
+@pytest.mark.parametrize("count_type", [np.int64, np.uint64])
+def test_numpy_zero_cases_with_known_exposure(count_type):
+    """Synthetic: signed and unsigned zero counts retain a measured zero rate."""
+    assert incidence_rate(count_type(0), 50_000) == 0.0
+
+
+@pytest.mark.parametrize(
+    "cases, expected",
+    [(np.int64(2**63 - 1), 2.0**62), (np.uint64(2**64 - 1), 2.0**63)],
+    ids=["signed-maximum", "unsigned-maximum"],
+)
+def test_numpy_large_counts_avoid_fixed_width_overflow(cases, expected):
+    """Synthetic: count * 200,000 / 400,000 = count / 2.
+
+    At each integer maximum, this rounds to the indicated float power of two.
+    Multiplication must occur after conversion to an arbitrary-precision integer.
+    """
+    rate = incidence_rate(cases, 400_000)
+
+    assert rate == expected
+    assert type(rate) is float
+
+
 @pytest.mark.parametrize("exposure_type", [np.float16, np.float32, np.float64])
 def test_numpy_exposure_uses_builtin_float(exposure_type):
     """Synthetic: 1 * 200,000 / 40,000 = 5.0, including binary16 exposure."""
@@ -86,7 +128,21 @@ def test_unrepresentable_rate_raises_value_error(cases, hours):
         incidence_rate(cases, hours)
 
 
-@pytest.mark.parametrize("cases", [-1, 1.5, True, False, "7", None])
+@pytest.mark.parametrize(
+    "cases",
+    [
+        -1,
+        np.int64(-1),
+        1.5,
+        np.float64(7),
+        True,
+        False,
+        np.bool_(True),
+        np.bool_(False),
+        "7",
+        None,
+    ],
+)
 def test_invalid_case_count(cases):
     """Counts must be nonnegative integers; these are API validation cases."""
     with pytest.raises(ValueError, match="incident_count"):
