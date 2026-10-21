@@ -48,15 +48,19 @@ field metadata and an exact `field_name` link in the selected well. Depth
 selection accepts nonnegative finite values only with unit `m` or `ft` and a
 stated datum. The field value remains a fallback otherwise. Each depth and
 coordinate selection records `measured`, `default`, or `missing` in
-`value_origins`; those origins are also included in FieldConcept `data_source`.
+`value_origins`; qualified offline bathymetry depths record `bathymetry`.
+Those origins are also included in FieldConcept `data_source`.
 Coordinates and their spatial reference remain in enrichment metadata because
 FieldConcept has no coordinate fields. Existing metadata can be enriched and
 then passed to the screening chain; no production or drilling CAPEX source is
 established by this adapter.
 
-Geoscience Australia bathymetry remains excluded: no small direct point-value
-route is verified by this slice. No grids are downloaded, and the independent
-bathymetry implementation is neither modified nor imported.
+The Geoscience Australia AusBathyTopo 2023 adapter accepts caller-supplied
+offline point evidence with a source digest, UTC retrieval timestamp and sourced
+marine classification. It supplies an estimated depth only at identical WGS84
+query coordinates and preserves qualified measured depths. Source-byte integrity
+is not verified by the adapter. No grids are downloaded; live point extraction
+and a reviewed GDA94-to-WGS84 transformation remain unestablished.
 
 ## Reproduction
 

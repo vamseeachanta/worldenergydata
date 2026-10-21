@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import math
 from typing import Any, Dict, Iterable, Optional
 
@@ -30,7 +31,8 @@ def enrich_field_metadata(
 
     No averaging or automatic field-name matching is performed. Coordinates are
     retained with their datum in this metadata; FieldConcept has no coordinate
-    fields. A measured depth is eligible only with a known unit and datum.
+    fields. A depth is eligible only with a known unit and datum. Grid-derived depths
+    retain their bathymetry origin and extraction provenance.
     """
     meta = dict(field_meta)
     name = meta.get("field_name", meta.get("field"))
@@ -54,10 +56,22 @@ def enrich_field_metadata(
     if matches:
         well = matches[0]
         measured = _measured_depth(well)
-        if measured is not None:
+        grid_estimate = well.get("water_depth_origin") == "bathymetry"
+        keep_measured = grid_estimate and origins["water_depth_m"] == "measured"
+        if measured is not None and not keep_measured:
             meta["water_depth_m"] = measured
             meta["water_depth_datum"] = well["water_depth_datum"]
-            origins["water_depth_m"] = "measured"
+            origins["water_depth_m"] = (
+                "bathymetry"
+                if well.get("water_depth_origin") == "bathymetry"
+                else "measured"
+            )
+            if origins["water_depth_m"] == "bathymetry":
+                meta["bathymetry_provenance"] = copy.deepcopy(
+                    well.get("bathymetry_provenance", {})
+                )
+            else:
+                meta.pop("bathymetry_provenance", None)
         if _has_coordinates(well):
             meta.update(
                 latitude=well["latitude"],
@@ -71,16 +85,26 @@ def enrich_field_metadata(
     meta["source"] = (
         source + "; " + ", ".join(f"{key}={value}" for key, value in origins.items())
     )
+    if origins["water_depth_m"] == "bathymetry":
+        provenance = meta.get("bathymetry_provenance", {})
+        meta["source"] += (
+            f"; bathymetry_product={provenance.get('product', 'unknown')}"
+            f"; source_sha256={provenance.get('source_sha256', 'unverified')}"
+            "; grid estimate; source digest unverified"
+        )
     return meta
 
 
 def _has_coordinates(well: Dict[str, Any]) -> bool:
     lat, lon = well.get("latitude"), well.get("longitude")
     sr = well.get("spatial_reference")
-    # Other datums remain missing because no transformation to GDA94 is established.
+    # NOPTA layer metadata (2026-10-11): EPSG:4283/GDA94. GA/DEA AusBathyTopo
+    # 2023 product information: EPSG:4326/WGS84, at
+    # https://knowledge.dea.ga.gov.au/data/external-data/ga-ausbathytopo-250m/
+    # Both are retained in their original datum; no transformation is implied.
     return bool(
-        sr
-        and sr.get("wkid") == 4283
+        isinstance(sr, dict)
+        and sr.get("wkid") in {4283, 4326}
         and isinstance(lat, (int, float))
         and isinstance(lon, (int, float))
         and not isinstance(lat, bool)
@@ -96,11 +120,11 @@ def _fallback_origins(meta: Dict[str, Any], depth: Any) -> Dict[str, str]:
     previous = meta.get("value_origins", {})
     datum = meta.get("water_depth_datum")
     measured_depth = (
-        previous.get("water_depth_m") == "measured"
+        previous.get("water_depth_m") in {"measured", "bathymetry"}
         and isinstance(datum, str)
         and bool(datum.strip())
     )
-    depth_origin = "measured" if measured_depth else "default"
+    depth_origin = previous["water_depth_m"] if measured_depth else "default"
     coordinates = "measured" if previous.get("coordinates") == "measured" else "default"
     return {
         "water_depth_m": depth_origin if depth is not None else "missing",
