@@ -43,11 +43,15 @@ Its `__init__.py` exports `BatchDrillingEconomics`, `BSEEBatchDetector`,
 cost calculations, data models and historical grouping. Runtime regression
 tests are in `tests/drilling/` and `tests/unit/drilling/`.
 
-The member intentionally distributes its DRAFT knowledge pack with the wheel;
+The member distributes all Markdown under `worldenergydata/drilling/docs/`,
+currently its DRAFT knowledge pack, with the wheel;
 see the [distribution boundary](../../packages/worldenergydata-drilling/README.md#knowledge-pack-distribution-boundary).
 `tests/unit/drilling/test_packaging.py` builds a wheel and checks exact pack
-bytes and drilling-only Python ownership. Existing package-data rules include
-the pack without modification. These packaging checks do not independently
+bytes, exact non-Python membership and drilling-only Python ownership. Recursive
+package-data rules require the declared `setuptools>=62.3` build floor.
+The `main` branch's `detector-contracts.md` and matching detector implementation
+await integration; both Markdown documents will then ship, each retaining its
+own status and qualification limits. These packaging checks do not independently
 validate the engineering methods or clear the pack for engineering use.
 The pack's open qualification limits remain authoritative. Source-distribution
 inspection and release evidence are later work under #1347.
