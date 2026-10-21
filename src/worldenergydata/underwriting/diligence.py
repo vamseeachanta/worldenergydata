@@ -376,9 +376,10 @@ def render_html(pack: dict, repository_url: str = "../../") -> str:
         )
     parts.append("</table>")
     for key, section in pack["sections"].items():
+        noun = "observation" if section["observation_count"] == 1 else "observations"
         parts += [
             f'<section id="{key}"><h2>{_e(section["title"])}</h2>',
-            f'<p>{_e(section["status"])}; {section["observation_count"]} observations.</p>',
+            f'<p>{_e(section["status"])}; {section["observation_count"]} {noun}.</p>',
             f'<p>{_e(section["caution"])}</p>',
         ]
         if section["observations"]:
@@ -458,11 +459,11 @@ def write_pack(
     pack = build_pack(json.loads(raw, object_pairs_hook=_unique_json_members))
     report = render_html(pack, repository_url)
     pack["input_sha256"] = hashlib.sha256(raw).hexdigest()
+    report_bytes = report.encode("utf-8")
+    summary_bytes = (
+        json.dumps(pack, indent=2, ensure_ascii=False, allow_nan=False) + "\n"
+    ).encode("utf-8")
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=False)
-    (output_dir / "index.html").write_text(report, encoding="utf-8", newline="\n")
-    (output_dir / "summary.json").write_text(
-        json.dumps(pack, indent=2, ensure_ascii=False, allow_nan=False) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+    (output_dir / "index.html").write_bytes(report_bytes)
+    (output_dir / "summary.json").write_bytes(summary_bytes)

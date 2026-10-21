@@ -397,3 +397,50 @@ def test_committed_worked_answer_matches_generator(tmp_path):
         assert (EXAMPLE.parent / name).read_bytes() == (
             tmp_path / "pack" / name
         ).read_bytes()
+
+
+@pytest.mark.parametrize("field", ["asset", "revision_note"])
+def test_unencodable_input_does_not_create_output(payload, monkeypatch, field):
+    payload[field] = "\ud800"
+    raw = json.dumps(payload).encode("utf-8")
+    if field == "revision_note":
+        # Isolate a JSON-only encoding failure after HTML encoding succeeds.
+        monkeypatch.setattr(
+            "worldenergydata.underwriting.diligence.render_html", lambda *args: "report"
+        )
+    created = []
+    monkeypatch.setattr(Path, "read_bytes", lambda self: raw)
+    monkeypatch.setattr(Path, "mkdir", lambda *args, **kwargs: created.append(True))
+    monkeypatch.setattr(
+        Path, "write_text", lambda self, text, **kw: text.encode("utf-8")
+    )
+    monkeypatch.setattr(Path, "write_bytes", lambda self, data: len(data))
+    with pytest.raises(UnicodeEncodeError):
+        write_pack(Path("input.json"), Path("output"))
+    assert not created
+
+
+def test_example_checkout_attributes_preserve_lf():
+    paths = [
+        f"examples/underwriting/{name}"
+        for name in ("input.json", "index.html", "summary.json")
+    ]
+    result = subprocess.run(
+        ["git", "check-attr", "text", "eol", "--", *paths],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    )
+    assert result.stdout.splitlines() == [
+        line for path in paths for line in (f"{path}: text: set", f"{path}: eol: lf")
+    ]
+
+
+def test_observation_count_grammar(payload):
+    report = render_html(build_pack(payload))
+    assert "1 observation.</p>" in report
+    assert "2 observations.</p>" in report
+    assert "0 observations.</p>" in report
+    assert "1 observations" not in report
