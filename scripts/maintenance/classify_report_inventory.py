@@ -231,11 +231,11 @@ def classify_tree(root, builder=BUILDER):
     for pattern, gates, evidence in selection_rows(root, builder):
         if all((root / gate).exists() for gate in gates):
             for path in sorted(root.glob(pattern), key=inventory_key):
-                if path.is_file():
+                if path.is_file() and path.suffix == ".html":
                     selected.setdefault(path.relative_to(root).as_posix(), evidence)
     rows = []
     for path in sorted((root / "reports").rglob("*.html"), key=inventory_key):
-        if not path.is_file():
+        if not path.is_file() or path.suffix != ".html":
             continue
         relative = path.relative_to(root).as_posix()
         replacement = replacement_evidence(path, root)
@@ -243,7 +243,9 @@ def classify_tree(root, builder=BUILDER):
             classification, evidence = "superseded", replacement
         elif '<p class="unverified">' in path.read_text(encoding="utf-8"):
             classification = "unverified"
-            evidence = "explicit unverified notice; source-data reproduction not established"
+            evidence = (
+                "explicit unverified notice; source-data reproduction not established"
+            )
         elif relative in selected:
             classification, evidence = "current", selected[relative]
         elif re.search(r"(^|[_-])(demo|test)(?=[_.-])", path.name):
@@ -289,7 +291,13 @@ def main(argv=None):
     else:
         counts = Counter(row["classification"] for row in classify_tree(ROOT, BUILDER))
         print("| Classification | HTML files |\n| --- | --- |")
-        for classification in ("current", "superseded", "unverified", "one-off", "undetermined"):
+        for classification in (
+            "current",
+            "superseded",
+            "unverified",
+            "one-off",
+            "undetermined",
+        ):
             print(f"| {classification} | {counts[classification]} |")
         print(
             "\n| Repository-relative selection glob | Existence gates | "
