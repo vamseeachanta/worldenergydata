@@ -1,0 +1,404 @@
+{
+  "fields": {
+    "anchor": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 475.245,
+      "pa_per_well_musd": 31.683,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 5180,
+      "water_depth_m": 1578.864,
+      "wellbores": 15
+    },
+    "big_foot": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 1207.4272,
+      "pa_per_well_musd": 31.7744,
+      "pa_reason": null,
+      "projected_cop_year": 2038,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 5200,
+      "water_depth_m": 1584.96,
+      "wellbores": 38
+    },
+    "cascade_chinook": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 636.8656,
+      "pa_per_well_musd": 45.4904,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 8200,
+      "water_depth_m": 2499.36,
+      "wellbores": 14
+    },
+    "jack_st_malo": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 2920.292,
+      "pa_per_well_musd": 40.004,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 7000,
+      "water_depth_m": 2133.6,
+      "wellbores": 73
+    },
+    "julia": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 360.036,
+      "pa_per_well_musd": 40.004,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 7000,
+      "water_depth_m": 2133.6,
+      "wellbores": 9
+    },
+    "kaskida": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 248.024,
+      "pa_per_well_musd": 35.432,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 6000,
+      "water_depth_m": 1828.8000000000002,
+      "wellbores": 7
+    },
+    "north_platte": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 384.99440000000004,
+      "pa_per_well_musd": 27.4996,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 4265,
+      "water_depth_m": 1299.972,
+      "wellbores": 14
+    },
+    "shenandoah": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 793.9048,
+      "pa_per_well_musd": 34.5176,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 5800,
+      "water_depth_m": 1767.8400000000001,
+      "wellbores": 23
+    },
+    "stones": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 1131.548,
+      "pa_per_well_musd": 51.434,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 9500,
+      "water_depth_m": 2895.6000000000004,
+      "wellbores": 22
+    },
+    "tiber": {
+      "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+      "bsee_decom_band": null,
+      "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+      "pa_estimate_musd": 53.783,
+      "pa_per_well_musd": 26.8915,
+      "pa_reason": null,
+      "projected_cop_year": null,
+      "provenance": {
+        "cost_reference_year": 2025,
+        "generated_on": "2026-10-20",
+        "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+        "region": "gom",
+        "source_digests": {
+          "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+          "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+          "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+        },
+        "wellbore_source": "config/ong_field_development/fields_registry.yml"
+      },
+      "regulations": [
+        {
+          "name": "well plugging",
+          "reference": "BSEE NTL 2018-N02"
+        },
+        {
+          "name": "structure removal",
+          "reference": "30 CFR 250.1725"
+        },
+        {
+          "name": "pipeline decommission",
+          "reference": "30 CFR 250.1750"
+        }
+      ],
+      "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+      "water_depth_ft": 4132,
+      "water_depth_m": 1259.4336,
+      "wellbores": 2
+    }
+  }
+}

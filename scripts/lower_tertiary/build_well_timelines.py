@@ -75,7 +75,7 @@ def _pretty(v):
     return p[0]
 
 
-def facts_to_well(w: dict, field: dict) -> dict:
+def facts_to_well(w: dict, field: dict, decommissioning: dict | None = None) -> dict:
     drill = w.get("drilling_rig_days") or 0
     compl = w.get("completion_rig_days") or 0
     total = drill + compl
@@ -190,7 +190,7 @@ def facts_to_well(w: dict, field: dict) -> dict:
             ]
             or ["none to date"],
         },
-        {"t": "Abandon", "big": "—", "li": ["still producing", "no P&A"]},
+        abandon_card(w, decommissioning),
     ]
 
     fid = w["field_id"]
@@ -219,6 +219,26 @@ def facts_to_well(w: dict, field: dict) -> dict:
         "pGates": p_gates,
         "pSpans": p_spans,
         "cards": cards,
+    }
+
+
+def abandon_card(well: dict, outlook: dict | None) -> dict:
+    """Use the field-depth sidecar estimate; do not infer a P&A filing."""
+    from html import escape
+
+    outlook = outlook or {}
+    cost = outlook.get("pa_per_well_musd")
+    depth = outlook.get("water_depth_ft")
+    status = escape(str(well.get("status") or "well status not recorded"))
+    return {
+        "t": "Abandon · outlook",
+        "big": f"${cost:.1f}M est." if cost is not None else "—",
+        "li": [
+            f"Field depth {depth:,} ft" if depth is not None else "Field depth unavailable",
+            "Uncalibrated parametric P&A; not BSEE or filed cost",
+            f"{status} · P&A filing status not evaluated",
+            '<a href="../norms/abandon.html">P&A context →</a>',
+        ],
     }
 
 
@@ -275,13 +295,18 @@ def _economics_context():
 def main():
     data = json.loads(FACTS.read_text())
     fields = data["fields"]
+    decom_path = HERE.parent / "_decommissioning.json"
+    decom_fields = (
+        json.loads(decom_path.read_text()).get("fields", {})
+        if decom_path.exists() else {}
+    )
     we, econ_cfg, loader, rates_dir, revenue_map, field_facts, norms_path = (
         _economics_context()
     )
     rows = []
     for w in data["wells"]:
         field = fields[w["field_id"]]
-        well = facts_to_well(w, field)
+        well = facts_to_well(w, field, decom_fields.get(w["field_id"]))
         # --- economics card payload (issue #849) ---
         ff = field_facts.get(w["field_id"], {})
         econ = we.compute_well_economics(

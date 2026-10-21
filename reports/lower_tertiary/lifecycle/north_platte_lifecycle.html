@@ -331,6 +331,16 @@
             <h3>Field performance · BSEE life-to-date</h3>
             <dl class="kv" id="f-performance"></dl>
           </div>
+          <div class="card" id="f-decommissioning-card" hidden>
+            <h3>Abandon outlook · decommissioning</h3>
+            <dl class="kv" id="f-decommissioning"></dl>
+            <p id="f-decommissioning-basis"></p>
+            <ul id="f-decommissioning-regulations"></ul>
+            <p id="f-decommissioning-regulatory-status"></p>
+            <p><a href="../decommissioning/pa-liability-wave.html">P&amp;A liability context →</a>
+              · <a href="../decommissioning/regional-liability.html">Regional liability →</a>
+              · <a href="norms/abandon.html">Abandon engineering context →</a></p>
+          </div>
           <div class="card econ-card" id="f-economics-card" hidden>
             <h3>Field economics · monthly cash-flow model</h3>
             <p>Monthly cash-flow detail, NPV narrative, and price-sensitivity context. Headline figures remain in the performance card above.</p>
@@ -632,7 +642,47 @@ const FIELD = {
       "state": "unavailable"
     }
   ],
-  "performance": null
+  "performance": null,
+  "decommissioning": {
+    "basis": "Uncalibrated parametric model estimate, not BSEE; wells only. Cost factors assumed, based on previous experience; independent calibration is NOT_EVALUATED. Not a field-specific budget or engineering design basis.",
+    "bsee_decom_band": null,
+    "bsee_reason": "BSEE decom totals unavailable or unreadable; no liability band established",
+    "pa_estimate_musd": 384.99440000000004,
+    "pa_per_well_musd": 27.4996,
+    "pa_reason": null,
+    "projected_cop_year": null,
+    "provenance": {
+      "cost_reference_year": 2025,
+      "generated_on": "2026-10-20",
+      "model": "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py",
+      "region": "gom",
+      "source_digests": {
+        "config/ong_field_development/fields_registry.yml": "68aa02020a5a9b97671392868bc89469b226988dbf93c7db829bbdda6151842e",
+        "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/_regulations_data.py": "d6699f8ad48db749f95038cf3c762ea907a8b39c50a0c69ee32b5f03b89e806e",
+        "packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py": "f638ac0578ae99738f5c4efce71ad3c69cfb0b8de6a5de334d139a88dadde286",
+        "reports/lower_tertiary/lifecycle/_facts.json": "fe42bfbaf37a630693e840c68c26fd709deadab6f586e96358504e882d3f2d97"
+      },
+      "wellbore_source": "config/ong_field_development/fields_registry.yml"
+    },
+    "regulations": [
+      {
+        "name": "well plugging",
+        "reference": "BSEE NTL 2018-N02"
+      },
+      {
+        "name": "structure removal",
+        "reference": "30 CFR 250.1725"
+      },
+      {
+        "name": "pipeline decommission",
+        "reference": "30 CFR 250.1750"
+      }
+    ],
+    "regulatory_status": "NOT_EVALUATED: reference index only; applicability and current requirements need review",
+    "water_depth_ft": 4265,
+    "water_depth_m": 1299.972,
+    "wellbores": 14
+  }
 };
 
 /* ---------------- render ---------------- */
@@ -911,6 +961,36 @@ if (FIELD.performance) {
   $("f-performance").innerHTML = rows.map(([k,v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("");
   $("f-performance-card").hidden = false;
   $("f-prov").textContent += " · Performance: BSEE OGOR-A per-well benchmark + economics (life-to-date, not full-cycle); EUR = curated recoverable reserves (#973)";
+}
+
+if (FIELD.decommissioning) {
+  const d = FIELD.decommissioning;
+  const list = $("f-decommissioning");
+  const row = (label, value) => {
+    const term = document.createElement("dt");
+    const detail = document.createElement("dd");
+    term.textContent = label;
+    detail.textContent = value == null ? "—" : String(value);
+    list.append(term, detail);
+  };
+  const money = value => value == null ? "—" : `$${Number(value).toFixed(1)}M`;
+  row("Projected COP · supplied outlook, not decline-fit", d.projected_cop_year);
+  row("Recorded wellbores", d.wellbores);
+  row("Field water depth (ft)", d.water_depth_ft);
+  row("P&A · wells-only parametric estimate", money(d.pa_estimate_musd));
+  if (d.pa_reason) row("P&A coverage", d.pa_reason);
+  if (d.bsee_decom_band) {
+    for (const [band, value] of Object.entries(d.bsee_decom_band)) row(`BSEE ${band}`, money(value));
+  } else row("BSEE liability band", d.bsee_reason);
+  $("f-decommissioning-basis").textContent = d.basis;
+  for (const regulation of d.regulations || []) {
+    const item = document.createElement("li");
+    item.textContent = `${regulation.name} · ${regulation.reference}`;
+    $("f-decommissioning-regulations").append(item);
+  }
+  $("f-decommissioning-regulatory-status").textContent = d.regulatory_status;
+  $("f-decommissioning-card").hidden = false;
+  $("f-prov").textContent += ` · Decommissioning: ${d.provenance.model}, ${d.provenance.region}, reference year ${d.provenance.cost_reference_year}; inputs and digests in _decommissioning.json`;
 }
 
 if (FIELD.economics_href) {

@@ -244,6 +244,11 @@ def facts_to_field(f: dict) -> dict:
     ticks = list(range(start, end + 1, 5))
 
     gates = []
+    if cop is not None:
+        gates.append({
+            "year": cop, "phase": "abandon", "lab": "Projected COP",
+            "dt": str(g["projected_cop_year"]), "kind": "sec",
+        })
     if disc is not None:
         gates.append(
             {
@@ -559,11 +564,18 @@ def main():
     if perf_path.exists():
         perf_fields = json.loads(perf_path.read_text()).get("fields", {})
 
+    decom_path = HERE / "_decommissioning.json"
+    decom_fields = (
+        json.loads(decom_path.read_text()).get("fields", {})
+        if decom_path.exists() else {}
+    )
+
     fields = []
     for f in facts:
         field = facts_to_field(f)
         field["norms"] = norms_chips.get(f["id"], [])
         field["performance"] = perf_fields.get(f["id"])
+        field["decommissioning"] = decom_fields.get(f["id"])
         out = HERE / f"{f['id']}_lifecycle.html"
         out.write_text(render(field))
         fields.append(field)

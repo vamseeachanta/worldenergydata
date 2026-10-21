@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Field and well Abandon outlook</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:850px;margin:2rem auto;padding:0 1rem;line-height:1.6}
+table{border-collapse:collapse}td,th{border:1px solid #888;padding:.5rem;text-align:left}
+code{overflow-wrap:anywhere}a{color:inherit}
+@media(prefers-color-scheme:dark){body{background:#14202b;color:#e5edf5}}
+</style>
+<h1>Field and well Abandon outlook</h1>
+<p>The Abandon stage exposes the supplied projected cessation-of-production (COP)
+year, an uncalibrated wells-only P&amp;A estimate, regulatory reference topics and
+explicit data gaps. These outputs provide context for further engineering;
+neither a field budget nor regulatory compliance is established.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>Initial</td><td>2026-10-20</td><td>The Abandon outlook connects field and
+well timelines to decommissioning context with input traceability.</td></tr></table>
+<p>Table 1. Document revisions.</p>
+<h2>Inputs and method</h2>
+<p><code>reports/lower_tertiary/lifecycle/_facts.json</code> supplies field water
+depth and projected COP. <code>config/ong_field_development/fields_registry.yml</code>
+supplies <code>validated_economics.wellbores</code>. The count includes recorded
+wellbores; it does not establish the remaining inventory requiring abandonment.</p>
+<p>The conversion is d = water depth in feet × 0.3048 metres/foot, from
+<a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf">NIST SP 811 (2008), Appendix B.8, foot</a>.
+The repository's <code>DecommissioningCostEstimator</code> computes
+C = (base + depth rate × d) × regional multiplier for a well without a weight term.
+The illustrative field total is recorded wellbores × C.</p>
+<p>The cost-factor source is
+<code>packages/worldenergydata-decommissioning/src/worldenergydata/decommissioning/cost_model.py</code>,
+<code>_COST_FACTORS["well_p_and_a"]</code> and <code>_REGION_MULTIPLIERS["gom"]</code>.
+The factors are assumed, based on previous experience. Published calibration
+evidence is absent: engineering cost qualification is <strong>NOT_EVALUATED</strong>.
+The displayed cost reference year is inherited from that model; no inflation
+adjustment is applied.</p>
+<h2>Worked example</h2>
+<p>A synthetic input has water depth 1,000 ft and two recorded wellbores.
+The converted depth is 304.8 m. Using the repository assumptions (base 8 MUSD,
+depth rate 0.015 MUSD/m and regional multiplier 1), the per-well estimate is
+displayed as 12.6 MUSD and the aggregate as 25.1 MUSD. The exact independent
+arithmetic is written in <code>test_hand_calculation</code> in
+<code>tests/unit/lower_tertiary/test_decom_outlook_contract.py</code>.
+The comparison establishes arithmetic agreement only, not predictive accuracy.</p>
+<h2>Reproduction</h2>
+<pre><code>python scripts/lower_tertiary/build_decom_outlook.py
+python scripts/lower_tertiary/build_lifecycle_posters.py
+python scripts/lower_tertiary/build_well_timelines.py</code></pre>
+<p>Run from the repository root with the repository packages and their dependencies
+available. The generated sidecar echoes inputs, model reference year and SHA-256
+digests of the facts, count registry, model and regulatory index. It is consumed
+by both poster and well builders and copied by the static-site builder.</p>
+<h2>Limits and engineering handoff</h2>
+<ul>
+<li>Missing or invalid depth withholds the estimate. Missing count withholds the
+field total; explicit zero is preserved. Missing sidecars hide the field card
+and leave well estimates unavailable.</li>
+<li>BSEE liability bands remain null without usable source data and qualified
+canonical-field attribution. A populated source alone does not establish a band.</li>
+<li>Regulatory topics and references are read through <code>get_regulations("gom")</code>;
+thresholds and deadlines are not copied. Current applicability and compliance
+require review of the governing requirements.</li>
+<li>COP is a supplied projection, not a newly fitted decline or late-life forecast.
+P&amp;A filing status is not inferred from production status.</li>
+<li>Host removal, pipelines, subsea equipment, cost escalation and engineering
+qualification are excluded. The Abandon context page provides the route to
+P&amp;A tubular, structural removal and marine-lift engineering in digitalmodel.</li>
+<li>Poster decommissioning links resolve in the built public site; the Abandon
+norms link also resolves within the committed lifecycle directory.</li>
+</ul>
+</html>
