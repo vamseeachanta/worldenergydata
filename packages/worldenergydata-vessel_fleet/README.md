@@ -82,3 +82,13 @@ records. No yield strength, allowable stress or grade conversion is assigned.
 Consumers require the applicable specification edition and material certificate
 before engineering use. The packaged data is the basis of the ratio example,
 not independent certification of the original catalog dimensions.
+
+### Lift-riser template and flow screens
+
+The additive `models.lift_design_basis` module provides an unfilled SI worksheet,
+field/source requirements and validated operating/survival records.
+`lift_flow_screening` provides bounded settling, deposition, vertical-suspension,
+airlift-energy and local slugging screens. Every empirical coefficient and
+validity range requires caller-supplied evidence; no calibration or design
+acceptance is implied. See the [public-source guide and field inventory](../../docs/modules/vessel_fleet/lift-riser-screening.html)
+for equations, limitations and independent synthetic arithmetic examples.

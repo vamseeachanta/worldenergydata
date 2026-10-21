@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lift-riser design-basis template and flow screens</title>
+<style>
+body{font:16px/1.5 system-ui,sans-serif;max-width:1120px;margin:2rem auto;padding:0 1rem;color:#182b38}
+h1,h2{color:#124861}table{border-collapse:collapse;width:100%;margin:1rem 0}
+td,th{border:1px solid #b8cad3;padding:.5rem;text-align:left;vertical-align:top}
+th{background:#eaf2f6}caption{caption-side:bottom;text-align:left;padding:.4rem 0;color:#425a66}
+code,pre{background:#f2f5f7}pre{padding:1rem;overflow:auto}.limit{border-left:4px solid #b27b22;padding:1rem;background:#fff7e8}
+a{color:#126186}td{overflow-wrap:anywhere}
+</style></head><body>
+<h1>Lift-riser design-basis template and flow screens</h1>
+<p>Generic public-source code in <code>worldenergydata.vessel_fleet</code>, beside the existing riser models.
+No equipment record, empirical calibration dataset or qualified design is supplied.
+Scope follows <a href="https://github.com/vamseeachanta/worldenergydata/issues/1138">the public riser issue</a>
+and <a href="https://github.com/vamseeachanta/worldenergydata/pull/1534">the merged model layout</a>.</p>
+<p class="limit"><strong>Screening only.</strong> Successful validation establishes required fields and
+mathematical consistency. It does not establish source truth, correlation applicability, code compliance,
+structural adequacy or deep-sea transport capacity. Numeric domains are caller-attested; source URLs are
+not fetched or authenticated. No network or solver is used by these modules.</p>
+<h2>Design-basis worksheet</h2>
+<pre>from worldenergydata.vessel_fleet.models.lift_design_basis import (
+    LiftDesignBasis, blank_template, field_requirements,
+)
+worksheet = blank_template()  # deliberately unfilled; validation will reject it
+requirements = field_requirements(include_structural=True)
+schema = LiftDesignBasis.model_json_schema()
+# Populate worksheet with sourced SI quantities, then:
+# basis = LiftDesignBasis.model_validate(worksheet)</pre>
+<p>Every physical scalar uses <code>{"value": ..., "unit": ..., "source": ...}</code>.
+Units must match exactly; no automatic conversion is performed. Evidence should identify a stable document
+reference, revision, locator, datum, condition and intended use. Missing input is <code>None</code> in the
+worksheet, not zero. The completed model requires finite numbers and nonblank evidence.</p>
+<p>Both operating and survival cases are required. Each retains strength/stability, fatigue/vibration,
+transport/pressure-transient, pump/shutdown and motion/clearance check categories with caller-supplied
+criterion references. These are review tasks, not passed checks. Additional check categories are allowed;
+duplicate names and omitted baseline categories are rejected. Category selection is template organization
+informed by S5 and S6, not a standards-derived completeness claim.</p>
+<p>One common environment/motion envelope is referenced by both cases. Different case envelopes require
+separate basis records. Equivalent string/pump properties refer to distributed schedules and performance
+curves. Auxiliary geometry uses SI inputs; it is not silently converted from the existing catalog's inch
+fields. No catalog values or material grades are imported. Installation, blockage, emergency disconnect,
+shutdown transients, detailed buoyancy, corrosion, erosion and coupled response require further definition.</p>
+<h2>Field units and required evidence</h2>
+<p>Positive physical quantities must exceed zero. Wave height, current speed, motion amplitudes,
+pump installation depth and case loads/flow permit zero where the explicit condition supports it.
+Absolute pressure cannot be negative. Unit <code>1</code> below denotes labels/containers, not a physical
+scalar; a nested quantity retains the unit stated by its parent field.</p>
+<table><thead><tr><th>Section.field</th><th>Unit</th><th>Required source or definition</th></tr></thead><tbody>
+<tr><td><code>environment.water_depth_m</code></td><td>m</td><td>Bathymetry and datum</td></tr>
+<tr><td><code>environment.water_density_kg_m3</code></td><td>kg/m3</td><td>Water property basis</td></tr>
+<tr><td><code>environment.significant_wave_height_m</code></td><td>m</td><td>Metocean spectrum and return condition</td></tr>
+<tr><td><code>environment.peak_wave_period_s</code></td><td>s</td><td>Metocean spectrum; period retained for calm cases</td></tr>
+<tr><td><code>environment.current_speed_m_s</code></td><td>m/s</td><td>Governing current profile and direction</td></tr>
+<tr><td><code>motion.surge_amplitude_m</code></td><td>m</td><td>Motion response and heading</td></tr>
+<tr><td><code>motion.sway_amplitude_m</code></td><td>m</td><td>Motion response and heading</td></tr>
+<tr><td><code>motion.heave_amplitude_m</code></td><td>m</td><td>Motion response and compensation</td></tr>
+<tr><td><code>motion.roll_amplitude_rad</code></td><td>rad</td><td>Rotational response and axes</td></tr>
+<tr><td><code>motion.pitch_amplitude_rad</code></td><td>rad</td><td>Rotational response and axes</td></tr>
+<tr><td><code>motion.yaw_amplitude_rad</code></td><td>rad</td><td>Rotational response and axes</td></tr>
+<tr><td><code>motion.response_period_s</code></td><td>s</td><td>Response time history or spectrum</td></tr>
+<tr><td><code>string.length_m</code></td><td>m</td><td>String tally and end geometry</td></tr>
+<tr><td><code>string.outer_diameter_m</code></td><td>m</td><td>Section drawing</td></tr>
+<tr><td><code>string.inner_diameter_m</code></td><td>m</td><td>Section drawing</td></tr>
+<tr><td><code>string.mass_per_length_kg_m</code></td><td>kg/m</td><td>Mass and buoyancy schedule</td></tr>
+<tr><td><code>string.young_modulus_pa</code></td><td>Pa</td><td>Material property qualification</td></tr>
+<tr><td><code>string.allowable_stress_pa</code></td><td>Pa</td><td>Applicable criterion and material basis</td></tr>
+<tr><td><code>pump.installation_depth_m</code></td><td>m</td><td>Pump arrangement and vertical datum</td></tr>
+<tr><td><code>pump.head_m</code></td><td>m</td><td>Slurry pump curve and reference density</td></tr>
+<tr><td><code>pump.volume_flow_m3_s</code></td><td>m3/s</td><td>Duty flow and solids basis</td></tr>
+<tr><td><code>pump.power_w</code></td><td>W</td><td>Pump efficiency and duty curve</td></tr>
+<tr><td><code>case.name</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>case.kind</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>case.source</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>case.environment_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>case.motion_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>case.internal_pressure_pa</code></td><td>Pa</td><td>Absolute pressure envelope and datum</td></tr>
+<tr><td><code>case.external_pressure_pa</code></td><td>Pa</td><td>Absolute pressure envelope and datum</td></tr>
+<tr><td><code>case.top_tension_n</code></td><td>N</td><td>Tensioning arrangement and load condition</td></tr>
+<tr><td><code>case.mixture_velocity_m_s</code></td><td>m/s</td><td>Transport duty or explicit zero-flow state</td></tr>
+<tr><td><code>case.checks</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.basis_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.environment</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.motion</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.string</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.pump</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.auxiliary_lines</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.auxiliary_lines_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>basis.cases</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>auxiliary_line.length_m</code></td><td>m</td><td>String tally and end geometry</td></tr>
+<tr><td><code>auxiliary_line.outer_diameter_m</code></td><td>m</td><td>Section drawing</td></tr>
+<tr><td><code>auxiliary_line.inner_diameter_m</code></td><td>m</td><td>Section drawing</td></tr>
+<tr><td><code>auxiliary_line.mass_per_length_kg_m</code></td><td>kg/m</td><td>Mass and buoyancy schedule</td></tr>
+<tr><td><code>auxiliary_line.young_modulus_pa</code></td><td>Pa</td><td>Material property qualification</td></tr>
+<tr><td><code>auxiliary_line.allowable_stress_pa</code></td><td>Pa</td><td>Applicable criterion and material basis</td></tr>
+<tr><td><code>auxiliary_line.function</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>auxiliary_line.attachment_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>check.name</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>check.criterion_reference</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>quantity.value</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>quantity.unit</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr>
+<tr><td><code>quantity.source</code></td><td>1</td><td>Caller basis record must identify this field and its evidence; nested quantities retain their named SI units</td></tr></tbody><caption>Table 1. Model field inventory; no engineering input values are provided.</caption></table>
+<h2>Flow screening interfaces</h2>
+<p>Import from <code>worldenergydata.vessel_fleet.lift_flow_screening</code>. Every function requires a
+<code>Calibration(model, source_url, source_locator, conditions, ranges)</code>. The ranges mapping contains
+an <code>Interval(lower, upper)</code> for every numeric argument under its exact SI name. Settling also
+requires <code>particle_reynolds</code>. Extra/missing fields, nonfinite bounds, reversed intervals,
+out-of-domain inputs and a mismatched model discriminator are rejected. Inclusive point domains are valid
+for a single sourced condition. No default gravity, density, viscosity, empirical coefficient or limit is used.</p>
+<table><thead><tr><th>Function / model</th><th>Relation and return</th><th>Required applicability and rejection</th></tr></thead><tbody>
+<tr><td><code>settling_velocity_m_s</code><br>isolated_sphere</td><td>w = sqrt(4 g d (rho_s/rho_l - 1)/(3 Cd)); m/s</td>
+<td>S1. Heavier isolated sphere in Newtonian liquid. Required Cd and its Reynolds domain must match
+the computed Re = rho_l w d / mu. No hindered settling, particle interaction or wall correction.</td></tr>
+<tr><td><code>critical_deposition_velocity_m_s</code><br>horizontal_slurry</td><td>v = FL sqrt(2 g D (rho_s/rho_l - 1)); m/s</td>
+<td>S2. Horizontal transport only. Required FL and evidence must cover pipe/particle diameters,
+fluid properties, concentration and size distribution. Reject d &gt;= D or rho_s &lt;= rho_l.
+Operation needs a separately established margin above the threshold. This is not a vertical limit.</td></tr>
+<tr><td><code>minimum_vertical_velocity_m_s</code><br>vertical_slip</td><td>j = (1-C) w + required v_s; m/s</td>
+<td>Continuity and phase-slip identity: j = (1-C) v_l + C v_s, w = v_l - v_s.
+C is in-situ volume fraction; effective slip is required evidence for this slurry. Reject nonpositive
+required solids speed or C outside (0,1). Isolated settling is not automatically valid slip.</td></tr>
+<tr><td><code>airlift_screen</code><br>isothermal_airlift</td><td>Pin = Pout + rho g depth;<br>
+W = Pout Qg_out ln(Pin/Pout);<br>Ql = eta W/(rho g lift)</td>
+<td>S3. Ideal isothermal gas and constant-density liquid; equal reservoir/outlet surface pressure.
+Gas rate is at outlet absolute pressure and the same temperature. Hydrostatic-equivalent injection
+pressure is assumed, not solved. Supplied eta includes all expansion-to-lift losses, not compressor
+efficiency. Reject zero lift, efficiency outside (0,1], or injection below submerged length.
+Returns pressure [Pa], gas power [W], and energy-limited liquid flow [m3/s]. No solids or deep-pressure
+nonideality; no hydraulic operating point.</td></tr>
+<tr><td><code>slugging_screen</code><br>vertical_drift_flux</td><td>alpha = jg / (C0 (jg+jl) + Vgj)</td>
+<td>S4. Steady local upward gas/liquid fluxes; C0, drift, transition alpha and upper alpha all require
+calibration. Returns void fraction and bubble_indicated or slugging_possible. At transition equality,
+slugging is flagged. Above the calibrated maximum, classification is refused. No universal void-fraction
+cutoff, churn/annular prediction, solids extension or severe-riser-slugging stability result.</td></tr>
+</tbody><caption>Table 2. Screening equations and scope. Density [kg/m3], length [m], viscosity [Pa s],
+velocity [m/s], acceleration [m/s2]; fractions and coefficients are dimensionless except drift [m/s].</caption></table>
+<p>Calibration conditions must identify geometry, inclination, phase properties, particle shape/size
+distribution, pressure and temperature. They are text evidence, not machine-verified physical facts.
+Changing those conditions requires a new qualified calibration. Passing an arbitrary broad range does
+not make a model applicable. These independent screens do not constitute a coupled three-phase model.</p>
+<h2>Public sources and constants</h2>
+<table><thead><tr><th>ID / public source</th><th>Formula or field rationale</th><th>Constants, coefficients and limits</th></tr></thead><tbody>
+<tr><td>S1. <a href="https://eng.libretexts.org/Bookshelves/Civil_Engineering/Slurry_Transport_(Miedema)/04%3A_The_Terminal_Settling_Velocity_of_Particles/4.04%3A_Terminal_Settling_Velocity_Equations">Slurry Transport, section 4.4</a></td>
+<td>Sphere drag-force balance and Reynolds definition.</td><td>4/3 from sphere volume/area and dynamic-pressure factor.
+Cd and Reynolds limits are required inputs; no empirical value is copied.</td></tr>
+<tr><td>S2. <a href="https://eng.libretexts.org/Bookshelves/Civil_Engineering/Slurry_Transport_(Miedema)/07%3A_The_Delft_Head_Loss_and_Limit_Deposit_Velocity_Framework/7.08%3A_The_Limit_Deposit_Velocity">Slurry Transport, section 7.8</a></td>
+<td>Deposit Froude-number definition.</td><td>2 is part of that definition; FL and its entire calibration range are supplied.</td></tr>
+<tr><td>S3. <a href="https://www.sciencedirect.com/science/article/pii/S0017931024002059">CO2 capture using gas-lift pumps operating under two-phase flow conditions (2024)</a>, equation (5)</td>
+<td>Isothermal expansion-to-lift efficiency.</td><td>Efficiency is supplied, expressed as a fraction rather than percent;
+the physical interval (0,1] follows the energy ratio. No fitted loss model is bundled.</td></tr>
+<tr><td>S4. <a href="https://doi.org/10.3390/fluids5040216">Overview of Void Fraction Measurement Techniques, Databases and Correlations for Two-Phase Flow in Small Diameter Channels (2020)</a>, equation (6)</td>
+<td>Drift-flux relation and superficial-flux definitions.</td><td>C0, drift and regime thresholds are supplied.
+0 and 1 are phase-fraction mathematical endpoints, not empirical transition limits.</td></tr>
+<tr><td>S5. <a href="https://www.mdpi.com/2075-163X/12/10/1319">Minerals 12(10), 1319 (2022)</a></td>
+<td>Hydraulic lifting component rationale for string and pump fields.</td><td>No design constant or acceptance value imported.</td></tr>
+<tr><td>S6. <a href="https://www.mdpi.com/2077-1312/12/5/788">Journal of Marine Science and Engineering 12(5), 788 (2024)</a></td>
+<td>Environment, platform-motion and internal-flow excitation rationale.</td><td>No design constant or acceptance value imported.</td></tr>
+<tr><td>Continuity and geometry identities</td><td>Phase-volume averaging, slip definition, hollow-section ordering,
+positive dimensional quantities, finite ranges and unique labels.</td><td>0/1 phase endpoints and unit coefficients
+are mathematical definitions. No standards-derived factor or allowable is assigned.</td></tr>
+</tbody><caption>Table 3. Public source register. No licensed standard or private survey is reproduced.</caption></table>
+<h2>Independent arithmetic checks</h2>
+<p>All numerical fixtures are synthetic test inputs, not values attributed to the cited publications.
+They verify formulas through hand arithmetic and do not calibrate a physical system.</p>
+<table><thead><tr><th>Screen</th><th>Hand calculation</th><th>Expected output</th></tr></thead><tbody>
+<tr><td>Sphere settling</td><td>sqrt(4 x 10 x 0.003 x (2000/1000 - 1)/(3 x 1)); Re = 1000 x .2 x .003/.001</td><td>0.2 m/s; Re 600</td></tr>
+<tr><td>Horizontal deposition</td><td>1.5 sqrt(2 x 10 x .2 x (2000/1000 - 1))</td><td>3 m/s</td></tr>
+<tr><td>Vertical minimum</td><td>(1 - .1) x .2 + .02</td><td>0.20 m/s</td></tr>
+<tr><td>Airlift energy</td><td>Pin = 100000 + 1000 x 10 x 10; Ql = .2 x 1000 ln(2)/(1000 x 10 x 2)</td><td>200000 Pa; 0.01 ln(2) m3/s</td></tr>
+<tr><td>Local slug screen</td><td>.3/(1 x (.3+.7)+.2)</td><td>0.25; equality at a synthetic .25 threshold flags possible slugging</td></tr>
+</tbody><caption>Table 4. Independent arithmetic fixtures with explicit synthetic provenance.</caption></table>
+<h2>Verification and follow-up</h2>
+<p>The tests first establish missing-module failures, then check arithmetic, nonfinite and boolean input,
+signs, unit labels, field coverage, provenance, range/model mismatch and geometry/order errors.
+No physical performance result is claimed. Required follow-up includes sourced site/calibration inputs,
+case-specific environmental response, distributed string/pump definition, coupled three-phase transport,
+erosion, structural response and transient assessments. Packages 5 through 8 remain later work.</p>
+</body></html>
