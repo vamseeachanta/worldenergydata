@@ -927,12 +927,23 @@ def build_field_benchmark(available_viz: dict[str, bool]) -> list[tuple]:
     return []
 
 
+def build_production_forecast(available_viz: dict[str, bool]) -> list[tuple]:
+    """Copy the self-contained synthetic probabilistic production example."""
+    source = REPORTS / "production_forecast" / "index.html"
+    if source.exists():
+        destination = PUBLIC / "production_forecast"
+        destination.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination / "index.html")
+    return []
+
+
 # Registry of per-domain builders. Add new domains here (key == reports/<domain>/
 # subdir name) as their surfaces come online. ``build(domains=...)`` iterates this.
 DOMAINS = {
     "lower_tertiary": build_lower_tertiary,
     "field_development": build_field_development,
     "completion": build_completion,
+    "production_forecast": build_production_forecast,
     "marine_safety": build_marine_safety,
     "hse": build_hse,
     "decommissioning": build_decommissioning,
@@ -1171,6 +1182,11 @@ def build_index() -> None:
         cards.append(
             '<a class="card" href="well-path.html"><h3>Julia Well Paths (3D) &rarr;</h3>'
             "<p>Interactive 3D directional surveys, two renderers from one data contract.</p></a>"
+        )
+    if (PUBLIC / "production_forecast" / "index.html").exists():
+        cards.append(
+            '<a class="card" href="production_forecast/"><h3>Probabilistic Production &rarr;</h3>'
+            "<p>Synthetic decline uncertainty, production bands and horizon economics.</p></a>"
         )
     if (PUBLIC / "completion" / "index.html").exists():
         cards.append(

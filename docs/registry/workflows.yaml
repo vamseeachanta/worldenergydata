@@ -149,6 +149,31 @@ workflows:
             eur_bbl: 22675.444679663216
     test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[production-forecast-arps]
     runtime: offline
+  - id: production-forecast-probabilistic
+    basename: production_forecast
+    title: Synthetic probabilistic production and horizon economics
+    input: examples/workflows/production-forecast-probabilistic/input.yml
+    outputs:
+      - examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_run_matrix.csv
+      - examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_fan.csv
+      - examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_summary.json
+      - examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_report.html
+    assertions:
+      json:
+        - path: examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_summary.json
+          equals:
+            screening_status: NOT_EVALUATED
+            data_basis: synthetic
+            sampler: builtin.naive-mc
+            n_samples: 500
+            seed: 42
+      csv:
+        - path: examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_run_matrix.csv
+          row_count: 500
+        - path: examples/workflows/production-forecast-probabilistic/outputs/production_forecast_probabilistic_fan.csv
+          row_count: 24
+    test: tests/workflows/test_durable_workflows.py::test_registry_workflow_outputs[production-forecast-probabilistic]
+    runtime: offline
   - id: marine-safety-stats
     basename: marine_safety
     title: Marine safety incident statistics from bundled CSV data

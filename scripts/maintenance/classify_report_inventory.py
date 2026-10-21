@@ -184,6 +184,7 @@ def selection_rows(root, builder=BUILDER):
     # build_decommissioning:878-899; pages dictionary supplies selected filenames.
     for name in literal_tables(functions["build_decommissioning"])[0]:
         add("build_decommissioning", f"reports/decommissioning/{name}")
+    add("build_production_forecast", "reports/production_forecast/index.html")
     return rows
 
 

@@ -50,7 +50,7 @@ class ForecastResult:
     qi: float
     Di: float
     b: float
-    r_squared: float
+    r_squared: float | None
     eur_bbl: float
     forecast_df: pd.DataFrame
     lower_ci: Optional[pd.DataFrame] = field(default=None)
@@ -68,6 +68,71 @@ class ArpsDeclineCurve:
     >>> result = adc.fit(production_df, model="hyperbolic")
     >>> fig = adc.plot(production_df, result)
     """
+
+    def simulate(
+        self,
+        *,
+        qi: float,
+        Di: float,
+        b: float,
+        economic_limit: float,
+        months: int,
+    ) -> ForecastResult:
+        """Forward Arps simulation with exact monthly volumes to abandonment.
+
+        Rates are bbl/month, Di is nominal 1/month and b is dimensionless.
+        EUR is future recovery from time zero, not booked reserves. Unlike a
+        fitted result, the simulation has no R squared. Month-end rates are
+        zero after abandonment; the final producing month can be partial.
+
+        Source: ResInsight, Decline Curve Analysis, rate-time and cumulative
+        production sections (accessed 2026):
+        https://resinsight.org/plot-window/declinecurveanalysis/
+        b=0 and b=1 are the exponential and harmonic mathematical limits.
+        """
+        values = (qi, Di, b, economic_limit)
+        if not all(
+            isinstance(v, (int, float)) and not isinstance(v, bool) and np.isfinite(v)
+            for v in values
+        ):
+            raise ValueError("decline parameters must be finite")
+        if qi <= 0 or Di <= 0 or economic_limit <= 0 or not 0 <= b <= 1:
+            raise ValueError("require qi, Di, economic_limit > 0 and 0 <= b <= 1")
+        if isinstance(months, bool) or not isinstance(months, int) or months <= 0:
+            raise ValueError("months must be a positive integer")
+        model = "exponential" if b == 0 else "harmonic" if b == 1 else "hyperbolic"
+        log_ratio = max(np.log(qi) - np.log(economic_limit), 0)
+        cutoff = log_ratio / Di if b == 0 else np.expm1(b * log_ratio) / (b * Di)
+        times = np.arange(months + 1, dtype=float)
+        producing_times = np.minimum(times, cutoff)
+
+        def cumulative(t):
+            if b == 0:
+                return qi / Di * -np.expm1(-Di * t)
+            if b == 1:
+                return qi / Di * np.log1p(Di * t)
+            return qi / (Di * (1 - b)) * -np.expm1((b - 1) / b * np.log1p(b * Di * t))
+
+        totals = cumulative(producing_times)
+        # log1p preserves the exponential limit when b is near zero.
+        rates = (
+            qi * np.exp(-Di * times[1:])
+            if b == 0
+            else qi * np.exp(-np.log1p(b * Di * times[1:]) / b)
+        )
+        rates[times[1:] >= cutoff] = 0
+        frame = pd.DataFrame(
+            {
+                "month": times[1:].astype(int),
+                "rate_bbl": rates,
+                "volume_bbl": np.diff(totals),
+                "cumulative_bbl": totals[1:],
+            }
+        )
+        eur = float(cumulative(cutoff))
+        if not np.isfinite(eur) or not np.isfinite(frame.to_numpy()).all():
+            raise ValueError("decline parameters overflow the simulation")
+        return ForecastResult(model, qi, Di, b, None, eur, frame)
 
     def fit(
         self,
@@ -185,11 +250,14 @@ class ArpsDeclineCurve:
             )
         )
 
+        r_squared_label = (
+            "not fitted" if result.r_squared is None else f"{result.r_squared:.3f}"
+        )
         fig.update_layout(
             title=(
                 f"Arps Decline Curve — {result.model.capitalize()}"
                 f"  |  qi={result.qi:,.0f} bbl/mo"
-                f"  |  R²={result.r_squared:.3f}"
+                f"  |  R²={r_squared_label}"
                 f"  |  EUR={result.eur_bbl:,.0f} bbl"
             ),
             xaxis_title="Month",
