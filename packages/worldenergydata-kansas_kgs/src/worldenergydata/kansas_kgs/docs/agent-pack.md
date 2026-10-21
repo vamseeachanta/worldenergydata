@@ -5,8 +5,8 @@
 | Module | `kansas_kgs` |
 | Repository | `worldenergydata` |
 | Package scope | `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs` |
-| Pack revision | 1, 2026-10-16 |
-| Code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
+| Pack revision | 2, 2026-10-19 |
+| Baseline code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
 | Analysis family | EC; data ingestion and screening calculations |
 | Quality role | Calculations quality manager, interim data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
@@ -17,6 +17,11 @@
 | --- | --- | --- |
 | 0 | 2026-10-16 | Initial package inventory, regression evidence and open-item register |
 | 1 | 2026-10-16 | Publish the eight issue drafts, link their scopes and proposed responsibilities, and record the missing-KID ambiguity |
+| 2 | 2026-10-19 | Count ambiguous joins as missing depth and update C18 and S53 for defect 1 of #1352 |
+
+Line-range citations retain the baseline code revision above. Revision 2 updates
+C18 and S53 using the current test node IDs and symbol names; other gates and
+the execution record remain historical evidence at the baseline revision.
 
 ## 1. Purpose and scope
 
@@ -122,7 +127,7 @@ Checks below are executable existing tests except the explicit C06 hand arithmet
 | C15 | G0 | Pressure input with only malformed data: exactly 0 normalized rows, exact schema and 1 malformed-row counter | `tests/unit/kansas_kgs/test_pressure_parser.py::test_proration_parser_empty_valid_rows_returns_schema`; [tests/unit/kansas_kgs/test_pressure_parser.py:L84-L100] |
 | C16 | G0 | Annual pressure policy: exactly 1 positive fixture row selected, null calendar date and `KS_PRORATION` tag; 0 policy mismatches | `tests/unit/kansas_kgs/test_pressure_parser.py::test_proration_parser_sets_pressure_fields_and_test_policy`; [tests/unit/kansas_kgs/test_pressure_parser.py:L39-L54] |
 | C17 | G2 | County and formation fallbacks: exactly 0 differences from each fixture's expected categorical output (count) | `tests/unit/kansas_kgs/test_observations.py::test_unknown_county_falls_back_to_matched_well_county`; `tests/unit/kansas_kgs/test_wells_parser.py::test_wells_parser_uses_producing_formation_when_total_depth_formation_blank`; [tests/unit/kansas_kgs/test_observations.py:L72-L81] [tests/unit/kansas_kgs/test_wells_parser.py:L54-L64] |
-| C18 | G2 | Quality flags: exactly 2 missing-depth counts, 1 ambiguous-API count and 1 ambiguous-identity count | `tests/unit/kansas_kgs/test_observations.py::test_observation_quality_counts_join_and_depth_flags`; [tests/unit/kansas_kgs/test_observations.py:L126-L158] |
+| C18 | G2 | Quality flags: exactly 3 missing-depth counts (2 zero-depth observations plus 1 ambiguous join), 1 ambiguous-API count and 1 ambiguous-identity count; each unresolved row carries exactly 1 missing-depth flag | Current tests: `tests/unit/kansas_kgs/test_observations.py::test_observation_quality_counts_join_and_depth_flags`; `tests/unit/kansas_kgs/test_observations.py::test_unresolved_join_counts_each_missing_depth_once`; independent counts in their docstrings; #1352, defect 1 |
 
 ## 6. Known failure modes and pitfalls
 
@@ -190,7 +195,7 @@ rg -n '0\.0|0\.05|1970|cache|to_csv|to_parquet|write_text|replace|NaT|pd.NA|time
 | S50 | int converts external test_year; direct callers can supply fractional years that truncate | no detection check exists for fractional direct-call years | issue pending (1) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L249-L251] |
 | S51 | Empty/missing quality flags yield zero; missing strings fill with empty text before integer counting | C09 covers empty data; no detection check exists for dropped flags column | issue pending (2) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L254-L258] |
 | S52 | Ambiguous identity returns missing; otherwise API14 falls back to KID or missing | C07 and C08 | Documented fallback; regression scope as stated | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L261-L268] |
-| S53 | No match returns an empty depth-flag list because match flags were assigned earlier | C07 | Documented fallback; regression scope as stated | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L271-L273] |
+| S53 | No match returns an empty depth-flag list; `_well_match` now assigns missing_depth for both missing and ambiguous joins | C18 tests both unresolved join paths and excludes duplicate depth flags | Corrected for #1352, defect 1 | Current symbols: `_well_match`, `_depth_flags` in `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py` |
 | S54 | Positive depth returns no depth flags; nonpositive depth adds missing_depth | C18 | Documented fallback; regression scope as stated | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L274-L274] |
 | S55 | Missing sources mapping defaults to empty catalog; string optional flags use bool rather than strict Boolean validation | no detection check exists | issue pending (3) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L35-L48] |
 | S56 | Empty county YAML defaults to empty mapping; all county names can become missing | C14 detects a missing mapping count | Documented fallback; regression scope as stated | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L51-L55] |
