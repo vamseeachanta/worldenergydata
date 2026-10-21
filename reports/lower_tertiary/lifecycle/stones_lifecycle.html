@@ -779,7 +779,7 @@ if (FIELD.landman) {
     `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
     + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
     + `<p style="font-size:13px;color:var(--muted)">Field operator <b>${L.operator||"—"}</b>`
-    + `${wi ? " · Field WI " + wi : ""} · Registry blocks ${L.blocks.join(", ")}</p>`
+    + `${wi ? " · Field WI " + wi : ""} · Registry blocks ${L.blocks.join(", ")}${L.block_note ? " (" + L.block_note + ")" : ""}</p>`
     + (L.table_html || "<p>Lease snapshot unavailable.</p>") + `</section>`;
 }
 

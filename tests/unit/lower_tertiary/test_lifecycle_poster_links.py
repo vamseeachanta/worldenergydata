@@ -119,13 +119,17 @@ def test_poster_and_explorer_use_the_same_sourced_lease_table():
             seen.add(row["lease_num"])
         assert "L.table_html" in builder.render(field)
     assert seen == set(expected)
-    atlas = (PROJECT_ROOT / "reports/field-atlas/atlas_template.html").read_text()
+    atlas = (PROJECT_ROOT / "reports/field-atlas/atlas_template.html").read_text(
+        encoding="utf-8"
+    )
     assert "L.table_html" in atlas
 
 
 @unit
 def test_published_explorer_uses_sourced_lease_table():
-    atlas = (PROJECT_ROOT / "reports/field-atlas/index.html").read_text()
+    atlas = (PROJECT_ROOT / "reports/field-atlas/index.html").read_text(
+        encoding="utf-8"
+    )
     landman = atlas.split('let landman = "";', 1)[1].split(
         "// Concept & development", 1
     )[0]
@@ -193,3 +197,20 @@ def test_poster_serialization_uses_one_lease_representation_without_mutating_inp
         k: v for k, v in original.items() if k != "landman"
     }
     assert field == original
+
+
+@unit
+@pytest.mark.parametrize("published", [False, True])
+def test_poster_block_caveats_remain_visible(published):
+    """Registry caveats must reach the rendered and committed poster sections."""
+    builder = _load_builder()
+    for facts in _facts():
+        field = builder.facts_to_field(facts)
+        if published:
+            html = (builder.HERE / f"{field['id']}_lifecycle.html").read_text(
+                encoding="utf-8"
+            )
+        else:
+            html = builder.render(field)
+        landman = html.split("if (FIELD.landman) {", 1)[1].split('$("f-metrics")', 1)[0]
+        assert "L.block_note" in landman

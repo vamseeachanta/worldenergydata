@@ -94,16 +94,18 @@ current commercial interests are not established solely by these downloads.
 The lifecycle-poster builder reads `leases.json`, `panel_values.json` and
 `operators.json` through `load_lease_snapshot`. It checks their byte sizes and
 SHA-256 digests against `extract_manifest.json`, plus the source-manifest digest,
-before joining normalized lease identifiers. The poster and Explorer consume
-the same escaped HTML table and structured JSON. Registry blocks remain an
-unpaired field-level list; only the Lease Data snapshot supplies a per-lease
-area/block. Field-level interests remain separate from owner assignment records.
+before joining normalized lease identifiers. The poster and Explorer publish
+the same escaped HTML table without duplicating structured lease rows. Registry
+blocks remain an unpaired field-level list; only the Lease Data snapshot supplies
+a per-lease area/block. Field-level interests remain separate from owner
+assignment records.
 
 Status and royalty bid-system values are displayed as source codes, without
 assuming a legal interpretation. Current owner rows retain serial, group,
-aliquot, percentage and assignment approval date. Operator history retains all
-source assignment rows. Company names describe retrieval-time resolution, not
-the company name at each historical date. Unknown values have explicit reasons;
+aliquot, percentage and assignment approval date. Published tables show current
+operator designations only; the committed snapshot and Python panel data retain
+all source assignment rows. Company names describe retrieval-time resolution,
+not the company name at each historical date. Unknown values have explicit reasons;
 lease type is not mapped. No expiration date is derived from an expected date.
 
 `data/freshness-scorecard.json` has a separate `datasets.bsee_leases` entry;
