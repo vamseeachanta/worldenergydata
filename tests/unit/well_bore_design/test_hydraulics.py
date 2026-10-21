@@ -286,8 +286,11 @@ def test_flowing_pressure_loss_obeys_yield_floor(
     """Hand: 15/(3*3.5)=10/7; 10/(3*3.5)=20/21; 15/(3*2.5)=2.
 
     The first four cases exercise the existing turbulent branch; the last
-    exercises its laminar branch. The floor dominates the retained estimate
-    in each case; these outputs are not exact physical flow solutions.
+    exercises its laminar branch. Table C11 in agent-pack.md r1 (2026),
+    section 5, gives retained turbulent losses of 0.0487, 0.0023, 0.0029
+    and 0.2497 psi/100 ft, respectively. The 1 gpm laminar estimate is
+    0.0219 psi/100 ft. Each is below its hand-calculated floor above;
+    these outputs are not exact physical flow solutions.
     """
     loss = WellBoreHydraulics().pressure_loss_psi_per_100ft(
         flow, mud, pv, yp, hole, pipe
@@ -324,6 +327,11 @@ def test_realistic_flow_and_viscosity_remain_on_yield_floor(plastic_viscosity_cp
 
     At 200 and 600 gpm with 10, 20 or 80 cP, the standard-annulus estimate
     stays below the 10/7 psi/100 ft floor. Its ECD therefore also stays fixed.
+    Independent evaluation of the retained formulas gives the largest of
+    these six estimates at 600 gpm and 80 cP: AV = 5.181 ft/s, Re = 14639
+    (turbulent), f = 0.006756 and loss = 0.0884 psi/100 ft, approximately
+    16 times below the floor. Table C11 in agent-pack.md r1 (2026),
+    section 5, records the same comparison for the four turbulent fixtures.
     """
     hydro = WellBoreHydraulics()
     for flow_rate_gpm in (200, 600):
