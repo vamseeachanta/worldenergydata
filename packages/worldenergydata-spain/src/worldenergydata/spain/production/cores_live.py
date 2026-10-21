@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import json
+import warnings
+from collections.abc import Iterable, Mapping
 from dataclasses import asdict, dataclass
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Optional, cast
+from typing import Any, cast
 
 import pandas as pd
 
@@ -16,12 +18,14 @@ from worldenergydata.spain.production.cores_density import (
     CoresOilConversionAudit,
     build_oil_conversion_audit,
     load_crude_density_factors,
+    normalize_field_key,
 )
 from worldenergydata.spain.production.cores_loader import (
     GWH_TO_MCF,
     TONNES_TO_BBL,
     CoresProductionLoader,
     extract_cores_field_names,
+    validate_production_keys,
 )
 from worldenergydata.spain.production.cores_source import (
     DEFAULT_WORKBOOKS,
@@ -61,10 +65,10 @@ class CoresLiveProductionLoader:
         self,
         *,
         cache_root: Path,
-        source: Optional[CoresWorkbookSource] = None,
+        source: CoresWorkbookSource | None = None,
         header_row: int = 5,
         sheet_name: str = "Production",
-        oil_density_registry_path: Optional[Path] = None,
+        oil_density_registry_path: Path | None = None,
         allow_default_density: bool = False,
     ):
         self.cache_root = Path(cache_root)
@@ -95,10 +99,23 @@ class CoresLiveProductionLoader:
         return self._load_product("gas")
 
     def load_all_production(self) -> pd.DataFrame:
-        keys = ["field_name", "year", "month"]
-        oil = self.load_oil_production()
-        gas = self.load_gas_production()
-        merged = oil.merge(gas, how="outer", on=keys)
+        keys = ["_field_key", "year", "month"]
+        oil = self.load_oil_production().copy()
+        gas = self.load_gas_production().copy()
+        for frame in (oil, gas):
+            validate_production_keys(frame)
+            frame["_field_key"] = frame["field_name"].map(normalize_field_key)
+        display_names = (
+            pd.concat([oil, gas])
+            .drop_duplicates("_field_key")
+            .set_index("_field_key")["field_name"]
+            .str.strip()
+        )
+        merged = oil.drop(columns="field_name").merge(
+            gas.drop(columns="field_name"), how="outer", on=keys, validate="one_to_one"
+        )
+        merged["field_name"] = merged["_field_key"].map(display_names)
+        merged = merged.drop(columns="_field_key")
         return self._write_normalized("all", merged)
 
     def load_field_production(self, field_name: str) -> pd.DataFrame:
@@ -134,6 +151,7 @@ class CoresLiveProductionLoader:
             path,
             sheet_name=self.sheet_name,
             header=self.header_row,
+            dtype=object,
         )
 
     def _oil_conversion_audit(
@@ -197,8 +215,8 @@ def refresh_ayoluengo_fixture(
     *,
     oil_frame: pd.DataFrame,
     metadata: Mapping[str, Any],
-    output_dir: Optional[Path] = None,
-    refreshed_at_utc: Optional[str] = None,
+    output_dir: Path | None = None,
+    refreshed_at_utc: str | None = None,
     sample_rows: int = 6,
     oil_conversion_audit: CoresOilConversionAudit | None = None,
 ) -> FixtureRefreshResult:
@@ -233,14 +251,14 @@ def _ayoluengo_sample(oil_frame: pd.DataFrame, sample_rows: int) -> pd.DataFrame
     if sample.empty:
         raise CoresSourceError("live oil frame contains no Ayoluengo rows")
     if "gas_mcf" not in sample.columns:
-        sample["gas_mcf"] = 0.0
+        sample["gas_mcf"] = float("nan")
     return sample[["field_name", "year", "month", "oil_bbl", "gas_mcf"]]
 
 
 def _fixture_metadata(
     source_metadata: Mapping[str, Any],
     sample_row_count: int,
-    refreshed_at_utc: Optional[str],
+    refreshed_at_utc: str | None,
     oil_conversion_audit: CoresOilConversionAudit | None = None,
 ) -> dict[str, Any]:
     workbooks = dict(source_metadata.get("workbooks", {}))
@@ -269,7 +287,15 @@ def _fixture_metadata(
     if oil_conversion_audit is not None:
         metadata.update(_fixture_density_metadata(oil_conversion_audit, refreshed))
     else:
-        metadata.update(_fixture_default_density_metadata(refreshed))
+        # Without the input audit the applied factor cannot be reconstructed
+        # from barrels. SF8 forbids claiming that a default factor was used.
+        metadata.update(
+            {
+                "conversion": "NOT_EVALUATED: input conversion audit unavailable",
+                "conversion_factors": {},
+                "oil_conversion_audit": None,
+            }
+        )
     return metadata
 
 
@@ -306,30 +332,6 @@ def _fixture_density_metadata(
     }
 
 
-def _fixture_default_density_metadata(generated_at: str) -> dict[str, Any]:
-    return {
-        "conversion": "oil_bbl = tonnes * cited_field_density_factors",
-        "conversion_factors": {
-            "gas_gwh_to_mcf": GWH_TO_MCF,
-            "oil_tonnes_to_bbl_default": TONNES_TO_BBL,
-        },
-        "oil_conversion_audit": {
-            "schema_version": 1,
-            "generated_at": generated_at,
-            "registry_version": "fixture-default-density",
-            "registry_date": generated_at[:10],
-            "conversion_basis": "cited_field_density_factors",
-            "coverage_status": "defaulted",
-            "oil_field_count": 1,
-            "used_fields": [],
-            "defaulted_fields": ["Ayoluengo"],
-            "missing_fields": [],
-            "default_bbl_per_tonne": TONNES_TO_BBL,
-            "factors": [],
-        },
-    }
-
-
 def _factor_map(factors: Iterable[CoresCrudeDensityFactor]) -> dict[str, float]:
     values: dict[str, float] = {}
     for factor in factors:
@@ -338,13 +340,18 @@ def _factor_map(factors: Iterable[CoresCrudeDensityFactor]) -> dict[str, float]:
     return values
 
 
-def _source_updated_date(oil_metadata: Mapping[str, Any]) -> Optional[str]:
+def _source_updated_date(oil_metadata: Mapping[str, Any]) -> str | None:
     last_modified = oil_metadata.get("last_modified")
     if not last_modified:
         return _optional_str(oil_metadata.get("source_updated_date"))
     try:
         return parsedate_to_datetime(str(last_modified)).date().isoformat()
     except (TypeError, ValueError):
+        warnings.warn(
+            "invalid CORES Last-Modified date; source date is unverified",
+            RuntimeWarning,
+            stacklevel=2,
+        )
         return _optional_str(oil_metadata.get("source_updated_date"))
 
 

@@ -9,9 +9,10 @@ from __future__ import annotations
 
 import json
 import logging
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, cast
+from typing import Any, cast
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 
@@ -82,9 +83,11 @@ class SpainCoresRefreshJob(AbstractJob):
 
         repo_root = config.get("_scheduler_repo_root")
         output_dir = self._resolve_path(config["output_dir"], repo_root)
-        force_refresh = bool(config.get("force_refresh", False))
+        force_refresh = config.get("force_refresh", True)
 
         try:
+            if not isinstance(force_refresh, bool):
+                raise SpainCoresConfigError("force_refresh must be boolean")
             loader = self._loader_class()(**self._loader_kwargs(config, output_dir))
             loader.refresh(force_refresh=force_refresh)
             production = loader.load_all_production()
@@ -106,7 +109,7 @@ class SpainCoresRefreshJob(AbstractJob):
                 retryable=self._is_retryable_exception(exc),
             )
 
-        self._write_refresh_metadata(output_dir, records_updated)
+        self._write_refresh_metadata(output_dir, records_updated, loader.metadata())
         logger.info(
             "Spain CORES refresh wrote %d production rows to %s",
             records_updated,
@@ -200,7 +203,9 @@ class SpainCoresRefreshJob(AbstractJob):
         )
 
     @staticmethod
-    def _write_refresh_metadata(output_dir: Path, records_updated: int) -> None:
+    def _write_refresh_metadata(
+        output_dir: Path, records_updated: int, source_metadata: dict[str, Any]
+    ) -> None:
         """Write Spain CORES freshness metadata with the correct CSV format."""
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_files = sorted(
@@ -217,7 +222,8 @@ class SpainCoresRefreshJob(AbstractJob):
         )
         metadata = {
             "module": "spain_cores",
-            "last_refresh": datetime.now(tz=timezone.utc).isoformat(),
+            "last_refresh": source_metadata.get("refreshed_at_utc"),
+            "last_checked": datetime.now(tz=timezone.utc).isoformat(),
             "record_count": records_updated,
             "file_count": len(csv_files),
             "sidecar_file_count": len(sidecar_files),
