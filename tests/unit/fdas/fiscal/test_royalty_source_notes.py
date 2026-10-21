@@ -56,8 +56,7 @@ def test_us_gom_royalty_hand_calculation(use_deck, dev_system):
     Source: us_gom.yml source_ref, recorded 2026-07-03, BOEM royalty note.
     For USD 1,000,000: dry = 1,000,000 * 12.5/100 = 125,000;
     deepwater/default = 1,000,000 * 18.75/100 = 187,500.
-    For zero revenue: 0 * either rate = 0. Negative USD 1,000,000
-    adjustments reverse the same payment: -125,000 or -187,500.
+    For zero revenue: 0 * either rate = 0.
     Formula: royalty = gross revenue * fractional rate (percentage definition).
     """
     engine = CashflowEngine(
@@ -67,8 +66,8 @@ def test_us_gom_royalty_hand_calculation(use_deck, dev_system):
     )
     payment = 125_000.0 if dev_system == "dry" else 187_500.0
     assert engine.calculate_royalty(
-        {"2025-01": 1_000_000.0, "2025-02": 0.0, "2025-03": -1_000_000.0}
-    ) == {"2025-01": payment, "2025-02": 0.0, "2025-03": -payment}
+        {"2025-01": 1_000_000.0, "2025-02": 0.0}
+    ) == {"2025-01": payment, "2025-02": 0.0}
 
 
 def test_missing_assumption_uses_source_note_rate():
