@@ -1,9 +1,9 @@
 """Suite 5 — us_gom deck parity (do-not-ship-without gate, #714).
 
-The `us_gom` deck holds the SAME per-dev-system royalty rates as the legacy
+The `us_gom` deck holds the same source-note-v2 royalty rates as the default
 ``AssumptionsManager`` path. Therefore, for every development system, a
 deck-driven ``CashflowEngine`` must produce a cashflow stream that is
-byte-identical to the deckless (legacy) engine — the deck overrides royalty
+byte-identical to the deckless default engine — the deck overrides royalty
 ONLY, every other assumption still flows through the untouched
 ``AssumptionsManager``. We assert on the FULL component vectors (not just NPV
 totals) so a divergence in any line item is caught.

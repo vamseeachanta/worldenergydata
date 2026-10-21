@@ -1,10 +1,8 @@
 # US Gulf of Mexico federal offshore fiscal terms.
 #
-# v1 CONSUMED: royalty only. rate_by_dev_system reproduces the legacy
-# per-dev-system ROYALTY_RATE vector in fdas.core.config.DEFAULT_ASSUMPTIONS
-# EXACTLY (dry 12.5% shallow-water, 18.75% deepwater) so a deck-driven run is
-# byte-identical to the today-path. Do not edit these four rates without a
-# corresponding parity re-baseline (Suite 5).
+# Consumed: royalty only. Revision 2 matches the source-note-v2 assumptions.
+# Rates follow this deck's revision-1 source_ref (2026); percent conversion
+# follows NIST SP 811 (2008), section 7.10.2. Legal applicability is unqualified.
 schema_version: 1
 country: us_gom
 currency: USD
@@ -15,9 +13,9 @@ royalty:
   model: flat
   rate_by_dev_system:
     dry: 0.125               # shallow-water / dry-tree lease royalty
-    subsea15: 0.188          # deepwater standard 18.75%
-    subsea20: 0.188
-    default: 0.188
+    subsea15: 0.1875         # revision-1 source_ref: 18.75 / 100
+    subsea20: 0.1875         # revision-1 source_ref: 18.75 / 100
+    default: 0.1875          # revision-1 source_ref: 18.75 / 100
 
 # Declarative income-tax layer (not consumed in v1; PSC/tax seam -> #716).
 income_tax:
@@ -25,9 +23,12 @@ income_tax:
 
 source_url: https://www.boem.gov/oil-gas-energy/leasing/lease-and-royalty-information
 source_ref: "BOEM GoM federal offshore royalty: 12.5% shallow-water, 18.75% deepwater; ported from FDAS DEFAULT_ASSUMPTIONS ROYALTY_RATE"
-revision: "1"
+revision: "2"
 effective_date: "2026-07-03"
 notes: >
-  Values mirror fdas.core.config.DEFAULT_ASSUMPTIONS['ROYALTY_RATE'] for exact
-  parity with the pre-carve BSEE-validated path. federal_cit and discount_rate
-  are declarative metadata only in v1.
+  Revision 2 corrects the rounded deep-water fraction 0.188 to 0.1875,
+  following the original source_ref percentage. The original ported table is
+  retained as legacy-v1 in core.config; the default source-note-v2 table
+  agrees with this deck. The effective_date retains the historical metadata
+  date and establishes no legal effective date. federal_cit and discount_rate
+  are declarative metadata only; current lease applicability is NOT_EVALUATED.

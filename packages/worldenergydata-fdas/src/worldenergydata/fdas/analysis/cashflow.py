@@ -157,8 +157,10 @@ class CashflowEngine:
             dev_system: Development system (dry, subsea15, subsea20)
             fiscal_terms: Optional country fiscal-terms deck. When provided, its
                 royalty layer supersedes the ``AssumptionsManager`` ROYALTY_RATE
-                (see ``calculate_royalty``). ``None`` (the default) preserves the
-                exact legacy US-GoM assumptions path — byte-identical behavior.
+                (see ``calculate_royalty``). ``None`` (the default) uses the
+                supplied assumptions, including their selected version. Use
+                ``AssumptionsManager(version="legacy-v1")`` without a deck
+                to reproduce historical rounded royalty assumptions.
         """
         self.assumptions = assumptions_mgr
         self.dev_system = dev_system
