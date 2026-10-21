@@ -49,10 +49,11 @@ def test_readme_embeds_canonical_mermaid():
         assert label in drawing.group(1)
 
 
-def test_work_specs_have_one_provenance_row_and_drawn_node():
-    """Each literal work ID maps once to a node; economics uses one shared node."""
+def work_specifications():
+    """Read literal work entries and their source spans without running the builder."""
     source = ROOT / "scripts/capabilities/build_onepagers.py"
-    tree = ast.parse(source.read_text(encoding="utf-8"))
+    source_text = source.read_text(encoding="utf-8")
+    tree = ast.parse(source_text)
     specification = next(
         node.value
         for node in tree.body
@@ -60,33 +61,92 @@ def test_work_specs_have_one_provenance_row_and_drawn_node():
         and isinstance(node.target, ast.Name)
         and node.target.id == "SPECS"
     )
-    specs = [
-        {
+    entries = {}
+    for row in specification.elts:
+        spec = {
             ast.literal_eval(key): ast.literal_eval(value)
             for key, value in zip(row.keys, row.values)
-            if isinstance(key, ast.Constant) and key.value in {"id", "kind"}
+            if isinstance(key, ast.Constant) and key.value in {"id", "kind", "std"}
         }
-        for row in specification.elts
-    ]
-    expected = {spec["id"] for spec in specs if spec["kind"] == "work"}
+        if spec["kind"] == "work":
+            entries[spec["id"]] = (spec, ast.get_source_segment(source_text, row))
+    return entries
+
+
+def provenance_rows():
+    """Select only the capability inventory table."""
     text = ARCHITECTURE.read_text(encoding="utf-8")
     section = text.split("## Capability inventory and provenance\n")[1].split("\n## ")[
         0
     ]
+    return re.findall(r"^\| (\w+) \| (.*?) \| (.*?) \|$", section, re.MULTILINE)
+
+
+def row_work_ids(identifiers, specs):
+    """Expand the shared economics dimension without embedding field names."""
+    if identifiers == "`economics-` prefix (seven work IDs)":
+        return [
+            identifier for identifier in specs if identifier.startswith("economics-")
+        ]
+    return re.findall(r"`([^`]+)`", identifiers)
+
+
+def test_work_specs_have_one_provenance_row_and_drawn_node():
+    """Every cited SPECS span contains its work ID and maps once to a drawn node."""
+    specs = work_specifications()
+    text = ARCHITECTURE.read_text(encoding="utf-8")
     observed = []
     economics_nodes = set()
-    for node, identifiers, provenance in re.findall(
-        r"^\| (\w+) \| (.*?) \| (.*?) \|$", section, re.MULTILINE
-    ):
-        ids = re.findall(r"`([^`]+)`", identifiers)
+    for node, identifiers, provenance in provenance_rows():
+        ids = row_work_ids(identifiers, specs)
         assert ids
         assert re.search(rf'^\s+{node}\["', text, re.MULTILINE), node
-        evidence = re.findall(r"`([^`]+)`", provenance)
-        assert evidence, node
-        for locator in evidence:
-            assert (ROOT / locator.split(":")[0]).is_file(), locator
+        locator = re.search(
+            r"`scripts/capabilities/build_onepagers\.py::SPECS"
+            r'\[(id|id_prefix)="([^"]+)"\]`',
+            provenance,
+        )
+        assert locator is not None, node
+        selector, value = locator.groups()
+        selected = (
+            [value]
+            if selector == "id"
+            else [identifier for identifier in specs if identifier.startswith(value)]
+        )
+        assert Counter(selected) == Counter(ids), node
+        for identifier in ids:
+            assert identifier in specs, identifier
+            _, span = specs[identifier]
+            assert f"'id': '{identifier}'" in span, identifier
         observed.extend(ids)
         if any(identifier.startswith("economics-") for identifier in ids):
             economics_nodes.add(node)
-    assert Counter(observed) == Counter(expected)
+    assert Counter(observed) == Counter(specs.keys())
     assert economics_nodes == {"economics"}
+
+
+def test_provenance_descriptions_match_current_specification_basis():
+    """A stale source, vintage or qualification in any std description is rejected."""
+    specs = work_specifications()
+    for node, identifiers, provenance in provenance_rows():
+        for identifier in row_work_ids(identifiers, specs):
+            spec, _ = specs[identifier]
+            assert provenance.startswith(spec["std"] + "; `"), (node, identifier)
+
+
+def test_publication_table_uses_existing_builder_symbols():
+    """Table 4 locators survive line shifts and identify real builder functions."""
+    source = ROOT / "scripts/build_pages.py"
+    functions = {
+        node.name
+        for node in ast.parse(source.read_text(encoding="utf-8")).body
+        if isinstance(node, ast.FunctionDef)
+    }
+    text = ARCHITECTURE.read_text(encoding="utf-8")
+    table = text.split("| Repository-relative selection glob |")[1].split("\n\n")[0]
+    rows = re.findall(r"^\| `.*?` \| .*? \| (.*?) \|$", table, re.MULTILINE)
+    assert rows
+    for locator in rows:
+        match = re.fullmatch(r"`scripts/build_pages\.py::(build_\w+)`", locator)
+        assert match is not None, locator
+        assert match.group(1) in functions, locator
