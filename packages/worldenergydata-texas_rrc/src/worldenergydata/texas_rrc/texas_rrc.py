@@ -228,9 +228,17 @@ class TexasRRC:
         summary_path = result_folder / f"{label}_summary.json"
 
         districts.to_csv(districts_path, index=False)
+        unassigned = districts.loc[districts["district"].isna()]
         summary = {
             "total_records": len(processed),
-            "district_count": int(len(districts)),
+            "district_count": int(districts["district"].notna().sum()),
+            "unassigned_records": sum(r.get("district") is None for r in processed),
+            "unassigned_oil_production_total": float(
+                unassigned["oil_production"].sum()
+            ),
+            "unassigned_gas_production_total": float(
+                unassigned["gas_production"].sum()
+            ),
             "oil_production_total": float(districts["oil_production"].sum()),
             "gas_production_total": float(districts["gas_production"].sum()),
         }

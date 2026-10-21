@@ -1,5 +1,7 @@
 """Tests for Texas RRC data validators."""
 
+import pytest
+
 from worldenergydata.texas_rrc.validators import (
     TexasDataValidator,
     is_valid_texas_api_number,
@@ -389,3 +391,22 @@ class TestConvenienceFunctions:
 
     def test_is_valid_coords_false(self):
         assert is_valid_texas_coordinates(50.0, -96.0) is False
+
+
+@pytest.mark.parametrize(
+    "district, expected",
+    [
+        ("3.0", "03"),
+        ("10.0", "10"),
+        ("03.000", "03"),
+        (" 3.00 ", "03"),
+        ("7B", "7B"),
+        ("3.5", None),
+        ("3e0", None),
+        ("003.0", None),
+        ("99.0", None),
+        ("7B.0", None),
+    ],
+)
+def test_normalize_integral_decimal_district(district, expected):
+    assert TexasDataValidator().normalize_district(district) == expected
