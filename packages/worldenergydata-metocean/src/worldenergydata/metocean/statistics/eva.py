@@ -142,6 +142,7 @@ class ExtremeValueAnalysis:
         series: pd.Series,
         distribution: str = "GEV",
         periods: list[int] = DEFAULT_PERIODS,
+        confidence_level: Optional[float] = None,
     ) -> EVAResult:
         """
         Annual maxima (block maxima / GEV) fitting using metocean-stats.
@@ -155,10 +156,15 @@ class ExtremeValueAnalysis:
         periods:
             Return periods in years.
 
+        confidence_level:
+            Optional confidence coverage; screening requests 0.95 explicitly.
+
         Returns
         -------
         EVAResult
         """
+        if confidence_level is not None and not 0 < confidence_level < 1:
+            raise ValueError("Confidence level must be between zero and one")
         df = self._series_to_df(series)
         var = series.name or "value"
 
@@ -179,6 +185,7 @@ class ExtremeValueAnalysis:
                 var=var,
                 dist=distribution,
                 periods=periods,
+                uncertainty=confidence_level,
             )
             lower_ci, upper_ci = self._extract_ci(rl_unc, periods)
         except Exception:
@@ -365,21 +372,15 @@ class ExtremeValueAnalysis:
         if not isinstance(rl_unc_df, pd.DataFrame) or rl_unc_df.empty:
             return lower, upper
 
-        numeric = rl_unc_df.select_dtypes(include=[np.number])
-        if numeric.shape[1] < 3:
+        required = ("ci_lower_rl", "ci_upper_rl")
+        if not all(column in rl_unc_df for column in required):
             return lower, upper
-
-        idx = rl_unc_df.index.astype(float).values
-        for p in periods:
-            try:
-                closest = int(np.argmin(np.abs(idx - float(p))))
-                row = numeric.iloc[closest]
-                vals = sorted([float(v) for v in row if not np.isnan(float(v))])
-                if len(vals) >= 2:
-                    lower[p] = vals[0]
-                    upper[p] = vals[-1]
-            except Exception:
-                pass
+        for period in periods:
+            if period not in rl_unc_df.index:
+                continue
+            low, high = (float(rl_unc_df.loc[period, column]) for column in required)
+            if np.isfinite(low) and np.isfinite(high) and low <= high:
+                lower[period], upper[period] = low, high
         return lower, upper
 
     @staticmethod

@@ -123,9 +123,14 @@ def _economics_block(economics, enriched, actuals: Optional[dict]) -> str:
     # Vessel feasibility from the top enriched concept.
     if enriched:
         v = enriched[0].vessel
+        vessel_count = (
+            "Not evaluated"
+            if v.water_depth_reachable is None
+            else _fmt(v.capable_vessel_count)
+        )
         out.append(
             f'<div class="card"><div class="k">Install vessels</div>'
-            f'<div class="v">{_fmt(v.capable_vessel_count)}</div></div>'
+            f'<div class="v">{vessel_count}</div></div>'
             f'<div class="card"><div class="k">Max crane</div>'
             f'<div class="v">{_fmt(v.max_crane_capacity_t, " t")}</div></div>'
         )
@@ -138,6 +143,8 @@ def _economics_block(economics, enriched, actuals: Optional[dict]) -> str:
                 f'{_esc(h.mooring_component_id or "")}</div></div>'
             )
     out.append("</div>")
+    if enriched and enriched[0].vessel.note:
+        out.append(f'<p class="sub">{_esc(enriched[0].vessel.note)}</p>')
     if e.note:
         out.append(f'<p class="sub">{_esc(e.note)}</p>')
     if actuals:

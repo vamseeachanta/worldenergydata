@@ -65,6 +65,8 @@ dependencies = [
     "worldenergydata-reporting",
     "worldenergydata-texas_rrc",
     "worldenergydata-fdas",
+    "worldenergydata-metocean",
+    "PyYAML>=6.0,<7.0",
     "assetutilities>=0.1.0,<1.0",
     "numpy>=2.2.6,<3.0",
     "numpy-financial>=1.0.0",
