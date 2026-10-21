@@ -20,13 +20,16 @@ from worldenergydata.vessel_fleet.lift_flow_screening import (
 
 
 def calibration(model, values):
-    """Point domains demonstrate mechanics only, never empirical validity."""
+    """Synthetic input points and a derived Re interval have no physical basis."""
+    ranges = {key: Interval(value, value) for key, value in values.items()}
+    if model == "isolated_sphere":
+        ranges.setdefault("particle_reynolds", Interval(1089.0, 1091.0))
     return Calibration(
         model=model,
-        source_url="https://doi.org/10.3390/fluids6060226",
+        source_url="https://example.org/synthetic",
         source_locator="Synthetic arithmetic fixture; not source measurements",
         conditions="Synthetic test of validation and arithmetic only",
-        ranges={key: Interval(value, value) for key, value in values.items()},
+        ranges=ranges,
     )
 
 
@@ -36,11 +39,11 @@ CASES = [
         "isolated_sphere",
         dict(
             particle_diameter_m=0.003,
-            solids_density_kg_m3=2000.0,
+            solids_density_kg_m3=2650.0,
             liquid_density_kg_m3=1000.0,
             dynamic_viscosity_pa_s=0.001,
             gravity_m_s2=10.0,
-            drag_coefficient=1.0,
+            drag_coefficient=0.5,
         ),
     ),
     (
@@ -49,7 +52,7 @@ CASES = [
         dict(
             pipe_id_m=0.2,
             particle_diameter_m=0.001,
-            solids_density_kg_m3=2000.0,
+            solids_density_kg_m3=2650.0,
             liquid_density_kg_m3=1000.0,
             dynamic_viscosity_pa_s=0.001,
             solids_volume_fraction=0.1,
@@ -86,9 +89,9 @@ CASES = [
         dict(
             superficial_gas_velocity_m_s=0.3,
             superficial_liquid_velocity_m_s=0.7,
-            distribution_parameter=1.0,
+            distribution_parameter=1.2,
             drift_velocity_m_s=0.2,
-            bubble_slug_void_fraction=0.25,
+            bubble_slug_void_fraction=0.2,
             maximum_void_fraction=0.6,
         ),
     ),
@@ -96,19 +99,22 @@ CASES = [
 
 
 def test_settling_hand_balance():
-    """w=sqrt(4*g*d*(rho_s/rho_l-1)/(3*Cd))=sqrt(.04)=.2.
+    """w=sqrt(4*10*.003*(2650/1000-1)/(3*.5))=sqrt(.132) m/s.
 
-    Re=1000*.2*.003/.001=600; sphere drag balance, textbook section 4.4.
+    Re=1000*sqrt(.132)*.003/.001 is about 1090; source S1, section 4.4.
+    The 1089-1091 interval permits roundoff without hiding a missing term.
     """
     fn, model, values = CASES[0]
-    domain = calibration(model, {**values, "particle_reynolds": 600.0})
-    assert fn(**values, calibration=domain) == pytest.approx(0.2)
+    domain = calibration(model, values)
+    assert fn(**values, calibration=domain) == pytest.approx(math.sqrt(0.132))
 
 
 def test_deposition_hand_calculation():
-    """FL*sqrt(2*g*D*(rho_s/rho_l-1))=1.5*sqrt(4)=3 m/s."""
+    """1.5*sqrt(2*10*.2*(2650/1000-1))=1.5*sqrt(6.6) m/s."""
     fn, model, values = CASES[1]
-    assert fn(**values, calibration=calibration(model, values)) == 3.0
+    assert fn(**values, calibration=calibration(model, values)) == pytest.approx(
+        1.5 * math.sqrt(6.6)
+    )
 
 
 def test_vertical_minimum_hand_calculation():
@@ -131,37 +137,51 @@ def test_airlift_hand_energy_balance():
 
 
 def test_slug_boundary_hand_calculation():
-    """alpha=.3/(1*(.3+.7)+.2)=.25; threshold equality flags slugging."""
+    """alpha=.3/(1.2*(.3+.7)+.2)=3/14, above the .2 threshold."""
     fn, model, values = CASES[4]
     result = fn(**values, calibration=calibration(model, values))
-    assert result.void_fraction == pytest.approx(0.25)
+    assert result.void_fraction == pytest.approx(3 / 14)
     assert result.indication == "slugging_possible"
     changed = {**values, "superficial_gas_velocity_m_s": 0.1}
     result = fn(**changed, calibration=calibration(model, changed))
-    # .1/(.1+.7+.2)=.1 < .25, independent hand calculation.
-    assert result.void_fraction == pytest.approx(0.1)
+    # .1/(1.2*(.1+.7)+.2)=5/58 < .2, independent hand calculation.
+    assert result.void_fraction == pytest.approx(5 / 58)
     assert result.indication == "bubble_indicated"
+
+
+@pytest.mark.parametrize(
+    "offset,indication", [(-1e-9, "slugging_possible"), (1e-9, "bubble_indicated")]
+)
+def test_slug_classification_near_threshold(offset, indication):
+    """Bracket alpha=3/14 without requiring bit-exact boundary arithmetic."""
+    fn, model, values = CASES[4]
+    changed = {**values, "bubble_slug_void_fraction": 3 / 14 + offset}
+    result = fn(**changed, calibration=calibration(model, changed))
+    assert result.void_fraction == pytest.approx(3 / 14)
+    assert result.indication == indication
 
 
 @pytest.mark.parametrize("fn,model,values", CASES)
 @pytest.mark.parametrize("invalid", [-1.0, float("nan"), float("inf"), True, "1"])
 def test_invalid_numeric_inputs(fn, model, values, invalid):
-    domain_values = dict(values)
-    if model == "isolated_sphere":
-        domain_values["particle_reynolds"] = 600.0
     changed = {**values, next(iter(values)): invalid}
     with pytest.raises((ValueError, TypeError)):
-        fn(**changed, calibration=calibration(model, domain_values))
+        fn(**changed, calibration=calibration(model, values))
+
+
+@pytest.mark.parametrize("fn,model,values", CASES)
+def test_negative_inputs_rejected_within_calibration(fn, model, values):
+    name = next(iter(values))
+    changed = {**values, name: -1.0}
+    with pytest.raises(ValueError, match=f"{name} must be positive"):
+        fn(**changed, calibration=calibration(model, changed))
 
 
 @pytest.mark.parametrize("fn,model,values", CASES)
 def test_outside_calibration_refused(fn, model, values):
-    domain_values = dict(values)
-    if model == "isolated_sphere":
-        domain_values["particle_reynolds"] = 600.0
     changed = {**values, next(iter(values)): values[next(iter(values))] * 2}
     with pytest.raises(ValueError, match="calibration"):
-        fn(**changed, calibration=calibration(model, domain_values))
+        fn(**changed, calibration=calibration(model, values))
 
 
 @pytest.mark.parametrize(
@@ -184,11 +204,8 @@ def test_outside_calibration_refused(fn, model, values):
 def test_physical_sign_and_order_even_if_calibration_permits(index, changes):
     fn, model, values = CASES[index]
     values = {**values, **changes}
-    domain_values = dict(values)
-    if index == 0:
-        domain_values["particle_reynolds"] = 600.0
     with pytest.raises(ValueError):
-        fn(**values, calibration=calibration(model, domain_values))
+        fn(**values, calibration=calibration(model, values))
 
 
 def test_wrong_units_and_missing_ranges_refused():
@@ -225,6 +242,19 @@ def test_calibration_requires_provenance_and_is_immutable():
     domain = calibration("vertical_slip", {"x_m": 1.0})
     with pytest.raises(TypeError):
         domain.ranges["x_m"] = Interval(0.0, 2.0)
+
+
+@pytest.mark.parametrize("userinfo", ["user@", ":pass@", "user:pass@"])
+def test_calibration_rejects_url_credentials(userinfo):
+    """Synthetic URL userinfo exercises rejection; no credential is used."""
+    with pytest.raises(ValueError, match="public HTTPS source reference"):
+        Calibration(
+            model="vertical_slip",
+            source_url=f"https://{userinfo}example.org/synthetic",
+            source_locator="Synthetic fixture",
+            conditions="Synthetic validation only",
+            ranges={"x_m": Interval(1.0, 2.0)},
+        )
 
 
 def test_unresolved_upper_regime_refused():

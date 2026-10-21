@@ -96,7 +96,12 @@ class Calibration:
             if not isinstance(value, str) or not value.strip():
                 raise ValueError(f"calibration {name} is required")
         parsed = urlsplit(self.source_url)
-        if parsed.scheme != "https" or not parsed.hostname or parsed.username:
+        if (
+            parsed.scheme != "https"
+            or not parsed.hostname
+            or parsed.username
+            or parsed.password
+        ):
             raise ValueError("calibration requires a public HTTPS source reference")
         if not self.ranges or any(
             not isinstance(key, str) or not isinstance(value, Interval)

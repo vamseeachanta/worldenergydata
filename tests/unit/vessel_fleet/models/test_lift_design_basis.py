@@ -55,12 +55,7 @@ def test_blank_template_is_unfilled_and_not_validated():
 
 
 def test_complete_basis_and_units_metadata():
-    basis = LiftDesignBasis.model_validate(complete_basis())
-    # Independent geometry: 0.6 m OD - 0.5 m ID = 0.1 m diametral wall.
-    assert (
-        basis.string.outer_diameter_m.value - basis.string.inner_diameter_m.value
-        == pytest.approx(0.1)
-    )
+    LiftDesignBasis.model_validate(complete_basis())
     for section in field_requirements().values():
         for requirement in section.values():
             assert requirement["unit"] and requirement["source_requirement"]

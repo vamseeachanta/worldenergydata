@@ -13,8 +13,7 @@ a{color:#126186}td{overflow-wrap:anywhere}
 <h1>Lift-riser design-basis template and flow screens</h1>
 <p>Generic public-source code in <code>worldenergydata.vessel_fleet</code>, beside the existing riser models.
 No equipment record, empirical calibration dataset or qualified design is supplied.
-Scope follows <a href="https://github.com/vamseeachanta/worldenergydata/issues/1138">the public riser issue</a>
-and <a href="https://github.com/vamseeachanta/worldenergydata/pull/1534">the merged model layout</a>.</p>
+Scope follows dedicated issue <code>#1637</code>; the existing riser models provide the package layout.</p>
 <p class="limit"><strong>Screening only.</strong> Successful validation establishes required fields and
 mathematical consistency. It does not establish source truth, correlation applicability, code compliance,
 structural adequacy or deep-sea transport capacity. Numeric domains are caller-attested; source URLs are
@@ -164,11 +163,11 @@ are mathematical definitions. No standards-derived factor or allowable is assign
 <p>All numerical fixtures are synthetic test inputs, not values attributed to the cited publications.
 They verify formulas through hand arithmetic and do not calibrate a physical system.</p>
 <table><thead><tr><th>Screen</th><th>Hand calculation</th><th>Expected output</th></tr></thead><tbody>
-<tr><td>Sphere settling</td><td>sqrt(4 x 10 x 0.003 x (2000/1000 - 1)/(3 x 1)); Re = 1000 x .2 x .003/.001</td><td>0.2 m/s; Re 600</td></tr>
-<tr><td>Horizontal deposition</td><td>1.5 sqrt(2 x 10 x .2 x (2000/1000 - 1))</td><td>3 m/s</td></tr>
+<tr><td>Sphere settling</td><td>sqrt(4 x 10 x 0.003 x (2650/1000 - 1)/(3 x .5)); Re = 1000 x sqrt(.132) x .003/.001</td><td>sqrt(.132) m/s; Re about 1090, checked within 1089-1091</td></tr>
+<tr><td>Horizontal deposition</td><td>1.5 sqrt(2 x 10 x .2 x (2650/1000 - 1))</td><td>1.5 sqrt(6.6) m/s</td></tr>
 <tr><td>Vertical minimum</td><td>(1 - .1) x .2 + .02</td><td>0.20 m/s</td></tr>
 <tr><td>Airlift energy</td><td>Pin = 100000 + 1000 x 10 x 10; Ql = .2 x 1000 ln(2)/(1000 x 10 x 2)</td><td>200000 Pa; 0.01 ln(2) m3/s</td></tr>
-<tr><td>Local slug screen</td><td>.3/(1 x (.3+.7)+.2)</td><td>0.25; equality at a synthetic .25 threshold flags possible slugging</td></tr>
+<tr><td>Local slug screen</td><td>.3/(1.2 x (.3+.7)+.2)</td><td>3/14; above the synthetic .2 threshold. Thresholds at 3/14 - 1e-9 and 3/14 + 1e-9 test both sides.</td></tr>
 </tbody><caption>Table 4. Independent arithmetic fixtures with explicit synthetic provenance.</caption></table>
 <h2>Verification and follow-up</h2>
 <p>The tests first establish missing-module failures, then check arithmetic, nonfinite and boolean input,
