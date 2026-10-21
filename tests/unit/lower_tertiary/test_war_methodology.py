@@ -85,7 +85,6 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
         mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
         wells = mod.load_wells(mod.DEFAULT_SOURCE)
         stats = mod.compute_stats(wells)
-        stats["learning"] = mod.compute_learning(wells)
         text = mod.render_html(stats, mod.DEFAULT_SOURCE)
     else:
         mod = load_script("scripts/completion/build_completion_report.py")
@@ -180,14 +179,14 @@ class NoteParser(HTMLParser):
 
 
 def assert_source_list(text):
-    """Each selected surface renders three distinct source items."""
+    """Each selected surface renders four distinct source items."""
     if "<section" in text:
         parser = NoteParser()
         parser.feed(text)
-        assert parser.items == 3
+        assert parser.items == 4
     else:
         note = text.split("## WAR methodology limits", 1)[1]
-        assert len([line for line in note.splitlines() if line.startswith("- ")]) == 3
+        assert len([line for line in note.splitlines() if line.startswith("- ")]) == 4
 
 
 def test_note_uses_superseding_milestone_decision():
@@ -268,3 +267,42 @@ def test_existing_dataset_card_replaces_old_note_once():
     assert_limits(updated)
     assert_source_list(updated)
     assert mod.patch_readme(updated) == updated
+
+
+def test_decision_link_and_annual_source():
+    mod = load_script("scripts/lower_tertiary/war_methodology.py")
+    url = "https://github.com/vamseeachanta/worldenergydata/issues/1064#issuecomment-6132640847"
+    assert f"]({url})" in mod.WAR_METHODOLOGY
+    assert f'href="{url}"' in mod.methodology_html()
+    assert "CFR-2025-title30-vol2-sec250-743" in mod.WAR_METHODOLOGY
+
+
+def test_insights_calendar_basis():
+    mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+    wells = mod.load_wells(mod.DEFAULT_SOURCE)
+    assert "calendar_days" in wells
+    text = mod.render_html(mod.compute_stats(wells), mod.DEFAULT_SOURCE)
+    note = text.split('class="panel war-methodology"', 1)[1]
+    assert "This page uses TD date minus spud date in calendar days" in note
+    assert "Existing figures retain their legacy" not in note
+    assert "The learning-series ratios" not in note
+
+
+def test_calendar_dates_keep_zero_and_reject_missing_or_reversed(monkeypatch):
+    mod = load_script("scripts/lower_tertiary/build_drilling_insights.py")
+    frame = mod.pd.DataFrame(
+        {
+            "LEASE_NAME": ["Example"] * 4,
+            "WELL_SPUD_DATE": ["01/01/2020"] * 4,
+            "TOTAL_DEPTH_DATE": ["01/08/2020", "01/01/2020", "12/31/2019", None],
+            "MAX_WELL_BORE_TVD": [1000] * 4,
+        }
+    )
+    monkeypatch.setattr(mod.pd, "read_excel", lambda *args, **kwargs: frame.copy())
+    wells = mod.load_wells(mod.DEFAULT_SOURCE)
+    assert wells["calendar_days"].iloc[:2].tolist() == [7, 0]
+    assert wells["calendar_days"].iloc[2:].isna().all()
+    stats = mod.compute_stats(wells)
+    assert stats["n_calendar"] == 2
+    assert stats["n_missing"] == 2
+    assert stats["total_calendar_days"] == 7
