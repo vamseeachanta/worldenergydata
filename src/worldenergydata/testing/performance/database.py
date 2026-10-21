@@ -3,6 +3,7 @@ Performance database for storing test execution metrics.
 """
 
 import json
+import logging
 import sqlite3
 import time
 from contextlib import contextmanager
@@ -13,6 +14,8 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 # Preserve the existing connection budget, also asserted by
 # tests/unit/ci/test_performance_tracker_concurrency.py::test_explicit_database_has_busy_timeout.
@@ -210,39 +213,52 @@ class PerformanceDatabase:
 
     def record_execution(self, record: TestExecutionRecord):
         """
-        Record a test execution.
+        Record a test execution, dropping unavailable diagnostic metrics.
+
+        SQLite OperationalError (including an exhausted lock timeout) is logged
+        and suppressed for connection setup, insertion, statistics and commit.
+        Closing the connection discards any uncommitted execution/statistics
+        changes together; other exception types remain visible.
+        See Python 3.11 sqlite3 transaction control:
+        https://docs.python.org/3.11/library/sqlite3.html#transaction-control
 
         Args:
             record: Test execution record
         """
-        with self._get_connection() as conn:
-            data = record.to_dict()
+        try:
+            with self._get_connection() as conn:
+                data = record.to_dict()
 
-            conn.execute(
-                """
-                INSERT INTO test_executions (
-                    test_name, module, duration, status, timestamp,
-                    memory_usage, cpu_usage, error_message, test_size, tags
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-                (
-                    data["test_name"],
-                    data["module"],
-                    data["duration"],
-                    data["status"],
-                    data["timestamp"],
-                    data.get("memory_usage"),
-                    data.get("cpu_usage"),
-                    data.get("error_message"),
-                    data.get("test_size"),
-                    data.get("tags"),
-                ),
+                conn.execute(
+                    """
+                    INSERT INTO test_executions (
+                        test_name, module, duration, status, timestamp,
+                        memory_usage, cpu_usage, error_message, test_size, tags
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                    (
+                        data["test_name"],
+                        data["module"],
+                        data["duration"],
+                        data["status"],
+                        data["timestamp"],
+                        data.get("memory_usage"),
+                        data.get("cpu_usage"),
+                        data.get("error_message"),
+                        data.get("test_size"),
+                        data.get("tags"),
+                    ),
+                )
+
+                # Update statistics
+                self._update_statistics(conn, record)
+
+                conn.commit()
+        except sqlite3.OperationalError:
+            # Avoid exposing database paths or test payloads in diagnostics.
+            logger.warning(
+                "Performance metric was not recorded (SQLite operational error)"
             )
-
-            # Update statistics
-            self._update_statistics(conn, record)
-
-            conn.commit()
 
     def _update_statistics(self, conn: sqlite3.Connection, record: TestExecutionRecord):
         """Update test statistics."""
