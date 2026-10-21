@@ -468,6 +468,7 @@ class BLMProvider(BaseProvider):
 
         Raises:
             RecordNotFoundError: If case not found
+            ProviderError: If the request or response decoding fails
         """
         self.logger.info(f"Getting case detail for {case_number}")
 
@@ -477,12 +478,9 @@ class BLMProvider(BaseProvider):
         if state:
             params["state"] = state.upper()
 
-        try:
-            data = self._get_json(query_url, params=params, use_cache=False)
-            if data and (data.get("case_nr") or data.get("results")):
-                return data
-        except Exception as e:
-            self.logger.error(f"Case detail query failed: {e}")
+        data = self._get_json(query_url, params=params, use_cache=False)
+        if data and (data.get("case_nr") or data.get("results")):
+            return data
 
         raise RecordNotFoundError(
             record_type="BLM Case",
