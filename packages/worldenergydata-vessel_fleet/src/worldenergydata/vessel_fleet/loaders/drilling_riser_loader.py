@@ -43,8 +43,8 @@ VALID_COMPONENT_TYPES = (
 )
 
 
-def _validate_row_widths(content: str) -> None:
-    """Check header mapping and widths; retain physical record start numbers."""
+def _validate_row_widths(content: str) -> list[int]:
+    """Check header mapping and widths; return physical record start numbers."""
     reader = csv.reader(StringIO(content), strict=True)
     try:
         header = next(reader, [])
@@ -60,6 +60,7 @@ def _validate_row_widths(content: str) -> None:
             raise ValueError(f"CSV header at line 1: duplicate column {field}")
         seen_columns.add(field)
     expected = len(header)
+    line_numbers: list[int] = []
     while True:
         line_number = reader.line_num + 1
         try:
@@ -75,6 +76,8 @@ def _validate_row_widths(content: str) -> None:
                 f"CSV line {line_number}: expected {expected} fields, "
                 f"actual {len(row)}"
             )
+        line_numbers.append(line_number)
+    return line_numbers
 
 
 class DrillingRiserLoader:
@@ -105,14 +108,23 @@ class DrillingRiserLoader:
         # Parse the same snapshot that was checked, so a file replacement
         # cannot introduce unchecked rows between preflight and pandas.
         content = csv_path.read_text(encoding="utf-8-sig")
-        _validate_row_widths(content)
-        df = pd.read_csv(StringIO(content))
+        line_numbers = _validate_row_widths(content)
+        # Preserve literal IDs, including leading zeros and pandas NA tokens;
+        # missing-value and numeric parsing for other columns stay unchanged.
+        df = pd.read_csv(StringIO(content), converters={"COMPONENT_ID": str})
         missing_columns = [field for field in _REQUIRED_COLUMNS if field not in df]
         if missing_columns:
             raise ValueError("Missing required column " + ", ".join(missing_columns))
         for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
+                if field == "COMPONENT_ID":
+                    lines = ", ".join(
+                        str(line_numbers[index]) for index in df.index[missing]
+                    )
+                    raise ValueError(
+                        f"COMPONENT_ID must be populated at CSV line {lines}"
+                    )
                 ids = df.loc[missing, "COMPONENT_ID"].tolist()
                 raise ValueError(f"{field} must be populated for components {ids}")
         # Issue #1046 requires unique component IDs; get_by_id must not select

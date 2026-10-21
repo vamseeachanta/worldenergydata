@@ -87,11 +87,62 @@ def test_blank_identity_is_not_cached(tmp_path: Path, component_id: str) -> None
     """An empty or whitespace-only ID has no usable lookup identity (#1046)."""
     write_catalog(tmp_path, [component_id])
     loader = DrillingRiserLoader(tmp_path)
-    with pytest.raises(ValueError, match="COMPONENT_ID must be populated"):
+    with pytest.raises(ValueError, match="COMPONENT_ID must be populated.*CSV line 2"):
         loader.load()
     assert loader._df is None
     write_catalog(tmp_path, ["A"])
     assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
+
+
+@pytest.mark.parametrize(
+    "ids",
+    [
+        ["1", "01"],
+        ["1", "1.0"],
+        ["01"],
+        ["NA", "NaN", "NULL", "null"],
+        ["A", " A", "A "],
+    ],
+)
+def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> None:
+    """Explicit distinct strings stay distinct, including leading zeros and NA."""
+    write_catalog(tmp_path, ids)
+    loader = DrillingRiserLoader(tmp_path)
+    assert loader.load()["COMPONENT_ID"].tolist() == ids
+    for component_id in ids:
+        assert loader.get_by_id(component_id)["COMPONENT_ID"] == component_id
+
+
+@pytest.mark.parametrize("component_id", ["01", "NA"])
+def test_duplicate_identity_reports_literal_string(
+    tmp_path: Path, component_id: str
+) -> None:
+    """Two identical strings remain duplicates without numeric or NA coercion."""
+    write_catalog(tmp_path, [component_id, component_id])
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match="Duplicate COMPONENT_ID") as error:
+        loader.load()
+    assert repr(component_id) in str(error.value)
+    assert loader._df is None
+
+
+@pytest.mark.parametrize("component_id", ["", " \t"])
+def test_blank_identity_reports_physical_line(
+    tmp_path: Path, component_id: str
+) -> None:
+    """The bad record starts at line 5 after a quoted newline and an empty line."""
+    write_catalog(tmp_path, ["A", component_id])
+    path = tmp_path / CSV_NAME
+    content = path.read_text()
+    content = content.replace("Identity validation only", '"first\nsecond"', 1)
+    first_record_end = content.index('second"') + len('second"')
+    line_end = content.index("\n", first_record_end)
+    path.write_text(content[:line_end] + "\n" + content[line_end:])
+
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match="COMPONENT_ID must be populated.*CSV line 5"):
+        loader.load()
+    assert loader._df is None
 
 
 def test_duplicate_identity_can_be_repaired_and_retried(tmp_path: Path) -> None:

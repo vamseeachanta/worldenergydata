@@ -7,6 +7,9 @@ Importable transparently as `worldenergydata.vessel_fleet` once the workspace
 is installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for
 the shared `worldenergydata.common` layer.
 
+See [drilling riser CSV validation](docs/drilling-riser-csv.md) for the input
+contract, rejection behavior and a worked example of correcting malformed data.
+
 ## Data relocation (option (i) — data travels with the package)
 
 The curated dataset (construction vessels, drilling rigs, riser components;
@@ -14,6 +17,3 @@ The curated dataset (construction vessels, drilling rigs, riser components;
 is resolved package-relative by the loaders and `FleetRouter`. This makes the
 domain self-contained — no repo-root or external data mount is required — and
 the data ships in the built wheel.
-
-See [drilling riser CSV validation](docs/drilling-riser-csv.md) for the input
-contract, rejection behavior and a worked example of correcting malformed data.
