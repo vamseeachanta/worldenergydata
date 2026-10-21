@@ -12,12 +12,18 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
 
     ``df`` must contain ``date`` and ``rig_count`` columns. Counts must be
     finite, nonnegative whole numbers; dates must be timezone-naive dates or
-    parseable date strings. Times within a calendar date are combined.
+    ISO 8601 date strings. Locale-dependent strings such as DD/MM/YYYY are
+    rejected. Times within a calendar date are combined.
 
     Each row must represent a disjoint part of the requested population.
     Filter to the desired population before calling; combining overlapping
     totals and detail records would double count rigs. No deduplication or
     population-completeness inference is performed.
+
+    Known loader limit: ``load_summary`` and ``load_pivot_table`` replace
+    missing or unparseable counts with zero before aggregation. Validate
+    source counts before loading; aggregation cannot distinguish those
+    replacements from observed zeros.
 
     The required ``window`` counts observed dates, not elapsed weeks. Absent
     dates are not filled. Incomplete windows yield NaN; an observed zero is
@@ -56,7 +62,7 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
             isinstance(value, Number) for value in df["date"]
         ):
             raise ValueError("numeric epochs are not calendar dates")
-        dates = df["date"].map(pd.Timestamp)
+        dates = df["date"].map(lambda value: pd.to_datetime(value, format="ISO8601"))
         if dates.isna().any() or dates.dt.tz is not None:
             raise ValueError("missing or timezone-aware date")
         dates = dates.dt.normalize()
