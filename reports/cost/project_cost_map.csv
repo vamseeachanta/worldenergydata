@@ -1,0 +1,18 @@
+project_id,view,identity,derivation,low,high,low_open,high_open,source,allocation_case,target_total,target_endpoint,target_open,limiting
+prj-demo,total,,observed,100,100,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,eligible,,observed,20,30,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,excluded_compatible,,observed,50,50,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,overlap_compatible,,observed,0,0,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,residual,,observed,70,80,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,coverage,,observed,0.20,0.30,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,residual_fraction,,observed,0.70,0.80,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,
+prj-demo,included,awd-demo,observed,20,30,false,false,Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026),,,,,
+prj-demo,excluded,awd-lease,observed,50,50,false,false,"Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)",,,,,
+prj-demo,scn-alternative,req-host,modeled,20.00,20.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-alternative,req-wells,modeled,70.00,70.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-alternative,unallocated,modeled,10.00,10.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-alternative,unreconciled_variance,modeled,0.00,0.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-reference,req-host,allocated,60.00,60.00,false,false,Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-reference,req-wells,allocated,30.00,30.00,false,false,Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-reference,unallocated,allocated,10.00,10.00,false,false,Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
+prj-demo,scn-reference,unreconciled_variance,allocated,0.00,0.00,false,false,Synthetic joint shares: 0.6 + 0.3 + 0.1 = 1; hand calculation (2026),point,100,point,false,false
