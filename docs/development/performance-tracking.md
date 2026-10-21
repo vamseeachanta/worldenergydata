@@ -11,6 +11,7 @@ The execution row and its statistics are committed together or discarded togethe
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Document fail-open recording and lock recovery to prevent diagnostic writes from changing test verdicts. |
+| 1 | 2026-10-21 | Keep the lock example immediate after connection setup began restoring the write timeout. |
 
 ## Storage and failure policy
 
@@ -42,8 +43,9 @@ metric delivery is provided. Test verdicts remain pytest's responsibility.
 Inputs are a synthetic passed execution and a competing write transaction. The
 example sets the test connection timeout to zero seconds to exercise the failure
 immediately, following the `sqlite3.connect(timeout)` API cited above; production
-timeout policy is unchanged. The duration is a chosen synthetic input, with no
-timing acceptance limit.
+timeout policy is unchanged. The example also overrides the connection budget
+used to restore `PRAGMA busy_timeout` during setup. The duration is a chosen
+synthetic input, with no timing acceptance limit.
 
 Method: hold `BEGIN IMMEDIATE`, attempt a diagnostic write, roll back the competing
 transaction, then record again. The independent row-count calculation is
@@ -79,7 +81,9 @@ with TemporaryDirectory() as directory:
         status="passed",
         timestamp=datetime.now(),
     )
-    with patch("sqlite3.connect", side_effect=connect_without_wait):
+    with patch("sqlite3.connect", side_effect=connect_without_wait), patch(
+        "worldenergydata.testing.performance.database._CONNECTION_TIMEOUT", 0
+    ):
         with closing(connect(db.db_path)) as holder:
             holder.execute("BEGIN IMMEDIATE")
             db.record_execution(record)  # Warns and drops the locked metric.

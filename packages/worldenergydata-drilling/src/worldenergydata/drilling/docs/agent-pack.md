@@ -5,7 +5,7 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 2, 2026-10-17 |
+| Pack revision | 3, 2026-10-19 |
 | Code revision | `b1394197a66f95d78615425b4e1ad4ff78bd9de2` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
@@ -27,6 +27,7 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | --- | --- | --- |
 | 0 | 2026-10-17 | Initial inputs, methods, regression examples and failure inventory to guide package use. |
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
+| 3 | 2026-10-19 | Add a pinned mobilization enrollment proposal and exact allocation checks; defer counted inventory changes until review. |
 
 ## 2. Inputs and outputs
 
@@ -281,6 +282,32 @@ Map source: `digitalmodel`, `docs/registry/implementation-map.yaml`, branch `cod
 Inventory at that map-file commit: **0 in-package implementation rows; 0 module map families; 0 counted families**. No path in the map lies under the package in this header. A8 inventory is empty; counted-family grep is `NOT_APPLICABLE` because the map has no in-package rows. Further second implementations counted for A8: 0; this is not a claim that all methods are mapped.
 
 Map follow-up, #1346: add the duration law, mobilization allocation, break-even comparison, campaign cost comparison/total, anchored time-window grouping and log-space learning fit before they can become counted families. The implementations in this package are already described in section 3. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L38-L228] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py:L38-L161]
+
+### Package-local enrollment proposal
+
+Slice 1 of #1346 is recorded in [implementation-map.json](implementation-map.json).
+The JSON contains one mobilization-allocation family with its implementation
+location, source-file digest, repository revision, exact test nodes and replayable
+duplicate-discovery results. It is a package-local proposal, not a replacement for
+the external map described above. The family is `pending_review` and `counted: false`;
+the reviewed inventory at the external map pin remains unchanged.
+
+The allocation equation is fixed cost divided by unit count: OpenStax,
+*Principles of Accounting, Volume 2: Managerial Accounting* (2019),
+[section 2.2, Average fixed cost](https://openstax.org/books/principles-managerial-accounting/pages/2-2-identify-and-apply-basic-cost-behavior-patterns).
+Mobilization is treated as a fixed cost and wells as equal allocation units.
+The test docstring writes out independent arithmetic with synthetic inputs;
+this supports allocation arithmetic and does not establish drilling cost calibration.
+[tests/unit/drilling/test_implementation_map.py::test_mobilization_hand_calculation]
+
+The recorded whole-repository name/division search retains the definition and
+two test consumers at its revision. No further definition was found by that
+bounded search; differently named allocation algorithms are not excluded.
+[tests/unit/drilling/test_implementation_map.py::test_mobilization_discovery_evidence]
+
+Duration, break-even, campaign costs, anchored grouping and learning-fit enrollment
+remain later slices of #1346. After review, reconcile the external map and update
+the counted pack inventory. Engineering qualification remains `NOT_EVALUATED`.
 
 ### Whole-repository duplicate discovery
 

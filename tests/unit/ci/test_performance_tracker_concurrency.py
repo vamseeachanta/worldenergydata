@@ -172,6 +172,10 @@ def _sample_record():
 
 
 def _disable_busy_wait(monkeypatch):
+    # Connection setup restores this budget through PRAGMA busy_timeout.
+    monkeypatch.setattr(
+        "worldenergydata.testing.performance.database._CONNECTION_TIMEOUT", 0
+    )
     connect = sqlite3.connect
 
     def immediate_connect(*args, **kwargs):
@@ -296,6 +300,9 @@ import conftest
 @pytest.fixture
 def locked_tracker(request, monkeypatch):
     tracker = conftest._get_performance_tracker(request.config)
+    monkeypatch.setattr(
+        'worldenergydata.testing.performance.database._CONNECTION_TIMEOUT', 0
+    )
     connect = sqlite3.connect
     def immediate_connect(*args, **kwargs):
         # No wait: Python 3.11 sqlite3.connect(timeout), seconds.
