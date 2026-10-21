@@ -126,11 +126,11 @@ def test_markdown_carries_resolution_section(devs):
 @pytest.mark.parametrize("missing", [("basis",), ("basis", "pnd_days", "days_status")])
 def test_synthetic_output_requires_basis(mod, monkeypatch, tmp_path, missing):
     from tests.unit.lower_tertiary.test_dc_provenance import (
+        make_synthetic_inputs,
         patch_inputs,
-        synthetic_inputs,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     patch_inputs(monkeypatch, mod, inputs)
     parser = mod.provenance
     monkeypatch.setattr(
@@ -148,12 +148,12 @@ def test_synthetic_label_cell_cannot_change_table_structure(mod, monkeypatch, tm
     import csv
 
     from tests.unit.lower_tertiary.test_dc_provenance import (
+        make_synthetic_inputs,
         patch_inputs,
-        synthetic_inputs,
         write_rows,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     rows = list(csv.DictReader(inputs[0].open(encoding="utf-8")))
     rows[0]["BASIS"] = "synthetic | rule\nnext <tag>"
     write_rows(inputs[0], rows)
@@ -170,15 +170,15 @@ def test_synthetic_vintage_labels_are_independent_of_source(monkeypatch, tmp_pat
 
     from tests.unit.lower_tertiary.test_dc_provenance import (
         load_script,
+        make_synthetic_inputs,
         patch_inputs,
         publisher,
         remove_source_labels,
         strip_labels,
-        synthetic_inputs,
         write_rows,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     remove_source_labels(inputs[0])
     listing = load_script(REPO / "scripts/lower_tertiary/build_wo_per_well_dc.py")
     drilldown = load_script(REPO / "scripts/lower_tertiary/build_dc_drilldown.py")

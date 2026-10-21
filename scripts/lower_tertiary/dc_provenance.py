@@ -12,6 +12,11 @@ LABELS = ("basis", "basis_v30", "basis_wed", "pnd_days", "days_status")
 DESCRIPTION = (
     "Days status preserves source coverage labels; aggregate statuses may be mixed."
 )
+# Overall coverage vocabulary from bsee/analysis/war_rig_days.py, plus the
+# aggregate marker. Per-activity no_activity_coded is not overall coverage.
+COVERAGE_STATUSES = frozenset(
+    {"war_covered", "no_war_activity", "war_covered_no_activity_code", "mixed"}
+)
 
 
 def carries_basis(columns: Iterable[str]) -> bool:
@@ -111,13 +116,18 @@ def require_publication_provenance(rows: Iterable[Mapping]) -> None:
     """
     for row in rows:
         if any(key not in row for key in ("basis", "pnd_days", "days_status")):
-            raise ValueError("missing publication provenance; regenerate labelled inputs")
+            raise ValueError(
+                "missing publication provenance; regenerate labelled inputs"
+            )
         basis = row["basis"]
-        if not isinstance(basis, str) or _basis_value(basis.strip(), allow_mixed=True) is None:
+        if (
+            not isinstance(basis, str)
+            or _basis_value(basis.strip(), allow_mixed=True) is None
+        ):
             raise ValueError("missing publication provenance basis")
         status = row["days_status"]
-        if not isinstance(status, str) or not status.strip() or status.strip() in ("nan", "<NA>"):
-            raise ValueError("missing publication provenance status")
+        if not isinstance(status, str) or status not in COVERAGE_STATUSES:
+            raise ValueError("invalid publication provenance status")
         nullable_days(row["pnd_days"])
         # An overall label cannot supply the missing rule for one vintage's
         # day counts. Outer-join-only rows genuinely have no opposite side.

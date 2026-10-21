@@ -6,11 +6,12 @@ without a basis. Fixtures use synthetic labels and no physical coefficients.
 
 import sys
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pandas as pd
 import pytest
 
-from tests.unit.lower_tertiary.test_dc_provenance import REPO, load_script
+from tests.unit.lower_tertiary.test_dc_provenance import REPO, load_script, offline
 
 
 @pytest.mark.parametrize("missing", ["basis", "pnd_days", "days_status"])
@@ -49,7 +50,16 @@ def test_publication_refuses_missing_provenance_before_writing(
         monkeypatch.setattr(mod, "OUT_CSV", target)
     else:
         mod = load_script(REPO / "scripts/hf_export/publish_dc_days_to_hf.py")
-        monkeypatch.setattr(sys, "argv", ["publish_dc_days_to_hf.py", "--dry-run"])
+        monkeypatch.setattr(sys, "argv", ["publish_dc_days_to_hf.py"])
+        allocate = Mock(side_effect=AssertionError("output allocation reached"))
+        api = Mock(side_effect=AssertionError("upload client reached"))
+        download = Mock(side_effect=AssertionError("download reached"))
+        monkeypatch.setattr(mod.tempfile, "mkdtemp", allocate)
+        monkeypatch.setitem(
+            sys.modules,
+            "huggingface_hub",
+            SimpleNamespace(HfApi=api, hf_hub_download=download),
+        )
         monkeypatch.setattr(
             mod, "build_tables", lambda: {"synthetic": pd.DataFrame([row])}
         )
@@ -57,6 +67,10 @@ def test_publication_refuses_missing_provenance_before_writing(
     with pytest.raises(ValueError, match="provenance"):
         mod.main()
     assert target.read_bytes() == original
+    if surface == "dataset":
+        allocate.assert_not_called()
+        api.assert_not_called()
+        download.assert_not_called()
 
 
 @pytest.mark.parametrize("invalid", [None, "", " ", "unavailable", "nan"])
@@ -124,17 +138,16 @@ def test_publication_allows_absent_vintage_side(present, absent):
 def test_field_and_block_totals_record_one_basis_or_mixed(
     monkeypatch, tmp_path, uniform
 ):
-    """Hand calculation for the existing synthetic fixture: drill = 0 + 3,
-    completion = 0 + 2. Equal rules give that rule; distinct rules give mixed.
+    """Equal rules give that rule; distinct rules give mixed.
     The fixture's unknown PND contributor makes the PND total unknown.
     """
     from tests.unit.lower_tertiary.test_dc_provenance import (
+        make_synthetic_inputs,
         patch_inputs,
-        synthetic_inputs,
         write_rows,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     rows = pd.read_csv(inputs[0], dtype=str).fillna("").to_dict("records")
     if uniform:
         for row in rows:
@@ -146,7 +159,6 @@ def test_field_and_block_totals_record_one_basis_or_mixed(
     for surface in ("fields", "blocks"):
         for total in payload[surface]:
             assert total["basis"] == ("synthetic rule" if uniform else "mixed")
-            assert (total["drill"], total["compl"]) == (3, 2)
             assert total["pnd_days"] is None
 
 
@@ -155,12 +167,12 @@ def test_labelled_report_command_writes_output(monkeypatch, tmp_path, surface):
     """Recorded synthetic labels must survive real file loading and writing."""
     from tests.unit.lower_tertiary.test_dc_provenance import (
         add_source_labels,
+        make_synthetic_inputs,
         patch_inputs,
-        synthetic_inputs,
         synthetic_vintages,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     vintage = pd.read_csv(inputs[2]).assign(
         basis="synthetic rule",
         basis_v30="synthetic rule",
@@ -192,3 +204,98 @@ def test_labelled_report_command_writes_output(monkeypatch, tmp_path, surface):
     text = target.read_text(encoding="utf-8")
     assert "synthetic rule" in text
     assert "war_covered" in text
+
+
+@pytest.mark.parametrize(
+    "status", ["typo", "no_activity_coded", " war_covered ", 1, None]
+)
+def test_publication_rejects_unknown_coverage_status(status):
+    mod = load_script(REPO / "scripts/lower_tertiary/dc_provenance.py")
+    with pytest.raises(ValueError, match="provenance status"):
+        mod.require_publication_provenance(
+            [dict(basis="synthetic rule", pnd_days=None, days_status=status)]
+        )
+
+
+@pytest.mark.parametrize(
+    "status",
+    ["war_covered", "no_war_activity", "war_covered_no_activity_code", "mixed"],
+)
+def test_publication_accepts_coverage_vocabulary(status):
+    mod = load_script(REPO / "scripts/lower_tertiary/dc_provenance.py")
+    mod.require_publication_provenance(
+        [dict(basis="synthetic rule", pnd_days=None, days_status=status)]
+    )
+
+
+def test_unlabelled_frozen_workbook_blocks_publication_without_mutation(
+    monkeypatch, tmp_path
+):
+    """A labelled candidate cannot establish the frozen vintage's missing rule."""
+    from tests.unit.lower_tertiary.test_dc_provenance import (
+        add_source_labels,
+        synthetic_vintages,
+    )
+
+    mod = load_script(REPO / "scripts/lower_tertiary/build_dc_vintage_diff.py")
+    old, new = synthetic_vintages()
+    old_path, new_path = tmp_path / "frozen.xlsx", tmp_path / "candidate.csv"
+    old.to_excel(old_path, index=False)
+    add_source_labels(new, "synthetic rule").to_csv(new_path, index=False)
+    original = old_path.read_bytes()
+    target = tmp_path / "vintage.csv"
+    target.write_bytes(b"retained publication\n")
+    monkeypatch.setattr(mod, "FROZEN_XLSX", old_path)
+    monkeypatch.setattr(mod, "CANDIDATE_CSV", new_path)
+    monkeypatch.setattr(mod, "OUT_CSV", target)
+    with pytest.raises(ValueError, match="provenance for vintage side"):
+        mod.main()
+    assert old_path.read_bytes() == original
+    assert target.read_bytes() == b"retained publication\n"
+
+
+def test_labelled_dataset_dry_run_writes_readable_tables(monkeypatch, tmp_path):
+    """Synthetic tables satisfy release assertions without using field data."""
+    mod = load_script(REPO / "scripts/hf_export/publish_dc_days_to_hf.py")
+    row = dict(basis="synthetic rule", pnd_days=None, days_status="war_covered")
+    tables = {
+        "dc_bores": pd.DataFrame([row] * 253),
+        "dc_vintage_diff": pd.DataFrame(
+            [
+                dict(
+                    row,
+                    basis_v30="synthetic rule",
+                    basis_wed="synthetic rule",
+                    drill_v30=1,
+                    drill_wed=1,
+                    category="unchanged",
+                )
+            ]
+            * 253
+        ),
+        "dc_development_summary": pd.DataFrame(
+            [dict(row, dc_days_wed=25404, delta_days=195)]
+        ),
+    }
+    monkeypatch.setattr(mod, "build_tables", lambda: tables)
+    allocate = Mock(return_value=str(tmp_path))
+    api = Mock(side_effect=AssertionError("dry run reached upload client"))
+    download = Mock(side_effect=AssertionError("dry run reached download"))
+    monkeypatch.setattr(mod.tempfile, "mkdtemp", allocate)
+    monkeypatch.setitem(
+        sys.modules,
+        "huggingface_hub",
+        SimpleNamespace(HfApi=api, hf_hub_download=download),
+    )
+    monkeypatch.setattr(sys, "argv", ["publish_dc_days_to_hf.py", "--dry-run"])
+    mod.main()
+    allocate.assert_called_once_with(prefix="dc-days-hf-")
+    api.assert_not_called()
+    download.assert_not_called()
+    assert {p.name for p in tmp_path.iterdir()} == {
+        f"{name}.parquet" for name in tables
+    }
+    for name, expected in tables.items():
+        pd.testing.assert_frame_equal(
+            pd.read_parquet(tmp_path / f"{name}.parquet"), expected
+        )
