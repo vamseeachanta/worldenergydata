@@ -157,6 +157,9 @@ def _read_response(
     client: Any, url: str, params: dict[str, Any], budget: int
 ) -> tuple[dict[str, Any], bytes, str]:
     """One capped request, with no redirects or retries after any error."""
+    # Issue 1164's aggregate-budget contract: no request after exhaustion.
+    if budget <= 0:
+        raise ValueError("response byte cap exhausted")
     if client.session.get_adapter(url).max_retries.total != 0:
         raise ValueError("transport retries must be disabled")
     delay = 2 - (time.monotonic() - getattr(client, "_feature_last_request", 0))
