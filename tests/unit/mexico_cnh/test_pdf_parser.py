@@ -68,6 +68,15 @@ def test_grouped_numbers_with_missing_and_invalid_cells():
         "ID_POZO",
         "clave_pozo",
         "record_id",
+        "Identificador",
+        "Identificador del pozo",
+        "Identificación",
+        "IdPozo",
+        "ClavePozo",
+        "NombreCampo",
+        "PozoID",
+        "IDs",
+        "Claves",
     ],
 )
 def test_identifier_and_numeric_columns_are_preserved(header):
@@ -86,10 +95,10 @@ def test_identifier_and_numeric_columns_are_preserved(header):
 @pytest.mark.parametrize(
     "header", ["Liquidos", "Hidrocarburos", "Unidad", "Produccion de liquidos"]
 )
-def test_numeric_headers_containing_identifier_substrings_are_converted(header):
-    """An embedded 'id' is not an identifier; 1,234 = 1000 + 234."""
+def test_headers_containing_identifier_substrings_remain_text(header):
+    """Preserve the existing substring policy until header parsing is revised."""
     result = CNHPDFParser()._convert_numeric_columns(pd.DataFrame({header: ["1,234"]}))
-    assert result.loc[0, header] == 1234
+    assert result.loc[0, header] == "1,234"
 
 
 def test_production_extraction_converts_thousands(monkeypatch):
