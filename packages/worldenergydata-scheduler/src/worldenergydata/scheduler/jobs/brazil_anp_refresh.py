@@ -121,14 +121,23 @@ def _is_deterministic_failure(exc: Exception) -> bool:
 
 
 def _resolve_year_month(config: dict) -> tuple[int, int]:
+    explicit_date = any(key in config for key in ("year", "month", "semester"))
     if "year" in config and "month" in config:
-        return int(config["year"]), int(config["month"])
+        year, month = int(config["year"]), int(config["month"])
+        # ANPClient._build_month_url defines the inclusive 1..12 contract.
+        # Validate here so a configuration error never enters download retry.
+        if not 1 <= month <= 12:
+            raise ValueError("month must be in 1..12")
+        return year, month
 
     if "year" in config and "semester" in config:
         semester = int(config["semester"])
         if semester not in (1, 2):
             raise ValueError("semester must be 1 or 2")
         return int(config["year"]), 6 if semester == 1 else 12
+
+    if explicit_date:
+        raise ValueError("explicit date requires year and either month or semester")
 
     now = datetime.now()
     month = now.month - 2
