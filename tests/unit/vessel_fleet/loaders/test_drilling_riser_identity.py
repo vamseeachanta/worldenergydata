@@ -101,7 +101,6 @@ def test_blank_identity_is_not_cached(tmp_path: Path, component_id: str) -> None
         ["1", "1.0"],
         ["01"],
         ["NA", "NaN", "NULL", "null"],
-        ["A", " A", "A "],
     ],
 )
 def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> None:
@@ -172,3 +171,49 @@ def test_distinct_ids_and_quoted_provenance_round_trip(tmp_path: Path) -> None:
     frame["NOTES"] = "first line\nsecond line"
     frame.to_csv(path, index=False)
     pd.testing.assert_frame_equal(DrillingRiserLoader(tmp_path).load(), frame)
+
+
+@pytest.mark.parametrize("component_id", [" A", "A ", "\tA", "A\n", "\u00a0A"])
+def test_padded_identity_is_not_cached(tmp_path: Path, component_id: str) -> None:
+    """Padding is rejected even without a second ID that would collide."""
+    write_catalog(tmp_path, [component_id])
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match="COMPONENT_ID.*whitespace.*CSV line 2"):
+        loader.load()
+    assert loader._df is None
+    write_catalog(tmp_path, ["A"])
+    assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
+
+
+@pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
+@pytest.mark.parametrize("value", ["", " \t", "NA"])
+def test_missing_provenance_reports_physical_lines(
+    tmp_path: Path, field: str, value: str
+) -> None:
+    """Missing records start at lines 5 and 6 after a multiline row and gap."""
+    write_catalog(tmp_path, ["A", "B", "C"])
+    path = tmp_path / CSV_NAME
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.reader(stream))
+    rows[1][HEADER.index("NOTES")] = "first\nsecond"
+    for row in rows[2:]:
+        row[HEADER.index(field)] = value
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        csv.writer(stream).writerows([rows[0], rows[1], [], *rows[2:]])
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match=rf"{field} must be populated.*CSV line 5, 6"):
+        loader.load()
+    assert loader._df is None
+    write_catalog(tmp_path, ["A"])
+    assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
+
+
+def test_delimiter_only_record_reports_physical_line(tmp_path: Path) -> None:
+    """Nine empty cells form one record at line 3 after the valid record."""
+    write_catalog(tmp_path, ["A"])
+    with (tmp_path / CSV_NAME).open("a", newline="", encoding="utf-8") as stream:
+        csv.writer(stream).writerow([""] * len(HEADER))
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match="DATA_SOURCE must be populated.*CSV line 3"):
+        loader.load()
+    assert loader._df is None

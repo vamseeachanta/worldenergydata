@@ -30,15 +30,18 @@ reads a single UTF-8 snapshot (a byte-order mark is accepted), then:
    expected count and actual count. Only empty physical lines are skipped.
 3. Parses the same snapshot with pandas, preserving literal ID strings, and
    checks the required query columns and populated `DATA_SOURCE` and `NOTES`.
-4. Checks `COMPONENT_ID` strings for blank or repeated values. Blank-ID errors
-   give the physical start line, including after quoted newlines or empty
-   physical lines. Repeated IDs are rejected before `get_by_id` can choose a
-   first match.
+   Missing-provenance errors give physical record start lines.
+4. Checks `COMPONENT_ID` strings for blank, padded or repeated values. Blank and
+   padded-ID errors give the physical start line, including after quoted
+   newlines or empty physical lines. Repeated IDs are rejected before
+   `get_by_id` can choose a first match.
 5. Caches the frame only after all checks pass. A failed load can be retried after
    the input is corrected.
 
-Column names and nonblank IDs are compared exactly; validation does not trim,
-rename or otherwise normalize them. Optional engineering cells may remain empty.
+IDs with leading or trailing whitespace are rejected, even without another ID
+that would collide after trimming. Column names and valid IDs are compared
+exactly; validation does not trim, rename or otherwise normalize them.
+Optional engineering cells may remain empty.
 IDs `1` and `01` remain distinct strings; `NA` is a populated ID. Other columns
 retain pandas' default numeric and missing-value parsing.
 A missing file retains the existing behavior of returning an empty frame.
@@ -114,8 +117,8 @@ CSV line 2: expected 9 fields, actual 8
 
 [Identity tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_identity.py)
 exercise ambiguous headers, blank IDs with physical line numbers, literal numeric
-and missing-value-like ID strings, repeated IDs, correction and retry, and quoted
-provenance round trips. Existing
+and missing-value-like ID strings, padded IDs, provenance error locations,
+repeated IDs, correction and retry, and quoted provenance round trips. Existing
 [alignment tests](../../../tests/unit/vessel_fleet/loaders/test_drilling_riser_alignment.py)
 retain the catalog's ID list, delimiter-independent text digest, width checks,
 component-type anchors and provenance assertions.
