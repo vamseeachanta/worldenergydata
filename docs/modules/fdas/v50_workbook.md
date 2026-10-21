@@ -7,23 +7,36 @@ it does not calculate economics or select fiscal assumptions.
 The summary uses the exact `Project_Summary` headers and order in the tracked
 [lineage workbook](../bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx),
 followed by `After-tax NPV USD` and `NPV Reference Date`. The original `NPV USD`
-column explicitly means pre-tax NPV in this interface. Each project carries
+column explicitly means pre-tax NPV in this interface. `Net CashFlow USD`,
+`MIRR monthly` and `MIRR annual` also use pre-tax cash flows; these bases are
+recorded in `Metadata`. Each project carries
 its own reference date. V30 is lineage-only.
 
-All columns are required. Numeric values must be finite; missing results must
-not be replaced by zero. A true zero is permitted. Project names must be unique.
+All columns are required. `FO Month`, `MIRR monthly` and `MIRR annual` may
+contain `NotApplicable(reason)` when a result is undefined. Each marker requires
+a nonblank reason, such as "No first oil by cutoff" or "MIRR undefined; cash flows
+lack both signs". It is exported as an empty cell, with its reason recorded under
+`not_applicable.Project_Summary!<cell address>` in `Metadata`. The address binds
+the reason to the project row and column in the exported summary. Unannotated
+`None`, NaN and NaT remain invalid, including in these three columns. All other
+columns reject not-applicable markers. Numeric values must otherwise be finite;
+missing results must not be replaced by zero. A true zero is permitted. Project
+names must be unique.
 Input columns may arrive in any order, but unknown columns are rejected so that
 source mapping cannot silently discard a result. Text is stored as literal text,
 including values beginning with a spreadsheet formula prefix.
 
 ```python
 from worldenergydata.fdas.reports.v50_workbook import (
+    NotApplicable,
     V50WorkbookMetadata,
     write_v50_workbook,
 )
 
 # summary is a DataFrame mapped explicitly from the financial engine outputs.
 # Both NPV columns are in USD, discounted on the same stated convention.
+# For an undefined result, assign a marker to that specific source cell:
+# summary.loc[row_index, "FO Month"] = NotApplicable("No first oil by cutoff")
 # Dates and provenance below are supplied from the actual run, without defaults.
 metadata = V50WorkbookMetadata(
     assumption_version=assumption_version,

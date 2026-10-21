@@ -5,17 +5,17 @@ financial_project_summary.xlsx, Project_Summary header row. Required provenance
 and separate tax bases follow repository issue 901. No economics are calculated.
 """
 
+import re
 from dataclasses import dataclass
 from datetime import date, datetime
 from math import isfinite
 from numbers import Real
 from pathlib import Path
-import re
 
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font
-
+from openpyxl.utils import get_column_letter
 
 # Frozen lineage schema, including its original units and column order.
 LEGACY_SUMMARY_COLUMNS = (
@@ -51,6 +51,14 @@ LEGACY_SUMMARY_COLUMNS = (
 SUMMARY_COLUMNS = (*LEGACY_SUMMARY_COLUMNS, "After-tax NPV USD", "NPV Reference Date")
 _TEXT_COLUMNS = {"Project Name", "DEV SYSTEM"}
 _DATE_COLUMNS = {"FO Month", "NPV Reference Date"}
+_NULLABLE_COLUMNS = {"FO Month", "MIRR monthly", "MIRR annual"}
+
+
+@dataclass(frozen=True)
+class NotApplicable:
+    """Explicit undefined result; a nonblank per-cell reason is required."""
+
+    reason: str
 
 
 @dataclass(frozen=True)
@@ -96,6 +104,8 @@ class V50WorkbookMetadata:
             "pre_tax_npv_column": "NPV USD",
             "after_tax_npv_column": "After-tax NPV USD",
             "npv_units": "USD",
+            "pre_tax_cashflow_column": "Net CashFlow USD",
+            "pre_tax_mirr_columns": "MIRR monthly; MIRR annual",
             "canonical_acceptance_status": "NOT_EVALUATED",
             "acceptance_limitation": "Assumptions and NPV convention require resolution of issues 899 and 900",
             "lineage": "V30 is lineage-only",
@@ -118,6 +128,14 @@ def _validated_rows(summary):
     rows = list(summary.loc[:, SUMMARY_COLUMNS].itertuples(index=False, name=None))
     for row in rows:
         for name, value in zip(SUMMARY_COLUMNS, row):
+            if isinstance(value, NotApplicable):
+                if name not in _NULLABLE_COLUMNS:
+                    raise ValueError(f"{name} does not permit not-applicable values")
+                if not isinstance(value.reason, str) or not value.reason.strip():
+                    raise ValueError(
+                        f"{name} not-applicable reason must be nonblank text"
+                    )
+                continue
             if name in _TEXT_COLUMNS:
                 if not isinstance(value, str) or not value.strip():
                     raise ValueError(f"{name} must be nonblank text")
@@ -160,8 +178,17 @@ def write_v50_workbook(
     sheet = book.active
     sheet.title = "Project_Summary"
     _append_literal(sheet, SUMMARY_COLUMNS)
-    for row in rows:
-        _append_literal(sheet, row)
+    for row_number, row in enumerate(rows, start=2):
+        values = []
+        for column_number, value in enumerate(row, start=1):
+            if isinstance(value, NotApplicable):
+                address = (
+                    f"Project_Summary!{get_column_letter(column_number)}{row_number}"
+                )
+                info[f"not_applicable.{address}"] = value.reason
+                value = None
+            values.append(value)
+        _append_literal(sheet, values)
     provenance = book.create_sheet("Metadata")
     for row in info.items():
         _append_literal(provenance, row)
