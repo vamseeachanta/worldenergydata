@@ -214,6 +214,9 @@ class PDQLoader:
 
         value = value.strip()
 
+        if field_name == "district":
+            return self.csv_loader._convert_value(field_name, value)
+
         # Numeric fields
         numeric_fields = {
             "oil_production",
@@ -232,7 +235,6 @@ class PDQLoader:
 
         # Integer fields
         integer_fields = {
-            "district",
             "county_code",
             "lease_number",
             "operator_number",

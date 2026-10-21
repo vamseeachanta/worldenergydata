@@ -486,8 +486,8 @@ class ProductionProcessor:
 
         Returns:
             DataFrame with district-level aggregates, including a missing-key
-            group for unclassified records. This group also counts toward the
-            district_count in local CSV workflow summaries.
+            group for unclassified records. Local CSV workflow summaries count
+            classified districts and report unclassified production separately.
         """
         if isinstance(data, list):
             df = pd.DataFrame(data)

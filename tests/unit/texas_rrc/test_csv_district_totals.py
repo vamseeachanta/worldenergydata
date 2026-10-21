@@ -1,12 +1,14 @@
 """Regression coverage for district data loss on the local CSV route."""
 
 import json
+import zipfile
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from worldenergydata.texas_rrc.data.loaders.csv_loader import CSVLoader
+from worldenergydata.texas_rrc.data.loaders.pdq_loader import PDQLoader
 from worldenergydata.texas_rrc.processors.production_processor import (
     ProductionProcessor,
 )
@@ -59,6 +61,50 @@ def test_csv_single_district_retains_production(district):
     assert result["oil_production"].sum() == sum(
         record["oil_production"] for record in records
     )
+
+
+@pytest.mark.parametrize(
+    "district, expected", [("5.0", "05"), ("10.0", "10"), ("05.00", "05")]
+)
+@pytest.mark.parametrize("route", ["string", "file", "stream"])
+def test_csv_decimal_district_retains_classified_production(
+    district, expected, route, tmp_path
+):
+    """One synthetic 100 BBL record belongs to its classified district."""
+    content = f"district,oil_production\n{district},100\n"
+    loader = CSVLoader()
+    if route == "string":
+        records = loader.load_from_string(content)
+    else:
+        path = tmp_path / "production.csv"
+        path.write_text(content, encoding="utf-8")
+        records = (
+            loader.load(path) if route == "file" else list(loader.iter_records(path))
+        )
+    processor = ProductionProcessor()
+    result = processor.aggregate_by_district(processor.process(records, validate=False))
+    assert result["district"].tolist() == [expected]
+    assert result["oil_production"].tolist() == [100]
+
+
+@pytest.mark.parametrize("district", ["03", "7B", "7C", "8A", "5.0", "10.0"])
+def test_pdq_stream_matches_bulk_district_conversion(district, tmp_path):
+    """ZIP streaming and bulk loading retain the same district identifier."""
+    path = tmp_path / "production.zip"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr(
+            "production.csv",
+            f"OG_DIST_NO,OG_OIL_PROD,OG_WELL_CNT\n{district},100,2\n",
+        )
+    loader = PDQLoader()
+    bulk = loader.load_zip(path)
+    streamed = list(loader.iter_zip_records(path))
+    assert len(bulk) == len(streamed) == 1
+    assert streamed[0]["district"] == bulk[0]["district"]
+    assert isinstance(streamed[0]["district"], str)
+    assert streamed[0]["oil_production"] == bulk[0]["oil_production"] == 100
+    assert streamed[0]["well_count"] == 2
+    assert isinstance(streamed[0]["well_count"], int)
 
 
 @pytest.mark.parametrize(
@@ -168,7 +214,37 @@ def test_csv_router_outputs_conserve_district_totals(tmp_path, unknown):
     assert districts["oil_production"].sum() == expected_total
     assert summary == {
         "total_records": 5 if unknown is None else 6,
-        "district_count": 4 if unknown is None else 5,
+        "district_count": 4,
+        "unclassified_records": 0 if unknown is None else 1,
+        "unclassified_oil_production": 0 if unknown is None else 50,
         "oil_production_total": expected_total,
+        "gas_production_total": 0,
+    }
+
+
+def test_csv_router_reports_entirely_unclassified_production(tmp_path):
+    """Two synthetic records give 100 + 25 = 125 BBL and zero districts."""
+    (tmp_path / "production.csv").write_text(
+        "district,oil_production,gas_production\n,100,0\ninvalid,25,0\n",
+        encoding="utf-8",
+    )
+    cfg = {
+        "basename": "texas_rrc",
+        "data_types": ["production"],
+        "data": {"source": "csv", "files": {"production": "production.csv"}},
+        "Analysis": {
+            "analysis_root_folder": str(tmp_path),
+            "result_folder": str(tmp_path / "outputs"),
+        },
+    }
+    result = TexasRRC().router(cfg)["texas_rrc"]
+    assert result["status"] == "completed"
+    summary = json.loads(Path(result["outputs"]["summary_json"]).read_text())
+    assert summary == {
+        "total_records": 2,
+        "district_count": 0,
+        "unclassified_records": 2,
+        "unclassified_oil_production": 125,
+        "oil_production_total": 125,
         "gas_production_total": 0,
     }

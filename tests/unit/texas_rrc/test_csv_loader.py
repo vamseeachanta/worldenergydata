@@ -91,6 +91,17 @@ class TestConvertValue:
         loader = CSVLoader()
         assert loader._convert_value("county_code", "5.0") == 5
 
+    @pytest.mark.parametrize(
+        "value, expected",
+        [("5.0", "5"), ("10.0", "10"), (" 05.000 ", "5")],
+    )
+    def test_district_integer_valued_decimal(self, value, expected):
+        assert CSVLoader()._convert_value("district", value) == expected
+
+    @pytest.mark.parametrize("value", ["5.5", "5e0", "5.01", "5.0x"])
+    def test_district_other_text_is_preserved(self, value):
+        assert CSVLoader()._convert_value("district", value) == value
+
     def test_integer_field_invalid(self):
         loader = CSVLoader()
         assert loader._convert_value("county_code", "abc") is None
