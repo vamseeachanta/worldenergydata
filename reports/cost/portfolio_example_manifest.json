@@ -1,0 +1,11 @@
+{
+  "contract": "portfolio-worked-example-v1",
+  "generated_at": "explicit revision date; no wall clock",
+  "inputs_sha256": "0d3a1a6b358ea8ece820c013ba3e1f456322f881137367d5631dd7307dcb54a2",
+  "output_sha256": {
+    "portfolio_example.html": "af92decbceca7eba443407dcbcd26d8f513ffc325de0f8b811669eb6189a09cc",
+    "portfolio_example.json": "576e8f1d79022a6e980117a9152a296f13a14ff73d7c655efd5933268b420594"
+  },
+  "rounding": "Decimal arithmetic; explicit allocation quantum; display one decimal",
+  "synthetic": true
+}

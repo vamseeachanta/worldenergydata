@@ -1,0 +1,1430 @@
+{
+  "bottom_up": {
+    "basis": {
+      "capex_basis": "capex",
+      "currency": "USD",
+      "ownership": "gross",
+      "phase": "phase-a",
+      "price_basis": "real",
+      "price_vintage": "2020",
+      "scope": "upstream",
+      "unit": "million"
+    },
+    "coverage": {
+      "high": "0.4",
+      "low": "0.25"
+    },
+    "covered_requirements": [
+      "host",
+      "installation",
+      "wells"
+    ],
+    "eligible": {
+      "high": "40",
+      "low": "30"
+    },
+    "excluded_ids": [],
+    "items": [
+      {
+        "amount": {
+          "high": "30",
+          "low": "20"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "a",
+        "overlap_group": "",
+        "requirements": [
+          "host",
+          "installation"
+        ],
+        "value_basis": "range"
+      },
+      {
+        "amount": {
+          "high": "10",
+          "low": "10"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "b",
+        "overlap_group": "",
+        "requirements": [
+          "wells"
+        ],
+        "value_basis": "point"
+      },
+      {
+        "amount": null,
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "c",
+        "overlap_group": "",
+        "requirements": [
+          "controls"
+        ],
+        "value_basis": "not_public"
+      }
+    ],
+    "linked_requirements": [
+      "controls",
+      "host",
+      "installation",
+      "wells"
+    ],
+    "missing_requirements": [
+      "controls"
+    ],
+    "overlap_ids": [],
+    "residual": {
+      "high": "90",
+      "low": "60"
+    },
+    "residual_fraction": {
+      "high": "0.9",
+      "low": "0.5"
+    },
+    "total": {
+      "high": "120",
+      "low": "100"
+    },
+    "unavailable": [
+      "c"
+    ]
+  },
+  "consistency": {
+    "relation": "indeterminate",
+    "variance": null
+  },
+  "estimator": {
+    "by_region": {
+      "region-a": {
+        "count": 2,
+        "coverage": "1",
+        "mae": "0"
+      }
+    },
+    "calibration_errors": [
+      "1",
+      "3"
+    ],
+    "candidate_mae": {
+      "linear": "0",
+      "quadratic": "0.000000000000000000000000004"
+    },
+    "coefficients": [
+      "3",
+      "16",
+      "2"
+    ],
+    "comparables": [
+      "c-1",
+      "c-2",
+      "t-1",
+      "t-2",
+      "t-3",
+      "t-4",
+      "t-5",
+      "v-1",
+      "v-2"
+    ],
+    "excluded": {},
+    "inputs": [
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "c-1",
+        "project": "c-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "15",
+          "low": "15"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "c-2",
+        "project": "c-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "21",
+          "low": "21"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "1",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-1",
+        "project": "t-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "12",
+          "low": "12"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-2",
+        "project": "t-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "14",
+          "low": "14"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "3",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-3",
+        "project": "t-3",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "16",
+          "low": "16"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-4",
+        "project": "t-4",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "18",
+          "low": "18"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "5",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-5",
+        "project": "t-5",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "20",
+          "low": "20"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "v-1",
+        "project": "v-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "14",
+          "low": "14"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "v-2",
+        "project": "v-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "18",
+          "low": "18"
+        }
+      }
+    ],
+    "interval": {
+      "high": "19",
+      "low": "13"
+    },
+    "method": "linear",
+    "partitions": {
+      "calibration": [
+        "c-1",
+        "c-2"
+      ],
+      "training": [
+        "t-1",
+        "t-2",
+        "t-3",
+        "t-4",
+        "t-5"
+      ],
+      "validation": [
+        "v-1",
+        "v-2"
+      ]
+    },
+    "point": "16",
+    "policy": {
+      "alpha": "0.5",
+      "max_mean_ape": "0.01",
+      "min_coverage": "0.5",
+      "min_training_groups": 3,
+      "min_validation_groups": 2,
+      "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+    },
+    "reason": "passed_supplied_policy",
+    "request": {
+      "architecture": "subsea",
+      "as_of": "2022-01-01",
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "driver": "3",
+      "driver_name": "well_count",
+      "driver_unit": "well",
+      "feature_evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "disclosed",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "group": "p-inferred",
+      "project": "p-inferred",
+      "region": "region-a"
+    },
+    "selection_folds": [
+      {
+        "test_groups": [
+          "t-1"
+        ],
+        "train_groups": [
+          "t-2",
+          "t-3",
+          "t-4",
+          "t-5"
+        ]
+      },
+      {
+        "test_groups": [
+          "t-2"
+        ],
+        "train_groups": [
+          "t-1",
+          "t-3",
+          "t-4",
+          "t-5"
+        ]
+      },
+      {
+        "test_groups": [
+          "t-3"
+        ],
+        "train_groups": [
+          "t-1",
+          "t-2",
+          "t-4",
+          "t-5"
+        ]
+      },
+      {
+        "test_groups": [
+          "t-4"
+        ],
+        "train_groups": [
+          "t-1",
+          "t-2",
+          "t-3",
+          "t-5"
+        ]
+      },
+      {
+        "test_groups": [
+          "t-5"
+        ],
+        "train_groups": [
+          "t-1",
+          "t-2",
+          "t-3",
+          "t-4"
+        ]
+      }
+    ],
+    "status": "modeled",
+    "validation": [
+      {
+        "ape": "0",
+        "covered": true,
+        "error": "0",
+        "group": "v-1",
+        "interval": {
+          "high": "17",
+          "low": "11"
+        },
+        "observed": "14",
+        "predicted": "14",
+        "project": "v-1",
+        "region": "region-a"
+      },
+      {
+        "ape": "0",
+        "covered": true,
+        "error": "0",
+        "group": "v-2",
+        "interval": {
+          "high": "21",
+          "low": "15"
+        },
+        "observed": "18",
+        "predicted": "18",
+        "project": "v-2",
+        "region": "region-a"
+      }
+    ],
+    "validation_coverage": "1",
+    "validation_mae": "0",
+    "validation_mean_ape": "0"
+  },
+  "inputs": {
+    "basis": {
+      "capex_basis": "capex",
+      "currency": "USD",
+      "ownership": "gross",
+      "phase": "phase-a",
+      "price_basis": "real",
+      "price_vintage": "2020",
+      "scope": "upstream",
+      "unit": "million"
+    },
+    "comparables": [
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "1",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-1",
+        "project": "t-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "12",
+          "low": "12"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-2",
+        "project": "t-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "14",
+          "low": "14"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "3",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-3",
+        "project": "t-3",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "16",
+          "low": "16"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-4",
+        "project": "t-4",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "18",
+          "low": "18"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "5",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "t-5",
+        "project": "t-5",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "20",
+          "low": "20"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "c-1",
+        "project": "c-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "15",
+          "low": "15"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "c-2",
+        "project": "c-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "21",
+          "low": "21"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "2",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "v-1",
+        "project": "v-1",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "14",
+          "low": "14"
+        }
+      },
+      {
+        "architecture": "subsea",
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "driver": "4",
+        "driver_name": "well_count",
+        "driver_unit": "well",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "features_on": "2020-01-01",
+        "group": "v-2",
+        "project": "v-2",
+        "region": "region-a",
+        "synthetic": false,
+        "target": {
+          "high": "18",
+          "low": "18"
+        }
+      }
+    ],
+    "events": [
+      {
+        "amount": {
+          "high": "120",
+          "low": "100"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "component": "total",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "disclosed",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "e-a",
+        "kind": "sanction",
+        "occurred_on": "2020-01-01",
+        "period": "2020",
+        "project": "p-map"
+      },
+      {
+        "amount": null,
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "component": "total",
+        "evidence": {
+          "available_on": "2021-01-01",
+          "derivation": "unavailable",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "e-b",
+        "kind": "not_public",
+        "occurred_on": "2021-01-01",
+        "period": "2021",
+        "project": "p-map"
+      },
+      {
+        "amount": {
+          "high": "30",
+          "low": "20"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "component": "host|installation",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "e-award-a",
+        "kind": "award",
+        "occurred_on": "2020-01-01",
+        "period": "2020",
+        "project": "p-map"
+      },
+      {
+        "amount": {
+          "high": "10",
+          "low": "10"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "component": "wells",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "e-award-b",
+        "kind": "award",
+        "occurred_on": "2020-01-01",
+        "period": "2020",
+        "project": "p-map"
+      },
+      {
+        "amount": null,
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "component": "controls",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "e-award-c",
+        "kind": "not_public",
+        "occurred_on": "2020-01-01",
+        "period": "2020",
+        "project": "p-map"
+      }
+    ],
+    "items": [
+      {
+        "amount": {
+          "high": "30",
+          "low": "20"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "a",
+        "overlap_group": "",
+        "requirements": [
+          "host",
+          "installation"
+        ],
+        "value_basis": "range"
+      },
+      {
+        "amount": {
+          "high": "10",
+          "low": "10"
+        },
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "b",
+        "overlap_group": "",
+        "requirements": [
+          "wells"
+        ],
+        "value_basis": "point"
+      },
+      {
+        "amount": null,
+        "basis": {
+          "capex_basis": "capex",
+          "currency": "USD",
+          "ownership": "gross",
+          "phase": "phase-a",
+          "price_basis": "real",
+          "price_vintage": "2020",
+          "scope": "upstream",
+          "unit": "million"
+        },
+        "disposition": "included",
+        "evidence": {
+          "available_on": "2020-01-01",
+          "derivation": "award_derived",
+          "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+        },
+        "identity": "c",
+        "overlap_group": "",
+        "requirements": [
+          "controls"
+        ],
+        "value_basis": "not_public"
+      }
+    ],
+    "policy": {
+      "alpha": "0.5",
+      "max_mean_ape": "0.01",
+      "min_coverage": "0.5",
+      "min_training_groups": 3,
+      "min_validation_groups": 2,
+      "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+    },
+    "request": {
+      "architecture": "subsea",
+      "as_of": "2022-01-01",
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "driver": "3",
+      "driver_name": "well_count",
+      "driver_unit": "well",
+      "feature_evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "disclosed",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "group": "p-inferred",
+      "project": "p-inferred",
+      "region": "region-a"
+    },
+    "required_asset_quantities": {
+      "controls": null,
+      "host": null,
+      "installation": null,
+      "wells": null
+    },
+    "requirements": [
+      "host",
+      "wells",
+      "installation",
+      "controls"
+    ],
+    "scenarios": [
+      {
+        "architecture": "subsea",
+        "identity": "example",
+        "shares": {
+          "host": "0.5",
+          "unallocated": "0.2",
+          "wells": "0.3"
+        },
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      }
+    ],
+    "total": {
+      "high": "120",
+      "low": "100"
+    },
+    "workbook": {
+      "amount": {
+        "high": "90",
+        "low": "90"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "cell": "example!B2",
+      "component": "total",
+      "period": "2020",
+      "project": "p-map",
+      "vintage": "example-vintage",
+      "workbook_digest": "synthetic-no-workbook-file"
+    }
+  },
+  "limits": [
+    "NOT_EVALUATED: real portfolio model qualification and asset-level predictions.",
+    "NOT_EVALUATED: real workbook scope/vintage reconciliation beyond the frozen-cell adapter.",
+    "Conformal coverage requires exchangeable project groups; no real-data guarantee is asserted.",
+    "The nine fictional observations deliberately mimic disclosed records only inside this example.",
+    "Joint allocation shares are assumed, not cost disclosures. Missing assets stay visible.",
+    "No FX, inflation, tax, workbook edits or stakeholder circulation."
+  ],
+  "revision_history": [
+    {
+      "change": "Add an auditable example for accounting and estimation.",
+      "date": "2026-10-20",
+      "revision": "initial"
+    }
+  ],
+  "sources": [
+    "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)",
+    "NIST/SEMATECH e-Handbook (2003), 4.4.3.1: https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm",
+    "A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification (2021), sections 2 and 3.1: https://arxiv.org/html/2107.07511v6",
+    "Cost-map program plan (2026), Shared Contract to Freeze: docs/plans/2026-07-16-issue-1038-cost-map-program.md"
+  ],
+  "summary": "Synthetic arithmetic demonstration only. No real-project CAPEX estimate is qualified. Inputs, method, answer and exclusions remain explicit.",
+  "synthetic": true,
+  "top_down": {
+    "allocation": {
+      "bands": {
+        "controls": {
+          "high": "0",
+          "low": "0"
+        },
+        "host": {
+          "high": "50",
+          "low": "50"
+        },
+        "installation": {
+          "high": "0",
+          "low": "0"
+        },
+        "wells": {
+          "high": "30",
+          "low": "30"
+        }
+      },
+      "derivation": "allocated",
+      "marginals_additive": false,
+      "scenarios": {
+        "example": {
+          "controls": "0",
+          "host": "50",
+          "installation": "0",
+          "unallocated": "20",
+          "wells": "30"
+        }
+      },
+      "sources": [
+        "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      ],
+      "unallocated": {
+        "high": "20",
+        "low": "20"
+      }
+    },
+    "basis": "explicit low-bound scenario",
+    "target": "100"
+  },
+  "trace": [
+    {
+      "amount": {
+        "high": "120",
+        "low": "100"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "total",
+      "evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "disclosed",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-a",
+      "kind": "sanction",
+      "occurred_on": "2020-01-01",
+      "period": "2020",
+      "project": "p-map"
+    },
+    {
+      "amount": {
+        "high": "30",
+        "low": "20"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "host|installation",
+      "evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "award_derived",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-award-a",
+      "kind": "award",
+      "occurred_on": "2020-01-01",
+      "period": "2020",
+      "project": "p-map"
+    },
+    {
+      "amount": {
+        "high": "10",
+        "low": "10"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "wells",
+      "evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "award_derived",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-award-b",
+      "kind": "award",
+      "occurred_on": "2020-01-01",
+      "period": "2020",
+      "project": "p-map"
+    },
+    {
+      "amount": null,
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "controls",
+      "evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "award_derived",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-award-c",
+      "kind": "not_public",
+      "occurred_on": "2020-01-01",
+      "period": "2020",
+      "project": "p-map"
+    },
+    {
+      "amount": null,
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "total",
+      "evidence": {
+        "available_on": "2021-01-01",
+        "derivation": "unavailable",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-b",
+      "kind": "not_public",
+      "occurred_on": "2021-01-01",
+      "period": "2021",
+      "project": "p-map"
+    }
+  ],
+  "workbook": {
+    "observation": {
+      "amount": {
+        "high": "120",
+        "low": "100"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "component": "total",
+      "evidence": {
+        "available_on": "2020-01-01",
+        "derivation": "disclosed",
+        "source": "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)"
+      },
+      "identity": "e-a",
+      "kind": "sanction",
+      "occurred_on": "2020-01-01",
+      "period": "2020",
+      "project": "p-map"
+    },
+    "reason": "unexplained",
+    "status": "evaluated",
+    "variance": {
+      "high": "30",
+      "low": "10"
+    },
+    "workbook": {
+      "amount": {
+        "high": "90",
+        "low": "90"
+      },
+      "basis": {
+        "capex_basis": "capex",
+        "currency": "USD",
+        "ownership": "gross",
+        "phase": "phase-a",
+        "price_basis": "real",
+        "price_vintage": "2020",
+        "scope": "upstream",
+        "unit": "million"
+      },
+      "cell": "example!B2",
+      "component": "total",
+      "period": "2020",
+      "project": "p-map",
+      "vintage": "example-vintage",
+      "workbook_digest": "synthetic-no-workbook-file"
+    }
+  }
+}
