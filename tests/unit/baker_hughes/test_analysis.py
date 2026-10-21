@@ -192,3 +192,16 @@ def test_mixed_dates_still_reject_missing_or_zoned_values(invalid_date, invalid_
     rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
     with pytest.raises(ValueError, match="date"):
         aggregate_rig_counts(rows, window=1)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_locale_dependent_date_strings_are_rejected(reverse):
+    """A day-first column must not silently acquire a December observation."""
+    dates = ["12/01/2026", "13/01/2026"]
+    if reverse:
+        dates.reverse()
+    rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
+    original = rows.copy(deep=True)
+    with pytest.raises(ValueError, match="date"):
+        aggregate_rig_counts(rows, window=1)
+    assert_frame_equal(rows, original, check_exact=True)
