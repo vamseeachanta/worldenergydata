@@ -10,6 +10,8 @@ These are parsing examples; no engineering coefficients or limits apply.
 
 import csv
 import importlib.util
+import subprocess
+import sys
 from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -215,7 +217,7 @@ def test_csv_integral_decimal_counts_and_missing_rows(importer, tmp_path, field,
 @pytest.mark.parametrize("field", COUNT_FIELDS)
 @pytest.mark.parametrize(
     "text,expected",
-    [("0.0", 0), ("-1.0", -1), ("1e2", 100), ("9007199254740993.0", 9007199254740993)],
+    [("0.0", 0), (" +001.00 ", 1), ("9007199254740993.0", 9007199254740993)],
 )
 def test_integral_decimal_count_text_is_exact(importer, field, text, expected):
     """Integral decimals retain their value, including beyond float precision."""
@@ -223,6 +225,48 @@ def test_integral_decimal_count_text_is_exact(importer, field, text, expected):
 
     assert actual == expected
     assert type(actual) is int
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+def test_negative_count_preserves_legacy_sign_behavior(importer, field):
+    """Legacy parsing preserves -1; count-range validation is deferred to #1599."""
+    assert importer.normalize_data({field: "-1.0"})[field] == -1
+
+
+@pytest.mark.parametrize("field", COUNT_FIELDS)
+@pytest.mark.parametrize("text", ["1e2", "1E+2", "1e-2", "0e1000000"])
+def test_exponent_count_text_remains_none(importer, field, text):
+    """Exponent notation is outside the count grammar, even for integral values."""
+    assert importer.normalize_data({field: text})[field] is None
+
+
+def test_large_exponent_count_returns_none_without_delay():
+    """Reject the short exponent input in every count field within ten seconds.
+
+    A subprocess bounds a regression that would otherwise expand a huge integer.
+    The timeout allows interpreter/import overhead; it is not a count limit.
+    """
+    root = Path(__file__).resolve().parents[4]
+    source = (
+        root / "src/worldenergydata/modules/hse/importers/bsee_statistics_importer.py"
+    )
+    script = """
+import runpy
+import sys
+from unittest.mock import MagicMock
+
+module = runpy.run_path(sys.argv[1])
+importer = module["BSEEStatisticsImporter"](MagicMock())
+for field in sys.argv[2:]:
+    assert importer.normalize_data({field: "1e1000000"})[field] is None, field
+"""
+    subprocess.run(
+        [sys.executable, "-c", script, str(source), *COUNT_FIELDS],
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
 
 
 @pytest.mark.parametrize("field", COUNT_FIELDS)
