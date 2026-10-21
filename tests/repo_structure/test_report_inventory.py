@@ -1,6 +1,7 @@
 """Report classification, reproducibility and publication agreement."""
 
 import importlib.util
+import os
 import subprocess
 from pathlib import Path, PureWindowsPath
 
@@ -215,15 +216,20 @@ def test_portable_inventory_bytes(tmp_path, path_type, newline):
 
 
 @pytest.mark.parametrize("autocrlf", ["false", "true"])
-def test_inventory_checkout_is_lf(autocrlf):
+def test_inventory_checkout_is_lf(autocrlf, tmp_path, monkeypatch):
     """Issue #1355: checkout conversion must retain the exact committed LF blob.
 
     cat-file --filters applies checkout conversion without changing the tree
     or index. Its expected bytes are the committed blob, independently read
     without filters. Both autocrlf settings must produce that same LF payload.
     """
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        monkeypatch.setenv(key, str(tmp_path / "unrelated"))
     path = "docs/modules/report-inventory.csv"
-    blob = subprocess.check_output(["git", "show", f"HEAD:{path}"], cwd=ROOT)
+    env = os.environ.copy()
+    for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+        env.pop(key, None)
+    blob = subprocess.check_output(["git", "show", f"HEAD:{path}"], cwd=ROOT, env=env)
     checkout = subprocess.check_output(
         [
             "git",
@@ -234,6 +240,7 @@ def test_inventory_checkout_is_lf(autocrlf):
             f"HEAD:{path}",
         ],
         cwd=ROOT,
+        env=env,
     )
     assert b"\r" not in checkout
     assert checkout == blob
@@ -252,7 +259,13 @@ def test_check_preserves_byte_equality(tmp_path, monkeypatch, change):
     put(tmp_path, "reports/z.html")
     monkeypatch.setattr(module, "ROOT", tmp_path)
     monkeypatch.setattr(module, "BUILDER", BUILDER)
-    canonical = module.inventory_bytes(tmp_path, BUILDER)
+    canonical = (
+        b"path,classification,evidence\n"
+        b"reports/a.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+        b"reports/z.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+    )
     if change == "crlf":
         changed = canonical.replace(b"\n", b"\r\n")
     elif change == "content":
@@ -267,3 +280,19 @@ def test_check_preserves_byte_equality(tmp_path, monkeypatch, change):
     assert module.main(["--write"]) == 0
     assert target.read_bytes() == canonical
     assert module.main(["--check"]) == 0
+
+
+def test_inventory_excludes_uppercase_extensions(tmp_path):
+    """Only the literal .html suffix belongs in the portable inventory."""
+    module = inventory_module()
+    paths = [
+        "reports/completion/index.html",
+        "reports/completion/selected.HTML",
+        "reports/nested/unselected.HTML",
+        "reports/mixed.HtMl",
+    ]
+    originals = {path: put(tmp_path, path).read_bytes() for path in paths}
+    rows = module.classify_tree(tmp_path, BUILDER)
+    assert [row["path"] for row in rows] == ["reports/completion/index.html"]
+    assert rows[0]["classification"] == "current"
+    assert {path: (tmp_path / path).read_bytes() for path in paths} == originals
