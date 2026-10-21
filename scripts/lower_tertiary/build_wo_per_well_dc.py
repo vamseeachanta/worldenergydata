@@ -21,12 +21,17 @@ import csv
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Literal
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    carries_basis, markdown_labels, provenance, validate_day_schema, validate_vintage_row,
+    carries_basis,
+    markdown_labels,
+    provenance,
+    validate_day_schema,
+    validate_vintage_row,
 )
 from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
@@ -126,7 +131,13 @@ def _int(raw: str) -> int:
     return int(float(raw)) if raw else 0
 
 
-def load_bores() -> dict[str, list[dict]]:
+def load_bores(
+    *, intensity_denominator: Literal["md", "tvd"] | None = None
+) -> dict[str, list[dict]]:
+    """Optionally derive Days/10K from raw cells without choosing a day basis."""
+    if intensity_denominator not in (None, "md", "tvd"):
+        raise ValueError("intensity_denominator shall be 'md' or 'tvd'")
+    seen = set()
     producers = set()
     with BENCHMARK_CSV.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
@@ -161,6 +172,17 @@ def load_bores() -> dict[str, list[dict]]:
             )
             if carries_basis(row):
                 validate_day_schema(devs[dev][-1])
+            if intensity_denominator is not None:
+                from lower_tertiary.dc_intensity import add_bore
+
+                if api12 in seen:
+                    raise ValueError(
+                        "drilling intensity requires unique bore identifiers"
+                    )
+                seen.add(api12)
+                add_bore(
+                    devs[dev][-1], row, field=dev, denominator=intensity_denominator
+                )
     for bores in devs.values():
         bores.sort(key=lambda b: (b["spud_key"], b["api12"]))
     return devs
@@ -363,20 +385,41 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         " `tests/unit/lower_tertiary/test_wo_per_well_dc.py`.",
         "",
     ]
-    return "\n".join(markdown_labels(lines, devs, vintage)) + "\n" + WAR_METHODOLOGY
+    preview = ""
+    if any("_intensity_input" in b for members in devs.values() for b in members):
+        from lower_tertiary.dc_intensity import markdown_preview
+
+        preview = "\n" + markdown_preview(devs)
+    return (
+        "\n".join(markdown_labels(lines, devs, vintage))
+        + "\n"
+        + WAR_METHODOLOGY
+        + preview
+    )
 
 
 def _anchor(title: str) -> str:
     return title.lower().replace(" ", "-")
 
 
-def main() -> None:
-    devs = load_bores()
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--intensity-denominator", choices=("md", "tvd"))
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args(argv)
+    if args.intensity_denominator and (
+        args.output is None or args.output.resolve() == OUT_MD.resolve()
+    ):
+        parser.error("intensity previews require a separate --output")
+    output = args.output or OUT_MD
+    devs = load_bores(intensity_denominator=args.intensity_denominator)
     vintage = load_vintage_diff()
-    OUT_MD.write_text(build_markdown(devs, vintage), encoding="utf-8")
+    output.write_text(build_markdown(devs, vintage), encoding="utf-8")
     total = sum(b["drill"] + b["compl"] for bores in devs.values() for b in bores)
     bores_n = sum(len(bores) for bores in devs.values())
-    print(f"wrote {OUT_MD} — {bores_n} bores, {total:,} D&C days")
+    print(f"wrote {output} — {bores_n} bores, {total:,} D&C days")
 
 
 if __name__ == "__main__":

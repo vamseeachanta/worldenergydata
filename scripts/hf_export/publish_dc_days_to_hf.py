@@ -31,6 +31,7 @@ import re
 import sys
 import tempfile
 from pathlib import Path
+from typing import Literal
 
 import pandas as pd
 
@@ -117,9 +118,12 @@ def _drilldown_extras() -> dict[str, dict]:
     return extras
 
 
-def build_tables() -> dict[str, pd.DataFrame]:
+def build_tables(
+    *, intensity_denominator: Literal["md", "tvd"] | None = None
+) -> dict[str, pd.DataFrame]:
+    """Build unchanged published tables or explicitly selected intensity previews."""
     mod = _load_listing_module()
-    devs = mod.load_bores()
+    devs = mod.load_bores(intensity_denominator=intensity_denominator)
     vintage = mod.load_vintage_diff()
     extras = _drilldown_extras()
 
@@ -173,6 +177,23 @@ def build_tables() -> dict[str, pd.DataFrame]:
             }
         )
 
+    if intensity_denominator is not None:
+        from lower_tertiary.dc_intensity import REFERENCE, bore_intensity, rollup
+
+        by_api = {b["api12"]: b for rows in devs.values() for b in rows}
+        for row in bore_rows:
+            bore = by_api[row["api12"]]
+            # Only the core result schema is exported, never raw adapter inputs.
+            row.update(
+                bore_intensity(
+                    bore["_intensity_input"], denominator=intensity_denominator
+                )
+            )
+        for row in summary_rows:
+            row.update(
+                rollup(devs[row["development"]], denominator=intensity_denominator)
+            )
+
     diff_rows = [row for rows in vintage.values() for row in rows]
     for row in diff_rows:
         validate_vintage_row(row)
@@ -204,6 +225,19 @@ def build_tables() -> dict[str, pd.DataFrame]:
         "dc_bores": pd.DataFrame(bore_rows),
         "dc_vintage_diff": diff,
     }
+
+    if intensity_denominator is not None:
+        for name in ("dc_bores", "dc_development_summary"):
+            table = tables[name]
+            for column in table:
+                if column in (
+                    "days_per_10k_ft",
+                    "days_per_10k_md",
+                    "days_per_10k_tvd",
+                ) or column.startswith("total_"):
+                    table[column] = pd.to_numeric(table[column]).astype("Float64")
+            for key, value in REFERENCE.items():
+                table[key] = value
 
     for name, table in tables.items():
         labelled = vintage_labelled if name == "dc_vintage_diff" else source_labelled
@@ -240,12 +274,15 @@ def patch_readme(readme: str) -> str:
     return readme.replace(anchor, addition) + CARD_SECTION + "\n" + WAR_METHODOLOGY
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args()
+    parser.add_argument("--intensity-denominator", choices=("md", "tvd"))
+    args = parser.parse_args(argv)
+    if args.intensity_denominator and not args.dry_run:
+        parser.error("intensity previews require --dry-run; publication is not enabled")
 
-    tables = build_tables()
+    tables = build_tables(intensity_denominator=args.intensity_denominator)
     assert len(tables["dc_bores"]) == 253
     assert len(tables["dc_vintage_diff"]) == 253
     assert int(tables["dc_development_summary"]["dc_days_wed"].sum()) == 25404
