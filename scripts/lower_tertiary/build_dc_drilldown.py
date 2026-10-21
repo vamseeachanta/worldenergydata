@@ -30,6 +30,7 @@ from lower_tertiary.dc_provenance import (
     carries_basis,
     html_labels,
     provenance,
+    require_publication_provenance,
     validate_day_schema,
     validate_vintage_row,
 )
@@ -622,6 +623,8 @@ def build_html(payload: dict) -> str:
 
 def main() -> None:
     payload = load_payload()
+    for surface in ("bores", "fields", "blocks"):
+        require_publication_provenance(payload[surface])
     OUT_HTML.write_text(build_html(payload), encoding="utf-8")
     print(
         f"wrote {OUT_HTML} — {len(payload['fields'])} fields / "

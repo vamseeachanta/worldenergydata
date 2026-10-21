@@ -40,6 +40,7 @@ if __package__ in (None, ""):
 from lower_tertiary.dc_provenance import (
     aggregate_provenance,
     carries_basis,
+    require_publication_provenance,
     validate_day_schema,
     validate_vintage_row,
 )
@@ -246,6 +247,8 @@ def main() -> None:
     args = parser.parse_args()
 
     tables = build_tables()
+    for table in tables.values():
+        require_publication_provenance(table.to_dict("records"))
     assert len(tables["dc_bores"]) == 253
     assert len(tables["dc_vintage_diff"]) == 253
     assert int(tables["dc_development_summary"]["dc_days_wed"].sum()) == 25404

@@ -101,6 +101,39 @@ def validate_day_schema(columns: Iterable[str]) -> None:
             raise ValueError("day-count schema requires basis")
 
 
+def require_publication_provenance(rows: Iterable[Mapping]) -> None:
+    """Reject unlabelled rows before a publishing command writes any output.
+
+    Issue #1076, Acceptance (2026), requires a basis beside published days.
+    Historical loaders remain usable for inspection; publication requires all
+    three labels, including nullable PND and the original coverage vocabulary.
+    Aggregates may explicitly record ``mixed`` as their basis.
+    """
+    for row in rows:
+        if any(key not in row for key in ("basis", "pnd_days", "days_status")):
+            raise ValueError("missing publication provenance; regenerate labelled inputs")
+        basis = row["basis"]
+        if not isinstance(basis, str) or _basis_value(basis.strip(), allow_mixed=True) is None:
+            raise ValueError("missing publication provenance basis")
+        status = row["days_status"]
+        if not isinstance(status, str) or not status.strip() or status.strip() in ("nan", "<NA>"):
+            raise ValueError("missing publication provenance status")
+        nullable_days(row["pnd_days"])
+        # An overall label cannot supply the missing rule for one vintage's
+        # day counts. Outer-join-only rows genuinely have no opposite side.
+        vintage = False
+        for side, absent_category in (("v30", "wed_only"), ("wed", "v30_only")):
+            if any(f"{phase}_{side}" in row for phase in ("drill", "compl")):
+                vintage = True
+                if (
+                    row.get("category") != absent_category
+                    and _basis_value(row.get(f"basis_{side}")) is None
+                ):
+                    raise ValueError("missing publication provenance for vintage side")
+        if vintage:
+            validate_vintage_row(row)
+
+
 def validate_vintage_row(row: Mapping) -> None:
     """Validate labelled vintage schemas; absent vintage-side labels stay null."""
     if not carries_basis(row):
