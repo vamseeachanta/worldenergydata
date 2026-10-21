@@ -319,3 +319,19 @@ def test_empty_war_frame_short_circuits():
         borehole_df=_borehole_rows(["608124009500"]),
     )
     assert engine.enrich().empty
+
+
+@pytest.mark.parametrize("bad_key", [None, "1234567890", "12345678901234", "invalid"])
+def test_malformed_war_keys_are_quarantined_with_a_count(bad_key):
+    api = ["123456789012"]
+    activity = pd.DataFrame(
+        [
+            _war_week(1, api[0] + ".00", "2020-01-01", "2020-01-07", "DRL"),
+            _war_week(2, bad_key, "2020-01-08", "2020-01-14", "DRL"),
+        ]
+    )
+    original = activity.copy(deep=True)
+    with pytest.warns(UserWarning, match="Quarantined 1 WAR row.*invalid API12"):
+        _, out = _enrich(_war_rows(api), _borehole_rows(api), activity)
+    assert out["DRILLING_DAYS"].iloc[0] == 7.0
+    pd.testing.assert_frame_equal(activity, original)
