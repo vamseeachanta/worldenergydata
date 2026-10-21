@@ -36,8 +36,10 @@ the loader rejects `model: sliding_scale` with a pointer to #718).
 
 Only the **royalty** layer is consumed by the cashflow engine in v1. Every other
 field is declarative provenance/metadata — readable, validated, but **not** yet
-wired into revenue/NPV (that seam is #716). This is what makes exact parity with
-the pre-carve BSEE path provable: the `us_gom` deck overrides royalty only.
+wired into revenue/NPV (that seam is #716). The `us_gom` revision-2 deck overrides
+royalty only: its deep-water fraction is 0.1875, while the live deckless defaults
+retain 0.188. Dry-tree royalties and all non-royalty component vectors retain
+parity; deep-water royalties, net cashflow and NPV intentionally differ.
 
 | Field | Status | Notes |
 |---|---|---|
