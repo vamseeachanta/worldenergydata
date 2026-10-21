@@ -50,3 +50,111 @@ scale. The synthetic runtime parity test in
 it does not establish regulatory qualification and does not ship a country deck.
 These illustrative values shall not be copied into a fiscal deck until the
 applicable contract, units, period and governing case are source-qualified.
+
+
+## Ingestion integrity
+
+The archive reader raises `ANPIngestionError` for an archive without CSV members,
+an archive without production rows, a missing period column, or any invalid
+period. Periods must be complete year/month strings with a valid calendar month.
+Entirely blank CSV rows are layout rather than observations. The existing
+sea/pre-salt overlap rule still chooses one observation for an overlapping key.
+Other duplicates still raise. Rejected rows are never silently dropped.
+A downloaded archive is parsed before replacing an existing cache entry.
+
+`WellProductionLoader.load` requires nonblank textual field and well identities
+in both schemas. Literal text labels remain text; missing scalars never become
+text labels. Current-schema rates must be present, finite and nonnegative.
+Numeric values and dot-decimal strings retain their magnitude. Decimal-comma
+strings can use dot grouping, as in `"1.000,5"`. Without a comma, a dot is always
+decimal: `"1.000"` means one. Callers supplying dot-only grouped integers must
+normalize them explicitly before loading. This is an input convention, not a
+claim that every source vintage uses the same numeric notation.
+
+The refresh job rejects empty raw data and any normalization row-count loss
+before writing either parquet snapshot or success metadata. Archive contract
+failures are terminal for that attempt. Network retry behavior is retained.
+This does not provide a transaction across filesystem writes: an output write
+failure can leave an earlier snapshot. Source completeness beyond the received
+CSV partitions is not established.
+
+Metadata well counts require linked rows with nonblank well identities. Counts
+use distinct trimmed identities, rather than well-month rows. Missing links,
+missing identity columns, empty selections or incomplete identities return
+`None`; they cannot establish a measured zero. Unknown production field
+summaries continue to raise `ValueError`.
+
+## Explicit participation basis
+
+The former fixed-currency special-participation bands have been removed.
+`calculate_special_participation` and `ConcessionRegime.calculate` require a
+`ParticipationSchedule` and a matching revenue currency and period. A schedule
+records its source and increasing upper bounds with fractional marginal rates;
+the final bound must be unbounded. Missing or mismatched inputs raise, including
+for zero revenue. No foreign-exchange or period conversion is inferred.
+The concession royalty helper likewise rejects missing, nonfinite or negative
+production rates before any revenue shortcut.
+
+The ANP [Participação especial calculation guidance](https://www.gov.br/anp/pt-br/assuntos/royalties-e-outras-participacoes/participacao-especial),
+calculation paragraphs, accessed 2026-10-21, describes quarterly net revenue and
+rates dependent on location, years of production and quarterly volume, with
+deductions under Lei 9.478/1997, art. 50, paragraph 1. It does not qualify the
+removed fixed monetary thresholds. A caller-supplied schedule is a generic
+marginal-band calculation; supplying a citation does not prove statutory
+applicability. Fiscal qualification remains **NOT_EVALUATED**. The existing
+illustrative royalty scale and other fiscal assumptions remain unqualified.
+
+This is an intentional API change: callers of the participation helper must
+supply `schedule=`, `currency=` and `period=`. Callers of the concession regime
+must supply `participation_schedule=`, `currency=` and `period=`. The existing
+concession basis `gross_revenue - opex - capex` remains a simplified basis, not a
+statutory determination of deductible net revenue.
+
+## Worked synthetic example
+
+Summary: a supplied daily oil rate becomes a monthly volume without decimal
+rescaling; a supplied marginal schedule produces an explicit monetary result.
+These inputs are synthetic and provide no field-specific or statutory values.
+
+### Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 1 | 2026-10-21 | Add explicit inputs and hand calculations to demonstrate integrity checks. |
+
+Inputs: February 2024 daily oil rate `0.5` bbl/day; net revenue `150` TEST units
+per quarter; caller-supplied untaxed band through `100` TEST units, followed by
+a fractional marginal rate `0.2`. Source for these magnitudes: this synthetic
+hand calculation, not regulatory data. Calendar day count comes from Python's
+[`calendar.monthrange`](https://docs.python.org/3/library/calendar.html#calendar.monthrange)
+API; February 2024 has 29 days.
+
+Method and answer: monthly oil is daily rate times days, `0.5 * 29 = 14.5` bbl.
+The marginal-band sum is `max(0, min(revenue, upper) - lower) * rate` per band;
+`100 * 0 + (150 - 100) * 0.2 = 10.0` TEST units per quarter. No conversion between
+volume and revenue is asserted. The independent arithmetic appears in
+`tests/unit/brazil_anp/test_ingestion_integrity.py` and
+`tests/unit/brazil_anp/test_field_economics.py`.
+
+```python
+from worldenergydata.brazil_anp.analysis.field_economics import (
+    ParticipationSchedule,
+    calculate_special_participation,
+)
+
+schedule = ParticipationSchedule(
+    currency="TEST",
+    period="quarter",
+    bands=((100, 0), (float("inf"), 0.2)),
+    source="Synthetic hand calculation in the package README",
+)
+answer = calculate_special_participation(
+    150, schedule=schedule, currency="TEST", period="quarter"
+)
+assert answer == 10
+```
+
+Later work: validate live partition inventories, qualify contractual fiscal
+terms and source vintages, and address the shared empty reference-chain behavior
+tracked separately in #1289. No live archive or metadata service is used by the
+regression examples.

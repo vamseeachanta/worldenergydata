@@ -18,8 +18,8 @@ PSA / Production Sharing (pre-salt, e.g. Buzios, Lula, Mero, Sepia):
 """
 
 import logging
+import math
 from dataclasses import dataclass
-from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -45,14 +45,22 @@ ROYALTY_SCALE = [
     (float("inf"), 0.15),
 ]
 
-# Progressive special participation thresholds (net revenue BRL)
-SP_THRESHOLDS = [
-    (50_000_000, 0.0),
-    (100_000_000, 0.10),
-    (300_000_000, 0.20),
-    (600_000_000, 0.30),
-    (float("inf"), 0.40),
-]
+
+@dataclass(frozen=True)
+class ParticipationSchedule:
+    """Caller-supplied marginal bands in an explicit currency and period.
+
+    ANP, Participação especial, calculation paragraphs (accessed 2026-10-21):
+    quarterly net revenue depends on location, production year and volume.
+    https://www.gov.br/anp/pt-br/assuntos/royalties-e-outras-participacoes/participacao-especial
+    No statutory band qualification or currency conversion is performed here.
+    """
+
+    currency: str
+    period: str
+    bands: tuple[tuple[float, float], ...]
+    source: str
+
 
 PSA_ROYALTY_RATE = 0.15
 PETROBRAS_MIN_SHARE = 0.30
@@ -80,10 +88,17 @@ def calculate_royalties_concession(
     not established by this interface. The bands are not qualified fiscal terms;
     see ROYALTY_SCALE_IS_ILLUSTRATIVE and the package README source comparison.
     """
+    try:
+        valid_rate = math.isfinite(production_rate_bpd) and production_rate_bpd >= 0
+    except TypeError:
+        valid_rate = False
+    if not valid_rate:
+        raise ValueError("production_rate_bpd must be finite and nonnegative")
+    if not math.isfinite(gross_revenue):
+        raise ValueError("gross_revenue must be finite")
     if gross_revenue <= 0:
         return 0.0
 
-    rate = 0.05
     for threshold, r in ROYALTY_SCALE:
         if production_rate_bpd <= threshold:
             rate = r
@@ -92,28 +107,58 @@ def calculate_royalties_concession(
     return gross_revenue * rate
 
 
-def calculate_special_participation(net_revenue: float) -> float:
-    if net_revenue <= 0:
-        return 0.0
+def calculate_special_participation(
+    net_revenue: float,
+    *,
+    schedule: ParticipationSchedule | None = None,
+    currency: str | None = None,
+    period: str | None = None,
+) -> float:
+    """Integrate caller-supplied marginal bands; require matching monetary basis.
 
-    total_sp = 0.0
-    prev_threshold = 0.0
-    for threshold, rate in SP_THRESHOLDS:
-        if net_revenue <= prev_threshold:
-            break
-        taxable = min(net_revenue, threshold) - prev_threshold
-        if taxable > 0:
-            total_sp += taxable * rate
-        prev_threshold = threshold
-
-    return total_sp
+    Sum(max(0, min(revenue, upper) - lower) * rate) is generic band arithmetic,
+    not a determination of the statutory special-participation liability.
+    """
+    if schedule is None:
+        raise ValueError("An explicit participation schedule is required")
+    if not all(
+        isinstance(value, str) and value.strip()
+        for value in (
+            schedule.currency,
+            schedule.period,
+            schedule.source,
+        )
+    ):
+        raise ValueError("Participation schedule requires currency, period and source")
+    if currency != schedule.currency or period != schedule.period:
+        raise ValueError("Revenue currency and period must match the schedule")
+    if not math.isfinite(net_revenue):
+        raise ValueError("net_revenue must be finite")
+    if not schedule.bands or schedule.bands[-1][0] != math.inf:
+        raise ValueError("Participation schedule must cover all revenue")
+    previous = 0.0
+    total = 0.0
+    for upper, rate in schedule.bands:
+        # Zero and one bound a nonnegative fractional rate by definition.
+        if (
+            math.isnan(upper)
+            or upper <= previous
+            or not math.isfinite(rate)
+            or not 0 <= rate <= 1
+        ):
+            raise ValueError(
+                "Participation schedule bands must increase with fractional rates"
+            )
+        total += max(0.0, min(net_revenue, upper) - previous) * rate
+        previous = upper
+    return total
 
 
 def calculate_psa_government_take(
     gross_revenue: float,
     cost_oil: float,
     profit_oil_gov_share: float,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     royalties = gross_revenue * PSA_ROYALTY_RATE
     net_after_royalties = gross_revenue - royalties
     profit_oil = max(0.0, net_after_royalties - cost_oil)
@@ -136,10 +181,19 @@ class ConcessionRegime:
         opex: float,
         capex: float,
         production_rate_bpd: float,
+        *,
+        participation_schedule: ParticipationSchedule | None = None,
+        currency: str | None = None,
+        period: str | None = None,
     ) -> FiscalResult:
         royalties = calculate_royalties_concession(gross_revenue, production_rate_bpd)
         net_revenue = gross_revenue - opex - capex
-        sp = calculate_special_participation(net_revenue)
+        sp = calculate_special_participation(
+            net_revenue,
+            schedule=participation_schedule,
+            currency=currency,
+            period=period,
+        )
         taxable_income = net_revenue - royalties - sp
         corporate_tax = max(0.0, taxable_income * CORPORATE_TAX_RATE)
         net_income = taxable_income - corporate_tax

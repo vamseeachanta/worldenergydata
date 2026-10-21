@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import unicodedata
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -33,7 +33,7 @@ def build_brazil_field_meta(
     platforms_df: pd.DataFrame,
     wells_df: pd.DataFrame,
     field_name: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Reduce ANP metadata; a non-blank textual field link is required."""
     field_row = _single_field_row(fields_df, field_name)
     platform_rows = _matching_platforms(platforms_df, field_name)
@@ -52,7 +52,7 @@ def build_brazil_field_meta(
     }
 
 
-def build_brazil_field_concept(field_meta: Dict[str, Any]):
+def build_brazil_field_concept(field_meta: dict[str, Any]):
     """Build a sparse Brazil FieldConcept from reduced ANP metadata."""
     meta = dict(field_meta)
     meta["region"] = "brazil"
@@ -103,7 +103,7 @@ def _matching_wells(wells_df: pd.DataFrame, field_name: str) -> pd.DataFrame:
     return wells_df[wells_df[field_col].map(_norm) == needle]
 
 
-def _platform_water_depth(platforms: pd.DataFrame) -> Optional[float]:
+def _platform_water_depth(platforms: pd.DataFrame) -> float | None:
     col = "[LÂMINA D'ÁGUA (m)]"
     if platforms.empty or col not in platforms.columns:
         return None
@@ -114,25 +114,33 @@ def _platform_water_depth(platforms: pd.DataFrame) -> Optional[float]:
     return float(sum(values) / len(values))
 
 
-def _well_count(wells: pd.DataFrame) -> int:
+def _well_count(wells: pd.DataFrame) -> int | None:
+    """Absent links or identities do not establish a measured well count."""
     if wells.empty:
-        return 0
+        return None
     for col in ("Nome_poço_anp", "Nome Poço ANP", "POCO", "Poço"):
         if col in wells.columns:
-            return int(wells[col].dropna().astype(str).str.strip().nunique())
-    return int(len(wells))
+            names = wells[col]
+            valid = names.map(
+                lambda value: isinstance(value, str) and bool(value.strip())
+            )
+            if not valid.all():
+                return None
+            return int(names.str.strip().nunique())
+    return None
 
 
-def _environment(field_row: pd.Series, wells: pd.DataFrame) -> Optional[str]:
+def _environment(field_row: pd.Series, wells: pd.DataFrame) -> str | None:
     value = _none_if_blank(field_row.get("AMBIENTE"))
     if value is not None:
         return value
     if not wells.empty and "Ambiente" in wells.columns:
-        return _none_if_blank(wells["Ambiente"].dropna().iloc[0])
+        values = wells["Ambiente"].dropna()
+        return _none_if_blank(values.iloc[0]) if not values.empty else None
     return None
 
 
-def _parse_brazil_number(value: Any) -> Optional[float]:
+def _parse_brazil_number(value: Any) -> float | None:
     if pd.isna(value):
         return None
     text = str(value).strip()
@@ -141,7 +149,7 @@ def _parse_brazil_number(value: Any) -> Optional[float]:
     return float(text.replace(".", "").replace(",", "."))
 
 
-def _none_if_blank(value: Any) -> Optional[Any]:
+def _none_if_blank(value: Any) -> Any | None:
     if pd.isna(value):
         return None
     text = str(value).strip()
