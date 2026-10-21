@@ -5,7 +5,7 @@
 | Module | canada |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-canada/src/worldenergydata/canada` |
-| Pack revision | 1, 2026-10-20 |
+| Pack revision | 2, 2026-10-21 |
 | Code revision | `285d65c40896b17ccf44568e59f5b789d59c943e` |
 | Analysis family | Data pipeline; QA family EC; AQG r0 Python calculations |
 | Quality role | Calculations family quality manager |
@@ -19,6 +19,7 @@ The code revision pins repository citations; original BASE/AFTER outcomes are ob
 |---|---|---|
 | 0 | 2026-10-15 | Initial pinned module reference, regression evidence and open items |
 | 1 | 2026-10-20 | Add omitted failure semantics and parser hazard; clarify test evidence and detection gaps |
+| 2 | 2026-10-21 | Complete historical failed-node IDs and record the silent-failure sweep and reconciliation |
 
 ## 1. Purpose and scope
 
@@ -126,6 +127,10 @@ For C5.1, resolve every bracketed repository path and line range through `git sh
 
 The issues below are references and follow-ups, not a claim that each historical request is an unresolved incident.
 
+sweep: 16 found
+
+The 2026-10-21 source sweep used `rg -n 'except|return \[\]|return None|\bpass\b|continue|\.get\(|\bor\b' packages/worldenergydata-canada/src/worldenergydata/canada -g '*.py'`, followed by inspection of the enclosing branches and the pinned evidence below. The count denotes grouped silent-failure risks, not matching lines or independently reproduced defects. Sixteen of the 20 rows below are those groups: all except default-cache initialization (an explicit exception), retrieval/rights (external qualification), legacy gas coverage (scope), and historical modal-parser disposition (implemented coverage). Metadata persistence, missing BCER feature lists and UWI-wrapper fallbacks are included explicitly. Documented cache misses, optional dependency guards, retry continuation and explicit error propagation are not counted as silent failures. This static sweep does not establish exhaustive runtime coverage.
+
 | Symptom / cause | Detection or missing detection | Incident / tracking | Evidence at the pin |
 |---|---|---|---|
 | Silent empty provincial collection: facade collectors are stubs; router still marks completed | no detection check exists for live acquisition; add a mocked nonempty route acceptance test requiring at least 1 returned record and surfaced acquisition errors | issue pending (2) | [packages/worldenergydata-canada/src/worldenergydata/canada/aer/aer.py:L97-L164] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/bcer.py:L147-L223] [packages/worldenergydata-canada/src/worldenergydata/canada/canada.py:L101-L106] |
@@ -139,12 +144,15 @@ The issues below are references and follow-ups, not a claim that each historical
 | BCER cache key omits requested output fields, geometry flag and page size; cached path does not trim to the total-record limit | no detection check exists for cache isolation and limit trimming; use mocked pages, demand requested columns and result count at most the caller's limit | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L508-L535] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L549-L566] |
 | Retry counts/TTL/rate supplied as zero may select defaults because constructors use `or`; downloads bypass retry wrapper | no detection check exists for zero overrides and download retries; request exactly 0 retries and compare calls with 1 initial attempt | issue pending (3); HTTP consolidation context #431 | [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L126-L146] [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L468-L509] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L137-L165] |
 | Text parser sums all same-period numeric rows, including an explicit total if present alongside subrows; short malformed rows drop silently and four/five volume columns enter metric branch; a missing year on a month line with at least four numeric values can make the first oil volume the year | R1 detects a deliberately blank month; no detection check exists for explicit-total double counts, ambiguous widths or missing years; require 1 total per month and 0 silently accepted ambiguous or missing-year layouts | issue pending (4) | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L123-L149] [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L170-L189] [tests/unit/canada/production/test_cnloer_loader.py:L45-L73] |
-| Record validator accepts an empty record and ignores a partial coordinate pair; `strict` is stored without promoting warnings | Existing tests pin empty-record acceptance; no detection check exists for required fields, partial coordinates or strict promotion | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L253-L261] [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L733-L799] [tests/unit/canada/common/test_validators.py:L427-L429] |
+| Record validator accepts an empty record and ignores a partial coordinate pair; zero-valued coordinates can fall through `or` aliases and avoid paired validation; `strict` is stored without promoting warnings | Existing tests pin empty-record acceptance; no detection check exists for required fields, partial coordinates or strict promotion | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L253-L261] [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L733-L799] [tests/unit/canada/common/test_validators.py:L427-L429] |
 | Missing discovery CSV logs a warning, returns an empty list and keeps that empty result | no detection check exists for a missing then restored file; require an explicit unavailable-data status rather than accepting 0 records as success | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discoveries.py:L44-L58] |
 | Depth-only development classification and fallback metadata are incomplete substitutes for actual development concept | no detection check exists for concept overrides; R6 only checks repeatability | #815, #818 | [packages/worldenergydata-canada/src/worldenergydata/canada/field_concept.py:L46-L57] [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L59-L70] [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L98-L101] |
 | Runtime download/refresh and public redistribution rights remain separate from parser success | C0.4 keeps synthetic source visible; no detection check exists for legal eligibility | #814, #819 | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L15-L23] [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L350-L358] |
 | Legacy gas-only ingestion and complete gas economics are outside this chain's recorded oil-revenue aggregation | no detection check exists for a gas-only chain | #816 | [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L54-L70] [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L91-L101] |
 | Historical modal-parser request already has an implementation and offline synthetic coverage | C1.2, C2.2; do not describe the parser as absent merely because the request remains open | #817 | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L321-L347] [tests/unit/canada/production/test_cnloer_html.py:L74-L119] |
+| Cache metadata read failures reset metadata to an empty mapping; write failures only log a warning, so persistence failure is not surfaced to the caller | no detection check exists for caller-visible persistence failure; require 0 failed metadata writes reported as persisted and an explicit corrupt-metadata outcome | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L165-L188] |
+| BCER response without a `features` member defaults to an empty list and can terminate pagination as if no records matched | no detection check exists for missing response members; require 0 malformed response mappings accepted as empty matches | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L537-L574] |
+| UWI convenience parsing returns components even when invalid; parsing exceptions become `None`, while normalization exceptions return the original input | no detection check exists for distinguishing wrapper failure from a usable normalized identifier; require 0 failed normalizations treated as validated identifiers | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi.py:L31-L72] |
 
 ## 7. Lessons log
 
@@ -291,27 +299,27 @@ The inventory below gives all 15 module test files plus the dedicated consumer f
 
 All 19 failing nodes are in `tests/unit/canada/aer/test_api_client.py`; each reaches default file-cache creation before its intended assertion. The same constructor and test calls are present at the code pin and on the inspected default-branch ref.
 
-| Failed node suffix (append to the file above with `::`) | BASE / AFTER |
+| Historical failed node ID | BASE / AFTER |
 |---|---|
-| `TestAERClientInit::test_default_values` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
-| `TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_params` | FAIL / FAIL |
-| `TestAERClientInit::test_config_dict` | FAIL / FAIL |
-| `TestSetupHeaders::test_default_headers` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
-| `TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
-| `TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
-| `TestContextManager::test_enter_exit` | FAIL / FAIL |
-| `TestContextManager::test_close` | FAIL / FAIL |
-| `TestContextManager::test_double_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_default_values` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_config_dict` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_default_headers` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_enter_exit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_double_close` | FAIL / FAIL |
 
 Failure evidence: cache construction is immediate in `AERClient.__init__`, the cache constructor creates its directory, and the affected tests supply no custom directory. [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L149-L151] [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L146-L164] [tests/unit/canada/aer/test_api_client.py:L13-L55] [tests/unit/canada/aer/test_api_client.py:L87-L194]
 
@@ -325,10 +333,10 @@ Each item below is assigned to the maintainer for issue assignment; a draft refe
 |---|---|---|
 | Cache-test portability | Make default-client tests use explicit temporary caches; retain the 19 failure results and original error evidence | issue pending (1); [tests/unit/canada/aer/test_api_client.py:L13-L55] [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L146-L164] |
 | Collection/control-flow gaps | Nonempty provincial acquisition, case-normalized routing, accepted type parity and non-placeholder analysis; preserve caller configuration | issue pending (2), #431; [packages/worldenergydata-canada/src/worldenergydata/canada/canada.py:L69-L89] [packages/worldenergydata-canada/src/worldenergydata/canada/canada.py:L194-L220] [packages/worldenergydata-canada/src/worldenergydata/canada/analysis/analysis.py:L124-L236] |
-| Client correctness | Canonical UWI comparison, required filter columns, distinct acquisition/empty-match/missing-licence outcomes, cache-key isolation, limit trimming and zero-option semantics | issue pending (3); [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L735-L796] [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L829-L865] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L508-L566] |
+| Client correctness | Canonical UWI comparison, required filter columns, distinct acquisition/empty-match/missing-licence outcomes, cache-key isolation, limit trimming, zero-option semantics, metadata persistence and BCER response-schema checks | issue pending (3); [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L735-L796] [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L829-L865] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L508-L566] |
 | Text-parser integrity | Explicit totals versus subrow duplication, malformed rows, ambiguous numeric widths, missing-year rejection and missing-month visibility | issue pending (4); [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L123-L189] |
 | Collection-error reporting | Distinguish acquisition errors from record payloads; require 0 error mappings counted as records and expose failure instead of `completed` | issue pending (9); [packages/worldenergydata-canada/src/worldenergydata/canada/aer/aer.py:L54-L65] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/bcer.py:L76-L78] [packages/worldenergydata-canada/src/worldenergydata/canada/canada.py:L101-L106] [packages/worldenergydata-canada/src/worldenergydata/canada/canada.py:L163-L172] |
-| Validation/data-availability semantics | Strict warnings, required/partial records, unavailable discovery data, geographic inference limits | issue pending (5); [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L253-L261] [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L733-L799] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi_parser.py:L364-L365] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi_parser.py:L580-L597] [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discoveries.py:L44-L58] |
+| Validation/data-availability semantics | Strict warnings, required/partial records, unavailable discovery data, geographic inference limits and UWI-wrapper failure outcomes | issue pending (5); [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L253-L261] [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L733-L799] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi_parser.py:L364-L365] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi_parser.py:L580-L597] [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discoveries.py:L44-L58] |
 | U1 | UNVERIFIED: normative references, editions/clauses and coordinate-box authority; no independent authority is asserted | issue pending (6); [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi_parser.py:L25-L28] [packages/worldenergydata-canada/src/worldenergydata/canada/common/validators.py:L174-L227] |
 | U2 | UNVERIFIED: conversion provenance and independently sourced benchmark; tests use implementation constants | issue pending (6); [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L39-L48] [tests/unit/canada/production/test_cnloer_loader.py:L76-L80] |
 | U3 | UNVERIFIED: discovery/watch-list estimate accuracy and freshness; schema validity and source URL presence do not establish current observations | issue pending (6); [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discovery_schema.py:L63-L73] [tests/unit/canada/emerging_basins/test_frontier_discoveries.py:L139-L153] |
