@@ -56,11 +56,29 @@ def test_grouped_numbers_with_missing_and_invalid_cells():
 
 
 @pytest.mark.parametrize(
-    "header", ["id", "ID", "Record ID", "Clave", "Clave del pozo", "Nombre", "Name"]
+    "header",
+    [
+        "id",
+        "ID",
+        "Record ID",
+        "Clave",
+        "Clave del pozo",
+        "Nombre",
+        "Name",
+        "ID_POZO",
+        "clave_pozo",
+        "record_id",
+    ],
 )
 def test_identifier_and_numeric_columns_are_preserved(header):
-    """An identifier is text; numeric 1234 = 1000 + 234 stays numeric."""
-    frame = pd.DataFrame({header: ["1,234"], "oil": [1234], "name": ["1,234"]})
+    """Identifiers retain leading zeros; existing numeric values stay numeric."""
+    frame = pd.DataFrame(
+        {
+            header: ["1,234", "00123", "00456"],
+            "oil": [1234, 2345, 3456],
+            "name": ["1,234", "00123", "00456"],
+        }
+    )
     result = CNHPDFParser()._convert_numeric_columns(frame.copy())
     pd.testing.assert_frame_equal(result, frame)
 

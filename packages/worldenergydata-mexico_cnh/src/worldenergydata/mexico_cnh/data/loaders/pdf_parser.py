@@ -248,7 +248,7 @@ class CNHPDFParser:
         """
         for col in df.columns:
             # Skip if column looks like an identifier
-            if re.search(r"\b(id|clave|nombre|name)\b", col.lower()):
+            if re.search(r"\b(id|clave|nombre|name)\b", col.lower().replace("_", " ")):
                 continue
 
             # Try numeric conversion
