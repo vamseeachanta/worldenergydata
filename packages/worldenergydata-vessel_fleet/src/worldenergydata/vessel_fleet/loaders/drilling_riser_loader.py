@@ -118,15 +118,17 @@ class DrillingRiserLoader:
         for field in ("DATA_SOURCE", "NOTES", "COMPONENT_ID"):
             missing = df[field].isna() | df[field].astype(str).str.strip().eq("")
             if missing.any():
-                if field == "COMPONENT_ID":
-                    lines = ", ".join(
-                        str(line_numbers[index]) for index in df.index[missing]
-                    )
-                    raise ValueError(
-                        f"COMPONENT_ID must be populated at CSV line {lines}"
-                    )
-                ids = df.loc[missing, "COMPONENT_ID"].tolist()
-                raise ValueError(f"{field} must be populated for components {ids}")
+                lines = ", ".join(
+                    str(line_numbers[index]) for index in df.index[missing]
+                )
+                raise ValueError(f"{field} must be populated at CSV line {lines}")
+        padded = df["COMPONENT_ID"].ne(df["COMPONENT_ID"].str.strip())
+        if padded.any():
+            lines = ", ".join(str(line_numbers[index]) for index in df.index[padded])
+            raise ValueError(
+                "COMPONENT_ID must not contain leading or trailing whitespace "
+                f"at CSV line {lines}"
+            )
         # Issue #1046 requires unique component IDs; get_by_id must not select
         # an arbitrary first record when more than one component has that ID.
         duplicate_ids = df.loc[
