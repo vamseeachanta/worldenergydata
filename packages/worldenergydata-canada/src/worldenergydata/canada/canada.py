@@ -99,13 +99,24 @@ class Canada:
                 cfg = self.analysis_instance.router(cfg, collected_data)
 
             # Add status information
-            cfg[cfg["basename"]]["status"] = "completed"
+            errors = {
+                f"{province}_{data_type}": items["error"]
+                for province, data in collected_data.items()
+                if isinstance(data, dict)
+                for data_type, items in data.items()
+                if isinstance(items, dict) and "error" in items
+            }
+            cfg[cfg["basename"]]["status"] = "error" if errors else "completed"
+            cfg[cfg["basename"]]["errors"] = errors
             cfg[cfg["basename"]]["provinces_collected"] = list(collected_data.keys())
             cfg[cfg["basename"]]["data_collected"] = self._summarize_data(
                 collected_data
             )
 
-            logger.info("Canada module processing completed successfully")
+            if errors:
+                logger.error("Canada module processing finished with collection errors")
+            else:
+                logger.info("Canada module processing completed successfully")
             return cfg
 
         except Exception as e:
@@ -164,7 +175,10 @@ class Canada:
             if isinstance(data, dict):
                 for data_type, items in data.items():
                     key = f"{province}_{data_type}"
-                    if isinstance(items, list):
+                    if isinstance(items, dict) and "error" in items:
+                        # Issue 1270: an error envelope contains no collected records.
+                        summary[key] = 0
+                    elif isinstance(items, list):
                         summary[key] = len(items)
                     elif isinstance(items, dict):
                         summary[key] = len(items)
