@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
+    ParsingError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -233,8 +234,10 @@ class BLMProvider(BaseProvider):
             params["claimant"] = claimant.upper()
 
         try:
-            data = self._get_json(query_url, params=params)
+            data = self._get_record_json(query_url, ("results", "records"), params=params)
             claims = self._parse_mining_claims(data, state)
+        except ParsingError:
+            raise
         except Exception as e:
             self.logger.warning(
                 f"BLM mining claims query returned empty results: {e}. "
@@ -248,7 +251,7 @@ class BLMProvider(BaseProvider):
     ) -> List[MiningClaim]:
         """Parse BLM response into MiningClaim objects."""
         claims = []
-        records = data.get("results", data.get("records", []))
+        records = self._require_record_list(data, ("results", "records"))
 
         for record in records:
             case_number = record.get("case_nr") or record.get("serial_nr")
@@ -395,8 +398,10 @@ class BLMProvider(BaseProvider):
             params["status"] = status
 
         try:
-            data = self._get_json(query_url, params=params)
+            data = self._get_record_json(query_url, ("results", "records"), params=params)
             leases = self._parse_fluid_minerals(data, state)
+        except ParsingError:
+            raise
         except Exception as e:
             self.logger.warning(
                 f"BLM fluid minerals query returned empty results: {e}. "
@@ -410,7 +415,7 @@ class BLMProvider(BaseProvider):
     ) -> List[FluidMineralLease]:
         """Parse BLM response into FluidMineralLease objects."""
         leases = []
-        records = data.get("results", data.get("records", []))
+        records = self._require_record_list(data, ("results", "records"))
 
         for record in records:
             case_number = record.get("case_nr") or record.get("serial_nr")

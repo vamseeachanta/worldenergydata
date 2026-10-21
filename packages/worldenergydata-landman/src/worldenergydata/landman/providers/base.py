@@ -362,6 +362,55 @@ class BaseProvider(ABC):
                 reason=f"Invalid JSON response: {str(e)}",
             )
 
+    def _require_record_list(
+        self, data: Any, record_keys: tuple[str, ...]
+    ) -> list[dict[str, Any]]:
+        """Require an explicit list; the first present alias takes precedence.
+
+        Contract: #1260 (2026). An error member overrides even an empty list.
+        ESRI's Query (Feature Service/Layer), JSON Response syntax, documents
+        the features array: https://developers.arcgis.com/rest/services-reference/
+        enterprise/query-feature-service-layer/ (accessed 2026-10-19).
+        Federal aliases retain the existing adapter contract, not a live schema.
+        """
+        if not isinstance(data, dict) or "error" in data:
+            raise ParsingError(self.PROVIDER_NAME, "Invalid record response envelope")
+        for key in record_keys:
+            if key in data:
+                records = data[key]
+                if not isinstance(records, list) or any(
+                    not isinstance(record, dict) for record in records
+                ):
+                    raise ParsingError(
+                        self.PROVIDER_NAME, f"Expected a list of objects in '{key}'"
+                    )
+                return records
+        raise ParsingError(
+            self.PROVIDER_NAME, f"Missing record list: {' or '.join(record_keys)}"
+        )
+
+    def _get_record_json(
+        self,
+        url: str,
+        record_keys: tuple[str, ...],
+        params: dict[str, Any] | None = None,
+        use_cache: bool = True,
+    ) -> dict[str, Any]:
+        """Cache record responses only after their envelope has been validated."""
+        cache_key = f"records:{record_keys}:{url}:{json.dumps(params or {}, sort_keys=True)}"
+        if use_cache:
+            cached = self._cache.get(cache_key)
+            if cached is not None:
+                return cached
+
+        # Bypass the raw HTTP cache, which accepts success statuses before JSON
+        # or provider-level errors can be checked. Failed validation stores nothing.
+        data = self._get_json(url, params=params, use_cache=False)
+        self._require_record_list(data, record_keys)
+        if use_cache:
+            self._cache.set(cache_key, data)
+        return data
+
     def clear_cache(self) -> None:
         """Clear the provider cache."""
         self._cache.clear()
