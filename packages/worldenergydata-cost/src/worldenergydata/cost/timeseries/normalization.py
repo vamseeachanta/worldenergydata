@@ -79,6 +79,8 @@ class Deflator:
 
     ``interpolated_years`` is carried explicitly so that every downstream real
     figure can declare whether the deflator it used was measured or inferred.
+    ``currency`` is uppercased like ``CostObservation.currency``; changing its
+    spelling never converts money between currencies.
     """
 
     basis: DeflatorBasis
@@ -92,6 +94,10 @@ class Deflator:
     #: USD preserves the built-in reference-series contract in
     #: data/modules/cost/curated/cost_component_timeseries.csv (CURRENCY column).
     currency: str = "USD"
+
+    def __post_init__(self) -> None:
+        """Use the observation schema's currency representation for comparison."""
+        object.__setattr__(self, "currency", self.currency.upper())
 
     @property
     def min_year(self) -> int:

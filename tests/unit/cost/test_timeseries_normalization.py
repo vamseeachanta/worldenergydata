@@ -93,20 +93,62 @@ def test_foreign_currency_raises(currency):
         deflate_series([_observation(currency=currency)], _deflator(), 2002)
 
 
-def test_explicit_currency_is_used_instead_of_assuming_usd():
+@pytest.mark.parametrize("currency", ["GBP", "gbp", "Gbp"])
+def test_explicit_currency_is_used_instead_of_assuming_usd(currency):
     """Same synthetic ratio: 200 GBP * 125 / 100 = 250 GBP; no FX conversion."""
     deflator = Deflator(
         basis=DeflatorBasis.CPI,
         values={2000: 100.0, 2002: 125.0},
         interpolated_years=frozenset(),
         source_note="Synthetic GBP index supplied explicitly by the caller.",
-        currency="GBP",
+        currency=currency,
     )
+    assert deflator.currency == "GBP"
     [point] = deflate_series([_observation(currency="gbp")], deflator, 2002)
     assert point.currency == "GBP"
     assert point.real == 250.0
     with pytest.raises(ValueError, match="currency.*USD.*GBP"):
         deflate_series([_observation()], deflator, 2002)
+
+
+@pytest.mark.parametrize("basis", list(DeflatorBasis))
+def test_builder_to_series_preserves_real_output_contract(basis):
+    """Synthetic anchors: 200 * 125 / 100 = 250; 200 * 125 / 125 = 200.
+
+    Inputs follow the module's OpenStax-based hand calculation. Neither
+    the expected numbers nor the metadata are obtained from another API.
+    """
+    component = (
+        CostComponent.INDEX_CPI
+        if basis is DeflatorBasis.CPI
+        else CostComponent.INDEX_UCCI
+    )
+    anchors = [
+        _observation(component=component, value=100.0),
+        _observation(component=component, year=2002, value=125.0),
+    ]
+    rows = [_observation(), _observation(year=2002)]
+    deflator = build_deflator(anchors, basis)
+    points = deflate_series(rows, deflator, 2002)
+
+    assert [point.real for point in points] == [250.0, 200.0]
+    for point in points:
+        serialized = asdict(point)
+        assert serialized["currency"] == "USD"
+        assert serialized["price_basis"] == "real"
+        assert serialized["basis"] == basis.value
+        assert serialized["basis_year"] == 2002
+
+
+@pytest.mark.parametrize("basis", list(DeflatorBasis))
+def test_incompatible_rows_raise_before_coverage_is_considered(basis):
+    """Missing coverage must not hide a REAL or foreign-currency input."""
+    for incompatible in [
+        {"price_basis": PriceBasis.REAL, "basis_year": 2002},
+        {"currency": "GBP"},
+    ]:
+        with pytest.raises(ValueError, match="price_basis|currency"):
+            deflate_series([_observation(**incompatible)], _deflator(basis), 2001)
 
 
 @pytest.mark.parametrize("year,basis_year", [(2001, 2002), (2000, 2001)])

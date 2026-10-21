@@ -6,3 +6,6 @@ workspace member (ADR 0001 Phase 2 — domain-package split, #529).
 Importable transparently as `worldenergydata.cost` once the workspace is
 installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for the
 shared `worldenergydata.common` layer.
+
+For nominal-to-real conversion, currency compatibility, output metadata and a
+worked example, see the [normalization guide](../../docs/modules/cost/NORMALIZATION.md).
