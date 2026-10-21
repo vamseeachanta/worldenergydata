@@ -271,6 +271,7 @@ class EnigmaCalibrator:
         Generate a realistic synthetic HSE DataFrame for testing.
         Produces incidents with realistic equipment_type/incident_type distributions
         matching BSEE GoM historical patterns.
+        Operator labels are neutral codenames with no real organisation mapping.
         """
         rng = np.random.default_rng(42)
 
