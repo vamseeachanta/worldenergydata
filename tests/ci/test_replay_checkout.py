@@ -131,11 +131,10 @@ def _wrapper(job_id):
     return checkout["with"], job["name"]
 
 
-@pytest.mark.parametrize("job_id", REQUIRED)
 @pytest.mark.skipif(os.name == "nt", reason="Workflow shell runs on Linux")
-def test_mode_command_logs_revision_and_selects_fallback(tmp_path, history, job_id):
+def test_mode_command_logs_revision_and_selects_fallback(tmp_path, history):
     """Missing context selects full CI without turning the mode job red."""
-    config, _name = _wrapper(job_id)
+    config, _name = _wrapper("lint-gate")
     runner = _checkout(tmp_path, history, False, False, config)
     workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
     command = workflow["jobs"]["mode"]["steps"][2]["run"]

@@ -1,5 +1,6 @@
 """Keep pull request CI available for every target branch."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -41,7 +42,7 @@ def test_required_pull_request_check_name_is_unchanged() -> None:
 
 
 def _evaluate_expression(expression: str, context: dict) -> object:
-    """Evaluate the equality and short-circuit subset used by concurrency."""
+    """Evaluate the workflow's Boolean and JSON lookup expression subset."""
     import ast
     import re
 
@@ -55,9 +56,17 @@ def _evaluate_expression(expression: str, context: dict) -> object:
     expression = re.sub(r"!(?!=)", " not ", expression).strip()
 
     def evaluate(node):
-        """Interpret only literals, comparisons and Boolean operators."""
+        """Interpret literals, JSON lookups, comparisons and Boolean operators."""
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            assert node.func.id == "fromJSON" and len(node.args) == 1
+            return json.loads(evaluate(node.args[0]))
+        if isinstance(node, ast.Subscript):
+            return evaluate(node.value).get(evaluate(node.slice), "")
+        if isinstance(node, ast.Attribute):
+            value = evaluate(node.value)
+            return value.get(node.attr, "") if isinstance(value, dict) else ""
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
             return not evaluate(node.operand)
         if isinstance(node, ast.Compare):
@@ -239,7 +248,9 @@ def test_required_names_have_single_result_job() -> None:
             "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
         )
         assert replay["env"]["REPLAY_RESULT"] == (
-            "${{ fromJSON(needs.mode.outputs.evidence)['" + name + "'].decision }}"
+            "${{ fromJSON(needs.mode.outputs.evidence || '{}')['"
+            + name
+            + "'].decision }}"
         )
         assert "GH_TOKEN" not in replay["env"]
         for decision, expected in [("PASS", 0), ("FAIL", 1), ("", 1)]:
@@ -276,6 +287,34 @@ def test_required_names_have_single_result_job() -> None:
                 assert bool(_evaluate_expression(replay["if"], context)) != bool(
                     _evaluate_expression(full["if"], context)
                 )
+
+
+@pytest.mark.parametrize(
+    "evidence,expected",
+    [
+        ("", ""),
+        ("{}", ""),
+        ('{"OTHER": {"decision": "PASS"}}', ""),
+        ('{"CHECK": {}}', ""),
+        ('{"CHECK": {"decision": "PASS"}}', "PASS"),
+        ('{"CHECK": {"decision": "FAIL"}}', "FAIL"),
+    ],
+)
+@pytest.mark.parametrize(
+    "job_id", ["lint-gate", "type-check-gate", "security-gate", "docs-gate", "pr-gate"]
+)
+def test_replay_environment_evaluates_before_step_condition(
+    job_id: str, evidence: str, expected: str
+) -> None:
+    """Skipped replay steps must still expand empty evidence without a JSON error."""
+    job = _load_workflow()["jobs"][job_id]
+    replay = job["steps"][0]
+    expression = replay["env"]["REPLAY_RESULT"]
+    decision = _evaluate_expression(
+        expression[3:-2],
+        {"needs.mode.outputs.evidence": evidence.replace("CHECK", job["name"])},
+    )
+    assert decision == expected
 
 
 def test_full_jobs_honor_cancellation() -> None:
