@@ -101,7 +101,6 @@ def test_blank_identity_is_not_cached(tmp_path: Path, component_id: str) -> None
         ["1", "1.0"],
         ["01"],
         ["NA", "NaN", "NULL", "null"],
-        ["A", " A", "A "],
     ],
 )
 def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> None:
@@ -111,6 +110,97 @@ def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> Non
     assert loader.load()["COMPONENT_ID"].tolist() == ids
     for component_id in ids:
         assert loader.get_by_id(component_id)["COMPONENT_ID"] == component_id
+
+
+@pytest.mark.parametrize(
+    ("ids", "lines"),
+    [
+        (["A", " A", "A "], "3, 4"),
+        (["\tA"], "2"),
+        (["A\t"], "2"),
+        (["\u00a0A"], "2"),
+        (["A\n"], "2"),
+        ([" A "], "2"),
+    ],
+)
+def test_padded_identity_can_be_repaired_and_retried(
+    tmp_path: Path, ids: list[str], lines: str
+) -> None:
+    """Padding is rejected rather than creating a visually ambiguous identity."""
+    write_catalog(tmp_path, ids)
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(
+        ValueError, match=rf"COMPONENT_ID.*whitespace.*CSV line {lines}$"
+    ):
+        loader.load()
+    assert loader._df is None
+    write_catalog(tmp_path, ["A"])
+    assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
+
+
+@pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
+@pytest.mark.parametrize("blank", ["", " \t"])
+def test_blank_provenance_reports_physical_line(
+    tmp_path: Path, field: str, blank: str
+) -> None:
+    """The bad record starts at line 5 after a quoted newline and an empty line."""
+    write_catalog(tmp_path, ["A", "B"])
+    path = tmp_path / CSV_NAME
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.reader(stream))
+    rows[1][HEADER.index("NOTES")] = "first\nsecond"
+    rows[2][HEADER.index(field)] = blank
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerows(rows[:2])
+        stream.write("\n")
+        writer.writerow(rows[2])
+
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match=rf"{field} must be populated.*CSV line 5"):
+        loader.load()
+    assert loader._df is None
+    write_catalog(tmp_path, ["A", "B"])
+    assert loader.load()["COMPONENT_ID"].tolist() == ["A", "B"]
+
+
+@pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
+def test_blank_provenance_reports_all_lines(tmp_path: Path, field: str) -> None:
+    """Only records on lines 2 and 4 lack the required provenance field."""
+    write_catalog(tmp_path, ["A", "B", "C"])
+    path = tmp_path / CSV_NAME
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.reader(stream))
+    for index in (1, 3):
+        rows[index][HEADER.index(field)] = ""
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        csv.writer(stream).writerows(rows)
+
+    with pytest.raises(ValueError, match=rf"{field} must be populated.*CSV line 2, 4$"):
+        DrillingRiserLoader(tmp_path).load()
+
+
+def test_delimiter_only_record_reports_physical_line(tmp_path: Path) -> None:
+    """An explicit nine-cell empty record retains the provenance error priority."""
+    write_catalog(tmp_path, ["A"])
+    with (tmp_path / CSV_NAME).open("w", newline="", encoding="utf-8") as stream:
+        csv.writer(stream).writerows([HEADER, [""] * len(HEADER)])
+    with pytest.raises(ValueError, match="DATA_SOURCE must be populated.*CSV line 2"):
+        DrillingRiserLoader(tmp_path).load()
+
+
+@pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
+def test_blank_provenance_precedes_padded_identity(tmp_path: Path, field: str) -> None:
+    """Missing provenance keeps priority when the same record has a padded ID."""
+    write_catalog(tmp_path, [" A"])
+    path = tmp_path / CSV_NAME
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.reader(stream))
+    rows[1][HEADER.index(field)] = ""
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        csv.writer(stream).writerows(rows)
+    with pytest.raises(ValueError, match=rf"{field} must be populated.*CSV line 2$"):
+        DrillingRiserLoader(tmp_path).load()
 
 
 @pytest.mark.parametrize("component_id", ["01", "NA"])
@@ -126,9 +216,12 @@ def test_duplicate_identity_reports_literal_string(
     assert loader._df is None
 
 
-@pytest.mark.parametrize("component_id", ["", " \t"])
-def test_blank_identity_reports_physical_line(
-    tmp_path: Path, component_id: str
+@pytest.mark.parametrize(
+    ("component_id", "reason"),
+    [("", "must be populated"), (" \t", "must be populated"), (" B", "whitespace")],
+)
+def test_invalid_identity_reports_physical_line(
+    tmp_path: Path, component_id: str, reason: str
 ) -> None:
     """The bad record starts at line 5 after a quoted newline and an empty line."""
     write_catalog(tmp_path, ["A", component_id])
@@ -140,7 +233,7 @@ def test_blank_identity_reports_physical_line(
     path.write_text(content[:line_end] + "\n" + content[line_end:])
 
     loader = DrillingRiserLoader(tmp_path)
-    with pytest.raises(ValueError, match="COMPONENT_ID must be populated.*CSV line 5"):
+    with pytest.raises(ValueError, match=rf"COMPONENT_ID.*{reason}.*CSV line 5$"):
         loader.load()
     assert loader._df is None
 
