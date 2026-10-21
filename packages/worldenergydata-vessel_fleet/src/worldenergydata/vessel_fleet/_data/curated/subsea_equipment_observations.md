@@ -1,7 +1,7 @@
 # Subsea equipment geometry investigation
 
 The companion `subsea_equipment_observations.csv` records seven public-source
-observations and nine explicit gaps. The observations support source discovery
+observations, three untranscribed research entries and six explicit gaps. The observations support source discovery
 and preliminary stack-up investigation. Suitability as engineering analysis
 inputs is NOT_EVALUATED: configuration, assembly boundaries and mass basis
 require confirmation from drawings. No universal geometry range is established.
@@ -11,6 +11,8 @@ require confirmation from drawings. No universal geometry range is established.
 | Revision | Date | Change and reason |
 |---|---|---|
 | A | 2026-10-19 | Add source-specific completion-package observations and explicit geometry gaps to prevent unsupported stack-up inputs. |
+
+| B | 2026-10-21 | Distinguish known untranscribed research from bounded-search gaps; correct component weight provenance. |
 
 ## Dataset contract
 
@@ -27,7 +29,9 @@ of a class.
 `REPORTED` means the fact appears in the cited document, not that the input is
 qualified for analysis. Confidence `A` means manufacturer-hosted literature.
 `NOT_FOUND` means no value was established in the bounded pass, not that the
-quantity is zero or absent from every public source. `NOT_EVALUATED` denotes
+quantity is zero or absent from every public source. `NOT_TRANSCRIBED` means
+research identifies a published value but it has not been transcribed into this
+table; it does not assert that no public value exists. `NOT_EVALUATED` denotes
 unestablished confidence or intended-use eligibility. `NOT_REPORTED` in `range`
 means no range was supplied. `ft_in` preserves feet-and-inches text without
 conversion. No equations, inferred constants, design limits or conversions are
@@ -49,6 +53,14 @@ used. Each row carries its public URL, document, page/table and retrieval date.
   accessed 2026-10-19: the inspected index provides well-data and submission
   discovery. It does not itself establish equipment dimensions. The gap rows
   are investigation targets, not findings about all underlying filings.
+- The 2026-10-11 research record in the linked subsea geometry investigation
+  identifies whole-stack height and mass (rows 1, 4 and 19) and approximate
+  separate LMRP weight (row 20), as recorded by the
+  [second-provider review](https://github.com/vamseeachanta/worldenergydata/pull/1435#issuecomment-6308529000).
+  These three entries are NOT_TRANSCRIBED. The research record and original
+  sources require verification before transcription, including a restricted-label
+  note for each resulting fact. The review was consulted on 2026-10-21; that
+  date does not represent retrieval of the original manufacturer sources.
 
 Only individual attributed facts and links are retained; source PDFs, images
 and substantial text are not redistributed. No reuse licence is asserted.
@@ -59,12 +71,14 @@ Retrieval dates do not establish current manufacture or equipment availability.
 
 Coverage by water depth and equipment configuration is not quantified. No BSEE
 filing census or APD/WAR schema audit has been completed in this dataset.
-Assembled BOP/LMRP heights, frame widths, dry and submerged mass, flex-joint
-stiffness, riser-adapter height, SSTT, retainer-valve, THRT and tubing-hanger
-spool envelopes remain unestablished by this pass. The CSV records selected
-height/mass gaps explicitly; this list also identifies parameters beyond those
-rows. Missing geometry stays NOT_FOUND, and derived hydrodynamic checks remain
-NOT_EVALUATED pending sourced geometry and an applicable method.
+Whole-stack BOP height and mass and approximate separate LMRP weight have
+published research entries but remain NOT_TRANSCRIBED here. Their assembly
+boundaries, configuration and mass basis remain unverified for analysis; a
+published weight is not automatically a dry mass. The six bounded-search gaps,
+including separate LMRP height, remain NOT_FOUND. Frame widths, submerged
+mass and flex-joint stiffness also require further evidence beyond the CSV
+rows. Derived hydrodynamic checks remain NOT_EVALUATED pending sourced geometry
+and an applicable method.
 
 Further collection will require manufacturer drawings with defined assembly
 boundaries and exact configuration attributes. The separate completion-package

@@ -53,9 +53,9 @@ def test_provenance_and_shape(rows):
         assert urlparse(row["source_url"]).scheme == "https"
         assert urlparse(row["source_url"]).netloc
         date.fromisoformat(row["retrieved_on"])
-        assert row["status"] in {"REPORTED", "NOT_FOUND"}
-        if row["status"] == "NOT_FOUND":
-            assert row["value"] == "NOT_FOUND"
+        assert row["status"] in {"REPORTED", "NOT_FOUND", "NOT_TRANSCRIBED"}
+        if row["status"] != "REPORTED":
+            assert row["value"] == row["status"]
             assert row["confidence"] == "NOT_EVALUATED"
         else:
             assert row["confidence"] == "A"
@@ -82,7 +82,8 @@ def test_ovs_published_values(rows, identifier, value, unit):
     row = next(row for row in rows if row["observation_id"] == identifier)
     assert (row["value"], row["unit"]) == (value, unit)
     assert row["source_url"] == "https://www.trendsetterengineering.com/files/864/"
-    assert "basis unspecified" in row["notes"] if "WEIGHT" in identifier else True
+    if "WEIGHT" in identifier:
+        assert "basis unspecified" in row["notes"]
 
 
 @pytest.mark.parametrize(
@@ -110,10 +111,7 @@ def test_modular_published_values(rows, identifier, value, unit):
 def test_gaps_remain_explicit(rows):
     gaps = {row["observation_id"] for row in rows if row["status"] == "NOT_FOUND"}
     assert gaps == {
-        "BOP-HEIGHT-GAP",
-        "BOP-MASS-GAP",
         "LMRP-HEIGHT-GAP",
-        "LMRP-MASS-GAP",
         "SSTT-HEIGHT-GAP",
         "RETAINER-HEIGHT-GAP",
         "THRT-HEIGHT-GAP",
@@ -132,3 +130,35 @@ def test_weight_basis_is_not_promoted_to_dry_or_submerged_mass(rows):
         "MODULAR-WEIGHT",
     }
     assert all("basis unspecified" in row["notes"] for row in weights)
+
+
+@pytest.mark.parametrize(
+    "identifier,locator",
+    [
+        ("OVS-EDP-WEIGHT", "EDP Deployed Weight"),
+        ("OVS-LRP-WEIGHT", "LRP Deployed Weight with H4 Connector"),
+    ],
+)
+def test_component_weight_provenance(rows, identifier, locator):
+    row = next(row for row in rows if row["observation_id"] == identifier)
+    assert row["source_locator"] == f"p.2 Equipment Specifications; {locator}"
+    if identifier == "OVS-EDP-WEIGHT":
+        assert "LRP" not in row["notes"]
+        assert "H4" not in row["notes"]
+    else:
+        assert "LRP includes H4 connector" in row["notes"]
+
+
+def test_known_research_is_untranscribed_not_missing(rows):
+    pending = {
+        row["observation_id"]: row for row in rows if row["status"] == "NOT_TRANSCRIBED"
+    }
+    assert set(pending) == {"BOP-HEIGHT-GAP", "BOP-MASS-GAP", "LMRP-MASS-GAP"}
+    for row in pending.values():
+        assert row["source_url"] == (
+            "https://github.com/vamseeachanta/worldenergydata/issues/1140"
+        )
+        assert "2026-10-11" in row["source_locator"]
+        assert "restricted-label" in row["notes"]
+        assert "mass basis" in row["notes"]
+        assert row["range"] == "NOT_REPORTED"
