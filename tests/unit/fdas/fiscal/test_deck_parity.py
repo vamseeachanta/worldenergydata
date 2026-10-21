@@ -94,9 +94,12 @@ def test_deckless_vs_us_gom_npv_saving(discount_rate):
     Nonzero-discount case: OpenStax, Principles of Finance (2022), section
     16.2, discounts each cashflow to its present value. The synthetic annual
     rate is 0.10. Monthly savings are 4500, 4317.5, 3420, 3200 USD, obtained
-    by multiplying each fixture revenue by (0.188 - 0.1875). The existing
-    calculate_host_capex_timing contract spans 24 months including first oil,
-    leaving 23 pre-production rows. Thus expected delta NPV is independently
+    by multiplying each fixture revenue by (0.188 - 0.1875). Timing is defined
+    by core/financial.py::calculate_npv: the first row is at time zero and
+    monthly discounting uses (1 + annual_rate)**(t/12). The contract in
+    analysis/cashflow.py::CashflowEngine.calculate_host_capex_timing spans
+    24 months including first oil, leaving 23 pre-production rows. These are
+    repository timing conventions, not textbook assumptions. Delta NPV is
     sum(saving_t / (1 + annual_rate)**(t/12)) for t = 23, 24, 25, 26.
     This also retains the original nonzero-discount regression input.
     """
@@ -120,7 +123,7 @@ def test_deckless_vs_us_gom_npv_saving(discount_rate):
                 prod.copy(), timeline, wti, first_oil
             )
         ]
-        # Independent hand-calculated payments and timing: docstring above.
+        # Hand-calculated payments; code-defined timing contracts cited above.
         saving = (
             0.0
             if ds == "dry"
