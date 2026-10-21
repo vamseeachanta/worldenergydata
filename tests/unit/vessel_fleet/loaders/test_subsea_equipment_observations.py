@@ -53,9 +53,9 @@ def test_provenance_and_shape(rows):
         assert urlparse(row["source_url"]).scheme == "https"
         assert urlparse(row["source_url"]).netloc
         date.fromisoformat(row["retrieved_on"])
-        assert row["status"] in {"REPORTED", "NOT_FOUND"}
-        if row["status"] == "NOT_FOUND":
-            assert row["value"] == "NOT_FOUND"
+        assert row["status"] in {"REPORTED", "NOT_FOUND", "NOT_TRANSCRIBED"}
+        if row["status"] in {"NOT_FOUND", "NOT_TRANSCRIBED"}:
+            assert row["value"] == row["status"]
             assert row["confidence"] == "NOT_EVALUATED"
         else:
             assert row["confidence"] == "A"
@@ -82,7 +82,23 @@ def test_ovs_published_values(rows, identifier, value, unit):
     row = next(row for row in rows if row["observation_id"] == identifier)
     assert (row["value"], row["unit"]) == (value, unit)
     assert row["source_url"] == "https://www.trendsetterengineering.com/files/864/"
-    assert "basis unspecified" in row["notes"] if "WEIGHT" in identifier else True
+    if "WEIGHT" in identifier:
+        assert "basis unspecified" in row["notes"]
+
+
+@pytest.mark.parametrize(
+    "identifier,entry,includes_connector",
+    [
+        ("OVS-EDP-WEIGHT", "EDP Deployed Weight", False),
+        ("OVS-LRP-WEIGHT", "LRP Deployed Weight with H4 Connector", True),
+    ],
+)
+def test_ovs_weights_identify_the_component_entry(
+    rows, identifier, entry, includes_connector
+):
+    row = next(row for row in rows if row["observation_id"] == identifier)
+    assert row["source_locator"] == f"p.2 Equipment Specifications; {entry}"
+    assert ("H4 connector" in row["notes"]) is includes_connector
 
 
 @pytest.mark.parametrize(
@@ -110,16 +126,38 @@ def test_modular_published_values(rows, identifier, value, unit):
 def test_gaps_remain_explicit(rows):
     gaps = {row["observation_id"] for row in rows if row["status"] == "NOT_FOUND"}
     assert gaps == {
-        "BOP-HEIGHT-GAP",
-        "BOP-MASS-GAP",
         "LMRP-HEIGHT-GAP",
-        "LMRP-MASS-GAP",
         "SSTT-HEIGHT-GAP",
         "RETAINER-HEIGHT-GAP",
         "THRT-HEIGHT-GAP",
         "SPOOL-HEIGHT-GAP",
         "ADAPTER-HEIGHT-GAP",
     }
+
+
+@pytest.mark.parametrize(
+    "identifier,research_rows",
+    [
+        ("BOP-HEIGHT-GAP", "row 19"),
+        ("BOP-MASS-GAP", "rows 1; 4; 19"),
+        ("LMRP-MASS-GAP", "row 20"),
+    ],
+)
+def test_known_research_findings_are_untranscribed_not_absent(
+    rows, identifier, research_rows
+):
+    """The #1140 research record distinguishes published leads from gaps."""
+    row = next(row for row in rows if row["observation_id"] == identifier)
+    assert (row["status"], row["value"]) == ("NOT_TRANSCRIBED", "NOT_TRANSCRIBED")
+    assert row["source_url"] == (
+        "https://api.github.com/repositories/574746314/issues/comments/6111983634"
+    )
+    assert row["source_document"] == "Research record #1140; 2026-10-11"
+    assert row["source_locator"] == f"2026-10-11 research record; {research_rows}"
+    assert "#1140" in row["notes"]
+    assert "NOT_EVALUATED" in row["notes"]
+    if identifier == "BOP-MASS-GAP":
+        assert "Restricted" in row["notes"]
 
 
 def test_weight_basis_is_not_promoted_to_dry_or_submerged_mass(rows):
