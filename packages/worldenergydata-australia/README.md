@@ -22,11 +22,22 @@ query's `latitude` and `longitude`, `spatial_reference={"wkid": 4326}`,
 in `product`. This interface records caller-supplied evidence; it does not verify
 the digest against source bytes or establish freshness.
 
+Depth conversion additionally requires `marine_qualification` with
+`classification="marine"` and a nonblank `source` string identifying the evidence
+for that classification at the extraction query point. For example, a synthetic
+test point may carry
+`{"classification": "marine", "source": "synthetic point classification"}`.
+This evidence is supplied by the caller and retained in provenance; the adapter
+does not authenticate it or perform a land/sea lookup. Missing, malformed, land
+or unknown classification, and absent or blank source references, return
+`NOT_EVALUATED` with a reason and null depth. A negative elevation alone does not
+establish marine water depth: dry land can lie below MSL.
+
 The [GA/DEA 2023 specifications, band and product-information tables](https://knowledge.dea.ga.gov.au/data/external-data/ga-ausbathytopo-250m/)
 define the metre/MSL basis, NoData sentinel and WGS84 reference system. Depth is
-the negative of submerged elevation relative to MSL. Missing, NoData, shoreline
-and land samples return `NOT_EVALUATED` with a reason and null depth. Invalid
-units, datum, coordinates or provenance raise `ValueError`.
+the negative of marine-qualified submerged elevation relative to MSL. Missing,
+NoData and shoreline samples return `NOT_EVALUATED` with a reason and null depth.
+Invalid units, datum, coordinates or extraction provenance raise `ValueError`.
 
 `enrich_well_from_bathymetry(well, point)` returns a copy and requires the exact
 same query coordinates and WGS84 datum. Qualified existing well depths take

@@ -70,7 +70,9 @@ def normalize_bathymetry_point(point: Dict[str, Any]) -> Dict[str, Any]:
 
     The point coordinates describe the extraction query, not a nearby cell
     centre. No interpolation, coordinate transformation or datum conversion is
-    performed. Invalid evidence raises; land/shoreline/NoData is NOT_EVALUATED.
+    performed. Marine classification requires a caller-supplied source reference;
+    elevation alone cannot establish it. Invalid extraction evidence raises;
+    land/unknown classification, shoreline and NoData are NOT_EVALUATED.
     """
     _validate_evidence(point)
     if "height_depth" not in point:
@@ -83,12 +85,24 @@ def normalize_bathymetry_point(point: Dict[str, Any]) -> Dict[str, Any]:
     ):
         raise ValueError("height_depth must be finite or null")
     # GA/DEA 2023 band table: metres relative to MSL, NoData=NODATA.
-    # Depth below MSL is 0 - elevation; only submerged (negative) elevations
-    # qualify. The MSL zero is the datum origin, not an acceptance tolerance.
-    submerged = elevation is not None and elevation != NODATA and elevation < 0
+    # Depth below MSL is 0 - elevation at an explicitly qualified marine point.
+    # Dry land may also lie below MSL. Zero is the datum origin, not a tolerance.
+    qualification = point.get("marine_qualification")
+    marine = (
+        isinstance(qualification, dict)
+        and qualification.get("classification") == "marine"
+        and isinstance(qualification.get("source"), str)
+        and bool(qualification["source"].strip())
+    )
+    submerged = (
+        marine and elevation is not None and elevation != NODATA and elevation < 0
+    )
+    reason = "" if submerged else "missing, NoData or non-submerged elevation"
+    if not marine:
+        reason = "marine classification with source reference required"
     return {
         "status": "EVALUATED" if submerged else "NOT_EVALUATED",
-        "reason": "" if submerged else "missing, NoData or non-submerged elevation",
+        "reason": reason,
         "water_depth": -float(elevation) if submerged else None,
         "water_depth_unit": "m",
         "water_depth_datum": "MSL",

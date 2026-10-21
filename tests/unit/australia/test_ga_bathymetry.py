@@ -27,6 +27,10 @@ def point():
         "spatial_reference": {"wkid": 4326},
         "source_sha256": "a" * 64,
         "retrieved_at_utc": "2026-10-19T00:00:00Z",
+        "marine_qualification": {
+            "classification": "marine",
+            "source": "synthetic point classification",
+        },
     }
 
 
@@ -54,6 +58,8 @@ def test_normalize_depth_and_provenance_without_mutation(point):
     assert result["provenance"]["source_sha256"] == point["source_sha256"]
     assert result["provenance"]["product"] == point["product"]
     assert result["provenance"]["source_url"] == ga.SPECIFICATION_URL
+    assert result["provenance"]["marine_qualification"] == point["marine_qualification"]
+    result["provenance"]["marine_qualification"]["source"] = "changed copy"
     assert point == before
 
 
@@ -65,6 +71,66 @@ def test_nonmarine_or_missing_depth_is_not_evaluated(point, elevation):
     assert result["status"] == "NOT_EVALUATED"
     assert result["water_depth"] is None
     assert result["reason"]
+
+
+@pytest.mark.parametrize(
+    "qualification",
+    [
+        None,
+        True,
+        "marine",
+        [],
+        {},
+        {"classification": "land", "source": "synthetic point classification"},
+        {"classification": "unknown", "source": "synthetic point classification"},
+        {"classification": True, "source": "synthetic point classification"},
+        {"classification": "marine"},
+        {"classification": "marine", "source": None},
+        {"classification": "marine", "source": ""},
+        {"classification": "marine", "source": " \t"},
+        {"classification": "marine", "source": 1},
+    ],
+)
+def test_below_msl_requires_sourced_marine_qualification(point, qualification):
+    """A synthetic -15 m elevation alone does not establish marine water depth."""
+    point.update(height_depth=-15.0, marine_qualification=qualification)
+    result = ga.normalize_bathymetry_point(point)
+    assert result["status"] == "NOT_EVALUATED"
+    assert result["water_depth"] is None
+    assert result["reason"]
+    assert result["provenance"]["marine_qualification"] == qualification
+
+
+@pytest.mark.parametrize("classification", ["land", "unknown", None])
+def test_below_msl_unqualified_point_preserves_field_fallback(
+    point, well, classification
+):
+    """Synthetic dry land below MSL and unknown points cannot supply a depth."""
+    point["height_depth"] = -15.0
+    if classification is None:
+        del point["marine_qualification"]
+    else:
+        point["marine_qualification"]["classification"] = classification
+    normalized = ga.normalize_bathymetry_point(point)
+    assert normalized["status"] == "NOT_EVALUATED"
+    assert normalized["water_depth"] is None
+    assert normalized["reason"]
+    before = copy.deepcopy(well)
+    result = ga.enrich_well_from_bathymetry(well, point)
+    assert result == before
+    assert well == before
+    meta = {
+        "field_name": "Synthetic Field",
+        "well_identifier": "synthetic-well",
+        "water_depth_m": 50,
+    }
+    enriched = enrich_field_metadata(meta, [result])
+    assert enriched["water_depth_m"] == 50
+    assert enriched["value_origins"]["water_depth_m"] == "default"
+    assert "bathymetry_provenance" not in enriched
+    concept = build_australia_field_concept(meta, wells=[result])
+    assert concept.water_depth_m == 50
+    assert "water_depth_m=bathymetry" not in concept.data_source
 
 
 @pytest.mark.parametrize(
