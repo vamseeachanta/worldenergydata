@@ -46,7 +46,7 @@ From a repository checkout with the package importable:
 
 ```bash
 PYTHONPATH=src python -m worldenergydata.underwriting \
-  examples/underwriting/input.json diligence-output
+  examples/underwriting/input.json diligence-output/pack
 ```
 
 The destination must be new. The command reads the supplied input only and
@@ -63,7 +63,7 @@ Unknown fields and section keys are rejected to make typing errors visible.
 
 | Field | Meaning |
 | --- | --- |
-| `asset`, `as_of` | Display identifier and evidence cutoff date, not a sourced location claim. Location facts belong in observations. |
+| `asset`, `as_of` | Display identifier and UTC evidence cutoff date (also the issue date), not a sourced location claim. Location facts belong in observations. |
 | `revision`, `revision_note` | Issue identifier and description of the change and reason. Retain prior issued reports. |
 | `previous_revisions` (optional) | Earlier revision/date/change rows, copied unchanged before the current row. IDs must be unique and dates chronological. Re-issues supply the complete prior history. |
 | `sources` | Source declarations with unique ID, kind, materialization status, explicit publication clearance, citation, URL, timezone-aware retrieval timestamp, SHA-256, license, coverage and caveats. |
@@ -98,7 +98,9 @@ Observation values must be nonempty text or finite numbers, with units (use
 Repeated observation identities are rejected rather than silently double
 counted. Different source records for the same well remain distinct observations;
 they are not counted as distinct wells. Retrieval and observation dates cannot
-follow the evidence cutoff.
+follow the UTC evidence cutoff. Retrieval timestamps are converted to UTC before
+comparing their dates. The cutoff `as_of` is also the current revision issue date;
+a reissue advances it while retaining earlier observation dates.
 
 Links permit public HTTP(S) URLs without embedded credentials and repository
 paths under `docs`, `src`, `packages`, or `examples`. Filesystem URLs, parent
@@ -131,7 +133,8 @@ syntax, but does not open external artifacts to verify declared source digests.
 
 Open the [HTML diligence pack](../../examples/underwriting/index.html).
 The [machine-readable summary](../../examples/underwriting/summary.json) remains
-a separate artifact. Tests regenerate both and require byte equality.
+a separate artifact. Tests regenerate both and require byte equality. Git attributes
+preserve LF bytes for the example input and outputs on every platform.
 
 The answer supports requesting the missing evidence, not an investment or legal
 decision. Obtain the inventory and matrix, qualified pressure observations,
