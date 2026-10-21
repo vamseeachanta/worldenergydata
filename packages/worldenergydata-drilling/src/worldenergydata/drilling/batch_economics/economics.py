@@ -4,11 +4,11 @@
 """Batch drilling economics calculator.
 
 Key economic concepts implemented:
-- Wright learning curve: T(N) = T(1) x N^(log(LC)/log(2))
+- Per-position learning curve: T(N) = T(1) x N^(log(LC)/log(2))
 - Mobilization cost amortization across N wells
 - Undiscounted batch vs. standalone cost comparison (legacy NPV API)
 - Break-even well count for batch justification
-- Campaign total cost with cumulative learning
+- Campaign total cost with summed per-well durations
 """
 
 from __future__ import annotations
@@ -41,16 +41,22 @@ class BatchDrillingEconomics:
         well_position: int,
         lc_factor: float = 0.85,
     ) -> float:
-        """Cumulative average learning curve time for well at position N.
+        """Learning-adjusted drilling duration used for the well at position N.
 
-        Uses the Wright (1936) power-law learning curve:
+        Applies the existing power law:
             T(N) = T(1) x N^(log(LC) / log(2))
+
+        Cost calculations use T(N) as a per-well duration and sum T(i) over
+        the batch. A cumulative-average interpretation would instead give a
+        total of N * T(N). This documents current compatibility behavior;
+        the learning model and its duration calibration remain unqualified
+        (see duration-qualification issue 1342).
 
         Args:
             base_time_days: Duration of the first well in the batch (days).
             well_position: 1-based position in the drill sequence.
-            lc_factor: Learning curve factor. 0.85 means each time cumulative
-                quantity doubles, average time falls to 85% of prior value.
+            lc_factor: Learning factor. When the well position doubles, its
+                estimated duration is multiplied by this factor.
 
         Returns:
             Estimated drilling time for the well at ``well_position`` (days).
@@ -120,7 +126,7 @@ class BatchDrillingEconomics:
             mob_cost: Mobilization cost in USD.
             day_rate: Rig day rate in USD per day.
             base_well_days: Base drilling duration for the first well (days).
-            lc_factor: Wright learning curve factor.
+            lc_factor: Per-position learning factor.
 
         Returns:
             First integer size with strictly lower batch cost in the existing
