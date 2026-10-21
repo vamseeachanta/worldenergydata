@@ -423,7 +423,8 @@ def analyze(
     oil_price: float = typer.Option(75.00, "--oil-price", help="Oil price per barrel"),
     gas_price: float = typer.Option(3.50, "--gas-price", help="Gas price per MCF"),
     royalty_rate: float = typer.Option(
-        0.188, "--royalty-rate", help="Royalty rate (e.g., 0.188 for 18.8%)"
+        # us_gom.yml source_ref (2026-07-03): 18.75% deepwater = 0.1875.
+        0.1875, "--royalty-rate", help="Royalty rate (e.g., 0.1875 for 18.75%)"
     ),
     output: Optional[Path] = typer.Option(
         None, "--output", "-o", help="Output file path for analysis results"
