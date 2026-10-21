@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
+    ProviderError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -460,18 +461,30 @@ class StateGISProvider(BaseProvider):
             state: Two-letter state code
             county: Optional county name
             operator: Optional operator name
-            start_date: Optional start date filter
-            end_date: Optional end date filter
+            start_date: Requested start date; date filtering is not supported
+            end_date: Requested end date; date filtering is not supported
             limit: Maximum results to return
 
         Returns:
             PermitSearchResult with matching permits
 
         Raises:
+            StateNotSupportedError: If state is not supported
+            ProviderError: If either date bound is supplied; permit-date fields
+                have not been verified for the configured services
             ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
+
+        # #1259 permits explicit rejection when a service cannot filter by date.
+        # Do not guess a date field or silently return an unfiltered result.
+        if start_date is not None or end_date is not None:
+            raise ProviderError(
+                message=f"Permit date filtering is not supported for {state_upper}",
+                error_code="PERMIT_DATE_FILTER_UNSUPPORTED",
+                details={"provider": self.PROVIDER_NAME, "state": state_upper},
+            )
 
         self.logger.info(f"Searching permits in {state_upper}")
 
