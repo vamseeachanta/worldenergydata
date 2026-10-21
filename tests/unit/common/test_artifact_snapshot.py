@@ -6,6 +6,7 @@ input or sealed output must fail before the caller publishes any returned bytes.
 """
 
 import json
+import os
 
 import pytest
 
@@ -133,8 +134,10 @@ def test_declared_output_set_is_enforced(tmp_path, mistake):
 def test_caller_exception_is_preserved_and_stage_is_private(tmp_path):
     """Rendering failures propagate without returning publishable bytes.
 
-    Hand calculation: group rwx (octal 070) plus other rwx (octal 007) is
-    octal 077. A zero bitwise intersection means all those bits are clear.
+    On POSIX, group rwx (octal 070) plus other rwx (octal 007) is octal 077.
+    A zero bitwise intersection means all those bits are clear. Windows stat
+    mode bits do not establish ACL privacy; exception and cleanup checks still
+    apply there.
     """
     caller_error = ValueError("synthetic render failure")
     paths = []
@@ -142,7 +145,8 @@ def test_caller_exception_is_preserved_and_stage_is_private(tmp_path):
     def render(inputs, stage):
         path = stage.write("report", b"abc")
         paths.append(path)
-        assert path.parent.stat().st_mode & 0o077 == 0
+        if os.name == "posix":
+            assert path.parent.stat().st_mode & 0o077 == 0
         raise caller_error
 
     with pytest.raises(ValueError) as caught:
