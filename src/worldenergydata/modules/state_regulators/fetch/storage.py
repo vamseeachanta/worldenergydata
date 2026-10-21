@@ -116,6 +116,8 @@ class CacheStore:
             or len(payload) != metadata["size_bytes"]
         ):
             raise ValueError("Cache integrity verification failed")
+        if not payload:
+            raise ValueError("Cache integrity: empty payload; preserve for inspection")
         return FetchResult(path, metadata, True)
 
     def put(
@@ -125,6 +127,9 @@ class CacheStore:
         headers: Mapping[str, str],
         terms_check: dict[str, Any],
     ) -> FetchResult:
+        # Issue #1301 cache contract: a response with no bytes is not reusable.
+        if not payload:
+            raise ValueError("Cannot cache an empty payload")
         digest = hashlib.sha256(payload).hexdigest()
         path = self.objects / digest
         scratch = path.with_suffix(".pending")

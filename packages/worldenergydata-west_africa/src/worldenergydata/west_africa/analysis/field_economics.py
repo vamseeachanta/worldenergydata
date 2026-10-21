@@ -19,6 +19,7 @@ Reference: Petroleum Industry Act 2021 (PIA), NUPRC guidelines.
 """
 
 import logging
+import math
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
@@ -169,18 +170,32 @@ def calculate_cost_oil_recovery(
 
 def calculate_profit_oil_split(
     profit_oil: float,
-    production_rate_bopd: int,
+    production_rate_bopd: float,
 ) -> Dict[str, float]:
     """
     Split profit oil between NNPC and contractor based on production rate.
 
     Args:
         profit_oil: Total profit oil amount in USD.
-        production_rate_bopd: Current production rate in barrels per day.
+        production_rate_bopd: Finite, nonnegative production rate in barrels
+            per day. A missing rate cannot be used to select a tier.
 
     Returns:
         Dict with 'nnpc' and 'contractor' keys (USD amounts).
+
+    Raises:
+        ValueError: If production_rate_bopd is missing, non-finite or negative.
     """
+    # Input domain: issue #1292 (2026), docs/agent-pack.md, SF6.
+    # Finite includes zero: Python 3.14 Library Reference, math.isfinite.
+    # https://docs.python.org/3.14/library/math.html#math.isfinite
+    if (
+        production_rate_bopd is None
+        or not math.isfinite(production_rate_bopd)
+        or production_rate_bopd < 0
+    ):
+        raise ValueError("production_rate_bopd must be finite and nonnegative")
+
     nnpc_share = 0.70  # Default to highest tier
     for max_rate, share in PROFIT_OIL_TIERS:
         if production_rate_bopd <= max_rate:
@@ -220,7 +235,7 @@ class NigeriaDeepwaterPSC:
         gross_revenue: float,
         opex: float,
         capex: float,
-        production_rate_bopd: int,
+        production_rate_bopd: float,
     ) -> PSCFiscalResult:
         """
         Compute full PSC fiscal result for a Nigeria deepwater field.
@@ -229,10 +244,14 @@ class NigeriaDeepwaterPSC:
             gross_revenue: Annual gross revenue in USD.
             opex: Annual operating expenditure in USD.
             capex: Annual capital expenditure in USD.
-            production_rate_bopd: Annual average production rate in bopd.
+            production_rate_bopd: Finite, nonnegative annual average production
+                rate in barrels per day; required even when profit oil is zero.
 
         Returns:
             PSCFiscalResult with all fiscal components.
+
+        Raises:
+            ValueError: If production_rate_bopd is missing, non-finite or negative.
         """
         # 1. Royalty (0% for >= 1000m deepwater)
         royalty_rate = calculate_royalty_deepwater(self.water_depth_m)

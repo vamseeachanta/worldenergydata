@@ -85,7 +85,13 @@ class ManifoldSupplierLoader:
         return results
 
     def get(self, company: str) -> Optional[ManifoldSupplierSchema]:
-        """Return the record whose COMPANY contains ``company`` (case-insensitive)."""
+        """Return the first case-insensitive COMPANY substring match, or None.
+
+        Raises ValueError if ``company`` is empty or contains only whitespace.
+        Nonblank keys retain their original whitespace for substring matching.
+        """
+        if not company.strip():
+            raise ValueError("company must contain non-whitespace characters")
         needle = company.lower()
         for r in self._load():
             if needle in r.COMPANY.lower():
