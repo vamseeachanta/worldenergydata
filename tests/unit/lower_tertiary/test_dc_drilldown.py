@@ -99,11 +99,11 @@ def test_page_has_both_themes_and_deep_link_router():
 @pytest.mark.parametrize("missing", [("basis",), ("basis", "pnd_days", "days_status")])
 def test_synthetic_output_requires_basis(mod, monkeypatch, tmp_path, missing):
     from tests.unit.lower_tertiary.test_dc_provenance import (
+        make_synthetic_inputs,
         patch_inputs,
-        synthetic_inputs,
     )
 
-    inputs = synthetic_inputs.__wrapped__(tmp_path)
+    inputs = make_synthetic_inputs(tmp_path)
     patch_inputs(monkeypatch, mod, inputs)
     parser = mod.provenance
     monkeypatch.setattr(
@@ -122,8 +122,8 @@ def test_synthetic_table_schema_requires_basis(monkeypatch, tmp_path, builder):
     from tests.unit.lower_tertiary.test_dc_provenance import (
         add_source_labels,
         load_script,
+        make_synthetic_inputs,
         publisher,
-        synthetic_inputs,
         synthetic_vintages,
     )
 
@@ -141,7 +141,7 @@ def test_synthetic_table_schema_requires_basis(monkeypatch, tmp_path, builder):
         with pytest.raises(ValueError, match="basis"):
             module.build_diff(old, add_source_labels(new, "synthetic rule"))
     else:
-        inputs = synthetic_inputs.__wrapped__(tmp_path)
+        inputs = make_synthetic_inputs(tmp_path)
         module = publisher(monkeypatch, inputs)
         parser = module.aggregate_provenance
         monkeypatch.setattr(

@@ -37,6 +37,10 @@ def write_rows(path, rows):
 
 @pytest.fixture
 def synthetic_inputs(tmp_path):
+    return make_synthetic_inputs(tmp_path)
+
+
+def make_synthetic_inputs(tmp_path):
     row = dict(
         LEASE_NAME="Anchor",
         SURF_LEASE_NUM="G00001",
