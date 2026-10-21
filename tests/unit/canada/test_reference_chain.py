@@ -58,6 +58,14 @@ def test_reference_chain_hibernia_is_dry_gbs_and_revenue_positive():
     )
 
     assert result["economics_label"] == "chain_plumbing_pre_tax"
+
+    basis = result["economics_basis"]
+    assert basis["view"] == "reference_chain_pre_tax"
+    assert basis["discount_convention"] == "undiscounted"
+    assert basis["tax_treatment"] == "pre_income_tax_after_royalty"
+    assert basis["oil_price_marker"] == "flat_input_not_market_series"
+    assert basis["status"] == "plumbing_only"
+
     # Hibernia is a shallow-water GBS dry-tree field → depth classifier "dry"
     assert result["dev_system"] == "dry"
     assert result["pre_tax_metrics"]["dev_system_source"] == "depth_classifier"

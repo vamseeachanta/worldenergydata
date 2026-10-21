@@ -263,6 +263,7 @@ def build_benchmark(
                     # only, excluding all capex — NOT an investment NPV. Named
                     # honestly per #723 review Finding 3.
                     "disc_posttax_cf_usd": float(fr["operator_npv_usd"]),
+                    "economics_basis": fr["economics_basis"],
                     "provenance": region_prov,
                 }
             )
@@ -295,6 +296,8 @@ def build_benchmark(
         "skipped_empty": skipped_empty,
         "concept_mix": concept_mix,
         "meta": {
+            "economics_view": "historical_post_tax_proxy",
+            "discount_convention": "effective_annual_to_monthly",
             "oil_price_usd": oil_price_usd,
             # The rate the numbers were ACTUALLY computed at (guaranteed above).
             "discount_rate": _DISCOUNT_RATE,
@@ -493,7 +496,13 @@ def render_benchmark_html(benchmark: dict) -> str:
     ingested public regulatory records. The <strong>Discounted post-tax CF</strong>
     column is discounted post-tax cash flow over <strong>historical production
     only, excluding all capital expenditure</strong> — it is a backward-looking
-    cash-flow proxy, not a forward-looking investment NPV.
+    cash-flow proxy, not a forward-looking investment NPV. Discounting uses
+    an effective annual rate converted to monthly periods, with the first
+    supplied calendar month at t=0 and gaps retained. Country reference-chain
+    results are a separate view: undiscounted, pre-income-tax cash flows after
+    royalties and model operating/capital costs. Their input data and
+    assumptions differ; the two views are not interchangeable.
+    See <code>docs/architecture/economics-views.md</code> for the decision and migration.
   </div>
   {summary_html}
   <table>

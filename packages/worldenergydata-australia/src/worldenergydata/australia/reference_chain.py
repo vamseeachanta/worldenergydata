@@ -23,6 +23,7 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
 )
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.fdas.core.economics_basis import reference_chain_basis
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 
@@ -76,6 +77,9 @@ def run_australia_reference_chain(
         "production_available": False,
         "concept_screening_label": "fieldconcept_screening_only_no_production",
         "economics_label": "no_production_source_placeholder",
+        "economics_basis": reference_chain_basis(
+            unified, oil_price_usd_bbl, royalty_basis="fdas_default_us_gom_assumptions"
+        ),
         "pre_tax_metrics": _pre_tax_metrics(cashflows),
     }
 

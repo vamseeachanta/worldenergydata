@@ -388,3 +388,15 @@ class TestRenderedStatusSummary:
             .split("</p>")[0]
         )
         assert "2 illustrative seed" in summary
+
+
+def test_benchmark_declares_distinct_economics_basis():
+    bench = _status_bench()
+    assert bench["meta"]["economics_view"] == "historical_post_tax_proxy"
+    for row in bench["rows"]:
+        assert row["economics_basis"]["view"] == bench["meta"]["economics_view"]
+        assert row["economics_basis"]["reference_date"]
+    page = render_benchmark_html(bench)
+    assert "effective annual" in page
+    assert "reference-chain" in page
+    assert "undiscounted" in page

@@ -13,6 +13,7 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
 )
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.fdas.core.economics_basis import reference_chain_basis
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
 from worldenergydata.spain.field_concept import build_spain_field_concept
@@ -72,6 +73,12 @@ def run_spain_reference_chain(
         "concept_screening_label": "wiring_only_onshore_sparse_metadata",
         "economics_label": "chain_plumbing_pre_tax",
         "dev_system": dev_system,
+        "economics_basis": reference_chain_basis(
+            unified,
+            oil_price_usd_bbl,
+            royalty_basis="fdas_default_us_gom_assumptions",
+            gas_prices=gas_prices,
+        ),
         "pre_tax_metrics": _pre_tax_metrics(cashflows, onshore_flag),
     }
 

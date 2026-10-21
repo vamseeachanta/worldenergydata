@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import pandas as pd
 
+from worldenergydata.fdas.core.financial import calculate_npv
 from worldenergydata.production.unified.query import ProductionResult
 
 # Fiscal parameters per region: (royalty_rate, tax_rate, govt_take_frac)
@@ -168,7 +169,7 @@ def fiscal_sensitivity(
     result: ProductionResult,
     oil_price_usd: float,
 ) -> pd.DataFrame:
-    """Apply each region's fiscal regime to estimate government take and NPV.
+    """Apply illustrative fiscal assumptions to historical revenue without costs.
 
     Uses a simplified cash-flow model:
         Revenue     = oil_bbl * oil_price_usd
@@ -186,7 +187,8 @@ def fiscal_sensitivity(
     Returns:
         DataFrame with columns ``region``, ``field_name``,
         ``total_revenue_usd``, ``govt_take_usd``, ``operator_npv_usd``,
-        ``effective_govt_take_pct``.
+        ``effective_govt_take_pct``, ``economics_basis``. The legacy
+        ``operator_npv_usd`` column is a historical proxy, not investment NPV.
     """
     df = result.data
     if df.empty:
@@ -197,12 +199,12 @@ def fiscal_sensitivity(
                 "total_revenue_usd",
                 "govt_take_usd",
                 "operator_npv_usd",
+                "economics_basis",
                 "effective_govt_take_pct",
             ]
         )
 
     records = []
-    monthly_rate = _DISCOUNT_RATE / 12.0
 
     for (region, field), group in df.groupby(["region", "field_name"]):
         regime = _FISCAL_REGIMES.get(region, _GENERIC_DEFAULT_REGIME)
@@ -219,15 +221,43 @@ def fiscal_sensitivity(
         total_revenue = revenues.sum()
         total_govt = (royalties + taxes).sum()
 
-        # Discount post-tax cash flow monthly
-        periods = pd.Series(range(len(post_tax)))
-        discount_factors = 1.0 / (1.0 + monthly_rate) ** periods
-        npv = (post_tax * discount_factors).sum()
+        # FDAS financial.py (2025): effective annual-to-monthly conversion,
+        # t=0 at the first supplied month. NPV equation: numpy-financial
+        # v1.0.0 (2019), npv docstring. Aggregate duplicate source rows and
+        # retain calendar gaps as zero cash flows; row count is not time.
+        dates = pd.PeriodIndex(
+            pd.to_datetime(group[["year", "month"]].assign(day=1)), freq="M"
+        )
+        monthly_cf = pd.Series(post_tax.to_numpy(), index=dates).groupby(level=0).sum()
+        monthly_cf = monthly_cf.reindex(
+            pd.period_range(dates.min(), dates.max(), freq="M"), fill_value=0.0
+        )
+        npv = calculate_npv(monthly_cf.to_numpy(), _DISCOUNT_RATE, period="monthly")
+        basis = {
+            "view": "historical_post_tax_proxy",
+            "engine": "fdas.core.financial.calculate_npv",
+            "production_scope": "supplied_history_no_forecast",
+            "cashflow_period": "monthly",
+            "discount_convention": "effective_annual_to_monthly",
+            "discount_rate_annual": _DISCOUNT_RATE,
+            "reference_date": str(dates.min()),
+            "tax_treatment": "post_tax_simplified",
+            "royalty_basis": fiscal_regime_source(region),
+            "royalty_rate": royalty_rate,
+            "tax_rate": tax_rate,
+            "fiscal_validation": "NOT_EVALUATED",
+            "capex": "excluded",
+            "opex": "excluded",
+            "oil_price_marker": "flat_input_not_market_series",
+            "oil_price_usd_bbl": oil_price_usd,
+            "gas_price_marker": "not_priced",
+        }
 
         records.append(
             {
                 "region": region,
                 "field_name": field,
+                "economics_basis": basis,
                 "total_revenue_usd": round(total_revenue, 0),
                 "govt_take_usd": round(total_govt, 0),
                 "operator_npv_usd": round(npv, 0),

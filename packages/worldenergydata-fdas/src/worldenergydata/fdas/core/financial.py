@@ -26,6 +26,8 @@ def excel_like_mirr(
     cashflows: np.ndarray,
     discount_rate_annual: float,
     reinvestment_rate_annual: Optional[float] = None,
+    *,
+    period: str = "monthly",
 ) -> Tuple[float, float]:
     """
     Calculate Modified Internal Rate of Return using Excel-compatible methodology.
@@ -38,9 +40,10 @@ def excel_like_mirr(
         cashflows: Array of periodic cashflows (typically monthly)
         discount_rate_annual: Annual discount rate (e.g., 0.10 for 10%)
         reinvestment_rate_annual: Annual reinvestment rate (defaults to discount_rate)
+        period: Cashflow frequency; monthly by default for existing callers.
 
     Returns:
-        Tuple of (monthly_mirr, annual_mirr)
+        Tuple of (period_mirr, annual_mirr)
 
     Raises:
         FinancialCalculationError: If cashflows are invalid or calculation fails
@@ -57,6 +60,12 @@ def excel_like_mirr(
         - Uses monthly compounding for monthly cashflows
         - Annual MIRR = (1 + monthly_MIRR)^12 - 1
     """
+    # Rate conversion: FDAS USER-GUIDE (2025), MIRR methodology; monthly
+    # uses twelve periods per year. Annual schedules use one period per year.
+    if period not in {"monthly", "annual"}:
+        raise FinancialCalculationError("period must be 'monthly' or 'annual'")
+    periods_per_year = 12 if period == "monthly" else 1
+
     # Input validation
     if len(cashflows) == 0:
         raise FinancialCalculationError("Cashflow array cannot be empty")
@@ -85,8 +94,10 @@ def excel_like_mirr(
     n_periods = trimmed_cashflows.size - 1
 
     # Convert annual rates to monthly (assuming monthly cashflows)
-    monthly_discount_rate = (1.0 + discount_rate_annual) ** (1 / 12) - 1.0
-    monthly_reinvest_rate = (1.0 + reinvestment_rate_annual) ** (1 / 12) - 1.0
+    monthly_discount_rate = (1.0 + discount_rate_annual) ** (1 / periods_per_year) - 1.0
+    monthly_reinvest_rate = (1.0 + reinvestment_rate_annual) ** (
+        1 / periods_per_year
+    ) - 1.0
 
     # Future value of positive cashflows (compounded forward at reinvestment rate)
     fv_positive = sum(
@@ -110,7 +121,7 @@ def excel_like_mirr(
     mirr_monthly = (fv_positive / -pv_negative) ** (1.0 / n_periods) - 1.0
 
     # Annualize (compound monthly rate to annual)
-    mirr_annual = (1.0 + mirr_monthly) ** 12 - 1.0
+    mirr_annual = (1.0 + mirr_monthly) ** periods_per_year - 1.0
 
     return mirr_monthly, mirr_annual
 
@@ -377,7 +388,7 @@ def calculate_all_metrics(
 
     # MIRR
     try:
-        mirr_m, mirr_a = excel_like_mirr(cashflows, discount_rate_annual)
+        mirr_m, mirr_a = excel_like_mirr(cashflows, discount_rate_annual, period=period)
         results["mirr_monthly"] = mirr_m
         results["mirr_annual"] = mirr_a
     except Exception as e:

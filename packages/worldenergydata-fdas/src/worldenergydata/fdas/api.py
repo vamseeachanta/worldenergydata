@@ -139,6 +139,7 @@ class EconomicsQuery:
         discount_rate: float,
         *,
         reinvestment_rate: Optional[float] = None,
+        period: str = "monthly",
     ) -> Tuple[float, float]:
         """Calculate Modified Internal Rate of Return (Excel-compatible).
 
@@ -150,11 +151,13 @@ class EconomicsQuery:
             Annual discount rate.
         reinvestment_rate : float, optional
             Annual reinvestment rate. Defaults to ``discount_rate``.
+        period : str, default ``"monthly"``
+            Cashflow frequency: ``"monthly"`` or ``"annual"``.
 
         Returns
         -------
         tuple of (float, float)
-            ``(monthly_mirr, annual_mirr)``.
+            ``(period_mirr, annual_mirr)``.
 
         Examples
         --------
@@ -166,7 +169,7 @@ class EconomicsQuery:
         from worldenergydata.fdas.core.financial import excel_like_mirr
 
         cf = np.asarray(cashflows, dtype=float)
-        return excel_like_mirr(cf, discount_rate, reinvestment_rate)
+        return excel_like_mirr(cf, discount_rate, reinvestment_rate, period=period)
 
     @staticmethod
     def payback_period(

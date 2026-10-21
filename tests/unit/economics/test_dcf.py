@@ -1,245 +1,109 @@
-"""
-ABOUTME: Tests for NPV and MIRR discounted cash flow calculations.
-ABOUTME: Uses known textbook examples with exact numeric verification.
+"""Schedule migration tests; expected values are independent hand calculations.
 
-All expected values derived analytically or with numpy_financial for cross-check.
+Synthetic inputs below are chosen for arithmetic, not field assumptions.
+Equations: numpy-financial v1.0.0, npv/mirr/irr docstrings (2019).
+FDAS trimming: core/financial.py, excel_like_mirr (2025).
 """
-
-from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from worldenergydata.economics.dcf import (
+from worldenergydata.economics.carbon import carbon_npv_curve
+from worldenergydata.economics.cash_flow import (
     CashFlowSchedule,
-    MIRRResult,
-    NPVResult,
     build_cash_flow_schedule,
-    calculate_mirr,
+)
+from worldenergydata.fdas.api import EconomicsQuery
+from worldenergydata.fdas.core.financial import (
+    calculate_all_metrics,
+    calculate_irr,
     calculate_npv,
+    excel_like_mirr,
 )
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
+def test_former_schedule_and_array_surfaces_have_npv_parity():
+    """Net = [-100, 121]; -100 + 121/1.1 = 10 at the first period.
+
+    Revenue 141 less opex 10 and carbon 10 gives 121. The annual rate
+    0.1 is a synthetic input. Relative tolerances are pytest defaults.
+    """
+    schedule = CashFlowSchedule(
+        years=[2024, 2025],
+        capex=[100, 0],
+        revenue=[0, 141],
+        opex=[0, 10],
+        carbon_cost=[0, 10],
+        emission_tco2_per_period=[0, 1],
+    )
+    assert schedule.net_cashflows().tolist() == [-100, 121]
+    assert calculate_npv(
+        schedule.net_cashflows(), 0.1, period="annual"
+    ) == pytest.approx(10)
+    assert EconomicsQuery.npv([-100, 121], 0.1, period="annual") == pytest.approx(10)
+    assert carbon_npv_curve(schedule, 0.1, np.array([10])).npv_values[
+        0
+    ] == pytest.approx(10)
 
 
-def _simple_schedule(
-    capex: float, revenues: list[float], opex_per_year: float
-) -> CashFlowSchedule:
-    """Build a minimal CashFlowSchedule with zero carbon costs."""
-    n = len(revenues)
-    return CashFlowSchedule(
-        years=list(range(n + 1)),
-        capex=[capex] + [0.0] * n,
-        revenue=[0.0] + revenues,
-        opex=[0.0] + [opex_per_year] * n,
-        carbon_cost=[0.0] * (n + 1),
+@pytest.mark.parametrize("period", ["annual", "monthly"])
+def test_former_annual_mirr_and_fdas_array_parity(period):
+    """[-100, 121] has period IRR and MIRR 0.21; annual = 1.21**12-1
+    for monthly inputs, or 0.21 for annual inputs. No intermediate positive
+    cash flow means reinvestment has no effect. Synthetic rates are inputs.
+    """
+    schedule = CashFlowSchedule([0, 1], [100, 0], [0, 121], [0, 0], [0, 0])
+    cf = schedule.net_cashflows()
+    expected_annual = 1.21**12 - 1 if period == "monthly" else 0.21
+    for actual in (
+        excel_like_mirr(cf, 0.1, 0.2, period=period),
+        EconomicsQuery.mirr(cf, 0.1, reinvestment_rate=0.2, period=period),
+        calculate_irr(cf, period=period),
+    ):
+        assert actual == pytest.approx((0.21, expected_annual))
+    assert calculate_all_metrics(cf, 0.1, period=period)[
+        "mirr_annual"
+    ] == pytest.approx(expected_annual)
+
+
+def test_mirr_preserves_fdas_zero_trimming():
+    """[0,-100,0,121,0] trims to [-100,0,121]: sqrt(121/100)-1=0.1.
+
+    Ordinary NPV keeps the leading zero: -100/1.1 + 121/1.1**3.
+    """
+    cf = np.array([0, -100, 0, 121, 0])
+    assert excel_like_mirr(cf, 0.1, period="annual") == pytest.approx((0.1, 0.1))
+    assert calculate_npv(cf, 0.1, period="annual") == pytest.approx(
+        -100 / 1.1 + 121 / 1.1**3
     )
 
 
-# ---------------------------------------------------------------------------
-# NPV tests
-# ---------------------------------------------------------------------------
+def test_mirr_two_rates_hand_calculation():
+    """PV(-) = 120 + 100/1.1**3; FV(+) = 200*1.12**3 + 200*1.12**2 + 400.
+
+    MIRR=(FV/PV)**(1/4)-1; synthetic annual flows [-120,200,200,-100,400].
+    """
+    expected = ((200 * 1.12**3 + 200 * 1.12**2 + 400) / (120 + 100 / 1.1**3)) ** (
+        1 / 4
+    ) - 1
+    assert excel_like_mirr(
+        np.array([-120, 200, 200, -100, 400]), 0.1, 0.12, period="annual"
+    ) == pytest.approx((expected, expected))
 
 
-class TestNPVCalculation:
-    """Tests for calculate_npv with known textbook results."""
-
-    def test_npv_basic_positive_result(self):
-        """NPV > 0 for a profitable project at 10% discount rate.
-
-        Cash flows: -1000 (t=0), +400, +400, +400, +400 (t=1..4)
-        NPV = -1000 + 400/1.1 + 400/1.1^2 + 400/1.1^3 + 400/1.1^4
-            = -1000 + 363.64 + 330.58 + 300.53 + 273.21
-            = 267.95
-        """
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3, 4],
-            capex=[1000.0, 0.0, 0.0, 0.0, 0.0],
-            revenue=[0.0, 400.0, 400.0, 400.0, 400.0],
-            opex=[0.0] * 5,
-            carbon_cost=[0.0] * 5,
-        )
-        result = calculate_npv(schedule, discount_rate=0.10)
-        assert isinstance(result, NPVResult)
-        assert result.npv == pytest.approx(267.95, rel=1e-3)
-
-    def test_npv_zero_discount_rate_equals_sum(self):
-        """At r=0, NPV equals sum of net cash flows."""
-        capex = 500.0
-        revenues = [200.0, 200.0, 200.0]
-        opex = 50.0
-        schedule = _simple_schedule(capex, revenues, opex)
-        result = calculate_npv(schedule, discount_rate=0.0)
-        # Net cash flow: -500 + (200-50)*3 = -500 + 450 = -50
-        assert result.npv == pytest.approx(-50.0, abs=1e-6)
-
-    def test_npv_negative_for_unprofitable_project(self):
-        """NPV < 0 when revenues do not cover capex at given rate."""
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2],
-            capex=[1000.0, 0.0, 0.0],
-            revenue=[0.0, 100.0, 100.0],
-            opex=[0.0] * 3,
-            carbon_cost=[0.0] * 3,
-        )
-        result = calculate_npv(schedule, discount_rate=0.10)
-        assert result.npv < 0
-
-    def test_npv_raises_on_mismatched_lengths(self):
-        """ValueError when schedule arrays have different lengths."""
-        with pytest.raises(ValueError, match="same length"):
-            CashFlowSchedule(
-                years=[0, 1, 2],
-                capex=[1000.0, 0.0],  # wrong length
-                revenue=[0.0, 400.0, 400.0],
-                opex=[0.0] * 3,
-                carbon_cost=[0.0] * 3,
-            )
-
-    def test_npv_raises_on_negative_discount_rate(self):
-        """ValueError for discount rate < -1."""
-        schedule = _simple_schedule(100.0, [50.0, 50.0], 10.0)
-        with pytest.raises(ValueError, match="discount_rate"):
-            calculate_npv(schedule, discount_rate=-1.5)
-
-    def test_npv_net_cash_flows_stored(self):
-        """NPVResult carries per-period net cash flows."""
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2],
-            capex=[500.0, 0.0, 0.0],
-            revenue=[0.0, 300.0, 300.0],
-            opex=[0.0, 50.0, 50.0],
-            carbon_cost=[0.0] * 3,
-        )
-        result = calculate_npv(schedule, discount_rate=0.10)
-        expected_net = [-500.0, 250.0, 250.0]
-        for calc, exp in zip(result.net_cash_flows, expected_net):
-            assert calc == pytest.approx(exp, abs=1e-6)
-
-    def test_npv_with_multi_year_capex(self):
-        """NPV correct when capex spans multiple years."""
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3],
-            capex=[600.0, 400.0, 0.0, 0.0],
-            revenue=[0.0, 0.0, 800.0, 800.0],
-            opex=[0.0] * 4,
-            carbon_cost=[0.0] * 4,
-        )
-        result = calculate_npv(schedule, discount_rate=0.10)
-        # Manual: -600 + (-400/1.1) + 800/1.21 + 800/1.331
-        #       = -600 - 363.636 + 661.157 + 601.052 = 298.573
-        assert result.npv == pytest.approx(298.573, rel=1e-3)
-
-    def test_npv_discount_rate_stored_on_result(self):
-        """NPVResult stores the discount rate used."""
-        schedule = _simple_schedule(100.0, [60.0, 60.0], 0.0)
-        result = calculate_npv(schedule, discount_rate=0.12)
-        assert result.discount_rate == pytest.approx(0.12)
+@pytest.mark.parametrize("flows", [[0, 0], [100, 121], [-100, -121]])
+def test_mirr_undefined_without_both_signs(flows):
+    """FDAS convention: missing either sign produces NaN, not an investment return."""
+    assert all(
+        np.isnan(v) for v in excel_like_mirr(np.array(flows), 0.1, period="annual")
+    )
 
 
-# ---------------------------------------------------------------------------
-# MIRR tests
-# ---------------------------------------------------------------------------
-
-
-class TestMIRRCalculation:
-    """Tests for calculate_mirr with known results."""
-
-    def test_mirr_basic_example(self):
-        """MIRR textbook example.
-
-        Cash flows: -120 (t=0), +200 (t=1), +200 (t=2), -100 (t=3), +400 (t=4)
-        Finance rate = 10%, reinvestment rate = 12%
-
-        PV of negatives (at 10%): 120 + 100/1.1^3 = 120 + 75.131 = 195.131
-        FV of positives (at 12%): 200*1.12^3 + 200*1.12^2 + 0 + 400
-                                 = 280.986 + 250.88 + 400 = 931.866
-        MIRR = (931.866 / 195.131)^(1/4) - 1 = 0.4769... => ~47.7%
-        """
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3, 4],
-            capex=[120.0, 0.0, 0.0, 100.0, 0.0],
-            revenue=[0.0, 200.0, 200.0, 0.0, 400.0],
-            opex=[0.0] * 5,
-            carbon_cost=[0.0] * 5,
-        )
-        result = calculate_mirr(
-            schedule,
-            finance_rate=0.10,
-            reinvestment_rate=0.12,
-        )
-        assert isinstance(result, MIRRResult)
-        assert result.mirr == pytest.approx(0.4769, rel=1e-2)
-
-    def test_mirr_equals_irr_when_rates_equal_irr(self):
-        """When finance_rate == reinvestment_rate == IRR, MIRR ≈ IRR.
-
-        For cash flows [-1000, 400, 400, 400, 400] the IRR ≈ 21.86%.
-        Setting both rates to IRR should give MIRR close to IRR.
-        """
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3, 4],
-            capex=[1000.0, 0.0, 0.0, 0.0, 0.0],
-            revenue=[0.0, 400.0, 400.0, 400.0, 400.0],
-            opex=[0.0] * 5,
-            carbon_cost=[0.0] * 5,
-        )
-        irr_approx = 0.2186
-        result = calculate_mirr(
-            schedule,
-            finance_rate=irr_approx,
-            reinvestment_rate=irr_approx,
-        )
-        assert result.mirr == pytest.approx(irr_approx, rel=5e-2)
-
-    def test_mirr_raises_on_all_positive_cash_flows(self):
-        """ValueError when there are no negative net cash flows."""
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2],
-            capex=[0.0, 0.0, 0.0],
-            revenue=[100.0, 200.0, 300.0],
-            opex=[0.0] * 3,
-            carbon_cost=[0.0] * 3,
-        )
-        with pytest.raises(ValueError, match="negative"):
-            calculate_mirr(schedule, finance_rate=0.10, reinvestment_rate=0.10)
-
-    def test_mirr_stores_rates(self):
-        """MIRRResult stores finance and reinvestment rates."""
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3],
-            capex=[500.0, 0.0, 0.0, 0.0],
-            revenue=[0.0, 300.0, 300.0, 300.0],
-            opex=[0.0] * 4,
-            carbon_cost=[0.0] * 4,
-        )
-        result = calculate_mirr(schedule, finance_rate=0.08, reinvestment_rate=0.12)
-        assert result.finance_rate == pytest.approx(0.08)
-        assert result.reinvestment_rate == pytest.approx(0.12)
-
-    def test_mirr_simple_case(self):
-        """MIRR for [-1000, 0, 0, 1500] at finance=10%, reinvest=10%.
-
-        PV negatives: 1000
-        FV positives: 1500
-        MIRR = (1500/1000)^(1/3) - 1 = 0.14471...
-        """
-        schedule = CashFlowSchedule(
-            years=[0, 1, 2, 3],
-            capex=[1000.0, 0.0, 0.0, 0.0],
-            revenue=[0.0, 0.0, 0.0, 1500.0],
-            opex=[0.0] * 4,
-            carbon_cost=[0.0] * 4,
-        )
-        result = calculate_mirr(schedule, finance_rate=0.10, reinvestment_rate=0.10)
-        assert result.mirr == pytest.approx(0.14471, rel=1e-3)
-
-
-# ---------------------------------------------------------------------------
-# build_cash_flow_schedule helper
-# ---------------------------------------------------------------------------
+def test_schedule_length_validation():
+    with pytest.raises(ValueError, match="same length"):
+        CashFlowSchedule([0, 1], [100], [0, 121], [0, 0], [0, 0])
+    with pytest.raises(ValueError, match="emission"):
+        CashFlowSchedule([0], [100], [0], [0], [0], [0, 1])
 
 
 class TestBuildCashFlowSchedule:
@@ -308,3 +172,29 @@ class TestBuildCashFlowSchedule:
         )
         assert schedule.opex[1] == pytest.approx(100_000.0)
         assert schedule.opex[2] == pytest.approx(80_000.0)
+
+
+@pytest.mark.parametrize(
+    "flows,rate,expected",
+    [
+        ([-500, 150, 150, 150], 0, -50),
+        ([-600, -400, 800, 800], 0.1, -600 - 400 / 1.1 + 800 / 1.1**2 + 800 / 1.1**3),
+        ([-1000, 100, 100], 0.1, -1000 + 100 / 1.1 + 100 / 1.1**2),
+    ],
+)
+def test_schedule_accounting_preserves_former_npv_cases(flows, rate, expected):
+    """Independent hand sums retain zero-rate, staged-capex and loss cases.
+
+    Synthetic cases: -500+3*150=-50; -600-400/1.1+800/1.1**2+800/1.1**3;
+    -1000+100/1.1+100/1.1**2. Equation: numpy-financial v1.0.0 (2019), NPV.
+    """
+    schedule = CashFlowSchedule(
+        list(range(len(flows))),
+        [max(-cf, 0) for cf in flows],
+        [max(cf, 0) for cf in flows],
+        [0] * len(flows),
+        [0] * len(flows),
+    )
+    assert calculate_npv(
+        schedule.net_cashflows(), rate, period="annual"
+    ) == pytest.approx(expected)

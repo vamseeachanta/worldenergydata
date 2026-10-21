@@ -63,6 +63,14 @@ def test_reference_chain_forces_onshore_dry_system_and_mismatch_flag():
     )
 
     assert result["economics_label"] == "chain_plumbing_pre_tax"
+
+    basis = result["economics_basis"]
+    assert basis["view"] == "reference_chain_pre_tax"
+    assert basis["discount_convention"] == "undiscounted"
+    assert basis["tax_treatment"] == "pre_income_tax_after_royalty"
+    assert basis["oil_price_marker"] == "flat_input_not_market_series"
+    assert basis["status"] == "plumbing_only"
+
     assert result["dev_system"] == "dry"
     assert result["pre_tax_metrics"]["onshore_model_mismatch"] is True
     assert result["pre_tax_metrics"]["host_capex_usd"] == 0.0

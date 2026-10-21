@@ -53,6 +53,14 @@ def test_screening_only_chain_runs_recommend_and_flags_no_production():
         result["concept_screening_label"] == "fieldconcept_screening_only_no_production"
     )
     assert result["economics_label"] == "no_production_source_placeholder"
+
+    basis = result["economics_basis"]
+    assert basis["view"] == "reference_chain_pre_tax"
+    assert basis["discount_convention"] == "undiscounted"
+    assert basis["tax_treatment"] == "pre_income_tax_after_royalty"
+    assert basis["oil_price_marker"] == "flat_input_not_market_series"
+    assert basis["status"] == "NOT_EVALUATED"
+
     # no production -> zero-month, zero-revenue cashflow
     assert result["pre_tax_metrics"]["months"] == 0
     assert result["pre_tax_metrics"]["gross_revenue_usd"] == 0.0

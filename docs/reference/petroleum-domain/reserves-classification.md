@@ -103,7 +103,7 @@ assumptions change.
 ## In this repository
 
 DCF / NPV / IRR machinery lives in
-[`src/worldenergydata/economics/dcf.py`](../../../src/worldenergydata/economics/dcf.py);
+[`fdas/core/financial.py`](../../../packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py);
 recoverable-volume estimation in
 [`src/worldenergydata/reservoir/resource_estimation.py`](../../../src/worldenergydata/reservoir/resource_estimation.py).
 See also the economic methods in [`../../analysis-guides/index.md`](../../analysis-guides/index.md).
