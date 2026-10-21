@@ -63,6 +63,29 @@ def test_normalize_depth_and_provenance_without_mutation(point):
     assert point == before
 
 
+@pytest.mark.parametrize(
+    "timestamp",
+    [
+        "2026-10-19T10:00:00+10:00",
+        "2026-10-18T19:00:00-05:00",
+        "2026-10-19T00:00:01+00:00:01",
+    ],
+)
+def test_non_utc_retrieval_timestamp_is_rejected(point, timestamp):
+    point["retrieved_at_utc"] = timestamp
+    with pytest.raises(ValueError, match="UTC"):
+        ga.normalize_bathymetry_point(point)
+
+
+@pytest.mark.parametrize(
+    "timestamp", ["2026-10-19T00:00:00Z", "2026-10-19T00:00:00+00:00"]
+)
+def test_utc_retrieval_timestamp_is_preserved(point, timestamp):
+    point["retrieved_at_utc"] = timestamp
+    result = ga.normalize_bathymetry_point(point)
+    assert result["provenance"]["retrieved_at_utc"] == timestamp
+
+
 @pytest.mark.parametrize("elevation", [None, -32767, 0, 10])
 def test_nonmarine_or_missing_depth_is_not_evaluated(point, elevation):
     """NoData is published; 0/10 m are synthetic shoreline/land elevations."""

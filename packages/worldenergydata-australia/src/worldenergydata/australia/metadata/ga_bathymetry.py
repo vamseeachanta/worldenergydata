@@ -11,11 +11,12 @@ from __future__ import annotations
 import copy
 import math
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict
 
 from .well_enrichment import _measured_depth
 
+# AusBathyTopo 250m (Australia) 2023: https://doi.org/10.26186/148758
 SPECIFICATION_URL = (
     "https://knowledge.dea.ga.gov.au/data/external-data/ga-ausbathytopo-250m/"
 )
@@ -60,8 +61,8 @@ def _validate_evidence(point: Dict[str, Any]) -> None:
         instant = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
     except (AttributeError, TypeError, ValueError) as exc:
         raise ValueError("retrieval timestamp required") from exc
-    if instant.utcoffset() is None:
-        raise ValueError("retrieval timestamp requires timezone")
+    if instant.utcoffset() != timedelta(0):
+        raise ValueError("retrieval timestamp requires UTC")
     _position(point)
 
 
