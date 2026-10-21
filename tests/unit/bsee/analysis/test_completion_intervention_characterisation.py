@@ -554,6 +554,20 @@ def test_conflicting_report_areas_rejected(name, key):
         activity().analyse(t)
 
 
+def test_completion_area_note_identifies_both_inputs():
+    page = Path(
+        "docs/modules/bsee/analysis/completion_intervention/area_characterisation.html"
+    ).read_text()
+    completion_figure = page.split(
+        'aria-label="Completion fixture record counts by area"', 1
+    )[1]
+    inputs = completion_figure.split('<p class="digest">', 1)[1].split("</p>", 1)[0]
+    manifest = json.loads((FIXTURES / "manifest.json").read_text())
+    for name in ["mv_api_wellcomps_all.csv", "mv_boreholes_all.csv"]:
+        assert f"<code>{name}</code>" in inputs
+        assert f'<code>{manifest["files"][name]["sha256"]}</code>' in inputs
+
+
 def test_area_note_charts_match_independent_fixture_tallies():
     """Independent tally uses CSV rows, sets and integer addition only.
 
@@ -600,4 +614,14 @@ def test_area_note_charts_match_independent_fixture_tallies():
     parser = Bars()
     parser.feed(page)
     assert parser.counts == expected
+    result = activity().analyse(tables())
+    analysed = Counter()
+    for source, key in [
+        ("mv_war_main", "war_by_year_area_type"),
+        ("mv_eor_mainquery", "eor_by_year_area_type"),
+        ("mv_api_wellcomps_all", "completion_by_year_area_status"),
+    ]:
+        for row in result[key]:
+            analysed[source, row["area"]] += row["records"]
+    assert parser.counts == analysed
     assert "fixture" in page.lower() and "NOT_EVALUATED" in page
