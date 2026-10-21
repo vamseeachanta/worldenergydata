@@ -46,11 +46,15 @@ def test_cost_changes_match_independent_reconciliation():
     This is a transcription check, with no new economic equations or values.
     The source table enumerates thirteen changed cells, each old/new pair.
     """
-    source = EVIDENCE.read_text().split("### 3.4", 1)[1].split("### 3.5", 1)[0]
+    source = (
+        EVIDENCE.read_text(encoding="utf-8")
+        .split("### 3.4", 1)[1]
+        .split("### 3.5", 1)[0]
+    )
     expected = re.findall(r"\| ([\w$/]+) \| (\w+) \| (\d+) → (\d+) \|", source)
     assert len(expected) == 13  # Reconciliation (2026-07-07), section 3.4.
     parser = CostTableParser()
-    parser.feed(LOG.read_text())
+    parser.feed(LOG.read_text(encoding="utf-8"))
     assert [tuple(row[:4]) for row in parser.rows] == expected
     for row in parser.rows:
         assert len(row) == 8
@@ -61,7 +65,7 @@ def test_cost_changes_match_independent_reconciliation():
 
 
 def test_log_records_model_decisions_and_source_links():
-    text = LOG.read_text()
+    text = LOG.read_text(encoding="utf-8")
     for anchor in ("tax", "leases", "wti", "mirr", "disposition"):
         assert f'id="{anchor}"' in text
     assert "NOT_EVALUATED" in text
@@ -69,9 +73,44 @@ def test_log_records_model_decisions_and_source_links():
     for href in re.findall(r'href="([^"]+)"', text):
         if not href.startswith(("https://", "#")):
             assert (LOG.parent / href.split("#", 1)[0]).is_file(), href
-    comparison = EVIDENCE.read_text()
+    comparison = EVIDENCE.read_text(encoding="utf-8")
     assert "v50_assumptions_change_log.html" in comparison
     assert "does not approve the cost/after-tax V50 basis" in comparison
+
+
+def _source_section(source, number):
+    heading = rf"^#{{2,3}} {re.escape(number)}\.? "
+    start = re.search(heading, source, re.MULTILINE).end()
+    return re.split(r"^#{2,3} ", source[start:], maxsplit=1, flags=re.MULTILINE)[0]
+
+
+def test_tax_settings_match_cited_reconciliation_sections():
+    text = LOG.read_text(encoding="utf-8")
+    row = re.search(r'<tr id="tax">(.*?)</tr>', text, re.DOTALL).group(1)
+    citations = re.findall(r"§(\d+(?:\.\d+)?)", row)
+    assert citations == ["0", "3.3", "4.3"]
+    assert "item 7" in row
+    source = EVIDENCE.read_text(encoding="utf-8")
+    summary = _source_section(source, "0")
+    summary_item = re.search(r"^7\. (.+)$", summary, re.MULTILINE).group(1)
+    for section in (summary_item, _source_section(source, "4.3")):
+        assert re.search(r"severance\s*&?\s*(?:and )?ad-valorem rates are 0\b", section)
+    assert "severance and ad-valorem at 0%" in row
+    tax_source = _source_section(source, "3.3")
+    assert re.search(r"corporate tax at 21\s*%", tax_source)
+    assert "corporate tax at 21%" in row
+    assert "monthly NOL carryforward" in tax_source
+    assert "monthly NOL carryforward" in row
+
+
+def test_wti_sensitivity_cites_reconciliation_section():
+    text = LOG.read_text(encoding="utf-8")
+    row = re.search(r'<tr id="wti">(.*?)</tr>', text, re.DOTALL).group(1)
+    assert re.findall(r"§(\d+(?:\.\d+)?)", row) == ["2", "4.3"]
+    source = EVIDENCE.read_text(encoding="utf-8")
+    sensitivity = _source_section(source, "4.3")
+    assert "extended deck" in sensitivity
+    assert "as a sensitivity" in sensitivity
 
 
 def test_comparison_generator_retains_assumptions_gate(tmp_path, monkeypatch):
@@ -84,13 +123,31 @@ def test_comparison_generator_retains_assumptions_gate(tmp_path, monkeypatch):
     monkeypatch.setattr(module, "OUT", output)
     module.main()
     published = ROOT / "reports/lower_tertiary/v30_vs_v50_comparison.md"
-    # Prove the required EOF hook only removes terminal newlines: all generated
-    # content, including every financial table cell, matches the committed report.
-    assert output.read_text().rstrip("\n") == published.read_text().rstrip("\n")
+    # Regeneration must preserve every byte, including the terminal newline.
+    assert output.read_bytes() == published.read_bytes()
     for report in (output, ROOT / "reports/lower_tertiary/v30_vs_v50_comparison.md"):
-        text = report.read_text()
+        text = report.read_text(encoding="utf-8")
         assert "v50_assumptions_change_log.html" in text
         assert "does not approve the cost/after-tax V50 basis" in text
         assert text.index("v50_assumptions_change_log.html") < text.index(
             "## Producing fields"
         )
+
+
+def test_text_checks_work_with_legacy_default_encoding(tmp_path, monkeypatch):
+    """Exercise the text consumers with the pre-UTF-8 Windows default."""
+    original_open = Path.open
+
+    def legacy_open(
+        path, mode="r", buffering=-1, encoding=None, errors=None, newline=None
+    ):
+        if "b" not in mode and encoding in (None, "locale"):
+            encoding = "cp1252"
+        return original_open(path, mode, buffering, encoding, errors, newline)
+
+    monkeypatch.setattr(Path, "open", legacy_open)
+    test_cost_changes_match_independent_reconciliation()
+    test_log_records_model_decisions_and_source_links()
+    test_tax_settings_match_cited_reconciliation_sections()
+    test_wti_sensitivity_cites_reconciliation_section()
+    test_comparison_generator_retains_assumptions_gate(tmp_path, monkeypatch)
