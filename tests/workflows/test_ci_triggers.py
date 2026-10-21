@@ -1,5 +1,6 @@
 """Keep pull request CI available for every target branch."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -41,7 +42,7 @@ def test_required_pull_request_check_name_is_unchanged() -> None:
 
 
 def _evaluate_expression(expression: str, context: dict) -> object:
-    """Evaluate the equality and short-circuit subset used by concurrency."""
+    """Evaluate the expression subset used by concurrency and result steps."""
     import ast
     import re
 
@@ -55,9 +56,16 @@ def _evaluate_expression(expression: str, context: dict) -> object:
     expression = re.sub(r"!(?!=)", " not ", expression).strip()
 
     def evaluate(node):
-        """Interpret only literals, comparisons and Boolean operators."""
+        """Interpret JSON lookups, literals, comparisons and Boolean operators."""
         if isinstance(node, (ast.Constant, ast.Dict)):
             return ast.literal_eval(node)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+            assert node.func.id == "fromJSON" and len(node.args) == 1
+            return json.loads(evaluate(node.args[0]))
+        if isinstance(node, (ast.Subscript, ast.Attribute)):
+            value = evaluate(node.value)
+            key = evaluate(node.slice) if isinstance(node, ast.Subscript) else node.attr
+            return value.get(key, "") if isinstance(value, dict) else ""
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
             return not evaluate(node.operand)
         if isinstance(node, ast.Compare):
@@ -239,7 +247,9 @@ def test_required_names_have_single_result_job() -> None:
             "needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'"
         )
         assert replay["env"]["REPLAY_RESULT"] == (
-            "${{ fromJSON(needs.mode.outputs.evidence)['" + name + "'].decision }}"
+            "${{ fromJSON(needs.mode.outputs.evidence || '{}')['"
+            + name
+            + "'].decision }}"
         )
         assert "GH_TOKEN" not in replay["env"]
         for decision, expected in [("PASS", 0), ("FAIL", 1), ("", 1)]:
@@ -276,6 +286,60 @@ def test_required_names_have_single_result_job() -> None:
                 assert bool(_evaluate_expression(replay["if"], context)) != bool(
                     _evaluate_expression(full["if"], context)
                 )
+
+
+@pytest.mark.parametrize(
+    "job_id", ["lint-gate", "type-check-gate", "security-gate", "docs-gate", "pr-gate"]
+)
+@pytest.mark.parametrize(
+    "evidence,decision",
+    [
+        ("", ""),
+        ("{}", ""),
+        ('{"unrelated": {"decision": "PASS"}}', ""),
+        ('{"check": {}}', ""),
+        ('{"check": {"decision": "PASS"}}', "PASS"),
+        ('{"check": {"decision": "FAIL"}}', "FAIL"),
+        ('{"check": {"decision": ""}}', ""),
+    ],
+    ids=[
+        "empty",
+        "empty-object",
+        "missing-check",
+        "missing-decision",
+        "pass",
+        "fail",
+        "empty-decision",
+    ],
+)
+def test_result_steps_evaluate_replay_evidence(job_id, evidence, decision):
+    """Render replay env before choosing a step, including on the full path."""
+    job = _load_workflow()["jobs"][job_id]
+    replay, full = job["steps"]
+    expression = replay["env"]["REPLAY_RESULT"][3:-2]
+    value = _evaluate_expression(
+        expression,
+        {"needs.mode.outputs.evidence": evidence.replace("check", job["name"])},
+    )
+    assert value == decision
+    for mode_result, selected in [
+        ("success", "false"),
+        ("failure", ""),
+        ("success", "true"),
+    ]:
+        context = {
+            "needs.mode.result": mode_result,
+            "needs.mode.outputs.replay": selected,
+        }
+        use_replay = bool(_evaluate_expression(replay["if"], context))
+        step = replay if use_replay else full
+        result = subprocess.run(
+            ["bash", "-e", "-c", step["run"]],
+            env={**os.environ, "REPLAY_RESULT": value, "FULL_RESULT": "success"},
+            capture_output=True,
+            check=False,
+        )
+        assert result.returncode == (int(decision != "PASS") if use_replay else 0)
 
 
 def test_full_jobs_honor_cancellation() -> None:
