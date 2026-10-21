@@ -352,7 +352,7 @@ class CashflowEngine:
             >>> engine = CashflowEngine(assumptions_mgr)
             >>> royalty = engine.calculate_royalty(
             ...     {'2024-01': 7500000},
-            ...     0.188
+            ...     0.1875
             ... )
         """
         if self._uses_sliding_scale():

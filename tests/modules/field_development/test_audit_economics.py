@@ -37,10 +37,10 @@ def fdas():
 def test_proxy_has_hand_checked_npv_and_label(fdas):
     result = estimate_economics(full_concept())
     # DEFAULT_ASSUMPTIONS subsea15: 300 + 6*8 = 348 MM.
-    # E3: 60,000*365/1e6 * (70*(1-.188)-12) - 25 = 956.996 MM/yr.
-    # E4: -348 + 956.996*(1-1.1**-15)/.1 = 6930.987663... MM.
+    # E3: 60,000*365/1e6 * (70*(1-.1875)-12) - 25 = 957.7625 MM/yr.
+    # E4: -348 + 957.7625*(1-1.1**-15)/.1 = 6936.8 MM (rounded).
     assert result.capex_mm == 348.0
-    assert result.npv_mm == pytest.approx(6931.0, abs=0.05)
+    assert result.npv_mm == pytest.approx(6936.8, abs=0.05)
     assert "undeclined oil-price proxy" in result.note.lower()
     assert "gas price" in result.note.lower()
     assert "Undeclined oil-price proxy NPV" in build_fdp_html(full_concept())
@@ -56,7 +56,8 @@ def test_fractional_life_is_not_silently_truncated(fdas):
 def test_explicit_zero_discount_preserved(fdas):
     result = estimate_economics(full_concept(discount_rate=0.0))
     assert result.discount_rate == 0.0
-    assert result.npv_mm == pytest.approx(14006.9, abs=0.05)
+    # Zero-discount E4: -348 + 15*957.7625 = 14018.4 MM (rounded).
+    assert result.npv_mm == pytest.approx(14018.4, abs=0.05)
 
 
 def test_missing_well_count_blocks_economics(fdas):

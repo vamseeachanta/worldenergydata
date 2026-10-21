@@ -75,8 +75,8 @@ def test_economics_npv_present_with_full_inputs():
             discount_rate=0.10,
         )
     )
-    # Pack E3–E4: 956.996 MM/year; discounted annual annuity less 348 MM.
-    assert eco.npv_mm == pytest.approx(6931.0, abs=0.05)
+    # E3–E4 at royalty .1875: 957.7625 MM/year; annuity less 348 MM.
+    assert eco.npv_mm == pytest.approx(6936.8, abs=0.05)
     assert "undeclined oil-price proxy" in eco.note
 
 

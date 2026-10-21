@@ -372,7 +372,7 @@ Perform comprehensive field development analysis.
 --discount-rate, -r FLOAT Annual discount rate [default: 0.10]
 --oil-price FLOAT         Oil price per barrel [default: 75.00]
 --gas-price FLOAT         Gas price per MCF [default: 3.50]
---royalty-rate FLOAT      Royalty rate [default: 0.188]
+--royalty-rate FLOAT      Royalty rate [default: 0.1875]
 --output, -o PATH         Output file path
 --verbose, -v             Enable verbose output
 

@@ -5,6 +5,8 @@ Tests Field Development Analysis System (FDAS) CLI functionality
 including NPV, MIRR, IRR calculations, and classification commands.
 """
 
+import json
+
 import pytest
 from typer.testing import CliRunner
 
@@ -290,6 +292,27 @@ class TestFDASAnalyze:
         output_lower = result.output.lower()
         # Should show field and lease options
         assert "field" in output_lower or "lease" in output_lower
+
+    def test_fdas_analyze_default_royalty_matches_results(self, tmp_path):
+        """The source-note default gives 18.75% on both output surfaces."""
+        output = tmp_path / "analysis.json"
+        result = runner.invoke(
+            app,
+            ["fdas", "analyze", "--field", "Synthetic", "--output", str(output)],
+        )
+
+        assert result.exit_code == 0
+        assert "Royalty Rate: 18.75%" in result.output
+        analysis = json.loads(output.read_text())
+        assert analysis["configuration"]["royalty_rate"] == 0.1875
+        assert analysis["assumptions"]["royalty_rate"] == 0.1875
+
+    def test_fdas_analyze_help_documents_source_note_rate(self):
+        result = runner.invoke(app, ["fdas", "analyze", "--help"])
+
+        assert result.exit_code == 0
+        assert "0.1875" in result.output
+        assert "18.75%" in result.output
 
 
 class TestFDASCLIEdgeCases:
