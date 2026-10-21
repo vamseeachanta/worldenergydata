@@ -1,0 +1,100 @@
+unavailable:
+  value: null
+  rationale: Evidence is absent or insufficient; null is distinct from zero.
+permit_length_unit:
+  value: ft
+  rationale: The permit length is treated as feet; the point-derived route length remains independent.
+empty_density:
+  value: 0
+  rationale: No internal contents mass is credited in the empty screening case.
+product_density:
+  value: null
+  rationale: An unrecognised product code does not establish contents density.
+product_densities:
+  value:
+    OIL: null
+    BLKO: null
+    GAS: null
+    BLKG: null
+    COND: null
+    H2O: null
+    LIFT: null
+    G/C: null
+  rationale: Product codes select cases, but composition and operating conditions do not establish numeric densities.
+empty_case_governs:
+  value: empty
+  rationale: The empty case is assumed governing for minimum internal mass; the product case is retained separately.
+grade:
+  value: assumed_X52
+  rationale: Assumed, based on previous experience represented by the existing pipeline safety workflow; no certificate
+    is supplied.
+  basis: pipeline_safety.workflow:_DEFAULT_SMYS_MPA
+smys_pa:
+  value: 358530000
+  rationale: The existing workflow strength default is converted from MPa to Pa; it does not establish material
+    certification.
+  basis: pipeline_safety.workflow:_DEFAULT_SMYS_MPA
+schedule:
+  value: STD
+  rationale: A local lookup preference only; the public build does not reuse an unqualified dimensional table.
+nominal_od_proxy:
+  value: nominal_size
+  rationale: Inch-coded nominal size is an OD proxy when no qualified dimensional lookup is supplied.
+corrosion_coating:
+  value: null
+  rationale: The public bulk records do not establish a corrosion coating system.
+corrosion_coating_thickness_m:
+  value: null
+  rationale: No evidenced coating thickness is supplied; bare steel is not silently assumed.
+concrete_density_kg_m3:
+  value: null
+  rationale: No evidenced concrete density is supplied; unknown concrete is not zero density.
+seabed_current_m_s:
+  value: null
+  rationale: The retained public inputs do not establish seabed storm current.
+normal_wave_direction:
+  value: normal_to_route
+  rationale: 'Assumed coming-from direction, clockwise from north, route bearing +90 degrees: right-hand side following
+    increasing point sequence.'
+friction_coefficient:
+  value: 0
+  rationale: No sliding resistance is credited; this is an assumed lower bound rather than a measured coefficient.
+history_years:
+  value:
+  - 2022
+  - 2023
+  - 2024
+  - 2025
+  rationale: Retained 2022-2025 archives cannot qualify return levels under I-0248; annual coverage is counted explicitly.
+status_meanings:
+  value:
+    A/C: ABANDONED AND COMBINED
+    ABN: ABANDONED
+    ACT: ACTIVE
+    CNCL: CANCELLED
+    COMB: COMBINED
+    O/C: OUT AND COMBINED
+    OUT: OUT OF SERVICE
+    PABN: PROPOSE ABANDONMENT
+    PREM: PROPOSE REMOVAL
+    PROP: PROPOSED
+    R/A: RELINQUISHED AND ABANDONED
+    R/C: RELINQUISHED AND COMBINED
+    R/R: RELINQUISHED AND REMOVED
+    RELQ: RELINQUISHED
+    REM: REMOVED
+  rationale: Explicit allow-list ACT, OUT, PABN and PREM under I-0248; all other codes are excluded and counted.
+    Selection does not establish present operation.
+  basis: https://www.data.bsee.gov/Pipeline/PipelinePermits/FieldValues.aspx?domain=STATUS_CODES
+  basis_sha256: 040d7b7654ee06176d1d9e29e427175a392928931934548bdc22cbdccb7ae737
+  digest_scope: canonical-json code-to-meaning table, excluding page hidden state
+spatial_match_limit_km:
+  value: 50
+  rationale: Assumed screening radius, narrower reading of the review; a match does not qualify site transfer.
+annual_coverage_fraction:
+  value: 0.8
+  rationale: Declared I-0248 policy for calendar-year and Atlantic June-November unique-hour coverage; no standard
+    clause fixes this value.
+minimum_annual_maxima:
+  value: 10
+  rationale: Declared I-0248 policy; Hs100 additionally needs 25 years because T <= 4n.

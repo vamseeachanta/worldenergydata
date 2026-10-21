@@ -112,7 +112,10 @@ class GIECollector(BaseCollector):
 
         # Capacity (GIE typically reports in mcm/d or GWh/d)
         capacity_mtpa = None
-        cap_str = record.get("maxCapacity", record.get("dtmi", ""))
+        # GIE API User Manual v007 (2022-10-04), section 2.4, page 8:
+        # dtmi is LNG storage volume, not throughput; never use it as a fallback.
+        # https://www.gie.eu/transparency-platform/GIE_API_documentation_v007.pdf
+        cap_str = record.get("maxCapacity", "")
         if cap_str:
             try:
                 mcm_d = float(cap_str)

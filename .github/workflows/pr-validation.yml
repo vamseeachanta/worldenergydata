@@ -72,32 +72,58 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          # Parent access: actions/checkout README, "Checkout HEAD^" (2026).
+          # https://github.com/actions/checkout#checkout-head
+          fetch-depth: 2
 
       - name: Check for sensitive files
+        shell: bash
         run: |
-          SENSITIVE_PATTERNS=(
-            ".env"
-            "*.pem"
-            "*.key"
-            "*secret*"
-            "*credential*"
-            "*.p12"
-            "id_rsa"
-            "id_dsa"
-          )
-
-          FOUND=""
-          for pattern in "${SENSITIVE_PATTERNS[@]}"; do
-            FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null | grep -E "$pattern" || true)
-            if [ -n "$FILES" ]; then
-              FOUND="$FOUND\n$FILES"
-            fi
-          done
-
-          if [ -n "$FOUND" ]; then
-            echo "::error::Potentially sensitive files detected:$FOUND"
+          set -euo pipefail
+          # pull_request uses the merge ref; ^1 is its base and ^2 its PR head.
+          # Git gitrevisions manual, "Specifying Revisions" (2026):
+          # https://git-scm.com/docs/gitrevisions
+          if ! git rev-parse --verify HEAD^2 > /dev/null; then
+            echo "::error::Expected the pull_request merge ref with both parents."
             exit 1
           fi
+          BASE_SHA=$(git rev-parse --verify HEAD^1)
+          changed_files=$(mktemp)
+          # Git git-diff manual (2026): -z preserves filenames; lowercase d
+          # excludes deletions; --no-renames exposes every destination as added.
+          # https://git-scm.com/docs/git-diff
+          if ! git diff --name-only --no-renames --diff-filter=d -z "$BASE_SHA" HEAD -- > "$changed_files"; then
+            echo "::error::Unable to compute PR filename diff."
+            exit 1
+          fi
+
+          # Existing filename policy, expressed as POSIX extended regexes.
+          # Include dotted .env variants; keep secret/credential substring checks.
+          # Bash manual, "Conditional Constructs" (2026), documents =~:
+          # https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html
+          SENSITIVE_PATTERNS=(
+            '(^|/)\.env($|\.)'
+            '\.(pem|key|p12)$'
+            'secret|credential'
+            '(^|/)(id_rsa|id_dsa)$'
+          )
+          found=false
+          while IFS= read -r -d '' file; do
+            for pattern in "${SENSITIVE_PATTERNS[@]}"; do
+              if [[ "$file" =~ $pattern ]]; then
+                # Shell escaping keeps embedded newlines out of annotations.
+                printf '::error::Potentially sensitive filename: %q\n' "$file"
+                found=true
+                break
+              fi
+            done
+          done < "$changed_files"
+
+          if [ "$found" = true ]; then
+            exit 1
+          fi
+          echo "No potentially sensitive filenames in PR changes."
 
   changelog-check:
     name: Changelog Check

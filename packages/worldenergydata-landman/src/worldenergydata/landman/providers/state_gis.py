@@ -14,7 +14,6 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
-    ParsingError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -186,6 +185,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -240,14 +242,8 @@ class StateGISProvider(BaseProvider):
             "resultRecordCount": limit,
         }
 
-        try:
-            data = self._get_record_json(query_url, ("features",), params=params)
-            return self._parse_esri_wells(data, config)
-        except ParsingError:
-            raise
-        except Exception as e:
-            self.logger.warning(f"ESRI query failed: {e}")
-            return []
+        data = self._get_record_json(query_url, ("features",), params=params)
+        return self._parse_esri_wells(data, config)
 
     def _parse_esri_wells(
         self, data: Dict[str, Any], config: Dict[str, str]
@@ -341,6 +337,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -364,13 +363,8 @@ class StateGISProvider(BaseProvider):
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_record_json(query_url, ("features",), params=params)
-                wells = self._parse_esri_wells(data, config)
-            except ParsingError:
-                raise
-            except Exception as e:
-                self.logger.warning(f"Operator search failed: {e}")
+            data = self._get_record_json(query_url, ("features",), params=params)
+            wells = self._parse_esri_wells(data, config)
 
         return WellSearchResult(
             total_count=len(wells),
@@ -396,6 +390,7 @@ class StateGISProvider(BaseProvider):
 
         Raises:
             RecordNotFoundError: If well not found
+            ProviderError: If the ESRI request or response decoding fails
         """
         if state is None:
             state = self._derive_state_from_api(api_number)
@@ -420,17 +415,12 @@ class StateGISProvider(BaseProvider):
                 "f": "json",
             }
 
-            try:
-                data = self._get_record_json(
-                    query_url, ("features",), params=params, use_cache=False
-                )
-                wells = self._parse_esri_wells(data, config)
-                if wells:
-                    return wells[0]
-            except ParsingError:
-                raise
-            except Exception as e:
-                self.logger.error(f"Well detail query failed: {e}")
+            data = self._get_record_json(
+                query_url, ("features",), params=params, use_cache=False
+            )
+            wells = self._parse_esri_wells(data, config)
+            if wells:
+                return wells[0]
 
         raise RecordNotFoundError(
             record_type="Well",
@@ -491,6 +481,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             PermitSearchResult with matching permits
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -522,13 +515,8 @@ class StateGISProvider(BaseProvider):
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_record_json(query_url, ("features",), params=params)
-                permits = self._parse_esri_permits(data, state_upper)
-            except ParsingError:
-                raise
-            except Exception as e:
-                self.logger.warning(f"Permit search failed: {e}")
+            data = self._get_record_json(query_url, ("features",), params=params)
+            permits = self._parse_esri_permits(data, state_upper)
 
         return PermitSearchResult(
             total_count=len(permits),
