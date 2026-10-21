@@ -1,6 +1,5 @@
 """Tests for EIA API v2 client — uses MOCK data, no live API calls."""
 
-import os
 import time
 
 import pytest
@@ -157,11 +156,11 @@ class TestEIAApiClientFetch:
     def test_fetch_series_returns_cached_on_hit(self, mock_client):
         mock_client.cache_enabled = True
         mock_client.cache.set(
-            mock_client.generate_cache_key("PET.MCRFPUS2.M", {}),
+            mock_client.generate_cache_key("PET.MCRFPUS2.M", {}, use_mock=True),
             [{"period": "2024-01", "value": 9000.0}],
         )
         result = mock_client.fetch_series("PET.MCRFPUS2.M", use_mock=True)
-        assert isinstance(result, list)
+        assert result == [{"period": "2024-01", "value": 9000.0}]
 
 
 # ── Error classes ──────────────────────────────────────────────────────────────

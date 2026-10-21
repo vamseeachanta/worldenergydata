@@ -2,7 +2,7 @@
 
 API base: https://api.eia.gov/v2/
 Auth: API key via EIA_API_KEY environment variable.
-Rate limit: 500 requests per hour per key — enforced via token bucket.
+Request spacing is configurable; the default is a local client policy.
 
 Key series IDs:
   PET.MCRFPUS2.M  — US total monthly crude production
@@ -15,7 +15,7 @@ import hashlib
 import logging
 import os
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 from urllib.parse import urlencode
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # EIA API v2 base URL
 EIA_BASE_URL: str = "https://api.eia.gov/v2"
 
-# Rate limit: 500 requests per hour per API key
+# Existing client policy at f82ff2f, not a documented EIA service quota.
 RATE_LIMIT_PER_HOUR: int = 500
 
 # Default cache TTL: 24 hours
@@ -38,7 +38,7 @@ class EIAApiError(Exception):
 
 
 class EIARateLimitError(EIAApiError):
-    """Raised when EIA API rate limit (500 req/hr) is exceeded."""
+    """Raised when the EIA service reports a rate-limit response."""
 
 
 # ── Cache ──────────────────────────────────────────────────────────────────────
@@ -60,9 +60,9 @@ class EIACache:
 
     def __init__(self, default_ttl: float = DEFAULT_CACHE_TTL) -> None:
         self.default_ttl = default_ttl
-        self._store: Dict[str, _CacheEntry] = {}
+        self._store: dict[str, _CacheEntry] = {}
 
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Return cached value if present and not expired, else None."""
         entry = self._store.get(key)
         if entry is None:
@@ -72,7 +72,7 @@ class EIACache:
             return None
         return entry.data
 
-    def set(self, key: str, value: Any, ttl: Optional[float] = None) -> None:
+    def set(self, key: str, value: Any, ttl: float | None = None) -> None:
         """Store value with given TTL (defaults to instance default)."""
         effective_ttl = ttl if ttl is not None else self.default_ttl
         self._store[key] = _CacheEntry(data=value, ttl=effective_ttl)
@@ -85,7 +85,7 @@ class EIACache:
 # ── EIA API Client ─────────────────────────────────────────────────────────────
 
 # Mock data for tests — avoids any live HTTP calls
-_MOCK_SERIES_DATA: Dict[str, List[Dict[str, Any]]] = {
+_MOCK_SERIES_DATA: dict[str, list[dict[str, Any]]] = {
     "PET.MCRFPUS2.M": [
         {"period": "2024-01", "value": "12500", "unit": "Thousand Barrels"},
         {"period": "2024-02", "value": "12300", "unit": "Thousand Barrels"},
@@ -108,14 +108,14 @@ class EIAApiClient:
 
     Features:
     - API key from constructor or EIA_API_KEY environment variable
-    - Rate limiting: 500 requests per hour
+    - Configurable spacing between live request attempts
     - In-memory response cache with configurable TTL
     - Mock mode for testing (no live HTTP calls)
     """
 
     def __init__(
         self,
-        api_key: Optional[str] = None,
+        api_key: str | None = None,
         base_url: str = EIA_BASE_URL,
         rate_limit_per_hour: int = RATE_LIMIT_PER_HOUR,
         cache_enabled: bool = True,
@@ -147,11 +147,12 @@ class EIAApiClient:
         self.cache_enabled = cache_enabled
         self.cache = EIACache(default_ttl=cache_ttl)
 
-        # Token bucket: allow up to rate_limit_per_hour / 3600 per second
+        # Existing spacing policy at f82ff2f: interval = seconds/hour / rate.
+        # This spaces attempts rather than permitting token-bucket bursts.
         self._min_interval = (
             3600.0 / rate_limit_per_hour if rate_limit_per_hour > 0 else 0.0
         )
-        self._last_request_time: float = 0.0
+        self._last_request_time: float | None = None
 
     # ── URL + cache key helpers ───────────────────────────────────────────────
 
@@ -160,16 +161,19 @@ class EIAApiClient:
         # EIA v2 uses /seriesid/ path for backward-compat series access
         return f"{self.base_url}/seriesid/{series_id}"
 
-    def generate_cache_key(self, series_id: str, params: Dict[str, Any]) -> str:
-        """Generate a deterministic cache key from series ID and query params."""
+    def generate_cache_key(
+        self, series_id: str, params: dict[str, Any], use_mock: bool = False
+    ) -> str:
+        """Key by mode, series and query; omitted mode selects the live namespace."""
         sorted_params = sorted(params.items())
         param_str = urlencode(sorted_params)
-        raw = f"{series_id}?{param_str}"
+        mode = "mock" if use_mock else "live"
+        raw = f"{mode}:{series_id}?{param_str}"
         return hashlib.md5(raw.encode()).hexdigest()
 
     # ── Response parsing ──────────────────────────────────────────────────────
 
-    def parse_series_response(self, raw: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def parse_series_response(self, raw: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Extract data records from an EIA API v2 JSON response.
 
@@ -180,7 +184,7 @@ class EIAApiClient:
             List of record dicts with 'period' and 'value' (float or None).
 
         Raises:
-            EIAApiError: If response.data is missing or is not an array.
+            EIAApiError: If response.data is not an array of objects.
         """
         # EIA API Technical Documentation, APIv2, "Parameters" and
         # "Understanding returned error codes" (accessed 2026-10-19):
@@ -192,6 +196,8 @@ class EIAApiClient:
             raise EIAApiError("EIA API response.data must be an array")
         result = []
         for rec in records:
+            if not isinstance(rec, dict):
+                raise EIAApiError("EIA API response.data records must be objects")
             value_raw = rec.get("value")
             if value_raw is None:
                 value = None
@@ -215,14 +221,15 @@ class EIAApiClient:
     def fetch_series(
         self,
         series_id: str,
-        params: Optional[Dict[str, Any]] = None,
+        params: dict[str, Any] | None = None,
         use_mock: bool = False,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Fetch time-series data for a given EIA series ID.
 
-        Uses cache if enabled. In test/mock mode returns built-in mock data
-        without making any HTTP requests.
+        Uses a separate cache namespace for each mode. Mock mode returns built-in
+        data without HTTP requests. Live mode fetches one page: pass offset and
+        length explicitly to request other pages; total does not trigger prefetch.
 
         Args:
             series_id: EIA series identifier (e.g. 'PET.MCRFPUS2.M').
@@ -235,7 +242,7 @@ class EIAApiClient:
         if params is None:
             params = {}
 
-        cache_key = self.generate_cache_key(series_id, params)
+        cache_key = self.generate_cache_key(series_id, params, use_mock=use_mock)
 
         # Cache hit
         if self.cache_enabled:
@@ -261,18 +268,18 @@ class EIAApiClient:
                 self.cache.set(cache_key, parsed)
             return parsed
 
-        # Live HTTP (guarded — not called in tests)
+        # Live transport is replaced by a mock in offline contract tests.
         return self._fetch_live(series_id, params, cache_key)
 
     def _fetch_live(
         self,
         series_id: str,
-        params: Dict[str, Any],
+        params: dict[str, Any],
         cache_key: str,
-    ) -> List[Dict[str, Any]]:
-        """Make live HTTP request to EIA API. Not called in test suite."""
+    ) -> list[dict[str, Any]]:
+        """Fetch one live page and cache it only after response validation."""
         try:
-            import requests  # noqa: PLC0415
+            import requests
         except ImportError as exc:
             raise EIAApiError(
                 "requests library required for live EIA API calls. "
@@ -292,13 +299,16 @@ class EIAApiClient:
             raise EIAApiError(f"EIA API request failed: {exc}") from exc
 
         if response.status_code == 429:
-            raise EIARateLimitError("EIA API rate limit exceeded (500 req/hr)")
+            raise EIARateLimitError("EIA API rate limit exceeded")
         if response.status_code != 200:
             raise EIAApiError(
                 f"EIA API returned status {response.status_code}: {response.text[:200]}"
             )
 
-        raw = response.json()
+        try:
+            raw = response.json()
+        except ValueError as exc:
+            raise EIAApiError("EIA API response must contain valid JSON") from exc
         records = self.parse_series_response(raw)
 
         if self.cache_enabled:
@@ -307,10 +317,11 @@ class EIAApiClient:
         return records
 
     def _apply_rate_limit(self) -> None:
-        """Sleep if needed to stay within 500 req/hr."""
+        """Space live attempts at the configured rate; the first starts immediately."""
         if self._min_interval <= 0:
             return
-        elapsed = time.monotonic() - self._last_request_time
-        if elapsed < self._min_interval:
-            time.sleep(self._min_interval - elapsed)
+        if self._last_request_time is not None:
+            elapsed = time.monotonic() - self._last_request_time
+            if elapsed < self._min_interval:
+                time.sleep(self._min_interval - elapsed)
         self._last_request_time = time.monotonic()
