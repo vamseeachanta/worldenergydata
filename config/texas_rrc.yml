@@ -85,6 +85,8 @@ data_types:
       aggregate_by: lease
 
 # District Configuration
+# Production labels: RRC General Production Query, District selector (undated;
+# retrieved 2026-10-21), https://webapps.rrc.texas.gov/PDQ/generalReportAction.do
 districts:
   "01":
     name: "San Antonio"
@@ -104,6 +106,9 @@ districts:
   "06":
     name: "East Texas"
     description: "Piney Woods region"
+  "6E":
+    name: "District 6E"
+    description: "PDQ production label; administrative metadata not qualified"
   "7B":
     name: "West Central Texas"
     description: "Abilene area"

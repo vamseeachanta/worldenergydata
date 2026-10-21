@@ -6,7 +6,7 @@ Data validation utilities for Texas RRC data processing.
 
 Provides validation for:
 - Texas API numbers (42-XXX-XXXXX format)
-- RRC district codes (01-10, 7B, 7C, 8A)
+- RRC production district labels (including 6E, 7B, 7C, 8A)
 - Geographic coordinates within Texas bounds
 - Required fields and data types
 - Date ranges and numeric values
@@ -14,8 +14,11 @@ Provides validation for:
 
 import logging
 import re
+import typing
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
+
+from .districts import PRODUCTION_DISTRICTS
 
 logger = logging.getLogger(__name__)
 
@@ -29,21 +32,8 @@ class TexasDataValidator:
     TEXAS_LON_MIN = -106.65
     TEXAS_LON_MAX = -93.51
 
-    # Valid Texas RRC districts
-    VALID_DISTRICTS = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "7B",
-        "7C",
-        "08",
-        "8A",
-        "09",
-        "10",
-    ]
+    # Source and intended use are recorded with PRODUCTION_DISTRICTS.
+    VALID_DISTRICTS: typing.ClassVar[list[str]] = list(PRODUCTION_DISTRICTS)
 
     # Texas state FIPS code
     TEXAS_STATE_FIPS = "42"
@@ -103,7 +93,7 @@ class TexasDataValidator:
         """
         Validate Texas RRC district code.
 
-        Valid districts: 01, 02, 03, 04, 05, 06, 7B, 7C, 08, 8A, 09, 10
+        Valid labels are the qualified PRODUCTION_DISTRICTS set.
 
         Args:
             district: District code to validate
@@ -114,10 +104,7 @@ class TexasDataValidator:
         if not district:
             return False, "District is empty"
 
-        # Normalize: uppercase and pad single digits
-        normalized = district.strip().upper()
-        if normalized.isdigit() and len(normalized) == 1:
-            normalized = normalized.zfill(2)
+        normalized = self.normalize_district(district)
 
         if normalized not in self.VALID_DISTRICTS:
             return (
@@ -565,9 +552,10 @@ class TexasDataValidator:
 
         normalized = district.strip().upper()
 
-        # Handle single digit districts
-        if normalized.isdigit() and len(normalized) == 1:
-            normalized = normalized.zfill(2)
+        # Preserve integral numeric CSV spellings accepted before district text
+        # preservation; never truncate a fractional value into a district label.
+        if re.fullmatch(r"[0-9]{1,2}(?:\.0+)?", normalized):
+            normalized = normalized.split(".", maxsplit=1)[0].zfill(2)
 
         if normalized not in self.VALID_DISTRICTS:
             return None

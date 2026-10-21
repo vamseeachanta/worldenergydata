@@ -32,7 +32,8 @@ class TestConstants:
         assert "drilling_permits" in PDQ_ENDPOINTS
 
     def test_districts_count(self):
-        assert len(TEXAS_DISTRICTS) == 12
+        # RRC PDQ District selector, retrieved 2026-10-21: see districts.py.
+        assert len(TEXAS_DISTRICTS) == 13
 
     def test_district_7b(self):
         assert TEXAS_DISTRICTS["7B"]["headquarters"] == "San Angelo"

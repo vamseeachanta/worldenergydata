@@ -10,8 +10,11 @@ interface for Texas RRC data collection and analysis within the WorldEnergyData 
 
 import json
 import logging
+import typing
 from pathlib import Path
 from typing import Any, Dict
+
+from .districts import PRODUCTION_DISTRICTS
 
 logger = logging.getLogger(__name__)
 
@@ -35,21 +38,8 @@ class TexasRRC:
         "fields",
     ]
 
-    # Valid Texas RRC districts
-    VALID_DISTRICTS = [
-        "01",
-        "02",
-        "03",
-        "04",
-        "05",
-        "06",
-        "7B",
-        "7C",
-        "08",
-        "8A",
-        "09",
-        "10",
-    ]
+    # Source and intended use are recorded with PRODUCTION_DISTRICTS.
+    VALID_DISTRICTS: typing.ClassVar[list[str]] = list(PRODUCTION_DISTRICTS)
 
     def __init__(self):
         """Initialize Texas RRC module."""
@@ -230,10 +220,31 @@ class TexasRRC:
         districts.to_csv(districts_path, index=False)
         summary = {
             "total_records": len(processed),
-            "district_count": int(len(districts)),
+            "district_count": int(districts["district"].notna().sum()),
             "oil_production_total": float(districts["oil_production"].sum()),
             "gas_production_total": float(districts["gas_production"].sum()),
         }
+        # Exact accounting identities: partition input volumes by district
+        # status, then sum each partition (worked arithmetic in the regression).
+        for status, prefix in (
+            ("invalid", "invalid_district"),
+            ("missing", "missing_district"),
+            (None, "unassigned"),
+        ):
+            records = [
+                record
+                for record in processed
+                if (
+                    record["district_status"] == status
+                    if status is not None
+                    else record["district_status"] != "assigned"
+                )
+            ]
+            summary[f"{prefix}_records"] = len(records)
+            for volume in ("oil_production", "gas_production"):
+                summary[f"{prefix}_{volume}_total"] = float(
+                    sum(record.get(volume) or 0 for record in records)
+                )
         summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
         cfg[cfg["basename"]]["outputs"] = {

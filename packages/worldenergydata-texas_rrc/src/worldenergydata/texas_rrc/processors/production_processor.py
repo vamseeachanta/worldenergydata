@@ -121,11 +121,16 @@ class ProductionProcessor:
 
         # Normalize district values
         if "district" in result.columns:
+            raw_districts = result["district"].copy()
             result["district"] = result["district"].apply(
                 lambda x: (
                     self.validator.normalize_district(str(x)) if pd.notna(x) else None
                 )
             )
+            result["district_status"] = [
+                self._district_status(raw, normalized)
+                for raw, normalized in zip(raw_districts, result["district"])
+            ]
 
         # Parse production date
         if "production_date" in result.columns:
@@ -305,6 +310,13 @@ class ProductionProcessor:
         )
         return processed
 
+    @staticmethod
+    def _district_status(raw: Any, normalized: str | None) -> str:
+        """Retain the distinction between absent and unsupported labels."""
+        if pd.isna(raw) or not str(raw).strip():
+            return "missing"
+        return "assigned" if normalized is not None else "invalid"
+
     def _process_record(self, record: Dict[str, Any]) -> Dict[str, Any]:
         """
         Process a single production record.
@@ -317,11 +329,12 @@ class ProductionProcessor:
         """
         processed = record.copy()
 
-        # Normalize district
-        if "district" in processed:
-            processed["district"] = self.validator.normalize_district(
-                str(processed["district"])
-            )
+        # Preserve missing versus invalid input before normalization loses it.
+        raw_district = processed.get("district")
+        processed["district"] = self.validator.normalize_district(str(raw_district))
+        processed["district_status"] = self._district_status(
+            raw_district, processed["district"]
+        )
 
         # Parse production date
         if "production_date" in processed:
@@ -506,13 +519,14 @@ class ProductionProcessor:
         # Filter to columns that exist
         agg_cols = {k: v for k, v in agg_cols.items() if k in df.columns}
 
-        result = df.groupby("district").agg(agg_cols).reset_index()
+        # Conservation identity: assigned plus unassigned groups equal input
+        # totals. Keep missing keys for both volume and unique-lease sums.
+        grouped = df.groupby("district", dropna=False)
+        result = grouped.agg(agg_cols).reset_index()
 
         # Add lease count if available
         if "lease_number" in df.columns:
-            lease_counts = (
-                df.groupby("district")["lease_number"].nunique().reset_index()
-            )
+            lease_counts = grouped["lease_number"].nunique().reset_index()
             lease_counts.columns = ["district", "lease_count"]
             result = result.merge(lease_counts, on="district", how="left")
 

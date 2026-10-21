@@ -40,8 +40,8 @@ class CSVLoader:
         "well_count",
     }
 
+    # Districts are labels, including 6E/7B/7C/8A (districts.PRODUCTION_DISTRICTS).
     INTEGER_FIELDS = {
-        "district",
         "county_code",
         "lease_number",
         "operator_number",
