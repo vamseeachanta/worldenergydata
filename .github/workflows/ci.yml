@@ -77,17 +77,21 @@ jobs:
   # the shared reusable workflow (workspace-hub#.../domain-matrix.yml, P4
   # worldenergydata#530). wed's conventions match the reusable defaults exactly
   # (selector scripts/ci/select_test_targets.py, uv sync --all-extras, quarantine
-  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10), so the caller
-  # passes no `with:` overrides.
+  # scripts/ci/quarantine.txt, python-setup uv, max-parallel 10). The runner adds
+  # the statistics extra only in the metocean shard (#1313).
   domain-tests:
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
+    with:
+      test-runner: bash scripts/ci/run_domain_tests.sh
 
   # ------------------------------------------------------------ full matrix --
   test:
+    env:
+      WED_REQUIRE_METOCEAN_STATS: "1"
     name: Test Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     needs: [mode]

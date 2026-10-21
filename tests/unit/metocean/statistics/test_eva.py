@@ -3,6 +3,8 @@ ABOUTME: Tests for ExtremeValueAnalysis wrapper (metocean-stats EVA).
 ABOUTME: Uses synthetic data — no live API calls.
 """
 
+from importlib.metadata import version
+
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -183,3 +185,9 @@ class TestPlotReturnPeriod:
         result = self.eva.fit_annual_maxima(self.hs)
         fig = self.eva.plot_return_period(result)
         assert isinstance(fig, go.Figure)
+
+
+def test_backend_version_matches_installed_distribution():
+    from worldenergydata.metocean.statistics import BACKEND_VERSION
+
+    assert BACKEND_VERSION == version("metocean-stats") == "1.2.0"

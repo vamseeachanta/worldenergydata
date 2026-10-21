@@ -97,11 +97,21 @@ class TestMetoceanReportAddSections:
         self.report.add_eva(eva_result)
         assert len(self.report._sections) == count_before + 1
 
+    @pytest.mark.xfail(
+        strict=True,
+        raises=RuntimeWarning,
+        reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+    )
     def test_add_joint_increases_sections(self, joint_model):
         count_before = len(self.report._sections)
         self.report.add_joint(joint_model)
         assert len(self.report._sections) == count_before + 1
 
+    @pytest.mark.xfail(
+        strict=True,
+        raises=RuntimeWarning,
+        reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+    )
     def test_add_contour_increases_sections(self, contour_result):
         count_before = len(self.report._sections)
         self.report.add_contour(contour_result)
@@ -141,6 +151,11 @@ class TestMetoceanReportSaveHTML:
         finally:
             os.unlink(path)
 
+    @pytest.mark.xfail(
+        strict=True,
+        raises=RuntimeWarning,
+        reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+    )
     def test_save_html_with_multiple_sections(
         self, eva_result, joint_model, contour_result, operability_result
     ):

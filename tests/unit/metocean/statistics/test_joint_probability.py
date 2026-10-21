@@ -43,6 +43,11 @@ class TestJointModel:
         assert model.n_samples == 5000
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=RuntimeWarning,
+    reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+)
 class TestJointProbabilityModelFit:
     def setup_method(self):
         self.model = JointProbabilityModel()

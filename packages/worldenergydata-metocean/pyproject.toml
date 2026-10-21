@@ -28,7 +28,6 @@ classifiers = [
 # ships worldenergydata.common (config/logging/exceptions/types/units).
 dependencies = [
     "worldenergydata-core",
-    "metocean-stats==1.1.9",
     "beautifulsoup4>=4.12.0,<5.0",
     "httpx>=0.25.0,<1.0",
     "numpy>=2.2.6,<3.0",
@@ -45,6 +44,11 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/vamseeachanta/worldenergydata"
 "Bug Tracker" = "https://github.com/vamseeachanta/worldenergydata/issues"
+
+[project.optional-dependencies]
+statistics = [
+    "metocean-stats==1.2.0",
+]
 
 # ---------------------------------------------------------------------------
 # PEP 420 namespace packaging (ADR 0001 — domain-package split)

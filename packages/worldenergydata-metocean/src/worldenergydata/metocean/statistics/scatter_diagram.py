@@ -2,7 +2,7 @@
 ABOUTME: 2D Hs-Tp occurrence table (scatter diagram) with Plotly visualisation.
 ABOUTME: Wraps metocean-stats calculate_scatter for the tabular backend.
 
-Uses real metocean-stats library (v1.1.9).
+Uses real metocean-stats library (v1.2.0).
 All visualisations use Plotly.
 """
 

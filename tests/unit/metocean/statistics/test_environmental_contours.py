@@ -64,6 +64,11 @@ class TestContourResult:
         assert len(contour.hs_values) == len(contour.tp_values)
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=RuntimeWarning,
+    reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+)
 class TestEnvironmentalContourIFORM:
     def setup_method(self):
         self.ec = EnvironmentalContour()
@@ -97,6 +102,11 @@ class TestEnvironmentalContourIFORM:
         assert (result.tp_values > 0).all()
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=RuntimeWarning,
+    reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+)
 class TestEnvironmentalContourISORMM:
     def setup_method(self):
         self.ec = EnvironmentalContour()
@@ -115,6 +125,11 @@ class TestEnvironmentalContourISORMM:
         assert len(result.tp_values) > 0
 
 
+@pytest.mark.xfail(
+    strict=True,
+    raises=RuntimeWarning,
+    reason="Backend joint-fit divide by zero: https://github.com/vamseeachanta/worldenergydata/issues/1362",
+)
 class TestPlotContour:
     def setup_method(self):
         self.ec = EnvironmentalContour()

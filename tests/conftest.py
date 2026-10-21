@@ -647,14 +647,6 @@ def pytest_ignore_collect(collection_path, config):
         Path("tests/unit/hse/importers/test_bsee_incidents_importer_url.py"),
         Path("tests/unit/hse/importers/test_bsee_penalties_importer_url.py"),
         Path("tests/unit/hse/importers/test_bsee_statistics_importer_url.py"),
-        # Missing metocean_stats dependency chain
-        Path("tests/unit/metocean/statistics/test_environmental_contours.py"),
-        Path("tests/unit/metocean/statistics/test_eva.py"),
-        Path("tests/unit/metocean/statistics/test_joint_probability.py"),
-        Path("tests/unit/metocean/statistics/test_reporting.py"),
-        Path("tests/unit/metocean/statistics/test_scatter_diagram.py"),
-        Path("tests/unit/metocean/statistics/test_wave_spectra.py"),
-        Path("tests/unit/metocean/statistics/test_weather_windows.py"),
         # Missing repo_yml_status.csv fixture/input
         Path("tests/unit/pipeline_ci_cd/test_pipeline_utils.py"),
     }
@@ -668,6 +660,17 @@ def pytest_ignore_collect(collection_path, config):
         rel_path = Path(collection_path).resolve().relative_to(repo_root)
     except ValueError:
         return False
+
+    # Statistics is an optional member extra (#1313). Collect its tests whenever
+    # installed. CI requires collection so a missing backend fails visibly.
+    if rel_path.parts[:4] == ("tests", "unit", "metocean", "statistics"):
+        from importlib.util import find_spec
+
+        if (
+            os.environ.get("WED_REQUIRE_METOCEAN_STATS") != "1"
+            and find_spec("metocean_stats") is None
+        ):
+            return True
 
     if rel_path in broken_module_tests:
         return True

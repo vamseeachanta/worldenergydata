@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -3051,7 +3051,7 @@ wheels = [
 
 [[package]]
 name = "metocean-stats"
-version = "1.1.9"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cartopy", version = "0.25.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -3074,9 +3074,9 @@ dependencies = [
     { name = "xarray", version = "2025.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "xarray", version = "2026.9.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4c/17/06afc724532c4dced621542b69f74da7e802531896e7e3b1d9fe1c67de62/metocean_stats-1.1.9.tar.gz", hash = "sha256:b66bab84d984ad470b2ae670b35f5add54b2f1aa585032fb3c328df9528f3bf1", size = 35544714, upload-time = "2025-11-29T06:38:28.77Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/16/43/81d59ecff92025305164b4ff94689a3ffa7a8cf81db75cec0b206bccb55f/metocean_stats-1.2.0.tar.gz", hash = "sha256:885b745edd463d8151953e38854f2bfc7e7fff49b8d5449326a91116ad7cd549", size = 36050835, upload-time = "2026-04-08T07:28:37.447Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c1/a6/11bb3114a8ddc2e23814a885aae007c22918645e3403a3b59cfdf0267ade/metocean_stats-1.1.9-py3-none-any.whl", hash = "sha256:d62a6cf0b386702c28b622a841aed5a065f2dde1830c0b0ea622ad06f1238b8a", size = 152953, upload-time = "2025-11-29T06:38:26.91Z" },
+    { url = "https://files.pythonhosted.org/packages/12/b6/caa1ea175006b36de1cc7572d3a9b1da7be165c36f147fa367355041bb32/metocean_stats-1.2.0-py3-none-any.whl", hash = "sha256:ee7c459472935600be2117e277ef55be8c0ef236cccdfc4b0e2467fc1a638df1", size = 156422, upload-time = "2026-04-08T07:28:35.76Z" },
 ]
 
 [[package]]
@@ -7989,7 +7989,7 @@ dependencies = [
     { name = "sqlalchemy" },
     { name = "worldenergydata-core" },
     { name = "worldenergydata-fdas" },
-    { name = "worldenergydata-metocean" },
+    { name = "worldenergydata-metocean", extra = ["statistics"] },
     { name = "worldenergydata-reporting" },
     { name = "worldenergydata-sodir" },
     { name = "worldenergydata-texas-rrc" },
@@ -8018,7 +8018,7 @@ requires-dist = [
     { name = "sqlalchemy", specifier = ">=2.0.49,<3.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
     { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
-    { name = "worldenergydata-metocean", editable = "packages/worldenergydata-metocean" },
+    { name = "worldenergydata-metocean", extras = ["statistics"], editable = "packages/worldenergydata-metocean" },
     { name = "worldenergydata-reporting", editable = "packages/worldenergydata-reporting" },
     { name = "worldenergydata-sodir", editable = "packages/worldenergydata-sodir" },
     { name = "worldenergydata-texas-rrc", editable = "packages/worldenergydata-texas_rrc" },
@@ -8374,7 +8374,6 @@ source = { editable = "packages/worldenergydata-metocean" }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "httpx" },
-    { name = "metocean-stats" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pandas" },
@@ -8389,11 +8388,16 @@ dependencies = [
     { name = "worldenergydata-core" },
 ]
 
+[package.optional-dependencies]
+statistics = [
+    { name = "metocean-stats" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = ">=4.12.0,<5.0" },
     { name = "httpx", specifier = ">=0.25.0,<1.0" },
-    { name = "metocean-stats", specifier = "==1.1.9" },
+    { name = "metocean-stats", marker = "extra == 'statistics'", specifier = "==1.2.0" },
     { name = "numpy", specifier = ">=2.2.6,<3.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "plotly", specifier = ">=5.18.0,<6.0" },
@@ -8405,6 +8409,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.9.0,<1.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
 ]
+provides-extras = ["statistics"]
 
 [[package]]
 name = "worldenergydata-mexico-cnh"

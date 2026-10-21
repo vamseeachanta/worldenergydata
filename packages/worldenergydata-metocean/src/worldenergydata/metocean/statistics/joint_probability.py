@@ -2,7 +2,7 @@
 ABOUTME: Joint probability model for Hs-Tp (or any two-variable) analysis.
 ABOUTME: Wraps metocean-stats joint_distribution_Hs_Tp and calculate_scatter.
 
-Uses real metocean-stats library (v1.1.9) as the statistical backend.
+Uses real metocean-stats library (v1.2.0) as the statistical backend.
 All visualisations use Plotly — metocean-stats matplotlib outputs are converted.
 """
 

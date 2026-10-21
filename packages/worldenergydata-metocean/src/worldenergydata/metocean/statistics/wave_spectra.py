@@ -2,7 +2,7 @@
 ABOUTME: Wave spectra computation — JONSWAP, Torsethaugen, and spectral moments.
 ABOUTME: Wraps metocean-stats spec_funcs with a clean API and Plotly visualisation.
 
-Uses real metocean-stats library (v1.1.9).
+Uses real metocean-stats library (v1.2.0).
 All visualisations use Plotly — not matplotlib.
 """
 

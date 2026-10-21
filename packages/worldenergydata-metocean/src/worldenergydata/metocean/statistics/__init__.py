@@ -1,11 +1,11 @@
 """
-ABOUTME: Metocean statistical analysis engine — wraps metocean-stats v1.1.9.
+ABOUTME: Metocean statistical analysis engine — wraps metocean-stats v1.2.0.
 ABOUTME: Provides EVA, joint probability, environmental contours, weather windows.
 
 Statistical Analysis Module
 ============================
 
-Powered by the real metocean-stats library (MET-OM/metocean-stats v1.1.9).
+Powered by the real metocean-stats library (MET-OM/metocean-stats v1.2.0).
 All visualisations use Plotly for interactive HTML output.
 
 Modules
@@ -66,4 +66,4 @@ __all__ = [
 
 # Backend note: uses real metocean-stats library (not stubs)
 BACKEND = "metocean-stats"
-BACKEND_VERSION = "1.1.9"
+BACKEND_VERSION = "1.2.0"
