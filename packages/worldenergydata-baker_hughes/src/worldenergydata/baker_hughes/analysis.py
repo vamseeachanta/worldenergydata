@@ -1,6 +1,7 @@
 """Aggregate disjoint rig-count records and calculate trailing means."""
 
 import math
+import re
 from numbers import Integral, Number
 
 import pandas as pd
@@ -12,7 +13,7 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
 
     ``df`` must contain ``date`` and ``rig_count`` columns. Counts must be
     finite, nonnegative whole numbers; dates must be timezone-naive dates or
-    parseable date strings. Times within a calendar date are combined.
+    complete ISO 8601 date strings. Times within a calendar date are combined.
 
     Each row must represent a disjoint part of the requested population.
     Filter to the desired population before calling; combining overlapping
@@ -56,13 +57,18 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
             isinstance(value, Number) for value in df["date"]
         ):
             raise ValueError("numeric epochs are not calendar dates")
-        dates = df["date"].map(pd.Timestamp)
+        if any(
+            isinstance(value, str) and re.fullmatch(r"\s*\d{4}(?:-\d{1,2})?\s*", value)
+            for value in df["date"]
+        ):
+            raise ValueError("incomplete calendar date")
+        dates = df["date"].map(lambda value: pd.to_datetime(value, format="ISO8601"))
         if dates.isna().any() or dates.dt.tz is not None:
             raise ValueError("missing or timezone-aware date")
         dates = dates.dt.normalize()
     except (ValueError, TypeError, AttributeError) as exc:
         raise ValueError(
-            "date must contain valid timezone-naive calendar dates"
+            "date must contain complete timezone-naive ISO 8601 calendar dates"
         ) from exc
 
     totals = (

@@ -133,10 +133,23 @@ def test_invalid_count_is_rejected(count):
         aggregate_rig_counts(rows, window=1)
 
 
-@pytest.mark.parametrize("date", [None, "bad", "2026-01-02T00:00:00Z", 1])
+@pytest.mark.parametrize(
+    "date", [None, "bad", "2026-01-02T00:00:00Z", 1, "2026", "2026-01", "2026-1"]
+)
 def test_invalid_date_is_rejected(date):
-    """The date-key contract excludes missing, invalid and zoned timestamps."""
+    """Date keys exclude missing, invalid, zoned and incomplete dates."""
     rows = pd.DataFrame({"date": [date], "rig_count": [1]})
+    with pytest.raises(ValueError, match="date"):
+        aggregate_rig_counts(rows, window=1)
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_ambiguous_day_first_dates_are_rejected(reverse):
+    """Slash dates must not silently mix month-first and day-first readings."""
+    dates = ["12/01/2026", "13/01/2026"]
+    if reverse:
+        dates.reverse()
+    rows = pd.DataFrame({"date": dates, "rig_count": [4, 5]})
     with pytest.raises(ValueError, match="date"):
         aggregate_rig_counts(rows, window=1)
 
