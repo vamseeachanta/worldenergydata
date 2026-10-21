@@ -6,9 +6,9 @@ Initial source inspection: `7f645ac5844b25a79374f62fb0230ef1dbb4b143` on 2026-10
 Report inventory reconciliation: `648d6de46081ad98a06504a25ec8a222acbd41b1` on 2026-10-19.
 It extends the module-level drawings in [BSEE architecture](bsee/bsee_architecture.puml)
 and [BSEE refresh flow](bsee/data-refresh-architecture/data-flow-diagram.md).
-Paths below are relative to the repository root; colon suffixes are source line numbers.
-Source line ranges outside Table 4 belong to the initial inspection; use the named
-files and symbols when reading newer revisions.
+Paths below are relative to the repository root; colon suffixes identify lines or symbols.
+Numeric source ranges belong to the initial inspection; use the named files and
+symbols when reading newer revisions. Tables 3 and 4 use stable symbol locators.
 
 The tree contains **299 report HTML files and zero API capability HTML pages**,
 enumerated in [report-inventory.csv](report-inventory.csv).
@@ -24,6 +24,7 @@ The issue's earlier report counts are therefore not the inventory baseline.
 | --- | --- | --- |
 | Initial | 2026-10-12 | Source inspection and report classification established the repository map. |
 | Inventory reconciliation | 2026-10-19 | Counts and Pages selections are reconciled with the current tree; the README embeds the drawing and regression checks detect drift. |
+| Provenance reconciliation | 2026-10-21 | Work bases match the surviving specifications at `dbce3901`; capability and Pages locators use symbols to avoid line-shift drift. |
 
 ## Drawing
 
@@ -143,8 +144,8 @@ source locations are not a complete map of the current packages.
 | --- | --- |
 | Sources to scheduler/manual to bulk data | Table 1 and the data-root contract below; dashed because configuration is not execution evidence |
 | Bulk data to processing packages | `packages/worldenergydata-core/src/worldenergydata/common/data_resolver.py:56-79`; source adapters in Table 1; not a claim that every loader uses this resolver |
-| BSEE to reports and capability nodes | `scripts/build_pages.py:478-515` describes the cashflow model and BSEE inputs; `scripts/capabilities/build_onepagers.py:95-188` supplies the work provenance |
-| Marine safety to reports and capability nodes | `scripts/build_pages.py:804-823`; `scripts/capabilities/build_onepagers.py:156-182` |
+| BSEE to reports and capability nodes | `scripts/build_pages.py:478-515` describes the cashflow model and BSEE inputs; `scripts/capabilities/build_onepagers.py:SPECS` supplies the work provenance |
+| Marine safety to reports and capability nodes | `scripts/build_pages.py:804-823`; `scripts/capabilities/build_onepagers.py:SPECS` |
 | Manual/catalog inputs to field development to reports | `scripts/field_development/build_fdp_portfolio.py:1-9` maps researched JSON to concepts and reports; `scripts/field_development/build_fdp_portfolio_matched.py:4-16` uses the SubseaIQ/BSEE crosswalk |
 | Reports to Pages and website redirect | `scripts/build_pages.py:11-18`; `.github/workflows/pages.yml:138-166`; `reports/capabilities/index.html:12-14` |
 | Reports to Hugging Face | `scripts/hf_export/publish_explorer_refresh_to_hf.py:2-17` and `scripts/hf_export/publish_dc_days_to_hf.py:16-22`; explicitly invoked publishing, not an inferred CI deployment |
@@ -154,33 +155,35 @@ Table 2. Evidence for grouped boxes and arrows. Per-capability dashed edges use 
 ## Capability inventory and provenance
 
 The inventory is the `kind="work"` subset of `SPECS` in
-`scripts/capabilities/build_onepagers.py:49-189`, evaluated without running the builder.
+`scripts/capabilities/build_onepagers.py:SPECS`, evaluated without running the builder.
 Seven economics IDs share one node. The issue also names economics-buckskin, but the current
 builder does not define that work ID; it is not silently added to the count.
+The provenance column reproduces each work specification's current `std` text.
+Symbol locators resolve to the named entry and its source span without executing the builder.
 The builder's descriptions establish stated provenance, not freshness or numerical validity.
 
 | Mermaid node | Work ID or field dimension | Provenance stated by surviving builder or implementation |
 | --- | --- | --- |
-| economics | `economics-anchor`, `economics-big_foot`, `economics-cascade_chinook`, `economics-jack_st_malo`, `economics-julia`, `economics-shenandoah`, `economics-stones` | BSEE OGOR-A, life-to-date public production; `scripts/capabilities/build_onepagers.py:95-105` |
-| portfolio | `portfolio` | Roll-up of the per-field economics and their data limits; `scripts/capabilities/build_onepagers.py:106-112` |
-| benchmark | `benchmark` | BSEE OGOR-A, same data window as economics; `scripts/capabilities/build_onepagers.py:113-117` |
-| completion | `completion` | BSEE WAR-derived frozen reference workbook; `scripts/capabilities/build_onepagers.py:118-125` |
-| well_path | `well-path` | BSEE directional surveys, shared frozen JSON contract; `scripts/capabilities/build_onepagers.py:126-131` |
-| fd_showcase | `fd-showcase` | SubseaIQ catalog and curated exemplars, not measurements generated by the schematic; `scripts/field_development/build_capability_showcase.py:18-26` |
-| fd_playbook | `fd-playbook` | Precomputed recommendation grids over region/fluid parameters; `scripts/field_development/build_interactive_playbook.py:6-11` |
-| fd_portfolio | `fd-portfolio` | Researched field-profile JSON mapped to FieldConcept; `scripts/field_development/build_fdp_portfolio.py:1-9` |
-| fd_bsee_matched | `fd-bsee-matched` | Matched SubseaIQ-to-BSEE crosswalk and as-built hosts; `scripts/field_development/build_fdp_portfolio_matched.py:4-16` |
-| ms_exec | `ms-exec` | TSB, IMO GISIS and MAIB combined casualty data; `scripts/capabilities/build_onepagers.py:156-162` |
-| ms_fatality | `ms-fatality` | Combined casualty database, fatal-incident subset; `scripts/capabilities/build_onepagers.py:163-166` |
-| ms_foundering | `ms-foundering` | Combined casualty database, foundering subset; `scripts/capabilities/build_onepagers.py:167-170` |
-| ms_hatch | `ms-hatch` | Regex-detected hatch incidents from the incident corpus; `scripts/capabilities/build_onepagers.py:171-175` |
-| imo | `imo` | IMO GISIS casualty database; `scripts/capabilities/build_onepagers.py:176-182` |
-| mooring | `mooring` | BSEE failure precedents and a standards-based screening model; `scripts/capabilities/build_onepagers.py:183-188`. No standards constants are reproduced here |
+| economics | `economics-anchor`, `economics-big_foot`, `economics-cascade_chinook`, `economics-jack_st_malo`, `economics-julia`, `economics-shenandoah`, `economics-stones` | Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax basis · Price: historical West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities and operating assumptions; `scripts/capabilities/build_onepagers.py:SPECS[id="economics-anchor"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-big_foot"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-cascade_chinook"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-jack_st_malo"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-julia"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-shenandoah"]`, `scripts/capabilities/build_onepagers.py:SPECS[id="economics-stones"]` |
+| portfolio | `portfolio` | Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax basis · Price: historical West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities and operating assumptions; `scripts/capabilities/build_onepagers.py:SPECS[id="portfolio"]` |
+| benchmark | `benchmark` | Bureau of Safety and Environmental Enforcement Oil and Gas Operations Reports; United States Energy Information Administration oil prices · data as of: 2025-05 · pre-tax basis · Price: historical West Texas Intermediate monthly prices; cost: recorded drilling, completion, facilities and operating assumptions; `scripts/capabilities/build_onepagers.py:SPECS[id="benchmark"]` |
+| completion | `completion` | Bureau of Safety and Environmental Enforcement Well Activity Reports · data as of: 2025-08-03 (latest recorded completion activity in the reference workbook; acquisition cut-off not recorded); `scripts/capabilities/build_onepagers.py:SPECS[id="completion"]` |
+| well_path | `well-path` | Bureau of Safety and Environmental Enforcement directional surveys and well metadata · data as of: 2026-02-11 (survey-file vintage in the manifest); well-metadata file vintage: 2025-07-31; source acquisition cut-off not recorded; `scripts/capabilities/build_onepagers.py:SPECS[id="well-path"]` |
+| fd_showcase | `fd-showcase` | SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental Enforcement asset records · data as of: 2014 (approximate catalogue baseline; acquisition cut-off not recorded) · pre-tax basis · Price: supplied field oil-price inputs; cost: development-system assumptions and qualitative concept adjustments; `scripts/capabilities/build_onepagers.py:SPECS[id="fd-showcase"]` |
+| fd_playbook | `fd-playbook` | SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental Enforcement asset records · data as of: 2014 (approximate catalogue baseline; acquisition cut-off not recorded); `scripts/capabilities/build_onepagers.py:SPECS[id="fd-playbook"]` |
+| fd_portfolio | `fd-portfolio` | SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental Enforcement asset records · data as of: 2014 (approximate catalogue baseline; acquisition cut-off not recorded); `scripts/capabilities/build_onepagers.py:SPECS[id="fd-portfolio"]` |
+| fd_bsee_matched | `fd-bsee-matched` | SubseaIQ commercial offshore-field catalogue; Bureau of Safety and Environmental Enforcement asset records · data as of: 2014 (approximate catalogue baseline; acquisition cut-off not recorded); `scripts/capabilities/build_onepagers.py:SPECS[id="fd-bsee-matched"]` |
+| ms_exec | `ms-exec` | Transportation Safety Board of Canada marine occurrences; United States Coast Guard 1995–2012 recreational boating accident reports, distributed by Data Liberation Project; International Maritime Organization Global Integrated Shipping Information System · data as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded; `scripts/capabilities/build_onepagers.py:SPECS[id="ms-exec"]` |
+| ms_fatality | `ms-fatality` | Transportation Safety Board of Canada marine occurrences; United States Coast Guard 1995–2012 recreational boating accident reports, distributed by Data Liberation Project · data as of: 2012 (Coast Guard record coverage end); Canadian acquisition cut-off not recorded; `scripts/capabilities/build_onepagers.py:SPECS[id="ms-fatality"]` |
+| ms_foundering | `ms-foundering` | Transportation Safety Board of Canada marine occurrences; United States Coast Guard 1995–2012 recreational boating accident reports, distributed by Data Liberation Project; International Maritime Organization Global Integrated Shipping Information System · data as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded; `scripts/capabilities/build_onepagers.py:SPECS[id="ms-foundering"]` |
+| ms_hatch | `ms-hatch` | Transportation Safety Board of Canada marine occurrences; United States Coast Guard 1995–2012 recreational boating accident reports, distributed by Data Liberation Project; International Maritime Organization Global Integrated Shipping Information System · data as of: 2025-10-11 (Organization records collated); other source cut-offs not recorded; `scripts/capabilities/build_onepagers.py:SPECS[id="ms-hatch"]` |
+| imo | `imo` | International Maritime Organization Global Integrated Shipping Information System · data as of: 2025-10-11 (collation date); latest export window ends 2025-10-10; `scripts/capabilities/build_onepagers.py:SPECS[id="imo"]` |
+| mooring | `mooring` | Bureau of Safety and Environmental Enforcement incident records; DNV-RP-C203 S-N curve D, seawater with cathodic protection (edition not recorded in linked report); Vicinay component catalogue · data as of: 2026-01-08 (latest recorded incident in the corpus); `scripts/capabilities/build_onepagers.py:SPECS[id="mooring"]` |
 
 Table 3. The 21 work specifications represented by 15 capability nodes.
 
 The five `kind="section"` summaries are navigation summaries, not additional work capabilities
-(`scripts/capabilities/build_onepagers.py:50-94`). The HTML card builder remains; tracked PDFs are no longer generated;
+(`scripts/capabilities/build_onepagers.py:SPECS[kind="section"]`). The HTML card builder remains; tracked PDFs are no longer generated;
 the API HTML surfaces do not. The landing redirect already exists through
 [PR 1001](https://github.com/vamseeachanta/worldenergydata/pull/1001).
 
@@ -211,42 +214,42 @@ notice takes precedence over publication selection; those reports are not counte
 The inspected builder copies field-development report trees, marine safety, completion,
 HSE, and selected lifecycle surfaces. It does not publish every report directory.
 The field-atlas builder tests for `reports/field-atlas/index.html` before copying
-the index and the one-pager directory (`scripts/build_pages.py:841-864`).
+the index and the one-pager directory (`scripts/build_pages.py:build_field_atlas`).
 The index exists in this tree; the one-pagers therefore meet the current rule.
 
-| Repository-relative selection glob | Existence gates | Builder function and lines |
+| Repository-relative selection glob | Existence gates | Builder function symbol |
 | --- | --- | --- |
-| `reports/lower_tertiary/lifecycle/*_lifecycle.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/index.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/wells/*_well.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/wells/index.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/assets/*_assets.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/assets` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/lifecycle/norms/*.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/norms` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/drilling_insights.html` | `reports/lower_tertiary/drilling_insights.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/dc-drilldown.html` | `reports/lower_tertiary/dc-drilldown.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/roy-rig-days-validation.html` | `reports/lower_tertiary/roy-rig-days-validation.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/war-activity-codes.html` | `reports/lower_tertiary/war-activity-codes.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `scripts/build_pages.py:417-697 (build_lower_tertiary)` |
-| `reports/field_development/showcase/index.html` | `reports/field_development/showcase/index.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/interactive/playbook.html` | `reports/field_development/interactive/playbook.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/spain_cores.html` | `reports/field_development/spain_cores.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/region_devtype_comparison.html` | `reports/field_development/region_devtype_comparison.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/all_regions_atlas.html` | `reports/field_development/all_regions_atlas.html` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/portfolio/**/*.html` | `reports/field_development/portfolio` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/field_development/bsee_matched/**/*.html` | `reports/field_development/bsee_matched` | `scripts/build_pages.py:700-743 (build_field_development)` |
-| `reports/capabilities/index.html` | `reports/capabilities/index.html` | `scripts/build_pages.py:746-783 (build_capabilities)` |
-| `reports/capabilities/insights.html` | `reports/capabilities/index.html`, `reports/capabilities/insights.html` | `scripts/build_pages.py:746-783 (build_capabilities)` |
-| `reports/capabilities/pdf/**/*.html` | `reports/capabilities/index.html`, `reports/capabilities/pdf` | `scripts/build_pages.py:746-783 (build_capabilities)` |
-| `reports/completion/*.html` | `reports/completion/index.html` | `scripts/build_pages.py:786-803 (build_completion)` |
-| `reports/hse/*.html` | `reports/hse` | `scripts/build_pages.py:828-840 (build_hse)` |
-| `reports/marine_safety/*.html` | `reports/marine_safety` | `scripts/build_pages.py:806-825 (build_marine_safety)` |
-| `reports/IMO_GISIS_Executive_Report.html` | `reports/IMO_GISIS_Executive_Report.html` | `scripts/build_pages.py:806-825 (build_marine_safety)` |
-| `reports/field-atlas/index.html` | `reports/field-atlas/index.html` | `scripts/build_pages.py:843-866 (build_field_atlas)` |
-| `reports/field-atlas/onepagers/**/*.html` | `reports/field-atlas/index.html`, `reports/field-atlas/onepagers` | `scripts/build_pages.py:843-866 (build_field_atlas)` |
-| `reports/pressure-atlas/index.html` | `reports/pressure-atlas/index.html` | `scripts/build_pages.py:869-877 (build_pressure_atlas)` |
-| `reports/field_benchmark/index.html` | `reports/field_benchmark/index.html` | `scripts/build_pages.py:904-924 (build_field_benchmark)` |
-| `reports/decommissioning/pa_liability_wave.html` | `reports/decommissioning/pa_liability_wave.html` | `scripts/build_pages.py:880-901 (build_decommissioning)` |
-| `reports/decommissioning/regional_liability.html` | `reports/decommissioning/regional_liability.html` | `scripts/build_pages.py:880-901 (build_decommissioning)` |
+| `reports/lower_tertiary/lifecycle/*_lifecycle.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/lifecycle/index.html` | `reports/lower_tertiary/lifecycle/index.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/lifecycle/wells/*_well.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/lifecycle/wells/index.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/wells/index.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/lifecycle/assets/*_assets.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/assets` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/lifecycle/norms/*.html` | `reports/lower_tertiary/lifecycle/index.html`, `reports/lower_tertiary/lifecycle/norms` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/drilling_insights.html` | `reports/lower_tertiary/drilling_insights.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/dc-drilldown.html` | `reports/lower_tertiary/dc-drilldown.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/roy-rig-days-validation.html` | `reports/lower_tertiary/roy-rig-days-validation.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/war-activity-codes.html` | `reports/lower_tertiary/war-activity-codes.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `reports/lower_tertiary/wo-april-2026-qaqc-hub.html` | `scripts/build_pages.py:build_lower_tertiary` |
+| `reports/field_development/showcase/index.html` | `reports/field_development/showcase/index.html` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/interactive/playbook.html` | `reports/field_development/interactive/playbook.html` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/spain_cores.html` | `reports/field_development/spain_cores.html` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/region_devtype_comparison.html` | `reports/field_development/region_devtype_comparison.html` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/all_regions_atlas.html` | `reports/field_development/all_regions_atlas.html` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/portfolio/**/*.html` | `reports/field_development/portfolio` | `scripts/build_pages.py:build_field_development` |
+| `reports/field_development/bsee_matched/**/*.html` | `reports/field_development/bsee_matched` | `scripts/build_pages.py:build_field_development` |
+| `reports/capabilities/index.html` | `reports/capabilities/index.html` | `scripts/build_pages.py:build_capabilities` |
+| `reports/capabilities/insights.html` | `reports/capabilities/index.html`, `reports/capabilities/insights.html` | `scripts/build_pages.py:build_capabilities` |
+| `reports/capabilities/pdf/**/*.html` | `reports/capabilities/index.html`, `reports/capabilities/pdf` | `scripts/build_pages.py:build_capabilities` |
+| `reports/completion/*.html` | `reports/completion/index.html` | `scripts/build_pages.py:build_completion` |
+| `reports/hse/*.html` | `reports/hse` | `scripts/build_pages.py:build_hse` |
+| `reports/marine_safety/*.html` | `reports/marine_safety` | `scripts/build_pages.py:build_marine_safety` |
+| `reports/IMO_GISIS_Executive_Report.html` | `reports/IMO_GISIS_Executive_Report.html` | `scripts/build_pages.py:build_marine_safety` |
+| `reports/field-atlas/index.html` | `reports/field-atlas/index.html` | `scripts/build_pages.py:build_field_atlas` |
+| `reports/field-atlas/onepagers/**/*.html` | `reports/field-atlas/index.html`, `reports/field-atlas/onepagers` | `scripts/build_pages.py:build_field_atlas` |
+| `reports/pressure-atlas/index.html` | `reports/pressure-atlas/index.html` | `scripts/build_pages.py:build_pressure_atlas` |
+| `reports/field_benchmark/index.html` | `reports/field_benchmark/index.html` | `scripts/build_pages.py:build_field_benchmark` |
+| `reports/decommissioning/pa_liability_wave.html` | `reports/decommissioning/pa_liability_wave.html` | `scripts/build_pages.py:build_decommissioning` |
+| `reports/decommissioning/regional_liability.html` | `reports/decommissioning/regional_liability.html` | `scripts/build_pages.py:build_decommissioning` |
 
 Table 4. Existing inputs selected by the Pages builder at inspection. Absent optional inputs
 are not counted. Re-evaluate the builder and its gates when the tree changes.
@@ -298,14 +301,18 @@ python3 scripts/maintenance/classify_report_inventory.py --summary
 paths, tallies the CSV, checks the README drawing against this source, and extracts
 work IDs from the capability builder's syntax tree without executing it. Every work
 ID must occur once in the provenance table and resolve to a drawn node; economics
-remains one node with a field dimension. Provenance source files must exist. These
-checks establish coverage and traceability, not the validity of underlying figures.
+remains one node with a field dimension. Each provenance locator must resolve to the
+matching work ID in its AST source span,
+and each basis must equal that entry's `std` text. Table 4 symbols must resolve to
+builder functions. These checks establish coverage and traceability, not the
+validity of underlying figures.
 
 The module-level `DOMAINS` registry, literal selection tables and direct-copy
 source paths are parsed from the builder's
 syntax tree. Conditional gates and glob selection are mirrored in one function;
-each branch cites its source function and lines. The selection table and counts
-above are emitted by `--summary`. The publication agreement test executes the real
+each branch cites its source function and lines. The selection globs, gates and counts
+above are emitted by `--summary`; Table 4 retains function symbols instead of the
+emitted numeric spans to avoid line-shift drift. The publication agreement test executes the real
 builder with its output directories redirected to pytest's temporary directory,
 records copy inputs, and requires every selected report HTML file to be current or
 explicitly unverified.
