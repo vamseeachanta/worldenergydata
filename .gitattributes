@@ -30,3 +30,6 @@
 data/modules/bsee/directional_survey_validation/** -text
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_api12.py text eol=lf
 packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_survey_validation.py text eol=lf
+
+# Keep generated comparison bytes stable across checkout platforms.
+reports/lower_tertiary/v30_vs_v50_comparison.md text eol=lf
