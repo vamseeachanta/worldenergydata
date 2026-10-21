@@ -9,6 +9,7 @@ thresholds.
 """
 
 from dataclasses import dataclass
+from math import isfinite
 
 import pandas as pd
 
@@ -33,13 +34,14 @@ class LateLifeAssessment:
 
     field_name: str
     region: str
-    peak_production_bopd: float
-    current_production_bopd: float
-    decline_pct_5yr: float  # % decline over last 5 years
-    months_idle: int  # consecutive months of near-zero production
+    peak_production_bopd: float | None
+    current_production_bopd: float | None
+    decline_pct_5yr: float | None  # % decline over last 5 years
+    months_idle: int | None  # None if the final observation is unknown
     late_life_flag: bool
     trigger: str  # "decline_>80pct" | "idle_>12mo" | "both" | "none"
-    estimated_cessation_year: int  # 0 if not applicable
+    estimated_cessation_year: int | None  # None if unknown; 0 if not applicable
+    production_data_status: str = "available"  # or "unknown_final_month"
 
 
 # ---------------------------------------------------------------------------
@@ -47,7 +49,7 @@ class LateLifeAssessment:
 # ---------------------------------------------------------------------------
 
 
-def _compute_decline_pct(prod_df: pd.DataFrame, lookback_years: int) -> float:
+def _compute_decline_pct(prod_df: pd.DataFrame, lookback_years: int) -> float | None:
     """Compute percentage decline over *lookback_years* years.
 
     Args:
@@ -77,6 +79,13 @@ def _compute_decline_pct(prod_df: pd.DataFrame, lookback_years: int) -> float:
     past_avg = past_rows["oil_bbl"].mean() / 30.0  # convert monthly bbl → bopd
     recent_avg = recent_rows["oil_bbl"].mean() / 30.0
 
+    if (
+        pd.isna(past_avg)
+        or pd.isna(recent_avg)
+        or not isfinite(past_avg)
+        or not isfinite(recent_avg)
+    ):
+        return None
     if past_avg <= 0:
         return 0.0
 
@@ -84,7 +93,7 @@ def _compute_decline_pct(prod_df: pd.DataFrame, lookback_years: int) -> float:
     return max(0.0, decline_pct)
 
 
-def _compute_consecutive_idle_months(prod_df: pd.DataFrame) -> int:
+def _compute_consecutive_idle_months(prod_df: pd.DataFrame) -> int | None:
     """Count consecutive months at the tail of the production history
     where production is below the near-zero threshold.
 
@@ -92,7 +101,9 @@ def _compute_consecutive_idle_months(prod_df: pd.DataFrame) -> int:
         prod_df: DataFrame with columns year, month, oil_bbl.
 
     Returns:
-        Number of consecutive idle months at the end of the series.
+        Number of consecutive idle rows at the end of the series, or None
+        if the final production observation is missing or non-finite. Calendar
+        gaps and duplicate dates are not resolved by this row-based screen.
     """
     if prod_df.empty:
         return 0
@@ -100,8 +111,14 @@ def _compute_consecutive_idle_months(prod_df: pd.DataFrame) -> int:
     df = prod_df.sort_values(["year", "month"]).copy()
     monthly_bopd = df["oil_bbl"] / 30.0
 
+    final_value = monthly_bopd.iloc[-1]
+    if pd.isna(final_value) or not isfinite(float(final_value)):
+        return None
+
     idle_count = 0
     for val in reversed(monthly_bopd.tolist()):
+        if pd.isna(val) or not isfinite(float(val)):
+            break
         if val <= _NEAR_ZERO_BOPD:
             idle_count += 1
         else:
@@ -111,9 +128,9 @@ def _compute_consecutive_idle_months(prod_df: pd.DataFrame) -> int:
 
 def _estimate_cessation_year(
     prod_df: pd.DataFrame,
-    current_bopd: float,
-    decline_pct_5yr: float,
-) -> int:
+    current_bopd: float | None,
+    decline_pct_5yr: float | None,
+) -> int | None:
     """Rough extrapolation of when production might cease.
 
     Uses the 5-year decline rate to project forward.  Returns 0 if
@@ -125,8 +142,16 @@ def _estimate_cessation_year(
         decline_pct_5yr: Percentage decline over 5 years.
 
     Returns:
-        Estimated cessation year (calendar year), or 0 if not applicable.
+        Estimated cessation year (calendar year), 0 if not applicable, or
+        None when a missing/non-finite rate prevents evaluation.
     """
+    if (
+        current_bopd is None
+        or not isfinite(current_bopd)
+        or decline_pct_5yr is None
+        or not isfinite(decline_pct_5yr)
+    ):
+        return None
     if current_bopd <= _NEAR_ZERO_BOPD:
         return 0
     if decline_pct_5yr <= 0:
@@ -179,6 +204,9 @@ class LateLifeIdentifier:
 
         Returns:
             LateLifeAssessment populated with computed metrics and flags.
+            Missing/non-finite final oil_bbl gives None for current rate,
+            months_idle and cessation year, with unknown_final_month status.
+            An independently observed decline may still flag the field.
         """
         if production_df.empty:
             return LateLifeAssessment(
@@ -196,14 +224,22 @@ class LateLifeIdentifier:
         df = production_df.sort_values(["year", "month"]).copy()
         monthly_bopd = df["oil_bbl"] / 30.0
 
-        peak_bopd = float(monthly_bopd.max())
-        current_bopd = float(monthly_bopd.iloc[-1])
+        peak_value = monthly_bopd.max()
+        peak_bopd = None if pd.isna(peak_value) else float(peak_value)
+        final_value = monthly_bopd.iloc[-1]
+        current_bopd = None if pd.isna(final_value) else float(final_value)
+        if current_bopd is not None and not isfinite(current_bopd):
+            current_bopd = None
 
-        decline_pct = _compute_decline_pct(df, _CESSATION_LOOKBACK_YEARS)
+        decline_pct = (
+            _compute_decline_pct(df, _CESSATION_LOOKBACK_YEARS)
+            if monthly_bopd.notna().any()
+            else None
+        )
         idle_months = _compute_consecutive_idle_months(df)
 
-        high_decline = decline_pct >= _DECLINE_THRESHOLD_PCT
-        long_idle = idle_months >= _IDLE_THRESHOLD_MONTHS
+        high_decline = decline_pct is not None and decline_pct >= _DECLINE_THRESHOLD_PCT
+        long_idle = idle_months is not None and idle_months >= _IDLE_THRESHOLD_MONTHS
 
         if high_decline and long_idle:
             trigger = "both"
@@ -223,13 +259,22 @@ class LateLifeIdentifier:
         return LateLifeAssessment(
             field_name=field_name,
             region=region,
-            peak_production_bopd=round(peak_bopd, 2),
-            current_production_bopd=round(current_bopd, 2),
-            decline_pct_5yr=round(decline_pct, 2),
+            peak_production_bopd=(
+                round(peak_bopd, 2) if peak_bopd is not None else None
+            ),
+            current_production_bopd=(
+                round(current_bopd, 2) if current_bopd is not None else None
+            ),
+            decline_pct_5yr=(
+                round(decline_pct, 2) if decline_pct is not None else None
+            ),
             months_idle=idle_months,
             late_life_flag=late_life_flag,
             trigger=trigger,
             estimated_cessation_year=cessation_year,
+            production_data_status=(
+                "available" if current_bopd is not None else "unknown_final_month"
+            ),
         )
 
     def screen_portfolio(

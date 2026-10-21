@@ -243,3 +243,92 @@ def test_late_life_fields_excludes_stable(identifier):
 
 def test_late_life_fields_empty_input(identifier):
     assert identifier.late_life_fields([]) == []
+
+
+@pytest.mark.parametrize("missing", [float("nan"), None, pd.NA])
+@pytest.mark.parametrize("history", ["idle", "declining"])
+def test_missing_final_month_is_unknown(identifier, missing, history):
+    """Issue #1281: missing production cannot determine current idle or cessation.
+
+    Idle example: two observed zero-volume months then an unknown month.
+    Neither 0 nor 3 idle months can be established at the tail. Decline example:
+    the existing synthetic declining history followed by an unknown last value.
+    A latest-year cessation estimate is unsupported in both cases.
+    """
+    if history == "idle":
+        frame = pd.DataFrame(
+            {
+                "year": [2025, 2025, 2025],
+                "month": [1, 2, 3],
+                "oil_bbl": [0.0, 0.0, missing],
+            }
+        )
+    else:
+        frame = _declining_field()
+        frame["oil_bbl"] = frame["oil_bbl"].astype(object)
+        frame.loc[frame.index[-1], "oil_bbl"] = missing
+    result = identifier.assess_field("Synthetic", frame.iloc[::-1])
+    assert result.current_production_bopd is None
+    assert result.months_idle is None
+    assert result.estimated_cessation_year is None
+    assert result.production_data_status == "unknown_final_month"
+    assert result.trigger not in {"idle_>12mo", "both"}
+    if history == "declining":
+        assert result.late_life_flag  # Independent observed decline is retained.
+
+
+@pytest.mark.parametrize("nonfinite", [float("inf"), float("-inf")])
+def test_nonfinite_final_month_cannot_project(identifier, nonfinite):
+    """Non-finite production is not a measured current rate (issue #1281)."""
+    frame = _declining_field()
+    frame.loc[frame.index[-1], "oil_bbl"] = nonfinite
+    result = identifier.assess_field("Synthetic", frame)
+    assert result.current_production_bopd is None
+    assert result.months_idle is None
+    assert result.estimated_cessation_year is None
+
+
+def test_observed_zero_final_month_remains_known(identifier):
+    """Hand calculation: two observed zero-volume months give 2 idle rows.
+
+    Existing policy reports 0 (not applicable) cessation for observed zero;
+    this must remain distinguishable from None (unknown) for missing data.
+    """
+    frame = pd.DataFrame({"year": [2025, 2025], "month": [1, 2], "oil_bbl": [0.0, 0.0]})
+    result = identifier.assess_field("Synthetic", frame)
+    assert result.current_production_bopd == 0.0
+    assert result.months_idle == 2
+    assert result.estimated_cessation_year == 0
+    assert result.production_data_status == "available"
+
+
+def test_portfolio_retains_unknown_final_month(identifier):
+    """Each missing endpoint must remain unknown through portfolio screening."""
+    frame = pd.DataFrame({"year": [2025], "month": [1], "oil_bbl": [float("nan")]})
+    (result,) = identifier.screen_portfolio({"Synthetic": frame})
+    assert result.current_production_bopd is None
+    assert result.months_idle is None
+    assert result.estimated_cessation_year is None
+
+
+@pytest.mark.parametrize("dtype", ["object", "Float64"])
+def test_all_missing_production_is_unknown(identifier, dtype):
+    """No measured volumes establish no peak, idle duration or cessation.
+
+    pandas 2.2.3 (2024), pandas.isna examples: None/NaN/NA are missing scalars.
+    No zero production or numerical decline can be inferred from two NA rows.
+    """
+    frame = pd.DataFrame(
+        {
+            "year": [2025, 2025],
+            "month": [1, 2],
+            "oil_bbl": pd.Series([pd.NA, pd.NA], dtype=dtype),
+        }
+    )
+    result = identifier.assess_field("Synthetic", frame)
+    assert result.peak_production_bopd is None
+    assert result.current_production_bopd is None
+    assert result.decline_pct_5yr is None
+    assert result.months_idle is None
+    assert result.estimated_cessation_year is None
+    assert not result.late_life_flag

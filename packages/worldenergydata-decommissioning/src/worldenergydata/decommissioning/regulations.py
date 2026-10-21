@@ -50,10 +50,16 @@ def get_regulations(region: str) -> list[DecommissioningRegulation]:
 
     Returns:
         List of DecommissioningRegulation records for that region.
-        Returns empty list if region is not recognised.
+
+    Raises:
+        ValueError: The region is absent from the stored database. Absence
+            does not establish that no regulatory obligations apply.
     """
     region = region.lower()
-    return [r for r in DECOMMISSIONING_REGULATIONS if r.region == region]
+    records = [r for r in DECOMMISSIONING_REGULATIONS if r.region == region]
+    if not records:
+        raise ValueError(f"Unknown regulatory region: {region!r}")
+    return records
 
 
 def get_lead_time(region: str, requirement_type: str) -> int:
@@ -64,14 +70,20 @@ def get_lead_time(region: str, requirement_type: str) -> int:
         requirement_type: Type of requirement (e.g. 'well_plugging'). Case-insensitive.
 
     Returns:
-        Lead time in months for the first matching record, or 0 if none found.
+        Lead time in months for the first matching stored record.
+
+    Raises:
+        ValueError: The region or its requirement key is absent. Requirement
+            names are region-specific; no cross-region aliases are inferred.
     """
     region = region.lower()
     requirement_type = requirement_type.lower()
-    for reg in DECOMMISSIONING_REGULATIONS:
-        if reg.region == region and reg.requirement_type == requirement_type:
+    for reg in get_regulations(region):
+        if reg.requirement_type == requirement_type:
             return reg.lead_time_months
-    return 0
+    raise ValueError(
+        f"Unknown requirement {requirement_type!r} for regulatory region {region!r}"
+    )
 
 
 def regulatory_summary() -> pd.DataFrame:

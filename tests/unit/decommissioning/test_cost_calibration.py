@@ -231,3 +231,83 @@ class TestFromCalibration:
         estimator = DecommissioningCostEstimator.from_calibration(fitted_calibrator)
         result = estimator.estimate("subsea_tree", 500, 25, "gom")
         assert result.estimated_cost_musd > 0
+
+
+@pytest.mark.parametrize(
+    "unsupported", ["spar", "tlp", "Jacket", " jacket", None, pd.NA]
+)
+def test_calibration_accounts_only_for_supported_rows(unsupported):
+    """Hand calculation: 3 input rows = 2 accepted jackets + 1 skipped row.
+
+    Accepted years 2020 and 2022 span 2022 - 2020 = 2 years. The unsupported
+    row in 1900 must not extend that span. Costs and dimensions are synthetic
+    inputs; no fitted engineering coefficient is asserted. Issue #1281 requires
+    only rows assigned to an asset assessment to count, including fallback fits.
+    Duplicate index labels ensure reporting uses unambiguous input positions.
+    """
+    frame = pd.DataFrame(
+        {
+            "asset_type": ["jacket", unsupported, "jacket"],
+            "water_depth_m": [100, 100, 100],
+            "weight_tonnes": [500, 500, 500],
+            "cost_musd": [5, 5, 5],
+            "year": [2020, 1900, 2022],
+        },
+        index=[7, 7, 7],
+    )
+    original = frame.copy(deep=True)
+    result = CostModelCalibration().fit(frame).calibration_result()
+    assert result.input_records == 3
+    assert result.total_records == 2
+    assert sum(f.n_records for f in result.fits) == 2
+    assert result.years_covered == 2.0
+    assert result.skipped_records == 1
+    skipped = result.skipped_rows[0]
+    assert skipped.row_position == 1  # Zero-based position of the middle row.
+    assert skipped.asset_type == (None if pd.isna(unsupported) else unsupported)
+    assert skipped.reason == "unsupported_asset_type"
+    pd.testing.assert_frame_equal(frame, original)
+
+
+def test_all_unsupported_rows_have_no_used_year_span():
+    """Hand calculation: one unsupported row gives 0 used + 1 skipped = 1 input.
+
+    With no accepted years there is no measured span: report 0 years.
+    """
+    frame = pd.DataFrame(
+        {
+            "asset_type": ["spar"],
+            "water_depth_m": [100],
+            "weight_tonnes": [500],
+            "cost_musd": [5],
+            "year": [2020],
+        }
+    )
+    result = CostModelCalibration().fit(frame).calibration_result()
+    assert result.total_records == 0
+    assert result.input_records == result.skipped_records == 1
+    assert result.years_covered == 0.0
+    assert not any(f.data_driven for f in result.fits)
+
+
+def test_empty_calibration_has_empty_accounting():
+    """Hand calculation: no input means 0 accepted and 0 skipped rows."""
+    result = CostModelCalibration().fit(pd.DataFrame()).calibration_result()
+    assert result.input_records == result.total_records == result.skipped_records == 0
+    assert result.skipped_rows == []
+
+
+def test_refit_replaces_skipped_row_accounting():
+    """A second empty input has no exclusions from the previous input."""
+    frame = pd.DataFrame(
+        {
+            "asset_type": ["spar"],
+            "water_depth_m": [100],
+            "weight_tonnes": [500],
+            "cost_musd": [5],
+            "year": [2020],
+        }
+    )
+    cal = CostModelCalibration().fit(frame).fit(pd.DataFrame())
+    assert cal.calibration_result().skipped_rows == []
+    assert cal.calibration_result().input_records == 0
