@@ -61,6 +61,35 @@ def test_numpy_exposure_uses_builtin_float(exposure_type):
 
 
 @pytest.mark.parametrize(
+    "cases",
+    [np.int8(7), np.int64(7), np.uint64(7), np.array([4, 3]).sum()],
+    ids=["int8", "int64", "uint64", "aggregate"],
+)
+def test_numpy_integral_counts(cases):
+    """Synthetic: 7 * 200,000 / 400,000 = 3.5 for integral scalars."""
+    rate = incidence_rate(cases, 400_000)
+
+    assert rate == 3.5
+    assert type(rate) is float
+
+
+@pytest.mark.parametrize("count_type", [np.int64, np.uint64])
+def test_numpy_count_arithmetic_does_not_overflow(count_type):
+    """Synthetic: maximum count * 200,000 / 200,000 equals that count.
+
+    Scaling the fixed-width scalar directly would overflow before division.
+    """
+    cases = count_type(np.iinfo(count_type).max)
+
+    assert incidence_rate(cases, 200_000) == float(int(cases))
+
+
+def test_numpy_zero_count():
+    """Synthetic: 0 * 200,000 / 400,000 = 0.0."""
+    assert incidence_rate(np.int64(0), 400_000) == 0.0
+
+
+@pytest.mark.parametrize(
     "cases, expected",
     [(10**308, 2e5), (10**400, 2e97)],
     ids=["large-numerator", "count-beyond-float"],
@@ -86,7 +115,10 @@ def test_unrepresentable_rate_raises_value_error(cases, hours):
         incidence_rate(cases, hours)
 
 
-@pytest.mark.parametrize("cases", [-1, 1.5, True, False, "7", None])
+@pytest.mark.parametrize(
+    "cases",
+    [-1, 1.5, True, False, "7", None, np.int64(-1), np.bool_(True), np.bool_(False)],
+)
 def test_invalid_case_count(cases):
     """Counts must be nonnegative integers; these are API validation cases."""
     with pytest.raises(ValueError, match="incident_count"):
