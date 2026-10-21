@@ -1,6 +1,7 @@
 """Report classification, reproducibility and publication agreement."""
 
 import importlib.util
+import os
 import subprocess
 from pathlib import Path, PureWindowsPath
 
@@ -174,6 +175,37 @@ class WindowsOrderedPath(type(Path())):
         return PureWindowsPath(self.as_posix()) < PureWindowsPath(other.as_posix())
 
 
+class WindowsHtmlPath(type(Path())):
+    """Emulate case-insensitive HTML glob matches over the native test tree."""
+
+    def glob(self, pattern):
+        candidates = super().glob(pattern[:-5] + ".*")
+        return (path for path in candidates if path.suffix.lower() == ".html")
+
+    def rglob(self, pattern):
+        candidates = super().rglob(pattern[:-5] + ".*")
+        return (path for path in candidates if path.suffix.lower() == ".html")
+
+
+@pytest.mark.parametrize("path_type", [Path, WindowsHtmlPath])
+def test_inventory_requires_lowercase_html_suffix(tmp_path, path_type):
+    module = inventory_module()
+    paths = [
+        "reports/completion/index.html",
+        "reports/completion/uppercase.HTML",
+        "reports/completion/mixed.Html",
+        "reports/ordinary.html",
+        "reports/unselected.HTML",
+    ]
+    originals = {path: put(tmp_path, path).read_bytes() for path in paths}
+    rows = module.classify_tree(path_type(tmp_path), BUILDER)
+    assert {row["path"]: row["classification"] for row in rows} == {
+        "reports/completion/index.html": "current",
+        "reports/ordinary.html": "undetermined",
+    }
+    assert {path: (tmp_path / path).read_bytes() for path in paths} == originals
+
+
 @pytest.mark.parametrize("path_type", [Path, WindowsOrderedPath])
 @pytest.mark.parametrize("newline", ["\n", "\r\n"], ids=["lf", "crlf"])
 def test_portable_inventory_bytes(tmp_path, path_type, newline):
@@ -215,15 +247,26 @@ def test_portable_inventory_bytes(tmp_path, path_type, newline):
 
 
 @pytest.mark.parametrize("autocrlf", ["false", "true"])
-def test_inventory_checkout_is_lf(autocrlf):
+@pytest.mark.parametrize("inherited_git", [False, True])
+def test_inventory_checkout_is_lf(autocrlf, inherited_git, tmp_path, monkeypatch):
     """Issue #1355: checkout conversion must retain the exact committed LF blob.
 
     cat-file --filters applies checkout conversion without changing the tree
     or index. Its expected bytes are the committed blob, independently read
     without filters. Both autocrlf settings must produce that same LF payload.
     """
+    if inherited_git:
+        for key in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"):
+            monkeypatch.setenv(key, str(tmp_path / key))
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE"}
+    }
     path = "docs/modules/report-inventory.csv"
-    blob = subprocess.check_output(["git", "show", f"HEAD:{path}"], cwd=ROOT)
+    blob = subprocess.check_output(
+        ["git", "show", f"HEAD:{path}"], cwd=ROOT, env=environment
+    )
     checkout = subprocess.check_output(
         [
             "git",
@@ -234,6 +277,7 @@ def test_inventory_checkout_is_lf(autocrlf):
             f"HEAD:{path}",
         ],
         cwd=ROOT,
+        env=environment,
     )
     assert b"\r" not in checkout
     assert checkout == blob
@@ -252,7 +296,13 @@ def test_check_preserves_byte_equality(tmp_path, monkeypatch, change):
     put(tmp_path, "reports/z.html")
     monkeypatch.setattr(module, "ROOT", tmp_path)
     monkeypatch.setattr(module, "BUILDER", BUILDER)
-    canonical = module.inventory_bytes(tmp_path, BUILDER)
+    canonical = (
+        b"path,classification,evidence\n"
+        b"reports/a.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+        b"reports/z.html,undetermined,"
+        b"no decisive publication or replacement evidence under these rules\n"
+    )
     if change == "crlf":
         changed = canonical.replace(b"\n", b"\r\n")
     elif change == "content":

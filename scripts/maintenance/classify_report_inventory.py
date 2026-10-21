@@ -231,11 +231,11 @@ def classify_tree(root, builder=BUILDER):
     for pattern, gates, evidence in selection_rows(root, builder):
         if all((root / gate).exists() for gate in gates):
             for path in sorted(root.glob(pattern), key=inventory_key):
-                if path.is_file():
+                if path.is_file() and path.suffix == ".html":
                     selected.setdefault(path.relative_to(root).as_posix(), evidence)
     rows = []
     for path in sorted((root / "reports").rglob("*.html"), key=inventory_key):
-        if not path.is_file():
+        if not path.is_file() or path.suffix != ".html":
             continue
         relative = path.relative_to(root).as_posix()
         replacement = replacement_evidence(path, root)
