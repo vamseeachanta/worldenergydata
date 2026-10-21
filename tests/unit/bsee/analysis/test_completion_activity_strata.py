@@ -1,11 +1,17 @@
 """Independent counting examples for the area and operator-class extension."""
 
+import csv
 import importlib
 import json
+import shutil
+import subprocess
+import sys
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import pandas as pd
 import pytest
+from bs4 import BeautifulSoup
 
 FIXTURES = Path("tests/fixtures/bsee/completion_intervention")
 MODULE = "worldenergydata.bsee.analysis.completion_intervention"
@@ -225,6 +231,8 @@ def test_report_and_products_include_strata(tmp_path):
     assert "Area and operator-class record counts" in page
     assert "Synthetic classification supplied for the hand example." in page
     assert "Distinct well counts are not additive across cells" in page
+    section = BeautifulSoup(page, "html.parser").find(id="activity-strata")
+    assert len(section.select('svg[aria-label$="supplied operator class."]')) == 3
     report.write_products(result, revision, tmp_path)
     compact = json.loads((tmp_path / "results.json").read_text())
     assert compact["activity_strata"] == result["activity_strata"]
@@ -261,3 +269,159 @@ def test_operator_labels_and_sources_are_escaped():
     page = report.render_report(result, revision)
     assert "<img " not in page and "<script>" not in page
     assert "&lt;img" in page and "&lt;script&gt;" in page
+
+
+def fixture_area_tallies():
+    """Count CSV records directly; API sets resolve completion areas only."""
+    raw = {}
+    for path in FIXTURES.glob("*.csv"):
+        with path.open(newline="", encoding="utf-8") as stream:
+            raw[path.stem] = list(csv.DictReader(stream))
+    areas = defaultdict(set)
+    for row in raw["mv_boreholes_all"]:
+        api = row["API_WELL_NUMBER"].strip().removesuffix(".0")
+        area = row["BOTM_AREA_CODE"].strip()
+        if len(api) == 12 and api.isdigit() and area:
+            areas[api].add(area)
+    counts = {}
+    for source, member in [
+        ("war", "mv_war_main"),
+        ("eor", "mv_eor_mainquery"),
+        ("completion", "mv_api_wellcomps_all"),
+    ]:
+        tally = Counter()
+        for row in raw[member]:
+            if source == "completion":
+                api = row["API_WELL_NUMBER"].strip().removesuffix(".0")
+                choices = areas[api]
+                area = next(iter(choices)) if len(choices) == 1 else "unknown"
+            else:
+                area = row["BOTM_AREA_CODE"].strip() or "unknown"
+            tally[area] += 1
+        counts[source] = tally
+    return counts
+
+
+@pytest.mark.parametrize("source", ["war", "eor", "completion"])
+def test_analysis_example_and_note_match_independent_csv_tally(source):
+    """A dropped or misassigned area row must fail every published comparison."""
+    expected = fixture_area_tallies()[source]
+    rows = analyse(tables())["activity_strata"][source]
+    actual = Counter()
+    for row in rows:
+        actual[row["area"]] += row["records"]
+    assert actual == expected
+    directory = Path("docs/modules/bsee/analysis/completion_intervention")
+    page = BeautifulSoup(
+        (directory / "area_operator_example.html").read_text(), "html.parser"
+    )
+    section = page.find(id="activity-strata")
+    heading = section.find("h3", string=source.upper())
+    labels = [text.get_text() for text in heading.find_next("svg").find_all("text")]
+    assert dict(zip(labels[::2], map(int, labels[1::2]))) == expected
+    delivered = Counter()
+    for row in heading.find_next("table").select("tbody tr"):
+        cells = [cell.get_text() for cell in row.find_all("td")]
+        delivered[cells[1]] += int(cells[4])
+    assert delivered == expected
+    note = (directory / "area_operator_note.md").read_text()
+    line = next(
+        line for line in note.splitlines() if line.lower().startswith(f"| {source} |")
+    )
+    assert [int(value.strip()) for value in line.split("|")[2:5]] == [
+        sum(expected.values()),
+        expected["unknown"],
+        sum(expected.values()),
+    ]
+
+
+@pytest.mark.parametrize("empty_mapping", [False, True])
+def test_unevaluated_classification_has_no_operator_chart(empty_mapping):
+    """Missing evidence must not present an unknown bar as an evaluated class."""
+    mapping = classification().iloc[:0] if empty_mapping else None
+    result = analyse(example(), operator_classes=mapping)
+    basis = result["operator_classification"]["basis"].lower()
+    assert "no operator-class mapping supplied" in basis
+    assert "caller-supplied" not in basis
+    page = report.render_report(
+        result,
+        {"revision": "1", "history": [{"revision": "1", "date": "2026-10-19"}]},
+    )
+    section = BeautifulSoup(page, "html.parser").find(id="activity-strata")
+    assert not section.select('svg[aria-label$="supplied operator class."]')
+    assert section.select('svg[aria-label$="bottom area code."]')
+    assert section.find("table") is not None
+
+
+def test_catalogue_distinguishes_archive_and_member_digests():
+    """An archive digest must be labelled separately from its member digest."""
+    result = analyse(example())
+    result["catalogue"] = [
+        {
+            "member": "synthetic.csv",
+            "url": "https://www.data.bsee.gov/",
+            "archive_sha256": "a" * 64,
+            "member_sha256": "b" * 64,
+        }
+    ]
+    page = report.render_report(
+        result,
+        {"revision": "1", "history": [{"revision": "1", "date": "2026-10-19"}]},
+    )
+    details = BeautifulSoup(page, "html.parser").find(id="catalogue").details
+    assert "Archive SHA-256: " + "a" * 64 in details.get_text()
+    assert "Member SHA-256: " + "b" * 64 in details.get_text()
+
+
+def test_fixture_builder_reproduces_example_and_catalogue(tmp_path):
+    """The committed command must reproduce every byte and identify its inputs."""
+    command = [sys.executable, "scripts/reporting/build_completion_activity_example.py"]
+    output = tmp_path / "example.html"
+    for _ in range(2):
+        run = subprocess.run(
+            [*command, "--output", str(output)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert run.returncode == 0, run.stderr
+        delivered = Path(
+            "docs/modules/bsee/analysis/completion_intervention/area_operator_example.html"
+        )
+        assert output.read_bytes() == delivered.read_bytes()
+    page = BeautifulSoup(output.read_text(), "html.parser")
+    assert "fixture example" in page.title.get_text().lower()
+    assert "fixture example" in page.h1.get_text().lower()
+    manifest = json.loads((FIXTURES / "manifest.json").read_text())
+    details = page.find(id="catalogue").find_all("details")
+    assert len(details) == len(manifest["files"])
+    for detail in details:
+        item = manifest["files"][detail.summary.get_text()]
+        assert "Archive SHA-256: " + item["archive_sha256"] in detail.get_text()
+        assert "Member SHA-256: not established" in detail.get_text()
+        assert item["sha256"] in detail.find_previous("table").get_text()
+
+
+def test_fixture_builder_rejects_changed_projection(tmp_path):
+    """A tampered fixture must fail before creating an example."""
+    fixtures = tmp_path / "fixtures"
+    shutil.copytree(FIXTURES, fixtures)
+    projection = fixtures / "mv_war_main.csv"
+    projection.write_bytes(projection.read_bytes() + b"\n")
+    output = tmp_path / "example.html"
+    run = subprocess.run(
+        [
+            sys.executable,
+            "scripts/reporting/build_completion_activity_example.py",
+            "--fixtures",
+            str(fixtures),
+            "--output",
+            str(output),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert run.returncode != 0
+    assert "fixture digest mismatch" in run.stderr
+    assert not output.exists()

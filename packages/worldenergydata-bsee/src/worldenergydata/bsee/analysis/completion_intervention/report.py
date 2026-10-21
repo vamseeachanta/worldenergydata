@@ -133,7 +133,13 @@ def _catalogue(result):
         "Catalogue of the exact source files used, unavailable downloads and held samples examined.",
     )
     details = "".join(
-        f'<details><summary>{_text(r["member"])}</summary><p>Source: <a href="{_text(r["url"])}">{_text(r["url"])}</a></p><p>{_text(r.get("reason", ""))}</p><p>Fields: {_text(", ".join(r.get("fields", [])))}</p><p>Member SHA-256: {_text(r.get("member_sha256"))}</p></details>'
+        f'<details><summary>{_text(r["member"])}</summary><p>Source: <a href="{_text(r["url"])}">{_text(r["url"])}</a></p><p>{_text(r.get("reason", ""))}</p><p>Fields: {_text(", ".join(r.get("fields", [])))}</p><p>Member SHA-256: {_text(r.get("member_sha256"))}</p>'
+        + (
+            f'<p>Archive SHA-256: {_text(r["archive_sha256"])}</p>'
+            if "archive_sha256" in r
+            else ""
+        )
+        + "</details>"
         for r in rows
     )
     return (
@@ -295,11 +301,12 @@ def _activity_strata(result):
     for source, rows in sorted(result["activity_strata"].items()):
         body += f"<h3>{_text(source.upper())}</h3>"
         body += _chart(rows, "area", f"{source.upper()} records by bottom area code.")
-        body += _chart(
-            rows,
-            "operator_class",
-            f"{source.upper()} records by supplied operator class.",
-        )
+        if classification["status"] == "SUPPLIED":
+            body += _chart(
+                rows,
+                "operator_class",
+                f"{source.upper()} records by supplied operator class.",
+            )
         body += _table(
             rows,
             [
@@ -315,10 +322,15 @@ def _activity_strata(result):
     return body + "</section>"
 
 
-def render_report(result, revision):
+def render_report(
+    result,
+    revision,
+    *,
+    title="Completion and intervention activity characterisation",
+):
     _validate_revision(revision)
     style = "body{font:16px system-ui,sans-serif;max-width:1200px;margin:auto;padding:2rem;color:#243746;background:#fff}h1,h2{color:#243746}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #ccd4dc;padding:6px;text-align:left;overflow-wrap:anywhere}th{background:#eef4f5}.table-wrap{overflow:auto}.caption,figcaption{font-size:13px;color:#475569}svg{width:100%;max-width:780px}svg rect{fill:#167d8d}svg text{font-size:13px}details{margin:1rem 0}"
-    title = "Completion and intervention activity characterisation"
+    title = _text(title)
     start = f'<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>{title}</title><style>{style}</style></head><body data-revision="{_text(revision["revision"])}"><h1>{title}</h1><p>Revision {_text(revision["revision"])}. Public BSEE snapshots; descriptive record counts.</p>'
     method = (
         '<section id="method"><h2>Method and parameters</h2>'

@@ -197,7 +197,11 @@ def _operator_classes(frame):
     return grouped.first().to_dict(), {
         "status": "SUPPLIED" if len(classes) else "NOT_EVALUATED",
         "sources": sorted(classes["SOURCE"].unique().tolist()),
-        "basis": "Caller-supplied API12 snapshot classes; historical attribution is not established.",
+        "basis": (
+            "Caller-supplied API12 snapshot classes; historical attribution is not established."
+            if len(classes)
+            else "No operator-class mapping supplied; classification is not evaluated."
+        ),
     }
 
 

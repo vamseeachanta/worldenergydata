@@ -11,6 +11,7 @@ coverage reporting; it does not describe the complete offshore population.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-19 | Added area distributions and explicit operator-class coverage to expose missing classifications. |
+| 2 | 2026-10-21 | Corrected classification requirements and digest labels, added reproducible fixture generation and independent CSV counts, and omitted unevaluated operator charts. |
 
 ## Method and sources
 
@@ -51,27 +52,43 @@ They are example data counts, not acceptance thresholds. All area fields
 are populated in this subset; that observation establishes no completeness
 claim for the full archives.
 
+The fixture example is reproduced from the repository root with:
+
+```bash
+uv run python scripts/reporting/build_completion_activity_example.py
+```
+
+The command checks each CSV projection against its manifest digest and row
+count before writing the example. Catalogue rows are derived from that
+manifest: File SHA-256 identifies the CSV projection and Archive SHA-256
+identifies the source ZIP. Raw member digests and projection retrieval dates
+are not established. No archive is downloaded or changed by this command.
+
 ## Operator classes and use
 
 Call `analyse(tables, operator_classes=classes)` with a DataFrame containing
-`API_WELL_NUMBER`, `OPERATOR_CLASS` and `SOURCE`. Each nonblank class requires
-a source reference and a valid API12. Conflicting classes for the same API12
+`API_WELL_NUMBER`, `OPERATOR_CLASS` and `SOURCE`. Every supplied row requires
+a nonblank class, a nonblank source reference and a valid API12. Conflicting classes for the same API12
 are rejected. Exact duplicates and repeated evidence for the same class do
 not multiply records. Inputs are not modified.
 
 No supported size-class mapping is supplied by these projections. Without
 one, classification is `NOT_EVALUATED`, sources are empty, and all operator
-classes are unknown. Caller-supplied classes describe an API12 snapshot;
+classes are unknown. Operator-class charts are omitted in that state; area
+charts and all record-count tables remain available. Caller-supplied classes describe an API12 snapshot;
 historical operators and corporate succession are not established. Sources
 are retained in results and shown in the report. A classification source
-must state its own definition and snapshot date; the analysis does not
-invent size thresholds or classify names.
+should state its own definition and snapshot date. Those descriptive
+metadata are not validated by the analysis, which does not invent size
+thresholds or classify names.
 
 ## Verification and limits
 
-The new tests enumerate synthetic records by hand, check reconciliation for
-each source, exercise missing and conflicting metadata, and check persisted
-results and the charted example. The existing characterisation tests cover
+The tests enumerate synthetic records by hand and independently tally fixture
+CSV records and completion-area API sets. Those counts check each source's
+analysis, delivered area chart and table, and the note's fixture totals.
+Tests also exercise missing and conflicting metadata, persisted results,
+digest labels and reproducible example generation. The existing characterisation tests cover
 report grains, revision history, digests and deterministic products.
 
 WAR rows remain reporting records; EOR years remain borehole-status years.
