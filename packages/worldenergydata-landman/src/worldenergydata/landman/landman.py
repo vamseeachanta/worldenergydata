@@ -158,7 +158,7 @@ class Landman:
                 cfg[cfg["basename"]]["error"] = str(e)
             raise LandmanError(
                 message=f"Landman router failed: {str(e)}",
-                code="LANDMAN_ROUTER_ERROR",
+                error_code="LANDMAN_ROUTER_ERROR",
                 cause=e,
             )
 
@@ -175,7 +175,7 @@ class Landman:
         if not cfg:
             raise LandmanValidationError(
                 message="Configuration cannot be empty",
-                code="LANDMAN_CONFIG_EMPTY",
+                error_code="LANDMAN_CONFIG_EMPTY",
             )
 
         # Validate module name if specified
@@ -192,16 +192,16 @@ class Landman:
             if invalid_types:
                 raise LandmanValidationError(
                     message=f"Invalid data types: {invalid_types}. Valid types: {self.VALID_DATA_TYPES}",  # noqa: E501
-                    code="LANDMAN_INVALID_DATA_TYPES",
-                    context={"invalid_types": invalid_types},
+                    error_code="LANDMAN_INVALID_DATA_TYPES",
+                    details={"invalid_types": invalid_types},
                 )
 
         # Validate provider if specified
         if "provider" in cfg and cfg["provider"] not in self.VALID_PROVIDERS:
             raise LandmanValidationError(
                 message=f"Invalid provider: {cfg['provider']}. Valid providers: {self.VALID_PROVIDERS}",  # noqa: E501
-                code="LANDMAN_INVALID_PROVIDER",
-                context={"provider": cfg["provider"]},
+                error_code="LANDMAN_INVALID_PROVIDER",
+                details={"provider": cfg["provider"]},
             )
 
         # Validate state if specified
@@ -229,7 +229,7 @@ class Landman:
                 if not is_valid:
                     raise LandmanValidationError(
                         message=f"Invalid owner name: {error}",
-                        code="LANDMAN_INVALID_OWNER_NAME",
+                        error_code="LANDMAN_INVALID_OWNER_NAME",
                     )
 
         logger.debug("Configuration validated successfully")
@@ -359,7 +359,7 @@ class Landman:
         if not is_valid:
             raise LandmanValidationError(
                 message=f"Invalid county: {error}",
-                code="LANDMAN_INVALID_COUNTY",
+                error_code="LANDMAN_INVALID_COUNTY",
             )
 
         if legal_description:

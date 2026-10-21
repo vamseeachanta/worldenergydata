@@ -160,7 +160,11 @@ def _well_match(
     ]
     if len(kid_matches) == 1:
         return kid_matches[0], ["kid_fallback_join"]
-    return None, ["ambiguous_api10_join", "ambiguous_identity_for_virgin_proxy"]
+    return None, [
+        "ambiguous_api10_join",
+        "ambiguous_identity_for_virgin_proxy",
+        "missing_depth",
+    ]
 
 
 def _mark_earliest(observations: pd.DataFrame) -> pd.DataFrame:

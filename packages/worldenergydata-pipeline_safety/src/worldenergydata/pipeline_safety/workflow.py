@@ -70,6 +70,28 @@ _DEFAULT_DEPTH_PCT = 30.0
 _SF_GAS = 1.39
 _CORROSION_GROWTH_RATE = 0.2  # mm/year
 
+_ASSESSMENT_NUMERIC_FIELDS = (
+    "depth_pct_wall",
+    "length_mm",
+    "pipe_od_mm",
+    "wall_thickness_mm",
+    "smys_mpa",
+    "maop_mpa",
+)
+
+
+def _finite_number(value: object, field: str) -> float:
+    """Reject explicit missing/non-finite data (issue 1295), without defaults."""
+    try:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(f"{field} must be a finite number") from exc
+    # Python 3 Library Reference, math.isfinite: excludes NaN and infinities.
+    # https://docs.python.org/3/library/math.html#math.isfinite
+    if not math.isfinite(number):
+        raise ValueError(f"{field} must be a finite number")
+    return number
+
 
 # --- FFS helpers -------------------------------------------------------------
 
@@ -154,7 +176,14 @@ class PipelineSafetyWorkflow:
     """
 
     def characterize(self, incident: dict) -> PipelineDefect:
-        """Convert PHMSA incident record to PipelineDefect with sensible defaults."""
+        """Convert an incident; reject explicit missing/non-finite numeric cells.
+
+        Omitted fields retain legacy defaults; their qualification is separate
+        from the explicit missing-cell correction in issue 1295.
+        """
+        for field in _ASSESSMENT_NUMERIC_FIELDS:
+            if field in incident:
+                _finite_number(incident[field], field)
         incident_id = _first_present_text(
             incident.get("incident_id"), incident.get("report_number")
         )
@@ -203,7 +232,16 @@ class PipelineSafetyWorkflow:
         Failure pressure (Modified B31G / Kiefner-Vieth):
           Pf = (2t/D) * SMYS * 0.9 * (1 - 0.85*d/t) / (1 - 0.85*d/t/M)
         """
-        sf = float(safety_factor) if safety_factor is not None else _SF_GAS
+        for field in _ASSESSMENT_NUMERIC_FIELDS:
+            _finite_number(getattr(defect, field), field)
+        sf = _finite_number(
+            safety_factor if safety_factor is not None else _SF_GAS,
+            "safety_factor",
+        )
+        # Positive divisor of the existing Pf/sf definition, not a sourced
+        # engineering acceptance limit or a qualification of the default factor.
+        if sf <= 0:
+            raise ValueError("safety_factor must be positive")
         if method == "b31g":
             pf = _failure_pressure_b31g(
                 defect.depth_pct_wall,
@@ -223,7 +261,8 @@ class PipelineSafetyWorkflow:
                 defect.smys_mpa,
             )
             notes = "Modified B31G (Kiefner-Vieth)"
-        safe_p = pf / sf
+        pf = _finite_number(pf, "failure_pressure_mpa")
+        safe_p = _finite_number(pf / sf, "safe_pressure_mpa")
         verdict = _determine_verdict(safe_p, defect.maop_mpa, defect.depth_pct_wall, pf)
         rem_life = (
             _remaining_life(defect.depth_pct_wall, defect.wall_thickness_mm)

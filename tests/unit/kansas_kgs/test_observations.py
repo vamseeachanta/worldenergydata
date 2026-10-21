@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
 
 def test_build_observations_converts_units_and_flags_earliest() -> None:
@@ -124,6 +125,13 @@ def test_missing_year_positive_pressure_is_flagged_not_fatal() -> None:
 
 
 def test_observation_quality_counts_join_and_depth_flags() -> None:
+    """Hand count for issue #1352, defect 1 (2026):
+
+    The two pressure years for the zero-depth well each lack usable depth.
+    The third pressure row has two API candidates and no matching KID, so
+    neither candidate supplies depth. Missing-depth count = 2 + 1 = 3;
+    ambiguous-API and ambiguous-identity counts each equal 1.
+    """
     from worldenergydata.kansas_kgs.observations import build_pressure_observations
 
     wells = pd.DataFrame(
@@ -153,9 +161,44 @@ def test_observation_quality_counts_join_and_depth_flags() -> None:
 
     result = build_pressure_observations(_pressure_rows(include_stevens=True), wells)
 
-    assert result.quality["missing_depth_count"] == 2
+    assert result.quality["missing_depth_count"] == 3
     assert result.quality["ambiguous_api10_join_count"] == 1
     assert result.quality["ambiguous_identity_for_virgin_proxy_count"] == 1
+
+
+@pytest.mark.parametrize("join_case", ["missing", "ambiguous"])
+def test_unresolved_join_counts_each_missing_depth_once(join_case: str) -> None:
+    """Independent count for issue #1352, defect 1 (2026).
+
+    Both rows in _pressure_rows share an API and KID. An empty well table
+    gives no candidates; a duplicated well table gives two matching KIDs
+    and cannot select either well. In either case, both pressure rows lack
+    depth and gradient: missing-depth count = 1 + 1 = 2. Each row must carry
+    exactly one missing-depth flag, alongside the appropriate join flags.
+    """
+    from worldenergydata.kansas_kgs.observations import build_pressure_observations
+
+    wells = pd.DataFrame()
+    expected_flags = {"missing_well_join", "missing_depth"}
+    if join_case == "ambiguous":
+        wells = pd.concat([_well_rows(), _well_rows()])
+        expected_flags = {
+            "ambiguous_api10_join",
+            "ambiguous_identity_for_virgin_proxy",
+            "missing_depth",
+        }
+
+    result = build_pressure_observations(_pressure_rows(), wells)
+
+    # Expected counts follow the hand enumeration above, not the builder.
+    assert len(result.observations) == 2
+    assert result.quality["missing_depth_count"] == 2
+    assert result.observations["reference_depth_ft"].isna().all()
+    assert result.observations["gradient_psi_ft"].isna().all()
+    for flags in result.observations["quality_flags"]:
+        flag_list = flags.split("|")
+        assert set(flag_list) == expected_flags
+        assert flag_list.count("missing_depth") == 1
 
 
 def _pressure_rows(include_stevens: bool = False) -> pd.DataFrame:

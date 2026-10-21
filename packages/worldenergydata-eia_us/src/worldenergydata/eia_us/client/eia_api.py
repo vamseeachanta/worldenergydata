@@ -178,8 +178,18 @@ class EIAApiClient:
 
         Returns:
             List of record dicts with 'period' and 'value' (float or None).
+
+        Raises:
+            EIAApiError: If response.data is missing or is not an array.
         """
-        records = raw.get("response", {}).get("data", [])
+        # EIA API Technical Documentation, APIv2, "Parameters" and
+        # "Understanding returned error codes" (accessed 2026-10-19):
+        # https://www.eia.gov/opendata/documentation.php
+        # An explicit empty array is valid; missing data is not an empty series.
+        response = raw.get("response") if isinstance(raw, dict) else None
+        records = response.get("data") if isinstance(response, dict) else None
+        if not isinstance(records, list):
+            raise EIAApiError("EIA API response.data must be an array")
         result = []
         for rec in records:
             value_raw = rec.get("value")
