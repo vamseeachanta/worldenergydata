@@ -59,7 +59,9 @@ jobs:
   - name: lng_terminals_refresh
     interval: weekly
     time: "07:00"
-    enabled: true
+    # Issue #458: keep the stub out of retries and freshness health until a
+    # real upstream refresh writes data and a successful scheduler manifest.
+    enabled: false
     output_dir: data/modules/lng_terminals
 
   - name: spain_cores_refresh

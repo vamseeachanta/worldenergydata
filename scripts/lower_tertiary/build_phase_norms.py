@@ -282,7 +282,7 @@ def main() -> int:
     xlsx = REPO / src["lt_dc_xlsx"]
     bench_csv = REPO / src["benchmark_csv"]
     well_data = REPO / src["well_data_csv"]
-    facts = json.loads((REPO / src["facts_json"]).read_text())
+    facts = json.loads((REPO / src["facts_json"]).read_text(encoding="utf-8"))
     display_names = {f["id"]: f["name"] for f in facts}
 
     lt_rows, exclusions = pn.load_lt_population(xlsx, cfg)
@@ -310,7 +310,14 @@ def main() -> int:
         ],
         exclusions=exclusions,
         join_coverage=round(coverage, 4),
-        extras={"abandon_context": abandon_ctx, "config": "config/phase_norms.yml"},
+        extras={
+            "abandon_context": abandon_ctx,
+            "config": "config/phase_norms.yml",
+            "revision_note": (
+                "2026-10-20: Refresh benchmark source digest after calendar-column "
+                "header rename; source data cells and norm values are unchanged."
+            ),
+        },
     )
     chips = {fid: pn.chips_for_field(entries, fid, cfg) for fid in cfg["field_ids"]}
     pn.write_norms_json(entries, provenance, LIFECYCLE / "_norms.json", chips=chips)
@@ -322,7 +329,7 @@ def main() -> int:
             stage, entries, lt_rows, bench_rows, cfg, display_names, abandon_ctx
         )
         out = NORMS_DIR / f"{stage}.html"
-        out.write_text(page)
+        out.write_text(page, encoding="utf-8", newline="\n")
         print(f"  wrote norms/{out.name}")
     return 0
 

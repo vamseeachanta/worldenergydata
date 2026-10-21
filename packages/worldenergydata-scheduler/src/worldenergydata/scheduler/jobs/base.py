@@ -32,7 +32,8 @@ class JobResult:
             after a non-success result. Jobs set this to False for
             deterministic failures (e.g. a stale upstream URL serving
             HTML) that cannot succeed on immediate retry (issue #460).
-            Ignored when status is "success".
+            True preserves retries for transient or unclassified failures.
+            Ignored when status is "success" or "skipped"; both are terminal.
     """
 
     job_name: str
