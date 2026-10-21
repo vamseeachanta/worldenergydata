@@ -10,10 +10,16 @@ the committed bore/family population; full raw-feed completeness remains unverif
 
 | Revision | Date | What changed and why |
 |---|---|---|
+| 0 | 2026-10-12 | Recorded identifier definitions, metric grains, and unresolved populations to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | Added identifier validation, completion keys, and tested population counts to prevent ambiguous grain from appearing as missing coverage. |
+| 2 | 2026-10-21 | Separated status and evidence from revision history, restored the original revision, and clarified the dates of the inventory and validation changes. |
+
+Revision history table. Changes to the identifier-grain record and their purpose.
+
+## Status and evidence
 
 - Status: metric inventory with enforced bore-key format; episode partitioning and renumbering remain proposed.
-- Evidence date: 2026-10-12; repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143`.
+- Evidence dates: the original inventory is based on repository revision `7f645ac5844b25a79374f62fb0230ef1dbb4b143` (2026-10-12); identifier validation and population tests were added on 2026-10-19.
 - Scope: deliverable 2 of [issue 1081](https://github.com/vamseeachanta/worldenergydata/issues/1081), using its [research note](https://github.com/vamseeachanta/worldenergydata/issues/1081#issuecomment-6113191313).
 - Placement follows the existing BSEE analysis note [API12 resolution](julia_api12_resolution.md#L1), indexed by [Data Sources](../../README.md#L14). This is a methodology decision record, not a replacement for the historical rig-day notes.
 
