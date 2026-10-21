@@ -12,6 +12,7 @@ from worldenergydata.vessel_fleet.models.drilling_riser import (
     FlexJointEntry,
     LMRPEntry,
     RiserJointEntry,
+    RiserLineEntry,
     TelescopicJointEntry,
 )
 from worldenergydata.vessel_fleet.schemas.construction_vessel import (
@@ -40,6 +41,7 @@ __all__ = [
     "LMRPSchema",
     "RiserJointEntry",
     "RiserJointSchema",
+    "RiserLineEntry",
     "TelescopicJointEntry",
     "TelescopicJointSchema",
 ]

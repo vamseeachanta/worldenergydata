@@ -426,7 +426,7 @@ kept separate in the activity-code breakdown and combined figures derived from
 the granular ones. The decision requires confirmation across the wider well
 population once the weekly records are obtained, before any published figure
 is replaced. This note replaces no figure and infers no additional code meanings.
-Decision: repository issue 1064#issuecomment-6132640847
+Decision: [#1064 decision](https://api.github.com/repositories/574746314/issues/comments/6132640847)
 
 Sanity reference: the public publisher-deposited abstract of SPE-87117-MS,
 Deepwater Success Through Predictable and Distinctive Drilling and Completion
@@ -436,8 +436,9 @@ the legacy figures here. The band is a plausibility reference, not an acceptance
 threshold; no per-well ratio is reproduced or asserted by this note.
 Record: https://api.crossref.org/works/10.2118/87117-MS
 
-Sources examined 2026-10-12:
+Sources examined 2026-10-21:
 
 - eCFR, Office of the Federal Register, 30 CFR 250.743(a): https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-G/subject-group-ECFRa4d25de54b283e6/section-250.743
+- Official annual CFR, 2025 edition, 30 CFR 250.743(a): https://www.govinfo.gov/content/pkg/CFR-2025-title30-vol2/xml/CFR-2025-title30-vol2-sec250-743.xml
 - BSEE Raw Data, eWell Submissions WAR row: https://www.data.bsee.gov/Main/RawData.aspx
 - BSEE eWell WAR Online Query Field Definitions: https://www.data.bsee.gov/Well/eWellWAR/FieldDefinitions.aspx

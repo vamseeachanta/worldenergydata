@@ -2,9 +2,22 @@
 
 **Play:** Lower Tertiary &middot; **Fields:** all producing fields &middot; **Spud window:** 2010–latest &middot; **Data through:** 2026-04-30 (BSEE OGOR-A)
 
-Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Drilling/completion timing and interventions are derived from BSEE WAR + V30 drilling data; first oil, cumulative oil and uptime from OGOR-A production; decline (D, EUR) from the forecasting module; estimated revenue from monthly oil × the historical WTI deck. Cells shown as `—` are not derivable from the public data for that well (flagged, not fabricated).
+Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Calendar timing and interventions are derived from BSEE WAR + V30 drilling data; first oil, cumulative oil and uptime from OGOR-A production; decline (D, EUR) from the forecasting module; estimated revenue from monthly oil × the historical WTI deck. Cells shown as `—` are not derivable from the public data for that well (flagged, not fabricated).
 
-| Field | Wellbore (API12) | Spud | First oil | Drill days | Compl. days | Cum oil (MMbbl) | Uptime % | Decline %/yr | EUR (MMbbl) | Est. revenue ($MM) | Interventions |
+## Revision history
+
+| Revision | Date | What changed and why |
+|---|---|---|
+| 1 | 2026-10-19 | Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged. |
+| 2 | 2026-10-20 | Document the retained completion_days name and its calendar basis for compatibility. |
+
+Spud to completion is the first completion operation date minus spud; completion to first oil is first oil minus that completion date. Both are elapsed calendar intervals, including suspensions, not rig-days. The benchmark population includes only producing wells in the stated spud window; it differs from the workbook and article populations on the [calendar cycle-time page](https://vamseeachanta.github.io/worldenergydata/drilling-insights.html).
+
+## Limits
+
+The CSV column `completion_days` retains its name for compatibility with existing consumers. It means first oil minus first completion, in calendar days, including waiting and suspension; it does not measure active completion time. A schema rename is deferred to a coordinated consumer migration.
+
+| Field | Wellbore (API12) | Spud | First oil | Spud to completion (calendar days) | Completion to first oil (calendar days) | Cum oil (MMbbl) | Uptime % | Decline %/yr | EUR (MMbbl) | Est. revenue ($MM) | Interventions |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | Jack St Malo | 608124005800 | 2011-12-05 | 2016-04-01 | 1,532.0 | 47.0 | 39.7 | 96.9 | 8.5 | 69.1 | 2,469.8 | 0 |
 | Jack St Malo | 608124005103 | 2012-06-02 | 2015-07-01 | — | — | 39.5 | 95.1 | 5.9 | 84.6 | 2,413.4 | 0 |
