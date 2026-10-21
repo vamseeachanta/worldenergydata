@@ -272,6 +272,43 @@ class TestJsonExport:
         assert isinstance(payload["data"], list)
         assert len(payload["data"]) == len(simple_result.data)
 
+    @pytest.mark.parametrize(
+        ("timestamp", "expected"),
+        [
+            ("2026-01-02T03:04:05.123", "2026-01-02T03:04:05.123"),
+            ("2026-01-02T03:04:05.123Z", "2026-01-02T03:04:05.123Z"),
+            ("2026-01-02T03:04:05.123+02:00", "2026-01-02T01:04:05.123Z"),
+            (None, None),
+        ],
+    )
+    def test_json_datetime_records_use_iso(self, timestamp, expected, tmp_dir):
+        """Check literal synthetic dates against an independent calculation.
+
+        Source: pandas DataFrame.to_json API, date_format and date_unit,
+        pandas 3.0 documentation (2026): ISO strings use milliseconds by
+        default; missing values become null.
+        https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+
+        Naive and UTC clock fields are unchanged. For the offset case,
+        UTC = 03:04:05.123 - 02:00 = 01:04:05.123 on the same date.
+        None is missing and therefore maps to JSON null. These are synthetic
+        format examples, not measured engineering inputs.
+        """
+        result = FakeResult(
+            data=pd.DataFrame(
+                {"observed_at": pd.to_datetime([timestamp]), "status": ["observed"]}
+            ),
+            summary={"status": "complete"},
+        )
+        manifest = export_report(result, formats=["json"], output_dir=tmp_dir)
+        assert manifest.formats_succeeded == ["json"]
+        assert manifest.formats_failed == {}
+        payload = json.loads(Path(manifest.files["json"]).read_text(encoding="utf-8"))
+        assert payload == {
+            "data": [{"observed_at": expected, "status": "observed"}],
+            "summary": {"status": "complete"},
+        }
+
     def test_json_summary_preserved(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["json"], output_dir=tmp_dir)
         payload = json.loads(Path(manifest.files["json"]).read_text())
