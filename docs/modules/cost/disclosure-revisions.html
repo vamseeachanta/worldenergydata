@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annual disclosure revision contract</title>
+<style>
+body { max-width: 68rem; margin: 2rem auto; padding: 0 1rem; color: #17252f;
+       font: 1rem/1.6 system-ui, sans-serif; }
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: .5rem; border: 1px solid #bcc9d1; text-align: left; }
+caption { caption-side: bottom; text-align: left; padding: .5rem 0; }
+code, pre { background: #eff4f6; } pre { padding: 1rem; overflow-x: auto; }
+a { color: #075c87; }
+</style>
+</head>
+<body>
+<main>
+<h1>Annual disclosure revision contract</h1>
+<p>Original and revised evidence is retained as distinct immutable records.
+The current view selects one version per logical disclosure; the history view
+retains all branches. Annual capex views select current versions before computing
+differences and carry the selected revision metadata.</p>
+<h2>Revision history</h2>
+<table>
+<thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-10-20</td><td>Define append-only lineage, ingest
+classification and current/history selection for annual restatements.</td></tr></tbody>
+<caption>Table 1. Document revision history.</caption>
+</table>
+<h2>Identity and validation</h2>
+<p>The optional <code>revision</code> block is shared by ingest
+<code>DisclosureRow</code> and analytics <code>DisclosureRecord</code>.
+No metadata is inferred for legacy records. Identifiers are caller-supplied,
+opaque, case-sensitive strings; they are preserved without normalization.</p>
+<table>
+<thead><tr><th>Field</th><th>Contract</th></tr></thead>
+<tbody>
+<tr><td>logical_disclosure_key</td><td>Required non-blank identity for one annual
+metric across versions; one business key and one original per logical key.</td></tr>
+<tr><td>version_id</td><td>Required non-blank corpus-wide version identity.
+A different value, citation or metadata under the same ID is a conflict.</td></tr>
+<tr><td>revision_classification</td><td>original, amended or restated.
+The classification is supplied by the curator, not inferred from amounts.</td></tr>
+<tr><td>supersedes_version_id</td><td>Absent on originals; required on revisions.
+The parent belongs to the same logical key and is already retained.</td></tr>
+<tr><td>publication_date</td><td>Optional on originals; required on amendments
+and restatements. Missing revision dates prevent ingest.</td></tr>
+<tr><td>effective_date</td><td>Optional; supplied only when stated by the source.
+No effective date is guessed from publication or fiscal year.</td></tr>
+<tr><td>revision_reason</td><td>Optional non-blank text when known; null means
+not established. Original citations and quoted evidence stay on their own rows.</td></tr>
+</tbody>
+<caption>Table 2. Revision metadata fields.</caption>
+</table>
+<p>The existing ingest business key is (operator, fiscal year, scope type,
+normalized metric name, project name). Different fiscal years require different
+logical keys. Analytics records have a single capex metric and use (operator,
+fiscal year, scope, project name, currency). Currency changes therefore cannot
+silently create a comparable capex lineage.</p>
+<h2>Ingest and linkage</h2>
+<p><code>ingest_disclosure_rows</code> accepts original records and appends
+revisions. An exact repeated version is a duplicate; a reused ID with changed
+evidence is <code>version_id_conflict</code>. Missing parents, cross-key links,
+competing originals and mixed versioned/unversioned records sharing a business
+key are <code>revision_lineage_conflict</code>, with a diagnostic in
+<code>decision.lineage_error</code>. Malformed metadata lands in
+<code>invalid</code>. Parents must precede children within an ingest batch;
+an earlier rejected child is not retried automatically.</p>
+<p>An imported existing corpus is validated before ingest or selection. Missing
+parents, cycles and conflicting identities raise <code>ValueError</code> rather
+than establish current evidence. Unversioned rows retain the previous
+citation/value duplicate and conflict rules. To migrate an existing logical
+point, supply a complete explicitly versioned copy of its historical evidence;
+a versioned row cannot silently replace an unversioned row.</p>
+<p>Only backward edges are stored. The superseded-by list is derived by finding
+rows whose <code>supersedes_version_id</code> equals the requested version ID;
+forks can produce several children. No original row is edited to add a forward
+pointer. Exact operator/project matching and scope gating for sanction linkage
+remain unchanged for every version; value and citation revisions do not change
+the match key. A business-key correction starts a separate logical record.</p>
+<h2>Current, history and annual-series rules</h2>
+<p><code>load_disclosure_revision_history(records, logical_disclosure_key=...)</code>
+returns complete, deduplicated version evidence. The full corpus is supplied,
+even when only one key is requested. Groups sort by logical key; within a group,
+root-relative depth precedes effective date, publication date and lexical ID.
+Without a filter, legacy rows retain input order ahead of versioned groups.</p>
+<p><code>load_current_effective_disclosure_rows(records)</code> selects the greatest
+precedence tuple in each logical group. Unknown dates sort before known dates.
+A deeper descendant wins over a shallower branch even when the shallower branch
+has a later date; equal-depth branches use effective date, then publication date,
+then lexical ID. All losing branches remain in history. Branch tie-breaking is
+a deterministic display convention, not confirmation of a filing's legal effect.
+Current refers to the supplied snapshot; no clock-based or historical as-of
+filter is applied, including for supplied future dates.</p>
+<p>Both existing annual views select current rows first, retain selected metadata
+in <code>revision</code>, and copy provenance. Values remain as supplied; no
+currency conversion, inflation adjustment or comparability approval is implied.
+The existing previous-observation difference method is retained; a fiscal-year
+gap is not interpolated. Legacy rows receive no invented revision label and
+unrelated legacy series remain available.</p>
+<h2>Worked example: inputs, method and answer</h2>
+<p>The runnable <a href="../../../examples/cost/disclosure_revisions.py">synthetic
+example</a> validates raw dictionaries, retains all evidence, then projects the
+declared USD-million capex inputs into the analytics contract. These values are
+test inputs, not observations from a filing, and are not engineering evidence.</p>
+<table>
+<thead><tr><th>Fiscal year</th><th>Version</th><th>Parent</th><th>Capex (USD million)</th></tr></thead>
+<tbody>
+<tr><td>2023</td><td>original</td><td>none</td><td>100.0</td></tr>
+<tr><td>2023</td><td>restated</td><td>original</td><td>120.0</td></tr>
+<tr><td>2024</td><td>following</td><td>none</td><td>150.0</td></tr>
+</tbody>
+<caption>Table 3. Declared synthetic example inputs.</caption>
+</table>
+<p>Method: retain all three records; follow the parent edge to select 120.0 for
+2023; keep 150.0 for 2024. Hand calculation: 150.0 − 120.0 = 30.0 USD million;
+30.0 / 120.0 = 0.25, or 25.0 %. History remains [100.0, 120.0, 150.0]; current
+amounts are [120.0, 150.0]. The selected 2023 row is annotated restated.</p>
+<pre>python examples/cost/disclosure_revisions.py</pre>
+<p>The example is executed by
+<code>test_documented_worked_example_runs_through_ingest_and_analytics</code>.
+Its expected amounts and ratios are independent hand calculations in the test
+docstring. No empirical coefficient or acceptance threshold is introduced.</p>
+<h2>Sources and limits</h2>
+<ul>
+<li><a href="../../plans/2026-04-23-issue-344-restatement-version-lineage-for-annual-disclosure-records.md">Revision plan (2026), Scope Boundaries</a>:
+identity, backward edges, required publication dates and selection precedence.</li>
+<li><a href="../../plans/2026-04-22-issue-337-citation-quality-and-automated-ingestion-contracts-for-annual-disclosures.md">Ingest plan (2026)</a>:
+legacy citation/value conflict semantics.</li>
+<li><a href="../../plans/2026-04-22-issue-338-annual-disclosure-analytics-views-and-consumer-integration.md">Analytics plan (2026)</a>:
+current/prior subtraction and ratio definitions; no monetary normalization.</li>
+</ul>
+<p>Automated filing discovery, historical restatement backfill, persistence,
+as-of filtering, and downstream economics integrations remain outside this
+contract. Source retrieval and intended-use qualification remain independent
+requirements; a valid revision structure alone does not qualify a monetary value.</p>
+</main>
+</body>
+</html>
