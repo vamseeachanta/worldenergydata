@@ -101,6 +101,7 @@ def test_blank_identity_is_not_cached(tmp_path: Path, component_id: str) -> None
         ["1", "1.0"],
         ["01"],
         ["NA", "NaN", "NULL", "null"],
+        ["Å", "A\u030a", "字"],
     ],
 )
 def test_identity_strings_survive_parsing(tmp_path: Path, ids: list[str]) -> None:
@@ -136,6 +137,42 @@ def test_padded_identity_can_be_repaired_and_retried(
     assert loader._df is None
     write_catalog(tmp_path, ["A"])
     assert loader.get_by_id("A")["COMPONENT_ID"] == "A"
+
+
+@pytest.mark.parametrize(
+    "component_id",
+    ["\u200bA", "A\u200b", "\ufeffA", "A\ufeff", "A\u200dB", "\u202eA", "\u200b"],
+)
+def test_format_character_identity_can_be_repaired_and_retried(
+    tmp_path: Path, component_id: str
+) -> None:
+    """Invisible or directional formatting must not create an ambiguous ID."""
+    write_catalog(tmp_path, ["A", component_id])
+    loader = DrillingRiserLoader(tmp_path)
+    with pytest.raises(ValueError, match="COMPONENT_ID.*format character.*CSV line 3$"):
+        loader.get_by_id(component_id)
+    assert loader._df is None
+    write_catalog(tmp_path, ["A", "B"])
+    assert loader.get_by_id("B")["COMPONENT_ID"] == "B"
+
+
+def test_format_character_identity_reports_all_physical_lines(tmp_path: Path) -> None:
+    """Bad IDs start on lines 2 and 5 after a quoted newline and an empty line."""
+    write_catalog(tmp_path, ["A\u200b", "B\ufeff"])
+    path = tmp_path / CSV_NAME
+    with path.open(newline="", encoding="utf-8") as stream:
+        rows = list(csv.reader(stream))
+    rows[1][HEADER.index("NOTES")] = "first\nsecond"
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.writer(stream)
+        writer.writerows(rows[:2])
+        stream.write("\n")
+        writer.writerow(rows[2])
+
+    with pytest.raises(
+        ValueError, match="COMPONENT_ID.*format character.*CSV line 2, 5$"
+    ):
+        DrillingRiserLoader(tmp_path).load()
 
 
 @pytest.mark.parametrize("field", ["DATA_SOURCE", "NOTES"])
@@ -218,7 +255,13 @@ def test_duplicate_identity_reports_literal_string(
 
 @pytest.mark.parametrize(
     ("component_id", "reason"),
-    [("", "must be populated"), (" \t", "must be populated"), (" B", "whitespace")],
+    [
+        ("", "must be populated"),
+        (" \t", "must be populated"),
+        (" B", "whitespace"),
+        ("B\u200b", "format character"),
+        ("\ufeffB", "format character"),
+    ],
 )
 def test_invalid_identity_reports_physical_line(
     tmp_path: Path, component_id: str, reason: str
@@ -257,11 +300,11 @@ def test_duplicate_identity_can_be_repaired_and_retried(tmp_path: Path) -> None:
 
 
 def test_distinct_ids_and_quoted_provenance_round_trip(tmp_path: Path) -> None:
-    """Quoted commas/newlines form one cell each; distinct IDs remain unchanged."""
+    """A file BOM and quoted provenance format characters preserve distinct IDs."""
     write_catalog(tmp_path, ["A", "B"])
     path = tmp_path / CSV_NAME
     frame = pd.read_csv(path)
     frame["DATA_SOURCE"] = "Synthetic, public example"
-    frame["NOTES"] = "first line\nsecond line"
-    frame.to_csv(path, index=False)
+    frame["NOTES"] = "first line\nsecond line\u200b"
+    frame.to_csv(path, index=False, encoding="utf-8-sig")
     pd.testing.assert_frame_equal(DrillingRiserLoader(tmp_path).load(), frame)

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import unicodedata
 from io import StringIO
 from pathlib import Path
 from typing import Optional
@@ -127,6 +128,14 @@ class DrillingRiserLoader:
             lines = ", ".join(str(line_numbers[index]) for index in df.index[padded])
             raise ValueError(
                 f"COMPONENT_ID has leading or trailing whitespace at CSV line {lines}"
+            )
+        formatted = df["COMPONENT_ID"].map(
+            lambda value: any(unicodedata.category(char) == "Cf" for char in value)
+        )
+        if formatted.any():
+            lines = ", ".join(str(line_numbers[index]) for index in df.index[formatted])
+            raise ValueError(
+                f"COMPONENT_ID contains Unicode format characters at CSV line {lines}"
             )
         # Issue #1046 requires unique component IDs; get_by_id must not select
         # an arbitrary first record when more than one component has that ID.
