@@ -14,7 +14,17 @@ from worldenergydata.drilling import (
 
 
 def test_c0_campaign_schema():
-    """Accept the documented default and reject each invalid numeric input."""
+    """Check the schema bounds independently of economic calculations.
+
+    Source: models.py lines 54-60 at code revision
+    b1394197a66f95d78615425b4e1ad4ff78bd9de2 (the pack's C0 source).
+    Hand classification: rate=0 violates gt=0; mobilization=-1 violates
+    ge=0; factor=0 violates gt=0; factor=1.01 exceeds le=1. The
+    synthetic upper probe is 1 + 0.01, not an engineering coefficient.
+    Default factor=0.85 and factor=1 with mobilization=0 are accepted.
+    The positive rate and mobilization below are synthetic test inputs.
+    Each rejected case changes one field, so that field alone must fail.
+    """
     valid = dict(
         campaign_id="",
         rig_name="",
@@ -23,13 +33,20 @@ def test_c0_campaign_schema():
         mobilization_cost_usd=20_000_000,
     )
     assert DrillCampaign(**valid).learning_curve_factor == 0.85
+    boundary = DrillCampaign(
+        **dict(valid, learning_curve_factor=1.0, mobilization_cost_usd=0)
+    )
+    assert boundary.learning_curve_factor == 1.0
+    assert boundary.mobilization_cost_usd == 0
     for key, value in (
         ("rig_day_rate_usd", 0),
         ("mobilization_cost_usd", -1),
         ("learning_curve_factor", 0),
+        ("learning_curve_factor", 1.01),
     ):
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError) as exc_info:
             DrillCampaign(**dict(valid, **{key: value}))
+        assert [error["loc"] for error in exc_info.value.errors()] == [(key,)]
 
 
 def test_c4_mobilization_allocation():

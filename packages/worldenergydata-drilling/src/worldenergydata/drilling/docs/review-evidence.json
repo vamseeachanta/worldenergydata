@@ -1,0 +1,258 @@
+{
+  "purpose": "Retained review target and normalized fresh test comparison; not a clearance signature.",
+  "source_issue": "#1348",
+  "historical_review": {
+    "source": "#1333, final review dated 2026-10-18, comment 6250885556",
+    "reviewed_head": "ccb19232cc547460a3402c297eea8d0c2b0b74cd",
+    "pack_revision": "2",
+    "pack_path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/docs/agent-pack.md",
+    "pack_sha256": "6f14a7d04fecac9c196ef316d9e158f4c5be5768adab3106d8daf034c4eac922",
+    "code_revision": "b1394197a66f95d78615425b4e1ad4ff78bd9de2",
+    "reported_disposition": "PASS WITH NOTES",
+    "clearance": "NOT_EVALUATED",
+    "limits": "The review explicitly leaves independent clearance, appointment, evidence retention and shared registration open.",
+    "scope": "Full pack and numeric-gate diff; the review read tests and hosted results rather than running tests locally."
+  },
+  "current_clearance": {
+    "pack_revision": "3",
+    "status": "NOT_EVALUATED",
+    "evidence_reference": null,
+    "reason": "No independent clearance of this revision is retained."
+  },
+  "deputy_appointment": {
+    "status": "NOT_EVALUATED",
+    "evidence_reference": null,
+    "reason": "A maintainer appointment record is required."
+  },
+  "lessons": [
+    {
+      "local_reference": "drilling-initial-semantics",
+      "source": "agent-pack.md section 7, initial revision",
+      "lesson": "Preserve undiscounted cost semantics and distinguish regression from independent qualification.",
+      "shared_registration": "PENDING",
+      "shared_evidence_reference": null
+    },
+    {
+      "local_reference": "drilling-constant-output",
+      "source": "agent-pack.md section 7, revision 1; section 6 row 50; C7; #1345",
+      "lesson": "Constant output can be hidden by type-only or vacuous regression oracles; assert exact outputs.",
+      "shared_registration": "PENDING",
+      "shared_evidence_reference": null
+    }
+  ],
+  "fresh_test_comparison": {
+    "date": "2026-10-19",
+    "base_revision": "648d6de46081ad98a06504a25ec8a222acbd41b1",
+    "after_revision": "uncommitted tree; content digests below identify the tested files",
+    "code_revision": "b1394197a66f95d78615425b4e1ad4ff78bd9de2",
+    "normalization": "JUnit testcase classnames become repository-relative pytest node IDs. Only node IDs and outcomes are retained. Paths, host metadata, timing and captured output are omitted; no test outcome is altered.",
+    "historical_raw_logs": "NOT_RETAINED; these fresh runs do not reconstruct the original comparison logs.",
+    "command": "uv run --no-project --with pytest --with pytest-cov --with numpy --with pandas --with pydantic --with pydantic-settings --with psutil --with pyyaml --with loguru --with plotly python -m pytest tests/drilling tests/unit/drilling -q -rA -p no:cacheprovider",
+    "execution_details": "Member and core source roots were on PYTHONPATH. Basetemp, JUnit, coverage data and HTML/XML/JSON coverage reports were directed to scratch. The after run used --allow-existing-tree-changes; repository conftest and coverage remained active.",
+    "before_exit_code": 0,
+    "after_exit_code": 0,
+    "before_count": 29,
+    "after_count": 29,
+    "changed_outcomes": 0,
+    "pack_before_sha256": "6f14a7d04fecac9c196ef316d9e158f4c5be5768adab3106d8daf034c4eac922",
+    "pack_after_sha256": "b541f68e5939f108bce5064edf81dcde8154b5a4debe608ad13cdfbaabf1ea0f",
+    "gate_path": "tests/unit/drilling/test_pack_numeric_gates.py",
+    "gate_before_sha256": "a7bffd58e73b8f640b2fedba9b3041241bdce9f59ec1623c5bbaed35e9ae7c80",
+    "gate_after_sha256": "359fe61d4c12e9a64e16403f674a2193d290687ed8ee43341683b666d3e2d5ad",
+    "runtime_files": [
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/__init__.py",
+        "sha256": "f882f5b9b7c7a3e0536e849cf303c5ed400dfa63845e1e5f180adba39b29dad0"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/__init__.py",
+        "sha256": "ae2a143c4857ecde2e8cceef694aa89ed0c0b25499a30a6f145ab06057dd20ab"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/bsee_batch_detector.py",
+        "sha256": "e4dcd3117697a474d204362eab8e80f65436ed635173c42e954c6e9f25c8e52e"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
+        "sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+      },
+      {
+        "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py",
+        "sha256": "dda57364683385ac3af3e10d0971921f9295f94bfbf1b85819c2f6b487ecff46"
+      }
+    ],
+    "nodes": [
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_detect_batches_outside_time_window",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_detect_batches_returns_dataframe",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_detect_batches_same_rig_same_field",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_detect_batches_separate_rigs",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBSEEBatchDetector::test_fit_learning_curve_returns_float",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_batch_npv_lower_than_standalone",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_batch_savings_positive_for_multi_well",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_result_has_required_keys",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBatchVsStandaloneNPV::test_single_well_no_mob_savings",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBreakEven::test_break_even_at_1_is_no_savings",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBreakEven::test_break_even_increases_with_higher_mob_cost",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestBreakEven::test_break_even_positive_integer",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestCampaignTotalCost::test_campaign_total_cost_decreases_with_more_wells",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestCampaignTotalCost::test_campaign_total_cost_includes_mobilization",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestCampaignTotalCost::test_campaign_total_cost_positive",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestLearningCurve::test_learning_curve_factor_1_no_improvement",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestLearningCurve::test_learning_curve_monotonic_decrease",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestLearningCurve::test_learning_curve_position_1_unchanged",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestLearningCurve::test_learning_curve_position_1_unchanged_factor_90",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_mobilization_savings_2_wells",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_mobilization_savings_4_wells",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_mobilization_savings_decreasing_with_more_wells",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_pack_numeric_gates.py::test_c0_campaign_schema",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_pack_numeric_gates.py::test_c4_mobilization_allocation",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_pack_numeric_gates.py::test_c5_power_law_duration",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_pack_numeric_gates.py::test_c7_break_even_outputs",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_pack_numeric_gates.py::test_c8_learning_fit",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_smoke.py::test_package_imports",
+        "before": "PASS",
+        "after": "PASS"
+      },
+      {
+        "node": "tests/unit/drilling/test_smoke.py::test_public_api_exported",
+        "before": "PASS",
+        "after": "PASS"
+      }
+    ],
+    "environment_versions": {
+      "python": "3.11.17",
+      "pytest": "9.1.1",
+      "pytest-cov": "7.1.0",
+      "numpy": "2.4.6",
+      "pandas": "3.0.6",
+      "pydantic": "2.14.1",
+      "pydantic-settings": "2.16.0",
+      "psutil": "7.2.2",
+      "pyyaml": "6.0.3",
+      "loguru": "0.7.3",
+      "plotly": "7.1.0"
+    }
+  },
+  "c0_basis": {
+    "source": "batch_economics/models.py lines 54-60 at b1394197a66f95d78615425b4e1ad4ff78bd9de2; independent schema classifications are written in the test docstring.",
+    "invalid_cases": "Rate zero; mobilization negative; factor zero; factor above one. Each must reject exactly the changed field.",
+    "valid_cases": "Default inputs; factor one with zero mobilization.",
+    "engineering_coefficients_added": false
+  },
+  "remaining_evidence": [
+    "Independent clearance of the issued pack and code pin",
+    "Maintainer deputy appointment and qualification limits",
+    "Original raw before/after test and numeric-gate logs",
+    "Applicable hook evidence",
+    "Shared-log registration receipts"
+  ]
+}

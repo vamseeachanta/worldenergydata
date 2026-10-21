@@ -5,7 +5,7 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 2, 2026-10-17 |
+| Pack revision | 3, 2026-10-19 |
 | Code revision | `b1394197a66f95d78615425b4e1ad4ff78bd9de2` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
@@ -27,6 +27,8 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | --- | --- | --- |
 | 0 | 2026-10-17 | Initial inputs, methods, regression examples and failure inventory to guide package use. |
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
+| 2 | 2026-10-18 | Execute the numeric gates as CI test nodes, file the follow-ups and add the revision-1 lesson; restored from the final review in #1333. |
+| 3 | 2026-10-19 | Retain a revision-bound review record and local lesson references; extend the schema gate to cover the upper boundary and rejected fields; clearance remains pending. |
 
 ## 2. Inputs and outputs
 
@@ -119,7 +121,7 @@ Applicability follows AQG r0 section 10, Python calculations, with G5 from secti
 
 | ID | Execution and evidence | Numeric pass criterion and unit | Gate |
 | --- | --- | --- | --- |
-| C0 | `tests/unit/drilling/test_pack_numeric_gates.py::test_c0_campaign_schema`. Construct `DrillCampaign` with rate 0, mobilization -1 and factor 0 separately; require Pydantic rejection; repeat with valid inputs. Source constraints: [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L54-L60] | 3/3 invalid campaigns rejected; 1/1 valid campaign accepted (campaigns); observed PASS: 3 rejected and 1 accepted | G0 |
+| C0 | `tests/unit/drilling/test_pack_numeric_gates.py::test_c0_campaign_schema`. Construct `DrillCampaign` with rate 0, mobilization -1, factor 0 and factor 1.01 separately; require rejection of exactly the changed field. Accept the default case and the boundary case with factor 1 and mobilization 0. The 1.01 probe is synthetic, just above the schema upper bound. Source constraints: [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L54-L60] | 4/4 invalid campaigns rejected with the expected field; 2/2 valid campaigns accepted (campaigns); observed PASS: 4 rejected and 2 accepted | G0 |
 | C1 | Verify method-table units against schema/docstrings and recompute SHA-256 of the 5 package Python files from the code pin before each future use. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L19-L60] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L80-L86] | 0 unit-label mismatches; 5/5 source digests match the C1 table below (files), observed PASS; unknown datum and coefficient basis remain disclosed | G0 |
 | C2 | `tests/unit/drilling/test_smoke.py::test_package_imports` and `tests/unit/drilling/test_smoke.py::test_public_api_exported`; import from the member source. [tests/unit/drilling/test_smoke.py:L5-L19] | 2/2 tests pass; 4/4 public exports resolve (symbols); observed PASS in both comparisons | G1 |
 | C3 | Run `tests/drilling/` and `tests/unit/drilling/`; retain the C6 node table. R1/R2 assert `learning_curve_time` = 60 days; R3 asserts `mobilization_savings` = half the one-well allocation; R5 asserts equal single-well costs. C4, C5, C7 and C8 add independent numeric output criteria. [tests/drilling/test_batch_economics.py:L51-L380] [tests/unit/drilling/test_smoke.py:L8-L19] | Revision 2: 29/29 tests pass, including 5 numeric-gate nodes; 0 changed outcomes among the original 24 tests; observed PASS | G1 |
@@ -183,6 +185,16 @@ The command was `uv run --no-project --with pytest --with pytest-cov --with 'num
 | `tests/drilling/test_batch_economics.py::TestMobilizationSavings::test_mobilization_savings_decreasing_with_more_wells` | PASS | PASS |
 | `tests/unit/drilling/test_smoke.py::test_package_imports` | PASS | PASS |
 | `tests/unit/drilling/test_smoke.py::test_public_api_exported` | PASS | PASS |
+
+### Retained review evidence
+
+Slice 1 of #1348 retains the review target, local lesson references and a fresh
+before/after node comparison in [review-evidence.json](review-evidence.json).
+The comparison records test outcomes for this revision; it does not replace the
+missing raw historical logs described in section 4 or establish clearance.
+C0 now tests the factor's upper boundary and the precise rejected field, as
+requested by the final review in #1333. Its expected outcomes come from the
+pinned schema in C0, rather than an economic acceptance criterion.
 
 ## 6. Known failure modes and pitfalls
 
@@ -256,12 +268,33 @@ The rows above identify code paths and coverage limitations; no historical incid
 
 | Date | Change reference | Lesson | Evidence | Pack change | Shared-log entry |
 | --- | --- | --- | --- | --- | --- |
-| 2026-10-17 | Initial pack revision | Preserve undiscounted-cost semantics and distinguish regression from independent qualification | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] | Sections 3–6 | Pending maintainer registration; #1348 |
-| 2026-10-17 | Revision 1 review | Constant break-even output can be hidden by type-only or vacuous regression oracles | Section-6 row 50 and C7; #1345 | Exact numeric output gates promoted to CI tests in revision 2; seven follow-ups filed | Pending maintainer registration; #1348 |
+| 2026-10-17 | Initial pack revision | Preserve undiscounted-cost semantics and distinguish regression from independent qualification | [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L170-L196] | Sections 3–6 | Local reference `drilling-initial-semantics`; shared registration pending; #1348 |
+| 2026-10-17 | Revision 1 review | Constant break-even output can be hidden by type-only or vacuous regression oracles | Section-6 row 50 and C7; #1345 | Exact numeric output gates promoted to CI tests in revision 2; seven follow-ups filed | Local reference `drilling-constant-output`; shared registration pending; #1348 |
+
+The local references above identify the lessons retained by this package. They
+are not shared-log receipts. A maintainer must supply a shared-log locator and
+registration revision before either row can be marked registered. The initial
+lesson requires exact cost semantics and independent references; the revision-1
+lesson requires output oracles that can expose constant output. C7 records
+current behaviour; #1345 retains responsibility for economic semantics.
 
 ## 8. Ownership
 
 The calculations quality manager will review the data-pipeline pack, with a calculations deputy to be appointed; the producing role is module documentation, and unresolved engineering criteria go to the quality manager while scope goes to the maintainer, under AQG r0 sections 10–11. Appointment and independent clearance remain pending; #1348.
+
+### Revision-bound review and clearance record
+
+| Record | Target and retained evidence | Disposition and limits |
+| --- | --- | --- |
+| Historical independent review | #1333, final review dated 2026-10-18, comment `6250885556`; exact head `ccb19232cc547460a3402c297eea8d0c2b0b74cd`, pack revision 2, code pin `b1394197a66f95d78615425b4e1ad4ff78bd9de2`; reviewed pack SHA-256 in `review-evidence.json` | PASS WITH NOTES for that target; no clearance signature. Revision history and C0 boundary coverage were requested. |
+| Current pack | Revision 3; code pin unchanged; local test outcomes in `review-evidence.json` | DRAFT; independent clearance NOT_EVALUATED. A review of revision 2 does not clear revision 3. |
+| Deputy appointment | Maintainer appointment record required; none retained | NOT_EVALUATED; no appointment inferred from review or test results. |
+| Qualification limits | Sections 3, 4 and 10; #1342–#1348 | Independent engineering examples, method provenance, historical raw evidence and shared-log receipts remain unresolved. |
+
+The record retains an existing review disposition; it does not authenticate a
+reviewer or make an appointment. A future clearance must name the exact issued
+pack revision, its content digest, code pin, scope and unresolved limits, and
+retain the maintainer's evidence reference.
 
 ## 9. Dependencies and implementation inventory
 
@@ -321,6 +354,6 @@ The seven follow-ups below are filed as #1342–#1348; the PR #1333 description 
 | Cost and break-even semantics | Unused discount/standalone arguments, fallback 1, constant output (row 50) and weak existing break-even test oracles; C7 records current behaviour | Maintainer; #1345 [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L68-L196] [tests/drilling/test_batch_economics.py:L133-L168] |
 | Map coverage | No in-package map rows at the section-9 map pin; all section-3 method families need enrollment | Maintainer; #1346 |
 | Documentation and distribution | Historical readiness text describes an empty domain; the existing nested-Markdown package-data glob matches the new pack, so wheel exclusion is not established; packaging is unchanged | Maintainer; #1347 [docs/reports/2026-04-26-worldenergydata-capability-readiness-matrix.md:L84-L84] [packages/worldenergydata-drilling/pyproject.toml:L56-L57] |
-| Clearance and evidence retention | A different-provider clearance, deputy appointment, durable test-evidence attachment and shared-log registration remain outstanding under AQG r0 sections 9–11 | Maintainer; #1348 |
+| Clearance and evidence retention | Slice 1 retains the historical review target, local lesson references and fresh normalized before/after test outcomes in `review-evidence.json`. Independent clearance, deputy appointment, historical raw-log attachment, applicable hook evidence and shared-log receipts remain outstanding under AQG r0 sections 9–11 | Maintainer; #1348 |
 
 The calc-citation contract was read as procedural guidance; no licensed standard text or operational source records are reproduced. Standards provenance remains the section-3 limitation. [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py:L44-L53] [packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/models.py:L19-L36]

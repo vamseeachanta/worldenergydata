@@ -55,3 +55,6 @@ namespaces = true
 
 [tool.setuptools.package-data]
 "worldenergydata.drilling" = ["*.md", "*.sql", "*.json", "**/*.yml", "**/*.yaml", "**/*.sql", "**/*.md", "**/*.json", "**/*.csv", "**/*.html"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["review-evidence.json", "**/review-evidence.json"]
