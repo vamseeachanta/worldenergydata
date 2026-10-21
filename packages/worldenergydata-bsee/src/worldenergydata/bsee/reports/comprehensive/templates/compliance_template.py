@@ -239,7 +239,12 @@ class ComplianceTemplate(BaseReportTemplate):
         self.context["environmental_compliance"] = env_compliance
 
     def add_safety_compliance_metrics(self, safety_metrics: SafetyMetrics):
-        """Add safety compliance metrics"""
+        """Add safety metrics with qualified case counts and matching exposure.
+
+        ``ValueError`` from either rate propagates to the caller; invalid or
+        missing employee-hours must be corrected before publishing rates.
+        A failed calculation leaves the existing safety context unchanged.
+        """
         safety_compliance = {
             "incident_count": safety_metrics.incident_count,
             "lost_time_incidents": safety_metrics.lost_time_incidents,
