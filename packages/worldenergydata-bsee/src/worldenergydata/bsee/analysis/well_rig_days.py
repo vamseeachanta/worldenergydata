@@ -26,6 +26,7 @@ from __future__ import annotations
 import pandas as pd
 from dateutil.parser import parse
 from loguru import logger
+
 from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_DRL_COM,
     STATUS_COVERED,

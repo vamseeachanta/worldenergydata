@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+
 from worldenergydata.bsee.analysis.war_rig_days import (
     BASIS_DRL_COM_PND,
     STATUS_COVERED,
@@ -17,6 +18,7 @@ from worldenergydata.bsee.analysis.war_rig_days import (
     STATUS_NO_ACTIVITY,
     STATUS_NO_ACTIVITY_CODED,
 )
+from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 from worldenergydata.bsee.analysis.well_rig_days import WellRigDays
 
 API12 = "608124009500"
@@ -376,3 +378,84 @@ class TestActivityCoverageSurvivesTheAdapter:
         assert result["completion_days"] is None
         assert result["days_by_code"] == {}
         assert out["api12_war_days"] == {"total_rig_days": 7}
+
+
+class TestAPI12ExportKeepsPhaseMeasurements:
+    @staticmethod
+    def _well_data(weeks, has_properties):
+        main, prop = _war_frames(weeks, rig_name="Synthetic rig")
+        prop["DRILL_FLUID_WGT"] = 10.0
+        merged = _api12_df().assign(
+            SN_EOR=1,
+            WELL_NM_ST_SFIX=0,
+            WELL_NM_BP_SFIX=0,
+            SUBSEA_TREE_HEIGHT_AML=0,
+            BH_TOTAL_MD=11000,
+            WELL_NAME_SUFFIX="",
+        )
+        merged["Water Depth (feet)"] = 1000
+        return {
+            "api12_eWellAPDRawData": pd.DataFrame(),
+            "api12_BoreholeRawData": pd.DataFrame(),
+            "api12_eWellEORRawData": pd.DataFrame(),
+            "merged_api12_df": merged,
+            "api12_eWellWARRawData_mv_war_main": main,
+            "api12_eWellWARRawData_mv_war_main_prop": (
+                prop if has_properties else prop.iloc[:0]
+            ),
+        }
+
+    @pytest.mark.parametrize(
+        "codes,has_properties,drilling,completion,rate,total",
+        [
+            (["DRL"], False, None, None, None, 7),
+            (["COM"], True, None, 7, None, 7),
+            (["DRL"], True, 7, None, 7.0, 7),
+            (["DRL", "COM"], True, 7, 7, 7.0, 14),
+            (["PND"], True, None, None, None, 7),
+            ([], True, None, None, None, None),
+        ],
+        ids=[
+            "absent-properties",
+            "missing-drilling",
+            "missing-completion",
+            "both-phases",
+            "other-code",
+            "no-coverage",
+        ],
+    )
+    def test_export_matches_null_aware_phases(
+        self, codes, has_properties, drilling, completion, rate, total
+    ):
+        """Jan 7..13 and Jan 14..20 each hold 7 dates; footage is 10,000 ft.
+
+        A measured 7-day drilling phase therefore gives 7.0 days per 10,000
+        ft. Missing phase evidence leaves that phase and its rate unknown.
+        """
+        intervals = [("2024-01-07", "2024-01-13"), ("2024-01-14", "2024-01-20")]
+        weeks = [(*interval, code) for interval, code in zip(intervals, codes)]
+        exported = WellAPI12().get_sidetracklabel_and_rig_rigdays(
+            CFG,
+            self._well_data(weeks, has_properties),
+            pd.DataFrame({"API12": [API12]}),
+        )
+        result = exported.iloc[0]
+
+        phases = json.loads(result["rigdays_by_milestone"])
+        assert phases["drilling_days"] == drilling
+        assert phases["completion_days"] == completion
+        assert phases["war_days_total"] == total
+        for column, expected in (
+            ("Drilling Days", drilling),
+            ("Completion Days", completion),
+            ("drilling_days_per_10000_ft", rate),
+        ):
+            if expected is None:
+                assert pd.isna(result[column]), column
+            else:
+                assert result[column] == expected, column
+        assert result["drilling_footage_ft"] == 10000
+        if total is None:
+            assert result["rigdays_by_war"] is None
+        else:
+            assert json.loads(result["rigdays_by_war"])["total_rig_days"] == total
