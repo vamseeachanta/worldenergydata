@@ -106,6 +106,14 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics():
     )
 
     assert result["economics_label"] == "chain_plumbing_pre_tax"
+
+    basis = result["economics_basis"]
+    assert basis["view"] == "reference_chain_pre_tax"
+    assert basis["discount_convention"] == "undiscounted"
+    assert basis["tax_treatment"] == "pre_income_tax_after_royalty"
+    assert basis["oil_price_marker"] == "flat_input_not_market_series"
+    assert basis["status"] == "plumbing_only"
+
     assert list(result["fdas_production"].columns) == list(FDAS_PRODUCTION_COLUMNS)
     assert result["pre_tax_metrics"]["months"] >= 2
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])

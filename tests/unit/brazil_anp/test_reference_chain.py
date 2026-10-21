@@ -65,6 +65,14 @@ def test_reference_chain_runs_production_fdas_cashflow_and_concept_screening():
 
     assert result["field_name"] == "TUPI"
     assert result["economics_label"] == "chain_plumbing_pre_tax"
+
+    basis = result["economics_basis"]
+    assert basis["view"] == "reference_chain_pre_tax"
+    assert basis["discount_convention"] == "undiscounted"
+    assert basis["tax_treatment"] == "pre_income_tax_after_royalty"
+    assert basis["oil_price_marker"] == "flat_input_not_market_series"
+    assert basis["status"] == "plumbing_only"
+
     assert list(result["fdas_production"]["YEAR_MONTH"]) == ["2024-01", "2024-02"]
     assert result["field_concept"].region == "brazil"
     assert result["ranked_concepts"][0].concept_type == ConceptType.FPSO

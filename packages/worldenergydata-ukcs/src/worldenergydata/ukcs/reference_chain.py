@@ -19,6 +19,7 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
 )
 from worldenergydata.fdas.analysis.cashflow import CashflowEngine
 from worldenergydata.fdas.core.config import AssumptionsManager
+from worldenergydata.fdas.core.economics_basis import reference_chain_basis
 from worldenergydata.fdas.fiscal import get_fiscal_terms
 from worldenergydata.field_development.recommendation import recommend
 from worldenergydata.production.unified.query import ProductionQuery
@@ -74,6 +75,9 @@ def run_ukcs_reference_chain(
         "field_concept": field_concept,
         "ranked_concepts": ranked_concepts,
         "economics_label": "chain_plumbing_pre_tax",
+        "economics_basis": reference_chain_basis(
+            unified, oil_price_usd_bbl, royalty_basis="uk_fiscal_deck_royalty_only"
+        ),
         "pre_tax_metrics": _pre_tax_metrics(cashflows),
     }
 

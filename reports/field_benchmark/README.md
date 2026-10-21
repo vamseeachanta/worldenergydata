@@ -74,3 +74,15 @@ own regime — the map exists so that can be spotted rather than inferred.
 
 Fiscal coefficients throughout are simplified public approximations. They are
 **not** legal or financial advice.
+
+
+## Economics basis
+
+Each row carries `economics_basis`: effective annual-to-monthly FDAS discounting,
+the first supplied calendar month at t=0, explicit price and fiscal assumptions,
+and excluded capital and operating costs. Country reference-chain results remain
+undiscounted pre-income-tax plumbing after royalties and model costs. The two
+views are deliberately distinct; see
+[the decision record](../../docs/architecture/economics-views.md). Regenerate
+when the calculation basis or timing convention changes as well as when data
+changes. No investment-NPV headline is enabled.

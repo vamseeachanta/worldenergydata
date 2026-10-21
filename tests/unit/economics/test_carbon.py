@@ -17,7 +17,7 @@ from worldenergydata.economics.carbon import (
     carbon_npv_curve,
     tornado_sensitivity,
 )
-from worldenergydata.economics.dcf import (
+from worldenergydata.economics.cash_flow import (
     CashFlowSchedule,
     build_cash_flow_schedule,
 )
@@ -89,19 +89,19 @@ class TestCarbonNpvCurve:
 
     def test_npv_at_zero_carbon_matches_no_carbon_case(self):
         """NPV at carbon_price=0 equals NPV with no carbon module."""
-        from worldenergydata.economics.dcf import calculate_npv
+        from worldenergydata.fdas.core.financial import calculate_npv
 
         schedule_no_carbon = _field_schedule(carbon_price=0.0)
-        result_no_carbon = calculate_npv(schedule_no_carbon, discount_rate=0.10)
+        result_no_carbon = calculate_npv(
+            schedule_no_carbon.net_cashflows(), 0.10, period="annual"
+        )
 
         result_curve = carbon_npv_curve(
             base_schedule=_field_schedule(),
             discount_rate=0.10,
             carbon_prices=np.array([0.0]),
         )
-        assert result_curve.npv_values[0] == pytest.approx(
-            result_no_carbon.npv, rel=1e-6
-        )
+        assert result_curve.npv_values[0] == pytest.approx(result_no_carbon, rel=1e-6)
 
     def test_base_npv_stored(self):
         """CarbonSensitivityResult stores base NPV (at carbon_price=0)."""
@@ -152,7 +152,7 @@ class TestBreakevenCarbonPrice:
 
     def test_breakeven_npv_is_zero(self):
         """At the breakeven price, NPV must be ~0."""
-        from worldenergydata.economics.dcf import calculate_npv
+        from worldenergydata.fdas.core.financial import calculate_npv
 
         bp = breakeven_carbon_price(
             base_schedule=_field_schedule(),
@@ -171,8 +171,8 @@ class TestBreakevenCarbonPrice:
             scope1_tco2_per_boe=0.02,
             scope2_tco2_per_boe=0.03,
         )
-        npv_at_bp = calculate_npv(schedule_at_bp, discount_rate=0.10)
-        assert npv_at_bp.npv == pytest.approx(0.0, abs=1.0)
+        npv_at_bp = calculate_npv(schedule_at_bp.net_cashflows(), 0.10, period="annual")
+        assert npv_at_bp == pytest.approx(0.0, abs=1.0)
 
     def test_breakeven_returns_none_for_always_negative(self):
         """Returns None when NPV is negative even at zero carbon price."""

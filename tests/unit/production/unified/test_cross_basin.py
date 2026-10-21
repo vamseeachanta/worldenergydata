@@ -305,3 +305,48 @@ class TestFiscalRegimeCoverage:
         ]
         df = fiscal_sensitivity(_make_result(rows), oil_price_usd=70.0)
         assert round(float(df["effective_govt_take_pct"].values[0]), 2) == 31.40
+
+
+def test_fiscal_discount_uses_calendar_months_and_fdas(monkeypatch):
+    """Synthetic inputs: no royalty/tax, price 1, 110 bbl at t=0 and t=12.
+
+    Two source rows of 55 in the first month must aggregate. A missing month
+    retains elapsed time. Effective annual rate 0.1 gives 110+110/1.1=210.
+    NPV equation: numpy-financial v1.0.0 (2019), npv docstring.
+    """
+    monkeypatch.setitem(_FISCAL_REGIMES, "test", {"royalty_rate": 0, "tax_rate": 0})
+    rows = [
+        {
+            "region": "test",
+            "field_name": "Synthetic",
+            "year": 2024,
+            "month": 1,
+            "oil_bbl": 55,
+        },
+        {
+            "region": "test",
+            "field_name": "Synthetic",
+            "year": 2025,
+            "month": 1,
+            "oil_bbl": 110,
+        },
+        {
+            "region": "test",
+            "field_name": "Synthetic",
+            "year": 2024,
+            "month": 1,
+            "oil_bbl": 55,
+        },
+    ]
+    row = fiscal_sensitivity(_make_result(rows), oil_price_usd=1).iloc[0]
+    assert row["operator_npv_usd"] == pytest.approx(210)
+    basis = row["economics_basis"]
+    assert basis["discount_convention"] == "effective_annual_to_monthly"
+    assert basis["reference_date"] == "2024-01"
+    assert basis["tax_treatment"] == "post_tax_simplified"
+    assert basis["capex"] == "excluded"
+    assert basis["opex"] == "excluded"
+    assert basis["oil_price_usd_bbl"] == 1
+    assert basis["royalty_rate"] == 0
+    assert basis["tax_rate"] == 0
+    assert basis["view"] == "historical_post_tax_proxy"

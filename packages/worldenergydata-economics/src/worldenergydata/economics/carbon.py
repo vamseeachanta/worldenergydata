@@ -12,7 +12,7 @@ Design note
 -----------
 ``carbon_npv_curve`` and ``breakeven_carbon_price`` use the
 ``emission_tco2_per_period`` field stored by
-:func:`~worldenergydata.economics.dcf.build_cash_flow_schedule` to
+:func:`~worldenergydata.economics.cash_flow.build_cash_flow_schedule` to
 recompute carbon costs at arbitrary prices without redundant input.
 """
 
@@ -24,11 +24,11 @@ from typing import List, Optional
 import numpy as np
 from scipy.optimize import brentq
 
-from worldenergydata.economics.dcf import (
+from worldenergydata.economics.cash_flow import (
     CashFlowSchedule,
     build_cash_flow_schedule,
-    calculate_npv,
 )
+from worldenergydata.fdas.core.financial import calculate_npv
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -106,7 +106,7 @@ def carbon_npv_curve(
     The *base_schedule* supplies the production profile, capex, opex, and
     revenue.  Emission volumes are taken from
     ``base_schedule.emission_tco2_per_period`` (set by
-    :func:`~worldenergydata.economics.dcf.build_cash_flow_schedule`).
+    :func:`~worldenergydata.economics.cash_flow.build_cash_flow_schedule`).
 
     At each carbon price the per-period carbon cost is recomputed as::
 
@@ -130,12 +130,16 @@ def carbon_npv_curve(
 
     # base NPV is computed with carbon_price = 0
     zero_carbon_sched = _schedule_at_price(base_schedule, emissions, 0.0)
-    base_npv = calculate_npv(zero_carbon_sched, discount_rate).npv
+    base_npv = calculate_npv(
+        zero_carbon_sched.net_cashflows(), discount_rate, period="annual"
+    )
 
     npv_values: list[float] = []
     for price in carbon_prices:
         sched_p = _schedule_at_price(base_schedule, emissions, float(price))
-        npv_values.append(calculate_npv(sched_p, discount_rate).npv)
+        npv_values.append(
+            calculate_npv(sched_p.net_cashflows(), discount_rate, period="annual")
+        )
 
     return CarbonSensitivityResult(
         carbon_prices=np.asarray(carbon_prices, dtype=float),
@@ -177,7 +181,7 @@ def breakeven_carbon_price(
 
     def _npv_at_price(price: float) -> float:
         sched = _schedule_at_price(base_schedule, emissions, price)
-        return calculate_npv(sched, discount_rate).npv
+        return calculate_npv(sched.net_cashflows(), discount_rate, period="annual")
 
     npv_low = _npv_at_price(0.0)
     npv_high = _npv_at_price(search_upper)
@@ -236,7 +240,9 @@ def tornado_sensitivity(
         scope1_tco2_per_boe=scope1_tco2_per_boe,
         scope2_tco2_per_boe=scope2_tco2_per_boe,
     )
-    base_npv = calculate_npv(base_schedule, discount_rate).npv
+    base_npv = calculate_npv(
+        base_schedule.net_cashflows(), discount_rate, period="annual"
+    )
 
     def _npv_for(dr: float = discount_rate, **overrides) -> float:
         kw = dict(
@@ -251,7 +257,7 @@ def tornado_sensitivity(
         )
         kw.update(overrides)
         sched = build_cash_flow_schedule(**kw)
-        return calculate_npv(sched, dr).npv
+        return calculate_npv(sched.net_cashflows(), dr, period="annual")
 
     f = swing_fraction
     parameters = [
