@@ -12,6 +12,7 @@ This checks export fidelity, not the upstream production calculation.
 """
 
 import json
+from collections.abc import Mapping
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -83,6 +84,7 @@ def test_export_preserves_production_volume(
     assert list(exported.columns) == ["production_bbl"]
     assert exported["production_bbl"].tolist() == volumes_bbl
     assert exported["production_bbl"].sum() == expected_total_bbl
-    if summary is not None:
+    if fmt in {"json", "xlsx"}:
+        assert isinstance(summary, Mapping)
         assert summary["total_production_bbl"] == expected_total_bbl
         assert summary["total_production_bbl"] == exported["production_bbl"].sum()
