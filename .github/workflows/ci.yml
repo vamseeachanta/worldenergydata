@@ -732,7 +732,7 @@ jobs:
       - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Lint'].decision }}
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Lint'].decision }}
         run: |
           echo "Selected replay result: $REPLAY_RESULT"
           test "$REPLAY_RESULT" = PASS
@@ -758,7 +758,7 @@ jobs:
       - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Type Check'].decision }}
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Type Check'].decision }}
         run: |
           echo "Selected replay result: $REPLAY_RESULT"
           test "$REPLAY_RESULT" = PASS
@@ -784,7 +784,7 @@ jobs:
       - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Security Scan'].decision }}
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Security Scan'].decision }}
         run: |
           echo "Selected replay result: $REPLAY_RESULT"
           test "$REPLAY_RESULT" = PASS
@@ -810,7 +810,7 @@ jobs:
       - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Documentation'].decision }}
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Documentation'].decision }}
         run: |
           echo "Selected replay result: $REPLAY_RESULT"
           test "$REPLAY_RESULT" = PASS
@@ -836,7 +836,7 @@ jobs:
       - name: Copy selected check conclusion
         if: needs.mode.result == 'success' && needs.mode.outputs.replay == 'true'
         env:
-          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence)['Test (PR gate)'].decision }}
+          REPLAY_RESULT: ${{ fromJSON(needs.mode.outputs.evidence || '{}')['Test (PR gate)'].decision }}
         run: |
           echo "Selected replay result: $REPLAY_RESULT"
           test "$REPLAY_RESULT" = PASS
