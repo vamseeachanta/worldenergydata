@@ -1,7 +1,14 @@
-"""Tests for compliance data models."""
+"""Tests for compliance data models.
+
+Incidence-rate source: Cal/OSHA, Brief Guide to Recordkeeping Requirements,
+2021 PDF revision, p. 5, Calculating Injury and Illness Incidence Rates:
+https://www.dir.ca.gov/dosh/dosh_publications/RecKeepOverview.pdf
+Additional rate examples use synthetic inputs with hand calculations below.
+"""
 
 from datetime import date
 
+import numpy as np
 import pytest
 
 from worldenergydata.bsee.reports.comprehensive.templates.compliance_models import (
@@ -142,11 +149,63 @@ class TestSafetyMetrics:
 
     def test_calculate_trir_zero_hours(self):
         s = SafetyMetrics(total_recordables=5)
-        assert s.calculate_trir() == 0.0
+        with pytest.raises(ValueError, match="hours_worked"):
+            s.calculate_trir()
 
     def test_calculate_ltir(self):
         s = SafetyMetrics(lost_time_incidents=2, man_hours_worked=1000000.0)
         assert s.calculate_ltir() == pytest.approx(0.4)
+
+    @pytest.mark.parametrize("method", ["calculate_trir", "calculate_ltir"])
+    @pytest.mark.parametrize(
+        "hours", [0, -1, None, float("nan"), float("inf"), -float("inf")]
+    )
+    @pytest.mark.parametrize("count", [0, 7])
+    def test_invalid_exposure_raises(self, method, hours, count):
+        """Undefined exposure stays undefined even with no recorded cases."""
+        metrics = SafetyMetrics(
+            total_recordables=count, lost_time_incidents=count, man_hours_worked=hours
+        )
+        with pytest.raises(ValueError, match="hours_worked"):
+            getattr(metrics, method)()
+
+    @pytest.mark.parametrize("method", ["calculate_trir", "calculate_ltir"])
+    @pytest.mark.parametrize(
+        "count", [-1, np.int64(-1), True, False, np.bool_(True), 1.5]
+    )
+    def test_invalid_counts_raise(self, method, count):
+        """Case counts obey the shared nonnegative-integral contract."""
+        metrics = SafetyMetrics(
+            total_recordables=count, lost_time_incidents=count, man_hours_worked=400_000
+        )
+        with pytest.raises(ValueError, match="incident_count"):
+            getattr(metrics, method)()
+
+    def test_qualified_counts_and_numpy_aggregation(self):
+        """Synthetic hand calculation using the cited Cal/OSHA formula:
+
+        7 recordables * 200,000 / 400,000 = 3.5; the chosen lost-time
+        subset is 2 * 200,000 / 400,000 = 1.0. All inputs represent the
+        same population and period. The unrelated incident total is 99.
+        """
+        from worldenergydata.hse.incidence_rate import incidence_rate
+
+        metrics = SafetyMetrics(
+            incident_count=99,
+            total_recordables=np.array([4, 3], dtype=np.int64).sum(),
+            lost_time_incidents=np.int64(2),
+            man_hours_worked=400_000,
+        )
+        assert metrics.calculate_trir() == 3.5
+        assert metrics.calculate_ltir() == 1.0
+        assert metrics.calculate_trir() == incidence_rate(7, 400_000)
+        assert metrics.calculate_ltir() == incidence_rate(2, 400_000)
+
+    def test_zero_counts_with_positive_exposure(self):
+        """Cited formula, synthetic: 0 * 200,000 / 400,000 = 0.0."""
+        metrics = SafetyMetrics(man_hours_worked=400_000)
+        assert metrics.calculate_trir() == 0.0
+        assert metrics.calculate_ltir() == 0.0
 
     def test_calculate_safety_score_perfect(self):
         s = SafetyMetrics(
