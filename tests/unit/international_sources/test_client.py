@@ -37,7 +37,13 @@ def test_collected_page_keeps_evidence_and_never_claims_complete_coverage():
     Independent expected byte count is len(payload); SHA-256 is checked against
     hashlib over the original supplied bytes rather than a JSON reserialization.
     """
-    metadata = json.dumps({"id": "fdvb-hsrf", "rowsUpdatedAt": 0}).encode()
+    metadata = json.dumps(
+        {
+            "id": "fdvb-hsrf",
+            "rowsUpdatedAt": 0,
+            "columns": [{"fieldName": "produccion_bls"}],
+        }
+    ).encode("utf-8")
     rows = json.dumps(
         [{"campo": "EXAMPLE", "vigencia": "2024", "mes": "1", "produccion_bls": "2.5"}]
     ).encode()
@@ -123,7 +129,11 @@ def test_argentina_identifier_is_encoded_and_metadata_preserved():
 
 def test_wrong_dataset_response_is_rejected():
     client = SourceClient(
-        timeout_seconds=2, max_bytes=1000, opener=opener_for(b'{"id":"5dux-bfvx"}')
+        timeout_seconds=2,
+        max_bytes=1000,
+        opener=opener_for(
+            b'{"id":"5dux-bfvx","columns":[{"fieldName":"produccionkpc"}]}'
+        ),
     )
     with pytest.raises(ValueError, match="dataset"):
         client.colombia_metadata("oil")
@@ -156,3 +166,59 @@ def test_https_downgrade_is_rejected():
     client = SourceClient(timeout_seconds=2, max_bytes=1000, opener=redirect)
     with pytest.raises(ValueError, match="redirect"):
         client.colombia_metadata("oil")
+
+
+@pytest.mark.parametrize(
+    "commodity,dataset_id,column,unit",
+    [
+        ("oil", "fdvb-hsrf", "produccion_bls", "bbl"),
+        ("gas", "5dux-bfvx", "produccionkpc", "Mcf"),
+    ],
+)
+def test_page_preserves_an_omitted_source_null(commodity, dataset_id, column, unit):
+    metadata = json.dumps(
+        {"id": dataset_id, "columns": [{"fieldName": column}]}
+    ).encode("utf-8")
+    rows = b'[{"campo":"EXAMPLE","vigencia":"2024","mes":"1"}]'
+
+    def open_response(request, timeout):
+        return Response(
+            metadata if "/api/views/" in request.full_url else rows,
+            url=request.full_url,
+        )
+
+    client = SourceClient(timeout_seconds=2, max_bytes=1000, opener=open_response)
+    page = client.colombia_page(commodity, limit=1, offset=0)
+
+    assert len(page.observations) == 1
+    assert page.observations[0].volume is None
+    assert page.observations[0].unit == unit
+    assert page.rows_evidence.raw_bytes == rows
+    assert page.complete is False
+
+
+@pytest.mark.parametrize(
+    "commodity,dataset_id", [("oil", "fdvb-hsrf"), ("gas", "5dux-bfvx")]
+)
+@pytest.mark.parametrize(
+    "rows", [b"[]", b'[{"campo":"EXAMPLE","vigencia":"2024","mes":"1"}]']
+)
+def test_page_rejects_removed_volume_column_before_fetching_rows(
+    commodity, dataset_id, rows
+):
+    metadata = json.dumps(
+        {"id": dataset_id, "columns": [{"fieldName": "renamed_volume"}]}
+    ).encode("utf-8")
+    requests = []
+
+    def open_response(request, timeout):
+        requests.append(request.full_url)
+        return Response(
+            metadata if "/api/views/" in request.full_url else rows,
+            url=request.full_url,
+        )
+
+    client = SourceClient(timeout_seconds=2, max_bytes=1000, opener=open_response)
+    with pytest.raises(ValueError, match="column"):
+        client.colombia_page(commodity, limit=1, offset=0)
+    assert len(requests) == 1

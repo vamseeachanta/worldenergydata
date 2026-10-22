@@ -19,6 +19,7 @@ from worldenergydata.international_sources.colombia import (
 def test_metadata_preserves_quarterly_refresh_and_source_vintage():
     metadata = {
         "id": "fdvb-hsrf",
+        "columns": [{"fieldName": "produccion_bls"}],
         "license": {
             "name": "Creative Commons Attribution | Share Alike 4.0 International"
         },
@@ -152,8 +153,69 @@ def test_malformed_grouping_and_boolean_volumes_are_rejected(value):
         )
 
 
-def test_missing_volume_column_is_schema_drift_not_an_unknown_value():
+@pytest.mark.parametrize(
+    "commodity,column,unit",
+    [("oil", "produccion_bls", "bbl"), ("gas", "produccionkpc", "Mcf")],
+)
+@pytest.mark.parametrize("representation", ["omitted", "null", "empty"])
+def test_source_nulls_preserve_unknown_volumes(commodity, column, unit, representation):
+    """Socrata JSON omits null-valued fields; zero remains a known value.
+
+    Contract: https://dev.socrata.com/docs/formats/json.html.
+    Synthetic known values are retained as 0 and 2.5, without conversion.
+    """
+    row = {"vigencia": "2024", "mes": "1", "campo": "EXAMPLE", "contrato": "A"}
+    if representation != "omitted":
+        row[column] = None if representation == "null" else ""
+    rows = [
+        row,
+        {**row, "contrato": "B", column: "0"},
+        {**row, "contrato": "C", column: "2.5"},
+    ]
+
+    result = normalize_rows(rows, commodity=commodity)
+
+    assert [item.volume for item in result] == [None, Decimal("0"), Decimal("2.5")]
+    assert [item.contract for item in result] == ["A", "B", "C"]
+    assert all(item.unit == unit for item in result)
+    assert all(item.period == "2024-01" for item in result)
+
+
+@pytest.mark.parametrize(
+    "dataset_id,column",
+    [("fdvb-hsrf", "produccion_bls"), ("5dux-bfvx", "produccionkpc")],
+)
+def test_metadata_declares_the_required_volume_column(dataset_id, column):
+    result = describe_dataset({"id": dataset_id, "columns": [{"fieldName": column}]})
+    assert result.dataset_id == dataset_id
+    assert result.source_modified is None
+    assert result.production_status == "NOT_EVALUATED"
+
+
+@pytest.mark.parametrize("dataset_id", ["fdvb-hsrf", "5dux-bfvx"])
+@pytest.mark.parametrize(
+    "schema",
+    [
+        {},
+        {"columns": None},
+        {"columns": {}},
+        {"columns": []},
+        {"columns": ["invalid"]},
+        {"columns": [{"name": "produccion_bls"}]},
+        {"columns": [{"fieldName": "renamed_volume"}]},
+    ],
+)
+def test_missing_or_invalid_metadata_volume_column_is_schema_drift(dataset_id, schema):
     with pytest.raises(ValueError, match="column"):
-        normalize_rows(
-            [{"vigencia": "2024", "mes": "1", "campo": "EXAMPLE"}], commodity="oil"
-        )
+        describe_dataset({"id": dataset_id, **schema})
+
+
+@pytest.mark.parametrize(
+    "dataset_id,other_column",
+    [("fdvb-hsrf", "produccionkpc"), ("5dux-bfvx", "produccion_bls")],
+)
+def test_metadata_requires_the_volume_column_for_its_own_commodity(
+    dataset_id, other_column
+):
+    with pytest.raises(ValueError, match="column"):
+        describe_dataset({"id": dataset_id, "columns": [{"fieldName": other_column}]})

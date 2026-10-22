@@ -64,10 +64,20 @@ def rows_url(commodity: str, *, limit: int, offset: int) -> str:
 
 
 def describe_dataset(metadata: dict) -> Discovery:
-    """Preserve source vintage, reuse terms and refresh frequency verbatim."""
+    """Validate the volume column; preserve vintage, reuse terms and refresh."""
     dataset_id = metadata.get("id")
-    if dataset_id not in {item[0] for item in DATASETS.values()}:
+    volume_columns = {item[0]: item[1] for item in DATASETS.values()}
+    if dataset_id not in volume_columns:
         raise ValueError("unrecognized ANH dataset id")
+    columns = metadata.get("columns")
+    if not isinstance(columns, list) or not all(
+        isinstance(column, dict) for column in columns
+    ):
+        raise ValueError("metadata columns must be an array of objects")
+    if not any(
+        column.get("fieldName") == volume_columns[dataset_id] for column in columns
+    ):
+        raise ValueError("volume column is missing from dataset metadata")
     updated = metadata.get("rowsUpdatedAt")
     vintage = None
     if updated is not None:
@@ -115,8 +125,10 @@ def _volume(value: object) -> Decimal | None:
 def normalize_rows(rows: list[dict], *, commodity: str) -> tuple[Observation, ...]:
     """Retain native monthly volumes; never infer water or join commodities.
 
-    Empty strings and null volumes remain unknown. Schema drift, missing field
-    keys and ambiguous numbers fail closed rather than become zero production.
+    Validate the dataset schema with describe_dataset before normalizing rows.
+    Socrata JSON omits null-valued fields; omitted, null and empty volumes remain
+    unknown (https://dev.socrata.com/docs/formats/json.html). Missing field names
+    and ambiguous numbers fail closed rather than become zero production.
     """
     dataset_id, volume_column, unit = _dataset(commodity)
     if not isinstance(rows, list):
@@ -129,15 +141,13 @@ def normalize_rows(rows: list[dict], *, commodity: str) -> tuple[Observation, ..
         name = row.get("campo")
         if not isinstance(name, str) or not name.strip():
             raise ValueError("field name is required")
-        if volume_column not in row:
-            raise ValueError("volume column is missing")
         observations.append(
             Observation(
                 dataset_id,
                 name,
                 period,
                 commodity,
-                _volume(row[volume_column]),
+                _volume(row.get(volume_column)),
                 unit,
                 row.get("contrato") or None,
                 row.get("operadora") or None,
