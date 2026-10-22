@@ -259,21 +259,31 @@ class WellAPI12:
 
         API10 = API12[:10] if API12 else ""
 
-        TOTAL_DEPTH_DATE = pd.to_datetime(
-            borehole_raw_data["TOTAL_DEPTH_DATE"].max(), errors="coerce"
-        )
-
-        WELL_SPUD_DATE = pd.to_datetime(
-            borehole_raw_data["WELL_SPUD_DATE"].max(), errors="coerce"
-        )
+        # Schema: data/modules/bsee/current/wells/well_data.csv (source names);
+        # prepare_well_paths below documents the legacy display aliases.
+        # Keep source columns authoritative and absent milestones unknown.
+        milestone_dates = {}
+        for source_column, display_column in (
+            ("TOTAL_DEPTH_DATE", "Total Depth Date"),
+            ("WELL_SPUD_DATE", "Spud Date"),
+        ):
+            values = borehole_raw_data.get(source_column)
+            if values is None:
+                values = borehole_raw_data.get(display_column)
+            # Parse before max: calendar order differs from string order.
+            milestone_dates[source_column] = (
+                pd.NaT
+                if values is None
+                else pd.to_datetime(values, errors="coerce", format="mixed").max()
+            )
 
         COMPLETION_NAME = ""
 
         api12_analysis_dict = {
             "API12": API12,
             "API10": API10,
-            "TOTAL_DEPTH_DATE": TOTAL_DEPTH_DATE,
-            "WELL_SPUD_DATE": WELL_SPUD_DATE,
+            "TOTAL_DEPTH_DATE": milestone_dates["TOTAL_DEPTH_DATE"],
+            "WELL_SPUD_DATE": milestone_dates["WELL_SPUD_DATE"],
             "COMPLETION_NAME": COMPLETION_NAME,
             "START_PRODUCTION_DATE": "",
             "LAST_PRODUCTION_DATE": "",
