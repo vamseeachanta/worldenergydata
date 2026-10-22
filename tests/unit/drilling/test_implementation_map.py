@@ -16,7 +16,7 @@ MAP = ROOT / PACKAGE / "docs/implementation-map.json"
 
 
 def test_mobilization_enrollment_pin():
-    """Enrollment identifies the actual definition and its unchanged pinned bytes."""
+    """Enrollment identifies the actual definition and its recorded current bytes."""
     inventory = json.loads(MAP.read_text())
     assert inventory["repository"] == "worldenergydata"
     (family,) = inventory["families"]
@@ -101,5 +101,5 @@ def test_mobilization_nonpositive_count(wells):
     Zero and minus one exercise the boundary and a representative invalid count;
     1200 USD is the synthetic fixed cost from the hand calculation above.
     """
-    with pytest.raises(ValueError, match="n_wells_batch must be > 0"):
+    with pytest.raises(ValueError, match="n_wells_batch"):
         BatchDrillingEconomics().mobilization_savings(1200, wells)

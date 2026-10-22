@@ -10,19 +10,34 @@ from worldenergydata.drilling import (
     BatchDrillingEconomics,
     BSEEBatchDetector,
     DrillCampaign,
+    DrillingSite,
 )
 
 
 def test_c0_campaign_schema():
-    """Accept the documented default and reject each invalid numeric input."""
-    valid = dict(
-        campaign_id="",
-        rig_name="",
-        wells=[],
-        rig_day_rate_usd=350_000,
-        mobilization_cost_usd=20_000_000,
-    )
+    """Require an explicit synthetic factor and a nonempty valid campaign."""
+    valid = {
+        "campaign_id": "synthetic",
+        "rig_name": "synthetic",
+        "wells": [
+            DrillingSite(
+                well_id="W1",
+                field_name="synthetic",
+                location_coords=(0.0, 0.0),
+                water_depth_ft=0,
+                planned_md_ft=100,
+                well_type="development",
+            )
+        ],
+        "learning_curve_factor": 0.85,  # Explicit synthetic factor from gate C5.
+        "rig_day_rate_usd": 350_000,
+        "mobilization_cost_usd": 20_000_000,
+    }
     assert DrillCampaign(**valid).learning_curve_factor == 0.85
+    missing = dict(valid)
+    missing.pop("learning_curve_factor")
+    with pytest.raises(ValidationError, match="learning_curve_factor"):
+        DrillCampaign(**missing)
     for key, value in (
         ("rig_day_rate_usd", 0),
         ("mobilization_cost_usd", -1),

@@ -1,73 +1,174 @@
 # ABOUTME: Data models for WRK-219 batch drilling economics.
 # ABOUTME: Defines DrillingSite and DrillCampaign Pydantic schemas.
 
-"""Data models for batch drilling campaign scheduling and cost optimization.
+"""Input contracts for batch drilling economics.
 
-DrillingSite — individual well definition for campaign planning.
-DrillCampaign — rig campaign grouping multiple wells with economics parameters.
+Field                        Unit          Sign / domain       Finite
+===========================  ============  ==================  ======
+water_depth_ft               ft            >= 0                yes
+planned_md_ft                ft MD         > 0                 yes
+location_coords (each)       degrees       signed              yes
+rig_day_rate_usd             USD/day       > 0                 yes
+day_rate                     USD/day       > 0                 yes
+mobilization_cost_usd        USD           >= 0                yes
+mob_cost                     USD           >= 0                yes
+learning_curve_factor        fraction      0 < factor <= 1     yes
+lc_factor                    fraction      0 < factor <= 1     yes
+base_time_days               days          > 0                 yes
+base_well_days               days          > 0                 yes
+base_days_per_well           days          > 0                 yes
+well_position                wells         integer >= 1        yes
+n_wells_batch                wells         integer >= 1        yes
+n_wells_standalone           wells         integer >= 1        yes
+discount_rate (if supplied)  fraction/yr   >= 0 (unused)       yes
+md_ft_per_day                ft/day        > 0                 yes
+water_depth_ft_per_day       ft/day        > 0                 yes
+fixed_days                   days          >= 0                yes
+minimum_days                 days          >= 0                yes
+===========================  ============  ==================  ======
+
+These bounds define this API's domain, not empirical acceptance limits.
+Real inputs accept integers and floats, never Boolean values or numeric text.
+Identifiers/categories must be nonblank strings; mpd_required is Boolean.
+Coordinates have no datum or geographic-range qualification. Models reject
+unknown fields. Pydantic ValidationError.errors() identifies the field/location,
+error type and message for both model construction and decorated direct calls.
+
+A campaign requires at least one well with unique well_id values. An empty
+sequence explicitly selects insertion order. Any nonempty sequence must be an
+exact permutation: duplicates, unknowns and omissions are rejected with IDs,
+because silent exclusions would change the cost denominator. Filtering all wells
+out therefore rejects the campaign. Numeric learning/duration assumptions have
+no calibrated defaults; see docs/campaign-contracts.md.
 """
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from functools import wraps
+from inspect import signature
+from typing import Annotated
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    ValidationError,
+    ValidationInfo,
+    field_validator,
+    validate_call,
+)
+
+# Boundaries are API definitions in the table above; no field calibration.
+PositiveReal = Annotated[float, Field(strict=True, gt=0, allow_inf_nan=False)]
+NonnegativeReal = Annotated[float, Field(strict=True, ge=0, allow_inf_nan=False)]
+FiniteReal = Annotated[float, Field(strict=True, allow_inf_nan=False)]
+LearningFactor = Annotated[float, Field(strict=True, gt=0, le=1, allow_inf_nan=False)]
+WellCount = Annotated[int, Field(strict=True, ge=1)]
+Identifier = Annotated[str, Field(strict=True, min_length=1, pattern=r"\S")]
 
 
-class DrillingSite(BaseModel):
-    """Individual well definition for batch campaign planning.
+def validate_inputs(function):
+    """Validate direct calls with named locations even for positional arguments."""
+    parameters = tuple(signature(function).parameters)
+    validated = validate_call(config=ConfigDict(strict=True, allow_inf_nan=False))(
+        function
+    )
 
-    Attributes:
-        well_id: Unique well identifier (API or internal).
-        field_name: Field / development area name.
-        location_coords: (latitude, longitude) decimal degrees.
-        water_depth_ft: Water depth at well location in feet.
-        planned_md_ft: Planned measured depth of well in feet.
-        well_type: Activity category — exploration, development, appraisal.
-        bore_design: Wellbore design type — slim, standard. Default standard.
-        mpd_required: Whether managed pressure drilling is required.
-    """
+    @wraps(function)
+    def checked(*args, **kwargs):
+        try:
+            return validated(*args, **kwargs)
+        except ValidationError as error:
+            details = error.errors(include_url=False)
+            for detail in details:
+                location = detail["loc"]
+                if location and isinstance(location[0], int):
+                    index = location[0]
+                    if index < len(parameters):
+                        detail["loc"] = (parameters[index], *location[1:])
+            raise ValidationError.from_exception_data(error.title, details) from None
 
-    well_id: str
-    field_name: str
-    location_coords: tuple[float, float]
-    water_depth_ft: float
-    planned_md_ft: float
-    well_type: str
-    bore_design: str = "standard"
+    return checked
+
+
+class ContractModel(BaseModel):
+    """Strict models, revalidated when consumed by the calculation API."""
+
+    model_config = ConfigDict(
+        strict=True,
+        allow_inf_nan=False,
+        extra="forbid",
+        validate_assignment=True,
+        revalidate_instances="always",
+    )
+
+
+class DrillingSite(ContractModel):
+    """Individual well; depths are feet and coordinates are decimal degrees."""
+
+    well_id: Identifier
+    field_name: Identifier
+    location_coords: tuple[FiniteReal, FiniteReal]
+    water_depth_ft: NonnegativeReal
+    planned_md_ft: PositiveReal
+    well_type: Identifier
+    bore_design: Identifier = "standard"
     mpd_required: bool = False
 
 
-class DrillCampaign(BaseModel):
-    """Rig campaign grouping multiple DrillingSite wells.
+class DrillCampaign(ContractModel):
+    """Nonempty campaign with an explicit individual-duration learning factor.
 
-    Attributes:
-        campaign_id: Unique campaign identifier.
-        rig_name: Name of the drilling rig.
-        rig_day_rate_usd: Rig day rate in USD per day.
-        mobilization_cost_usd: One-time rig mobilization cost in USD.
-        wells: List of DrillingSite objects in this campaign.
-        sequence: Ordered list of well_ids defining drill sequence.
-            If empty, defaults to insertion order of wells.
-        learning_curve_factor: Wright learning curve factor (0 < LC <= 1).
-            0.85 means 15% time reduction per doubling of cumulative wells.
+    The documented empty-sequence convention preserves insertion order. The
+    learning factor is required: no drilling calibration supports a default.
     """
 
-    campaign_id: str
-    rig_name: str
-    rig_day_rate_usd: float = Field(gt=0)
-    mobilization_cost_usd: float = Field(ge=0)
+    campaign_id: Identifier
+    rig_name: Identifier
+    rig_day_rate_usd: PositiveReal
+    mobilization_cost_usd: NonnegativeReal
     wells: list[DrillingSite]
-    sequence: list[str] = Field(default_factory=list)
-    learning_curve_factor: float = Field(default=0.85, gt=0.0, le=1.0)
+    sequence: list[Identifier] = Field(default_factory=list)
+    learning_curve_factor: LearningFactor
+
+    @field_validator("wells")
+    @classmethod
+    def check_wells(cls, wells: list[DrillingSite]) -> list[DrillingSite]:
+        """Reject empty lists and ambiguous well identifiers at the wells field."""
+        if not wells:
+            raise ValueError("wells must contain at least one well")
+        seen = set()
+        for well in wells:
+            if well.well_id in seen:
+                raise ValueError(f"wells duplicate identifier: {well.well_id}")
+            seen.add(well.well_id)
+        return wells
+
+    @field_validator("sequence")
+    @classmethod
+    def check_sequence(cls, sequence: list[str], info: ValidationInfo) -> list[str]:
+        """Reject incomplete permutations at the sequence field, with IDs."""
+        if not sequence or "wells" not in info.data:
+            return sequence
+        known = {well.well_id for well in info.data["wells"]}
+        seen = set()
+        for well_id in sequence:
+            if well_id in seen:
+                raise ValueError(f"sequence duplicate identifier: {well_id}")
+            if well_id not in known:
+                raise ValueError(f"sequence unknown identifier: {well_id}")
+            seen.add(well_id)
+        missing = known - seen
+        if missing:
+            raise ValueError(
+                f"sequence omitted identifiers: {', '.join(sorted(missing))}"
+            )
+        return sequence
 
     def ordered_wells(self) -> list[DrillingSite]:
-        """Return wells in sequence order.
-
-        Falls back to insertion order when sequence is empty.
-
-        Returns:
-            List of DrillingSite in campaign drill order.
-        """
-        if not self.sequence:
-            return list(self.wells)
-        well_map = {w.well_id: w for w in self.wells}
-        return [well_map[wid] for wid in self.sequence if wid in well_map]
+        """Return every well exactly once, rechecking mutable list contents."""
+        validated = DrillCampaign.model_validate(self)
+        if not validated.sequence:
+            return list(validated.wells)
+        well_map = {well.well_id: well for well in validated.wells}
+        return [well_map[well_id] for well_id in validated.sequence]

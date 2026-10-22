@@ -1,27 +1,34 @@
 # ABOUTME: Core batch drilling economics calculations for WRK-219.
 # ABOUTME: Implements learning curve, mobilization savings, NPV comparison, break-even.
 
-"""Batch drilling economics calculator.
+"""Batch drilling costs using the individual-duration power law.
 
-Key economic concepts implemented:
-- Wright learning curve: T(N) = T(1) x N^(log(LC)/log(2))
-- Mobilization cost amortization across N wells
-- Batch vs. standalone NPV comparison
-- Break-even well count for batch justification
-- Campaign total cost with cumulative learning
+Source: NASA, Guidelines for Application of Learning/Cost Improvement Curves
+(1975), sections IV.A-B, VII.B formulas 1-2, printed pp. 6-7 and 15:
+https://ntrs.nasa.gov/api/citations/19760006882/downloads/19760006882.pdf
+
+T(N) = T1 * N**e, e = log(LC)/log(2), is an individual-unit duration here.
+For the cumulative-average reading, the same ordinate is A(N), so total time
+is N*A(N), not sum(A(i)). Cost methods retain the individual-unit reading.
+The source establishes the mathematical form, not drilling applicability or
+calibration. T1 (days) and LC (fraction per doubling) are required assumptions.
+Depth coefficients are also required; no public drilling calibration has been
+established. See models.py for the finite-input contract and
+../docs/campaign-contracts.md for independent hand calculations and limits.
 """
 
 from __future__ import annotations
 
-import logging
 import math
 
-from worldenergydata.drilling.batch_economics.models import DrillCampaign
-
-logger = logging.getLogger(__name__)
-
-# Default annual discount rate for NPV when not otherwise specified
-_DEFAULT_DISCOUNT_RATE = 0.10
+from worldenergydata.drilling.batch_economics.models import (
+    DrillCampaign,
+    LearningFactor,
+    NonnegativeReal,
+    PositiveReal,
+    WellCount,
+    validate_inputs,
+)
 
 
 class BatchDrillingEconomics:
@@ -35,29 +42,25 @@ class BatchDrillingEconomics:
     # Learning curve
     # ------------------------------------------------------------------
 
+    @validate_inputs
     def learning_curve_time(
         self,
-        base_time_days: float,
-        well_position: int,
-        lc_factor: float = 0.85,
+        base_time_days: PositiveReal,
+        well_position: WellCount,
+        lc_factor: LearningFactor,
     ) -> float:
-        """Cumulative average learning curve time for well at position N.
+        """Individual duration at the one-based position, in days.
 
-        Uses the Wright (1936) power-law learning curve:
-            T(N) = T(1) x N^(log(LC) / log(2))
-
-        Args:
-            base_time_days: Duration of the first well in the batch (days).
-            well_position: 1-based position in the drill sequence.
-            lc_factor: Learning curve factor. 0.85 means each time cumulative
-                quantity doubles, average time falls to 85% of prior value.
-
-        Returns:
-            Estimated drilling time for the well at ``well_position`` (days).
+        NASA (1975), IV.B and VII.B formulas 1-2: unit-time power law.
+        The factor defines T(2*N)/T(N); solving 2**e=LC gives e=log2(LC).
+        It is required and has no empirically calibrated drilling default.
+        Interpreting this ordinate as a cumulative average instead would
+        require N*T(N) for the cumulative total, not summing these ordinates.
         """
-        if well_position <= 1:
+        if well_position == 1:
             return float(base_time_days)
 
+        # NASA (1975), VII.B.1-2; base 2 follows the doubling definition.
         exponent = math.log(lc_factor) / math.log(2.0)
         return float(base_time_days * (well_position**exponent))
 
@@ -65,11 +68,12 @@ class BatchDrillingEconomics:
     # Mobilization savings
     # ------------------------------------------------------------------
 
+    @validate_inputs
     def mobilization_savings(
         self,
-        mob_cost: float,
-        n_wells_batch: int,
-        n_wells_standalone: int = 1,
+        mob_cost: NonnegativeReal,
+        n_wells_batch: WellCount,
+        n_wells_standalone: WellCount = 1,
     ) -> float:
         """Per-well mobilization cost in a batch vs standalone scenario.
 
@@ -85,20 +89,19 @@ class BatchDrillingEconomics:
         Returns:
             Per-well mobilization cost in USD for the batch scenario.
         """
-        if n_wells_batch <= 0:
-            raise ValueError(f"n_wells_batch must be > 0, got {n_wells_batch}")
         return mob_cost / n_wells_batch
 
     # ------------------------------------------------------------------
     # Break-even analysis
     # ------------------------------------------------------------------
 
+    @validate_inputs
     def break_even_n_wells(
         self,
-        mob_cost: float,
-        day_rate: float,
-        base_well_days: float,
-        lc_factor: float = 0.85,
+        mob_cost: NonnegativeReal,
+        day_rate: PositiveReal,
+        base_well_days: PositiveReal,
+        lc_factor: LearningFactor,
     ) -> int:
         """Minimum number of wells in a batch to justify batch vs standalone.
 
@@ -112,7 +115,7 @@ class BatchDrillingEconomics:
             mob_cost: Mobilization cost in USD.
             day_rate: Rig day rate in USD per day.
             base_well_days: Base drilling duration for the first well (days).
-            lc_factor: Wright learning curve factor.
+            lc_factor: Required individual-duration learning factor.
 
         Returns:
             Minimum integer N >= 1 where batching saves money.
@@ -139,33 +142,22 @@ class BatchDrillingEconomics:
     # NPV comparison
     # ------------------------------------------------------------------
 
+    @validate_inputs
     def batch_vs_standalone_npv(
         self,
         campaign: DrillCampaign,
-        discount_rate: float = _DEFAULT_DISCOUNT_RATE,
+        discount_rate: NonnegativeReal | None = None,
+        *,
+        base_days_per_well: PositiveReal,
     ) -> dict[str, float]:
-        """Compare batch NPV vs standalone NPV for a campaign.
+        """Compare undiscounted batch and standalone costs in USD.
 
-        Cost-only NPV: all costs are negative cash flows at t=0 (CAPEX
-        incurred upfront).  Uses simple present-value discounting with a
-        single period for the campaign duration approximation.
-
-        Standalone scenario: each well bears the full mobilization cost
-        independently, and no learning curve benefit is applied.
-
-        Batch scenario: mobilization cost is shared across all N wells;
-        learning curve reduces drilling time for each subsequent well.
-
-        Args:
-            campaign: DrillCampaign instance with rig/well parameters.
-            discount_rate: Annual discount rate (default 10%).
-
-        Returns:
-            Dict with keys:
-                batch_npv: Total batch cost (negative = savings preserved
-                    as absolute cost in USD).
-                standalone_npv: Sum of standalone well costs in USD.
-                batch_savings: standalone_npv - batch_npv (positive = savings).
+        The legacy NPV names are retained; no cashflow schedule or discounting
+        is applied. A supplied discount_rate is validated but remains unused.
+        base_days_per_well is required, replacing the unqualified automatic
+        depth heuristic. Standalone pays mobilization per well and no learning;
+        batch pays it once and sums individual learning-adjusted durations.
+        Outputs are batch_npv, standalone_npv and their difference batch_savings.
         """
         n_wells = len(campaign.wells)
         day_rate = campaign.rig_day_rate_usd
@@ -173,9 +165,8 @@ class BatchDrillingEconomics:
         lc = campaign.learning_curve_factor
 
         # Standalone: each well pays full mob + base drilling day rate
-        # Use average time from batch position 1 as the base for all
-        # standalone wells (no learning benefit).
-        base_days = self._estimate_base_well_days(campaign)
+        # Supplied first-well duration is also the no-learning standalone base.
+        base_days = base_days_per_well
 
         standalone_per_well = mob + day_rate * base_days
         standalone_total = n_wells * standalone_per_well
@@ -199,10 +190,11 @@ class BatchDrillingEconomics:
     # Campaign total cost
     # ------------------------------------------------------------------
 
+    @validate_inputs
     def campaign_total_cost(
         self,
         campaign: DrillCampaign,
-        base_days_per_well: float,
+        base_days_per_well: PositiveReal,
     ) -> float:
         """Total campaign cost applying learning curve to all wells.
 
@@ -231,25 +223,32 @@ class BatchDrillingEconomics:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _estimate_base_well_days(self, campaign: DrillCampaign) -> float:
-        """Derive a base well duration from campaign depth parameters.
+    @validate_inputs
+    def _estimate_base_well_days(
+        self,
+        campaign: DrillCampaign,
+        *,
+        md_ft_per_day: PositiveReal,
+        water_depth_ft_per_day: PositiveReal,
+        fixed_days: NonnegativeReal,
+        minimum_days: NonnegativeReal,
+    ) -> float:
+        """Evaluate an explicitly assumed depth-duration model in days.
 
-        Uses a simple heuristic based on planned measured depth.  When depth
-        data is available, applies a benchmark of ~1 day per 400 ft MD plus
-        20 days fixed for water depth mobilization.  Falls back to 60 days.
+        Retains the previous arithmetic, now with required coefficients:
+        max(mean_MD / md_ft_per_day + mean_WD / water_depth_ft_per_day
+            + fixed_days, minimum_days).
 
-        Args:
-            campaign: DrillCampaign instance.
-
-        Returns:
-            Estimated base well duration in days.
+        The previous denominators, fixed term and floor have no established
+        public calibration. They are no longer defaults. The former prose
+        described a different fixed term from the arithmetic; this expression
+        states the actual addition. No empty-campaign fallback is allowed.
+        The comparison API takes an explicit base duration instead of invoking
+        this heuristic. This helper only evaluates caller assumptions.
         """
-        if not campaign.wells:
-            return 60.0
-
         avg_md_ft = sum(w.planned_md_ft for w in campaign.wells) / len(campaign.wells)
         avg_wd_ft = sum(w.water_depth_ft for w in campaign.wells) / len(campaign.wells)
-
-        # Heuristic: 1 day per 400 ft MD, 1 day per 2000 ft water depth, +10 fixed
-        estimated = (avg_md_ft / 400.0) + (avg_wd_ft / 2000.0) + 10.0
-        return max(estimated, 30.0)
+        estimated = (
+            avg_md_ft / md_ft_per_day + avg_wd_ft / water_depth_ft_per_day + fixed_days
+        )
+        return max(estimated, minimum_days)

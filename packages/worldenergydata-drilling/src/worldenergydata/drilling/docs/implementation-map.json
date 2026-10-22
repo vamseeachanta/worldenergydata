@@ -2,7 +2,7 @@
   "schema_version": 1,
   "repository": "worldenergydata",
   "revision": "648d6de46081ad98a06504a25ec8a222acbd41b1",
-  "scope": "Package-local enrollment proposal; external map and reviewed inventory unchanged.",
+  "scope": "Package-local enrollment proposal; external map and reviewed inventory unchanged. File digests and symbol ranges describe current contents; revision records historical discovery provenance only. A current reviewed code pin is pending.",
   "families": [
     {
       "id": "mobilization-allocation",
@@ -23,12 +23,12 @@
         {
           "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
           "symbol": "BatchDrillingEconomics.mobilization_savings",
-          "line": 68,
-          "end_line": 90,
+          "line": 72,
+          "end_line": 92,
           "kind": "method",
           "relation": "independent",
           "module": "drilling",
-          "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+          "file_sha256": "bc312badfa02577c8fa307628759764595ddca4148a5ea5584997876a4fc3742"
         }
       ],
       "tests": [
@@ -36,24 +36,24 @@
         "tests/unit/drilling/test_implementation_map.py::test_mobilization_nonpositive_count"
       ],
       "duplicate_discovery": {
-        "scope": "All tracked Python blobs at revision; bounded name and literal-division search.",
+        "scope": "Historical discovery result paths retained. File hashes refreshed to current contents; this is not a new repository-wide discovery or a reviewed current code pin.",
         "pattern": "mobilization_savings|mob_cost / n_wells_batch",
         "command": "git grep -l -E 'mobilization_savings|mob_cost / n_wells_batch' <revision> -- '*.py'",
         "results": [
           {
             "path": "packages/worldenergydata-drilling/src/worldenergydata/drilling/batch_economics/economics.py",
             "classification": "implementation",
-            "file_sha256": "a14564ea9372b26481bb41e4387b11a1dcb908c7e3bd5a230ba7dea327ab58c4"
+            "file_sha256": "bc312badfa02577c8fa307628759764595ddca4148a5ea5584997876a4fc3742"
           },
           {
             "path": "tests/drilling/test_batch_economics.py",
             "classification": "test_consumer",
-            "file_sha256": "df9adfcdbc4ca42cda5bba5b9750b96cdc3f57acbb9bc035cd217ab94a414b20"
+            "file_sha256": "d51cfeede3a99950067c3316650ef0b2b8c9a3b9ebd96c132754cd09a07a6fbe"
           },
           {
             "path": "tests/unit/drilling/test_pack_numeric_gates.py",
             "classification": "test_consumer",
-            "file_sha256": "a7bffd58e73b8f640b2fedba9b3041241bdce9f59ec1623c5bbaed35e9ae7c80"
+            "file_sha256": "d12057c7b393e75634dc48f5782bd15337c21101b7878f62aac4cd1eb15459bd"
           }
         ],
         "conclusion": "No additional definition in this search; not a proof of algorithmic uniqueness."
@@ -61,7 +61,7 @@
       "limits": [
         "The return is allocated cost, despite the savings method name.",
         "n_wells_standalone is accepted but unused; semantics remain tracked in #1345.",
-        "Only the existing nonpositive batch-count guard is recorded; finiteness and integer-count contracts remain tracked in #1344.",
+        "Finite numeric inputs, strict positive integer counts and model completeness are enforced; campaign-contracts.md defines the current contracts. Discovery coverage and engineering calibration remain separate.",
         "Engineering qualification and counted-family review are NOT_EVALUATED."
       ]
     }
