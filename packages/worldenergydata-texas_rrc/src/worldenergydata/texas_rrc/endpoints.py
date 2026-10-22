@@ -161,7 +161,8 @@ GIS_ENDPOINTS = {
     },
 }
 
-# Texas RRC districts
+# District metadata. Production membership is qualified in districts.py;
+# the PDQ source does not qualify headquarters or county counts for 6E.
 TEXAS_DISTRICTS = {
     "01": {"name": "District 1", "headquarters": "San Antonio", "counties": 27},
     "02": {"name": "District 2", "headquarters": "Refugio", "counties": 21},
@@ -169,6 +170,7 @@ TEXAS_DISTRICTS = {
     "04": {"name": "District 4", "headquarters": "Corpus Christi", "counties": 22},
     "05": {"name": "District 5", "headquarters": "Kilgore", "counties": 15},
     "06": {"name": "District 6", "headquarters": "Kilgore", "counties": 16},
+    "6E": {"name": "District 6E", "headquarters": None, "counties": None},
     "7B": {"name": "District 7B", "headquarters": "San Angelo", "counties": 19},
     "7C": {"name": "District 7C", "headquarters": "San Angelo", "counties": 13},
     "08": {"name": "District 8", "headquarters": "Midland", "counties": 30},
@@ -270,7 +272,7 @@ def get_district_info(district_code: str) -> dict:
     Get information about a Texas RRC district.
 
     Args:
-        district_code: District code (01-10, 7B, 7C, 8A)
+        district_code: Production district label (including 6E, 7B, 7C, 8A)
 
     Returns:
         District information dictionary

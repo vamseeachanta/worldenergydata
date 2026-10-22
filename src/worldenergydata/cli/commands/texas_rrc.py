@@ -28,6 +28,8 @@ from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
+from worldenergydata.texas_rrc.districts import PRODUCTION_DISTRICTS
+
 # Initialize console
 console = Console()
 
@@ -59,21 +61,9 @@ class OutputFormat(str, Enum):
     excel = "excel"
 
 
-# Valid RRC districts
-VALID_DISTRICTS = [
-    "01",
-    "02",
-    "03",
-    "04",
-    "05",
-    "06",
-    "7B",
-    "7C",
-    "08",
-    "8A",
-    "09",
-    "10",
-]
+# Qualified production labels; reference and scope in districts.py.
+VALID_DISTRICTS = list(PRODUCTION_DISTRICTS)
+DISTRICT_HELP = f"RRC production districts: {', '.join(VALID_DISTRICTS)} (omit for all)"
 
 
 @app.command()
@@ -88,7 +78,7 @@ def collect(
         None,
         "--districts",
         "-d",
-        help="RRC districts: 01-10, 7B, 7C, 8A (omit for all districts)",
+        help=DISTRICT_HELP,
     ),
     output: Path = typer.Option(
         Path("./data/texas_rrc"),
@@ -1863,6 +1853,7 @@ def status(
                 "04": "Deep South Texas",
                 "05": "East Central Texas",
                 "06": "East Texas",
+                "6E": "PDQ production district",
                 "7B": "West Central Texas",
                 "7C": "West Central Texas",
                 "08": "Permian Basin - Midland",
