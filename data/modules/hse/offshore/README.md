@@ -36,3 +36,12 @@ The importer rejects unreviewed string values and contact patterns before persis
 The earlier collection recorded a 50-event packet in external storage. Its original digests remain in the manifest, but the packet was not located for this revision; current-policy validation and canonical placement are unverified. It remains **candidate data**, with 52 source rows. Historical review receipts were not imported as current approvals. The earlier independent source review checked five candidates (10% of 50), plus a partial pilot check; `source_review.json` binds those results to corrected sample record hashes and records the expected historical packet digest separately. `sample.json` contains those five records and the pilot. Only this small sample, pilot, links, registry, review report and compact manifest belong in Git.
 
 Complete canonical HSE and marine-safety indexes are unavailable. The private source-identity catalog is also unavailable and has not been modified. **Bulk acceptance and canonical placement remain blocked.** The preserved candidates must not be presented as 50 deduplicated accepted events or qualified engineering inputs. The manifest records these limitations and failed acceptance criteria. Maintainer review remains required before merge.
+
+## Source registry
+
+The [registry documentation](../../../../docs/hse/source-registry.md) defines
+the controlled licence and access values, historical terms-check dates and
+metadata-only storage policy. It includes a before/after contract-row example.
+Run `python -m worldenergydata.hse.source_registry validate` to check the registry
+or replace `validate` with `list --json` to inspect its entries offline.
+Registry validation does not fetch a source or approve collection.
