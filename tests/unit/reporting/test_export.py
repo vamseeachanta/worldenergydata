@@ -251,6 +251,56 @@ class TestCsvExport:
 
 
 class TestJsonExport:
+    def test_epoch_default_is_not_the_export_contract(self, tmp_path):
+        """Hand calculation using pandas 2.3.3 to_json date_format/date_unit.
+
+        https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.to_json.html
+        The synthetic naive date 1970-01-02 is one day after the Unix epoch:
+        24 hours * 60 minutes * 60 seconds * 1000 milliseconds = 86400000.
+        The default records encoder produces that integer. The export must
+        instead produce "1970-01-02T00:00:00.000" and null for pd.NaT.
+        """
+        frame = pd.DataFrame({"date": [pd.Timestamp("1970-01-02"), pd.NaT]})
+        assert frame.to_json(orient="records") == ('[{"date":86400000},{"date":null}]')
+        result = FakeResult(data=frame, summary={})
+        manifest = export_report(result, formats=["json"], output_dir=str(tmp_path))
+        payload = json.loads(Path(manifest.files["json"]).read_text())
+        assert payload["data"] == [
+            {"date": "1970-01-02T00:00:00.000"},
+            {"date": None},
+        ]
+
+    def test_documented_two_row_example_is_exact(self, tmp_path):
+        """README worked example: the literal ISO date and NaT/null need no fit.
+
+        pandas 2.3.3 to_json date_format/date_unit (URL in the epoch test)
+        specifies ISO milliseconds and null for missing dates. The enclosing
+        object and indentation come from the reporting JSON writer contract.
+        The expected text below is written by hand, including key order.
+        """
+        result = FakeResult(
+            data=pd.DataFrame({"date": [pd.Timestamp("1970-01-02"), pd.NaT]}),
+            summary={},
+        )
+        expected = """{
+  "data": [
+    {
+      "date": "1970-01-02T00:00:00.000"
+    },
+    {
+      "date": null
+    }
+  ],
+  "summary": {}
+}"""
+        manifest = export_report(result, formats=["json"], output_dir=str(tmp_path))
+        assert Path(manifest.files["json"]).read_text(encoding="utf-8") == expected
+        readme = (
+            Path(__file__).resolve().parents[3]
+            / "packages/worldenergydata-reporting/README.md"
+        ).read_text(encoding="utf-8")
+        assert readme.split("```json\n")[1].split("\n```")[0] == expected
+
     def test_json_file_created(self, simple_result, tmp_dir):
         manifest = export_report(simple_result, formats=["json"], output_dir=tmp_dir)
         assert "json" in manifest.formats_succeeded
@@ -278,6 +328,8 @@ class TestJsonExport:
             ("2026-01-02T03:04:05.123", "2026-01-02T03:04:05.123"),
             ("2026-01-02T03:04:05.123Z", "2026-01-02T03:04:05.123Z"),
             ("2026-01-02T03:04:05.123+02:00", "2026-01-02T01:04:05.123Z"),
+            ("2026-01-02T00:04:05.123+02:00", "2026-01-01T22:04:05.123Z"),
+            ("2026-01-02T03:04:05.123456789", "2026-01-02T03:04:05.123"),
             (None, None),
         ],
     )
@@ -285,14 +337,20 @@ class TestJsonExport:
         """Check literal synthetic dates against an independent calculation.
 
         Source: pandas DataFrame.to_json API, date_format and date_unit,
-        pandas 3.0 documentation (2026): ISO strings use milliseconds by
+        pandas 2.3.3 documentation: ISO strings use milliseconds by
         default; missing values become null.
-        https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
+        https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.to_json.html
 
         Naive and UTC clock fields are unchanged. For the offset case,
         UTC = 03:04:05.123 - 02:00 = 01:04:05.123 on the same date.
         None is missing and therefore maps to JSON null. These are synthetic
         format examples, not measured engineering inputs.
+        Literal answers: "2026-01-02T03:04:05.123" (naive),
+        "2026-01-02T03:04:05.123Z" (UTC),
+        "2026-01-02T01:04:05.123Z" (offset), null (NaT).
+        Crossing midnight: 00:04:05.123 - 02:00 is the previous day's
+        "2026-01-01T22:04:05.123Z". Millisecond precision truncates the
+        fractional part .123456789 to .123, giving "2026-01-02T03:04:05.123".
         """
         result = FakeResult(
             data=pd.DataFrame(

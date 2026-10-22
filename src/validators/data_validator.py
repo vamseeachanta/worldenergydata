@@ -369,7 +369,8 @@ class DataValidator:
 
         # Save as HTML
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.write_html(output_path, include_plotlyjs="cdn")
+        # Embed Plotly so the saved report can be opened without network access.
+        fig.write_html(output_path, include_plotlyjs=True)
         self.logger.info(f"Interactive validation report saved to {output_path}")
 
     def _get_quality_color(self, score: float) -> str:

@@ -72,11 +72,17 @@ def _write_csv(df: pd.DataFrame, dest: Path) -> str:
 
 
 def _write_json(df: pd.DataFrame, summary: dict, dest: Path) -> str:
-    """Write data as JSON records with ISO dates plus summary."""
+    """Write ISO date records at millisecond precision, with null for NaT.
+
+    Naive datetimes remain zoneless; aware datetimes are normalized to UTC.
+    See the package README for the contract and a literal worked example.
+    """
     payload = {
-        # pandas DataFrame.to_json API, date_format (3.0 docs, 2026):
-        # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_json.html
-        "data": json.loads(df.to_json(orient="records", date_format="iso")),
+        # pandas 2.3.3 DataFrame.to_json API, date_format/date_unit:
+        # https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.DataFrame.to_json.html
+        "data": json.loads(
+            df.to_json(orient="records", date_format="iso", date_unit="ms")
+        ),
         "summary": summary,
     }
     dest.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
