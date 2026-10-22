@@ -28,7 +28,7 @@ from typing import Dict, Optional
 DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 
 # Additive royalty models retain the version-1 shipped deck contract.
-SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
+SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale", "not_evaluated")
 RESERVED_ROYALTY_MODELS = ()
 
 # gas_au requires an explicit normalized USD/Mcf deck in monthly cashflow.
@@ -66,7 +66,8 @@ class RoyaltyTerms:
 
     Attributes:
         model: ``"flat"`` (per-dev-system fixed rate), ``"none"`` (zero royalty),
-            or ``"sliding_scale"`` (production-rate bands).
+            ``"sliding_scale"`` (production-rate bands), or ``"not_evaluated"``
+            (caller-supplied terms required).
         rate_by_dev_system: for ``model == "flat"``, an exact mapping over
             ``DEV_SYSTEMS`` with each rate in ``[0.0, 1.0]``. ``None`` for
             ``model == "none"``.
@@ -84,11 +85,16 @@ class RoyaltyTerms:
 
         ``sliding_scale`` requires a finite, non-negative daily production rate
         and selects the first inclusive threshold, ending with an unbounded band.
+        ``not_evaluated`` raises until the caller supplies royalty terms.
         ``none`` → 0.0. ``flat`` → the mapped rate, falling back to the
         ``default`` dev-system entry when ``dev_system`` is unknown — mirroring
         ``AssumptionsManager.get``'s default-row fallback so parity holds for
         dev systems outside the canonical four.
         """
+        if self.model == "not_evaluated":
+            raise ValueError(
+                "Royalty is NOT_EVALUATED; caller-supplied royalty terms required"
+            )
         if self.model == "none":
             return 0.0
         if self.model == "sliding_scale":

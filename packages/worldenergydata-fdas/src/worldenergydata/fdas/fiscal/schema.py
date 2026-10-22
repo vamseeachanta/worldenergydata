@@ -7,7 +7,8 @@ data and validates it fail-closed. Strictness is deliberate — a mis-authored
 deck must raise, never silently degrade to a wrong royalty:
 
 * unknown top-level or royalty fields are rejected (typo guard);
-* ``royalty.model`` must be ``flat``, ``none`` or ``sliding_scale``;
+* ``royalty.model`` must be ``flat``, ``none``, ``sliding_scale`` or
+  ``not_evaluated`` (which cannot resolve a rate);
 * production-rate bands are ordered, bounded rates with an unbounded last band;
 * a ``flat`` model must carry ``rate_by_dev_system`` with *exactly* the four
   canonical dev systems, each rate in ``[0.0, 1.0]``;
@@ -120,6 +121,13 @@ def _validate_royalty(raw: Any) -> RoyaltyTerms:
         model in SUPPORTED_ROYALTY_MODELS,
         f"royalty.model {model!r} not in {SUPPORTED_ROYALTY_MODELS}",
     )
+
+    if model == "not_evaluated":
+        _require(
+            "rate_by_dev_system" not in raw and "bands" not in raw,
+            "royalty rates and bands must be omitted when model is 'not_evaluated'",
+        )
+        return RoyaltyTerms(model="not_evaluated")
 
     rate_map = raw.get("rate_by_dev_system")
     if model == "sliding_scale":

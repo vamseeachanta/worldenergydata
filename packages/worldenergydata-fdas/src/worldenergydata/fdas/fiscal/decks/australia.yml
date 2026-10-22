@@ -5,12 +5,10 @@ country: australia
 currency: USD
 price_marker: gas_au
 
-# Scope: assumed Commonwealth offshore production without a royalty-bearing
-# permit. Historical basis: Treasury, Petroleum Resource Rent Tax Review,
-# Final Report (2017), sections 6.1-6.3 and 6.5. This is not an all-Australia
-# royalty rule. Current permit applicability must be checked by the caller.
+# Royalty applicability is NOT_EVALUATED. No zero rate is inferred from
+# historical context; callers must supply validated royalty terms for cashflow.
 royalty:
-  model: none
+  model: not_evaluated
 
 # No tax or discount coefficients are inferred from the historical review.
 source_url: https://treasury.gov.au/review/review-of-the-petroleum-resource-rent-tax/final-report
@@ -19,10 +17,9 @@ revision: "1"
 # Deck review date; not the effective date of tax legislation.
 effective_date: "2026-10-19"
 notes: >
-  Screening only: no royalty is assumed, based on previous experience, for
-  Commonwealth offshore permits without a royalty obligation. State waters
-  and royalty-bearing permits are excluded. Current royalty applicability,
-  PRRT and company tax are NOT_EVALUATED; income_tax is deliberately absent.
+  Screening only: royalty applicability, PRRT and company tax are
+  NOT_EVALUATED; income_tax is deliberately absent. Cashflow requires
+  caller-supplied validated royalty terms; no royalty rate is assumed.
   No discount rate is supplied. gas_au requires explicit monthly realized
   USD/Mcf gas prices. The caller selects an AU gas market and supplies prices,
   heat content and exchange rates; no live market series or oil linkage is

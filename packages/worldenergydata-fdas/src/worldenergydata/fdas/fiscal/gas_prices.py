@@ -7,6 +7,7 @@ heating-value basis appropriate to their production volumes.
 
 from collections.abc import Mapping
 from math import isfinite
+from numbers import Real
 
 
 def au_gas_prices_usd_per_mcf(
@@ -18,8 +19,9 @@ def au_gas_prices_usd_per_mcf(
     """Convert monthly AUD/GJ prices using explicit monthly heat content and FX.
 
     The three mappings must have identical YYYY-MM keys. FX is USD per AUD,
-    never its reciprocal. Inputs must be finite; prices may be zero, while
-    heat content and FX must be positive. No escalation or averaging is applied.
+    never its reciprocal. Inputs must be real numbers, excluding bool, and
+    finite. Prices may be zero; heat content and FX must be positive.
+    No escalation or averaging is applied.
 
     Equation: P[USD/Mcf] = P[AUD/GJ] * H[GJ/Mcf] * X[USD/AUD].
     Basis: BIPM, The International System of Units, ninth edition (2019),
@@ -44,7 +46,7 @@ def au_gas_prices_usd_per_mcf(
 
 def _finite_input(value: float, label: str, *, positive: bool) -> float:
     try:
-        if isinstance(value, bool):
+        if not isinstance(value, Real) or isinstance(value, bool):
             raise TypeError
         number = float(value)
     except (TypeError, ValueError, OverflowError) as exc:

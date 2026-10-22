@@ -38,11 +38,13 @@ the loader rejects `model: sliding_scale` with a pointer to #718).
 The cashflow engine consumes the **royalty** layer. The `gas_au` price marker
 also requires an explicit gas deck; other markers remain declarative. Other
 fields are provenance/metadata, with revenue/NPV integration tracked in #716.
-This is what makes exact parity with the pre-carve BSEE path provable: the `us_gom` deck overrides royalty only.
+This is what makes exact parity with the pre-carve BSEE path provable: the
+`us_gom` deck overrides royalty only.
 
 | Field | Status | Notes |
 |---|---|---|
 | `royalty.model` (`flat` \| `none`) | **Consumed** | `flat` → per-dev-system rate; `none` → 0.0 |
+| `royalty.model: not_evaluated` | **Consumed** | caller-supplied terms required |
 | `royalty.rate_by_dev_system` | **Consumed** | exact keys `{dry, subsea15, subsea20, default}`, each in `[0,1]` |
 | `country` | **Consumed** | deck identity / lookup key |
 | `price_marker` | `gas_au` requires explicit gas pricing | Other markers remain declarative |
@@ -61,10 +63,14 @@ pre-carve engine.
 ## Australian gas marker
 
 `get_fiscal_terms("australia")` selects `gas_au`. Monthly cashflow requires an
-explicit gas deck in USD/Mcf, independently of the oil deck. To normalize a
-supplied Australian marker quoted in AUD/GJ:
+explicit gas deck in USD/Mcf and caller-supplied validated royalty terms,
+independently of the oil deck. To normalize a supplied Australian marker
+quoted in AUD/GJ:
 
 ```python
+from dataclasses import asdict
+
+from worldenergydata.fdas.fiscal import validate_deck
 from worldenergydata.fdas.fiscal.gas_prices import au_gas_prices_usd_per_mcf
 
 # All mappings use identical YYYY-MM keys and caller-supplied observations.
@@ -74,6 +80,10 @@ gas_prices = au_gas_prices_usd_per_mcf(
     usd_per_aud=monthly_fx_usd_per_aud,
 )
 terms = get_fiscal_terms("australia")
+# The shipped royalty is NOT_EVALUATED; validate the caller's applicable terms.
+raw = asdict(terms)
+raw["royalty"] = caller_royalty_terms
+terms = validate_deck(raw)
 engine = CashflowEngine(AssumptionsManager(), "dry", fiscal_terms=terms)
 # Pass gas_prices=gas_prices to engine.generate_monthly_cashflow(...).
 ```
@@ -84,15 +94,15 @@ No heat-content factor, exchange rate, market quotation or escalation is
 embedded. The caller selects the delivery market and compatible heat-content
 and volume bases; the helper validates finite inputs and matching months.
 
-The deck is a screening assumption for Commonwealth offshore permits without
-a royalty obligation, with state waters and royalty-bearing permits excluded.
-Historical context is the [Treasury PRRT Review, Final Report (2017), sections
-6.1-6.3 and 6.5](https://treasury.gov.au/review/review-of-the-petroleum-resource-rent-tax/final-report).
-The no-royalty scope is **assumed, based on previous experience**. Current
-permit applicability, PRRT and company tax are **NOT_EVALUATED**. No discount
-rate is supplied. The deck date records its review, not a legislative effective
-date. Mixed streams continue to price oil separately. The Australian reference
-chain still has no production source; this change does not add market-data or
+The deck supplies no royalty rate. Royalty applicability, PRRT and company tax
+are **NOT_EVALUATED**. Cashflow fails closed until the caller replaces the
+royalty block with applicable terms and validates the resulting deck using
+`validate_deck`. An explicit `royalty_rate` can also be supplied for a direct
+`calculate_royalty` call. The Treasury citation in the deck is historical
+context only and establishes no fiscal coefficient. No discount rate is
+supplied. The deck date records its review, not a legislative effective date.
+Mixed streams continue to price oil separately. The Australian reference chain
+still has no production source; this change does not add market-data or
 production ingestion.
 
 ## F2 country adapter contract (#715)
