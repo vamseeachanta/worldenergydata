@@ -48,3 +48,6 @@ packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/directional_surv
 
 # Preserve the benchmark source digest across platform checkout conventions.
 reports/lower_tertiary/lt_well_benchmark_lower_tertiary_2010_latest.csv text eol=lf
+
+# Workflow receipts hash these source bytes across checkout conventions.
+packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/drilling_refresh.py text eol=lf

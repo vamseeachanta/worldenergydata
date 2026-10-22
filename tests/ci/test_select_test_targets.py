@@ -119,6 +119,27 @@ def test_config_repo_structure_routes_to_its_contract():
     assert "tests/repo_structure" in r["xdist"]
 
 
+@pytest.mark.parametrize(
+    "path,target",
+    [
+        (
+            "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/drilling_refresh.py",
+            "tests/unit/bsee",
+        ),
+        ("tests/unit/bsee/analysis/test_drilling_refresh.py", "tests/unit/bsee"),
+        ("tests/unit/bsee/analysis/test_drilling_refresh_review.py", "tests/unit/bsee"),
+        ("config/analysis/bsee/drilling_refresh.json", "tests/unit/bsee/analysis"),
+    ],
+)
+def test_drilling_refresh_changes_run_added_tests(path, target):
+    result = select([path], REPO_ROOT)
+    assert target in result["xdist"]
+    selected = REPO_ROOT / target
+    assert (selected / "test_drilling_refresh.py").exists() or (
+        selected / "analysis/test_drilling_refresh.py"
+    ).exists()
+
+
 @pytest.mark.parametrize("module", _unit_modules())
 def test_every_unit_module_is_selected(module):
     """Drift guard: a change under any tests/unit/<module> must be module-scoped
