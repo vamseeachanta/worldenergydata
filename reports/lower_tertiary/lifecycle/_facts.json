@@ -142,18 +142,8 @@
     "gor_scf": 1400,
     "opex_boe": 18,
     "capex_bn_usd": 2.9,
-    "working_interest": [
-      {
-        "name": "Murphy EXPRO (MP Gulf of Mexico LLC)",
-        "wi": 80,
-        "operator": true
-      },
-      {
-        "name": "Petrobras America Inc.",
-        "wi": 20,
-        "operator": false
-      }
-    ],
+    "working_interest": [],
+    "working_interest_status": "contradicted",
     "gates": {
       "discovery_year": 2002,
       "fid_year": null,
@@ -172,7 +162,7 @@
       "https://www.rigzone.com/news/murphy_and_petrobras_award_fiveyear_fpso_contract-19-mar-2020-161433-article/",
       "https://www.offshore-mag.com/production/article/14170050/cascade-and-chinook-fpso-secures-long-term-extension-in-the-gulf-of-mexico"
     ],
-    "provenance": "Life-cycle dates and ownership from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. IMPORTANT: two YAML values were overridden as demonstrably wrong vs. well-documented public record — YAML first oil \"2021-08\" corrected to 2012-02 (Cascade first oil Feb 2012, Chinook Sep 2012; BW Pioneer was the first FPSO in the US GoM), and YAML operator/WI \"TotalEnergies 60% / Equinor 40%\" corrected to current MP Gulf of Mexico LLC (Murphy EXPRO 80% operator, Petrobras America 20%; originally Petrobras-operated with Total 33.33% in Chinook). LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
+    "provenance": "Life-cycle dates from public sources (Offshore Technology, Offshore Magazine, OGJ, Heerema, Rigzone); economics (capex $2.9B, plateau 75 mbopd, GOR 1400 scf/bbl, opex $18/boe) and data through from in-repo YAML. First oil and operator match the reconciled field YAML (issue 747). Working interests NOT_EVALUATED: MP Gulf of Mexico entity ownership is not field working interest. The YAML partners_by_field references P4 (annual report, FY2018) describe separate field interests; a combined-field allocation is not established. LOW CONFIDENCE: FID year (sanction ~mid-2000s, no firm public citation — not available), lease year and projected end-of-production (not available); water depth 8,200 ft is the Cascade value (Chinook ~8,600 ft); capex is a YAML assumption not independently verified.",
     "reservoir": {
       "formation": "Wilcox 1 (Eocene) / Wilcox 2 (Paleocene)",
       "hpht_class": "HPHT",
@@ -198,23 +188,8 @@
     "region_block": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
     "water_depth_ft": 7000,
     "host_type": "Semisubmersible FPU",
-    "working_interest": [
-      {
-        "name": "Chevron",
-        "wi": 51,
-        "operator": true
-      },
-      {
-        "name": "Equinor",
-        "wi": 24.5,
-        "operator": false
-      },
-      {
-        "name": "Suncor",
-        "wi": 24.5,
-        "operator": false
-      }
-    ],
+    "working_interest": [],
+    "working_interest_status": "unverified",
     "capex_bn_usd": 7.5,
     "opex_boe": 15,
     "plateau_mbopd": 94,
@@ -235,7 +210,7 @@
       "https://www.offshore-mag.com/field-development/article/16758344/chevron-advances-deepwater-frontier-with-jack-st-malo-project",
       "https://naturalgasintel.com/news/chevrons-jackst-malo-project-underway-in-lower-tertiary/"
     ],
-    "provenance": "Facts from in-repo YAML (operator, WI Chevron 51%/Equinor 24.5%/Suncor 24.5%, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this OVERRIDES the YAML's first oil \"2014-02-01\", which appears erroneous. Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident.",
+    "provenance": "Facts from in-repo YAML (operator, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this matches the reconciled field YAML (issue 747). Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident. Working interests NOT_EVALUATED: the combined co-owner split is unverified in the field YAML. Its partners_by_field references P7 (annual report, FY2014) establish separate operator interests, not a combined-field allocation or a current complete co-owner list.",
     "reservoir": {
       "formation": "Wilcox (Lower Tertiary)",
       "hpht_class": "HPHT",
