@@ -59,7 +59,7 @@ class PipelineIncident(Base):
 
     # Pipeline characteristics
     pipeline_type = Column(String(50), index=True)
-    pipeline_diameter = Column(Float)
+    pipeline_diameter = Column(Float, info={"units": "unknown source unit"})
     pipeline_material = Column(String(100))
 
     # Release information
@@ -72,8 +72,12 @@ class PipelineIncident(Base):
     explosion = Column(Boolean)
 
     # Consequences
-    fatalities = Column(Integer, default=0)
-    injuries = Column(Integer, default=0)
+    fatalities = Column(
+        Integer, nullable=True, info={"units": "persons; null is unknown"}
+    )
+    injuries = Column(
+        Integer, nullable=True, info={"units": "persons; null is unknown"}
+    )
 
     # Financial impact
     estimated_property_damage = Column(Float)

@@ -8,7 +8,10 @@ from typing import Any
 
 import pandas as pd
 
-from worldenergydata.pipeline_safety.workflow import PipelineSafetyWorkflow
+from worldenergydata.pipeline_safety.workflow import (
+    ASSESSMENT_UNITS,
+    PipelineSafetyWorkflow,
+)
 
 
 class PipelineSafety:
@@ -53,14 +56,18 @@ class PipelineSafety:
         summary_path = result_folder / f"{label}_summary.json"
         narrative_path = result_folder / f"{label}_narrative.txt"
 
-        report_df.to_csv(report_path, index=False)
         summary = {
             "method": method,
-            "incident_count": int(len(report_df)),
+            "units": ASSESSMENT_UNITS,
+            "flow_stress_basis": report_df["notes"].unique().tolist(),
+            "incident_count": len(report_df),
             "verdict_summary": verdict_summary,
             "minimum_safe_pressure_mpa": float(report_df["safe_pressure_mpa"].min()),
         }
-        summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        report_csv = report_df.to_csv(index=False)
+        summary_json = json.dumps(summary, indent=2, allow_nan=False)
+        report_path.write_text(report_csv, encoding="utf-8")
+        summary_path.write_text(summary_json, encoding="utf-8")
         narrative_path.write_text(narrative, encoding="utf-8")
 
         return {

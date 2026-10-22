@@ -4,12 +4,15 @@
 """
 PHMSA pipeline safety: incident data -> FFS assessment -> verdict.
 Implements Modified B31G (Kiefner-Vieth) and original ASME B31G.
-Ref: ASME B31G-2012; Kiefner & Vieth (1989).
+Source: ORNL/TM-2019/1192 (May 2019), sections 2.1-2.4,
+https://www.osti.gov/servlets/purl/1855701 (public technical report).
+Original criterion basis: ASME B31G-1991 (reaffirmed 2004), as identified there.
+The modified branch retains the historical 0.9*SMYS screening flow stress,
+not the published modified criterion's flow stress; results disclose this choice.
 """
 
 import math
 from dataclasses import dataclass
-from typing import Optional
 
 import pandas as pd
 
@@ -21,13 +24,13 @@ class PipelineDefect:
     incident_id: str
     location: str  # pipeline segment or milepost
     defect_type: str  # "corrosion"|"mechanical"|"material"|"weld"|"third_party"
-    depth_pct_wall: float  # defect depth as % of wall thickness (0-100)
+    depth_pct_wall: float  # percent wall; criterion scope checked before pressure
     length_mm: float  # axial defect length
     pipe_od_mm: float  # outer diameter
     wall_thickness_mm: float
     smys_mpa: float  # specified minimum yield strength
     maop_mpa: float  # maximum allowable operating pressure
-    year: int
+    year: int | None
     source: str  # "phmsa"
 
 
@@ -39,9 +42,9 @@ class FFSResult:
     method: str  # "b31g" | "modified_b31g"
     failure_pressure_mpa: float
     safe_pressure_mpa: float  # failure_pressure / safety_factor
-    safety_factor: float  # 1.39 gas, 1.25 liquid
+    safety_factor: float  # supplied divisor; default basis documented below
     verdict: str  # "accept"|"monitor"|"repair"|"replace"
-    remaining_life_years: Optional[float]
+    remaining_life_years: float | None
     notes: str
 
 
@@ -60,15 +63,21 @@ _DEFECT_TYPE_MAP = {
     "other outside force": "third_party",
     "excavation damage": "third_party",
 }
-_DEFAULT_OD_MM = 323.85  # NPS 12
-_DEFAULT_WT_MM = 9.53  # std wall
-_DEFAULT_SMYS_MPA = 358.53  # X52
-_DEFAULT_MAOP_GAS_MPA = 6.895  # 1000 psi
-_DEFAULT_MAOP_LIQ_MPA = 5.516  # 800 psi
-_DEFAULT_LENGTH_MM = 150.0
-_DEFAULT_DEPTH_PCT = 30.0
+# ORNL/TM-2019/1192 (2019), section 2.4.1, p. 10: example factor for
+# maximum operating stress <= 0.72 SMYS. Applicability remains caller-owned.
 _SF_GAS = 1.39
-_CORROSION_GROWTH_RATE = 0.2  # mm/year
+
+# CSV schema contract: no implicit conversions or geometry/pressure defaults.
+ASSESSMENT_UNITS = {
+    "depth_pct_wall": "% wall",
+    "length_mm": "mm",
+    "pipe_od_mm": "mm",
+    "wall_thickness_mm": "mm",
+    "smys_mpa": "MPa",
+    "maop_mpa": "MPa",
+    "failure_pressure_mpa": "MPa",
+    "safe_pressure_mpa": "MPa",
+}
 
 _ASSESSMENT_NUMERIC_FIELDS = (
     "depth_pct_wall",
@@ -96,59 +105,111 @@ def _finite_number(value: object, field: str) -> float:
 # --- FFS helpers -------------------------------------------------------------
 
 
+def _validate_geometry(depth_pct, L_mm, OD_mm, t_mm, smys_mpa):
+    """Reject missing, non-finite, nonphysical or out-of-scope geometry.
+
+    ORNL/TM-2019/1192 (2019), sections 2.1.1-2.1.2: maximum depth 80%.
+    Positivity is a dimensional prerequisite, not a design acceptance limit.
+    """
+    fields = {
+        "depth_pct_wall": depth_pct,
+        "length_mm": L_mm,
+        "pipe_od_mm": OD_mm,
+        "wall_thickness_mm": t_mm,
+        "smys_mpa": smys_mpa,
+    }
+    values = {k: _finite_number(v, k) for k, v in fields.items()}
+    if not 0 <= values["depth_pct_wall"] <= 80.0:
+        raise ValueError("depth_pct_wall outside criterion scope [0, 80]")
+    for field, value in values.items():
+        if field != "depth_pct_wall" and value <= 0:
+            raise ValueError(f"{field} must be positive")
+    if values["wall_thickness_mm"] >= values["pipe_od_mm"] / 2:
+        raise ValueError("wall_thickness_mm must leave a positive bore")
+    return tuple(values.values())
+
+
 def _folias_factor(L_mm: float, OD_mm: float, t_mm: float) -> float:
-    """Folias bulging factor M (Modified B31G piecewise formula)."""
-    A = (L_mm**2) / (OD_mm * t_mm)
-    if A <= 50.0:
-        return math.sqrt(1.0 + 0.6275 * A - 0.003375 * A**2)
-    return 0.032 * A + 3.3
+    """Modified Folias factor; ORNL/TM-2019/1192 (2019), eqs. 10-11.
+
+    Both branches and all coefficients, including the z=50 switch, follow
+    section 2.4.2. This helper must not be used by the original criterion.
+    """
+    _, L_mm, OD_mm, t_mm, _ = _validate_geometry(0, L_mm, OD_mm, t_mm, 1)
+    z = _finite_number(L_mm**2 / (OD_mm * t_mm), "length_parameter")
+    if L_mm <= math.sqrt(50.0 * OD_mm * t_mm):
+        return math.sqrt(1.0 + 0.6275 * z - 0.003375 * z**2)
+    return 0.032 * z + 3.3
 
 
 def _failure_pressure_modified_b31g(
     depth_pct: float, L_mm: float, OD_mm: float, t_mm: float, smys_mpa: float
 ) -> float:
-    """Modified B31G (Kiefner-Vieth): Pf=(2t/D)*SMYS*0.9*(1-0.85*d/t)/(1-0.85*d/t/M)."""
-    d_t = depth_pct / 100.0
+    """Modified-shape screening variant with historical flow stress 0.9*SMYS.
+
+    Shape coefficient 0.85: ORNL/TM-2019/1192 (2019), section 2.1.2;
+    pressure equation 2, modified Folias equations 10-11. The 0.9 multiplier
+    is preserved from the repository knowledge pack revision 1, section 6 SF2,
+    for compatibility, and is NOT the published modified flow-stress rule.
+    The public report section 2.2.2 specifies SMYS + 10,000 psi instead.
+    No standards-compliance or material applicability claim is made.
+    """
+    depth_pct, L_mm, OD_mm, t_mm, smys_mpa = _validate_geometry(
+        depth_pct, L_mm, OD_mm, t_mm, smys_mpa
+    )
+    d_t = depth_pct / 100.0  # percent definition, ORNL section 2.1
     M = _folias_factor(L_mm, OD_mm, t_mm)
-    denom = 1.0 - (0.85 * d_t / M)
-    if denom <= 0:
-        return 0.0
-    return max((2.0 * t_mm / OD_mm) * smys_mpa * 0.9 * (1.0 - 0.85 * d_t) / denom, 0.0)
+    area = 0.85 * d_t
+    return _finite_number(
+        (2.0 * t_mm / OD_mm) * smys_mpa * 0.9 * (1.0 - area) / (1.0 - area / M),
+        "failure_pressure_mpa",
+    )
 
 
 def _failure_pressure_b31g(
     depth_pct: float, L_mm: float, OD_mm: float, t_mm: float, smys_mpa: float
 ) -> float:
-    """Original ASME B31G: Pf=(2t/D)*SMYS*(1-(2/3)*d/t)/(1-(2/3)*d/t/M)."""
+    """Original ASME B31G-1991 criterion including the long-flaw limit.
+
+    Source: ORNL/TM-2019/1192 (2019), sections 2.1.1, 2.2.1, 2.4.1,
+    equations 2, 5, 6 and 8: flow=1.1*SMYS; for z=L**2/(D*t)<=20,
+    M=sqrt(1+0.8*z), area=2*d/(3*t); for z>20 the reduction is 1-d/t.
+    These are burst pressures; safe pressure additionally divides by a factor.
+    """
+    depth_pct, L_mm, OD_mm, t_mm, smys_mpa = _validate_geometry(
+        depth_pct, L_mm, OD_mm, t_mm, smys_mpa
+    )
     d_t = depth_pct / 100.0
-    M = _folias_factor(L_mm, OD_mm, t_mm)
-    denom = 1.0 - ((2.0 / 3.0) * d_t / M)
-    if denom <= 0:
-        return 0.0
-    return max((2.0 * t_mm / OD_mm) * smys_mpa * (1.0 - (2.0 / 3.0) * d_t) / denom, 0.0)
+    z = _finite_number(L_mm**2 / (OD_mm * t_mm), "length_parameter")
+    base = (2.0 * t_mm / OD_mm) * smys_mpa * 1.1
+    if L_mm > math.sqrt(20.0 * OD_mm * t_mm):
+        reduction = 1.0 - d_t
+    else:
+        M = math.sqrt(1.0 + 0.8 * z)
+        area = (2.0 / 3.0) * d_t
+        reduction = (1.0 - area) / (1.0 - area / M)
+    return _finite_number(base * reduction, "failure_pressure_mpa")
 
 
 def _determine_verdict(
     safe_p: float, maop: float, depth_pct: float, fail_p: float
 ) -> str:
-    """FFS verdict: replace >= 80% or fail_p < maop; repair < maop; monitor >= 50%; accept."""
+    """Pressure screening labels; depth limit from ORNL (2019), section 2.1.1.
+
+    No sourced monitoring threshold is available. A sufficient safe pressure
+    yields accept; monitoring intervals require a separate qualified assessment.
+    """
+    safe_p = _finite_number(safe_p, "safe_pressure_mpa")
+    fail_p = _finite_number(fail_p, "failure_pressure_mpa")
+    maop = _finite_number(maop, "maop_mpa")
+    depth_pct = _finite_number(depth_pct, "depth_pct_wall")
+    if safe_p <= 0 or fail_p <= 0 or maop <= 0 or not 0 <= depth_pct <= 80:
+        raise ValueError("invalid pressure or depth for verdict")
     if depth_pct >= 80.0 or fail_p < maop:
         return "replace"
     if safe_p < maop:
         return "repair"
-    if depth_pct >= 50.0:
-        return "monitor"
     return "accept"
-
-
-def _remaining_life(depth_pct: float, t_mm: float) -> Optional[float]:
-    """Years until corrosion reaches 80% wall at default growth rate."""
-    current = (depth_pct / 100.0) * t_mm
-    critical = 0.80 * t_mm
-    remaining = critical - current
-    if remaining <= 0:
-        return 0.0
-    return remaining / _CORROSION_GROWTH_RATE
 
 
 # --- Public workflow class ---------------------------------------------------
@@ -167,12 +228,11 @@ class PipelineSafetyWorkflow:
     def characterize(self, incident: dict) -> PipelineDefect:
         """Convert an incident; reject explicit missing/non-finite numeric cells.
 
-        Omitted fields retain legacy defaults; their qualification is separate
-        from the explicit missing-cell correction in issue 1295.
+        Geometry, material strength and MAOP must be supplied in mm, percent
+        wall and MPa as named by the schema; omitted values are not evidence.
         """
         for field in _ASSESSMENT_NUMERIC_FIELDS:
-            if field in incident:
-                _finite_number(incident[field], field)
+            _finite_number(incident.get(field), field)
         incident_id = str(
             incident.get("incident_id") or incident.get("report_number") or "UNKNOWN"
         )
@@ -186,26 +246,17 @@ class PipelineSafetyWorkflow:
             incident.get("defect_type") or incident.get("cause_category") or "corrosion"
         )
         defect_type = _DEFECT_TYPE_MAP.get(str(raw_type).lower(), "corrosion")
-        pipeline_type = incident.get("pipeline_type", "gas_transmission")
-        if incident.get("maop_mpa"):
-            maop_mpa = float(incident["maop_mpa"])
-        elif "liquid" in str(pipeline_type):
-            maop_mpa = _DEFAULT_MAOP_LIQ_MPA
-        else:
-            maop_mpa = _DEFAULT_MAOP_GAS_MPA
         return PipelineDefect(
             incident_id=incident_id,
             location=location,
             defect_type=defect_type,
-            depth_pct_wall=float(incident.get("depth_pct_wall") or _DEFAULT_DEPTH_PCT),
-            length_mm=float(incident.get("length_mm") or _DEFAULT_LENGTH_MM),
-            pipe_od_mm=float(incident.get("pipe_od_mm") or _DEFAULT_OD_MM),
-            wall_thickness_mm=float(
-                incident.get("wall_thickness_mm") or _DEFAULT_WT_MM
-            ),
-            smys_mpa=float(incident.get("smys_mpa") or _DEFAULT_SMYS_MPA),
-            maop_mpa=maop_mpa,
-            year=int(incident.get("year") or incident.get("incident_year") or 2020),
+            depth_pct_wall=float(incident["depth_pct_wall"]),
+            length_mm=float(incident["length_mm"]),
+            pipe_od_mm=float(incident["pipe_od_mm"]),
+            wall_thickness_mm=float(incident["wall_thickness_mm"]),
+            smys_mpa=float(incident["smys_mpa"]),
+            maop_mpa=float(incident["maop_mpa"]),
+            year=incident.get("year", incident.get("incident_year")),
             source="phmsa",
         )
 
@@ -213,19 +264,20 @@ class PipelineSafetyWorkflow:
         self,
         defect: PipelineDefect,
         method: str = "modified_b31g",
-        safety_factor: Optional[float] = None,
+        safety_factor: float | None = None,
     ) -> FFSResult:
-        """
-        Apply ASME B31G / Modified B31G fitness-for-service assessment.
+        """Apply sourced original criterion or disclosed legacy modified variant.
 
-        Modified B31G Folias factor:
-          M = sqrt(1 + 0.6275*(L²/Dt) - 0.003375*(L²/Dt)²)  for L²/Dt <= 50
-          M = 0.032*(L²/Dt) + 3.3                             for L²/Dt > 50
-        Failure pressure (Modified B31G / Kiefner-Vieth):
-          Pf = (2t/D) * SMYS * 0.9 * (1 - 0.85*d/t) / (1 - 0.85*d/t/M)
+        See pressure-helper docstrings for equations and flow-stress choices.
+        A caller-supplied safety factor must be qualified for the application;
+        the default example factor is limited as documented at _SF_GAS.
         """
         for field in _ASSESSMENT_NUMERIC_FIELDS:
             _finite_number(getattr(defect, field), field)
+        if defect.maop_mpa <= 0:
+            raise ValueError("maop_mpa must be positive")
+        if method not in {"b31g", "modified_b31g"}:
+            raise ValueError("unsupported assessment method")
         sf = _finite_number(
             safety_factor if safety_factor is not None else _SF_GAS,
             "safety_factor",
@@ -242,7 +294,7 @@ class PipelineSafetyWorkflow:
                 defect.wall_thickness_mm,
                 defect.smys_mpa,
             )
-            notes = "ASME B31G original criterion"
+            notes = "ASME B31G-1991 original criterion; flow stress = 1.1 * SMYS"
         else:
             method = "modified_b31g"
             pf = _failure_pressure_modified_b31g(
@@ -252,15 +304,13 @@ class PipelineSafetyWorkflow:
                 defect.wall_thickness_mm,
                 defect.smys_mpa,
             )
-            notes = "Modified B31G (Kiefner-Vieth)"
+            notes = "Modified-shape screening variant; flow stress = 0.9 * SMYS (legacy, not published modified criterion)"
         pf = _finite_number(pf, "failure_pressure_mpa")
         safe_p = _finite_number(pf / sf, "safe_pressure_mpa")
         verdict = _determine_verdict(safe_p, defect.maop_mpa, defect.depth_pct_wall, pf)
-        rem_life = (
-            _remaining_life(defect.depth_pct_wall, defect.wall_thickness_mm)
-            if defect.defect_type == "corrosion"
-            else None
-        )
+        # No qualified corrosion growth rate is available: life is unknown.
+        rem_life = None
+        notes += "; units: mm, % wall, MPa; remaining life not evaluated"
         return FFSResult(
             incident_id=defect.incident_id,
             method=method,
@@ -280,6 +330,8 @@ class PipelineSafetyWorkflow:
         self, incidents_df: pd.DataFrame, method: str = "modified_b31g"
     ) -> pd.DataFrame:
         """Batch assess all incidents. Returns DataFrame with FFS results per row."""
+        if incidents_df.empty:
+            raise ValueError("assessment input is empty")
         rows = []
         for _, row in incidents_df.iterrows():
             defect = self.characterize(row.to_dict())
@@ -287,6 +339,9 @@ class PipelineSafetyWorkflow:
             rows.append(
                 {
                     "incident_id": result.incident_id,
+                    "method": result.method,
+                    "notes": result.notes,
+                    "units": "mm, % wall, MPa",
                     "defect_type": defect.defect_type,
                     "failure_pressure_mpa": result.failure_pressure_mpa,
                     "safe_pressure_mpa": result.safe_pressure_mpa,
@@ -300,8 +355,13 @@ class PipelineSafetyWorkflow:
     def verdict_summary(self, report_df: pd.DataFrame) -> dict:
         """Return counts by verdict: {accept: N, monitor: N, repair: N, replace: N}."""
         counts = {"accept": 0, "monitor": 0, "repair": 0, "replace": 0}
-        if "verdict" not in report_df.columns or report_df.empty:
-            return counts
+        if "verdict" not in report_df.columns:
+            raise ValueError("report has no verdict column")
+        if (
+            report_df["verdict"].isna().any()
+            or not set(report_df["verdict"]) <= counts.keys()
+        ):
+            raise ValueError("report contains an unknown verdict")
         for verdict, count in report_df["verdict"].value_counts().items():
             if verdict in counts:
                 counts[verdict] = int(count)
@@ -339,8 +399,9 @@ class PipelineSafetyWorkflow:
             f"   Verdict          : {hr['verdict'].upper()}",
             "",
             "4. METHODOLOGY",
-            "   Primary method : Modified B31G (Kiefner-Vieth, 1989)",
-            "   Standard       : ASME B31G-2012",
+            f"   Methods        : {', '.join(sorted(report_df['method'].unique()))}",
+            f"   Basis          : {hr['notes']}",
+            "   Source         : ORNL/TM-2019/1192 (2019)",
             "   Data source    : PHMSA National Pipeline Safety Incident Data",
             "=" * 60,
         ]

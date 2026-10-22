@@ -97,13 +97,15 @@ class TestSafeInt:
         assert _safe_int(42) == 42
 
     def test_float(self):
-        assert _safe_int(3.7) == 3
+        with pytest.raises(ValueError, match="fractional"):
+            _safe_int(3.7)
 
     def test_string(self):
         assert _safe_int("10") == 10
 
     def test_string_float(self):
-        assert _safe_int("3.9") == 3
+        with pytest.raises(ValueError, match="fractional"):
+            _safe_int("3.9")
 
     def test_nan(self):
         assert _safe_int(float("nan")) is None
@@ -112,7 +114,8 @@ class TestSafeInt:
         assert _safe_int(pd.NA) is None
 
     def test_non_numeric(self):
-        assert _safe_int("abc") is None
+        with pytest.raises(ValueError, match="numeric"):
+            _safe_int("abc")
 
 
 # ---------------------------------------------------------------------------
@@ -137,7 +140,8 @@ class TestSafeFloat:
         assert _safe_float(pd.NA) is None
 
     def test_non_numeric(self):
-        assert _safe_float("abc") is None
+        with pytest.raises(ValueError, match="numeric"):
+            _safe_float("abc")
 
 
 # ---------------------------------------------------------------------------
@@ -203,7 +207,8 @@ class TestParseBoolIndicator:
         assert _parse_bool_indicator(float("nan")) is None
 
     def test_unknown(self):
-        assert _parse_bool_indicator("maybe") is None
+        with pytest.raises(ValueError, match="boolean"):
+            _parse_bool_indicator("maybe")
 
     def test_pd_na(self):
         assert _parse_bool_indicator(pd.NA) is None
@@ -235,7 +240,8 @@ class TestParseDatetime:
         assert _parse_datetime(float("nan")) is None
 
     def test_invalid(self):
-        assert _parse_datetime("not-a-date") is None
+        with pytest.raises(ValueError, match="date"):
+            _parse_datetime("not-a-date")
 
     def test_pd_na(self):
         assert _parse_datetime(pd.NA) is None
@@ -253,15 +259,15 @@ class TestSumColumns:
 
     def test_some_missing(self):
         row = pd.Series({"A": 5, "C": 10})
-        assert _sum_columns(row, ["A", "B", "C"]) == 15
+        assert _sum_columns(row, ["A", "B", "C"]) is None
 
-    def test_nan_treated_as_zero(self):
+    def test_nan_makes_total_unknown(self):
         row = pd.Series({"A": 5, "B": float("nan")})
-        assert _sum_columns(row, ["A", "B"]) == 5
+        assert _sum_columns(row, ["A", "B"]) is None
 
     def test_empty_columns(self):
         row = pd.Series({"A": 5})
-        assert _sum_columns(row, []) == 0
+        assert _sum_columns(row, []) is None
 
 
 # ---------------------------------------------------------------------------
@@ -423,7 +429,7 @@ class TestExtractReleaseQuantity:
         row = pd.Series({"OTHER": 1})
         qty, unit = self.imp._extract_release_quantity(row, "hazardous_liquid")
         assert qty is None
-        assert unit is None
+        assert unit == "barrels"
 
     def test_lng(self):
         row = pd.Series(
@@ -434,7 +440,7 @@ class TestExtractReleaseQuantity:
         )
         qty, unit = self.imp._extract_release_quantity(row, "lng")
         assert qty == pytest.approx(200.0)
-        assert unit == "MCF"
+        assert unit is None
 
     def test_gas_distribution(self):
         row = pd.Series({"ESTIMATED_GAS_RELEASED": 500.0})
