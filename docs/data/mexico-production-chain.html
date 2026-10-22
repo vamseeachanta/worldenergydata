@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Mexico production chain analysis</title>
+<body>
+<h1>Mexico production chain analysis</h1>
+<h2>Summary</h2>
+<p>The SENER field-production workbook can be ingested over HTTP without a browser.
+Monthly petroleum, condensate and gas volumes are normalized with source digests.
+FDAS input readiness is checked separately from economic viability. Economic
+viability and development screening remain NOT_EVALUATED until the required
+contract, forecast and development inputs are supplied.</p>
+<h2>Revision history</h2>
+<table>
+<tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>Initial</td><td>2026-10-20</td><td>Document HTTP acquisition, country normalization
+and readiness reporting to replace fragile production dashboard navigation.</td></tr>
+</table>
+<p>Table 1. Document revisions.</p>
+<h2>Source and observed coverage</h2>
+<p><a href="https://hidrocarburos.energia.gob.mx/estadisticas/">SENER statistics</a>
+links to <a href="https://hidrocarburos.energia.gob.mx/media/6810/producci%C3%B3n-nacional-de-petr%C3%B3leo-y-gas-natural-enero-2025.xlsx">Producción nacional de petróleo y gas natural, enero 2025</a>.
+The listing and workbook returned HTTP 200 on 2026-10-20. The retained workbook
+has SHA-256 <code>5dd30d30339e9a73df25d514ccfcde4122605445e4b92d27447b01d34af9e698</code>.
+The normalized observation contains 210,906 records and 817 field labels,
+from January 1960 to January 2025. One oil observation is missing; it remains unknown.
+This historical release is not qualified as current data. Local raw retention
+and a JSON receipt are supported; backup and publication are separate actions.</p>
+<h2>Method and units</h2>
+<p>The workbook sheets are <em>Aceite y condensado</em> and <em>Gas Natural</em>.
+The source units row defines Mbd as thousand barrels per day and MMpcd as million
+cubic feet per day. The column headers distinguish petroleum from condensate,
+and natural gas excluding nitrogen from nitrogen. Thus:</p>
+<ul>
+<li>Petroleum or condensate (bbl/month) = rate (Mbd) × 1000 × days in month.</li>
+<li>Gas excluding nitrogen (Mcf/month) = rate (MMpcd) × 1000 × days in month.</li>
+</ul>
+<p>The multiplier follows the source units; calendar days come from the Gregorian
+calendar. There is no gas-to-BOE coefficient and no assumed month length.
+The published liquids total is not added to petroleum or condensate.
+Blank values remain unknown, and missing water production is never replaced with zero.</p>
+<h2>Interfaces</h2>
+<pre><code>from worldenergydata.mexico_cnh.bulk_client import BulkProductionClient
+from worldenergydata.mexico_cnh.chain import run_chain
+
+# Caller-selected operational budgets; these are not engineering constants.
+client = BulkProductionClient(timeout=timeout_seconds, max_bytes=download_budget)
+download = client.download(output_directory)
+result = run_chain(download.workbook, basin=selected_basin, location=selected_location)
+report_file.write_text(result.html, encoding="utf-8")
+</code></pre>
+<p>Discovery reads the statistics page and accepts exactly one production XLSX
+link on the source origin. Multiple candidates require an explicit reviewed URL;
+media identifiers are not treated as chronological release numbers. HTTPS origin
+checks also apply before redirects. HTML maintenance responses, oversized
+responses and schema drift are rejected. The raw file is content addressed;
+its receipt records URL, retrieval time, digest, source vintage, rows, units and
+partial readiness. The parser hashes and reads the same byte snapshot.</p>
+<p>The existing collection router accepts <code>production_bulk</code> with either
+<code>workbook</code> for a local file, or <code>directory</code>, <code>timeout</code>,
+<code>max_bytes</code> and optional <code>url</code> for HTTP acquisition.
+Unconfigured legacy collection behavior is preserved. Collection errors can still
+be logged and omitted by the existing router; use <code>continue_on_error=False</code>
+when failure must propagate.</p>
+<p><code>SenerProductionAdapter</code> implements the shared production contract.
+It accepts basin/location scoping and preserves field-month provenance in the
+FDAS bundle. Duplicate source identities are rejected. Ambiguous field labels
+across basin/location identities require scoping or a reviewed crosswalk.
+Operator contributions are summed only if every component is known.
+The existing illustrative Mexico adapter is not automatically replaced.</p>
+<h2>Worked example: inputs, method and answer</h2>
+<p>Run <code>python examples/mexico_cnh/production_chain.py --output-dir OUTPUT</code>
+with the repository packages installed. OUTPUT is a caller-selected artifact
+directory. No public-server request is made.</p>
+<table>
+<tr><th>Quantity</th><th>Synthetic input</th><th>Independent calculation</th><th>Answer</th></tr>
+<tr><td>Petroleum</td><td>2 Mbd, February 2024</td><td>2 × 1000 × 29</td><td>58,000 bbl</td></tr>
+<tr><td>Gas excluding nitrogen</td><td>3 MMpcd, February 2024</td><td>3 × 1000 × 29</td><td>87,000 Mcf</td></tr>
+<tr><td>Condensate</td><td>1 Mbd, February 2024</td><td>1 × 1000 × 29</td><td>29,000 bbl</td></tr>
+<tr><td>Water</td><td>Unavailable</td><td>Not calculated</td><td>Unknown</td></tr>
+</table>
+<p>Table 2. Synthetic hand calculation; none of these rates is a measured field value.</p>
+<p>The executable checks its answer against this independent calculation,
+retains its synthetic workbook and writes a readiness report. FDAS conversion
+requires finite, non-negative oil, gas and explicitly supplied field-month water.
+Supplying water does not qualify a fiscal deck or establish economic viability.</p>
+<h2>Limitations and way forward</h2>
+<p>A Mexico fiscal deck is not supplied: a contract-specific royalty, tax and
+cost-recovery basis was not established from the production workbook.
+Economic evaluation requires that sourced basis, prices, costs and a forecast;
+the shared fiscal schema alone does not establish complete Mexico taxation.
+FieldConcept screening requires water depth, reserves and development metadata.
+Scheduler registration and the source-refresh acceptance contract remain follow-up
+work under the Mexico chain issue. No licensed fiscal value or unsourced default
+is introduced. Tests use synthetic inputs with independent arithmetic and perform
+no network access.</p>
+</body>
+</html>

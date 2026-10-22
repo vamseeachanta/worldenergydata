@@ -8414,6 +8414,8 @@ dependencies = [
     { name = "openpyxl" },
     { name = "pandas" },
     { name = "worldenergydata-core" },
+    { name = "worldenergydata-fdas" },
+    { name = "worldenergydata-production" },
 ]
 
 [package.metadata]
@@ -8421,6 +8423,8 @@ requires-dist = [
     { name = "openpyxl", specifier = ">=3.1.0,<4.0" },
     { name = "pandas", specifier = ">=2.3.3,<3.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+    { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
+    { name = "worldenergydata-production", editable = "packages/worldenergydata-production" },
 ]
 
 [[package]]
