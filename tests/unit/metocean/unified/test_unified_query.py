@@ -2,11 +2,10 @@
 
 """Tests for the unified metocean query interface (all HTTP mocked)."""
 
-from datetime import datetime, timezone
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pandas as pd
-import pytest
 
 from worldenergydata.metocean.unified.unified_query import (
     MetoceanQuery,
@@ -188,7 +187,10 @@ class TestUnifiedMetoceanClientNorthSea:
             client, "_fetch_from_source", return_value=_make_sample_df("met_norway")
         ):
             result = client.query(NORTH_SEA_QUERY)
-        assert "met_norway" in result.sources_used
+        # The January fixture is outside this June query. Selection is reported
+        # separately from sources that actually contribute in-range values.
+        assert result.source_status["met_norway"] == "EMPTY"
+        assert "met_norway" not in result.sources_used
 
     def test_north_sea_does_not_select_ndbc(self):
         client = UnifiedMetoceanClient()
@@ -210,7 +212,7 @@ class TestUnifiedMetoceanClientParallel:
             return _make_sample_df(source_name)
 
         with patch.object(client, "_fetch_from_source", side_effect=mock_fetch):
-            result = client.query(GOM_QUERY)
+            client.query(GOM_QUERY)
 
         # Multiple sources should have been fetched
         assert len(call_log) >= 2
