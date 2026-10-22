@@ -28,6 +28,7 @@ classifiers = [
 # ships worldenergydata.common (config/logging/exceptions/types/units).
 dependencies = [
     "worldenergydata-core",
+    "worldenergydata-fdas",
     "numpy>=2.2.6,<3.0",
     "pandas>=2.3.3,<3.0",
     "plotly>=5.18.0,<6.0",

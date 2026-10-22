@@ -8454,6 +8454,7 @@ dependencies = [
     { name = "scipy", version = "1.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "typer" },
     { name = "worldenergydata-core" },
+    { name = "worldenergydata-fdas" },
 ]
 
 [package.metadata]
@@ -8465,6 +8466,7 @@ requires-dist = [
     { name = "scipy", specifier = ">=1.11.0,<2.0" },
     { name = "typer", specifier = ">=0.9.0,<1.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
+    { name = "worldenergydata-fdas", editable = "packages/worldenergydata-fdas" },
 ]
 
 [[package]]

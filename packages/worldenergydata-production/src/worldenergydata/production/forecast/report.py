@@ -6,6 +6,7 @@ import base64
 import html
 import json
 from datetime import datetime, timezone
+from importlib import metadata
 
 import numpy as np
 
@@ -79,7 +80,10 @@ def _histogram(values):
 
 def build_report_html(result):
     """Render the result and input echo without paths or external resources."""
-    from worldenergydata import __version__
+    try:
+        package_version = metadata.version("worldenergydata-production")
+    except metadata.PackageNotFoundError:
+        package_version = "source tree (metadata unavailable)"
 
     summary = result.summary
     now = datetime.now(timezone.utc).date().isoformat()
@@ -116,13 +120,13 @@ Pointwise bands do not form a single realizable production trajectory.</p>
 Undefined ranks identify constant inputs or outputs.</p>
 <h2>Inputs and provenance</h2><pre>{echo}</pre>
 <p>Input SHA-256: {summary['input_sha256']}; backend: {result.sampler_used};
-package version: {__version__}; generated: {now} (UTC).
+package version: {html.escape(package_version)}; generated: {now} (UTC).
 Methods: ArpsDeclineCurve.simulate, ProbabilisticForecast.run and EconomicsQuery.npv.</p>
 <h2>Method and sources</h2>
 <p>Arps rate and cumulative equations: <a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve Analysis</a> (accessed 2026).
 Exact monthly volumes are integrated to the rate limit, including partial months.
 Time-zero CAPEX and month-end net operating cash are discounted through FDAS;
-<a href="https://numpy.org/numpy-financial/latest/npv.html">numpy-financial NPV</a> (accessed 2026).
+<a href="https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789">numpy-financial 1.0.0, npv function and Notes</a>.
 Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">NumPy 2.2 linear percentiles</a>;
 ranks use <a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">SciPy 1.15.2 Spearman correlation</a>.</p>
 <h2>Limits and way forward</h2><p>Independent priors; empirical decline with no pressure,

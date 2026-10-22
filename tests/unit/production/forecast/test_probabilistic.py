@@ -9,10 +9,23 @@ NPV: numpy-financial npv documentation, end-of-period convention.
 import copy
 import json
 import math
+import os
+import shutil
+import subprocess
+import sys
+import sysconfig
+from importlib import metadata
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
 
 import numpy as np
 import pandas as pd
 import pytest
+from packaging.requirements import Requirement
 
 from worldenergydata.production.forecast.decline import ArpsDeclineCurve
 from worldenergydata.production.forecast.probabilistic import ProbabilisticForecast
@@ -179,11 +192,9 @@ def test_router_and_report(tmp_path):
         "Analysis": {"result_folder": str(tmp_path)},
     }
     outputs = ProductionForecast().router(cfg)["production_forecast"]["outputs"]
-    from pathlib import Path
-
-    summary = json.loads(Path(outputs["summary_json"]).read_text())
+    summary = json.loads(Path(outputs["summary_json"]).read_text(encoding="utf-8"))
     assert summary["n_samples"] == 20
-    html = Path(outputs["report_html"]).read_text()
+    html = Path(outputs["report_html"]).read_text(encoding="utf-8")
     assert "NOT_EVALUATED" in html and "Synthetic example" in html
     assert "<script src=" not in html
     assert "data:image/svg+xml" in html  # Inline vector charts, no network assets.
@@ -301,3 +312,107 @@ def test_output_label_cannot_escape_result_folder(label, tmp_path):
     with pytest.raises(ValueError, match="label"):
         ProductionForecast().router(cfg)
     assert list(tmp_path.iterdir()) == []
+
+
+def _copy_member_closure(tmp_path):
+    """Copy only the production member's declared local dependency closure."""
+    packages = Path(__file__).resolve().parents[4] / "packages"
+    pending, included = ["worldenergydata-production"], set()
+    while pending:
+        name = pending.pop()
+        if name in included:
+            continue
+        included.add(name)
+        member = packages / name
+        spec = tomllib.loads((member / "pyproject.toml").read_text(encoding="utf-8"))
+        shutil.copytree(member / "src", tmp_path / "members", dirs_exist_ok=True)
+        pending.extend(
+            Requirement(requirement).name
+            for requirement in spec["project"]["dependencies"]
+            if (packages / Requirement(requirement).name / "pyproject.toml").is_file()
+        )
+
+
+def _member_only_run(tmp_path, *, render_report=False):
+    """Run copied member sources and their declared local closure, without root."""
+    _copy_member_closure(tmp_path)
+    script = """
+import json
+import sys
+from pathlib import Path
+payload = json.load(sys.stdin)
+sys.path.insert(0, payload['members'])
+import worldenergydata
+assert not hasattr(worldenergydata, '__version__')
+worldenergydata.__path__ = [str(Path(payload['members']) / 'worldenergydata')]
+sys.path.append(payload['third_party'])
+from worldenergydata.production.forecast.probabilistic import ProbabilisticForecast
+result = ProbabilisticForecast().run(payload['config'])
+if payload['render_report']:
+    from worldenergydata.production.forecast.report import build_report_html
+    assert 'Production fan' in build_report_html(result)
+print(json.dumps(result.summary, allow_nan=False))
+"""
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if key not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR"}
+    }
+    completed = subprocess.run(
+        [sys.executable, "-I", "-S", "-c", script],
+        input=json.dumps(
+            {
+                "members": str(tmp_path / "members"),
+                "third_party": sysconfig.get_path("purelib"),
+                "config": study(),
+                "render_report": render_report,
+            }
+        ),
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=60,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    return json.loads(completed.stdout)
+
+
+def test_forecast_with_declared_member_closure(tmp_path):
+    summary = _member_only_run(tmp_path)
+    assert summary["n_samples"] == 20
+    assert summary["npv_usd"]["p50"] > 0
+
+
+def test_report_without_root_distribution(tmp_path):
+    assert _member_only_run(tmp_path, render_report=True)["n_samples"] == 20
+
+
+def test_report_uses_member_distribution_version(tmp_path, monkeypatch):
+    from worldenergydata.production.forecast.report import build_report_html
+
+    distribution = tmp_path / "worldenergydata_production-1.2.3.dist-info"
+    distribution.mkdir()
+    (distribution / "METADATA").write_text(
+        "Metadata-Version: 2.1\nName: worldenergydata-production\nVersion: 1.2.3\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    monkeypatch.syspath_prepend(str(tmp_path))
+    assert "package version: 1.2.3" in build_report_html(
+        ProbabilisticForecast().run(study())
+    )
+
+
+def test_report_marks_source_tree_without_metadata(monkeypatch):
+    from worldenergydata.production.forecast.report import build_report_html
+
+    def unavailable_version(name):
+        raise metadata.PackageNotFoundError(name)
+
+    monkeypatch.setattr(metadata, "version", unavailable_version)
+    assert "package version: source tree (metadata unavailable)" in build_report_html(
+        ProbabilisticForecast().run(study())
+    )

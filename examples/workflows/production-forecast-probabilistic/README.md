@@ -70,8 +70,8 @@ zero discount, the two-month answer is `NPV=-10+3*qi/(4 ln(2))` USD.
 These hand calculations are written independently in the unit-test docstrings.
 
 NPV delegates to `EconomicsQuery.npv`, using effective annual-to-monthly
-conversion and the [numpy-financial NPV timing convention](https://numpy.org/numpy-financial/latest/npv.html)
-(accessed 2026): time-zero CAPEX followed by month-end operating cash. Future EUR
+conversion and [numpy-financial 1.0.0, npv function and Notes](https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789):
+time-zero CAPEX followed by month-end operating cash. Future EUR
 extends to abandonment; NPV ends at `forecast_months`, with no terminal value.
 
 The [NumPy 2.2 linear percentile method](https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html)
