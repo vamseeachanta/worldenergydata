@@ -4,6 +4,7 @@ import importlib.util
 import json
 import re
 import socket
+from datetime import datetime, timezone
 from decimal import Decimal
 from html.parser import HTMLParser
 from pathlib import Path
@@ -11,6 +12,7 @@ from urllib import request
 
 import pytest
 
+from worldenergydata.energy_mix import irena
 from worldenergydata.energy_mix.irena import load_export
 from worldenergydata.energy_mix.query import query_export
 
@@ -131,6 +133,40 @@ def test_report_rebuild_and_worked_example_consistency(tmp_path):
     assert masked(committed) == masked(fresh), REBUILD
     assert builder.FIXTURE.read_bytes() == before
     assert b"\r" not in output.read_bytes()
+
+
+def test_report_and_comment_binding_survive_year_rollover(monkeypatch, tmp_path):
+    class RolloverClock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return cls(2027, 1, 1, tzinfo=timezone.utc).astimezone(tz)
+
+    # Advance both clocks: report preparation is recorded, while input-year
+    # validation continues to follow the loader's current UTC year policy.
+    monkeypatch.setattr(builder, "datetime", RolloverClock)
+    monkeypatch.setattr(irena, "datetime", RolloverClock)
+    test_report_rebuild_and_worked_example_consistency(tmp_path)
+    assert (tmp_path / "report.html").read_bytes() == (
+        builder.REPORT_DIR / "index.html"
+    ).read_bytes()
+    raw = builder.FIXTURE.read_bytes()
+    source_year = builder.csv_rows(raw)[0]["year"]
+    future_export = raw.replace(f",{source_year},".encode("utf-8"), b",2027,", 1)
+    assert load_export(future_export)[0]["year"] == 2027
+    with pytest.raises(ValueError, match="Year outside supported historical range"):
+        load_export(future_export.replace(b",2027,", b",2028,", 1))
+
+
+def test_report_preparation_year_follows_recorded_revision_date(monkeypatch, tmp_path):
+    changes = json.loads(
+        (builder.REPORT_DIR / "changes.json").read_text(encoding="utf-8")
+    )
+    changes["revisions"][0]["date"] = "2028-01-01"
+    (tmp_path / "changes.json").write_text(
+        json.dumps(changes), encoding="utf-8", newline="\n"
+    )
+    monkeypatch.setattr(builder, "REPORT_DIR", tmp_path)
+    assert builder.report_data()["metrics"]["clock_year"] == "2028"
 
 
 def test_headline_is_calculated_from_displayed_inputs():

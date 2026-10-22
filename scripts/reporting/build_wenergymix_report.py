@@ -10,7 +10,7 @@ import hashlib
 import io
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime
 from html import escape
 from pathlib import Path
 
@@ -67,9 +67,15 @@ def calculate_example() -> dict:
 
 
 def report_data() -> dict:
-    """Collect exact display strings and calculation-source identities."""
+    """Collect display values as prepared on the recorded revision date.
+
+    The preparation year is fixed by report metadata; the loader independently
+    validates observation years against the current UTC year at runtime.
+    """
     example = calculate_example()
     original, converted = example["original"], example["converted"]
+    changes = json.loads((REPORT_DIR / "changes.json").read_text(encoding="utf-8"))
+    preparation_year = datetime.fromisoformat(changes["revisions"][0]["date"]).year
     metrics = {
         "alpha_gwh": original[0]["generation_gwh"],
         "alpha_mwh": converted[0]["generation_mwh"],
@@ -82,7 +88,7 @@ def report_data() -> dict:
         "selected_rows": str(len(example["selected"])),
         "source_bytes": str(example["manifest"]["size_bytes"]),
         "max_bytes": str(MAX_EXPORT_BYTES),
-        "clock_year": str(datetime.now(timezone.utc).year),
+        "clock_year": str(preparation_year),
         "column_count": str(len(COLUMNS)),
     }
     for index, row in enumerate(original):
