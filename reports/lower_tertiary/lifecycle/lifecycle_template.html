@@ -275,6 +275,8 @@
         <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
         <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
         <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
+        <a class="riskchip" id="f-risk-well-pa" hidden></a>
+        <small id="f-risk-well-pa-note" hidden></small>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -424,6 +426,16 @@ if (RISK.decommissioning) {
   c.textContent = RISK.decommissioning.label;
   c.setAttribute("data-conf", RISK.decommissioning.confidence);
   c.hidden = false;
+}
+if (RISK.well_pa && RISK.well_pa.availability === "boreholes_present") {
+  const c = $("f-risk-well-pa");
+  c.textContent = RISK.well_pa.label;
+  c.href = RISK.well_pa.provenance.status_definitions_url;
+  c.title = RISK.well_pa.note;
+  c.hidden = false;
+  const n = $("f-risk-well-pa-note");
+  n.textContent = RISK.well_pa.note + " Snapshot: " + RISK.well_pa.provenance.source_retrieved_at_utc;
+  n.hidden = false;
 }
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`

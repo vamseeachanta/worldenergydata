@@ -57,6 +57,17 @@ def test_lower_tertiary_publishes_explorer_sidecar(bp):
     assert "wells" in data
 
 
+def test_lower_tertiary_publishes_matching_risk_sidecar(bp):
+    bp.build(domains=["lower_tertiary"])
+    lifecycle = bp.PUBLIC / "lifecycle"
+    risk = json.loads((lifecycle / "_risk.json").read_text())
+    explorer = json.loads((lifecycle / "_explorer.json").read_text())
+    assert risk["fields"] == {
+        field_id: field["risk"] for field_id, field in explorer["fields"].items()
+    }
+    assert all(signal["well_pa"] for signal in risk["fields"].values())
+
+
 def test_field_atlas_publishes_global_feed(bp):
     # Global catalog feed lazily fetched by the Explorer funnel (#947).
     bp.build(domains=["field-atlas"])

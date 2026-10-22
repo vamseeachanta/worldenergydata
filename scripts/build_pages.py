@@ -467,6 +467,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
                 lifecycle_src / "_explorer.json",
                 lifecycle_dst / "_explorer.json",
             )
+        if (lifecycle_src / "_risk.json").exists():
+            shutil.copy2(
+                lifecycle_src / "_risk.json",
+                lifecycle_dst / "_risk.json",
+            )
 
     # --- Calendar cycle-time front door (issue #775) ---
     # Self-contained HTML (inline CSS + inline-SVG charts) built by

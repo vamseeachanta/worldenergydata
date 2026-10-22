@@ -26,8 +26,10 @@ unknown statuses remain explicit. Counts identify API12 boreholes on registered
 bottom leases, not independent wells or quantified P&A liability.
 
 Offline tests: `tests/unit/bsee/data/test_borehole_status*.py`.
-Cost basis, underwriting wiring, and reconciliation with the independently dated
-lease ingest remain downstream work. No shared metadata or registry is changed.
+The [P&A screen](../../../../docs/modules/bsee/analysis/well_pa_screen.md) exposes
+TA/COM counts in the lifecycle posters and Explorer, with optional explicit-price
+cost scenarios. Qualified cost inputs and reconciliation with the independently
+dated lease ingest remain downstream work. No shared metadata or registry is changed.
 
 `BoreholeDataAcquirer.acquire_borehole_dataframe` handles the sibling
 BoreholeRawData.zip headered file with network/cache behavior and DataFrame

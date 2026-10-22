@@ -275,6 +275,8 @@
         <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
         <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
         <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
+        <a class="riskchip" id="f-risk-well-pa" hidden></a>
+        <small id="f-risk-well-pa-note" hidden></small>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -534,7 +536,43 @@ const FIELD = {
       "basis": "reservoir",
       "label": "ultra-HPHT · 20k vs 20k psi (0%)"
     },
-    "decommissioning": null
+    "decommissioning": null,
+    "well_pa": {
+      "field_id": "kaskida",
+      "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+      "registered_leases": [
+        "G19555",
+        "G25792"
+      ],
+      "borehole_count": 13,
+      "ta_count": 1,
+      "com_count": 0,
+      "candidate_boreholes": 1,
+      "other_status_counts": {
+        "APD": 6,
+        "PA": 1,
+        "ST": 5
+      },
+      "availability": "boreholes_present",
+      "cost": {
+        "status": "NOT_EVALUATED",
+        "reason": "missing_unit_cost_basis",
+        "total_usd": null
+      },
+      "label": "P&A screen · TA 1 / COM 0 boreholes",
+      "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+      "provenance": {
+        "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+        "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+        "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+        "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+        "source_boreholes": 55570,
+        "joined_boreholes": 266,
+        "unmatched_counts": {
+          "lease_not_in_registry": 55304
+        }
+      }
+    }
   },
   "landman": {
     "leases": [
@@ -591,7 +629,7 @@ const FIELD = {
     "svg": null,
     "pending_issue": 962
   },
-  "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but left blank as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (<$5B per BP; YAML total CAPEX 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water depth (rounded), lease year unknown, opex unknown.",
+  "provenance": "Discovery 2006 (Keathley Canyon 292, Lower Tertiary Wilcox), FID/sanction July 30 2024 (BP 100%, Devon's original 30% exited), first oil targeted 2029 but left blank as no oil has flowed and the Aug-2025 BOEM DPP rejection likely pushes it out. Public sanctioned figures used over YAML where they diverge: plateau/nameplate 80 mbopd (YAML said 120) and capex ~$5bn for Phase 1 (\u003c$5B per BP; YAML total CAPEX 10000 = $10bn is a full-field/multi-phase estimate). GOR 1000 scf/bbl and data through 2024-12-31 from YAML. Water depth ~6,000 ft, 20,000-psi semisubmersible FPU. Low-confidence: capex (phase-1 vs full-field ambiguity), water depth (rounded), lease year unknown, opex unknown.",
   "norms": [
     {
       "delta_play_pct": -21.3,
@@ -660,6 +698,16 @@ if (RISK.decommissioning) {
   c.textContent = RISK.decommissioning.label;
   c.setAttribute("data-conf", RISK.decommissioning.confidence);
   c.hidden = false;
+}
+if (RISK.well_pa && RISK.well_pa.availability === "boreholes_present") {
+  const c = $("f-risk-well-pa");
+  c.textContent = RISK.well_pa.label;
+  c.href = RISK.well_pa.provenance.status_definitions_url;
+  c.title = RISK.well_pa.note;
+  c.hidden = false;
+  const n = $("f-risk-well-pa-note");
+  n.textContent = RISK.well_pa.note + " Snapshot: " + RISK.well_pa.provenance.source_retrieved_at_utc;
+  n.hidden = false;
 }
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`

@@ -353,22 +353,23 @@ function renderField(x, f){
     `<p class="xnote">Well-level timelines cover the benchmark's producing wells;
      this field is pre-production, so it has none yet (rollout
      <a href="https://github.com/vamseeachanta/worldenergydata/issues/948">#948</a>).</p>`;
-  // Underwriting-lens chips + panel (#949): HPHT and facility decommissioning,
-  // honesty-gated. Well-plugging P&A is NOT attributed per field (documented).
+  // Underwriting signals share the poster's snapshot-based borehole screen.
   const risk = f.risk || {};
   const sevColor = {"over-rating":"#e5484d","at-rating":"#f5a524"};
   const chip = (label, color, dashed) =>
     `<span class="badge" style="color:${color};border:1px ${dashed?"dashed":"solid"} ${color};background:transparent">${esc(label)}</span>`;
   const riskChips =
     (risk.hpht ? chip(risk.hpht.label, sevColor[risk.hpht.severity]||"var(--muted)", false) : "") +
-    (risk.decommissioning ? chip(risk.decommissioning.label, "var(--teal)", risk.decommissioning.confidence==="low") : "");
+    (risk.decommissioning ? chip(risk.decommissioning.label, "var(--teal)", risk.decommissioning.confidence==="low") : "") +
+    (risk.well_pa && risk.well_pa.availability === "boreholes_present" ? chip(risk.well_pa.label, "var(--teal)", false) : "");
   let uw = "";
-  if (risk.hpht || risk.decommissioning) {
+  if (risk.hpht || risk.decommissioning || risk.well_pa) {
     const lines = [];
     if (risk.hpht) lines.push(`<tr><td>HPHT</td><td>${esc(risk.hpht.label)} · <a href="${rb("pressure-atlas/")}">pressure atlas →</a></td></tr>`);
     if (risk.decommissioning) lines.push(`<tr><td>Decommission</td><td>${esc(risk.decommissioning.label)} <small>(facility removal, ${esc(risk.decommissioning.confidence)}-confidence)</small> · <a href="${rb("decommissioning/pa-liability-wave.html")}">P&amp;A wave →</a></td></tr>`);
+    if (risk.well_pa) lines.push(`<tr><td>Well P&amp;A screen</td><td>${esc(risk.well_pa.label)}<br><small>${esc(risk.well_pa.note)} Snapshot: ${esc(risk.well_pa.provenance.source_retrieved_at_utc)}</small> · <a href="${esc(risk.well_pa.provenance.status_definitions_url)}">BSEE status definitions →</a></td></tr>`);
     uw = `<div class="xcardlet"><div class="xh">Underwriting signals</div><table>${lines.join("")}</table>
-      <p style="font-size:11.5px;color:var(--muted);margin-top:6px">Well-plugging P&amp;A is not attributed per field (BSEE well data lacks a lease join for these fields).</p></div>`;
+      ${risk.well_pa ? "" : '<p class="xnote">Per-field borehole snapshot unavailable; well P&amp;A cost NOT_EVALUATED.</p>'}</div>`;
   }
   // Lease & landman card (#951): real lease id/depth/dev-system + placeholders
   // linking the BSEE lease ingest issue.

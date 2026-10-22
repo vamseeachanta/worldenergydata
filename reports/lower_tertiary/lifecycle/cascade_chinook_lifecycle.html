@@ -275,6 +275,8 @@
         <a class="devtype" id="f-devtype" data-tree="" href="../region-devtype-comparison.html" hidden></a>
         <a class="riskchip" id="f-risk-hpht" href="../pressure-atlas/" hidden></a>
         <a class="riskchip" id="f-risk-decom" href="../decommissioning/pa-liability-wave.html" hidden></a>
+        <a class="riskchip" id="f-risk-well-pa" hidden></a>
+        <small id="f-risk-well-pa-note" hidden></small>
         <span class="draft">Draft tracer · #738</span>
       </div>
     </header>
@@ -522,7 +524,7 @@ const FIELD = {
     "equip_rating_psi": null,
     "temp_f": 260,
     "tvd_ft": 25600,
-    "fluid": "black oil (low GOR; CO₂ <1.5%, no H₂S)",
+    "fluid": "black oil (low GOR; CO₂ \u003c1.5%, no H₂S)",
     "api": null,
     "source_note": "OTC-24162/24163 + JPT: initial reservoir pressure ~19,500 psi, BHT ~256–260F, reservoir mid-point ~25,600 ft TVD."
   },
@@ -536,7 +538,42 @@ const FIELD = {
       "basis": "reservoir",
       "label": "HPHT · 19.5k psi"
     },
-    "decommissioning": null
+    "decommissioning": null,
+    "well_pa": {
+      "field_id": "cascade_chinook",
+      "basis": "API12 boreholes on registered Lower Tertiary field bottom leases; not geological targeting, current ownership or outstanding liability",
+      "registered_leases": [
+        "G16965",
+        "G16997"
+      ],
+      "borehole_count": 11,
+      "ta_count": 0,
+      "com_count": 3,
+      "candidate_boreholes": 3,
+      "other_status_counts": {
+        "PA": 3,
+        "ST": 5
+      },
+      "availability": "boreholes_present",
+      "cost": {
+        "status": "NOT_EVALUATED",
+        "reason": "missing_unit_cost_basis",
+        "total_usd": null
+      },
+      "label": "P&A screen · TA 0 / COM 3 boreholes",
+      "note": "API12 boreholes on registered bottom leases; not independent wells or outstanding liability. Other statuses and facility removal excluded. Cost NOT_EVALUATED: missing_unit_cost_basis.",
+      "provenance": {
+        "source_sha256": "a5324d1508916bd2a19925522f8afa9b332063ff8e18b614d5d3430ef57ff929",
+        "registry_sha256": "5c350649a9cc11b772c37bef8dc5bcfd57a25e5b4660b3176b4da37839f5b265",
+        "source_retrieved_at_utc": "2026-10-11T19:11:56.141905+00:00",
+        "status_definitions_url": "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields",
+        "source_boreholes": 55570,
+        "joined_boreholes": 266,
+        "unmatched_counts": {
+          "lease_not_in_registry": 55304
+        }
+      }
+    }
   },
   "landman": {
     "leases": [
@@ -597,7 +634,7 @@ const FIELD = {
     "fdp_issue": 962
   },
   "architecture": {
-    "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"1140\" viewBox=\"0 0 120 1140\">\n<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n<title>Field layout — Chinook</title>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1040.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1040.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"1080.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<line x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1080.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n<line x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n<g class=\"sym\"><title>Subsea manifold</title><rect x=\"48.0\" y=\"1052.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"52.8\" y1=\"1067.2\" x2=\"52.8\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"57.6\" y1=\"1067.2\" x2=\"57.6\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"62.4\" y1=\"1067.2\" x2=\"62.4\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/><line x1=\"67.2\" y1=\"1067.2\" x2=\"67.2\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/></g>\n<text x=\"75.0\" y=\"1063.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1048.0\" x2=\"60.0\" y2=\"1032.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1044.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1034.8 64.0,1039.6 64.0,1034.8 56.0,1039.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1038.8 64.0,1043.6 64.0,1038.8 56.0,1043.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1043.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1</text>\n<g class=\"sym\"><title>Subsea tree (wet XT)</title><line x1=\"60.0\" y1=\"1088.0\" x2=\"60.0\" y2=\"1072.0\" stroke=\"#234e78\" stroke-width=\"2\"/><rect x=\"54.4\" y=\"1084.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/><polygon points=\"56.0,1074.8 64.0,1079.6 64.0,1074.8 56.0,1079.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/><polygon points=\"56.0,1078.8 64.0,1083.6 64.0,1078.8 56.0,1083.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/></g>\n<text x=\"71.0\" y=\"1083.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2</text>\n<g class=\"sym\"><title>Existing host (tieback)</title><rect x=\"44.0\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/><line x1=\"52.0\" y1=\"88.8\" x2=\"52.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/><line x1=\"68.0\" y1=\"88.8\" x2=\"68.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/></g>\n<text x=\"79.0\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)</text>\n<g class=\"sym\"><title>Export</title><polygon points=\"50.0,55.0 63.0,55.0 63.0,50.0 70.0,60.0 63.0,70.0 63.0,65.0 50.0,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/></g>\n<text x=\"73.0\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export</text>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"92\" y1=\"46\" x2=\"92\" y2=\"20\" stroke-width=\"2\"/><polygon points=\"92,14 87,24 97,24\"/><text x=\"88\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N</text></g>\n<g stroke=\"#222\" fill=\"#222\"><line x1=\"20\" y1=\"1116\" x2=\"60\" y2=\"1116\" stroke-width=\"2\"/><line x1=\"20\" y1=\"1112\" x2=\"20\" y2=\"1120\" stroke-width=\"2\"/><line x1=\"60\" y1=\"1112\" x2=\"60\" y2=\"1120\" stroke-width=\"2\"/><text x=\"20\" y=\"1108\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km</text></g>\n</svg>",
+    "svg": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"1140\" viewBox=\"0 0 120 1140\">\n\u003crect width=\"100%\" height=\"100%\" fill=\"white\"/>\n\u003ctitle>Field layout — Chinook\u003c/title>\n\u003cline x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"100.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n\u003cline x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n\u003cline x1=\"60.0\" y1=\"1040.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n\u003cline x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1040.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n\u003cline x1=\"60.0\" y1=\"1080.0\" x2=\"60.0\" y2=\"1060.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n\u003cline x1=\"60.0\" y1=\"1060.0\" x2=\"60.0\" y2=\"1080.0\" stroke=\"#5a7\" stroke-width=\"1.5\" stroke-dasharray=\"4 3\"/>\n\u003cline x1=\"60.0\" y1=\"100.0\" x2=\"60.0\" y2=\"60.0\" stroke=\"#5a7\" stroke-width=\"1.5\"/>\n\u003cg class=\"sym\">\u003ctitle>Subsea manifold\u003c/title>\u003crect x=\"48.0\" y=\"1052.8\" width=\"24.0\" height=\"14.4\" rx=\"3\" fill=\"#ffe9c7\" stroke=\"#a8620a\" stroke-width=\"1.5\"/>\u003cline x1=\"52.8\" y1=\"1067.2\" x2=\"52.8\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/>\u003cline x1=\"57.6\" y1=\"1067.2\" x2=\"57.6\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/>\u003cline x1=\"62.4\" y1=\"1067.2\" x2=\"62.4\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/>\u003cline x1=\"67.2\" y1=\"1067.2\" x2=\"67.2\" y2=\"1072.0\" stroke=\"#a8620a\" stroke-width=\"1.5\"/>\u003c/g>\n\u003ctext x=\"75.0\" y=\"1063.0\" font-family=\"sans-serif\" font-size=\"9\">Manifold 1\u003c/text>\n\u003cg class=\"sym\">\u003ctitle>Subsea tree (wet XT)\u003c/title>\u003cline x1=\"60.0\" y1=\"1048.0\" x2=\"60.0\" y2=\"1032.0\" stroke=\"#234e78\" stroke-width=\"2\"/>\u003crect x=\"54.4\" y=\"1044.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/>\u003cpolygon points=\"56.0,1034.8 64.0,1039.6 64.0,1034.8 56.0,1039.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/>\u003cpolygon points=\"56.0,1038.8 64.0,1043.6 64.0,1038.8 56.0,1043.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/>\u003c/g>\n\u003ctext x=\"71.0\" y=\"1043.0\" font-family=\"sans-serif\" font-size=\"9\">XT 1\u003c/text>\n\u003cg class=\"sym\">\u003ctitle>Subsea tree (wet XT)\u003c/title>\u003cline x1=\"60.0\" y1=\"1088.0\" x2=\"60.0\" y2=\"1072.0\" stroke=\"#234e78\" stroke-width=\"2\"/>\u003crect x=\"54.4\" y=\"1084.0\" width=\"11.2\" height=\"4.0\" fill=\"#234e78\"/>\u003cpolygon points=\"56.0,1074.8 64.0,1079.6 64.0,1074.8 56.0,1079.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/>\u003cpolygon points=\"56.0,1078.8 64.0,1083.6 64.0,1078.8 56.0,1083.6\" fill=\"#eccff2\" stroke=\"#6a1b80\" stroke-width=\"1.2\"/>\u003c/g>\n\u003ctext x=\"71.0\" y=\"1083.0\" font-family=\"sans-serif\" font-size=\"9\">XT 2\u003c/text>\n\u003cg class=\"sym\">\u003ctitle>Existing host (tieback)\u003c/title>\u003crect x=\"44.0\" y=\"88.8\" width=\"32.0\" height=\"22.4\" fill=\"#cde2f7\" stroke=\"#234e78\" stroke-width=\"1.5\" stroke-dasharray=\"5 3\"/>\u003cline x1=\"52.0\" y1=\"88.8\" x2=\"52.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/>\u003cline x1=\"68.0\" y1=\"88.8\" x2=\"68.0\" y2=\"82.4\" stroke=\"#234e78\" stroke-width=\"2\"/>\u003c/g>\n\u003ctext x=\"79.0\" y=\"103.0\" font-family=\"sans-serif\" font-size=\"9\">Existing Host (tieback)\u003c/text>\n\u003cg class=\"sym\">\u003ctitle>Export\u003c/title>\u003cpolygon points=\"50.0,55.0 63.0,55.0 63.0,50.0 70.0,60.0 63.0,70.0 63.0,65.0 50.0,65.0\" fill=\"#dddddd\" stroke=\"#555\" stroke-width=\"1.2\"/>\u003c/g>\n\u003ctext x=\"73.0\" y=\"63.0\" font-family=\"sans-serif\" font-size=\"9\">Export\u003c/text>\n\u003cg stroke=\"#222\" fill=\"#222\">\u003cline x1=\"92\" y1=\"46\" x2=\"92\" y2=\"20\" stroke-width=\"2\"/>\u003cpolygon points=\"92,14 87,24 97,24\"/>\u003ctext x=\"88\" y=\"60\" font-family=\"sans-serif\" font-size=\"11\" stroke=\"none\">N\u003c/text>\u003c/g>\n\u003cg stroke=\"#222\" fill=\"#222\">\u003cline x1=\"20\" y1=\"1116\" x2=\"60\" y2=\"1116\" stroke-width=\"2\"/>\u003cline x1=\"20\" y1=\"1112\" x2=\"20\" y2=\"1120\" stroke-width=\"2\"/>\u003cline x1=\"60\" y1=\"1112\" x2=\"60\" y2=\"1120\" stroke-width=\"2\"/>\u003ctext x=\"20\" y=\"1108\" font-family=\"sans-serif\" font-size=\"10\" stroke=\"none\">1 km\u003c/text>\u003c/g>\n\u003c/svg>",
     "source": "render_layout",
     "caption": "Chinook subsea tieback"
   },
@@ -695,6 +732,16 @@ if (RISK.decommissioning) {
   c.textContent = RISK.decommissioning.label;
   c.setAttribute("data-conf", RISK.decommissioning.confidence);
   c.hidden = false;
+}
+if (RISK.well_pa && RISK.well_pa.availability === "boreholes_present") {
+  const c = $("f-risk-well-pa");
+  c.textContent = RISK.well_pa.label;
+  c.href = RISK.well_pa.provenance.status_definitions_url;
+  c.title = RISK.well_pa.note;
+  c.hidden = false;
+  const n = $("f-risk-well-pa-note");
+  n.textContent = RISK.well_pa.note + " Snapshot: " + RISK.well_pa.provenance.source_retrieved_at_utc;
+  n.hidden = false;
 }
 if (FIELD.wellsHref) $("f-wells").innerHTML =
   `<a href="${FIELD.wellsHref}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;`
