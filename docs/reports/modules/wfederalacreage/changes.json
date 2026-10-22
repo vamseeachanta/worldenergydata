@@ -1,9 +1,13 @@
 {
   "document": "Federal acreage module analysis",
-  "revision": "0",
+  "revision": "1",
   "date": "2026-10-22",
   "status": "Draft for maintainer review",
   "changes": [
+    {
+      "section": "Basis, method and references",
+      "change": "The nominal subdivision citations are corrected to Chapter III, paragraph 3-32, printed page 47, while Chapter I, paragraph 1-1 remains the survey-record basis."
+    },
     {
       "section": "Basis and method",
       "change": "The regular survey-cell convention, overlap union and unit basis are stated to define the screening geometry."

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-revision="0">
+<html lang="en" data-revision="1">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,7 @@
 <body class="hs-doc">
 <header><h1>Federal acreage module analysis</h1>
 <p>Single-section lease-record screening with explicit evidence gaps</p>
-<p>Revision 0 · 2026-10-22</p><p>Draft for maintainer review</p></header>
+<p>Revision 1 · 2026-10-22</p><p>Draft for maintainer review</p></header>
 <div class="layout">
 <nav aria-label="Contents"><ol>
 <li><a href="#section-1">Executive Summary</a></li>
@@ -59,7 +59,8 @@
 </section>
 <div id="revision-history"><h3>Revision history</h3>
 <table><thead><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr></thead>
-<tbody><tr><td>0</td><td>2026-10-22</td><td>The screening calculation, synthetic example and evidence gaps are documented to define the supported use and the basis needed for real-tract assessment.</td></tr></tbody>
+<tbody><tr><td>0</td><td>2026-10-22</td><td>The screening calculation, synthetic example and evidence gaps are documented to define the supported use and the basis needed for real-tract assessment.</td></tr>
+<tr><td>1</td><td>2026-10-22</td><td>The nominal subdivision citations are corrected to identify the published acreage basis; the separate survey-record recommendation retains its original source locator.</td></tr></tbody>
 <caption>Revision history. Current issue; engineering changes are listed newest first.</caption></table></div>
 
 <section id="section-2"><h2>2. Introduction and scope</h2>
@@ -72,7 +73,7 @@
 <section id="section-3"><h2>3. Basis and criteria</h2>
 <p>The calculation basis is the documented synthetic example and the module's equal-area survey-cell convention. Numerical consistency is assessed separately from the accuracy of a land survey or lease register.</p>
 <h3>3.1 Geometry and units</h3>
-<p>Each accepted quarter-quarter cell is assigned exactly @@metric:cell_area@@ acres by the model. The federal surveying manual describes nominal subdivision areas, with a section of 640 acres, a quarter section of 160 acres and a quarter-quarter of 40 acres (<a href="#ref-survey">2009 edition, Chapter I, paragraph 1-1</a>). This nominal basis does not establish the measured acreage of an irregular real section.</p>
+<p>Each accepted quarter-quarter cell is assigned exactly @@metric:cell_area@@ acres by the model. The federal surveying manual describes nominal subdivision areas, with a section of 640 acres, a quarter section of 160 acres and a quarter-quarter of 40 acres (<a href="#ref-survey">2009 edition, Chapter III, paragraph 3-32, p. 47</a>). This nominal basis does not establish the measured acreage of an irregular real section.</p>
 <p>The hectare record is interpreted using the international-foot acre for this arithmetic demonstration (<a href="#ref-acre">unit-conversion table</a>). Its applicability to any historical source record is NOT_EVALUATED. Source-specific unit evidence is required before that conversion is applied to real records.</p>
 <h3>3.2 Software criteria</h3>
 <p>Converted record area is compared with the area of its listed cells. A difference greater than @@metric:tolerance@@ acre produces an ambiguous-unit exception; this is the current software policy, not a cadastral accuracy standard (<a href="#ref-evidence">area inspection function</a>). The inclusive boundary is not rejected by this test.</p>
@@ -96,7 +97,7 @@
 <p>Let T be the tract's set of cells, R<sub>i</sub> the cells listed by record i, a the area assigned to each cell, and |S| the number of distinct cells in set S. The intersection symbol ∩ means membership in both sets; ∪ means membership in either set; the empty set ∅ has no cells. North, south, east and west are abbreviated N, S, E and W; a label such as NE-NW means the northeast quarter of the northwest quarter.</p>
 <figure>@@schematic@@
 <figcaption>Figure 5.1. Plan view of the documented synthetic section. Colour identifies active lease, expired lease, no supplied record or outside-tract cells; the repeated active cell is labelled as an overlap. This is an idealized boundary, without surveyed coordinates or ground dimensions.</figcaption></figure>
-<p>The nominal equal-cell relation is a = 640 acres / (4 × 4) = 40 acres (<a href="#ref-survey">2009 surveying manual, Chapter I, paragraph 1-1</a>). The model enforces that value exactly; physical sections can depart from the nominal subdivision.</p>
+<p>The nominal equal-cell relation is a = 640 acres / (4 × 4) = 40 acres (<a href="#ref-survey">2009 surveying manual, Chapter III, paragraph 3-32, p. 47</a>). The model enforces that value exactly; physical sections can depart from the nominal subdivision.</p>
 <h3>5.2 Coverage and lease categories</h3>
 <p>For each record, I<sub>i</sub> = T ∩ R<sub>i</sub>. The coverage set is C = ∪ I<sub>i</sub>, and coverage area is A<sub>C</sub> = a |C|. Gross tract area is A<sub>T</sub> = a |T|, and no-record area is A<sub>U</sub> = A<sub>T</sub> − A<sub>C</sub>. These identities follow from distinct-cell membership and cardinality (<a href="#ref-sets">Contemporary Mathematics, 2023 edition, Section 1.4</a>); their application assumes equal cell areas.</p>
 <p>The active-lease set L is the union of intersections for records with active lease status and resolved date and unit checks. The expired-or-nonleased set E is the corresponding union for other resolved records, including active parcel records. Reported category areas are a |L| and a |E|. If L ∩ E ≠ ∅, or intersecting records have unresolved dates or units, both category areas become ambiguous; the geometric coverage remains available (<a href="#ref-evidence">category policy</a>).</p>
@@ -142,7 +143,7 @@
 <p>Published documents support the geometric and unit equations. Repository records identify the implementation and the synthetic evidence; they do not replace the published mathematical basis.</p>
 <h3>9.1 Published sources</h3>
 <ul>
-<li id="ref-survey"><a href="https://www.blm.gov/sites/default/files/Manual_Of_Surveying_Instructions_2009.pdf">Bureau of Land Management, Manual of Surveying Instructions, 2009 edition</a>, Chapter I, paragraph 1-1. Nominal section subdivisions and the distinction between survey records and land descriptions.</li>
+<li id="ref-survey"><a href="https://www.blm.gov/sites/default/files/Manual_Of_Surveying_Instructions_2009.pdf">Bureau of Land Management, Manual of Surveying Instructions, 2009 edition</a>, Chapter III, paragraph 3-32, p. 47, Aliquot Parts in the Rectangular System (nominal section subdivisions); Chapter I, paragraph 1-1 (survey records and land descriptions).</li>
 <li id="ref-sets"><a href="https://openstax.org/books/contemporary-mathematics/pages/1-4-set-operations-with-two-sets">OpenStax, Contemporary Mathematics, 2023 edition</a>, Section 1.4, Set Operations with Two Sets. Union, intersection and finite cardinality. The report equations are an application of these general mathematical definitions; textbook prose and figures are not reproduced.</li>
 <li id="ref-acre"><a href="https://www.nist.gov/pml/us-surveyfoot/revised-unit-conversion-factors">National Institute of Standards and Technology, U.S. Survey Foot: Revised Unit Conversion Factors</a>, revision of 3 February 2026, foot and acre rows. Exact international-foot definitions and the distinction from legacy survey-foot units.</li>
 <li id="ref-si"><a href="https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf">Bureau International des Poids et Mesures, The International System of Units</a>, ninth edition, version 4.01, June 2026, Section 4, Table 8, hectare row.</li>

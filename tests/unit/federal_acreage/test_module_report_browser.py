@@ -67,7 +67,7 @@ def test_offline_chart_hover_keyboard_and_change_panel(page):
     assert "bound 320 acres" in page.locator("#chart-detail").inner_text()
     bars.nth(4).focus()
     assert "acreage 40 acres" in page.locator("#chart-detail").inner_text()
-    assert page.locator("#change-list li").count() == 3
+    assert page.locator("#change-list li").count() == 4
     assert page.locator("main > section").count() == 10
 
 
@@ -82,7 +82,7 @@ def test_comment_export_import_and_html_escaping(page, tmp_path):
     download.save_as(target)
     saved = json.loads(target.read_text(encoding="utf-8"))
     assert saved["comments"] == [{"section": "section-6", "text": text}]
-    assert saved["revision"] == "0"
+    assert saved["revision"] == "1"
     page.reload()
     assert page.locator("#comment-list li").count() == 0
     page.set_input_files("#import-comments", str(target))
@@ -100,7 +100,8 @@ def test_adjacent_file_save_and_wrong_folder_rejection(page, tmp_path):
     add_comment(page)
     # The browser permission dialog is replaced; real handlers and serialization
     # run unchanged. Saved bytes are read back as a filesystem artifact below.
-    page.evaluate("""() => {
+    page.evaluate(
+        """() => {
       window.writes = [];
       window.folderMatches = true;
       window.showDirectoryPicker = async () => ({getFileHandle: async (name, options) => {
@@ -110,7 +111,8 @@ def test_adjacent_file_save_and_wrong_folder_rejection(page, tmp_path):
         return {createWritable: async () => ({write: async text => window.writes.push(text),
                                               close: async () => {window.closedSave = true;}})};
       }});
-    }""")
+    }"""
+    )
     page.click("#save-comments")
     page.wait_for_function("window.closedSave === true")
     assert (

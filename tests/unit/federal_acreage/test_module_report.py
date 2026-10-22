@@ -177,6 +177,27 @@ def test_text_files_are_utf8_lf():
         assert raw.decode("utf-8").endswith("\n"), path.name
 
 
+@pytest.mark.parametrize("source", ["rendered", "saved"])
+def test_survey_citations_distinguish_subdivision_and_record_basis(source):
+    html = (
+        builder.render_report()
+        if source == "rendered"
+        else (FOLDER / "index.html").read_text(encoding="utf-8")
+    )
+    soup = BeautifulSoup(html, "html.parser")
+    # BLM's 2009 manual locates nominal aliquot areas at 3-32 (printed p. 47).
+    for section in (3, 5):
+        citations = soup.select(f'#section-{section} a[href="#ref-survey"]')
+        assert citations
+        for citation in citations:
+            assert "Chapter III, paragraph 3-32, p. 47" in citation.get_text()
+    recommendation = soup.select_one('#section-8 a[href="#ref-survey"]')
+    assert "Chapter I, paragraph 1-1" in recommendation.get_text()
+    reference = soup.select_one("#ref-survey").get_text()
+    assert "Chapter III, paragraph 3-32, p. 47" in reference
+    assert "Chapter I, paragraph 1-1" in reference
+
+
 def test_builder_rejects_input_overwrite(tmp_path, monkeypatch):
     # Mutation probes use a disposable source, never the canonical fixture.
     disposable = tmp_path / "input.html"
