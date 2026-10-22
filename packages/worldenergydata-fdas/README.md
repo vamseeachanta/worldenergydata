@@ -36,8 +36,8 @@ the loader rejects `model: sliding_scale` with a pointer to #718).
 
 Only the **royalty** layer is consumed by the cashflow engine in v1. Every other
 field is declarative provenance/metadata — readable, validated, but **not** yet
-wired into revenue/NPV (that seam is #716). This is what makes exact parity with
-the pre-carve BSEE path provable: the `us_gom` deck overrides royalty only.
+wired into revenue/NPV (that seam is #716). The `us_gom` deck overrides royalty
+only and agrees with the current `source-note-v2` default assumptions.
 
 | Field | Status | Notes |
 |---|---|---|
@@ -53,9 +53,13 @@ the pre-carve BSEE path provable: the `us_gom` deck overrides royalty only.
 ### Royalty-rate resolution precedence
 
 `CashflowEngine.calculate_royalty` resolves the rate as: explicit `royalty_rate`
-argument → `fiscal_terms` deck → legacy `AssumptionsManager` ROYALTY_RATE. With
-no deck (`fiscal_terms=None`) the behavior is **byte-identical** to the
-pre-carve engine.
+argument → `fiscal_terms` deck → supplied `AssumptionsManager` ROYALTY_RATE.
+`AssumptionsManager()` selects `source-note-v2`, correcting the deep-water
+fractions to the Gulf deck's original percentage source note. For historical
+rounded assumptions, use `AssumptionsManager(version="legacy-v1")` with no
+fiscal deck. Custom tables retain their supplied rates. See the
+[compatibility guide and worked example](../../docs/modules/fdas/ROYALTY-VERSIONS.md)
+for the source basis, arithmetic and legal qualification limits.
 
 ## F2 country adapter contract (#715)
 

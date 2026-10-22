@@ -26,8 +26,9 @@ class ConfigurationError(ConfigError):
     default_code = "FDAS_CONFIG_ERROR"
 
 
-# Default assumptions for development systems
-DEFAULT_ASSUMPTIONS = {
+# Historical table: core/config.py at revision f82ff2f (2026).
+# These are compatibility inputs, not qualified fiscal or cost recommendations.
+LEGACY_ASSUMPTIONS = {
     "DEV_SYSTEM": ["dry", "subsea15", "subsea20", "default"],
     "HOST_CAPEX_MM": [0.0, 300.0, 450.0, 300.0],  # Million USD
     "SURF_PER_WELL_MM": [0.0, 8.0, 12.0, 8.0],
@@ -39,6 +40,13 @@ DEFAULT_ASSUMPTIONS = {
     "DISCOUNT_RATE_ANNUAL": [0.10, 0.10, 0.10, 0.10],
     "WTI_BASE_$/BBL": [75.0, 75.0, 75.0, 75.0],
 }
+
+# Rate basis: fiscal/decks/us_gom.yml, revision 1, source_ref (2026),
+# 12.5% dry and 18.75% deep water. NIST SP 811 (2008), section 7.10.2:
+# percent denotes 0.01. Source-note agreement does not establish current law.
+DEFAULT_ASSUMPTIONS_VERSION = "source-note-v2"
+DEFAULT_ASSUMPTIONS = {key: values.copy() for key, values in LEGACY_ASSUMPTIONS.items()}
+DEFAULT_ASSUMPTIONS["ROYALTY_RATE"] = [0.125, 0.1875, 0.1875, 0.1875]
 
 
 def normalize_dev_system(system_name: Optional[str]) -> str:
@@ -124,17 +132,45 @@ class AssumptionsManager:
     values, matching the behavior of FDAS Aget() function.
     """
 
-    def __init__(self, assumptions_df: Optional[pd.DataFrame] = None):
+    def __init__(
+        self,
+        assumptions_df: pd.DataFrame | None = None,
+        *,
+        version: str | None = None,
+    ):
         """
         Initialize assumptions manager.
 
         Args:
             assumptions_df: DataFrame with development system assumptions
-                           If None, uses DEFAULT_ASSUMPTIONS
+                           If None, uses the selected shipped table.
+            version: ``source-note-v2`` (default) or ``legacy-v1`` for the
+                historical rounded royalties. Cannot be combined with a custom
+                DataFrame. Custom inputs retain their supplied values and are
+                identified by ``version == "custom"``.
+
+        Raises:
+            ConfigurationError: Unknown version or version plus custom inputs.
         """
+        if assumptions_df is not None and version is not None:
+            raise ConfigurationError("Cannot combine custom assumptions with a version")
         if assumptions_df is None:
-            self.assumptions = pd.DataFrame(DEFAULT_ASSUMPTIONS)
+            selected_version = (
+                DEFAULT_ASSUMPTIONS_VERSION if version is None else version
+            )
+            tables = {
+                "legacy-v1": LEGACY_ASSUMPTIONS,
+                "source-note-v2": DEFAULT_ASSUMPTIONS,
+            }
+            if selected_version not in tables:
+                raise ConfigurationError(
+                    f"Unknown assumptions version: {selected_version!r}; "
+                    f"available: {', '.join(tables)}"
+                )
+            self.version = selected_version
+            self.assumptions = pd.DataFrame(tables[selected_version])
         else:
+            self.version = "custom"
             self.assumptions = assumptions_df.copy()
 
         # Normalize development system names
