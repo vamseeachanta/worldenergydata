@@ -21,6 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import generate_field_economics_report as gen  # noqa: E402
+
 from worldenergydata.lower_tertiary import (  # noqa: E402
     v30_financial_reproducer as _fin,
 )
