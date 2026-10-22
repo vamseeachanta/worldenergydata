@@ -280,6 +280,14 @@ class ComplianceTemplate(BaseReportTemplate):
 
         self.context["milestone_tracking"] = milestone_tracking
 
+    def get_compliance_status_color(self, score: float) -> str:
+        """Expose the existing compliance presentation palette on templates."""
+        return get_compliance_status_color(score)
+
+    def _create_compliance_dashboard(self, compliance_data: dict[str, Any]) -> str:
+        """Delegate dashboard rendering to the shared chart implementation."""
+        return create_compliance_dashboard(compliance_data)
+
     def generate_compliance_visualizations(
         self, compliance_data: Dict[str, Any]
     ) -> Dict[str, str]:
@@ -287,7 +295,9 @@ class ComplianceTemplate(BaseReportTemplate):
         charts = {}
 
         # Compliance Dashboard - Gauge charts for key metrics
-        charts["compliance_dashboard"] = create_compliance_dashboard(compliance_data)
+        charts["compliance_dashboard"] = self._create_compliance_dashboard(
+            compliance_data
+        )
 
         # Production Quota Chart
         if "quota_analysis" in self.context:
