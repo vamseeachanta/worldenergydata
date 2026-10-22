@@ -1,0 +1,49 @@
+{
+  "policy": "Include the knowledge pack unchanged in wheel and source distribution.",
+  "inspected": "2026-10-22",
+  "tools": {
+    "pandas": "2.3.3",
+    "setuptools": "84.2.1",
+    "build": "1.6.1",
+    "wheel": "0.48.0",
+    "python": "3.11.17"
+  },
+  "method": "Disposable source copy; source distribution followed by wheel built from source distribution; exact payload bytes checked against source.",
+  "members": {
+    "wheel": [
+      "worldenergydata/baker_hughes/__init__.py",
+      "worldenergydata/baker_hughes/docs/agent-pack.md",
+      "worldenergydata/baker_hughes/loader.py",
+      "worldenergydata/baker_hughes/report.py",
+      "worldenergydata_baker_hughes-0.1.0.dist-info/METADATA",
+      "worldenergydata_baker_hughes-0.1.0.dist-info/RECORD",
+      "worldenergydata_baker_hughes-0.1.0.dist-info/WHEEL",
+      "worldenergydata_baker_hughes-0.1.0.dist-info/top_level.txt"
+    ],
+    "sdist": [
+      "worldenergydata_baker_hughes-0.1.0",
+      "worldenergydata_baker_hughes-0.1.0/PKG-INFO",
+      "worldenergydata_baker_hughes-0.1.0/README.md",
+      "worldenergydata_baker_hughes-0.1.0/pyproject.toml",
+      "worldenergydata_baker_hughes-0.1.0/setup.cfg",
+      "worldenergydata_baker_hughes-0.1.0/src",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes/__init__.py",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes/docs",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes/docs/agent-pack.md",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes/loader.py",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata/baker_hughes/report.py",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info/PKG-INFO",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info/SOURCES.txt",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info/dependency_links.txt",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info/requires.txt",
+      "worldenergydata_baker_hughes-0.1.0/src/worldenergydata_baker_hughes.egg-info/top_level.txt"
+    ]
+  },
+  "limits": [
+    "Documentation inclusion does not qualify workbook data or engineering results.",
+    "Minimum backend version and installed dependency closure were not evaluated."
+  ]
+}

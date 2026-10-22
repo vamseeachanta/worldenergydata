@@ -37,7 +37,19 @@ def test_complete_dates_preserve_report_fields(source):
         "states": ["X", "Y"],
         "countries": ["Z"],
         "completeness": {
-            "date_range": {"status": "complete", "reason": None, "missing_count": 0}
+            "date_range": {
+                "status": "complete",
+                "reason": None,
+                "missing_count": 0,
+                "bounds_status": "observed",
+            },
+            "dimensions": {
+                "basin": {"status": "complete", "reason": None, "missing_count": 0},
+                "state": {"status": "complete", "reason": None, "missing_count": 0},
+                "country": {"status": "complete", "reason": None, "missing_count": 0},
+            },
+            "omitted_fields": [],
+            "status": "complete",
         },
     }
     pd.testing.assert_frame_equal(df, original)
@@ -59,6 +71,7 @@ def test_empty_input_reports_incomplete_dates(with_date_column):
         "status": "incomplete",
         "reason": "empty_input",
         "missing_count": 0 if with_date_column else None,
+        "bounds_status": "undefined",
     }
 
 
@@ -78,6 +91,7 @@ def test_missing_date_column_reports_unknown_missing_count(with_state_column):
         "status": "incomplete",
         "reason": "missing_date_column",
         "missing_count": None,
+        "bounds_status": "undefined",
     }
 
 
@@ -94,6 +108,7 @@ def test_partial_missing_dates_flag_observed_bounds(missing):
         "status": "incomplete",
         "reason": "missing_dates",
         "missing_count": 1,
+        "bounds_status": "observed",
     }
 
 
@@ -109,5 +124,6 @@ def test_all_missing_dates_omit_bounds():
         "status": "incomplete",
         "reason": "all_dates_missing",
         "missing_count": 2,
+        "bounds_status": "undefined",
     }
     assert json.loads(json.dumps(report, allow_nan=False)) == report
