@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Field-development topology analysis</title>
+<main>
+<h1>Field-development topology analysis</h1>
+<p>Summary: independent hand counts and a separately authored XML input extend
+software validation of populated graph and XML paths. Engineering qualification,
+external-tool interoperability and standards conformance are not established.</p>
+<h2>Revision history</h2>
+<table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-21</td><td>Add topology examples and coverage map to distinguish software evidence from design validation.</td></tr></table>
+<h2>Discovery and proposed scope</h2>
+<p><a href="https://github.com/vamseeachanta/worldenergydata/issues/1323">Issue 1323</a>
+remains open. Merged pull requests 1234 and 1382 provide the knowledge pack and
+installation-catalog completeness checks. Merged pull request 1383 supplies zero-discount
+and fallback arithmetic checks. Standards provenance is separately addressed by
+issue 1322; independent calibration remains issue 640.</p>
+<p>The topology slice will pin populated wet- and dry-tree connections and expose
+sparse-count substitutions. The XML slice will check export through an independent
+XML parser and import through literal XML that bypasses the exporter. Tests will
+compare exact endpoints and types rather than relying only on a round trip.</p>
+<h2>Worked example: inputs, method and answer</h2>
+<p>Inputs are synthetic given values: a subsea tieback with three wells and two
+manifolds. No field data, cost coefficient or acceptance threshold is used.</p>
+<p>Method basis: graph.py, concept_to_graph, _build_subsea and _build_dry_tree,
+repository revision f82ff2f1 (2026); these are software conventions. Round-robin
+assignment places trees one and three on manifold one and tree two on manifold two.</p>
+<p>The independent count is N = W + M + H + X = 3 + 2 + 1 + 1 = 7 nodes.
+Production edges equal W + M = 5. Control edges reverse those connections and
+also total 5. One host-to-export edge gives E = 2(W + M) + 1 = 11.
+These equations count the specified software topology; they do not size equipment.</p>
+<p>A dry-tree input with two wells gives two wellheads, one host and one export:
+four nodes, two risers and one export edge. A subsea-to-shore input with one well
+and one manifold gives three nodes and four edges; its terminal is already the
+export sink. The test docstrings contain each hand calculation.</p>
+<h2>Implementation map and evidence limits</h2>
+<table><tr><th>Path</th><th>Methods and evidence</th><th>Limit</th></tr>
+<tr><td>Graph</td><td>concept_to_graph; independent exact endpoint sets in test_independent_topology.py</td><td>Missing and zero counts both substitute schematic hardware; not an evaluated inventory.</td></tr>
+<tr><td>XML</td><td>graph_to_dexpi: ElementTree consumer; dexpi_to_graph: literal input independent of exporter</td><td>No external application or schema validation; DEXPI-aligned subset only.</td></tr>
+<tr><td>Ranking and priors</td><td>recommendation.py feasible_concepts, recommend; basin.py region_fit</td><td>Heuristic priors; independent qualification remains open.</td></tr>
+<tr><td>Layout</td><td>layout.py compute_positions, layout_caption; test_layout.py</td><td>Synthetic well geometry; not surveyed coordinates.</td></tr>
+<tr><td>Hazard and erosion</td><td>flow_assurance.py assess_flow_assurance, screen_erosion_risk; test_audit_screening.py</td><td>Screening inputs and unevaluated outcomes remain explicit; not transient hydraulics.</td></tr>
+<tr><td>Symbols</td><td>symbols/__init__.py render_symbol; test_symbols.py</td><td>Rendering tests do not establish symbol-standard conformity.</td></tr>
+<tr><td>Calibration</td><td>calibration.py backtest_fields; test_calibration.py</td><td>In-sample evidence; independent calibration remains open.</td></tr></table>
+<p>Table: software entry points and bounded evidence, not a declaration of engineering readiness.</p>
+<h2>Later slices</h2>
+<p>Populated economics and hardware completeness, catalog publication evidence,
+reference-data and terrain validation, launch/consumer inventory, optional CAD,
+the two LFS-fixture cases, the opt-in live endpoint and signed QA evidence remain
+open. No signature or independent-provider clearance is claimed. Existing missing
+package and fixture outcomes are preserved. No production behavior is changed.</p>
+<p>Executable evidence: tests/modules/field_development/test_independent_topology.py;
+existing graph and XML tests remain part of the targeted regression run.</p>
+</main></html>
