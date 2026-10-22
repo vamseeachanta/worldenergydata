@@ -353,7 +353,10 @@ class CnloerProductionLoader:
     Dependency-injected ``raw_text`` (pre-extracted ``pdftotext`` output) is used
     for tests; otherwise ``path`` is read via ``pdftotext -layout``.
     Optional ``raw_html`` supplies the historical Hibernia statistics modals;
-    PDF periods retain their original values on overlap. The runtime
+    PDF periods retain their original values on overlap. ``report_year`` will
+    select the strict annual PDF layout parser, including grouped integers,
+    merged month labels and source totals. Without it the legacy flat-text
+    parser is retained. The runtime
     download path (fetch + gitignored cache) is a documented #719 follow-on and
     is NOT exercised in tests nor committed with cached PDFs (licence).
     """
@@ -365,11 +368,13 @@ class CnloerProductionLoader:
         path: Optional[Path] = None,
         raw_text: Optional[str] = None,
         raw_html: Optional[str] = None,
+        report_year: int | None = None,
     ):
         self.field_name = field_name
         self._path = path
         self._raw_text = raw_text
         self._raw_html = raw_html
+        self._report_year = report_year
 
     def load(self) -> pd.DataFrame:
         historical = None
@@ -384,7 +389,16 @@ class CnloerProductionLoader:
             if self._raw_text is not None
             else self._pdftotext(self._path)
         )
-        existing = parse_cnloer_production_text(text, field_name=self.field_name)
+        if self._report_year is None:
+            existing = parse_cnloer_production_text(text, field_name=self.field_name)
+        else:
+            from worldenergydata.canada.production.cnloer_annual import (
+                parse_cnloer_annual_text,
+            )
+
+            existing = parse_cnloer_annual_text(
+                text, field_name=self.field_name, year=self._report_year
+            )
         if historical is None:
             return existing
         return (
