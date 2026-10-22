@@ -74,6 +74,57 @@ def test_overlapping_installed_files_are_rejected(tmp_path, placement):
     assert any("overlap" in error and shared in error for error in errors)
 
 
+@pytest.mark.parametrize("file_placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("child_placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("file_first", [False, True])
+@pytest.mark.parametrize(
+    "parent, child",
+    [
+        ("worldenergydata", "worldenergydata/eia/a.py"),
+        ("worldenergydata/eia", "worldenergydata/eia/a.py"),
+        ("worldenergydata/eia", "worldenergydata/eia/data/a.py"),
+    ],
+)
+def test_file_directory_conflicts_are_rejected(
+    tmp_path, file_placement, child_placement, file_first, parent, child
+):
+    """A file cannot occupy a parent directory required by another wheel."""
+    file_name, child_name = ("a", "z") if file_first else ("z", "a")
+    file_prefix = f"{file_name}-0.1.0.data/{file_placement}/" if file_placement else ""
+    child_prefix = (
+        f"{child_name}-0.1.0.data/{child_placement}/" if child_placement else ""
+    )
+    file_wheel = wheel(tmp_path, file_name, [file_prefix + parent])
+    child_wheel = wheel(tmp_path, child_name, [child_prefix + child])
+    errors = checker.check_wheels([file_wheel, child_wheel])
+    assert any(
+        "file/directory conflict" in error
+        and parent in error
+        and file_wheel.name in error
+        and child_wheel.name in error
+        for error in errors
+    )
+
+
+@pytest.mark.parametrize("placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize(
+    "first, second",
+    [
+        ("worldenergydata/common/a.py", "worldenergydata/common/b.py"),
+        ("worldenergydata/eia", "worldenergydata/eia_us/a.py"),
+        ("worldenergydata/eia/a.py", "worldenergydata/eia_extra"),
+    ],
+)
+def test_shared_parents_and_similarly_prefixed_siblings_are_valid(
+    tmp_path, placement, first, second
+):
+    """Shared parents and distinct path components have no file intersection."""
+    prefix = f"worldenergydata_eia-0.1.0.data/{placement}/" if placement else ""
+    core = wheel(tmp_path, "worldenergydata-core", [first])
+    domain = wheel(tmp_path, "worldenergydata-eia", [prefix + second])
+    assert checker.check_wheels([core, domain]) == []
+
+
 def test_data_files_are_owned_too(tmp_path):
     """Identical bytes still conflict: uninstalling either removes the file."""
     shared = "worldenergydata/common/schema.json"
