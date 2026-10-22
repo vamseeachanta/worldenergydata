@@ -5,19 +5,29 @@ Fields covered:
   - Kuparuk River — second-largest, supergiant
   - Point Thomson — newer development, NGL-rich
 
-Production data derived from EIA Alaska state series + AOGCC field reports.
+Caller-supplied monthly average rates use an explicit barrels/day schema.
+This loader does not qualify source revisions or retrieve field measurements.
 """
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, ClassVar
 
 import pandas as pd
+
+from .measurement import (
+    RATE,
+    VOLUME,
+    annual_volumes,
+    declared_unit,
+    monthly_period,
+    number_or_missing,
+)
 
 logger = logging.getLogger(__name__)
 
 # Alaska North Slope fields
-ALASKA_FIELDS: List[str] = [
+ALASKA_FIELDS: list[str] = [
     "Prudhoe Bay",
     "Kuparuk",
     "Point Thomson",
@@ -42,9 +52,18 @@ class AlaskaFieldRecord:
 class AlaskaProductionLoader:
     """Load and normalise Alaska North Slope field-level production data."""
 
-    _REQUIRED_COLS = ["period", "field", "crude_bopd", "ngl_bopd"]
+    _REQUIRED_COLS: ClassVar[list[str]] = [
+        "period",
+        "field",
+        "crude_bopd",
+        "ngl_bopd",
+        "crude_bopd_missing",
+        "ngl_bopd_missing",
+        "unit",
+        "basis",
+    ]
 
-    def load(self, records: List[Dict[str, Any]]) -> pd.DataFrame:
+    def load(self, records: list[dict[str, Any]]) -> pd.DataFrame:
         """Convert raw Alaska field records to normalised DataFrame.
 
         Args:
@@ -60,13 +79,21 @@ class AlaskaProductionLoader:
 
         rows = []
         for rec in records:
-            crude = float(rec.get("crude_bopd", 0.0))
+            # Named *_bopd fields explicitly declare bbl/day, rate_per_day.
+            declared_unit(rec, schema_unit="bopd")
+            monthly_period(rec.get("period"))
+            crude = number_or_missing(rec.get("crude_bopd"))
+            ngl = number_or_missing(rec.get("ngl_bopd"))
             rows.append(
                 {
                     "period": rec.get("period", ""),
                     "field": rec.get("field", ""),
-                    "crude_bopd": max(crude, 0.0),
-                    "ngl_bopd": float(rec.get("ngl_bopd", 0.0)),
+                    "crude_bopd": crude,
+                    "ngl_bopd": ngl,
+                    "crude_bopd_missing": pd.isna(crude),
+                    "ngl_bopd_missing": pd.isna(ngl),
+                    "unit": "bopd",
+                    "basis": RATE,
                 }
             )
 
@@ -81,23 +108,28 @@ class AlaskaProductionLoader:
         return df[df["period"] == period].copy()
 
     def annual_total(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Aggregate monthly records to annual totals per field.
+        """Integrate monthly daily rates into annual crude_bbl and ngl_bbl.
 
-        Returns:
-            DataFrame with columns: field, year, crude_bopd, ngl_bopd.
+        Incomplete components have unknown totals and explicit missing months.
+        Rate columns are not retained with misleading annual volume values.
         """
+        columns = ["crude_bbl", "ngl_bbl"]
         if df.empty:
-            return pd.DataFrame(columns=["field", "year", "crude_bopd", "ngl_bopd"])
+            return annual_volumes(df, "field", columns)
+        if not df["unit"].eq("bopd").all() or not df["basis"].eq(RATE).all():
+            raise ValueError("Annual aggregation requires daily rate unit/basis")
+        volumes = df.copy()
+        periods = [monthly_period(period) for period in df["period"]]
+        volumes["year"] = [period[0] for period in periods]
+        volumes["month"] = [period[1] for period in periods]
+        days = pd.Series([period[2] for period in periods], index=df.index)
+        for rate, volume in zip(["crude_bopd", "ngl_bopd"], columns):
+            # NIST SP 811 (2008), section 7.11: average rate * duration.
+            volumes[volume] = df[rate].map(number_or_missing) * days
+        volumes["unit"], volumes["basis"] = "bbl", VOLUME
+        return annual_volumes(volumes, "field", columns)
 
-        df = df.copy()
-        df["year"] = df["period"].str[:4].astype(int)
-        return (
-            df.groupby(["field", "year"])[["crude_bopd", "ngl_bopd"]]
-            .sum()
-            .reset_index()
-        )
-
-    def to_records(self, df: pd.DataFrame) -> List[AlaskaFieldRecord]:
+    def to_records(self, df: pd.DataFrame) -> list[AlaskaFieldRecord]:
         """Convert DataFrame rows to AlaskaFieldRecord dataclass instances."""
         result = []
         for _, row in df.iterrows():
