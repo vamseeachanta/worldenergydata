@@ -1,0 +1,80 @@
+{
+  "revision": "BH-map-1",
+  "date": "2026-10-22",
+  "basis": "Repository-local map proposed for issue #1337; does not modify the external registry.",
+  "families": [
+    {
+      "id": "pivot-ingestion",
+      "scope": "in-package",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py",
+          "symbol": "load_pivot_table"
+        }
+      ],
+      "tests": [
+        "tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_required",
+        "tests/unit/baker_hughes/test_schema_contract.py::test_pivot_extra_rejected",
+        "tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_optional_reported"
+      ]
+    },
+    {
+      "id": "summary-ingestion",
+      "scope": "in-package",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/loader.py",
+          "symbol": "load_summary"
+        }
+      ],
+      "tests": [
+        "tests/unit/baker_hughes/test_schema_contract.py::test_summary_wrong_identifier",
+        "tests/unit/baker_hughes/test_schema_contract.py::test_summary_non_date_headers",
+        "tests/unit/baker_hughes/test_schema_contract.py::test_summary_date_header_selection"
+      ]
+    },
+    {
+      "id": "ingestion-report",
+      "scope": "in-package",
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes/report.py",
+          "symbol": "generate_report"
+        }
+      ],
+      "tests": [
+        "tests/unit/baker_hughes/test_ingestion_status.py::test_dimension_completeness",
+        "tests/unit/baker_hughes/test_ingestion_status.py::test_undefined_bounds",
+        "tests/unit/baker_hughes/test_ingestion_status.py::test_complete_report"
+      ]
+    },
+    {
+      "id": "independent-workbook-export",
+      "scope": "outside-package",
+      "delegates_to_loaders": false,
+      "implementations": [
+        {
+          "path": "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/baker_hughes_collector.py",
+          "symbol": "BakerHughesCollector.download_na_rig_count"
+        },
+        {
+          "path": "packages/worldenergydata-vessel_fleet/src/worldenergydata/vessel_fleet/collectors/baker_hughes_collector.py",
+          "symbol": "BakerHughesCollector.download_international_rig_count"
+        },
+        {
+          "path": "scripts/vessel_fleet/enrich_from_government.py",
+          "symbol": "export_baker_hughes"
+        },
+        {
+          "path": "scripts/vessel_fleet/enrich_from_government.py",
+          "symbol": "main"
+        }
+      ],
+      "tests": [
+        "tests/unit/baker_hughes/test_collector_export.py::test_collector_surfaces_failure",
+        "tests/unit/baker_hughes/test_collector_export.py::test_export_states",
+        "tests/unit/baker_hughes/test_collector_export.py::test_main_exit_status"
+      ]
+    }
+  ]
+}

@@ -9,16 +9,22 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Any, Optional
+from typing import Any
+from zipfile import BadZipFile
 
 import pandas as pd
+from requests import RequestException
 
 from worldenergydata.vessel_fleet.collectors.base import BaseCollector
 
 logger = logging.getLogger(__name__)
 
 _BH_NA_URL = "https://rigcount.bakerhughes.com/static-files/na-702b0e93-5e46-4a5c-8ba2-e11cd1e14d49"
-_BH_INTL_URL = "https://rigcount.bakerhughes.com/static-files/intl-a0e5dc74-c07b-4c84-a93e-a8f12a3dce80"  # noqa: E501
+_BH_INTL_URL = "https://rigcount.bakerhughes.com/static-files/intl-a0e5dc74-c07b-4c84-a93e-a8f12a3dce80"
+
+
+class DownloadError(RuntimeError):
+    """Workbook download or parsing failed; distinct from a valid empty sheet."""
 
 
 class BakerHughesCollector(BaseCollector):
@@ -37,9 +43,9 @@ class BakerHughesCollector(BaseCollector):
 
     def download_na_rig_count(
         self,
-        url: Optional[str] = None,
+        url: str | None = None,
     ) -> pd.DataFrame:
-        """Download North American rig count Excel."""
+        """Download North American Excel; raise DownloadError on access/parse failure."""
         target = url or _BH_NA_URL
         try:
             content = self.get_bytes(target)
@@ -50,15 +56,14 @@ class BakerHughesCollector(BaseCollector):
                 len(df.columns),
             )
             return df
-        except Exception as exc:
-            logger.warning("Baker Hughes NA download failed: %s", exc)
-            return pd.DataFrame()
+        except (RequestException, OSError, ValueError, ImportError, BadZipFile):
+            raise DownloadError("North American workbook download failed") from None
 
     def download_international_rig_count(
         self,
-        url: Optional[str] = None,
+        url: str | None = None,
     ) -> pd.DataFrame:
-        """Download international rig count Excel."""
+        """Download international Excel; raise DownloadError on access/parse failure."""
         target = url or _BH_INTL_URL
         try:
             content = self.get_bytes(target)
@@ -69,6 +74,5 @@ class BakerHughesCollector(BaseCollector):
                 len(df.columns),
             )
             return df
-        except Exception as exc:
-            logger.warning("Baker Hughes international download failed: %s", exc)
-            return pd.DataFrame()
+        except (RequestException, OSError, ValueError, ImportError, BadZipFile):
+            raise DownloadError("International workbook download failed") from None

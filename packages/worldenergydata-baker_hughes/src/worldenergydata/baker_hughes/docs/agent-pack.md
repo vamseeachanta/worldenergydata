@@ -1,22 +1,23 @@
 # Baker Hughes module knowledge pack
 
-Summary: section 11 defines date-range completeness for issue #1335, slice 1.
-Sections 1–10 retain the historical evidence at the code revision below;
-section 11 supersedes the F13/F19 dispositions for the current implementation.
+Summary: section 12 defines schema, filter, completeness, collector/export and
+distribution contracts for #1335, #1337 and #1338. Sections 1–11 preserve the
+earlier evidence; section 12 supersedes their affected current dispositions.
 
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
+| 4 | 2026-10-22 | Added schema and completeness diagnostics, independent collector failure checks, a local implementation map and built-archive evidence to resolve the detection gaps. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 3 |
-| Pack date | 2026-10-19 |
+| Pack revision | 4 |
+| Pack date | 2026-10-22 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -158,10 +159,10 @@ The export caller `main` saves non-empty results to parquet without `load_pivot_
 | Item | Coverage or limitation | Tracking |
 | --- | --- | --- |
 | Numeric qualification | F1–F6, F11–F12; missing, fractional, locale-separated and unit-mismatched inputs lack rejection tests | #1334 |
-| Schema and completeness | F7–F10, F13–F19; empty-filter, missing/extra-column and missing-dimension/report cases lack detection checks | #1335 |
+| Schema and completeness | F7–F10, F13–F19 now have detection tests; section 12 defines current statuses and limits | #1335 |
 | Independent evidence | UNVERIFIED: Source workbook revision, depth units, independent counts and signed fingerprinted QA evidence are not established | #1336 |
-| Map coverage | No in-package map family; add section-3 method families and the outside-package collector/export path before counting in-package rows | #1337 |
-| Distribution boundary | Existing package-data glob includes `**/*.md`; excluding docs from distribution is not established and no packaging code is changed. [packages/worldenergydata-baker_hughes/pyproject.toml:L55-L56] | #1338 |
+| Map coverage | BH-map-1 proposes three in-package families and one independent outside-package collector/export family; external registry adoption remains pending | #1337 |
+| Distribution boundary | Policy intentionally includes the pack in wheel and source distribution; section 12 records built-archive byte checks and complete file-list evidence. Packaging configuration is unchanged. | #1338 |
 | Documentation discovery | Read the member README and all three package Python files; module-naming documentation found in 6 repository discovery documents, including 1 discovery file with identifying names; individual identifying paths are withheld | #1336 |
 | Testing coverage | Read all 15 test definitions across the loader tests and smoke tests; 3 regression cases are listed in section 4. [tests/test_baker_hughes_loader.py:L13-L135] [tests/unit/baker_hughes/test_smoke.py:L8-L14] | #1336 |
 | Governance | Deputy role and QA evidence indexing still require maintainer action; draft references are filed | #1336 |
@@ -225,3 +226,137 @@ The new file has ten parametrized cases. Together with the existing loader
 and package smoke tests, 25 cases pass. Later slices of #1335 address the
 retained schema, filter and dimension checks above; #1334 and #1336 retain
 numeric and independent source-qualification gaps.
+
+## 12. Current schema, completeness and distribution contracts
+
+This revision supersedes the affected historical dispositions in sections 6,
+9–11. Input-domain rules implement #1335 and #1337 (2026); they introduce no
+engineering equations, empirical coefficients or acceptance tolerances.
+Counts below enumerate fields, families or synthetic rows. Expected values
+are derived by enumeration in test docstrings, independently of production
+code. Numeric coercion and independent source qualification remain #1334 and
+#1336; neither is established by these checks.
+
+### Workbook schemas and filter states
+
+| Loader | Required | Optional | Selection and rejection |
+| --- | --- | --- | --- |
+| Pivot | `PublishDate`, `RigCount` | `Country`, `StateProvince`, `County`, `BasinName`, `DrillFor`, `Location`, `Trajectory`, `WellType`, `WellDepth`, `WaterDepth` | Extra or duplicate headers and missing required headers raise `SchemaError` with `diagnostics`. Missing optional headers are explicitly listed in `attrs['schema']['missing_optional']`; no columns are invented. |
+| Summary | First column exactly `State`, followed by at least one calendar-date header | None | Accepted date headers are full `YYYY-MM-DD`, month-first `M/D/YYYY`, or timezone-naive date/datetime at midnight. Invalid dates, non-date columns, duplicate headers and equivalent duplicate dates are rejected. |
+
+The schema is also tabulated in both loader docstrings. Header validation
+precedes transformation; unexpected fields do not pass through. Exact pivot
+filters do not normalize strings. Filtering an absent dimension raises
+`ValueError` naming `absent_dimension`. Loader `attrs['ingestion']` records
+input/output row counts, requested filters, source null-dimension counts and
+one of `loaded`, `matched`, `no_match`, or `empty_input`. Empty input takes
+precedence over an unmatched filter. Summary uses loaded/empty_input states.
+
+### Completeness
+
+`generate_report` adds an overall `completeness.status`, assessments for all
+three dimensions, `omitted_fields`, and copies any loader schema/ingestion
+diagnostics. It preserves the date reason and missing-count fields introduced
+in section 11 and adds `bounds_status=observed|undefined`. Missing/all-missing
+dates do not produce `NaT` bounds. Partially observed bounds remain incomplete.
+Missing dimension columns have undefined status and unknown missing counts;
+null values in existing dimensions have incomplete status and enumerated
+missing counts. Available inventories still contain sorted unique non-null
+values. Summary therefore explicitly lists absent basin and country inventories.
+
+Overall completeness is incomplete for deficient dates, dimensions, schema,
+empty input or no match. A complete result means these observed fields are
+populated; it does not qualify counts, units, workbook authenticity or source
+coverage. Bare frames without loader attrs do not receive a workbook schema
+assessment. Dates must already be parsed and dimension values comparable.
+Attrs are transient; callers needing persistent diagnostics must save the
+returned report separately. No signed QA claim is made.
+
+### Detection index and final dispositions
+
+All paths in this table are test node identifiers. Parametrization covers both
+filters, all three dimensions, missing/extra headers and date selection forms.
+
+| Case | Current detection evidence | Disposition |
+| --- | --- | --- |
+| F7 | `tests/unit/baker_hughes/test_ingestion_status.py::test_unmatched_filter` | Country no match explicitly recorded. |
+| F8 | `tests/unit/baker_hughes/test_ingestion_status.py::test_unmatched_filter` | Basin no match explicitly recorded. |
+| F9 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_wrong_identifier` | First identifier header validated. |
+| F10 | `tests/unit/baker_hughes/test_schema_contract.py::test_summary_non_date_headers`; `tests/unit/baker_hughes/test_schema_contract.py::test_summary_date_header_selection` | Full date headers selected; other columns rejected. |
+| F13 | `tests/unit/baker_hughes/test_report.py::test_empty_input_reports_incomplete_dates`; `tests/unit/baker_hughes/test_report.py::test_missing_date_column_reports_unknown_missing_count` | Empty input and absent dates explicitly incomplete. |
+| F14 | `tests/unit/baker_hughes/test_ingestion_status.py::test_dimension_completeness` | Missing basin values counted. |
+| F15 | `tests/unit/baker_hughes/test_ingestion_status.py::test_dimension_completeness` | Missing state values counted. |
+| F16 | `tests/unit/baker_hughes/test_ingestion_status.py::test_dimension_completeness` | Missing country values counted. |
+| F17 | `tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_required`; `tests/unit/baker_hughes/test_schema_contract.py::test_pivot_extra_rejected`; `tests/unit/baker_hughes/test_schema_contract.py::test_pivot_missing_optional_reported` | Required/extra fields rejected; missing optional fields reported. |
+| F18 | `tests/unit/baker_hughes/test_ingestion_status.py::test_dimension_completeness`; `tests/unit/baker_hughes/test_ingestion_status.py::test_summary_dimensions_explicitly_omitted` | Absent dimensions explicitly listed. |
+| F19 | `tests/unit/baker_hughes/test_report.py::test_partial_missing_dates_flag_observed_bounds`; `tests/unit/baker_hughes/test_report.py::test_all_missing_dates_omit_bounds`; `tests/unit/baker_hughes/test_ingestion_status.py::test_undefined_bounds`; `tests/unit/baker_hughes/test_worked_ingestion.py::test_pivot_missing_dates_survive_to_report` | Missing dates counted, undefined bounds explicit, no NaT strings. |
+
+Additional nodes test absent filter dimensions, empty inputs, duplicate columns,
+equivalent date headers, complete reports, schema propagation and the worked
+example. `docs/examples/baker-hughes-ingestion.md` gives inputs, method and
+independently enumerated answers; its executable counterpart is
+`tests/unit/baker_hughes/test_worked_ingestion.py::test_worked_ingestion`.
+
+### Implementation map BH-map-1
+
+`docs/modules/baker_hughes-implementation-map.json` is the named local map
+revision **BH-map-1**, dated 2026-10-22. It proposes explicit coverage without
+claiming adoption by the external implementation registry cited in section 9.
+
+| Scope | Families | Entry points | Detection evidence |
+| --- | --- | --- | --- |
+| In-package | Three: pivot-ingestion, summary-ingestion, ingestion-report | `load_pivot_table`, `load_summary`, `generate_report` | Schema, filter, date and dimension tests indexed in the map. |
+| Outside-package | One: independent-workbook-export | Two `BakerHughesCollector` download methods plus `export_baker_hughes` and `main` in the export script | `tests/unit/baker_hughes/test_collector_export.py::test_collector_surfaces_failure`; `tests/unit/baker_hughes/test_collector_export.py::test_export_states`; `tests/unit/baker_hughes/test_collector_export.py::test_main_exit_status` |
+
+Recount evidence: `tests/unit/baker_hughes/test_implementation_map.py::test_map_covers_entry_points`
+asserts exact family and callable sets and resolves every implementation and
+test symbol by parsing source. In-package and outside-package counts remain
+distinct. The collector independently parses downloaded Excel; it does not
+delegate to either loader and does not inherit their schema checks.
+
+Collector access/parse failures now raise `DownloadError` instead of returning
+an empty frame. Fake downloaders distinguish failed downloads from valid empty
+frames and parse errors. The export helper attempts both sources and records
+`download_failed`, `empty_result`, `missing_export`, or `exported`. A write
+exception or absent output path is missing_export. The caller returns success
+only when both exports exist; tests enumerate both-fail, either-fail and both-
+success cases. File existence does not establish parquet validity or freshness;
+real remote endpoint availability and live downloads remain untested. BOEM
+collection behavior is outside this change.
+
+### Distribution boundary: intentional inclusion
+
+The intended policy is to **include** this module knowledge pack unchanged in
+both wheel and source distribution. It documents API limits and carries no
+qualification clearance. No exclusion or packaging configuration change is
+required. The README remains a source-distribution build input and supplies
+wheel metadata, rather than a separate runtime README file.
+
+`tests/unit/baker_hughes/test_distribution.py::test_wheel_documentation_policy`
+and `tests/unit/baker_hughes/test_distribution.py::test_sdist_documentation_policy`
+build a disposable member copy, produce a source distribution, build its wheel,
+open the archives with `zipfile`/`tarfile`, assert the exact owned payload set,
+and compare every payload byte with its source. The source distribution also
+preserves README and pyproject bytes. Temporary build logs remain outside the
+repository. Complete inspected member lists and tool versions are recorded in
+`docs/modules/baker_hughes-distribution-contents.json`.
+
+The runtime payload is `__init__.py`, `loader.py`, `report.py` and
+`docs/agent-pack.md`, all under `worldenergydata/baker_hughes/`. No namespace-root
+initializer or sibling module is shipped. Evidence is for setuptools 84.2.1;
+minimum-backend execution and installed dependency closure are not established.
+Archive inclusion establishes documentation distribution only, not source or
+engineering qualification. Changes to the payload require updating the explicit
+policy assertion and re-inspecting artifacts.
+
+### Sources
+
+Opened on 2026-10-22 with HTTP 200; responses, addresses and access times are
+retained with the external build evidence:
+
+- [pandas 2.3.3 to_datetime](https://pandas.pydata.org/pandas-docs/version/2.3.3/reference/api/pandas.to_datetime.html): explicit date formats and missing dates.
+- [pandas 2.3.3 DataFrame.melt](https://pandas.pydata.org/pandas-docs/version/2.3.3/reference/api/pandas.DataFrame.melt.html): explicit identifier and value columns.
+- [setuptools 84.2.1 Data Files Support](https://setuptools.pypa.io/en/stable/userguide/datafiles.html): package-data patterns and distribution content.
+
+No licensed publication values or external workbook data are used. Synthetic
+input values and their expectations are written out in the test docstrings.
