@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" data-revision="0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="document-binding" content="776ce71a9f810a066264653457df7bf1fe8fc4302e38ace2e385671618e14489">
+<title>Federal acreage module analysis</title>
+<style>/* Existing module-report family stylesheet, reused without layout changes. */
+:root{color-scheme:light;--ink:#183449;--report-accent:#137e8a;--muted:#516573;--line:#d3dfe4}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:#edf2f4;font:16px/1.65 Georgia,serif}
+header{background:var(--ink);color:white;padding:58px max(6vw,24px);border-bottom:8px solid var(--report-accent)}
+h1{max-width:1100px;font:600 clamp(28px,3.5vw,46px)/1.2 Georgia,serif;margin:0}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);max-width:1440px;margin:auto;background:white}
+nav{padding:32px 22px;font:14px/1.8 sans-serif;border-right:1px solid var(--line)}
+nav ol{padding-left:18px}nav a{color:var(--ink);text-decoration:none}nav a:hover{text-decoration:underline}
+main{padding:24px 42px 70px;min-width:0}section{padding:20px 0;border-bottom:1px solid var(--line)}
+h2{font:600 27px/1.3 Georgia,serif;margin:12px 0 22px}h3{font:600 20px/1.4 Georgia,serif;margin-top:26px}
+.prose h2{font-size:21px}.prose strong{color:#085965}p{max-width:86ch}
+.table-wrap{overflow-x:auto;margin:24px 0}table{border-collapse:collapse;width:100%;font:13px/1.5 sans-serif}
+th{background:var(--ink);color:white;text-align:left;padding:11px 9px}td{padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#f2f7f8}caption{caption-side:bottom;text-align:left;color:var(--muted);padding:9px 0;font-size:13px}
+figure{margin:26px 0}svg,img{display:block;max-width:100%;height:auto}figcaption{color:var(--muted);font:13px/1.6 sans-serif;margin-top:10px}
+.source{font:13px/1.5 sans-serif;color:var(--muted)}
+@media(max-width:900px){.layout{display:block}nav{border-bottom:1px solid var(--line);border-right:0}nav ol{columns:2}main{padding:16px 20px}}
+@media print{body{background:white;font-size:10pt}header{padding:24px;background:white;color:var(--ink)}h1{font-size:25pt}.layout{display:block}nav{display:none}main{padding:0}figure{break-inside:avoid}h2,h3{break-after:avoid}table{font-size:8pt}th,td{padding:5px}thead{display:table-header-group}}
+</style>
+<style>
+.hs-doc .panel,.hs-doc pre{background:#f2f7f8;border:1px solid var(--line);padding:16px}
+.hs-doc pre{overflow-x:auto;font:13px/1.6 monospace}
+.hs-doc svg text{fill:var(--ink);font:15px sans-serif}
+.hs-doc svg .small-label{font-size:11px}
+.hs-doc .bar{fill:var(--report-accent);cursor:crosshair}
+.hs-doc .bar:hover,.hs-doc .bar:focus{fill:var(--ink);outline:2px solid #a54236}
+.hs-doc .limit{stroke:#a54236;stroke-width:2;stroke-dasharray:6 4}
+.hs-doc .cell{stroke:white;stroke-width:2}
+.hs-doc .active{fill:#b8dedb}.hs-doc .expired{fill:#f1d6a7}
+.hs-doc .uncovered{fill:#f1c9c5}.hs-doc .outside{fill:#e4e8eb}
+.hs-doc .tract-boundary{fill:none;stroke:var(--ink);stroke-width:3}
+.hs-doc label{display:block;margin-top:14px;font:14px sans-serif}
+.hs-doc textarea,.hs-doc select{width:100%;padding:8px;font:16px/1.5 sans-serif}
+.hs-doc button{background:var(--ink);color:white;padding:10px 14px;border:0;cursor:pointer;margin:8px 8px 8px 0}
+.hs-doc button:focus-visible,.hs-doc a:focus-visible{outline:3px solid var(--report-accent);outline-offset:3px}
+.hs-doc #revision-history td:nth-child(2){white-space:nowrap}
+.hs-doc .comment-text{white-space:pre-wrap}.hs-doc code,.hs-doc td{overflow-wrap:anywhere}
+@media print{.hs-doc .comment-controls{display:none}}
+</style>
+</head>
+<body class="hs-doc">
+<header><h1>Federal acreage module analysis</h1>
+<p>Single-section lease-record screening with explicit evidence gaps</p>
+<p>Revision 0 · 2026-10-22</p><p>Draft for maintainer review</p></header>
+<div class="layout">
+<nav aria-label="Contents"><ol>
+<li><a href="#section-1">Executive Summary</a></li>
+<li><a href="#section-2">Introduction and scope</a></li>
+<li><a href="#section-3">Basis and criteria</a></li>
+<li><a href="#section-4">Inputs and outputs</a></li>
+<li><a href="#section-5">Theory and method</a></li>
+<li><a href="#section-6">Worked example</a></li>
+<li><a href="#section-7">Validation evidence</a></li>
+<li><a href="#section-8">Limits and recommendations</a></li>
+<li><a href="#section-9">References</a></li>
+<li><a href="#section-10">Appendices and comments</a></li>
+</ol></nav>
+<main>
+<section id="section-1"><h2>1. Executive Summary</h2>
+<p>The federal acreage module is an offline screening tool for lease-record coverage on a regular survey-cell grid. Analysis is performed to determine the supported calculation and evidence gaps; key results are summarized below.</p>
+<ul>
+<li>The documented synthetic tract has <span data-metric="gross">320</span> acres gross and <span data-metric="coverage">280</span> acres of supplied-record coverage.
+<ul><li>The <span data-metric="no_record">40</span> acres without supplied records identify an evidence gap. They do not establish land availability or title.</li></ul></li>
+<li>The example returns <span data-metric="leased">200</span> acres in the active-lease union and <span data-metric="expired">80</span> acres in the expired-or-nonleased union.
+<ul><li>The result is partial evidence because exceptions and uncovered tract area remain. These quantities support checking the supplied records against the stated idealized geometry.</li></ul></li>
+<li>Real-tract decisions require additional evidence.
+<ul><li>Survey geometry, current source records, the acreage-unit convention and county title records require assessment before the screening quantities are used for acquisition or ownership decisions.</li></ul></li>
+</ul>
+<p>The example is developed in <a href="#section-6">Section 6</a> from <a href="#ref-example">the public repository example</a>. Its records are authored synthetic data, not a public land-record extract.</p>
+</section>
+<div id="revision-history"><h3>Revision history</h3>
+<table><thead><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr></thead>
+<tbody><tr><td>0</td><td>2026-10-22</td><td>The screening calculation, synthetic example and evidence gaps are documented to define the supported use and the basis needed for real-tract assessment.</td></tr></tbody>
+<caption>Revision history. Current issue; engineering changes are listed newest first.</caption></table></div>
+
+<section id="section-2"><h2>2. Introduction and scope</h2>
+<p>Tract cells are intersected with supplied federal lease or parcel records, and coverage is aggregated without counting overlapping cells twice. Record exceptions and source references are carried beside the acreage quantities.</p>
+<p>The main workflow comprises a fixture provider, validated input models, the public evaluation function and paired structured-data and HTML outputs. A source-provider protocol defines the interface for future acquisition. The available router accepts fixture acquisition only (<a href="#ref-api">public interfaces</a>; <a href="#ref-provider">provider and router</a>).</p>
+<h3>2.1 Not covered</h3>
+<p>Live acquisition, irregular or fractional survey lots, multiple sections, polygon clipping, coordinate transformations, net revenue interests, mineral ownership and title-chain assessment are not provided by this workflow. No physical plant, loading model or licensed numerical solver is used. The module name does not establish these capabilities.</p>
+</section>
+
+<section id="section-3"><h2>3. Basis and criteria</h2>
+<p>The calculation basis is the documented synthetic example and the module's equal-area survey-cell convention. Numerical consistency is assessed separately from the accuracy of a land survey or lease register.</p>
+<h3>3.1 Geometry and units</h3>
+<p>Each accepted quarter-quarter cell is assigned exactly <span data-metric="cell_area">40</span> acres by the model. The federal surveying manual describes nominal subdivision areas, with a section of 640 acres, a quarter section of 160 acres and a quarter-quarter of 40 acres (<a href="#ref-survey">2009 edition, Chapter I, paragraph 1-1</a>). This nominal basis does not establish the measured acreage of an irregular real section.</p>
+<p>The hectare record is interpreted using the international-foot acre for this arithmetic demonstration (<a href="#ref-acre">unit-conversion table</a>). Its applicability to any historical source record is NOT_EVALUATED. Source-specific unit evidence is required before that conversion is applied to real records.</p>
+<h3>3.2 Software criteria</h3>
+<p>Converted record area is compared with the area of its listed cells. A difference greater than <span data-metric="tolerance">0.5</span> acre produces an ambiguous-unit exception; this is the current software policy, not a cadastral accuracy standard (<a href="#ref-evidence">area inspection function</a>). The inclusive boundary is not rejected by this test.</p>
+<p>The chart's upper comparator is the gross tract area. No engineering operating envelope or statutory land-availability threshold is inferred. The area bound follows because every intersection is a subset of the tract (<a href="#ref-sets">set operations</a>).</p>
+<p>Hand-worked acreage anchors and displayed-input arithmetic are compared with an absolute tolerance of 10<sup>−9</sup> acre in the report checks. This numerical checking tolerance is not a measurement uncertainty (<a href="#ref-report-checks">report checks</a>).</p>
+</section>
+
+<section id="section-4"><h2>4. Inputs and outputs</h2>
+<p>Inputs are validated before evaluation. Acreage values are returned together with their availability state and source reference, so an unknown quantity remains distinguishable from a true zero.</p>
+<h3>4.1 Input contract</h3>
+<p>The tract supplies its identifier, descriptive label, state, principal meridian, township, range, section, distinct quarter-quarter cells and gross area. Gross area equals the cell count multiplied by the fixed cell area. Each record supplies a distinct serial, record type and status, area and units, geometry or an explicit missing-geometry value, source identifier and optional effective and expiry dates.</p>
+<p>Every source supplies a unique identifier, dataset description, fixture-or-live classification, timezone-aware retrieval time and licence note. Duplicate serials, missing source references, unsupported aliquot labels, non-finite areas and reversed date intervals are rejected by the public contracts (<a href="#ref-models">models</a>; <a href="#ref-evidence">evaluation</a>).</p>
+<h3>4.2 Output contract</h3>
+<p>The result contains gross area, record coverage, active-lease area, expired-or-nonleased area and derived no-record area, together with per-record converted and intersecting areas, exceptions, sources, an evidence disposition and a separate title-chain gap. The serializer writes a structured-data file and an escaped HTML report from that result (<a href="#ref-serializer">output writer</a>).</p>
+<p>Complete evidence means full supplied-record coverage without exceptions. Partial evidence means coverage exists but exceptions or uncovered area remain. Blocked evidence means no intersecting geometry is available; every rollup quantity, including gross area, is then unavailable in the returned rollup. None of these dispositions establishes title.</p>
+</section>
+
+<section id="section-5"><h2>5. Theory and method</h2>
+<p>Acreage is calculated by counting distinct intersecting cells. The equations below express finite-set operations on the idealized equal-area grid, rather than a survey adjustment.</p>
+<h3>5.1 Geometry and symbols</h3>
+<p>Let T be the tract's set of cells, R<sub>i</sub> the cells listed by record i, a the area assigned to each cell, and |S| the number of distinct cells in set S. The intersection symbol ∩ means membership in both sets; ∪ means membership in either set; the empty set ∅ has no cells. North, south, east and west are abbreviated N, S, E and W; a label such as NE-NW means the northeast quarter of the northwest quarter.</p>
+<figure><svg viewBox="0 0 760 510" role="img" aria-label="Idealized single-section plan showing the northern-half tract">
+<text x="15" y="30">North ↑</text>
+<text x="155" y="30">Idealized section; no surveyed coordinates</text>
+<rect x="90" y="55" width="145" height="95" class="cell expired"><title>NW-NW: Expired lease</title></rect>
+<text x="98" y="87">NW-NW</text>
+<text x="98" y="113" class="small-label">Expired lease</text>
+<rect x="235" y="55" width="145" height="95" class="cell active"><title>NE-NW: Active lease</title></rect>
+<text x="243" y="87">NE-NW</text>
+<text x="243" y="113" class="small-label">Active lease</text>
+<rect x="90" y="150" width="145" height="95" class="cell expired"><title>SW-NW: Expired lease</title></rect>
+<text x="98" y="182">SW-NW</text>
+<text x="98" y="208" class="small-label">Expired lease</text>
+<rect x="235" y="150" width="145" height="95" class="cell uncovered"><title>SE-NW: No supplied record</title></rect>
+<text x="243" y="182">SE-NW</text>
+<text x="243" y="208" class="small-label">No supplied record</text>
+<rect x="380" y="55" width="145" height="95" class="cell active"><title>NW-NE: Active lease</title></rect>
+<text x="388" y="87">NW-NE</text>
+<text x="388" y="113" class="small-label">Active lease</text>
+<rect x="525" y="55" width="145" height="95" class="cell active"><title>NE-NE: Active lease</title></rect>
+<text x="533" y="87">NE-NE</text>
+<text x="533" y="113" class="small-label">Active lease</text>
+<rect x="380" y="150" width="145" height="95" class="cell active"><title>SW-NE: Active lease</title></rect>
+<text x="388" y="182">SW-NE</text>
+<text x="388" y="208" class="small-label">Active lease</text>
+<rect x="525" y="150" width="145" height="95" class="cell active"><title>SE-NE: Active lease</title></rect>
+<text x="533" y="182">SE-NE</text>
+<text x="533" y="208" class="small-label">Active lease</text>
+<text x="533" y="230" class="small-label">Overlap</text>
+<rect x="90" y="245" width="145" height="95" class="cell outside"><title>NW-SW: Outside tract</title></rect>
+<text x="98" y="277">NW-SW</text>
+<text x="98" y="303" class="small-label">Outside tract</text>
+<rect x="235" y="245" width="145" height="95" class="cell outside"><title>NE-SW: Outside tract</title></rect>
+<text x="243" y="277">NE-SW</text>
+<text x="243" y="303" class="small-label">Outside tract</text>
+<rect x="90" y="340" width="145" height="95" class="cell outside"><title>SW-SW: Outside tract</title></rect>
+<text x="98" y="372">SW-SW</text>
+<text x="98" y="398" class="small-label">Outside tract</text>
+<rect x="235" y="340" width="145" height="95" class="cell outside"><title>SE-SW: Outside tract</title></rect>
+<text x="243" y="372">SE-SW</text>
+<text x="243" y="398" class="small-label">Outside tract</text>
+<rect x="380" y="245" width="145" height="95" class="cell outside"><title>NW-SE: Outside tract</title></rect>
+<text x="388" y="277">NW-SE</text>
+<text x="388" y="303" class="small-label">Outside tract</text>
+<rect x="525" y="245" width="145" height="95" class="cell outside"><title>NE-SE: Outside tract</title></rect>
+<text x="533" y="277">NE-SE</text>
+<text x="533" y="303" class="small-label">Outside tract</text>
+<rect x="380" y="340" width="145" height="95" class="cell outside"><title>SW-SE: Outside tract</title></rect>
+<text x="388" y="372">SW-SE</text>
+<text x="388" y="398" class="small-label">Outside tract</text>
+<rect x="525" y="340" width="145" height="95" class="cell outside"><title>SE-SE: Outside tract</title></rect>
+<text x="533" y="372">SE-SE</text>
+<text x="533" y="398" class="small-label">Outside tract</text>
+<rect x="90" y="55" width="580" height="190" class="tract-boundary"/>
+<text x="90" y="466">Each model cell: <tspan data-metric="cell_area">40</tspan> acres; tract boundary outlined.</text>
+</svg>
+<figcaption>Figure 5.1. Plan view of the documented synthetic section. Colour identifies active lease, expired lease, no supplied record or outside-tract cells; the repeated active cell is labelled as an overlap. This is an idealized boundary, without surveyed coordinates or ground dimensions.</figcaption></figure>
+<p>The nominal equal-cell relation is a = 640 acres / (4 × 4) = 40 acres (<a href="#ref-survey">2009 surveying manual, Chapter I, paragraph 1-1</a>). The model enforces that value exactly; physical sections can depart from the nominal subdivision.</p>
+<h3>5.2 Coverage and lease categories</h3>
+<p>For each record, I<sub>i</sub> = T ∩ R<sub>i</sub>. The coverage set is C = ∪ I<sub>i</sub>, and coverage area is A<sub>C</sub> = a |C|. Gross tract area is A<sub>T</sub> = a |T|, and no-record area is A<sub>U</sub> = A<sub>T</sub> − A<sub>C</sub>. These identities follow from distinct-cell membership and cardinality (<a href="#ref-sets">Contemporary Mathematics, 2023 edition, Section 1.4</a>); their application assumes equal cell areas.</p>
+<p>The active-lease set L is the union of intersections for records with active lease status and resolved date and unit checks. The expired-or-nonleased set E is the corresponding union for other resolved records, including active parcel records. Reported category areas are a |L| and a |E|. If L ∩ E ≠ ∅, or intersecting records have unresolved dates or units, both category areas become ambiguous; the geometric coverage remains available (<a href="#ref-evidence">category policy</a>).</p>
+<p>A pairwise overlap has area a |I<sub>i</sub> ∩ I<sub>j</sub>|, using the same cited intersection definition. An overlap exception does not add area to C. Missing geometry is excluded; geometry outside the tract gives no intersection. The expired-or-nonleased category is not a finding that the land is available for leasing.</p>
+<h3>5.3 Unit conversion and time basis</h3>
+<p>For hectare input H, the conversion basis is A = H × 10,000 / [43,560 × (0.3048)²] acres. The hectare supplies 10,000 square metres (<a href="#ref-si">SI Brochure, ninth edition, version 4.01, Section 4, Table 8</a>); the acre contains 43,560 square feet and the international foot is 0.3048 metre (<a href="#ref-acre">2026 revision, acre and foot rows</a>). The module uses a rounded coefficient for this ratio; the report calls that implementation.</p>
+<p>Date checks use each record source's retrieval date. An active record is unresolved when it expires before that date or becomes effective after it; pending and unknown status are unresolved. The aggregate data date is the earliest supplied retrieval timestamp, not the current date. Retrieval time is not proof of when a legal change took effect (<a href="#ref-evidence">date and provenance policy</a>).</p>
+</section>
+
+<section id="section-6"><h2>6. Worked example</h2>
+<p>The documented public repository example is evaluated through the public provider and evaluation function. Its authored synthetic records demonstrate the calculation; no live record extract is represented.</p>
+<p>The fixture's data date is <time>2026-07-10</time>. Its <span data-metric="tract_cells">8</span> tract cells give <span data-metric="gross">320</span> acres, and <span data-metric="record_count">6</span> supplied records are assessed. The returned union covers <span data-metric="coverage">280</span> acres, with <span data-metric="leased">200</span> acres in active leases and <span data-metric="expired">80</span> acres in expired-or-nonleased records. The derived no-record area is <span data-metric="gross">320</span> − <span data-metric="coverage">280</span> = <span data-metric="no_record">40</span> acres (<a href="#ref-example">documented example</a>).</p>
+<figure><svg id="area-chart" viewBox="0 0 820 365" role="group" aria-label="Synthetic tract acreage by output category">
+<text x="30" y="22">Area (acres)</text>
+<line x1="55" y1="65" x2="800" y2="65" class="limit"/>
+<text x="360" y="48">Gross tract-area bound: <tspan data-metric="gross">320</tspan> acres</text>
+<text x="30" y="285"><tspan data-metric="zero">0</tspan></text>
+<rect x="70" y="65.000" width="90" height="210.000" class="bar" tabindex="0" role="img" aria-label="Synthetic tract; Gross tract; acreage 320 acres; gross tract-area bound 320 acres" data-description="Synthetic tract; Gross tract; acreage 320 acres; gross tract-area bound 320 acres"><title>Synthetic tract; Gross tract; acreage 320 acres; gross tract-area bound 320 acres</title></rect>
+<text x="70" y="55.000"><tspan data-metric="gross">320</tspan></text>
+<text x="70" y="305" class="small-label">Gross tract</text>
+<rect x="217" y="91.250" width="90" height="183.750" class="bar" tabindex="0" role="img" aria-label="Synthetic tract; Record coverage; acreage 280 acres; gross tract-area bound 320 acres" data-description="Synthetic tract; Record coverage; acreage 280 acres; gross tract-area bound 320 acres"><title>Synthetic tract; Record coverage; acreage 280 acres; gross tract-area bound 320 acres</title></rect>
+<text x="217" y="81.250"><tspan data-metric="coverage">280</tspan></text>
+<text x="217" y="305" class="small-label">Record coverage</text>
+<rect x="364" y="143.750" width="90" height="131.250" class="bar" tabindex="0" role="img" aria-label="Synthetic tract; Active leases; acreage 200 acres; gross tract-area bound 320 acres" data-description="Synthetic tract; Active leases; acreage 200 acres; gross tract-area bound 320 acres"><title>Synthetic tract; Active leases; acreage 200 acres; gross tract-area bound 320 acres</title></rect>
+<text x="364" y="133.750"><tspan data-metric="leased">200</tspan></text>
+<text x="364" y="305" class="small-label">Active leases</text>
+<rect x="511" y="222.500" width="90" height="52.500" class="bar" tabindex="0" role="img" aria-label="Synthetic tract; Expired or nonleased; acreage 80 acres; gross tract-area bound 320 acres" data-description="Synthetic tract; Expired or nonleased; acreage 80 acres; gross tract-area bound 320 acres"><title>Synthetic tract; Expired or nonleased; acreage 80 acres; gross tract-area bound 320 acres</title></rect>
+<text x="511" y="212.500"><tspan data-metric="expired">80</tspan></text>
+<text x="511" y="305" class="small-label">Expired or nonleased</text>
+<rect x="658" y="248.750" width="90" height="26.250" class="bar" tabindex="0" role="img" aria-label="Synthetic tract; Without supplied records; acreage 40 acres; gross tract-area bound 320 acres" data-description="Synthetic tract; Without supplied records; acreage 40 acres; gross tract-area bound 320 acres"><title>Synthetic tract; Without supplied records; acreage 40 acres; gross tract-area bound 320 acres</title></rect>
+<text x="658" y="238.750"><tspan data-metric="no_record">40</tspan></text>
+<text x="658" y="305" class="small-label">Without supplied records</text>
+<text x="55" y="345">Category</text></svg>
+<p id="chart-detail" class="panel" aria-live="polite">Hover over or focus on a bar to read the category, acreage and tract-area bound.</p>
+<figcaption>Figure 6.1. Returned acreage by output category. The dashed line marks the gross tract-area bound. Coverage contains the lease categories; gross, coverage and no-record quantities are not additive categories.</figcaption></figure>
+<p>The hectare input is <span data-metric="hectare_input">16.1874</span> hectares. Its returned converted area is <span data-metric="converted">39.9999</span> acres at the displayed precision; the geometric intersection remains <span data-metric="cell_area">40</span> acres. The input keeps its original precision and the difference remains below the <span data-metric="tolerance">0.5</span>-acre software criterion (<a href="#ref-acre">conversion basis</a>; <a href="#ref-evidence">area policy</a>).</p>
+<p>The result is partial evidence. There are <span data-metric="exception_count">3</span> exceptions: an out-of-tract record, missing geometry and a repeated active cell with <span data-metric="overlap">40</span> acres of overlap. The repeated area is counted once in coverage. The <span data-metric="no_record">40</span> acres without supplied records remain an evidence gap. Title-chain assessment is NOT_EVALUATED.</p>
+<p>Record-level inputs and intersections are tabulated in <a href="#data-register">the appendix</a>. The existing example's saved outputs and the fresh evaluation are compared by <a href="#ref-existing-tests">the module tests</a>.</p>
+</section>
+
+<section id="section-7"><h2>7. Validation evidence</h2>
+<p>The repository holds synthetic fixtures, a published worked description and tests of the existing contracts, calculation and serializer. These records establish bounded software checks; survey accuracy and source-register completeness are NOT_EVALUATED.</p>
+<h3>7.1 Existing evidence</h3>
+<p>Calculation tests cover coverage unions, overlap exceptions, partial intersections, absent geometry, hectare conversion, unit ambiguity, pending and unknown status, dates, empty records and complete supplied-record coverage. Model tests cover gross-area consistency, unavailable markers, structured-data round trips and reversed dates. Provider and serializer tests cover fixture licensing, router selection, deterministic paired outputs and agreement with the saved example (<a href="#ref-existing-tests">existing module tests</a>).</p>
+<p>The provider-substitution test relabels fixture sources through a compatible interface. It is not a live acquisition or federal-service integration test. The inspected module evidence contains no measured-survey benchmark, live register reconciliation or county title-chain comparison.</p>
+<h3>7.2 Report checks</h3>
+<p>Three hand-worked anchors check gross, covered and active-lease areas. Additional consistency checks bind every displayed example quantity to module results, recompute the headline from displayed inputs, compare a fresh build at displayed precision, preserve the original input bytes and bind source digests to the calculation files (<a href="#ref-report-checks">report checks</a>).</p>
+<p>The complete HTML, change-panel data and comment functions are tested offline, including hover, keyboard focus, comment export and import. The adjacent-file save handler is exercised with a simulated folder-permission interface; a real folder-picker interaction is not established by that check. The input basis and calculation-source digests are embedded for readback. Those checks do not establish the accuracy of a real lease register.</p>
+</section>
+
+<section id="section-8"><h2>8. Limits and recommendations</h2>
+<p>The reported quantities apply to the supplied synthetic records and the fixed equal-cell geometry. The following evidence is required to extend the use to real tracts.</p>
+<h3>8.1 Limits of use</h3>
+<p>Acreage is nominal, not a surveyed polygon area. Irregular lots, cross-section geometry, boundary disputes and source acreage-unit differences are unresolved. Missing records do not establish an unleased or nonfederal tract, and record coverage does not establish title. Source dates do not establish continuing legal validity.</p>
+<p>Known geometry still contributes to coverage when a record's date or units make the lease split ambiguous. Active parcel records enter the expired-or-nonleased category. Caller-created records also carry no independent section identifier; the fixture provider checks the tract grid, while other providers require their own grid qualification (<a href="#ref-provider">provider contract</a>; <a href="#ref-evidence">evaluation policy</a>).</p>
+<h3>8.2 Recommendations</h3>
+<p>Before real-tract screening, reconcile the legal description and measured survey geometry with the applicable filed plat and notes. The federal surveying manual identifies those records as the basis for locating the land (<a href="#ref-survey">Chapter I, paragraph 1-1</a>). Keep irregular geometry outside this model until an area-preserving geometry extension and comparison cases are supplied.</p>
+<p>Resolve the missing geometry and out-of-tract record against their source before interpreting the uncovered area. Review the repeated cell against the source instruments; retain the union calculation while the overlap exception remains. Reconcile source units with the applicable international or historical survey-foot acre before using hectare conversions (<a href="#ref-acre">unit-convention guidance</a>).</p>
+<p>Obtain a dated source snapshot and source-rights record before live acquisition is introduced. Add status-date boundary and cross-category overlap examples before changing the lease-category policy. Obtain county recorder and title-chain records for ownership decisions; the existing result explicitly reports that evidence as NOT_EVALUATED (<a href="#ref-models">title-gap contract</a>).</p>
+</section>
+
+<section id="section-9"><h2>9. References</h2>
+<p>Published documents support the geometric and unit equations. Repository records identify the implementation and the synthetic evidence; they do not replace the published mathematical basis.</p>
+<h3>9.1 Published sources</h3>
+<ul>
+<li id="ref-survey"><a href="https://www.blm.gov/sites/default/files/Manual_Of_Surveying_Instructions_2009.pdf">Bureau of Land Management, Manual of Surveying Instructions, 2009 edition</a>, Chapter I, paragraph 1-1. Nominal section subdivisions and the distinction between survey records and land descriptions.</li>
+<li id="ref-sets"><a href="https://openstax.org/books/contemporary-mathematics/pages/1-4-set-operations-with-two-sets">OpenStax, Contemporary Mathematics, 2023 edition</a>, Section 1.4, Set Operations with Two Sets. Union, intersection and finite cardinality. The report equations are an application of these general mathematical definitions; textbook prose and figures are not reproduced.</li>
+<li id="ref-acre"><a href="https://www.nist.gov/pml/us-surveyfoot/revised-unit-conversion-factors">National Institute of Standards and Technology, U.S. Survey Foot: Revised Unit Conversion Factors</a>, revision of 3 February 2026, foot and acre rows. Exact international-foot definitions and the distinction from legacy survey-foot units.</li>
+<li id="ref-si"><a href="https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf">Bureau International des Poids et Mesures, The International System of Units</a>, ninth edition, version 4.01, June 2026, Section 4, Table 8, hectare row.</li>
+</ul>
+<p>Public references were consulted on 2026-10-21. Only the necessary definitions are used; no licensed standards text or source document is redistributed.</p>
+<h3>9.2 Repository records and reproduction</h3>
+<ul>
+<li id="ref-api">Public interfaces: <code>src/worldenergydata/federal_acreage/__init__.py</code>. Calls: <code>FixtureRecordProvider</code>, <code>evaluate</code>, <code>write_outputs</code> and <code>FederalAcreage.router</code>.</li>
+<li id="ref-models">Input, result and title-gap contracts: <code>src/worldenergydata/federal_acreage/models.py</code>.</li>
+<li id="ref-evidence">Geometry, units, category and date policy: <code>src/worldenergydata/federal_acreage/evidence.py</code>, functions <code>evaluate</code>, <code>_check_area</code>, <code>_rollup</code> and <code>_stale_status</code>.</li>
+<li id="ref-provider">Provider and router: <code>src/worldenergydata/federal_acreage/provider.py</code> and <code>federal_acreage.py</code>.</li>
+<li id="ref-serializer">Paired output writer: <code>src/worldenergydata/federal_acreage/report.py</code>, <code>write_outputs</code>.</li>
+<li id="ref-example">Documented public synthetic example: <code>examples/workflows/federal-acreage-evidence/README.md</code>, <code>input.yml</code> and <code>fixture_records.json</code>; paired saved results are under <code>outputs/</code> in that example. The repository licence is MIT. Source identifier: <code>fixture-mlrs-synthetic</code>; fixture schema: <code>federal-acreage-fixture-v1</code>.</li>
+<li id="ref-existing-tests">Existing evidence: <code>tests/unit/federal_acreage/test_evidence.py</code>, <code>test_models.py</code>, <code>test_provider.py</code> and <code>test_report.py</code>.</li>
+<li id="ref-report-checks">Report generator: <code>scripts/reports/build_federal_acreage_report.py</code>; checks: <code>tests/unit/federal_acreage/test_module_report.py</code> and <code>test_module_report_browser.py</code>. The inlined stylesheet and layout reuse the existing energy-mix module-report family page.</li>
+</ul>
+<pre>from worldenergydata.federal_acreage import FixtureRecordProvider, evaluate
+provider = FixtureRecordProvider("examples/workflows/federal-acreage-evidence/fixture_records.json")
+result = evaluate(provider.tract, *provider.records_for_tract(provider.tract))
+print(result.acreage.model_dump())
+
+PYTHONPATH=src python scripts/reports/build_federal_acreage_report.py
+PYTHONPATH=src python -m pytest --noconftest -o addopts='' tests/unit/federal_acreage</pre>
+<p>The module is imported from the source tree with its declared validation dependency installed. The report browser checks require Playwright and a Chromium browser. The wider energy-data suite is outside this report's validation scope.</p>
+</section>
+
+<section id="section-10"><h2>10. Appendices and comments</h2>
+<p>The appendix records the case inputs, missing evidence and numerical checking basis. Review comments are attached to sections and remain local to the report reader.</p>
+<h3 id="data-register">10.1 Data register</h3>
+<p>All listed records are authored synthetic inputs from <a href="#ref-example">the public example</a>. No lessee or operator identity is needed for the calculation and none is reproduced. The original fixture is the authoritative input; this table is a derived view. Its data date is <time>2026-07-10</time>.</p>
+<div class="table-wrap"><table><thead><tr><th>Record</th><th>Status</th><th>Input area (acres)</th><th>Input area (hectares)</th><th>Quarter-quarter geometry</th><th>Intersection (acres)</th><th>Source</th></tr></thead>
+<tbody><tr><td>SYNFL0001</td><td>active</td><td>160</td><td>Not applicable</td><td>NE-NE, NW-NE, SW-NE, SE-NE</td><td>160</td><td><a href="#ref-example">Public example</a></td></tr>
+<tr><td>SYNFL0002</td><td>expired</td><td>80</td><td>Not applicable</td><td>NW-NW, SW-NW</td><td>80</td><td><a href="#ref-example">Public example</a></td></tr>
+<tr><td>SYNFL0003</td><td>active</td><td>160</td><td>Not applicable</td><td>NE-SE, NW-SE, SW-SE, SE-SE</td><td>0</td><td><a href="#ref-example">Public example</a></td></tr>
+<tr><td>SYNFL0004</td><td>active</td><td>40</td><td>Not applicable</td><td>Unavailable</td><td>Unavailable</td><td><a href="#ref-example">Public example</a></td></tr>
+<tr><td>SYNFL0005</td><td>active</td><td>Not applicable</td><td>16.1874</td><td>NE-NW</td><td>40</td><td><a href="#ref-example">Public example</a></td></tr>
+<tr><td>SYNFL0006</td><td>active</td><td>40</td><td>Not applicable</td><td>SE-NE</td><td>40</td><td><a href="#ref-example">Public example</a></td></tr></tbody><caption>Table 10.1. Supplied record geometry and returned intersection. The unavailable intersection is not zero. Input acres are exact nominal integers; hectare input retains its original decimal precision.</caption></table></div>
+<table><thead><tr><th>Evidence</th><th>State</th><th>Effect and required input</th><th>Source</th></tr></thead><tbody>
+<tr><td>Regular equal-area geometry</td><td>ASSUMED - to be confirmed for real use</td><td>The fixture's fixed cells define the calculation. Filed survey geometry is required for real acreage.</td><td><a href="#ref-survey">Surveying manual</a>; <a href="#ref-example">public example</a></td></tr>
+<tr><td>Historical source-unit convention</td><td>NOT_EVALUATED</td><td>The international-foot convention demonstrates arithmetic only. Source-specific unit evidence is required.</td><td><a href="#ref-acre">Unit table</a></td></tr>
+<tr><td>Real-record freshness and completeness</td><td>NOT_EVALUATED</td><td>No live extract or present lease position is established.</td><td><a href="#ref-provider">Fixture provider</a></td></tr>
+<tr><td>County title chain</td><td>NOT_EVALUATED</td><td>Ownership and land availability cannot be established by the rollup.</td><td><a href="#ref-models">Title-gap contract</a></td></tr>
+</tbody><caption>Table 10.2. Assumptions and required evidence. An unknown state is not a true zero.</caption></table>
+<h3>10.2 Numerical and presentation pre-flight</h3>
+<p>The hand arithmetic is eight cells × forty acres for gross area; seven distinct covered cells × forty acres for coverage; and five distinct active-lease cells × forty acres for active leases. The repeated cell is counted once. These literals are asserted separately from the report's module-consistency checks. The headline difference is recomputed from the displayed gross and coverage values.</p>
+<p>The report rebuild compares displayed values and rounded chart arrays. Calculation-source and input digests identify UTF-8 text with line endings normalized to line feed; the original files are not rewritten. Report text, stylesheet and revision data also bind the comment file to this document. Unicode text is read and written explicitly as UTF-8 with line-feed endings. The report tests are executed with the Python UTF-8 environment override unset. Offline browser checks exercise the chart and comment persistence. Check results and scope are recorded with the report delivery.</p>
+<h3>10.3 Engineering changes</h3>
+<p>The change panel describes the engineering content introduced in the current revision.</p>
+<ul id="change-list"></ul>
+<h3>10.4 Section comments</h3>
+<p>Comments are held in the open page until saved. Choose the folder containing this report to save the comments beside it; the document binding is checked before an adjacent file is written. Where folder access is unavailable, export the comments and place the downloaded file beside the report. Import restores a previously saved comment file for this document revision.</p>
+<div class="comment-controls">
+<label for="comment-section">Section</label><select id="comment-section"></select>
+<label for="comment-text">Comment</label><textarea id="comment-text" rows="4" maxlength="4000"></textarea>
+<button type="button" id="add-comment">Add comment</button>
+<button type="button" id="save-comments">Save beside report</button>
+<button type="button" id="export-comments">Export comments</button>
+<label for="import-comments">Import comments</label><input type="file" id="import-comments" accept="application/json,.json">
+</div>
+<p id="comment-status" role="status">No comments have been saved from this page.</p>
+<ol id="comment-list"></ol>
+<noscript>Interactive chart details, the change panel and comments require JavaScript. All calculation results and source references remain readable without it.</noscript>
+</section>
+</main></div>
+<script type="application/json" id="chart-data">{"areas": [320.0, 280.0, 200.0, 80.0, 40.0], "limit": 320.0}</script>
+<script type="application/json" id="calculation-digests">{"examples/workflows/federal-acreage-evidence/fixture_records.json": "edd87d49a3a78b3727a7cd3c17a465f80a56712f7f467c7cccdc17ed37802b24", "src/worldenergydata/federal_acreage/__init__.py": "bf07392e8cae21eb8bca33e9ee8b0c575d002f6766a7eff112ecd8647ac7af13", "src/worldenergydata/federal_acreage/evidence.py": "3bf6e1571b1100fe3ad319b26e1a108ff84a9d039eaff8037e23036e32bd4721", "src/worldenergydata/federal_acreage/federal_acreage.py": "9dfe58b6d3567bca2f799c5d5a96b2fe6d65fd0d0543fcd3ac78688d2d915d40", "src/worldenergydata/federal_acreage/models.py": "03e5aca8479ac0e80d303a9f2352cbf23bbb1a941ad43bea45044e19e6113615", "src/worldenergydata/federal_acreage/provider.py": "6e4fb9a2d152550aaf4f599945ef67f7d93803ec7dda12b84e9714dbc3394540", "src/worldenergydata/federal_acreage/report.py": "bda4a803cbefa8dd177b6321a6e96be6cdb3b7ece0538bd775aeec4ce9a240b3"}</script>
+<script type="application/json" id="change-data">{"changes": [{"change": "The regular survey-cell convention, overlap union and unit basis are stated to define the screening geometry.", "section": "Basis and method"}, {"change": "The documented synthetic example is calculated through the public interface and is distinguished from live survey and title evidence.", "section": "Worked example and validation"}, {"change": "The missing geometry, record freshness and title gaps are tied to the evidence required for real-tract use.", "section": "Limits and recommendations"}], "date": "2026-10-22", "document": "Federal acreage module analysis", "revision": "0", "status": "Draft for maintainer review"}</script>
+<script>
+'use strict';
+const documentBinding = document.querySelector('meta[name="document-binding"]').content;
+const revision = document.documentElement.dataset.revision;
+const sections = [...document.querySelectorAll('main > section')];
+const selector = document.getElementById('comment-section');
+const status = document.getElementById('comment-status');
+let comments = [];
+for (const section of sections) {
+  const option = document.createElement('option');
+  option.value = section.id;
+  option.textContent = section.querySelector('h2').textContent;
+  selector.append(option);
+}
+const changes = JSON.parse(document.getElementById('change-data').textContent);
+for (const item of changes.changes) {
+  const li = document.createElement('li');
+  li.textContent = `${item.section}: ${item.change}`;
+  document.getElementById('change-list').append(li);
+}
+for (const bar of document.querySelectorAll('.bar')) {
+  const show = () => { document.getElementById('chart-detail').textContent = bar.dataset.description; };
+  bar.addEventListener('mouseenter', show);
+  bar.addEventListener('focus', show);
+}
+function payload() { return {documentBinding, revision, comments}; }
+function drawComments() {
+  const list = document.getElementById('comment-list');
+  list.replaceChildren();
+  for (const comment of comments) {
+    const li = document.createElement('li');
+    const anchor = document.createElement('a');
+    anchor.href = `#${comment.section}`;
+    anchor.textContent = document.getElementById(comment.section).querySelector('h2').textContent;
+    const text = document.createElement('p');
+    text.className = 'comment-text';
+    text.textContent = comment.text;
+    li.append(anchor, text);
+    list.append(li);
+  }
+}
+document.getElementById('add-comment').addEventListener('click', () => {
+  const input = document.getElementById('comment-text');
+  const text = input.value.trim();
+  if (!text) { status.textContent = 'Enter a comment before adding it.'; return; }
+  comments.push({section: selector.value, text});
+  input.value = '';
+  drawComments();
+  status.textContent = 'Comment added in this page. Save or export to keep it.';
+});
+document.getElementById('export-comments').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(payload(), null, 2) + '\n'], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'federal-acreage-comments.json';
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  status.textContent = 'Comments exported. Place the downloaded file beside the report.';
+});
+document.getElementById('import-comments').addEventListener('change', async event => {
+  try {
+    const file = event.target.files[0];
+    if (!file) { return; }
+    if (file.size > 1000000) { throw new Error('Comment file exceeds the supported size.'); }
+    const saved = JSON.parse(await file.text());
+    if (saved.documentBinding !== documentBinding || saved.revision !== revision) {
+      throw new Error('The comment file belongs to another document revision.');
+    }
+    if (!Array.isArray(saved.comments) || !saved.comments.every(item =>
+      item && sections.some(section => section.id === item.section) &&
+      typeof item.text === 'string' && item.text.length > 0 && item.text.length <= 4000)) {
+      throw new Error('The comment file does not match the supported format.');
+    }
+    comments = saved.comments.map(item => ({section:item.section, text:item.text}));
+    drawComments();
+    status.textContent = 'Comments imported. Save again after making changes.';
+  } catch (error) { status.textContent = `Import failed: ${error.message}`; }
+});
+document.getElementById('save-comments').addEventListener('click', async () => {
+  try {
+    if (!window.showDirectoryPicker) { throw new Error('Folder access is unavailable; use Export comments.'); }
+    const directory = await window.showDirectoryPicker({mode:'readwrite'});
+    const reportHandle = await directory.getFileHandle('index.html');
+    const reportFile = await reportHandle.getFile();
+    const savedReport = new DOMParser().parseFromString(await reportFile.text(), 'text/html');
+    if (savedReport.querySelector('meta[name="document-binding"]')?.content !== documentBinding) {
+      throw new Error('The selected folder does not contain this report revision.');
+    }
+    const handle = await directory.getFileHandle('federal-acreage-comments.json', {create:true});
+    const writable = await handle.createWritable();
+    await writable.write(JSON.stringify(payload(), null, 2) + '\n');
+    await writable.close();
+    status.textContent = 'Comments saved beside the report.';
+  } catch (error) { status.textContent = `Save failed: ${error.message}`; }
+});
+</script>
+</body>
+</html>

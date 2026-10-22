@@ -1,0 +1,20 @@
+{
+  "document": "Federal acreage module analysis",
+  "revision": "0",
+  "date": "2026-10-22",
+  "status": "Draft for maintainer review",
+  "changes": [
+    {
+      "section": "Basis and method",
+      "change": "The regular survey-cell convention, overlap union and unit basis are stated to define the screening geometry."
+    },
+    {
+      "section": "Worked example and validation",
+      "change": "The documented synthetic example is calculated through the public interface and is distinguished from live survey and title evidence."
+    },
+    {
+      "section": "Limits and recommendations",
+      "change": "The missing geometry, record freshness and title gaps are tied to the evidence required for real-tract use."
+    }
+  ]
+}
