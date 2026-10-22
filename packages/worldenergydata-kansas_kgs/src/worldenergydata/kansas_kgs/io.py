@@ -165,6 +165,8 @@ def _manifest_payload(
         "limitations": list(limitations),
         "command": command,
         "code_revision": code_revision or _git_revision(),
+        # Explicit revisions may describe a different tree; its dirty state is unknown.
+        "code_dirty": None if code_revision else _git_dirty(),
     }
 
 
@@ -194,6 +196,7 @@ def _git_revision() -> str | None:
     try:
         result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
+            cwd=Path(__file__).resolve().parent,
             check=True,
             capture_output=True,
             text=True,
@@ -202,6 +205,22 @@ def _git_revision() -> str | None:
     except Exception:
         return None
     return result.stdout.strip()
+
+
+def _git_dirty() -> bool | None:
+    """Report tracked changes in the package checkout, or unknown without Git."""
+    try:
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=Path(__file__).resolve().parent,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return bool(result.stdout.strip())
 
 
 def _write_json(path: Path, payload: dict[str, object]) -> None:
