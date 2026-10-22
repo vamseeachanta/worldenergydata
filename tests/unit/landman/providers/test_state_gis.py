@@ -127,6 +127,7 @@ def test_undated_esri_permit_search_preserves_query(
             "f": "json",
             "resultRecordCount": 100,
         },
+        record_keys=("features",),
     )
     assert result.total_count == result.returned_count == 1
     assert [permit.permit_number for permit in result.permits] == ["PERMIT-A"]
@@ -135,14 +136,14 @@ def test_undated_esri_permit_search_preserves_query(
 
 
 @pytest.mark.parametrize("state", ["OK", "ND", "CO", "WY", "LA", "UT"])
-def test_undated_custom_permit_search_preserves_empty_result(monkeypatch, state):
-    """The existing custom/sonris branches issue no request and return no records."""
+def test_undated_custom_permit_search_rejects_unimplemented_service(monkeypatch, state):
+    """An unimplemented search cannot establish the absence of records (#1256)."""
     provider = StateGISProvider()
     get_json = Mock()
     monkeypatch.setattr(provider, "_get_json", get_json)
 
-    result = provider.search_permits(state)
+    with pytest.raises(ProviderError) as caught:
+        provider.search_permits(state)
 
-    assert result.permits == []
-    assert result.total_count == result.returned_count == 0
+    assert caught.value.error_code == "SEARCH_UNSUPPORTED"
     get_json.assert_not_called()
