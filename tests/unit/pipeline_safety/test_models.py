@@ -2,8 +2,6 @@
 
 from datetime import datetime
 
-import pytest
-
 from worldenergydata.pipeline_safety.database.models import (
     Base,
     PipelineIncident,
@@ -28,14 +26,14 @@ class TestPipelineIncident:
         assert "Test Operator" in repr_str
         assert "crude_oil" in repr_str
 
-    def test_column_defaults_defined(self):
-        """SQLAlchemy Column defaults are defined (applied at INSERT time, not construction)."""
+    def test_unknown_consequences_have_no_zero_default(self):
+        """Unknown consequences must not acquire a zero default at INSERT."""
         col = PipelineIncident.__table__.columns["fatalities"]
-        assert col.default is not None
-        assert col.default.arg == 0
+        assert col.default is None
+        assert col.nullable
         col_inj = PipelineIncident.__table__.columns["injuries"]
-        assert col_inj.default is not None
-        assert col_inj.default.arg == 0
+        assert col_inj.default is None
+        assert col_inj.nullable
 
     def test_nullable_columns(self):
         incident = PipelineIncident(

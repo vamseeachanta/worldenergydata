@@ -2,9 +2,11 @@
 # ABOUTME: Handles all 4 pipeline types (GD, GTGG, HL, LNG)
 # ABOUTME: across 3 eras (1986-2001, 2002-2009, 2010-present)
 
+import math
+import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import pandas as pd
 from sqlalchemy.orm import Session
@@ -140,27 +142,46 @@ MID_LOCATION_COLUMNS = {
 }
 
 
-def _safe_int(value: Any) -> Optional[int]:
-    """Convert value to int, returning None for non-numeric values."""
-    if pd.isna(value):
+# Imported values are preserved without conversion. These labels describe the
+# legacy schema, not a qualification of workbook units (knowledge pack U1).
+IMPORT_UNIT_ASSUMPTIONS = {
+    "pipeline_diameter": "unknown source unit; not assessment geometry",
+    "latitude_longitude": "source coordinates; CRS/datum unverified",
+    "incident_date": "source local timestamp; timezone unverified",
+    "costs": "source currency/basis unverified; no inflation adjustment",
+    "release": "barrels for BBLS fields; gas MCF assumed; LNG unit unknown",
+    "consequences": "persons; missing component makes total unknown",
+}
+
+
+class MissingSourceColumnWarning(UserWarning):
+    """A mapped source field was absent, rather than a reported blank cell."""
+
+
+def _safe_int(value: Any) -> int | None:
+    """Missing stays unknown; malformed or fractional counts raise."""
+    number = _safe_float(value)
+    if number is None:
+        return None
+    if not number.is_integer():
+        raise ValueError("integer field is fractional")
+    return int(number)
+
+
+def _safe_float(value: Any) -> float | None:
+    """Missing stays unknown; malformed and explicit non-finite tokens raise."""
+    if pd.isna(value) or (isinstance(value, str) and not value.strip()):
         return None
     try:
-        return int(float(value))
-    except (ValueError, TypeError):
-        return None
+        result = float(value)
+    except (ValueError, TypeError, OverflowError) as exc:
+        raise ValueError("numeric field cannot be parsed") from exc
+    if not math.isfinite(result):
+        raise ValueError("numeric field must be finite")
+    return result
 
 
-def _safe_float(value: Any) -> Optional[float]:
-    """Convert value to float, returning None for non-numeric values."""
-    if pd.isna(value):
-        return None
-    try:
-        return float(value)
-    except (ValueError, TypeError):
-        return None
-
-
-def _safe_str(value: Any) -> Optional[str]:
+def _safe_str(value: Any) -> str | None:
     """Convert value to stripped string, returning None for NaN/empty."""
     if pd.isna(value):
         return None
@@ -168,19 +189,19 @@ def _safe_str(value: Any) -> Optional[str]:
     return result if result else None
 
 
-def _parse_bool_indicator(value: Any) -> Optional[bool]:
+def _parse_bool_indicator(value: Any) -> bool | None:
     """Parse YES/NO indicator to boolean."""
-    if pd.isna(value):
+    if pd.isna(value) or (isinstance(value, str) and not value.strip()):
         return None
     s = str(value).strip().upper()
     if s in ("YES", "Y", "TRUE", "1"):
         return True
     if s in ("NO", "N", "FALSE", "0"):
         return False
-    return None
+    raise ValueError("boolean field has an unrecognized token")
 
 
-def _parse_datetime(value: Any) -> Optional[datetime]:
+def _parse_datetime(value: Any) -> datetime | None:
     """Parse datetime from various formats."""
     if pd.isna(value):
         return None
@@ -190,24 +211,28 @@ def _parse_datetime(value: Any) -> Optional[datetime]:
         return value.to_pydatetime()
     try:
         return pd.to_datetime(value).to_pydatetime()
-    except (ValueError, TypeError):
+    except (ValueError, TypeError) as exc:
+        raise ValueError("date field cannot be parsed") from exc
+
+
+def _sum_columns(row: pd.Series, columns: list[str]) -> int | None:
+    """A total is known only when every requested consequence count is known."""
+    if not columns:
         return None
+    values = [_safe_int(_get_col(row, col)) for col in columns]
+    if any(value is None for value in values):
+        return None
+    if any(value < 0 for value in values):
+        raise ValueError("consequence count must be nonnegative")
+    return sum(values)
 
 
-def _sum_columns(row: pd.Series, columns: List[str]) -> int:
-    """Sum numeric columns from a row, treating NaN as 0."""
-    total = 0
-    for col in columns:
-        if col in row.index:
-            val = _safe_int(row[col])
-            if val is not None:
-                total += val
-    return total
-
-
-def _get_col(row: pd.Series, col_name: Optional[str]) -> Any:
-    """Safely get a column value from a row, returning NaN if missing."""
-    if col_name is None or col_name not in row.index:
+def _get_col(row: pd.Series, col_name: str | None) -> Any:
+    """Report absent mapped columns; intentional unmapped fields stay unknown."""
+    if col_name is None:
+        return pd.NA
+    if col_name not in row.index:
+        warnings.warn(col_name, MissingSourceColumnWarning, stacklevel=2)
         return pd.NA
     return row[col_name]
 
@@ -236,7 +261,7 @@ class PHMSAImporter:
         self,
         db_session: Session,
         data_dir: str,
-        pipeline_types: Optional[List[str]] = None,
+        pipeline_types: list[str] | None = None,
     ):
         """
         Initialize the PHMSA importer.
@@ -250,13 +275,17 @@ class PHMSAImporter:
         """
         self.db_session = db_session
         self.data_dir = Path(data_dir)
+        valid_types = {entry[2] for entry in FILE_MANIFEST}
+        if pipeline_types is not None and not set(pipeline_types) <= valid_types:
+            raise ValueError("unrecognized pipeline category")
         self.pipeline_types = pipeline_types
         self.imported_count = 0
         self.skipped_count = 0
         self.error_count = 0
-        self.validation_errors: List[str] = []
+        self.validation_errors: list[str] = []
+        self.missing_source_columns: set[str] = set()
 
-    def import_data(self) -> Dict[str, int]:
+    def import_data(self) -> dict[str, Any]:
         """
         Execute full import pipeline across all PHMSA data files.
 
@@ -297,7 +326,7 @@ class PHMSAImporter:
                     sheet_name=sheet_name,
                     engine="openpyxl",
                 )
-            except Exception as exc:
+            except (OSError, ValueError, ImportError) as exc:
                 logger.error("Failed to read %s: %s", filename, exc)
                 continue
 
@@ -307,13 +336,15 @@ class PHMSAImporter:
             for idx, row in df.iterrows():
                 try:
                     normalized = self._normalize_row(row, pipeline_type, era)
-                except Exception as exc:
+                except (ValueError, TypeError, OverflowError) as exc:
                     logger.debug(
                         "Normalization error in %s row %s: %s",
                         filename,
                         idx,
                         exc,
                     )
+                    # Record the parse reason without copying raw cell values.
+                    self.validation_errors.append(f"{filename} row {idx}: {exc}")
                     self.error_count += 1
                     continue
 
@@ -348,6 +379,9 @@ class PHMSAImporter:
             "error_count": self.error_count,
             "total_records": total_records,
             "files_processed": files_processed,
+            "missing_source_columns": sorted(self.missing_source_columns),
+            "unit_assumptions": dict(IMPORT_UNIT_ASSUMPTIONS),
+            "validation_errors": list(self.validation_errors),
         }
 
     def _normalize_row(
@@ -355,7 +389,7 @@ class PHMSAImporter:
         row: pd.Series,
         pipeline_type: str,
         era: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Normalize a single row from any era/type to the unified schema.
 
@@ -368,13 +402,32 @@ class PHMSAImporter:
         Returns:
             Dictionary matching PipelineIncident model fields.
         """
-        if era == "2010_present":
-            return self._normalize_modern(row, pipeline_type)
-        if era == "2004_2009":
-            return self._normalize_mid(row, pipeline_type)
-        return self._normalize_legacy(row, pipeline_type)
+        if pipeline_type not in {entry[2] for entry in FILE_MANIFEST}:
+            raise ValueError("unrecognized pipeline category")
+        normalizers = {
+            "2010_present": self._normalize_modern,
+            "2004_2009": self._normalize_mid,
+            "pre2004": self._normalize_legacy,
+        }
+        if era not in normalizers:
+            raise ValueError("unrecognized source era")
+        # Preserve missing-column diagnostics even when another cell fails.
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always", MissingSourceColumnWarning)
+            try:
+                result = normalizers[era](row, pipeline_type)
+            finally:
+                missing = {
+                    str(w.message)
+                    for w in caught
+                    if issubclass(w.category, MissingSourceColumnWarning)
+                }
+                self.missing_source_columns.update(missing)
+        result["missing_source_columns"] = sorted(missing)
+        result["unit_assumptions"] = dict(IMPORT_UNIT_ASSUMPTIONS)
+        return result
 
-    def _normalize_modern(self, row: pd.Series, pipeline_type: str) -> Dict[str, Any]:
+    def _normalize_modern(self, row: pd.Series, pipeline_type: str) -> dict[str, Any]:
         """Normalize 2010-present era rows."""
         col_map = dict(MODERN_COLUMN_MAP)
 
@@ -453,7 +506,7 @@ class PHMSAImporter:
             "narrative": _safe_str(_get_col(row, col_map["narrative"])),
         }
 
-    def _normalize_mid(self, row: pd.Series, pipeline_type: str) -> Dict[str, Any]:
+    def _normalize_mid(self, row: pd.Series, pipeline_type: str) -> dict[str, Any]:
         """Normalize 2004-2009 era rows."""
         col_map = MID_COLUMN_MAP
 
@@ -495,8 +548,8 @@ class PHMSAImporter:
             "unit_of_measure": None,
             "ignition": _parse_bool_indicator(_get_col(row, "IGNITE_IND")),
             "explosion": _parse_bool_indicator(_get_col(row, "EXPLODE_IND")),
-            "fatalities": fatalities if fatalities is not None else 0,
-            "injuries": injuries if injuries is not None else 0,
+            "fatalities": fatalities,
+            "injuries": injuries,
             "estimated_property_damage": _safe_float(
                 _get_col(row, col_map.get("estimated_property_damage"))
             ),
@@ -508,7 +561,7 @@ class PHMSAImporter:
             "narrative": _safe_str(_get_col(row, col_map["narrative"])),
         }
 
-    def _normalize_legacy(self, row: pd.Series, pipeline_type: str) -> Dict[str, Any]:
+    def _normalize_legacy(self, row: pd.Series, pipeline_type: str) -> dict[str, Any]:
         """Normalize pre-2004 era rows (abbreviated column names)."""
         raw_report = _safe_str(_get_col(row, "RPTID"))
         report_number = f"{pipeline_type}_{raw_report}" if raw_report else None
@@ -538,8 +591,8 @@ class PHMSAImporter:
             "unit_of_measure": None,
             "ignition": None,
             "explosion": None,
-            "fatalities": fatalities if fatalities is not None else 0,
-            "injuries": injuries if injuries is not None else 0,
+            "fatalities": fatalities,
+            "injuries": injuries,
             "estimated_property_damage": _safe_float(_get_col(row, "TOTAL_COST")),
             "estimated_cost_of_commodity_lost": None,
             "cause_category": _safe_str(_get_col(row, "CAUSE")),
@@ -559,32 +612,17 @@ class PHMSAImporter:
         if pipeline_type == "hazardous_liquid":
             unintentional = _safe_float(_get_col(row, "UNINTENTIONAL_RELEASE_BBLS"))
             intentional = _safe_float(_get_col(row, "INTENTIONAL_RELEASE_BBLS"))
-            total = 0.0
-            has_value = False
-            if unintentional is not None:
-                total += unintentional
-                has_value = True
-            if intentional is not None:
-                total += intentional
-                has_value = True
-            if has_value:
-                return (total, "barrels")
-            return (None, None)
+            if unintentional is None or intentional is None:
+                return (None, "barrels")
+            return (unintentional + intentional, "barrels")
 
         if pipeline_type == "lng":
             unintentional = _safe_float(_get_col(row, "UNINTENTIONAL_RELEASE"))
             intentional = _safe_float(_get_col(row, "INTENTIONAL_RELEASE"))
-            total = 0.0
-            has_value = False
-            if unintentional is not None:
-                total += unintentional
-                has_value = True
-            if intentional is not None:
-                total += intentional
-                has_value = True
-            if has_value:
-                return (total, "MCF")
-            return (None, None)
+            if unintentional is None or intentional is None:
+                return (None, None)
+            # The workbook fields provide no unit-qualified name; do not guess.
+            return (unintentional + intentional, None)
 
         # Gas distribution and transmission: estimated gas released in MCF
         est_mcf = _safe_float(_get_col(row, "ESTIMATED_GAS_RELEASED"))
@@ -592,7 +630,7 @@ class PHMSAImporter:
             return (est_mcf, "MCF")
         return (None, None)
 
-    def _validate(self, data: Dict[str, Any]) -> bool:
+    def _validate(self, data: dict[str, Any]) -> bool:
         """
         Validate that required fields are present and well-formed.
 
@@ -639,7 +677,7 @@ class PHMSAImporter:
         )
         return existing is not None
 
-    def _persist(self, data: Dict[str, Any]) -> None:
+    def _persist(self, data: dict[str, Any]) -> None:
         """
         Create a PipelineIncident record and add to the session.
 
@@ -671,8 +709,8 @@ class PHMSAImporter:
             unit_of_measure=data.get("unit_of_measure"),
             ignition=data.get("ignition"),
             explosion=data.get("explosion"),
-            fatalities=data.get("fatalities", 0),
-            injuries=data.get("injuries", 0),
+            fatalities=data.get("fatalities"),
+            injuries=data.get("injuries"),
             estimated_property_damage=data.get("estimated_property_damage"),
             estimated_cost_of_commodity_lost=data.get(
                 "estimated_cost_of_commodity_lost"
