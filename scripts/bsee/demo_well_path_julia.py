@@ -22,30 +22,33 @@ Data sources (all public BSEE):
     gitignored — see note above).
     The headerless raw file is parsed with the 13 documented column names
     (see ``well_data.py:_get_column_names_for_dsptsdelimit_file``).
-  * Well metadata: ``data/modules/bsee/current/wells/well_data.csv`` (curated
-    Lower-Tertiary working set), which names the Julia wells present in this
-    catalog: ``JU101`` and ``JU105``.
+  * Lease membership and well names: the raw ``mv_war_main.txt`` table.
+  * Well metadata: the raw ``mv_boreholes_all.txt`` table.
+    Supply both comma-delimited tables explicitly. No curated-catalog
+    fallback is used; provision the raw inputs before running this demo.
 
 Julia-well identification
 -------------------------
-This demo renders the Julia wells PRESENT IN THE CURATED WELL CATALOG
-(``well_data.csv``), selected by the "JU" ``WELL_NAME`` prefix: API12s
-608124009400 (JU101) and 608124011101 (JU105). This is NOT the full Julia /
-G20351 field -- the field also includes JU102/JU103/JU104/JU106 (see
-``tests/unit/bsee/analysis/legacy/results/Data/WR_584.csv``), which are simply
-absent from the curated catalog. A surface lat/long box was *not* used as the
-filter because the survey file's SURF_LAT/LON columns carry per-station (not
-surface) coordinates, so a Walker-Ridge box mis-classifies these wells.
+WAR surface-lease membership selects the field's full bore set, including
+non-producers and sidetracks. Names and surface positions must agree with the
+raw borehole records. The curated catalog is excluded because its metadata
+conflicts with the lease-resolved economics data (issue #493, 2026). Missing
+metadata, conflicting identities or missing survey coverage stop the render.
+Neither a name prefix nor a survey-station latitude/longitude box establishes
+field membership. This selection alone does not reconcile the curated catalog;
+real-data reconciliation and regenerated figures remain separate work.
 
 Usage::
 
-    uv run python scripts/bsee/demo_well_path_julia.py
+    uv run python scripts/bsee/demo_well_path_julia.py \\
+        --war-main-csv mv_war_main.txt --boreholes-csv mv_boreholes_all.txt
 
 Assumes the pickle/zip is already present; downloads the ZIP if missing.
 """
 
 from __future__ import annotations
 
+import argparse
 import math
 import os
 import pickle
@@ -69,15 +72,14 @@ DSPTS_BIN = os.path.join(DSPTS_DIR, "dsptsdelimit.bin")
 DSPTS_TXT_MEMBER = "dsptsdelimit.txt"
 DSPTS_URL = "https://www.data.bsee.gov/Well/Files/dsptsdelimit.ZIP"
 
-WELL_DATA_CSV = os.path.join(
-    REPO, "data", "modules", "bsee", "current", "wells", "well_data.csv"
-)
-
 REPORTS_DIR = os.path.join(REPO, "reports", "bsee")
 PLOTLY_OUT = os.path.join(REPORTS_DIR, "julia_well_path_plotly.html")
 THREEJS_OUT = os.path.join(REPORTS_DIR, "julia_well_path_threejs.html")
 
 FIELD_NAME = "Julia (Walker Ridge, lease G20351)"
+# Lease basis: docs/data-sources/bsee/analysis/julia_api12_resolution.md
+# (2025-07-24), "Way forward": select APIs from downloaded WAR records.
+FIELD_LEASE = "G20351"
 
 # 13 documented columns of the headerless dsptsdelimit raw file, in order.
 DSPTS_COLS = [
@@ -172,16 +174,111 @@ def _normalize(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# Step 3: identify Julia wells (API cross-reference with well_data.csv)
+# Step 3: identify Julia wells from WAR surface-lease membership
 # ---------------------------------------------------------------------------
-def julia_well_metadata() -> pd.DataFrame:
-    """Return the well_data.csv rows for Julia wells (WELL_NAME starts 'JU')."""
-    wd = pd.read_csv(WELL_DATA_CSV, dtype=str)
-    wd["API_WELL_NUMBER"] = (
-        wd["API_WELL_NUMBER"].astype(str).str.replace(r"\.0$", "", regex=True).str.strip()
+def _clean_text(values: pd.Series) -> pd.Series:
+    """Normalize quoted BSEE text while preserving missing values."""
+    return values.astype("string").str.replace('"', "", regex=False).str.strip()
+
+
+def _api_keys(values: pd.Series) -> pd.Series:
+    """Match string/integer/float API spellings without truncating bore IDs."""
+    return _clean_text(values).str.replace(r"\.0$", "", regex=True)
+
+
+def julia_well_metadata(
+    war_main: pd.DataFrame,
+    boreholes: pd.DataFrame,
+) -> pd.DataFrame:
+    """Join lease-selected WAR APIs to raw borehole metadata, failing closed.
+
+    Input schemas follow bsee/data/loaders/api/well.py
+    (get_eWellWARRawData_mv_war_main_from_bin and get_BoreholeRawData_from_bin).
+    The caller supplies decoded raw tables. Repeated WAR activities
+    and identical borehole records are allowed; ambiguous identities are not.
+    """
+    war_columns = ["API_WELL_NUMBER", "SURF_LEASE_NUM", "WELL_NAME"]
+    bore_columns = ["API_WELL_NUMBER", "WELL_NAME", "SURF_LATITUDE", "SURF_LONGITUDE"]
+    for label, frame, required in (
+        ("WAR", war_main, war_columns),
+        ("borehole", boreholes, bore_columns),
+    ):
+        missing = sorted(set(required) - set(frame.columns))
+        if missing:
+            raise ValueError(f"Missing {label} columns: {missing}")
+
+    # Match the economics resolver's _norm_lease in lower_tertiary/ops_timeline.py.
+    lease = (
+        _clean_text(war_main["SURF_LEASE_NUM"])
+        .str.upper()
+        .str.replace(" ", "", regex=False)
     )
-    julia = wd[wd["WELL_NAME"].astype(str).str.upper().str.startswith("JU")].copy()
-    return julia
+    selected = war_main.loc[lease == FIELD_LEASE, war_columns].copy()
+    if selected.empty:
+        raise ValueError(f"No WAR wells for surface lease {FIELD_LEASE}")
+    selected["SURF_LEASE_NUM"] = FIELD_LEASE
+    selected["API_WELL_NUMBER"] = _api_keys(selected["API_WELL_NUMBER"])
+    # API12 format basis: issue #493 (2026), API12 evidence table; do not
+    # truncate a longer identifier into a potentially different bore.
+    if not selected["API_WELL_NUMBER"].str.fullmatch(r"[0-9]{12}").fillna(False).all():
+        raise ValueError("Invalid WAR API: expected complete API12 identifiers")
+    selected["WELL_NAME"] = _clean_text(selected["WELL_NAME"]).str.upper()
+    if selected["WELL_NAME"].isna().any() or selected["WELL_NAME"].eq("").any():
+        raise ValueError("Missing WAR well name")
+    selected = selected.drop_duplicates()
+    if selected["API_WELL_NUMBER"].duplicated().any():
+        raise ValueError("Conflicting WAR names for the same API")
+
+    optional = [
+        "WELL_NAME_SUFFIX",
+        "WATER_DEPTH",
+        "BH_TOTAL_MD",
+        "TOTAL_DEPTH_DATE",
+        "WELL_SPUD_DATE",
+    ]
+    metadata = boreholes.reindex(columns=bore_columns + optional).copy()
+    metadata["API_WELL_NUMBER"] = _api_keys(metadata["API_WELL_NUMBER"])
+    metadata = metadata[metadata["API_WELL_NUMBER"].isin(selected["API_WELL_NUMBER"])]
+    for column in metadata.columns:
+        if column != "API_WELL_NUMBER":
+            metadata[column] = _clean_text(metadata[column])
+    metadata["WELL_NAME"] = metadata["WELL_NAME"].str.upper()
+    metadata = metadata.drop_duplicates()
+    if metadata["API_WELL_NUMBER"].duplicated().any():
+        raise ValueError("Conflicting borehole metadata for the same API")
+    missing_apis = sorted(
+        set(selected["API_WELL_NUMBER"]) - set(metadata["API_WELL_NUMBER"])
+    )
+    if missing_apis:
+        raise ValueError(f"Missing borehole metadata for APIs: {missing_apis}")
+    result = selected.merge(
+        metadata,
+        on="API_WELL_NUMBER",
+        suffixes=("", "_BOREHOLE"),
+        validate="one_to_one",
+    )
+    disagrees = result["WELL_NAME_BOREHOLE"].isna() | (
+        result["WELL_NAME"] != result["WELL_NAME_BOREHOLE"]
+    )
+    if disagrees.any():
+        apis = result.loc[disagrees, "API_WELL_NUMBER"].tolist()
+        raise ValueError(f"Conflicting well names between WAR and boreholes: {apis}")
+    for column in ("SURF_LATITUDE", "SURF_LONGITUDE"):
+        result[column] = pd.to_numeric(result[column], errors="coerce")
+        if (
+            not result[column]
+            .map(lambda value: pd.notna(value) and math.isfinite(value))
+            .all()
+        ):
+            raise ValueError(f"Invalid borehole surface coordinates: {column}")
+    # A missing suffix is optional, but pd.NA must not reach boolean fallback
+    # expressions in build_inputs. Missing engineering quantities stay unknown.
+    result["WELL_NAME_SUFFIX"] = result["WELL_NAME_SUFFIX"].fillna("")
+    return (
+        result.drop(columns="WELL_NAME_BOREHOLE")
+        .sort_values("API_WELL_NUMBER")
+        .reset_index(drop=True)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +288,12 @@ def build_inputs(
     surveys_all: pd.DataFrame, julia_meta: pd.DataFrame
 ) -> tuple[pd.DataFrame, dict]:
     julia_apis = list(julia_meta["API_WELL_NUMBER"].unique())
-    ds = surveys_all[surveys_all["API_WELL_NUMBER"].isin(julia_apis)].copy()
+    survey_apis = _api_keys(surveys_all["API_WELL_NUMBER"])
+    missing_apis = sorted(set(julia_apis) - set(survey_apis.dropna()))
+    if missing_apis:
+        raise ValueError(f"Missing survey rows for lease-selected APIs: {missing_apis}")
+    ds = surveys_all[survey_apis.isin(julia_apis)].copy()
+    ds["API_WELL_NUMBER"] = survey_apis.loc[ds.index]
     if ds.empty:
         raise RuntimeError(f"No survey rows for Julia APIs {julia_apis}")
 
@@ -245,8 +347,8 @@ def build_inputs(
     dup_zero = is_zero & ds.duplicated(subset=["API12", "SURVEY_POINT_MD"], keep="first")
     ds = ds[~dup_zero].reset_index(drop=True)
 
-    # Surface coords for the relative-WH offset come from well_data.csv
-    # (authoritative surface lat/long), converted to field-relative feet.
+    # Surface coords for the relative-WH offset come from the matched raw
+    # borehole records, converted to field-relative feet.
     julia_meta = julia_meta.copy()
     julia_meta["lat"] = pd.to_numeric(julia_meta["SURF_LATITUDE"], errors="coerce")
     julia_meta["lon"] = pd.to_numeric(julia_meta["SURF_LONGITUDE"], errors="coerce")
@@ -292,25 +394,39 @@ def build_inputs(
 # ---------------------------------------------------------------------------
 # Step 5-6: run pipeline + render
 # ---------------------------------------------------------------------------
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--war-main-csv",
+        required=True,
+        help="Raw comma-delimited WAR main table with surface-lease membership",
+    )
+    parser.add_argument(
+        "--boreholes-csv",
+        required=True,
+        help="Raw comma-delimited borehole table with names and surface coordinates",
+    )
+    args = parser.parse_args(argv)
+    # Validate the lease inputs before importing the pipeline or downloading
+    # the much larger survey dataset. Missing raw inputs have no fallback.
+    julia_meta = julia_well_metadata(
+        pd.read_csv(args.war_main_csv, dtype=str),
+        pd.read_csv(args.boreholes_csv, dtype=str),
+    )
+    surveys_all = load_surveys()
+
     from worldenergydata.bsee.analysis.well_api12 import WellAPI12
     from worldenergydata.bsee.visualization import (
         render_well_paths_plotly,
         render_well_paths_threejs,
     )
 
-    surveys_all = load_surveys()
-    julia_meta = julia_well_metadata()
     selected_apis = sorted(julia_meta["API_WELL_NUMBER"].unique())
-    assert selected_apis, (
-        'No wells selected: no "JU"-prefixed WELL_NAME rows found in '
-        f"{WELL_DATA_CSV}"
-    )
     print(
-        f"\nSelected {len(selected_apis)} Julia well(s) from the curated "
-        f"catalog (API12s): {selected_apis}"
+        f"\nSelected {len(selected_apis)} well(s) from WAR surface lease "
+        f"{FIELD_LEASE} (API12s): {selected_apis}"
     )
-    print("\nJulia wells (from well_data.csv):")
+    print("\nLease-selected wells (WAR names, raw borehole metadata):")
     print(
         julia_meta[
             ["API_WELL_NUMBER", "WELL_NAME", "WELL_NAME_SUFFIX",
