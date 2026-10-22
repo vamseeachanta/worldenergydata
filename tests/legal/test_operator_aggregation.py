@@ -23,7 +23,13 @@ def run_check(tmp_path, text, external=None, local=None):
     (reports / "memo.md").write_text(text, encoding="utf-8")
     external_path = tmp_path / "external.yaml"
     external_path.write_text(
-        yaml.safe_dump(external if external is not None else {"client_references": []}),
+        (
+            external
+            if isinstance(external, str)
+            else yaml.safe_dump(
+                external if external is not None else {"client_references": []}
+            )
+        ),
         encoding="utf-8",
     )
     command = [
@@ -36,7 +42,9 @@ def run_check(tmp_path, text, external=None, local=None):
     ]
     if local is not None:
         local_path = tmp_path / "local.yaml"
-        local_path.write_text(yaml.safe_dump(local), encoding="utf-8")
+        local_path.write_text(
+            local if isinstance(local, str) else yaml.safe_dump(local), encoding="utf-8"
+        )
         command += ["--operator-denylist", str(local_path)]
     env = {
         key: value for key, value in os.environ.items() if not key.startswith("GIT_")
@@ -121,6 +129,36 @@ def test_malformed_policy_fails_closed(tmp_path, policy):
     assert "ERROR" in result.stderr
 
 
+@pytest.mark.parametrize("source", ["external", "local"])
+@pytest.mark.parametrize(
+    "policy",
+    [
+        "client_references:\n  - pattern: Synthetic marker\nclient_references: []\n",
+        (
+            "client_references:\n  - pattern: Synthetic marker\n"
+            "    pattern: Replacement marker\n"
+        ),
+        (
+            "client_references:\n  - pattern: Synthetic marker\n"
+            "    severity: block\n    severity: warn\n"
+        ),
+        (
+            "sources:\n  - title: Synthetic source\n    title: Replacement source\n"
+            "client_references: []\n"
+        ),
+    ],
+    ids=["section", "entry-pattern", "entry-severity", "nested-metadata"],
+)
+def test_duplicate_policy_keys_fail_closed(tmp_path, source, policy):
+    result = run_check(tmp_path, "Synthetic marker", **{source: policy})
+    assert result.returncode == 2
+    assert "ERROR" in result.stderr
+    assert "no blocking matches" not in result.stdout
+    assert "Synthetic marker" not in result.stdout + result.stderr
+    assert "Replacement marker" not in result.stdout + result.stderr
+    assert str(tmp_path) not in result.stdout + result.stderr
+
+
 def test_top_twenty_source_rows_are_present():
     """BSEE PDRANKOP, 01-Oct-2026, CY2024, p.1, first twenty Total Oil rows.
 
@@ -161,7 +199,9 @@ def test_each_sourced_operator_is_detected(tmp_path):
         assert result.returncode == 1, result.stderr
 
 
-@pytest.mark.parametrize("kind", ["empty", "binary", "linked-file", "linked-directory"])
+@pytest.mark.parametrize(
+    "kind", ["empty", "binary", "nul", "utf16", "linked-file", "linked-directory"]
+)
 def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
     reports = tmp_path / "reports"
     reports.mkdir()
@@ -169,6 +209,10 @@ def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
     external.write_text("client_references: []\n", encoding="utf-8")
     if kind == "binary":
         (reports / "memo.bin").write_bytes(b"\xff")
+    elif kind == "nul":
+        (reports / "memo.bin").write_bytes(b"Peer aggregate.\x00")
+    elif kind == "utf16":
+        (reports / "memo.bin").write_bytes("Operator X".encode("utf-16le"))
     elif kind.startswith("linked"):
         target = tmp_path / "target"
         target.mkdir()
@@ -189,6 +233,8 @@ def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
         text=True,
     )
     assert result.returncode == 2
+    assert "ERROR" in result.stderr
+    assert "no blocking matches" not in result.stdout
     assert str(tmp_path) not in result.stderr
 
 

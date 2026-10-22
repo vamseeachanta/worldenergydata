@@ -14,9 +14,27 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 
 
+class UniqueKeyLoader(yaml.SafeLoader):
+    """Reject duplicate keys throughout the policy, including merged mappings."""
+
+    def construct_mapping(self, node, deep=False):
+        self.flatten_mapping(node)
+        mapping = {}
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in mapping:
+                raise ValueError("duplicate policy key")
+            mapping[key] = self.construct_object(value_node, deep=deep)
+        return mapping
+
+
 def load_rules(path):
     """Read workspace-compatible literal entries and explicit regex extensions."""
-    policy = yaml.safe_load(path.read_text(encoding="utf-8"))
+    loader = UniqueKeyLoader(path.read_text(encoding="utf-8"))
+    try:
+        policy = loader.get_single_data()
+    finally:
+        loader.dispose()
     if not isinstance(policy, dict):
         raise TypeError("policy must be a mapping")
     default = policy.get("default_severity", "block")
@@ -69,6 +87,8 @@ def scan_reports(reports, rules):
     blocked = False
     for path in files:
         text = path.read_text(encoding="utf-8")
+        if "\x00" in text:
+            raise ValueError("binary report input")
         findings = {}
         for pattern, severity in rules:
             for match in pattern.finditer(text):
