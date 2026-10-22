@@ -72,13 +72,14 @@ def assert_workflow_names(filename, workflow):
 
 def assert_pr_triggers(filename, workflow):
     expected = json.loads(json.dumps(SNAPSHOT[filename]["on"]))
-    pull_request = expected["pull_request"] or {}
-    # Keep edited events for title validation and metadata-result replay.
-    old_types = pull_request.get("types", PR_EVENTS[:3])
-    pull_request["types"] = PR_EVENTS + [
-        event for event in old_types if event not in PR_EVENTS
-    ]
-    expected["pull_request"] = pull_request
+    if filename in HEAVY_JOBS:
+        pull_request = expected["pull_request"] or {}
+        # Restart guarded work on ready transitions; preserve metadata replay.
+        old_types = pull_request.get("types", PR_EVENTS[:3])
+        pull_request["types"] = PR_EVENTS + [
+            event for event in old_types if event not in PR_EVENTS
+        ]
+        expected["pull_request"] = pull_request
     assert workflow["on"] == expected, f"{filename}: triggers"
 
 
@@ -157,6 +158,7 @@ def test_required_aggregate_checks_full_result(job_id, full_result, tmp_path):
         text=True,
         capture_output=True,
         check=False,
+        timeout=10,
     )
     assert result.returncode == (0 if full_result == "success" else 1), result.stdout
 
@@ -191,6 +193,15 @@ def test_required_check_policy_mutations_are_rejected(mutation):
         workflow["on"]["pull_request"]["types"].remove("ready_for_review")
         with pytest.raises(AssertionError, match="triggers"):
             assert_pr_triggers("ci.yml", workflow)
+
+
+@pytest.mark.parametrize("filename", sorted(PR_WORKFLOWS - HEAVY_JOBS.keys()))
+def test_quick_workflows_reject_redundant_ready_events(filename):
+    workflow = load_workflow(filename)
+    pull_request = workflow["on"]["pull_request"]
+    pull_request.setdefault("types", PR_EVENTS[:3]).append("ready_for_review")
+    with pytest.raises(AssertionError, match="triggers"):
+        assert_pr_triggers(filename, workflow)
 
 
 def test_draft_policy_is_in_the_default_pr_test_selection():

@@ -160,7 +160,7 @@ def test_concurrency_event_behavior() -> None:
 
 
 def test_pull_request_activity_types() -> None:
-    """Retargeting starts fresh gates while preserving the default events."""
+    """Ready transitions and retargeting start gates alongside default events."""
     workflow = _load_workflow()
     events = workflow["on"] if "on" in workflow else workflow[True]
     pull_request = events["pull_request"] or {}
@@ -168,6 +168,7 @@ def test_pull_request_activity_types() -> None:
         "opened",
         "synchronize",
         "reopened",
+        "ready_for_review",
         "edited",
     ]
 
@@ -199,6 +200,7 @@ def test_base_change_runs_full_gate() -> None:
         ("pull_request", "opened", False, False),
         ("pull_request", "synchronize", False, False),
         ("pull_request", "reopened", False, False),
+        ("pull_request", "ready_for_review", False, False),
         ("push", "edited", False, False),
         ("schedule", "", False, False),
         ("workflow_dispatch", "", False, False),
