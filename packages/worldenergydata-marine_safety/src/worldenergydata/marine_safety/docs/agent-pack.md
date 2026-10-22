@@ -5,11 +5,27 @@
 | Module | `marine_safety` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-marine_safety/src/worldenergydata/marine_safety` |
-| Pack revision | 1, 2026-10-15 |
+| Pack revision | 2, 2026-10-22 |
 | Code revision | `55991b0def0f90708b3e0c396c0f57d9d1b7f7fb` |
 | Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10, Python calculations |
 | Required quality role | EC quality manager; data-pipeline quality manager as deputy when appointed |
 | Status | DRAFT |
+
+Summary: the original assessment is retained at its code pin; the collection
+and failure audit now has committed issue texts and a per-node result ledger.
+
+## Revision history
+
+| Revision | Date | What changed and why |
+| --- | --- | --- | --- |
+| 1 | 2026-10-15 | Initial canonical assessment. |
+| 2 | 2026-10-22 | Add committed draft and result references so baseline defects can be filed and collection evidence reproduced. |
+
+Current audit sources: [ISSUES_DRAFT.md](ISSUES_DRAFT.md) preserves every numbered
+placeholder in this pack; [BASELINE_RESULTS.md](BASELINE_RESULTS.md) records the
+restored collection inventory and current raw failures. Historical results below
+remain observations at the original code pin, including its collection gap.
+No engineering constant or incident-analysis implementation is changed.
 
 ## 1. Purpose and scope
 

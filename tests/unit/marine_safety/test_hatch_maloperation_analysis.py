@@ -10,9 +10,6 @@ from typing import Any, Dict, List
 
 import pytest
 
-# Test data will be imported from fixtures
-from tests.modules.marine_safety.fixtures.sample_data import generate_incident
-
 
 @pytest.fixture
 def hatch_maloperation_incidents() -> List[Dict[str, Any]]:

@@ -1,0 +1,182 @@
+[
+  {
+    "nodeid": "tests/unit/marine_safety/analysis/test_cause_statistics.py::TestStatisticalSummary::test_print_report",
+    "exception": "AssertionError",
+    "draft": "8",
+    "cause": "The test expects stdout while print_report uses logging."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_correlation.py::TestIncidentMatcherConfidence::test_find_matches_returns_above_threshold",
+    "exception": "AssertionError",
+    "draft": "5",
+    "cause": "The test-local weighted matcher finds no qualifying pair."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_http_500_error",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_invalid_ssl_certificate",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestErrorHandling::test_network_timeout_recovery",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_download_pdf_success",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_parse_pdf_metadata",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_connection_error",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_success",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_fetch_page_timeout",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_max_retries_exceeded",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_empty_html",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_html",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_parse_malformed_html",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_retry_on_failure",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_uscg_scraper.py::TestUSCGScraper::test_scrape_incidents_date_range",
+    "exception": "AttributeError",
+    "draft": "3",
+    "cause": "Scraper tests call public methods absent from the implementation."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_critical_severity_requires_investigation",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_pollution_environmental_impact",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestCrossFieldValidation::test_vessel_incident_consistency",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_casualties_validation",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_location_validation",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_missing_required_fields",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_negative_casualties",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_severity_type_consistency",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestIncidentValidator::test_valid_incident_data",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_gross_tonnage_positive",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_valid_vessel_data",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_vessel_name_required",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  },
+  {
+    "nodeid": "tests/unit/marine_safety/test_validators.py::TestVesselValidator::test_year_built_range",
+    "exception": "ValidationError",
+    "draft": "4",
+    "cause": "Empty Pydantic model construction fails before the validator assertions."
+  }
+]
