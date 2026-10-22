@@ -1,0 +1,178 @@
+{
+  "summary": "A tailoring packet for semiconductor-adjacent applications. The available hands-on evidence covers Python validation and this packet builder. EDA and layout entries are researched concepts; a semiconductor FEM benchmark is NOT_EVALUATED in this checkout. Personal contribution must be confirmed before any resume bullet is used.",
+  "revisions": [
+    {
+      "revision": "Initial",
+      "date": "2026-10-19",
+      "change": "Add an evidence-linked index, conditional application material and interview prompts to keep claims within available artifacts."
+    }
+  ],
+  "sources": [
+    {
+      "id": "flow",
+      "title": "OpenLane documentation: Newcomers",
+      "url": "https://openlane2.readthedocs.io/en/latest/getting_started/newcomers/index.html",
+      "edition": "latest documentation, undated; sections Chip Design Basics, DRC and LVS",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "pdk",
+      "title": "OpenLane documentation: Using PDKs",
+      "url": "https://openlane2.readthedocs.io/en/latest/usage/about_pdks.html",
+      "edition": "latest documentation, undated; process design kit overview",
+      "checked": "2026-10-19"
+    },
+    {
+      "id": "layout-docs",
+      "title": "KLayout introduction: Highlights",
+      "url": "https://www.klayout.de/intro.html",
+      "edition": "web documentation, undated; General and scripting features",
+      "checked": "2026-10-19"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "research",
+      "title": "Research and terminology",
+      "status": "concept researched",
+      "summary": "Public tool documentation supports the interview notes below. This is bounded terminology research, not a job-market survey or evidence of tool operation.",
+      "paths": [],
+      "sources": ["flow", "pdk", "layout-docs"]
+    },
+    {
+      "id": "eda",
+      "title": "EDA demonstration",
+      "status": "concept researched",
+      "summary": "RTL-to-layout flow documentation reviewed. No RTL source, flow configuration, run logs, timing report or DRC/LVS result is present in this packet. Implementation remains a later slice.",
+      "paths": [],
+      "sources": ["flow"]
+    },
+    {
+      "id": "layout",
+      "title": "CAD/layout demonstration",
+      "status": "concept researched",
+      "summary": "KLayout documents Python scripting and GDS/OASIS support. No generated geometry, round-trip export or geometry-invariant test is supplied here.",
+      "paths": [],
+      "sources": ["layout-docs"]
+    },
+    {
+      "id": "fem",
+      "title": "Semiconductor package FEM benchmark",
+      "status": "NOT_EVALUATED",
+      "summary": "No benchmark inputs, material provenance, convergence study or result manifest is available in this checkout. A linked issue describes work elsewhere; that description alone is not reusable result evidence.",
+      "paths": [],
+      "sources": []
+    },
+    {
+      "id": "reports",
+      "title": "Reproducible portfolio reporting",
+      "status": "hands-on artifact built",
+      "summary": "Offline packet generation validates evidence paths and claim classes. Regression tests cover absent evidence, path containment, reproducibility and HTML escaping. This proves packet tooling, not semiconductor simulation.",
+      "paths": [
+        "scripts/career/build_semiconductor_packet.py",
+        "tests/career/test_semiconductor_packet.py"
+      ],
+      "sources": []
+    },
+    {
+      "id": "validation",
+      "title": "Transferable Python validation example",
+      "status": "hands-on artifact built",
+      "summary": "Existing repository code provides field rules and structured error handling with associated unit tests. These are transferable software practices. The packet does not establish who authored them or assert that their tests were rerun for this packet.",
+      "paths": [
+        "src/worldenergydata/validation/rules.py",
+        "src/worldenergydata/validation/base.py",
+        "tests/unit/validation/test_rules.py"
+      ],
+      "sources": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "packet-tooling",
+      "text": "Built an offline HTML portfolio packet generator with artifact-linked claims and tests that reject missing files and unsupported built-work claims.",
+      "evidence": ["reports"]
+    },
+    {
+      "id": "data-validation",
+      "text": "Implemented Python field validation with structured errors and unit-test examples for required values, types and ranges.",
+      "evidence": ["validation"]
+    }
+  ],
+  "roles": [
+    {
+      "id": "packaging",
+      "title": "Packaging simulation",
+      "template": "[Insert the posting requirement and verified personal contribution.] Relevant repository examples demonstrate input validation and traceable reporting. A package-specific thermal and mechanical benchmark is the next evidence requirement.",
+      "claims": ["data-validation", "packet-tooling"],
+      "gap": "NOT_EVALUATED: package materials, units, loads, boundary conditions, mesh convergence and result validation. Do not claim package simulation or reliability qualification."
+    },
+    {
+      "id": "layout",
+      "title": "CAD/layout automation",
+      "template": "[Insert the posting requirement and verified personal contribution.] Python validation and reproducible reporting are available examples to discuss. The layout scripting workflow is researched; an executable geometry demonstration remains to be built.",
+      "claims": ["data-validation", "packet-tooling"],
+      "gap": "No layout generator or GDS/OASIS round-trip evidence. Do not substitute data-validation tests for geometry or connectivity checks."
+    },
+    {
+      "id": "eda-program",
+      "title": "ASIC/EDA technical program roles",
+      "template": "[Insert the posting requirement and verified personal contribution.] The portfolio index demonstrates evidence classification and explicit gaps. Discuss how deliverable checks could structure an EDA handoff, without implying tape-out or program delivery experience.",
+      "claims": ["packet-tooling"],
+      "gap": "No completed RTL-to-GDS run or semiconductor program history is verified. Timing, area, power and signoff results require actual run artifacts."
+    }
+  ],
+  "interview": [
+    {
+      "term": "PDK",
+      "status": "concept researched",
+      "note": "A process design kit supplies process-specific data used by design tools. Prepare to explain which kit and revision a reproducible flow uses; none is installed or exercised by this packet.",
+      "sources": ["pdk"]
+    },
+    {
+      "term": "DRC and LVS",
+      "status": "concept researched",
+      "note": "DRC checks layout against foundry rules; LVS compares layout connectivity with the schematic. Explain why these checks answer different questions. Documentation review does not establish a clean result.",
+      "sources": ["flow"]
+    },
+    {
+      "term": "RTL-to-GDS",
+      "status": "concept researched",
+      "note": "Synthesis converts a hardware description to a netlist; physical implementation places and routes it into a layout. Prepare an artifact walkthrough from source to final layout when a demonstration is available.",
+      "sources": ["flow"]
+    },
+    {
+      "term": "GDS/OASIS and Python layout automation",
+      "status": "concept researched",
+      "note": "KLayout supports these layout formats and Python scripting. An interview demonstration should separately show geometry generation, metadata extraction and a checked export/import round trip.",
+      "sources": ["layout-docs"]
+    },
+    {
+      "term": "Thermal and thermo-mechanical FEM",
+      "status": "NOT_EVALUATED",
+      "note": "Preparation prompt: explain the distinction between temperature prediction and mechanical response to a temperature field. Supply a public reference, material provenance, boundary conditions, mesh convergence and an independently checked example before presenting a worked answer. A candidate may discuss verified prior CAD/FEM practice using public artifacts; no prior employment experience is asserted here.",
+      "sources": []
+    },
+    {
+      "term": "Reliability terminology",
+      "status": "NOT_EVALUATED",
+      "note": "Preparation prompt: distinguish an analysis result, a failure mechanism and a qualification test. Standards-based definitions, test conditions and acceptance limits remain unevaluated. No JEDEC/IPC compliance, fatigue life or reliability prediction is claimed.",
+      "sources": []
+    }
+  ],
+  "tailoring": [
+    "Record the posting URL, retrieval date and exact requirement privately; this packet contains no current vacancy recommendation.",
+    "Choose the matching role template and retain only requirements supported by linked evidence.",
+    "Confirm personal contribution before converting a bullet candidate into a resume claim; replace every placeholder.",
+    "Separate researched concepts from work personally performed. Omit quantitative performance claims without a reproducible, cited result.",
+    "Inspect each linked artifact and confirm its revision before sending. Add the missing demonstration and its tests before promoting a concept to built status."
+  ],
+  "limits": [
+    "No engineering equations, material constants, solver execution or acceptance thresholds are introduced.",
+    "Local file presence establishes neither correctness nor authorship. Review and personal contribution confirmation remain required.",
+    "The cited documentation is mutable and undated. No tool version, installed environment or live job-market fit is asserted.",
+    "The thermal-expansion documentation request returned HTTP 403; no content or engineering value was inferred from that response.",
+    "Later work: attach reproducible EDA and CAD/layout demonstrations, then independently inspect the externally described FEM benchmark and its provenance before adding result claims.",
+    "Later work: complete sourced thermal, thermo-mechanical and reliability interview answers and tailor against an actual posting."
+  ]
+}
