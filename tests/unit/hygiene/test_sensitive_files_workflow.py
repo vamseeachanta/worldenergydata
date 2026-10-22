@@ -9,15 +9,19 @@ contains credential material. Only the synthetic PR changes should be checked.
 
 import json
 import os
+import runpy
 import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 import yaml
 
-WORKFLOW = Path(__file__).resolve().parents[3] / ".github/workflows/pr-validation.yml"
+ROOT = Path(__file__).resolve().parents[3]
+WORKFLOW = ROOT / ".github/workflows/pr-validation.yml"
+SCRIPT = ROOT / "scripts/ci/check_sensitive_files.py"
 
 
 def workflow_job():
@@ -110,6 +114,11 @@ def history(tmp_path):
             run(repo, env, "git", "rev-parse", "--is-shallow-repository").stdout.strip()
             == "true"
         )
+        # Install the production entry point without adding it to the PR diff.
+        if SCRIPT.exists():
+            target = repo / SCRIPT.relative_to(ROOT)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(SCRIPT, target)
         return repo, env
 
     return checkout
@@ -127,7 +136,7 @@ def check_step(repo, env):
         "-o",
         "pipefail",
         "-c",
-        workflow_shell(),
+        workflow_shell().replace("python3 ", shlex.quote(sys.executable) + " "),
         check=False,
     )
 
@@ -245,3 +254,57 @@ def test_diff_failure_is_not_a_clean_result(history, tmp_path):
     assert "injected diff failure" in result.stderr
     assert "::error::Unable to compute PR filename diff" in result.stdout
     assert "No potentially sensitive" not in result.stdout
+
+
+def test_workflow_calls_offline_script():
+    """The script exercised offline must be the workflow's sole policy check."""
+    assert workflow_shell().strip() == "python3 scripts/ci/check_sensitive_files.py"
+
+
+@pytest.mark.parametrize(
+    "pattern,positive,negative",
+    [
+        (
+            "environment",
+            [".env", "x/.env.local"],
+            ["x.env", "x/.env-example", ".env\n", ".ENV"],
+        ),
+        (
+            "private-key",
+            ["x.pem", "a/x.key", "x.p12"],
+            ["x.pem.txt", "monkey", "x.key\n", "x.PEM"],
+        ),
+        ("secret-token", ["secret.txt", "a/credential/file"], ["secure.txt", "credit"]),
+        (
+            "ssh-key",
+            ["id_rsa", "a/id_dsa"],
+            ["id_rsa.pub", "my_id_dsa", "id_rsa\n", "ID_RSA"],
+        ),
+    ],
+)
+def test_each_regex_has_positive_and_negative_boundaries(pattern, positive, negative):
+    """Hand classifications from the pre-extraction workflow's filename policy.
+
+    Environment basenames end or continue with a dot; key extensions end the
+    path; secret/credential are substrings; SSH key basenames match exactly.
+    Case sensitivity is retained. These are policy examples, not file contents.
+    """
+    patterns = runpy.run_path(str(SCRIPT))["SENSITIVE_PATTERNS"]
+    regex = patterns[pattern]
+    assert all(regex.search(name) for name in positive)
+    assert all(regex.search(name) is None for name in negative)
+
+
+def test_filename_cannot_inject_annotations(history):
+    """One filename produces one annotation; newline and percent escapes are data.
+
+    Expected escaping comes from Actions toolkit command.ts escapeData and
+    Python JSON string escaping. The percent escape must itself be escaped so
+    Actions cannot decode a filename into another command or line.
+    """
+    repo, env = history({"escape%0A::error::injected\nname.key": "fixture"})
+    result = check_step(repo, env)
+    assert result.returncode != 0
+    assert len(result.stdout.splitlines()) == 1
+    assert "%250A" in result.stdout
+    assert "\\nname.key" in result.stdout

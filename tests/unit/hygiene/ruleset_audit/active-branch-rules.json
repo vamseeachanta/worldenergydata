@@ -1,0 +1,44 @@
+[
+  {
+    "type": "required_status_checks",
+    "parameters": {
+      "strict_required_status_checks_policy": false,
+      "do_not_enforce_on_create": false,
+      "required_status_checks": [
+        {
+          "context": "Validate PR Title"
+        },
+        {
+          "context": "Lint"
+        },
+        {
+          "context": "Type Check"
+        },
+        {
+          "context": "Check File Sizes"
+        },
+        {
+          "context": "Check Sensitive Files"
+        },
+        {
+          "context": "Security Scan"
+        },
+        {
+          "context": "Changelog Check"
+        },
+        {
+          "context": "Documentation"
+        },
+        {
+          "context": "Code Owners Check"
+        },
+        {
+          "context": "GitGuardian Security Checks"
+        },
+        {
+          "context": "Test (PR gate)"
+        }
+      ]
+    }
+  }
+]
