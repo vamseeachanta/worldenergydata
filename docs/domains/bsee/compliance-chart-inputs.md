@@ -10,6 +10,7 @@ the existing score policies do not establish regulatory acceptance.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-20 | Documented input handling and a synthetic example to reproduce the compliance chart fixes. |
+| 2 | 2026-10-22 | Preserved calculated overall scores above unity during overproduction and clarified the aggregate input range. |
 
 ## Input contract
 
@@ -21,7 +22,8 @@ color lookup from `compliance_calculations.py`.
 | Field | Meaning | Valid input |
 | --- | --- | --- |
 | `production_compliance` | Actual production divided by permitted production, expressed as a percentage | Finite, nonnegative real number; overproduction remains visible |
-| `environmental_score`, `safety_score`, `overall_compliance_score` | Existing normalized scores | Finite real number in the unit interval |
+| `environmental_score`, `safety_score` | Existing normalized scores | Finite real number in the unit interval |
+| `overall_compliance_score` | Calculated aggregate fraction | Finite, nonnegative real number; values above unity remain visible |
 | `oil_quota`, `oil_actual` | Oil volume in barrels | Finite, nonnegative real number |
 | `gas_quota`, `gas_actual` | Gas volume in Mcf | Finite, nonnegative real number |
 
@@ -31,6 +33,15 @@ have no numeric trace and show `NOT_EVALUATED`; unavailable quota values are
 blank bars with an annotation. An explicitly supplied zero remains zero.
 Input mappings are not modified. An absent or invalid dashboard mapping marks
 all metrics `NOT_EVALUATED`.
+If converting a fraction to a percentage exceeds the finite numeric range,
+the affected metric also shows `NOT_EVALUATED`.
+
+`ComplianceTemplate.build_compliance_context` produces the overall score in
+`compliance_summary` through `_generate_compliance_summary`. It averages the
+production fraction, environmental score and safety score without an upper cap.
+Overproduction can therefore raise the overall fraction above unity. Rendering
+that calculated value does not change the context's regulatory status or
+establish regulatory acceptance.
 
 ## Method and sources
 
@@ -109,6 +120,12 @@ failures. The discoverable unit tests in
 `tests/unit/bsee/reports/comprehensive/templates/test_compliance_charts.py`
 check exact serialized chart values, unavailable inputs, explicit zero,
 score bounds, palette boundaries and the template entry points.
+The integration regression builds the compliance context with synthetic
+overproduction, then renders its summary and checks all four indicators. The
+overall result is `103.3 %`, with production at `110.0 %` and environmental and
+safety values each at `100.0 %`. The context retains its `Non-Compliant` status.
+Invalid overall inputs and environmental or safety scores above unity remain
+`NOT_EVALUATED`.
 
 Plotly templates legitimately include `error_x` and `error_y` schema keys.
 The HTML regression therefore decodes the actual chart payload and checks its

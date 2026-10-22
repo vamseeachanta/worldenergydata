@@ -15,6 +15,11 @@ from worldenergydata.bsee.reports.comprehensive.templates.compliance_charts impo
     create_compliance_dashboard,
     create_production_quota_chart,
 )
+from worldenergydata.bsee.reports.comprehensive.templates.compliance_models import (
+    ComplianceMetrics,
+    EnvironmentalMetrics,
+    SafetyMetrics,
+)
 from worldenergydata.bsee.reports.comprehensive.templates.compliance_template import (
     ComplianceTemplate,
 )
@@ -61,20 +66,28 @@ def test_dashboard_values_and_template_entry_point(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "invalid", [None, "invalid", "0.8", True, -1, float("nan"), float("inf"), [], {}]
+    "invalid",
+    [None, "invalid", "0.8", True, -1, float("nan"), float("inf"), 1e308, [], {}],
 )
-def test_invalid_score_is_not_evaluated(invalid, tmp_path):
+@pytest.mark.parametrize(
+    "key, title",
+    [
+        ("safety_score", "Safety Score"),
+        ("overall_compliance_score", "Overall Compliance"),
+    ],
+)
+def test_invalid_score_is_not_evaluated(invalid, key, title, tmp_path):
     """Invalid values carry no numerical result; the valid 0.85 gives 85 %."""
     template = ComplianceTemplate(template_path=tmp_path)
     html = template.generate_compliance_visualizations(
-        {"safety_score": invalid, "environmental_score": 0.85}
+        {key: invalid, "environmental_score": 0.85}
     )["compliance_dashboard"]
     traces, layout = chart_payload(html)
     assert len(traces) == 1
     assert traces[0]["value"] == 85.0
     assert traces[0]["title"]["text"] == "Environmental Score (%)"
     assert any(
-        "Safety Score" in annotation["text"] and "NOT_EVALUATED" in annotation["text"]
+        title in annotation["text"] and "NOT_EVALUATED" in annotation["text"]
         for annotation in layout["annotations"]
     )
 
@@ -88,10 +101,11 @@ def test_missing_dashboard_input_is_not_evaluated(inputs):
 
 
 def test_score_bounds_and_overproduction():
-    """Unit scores lie in [0, 1]; production 150 % remains visible.
+    """Bounded scores lie in [0, 1]; production and overall can exceed it.
 
     Bounds source: compliance_models.py score clamps at d867ba1e (2026).
-    Hand calculation: 0 * 100 = 0; 1 * 100 = 100; production is unscaled.
+    Hand calculation: 0 * 100 = 0; 1 * 100 = 100; 1.1 * 100 = 110.
+    Production is already a percentage and remains unscaled.
     """
     traces, layout = chart_payload(
         create_compliance_dashboard(
@@ -103,8 +117,59 @@ def test_score_bounds_and_overproduction():
             }
         )
     )
-    assert [trace["value"] for trace in traces] == [150.0, 0.0, 100.0]
-    assert any("NOT_EVALUATED" in a["text"] for a in layout["annotations"])
+    assert [trace["value"] for trace in traces] == pytest.approx(
+        [150.0, 0.0, 100.0, 110.0]
+    )
+    assert not any("NOT_EVALUATED" in a["text"] for a in layout["annotations"])
+
+
+@pytest.mark.parametrize(
+    "key, title",
+    [("environmental_score", "Environmental Score"), ("safety_score", "Safety Score")],
+)
+def test_bounded_scores_above_unity_are_not_evaluated(key, title):
+    """The overall-score exception does not relax environmental or safety bounds."""
+    traces, layout = chart_payload(create_compliance_dashboard({key: 1.1}))
+    assert traces == []
+    assert any(
+        title in annotation["text"] and "NOT_EVALUATED" in annotation["text"]
+        for annotation in layout["annotations"]
+    )
+
+
+def test_calculated_overall_score_survives_overproduction(tmp_path):
+    """The context builder's uncapped aggregate reaches the rendered dashboard."""
+    template = ComplianceTemplate(template_path=tmp_path)
+    context = template.build_compliance_context(
+        ComplianceMetrics(
+            permitted_production_bbls=100000, actual_production_bbls=110000
+        ),
+        EnvironmentalMetrics(),
+        SafetyMetrics(),
+    )
+    summary = context["compliance_summary"]
+    # Hand calculation: 110000 / 100000 * 100 = 110 percent production;
+    # environmental and safety scores of 1 each give 100 percent each.
+    # The existing aggregate is (110 + 100 + 100) / 3 = 310 / 3 percent.
+    assert summary["production_compliance"] == pytest.approx(110.0)
+    assert summary["environmental_score"] == pytest.approx(1.0)
+    assert summary["safety_score"] == pytest.approx(1.0)
+    assert summary["overall_compliance_score"] == pytest.approx(31 / 30)
+    assert context["regulatory_status"] == "Non-Compliant"
+    traces, layout = chart_payload(
+        template.generate_compliance_visualizations(summary)["compliance_dashboard"]
+    )
+    assert {
+        trace["title"]["text"]: trace["value"] for trace in traces
+    } == pytest.approx(
+        {
+            "Production Compliance (%)": 110.0,
+            "Environmental Score (%)": 100.0,
+            "Safety Score (%)": 100.0,
+            "Overall Compliance (%)": 310 / 3,
+        }
+    )
+    assert not any("NOT_EVALUATED" in a["text"] for a in layout["annotations"])
 
 
 @pytest.mark.parametrize(

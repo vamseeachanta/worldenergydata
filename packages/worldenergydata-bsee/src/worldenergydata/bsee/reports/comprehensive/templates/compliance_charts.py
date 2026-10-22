@@ -36,7 +36,8 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     """Create gauges, marking missing or invalid metrics NOT_EVALUATED.
 
     Production is already a percentage and can exceed full production.
-    Other scores are fractions within the repository model's unit interval.
+    Environmental and safety scores are fractions within the unit interval.
+    The calculated overall fraction can exceed unity during overproduction.
     Numeric strings and booleans are not treated as measurements.
     """
     compliance_data = compliance_data if isinstance(compliance_data, Mapping) else {}
@@ -60,8 +61,13 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
     for index, (key, title, color, lower, upper, threshold) in enumerate(gauges):
         row, col = divmod(index, 2)
         production = key == "production_compliance"
-        # Unit bounds: compliance_models.py score clamps, d867ba1e (2026).
-        value = _chart_number(compliance_data.get(key), None if production else 1.0)
+        # Only environmental and safety scores use the unit-interval contract.
+        # ComplianceTemplate._generate_compliance_summary leaves overall uncapped.
+        maximum = 1.0 if key in ("environmental_score", "safety_score") else None
+        value = _chart_number(compliance_data.get(key), maximum)
+        if value is not None and not production:
+            # Percent conversion: NIST SP 811, section 7.10.2, online revision 2025.
+            value = _chart_number(value * 100)
         if value is None:
             fig.add_annotation(
                 text=f"{title}<br>NOT_EVALUATED",
@@ -72,11 +78,10 @@ def create_compliance_dashboard(compliance_data: Dict[str, Any]) -> str:
                 showarrow=False,
             )
             continue
-        # Percent conversion: NIST SP 811, section 7.10.2, online revision 2025.
         fig.add_trace(
             go.Indicator(
                 mode="gauge+number+delta" if production else "gauge+number",
-                value=value if production else value * 100,
+                value=value,
                 title={"text": f"{title} (%)"},
                 gauge={
                     "axis": {"range": [None, 100]},
