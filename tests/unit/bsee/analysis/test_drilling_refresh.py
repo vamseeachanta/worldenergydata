@@ -17,6 +17,7 @@ from worldenergydata.bsee.analysis.drilling_refresh import (
     analyse,
     fetch,
     record_download,
+    write_data_quality,
 )
 
 FIXTURE = Path(__file__).parent / "fixtures" / "drilling_refresh"
@@ -122,7 +123,11 @@ def test_fail_closed(setup_run, table, change, reason):
     qa = json.loads((output / "qa.json").read_text(encoding="utf-8"))
     assert qa["status"] == "not-evaluated"
     assert reason in str(qa["failures"])
-    assert not list(output.glob("*.csv"))
+    assert {path.name for path in output.glob("*.csv")} == {"data_quality.csv"}
+    quality = json.loads((output / "data_quality.json").read_text(encoding="utf-8"))
+    assert any(reason in row["defect"] for row in quality["rows"])
+    assert all(row["rule"] == "excluded" for row in quality["rows"])
+    assert not (output / "activity.json").exists()
     assert not (output / "headlines.json").exists()
 
 
@@ -252,7 +257,200 @@ def test_retained_qa_receipt_matches_manifest_and_workflow():
     assert qa["sources"] == manifest["files"]
     assert qa["status"] == "not-evaluated"
     assert qa["failures"]
+    # This immutable receipt identifies the implementation used for that vintage.
+    assert len(qa["workflow_sha256"]) == 64
+
+
+def test_synthetic_quality_table_covers_retained_defect_types(setup_run):
+    rewrite_table(
+        setup_run,
+        "war",
+        lambda rows: (
+            rows[0].update(WAR_END_DT="12/31/2019"),
+            rows[1].update(WAR_END_DT="12/31/2020"),
+        ),
+    )
+    rewrite_table(
+        setup_run,
+        "activity",
+        lambda rows: (rows[0].update(WELL_ACTIVITY_CD=""), rows.pop()),
+    )
+    rewrite_table(
+        setup_run,
+        "boreholes",
+        lambda rows: (
+            rows[0].update(WELL_SPUD_DATE="", TOTAL_DEPTH_DATE=""),
+            rows.pop(),
+        ),
+    )
+    with pytest.raises(QualityError):
+        analyse(setup_run)
+    output = Path(setup_run["output_dir"])
+    quality = json.loads((output / "data_quality.json").read_text(encoding="utf-8"))
+    assert quality["synthetic"] is True
+    counts = {row["defect"]: row["count"] for row in quality["rows"]}
+    assert counts == {
+        "war.reversed_dates": 1,
+        "war.implausible_span": 1,
+        "activity.missing_keys": 1,
+        "boreholes.missing_dates": 2,
+        "unattributed_reports": 1,
+        "population_coverage": 1,
+    }
+    with (output / "data_quality.csv").open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        assert reader.fieldnames == ["defect", "count", "example_id", "rule", "reason"]
+        rows = list(reader)
+    assert len(rows) == len(counts)
+    assert all(row["example_id"].isdigit() for row in rows)
+    text = (output / "public_data_quality.txt").read_text(encoding="utf-8")
+    assert text.startswith("Public data quality\n")
+    for row in quality["rows"]:
+        assert f"{row['defect']}: {row['count']}" in text
+        account = quality["accounting"][row["defect"]]
+        assert account["excluded"] + account["corrected"] == row["count"]
+    assert not (output / "headlines.json").exists()
+    assert not (output / "calendar.csv").exists()
+
+
+@pytest.mark.parametrize(
+    "outcomes",
+    [[], ["2"], ["1", "1"]],
+)
+def test_synthetic_accounting_fails_closed(tmp_path, outcomes):
+    defects = {"war.reversed_dates": ["1"]}
+    with pytest.raises(QualityError, match="accounting"):
+        write_data_quality(
+            tmp_path, defects, {"war.reversed_dates": outcomes}, synthetic=True
+        )
+    assert not list(tmp_path.iterdir())
+
+
+def test_synthetic_accounting_rejects_free_text_identifier(tmp_path):
+    defects = {"war.reversed_dates": ["untrusted source text"]}
+    with pytest.raises(QualityError, match="public record key"):
+        write_data_quality(tmp_path, defects, defects, synthetic=True)
+    assert not list(tmp_path.iterdir())
+
+
+def test_passing_rows_are_the_only_statistics_input(setup_run):
+    result = analyse(setup_run)
+    output = Path(setup_run["output_dir"])
+    qa = json.loads((output / "qa.json").read_text(encoding="utf-8"))
+    quality = json.loads((output / "data_quality.json").read_text(encoding="utf-8"))
     workflow = Path(
         "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/drilling_refresh.py"
     )
     assert qa["workflow_sha256"] == hashlib.sha256(workflow.read_bytes()).hexdigest()
+    assert qa["failures"] == []
+    assert quality["rows"] == []
+    assert "No source defects were detected" in result["public_data_quality"]
+    assert result["qa_status"] == "pass"
+
+
+def test_synthetic_exclusion_prevents_statistics_computation(setup_run, monkeypatch):
+    from worldenergydata.bsee.analysis import drilling_refresh
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("excluded source records reached statistics")
+
+    monkeypatch.setattr(drilling_refresh, "_products", forbidden)
+    rewrite_table(setup_run, "war", lambda rows: rows[0].update(WAR_START_DT=""))
+    with pytest.raises(QualityError):
+        analyse(setup_run)
+    output = Path(setup_run["output_dir"])
+    assert {path.name for path in output.iterdir()} == {
+        "qa.json",
+        "data_quality.csv",
+        "data_quality.json",
+        "public_data_quality.txt",
+    }
+
+
+def test_statistics_reject_quality_defects_before_importing_dependencies():
+    from worldenergydata.bsee.analysis.drilling_refresh import _products
+
+    with pytest.raises(QualityError, match="exclude all statistics"):
+        _products({}, {}, set(), [], {"rows": [{"defect": "war.reversed_dates"}]})
+
+
+@pytest.mark.parametrize(
+    "excluded", [{}, {"war.reversed_dates": ["1"], "extra": ["2"]}]
+)
+def test_synthetic_accounting_requires_matching_classes(tmp_path, excluded):
+    with pytest.raises(QualityError, match="accounting"):
+        write_data_quality(
+            tmp_path, {"war.reversed_dates": ["1"]}, excluded, synthetic=True
+        )
+    assert not list(tmp_path.iterdir())
+
+
+def test_retained_public_quality_accounting_and_provenance():
+    directory = Path("docs/modules/bsee/analysis/drilling_refresh/quality")
+    qa = json.loads((directory / "qa.json").read_text(encoding="utf-8"))
+    quality = json.loads((directory / "data_quality.json").read_text(encoding="utf-8"))
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+    workflow = Path(
+        "packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/drilling_refresh.py"
+    )
+    assert qa["workflow_sha256"] == hashlib.sha256(workflow.read_bytes()).hexdigest()
+    assert qa["sources"] == manifest["files"]
+    assert qa["data_quality"] == quality
+    assert quality["synthetic"] is False
+    assert qa["status"] == "not-evaluated"
+    expected = {
+        f"{name}.{check}": count
+        for name, table in qa["tables"].items()
+        for check, count in table["checks"].items()
+        if count
+    }
+    expected.update({key: count for key, count in qa["joins"].items() if count})
+    assert {row["defect"]: row["count"] for row in quality["rows"]} == expected
+    with (directory / "data_quality.csv").open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    assert rows == [
+        {key: str(value) for key, value in row.items()} for row in quality["rows"]
+    ]
+    for row in quality["rows"]:
+        assert quality["accounting"][row["defect"]] == {
+            "excluded": row["count"],
+            "corrected": 0,
+        }
+        assert row["example_id"].isdigit()
+    assert (directory / "public_data_quality.txt").read_text(
+        encoding="utf-8"
+    ) == quality["public_data_quality"]
+
+
+def test_synthetic_qa_count_disagreement_withholds_statistics(setup_run, monkeypatch):
+    from worldenergydata.bsee.analysis import drilling_refresh
+
+    original = drilling_refresh._quality
+
+    def inconsistent(*args):
+        qa = original(*args)
+        qa["tables"]["war"]["checks"]["missing_dates"] = 1
+        return qa
+
+    monkeypatch.setattr(drilling_refresh, "_quality", inconsistent)
+    with pytest.raises(QualityError, match="accounting"):
+        analyse(setup_run)
+    output = Path(setup_run["output_dir"])
+    assert {path.name for path in output.iterdir()} == {"qa.json"}
+    qa = json.loads((output / "qa.json").read_text(encoding="utf-8"))
+    assert qa["status"] == "not-evaluated"
+    assert "accounting" in str(qa["failures"])
+    assert qa["criterion"]
+    assert qa["basis"] == "DRL+COM"
+
+
+def test_synthetic_missing_public_example_is_not_invented(setup_run):
+    rewrite_table(
+        setup_run, "boreholes", lambda rows: rows[0].update(API_WELL_NUMBER="bad")
+    )
+    with pytest.raises(QualityError, match="public record key"):
+        analyse(setup_run)
+    output = Path(setup_run["output_dir"])
+    assert {path.name for path in output.iterdir()} == {"qa.json"}
+    qa = json.loads((output / "qa.json").read_text(encoding="utf-8"))
+    assert "public record key" in str(qa["failures"])

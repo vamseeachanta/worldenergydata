@@ -11,6 +11,7 @@ historical basis and must not be presented as refreshed results.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-22 | Add reproducible retrieval, offline tests and a source-quality receipt; withhold statistics where source evidence fails QA. |
+| 2 | 2026-10-22 | Add checked exclusion accounting and explanations generated from quality counts; preserve the source-quality gate. |
 
 ## Run a new vintage
 
@@ -53,12 +54,39 @@ forms supplied by BSEE. The configured WAR span bound follows the existing
 canonical rig-day implementation's plausibility bound; it is a rejection rule,
 not a measured operating limit.
 
-Any failed check produces only `qa.json` with `status: not-evaluated`, the reasons
-and source digests. It returns a nonzero exit status. It never computes headline
-values or regenerates HTML. A run requires an empty output directory, preventing
-old statistics from appearing beside a new failed QA receipt. Import digest
-mismatches also fail closed. The workflow digest identifies the implementation
-that evaluated the recorded source vintage.
+Any failed check produces `qa.json` with `status: not-evaluated`, the criterion,
+basis, reasons and source digests. It returns a nonzero exit status and withholds
+every statistic and chart value, including those for otherwise valid records.
+A passing subset is not inferred from incomplete source evidence. A run requires
+an empty output directory, preventing old statistics from appearing beside a new
+failed QA receipt. Import digest mismatches also fail closed. The workflow digest
+identifies the implementation that evaluated the recorded source vintage.
+
+When source records can be evaluated, the refresh also writes `data_quality.csv`,
+`data_quality.json` and `public_data_quality.txt`, even when source checks fail.
+CSV columns and the JSON `columns` array are `defect`, `count`, `example_id`,
+`rule`, `reason`. Each defect class has one row, one numeric public report or bore
+key, and its exclusion criterion. Free-text source values are never examples.
+JSON includes the excluded and corrected occurrence counts for each class, the
+synthetic-fixture label and the whole-table evaluation basis. No supported
+correction is currently applied: every detected occurrence is `excluded`, with
+zero corrected occurrences. Raw source bytes are retained without alteration.
+
+Accounting compares the full detected and excluded key multisets, including
+repeated occurrences, before writing the table. It also reconciles detected
+occurrences against every source QA count. Missing dispositions, extra classes,
+unpublishable examples or unmatched counts fail closed with a QA receipt and no
+statistics. Schema or provenance failures before record evaluation may prevent
+the table from being written; no example identifier is invented.
+
+Counts retain the QA basis: missing dates count blank fields, duplicate keys count
+excess copies, and missing joins count distinct source keys. Population coverage
+adds missing borehole joins and missing WAR joins separately, so a bore can count
+twice. Defect classes can overlap and their sum is not a distinct-bore count.
+All copies of an ambiguous record remain outside every statistic under the gate.
+The `Public data quality` text is generated from the table rows and their reasons;
+its numbers are never maintained separately. Passing exports repeat the text in
+each product JSON, beside the statistics basis and limits.
 
 After QA passes, the workflow emits the following paired CSV and JSON products:
 
@@ -97,6 +125,15 @@ dashboard chart adapters. A maintainer must resolve the source-quality and
 coverage gaps before those builders can publish refreshed statistics; missing
 evidence must not be converted to zero or removed silently.
 
+The subsequent public rebuild also returned `1` with the same source-quality
+rejection. Its generated [quality table](quality/data_quality.csv),
+[accounting](quality/data_quality.json) and
+[Public data quality explanation](quality/public_data_quality.txt) are retained
+under `quality/`, beside the new manifest and QA receipt. The response was HTTP
+200; archive bytes and temporary computation outputs remain outside version
+control. The original receipt above remains unchanged. No chart adapter or HTML
+builder was run because the source gate did not pass.
+
 ## Offline verification
 
 The committed fixture in
@@ -105,6 +142,12 @@ overlapping sidetrack weeks so that bore sums and well unions differ. Tests
 regenerate headline values, preserve missing phase evidence, check timestamp
 parsing and exercise each QA rejection, download provenance, resume behaviour,
 network failure, invalid archives, source schema and digest mismatches.
+The combined synthetic quality fixture covers every retained defect type, checks
+the CSV/JSON columns and generated text, and proves excluded records never reach
+the statistics computation. Separate cases reject mismatched exclusion accounting
+and free-text examples before any table is written. The retained historical QA
+receipt keeps its original workflow digest; fresh receipts are checked against
+the current implementation digest.
 
 Run `tests/unit/bsee/analysis/test_drilling_refresh.py` together with the existing
 `test_war_rig_days*.py` regression files using pytest. No test downloads data.

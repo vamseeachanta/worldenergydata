@@ -1,0 +1,167 @@
+{
+  "basis": "DRL+COM",
+  "criterion": "Every source check and join must pass before any statistic.",
+  "data_quality": {
+    "accounting": {
+      "activity.missing_keys": {
+        "corrected": 0,
+        "excluded": 882
+      },
+      "boreholes.missing_dates": {
+        "corrected": 0,
+        "excluded": 1844
+      },
+      "population_coverage": {
+        "corrected": 0,
+        "excluded": 14
+      },
+      "unattributed_reports": {
+        "corrected": 0,
+        "excluded": 1747
+      },
+      "war.implausible_span": {
+        "corrected": 0,
+        "excluded": 33
+      },
+      "war.reversed_dates": {
+        "corrected": 0,
+        "excluded": 10
+      }
+    },
+    "basis": "Entire supplied tables; source QA gates every statistic. No corrections applied.",
+    "columns": [
+      "defect",
+      "count",
+      "example_id",
+      "rule",
+      "reason"
+    ],
+    "public_data_quality": "Public data quality\nSource checks failed. All statistics and chart values are withheld.\nactivity.missing_keys: 882 excluded. A required source key or activity code is blank.\nboreholes.missing_dates: 1844 excluded. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 excluded. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 excluded. A WAR report key has no matching activity record.\nwar.implausible_span: 33 excluded. The inclusive WAR interval exceeds the configured day limit.\nwar.reversed_dates: 10 excluded. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
+    "rows": [
+      {
+        "count": 882,
+        "defect": "activity.missing_keys",
+        "example_id": "10028",
+        "reason": "A required source key or activity code is blank.",
+        "rule": "excluded"
+      },
+      {
+        "count": 1844,
+        "defect": "boreholes.missing_dates",
+        "example_id": "177000013501",
+        "reason": "A required source date is blank; each blank date is counted.",
+        "rule": "excluded"
+      },
+      {
+        "count": 14,
+        "defect": "population_coverage",
+        "example_id": "608074033000",
+        "reason": "A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.",
+        "rule": "excluded"
+      },
+      {
+        "count": 1747,
+        "defect": "unattributed_reports",
+        "example_id": "1042",
+        "reason": "A WAR report key has no matching activity record.",
+        "rule": "excluded"
+      },
+      {
+        "count": 33,
+        "defect": "war.implausible_span",
+        "example_id": "1288",
+        "reason": "The inclusive WAR interval exceeds the configured day limit.",
+        "rule": "excluded"
+      },
+      {
+        "count": 10,
+        "defect": "war.reversed_dates",
+        "example_id": "2004",
+        "reason": "The source end date precedes its start date.",
+        "rule": "excluded"
+      }
+    ],
+    "synthetic": false
+  },
+  "failures": [
+    "war: reversed_dates (10)",
+    "war: implausible_span (33)",
+    "activity: missing_keys (882)",
+    "boreholes: missing_dates (1844)",
+    "unattributed_reports (1747)",
+    "population_coverage (14)"
+  ],
+  "joins": {
+    "orphan_keys": 0,
+    "population_coverage": 14,
+    "unattributed_reports": 1747
+  },
+  "population_bores": 253,
+  "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
+  "scope": "entire supplied tables before population filtering",
+  "sources": [
+    {
+      "downloaded_at": "2026-10-22T12:32:32.908894+00:00",
+      "file": "eWellWARRawData.zip",
+      "http_status": 200,
+      "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+      "size_bytes": 130673137,
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    }
+  ],
+  "status": "not-evaluated",
+  "tables": {
+    "activity": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 0,
+        "missing_keys": 882,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": null,
+      "date_min": null,
+      "rows": 368305,
+      "unit": "record"
+    },
+    "boreholes": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 1844,
+        "missing_keys": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-06-10",
+      "date_min": "1947-05-10",
+      "rows": 54857,
+      "unit": "day"
+    },
+    "war": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 33,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "missing_dates": 0,
+        "missing_keys": 0,
+        "reversed_dates": 10,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-10-17",
+      "date_min": "1988-04-07",
+      "rows": 370052,
+      "unit": "day"
+    }
+  },
+  "workflow_sha256": "e3dfde8d3b3309511bd20a39ea61a4bce85b82f28d77e1a0023835aeaf92a85b"
+}
