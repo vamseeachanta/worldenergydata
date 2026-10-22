@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NSTA field metadata enrichment</title>
+  <style>
+    body { max-width: 66rem; margin: 2rem auto; padding: 0 1rem;
+           font: 1rem/1.6 system-ui, sans-serif; color: #182631; }
+    table { border-collapse: collapse; width: 100%; }
+    td, th { padding: .5rem; border: 1px solid #becbd3; text-align: left; }
+    pre { overflow-x: auto; padding: 1rem; background: #eff4f7; }
+    code { font-family: ui-monospace, monospace; }
+    .limit { border-left: .25rem solid #a16c00; padding-left: 1rem; }
+  </style>
+</head>
+<body>
+<main>
+<h1>NSTA field metadata enrichment</h1>
+<p>The fields and wells themes are joined to enrich UK field concepts with
+operator, depth and oil-field startup year. The synthetic example below returns
+120.0 m from matching well depths of 100.0 m and 140.0 m. Screening retains source
+evidence and missing-data indicators; no field recommendation is qualified.</p>
+
+<h2>Revision history</h2>
+<table>
+  <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>1</td><td>2026-10-20</td><td>Metadata source contract and offline
+  example are documented to distinguish preliminary screening from a field
+  recommendation.</td></tr></tbody>
+</table>
+<p>Table 1. Documentation revisions.</p>
+
+<h2>Source contract</h2>
+<p>The public NSTA layer schemas were inspected on 2026-10-20. The
+<a href="https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/Offshore_hydrocarbon_fields_(WGS84)/FeatureServer/0?f=pjson">offshore fields schema</a>
+provides FIELDNAME, FIELDTYPE, CURR_OPER, STATUS, PROD_DATE, DISC_DATE, DEPTH_M and
+the CURRLIC/EQUITY slots. The
+<a href="https://services-eu1.arcgis.com/OZMfUznmLTnWccBc/arcgis/rest/services/UKCS%20offshore%20petroleum%20wells%20top%20holes%20ETRS89/FeatureServer/0?f=pjson">offshore wells top-holes schema</a>
+provides TARGETFLD for the join and WATDEP_M for water depth in metres. Drilling
+depth and datum elevation are not substituted for water depth. Only attributes
+are requested; the coordinate systems are not used for a spatial join.</p>
+<p>Startup dates in PROD_DATE are strings. Valid calendar years, year/month
+strings and ISO calendar dates are parsed. Production startup is retained for
+all field types; year_first_oil is populated only for the source OIL type.
+Neither discovery date nor startup date establishes FDP consent or FID.</p>
+
+<h2>Inputs, method and answer</h2>
+<p>The fixture at <code>tests/unit/ukcs/fixtures/nsta_metadata.json</code> is
+synthetic. Its names, dates, depths and equity strings are illustrative inputs,
+not NSTA observations or engineering acceptance limits.</p>
+<table>
+  <thead><tr><th>Input</th><th>Value</th><th>Disposition</th></tr></thead>
+  <tbody>
+    <tr><td>Field DEPTH_M (m)</td><td>Missing</td><td>Matching wells are considered.</td></tr>
+    <tr><td>Matching WATDEP_M (m)</td><td>100.0, 140.0</td><td>Both values enter the median.</td></tr>
+    <tr><td>Unrelated WATDEP_M (m)</td><td>900.0</td><td>Different field name; excluded.</td></tr>
+    <tr><td>Oil-field PROD_DATE</td><td>2001/06</td><td>Startup year is 2001.</td></tr>
+    <tr><td>Equity strings</td><td>60, 40</td><td>Copied unchanged; units and total are unverified.</td></tr>
+  </tbody>
+</table>
+<p>Table 2. Synthetic example inputs.</p>
+<p>A finite, nonnegative field depth takes precedence. Otherwise the sample
+median of finite, nonnegative matching-well depths is used as an estimate.
+For this even sample, median = (100.0 + 140.0) / 2 = <strong>120.0 m</strong>.
+This definition follows
+<a href="https://docs.python.org/3/library/statistics.html#statistics.median">Python's statistics.median documentation</a>
+(accessed 2026-10-20). The aggregation is an explicit software policy; it is not
+an NSTA-approved field-depth estimator or an engineering acceptance criterion.</p>
+<pre><code>import json
+from pathlib import Path
+from worldenergydata.ukcs.field_metadata import enrich_ukcs_field_metadata
+from worldenergydata.ukcs.field_concept import screen_ukcs_field_metadata
+
+fixture = json.loads(
+    Path("tests/unit/ukcs/fixtures/nsta_metadata.json").read_text()
+)
+meta = enrich_ukcs_field_metadata(
+    "EXAMPLE", fields=fixture["fields"], wells=fixture["wells"]
+)
+screen = screen_ukcs_field_metadata(meta)
+concept = screen["field_concept"]
+assert concept.region == "uk"
+assert concept.water_depth_m == 120.0
+assert concept.year_first_oil == 2001
+assert meta["metadata_provenance"]["water_depth_m"]["method"] == "median"
+assert meta["metadata_coverage"]["fdp_consent_date"] == "NOT_EVALUATED"
+assert screen["recommendation_ready"] is False
+</code></pre>
+<p>The example is exercised by <code>test_field_metadata.py</code>; its expected
+depth is calculated independently in the test docstring. The normalizer copies
+the input records without mutating them. The same metadata gives the same
+concepts, scores and evidence, including after the well rows are reordered.</p>
+
+<h2>Live access and retained evidence</h2>
+<pre><code>from worldenergydata.ukcs.metadata_client import NSTAFieldMetadataClient
+
+# field_name is supplied by the caller and identifies a public NSTA field.
+meta = NSTAFieldMetadataClient().load_field_metadata(field_name)
+# The existing reference chain accepts this dictionary as field_meta.
+</code></pre>
+<p>Each query requests OBJECTID ordering. Offsets advance by received row count,
+including short pages that still carry the transfer-limit flag. HTTP errors,
+ArcGIS error envelopes, malformed rows, empty incomplete pages and repeated
+object IDs fail explicitly. Conflicting field records require reconciliation;
+record order does not establish precedence. No implicit cache is created.</p>
+<p>Per-value evidence includes the source layer URL, source columns, contributing
+record IDs, transformation and a SHA-256 digest of the contributing attribute
+snapshot. Dictionary keys and rows are sorted before hashing. This is a digest
+of canonical attributes, not of the raw HTTP response. Live retrieval adds a UTC
+timestamp; offline snapshots require their own capture-time record. Consumers
+retaining datasets shall also retain the original snapshots and retrieval
+manifest; a digest alone is not a source copy or a freshness assessment.</p>
+<p>A supplied HTTP session can archive the original responses when retention is
+required. The default client returns metadata and digests without saving source
+bytes; it is an access interface, not a retained dataset.</p>
+
+<h2>Coverage and limitations</h2>
+<p class="limit">Status, ownership and full dates remain beside FieldConcept
+because the shared schema has no corresponding fields. Equity values are
+preserved without a percentage conversion or a completeness claim. FDP consents
+remain NOT_EVALUATED until a verified consent source is supplied. A missing
+depth remains unknown rather than zero; an observed zero is retained.</p>
+<p>Well-derived depth represents the contributing sample and can vary across a
+field. No outlier, datum or spatial representativeness qualification is added.
+The source schema check is not a live field validation campaign. Reservoir,
+host, schedule and commercial evidence remain necessary before a field
+recommendation can be issued. The reference chain's existing pre-tax economics
+and missing drilling-capital limitations remain outside this metadata change.</p>
+</main>
+</body>
+</html>

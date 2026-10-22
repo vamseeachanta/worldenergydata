@@ -1,0 +1,24 @@
+{
+  "description": "Synthetic records using NSTA fields and wells schema names; no real field observations.",
+  "fields": [
+    {
+      "OBJECTID": 1,
+      "FIELDNAME": "EXAMPLE",
+      "FIELDTYPE": "OIL",
+      "CURR_OPER": "Example operator",
+      "STATUS": "PRODUCING",
+      "PROD_DATE": "2001/06",
+      "DISC_DATE": "1990/02",
+      "DEPTH_M": null,
+      "CURRLIC": "Example licensee",
+      "EQUITY": "60",
+      "CURRLIC2": "Other licensee",
+      "EQUITY2": "40"
+    }
+  ],
+  "wells": [
+    {"OBJECTID": 11, "TARGETFLD": "EXAMPLE", "WATDEP_M": 100.0},
+    {"OBJECTID": 12, "TARGETFLD": " example ", "WATDEP_M": 140.0},
+    {"OBJECTID": 13, "TARGETFLD": "OTHER", "WATDEP_M": 900.0}
+  ]
+}
