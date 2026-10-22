@@ -135,7 +135,8 @@ class CnloerPdfClient:
         ):
             raise ValueError("invalid cache manifest")
         path = self.cache_dir / expected
-        payload = path.read_bytes()
+        with path.open("rb") as stream:
+            payload = stream.read(self.max_bytes + 1)
         if (
             len(payload) > self.max_bytes
             or len(payload) != manifest.get("size_bytes")

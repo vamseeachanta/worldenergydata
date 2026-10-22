@@ -163,6 +163,41 @@ def test_cache_hit_obeys_current_size_limit(tmp_path, remote):
         smaller.download(year=2026, field_code="h")
 
 
+@pytest.mark.parametrize("enlarge_cache", [False, True])
+def test_cache_hit_bounds_payload_read(tmp_path, remote, monkeypatch, enlarge_cache):
+    path = client(tmp_path).download(year=2026, field_code="h")
+    if enlarge_cache:
+        path.write_bytes(PDF + b"x" * 8192)
+    smaller = cnloer_client.CnloerPdfClient(
+        cache_dir=tmp_path, timeout=10, max_bytes=16
+    )
+    original_open = type(path).open
+    read_sizes = []
+    read_lengths = []
+
+    def tracked_open(cache_path, *args, **kwargs):
+        stream = original_open(cache_path, *args, **kwargs)
+        if cache_path == path:
+            original_read = stream.read
+
+            def tracked_read(size=-1):
+                read_sizes.append(size)
+                payload = original_read(size)
+                read_lengths.append(len(payload))
+                return payload
+
+            monkeypatch.setattr(stream, "read", tracked_read)
+        return stream
+
+    monkeypatch.setattr(type(path), "open", tracked_open)
+    remote.reset_mock()
+    with pytest.raises(ValueError, match="size"):
+        smaller.download(year=2026, field_code="h")
+    assert read_sizes == [17]
+    assert read_lengths == [17]
+    remote.assert_not_called()
+
+
 def test_negated_ignore_pattern_is_rejected(tmp_path, remote):
     (tmp_path / ".gitignore").write_text("*\n!*.pdf\n")
     with pytest.raises(ValueError, match="gitignore"):
