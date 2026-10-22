@@ -3,7 +3,7 @@
 version: '1.0'
 sources:
 - title: BSEE PDRANKOP, CY2024, order by Total Oil, p. 1, first twenty rows
-  edition: 01-OCT-2026
+  edition: 15-OCT-2026
   url: https://www.data.bsee.gov/Production/Files/Rank%20File%20Oil%202024.pdf
 - title: 'Issue 420: requested alternate name, abbreviations and placeholders'
   url: https://github.com/vamseeachanta/worldenergydata/issues/420
@@ -71,40 +71,40 @@ operator_names:
   severity: block
 operator_aliases:
 - pattern: Shell
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: BP
-  case_sensitive: false
-  severity: block
+  case_sensitive: true
+  severity: warn
 - pattern: Anadarko
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Chevron
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Murphy
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: LLOG
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Union Oil
   case_sensitive: false
   severity: block
 - pattern: Hess
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Talos
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Woodside
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Exxon Mobil
   case_sensitive: false
   severity: block
 - pattern: ExxonMobil
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Arena Offshore
   case_sensitive: false
@@ -113,7 +113,7 @@ operator_aliases:
   case_sensitive: false
   severity: block
 - pattern: Cantium
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: Beacon Growthco
   case_sensitive: false
@@ -125,16 +125,16 @@ operator_aliases:
   case_sensitive: false
   severity: block
 - pattern: WPX
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: EOG
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 - pattern: OXY
-  case_sensitive: false
+  case_sensitive: true
   severity: block
 placeholder_patterns:
-- pattern: (?:operator|company)\s+[A-Z]
-  case_sensitive: false
+- pattern: (?i:operator|company)\s+[A-Z]
+  case_sensitive: true
   severity: block
   regex: true

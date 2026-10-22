@@ -10,11 +10,13 @@ or proof of anonymity. Repository-wide identifier gates remain retired.
 
 `operator_names` transcribes the first twenty rows of BSEE's
 [Production by Operator Ranked by Volume](https://www.data.bsee.gov/Production/Files/Rank%20File%20Oil%202024.pdf),
-PDRANKOP, edition 01-Oct-2026, page 1, January–December 2024, ordered by Total Oil.
+PDRANKOP, edition 15-Oct-2026, page 1, January–December 2024, ordered by Total Oil.
 The row count is the policy scope requested in issue 420, not an engineering
 acceptance limit. This is an oil ranking, not a gas ranking or combined-energy
-ranking. BSEE publishes this URL as a changing report; the edition identifies
-the transcription used here. No production quantities are copied.
+ranking. BSEE publishes this URL as a changing report. The edition was retrieved
+on 22-Oct-2026, and all twenty selected labels were compared in source order.
+No archived copy of the earlier cited edition was verified; the citation now
+identifies the retrieved report. No production quantities are copied.
 
 Source-truncated labels are retained as printed. `operator_aliases` includes
 shortened public names from those rows, spacing variants of Exxon Mobil, and
@@ -41,10 +43,17 @@ The YAML mirrors the workspace list's section-of-entry format:
 Table 1. Policy metadata and rule fields.
 
 Literal rules are escaped before compilation. Word boundaries prevent short
-names matching inside longer words. Placeholder rules match a single-letter
-label following `operator` or `company`, ignoring case. Shared metadata,
-including `exclusions`, is accepted; exclusions are deliberately not applied
-inside the explicitly selected report directory. There is no whole-file bypass.
+names matching inside longer words. Single-word aliases require exact case to
+avoid routine narrative matches, including lowercase terms before a hyphen.
+The ambiguous bridge-plug abbreviation produces a warning rather than a block.
+Full operator names and multiword aliases still block regardless of case.
+Lowercase single-word aliases are intentionally outside automatic detection;
+warnings and indirect references require contextual review.
+
+Placeholder rules match an uppercase single-letter label following `operator`
+or `company`; only the keyword ignores case. Shared metadata, including
+`exclusions`, is accepted; exclusions are deliberately not applied inside the
+explicitly selected report directory. There is no whole-file bypass.
 
 ## Usage and results
 

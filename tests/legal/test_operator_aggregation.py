@@ -59,7 +59,10 @@ def run_check(tmp_path, text, external=None, local=None):
     return result
 
 
-@pytest.mark.parametrize("text", ["Operator X", "company A", "OPERATOR Z"])
+@pytest.mark.parametrize(
+    "text",
+    ["Operator X", "company A", "OPERATOR Z", "operator A", "COMPANY B", "Company C"],
+)
 def test_placeholder_blocks(tmp_path, text):
     result = run_check(tmp_path, text)
     assert result.returncode == 1, result.stderr
@@ -79,6 +82,50 @@ def test_aggregate_language_and_word_boundaries_pass(tmp_path):
         tmp_path, "Peer aggregate; oxygen; company analysis; operators overall."
     )
     assert result.returncode == 0, result.stderr
+
+
+@pytest.mark.parametrize(
+    "text, warning",
+    [
+        ("Hot work used an oxy-acetylene torch.", False),
+        ("The shell of the separator cracked.", False),
+        ("A BP was set above the perforations.", True),
+        ("the company a contractor hired", False),
+        ("Operator x", False),
+    ],
+)
+def test_routine_narratives_do_not_block(tmp_path, text, warning):
+    result = run_check(tmp_path, text)
+    assert result.returncode == 0, result.stderr
+    assert "BLOCK" not in result.stdout
+    assert ("WARN memo.md:1" in result.stdout) is warning
+
+
+def test_lowercase_short_aliases_do_not_match(tmp_path):
+    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    for entry in policy["operator_aliases"]:
+        if " " not in entry["pattern"]:
+            result = run_check(tmp_path, entry["pattern"].lower())
+            assert result.returncode == 0, result.stderr
+            assert "WARN" not in result.stdout
+
+
+def test_aliases_keep_exact_case_detection(tmp_path):
+    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    for entry in policy["operator_aliases"]:
+        result = run_check(tmp_path, entry["pattern"])
+        severity = entry["severity"]
+        assert result.returncode == (1 if severity == "block" else 0), result.stderr
+        assert f"{severity.upper()} memo.md:1" in result.stdout
+
+
+@pytest.mark.parametrize("letter_case", ["lower", "upper"])
+def test_full_operator_names_remain_case_insensitive(tmp_path, letter_case):
+    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    for entry in policy["operator_names"]:
+        text = getattr(entry["pattern"], letter_case)()
+        result = run_check(tmp_path, text)
+        assert result.returncode == 1, result.stderr
 
 
 def test_external_list_union_and_non_disclosure(tmp_path):
@@ -160,7 +207,7 @@ def test_duplicate_policy_keys_fail_closed(tmp_path, source, policy):
 
 
 def test_top_twenty_source_rows_are_present():
-    """BSEE PDRANKOP, 01-Oct-2026, CY2024, p.1, first twenty Total Oil rows.
+    """BSEE PDRANKOP, 15-Oct-2026, CY2024, p.1, first twenty Total Oil rows.
 
     The expected names are transcribed independently from the source table;
     truncated source labels remain as printed, without invented completions.
@@ -188,6 +235,7 @@ def test_top_twenty_source_rows_are_present():
         "Talos ERT LLC",
     }
     policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
+    assert policy["sources"][0]["edition"] == "15-OCT-2026"
     assert {entry["pattern"] for entry in policy["operator_names"]} == expected
     assert all(entry["severity"] == "block" for entry in policy["operator_names"])
 
