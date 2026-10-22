@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API12 NPV with explicit royalty evidence</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 68rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #192d3a; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: .5rem; border: 1px solid #aabac5; text-align: left; }
+    pre { background: #eef3f6; padding: 1rem; overflow-x: auto; }
+    .limit { border-left: .3rem solid #8a5800; padding-left: 1rem; }
+  </style>
+</head>
+<body>
+<h1>API12 NPV with explicit royalty evidence</h1>
+<p>The existing API12 scalar calculation uses FDAS discounting, WTI-derived gross
+revenue and assumptions-manager costs. The optional
+<code>calculate_npv_with_citations</code> method deducts a caller-supplied royalty
+fraction and emits its citation beside the numeric NPV. Without that input,
+the original gross result is returned with royalty marked
+<code>NOT_EVALUATED</code>.</p>
+
+<h2>Revision history</h2>
+<table>
+  <thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+  <tbody><tr><td>1</td><td>2026-10-20</td><td>Document explicit royalty evidence and a hand-calculated example to distinguish gross and royalty-adjusted NPV.</td></tr></tbody>
+</table>
+<p>Table 1. Revision history.</p>
+
+<h2>Method and source basis</h2>
+<p>For period <em>t</em>, royalty is gross oil revenue multiplied by the supplied
+fraction. Operating cashflow is gross revenue less royalty and volume multiplied
+by unit operating cost. Capital expenditure occurs at inception. These are
+accounting definitions; the royalty fraction is a required input rather than a
+statutory default.</p>
+<pre>CF[0] = -CAPEX
+CF[t] = gross_revenue[t] * (1 - royalty_rate) - production[t] * OPEX
+NPV = sum(CF[t] / (1 + r_period)**t)
+r_month = (1 + r_annual)**(1/12) - 1</pre>
+<p>The NPV reference is <a href="https://openstax.org/books/principles-finance/pages/16-2-net-present-value-npv-method">OpenStax, Principles of Finance (2022), Section 16.2, Net Present Value Method</a>.
+The implemented discounting source is the repository's FDAS financial module
+(2025 implementation), <code>calculate_npv</code> in
+<code>packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py</code>.
+The twelve-period conversion is the calendar convention for monthly cashflows.
+The citation identity and direct-resolution method follow the calculation-output
+citation contract v1 (2026). Costs and discount rates continue to resolve through
+<code>AssumptionsManager</code>, including existing configuration overrides.</p>
+
+<h2>Worked example: synthetic inputs</h2>
+<p>Every value in this example is an assumed test input. The fraction one eighth
+does not establish a federal or lease-specific rate, and the oil prices are
+synthetic rather than a retrieved WTI series.</p>
+<table>
+  <thead><tr><th>Input</th><th>Inception</th><th>Annual period 1</th><th>Annual period 2</th></tr></thead>
+  <tbody>
+    <tr><td>Capital expenditure (USD)</td><td>1000</td><td>0</td><td>0</td></tr>
+    <tr><td>Oil production (bbl)</td><td>0</td><td>100</td><td>200</td></tr>
+    <tr><td>Oil price (USD/bbl)</td><td>Not applicable</td><td>10</td><td>15</td></tr>
+    <tr><td>Gross revenue (USD)</td><td>0</td><td>1000</td><td>3000</td></tr>
+    <tr><td>Operating cost (USD/bbl)</td><td>Not applicable</td><td>2</td><td>2</td></tr>
+    <tr><td>Royalty fraction (dimensionless)</td><td>Not applicable</td><td>1/8</td><td>1/8</td></tr>
+    <tr><td>Annual discount fraction (dimensionless)</td><td>0.1</td><td>0.1</td><td>0.1</td></tr>
+    <tr><td>Net cashflow (USD)</td><td>-1000</td><td>675</td><td>2225</td></tr>
+  </tbody>
+</table>
+<p>Table 2. Synthetic cashflow basis; each operating period ends one year after the preceding period.</p>
+<p>The hand calculation is
+<code>-1000 + 675/1.1 + 2225/1.1² = 175750/121</code> USD,
+which rounds to <strong>1452.5 USD</strong>. The gross calculation without royalty
+is <code>-1000 + 800/1.1 + 2600/1.1² = 227000/121</code> USD,
+or <strong>1876.0 USD</strong>. Royalty reduces NPV by <strong>423.6 USD</strong>.
+The difference is evaluated before rounding. Neither result qualifies an actual
+lease or includes tax, royalty relief, gas revenue or abandonment costs.</p>
+
+<h2>Executable example</h2>
+<p>The example creates only synthetic evidence in a temporary directory. The
+regression test independently checks its answer as an exact rational number.</p>
+<pre id="example">from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import pandas as pd
+
+from worldenergydata.bsee.analysis.production_api12 import ProductionAPI12Analysis
+from worldenergydata.fdas.core.citations import Citation, CitedRoyalty
+
+cfg = {"economics": {"cost": {
+    "CAPEX": 1000, "OPEX": 2, "discount_rate_annual": 0.1
+}}}
+revenue = pd.DataFrame({
+    "Month": ["Period 1", "Period 2"],
+    "Monthly Oil Production": [100, 200],
+    "Revenue (USD)": [1000, 3000],
+})
+with TemporaryDirectory() as folder:
+    root = Path(folder)
+    relative = "wikis/engineering/standards/example.md"
+    page = root / relative
+    page.parent.mkdir(parents=True)
+    page.write_text(
+        "---\ncode_id: SYNTHETIC-ROYALTY\npublisher: Synthetic example\n"
+        'revision: "1"\nsource_sibling: generic\nroyalty_rate: 0.125\n'
+        "---\nAssumed worked-example fraction: one eighth.\n",
+        encoding="utf-8",
+    )
+    royalty = CitedRoyalty(rate=1 / 8, citation=Citation(
+        code_id="SYNTHETIC-ROYALTY", publisher="Synthetic example",
+        revision="1", section="Worked example", wiki_path=relative,
+    ))
+    result = ProductionAPI12Analysis().calculate_npv_with_citations(
+        cfg, revenue, period="annual", royalty=royalty, wiki_root=root
+    )
+    print(f"NPV: {result['npv']:.1f} USD; royalty: {result['royalty_status']}")
+# NPV: 1452.5 USD; royalty: EVALUATED</pre>
+
+<h2>Evidence and compatibility boundary</h2>
+<p>The explicit wiki root contains the relative <code>wikis/</code> tree.
+Frontmatter shall match <code>code_id</code>, <code>publisher</code>,
+<code>revision</code>, <code>source_sibling</code> and optional
+<code>source_project</code>; a numeric <code>royalty_rate</code> shall equal the
+input fraction. Missing files, metadata mismatches, ambiguous YAML, nonfinite
+fractions, source pages and paths escaping the root cause
+<code>CitationResolutionError</code> before calculation. Invalid input records
+raise <code>ValueError</code> or <code>TypeError</code>. An explicitly evidenced
+zero fraction is <code>EVALUATED</code>; absent evidence is
+<code>NOT_EVALUATED</code>, with a null rate and empty citation list.</p>
+<p class="limit">Matching metadata establishes that the supplied fraction agrees
+with the selected page. It does not establish the source's legal applicability,
+freshness, lease terms, valuation adjustments or royalty relief. Those require
+source review. No universal federal royalty rate is introduced. Public reference
+retrieval did not provide usable source content, so no statutory numeric value
+is qualified by this example.</p>
+<p>The original <code>calculate_npv</code> and compatibility wrappers return
+unchanged scalar results. The sidecar API expects gross oil revenue; passing
+already-net revenue would deduct royalty twice. Missing or nonfinite gross
+revenue and production are rejected in the cited path. The period argument
+defines equal cashflow spacing; date labels are not used to infer elapsed time.
+The general citation rollout
+remains tracked separately in issue 361; issue 367 remains open for qualified
+lease evidence. No archived calculator is imported or reinstated.</p>
+<p>The executable regression suites are
+<code>tests/unit/bsee/analysis/test_production_api12_royalty.py</code> and
+<code>tests/unit/fdas/core/test_citations.py</code>.</p>
+</body>
+</html>

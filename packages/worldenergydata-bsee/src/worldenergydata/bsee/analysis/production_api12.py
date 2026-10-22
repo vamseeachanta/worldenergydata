@@ -2,6 +2,7 @@
 import datetime
 import json
 import os
+from dataclasses import asdict
 
 # Third party imports
 import numpy as np
@@ -17,6 +18,7 @@ from loguru import logger
 
 from worldenergydata.bsee.data.bsee_data import BSEEData
 from worldenergydata.common.legacy.data import DateTimeUtility
+from worldenergydata.fdas.core.citations import CitedRoyalty
 from worldenergydata.fdas.core.config import AssumptionsManager
 from worldenergydata.fdas.core.financial import calculate_npv as fdas_calculate_npv
 from worldenergydata.lower_tertiary.wti_prices import load_extended_wti_prices
@@ -46,6 +48,24 @@ def _production_month(value) -> pd.Timestamp:
     if len(text) == 6 and text.isdigit():
         return pd.Timestamp(year=int(text[:4]), month=int(text[4:6]), day=1)
     return pd.to_datetime(text).to_period("M").to_timestamp()
+
+
+def _royalty_adjusted_revenue(revenue_df, rate):
+    """Apply a cited fraction to complete gross-revenue rows, without mutation."""
+    working = revenue_df.copy()
+    if "Month" in working.columns:
+        working = working[working["Month"].astype(str).str.strip() != ""].copy()
+    for column in ("Revenue (USD)", "Monthly Oil Production"):
+        values = working[column]
+        if values.isna().any() or values.astype(str).str.strip().eq("").any():
+            raise ValueError(f"missing {column}")
+    gross = working["Revenue (USD)"].apply(_currency_to_float)
+    production = pd.to_numeric(working["Monthly Oil Production"], errors="coerce")
+    if not np.isfinite(gross).all() or not np.isfinite(production).all():
+        raise ValueError("revenue and production must be finite numeric inputs")
+    # Accounting identity: net = gross * (1 - required royalty fraction).
+    working["Revenue (USD)"] = gross * (1 - rate)
+    return working
 
 
 class ProductionAPI12Analysis:
@@ -802,6 +822,41 @@ class ProductionAPI12Analysis:
     def perform_npv_calculation(self, cfg, revenue_df):
         """Backward-compatible wrapper around the FDAS API12 NPV path."""
         return self.calculate_npv(cfg, revenue_df)
+
+    def calculate_npv_with_citations(
+        self,
+        cfg,
+        revenue_df,
+        dev_system="default",
+        period="monthly",
+        *,
+        royalty: CitedRoyalty | None = None,
+        wiki_root=None,
+    ):
+        """Return NPV and an optional royalty sidecar without changing scalar callers.
+
+        The input table contains gross oil revenue. An explicit cited royalty
+        will be deducted once before the existing OPEX and FDAS discounting.
+        Without royalty evidence the original gross calculation is returned,
+        with royalty marked NOT_EVALUATED rather than assumed zero. Root and
+        rate applicability are caller responsibilities; no lease rate is inferred.
+        """
+        working = revenue_df
+        citations = []
+        if royalty is not None:
+            if not isinstance(royalty, CitedRoyalty):
+                raise ValueError("royalty must be a CitedRoyalty")
+            if wiki_root is None:
+                raise ValueError("wiki_root is required for cited royalty")
+            royalty.validate(wiki_root)
+            working = _royalty_adjusted_revenue(revenue_df, royalty.rate)
+            citations = [asdict(royalty.citation)]
+        return {
+            "npv": self.calculate_npv(cfg, working, dev_system, period),
+            "royalty_status": "EVALUATED" if royalty is not None else "NOT_EVALUATED",
+            "royalty_rate": float(royalty.rate) if royalty is not None else None,
+            "citations": citations,
+        }
 
     def perform_excel_aligned_npv_calculation(self, cfg, revenue_df):
         """Backward-compatible wrapper around the FDAS API12 NPV path."""
