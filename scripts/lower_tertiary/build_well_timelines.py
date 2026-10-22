@@ -31,10 +31,15 @@ _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
+from lower_tertiary.drilling_benchmark import (
+    benchmark_well,
+    load_benchmark_rows,
+)
 
 HERE = REPO / "reports/lower_tertiary/lifecycle/wells"
 TEMPLATE = HERE / "well_lifecycle_template.html"
 FACTS = HERE / "_wells.json"
+DRILLING_CSV = REPO / "reports/lower_tertiary/lt_drilling_insights.csv"
 # Non-dated stamp: 56 pages are regenerated on every content change, so a
 # hardcoded date would go stale across the fleet (#948 review f9b).
 GENERATED = "BSEE benchmark (production) + V30 workbook (native rig-days)"
@@ -75,7 +80,7 @@ def _pretty(v):
     return p[0]
 
 
-def facts_to_well(w: dict, field: dict) -> dict:
+def facts_to_well(w: dict, field: dict, *, drilling_rows=()) -> dict:
     drill = w.get("drilling_rig_days") or 0
     compl = w.get("completion_rig_days") or 0
     total = drill + compl
@@ -164,11 +169,23 @@ def facts_to_well(w: dict, field: dict) -> dict:
     if w.get("mud_weight_ppg") is not None:
         drill_li.append(f"{w['mud_weight_ppg']:g} ppg mud")
     drill_li.append(f"spud {_pretty(w['spud_date'])}")
+    benchmark = benchmark_well(w, drilling_rows)
+    if benchmark["status"] == "EVALUATED":
+        badge = f"Days vs depth · {benchmark['observed_to_fitted']:.1f}× fitted"
+        drill_li.append(
+            f"Fitted {benchmark['fitted_days']:.1f} days; "
+            f"{benchmark['peer_count']} other API wellbores"
+        )
+    else:
+        badge = "Days vs depth · NOT_EVALUATED"
+        drill_li.append(benchmark["reason"])
+    drill_li.append(benchmark["limitation"])
     cards = [
         {
             "t": "Drill · done",
             "big": f"{drill:g} rig-days",
             "li": drill_li,
+            "badge": badge,
         },
         {
             "t": "Complete · done",
@@ -219,6 +236,7 @@ def facts_to_well(w: dict, field: dict) -> dict:
         "pGates": p_gates,
         "pSpans": p_spans,
         "cards": cards,
+        "drilling_benchmark": benchmark,
     }
 
 
@@ -275,13 +293,14 @@ def _economics_context():
 def main():
     data = json.loads(FACTS.read_text())
     fields = data["fields"]
+    drilling_rows = load_benchmark_rows(DRILLING_CSV)
     we, econ_cfg, loader, rates_dir, revenue_map, field_facts, norms_path = (
         _economics_context()
     )
     rows = []
     for w in data["wells"]:
         field = fields[w["field_id"]]
-        well = facts_to_well(w, field)
+        well = facts_to_well(w, field, drilling_rows=drilling_rows)
         # --- economics card payload (issue #849) ---
         ff = field_facts.get(w["field_id"], {})
         econ = we.compute_well_economics(
