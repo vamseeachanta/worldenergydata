@@ -1,9 +1,11 @@
 """Expose typed catalog evidence without treating research as current design input."""
 
+import importlib.util
 from collections import defaultdict
+from pathlib import Path
 
 
-def _research_entry(entity, bundle, legacy, duplicate):
+def _research_entry(entity, bundle, legacy, duplicate, reader=None):
     identifier = entity["entity_id"]
     origin = entity.get("origin_entity_id")
     observations = [
@@ -32,7 +34,23 @@ def _research_entry(entity, bundle, legacy, duplicate):
         "research_as_of": bundle.get("manifest", {}).get("as_of"),
         "legacy_attributes": legacy,
         "research_observations": observations,
+        **({"research_evidence": reader.entity(identifier)} if reader else {}),
     }
+
+
+def _evidence_reader(bundle):
+    # Older programmatic callers supply identity-only bundles. Evidence fields
+    # are optional for these callers; the CLI always uses a validated bundle.
+    if "links" not in bundle:
+        return None
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "src/worldenergydata/field_development/catalog_evidence.py"
+    )
+    spec = importlib.util.spec_from_file_location("catalog_evidence", source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.CatalogEvidence(bundle)
 
 
 def _identity_matches(crosswalk, ids):
@@ -58,6 +76,7 @@ def _identity_matches(crosswalk, ids):
 def extend_fields(pairs, bundle, fingerprint):
     """Merge accepted fingerprint groups; retain pending/composite identities."""
     fields = [row for row in bundle["entities"] if row["entity_type"] == "field"]
+    reader = _evidence_reader(bundle)
     accepted, possible = _identity_matches(
         bundle["crosswalk"], {row["entity_id"] for row in fields}
     )
@@ -70,7 +89,11 @@ def extend_fields(pairs, bundle, fingerprint):
             result.append(entry)
     result.extend(
         _research_entry(
-            row, bundle, legacy.get(row["entity_id"], []), row["entity_id"] in possible
+            row,
+            bundle,
+            legacy.get(row["entity_id"], []),
+            row["entity_id"] in possible,
+            reader,
         )
         for row in fields
     )
@@ -80,5 +103,15 @@ def extend_fields(pairs, bundle, fingerprint):
         "registered_nonfields": len(bundle["entities"]) - len(fields),
         "accepted_reconciled_identities": len(legacy),
         "possible_duplicates": len(possible),
+        "nonfield_entities": [
+            _research_entry(row, bundle, [], False, reader)
+            for row in bundle["entities"]
+            if row["entity_type"] != "field"
+        ],
+        **(
+            {"state": bundle["manifest"]["state"]}
+            if "state" in bundle["manifest"]
+            else {}
+        ),
     }
     return result, counts

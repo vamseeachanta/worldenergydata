@@ -32,6 +32,13 @@ Inherited costs reference their existing parent rows rather than add new
 cost observations. The extension does not establish national completeness,
 verified current configuration, engineering suitability or field allocation.
 
+`catalog_integration.CatalogEvidence(bundle)` provides exact-ID entity and record
+views after bundle validation. Atlas extension fields carry optional
+`research_evidence` with source URLs and scoped record groups; nonfield scopes
+are exposed separately under `meta.catalog_extension.nonfield_entities`.
+See the [reader guide and runnable synthetic example](../../../docs/data/angola-catalog-evidence.md)
+for inputs, method, expected counts and publication limits.
+
 Normalized, worldenergydata-native reference tables covering global oil & gas
 **fields**, **production facilities**, **host vessels**, **drilling rigs** and
 **jackups**. Re-expressed in clean relational tables from a legacy reference
