@@ -13,7 +13,8 @@ deck must raise, never silently degrade to a wrong royalty:
   canonical dev systems, each rate in ``[0.0, 1.0]``;
 * provenance fields (``source_url``, ``source_ref``, ``revision``,
   ``effective_date``, ``schema_version``) are required and non-empty;
-* ``price_marker`` / ``currency`` are validated but *declarative* in v1.
+* ``price_marker`` / ``currency`` are validated here; the cashflow consumer
+  additionally requires an oil marker and USD before calculating revenue.
 
 Author: WorldEnergyData Team
 Issue:  https://github.com/vamseeachanta/worldenergydata/issues/714
