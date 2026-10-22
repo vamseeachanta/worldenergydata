@@ -7,11 +7,20 @@ import re
 import sys
 import time
 from collections.abc import Callable
+from functools import cache
 from http.client import HTTPException, HTTPSConnection
 from typing import Any
 from urllib.parse import quote, urlencode, urlsplit
 
 API = Callable[[str], dict[str, Any]]
+# Issue #1350, section 1: replay requires PASS for every protected name.
+REQUIRED_CHECKS = (
+    "Lint",
+    "Type Check",
+    "Security Scan",
+    "Documentation",
+    "Test (PR gate)",
+)
 
 
 def pages(api: API, path: str, key: str) -> list[dict[str, Any]]:
@@ -151,6 +160,17 @@ def decide(
         return result
 
 
+def select_mode(api: API, context: dict[str, Any]) -> dict[str, Any]:
+    """Select replay only with a single all-PASS snapshot; otherwise run full CI."""
+    snapshot = cache(api)
+    evidence = {}
+    for name in REQUIRED_CHECKS:
+        evidence[name] = decide(snapshot, context, name)
+        if evidence[name]["decision"] != "PASS":
+            return {"replay": False, "evidence": evidence}
+    return {"replay": True, "evidence": evidence}
+
+
 def request_json(path: str) -> dict[str, Any]:
     """Use the workflow's read-only token for a bounded GitHub REST request."""
     base = urlsplit(os.environ.get("GITHUB_API_URL", "https://api.github.com"))
@@ -179,7 +199,8 @@ def request_json(path: str) -> dict[str, Any]:
 
 
 def main() -> int:
-    """Emit one audit line and return the actual copied decision."""
+    """Emit an audit line; select gate mode or return a copied decision."""
+    selecting_mode = sys.argv[1:] == ["--mode"]
     try:
         with open(os.environ["GITHUB_EVENT_PATH"], encoding="utf-8") as stream:
             event = json.load(stream)
@@ -192,10 +213,25 @@ def main() -> int:
             base_ref=pr["base"]["ref"],
             base_repository_id=pr["base"]["repo"]["id"],
         )
-        result = decide(request_json, context, sys.argv[1])
+        result = (
+            select_mode(request_json, context)
+            if selecting_mode
+            else decide(request_json, context, sys.argv[1])
+        )
     except (OSError, ValueError, KeyError, IndexError, TypeError):
-        result = {"decision": "FAIL", "reason": "invalid replay context"}
+        result = (
+            {"replay": False, "evidence": {}, "reason": "invalid replay context"}
+            if selecting_mode
+            else {"decision": "FAIL", "reason": "invalid replay context"}
+        )
     print(json.dumps(result, sort_keys=True))
+    if selecting_mode:
+        # GitHub Actions, "Passing information between jobs" (accessed 2026):
+        # https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/pass-job-outputs
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as stream:
+            stream.write(f"replay={str(result['replay']).lower()}\n")
+            stream.write(f"evidence={json.dumps(result['evidence'], sort_keys=True)}\n")
+        return 0  # Unavailable evidence is a normal full-gate fallback.
     return 0 if result["decision"] == "PASS" else 1
 
 
