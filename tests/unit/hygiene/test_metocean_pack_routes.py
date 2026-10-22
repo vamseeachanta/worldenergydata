@@ -36,12 +36,13 @@ def test_extreme_selection_is_scoped_per_route(heading):
 
 @pytest.mark.parametrize("heading", ["## 3. Method", "## 9. Dependencies"])
 def test_contours_cite_the_routes_actually_called(heading):
-    """Local contours L203-L252 use raw joint output or virocon, not CMA."""
+    """Native aux_funcs.py L121-L175 curves have constant joint density."""
     text = section(heading)
     assert "`joint_distribution_Hs_Tp`" in text
-    assert "`virocon` directly" in text
-    assert "heuristic fallback" in text
-    assert "statistics/environmental_contours.py:L203-L270" in text
+    assert "constant-density" in text
+    assert "NOT_EVALUATED" in text
+    assert "heuristic fallback is removed" in text
+    assert "aux_funcs.py#L121-L175" in text
     assert "CMA/contours.py" not in text
     assert "extreme.py#L610-L766" in text
 
@@ -68,3 +69,13 @@ def test_lesson_log_identifies_the_superseded_delegation_claim():
     assert "`pyextremes.get_extremes`" in text
     assert "`idxmax`" in text
     assert "`virocon` directly" in text
+
+
+def test_joint_model_parameters_and_supported_methods():
+    """Upstream extreme.py L731-L766 defines conditional moments, not Hs shape."""
+    text = section("## 9. Dependencies")
+    assert "mu(Hs) = a1 + a2" in text
+    assert "variance" in text and "b1 + b2" in text
+    assert "Tp first" in text
+    assert "Weibull 2P Hs marginal via" not in text
+    assert "`lonowe()`" in text

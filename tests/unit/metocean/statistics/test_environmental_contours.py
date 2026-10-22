@@ -1,15 +1,14 @@
-"""
-ABOUTME: Tests for EnvironmentalContour (IFORM/ISORM contour wrapper).
-ABOUTME: Uses synthetic Hs-Tp data — no live API calls.
+"""LoNoWe contour regression and explicit unsupported-method contracts.
+
+Basis: metocean-stats v.1.2.0 extreme.py L610-L766 and aux_funcs.py
+L121-L175 (Tp first, constant joint density, data-derived duration).
+Synthetic inputs and hand calculations are specified in lonowe_example.py.
 """
 
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
 import pytest
-
 from worldenergydata.metocean.statistics.environmental_contours import (
-    ContourResult,
     EnvironmentalContour,
 )
 from worldenergydata.metocean.statistics.joint_probability import (
@@ -18,122 +17,127 @@ from worldenergydata.metocean.statistics.joint_probability import (
 )
 
 
-def _make_hs_tp(n: int = 5000, seed: int = 42) -> tuple[pd.Series, pd.Series]:
-    rng = np.random.default_rng(seed)
-    dates = pd.date_range("2010-01-01", periods=n, freq="h")
-    hs = rng.weibull(1.5, size=n) * 2.0 + 0.3
-    tp = 4.0 * np.sqrt(hs) + rng.normal(0, 1.0, size=n)
-    tp = np.clip(tp, 3.0, 25.0)
-    return (
-        pd.Series(hs, index=dates, name="hs"),
-        pd.Series(tp, index=dates, name="tp"),
+@pytest.fixture(scope="module")
+def sample():
+    from worldenergydata.metocean.statistics.examples.lonowe_example import (
+        synthetic_sample,
     )
 
-
-@pytest.fixture
-def joint_model():
-    hs, tp = _make_hs_tp()
-    jpm = JointProbabilityModel()
-    return jpm.fit(hs, tp)
+    return synthetic_sample()
 
 
-@pytest.fixture
-def hs_tp_data():
-    return _make_hs_tp()
+@pytest.fixture(scope="module")
+def joint_model(sample):
+    return JointProbabilityModel().fit(*sample, periods=[1, 100])
 
 
-class TestContourResult:
-    def test_contour_result_has_required_fields(self):
-        contour = ContourResult(
-            method="IFORM",
-            return_period=50,
-            hs_values=np.array([3.0, 4.0, 5.0]),
-            tp_values=np.array([10.0, 12.0, 14.0]),
-        )
-        assert contour.method == "IFORM"
-        assert contour.return_period == 50
-        assert len(contour.hs_values) == 3
-        assert len(contour.tp_values) == 3
+def test_axes_are_bounded_by_their_own_input_ranges(joint_model, sample):
+    """Bounds are sample extrema expanded by that variable's sample span.
 
-    def test_contour_result_arrays_equal_length(self):
-        hs = np.array([3.0, 4.0, 5.0])
-        tp = np.array([10.0, 12.0, 14.0])
-        contour = ContourResult(
-            method="ISORM", return_period=100, hs_values=hs, tp_values=tp
-        )
-        assert len(contour.hs_values) == len(contour.tp_values)
+    This data-derived dimensional bound allows tail extrapolation, but fails
+    if Tp is used as Hs: max(Tp contour) exceeds max(Hs) + span(Hs).
+    No environmental acceptance limit is asserted.
+    """
+    contour = EnvironmentalContour().lonowe(joint_model, 100)
+    hs, tp = sample
+    assert 0 < contour.hs_values.min() < hs.min()
+    assert hs.max() < contour.hs_values.max() < hs.max() + np.ptp(hs)
+    assert 0 < contour.tp_values.min() < tp.min()
+    assert tp.max() < contour.tp_values.max() < tp.max() + np.ptp(tp)
+    # Exact upstream position contract, aux_funcs.py L165-L175.
+    np.testing.assert_array_equal(contour.hs_values, joint_model._raw_result[9][1])
+    np.testing.assert_array_equal(contour.tp_values, joint_model._raw_result[8][1])
+    assert contour.method == "LoNoWe"
 
 
-class TestEnvironmentalContourIFORM:
-    def setup_method(self):
-        self.ec = EnvironmentalContour()
+def test_larger_contour_encloses_smaller(joint_model):
+    """Nested density superlevel sets must have nested Tp intervals at each Hs.
 
-    def test_iform_returns_contour_result(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert isinstance(result, ContourResult)
+    Compare the branches on the smaller contour's Hs grid; no fitted constants
+    or arbitrary numerical tolerances enter this ordering check.
+    """
+    def branches(contour):
+        heights = np.unique(contour.hs_values)
+        bounds = [
+            contour.tp_values[contour.hs_values == height]
+            for height in heights
+        ]
+        return heights, np.array([t.min() for t in bounds]), np.array([t.max() for t in bounds])
 
-    def test_iform_method_label(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert result.method == "IFORM"
-
-    def test_iform_return_period_stored(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=100)
-        assert result.return_period == 100
-
-    def test_iform_has_hs_values(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert len(result.hs_values) > 0
-
-    def test_iform_has_tp_values(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert len(result.tp_values) > 0
-
-    def test_iform_hs_values_positive(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert (result.hs_values > 0).all()
-
-    def test_iform_tp_values_positive(self, joint_model):
-        result = self.ec.iform(joint_model, return_period=50)
-        assert (result.tp_values > 0).all()
+    ec = EnvironmentalContour()
+    small, large = ec.lonowe(joint_model, 1), ec.lonowe(joint_model, 100)
+    h, low, high = branches(small)
+    outer_h, outer_low, outer_high = branches(large)
+    assert outer_h.min() <= h.min() < h.max() <= outer_h.max()
+    assert np.all(np.interp(h, outer_h, outer_low) <= low)
+    assert np.all(np.interp(h, outer_h, outer_high) >= high)
+    assert large.hs_values.max() > small.hs_values.max()
 
 
-class TestEnvironmentalContourISORMM:
-    def setup_method(self):
-        self.ec = EnvironmentalContour()
-
-    def test_isorm_returns_contour_result(self, joint_model):
-        result = self.ec.isorm(joint_model, return_period=50)
-        assert isinstance(result, ContourResult)
-
-    def test_isorm_method_label(self, joint_model):
-        result = self.ec.isorm(joint_model, return_period=50)
-        assert result.method == "ISORM"
-
-    def test_isorm_has_values(self, joint_model):
-        result = self.ec.isorm(joint_model, return_period=50)
-        assert len(result.hs_values) > 0
-        assert len(result.tp_values) > 0
+@pytest.mark.parametrize("period", [10, 0, -1, float("nan")])
+def test_unfitted_period_is_rejected(joint_model, period):
+    with pytest.raises(ValueError, match="fitted return periods"):
+        EnvironmentalContour().lonowe(joint_model, period)
 
 
-class TestPlotContour:
-    def setup_method(self):
-        self.ec = EnvironmentalContour()
+@pytest.mark.parametrize("method", ["iform", "isorm"])
+def test_reliability_methods_are_not_density_contours(joint_model, method):
+    with pytest.raises(NotImplementedError, match="NOT_EVALUATED.*constant-density"):
+        getattr(EnvironmentalContour(), method)(joint_model, 100)
 
-    def test_plot_contour_returns_plotly_figure(self, joint_model):
-        contour = self.ec.iform(joint_model, return_period=50)
-        fig = self.ec.plot_contour(contour)
-        assert isinstance(fig, go.Figure)
 
-    def test_plot_contour_has_traces(self, joint_model):
-        contour = self.ec.iform(joint_model, return_period=50)
-        fig = self.ec.plot_contour(contour)
-        assert len(fig.data) >= 1
+def test_duration_mismatch_is_rejected(joint_model):
+    with pytest.raises(ValueError, match="duration"):
+        EnvironmentalContour(state_duration_hours=3).lonowe(joint_model, 100)
 
-    def test_plot_contour_with_data_overlay(self, joint_model, hs_tp_data):
-        hs, tp = hs_tp_data
-        data_df = pd.DataFrame({"hs": hs.values, "tp": tp.values})
-        contour = self.ec.iform(joint_model, return_period=50)
-        fig = self.ec.plot_contour(contour, data=data_df)
-        assert isinstance(fig, go.Figure)
-        # Should have more traces with data overlay
-        assert len(fig.data) >= 2
+
+def test_matching_duration_is_accepted(joint_model):
+    ec = EnvironmentalContour(state_duration_hours=joint_model.state_duration_hours)
+    np.testing.assert_array_equal(ec.lonowe(joint_model, 1).hs_values, joint_model._raw_result[9][0])
+
+
+def test_missing_fit_never_fabricates_an_ellipse():
+    model = JointModel(marginal_hs={}, conditional_tp={}, n_samples=0)
+    with pytest.raises(NotImplementedError, match="NOT_EVALUATED"):
+        EnvironmentalContour().lonowe(model, 100)
+
+
+def test_plot_preserves_units_and_coordinates(joint_model, sample):
+    contour = EnvironmentalContour().lonowe(joint_model, 100)
+    data = pd.DataFrame({"hs": sample[0], "tp": sample[1]})
+    fig = EnvironmentalContour().plot_contour(contour, data)
+    np.testing.assert_array_equal(fig.data[1].x[:-1], contour.tp_values)
+    np.testing.assert_array_equal(fig.data[1].y[:-1], contour.hs_values)
+    assert fig.layout.xaxis.title.text == "Tp (s)"
+    assert fig.layout.yaxis.title.text == "Hs (m)"
+
+
+def test_one_point_by_independent_log_density_algebra(joint_model, sample):
+    """Hand check, not a call to the backend density/contour implementation.
+
+    From v.1.2.0 extreme.py L735-L742, put y=ln(Tp). Constant density at
+    fixed Hs gives (y-mu)**2/(2*v)+y=constant. Completing the square gives
+    (y-(mu-v))**2=constant, hence t_low*t_high=exp(2*(mu-v)).
+    The two sampled roots bracket true roots within one Tp grid cell;
+    the grid endpoints and count are upstream extreme.py L731. Thus the
+    product of the two lower cell edges bounds the analytic product below,
+    and the upper edges bound it above. No fitted-output reference number
+    or arbitrary tolerance is used. Test height is nearest the sample median.
+    """
+    import math
+
+    for period in (1, 100):
+        contour = EnvironmentalContour().lonowe(joint_model, period)
+        heights = np.unique(contour.hs_values)
+        h = float(heights[np.argmin(abs(heights - sample[0].median()))])
+        t = contour.tp_values[contour.hs_values == h]
+        low, high = float(t.min()), float(t.max())
+        a = joint_model.conditional_tp["mu"]
+        b = joint_model.conditional_tp["variance"]
+        mu = a["a1"] + a["a2"] * h ** a["a3"]
+        v = b["b1"] + b["b2"] * math.exp(-b["b3"] * h)
+        # Grid resolution: v.1.2.0 extreme.py L731, linspace(.01,40,2000).
+        cell = (40.0 - 0.01) / (2000 - 1)
+        expected_product = math.exp(2 * (mu - v))
+        assert (low - cell) * (high - cell) < expected_product
+        assert expected_product < (low + cell) * (high + cell)

@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pytest
-
 from worldenergydata.metocean.statistics.eva import (
     EVAResult,
     ExtremeValueAnalysis,
@@ -183,3 +182,45 @@ class TestPlotReturnPeriod:
         result = self.eva.fit_annual_maxima(self.hs)
         fig = self.eva.plot_return_period(result)
         assert isinstance(fig, go.Figure)
+
+
+def test_annual_gumbel_values_and_partial_year_selection(monkeypatch):
+    """Independent hand calculation, with stipulated fit loc=4 and scale=2.
+
+    v.1.2.0 extreme.py L106-L137 selects calendar-year maxima and replaces
+    period 1 by 1.6. For Gumbel F(x)=exp(-exp(-(x-loc)/scale)), inversion
+    gives x=loc-scale*log(-log(1-1/T)). Thus use that scalar expression,
+    not scipy.isf or wrapper output, as the independent expected value.
+    Source: NIST/SEMATECH e-Handbook, online edition accessed 2026,
+    section 1.3.6.6.16, Gumbel maximum percent point function:
+    https://www.itl.nist.gov/div898/handbook/eda/section3/eda366g.htm. Synthetic dates deliberately include
+    partial years. The fit parameters are test inputs, not fitted evidence.
+    """
+    import math
+
+    import metocean_stats.stats.extreme as upstream
+
+    series = pd.Series(
+        [1.0, 5.0, 2.0, 7.0, 3.0, 9.0],
+        index=pd.to_datetime([
+            "2010-12-30", "2010-12-31", "2011-06-01",
+            "2011-12-31", "2012-01-01", "2012-01-02",
+        ]),
+        name="hs",
+    )
+    selected = []
+
+    def fit(values):
+        selected.append(list(values))
+        return 4.0, 2.0
+
+    monkeypatch.setattr(upstream.st.gumbel_r, "fit", fit)
+    result = ExtremeValueAnalysis().fit_annual_maxima(
+        series, distribution="GUM", periods=[1, 100],
+    )
+    assert selected
+    assert all(values == [5.0, 7.0, 9.0] for values in selected)
+    for requested, effective in [(1, 1.6), (100, 100)]:
+        expected = 4.0 - 2.0 * math.log(-math.log1p(-1.0 / effective))
+        assert result.return_levels[requested] == pytest.approx(expected)
+    assert result.return_levels[100] > result.return_levels[1]
