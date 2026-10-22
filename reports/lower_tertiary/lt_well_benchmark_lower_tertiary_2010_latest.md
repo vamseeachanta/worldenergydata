@@ -10,8 +10,11 @@ Per-well benchmark for **56 producing wells**, sorted by cumulative oil. Calenda
 |---|---|---|
 | 1 | 2026-10-19 | Rename calendar timing to prevent interpretation as drilling rig-time; saved values remain unchanged. |
 | 2 | 2026-10-20 | Document the retained completion_days name and its calendar basis for compatibility. |
+| 3 | 2026-10-22 | Link the calendar identity and worked example to make the timing basis auditable without raw data. |
 
 Spud to completion is the first completion operation date minus spud; completion to first oil is first oil minus that completion date. Both are elapsed calendar intervals, including suspensions, not rig-days. The benchmark population includes only producing wells in the stated spud window; it differs from the workbook and article populations on the [calendar cycle-time page](https://vamseeachanta.github.io/worldenergydata/drilling-insights.html).
+
+See the [calendar-span definition and synthetic worked example](../../docs/data-sources/bsee/analysis/rig_days/benchmark_calendar_spans.md) for the date identity and limits.
 
 ## Limits
 

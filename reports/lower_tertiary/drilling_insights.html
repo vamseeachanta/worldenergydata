@@ -19,7 +19,7 @@ th,td { text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }
  and include suspension and waiting between milestones.</p>
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-10-19</td><td>Replace mixed drilling-day claims with dated
-calendar intervals; explain populations and remove unsupported learning conclusions.</td></tr><tr><td>2</td><td>2026-10-20</td><td>Separate historical snapshot counts from the current workbook population and document the retained completion_days name.</td></tr><tr><td>3</td><td>2026-10-20</td><td>Use the issued revision date in the footer to keep regeneration dates consistent.</td></tr><tr><td>4</td><td>2026-10-21</td><td>Add sourced WAR limits with a calendar-specific basis; retain the dated intervals and distinguish depth from a duration denominator.</td></tr></table>
+calendar intervals; explain populations and remove unsupported learning conclusions.</td></tr><tr><td>2</td><td>2026-10-20</td><td>Separate historical snapshot counts from the current workbook population and document the retained completion_days name.</td></tr><tr><td>3</td><td>2026-10-20</td><td>Use the issued revision date in the footer to keep regeneration dates consistent.</td></tr><tr><td>4</td><td>2026-10-21</td><td>Add sourced WAR limits with a calendar-specific basis; retain the dated intervals and distinguish depth from a duration denominator.</td></tr><tr><td>5</td><td>2026-10-22</td><td>Read population counts from the supplied workbook and committed comparison and benchmark tables to prevent stale labels.</td></tr></table>
 </header>
 <section><h2>Definition and population</h2>
 <p>For each named lease row in workbook Sheet1, calendar days = TD date minus spud
@@ -27,21 +27,23 @@ calendar intervals; explain populations and remove unsupported learning conclusi
  are excluded. Missing or reversed dates are not evaluated; same-day dates give
  zero. 31 rows lack an ordered pair; 186 also have TVD and appear
  below. No positive-duration filter or producing-well filter is applied.</p>
-<p>The historical <b>184</b> figure counted positive legacy DRILLING_DAYS entries
- in the historical 217-wellbore workbook snapshot; the remaining 33 were zero/missing entries.
+<p>The supplied workbook has <b>184</b> positive legacy
+ DRILLING_DAYS entries among 217 named wellbores; the remaining 33
+ are zero/missing entries. Legacy counts are NOT_EVALUATED if that column is absent.
  Current population: 217 workbook wellbores.
- The historical 11,124-day total mixed milestone spans and WAR-union values and is withdrawn
+ The legacy 11,124-day total mixed milestone spans and WAR-union values and is withdrawn
  as a rig-time claim. The article's <b>211</b> wellbores and 21,944 days cover a
- different development population (excluding Big Foot), and count drilling plus
+ different development population (the article excludes a development present in the workbook), and count drilling plus
  completion, rather than this page's spud-to-TD interval. Neither the difference
  in counts nor the difference in totals measures missing rig-time or performance.</p>
-<p>Source for the historical counts and definitions:
+<p>Positive legacy counts and totals are read from the supplied workbook; article
+ counts are read from the committed reconciliation total row. Definition context:
 <a href="https://github.com/vamseeachanta/worldenergydata/issues/1062">data-basis investigation</a>;
  source for the article comparison:
 <a href="wo-april-2026-per-well-dc.html">per-well D&amp;C reconciliation, population table</a>.
  Exact row-level membership of the article population is not established by this
  workbook; a paired performance comparison is not evaluated.</p>
-<p>The producing-well benchmark is a third population, restricted by its configured
+<p>The producing-well benchmark has 56 producing wells, a third population, restricted by its configured
  spud window and OGOR-A production. Its <code>spud_to_completion_calendar_days</code>
  ends at the first completion operation, not TD. Its <code>completion_days</code>
  ends at first oil. Neither benchmark interval is rig-time.</p>
@@ -96,7 +98,7 @@ examples. The abstract does not establish MD versus TVD or comparability to
 the legacy figures here. The band is a plausibility reference, not an acceptance
 threshold; no per-well ratio is reproduced or asserted by this note.
 Record: https://api.crossref.org/works/10.2118/87117-MS</p><p>Sources examined 2026-10-21:</p><ul><li>eCFR, Office of the Federal Register, 30 CFR 250.743(a): https://www.ecfr.gov/current/title-30/chapter-II/subchapter-B/part-250/subpart-G/subject-group-ECFRa4d25de54b283e6/section-250.743</li><li>Official annual CFR, 2025 edition, 30 CFR 250.743(a): https://www.govinfo.gov/content/pkg/CFR-2025-title30-vol2/xml/CFR-2025-title30-vol2-sec250-743.xml</li><li>BSEE Raw Data, eWell Submissions WAR row: https://www.data.bsee.gov/Main/RawData.aspx</li><li>BSEE eWell WAR Online Query Field Definitions: https://www.data.bsee.gov/Well/eWellWAR/FieldDefinitions.aspx</li></ul></section>
-<footer>Input: <code>docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx</code>, Sheet1. Report revision date 2026-10-21.
+<footer>Input: <code>docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days.xlsx</code>, Sheet1. Report revision date 2026-10-22.
  Source dates are preserved in <a href="lt_drilling_insights.csv">the calendar CSV</a>.
  Regenerate with <code>python scripts/lower_tertiary/build_drilling_insights.py</code>.
  No activity-coded rig-time result is inferred; those require a separately qualified basis.</footer>
