@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import httpx
 import pytest
 
 REPO = Path(__file__).resolve().parents[3]
@@ -138,7 +139,101 @@ def test_cli_failure_is_redacted(monkeypatch, capsys):
         )
         == 1
     )
-    assert "synthetic-sensitive-detail" not in capsys.readouterr().err
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == (
+        "Snapshot failed; no verified publication receipt was produced.\n"
+    )
+
+
+@pytest.mark.parametrize("error_type", [httpx.ReadTimeout, httpx.ConnectError])
+def test_cli_transport_failure_is_redacted(monkeypatch, capsys, error_type):
+    monkeypatch.setattr(publisher, "build_from_git", lambda *a: {"synthetic": b"data"})
+
+    def fail(*args, **kwargs):
+        raise error_type("synthetic-sensitive-detail")
+
+    monkeypatch.setattr(publisher, "publish_snapshot", fail)
+    assert (
+        publisher.main(
+            [
+                "--config",
+                "admission.json",
+                "--source-sha",
+                "a" * 40,
+                "--dataset-id",
+                "namespace/dataset",
+            ]
+        )
+        == 1
+    )
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == (
+        "Snapshot failed; no verified publication receipt was produced.\n"
+    )
+
+
+def test_cli_missing_git_input_is_redacted(monkeypatch, capsys):
+    run = snapshot.subprocess.run
+    source_sha = run(
+        ["git", "-C", str(REPO), "rev-parse", "HEAD"],
+        check=True,
+        capture_output=True,
+    ).stdout.decode().strip()
+
+    def clean_preflight(args, **kwargs):
+        # Permit this test's edited checkout; Git object reads remain real.
+        if args[3:] == ["status", "--porcelain", "--untracked-files=all"]:
+            return SimpleNamespace(stdout=b"")
+        return run(args, **kwargs)
+
+    monkeypatch.setattr(snapshot.subprocess, "run", clean_preflight)
+    assert (
+        publisher.main(
+            [
+                "--repo",
+                str(REPO),
+                "--config",
+                "missing-admission-for-cli-test.json",
+                "--source-sha",
+                source_sha,
+                "--dataset-id",
+                "namespace/dataset",
+            ]
+        )
+        == 1
+    )
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == (
+        "Snapshot failed; no verified publication receipt was produced.\n"
+    )
+
+
+@pytest.mark.parametrize("interruption", [KeyboardInterrupt, SystemExit])
+@pytest.mark.parametrize("stage", ["build_from_git", "publish_snapshot"])
+def test_cli_process_interruptions_propagate(monkeypatch, capsys, interruption, stage):
+    monkeypatch.setattr(publisher, "build_from_git", lambda *a: {"synthetic": b"data"})
+
+    def interrupt(*args, **kwargs):
+        raise interruption()
+
+    monkeypatch.setattr(publisher, stage, interrupt)
+    with pytest.raises(interruption):
+        publisher.main(
+            [
+                "--config",
+                "admission.json",
+                "--source-sha",
+                "a" * 40,
+                "--dataset-id",
+                "namespace/dataset",
+            ]
+        )
+    output = capsys.readouterr()
+    assert output.out == ""
+    assert output.err == ""
 
 
 def test_legacy_entrypoint_requires_full_build(monkeypatch):

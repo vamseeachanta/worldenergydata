@@ -114,8 +114,9 @@ def main(argv=None, *, default_dataset=None):
         # redirected by the caller; no partial receipt is ever written here.
         sys.stdout.buffer.write(canonical_json(result))
         return 0
-    except (ValueError, KeyError, TypeError, OSError, RuntimeError, ImportError):
-        # SDK/HTTP exceptions can contain credentials, paths or response bodies.
+    except Exception:
+        # Redact all operational errors at the CLI boundary, including optional
+        # SDK transports and Git failures. BaseException interruptions propagate.
         print(
             "Snapshot failed; no verified publication receipt was produced.",
             file=sys.stderr,
