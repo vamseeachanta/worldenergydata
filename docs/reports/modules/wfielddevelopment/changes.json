@@ -1,0 +1,11 @@
+{
+  "revision": "A",
+  "date": "2026-10-22",
+  "changes": [
+    {
+      "section": "worked-example",
+      "description": "Public near-host screening and schematic outputs are documented with configurable distance boundaries and arithmetic checks.",
+      "reason": "Separate concept ranking and drawing behavior from engineering acceptance."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "manual": {
+    "title": "Multi-criteria analysis: a manual",
+    "edition": "January 2009",
+    "sections": "6.2.11 and 6.2.12; overall weighted scores and mutual preference independence",
+    "url": "https://assets.publishing.service.gov.uk/media/5a790545e5274a2acd18b975/1132618.pdf",
+    "accessed_utc": "2026-10-22T04:49:37Z",
+    "http_status": 200,
+    "use": "Weighted-average method only; no field-development weights or engineering thresholds are supplied by this manual."
+  },
+  "svg": {
+    "title": "Scalable Vector Graphics (SVG) 2",
+    "edition": "W3C Candidate Recommendation, 4 October 2018",
+    "sections": "Chapter 8, sections 8.2, 8.4 and 8.6: viewport transforms, initial coordinates and viewBox",
+    "url": "https://www.w3.org/TR/2018/CR-SVG2-20181004/coords.html",
+    "accessed_utc": "2026-10-22T04:50:00Z",
+    "http_status": 200,
+    "use": "Coordinate orientation and scale transformations only; drawing scale and seabed locations are presentation inputs."
+  },
+  "style": {
+    "title": "Established engineering report layout and shared palette",
+    "exemplar": "docs/api/cfd/turbulent-flat-plate-verification.html",
+    "palette": "docs/api/_assets/brand.css",
+    "origin": "Existing engineering documentation in the companion calculation repository",
+    "use": "Stylesheet copied without historical comments; report body uses hs-doc. No matching house-style page exists in this repository at the report basis."
+  }
+}
