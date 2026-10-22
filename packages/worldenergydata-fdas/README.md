@@ -57,6 +57,58 @@ argument → `fiscal_terms` deck → legacy `AssumptionsManager` ROYALTY_RATE. W
 no deck (`fiscal_terms=None`) the behavior is **byte-identical** to the
 pre-carve engine.
 
+### Australian gas screening
+
+`get_fiscal_terms("australia")` selects `gas_au`, a caller-supplied Australian
+gas marker. Monthly cashflow requires an explicit `gas_prices` deck in USD/Mcf;
+omitting it raises instead of silently ignoring gas production. The marker
+does not select or fetch an STTM hub, GBB series or LNG-linked benchmark.
+The existing oil-price input remains separate for any oil volumes.
+
+For a supplied monthly AUD/GJ series, conversion is explicit:
+
+```python
+from worldenergydata.fdas.fiscal.gas_prices import convert_australia_gas_prices
+
+gas_prices = convert_australia_gas_prices(
+    monthly_prices_aud_per_gj,
+    usd_per_aud=monthly_exchange_rates,
+    gj_per_mcf=monthly_gas_energy_contents,
+)
+engine = CashflowEngine(
+    assumptions, dev_system=dev_system, fiscal_terms=get_fiscal_terms("australia")
+)
+cashflows = engine.generate_monthly_cashflow(
+    production, drilling_timeline, oil_prices, first_production_date,
+    gas_prices=gas_prices, royalty_rate=qualified_royalty_fraction,
+)
+```
+
+The equation is `(AUD/GJ) * (USD/AUD) * (GJ/Mcf) = USD/Mcf`, by unit
+cancellation ([NIST SP 811, 2008, section 7.11](https://www.nist.gov/pml/special-publication-811/nist-guide-si-chapter-7-rules-and-style-conventions-expressing-values)).
+Revenue is `Mcf * USD/Mcf = USD`; royalty is revenue times the supplied
+dimensionless fraction. No numerical exchange rate or energy conversion
+coefficient is embedded. All three series require identical valid monthly keys,
+finite nonnegative prices and finite positive conversion factors. Negative gas
+prices are outside the current FDAS gas-revenue contract. Inputs remain
+unchanged; no missing month is filled automatically.
+
+The caller shall qualify the source, hub, monthly aggregation and realized-price
+adjustments. Gas energy content shall use the same reference conditions as the
+production Mcf volumes. The candidate [AEMO STTM description](https://www.aemo.com.au/energy-systems/gas/short-term-trading-market-sttm/about-the-short-term-trading-market-sttm)
+returned HTTP 403 when accessed on 2026-10-19; its units and market values were
+not established. The conversion interface defines input units, rather than
+claiming that an uninspected series uses those units.
+
+The Australia deck declares royalty `not_evaluated`, distinct from zero royalty.
+Calculation requires a caller-supplied `royalty_rate` fraction; no Australian
+statutory rate is supplied. PRRT, corporate income tax, transport, liquefaction,
+gas operating costs and country-specific capital costs are **NOT_EVALUATED**.
+Existing development-system cost assumptions remain in use. These cashflows
+are screening results before tax, not an Australian fiscal assessment.
+The Australia reference chain continues to expose its no-production placeholder;
+this interface does not create production data or change that chain.
+
 ## F2 country adapter contract (#715)
 
 The source-adapter interface that feeds these decks. It bridges the repo's

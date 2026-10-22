@@ -29,11 +29,12 @@ from typing import Dict, Optional
 DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 
 # Additive royalty models retain the version-1 shipped deck contract.
-SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
+SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale", "not_evaluated")
 RESERVED_ROYALTY_MODELS = ()
 
-# Declarative price markers (not consumed in v1 — revenue seam is #716).
-SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf")
+# Markers describe caller-selected prices; gas_au also requires gas_prices in
+# monthly cashflow. No marker fetches data or converts its units automatically.
+SUPPORTED_PRICE_MARKERS = ("wti", "brent", "gas_hh", "gas_ttf", "gas_au")
 
 
 class FiscalTermsError(Exception):
@@ -66,7 +67,8 @@ class RoyaltyTerms:
 
     Attributes:
         model: ``"flat"`` (per-dev-system fixed rate), ``"none"`` (zero royalty),
-            or ``"sliding_scale"`` (production-rate bands).
+            ``"sliding_scale"`` (production-rate bands), or ``"not_evaluated"``
+            (unknown; calculation requires an explicit rate).
         rate_by_dev_system: for ``model == "flat"``, an exact mapping over
             ``DEV_SYSTEMS`` with each rate in ``[0.0, 1.0]``. ``None`` for
             ``model == "none"``.
@@ -84,11 +86,14 @@ class RoyaltyTerms:
 
         ``sliding_scale`` requires a finite, non-negative daily production rate
         and selects the first inclusive threshold, ending with an unbounded band.
+        ``not_evaluated`` raises instead of assuming a rate.
         ``none`` → 0.0. ``flat`` → the mapped rate, falling back to the
         ``default`` dev-system entry when ``dev_system`` is unknown — mirroring
         ``AssumptionsManager.get``'s default-row fallback so parity holds for
         dev systems outside the canonical four.
         """
+        if self.model == "not_evaluated":
+            raise ValueError("Royalty NOT_EVALUATED: supply an explicit royalty rate")
         if self.model == "none":
             return 0.0
         if self.model == "sliding_scale":
@@ -114,10 +119,10 @@ class FiscalTerms:
     """Country fiscal regime (v1: royalty consumed, rest declarative).
 
     Consumed in v1:
-        country, royalty
+        country, royalty; gas_au requires an explicit gas-price deck
 
     Declarative metadata (readable, provably *not* consumed — see Suite 6):
-        currency, price_marker, discount_rate, income_tax, notes
+        currency, discount_rate, income_tax, notes; other price markers
 
     Provenance (machine-verifiable, required non-empty by the loader):
         source_url, source_ref, revision, effective_date, schema_version

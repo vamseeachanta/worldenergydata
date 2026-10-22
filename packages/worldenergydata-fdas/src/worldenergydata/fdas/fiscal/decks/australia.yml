@@ -1,0 +1,26 @@
+# Australia gas screening marker, per issue #824 (2026).
+# Schema and revision numbers identify software, not fiscal coefficients.
+schema_version: 1
+country: australia
+currency: USD  # FDAS cashflow settlement currency; not a raw AU market quote.
+price_marker: gas_au
+
+# Unknown is distinct from the existing 'none' (zero royalty) model.
+# No Australian royalty rate, tax rate or discount rate is assumed.
+royalty:
+  model: not_evaluated
+
+source_url: https://www.aemo.com.au/energy-systems/gas/short-term-trading-market-sttm/about-the-short-term-trading-market-sttm
+source_ref: >
+  Issue #824 (2026), AU gas marker requirement. Candidate AEMO STTM source
+  returned HTTP 403 on 2026-10-19; market series and fiscal basis remain
+  NOT_EVALUATED. This reference does not establish source qualification.
+revision: "1"
+effective_date: "2026-10-19"  # Software deck date, not a statutory effective date.
+notes: >
+  Screening configuration only. gas_au identifies caller-supplied Australian
+  gas prices, never WTI. It does not select a hub, LNG linkage or market series.
+  Supply realized monthly USD/Mcf prices with a documented source, currency
+  conversion and gas energy content. Royalty is NOT_EVALUATED; an explicit
+  royalty rate is required for calculation. PRRT, corporate income tax,
+  transport, liquefaction and gas operating costs are NOT_EVALUATED.
