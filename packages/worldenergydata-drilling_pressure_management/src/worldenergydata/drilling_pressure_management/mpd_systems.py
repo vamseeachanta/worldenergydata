@@ -172,8 +172,18 @@ def get_system(system_id: str) -> MPDSystemEntry:
 
 
 def get_systems_by_type(mpd_type: str) -> list[MPDSystemEntry]:
-    """Return all systems matching the given mpd_type."""
-    return [s for s in MPD_SYSTEMS if s.mpd_type == mpd_type]
+    """Return matching systems and multi-mode candidates for known types.
+
+    Inclusion is catalog discovery, not qualification for a particular mode.
+    The stored multi-mode label does not establish every mode's capability.
+    """
+    from worldenergydata.drilling_pressure_management.mpd_configurations import (
+        list_config_types,
+    )
+
+    if mpd_type not in {*list_config_types(), "multi_mode"}:
+        return []
+    return [s for s in MPD_SYSTEMS if s.mpd_type in {mpd_type, "multi_mode"}]
 
 
 def get_systems_by_rig_type(rig_type: str) -> list[MPDSystemEntry]:

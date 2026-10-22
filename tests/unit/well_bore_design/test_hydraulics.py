@@ -5,6 +5,13 @@ import pytest
 from worldenergydata.well_bore_design.hydraulics import WellBoreHydraulics
 from worldenergydata.well_bore_design.schemas import BoreType
 
+# Synthetic comparison inputs; the public API supplies no geometry or mud defaults.
+SYNTHETIC_GEOMETRIES = {
+    BoreType.SLIM_HOLE: {"hole_od_in": 6, "pipe_od_in": 3.5},
+    BoreType.STANDARD: {"hole_od_in": 8.5, "pipe_od_in": 5},
+    BoreType.LARGE_BORE: {"hole_od_in": 12.25, "pipe_od_in": 5.5},
+}
+
 
 @pytest.fixture
 def hydro():
@@ -200,6 +207,9 @@ class TestCompareBoreTypes:
             flow_rate_gpm=500,
             mud_weight_ppg=10.0,
             depth_ft=8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
         )
         assert set(result.keys()) == {
             BoreType.SLIM_HOLE.value,
@@ -208,7 +218,14 @@ class TestCompareBoreTypes:
         }
 
     def test_each_entry_has_required_keys(self, hydro):
-        result = hydro.compare_bore_types(500, 10.0, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            10.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         required = {
             "ecd_ppg",
             "annular_velocity_fps",
@@ -220,30 +237,65 @@ class TestCompareBoreTypes:
             assert required.issubset(data.keys()), f"Missing keys for {bore_val}"
 
     def test_slim_hole_higher_annular_velocity(self, hydro):
-        result = hydro.compare_bore_types(500, 10.0, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            10.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         av_slim = result[BoreType.SLIM_HOLE.value]["annular_velocity_fps"]
         av_std = result[BoreType.STANDARD.value]["annular_velocity_fps"]
         assert av_slim > av_std
 
     def test_slim_hole_higher_ecd_than_standard(self, hydro):
-        result = hydro.compare_bore_types(500, 10.0, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            10.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         ecd_slim = result[BoreType.SLIM_HOLE.value]["ecd_ppg"]
         ecd_std = result[BoreType.STANDARD.value]["ecd_ppg"]
         assert ecd_slim > ecd_std
 
     def test_slim_hole_higher_pressure_loss_than_standard(self, hydro):
-        result = hydro.compare_bore_types(500, 10.0, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            10.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         dp_slim = result[BoreType.SLIM_HOLE.value]["pressure_loss_psi_per_100ft"]
         dp_std = result[BoreType.STANDARD.value]["pressure_loss_psi_per_100ft"]
         assert dp_slim > dp_std
 
     def test_all_ecd_values_greater_than_mud_weight(self, hydro):
         mw = 10.0
-        result = hydro.compare_bore_types(500, mw, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            mw,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         for key, data in result.items():
             assert data["ecd_ppg"] >= mw, f"ECD below mud weight for {key}"
 
     def test_all_hci_values_are_positive(self, hydro):
-        result = hydro.compare_bore_types(500, 10.0, 8000.0)
+        result = hydro.compare_bore_types(
+            500,
+            10.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            geometries=SYNTHETIC_GEOMETRIES,
+        )
         for key, data in result.items():
             assert data["hole_cleaning_index"] > 0.0, f"Non-positive HCI for {key}"

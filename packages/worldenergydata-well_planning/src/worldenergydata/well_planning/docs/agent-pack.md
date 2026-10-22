@@ -5,24 +5,15 @@
 | Module | `well_planning` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-well_planning/src/worldenergydata/well_planning` |
-| Pack revision | 1, 2026-10-15 |
-| Code revision | `92b13dce6b3121cbe827f17327c6dde7fcd6dc5c` |
+| Pack revision | 2, 2026-10-22 |
+| Historical code revision | `92b13dce6b3121cbe827f17327c6dde7fcd6dc5c` |
 | Analysis family | EC; data pipeline, using AQG r0 Python calculations gates |
 | Quality manager role | Calculations quality manager, interim data-pipeline coverage |
 | Status | DRAFT; independent review pending |
 
 ## 1. Purpose and scope
 
-The public API exposes risk enums, a risk dataclass, a built-in registry, an analyzer and calibration records/reports. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/__init__.py:L3-L27]
-The analyzer filters risk records, sorts supplied scores, counts authority/category combinations and produces text and DataFrame summaries. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/risk_analyzer.py:L38-L129]
-The calibrator consumes an incident DataFrame, maps incident pairs to risk IDs, blends annual weighted frequencies with baseline probabilities, and returns copied registry entries. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/risk_calibrator.py:L125-L258]
-These are screening and reporting algorithms: the implemented operations are counts, filtering and probability arithmetic; the analyzer does not calculate physical drilling loads or equipment capacity. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/risk_analyzer.py:L38-L129] [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/risk_calibrator.py:L176-L230]
-
-Scope includes all five Python files in the package; calibration is included rather than treated as a separate sub-package. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/__init__.py:L3-L27]
-The distribution declares version 0.1.0 and an Alpha classifier; neither establishes engineering qualification. [packages/worldenergydata-well_planning/pyproject.toml:L5-L24]
-UNVERIFIED: an authoritative engineering-use maturity classification is not established by the inspected package metadata; resolve through #349. [packages/worldenergydata-well_planning/pyproject.toml:L5-L24]
-
-Exposure duration can be wrong without warning even for parseable inputs; section 6 records the route-dependent defect tracked by #1283. [packages/worldenergydata-well_planning/src/worldenergydata/well_planning/risk_calibrator.py:L351-L376]
+Exposure duration now counts calendar years inclusively, with both endpoint years included. Numeric values in either date-labelled column raise an actionable error instead of becoming epoch timestamps. Calibration weights, blend coefficients and baseline probabilities are unchanged.
 
 ## Revision history
 
@@ -30,6 +21,26 @@ Exposure duration can be wrong without warning even for parseable inputs; sectio
 |---|---|---|
 | 0 | 2026-10-15 | Initial module knowledge pack. |
 | 1 | 2026-10-15 | Record exposure-duration defects, complete test node paths and clarify calibration dependencies and evidence. |
+| 2 | 2026-10-22 | Count both endpoint calendar years and reject numeric date values to avoid epoch parsing. |
+
+### Current implementation update, revision 2
+
+The duration is `last_calendar_year-first_calendar_year+1` for a `year`, `date` or `incident_date` source. This is the cardinality of an inclusive integer interval, not a fitted coefficient or an elapsed-day conversion. It does not prove that all intervening calendar exposure was observed. Numeric date validation runs before time-source selection, so a valid `year` column cannot hide a malformed date-labelled column. The error directs numeric years to a `year` column.
+
+| Finding | Current detection nodes |
+| --- | --- |
+| #1283: duration off by one | `tests/unit/well_planning/test_exposure_regressions.py::test_two_calendar_years_count_both_endpoints`: 2020 and 2021 count as two calendar years; two recordable kicks divided by two years give one event per year |
+| #1283: numeric dates become epoch timestamps | `tests/unit/well_planning/test_exposure_regressions.py::test_numeric_date_values_rejected_with_message`: integer, floating integer and mixed numeric/date values, including simultaneous year data |
+
+Remaining limits: absent or unparseable time still uses the existing one-year fallback, and route/fallback diagnostics are not added. Calendar coverage is not well-year normalization. Incident associations, sparse-data fallback, severity weights, normalization and blending, shared registry behavior and physical probability qualification remain as recorded below.
+
+### Historical inventory boundary
+
+Sections 2–10 below retain the inventory, citations, execution records and open
+limits at the historical code revision. Findings corrected by the current update
+are historical evidence; the current contracts and detection nodes above supersede
+those earlier behavior statements and test counts. Remaining limits are retained.
+
 
 ## 2. Inputs and outputs
 

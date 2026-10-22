@@ -5,22 +5,15 @@
 | Module | `analysis` |
 | Repository | `worldenergydata` |
 | Package path | `src/worldenergydata/analysis` |
-| Pack revision | 2 |
-| Code revision | `3a5d87fba8d476ff2367e7256ef176fed5672492` |
+| Pack revision | 3, 2026-10-22 |
+| Historical code revision | `3a5d87fba8d476ff2367e7256ef176fed5672492` |
 | Analysis family | EC; data pipeline, using the Python calculations gate set of AQG r0 section 10 |
 | Quality manager role | Calculations quality manager; independent-provider review required by AQG r0 section 11 |
 | Status | DRAFT |
 
 ## 1. Purpose and scope
 
-The pressure-screen path normalizes source observation tables, estimates bottom-hole pressure, assigns gradient tiers, selects an observation per well, ranks groups, evaluates recovery and participation gates, and writes tabular outputs and a summary. [src/worldenergydata/analysis/underpressured_screen/screen.py:L184-L216]
-
-The package root exports no public symbols; the former lower-tertiary implementation is outside this package. [src/worldenergydata/analysis/__init__.py:L1-L9]
-The dashboard subpackage preserves compatibility imports and delegates component implementations to `worldenergydata.well_production_dashboard`; its local wrapper also exports `VerificationWorkflow`. [src/worldenergydata/analysis/dashboard/__init__.py:L1-L10] [src/worldenergydata/analysis/dashboard/well_detail_views.py:L1-L8]
-The delegate implementation re-exports chart, decline, financial, configuration, verification and view components from its own split modules; the pressure-screen methods below do not qualify those downstream algorithms. [packages/worldenergydata-bsee/src/worldenergydata/well_production_dashboard/well_detail_views.py:L7-L39]
-
-The current screen is a pressure-observation ranking path: its orchestration contains no production-character filter, depletion-history calculation or economic analysis. [src/worldenergydata/analysis/underpressured_screen/screen.py:L184-L216]
-Non-shut-in pressure kinds pass through as reported, rather than receiving the gas-column estimate; this includes flowing pressure, so a computed gradient alone does not establish measured bottom-hole pressure. [src/worldenergydata/analysis/underpressured_screen/screen.py:L40-L65] [tests/unit/analysis/test_underpressured_screen.py:L60-L90]
+Pressure screening now requires finite positive depth and pressure before estimation or division. Invalid inputs and nonfinite computed estimates carry `NOT_EVALUATED` status and a reason, no gradient, no pressure tier and no near-vacuum flag. Usable-well selection excludes these observations.
 
 ### Revision history
 
@@ -29,6 +22,27 @@ Non-shut-in pressure kinds pass through as reported, rather than receiving the g
 | 0 | 2026-10-16 | Initial inventory of implemented methods, regression evidence and qualification gaps. |
 | 1 | 2026-10-16 | Add numbered issue drafts, the infinite-depth finding and numeric-flag consequences; complete check references and issue notation. |
 | 2 | 2026-10-16 | Use explicit draft-number headings so pending references pass lint; update links to the renamed headings. |
+| 3 | 2026-10-22 | Refuse nonfinite or nonpositive screen inputs before they produce misleading pressure tiers. |
+
+### Current implementation update, revision 3
+
+`estimate_bhp` applies `math.isfinite` and positivity checks before the gas-column exponential or pressure/depth ratio. Finite inputs that overflow the gas-column model are also refused. `screen_status` and `screen_reason` preserve the disposition on the observation; `pressure_tier` is explicitly `NOT_EVALUATED`. Direct classification also refuses nonfinite or nonpositive gradients.
+
+| Finding | Current detection nodes |
+| --- | --- |
+| #1307 S52: infinite depth or invalid pressure yields a false tier | `tests/unit/analysis/test_screen_input_regressions.py::test_nonfinite_or_nonpositive_input_not_evaluated` |
+| Independent normal-case arithmetic | `tests/unit/analysis/test_screen_input_regressions.py::test_normal_pressure_depth_hand_calculation`: measured 1200 psia divided by 5000 ft gives 0.24 psi/ft, as defined by historical C06 |
+| Invalid direct classification or computed BHP | `tests/unit/analysis/test_screen_input_regressions.py::test_direct_classification_refuses_invalid_gradient`; `tests/unit/analysis/test_screen_input_regressions.py::test_overflow_in_bhp_estimate_not_evaluated` |
+
+Remaining limits: the gas-column assumptions, configured tier thresholds, pressure datum, numeric flag parsing, missing metadata, earliest-observation proxy, field gates, output-before-gate behavior and rounding remain as recorded below. Invalid observations remain visible in the enriched frame but are excluded from usable-well rankings; no new invalid-row summary count is added.
+
+### Historical inventory boundary
+
+Sections 2–10 below retain the inventory, citations, execution records and open
+limits at the historical code revision. Findings corrected by the current update
+are historical evidence; the current contracts and detection nodes above supersede
+those earlier behavior statements and test counts. Remaining limits are retained.
+
 
 ## 2. Inputs and outputs
 

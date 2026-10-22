@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import numpy as np
@@ -44,23 +45,40 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
     correction; measured BHP and non-shut-in WHP values pass through unchanged.
     """
     frame = observations.copy()
+    depth = frame["reference_depth_ft"]
+    pressure = frame["pressure_psia"].astype(float)
+    valid = (
+        depth.map(math.isfinite)
+        & pressure.map(math.isfinite)
+        & (depth > 0)
+        & (pressure > 0)
+    )
+    is_shut_in_whp = frame["pressure_kind"].fillna("").astype(str).eq("WHP_shut_in")
+    # Only valid shut-in WHP needs a gas-column correction. Invalid values
+    # cannot enter the exponential or a pressure/depth ratio.
     exponent = (
         0.01875
         * settings["gas_sg"]
-        * frame["reference_depth_ft"]
+        * depth.where(valid & is_shut_in_whp, 0)
         / (settings["z_avg"] * settings["t_avg_rankine"])
     )
-    multiplier = np.exp(exponent)
-    is_shut_in_whp = frame["pressure_kind"].fillna("").astype(str).eq("WHP_shut_in")
-    frame["bhp_psia_est"] = frame["pressure_psia"].where(
-        ~is_shut_in_whp, frame["pressure_psia"] * multiplier
-    )
+    with np.errstate(over="ignore", invalid="ignore"):
+        multiplier = np.exp(exponent)
+    with np.errstate(over="ignore", invalid="ignore"):
+        frame["bhp_psia_est"] = pressure.where(~is_shut_in_whp, pressure * multiplier)
     frame["bhp_method"] = np.where(
         is_shut_in_whp, "static_gas_column_avg_zt", "as_reported"
     )
-    has_depth = frame["reference_depth_ft"] > 0
-    frame["bhp_gradient_psi_ft"] = np.where(
-        has_depth, frame["bhp_psia_est"] / frame["reference_depth_ft"], np.nan
+    valid &= frame["bhp_psia_est"].map(math.isfinite) & (frame["bhp_psia_est"] > 0)
+    frame["bhp_psia_est"] = frame["bhp_psia_est"].where(valid)
+    gradient = frame["bhp_psia_est"] / depth.where(valid)
+    valid &= gradient.map(math.isfinite) & (gradient > 0)
+    frame["bhp_gradient_psi_ft"] = gradient.where(valid)
+    frame["screen_status"] = np.where(valid, "EVALUATED", "NOT_EVALUATED")
+    frame["screen_reason"] = np.where(
+        valid,
+        "",
+        "Depth, pressure and computed BHP/gradient must be finite and positive",
     )
     return frame
 
@@ -68,6 +86,14 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
 def classify_tiers(frame: pd.DataFrame, tiers: dict) -> pd.DataFrame:
     frame = frame.copy()
     gradient = frame["bhp_gradient_psi_ft"]
+    valid = gradient.map(math.isfinite) & (gradient > 0)
+    gradient = gradient.where(valid)
+    frame["bhp_gradient_psi_ft"] = gradient
+    frame["screen_status"] = np.where(valid, "EVALUATED", "NOT_EVALUATED")
+    if "screen_reason" not in frame:
+        frame["screen_reason"] = np.where(
+            valid, "", "Gradient must be finite and positive"
+        )
     frame["pressure_tier"] = np.select(
         [
             gradient >= tiers["hydrostatic_normal_min"],
@@ -75,10 +101,12 @@ def classify_tiers(frame: pd.DataFrame, tiers: dict) -> pd.DataFrame:
             gradient.notna(),
         ],
         [TIER_NORMAL, TIER_MILD, TIER_SEVERE],
-        default=None,
+        default="NOT_EVALUATED",
     )
-    frame["near_vacuum"] = (frame["pressure_kind"] == "WHP_shut_in") & (
-        frame["pressure_psia"] < tiers["near_vacuum_whp_psia"]
+    frame["near_vacuum"] = (
+        valid
+        & (frame["pressure_kind"] == "WHP_shut_in")
+        & (frame["pressure_psia"] < tiers["near_vacuum_whp_psia"])
     )
     return frame
 

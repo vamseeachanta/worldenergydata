@@ -5,7 +5,7 @@
 | Module | `drilling_pressure_management` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management` |
-| Pack revision | 1 |
+| Pack revision | 2, 2026-10-22 |
 | Code pin | `3cad44fa0b5d4a5a4a8798cb6cb2dc15739ee746` |
 | Analysis family | EC; Python calculations gate set for a data pipeline |
 | Quality role | Calculations quality manager; data quality manager appointment pending |
@@ -14,11 +14,7 @@
 
 ## 1. Purpose and scope
 
-The public API exposes system records, configuration records, capability records, filters, summaries and a pressure-window analyzer. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/__init__.py:L3-L25]
-`PressureWindowAnalyzer.analyze` returns pressure arithmetic and a threshold flag; it does not launch a solver or calculate a circulating-flow loss from the supplied rate. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214]
-The distribution declares Alpha development status; that classifier does not establish engineering validation. [packages/worldenergydata-drilling_pressure_management/pyproject.toml:L16-L24]
-The flag uses window width alone, without comparing ECD with either bound; omitted annular loss adds 200.0 psi, and configuration-type queries omit the stored `multi_mode` system. These failures are tracked in #1290; engineering clearance remains open. [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_configurations.py:L180-L214] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L33-L46] [packages/worldenergydata-drilling_pressure_management/src/worldenergydata/drilling_pressure_management/mpd_systems.py:L174-L181]
-Use the catalog as stored data and the analyzer as screening arithmetic; require source qualification and input review before operational use, under open items 1–3.
+The analyzer now reports fractional ECD position and applies explicit caller policy to both window width and boundary margin. Annular loss is required. Known type queries include multi-mode candidates; catalog inclusion does not establish equipment suitability.
 
 ### Revision history
 
@@ -26,6 +22,32 @@ Use the catalog as stored data and the analyzer as screening arithmetic; require
 | --- | --- | --- |
 | 0 | 2026-10-16 | Initial cited contracts, regression examples and open items |
 | 1 | 2026-10-16 | Add missing failure modes, full test nodes and an ECD magnitude check; correct the Alpha citation and issue references |
+| 2 | 2026-10-22 | Use ECD position in MPD assessment, require annular loss and policy, and include multi-mode candidates. |
+
+### Current implementation update, revision 2
+
+The position is `(ECD-pore)/(fracture-pore)`. MPD assessment is flagged if width is below the caller's `threshold_psi`, or position lies outside `[margin, 1-margin]`, where `minimum_window_margin_fraction` is a required caller input. Boundary equality is admissible. No universal threshold has been established by the reviewed sources; the removed implicit width threshold is not an engineering criterion. `analyze` requires finite physical inputs, positive depth/mud/window and nonnegative flow/loss. The returned `ecd_window_position` exposes the arithmetic.
+
+The retained rounded hydrostatic conversion follows NIST SP 811 (2008), Appendix B.8 (pound, US gallon, foot and psi); the existing ECD convention and its rounding are unchanged. The analyzer uses supplied annular loss, not a flow-rate correlation.
+
+| Finding | Current detection nodes |
+| --- | --- |
+| #1290 SF1: ECD position ignored | `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_mpd_depends_on_ecd_position`; `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_ecd_below_pore_requires_assessment`; `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_both_window_margin_boundaries` |
+| #1290 SF2: multi-mode omitted | `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_multi_mode_in_every_known_type_query` |
+| #1290 SF3: silent annular-loss default | `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_annular_loss_and_policy_required` |
+| Invalid inputs or policy | `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_invalid_loss_refused`; `tests/unit/drilling_pressure_management/test_pressure_regressions.py::test_invalid_policy_refused` |
+
+Remaining limits: the flag calls for assessment and does not prove MPD feasibility. Multi-mode entries are discovery candidates for each known type, not claims of qualification for every mode; `multi_mode` still has no single configuration definition. Stored capability currency, pressure datum, case-sensitive catalog queries, referential integrity, absent capability counts and package-data questions remain as recorded below.
+
+Source: [NIST SP 811 (2008), Appendix B.8](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf). The fractional-position rule is explicit caller policy, not a sourced universal acceptance threshold.
+
+### Historical inventory boundary
+
+Sections 2–10 below retain the inventory, citations, execution records and open
+limits at the historical code revision. Findings corrected by the current update
+are historical evidence; the current contracts and detection nodes above supersede
+those earlier behavior statements and test counts. Remaining limits are retained.
+
 
 ## 2. Inputs and outputs
 

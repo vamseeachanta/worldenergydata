@@ -122,7 +122,7 @@ class TestGetSystemsByType:
 
     def test_cbhp_entries_all_have_correct_type(self):
         for entry in get_systems_by_type("CBHP"):
-            assert entry.mpd_type == "CBHP"
+            assert entry.mpd_type in {"CBHP", "multi_mode"}
 
 
 class TestGetSystemsByRigType:

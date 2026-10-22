@@ -5,6 +5,7 @@ ABOUTME: CBHP, PMCD, dual gradient, RFC configurations with ECD management.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 
@@ -169,12 +170,16 @@ class PressureWindow:
     ecd_psi: float
     pressure_window_psi: float
     mpd_required: bool
+    ecd_window_position: float
 
 
 class PressureWindowAnalyzer:
     """Calculates ECD and pressure window metrics for MPD applicability assessment."""
 
+    # NIST SP 811 (2008), B.8: lb, US gallon, foot and psi conversions
+    # give 0.051948... psi/ft per ppg, rounded to the stored 0.052 convention.
     _MUD_WEIGHT_PPG_TO_PSI_PER_FT: float = 0.052
+    # NIST SP 811 (2008), B.8, international foot = 0.3048 m; rounded inverse.
     _M_TO_FT: float = 3.28084
 
     def analyze(
@@ -184,8 +189,10 @@ class PressureWindowAnalyzer:
         fracture_gradient_psi: float,
         mud_weight_ppg: float,
         flow_rate_gpm: float,
-        annular_pressure_drop_psi: float = 200.0,
-        threshold_psi: float = 200.0,
+        annular_pressure_drop_psi: float,
+        threshold_psi: float,
+        *,
+        minimum_window_margin_fraction: float,
     ) -> PressureWindow:
         """Return a PressureWindow for the given well conditions.
 
@@ -196,14 +203,49 @@ class PressureWindowAnalyzer:
             mud_weight_ppg: Drilling fluid weight in pounds per gallon.
             flow_rate_gpm: Circulating flow rate in gallons per minute.
             annular_pressure_drop_psi: Annular friction pressure loss in psi.
-            threshold_psi: Pressure window below which MPD is considered required.
+            threshold_psi: Caller-selected minimum window width, in psi.
+            minimum_window_margin_fraction: Caller-selected minimum distance
+                from either pressure bound, as a fraction of window width.
+                No universal threshold is established by the module sources.
+
+        Rule: flag assessment when width < threshold or the ECD position
+        (ECD-pore)/(fracture-pore) is outside [margin, 1-margin]. Both policy
+        limits are required inputs, not published engineering criteria.
+        A flag identifies an assessment need, not an MPD feasibility verdict.
 
         Returns:
             PressureWindow dataclass with calculated values.
         """
+        values = (
+            depth_m,
+            pore_pressure_psi,
+            fracture_gradient_psi,
+            mud_weight_ppg,
+            flow_rate_gpm,
+            annular_pressure_drop_psi,
+        )
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("Pressure inputs must be finite")
+        if (
+            depth_m <= 0
+            or mud_weight_ppg <= 0
+            or pore_pressure_psi <= 0
+            or fracture_gradient_psi <= pore_pressure_psi
+            or flow_rate_gpm < 0
+            or annular_pressure_drop_psi < 0
+        ):
+            raise ValueError(
+                "Require positive depth, mud and pressure window; nonnegative flow and loss"
+            )
         ecd = self.ecd_pressure(mud_weight_ppg, depth_m, annular_pressure_drop_psi)
         window = fracture_gradient_psi - pore_pressure_psi
-        required = self.mpd_required(window, threshold_psi)
+        position = (ecd - pore_pressure_psi) / window
+        required = self.mpd_required(
+            window,
+            threshold_psi,
+            ecd_window_position=position,
+            minimum_window_margin_fraction=minimum_window_margin_fraction,
+        )
         return PressureWindow(
             depth_m=depth_m,
             pore_pressure_psi=pore_pressure_psi,
@@ -211,6 +253,7 @@ class PressureWindowAnalyzer:
             ecd_psi=ecd,
             pressure_window_psi=window,
             mpd_required=required,
+            ecd_window_position=position,
         )
 
     def ecd_pressure(
@@ -235,15 +278,37 @@ class PressureWindowAnalyzer:
     def mpd_required(
         self,
         pressure_window_psi: float,
-        threshold_psi: float = 200.0,
+        threshold_psi: float,
+        *,
+        ecd_window_position: float,
+        minimum_window_margin_fraction: float,
     ) -> bool:
-        """Return True when pressure window is narrower than threshold.
+        """Apply caller policy to width and fractional ECD position.
 
-        Args:
-            pressure_window_psi: Available pressure window in psi.
-            threshold_psi: Minimum window before MPD is considered necessary.
+        The fractional margin must lie between zero and one half: larger
+        margins would leave no admissible position. Equality is admissible.
         """
-        return pressure_window_psi < threshold_psi
+        values = (
+            pressure_window_psi,
+            threshold_psi,
+            ecd_window_position,
+            minimum_window_margin_fraction,
+        )
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("Window and policy inputs must be finite")
+        if (
+            pressure_window_psi <= 0
+            or threshold_psi < 0
+            or not 0 <= minimum_window_margin_fraction <= 0.5
+        ):
+            raise ValueError(
+                "Require positive width, nonnegative threshold and margin in [0, 0.5]"
+            )
+        return (
+            pressure_window_psi < threshold_psi
+            or ecd_window_position < minimum_window_margin_fraction
+            or ecd_window_position > 1 - minimum_window_margin_fraction
+        )
 
 
 def get_configuration(config_type: str) -> MPDConfiguration:
