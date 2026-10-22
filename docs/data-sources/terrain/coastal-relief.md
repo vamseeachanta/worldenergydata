@@ -10,6 +10,7 @@ it establishes transport provenance, not scientific suitability.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Add discovery and bounded subset acquisition without full-volume downloads. |
+| 1 | 2026-10-22 | Correct service inheritance and compressed transfer budgets, declare the XML parser dependency and test real gzip decoding. |
 
 ## Source basis
 
@@ -36,7 +37,7 @@ Import from `worldenergydata.field_development.coastal_relief`. All resource
 budgets and the output destination are explicit caller inputs. `timeout_s` is a
 requests connect/read timeout, not a total download deadline. `bbox` contains
 geographic degrees in west, south, east, north order. The XML parser uses
-`defusedxml`, present in the existing runtime dependency graph.
+`defusedxml`, declared as a direct runtime dependency.
 
 ```python
 from worldenergydata.field_development.coastal_relief import (
@@ -73,8 +74,9 @@ references or redirects. XML DTDs, entities and external references are rejected
 
 The byte budget applies to decoded response bytes, including when a server
 compresses its response. The helper rejects HTTP errors, redirects, incomplete
-uncompressed transfers, service-error pages and oversized responses. An existing
-destination is preserved, and incomplete transfers do not publish an output.
+uncompressed transfers, service-error pages and oversized responses. The NetCDF3
+signature check accepts classic and 64-bit-offset formats only; CDF-5 is excluded.
+An existing destination is preserved, and incomplete transfers do not publish an output.
 Publication requires a same-directory hard link, so the output filesystem must
 support hard links. Keep the returned receipt with the data; receipt persistence
 is the caller's responsibility. Temporary transfer files are cleaned up.

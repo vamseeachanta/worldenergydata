@@ -148,7 +148,7 @@ def parse_crm_catalog(xml: bytes, *, catalog_url: str) -> tuple[CrmDataset, ...]
                 )
             )
         for child in node.findall(_NS + "dataset"):
-            visit(child, local or descendant_service)
+            visit(child, descendant_service)
 
     for dataset in root.findall(_NS + "dataset"):
         visit(dataset, None)
@@ -179,7 +179,10 @@ def _receive(
             if not re.fullmatch(r"[0-9]+", length):
                 raise TerrainFetchError("invalid response content length")
             length = int(length)
-            if length > max_bytes:
+            if (
+                response.headers.get("Content-Encoding", "identity") == "identity"
+                and length > max_bytes
+            ):
                 raise TerrainFetchError("response exceeds max_bytes")
         total = 0
         digest = hashlib.sha256()
@@ -270,6 +273,7 @@ def fetch_crm_subset(
     Existing outputs are never overwritten. Failed or interrupted transfers
     leave no destination file. Magic validation only distinguishes NetCDF3
     transport from typical service-error pages; it is not a scientific reader.
+    Only classic and 64-bit-offset formats are accepted; CDF-5 is excluded.
     """
     _validate_limits(timeout, max_bytes)
     url = build_crm_subset_url(dataset, bbox, coverage=coverage)
