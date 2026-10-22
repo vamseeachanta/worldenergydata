@@ -6,6 +6,7 @@ No network access, interpolation, inversion or fallback is performed.
 """
 
 from decimal import Decimal
+from re import fullmatch
 
 from pydantic import (
     BaseModel,
@@ -15,6 +16,11 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+
+
+def is_currency_code(value: str) -> bool:
+    """Require three uppercase ASCII letters; no symbols or alias expansion."""
+    return fullmatch(r"[A-Z]{3}", value) is not None
 
 
 class FxRate(BaseModel):
@@ -37,6 +43,8 @@ class FxRate(BaseModel):
     @field_validator("currency")
     @classmethod
     def foreign_currency(cls, value: str) -> str:
+        if not is_currency_code(value):
+            raise ValueError("currency code must contain three uppercase ASCII letters")
         if value == "USD":
             raise ValueError("USD uses the identity ratio, never a table observation")
         return value

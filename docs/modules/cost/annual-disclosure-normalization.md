@@ -11,6 +11,7 @@ codes and null normalized fields. It never substitutes zero for missing data.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-20 | Added a sourced money policy, deterministic utilities and a worked example to make annual disclosure comparisons auditable. |
+| 2 | 2026-10-22 | Validate serialized comparison keys and currency syntax, and specify the complete decimal context to keep results reproducible. |
 
 ## Contract and scope
 
@@ -93,15 +94,23 @@ Every observation cites the G.5A table above. USD uses the identity ratio in
 every year. No other currency or year is filled, inverted or interpolated.
 A supplied `FxTable` must have a version, finite positive rates, citations and
 unique currency/year keys; USD observations are refused because its identity
-ratio is fixed. The source responses were opened on 2026-10-20; this module
-performs no network requests.
+ratio is fixed. Both reported currency/unit fields and supplied FX observations
+require three uppercase ASCII letters. No symbols, whitespace, case conversion
+or alias expansion are supported. This is a syntax check, not verification
+against a currency registry. Invalid reported codes remain in the raw snapshot
+with `unsupported_currency` or `unsupported_unit`; invalid FX codes raise
+validation errors before the table can be used. The source responses were
+opened on 2026-10-20; this module performs no network requests.
 
 Arithmetic uses a fresh decimal context with 28 significant digits and
 `ROUND_HALF_EVEN`, following the
 [Python 3.10 decimal context](https://docs.python.org/3.10/library/decimal.html#decimal.Context).
-Caller precision, rounding and traps do not affect the result. Overflow and
-underflow produce `NOT_EVALUATED`. Output is not quantized to cents or millions;
-JSON represents decimals as strings. Display rounding belongs to the consumer.
+Every context parameter is explicit, including exponent bounds of -999999 and
+999999, capitals set to 1, clamp set to 0 and initially clear flags. Invalid
+operations, division by zero, overflow and underflow are trapped; other traps
+are disabled. Neither the current context nor mutable `DefaultContext` settings
+alter the result. Overflow and underflow produce `NOT_EVALUATED`. Output is not
+quantized to cents or millions; JSON represents decimals as strings. Display rounding belongs to the consumer.
 
 ## Output and comparison policy
 
@@ -130,6 +139,10 @@ Arithmetic outside the decimal context's range yields
 the same normalized metric, scope, declared economic basis, currency, target
 year, method and full policy fingerprint. A changed assumption, source,
 table version or table order conservatively creates a different policy.
+JSON validation rejects a serialized comparison key that disagrees with the
+row's metadata. The comparison gate also reconstructs the tuple from that
+metadata and refuses a stale key. These consistency checks do not authenticate
+the reported evidence or the policy fingerprint's origin.
 Currency conversion does not establish equivalent asset boundaries, ownership
 shares, accounting treatments, cash timing or metric definitions. A nonblank
 basis is an attestation by the caller, not an independently verified fact.
@@ -176,7 +189,9 @@ division; tests spell out each independent calculation.
 The focused suite covers raw preservation, unit pairing, all supported scales,
 published EUR/GBP quote direction, forward/reverse rebasing, zero and signed
 amounts, missing evidence, unavailable FX, decimal failures, policy changes,
-economic-basis gating, serialization and the executable example.
+economic-basis gating, serialization and the executable example. It also covers
+independent metadata changes with stale keys, ambiguous matching currency/unit
+pairs, invalid custom FX codes and altered default/current decimal contexts.
 
 Live FX ingestion, non-calendar fiscal averages, transaction/closing rates,
 qualified escalation series, restatements and adapters for existing downstream

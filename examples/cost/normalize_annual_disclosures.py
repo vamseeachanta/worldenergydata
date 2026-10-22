@@ -31,17 +31,17 @@ def main() -> None:
         ),
     )
     # Amounts, year and economic basis below are synthetic example inputs.
-    common = dict(
-        magnitude_scale="million",
-        fiscal_year=2020,
-        as_reported_metric_name="Capital expenditure",
-        metric_name_normalized="capex",
-        scope="operator",
-        comparison_basis="consolidated; cash capex; net interest; full year",
-        period_basis="calendar_year_flow",
-        price_basis="nominal",
-        provenance={"source": "Synthetic worked example, not a filing"},
-    )
+    common = {
+        "magnitude_scale": "million",
+        "fiscal_year": 2020,
+        "as_reported_metric_name": "Capital expenditure",
+        "metric_name_normalized": "capex",
+        "scope": "operator",
+        "comparison_basis": "consolidated; cash capex; net interest; full year",
+        "period_basis": "calendar_year_flow",
+        "price_basis": "nominal",
+        "provenance": {"source": "Synthetic worked example, not a filing"},
+    }
     inputs = [
         DisclosureMoney(**common, amount="2", currency="EUR", unit="EUR"),
         DisclosureMoney(**common, amount="2.282", currency="USD", unit="USD"),

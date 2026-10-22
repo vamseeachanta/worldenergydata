@@ -9,7 +9,7 @@ revision), https://www.federalreserve.gov/releases/g5a/20210104/ .
 import json
 import runpy
 from copy import deepcopy
-from decimal import Decimal, localcontext
+from decimal import Decimal, DefaultContext, Inexact, localcontext
 from pathlib import Path
 
 import pytest
@@ -45,7 +45,7 @@ def policy():
 def money():
     # Synthetic monetary input; no real operator or disclosure is represented.
     return DisclosureMoney(
-        amount=Decimal("2"),
+        amount=Decimal(2),
         currency="EUR",
         unit="EUR",
         magnitude_scale="million",
@@ -69,7 +69,7 @@ def test_preserves_as_reported_and_provenance(money, policy):
     before = deepcopy(money.model_dump())
     result = normalize_disclosure_money(money, policy)
     assert result.as_reported.model_dump() == before == money.model_dump()
-    assert result.normalized_amount == Decimal("2282000")
+    assert result.normalized_amount == Decimal(2282000)
     assert result.normalized_currency == result.normalized_unit == "USD"
     assert result.normalized_magnitude_scale == "units"
     assert result.normalized_base_year == 2020
@@ -106,7 +106,7 @@ def test_magnitude_scales(money, policy, scale, expected):
         changed(money, currency="USD", unit="USD", magnitude_scale=scale), policy
     )
     assert result.normalized_amount == Decimal(expected)
-    assert result.fx_rate == Decimal("1")  # USD/USD identity, by definition.
+    assert result.fx_rate == Decimal(1)  # USD/USD identity, by definition.
 
 
 @pytest.mark.parametrize(
@@ -363,7 +363,153 @@ def test_worked_example(capsys):
     )
     result = json.loads(capsys.readouterr().out)
     assert [Decimal(value) for value in result["normalized_usd"]] == [
-        Decimal("2282000"),
-        Decimal("2282000"),
+        Decimal(2282000),
+        Decimal(2282000),
     ]
     assert result["comparable"] is True
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("normalized_base_year", 2021),
+        ("policy_fingerprint", "different-policy"),
+        ("comparison_basis", "gross interest"),
+        ("metric_name_normalized", "opex"),
+        ("scope", "project"),
+        ("normalization_method", "different-method"),
+    ],
+)
+def test_serialized_comparison_key_must_match_metadata(money, policy, field, value):
+    """Each independent basis change must invalidate the old serialized key."""
+    original = normalize_disclosure_money(money, policy)
+    payload = json.loads(original.model_dump_json())
+    if field in {"comparison_basis", "metric_name_normalized", "scope"}:
+        payload["as_reported"][field] = value
+    else:
+        payload[field] = value
+    with pytest.raises(ValidationError, match="comparison key"):
+        NormalizedDisclosureMoney.model_validate_json(json.dumps(payload))
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("normalized_base_year", 2021),
+        ("policy_fingerprint", "different-policy"),
+        ("comparison_basis", "gross interest"),
+    ],
+)
+def test_comparison_gate_rechecks_metadata(money, policy, field, value):
+    """Unvalidated copies cannot reuse a stale key to pass the comparison gate."""
+    original = normalize_disclosure_money(money, policy)
+    if field == "comparison_basis":
+        copied = original.model_copy(
+            update={"as_reported": changed(money, comparison_basis=value)}
+        )
+    else:
+        copied = original.model_copy(update={field: value})
+    assert not money_values_are_comparable(original, copied)
+    assert not money_values_are_comparable(copied, original)
+
+
+@pytest.mark.parametrize(
+    "currency",
+    ["$", "€", "£", "US$", "eur", " EUR", "EUR ", "EUR million", "EUR/boe", "UЅD"],
+)
+def test_ambiguous_currency_unit_pair_is_not_evaluated(money, policy, currency):
+    """Matching symbols or aliases do not establish an explicit currency code."""
+    row = changed(money, currency=currency, unit=currency)
+    result = normalize_disclosure_money(row, policy)
+    assert result.as_reported == row
+    assert result.normalization_status == "NOT_EVALUATED"
+    assert result.normalized_amount is None
+    assert result.comparison_key is None
+    assert "unsupported_currency" in result.reasons
+    assert "unsupported_unit" in result.reasons
+
+
+@pytest.mark.parametrize(
+    "currency",
+    ["$", "€", "£", "US$", "eur", " EUR", "EUR ", "EUR million", "EUR/boe", "UЅD"],
+)
+def test_custom_fx_table_cannot_authorize_ambiguous_currency(policy, currency):
+    """Reject ambiguous codes at policy input, even for matching raw unit pairs."""
+    payload = json.loads(policy.model_dump_json())
+    payload["fx_table"]["rates"] = [
+        {
+            "currency": currency,
+            "fiscal_year": 2020,
+            "usd_per_currency": "2",
+            "source": "Synthetic example",
+        }
+    ]
+    with pytest.raises(ValidationError, match="currency code"):
+        NormalizationPolicy.model_validate_json(json.dumps(payload))
+
+
+def test_custom_fx_table_accepts_explicit_currency_code(money, policy):
+    """Synthetic 2 CAD * 2 USD/CAD = 4 USD; the rate is not an observation."""
+    table = FxTable(
+        version="synthetic-cad-v1",
+        rates=(
+            FxRate(
+                currency="CAD",
+                fiscal_year=2020,
+                usd_per_currency="2",
+                source="Synthetic example",
+            ),
+        ),
+    )
+    custom = NormalizationPolicy(**{**policy.model_dump(), "fx_table": table})
+    row = changed(money, currency="CAD", unit="CAD", magnitude_scale="units")
+    result = normalize_disclosure_money(row, custom)
+    assert result.normalization_status == "NORMALIZED"
+    assert result.normalized_amount == Decimal(4)
+
+
+@pytest.mark.parametrize("target", ["default", "current"])
+@pytest.mark.parametrize("setting", ["traps", "exponent_bounds"])
+def test_rebasing_ignores_mutable_decimal_contexts(
+    money, policy, monkeypatch, target, setting
+):
+    """103 / 1.03 = 100 despite traps for inexact division or narrow bounds."""
+    row = changed(
+        money,
+        amount="103",
+        currency="USD",
+        unit="USD",
+        magnitude_scale="units",
+        fiscal_year=2021,
+    )
+    expected = normalize_disclosure_money(row, policy)
+    assert expected.normalization_status == "NORMALIZED"
+    assert expected.normalized_amount == Decimal(100)
+    with localcontext() as current:
+        context = DefaultContext if target == "default" else current
+        if setting == "traps":
+            monkeypatch.setitem(context.traps, Inexact, True)
+        else:
+            monkeypatch.setattr(context, "Emin", -1)
+            monkeypatch.setattr(context, "Emax", 1)
+        actual = normalize_disclosure_money(row, policy)
+    assert actual.model_dump_json() == expected.model_dump_json()
+
+
+@pytest.mark.parametrize("target", ["default", "current"])
+@pytest.mark.parametrize("amount", ["1e1000000", "1e-1000030"])
+def test_decimal_range_failures_ignore_disabled_external_traps(
+    money, policy, monkeypatch, target, amount
+):
+    """Out-of-range amounts still refuse evaluation when external traps are off."""
+    row = changed(
+        money, amount=amount, currency="USD", unit="USD", magnitude_scale="units"
+    )
+    with localcontext() as current:
+        context = DefaultContext if target == "default" else current
+        for signal in context.traps:
+            monkeypatch.setitem(context.traps, signal, False)
+        result = normalize_disclosure_money(row, policy)
+    assert result.normalization_status == "NOT_EVALUATED"
+    assert result.normalized_amount is None
+    assert result.reasons == ("decimal_calculation_failed",)

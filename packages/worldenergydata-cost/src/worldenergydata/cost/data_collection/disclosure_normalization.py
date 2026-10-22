@@ -8,29 +8,37 @@ It does not authenticate that basis or approve a project benchmark.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from decimal import (
     ROUND_HALF_EVEN,
     Context,
     Decimal,
     DecimalException,
+    DivisionByZero,
+    InvalidOperation,
+    Overflow,
     Underflow,
     localcontext,
 )
 from hashlib import sha256
-from typing import Any, Iterable, Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictInt, model_validator
 
-from worldenergydata.cost.data_collection.fx_policy_v1 import BASELINE_FX_TABLE, FxTable
+from worldenergydata.cost.data_collection.fx_policy_v1 import (
+    BASELINE_FX_TABLE,
+    FxTable,
+    is_currency_code,
+)
 
 # Financial short-scale definitions. Powers match NIST SP 330 (2019),
 # Table 7 (kilo, mega, giga): https://doi.org/10.6028/NIST.SP.330-2019 .
 # "units" is the multiplicative identity; no SI status is claimed for money.
 _SCALES = {
-    "units": Decimal("1"),
-    "thousand": Decimal("1000"),
-    "million": Decimal("1000000"),
-    "billion": Decimal("1000000000"),
+    "units": Decimal(1),
+    "thousand": Decimal(1000),
+    "million": Decimal(1000000),
+    "billion": Decimal(1000000000),
 }
 _METHOD = "fx_then_base_year_adjustment_v1"
 
@@ -75,13 +83,31 @@ class NormalizationPolicy(BaseModel):
     # Target year from the repository issue-336 plan (2026-04-22), Scope Boundaries.
     base_year: StrictInt = Field(default=2020, gt=0)
     # Equation 3-13 requires 1+r > 0 for a positive, invertible price ratio.
-    annual_escalation_rate: Decimal | None = Field(gt=Decimal("-1"))
+    annual_escalation_rate: Decimal | None = Field(gt=Decimal(-1))
     escalation_source: str | None
     fx_table: FxTable = BASELINE_FX_TABLE
 
     @property
     def fingerprint(self) -> str:
         return sha256(self.model_dump_json().encode("utf-8")).hexdigest()
+
+
+def _comparison_key(
+    record: DisclosureMoney,
+    currency: str | None,
+    base_year: int | None,
+    method: str,
+    policy_fingerprint: str,
+) -> tuple[str | None, ...]:
+    return (
+        record.metric_name_normalized,
+        record.scope,
+        record.comparison_basis,
+        currency,
+        str(base_year),
+        method,
+        policy_fingerprint,
+    )
 
 
 class NormalizedDisclosureMoney(BaseModel):
@@ -114,7 +140,7 @@ class NormalizedDisclosureMoney(BaseModel):
     comparison_key: tuple[str, ...] | None = None
 
     @model_validator(mode="after")
-    def consistent_status(self) -> "NormalizedDisclosureMoney":
+    def consistent_status(self) -> NormalizedDisclosureMoney:
         values = (
             self.normalized_amount,
             self.normalized_currency,
@@ -134,6 +160,8 @@ class NormalizedDisclosureMoney(BaseModel):
                 raise ValueError(
                     "normalized results require complete comparable fields"
                 )
+            if self.comparison_key != self._derived_comparison_key():
+                raise ValueError("comparison key does not match normalized metadata")
         elif (
             self.comparability_status != "not_comparable"
             or not self.reasons
@@ -143,6 +171,15 @@ class NormalizedDisclosureMoney(BaseModel):
                 "NOT_EVALUATED results require reasons and no normalized fields"
             )
         return self
+
+    def _derived_comparison_key(self) -> tuple[str | None, ...]:
+        return _comparison_key(
+            self.as_reported,
+            self.normalized_currency,
+            self.normalized_base_year,
+            self.normalization_method,
+            self.policy_fingerprint,
+        )
 
 
 def _blank(value: str | None) -> bool:
@@ -161,14 +198,14 @@ def normalize_disclosure_money(
     https://doi.org/10.6028/NIST.HB.135-2020 . This is price escalation,
     not investment discounting or purchasing-power-parity conversion.
     """
-    metadata = dict(
-        as_reported=record.model_copy(deep=True),
-        policy_id=policy.policy_id,
-        policy_fingerprint=policy.fingerprint,
-        fx_table_version=policy.fx_table.version,
-        annual_escalation_rate=policy.annual_escalation_rate,
-        escalation_source=policy.escalation_source,
-    )
+    metadata = {
+        "as_reported": record.model_copy(deep=True),
+        "policy_id": policy.policy_id,
+        "policy_fingerprint": policy.fingerprint,
+        "fx_table_version": policy.fx_table.version,
+        "annual_escalation_rate": policy.annual_escalation_rate,
+        "escalation_source": policy.escalation_source,
+    }
     reasons: list[str] = []
     if record.amount is None:
         reasons.append("missing_amount")
@@ -185,6 +222,10 @@ def normalize_disclosure_money(
             reasons.append(reason)
     if record.fiscal_year is None:
         reasons.append("missing_fiscal_year")
+    if record.currency and not is_currency_code(record.currency):
+        reasons.append("unsupported_currency")
+    if record.unit and not is_currency_code(record.unit):
+        reasons.append("unsupported_unit")
     if record.currency and record.unit and record.unit != record.currency:
         reasons.append("currency_unit_mismatch")
     if record.magnitude_scale and record.magnitude_scale not in _SCALES:
@@ -215,7 +256,7 @@ def normalize_disclosure_money(
         return unevaluated()
 
     if record.currency == "USD":
-        fx_rate = Decimal("1")  # USD/USD identity, by definition, in every year.
+        fx_rate = Decimal(1)  # USD/USD identity, by definition, in every year.
         fx_source = "USD/USD identity; no exchange conversion"
     else:
         observation = next(
@@ -236,26 +277,32 @@ def normalize_disclosure_money(
         # Python decimal.Context default precision/rounding (Library Reference,
         # decimal, Python 3.10): 28 significant digits, ROUND_HALF_EVEN.
         # https://docs.python.org/3.10/library/decimal.html#decimal.Context
-        # Use a
-        # fresh context so caller precision, rounding and traps cannot alter it.
-        context = Context(prec=28, rounding=ROUND_HALF_EVEN)
-        context.traps[Underflow] = True  # Do not silently lose a nonzero amount.
+        # Specify every parameter: omitted values inherit mutable DefaultContext.
+        # Underflow is trapped to avoid silently losing a nonzero amount.
+        context = Context(
+            prec=28,
+            rounding=ROUND_HALF_EVEN,
+            Emin=-999999,
+            Emax=999999,
+            capitals=1,
+            clamp=0,
+            flags=[],
+            traps=[InvalidOperation, DivisionByZero, Overflow, Underflow],
+        )
         with localcontext(context):
             nominal_usd = record.amount * _SCALES[record.magnitude_scale] * fx_rate
             normalized = nominal_usd * (
-                (Decimal("1") + policy.annual_escalation_rate)
+                (Decimal(1) + policy.annual_escalation_rate)
                 ** (policy.base_year - record.fiscal_year)
             )
     except DecimalException:
         reasons.append("decimal_calculation_failed")
         return unevaluated()
 
-    key = (
-        record.metric_name_normalized,
-        record.scope,
-        record.comparison_basis,
+    key = _comparison_key(
+        record,
         "USD",
-        str(policy.base_year),
+        policy.base_year,
         _METHOD,
         policy.fingerprint,
     )
@@ -288,7 +335,11 @@ def money_values_are_comparable(
 ) -> bool:
     """Require successful normalization and an identical declared economic basis."""
     return (
-        left.comparability_status == right.comparability_status == "comparable"
+        left.normalization_status == right.normalization_status == "NORMALIZED"
+        and left.comparability_status == right.comparability_status == "comparable"
         and left.comparison_key is not None
-        and left.comparison_key == right.comparison_key
+        and left.comparison_key
+        == left._derived_comparison_key()
+        == right._derived_comparison_key()
+        == right.comparison_key
     )
