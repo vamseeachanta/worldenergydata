@@ -136,8 +136,9 @@ def read_depth_grid(
     only coordinate axes and clipped values are read, without derived files.
     """
     _validate_bbox(bbox)
-    if max_cells <= 0:
-        raise ValueError("max_cells must be positive")
+    # Caller-selected resource budget, not a bathymetric acceptance threshold.
+    if isinstance(max_cells, bool) or not isinstance(max_cells, int) or max_cells <= 0:
+        raise ValueError("max_cells must be a positive integer")
     _qualify_conventions(entry)
     verify_file(archive, entry)
     if entry["source_id"] == "boem_gom_bathymetry":
@@ -206,6 +207,29 @@ def _read_tiff(
             return clip_to_bbox(DepthGrid(lon, lat, _depth(values, convention)), bbox)
 
 
+def _netcdf_axis(variable: Any, name: str, units: str, limit: int) -> Any:
+    """Validate a CF coordinate before discarding its mask.
+
+    CF Metadata Conventions 1.6 (2011), section 1.2: coordinates are numeric,
+    monotonic, share their dimension's name, and cannot have missing values.
+    Geographic unit strings follow sections 4.1 and 4.2.
+    """
+    if (
+        getattr(variable, "dimensions", None) != (name,)
+        or getattr(variable, "units", None) != units
+    ):
+        raise TerrainFetchError("unsupported netCDF coordinate dimensions or units")
+    values = np.ma.asarray(variable[:])
+    if np.any(np.ma.getmaskarray(values)):
+        raise TerrainFetchError("netCDF coordinate contains missing values")
+    axis = np.asarray(values)
+    try:
+        _validate_axis(axis, limit)
+    except (ValueError, TypeError) as exc:
+        raise TerrainFetchError("invalid netCDF coordinate values") from exc
+    return axis
+
+
 def _read_netcdf(
     archive: Path,
     bbox: tuple[float, float, float, float],
@@ -217,23 +241,33 @@ def _read_netcdf(
     except ImportError as exc:
         raise TerrainFetchError("netCDF4 reader requires optional netCDF4") from exc
     with Dataset(archive, "r") as dataset:
-        lon_var, lat_var = dataset.variables["lon"], dataset.variables["lat"]
+        try:
+            lon_var = dataset.variables["lon"]
+            lat_var = dataset.variables["lat"]
+            elevation = dataset.variables["elevation"]
+        except KeyError as exc:
+            raise TerrainFetchError("netCDF missing required grid variable") from exc
+        # GEBCO_2024 (2024), "GEBCO Grid, vertical and horizontal datum":
+        # global geographic cell centres within the longitude/latitude bounds.
+        lon = _netcdf_axis(lon_var, "lon", "degrees_east", 180)
+        lat = _netcdf_axis(lat_var, "lat", "degrees_north", 90)
+        # GEBCO_2024 Grid (2024), "CF-compliant NetCDF format": a metre
+        # elevation array with bathymetry negative and topography positive.
+        # https://www.gebco.net/data-products-gridded-bathymetry-data/gebco2024-grid
         if (
-            getattr(lon_var, "units", None) != "degrees_east"
-            or getattr(lat_var, "units", None) != "degrees_north"
+            elevation.dimensions != ("lat", "lon")
+            or getattr(elevation, "units", None) not in ("m", "meters")
+            or elevation.shape != (len(lat), len(lon))
         ):
-            raise TerrainFetchError(
-                "netCDF coordinate units are not geographic degrees"
-            )
-        lon, lat = np.asarray(lon_var[:]), np.asarray(lat_var[:])
-        _validate_axis(lon, 180)
-        _validate_axis(lat, 90)
-        elevation = dataset.variables["elevation"]
-        if elevation.dimensions != ("lat", "lon") or elevation.units not in (
-            "m",
-            "meters",
-        ):
-            raise TerrainFetchError("unsupported elevation dimensions or units")
+            raise TerrainFetchError("unsupported elevation dimensions, shape or units")
+        expected_positive = {
+            "elevation_positive_up": "up",
+            "depth_positive_down": "down",
+        }[convention]
+        # CF 1.6 (2011), section 4.3: positive directions are case insensitive.
+        positive = getattr(elevation, "positive", expected_positive)
+        if not isinstance(positive, str) or positive.lower() != expected_positive:
+            raise TerrainFetchError("netCDF positive attribute contradicts manifest")
         west, south, east, north = bbox
         x = np.flatnonzero((lon >= west) & (lon <= east))
         y = np.flatnonzero((lat >= south) & (lat <= north))
@@ -241,5 +275,7 @@ def _read_netcdf(
             raise ValueError("bbox outside grid")
         if (x[-1] - x[0] + 1) * (y[-1] - y[0] + 1) > max_cells:
             raise TerrainFetchError("clip exceeds max_cells")
+        # netCDF4 performs CF 1.6 sections 2.5.1 and 8.1 masking/unpacking:
+        # unpacked = packed * scale_factor + add_offset. Keep its mask.
         values = elevation[y[0] : y[-1] + 1, x[0] : x[-1] + 1]
         return DepthGrid(lon[x], lat[y], _depth(values, convention))
