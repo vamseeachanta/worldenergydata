@@ -126,6 +126,84 @@ def test_invalid_row_rejected_without_losing_next_row(field, value, caplog):
 
 
 @pytest.mark.parametrize(
+    "field,value",
+    [
+        ("Deck Load Capacity (MT)", "1500 kips"),
+        ("Deck Load Capacity (MT)", "1,5,00"),
+        ("Deck Load Capacity (MT)", "1500 m"),
+        ("Deck Area (m2)", "2400 m"),
+        ("Deck Area (m2)", "2400 t"),
+        ("Deck Area (m2)", "2,4,00"),
+        ("Accommodation", "12 m"),
+        ("Accommodation", "12 t"),
+        ("Accommodation", "1,2"),
+        ("LOA (m)", "120 ft"),
+        ("Beam (m)", "2,4"),
+        ("Main Crane (MT)", "2x900 kips"),
+        ("Draft (m)", "6 ft/12"),
+        ("Draft (m)", "6/12 ft"),
+        ("Draft (m)", "6/unreadable"),
+    ],
+)
+def test_rejects_incompatible_units_and_malformed_numbers(field, value, caplog):
+    """Reject whole cells before unit stripping or comma removal can hide errors."""
+    valid = matrix(**{field: ""}) if field == "Accommodation" else matrix()
+    text = matrix(**{field: value}) + "\n" + valid.splitlines()[-1]
+    (record,) = collector.parse_msiv_matrix(text)
+    assert record["VESSEL_NAME"] == "Fixture A"
+    assert "invalid MSIV particulars" in caplog.text
+    assert value not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "field,value,key,expected",
+    [
+        ("LOA (m)", "120 m", "LOA_M", 120.0),
+        ("Beam (m)", "24 metres", "BEAM_M", 24.0),
+        ("Deck Area (m2)", "2,400 m2", "DECK_AREA_M2", 2400.0),
+        ("Deck Area (m2)", "2400 m²", "DECK_AREA_M2", 2400.0),
+        ("Deck Load Capacity (MT)", "1,500 MT", "DECK_LOAD_CAPACITY_T", 1500.0),
+        ("Deck Load Capacity (MT)", "1500 tonnes", "DECK_LOAD_CAPACITY_T", 1500.0),
+        ("Accommodation", "12.0", "QUARTERS_CAPACITY", 12),
+        ("Accommodation", "0", "QUARTERS_CAPACITY", 0),
+        ("Main Crane (MT)", "2×900 t", "MAIN_CRANE_CAPACITY_T", 900.0),
+        ("Main Crane (MT)", "2x900 MT", "MAIN_CRANE_CAPACITY_T", 900.0),
+        ("Draft (m)", "6/12", "DRAFT_M", 6.0),
+        ("Draft (m)", "6 m / 12 m", "DRAFT_M", 6.0),
+    ],
+)
+def test_accepts_compatible_units_and_source_conventions(field, value, key, expected):
+    """Unit suffixes are identity mappings; multiplicity and paired draft remain."""
+    (record,) = collector.parse_msiv_matrix(matrix(**{field: value}))
+    assert record[key] == expected
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "",
+        "-",
+        "--",
+        "---",
+        "n/a",
+        "na",
+        "nil",
+        "none",
+        "tbd",
+        "tba",
+        "unknown",
+        "varies",
+        " NoNe ",
+    ],
+)
+def test_missing_optional_crane_preserves_row(value):
+    """Shared numeric absence markers leave the optional value unknown."""
+    (record,) = collector.parse_msiv_matrix(matrix(**{"Aux Crane (MT)": value}))
+    assert record["AUX_CRANE_CAPACITY_T"] is None
+    assert record["MAIN_CRANE_CAPACITY_T"] == 900.0
+
+
+@pytest.mark.parametrize(
     "value",
     [
         "brochure.pdf",

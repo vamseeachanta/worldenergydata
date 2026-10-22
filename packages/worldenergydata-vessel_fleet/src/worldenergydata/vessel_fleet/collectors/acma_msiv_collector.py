@@ -18,12 +18,12 @@ import logging
 import math
 import os
 import re
-from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
 from worldenergydata.vessel_fleet.parsers.numeric import (
+    _NON_NUMERIC_VALUES,
     parse_int_from_label,
     parse_numeric,
 )
@@ -63,7 +63,13 @@ _REQUIRED_COLUMNS = {
     "draft (m)",
     "main crane (mt)",
 }
-_MISSING = {"", "-", "--", "n/a", "na", "unknown", "tbd"}
+_MISSING = _NON_NUMERIC_VALUES | {""}
+_NUMBER = (
+    r"[+-]?(?:(?:[0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)(?:\.[0-9]*)?"
+    r"|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
+)
+_METRES = r"m\.?|metres|meters"
+_TONNES = r"mt|t|tonnes"
 
 
 def _normalize_header(cell: str) -> str:
@@ -114,13 +120,26 @@ def _optional_text(value: str | None) -> str | None:
 
 def _checked_numeric(
     value: str | None,
-    parser: Callable[[str], float | None] = parse_numeric,
+    *,
+    units: str = "",
+    crane: bool = False,
+    draft: bool = False,
 ) -> float | None:
-    """Keep missing values unknown; reject malformed or non-finite specs."""
+    """Validate the whole cell before stripping compatible units or grouping."""
     value = _optional_text(value)
     if value is None:
         return None
-    parsed = parser(value)
+    literal = rf"({_NUMBER})(?:\s*(?:{units}))?" if units else rf"({_NUMBER})"
+    pattern = literal
+    if crane:
+        pattern = rf"(?:[0-9]+\s*[x×X]\s*)?{pattern}"
+    if draft:
+        pattern = rf"{pattern}(?:\s*/\s*{literal})?"
+    match = re.fullmatch(pattern, value, re.IGNORECASE)
+    if match is None:
+        raise ValueError("Invalid numeric particulars")
+    # The first capture retains per-crane capacity and transit draft.
+    parsed = parse_numeric(match.group(1))
     # Sign rule: ConstructionVesselSchema._validate_non_negative_cv_floats
     # and BaseVesselSchema._validate_non_negative_floats; no physical limit.
     if parsed is None or not math.isfinite(parsed) or parsed < 0:
@@ -223,19 +242,21 @@ def _map_spec_row(header: list[str], cells: list[str]) -> dict[str, Any] | None:
         "DATA_SOURCE": DATA_SOURCE_MSIV,
         "DATA_SOURCE_URL": _source_url(row.get("source url")),
         "IMO_NUMBER": _optional_text(row.get("imo number") or row.get("imo")),
-        "LOA_M": _checked_numeric(row.get("loa (m)")),
-        "BEAM_M": _checked_numeric(row.get("beam (m)")),
-        "DRAFT_M": _checked_numeric(row.get("draft (m)"), _parse_draft),
+        "LOA_M": _checked_numeric(row.get("loa (m)"), units=_METRES),
+        "BEAM_M": _checked_numeric(row.get("beam (m)"), units=_METRES),
+        "DRAFT_M": _checked_numeric(row.get("draft (m)"), units=_METRES, draft=True),
         "MAIN_CRANE_CAPACITY_T": _checked_numeric(
-            row.get("main crane (mt)"), _parse_crane
+            row.get("main crane (mt)"), units=_TONNES, crane=True
         ),
         "AUX_CRANE_CAPACITY_T": _checked_numeric(
-            row.get("aux crane (mt)"), _parse_crane
+            row.get("aux crane (mt)"), units=_TONNES, crane=True
         ),
         "DP_CLASS": _parse_dp(dp_text or ""),
         "QUARTERS_CAPACITY": int(accommodation) if accommodation is not None else None,
-        "DECK_AREA_M2": _checked_numeric(row.get("deck area (m2)")),
-        "DECK_LOAD_CAPACITY_T": _checked_numeric(row.get("deck load capacity (mt)")),
+        "DECK_AREA_M2": _checked_numeric(row.get("deck area (m2)"), units=r"m2|m²"),
+        "DECK_LOAD_CAPACITY_T": _checked_numeric(
+            row.get("deck load capacity (mt)"), units=_TONNES
+        ),
     }
     # Format checks come from the existing schema, including the IMO format;
     # schema validation does not establish registry identity or brochure truth.
