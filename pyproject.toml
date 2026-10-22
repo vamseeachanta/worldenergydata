@@ -137,7 +137,7 @@ dev = [
     "pre-commit>=3.0",
     "types-requests>=2.33.0.20260518",
     "types-PyYAML>=6.0.12.20260906",
-    "types-python-dateutil>=2.9",
+    "types-python-dateutil>=2.9.0.20260807",
 ]
 test = [
     "pytest>=8.4.2",
