@@ -83,3 +83,40 @@ def test_explicit_zero_gas_prices_are_evaluated_as_zero_revenue():
     metrics = run_chain({"2018-01": 0.0, "2018-02": 0.0})["pre_tax_metrics"]
     assert metrics["gross_revenue_usd"] == 0.0
     assert metrics["gas_revenue_usd"] == 0.0
+
+
+@pytest.mark.parametrize("gas", ["missing", float("nan"), "bad", 0.0, 100.0])
+@pytest.mark.parametrize("priced", [True, False])
+def test_unknown_gas_is_rejected_only_when_priced(gas, priced):
+    """Synthetic single-month inputs distinguish unknown gas from measured zero."""
+
+    class GasInputLoader:
+        def load_field_production(self, field_name):
+            frame = (
+                SyntheticGasLoader(oil=(10.0, 20.0))
+                .load_field_production(field_name)
+                .iloc[:1]
+                .copy()
+            )
+            if gas == "missing":
+                return frame.drop(columns="gas_mcf")
+            frame["gas_mcf"] = gas
+            return frame
+
+    def evaluate():
+        return run_canada_reference_chain(
+            adapter=CanadaAdapter(loader=GasInputLoader()),
+            field_meta={"field_name": "Synthetic gas field", "water_depth_m": 0.0},
+            field_name="Synthetic gas field",
+            oil_price_usd_bbl=2.0,
+            gas_prices={"2018-01": 3.0} if priced else None,
+        )["pre_tax_metrics"]
+
+    if priced and (isinstance(gas, str) or pd.isna(gas)):
+        with pytest.raises(CashflowError, match="gas"):
+            evaluate()
+    else:
+        metrics = evaluate()
+        expected_gas = gas * 3.0 if priced else 0.0
+        assert metrics["gas_revenue_usd"] == expected_gas
+        assert metrics["gross_revenue_usd"] == 20.0 + expected_gas
