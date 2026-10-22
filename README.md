@@ -59,6 +59,48 @@ This repo is the **asset & data** half of that loop — the public-source field/
 [Architecture drawing and report inventory](docs/modules/repository-architecture.md)
 covers ingestion, processing, capability provenance, publication and the bulk-data boundary.
 
+## CI guards
+
+Run local checks from the repository root. The PR Validation workflow contains
+these guards; its job names are the status contexts used by branch rulesets.
+The workflow is the source for the title policy and advisory size limit.
+
+| Guard | What it checks | Local check |
+|---|---|---|
+| Validate PR Title | Conventional title type and subject length | Compare `gh pr view --json title` with the `pr-title` policy in `.github/workflows/pr-validation.yml`. |
+| Check File Sizes | Advisory warning for changed files above the workflow limit | Review sizes of files in `git diff --name-only origin/main...HEAD`. |
+| Check Sensitive Files | New/modified filenames against environment, key and secret patterns; diff errors fail | `python3 scripts/ci/check_sensitive_files.py --repo <merge-checkout>` |
+| Changelog Check | Advisory notice when no changelog changed | `git diff --name-only origin/main...HEAD -- 'CHANGELOG*' 'HISTORY*' 'NEWS*'` |
+| Code Owners Check | Advisory presence of a CODEOWNERS file | `git ls-files -- .github/CODEOWNERS CODEOWNERS docs/CODEOWNERS` |
+| Lint Changed Knowledge Packs | Policy, source URLs and publication checks on changed packs | `python3 scripts/pack_lint.py --account <repository-namespace> <changed-agent-pack.md> ...` |
+| Repository structure contract | Root classification and digest-bound generated-file retirement | `uv run --with pyyaml python scripts/maintenance/verify_repo_structure.py` |
+| Required pack-check audit | Read-only observation of effective active branch rules | `python3 scripts/ci/audit_required_pack_check.py --repo <organization/repository> --branch main` |
+
+The sensitive-file command expects a pull-request **merge checkout** with both
+parents available, as used by the workflow. A shallow checkout without parents
+fails; it cannot report a clean result. Filenames are checked without reading
+file contents. This does not replace the secret scanners in the security workflow
+or hooks. The ruleset audit is a local diagnostic, not a new required CI job:
+`PASS` exits successfully, `FAIL` exits with status 1, and `NOT_EVALUATED` exits
+with status 2 when evidence is unavailable or malformed. It does not change
+settings or prove a branch is otherwise protected against bypasses.
+
+Offline regression tests (including a recorded branch-rules response):
+
+```bash
+uv run --no-project --with pytest --with pyyaml python -m pytest --noconftest -o addopts='' tests/unit/hygiene/test_sensitive_files_workflow.py tests/unit/hygiene/test_required_pack_check_audit.py tests/repo_structure/ -q -p no:cacheprovider
+python3 scripts/ci/audit_required_pack_check.py --rules-json tests/unit/hygiene/ruleset_audit/active-branch-rules.json
+```
+
+The recorded required-status-rule projection was observed on 2026-10-22; it
+omits the pack-lint context and therefore reports `FAIL`. Online auditing uses
+GitHub CLI authentication and paginates the [effective branch-rules API](https://docs.github.com/en/rest/repos/rules#get-rules-for-a-branch),
+which includes inherited active rules and excludes disabled/evaluate rulesets.
+The [rename evidence design](docs/standards/report-rename-evidence.md) documents
+strict expected-failure specifications pending an authenticated approval source.
+Other build, lint, type, security and documentation checks remain defined in
+`.github/workflows/ci.yml`.
+
 ## Overview
 
 WorldEnergyData helps energy industry professionals, data analysts, researchers, and consultants make data-driven decisions by providing:
