@@ -1,0 +1,23 @@
+# Brazil concession royalty seam, not a complete fiscal regime.
+# Contract rate is a required runtime input, never copied from illustrative bands.
+schema_version: 1
+country: brazil
+currency: USD  # Screening reporting currency only; no BRL conversion is performed.
+price_marker: brent  # Declarative only; supply realized prices explicitly.
+royalty:
+  model: contractual
+source_url: https://www.planalto.gov.br/ccivil_03/decreto/d2705.htm
+source_ref: >
+  Decreto 2.705/1998, arts. 11-12 (monthly royalty, contractual percentage,
+  reference-price valuation); Lei 9.478/1997, art. 47 (concession royalties).
+revision: "1"
+effective_date: "2026-10-19"  # Deck revision date, not a statutory commencement date.
+notes: >
+  Royalty-only screening for concession contracts; not a PSC deck.
+  Supply the royalty_rate from the applicable contract, per Decreto 2.705/1998,
+  art. 12 paragraph 2. No production-rate bands or default percentage are assumed.
+  NOT_EVALUATED: statutory reference-price valuation and local-currency payment;
+  the engine uses supplied sales prices in USD. NOT_EVALUATED: special
+  participation (art. 22 requires quarterly net revenue, production volume,
+  production year and location), corporate income tax and full government take.
+  A royalty-only cashflow does not establish after-tax economics.

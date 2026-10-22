@@ -5,7 +5,7 @@ Frozen, source-agnostic representations of a country's field-economics fiscal
 regime. In v1 only the *royalty* layer is consumed by the cashflow engine
 (``CashflowEngine.calculate_royalty``); every other field is declarative
 metadata that documents provenance and reserves seams for later slices
-(revenue/NPV price-marker + discount in #716, sliding-scale royalty in #718).
+(revenue/NPV price-marker + discount in #716, full Brazil fiscal regime in #718).
 
 The types here carry no I/O and no validation logic beyond dataclass field
 typing — construction and strict validation live in ``schema.py`` so that the
@@ -29,7 +29,7 @@ from typing import Dict, Optional
 DEV_SYSTEMS = ("dry", "subsea15", "subsea20", "default")
 
 # Additive royalty models retain the version-1 shipped deck contract.
-SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale")
+SUPPORTED_ROYALTY_MODELS = ("flat", "none", "sliding_scale", "contractual")
 RESERVED_ROYALTY_MODELS = ()
 
 # Declarative price markers (not consumed in v1 — revenue seam is #716).
@@ -66,7 +66,8 @@ class RoyaltyTerms:
 
     Attributes:
         model: ``"flat"`` (per-dev-system fixed rate), ``"none"`` (zero royalty),
-            or ``"sliding_scale"`` (production-rate bands).
+            ``"sliding_scale"`` (production-rate bands), or ``"contractual"``
+            (explicit caller-supplied contract rate).
         rate_by_dev_system: for ``model == "flat"``, an exact mapping over
             ``DEV_SYSTEMS`` with each rate in ``[0.0, 1.0]``. ``None`` for
             ``model == "none"``.
@@ -82,6 +83,7 @@ class RoyaltyTerms:
     ) -> float:
         """Resolve the royalty rate for a development system.
 
+        ``contractual`` raises: the cashflow engine requires the contract rate.
         ``sliding_scale`` requires a finite, non-negative daily production rate
         and selects the first inclusive threshold, ending with an unbounded band.
         ``none`` → 0.0. ``flat`` → the mapped rate, falling back to the
@@ -89,6 +91,10 @@ class RoyaltyTerms:
         ``AssumptionsManager.get``'s default-row fallback so parity holds for
         dev systems outside the canonical four.
         """
+        if self.model == "contractual":
+            raise ValueError(
+                "contract royalty rate must be supplied to the cashflow engine"
+            )
         if self.model == "none":
             return 0.0
         if self.model == "sliding_scale":
