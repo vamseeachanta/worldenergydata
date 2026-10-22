@@ -13,3 +13,9 @@ shared `worldenergydata.common` layer.
 Hs-conditioned QDM, joint Hs–Tm02 diagnostics and contiguous time-block validation.
 See the [calibration guide](src/worldenergydata/metocean/calibration/README.md)
 for assumptions, citations, provenance and the opt-in published-data benchmark.
+
+## Backend contracts and examples
+
+See the [optional backend guide](OPTIONAL_BACKENDS.md) for dependency integration
+prerequisites, joint-model return contracts, contour methods, the two-dataset
+adapter and an independently calculated synthetic example.

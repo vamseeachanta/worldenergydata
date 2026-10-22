@@ -1,20 +1,22 @@
 """
-ABOUTME: Environmental contour wrapper (IFORM/ISORM) using metocean-stats + virocon.
+ABOUTME: IFORM/ISORM transforms and explicitly labelled backend contours.
 ABOUTME: Derives contours from the JointModel fitted by JointProbabilityModel.
 
-Uses virocon (installed with metocean-stats) for IFORM/ISORM contour computation.
+Uses normal-space transforms and the fitted tabulated marginal distribution.
 All visualisations use Plotly.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from scipy.integrate import cumulative_trapezoid
+from scipy.stats import chi2, norm, weibull_min
 
+from worldenergydata.metocean.statistics.backend import JointBackendResult
 from worldenergydata.metocean.statistics.joint_probability import JointModel
 
 
@@ -23,7 +25,7 @@ class ContourResult:
     """Container for an environmental contour result."""
 
     method: str
-    """'IFORM' or 'ISORM'."""
+    """'IFORM', 'ISORM', or 'backend_iso_density'."""
     return_period: int
     """Return period in years."""
     hs_values: np.ndarray
@@ -37,8 +39,10 @@ class EnvironmentalContour:
     IFORM and ISORM environmental contour computation.
 
     Leverages the joint model fitted by ``JointProbabilityModel.fit``.
-    Uses virocon (bundled with metocean-stats 1.1.9) for contour
-    computation, with a Plotly-based visualisation layer.
+    IFORM/ISORM use the normalized tabulated Hs marginal and conditional
+    lognormal model. Backend iso-density curves are available separately;
+    they are neither IFORM nor ISORM. See the optional-backends guide for
+    numerical and engineering validation limits.
 
     Examples
     --------
@@ -54,6 +58,8 @@ class EnvironmentalContour:
         state_duration_hours:
             Duration of each sea state in hours (commonly 1 or 3).
         """
+        if not np.isfinite(state_duration_hours) or state_duration_hours <= 0:
+            raise ValueError("state_duration_hours must be finite and positive")
         self._state_duration = state_duration_hours
 
     # ------------------------------------------------------------------
@@ -125,7 +131,7 @@ class EnvironmentalContour:
     def plot_contour(
         self,
         contour: ContourResult,
-        data: Optional[pd.DataFrame] = None,
+        data: pd.DataFrame | None = None,
     ) -> go.Figure:
         """
         Plotly Hs-Tp contour plot with optional data overlay.
@@ -151,7 +157,7 @@ class EnvironmentalContour:
                     y=data["hs"].values,
                     mode="markers",
                     name="Observations",
-                    marker=dict(color="lightgrey", size=3, opacity=0.5),
+                    marker={"color": "lightgrey", "size": 3, "opacity": 0.5},
                 )
             )
 
@@ -165,19 +171,19 @@ class EnvironmentalContour:
                 y=hs,
                 mode="lines",
                 name=f"{contour.method} {contour.return_period}-yr",
-                line=dict(color="firebrick", width=2),
+                line={"color": "firebrick", "width": 2},
             )
         )
 
         fig.update_layout(
-            title=dict(
-                text=(
+            title={
+                "text": (
                     f"{contour.method} Environmental Contour "
                     f"({contour.return_period}-year return period)"
                 )
-            ),
-            xaxis=dict(title="Tp (s)"),
-            yaxis=dict(title="Hs (m)"),
+            },
+            xaxis={"title": "Tp (s)"},
+            yaxis={"title": "Hs (m)"},
             template="plotly_white",
         )
         return fig
@@ -186,98 +192,107 @@ class EnvironmentalContour:
     # Private helpers
     # ------------------------------------------------------------------
 
-    def _compute_contour(
-        self,
-        joint_model: JointModel,
-        return_period: int,
-        method: str,
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """
-        Internal contour computation using virocon or metocean-stats.
+    def backend_contour(
+        self, joint_model: JointModel, return_period: int
+    ) -> ContourResult:
+        """Return an exactly requested backend iso-density curve, without relabelling."""
+        hs, tp = self._compute_contour(
+            joint_model, return_period, "backend_iso_density"
+        )
+        return ContourResult("backend_iso_density", return_period, hs, tp)
 
-        Tries to use the pre-computed contours stored in the JointModel
-        (from metocean-stats joint_distribution_Hs_Tp output), falling back
-        to virocon if needed.
-        """
-        # Prefer contours already computed inside metocean-stats
-        if joint_model._raw_result is not None:
-            raw = joint_model._raw_result
-            contour_hs_list = raw[8]  # list of arrays, one per period
-            contour_tp_list = raw[9]  # list of arrays, one per period
-            periods_list = raw[10]  # list of periods
+    def _compute_contour(self, joint_model, return_period, method):
+        if not np.isfinite(return_period) or return_period <= 0:
+            raise ValueError("return period must be finite and positive")
+        if method == "backend_iso_density":
+            if joint_model._raw_result is None:
+                raise ValueError("No backend contour is stored")
+            raw = JointBackendResult.from_raw(joint_model._raw_result)
+            if return_period not in raw.X:
+                raise ValueError("Requested return period was not fitted")
+            index = list(raw.X).index(return_period)
+            hs = np.asarray(raw.h3[index], dtype=float)
+            tp = np.asarray(raw.t3[index], dtype=float)
+            if hs.ndim != 1 or hs.shape != tp.shape or not hs.size:
+                raise ValueError("Invalid backend contour coordinate shapes")
+            if not np.isfinite(hs).all() or not np.isfinite(tp).all():
+                raise ValueError("Nonfinite backend contour coordinates")
+            return hs, tp
 
-            if isinstance(periods_list, (list, tuple)) and len(periods_list) > 0:
-                # Find closest requested period
-                periods_arr = np.array(periods_list, dtype=float)
-                idx = int(np.argmin(np.abs(periods_arr - float(return_period))))
-                hs_arr = np.asarray(contour_hs_list[idx], dtype=float)
-                tp_arr = np.asarray(contour_tp_list[idx], dtype=float)
-                return hs_arr, tp_arr
-
-        # Fallback: compute via virocon
-        return self._virocon_contour(joint_model, return_period, method)
-
-    def _virocon_contour(
-        self,
-        joint_model: JointModel,
-        return_period: int,
-        method: str,
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Compute IFORM/ISORM contour using virocon library."""
-        try:
-            import virocon
-
-            a1, b1 = joint_model.marginal_hs["params"]
-            joint_model.n_samples / (365.25 * 24.0 / self._state_duration)
-
-            dist_hs = virocon.WeibullDistribution(alpha=float(a1), beta=float(b1))
-            dist_tp = virocon.LogNormalDistribution(
-                mu=virocon.DependenceFunction(
-                    virocon.factor,
-                    [joint_model.conditional_tp["mu"]],
-                ),
-                sigma=joint_model.conditional_tp["sigma"],
+        # Coastal Engineering 123 (2017), Eq. (7): annual sea-state conversion.
+        alpha = self._state_duration / (return_period * 365.25 * 24)
+        if not 0 < alpha < 1:
+            raise ValueError(
+                "Sea-state exceedance probability must be between zero and one"
             )
-            model = virocon.GlobalHierarchicalModel([dist_hs, dist_tp])
-
-            alpha = 1.0 / (return_period * 365.25 * 24.0 / self._state_duration)
-
-            if method == "IFORM":
-                contour = virocon.IFORMContour(model, alpha)
-            else:
-                contour = virocon.ISORMContour(model, alpha)
-
-            coords = contour.coordinates
-            return np.asarray(coords[:, 0]), np.asarray(coords[:, 1])
-
-        except Exception:
-            # Final fallback: parametric ellipse-like contour from samples
-            return self._parametric_fallback(joint_model, return_period)
+        # Normal-space radii and angular discretization: virocon 2.4.0,
+        # contours.py, IFORMContour and ISORMContour (180 points by default).
+        if method == "IFORM":
+            if alpha >= 0.5:
+                raise ValueError("IFORM requires exceedance probability below one half")
+            radius = norm.isf(alpha)
+        elif method == "ISORM":
+            radius = np.sqrt(chi2.isf(alpha, df=2))
+        else:
+            raise ValueError("Unknown contour method")
+        angle = np.linspace(0, 2 * np.pi, 180, endpoint=False)
+        return self.inverse_transform(
+            joint_model,
+            norm.cdf(radius * np.cos(angle)),
+            norm.cdf(radius * np.sin(angle)),
+        )
 
     @staticmethod
-    def _parametric_fallback(
-        joint_model: JointModel,
-        return_period: int,
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Simple parametric fallback contour when virocon is unavailable."""
-        if joint_model.hs_samples is not None and joint_model.tp_samples is not None:
-            hs_samp = joint_model.hs_samples
-            tp_samp = joint_model.tp_samples
+    def inverse_transform(joint_model, hs_probability, tp_probability, *, weibull=None):
+        """Invert the marginal and conditional CDFs without heuristic fallbacks.
+
+        The backend's finite-grid marginal is integrated by trapezoids and
+        normalized on its stored support. Tail extrapolation is not implied.
+        An explicit (shape, location, scale) Weibull is accepted for independent
+        analytic cases. No Weibull parameters are inferred from conditional
+        coefficients. Coastal Engineering 123 (2017), Eqs. (2),(3),(6).
+        """
+        p = np.asarray(hs_probability, dtype=float)
+        q = np.asarray(tp_probability, dtype=float)
+        if p.shape != q.shape or not ((p > 0) & (p < 1) & (q > 0) & (q < 1)).all():
+            raise ValueError(
+                "Paired probabilities must be strictly between zero and one"
+            )
+        if weibull is not None:
+            shape, location, scale = weibull
+            if shape <= 0 or scale <= 0 or not np.isfinite(weibull).all():
+                raise ValueError("Invalid Weibull parameters")
+            hs = weibull_min.ppf(p, shape, loc=location, scale=scale)
         else:
-            rng = np.random.default_rng(42)
-            hs_samp = rng.weibull(1.5, 1000) * 3.0
-            tp_samp = 4.0 * np.sqrt(hs_samp) + rng.normal(0, 1.0, 1000)
-
-        # Scale by return period factor (heuristic)
-        scale = 1.0 + 0.15 * np.log10(max(return_period, 1))
-        theta = np.linspace(0, 2 * np.pi, 200)
-
-        hs_mean = np.mean(hs_samp) * scale
-        tp_mean = np.mean(tp_samp)
-        hs_std = np.std(hs_samp) * scale
-        tp_std = np.std(tp_samp)
-
-        hs_contour = hs_mean + hs_std * np.sin(theta)
-        tp_contour = tp_mean + tp_std * np.cos(theta)
-
-        return np.clip(hs_contour, 0.1, None), np.clip(tp_contour, 1.0, None)
+            h = np.asarray(joint_model.marginal_hs["h"], dtype=float)
+            pdf = np.asarray(joint_model.marginal_hs["pdf"], dtype=float)
+            if (
+                h.ndim != 1
+                or h.size < 2
+                or h.shape != pdf.shape
+                or not np.isfinite(h).all()
+                or not np.isfinite(pdf).all()
+                or (np.diff(h) <= 0).any()
+                or (pdf < 0).any()
+            ):
+                raise ValueError("Invalid marginal PDF grid")
+            cdf = cumulative_trapezoid(pdf, h, initial=0)
+            if cdf[-1] <= 0:
+                raise ValueError("Marginal PDF grid has no probability mass")
+            cdf /= cdf[-1]
+            hs = np.interp(p, cdf, h)
+        a1, a2, a3 = joint_model.conditional_tp["mu_coefficients"]
+        b1, b2, b3 = joint_model.conditional_tp["variance_coefficients"]
+        mu = a1 + a2 * hs**a3
+        # Backend 1.2.0 extreme.py: b1+b2*exp(-b3*Hs) is VARIANCE.
+        variance = b1 + b2 * np.exp(-b3 * hs)
+        if (
+            not np.isfinite(mu).all()
+            or not np.isfinite(variance).all()
+            or (variance <= 0).any()
+        ):
+            raise ValueError("Invalid conditional lognormal parameters")
+        tp = np.exp(mu + np.sqrt(variance) * norm.ppf(q))
+        if not np.isfinite(tp).all():
+            raise ValueError("Nonfinite inverse-transform result")
+        return hs, tp
