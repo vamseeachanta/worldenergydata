@@ -1,0 +1,7 @@
+basename: ukcs
+
+default:
+  log_level: INFO
+  config:
+    overwrite:
+      output: true

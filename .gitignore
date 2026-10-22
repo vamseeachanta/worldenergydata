@@ -227,7 +227,9 @@ data/posters/*.pdf
 src/worldenergydata/brazil_anp/data/
 
 # UKCS NSTA cached CSVs (regenerate: nsta_client.py download)
-src/worldenergydata/ukcs/data/
+packages/worldenergydata-ukcs/src/worldenergydata/ukcs/data/
+data/modules/ukcs/raw/
+data/modules/ukcs/**/*.parquet
 
 # EIA US cached API responses (regenerate: EIAApiClient.fetch_series())
 src/worldenergydata/eia_us/data/
@@ -318,6 +320,11 @@ archive/
 # Agent worktrees (local-only, must not be tracked as gitlinks)
 .claude/worktrees/
 examples/workflows/*/outputs/
+# Retain only the reproducible synthetic UKCS report artifacts.
+!examples/workflows/ukcs-reference-report/outputs/
+examples/workflows/ukcs-reference-report/outputs/*
+!examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_report.html
+!examples/workflows/ukcs-reference-report/outputs/ukcs_reference_report_facts.json
 data/modules/hse/grounding_demand.jsonl
 
 # Built static Pages output (regenerated in CI from reports/)
