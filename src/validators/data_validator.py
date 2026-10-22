@@ -15,9 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import pandas as pd
-import plotly.graph_objects as go
 import yaml
-from plotly.subplots import make_subplots
 
 
 class DataValidator:
@@ -234,6 +232,9 @@ class DataValidator:
             validation_results: Results from validate_dataframe()
             output_path: Path to save HTML report
         """
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
+
         # Create subplots
         fig = make_subplots(
             rows=2,
