@@ -19,19 +19,23 @@ SPEC.loader.exec_module(atlas)
 def test_csv_count_handles_quoted_newlines_and_blank_records(tmp_path):
     """Hand count: two data records; the embedded newline adds no CSV record."""
     source = tmp_path / "rows.csv"
-    source.write_text('name,note\nalpha,"first\nsecond"\n\nbeta,end\n')
+    source.write_text(
+        'name,note\nalpha,"first\nsecond"\n\nbeta,end\n',
+        encoding="utf-8",
+        newline="\n",
+    )
     assert atlas.count_data_rows(source) == 2
 
 
 def test_absent_evidence_is_not_zero(tmp_path):
-    """Missing inputs provide no count; a header-only CSV provides zero rows."""
+    """Zero CSV records do not establish an observed GoM field population."""
     source = tmp_path / "absent.csv"
     assert atlas.count_data_rows(source) is None
     assert atlas.count_glob_html(tmp_path / "absent") is None
     assert atlas.gom_atlas_counts(source) == (None, None)
-    source.write_text("FIELD_CODE,WELL_COUNT\n")
+    source.write_text("FIELD_CODE,WELL_COUNT\n", encoding="utf-8", newline="\n")
     assert atlas.count_data_rows(source) == 0
-    assert atlas.gom_atlas_counts(source) == (0, 0)
+    assert atlas.gom_atlas_counts(source) == (None, None)
     assert atlas.count_glob_html(tmp_path) == 0
 
 
@@ -42,14 +46,16 @@ def test_gom_counts_use_export_schema(tmp_path):
     The sum is not a basin-wide unique well count: a well may cross fields.
     """
     source = tmp_path / "gom.csv"
-    source.write_text("FIELD_CODE,WELL_COUNT\nA,2\nB,3\n")
+    source.write_text(
+        "FIELD_CODE,WELL_COUNT\nA,2\nB,3\n", encoding="utf-8", newline="\n"
+    )
     assert atlas.gom_atlas_counts(source) == (2, 5)
 
 
 def test_html_page_counts_exclude_directories_and_templates(tmp_path):
     """Hand count: one content file; index, template, and directory do not count."""
     for name in ("index.html", "lifecycle_template.html", "content.html"):
-        (tmp_path / name).write_text("<html></html>")
+        (tmp_path / name).write_text("<html></html>", encoding="utf-8", newline="\n")
     (tmp_path / "folder.html").mkdir()
     assert (
         atlas.count_glob_html(
@@ -80,7 +86,7 @@ def test_geographic_scope_requires_available_evidence(tmp_path, monkeypatch):
 def test_invalid_gom_counts_fail_closed(tmp_path, body):
     """Counts require nonnegative integers and exactly one row per field code."""
     source = tmp_path / "gom.csv"
-    source.write_text(body)
+    source.write_text(body, encoding="utf-8", newline="\n")
     with pytest.raises(ValueError):
         atlas.gom_atlas_counts(source)
 
@@ -137,6 +143,34 @@ def test_map_uses_table_counts_and_preserves_zero():
     assert trace["locations"] == ["United States", "United Kingdom"]
     assert trace["z"] == [2, 0]
     assert trace["customdata"] == [[3, "RICH"], [1, "ROADMAP"]]
+
+
+def test_map_loads_supported_plotly_build_with_integrity():
+    """The rendered dependency uses the repository's supported build and CDN digest."""
+    text = render()
+    script = re.search(r'<script src="([^"]+)"([^>]*)></script>', text)
+    assert script is not None
+    assert script.group(1) == "https://cdn.plot.ly/plotly-2.35.2.min.js"
+    # SHA-384 of the published 2.35.2 bytes, retrieved independently from the CDN.
+    assert (
+        'integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7"'
+        in script.group(2)
+    )
+    assert 'crossorigin="anonymous"' in script.group(2)
+
+
+def test_observed_gom_field_can_have_zero_wells(tmp_path):
+    """One recorded field with zero memberships differs from unavailable evidence."""
+    source = tmp_path / "gom.csv"
+    source.write_text("FIELD_CODE,WELL_COUNT\nA,0\n", encoding="utf-8", newline="\n")
+    assert atlas.gom_atlas_counts(source) == (1, 0)
+
+
+def test_non_utf8_benchmark_fails_closed(tmp_path):
+    source = tmp_path / "rows.csv"
+    source.write_bytes(b"name\n\xff\n")
+    with pytest.raises(UnicodeDecodeError):
+        atlas.count_data_rows(source)
 
 
 def test_map_data_cannot_terminate_script():

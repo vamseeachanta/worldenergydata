@@ -38,10 +38,10 @@ from pathlib import Path
 _SCRIPTS = Path(__file__).resolve().parents[1]
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
-import site_nav
+import site_nav  # noqa: E402
 
 # Country badge rule shared with the field-atlas Explorer feed (#947).
-from catalog_badges import badge_for, load_scorecard
+from catalog_badges import badge_for, load_scorecard  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 CURATED = PROJECT_ROOT / "data" / "modules" / "offshore_assets" / "curated"
@@ -99,7 +99,10 @@ def count_glob_html(d: Path, exclude=frozenset({"index.html"})) -> int | None:
 
 
 def count_data_rows(p: Path) -> int | None:
-    """Count CSV records, not physical lines; missing evidence is not zero."""
+    """Count CSV records; missing evidence is not zero; invalid UTF-8 raises.
+
+    Malformed text fails closed rather than replacing bytes in benchmark evidence.
+    """
     if not p.is_file():
         return None
     with p.open(newline="", encoding="utf-8") as f:
@@ -115,6 +118,7 @@ def gom_atlas_counts(path: Path) -> tuple[int | None, int | None]:
     Schema and summation basis: AllFieldsRunner._compute_field_production in
     packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/all_fields_runner.py.
     WELL_COUNT counts distinct wells within each field, not across the basin.
+    A header-only export provides no observed field population, so it is unavailable.
     """
     if not path.is_file():
         return None, None
@@ -131,7 +135,7 @@ def gom_atlas_counts(path: Path) -> tuple[int | None, int | None]:
                 raise ValueError("GoM atlas requires unique field codes and integer well counts")
             codes.add(code)
             wells += int(count)
-    return len(codes), wells
+    return (len(codes), wells) if codes else (None, None)
 
 
 def format_count(value: int | None) -> str:
@@ -143,6 +147,7 @@ def choropleth(rows) -> str:
 
     API source: Plotly.js documentation, World Choropleth Map (Robinson Projection),
     accessed 2026-10-19: https://plotly.com/javascript/choropleth-maps/.
+    Pinned build: https://github.com/plotly/plotly.js/releases/tag/v2.35.2.
     Country aliases expand the US/UK labels in coverage_summary.csv.
     """
     aliases = {"US": "United States", "UK": "United Kingdom"}
@@ -167,7 +172,9 @@ def choropleth(rows) -> str:
   have no mapped observation; this does not establish zero fields. Map names that
   the geography provider does not recognize remain in the table.</p>
   <script id="atlas-map-data" type="application/json">{payload}</script>
-  <script src="https://cdn.plot.ly/plotly-4.1.1.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+    integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7"
+    crossorigin="anonymous"></script>
   <script>
   if (window.Plotly) {{
     Plotly.newPlot('atlas-map',
@@ -388,7 +395,10 @@ th.sorted-desc::after {{ content:" \\25BC"; font-size:7pt; }}
   <h2>Revision history</h2>
   <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
   <tbody><tr><td>Evidence and map</td><td>2026-10-19</td><td>Country counts are mapped,
-  badge provenance is exposed, and unsupported GoM counts are marked NOT_EVALUATED.</td></tr></tbody></table>
+  badge provenance is exposed, and unsupported GoM counts are marked NOT_EVALUATED.</td></tr>
+  <tr><td>Map dependency and evidence</td><td>2026-10-22</td><td>The map uses a supported
+  Plotly build with integrity validation; empty GoM exports are marked NOT_EVALUATED
+  because no field population is established.</td></tr></tbody></table>
 
   <div class="kpis">
     <div class="kpi"><div class="v">{atlas_countries}</div><div class="l">Countries in atlas scope</div></div>
@@ -559,7 +569,7 @@ def main():
 
     # --- CSV ---
     OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    with OUT_CSV.open("w", newline="", encoding="utf-8") as f:
+    with OUT_CSV.open("w", newline="\n", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(
             [
@@ -601,6 +611,7 @@ def main():
             "all_regions",
         ),
         encoding="utf-8",
+        newline="\n",
     )
 
     b = {"RICH": 0, "SAMPLE": 0, "ROADMAP": 0}
@@ -612,8 +623,8 @@ def main():
     )
     print(f"totals={totals}  gom={by_region.get('US Gulf of Mexico (flagged)')}")
     print(f"badges={b}  gom_proof={gom_proof}")
-    print(f"wrote {OUT_CSV}")
-    print(f"wrote {OUT_HTML}")
+    print("wrote coverage CSV")
+    print("wrote atlas HTML")
 
 
 if __name__ == "__main__":

@@ -78,7 +78,7 @@ th.sorted-desc::after { content:" \25BC"; font-size:7pt; }
 <div class="page">
   <div class="hdr">
     <div class="brand">World Energy Data &middot; Offshore Field Atlas</div>
-    <div class="meta">Front-door coverage map &middot; generated 2026-10-19 &middot; issue #779</div>
+    <div class="meta">Front-door coverage map &middot; generated 2026-10-22 &middot; issue #779</div>
   </div>
 
   <!-- nav-spine --><div class="nav-spine" style="font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 10px;opacity:.75"><a href="index.html">worldenergydata</a> ▸ <a href="capabilities/index.html">Capabilities</a> ▸ <a href="capabilities/insights.html">Insights</a> ▸ <span>All-regions atlas</span></div>
@@ -90,7 +90,10 @@ th.sorted-desc::after { content:" \25BC"; font-size:7pt; }
   <h2>Revision history</h2>
   <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
   <tbody><tr><td>Evidence and map</td><td>2026-10-19</td><td>Country counts are mapped,
-  badge provenance is exposed, and unsupported GoM counts are marked NOT_EVALUATED.</td></tr></tbody></table>
+  badge provenance is exposed, and unsupported GoM counts are marked NOT_EVALUATED.</td></tr>
+  <tr><td>Map dependency and evidence</td><td>2026-10-22</td><td>The map uses a supported
+  Plotly build with integrity validation; empty GoM exports are marked NOT_EVALUATED
+  because no field population is established.</td></tr></tbody></table>
 
   <div class="kpis">
     <div class="kpi"><div class="v">205</div><div class="l">Countries in atlas scope</div></div>
@@ -143,7 +146,9 @@ th.sorted-desc::after { content:" \25BC"; font-size:7pt; }
   have no mapped observation; this does not establish zero fields. Map names that
   the geography provider does not recognize remain in the table.</p>
   <script id="atlas-map-data" type="application/json">{"type": "choropleth", "locationmode": "country names", "locations": ["United Kingdom", "United States", "Norway", "Australia", "Brazil", "Malaysia", "Angola", "Indonesia", "China", "Thailand", "Nigeria", "Viet nam", "Egypt", "Denmark", "Ireland", "New Zealand", "Canada", "Trin. & Tobago", "Philippines", "Russian Federation", "Qatar", "Gabon", "Ghana", "Equatorial Guinea", "Tunisia", "Falkland Islands (Malvinas)", "Mexico", "Tanzania, United Republic of", "Netherlands", "Myanmar", "India", "Congo", "Israel", "UAE", "Italy", "Morocco", "Mozambique", "Azerbaijan", "South Africa", "Kenya", "Libya", "Namibia", "Bulgaria", "Liberia", "Peru", "Mauritania", "Oman", "Turkmenistan", "Argentina", "Kazakhstan", "Senegal", "Bangladesh", "Brunei Darussalam", "Greece", "Romania", "Turkey", "Cameroon", "Congo, The Demo. Rep. of the", "Faroe Islands", "Greenland", "Papua New Guinea", "Sierra Leone", "Spain", "Croatia", "Guinea", "Guinea-Bissau", "Iran", "Sao Tome and Principe", "Venezuela", "Albania", "Colombia", "Guyana", "Japan", "Niger", "Sri Lanka", "Cuba", "Cyprus", "French Guiana", "Gambia", "Madagascar", "Malta", "Nicaragua", "Palestinian Territory, occupied", "Saudi Arabia"], "z": [308, 333, 302, 192, 98, 65, 75, 62, 29, 30, 28, 29, 29, 33, 39, 24, 22, 19, 23, 14, 7, 17, 22, 16, 16, 21, 15, 20, 10, 10, 12, 12, 14, 7, 10, 13, 13, 3, 9, 11, 5, 11, 5, 8, 5, 6, 5, 2, 3, 2, 6, 4, 5, 3, 5, 3, 4, 3, 4, 4, 4, 4, 3, 1, 3, 3, 2, 3, 2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1], "text": ["UK", "US", "Norway", "Australia", "Brazil", "Malaysia", "Angola", "Indonesia", "China", "Thailand", "Nigeria", "Viet nam", "Egypt", "Denmark", "Ireland", "New Zealand", "Canada", "Trin. &amp; Tobago", "Philippines", "Russian Federation", "Qatar", "Gabon", "Ghana", "Equatorial Guinea", "Tunisia", "Falkland Islands (Malvinas)", "Mexico", "Tanzania, United Republic of", "Netherlands", "Myanmar", "India", "Congo", "Israel", "UAE", "Italy", "Morocco", "Mozambique", "Azerbaijan", "South Africa", "Kenya", "Libya", "Namibia", "Bulgaria", "Liberia", "Peru", "Mauritania", "Oman", "Turkmenistan", "Argentina", "Kazakhstan", "Senegal", "Bangladesh", "Brunei Darussalam", "Greece", "Romania", "Turkey", "Cameroon", "Congo, The Demo. Rep. of the", "Faroe Islands", "Greenland", "Papua New Guinea", "Sierra Leone", "Spain", "Croatia", "Guinea", "Guinea-Bissau", "Iran", "Sao Tome and Principe", "Venezuela", "Albania", "Colombia", "Guyana", "Japan", "Niger", "Sri Lanka", "Cuba", "Cyprus", "French Guiana", "Gambia", "Madagascar", "Malta", "Nicaragua", "Palestinian Territory, occupied", "Saudi Arabia"], "customdata": [[124, "ROADMAP"], [88, "RICH"], [82, "ROADMAP"], [50, "SAMPLE"], [58, "ROADMAP"], [48, "SAMPLE"], [24, "SAMPLE"], [30, "SAMPLE"], [32, "SAMPLE"], [25, "SAMPLE"], [24, "SAMPLE"], [21, "SAMPLE"], [20, "SAMPLE"], [15, "SAMPLE"], [4, "SAMPLE"], [7, "SAMPLE"], [8, "ROADMAP"], [10, "SAMPLE"], [5, "SAMPLE"], [14, "SAMPLE"], [19, "SAMPLE"], [8, "SAMPLE"], [2, "SAMPLE"], [7, "SAMPLE"], [7, "SAMPLE"], [0, "SAMPLE"], [6, "ROADMAP"], [1, "SAMPLE"], [10, "SAMPLE"], [9, "SAMPLE"], [6, "SAMPLE"], [5, "SAMPLE"], [2, "SAMPLE"], [9, "SAMPLE"], [4, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [9, "SAMPLE"], [3, "SAMPLE"], [0, "SAMPLE"], [6, "SAMPLE"], [0, "SAMPLE"], [3, "SAMPLE"], [0, "SAMPLE"], [3, "SAMPLE"], [1, "SAMPLE"], [2, "SAMPLE"], [5, "SAMPLE"], [3, "SAMPLE"], [4, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [0, "SAMPLE"], [2, "SAMPLE"], [0, "SAMPLE"], [2, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [2, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [1, "SAMPLE"], [1, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"], [0, "SAMPLE"]], "colorbar": {"title": {"text": "Fields"}}, "hovertemplate": "%{text}\u003cbr>Fields: %{z}\u003cbr>Facilities: %{customdata[0]}\u003cbr>Badge: %{customdata[1]}\u003cextra>\u003c/extra>"}</script>
-  <script src="https://cdn.plot.ly/plotly-4.1.1.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+    integrity="sha384-cCVCZkAjYNxaYKbM8lsArLznDF/SvMFr1jcZrvOpSTCa0W40ZAdLzHCEulnUa5i7"
+    crossorigin="anonymous"></script>
   <script>
   if (window.Plotly) {
     Plotly.newPlot('atlas-map',
