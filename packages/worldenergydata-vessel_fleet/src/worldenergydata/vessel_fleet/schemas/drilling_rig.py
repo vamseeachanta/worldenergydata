@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 
 from worldenergydata.vessel_fleet.schemas.base import BaseVesselSchema
 
@@ -44,6 +44,22 @@ class DrillingRigSchema(BaseVesselSchema):
     # Riser
     RISER_SIZE_IN: Optional[float] = None
     RISER_LENGTH_FT: Optional[float] = None
+
+    # Issue #742 (2026): public-spec rated magnitudes, not operating limits.
+    # No default capacity is established. Zero is not a usable rated magnitude;
+    # absent evidence remains None. No standard-derived limit is applied here.
+    CONDUCTOR_MOMENT_CAPACITY_KN_M: float | None = Field(
+        default=None,
+        gt=0,
+        allow_inf_nan=False,
+        description="Public-spec conductor/wellhead bending-moment capacity in kN m",
+    )
+    FLEXJOINT_ANGLE_RATING_DEG: float | None = Field(
+        default=None,
+        gt=0,
+        allow_inf_nan=False,
+        description="Public-spec flex-joint hardware angular rating in degrees",
+    )
 
     # Moonpool
     MOONPOOL_LENGTH_M: Optional[float] = None
@@ -142,6 +158,8 @@ class DrillingRigSchema(BaseVesselSchema):
         "BOP_SIZE_IN",
         "RISER_SIZE_IN",
         "RISER_LENGTH_FT",
+        "CONDUCTOR_MOMENT_CAPACITY_KN_M",
+        "FLEXJOINT_ANGLE_RATING_DEG",
         "MOONPOOL_LENGTH_M",
         "MOONPOOL_WIDTH_M",
         "MOONPOOL_DIAMETER_M",
