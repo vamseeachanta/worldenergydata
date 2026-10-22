@@ -8,6 +8,7 @@ records because FieldConcept has no corresponding fields.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable
 from typing import Any
 
@@ -53,7 +54,8 @@ def canada_field_to_concept(
     Caller-supplied depth and well count take precedence over well metadata.
     Legacy depths are retained for compatibility, labelled as defaults rather
     than measurements. Inputs are not mutated and field joins are exact after
-    case/whitespace normalization.
+    case/whitespace normalization. Blank depth text is absent; malformed or
+    nonfinite explicit depth raises ValueError before provenance is assigned.
     """
     meta = dict(field_meta)
     if "field_name" not in meta and "field" in meta:
@@ -61,6 +63,13 @@ def canada_field_to_concept(
     meta["region"] = "canada"
     meta.setdefault("source", "cnloer")
     summary = summarize_field_wells(meta.get("field_name", ""), development_wells)
+    raw_depth = meta.get("water_depth_m")
+    if isinstance(raw_depth, str) and not raw_depth.strip():
+        raw_depth = None
+    depth = number_from(raw_depth)
+    if raw_depth is not None and (depth is None or not math.isfinite(depth)):
+        raise ValueError("water_depth_m must be a finite number or blank")
+    meta["water_depth_m"] = depth
     depth_source = "provided"
     if meta.get("water_depth_m") is None:
         meta["water_depth_m"] = summary.water_depth_m

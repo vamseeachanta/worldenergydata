@@ -85,8 +85,13 @@ def test_measured_depth_replaces_a_legacy_default():
 
 
 def test_null_linked_depth_retains_default_with_distinct_provenance():
-    """Expected fallback is the unchanged legacy mapping, not a measured claim."""
-    field, expected_default = next(iter(CANADA_WATER_DEPTH_M.items()))
+    """Freeze the first legacy fallback at 80 m, assumed from previous experience.
+
+    This compatibility oracle is independent of production depth values; public
+    source validation remains deferred and this is not a measured depth.
+    """
+    field = next(iter(CANADA_WATER_DEPTH_M))
+    expected_default = 80.0
     concept = build_canada_field_concept(
         {"field_name": field}, development_wells=[well("example-a", None, field)]
     )
@@ -166,3 +171,31 @@ def test_arcgis_attributes_feed_concept_without_geometry_or_column_assumptions()
     assert "synthetic-arcgis" in concept.data_source
     assert wells[0].latitude == 1.0
     assert wells[0].longitude == -1.0
+
+
+@pytest.mark.parametrize("depth", ["", "   ", "\t\n"])
+def test_blank_explicit_depth_uses_linked_median(depth):
+    concept = build_canada_field_concept(
+        {"field_name": "Example", "water_depth_m": depth},
+        development_wells=[well("example-a", 3)],
+    )
+    assert concept.water_depth_m == 3.0
+    assert "water_depth=development_wells_median" in concept.data_source
+
+
+@pytest.mark.parametrize("depth", ["unavailable", "3 metres", "nan", "inf"])
+def test_malformed_explicit_depth_is_rejected(depth):
+    with pytest.raises(ValueError, match="water_depth_m"):
+        build_canada_field_concept(
+            {"field_name": "Example", "water_depth_m": depth},
+            development_wells=[well("example-a", 3)],
+        )
+
+
+@pytest.mark.parametrize("depth, expected", [(0, 0.0), ("0", 0.0), (" 7 ", 7.0)])
+def test_numeric_explicit_depth_has_provided_provenance(depth, expected):
+    meta = {"field_name": "Example", "water_depth_m": depth}
+    concept = build_canada_field_concept(meta, development_wells=[well("example-a", 3)])
+    assert concept.water_depth_m == expected
+    assert "water_depth=provided" in concept.data_source
+    assert meta["water_depth_m"] == depth
