@@ -170,6 +170,8 @@ def estimate_economics(concept: FieldConcept) -> Economics:
 
 def _rough_npv(concept, capex_mm, discount_rate, mgr, sysname) -> float:
     """Pack E3–E4: annual oil-price proxy; invalid/missing basis raises."""
+    if not math.isfinite(discount_rate) or discount_rate < 0:
+        raise ValueError("NPV needs finite non-negative discount_rate")
     for key in ("plateau_rate_boed", "oil_price_usd_bbl", "field_life_years"):
         value = getattr(concept, key)
         if value is None or not math.isfinite(value) or value <= 0:

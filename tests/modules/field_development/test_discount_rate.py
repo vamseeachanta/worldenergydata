@@ -3,6 +3,9 @@
 Equation source: NumPy v1.17 Manual, numpy.npv, Notes (2020):
 https://numpy.org/doc/1.17/reference/generated/numpy.npv.html
 NPV = sum(CF_t / (1 + r)**t), including the initial investment at t=0.
+The manual cites Principles of Managerial Finance, Brief, third edition
+(2003), page 346. The positive-rate factors are 1/(1+r)**t; t counts
+whole years, with end-year receipts and the investment at t=0.
 Integration conventions: field_development/docs/agent-pack.md, E2–E4.
 
 All fixture numbers below are synthetic inputs, not engineering defaults:
@@ -71,3 +74,26 @@ def test_discount_selection_and_hand_calculated_npv(
     assert result.capex_mm == 100.0
     assert result.discount_rate == expected_rate
     assert result.npv_mm == expected_npv
+
+
+@pytest.mark.parametrize("rate", [-0.1, float("nan"), float("inf"), -float("inf")])
+def test_invalid_discount_rate_is_refused(rate):
+    """Issue 1324: a negative or non-finite rate is outside the input contract."""
+    with pytest.raises(ValueError, match="discount_rate"):
+        FieldConcept(name="Synthetic", discount_rate=rate)
+
+
+@pytest.mark.parametrize("rate", [-0.1, float("nan"), float("inf")])
+def test_unvalidated_discount_rate_does_not_produce_npv(rate):
+    """Even model-copy updates must not publish an invalid-rate valuation."""
+    concept = FieldConcept(
+        name="Synthetic",
+        water_depth_m=1500.0,
+        num_wells=2,
+        plateau_rate_boed=100.0,
+        oil_price_usd_bbl=100.0,
+        field_life_years=2,
+    ).model_copy(update={"discount_rate": rate})
+    result = estimate_economics(concept)
+    assert result.npv_mm is None
+    assert "discount_rate" in result.note

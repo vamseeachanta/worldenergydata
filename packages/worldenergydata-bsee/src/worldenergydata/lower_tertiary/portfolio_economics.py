@@ -250,7 +250,8 @@ def analyze_field(
             f"Field {field_id}: production_profile.plateau_rate_mbopd missing or non-positive"
         )
 
-    opex_per_boe = float(payload.get("opex_per_boe") or DEFAULT_OPEX_PER_BOE)
+    opex_value = payload.get("opex_per_boe")
+    opex_per_boe = float(DEFAULT_OPEX_PER_BOE if opex_value is None else opex_value)
 
     production_mmbbl = _build_production_profile(
         plateau_mbopd, plateau_years, annual_decline, project_years

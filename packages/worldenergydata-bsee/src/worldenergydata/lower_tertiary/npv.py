@@ -5,6 +5,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+from datetime import date
+from math import isfinite
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -51,12 +54,27 @@ def load_lease_mapping(path: Path | str) -> Dict[str, Dict[str, object]]:
     }
 
 
+class FinancialInputError(ValueError):
+    """Financial evaluation refused because a named input is unestablished."""
+
+    def __init__(self, field: str, reason: str):
+        self.field = field
+        self.reason = reason
+        super().__init__(f"{field}: {reason}")
+
+
 def _resolve_first_oil(value: object) -> pd.Timestamp:
-    if isinstance(value, pd.Timestamp):
-        return value
-    if value is None:
-        return pd.Timestamp("1970-01-01")
-    return pd.to_datetime(value)
+    """Require an explicit calendar date; numeric epoch offsets are not dates."""
+    message = "an explicit, parseable calendar date is required"
+    if not isinstance(value, (str, date, pd.Timestamp)):
+        raise FinancialInputError("first_oil", message)
+    try:
+        resolved = pd.Timestamp(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise FinancialInputError("first_oil", message) from exc
+    if pd.isna(resolved):
+        raise FinancialInputError("first_oil", message)
+    return resolved
 
 
 def load_field_inputs(
@@ -97,9 +115,12 @@ def load_field_inputs(
         leases = [_normalize_lease(item) for item in leases]
 
         capex = field_payload.get("capex") or {}
-        first_oil = _resolve_first_oil(
-            field_payload.get("first_oil")
-            or field_payload.get("key_dates", {}).get("first_oil")
+        first_oil_value = field_payload.get("first_oil")
+        if first_oil_value is None:
+            first_oil_value = field_payload.get("key_dates", {}).get("first_oil")
+        # Inventory can retain unknown dates; financial evaluation cannot.
+        first_oil = (
+            _resolve_first_oil(first_oil_value) if first_oil_value is not None else None
         )
         data_through_value = field_payload.get("data_through") or field_payload.get(
             "key_dates", {}
@@ -167,15 +188,34 @@ def summarize_field_financials(
     field_profile: Dict[str, object],
     econ_config: Dict[str, object],
 ) -> Dict[str, float | str | int]:
-    """Summarize key production and financial metrics for a field."""
+    """Summarize metrics, raising FinancialInputError for unknown date or CAPEX.
+
+    PI retains the historical project-NPV/CAPEX definition.
+    """
 
     if monthly.empty:
         raise ValueError("Monthly dataframe must contain at least one record")
 
     first_oil = _resolve_first_oil(field_profile.get("first_oil"))
+    capex = field_profile.get("capex")
+    value = capex.get("total_mm_usd") if isinstance(capex, Mapping) else None
+    message = "an explicit, finite, positive investment is required"
+    if value is None or isinstance(value, bool):
+        raise FinancialInputError("capex.total_mm_usd", message)
+    try:
+        capex_total = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise FinancialInputError("capex.total_mm_usd", message) from exc
+    # Existing PI divides project NPV by investment; zero cannot define a ratio.
+    if not isfinite(capex_total) or capex_total <= 0:
+        raise FinancialInputError("capex.total_mm_usd", message)
     discount_rate = float(
         econ_config["financial_metrics"]["discount_rates"]["primary_discount_rate"]
     )
+    if not isfinite(discount_rate) or discount_rate < 0:
+        raise FinancialInputError(
+            "discount_rate", "a finite non-negative rate is required"
+        )
     monthly_discount = (1 + discount_rate) ** (1 / 12) - 1
 
     df = monthly.copy()
@@ -185,10 +225,19 @@ def summarize_field_financials(
     )
     df["discount_factor"] = 1 / ((1 + monthly_discount) ** df["months_from_first_oil"])
 
-    if "operating_cash_flow" in df.columns:
-        df["operating_cash_flow"] = df["operating_cash_flow"].fillna(0.0)
-    else:
-        df["operating_cash_flow"] = 0.0
+    if "operating_cash_flow" not in df.columns:
+        raise FinancialInputError(
+            "operating_cash_flow", "monthly observations are required"
+        )
+    try:
+        cashflows = pd.to_numeric(df["operating_cash_flow"], errors="raise")
+    except (TypeError, ValueError) as exc:
+        raise FinancialInputError(
+            "operating_cash_flow", "finite values are required"
+        ) from exc
+    if not cashflows.map(isfinite).all():
+        raise FinancialInputError("operating_cash_flow", "finite values are required")
+    df["operating_cash_flow"] = cashflows
     df["pv_cash_flow"] = df["operating_cash_flow"] * df["discount_factor"]
 
     total_oil = df.get("oil_bbl", pd.Series(0.0)).sum()
@@ -200,11 +249,10 @@ def summarize_field_financials(
     npv_operations = df["pv_cash_flow"].sum()
 
     boe = total_oil + total_gas / 6.0
-    capex_total = float(field_profile.get("capex", {}).get("total_mm_usd", 0.0))
 
     npv_operations_mm = npv_operations / 1_000_000.0
     npv_project_mm = npv_operations_mm - capex_total
-    profitability_index = (npv_project_mm / capex_total) if capex_total else 0.0
+    profitability_index = npv_project_mm / capex_total
 
     return {
         "Field": field_profile.get(

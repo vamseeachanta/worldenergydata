@@ -119,3 +119,45 @@ class TestCrossBasinComparator:
         summary = result.summary()
         assert isinstance(summary, str)
         assert len(summary) > 0
+
+
+@pytest.mark.parametrize("selector", ["UKCS", "unknown", ""])
+@pytest.mark.parametrize("production", [[1.0], []])
+def test_unknown_fiscal_selector_is_refused(selector, production):
+    """Issue 1284: selector validation must precede even an empty monthly loop."""
+    profile = BasinProfile(
+        "Synthetic", "synthetic", production, 10.0, 0.0, 2.0, selector
+    )
+    with pytest.raises(ValueError, match="fiscal"):
+        CrossBasinComparator().compare(profile)
+
+
+def test_negative_month_is_retained(monkeypatch):
+    """Hand sum: pre-tax [8,16,8] minus tax [3,20,1] = [5,-4,7].
+
+    Cumulative undiscounted cashflow is [5,1,8], so NPV is 8, formerly 12.
+    All numbers are synthetic inputs; no fiscal coefficient is assumed.
+    """
+    comparator = CrossBasinComparator(discount_rate=0.0)
+    taxes = [3.0, 20.0, 1.0]
+    monkeypatch.setattr(comparator, "_apply_fiscal", lambda *args: taxes[args[-1] - 1])
+    profile = BasinProfile(
+        "Synthetic", "synthetic", [1.0, 2.0, 1.0], 10.0, 0.0, 2.0, "ukcs"
+    )
+    assert comparator._compute(profile)[0] == 8.0
+
+
+def test_pre_tax_loss_is_retained(monkeypatch):
+    """Hand sum with no tax: (2-5)*1 + (2-5)*2 = -3-6 = -9 USD."""
+    comparator = CrossBasinComparator(discount_rate=0.0)
+    monkeypatch.setattr(comparator, "_apply_fiscal", lambda *args: 0.0)
+    profile = BasinProfile("Synthetic", "synthetic", [1.0, 2.0], 2.0, 0.0, 5.0, "ukcs")
+    assert comparator._compute(profile)[0] == -9.0
+
+
+def test_government_take_diagnostic_is_not_clipped(monkeypatch):
+    """Synthetic tax 12 / pre-tax profit (10-2) = 1.5; net cashflow is -4."""
+    comparator = CrossBasinComparator(discount_rate=0.0)
+    monkeypatch.setattr(comparator, "_apply_fiscal", lambda *args: 12.0)
+    profile = BasinProfile("Synthetic", "synthetic", [1.0], 10.0, 0.0, 2.0, "ukcs")
+    assert comparator._compute(profile) == (-4.0, 1.5)

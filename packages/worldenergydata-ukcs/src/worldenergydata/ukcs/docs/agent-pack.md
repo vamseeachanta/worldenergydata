@@ -5,8 +5,8 @@
 | Module | `ukcs` |
 | Repository | `worldenergydata` |
 | Package path | `packages/worldenergydata-ukcs/src/worldenergydata/ukcs` |
-| Pack revision | 1, 2026-10-16 |
-| Code pin | `92b13dce6b3121cbe827f17327c6dde7fcd6dc5c` |
+| Pack revision | 2, 2026-10-22 |
+| Code pin | Historical pin `92b13dce6b3121cbe827f17327c6dde7fcd6dc5c`; the containing commit binds revision 2 behavior and test nodes. |
 | Analysis family | EC; data pipeline, Python calculations gate set |
 | Quality role | Calculations quality manager; deputy appointment pending |
 | Status | DRAFT; independent clearance pending |
@@ -25,7 +25,7 @@ Scope includes every Python file in this package, including `production`, `wells
 
 Package metadata classifies the distribution as Alpha; that declaration is not independent engineering validation. [packages/worldenergydata-ukcs/pyproject.toml:L15-L24]
 
-Section 6 records three unflagged failure groups under #1284: comparator fiscal/cashflow coercion, reference-chain capital omission and empty-production results, and short-page row loss. No detection check exists for these groups; passing regression tests do not establish their absence. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/analysis/cross_basin_example.py:L172-L187] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/analysis/cross_basin_example.py:L227-L228] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/reference_chain.py:L59-L88] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L128-L139]
+Section 6 records corrected input and cashflow failures under #1284. The revision-2 regression nodes below detect these cases; they do not qualify fiscal assumptions or investment results.
 
 ## Revision history
 
@@ -33,6 +33,8 @@ Section 6 records three unflagged failure groups under #1284: comparator fiscal/
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial implementation inventory and regression evidence |
 | 1 | 2026-10-16 | Record silent failures and detection gaps; distinguish a pagination regression that encodes row loss from completeness evidence |
+
+| 2 | 2026-10-22 | Reject unknown economics inputs, preserve loss cashflows and correct short-page offsets; retain fiscal and unit qualification limits. |
 
 ## 2. Inputs and outputs
 
@@ -100,7 +102,7 @@ All listed results are PASS at the code pin on 2026-10-15, before and after this
 | Well average / inline fixture | 10750.0 bbl/day, relative tolerance 0.001 from test assertion | `tests/unit/ukcs/test_well_loader.py::TestUKCSWellLoaderSummary::test_field_summary_avg_test_rate`; PASS/PASS. [tests/unit/ukcs/test_well_loader.py:L118-L123] |
 | Exponential forecast / inline result object | NumPy array of exactly 12 monthly predictions; no value-accuracy assertion | `tests/unit/ukcs/test_decline_curves.py::TestDeclineCurveResult::test_predict_returns_array`; PASS/PASS. [tests/unit/ukcs/test_decline_curves.py:L49-L60] |
 | Positive-profit RFCT / inline fixture | 3000000.0 currency units; `pytest.approx` default tolerance; code-regime arithmetic only | `tests/unit/ukcs/test_field_economics.py::TestRFCT::test_rfct_on_positive_profit`; PASS/PASS. [tests/unit/ukcs/test_field_economics.py:L33-L36] |
-| ArcGIS pagination / mocked responses; ENCODING THE DEFECT | 2 rows; offsets 0 and 2000; requested page sizes 2000 rows, all exact integer checks. Pins advancing by the requested size after receiving only 1 row with `exceededTransferLimit` true; does not establish completeness | `tests/unit/ukcs/test_nsta_client.py::TestNSTAClientDownload::test_download_paginates_official_arcgis_endpoint`; PASS/PASS. [tests/unit/ukcs/test_nsta_client.py:L150-L181] |
+| ArcGIS pagination / mocked responses | Corrected: two one-row pages require offsets 0 and 1; requested capacities remain unchanged. The old test expected offset 2000 and skipped unreturned rows. | `tests/unit/ukcs/test_nsta_client.py::TestNSTAClientDownload::test_download_paginates_official_arcgis_endpoint`; revision-2 regression |
 | Reference-chain plumbing / inline fixture | At least 2 months; finite positive gross revenue USD; finite net cashflow USD; royalty approximately 0.0 USD; explicit pre-tax label | `tests/unit/ukcs/test_reference_chain.py::test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty`; PASS/PASS. [tests/unit/ukcs/test_reference_chain.py:L92-L109] |
 
 ## 5. QA gates
@@ -120,7 +122,24 @@ Replay C0.3 with one synthetic row containing the required well columns and nonn
 
 Additional detection procedures for section 6: D1 force SciPy fitting to raise and inspect fallback quality; D2 omit both PPRS gas columns; D3 download from a prewritten 3-row cache with `max_records=1`; D4 mock an HTTP-success JSON error envelope; D5 compare legacy water factor selection with `WaterUnits.TONNE_TO_BBL`. These characterize existing pitfalls rather than accepting the affected paths as hand-check references. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L154-L161] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/field_production.py:L80-L98] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L69-L71] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L128-L143] [packages/worldenergydata-core/src/worldenergydata/common/units.py:L49-L54]
 
-No detection check exists for SF1–SF3 in section 6. The section-4 pagination test encodes the defect, and the finite-net-cashflow assertion does not detect omitted capital. C0.3 concerns well values only; no detection check exists for zero-filled production measurements. G1 regression counts therefore do not clear these data or economics paths.
+Revision-2 tests below detect SF1–SF3 in section 6. The corrected pagination test requires the next offset to equal returned rows; timeline forwarding establishes input wiring, not cost completeness. C0.3 concerns well values only; no detection check exists for zero-filled production measurements. G1 regression counts therefore do not clear these data or economics paths.
+
+### Revision-2 detection checks
+
+| Finding | Detection test node | Independent expectation |
+| --- | --- | --- |
+| Unknown selector | `tests/unit/ukcs/test_cross_basin.py::test_unknown_fiscal_selector_is_refused` | Issue #1284: raise, including empty histories |
+| Negative net month | `tests/unit/ukcs/test_cross_basin.py::test_negative_month_is_retained` | Synthetic [5, -4, 7] accumulates to [5, 1, 8] USD |
+| Pre-tax loss | `tests/unit/ukcs/test_cross_basin.py::test_pre_tax_loss_is_retained` | Hand sum -3 - 6 = -9 USD |
+| Clipped diagnostic | `tests/unit/ukcs/test_cross_basin.py::test_government_take_diagnostic_is_not_clipped` | Synthetic tax 12 / profit 8 = 1.5; signed net -4 USD |
+| Missing drilling basis | `tests/unit/ukcs/test_reference_chain.py::test_missing_drilling_timeline_is_refused`; `tests/unit/ukcs/test_reference_chain.py::test_invalid_drilling_timeline_is_refused` | Unknown or invalid effort is refused before acquisition |
+| Timeline forwarding | `tests/unit/ukcs/test_reference_chain.py::test_drilling_timeline_reaches_cashflow_engine` | Caller-supplied mapping reaches FDAS unchanged |
+| Empty production | `tests/unit/ukcs/test_reference_chain.py::test_empty_production_is_refused` | No inferred calendar origin or evaluated output |
+| Short pages | `tests/unit/ukcs/test_nsta_client.py::test_short_pages_preserve_every_row_and_cache` | Five indexed rows, offsets [0,2,4]; cap three stops after offsets [0,2] |
+
+Paging semantics follow [ArcGIS REST Query, resultOffset and resultRecordCount](https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/), opened 2026-10-22. All new monetary tests use synthetic inputs and independent arithmetic, not assumed fiscal coefficients. The comparator retains its nominal annual rate divided by twelve convention. Current-law fiscal validity remains UNVERIFIED.
+
+The FDAS drilling helper currently returns days multiplied by a rate named in MM USD/day, then assigns it to a USD cashflow field without conversion (`fdas/analysis/cashflow.py::calculate_drilling_capex`, `generate_monthly_cashflow`). This dimensional concern remains NOT_EVALUATED for investment use; no coefficient or published report is silently changed here. The reference chain remains pre-tax plumbing, with fixed OPEX and facilities capital still omitted.
 
 ## 6. Known failure modes and pitfalls
 sweep: not run (legacy pack)
@@ -129,9 +148,9 @@ The entries below record observations against the code pin, checked on 2026-10-1
 
 | Symptom, silent cases first | Cause / detection | Tracking and date |
 | --- | --- | --- |
-| SF1: unknown fiscal selectors produce untaxed results; loss months disappear and government take is clipped | `_apply_fiscal` returns zero for selectors other than `ukcs`, `ncs`, `gom`, including uppercase `UKCS`; `_compute` floors monthly net cashflow at zero and clips take to [0, 1]. No detection check exists; the shipped cross-basin tests use valid selectors and do not assert these failure cases. | #1284, 2026-10-16. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/analysis/cross_basin_example.py:L156-L189] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/analysis/cross_basin_example.py:L221-L228] [tests/unit/ukcs/test_cross_basin.py:L1-L121] |
-| SF2: reference-chain net cashflow omits drilling capital without a result flag; empty production still returns a labelled result | The chain passes an empty drilling timeline; empty production selects 1970-01-01 as first oil. The FDAS engine warns and assigns zero drilling capital; fixed opex and facilities capital are also zero (dependency scope, #1231). No detection check exists; the section-4 finite-value assertion does not establish capital completeness or reject empty production. | #1284, 2026-10-16. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/reference_chain.py:L59-L88] [packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/cashflow.py:L499-L511] [packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/cashflow.py:L568-L570] [tests/unit/ukcs/test_reference_chain.py:L92-L109] |
-| SF3: short ArcGIS pages can silently skip rows and produce an apparently complete cache | Offset advances by requested `record_count`, not received rows. No detection check exists. `tests/unit/ukcs/test_nsta_client.py::TestNSTAClientDownload::test_download_paginates_official_arcgis_endpoint` is ENCODING THE DEFECT: after 1 row with the limit flag true it expects offset 2000; it is not completeness evidence. | #1284; issue pending (2), 2026-10-16. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L128-L143] [tests/unit/ukcs/test_nsta_client.py:L150-L181] |
+| SF1: unknown selectors, loss floors and clipped take diagnostics | Corrected: unknown selectors raise before iteration; signed net cashflows and unbounded take ratios are retained. | #1284; revision-2 nodes below |
+| SF2: missing drilling capital or production | Corrected: a nonempty dated drilling timeline with finite positive effort is required and forwarded unchanged; empty production raises before screening. Inherited cost units and other omitted costs remain unqualified. | #1284; revision-2 nodes below |
+| SF3: short ArcGIS pages can silently skip rows and produce an apparently complete cache | Offset advances by requested `record_count`, not received rows. No detection check exists. `tests/unit/ukcs/test_nsta_client.py::TestNSTAClientDownload::test_download_paginates_official_arcgis_endpoint` is historical defective assertion, corrected in revision 2: after 1 row with the limit flag true it expects offset 2000; it is not completeness evidence. | #1284; issue pending (2), 2026-10-16. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L128-L143] [tests/unit/ukcs/test_nsta_client.py:L150-L181] |
 | A decline fit can return plausible parameters after optimization fails | Broad exception fallback sets quality to zero and RMSE to infinity; hyperbolic/harmonic failures delegate to exponential. D1 reproduced with forced optimization failure; do not use fallback as a reference. | issue pending (1), 2026-10-15. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L154-L161] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L189-L190] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L217-L218] |
 | Missing/nonpositive decline observations compress elapsed time | `dropna`, positive filtering and `arange(len(clean))` discard calendar gaps; no detection check exists in the shipped tests for elapsed-calendar fidelity | issue pending (1), 2026-10-15. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/decline_curves.py:L85-L94] |
 | Download row cap ignored on cached data; a limited cache can masquerade as a full dataset | Cache keys omit cap, source and completeness; cache hit returns before cap handling. D3 reproduced: request cap 1 returns 3 cached rows. | issue pending (2), 2026-10-15. [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L45-L58] [packages/worldenergydata-ukcs/src/worldenergydata/ukcs/production/nsta_client.py:L60-L88] |
@@ -250,10 +269,10 @@ The package has 7 dedicated test files containing 119 collected test cases; dedi
 | Item | Scope and required closure evidence | Responsible role | Tracking |
 | --- | --- | --- | --- |
 | Fiscal and conversion authority; UNVERIFIED claim from section 3 | Reconcile effective dates and fiscal sources with authoritative public material; add independent expected values, after-tax parity and provenance sidecars; 0 independently validated section-4 cases at present | Module maintainer | #736, #361 |
-| Silent economics failures | Reject unknown selectors, preserve negative cashflows and unclipped take diagnostics; flag omitted drilling capital and reject empty-production chain results; add detection tests before accepting results | Module maintainer | #1284 |
+| Economics qualification | Input guards and signed cashflows are corrected in revision 2. Qualify inherited drilling-cost units, facilities capital, fixed OPEX and fiscal assumptions before investment use. | Module maintainer | #1284; #736 |
 | Live source validity | UNVERIFIED: present endpoint availability, licence terms, production coverage and completeness; no live source download or independent production benchmark was run | Module maintainer | #797 |
 | Decline quality and elapsed time | Surface fallback status and preserve or explicitly constrain calendar spacing; add focused failure/gap tests | Module maintainer | issue pending (1) |
-| Cache and payload completeness | Separate partial/full caches and cap/source identities, enforce cached limits, reject ArcGIS error payloads and detect empty refresh success; correct short-page offsets | Module maintainer | #1284; issue pending (2) |
+| Cache and payload completeness | Separate partial/full caches and cap/source identities, enforce cached limits, reject ArcGIS error payloads and detect empty refresh success; short-page offsets corrected in revision 2 | Module maintainer | #1284; issue pending (2) |
 | Production normalization | Correct missing-column behavior and establish legacy water density/conversion basis; audit zero-filled missing measurements | Module maintainer | issue pending (3) |
 | Summary and profile identity | Distinguish empty well rates from measured zero; reject duplicate comparison profile names before dictionary insertion | Module maintainer | issue pending (3), issue pending (7) |
 | Rich metadata and condensate | Keep sparse ranking and unknown streams explicit until source-backed enrichment and component mapping are tested | Module maintainer | #795, #796 |

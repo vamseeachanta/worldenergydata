@@ -155,6 +155,8 @@ class CrossBasinComparator:
 
     def _compute(self, profile: BasinProfile):
         """Return (post-tax NPV, effective government-take rate)."""
+        if profile.fiscal_regime not in ("ukcs", "ncs", "gom"):
+            raise ValueError(f"Unknown fiscal selector: {profile.fiscal_regime!r}")
         monthly_rate = self.discount_rate / 12.0
         capex_usd = profile.capex_mm_usd * 1_000_000.0
 
@@ -169,7 +171,7 @@ class CrossBasinComparator:
 
             tax = self._apply_fiscal(profile, revenue, opex, capex_usd, t)
 
-            net_cf = max(pre_tax_profit - tax, 0.0) if pre_tax_profit > 0 else 0.0
+            net_cf = pre_tax_profit - tax
             discount_factor = 1.0 / ((1 + monthly_rate) ** t)
             post_tax_cashflows.append(net_cf * discount_factor)
 
@@ -184,7 +186,6 @@ class CrossBasinComparator:
         gov_rate = (
             (total_tax / total_pre_tax_profit) if total_pre_tax_profit > 0 else 0.0
         )
-        gov_rate = min(max(gov_rate, 0.0), 1.0)
 
         return npv, gov_rate
 
@@ -225,7 +226,7 @@ class CrossBasinComparator:
             return royalty + fed_tax
 
         else:
-            return 0.0
+            raise ValueError(f"Unknown fiscal selector: {profile.fiscal_regime!r}")
 
     def _npv_sensitivity(
         self, profile: BasinProfile, oil_price_delta_pct: float = 0.10
