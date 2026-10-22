@@ -216,17 +216,13 @@ class SIHScraper:
 
         # Language and locale for Mexican Spanish content
         options.add_argument("--lang=es-MX")
+        # Selenium Chromium Options.add_experimental_option stores by key;
+        # set prefs once so download settings retain the language (issue #1282).
+        # https://www.selenium.dev/selenium/docs/api/py/selenium_webdriver_chromium/selenium.webdriver.chromium.options.html
         options.add_experimental_option(
             "prefs",
             {
                 "intl.accept_languages": "es-MX,es,en",
-            },
-        )
-
-        # Download configuration
-        options.add_experimental_option(
-            "prefs",
-            {
                 "download.default_directory": str(self.download_dir.absolute()),
                 "download.prompt_for_download": False,
                 "download.directory_upgrade": True,

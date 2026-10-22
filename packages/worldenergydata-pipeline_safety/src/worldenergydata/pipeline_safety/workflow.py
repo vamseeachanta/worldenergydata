@@ -18,8 +18,8 @@ import pandas as pd
 class PipelineDefect:
     """Characterizes a pipeline defect from PHMSA incident data."""
 
-    incident_id: str
-    location: str  # pipeline segment or milepost
+    incident_id: str | None
+    location: str | None  # pipeline segment or milepost
     defect_type: str  # "corrosion"|"mechanical"|"material"|"weld"|"third_party"
     depth_pct_wall: float  # defect depth as % of wall thickness (0-100)
     length_mm: float  # axial defect length
@@ -35,7 +35,7 @@ class PipelineDefect:
 class FFSResult:
     """Fitness-for-Service assessment result (ASME B31G / Modified B31G)."""
 
-    incident_id: str
+    incident_id: str | None
     method: str  # "b31g" | "modified_b31g"
     failure_pressure_mpa: float
     safe_pressure_mpa: float  # failure_pressure / safety_factor
@@ -91,6 +91,22 @@ def _finite_number(value: object, field: str) -> float:
     if not math.isfinite(number):
         raise ValueError(f"{field} must be a finite number")
     return number
+
+
+def _first_text(*values: object) -> str | None:
+    """Select an available text alias without stringifying scalar nulls.
+
+    pandas 2.3 isna:
+    https://pandas.pydata.org/pandas-docs/version/2.3/reference/api/pandas.isna.html
+    Empty/whitespace-only strings are absent per issue #1297.
+    """
+    for value in values:
+        if pd.api.types.is_scalar(value) and pd.isna(value):
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return str(value)
+    return None
 
 
 # --- FFS helpers -------------------------------------------------------------
@@ -173,14 +189,11 @@ class PipelineSafetyWorkflow:
         for field in _ASSESSMENT_NUMERIC_FIELDS:
             if field in incident:
                 _finite_number(incident[field], field)
-        incident_id = str(
-            incident.get("incident_id") or incident.get("report_number") or "UNKNOWN"
+        incident_id = _first_text(
+            incident.get("incident_id"), incident.get("report_number")
         )
-        location = str(
-            incident.get("location")
-            or incident.get("state")
-            or incident.get("city")
-            or "unknown"
+        location = _first_text(
+            incident.get("location"), incident.get("state"), incident.get("city")
         )
         raw_type = (
             incident.get("defect_type") or incident.get("cause_category") or "corrosion"
@@ -287,6 +300,7 @@ class PipelineSafetyWorkflow:
             rows.append(
                 {
                     "incident_id": result.incident_id,
+                    "location": defect.location,
                     "defect_type": defect.defect_type,
                     "failure_pressure_mpa": result.failure_pressure_mpa,
                     "safe_pressure_mpa": result.safe_pressure_mpa,
@@ -332,7 +346,8 @@ class PipelineSafetyWorkflow:
             f"   Replace : {summary['replace']}",
             "",
             "3. KEY FINDING — HIGHEST-RISK SEGMENT",
-            f"   Incident ID      : {hr['incident_id']}",
+            f"   Incident ID      : {_first_text(hr.get('incident_id')) or 'missing'}",
+            f"   Location         : {_first_text(hr.get('location')) or 'missing'}",
             f"   Defect type      : {hr['defect_type']}",
             f"   Failure pressure : {hr['failure_pressure_mpa']:.2f} MPa",
             f"   Safe pressure    : {hr['safe_pressure_mpa']:.2f} MPa",
