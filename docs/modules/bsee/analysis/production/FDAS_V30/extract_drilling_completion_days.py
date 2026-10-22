@@ -244,7 +244,7 @@ def load_remarks(path):
     df = df[df["SN_WAR"].astype(str).str.upper()!="SN_WAR"].copy()
     df["SN_WAR"] = pd.to_numeric(df["SN_WAR"], errors="coerce")
     df = df.dropna(subset=["SN_WAR"])
-    df["TEXT_REMARK"] = df["TEXT_REMARK"].astype(str)
+    df["TEXT_REMARK"] = df["TEXT_REMARK"].fillna("").astype(str)
     return df
 
 # ------------------ Remarks-derived narrative fields ------------------
@@ -299,6 +299,29 @@ def last_activity_and_mud_weight(remarks_for_api):
 # completion counted inclusively. Both are fixed in war_rig_days.union_days,
 # which merges adjacency and normalises to midnight before counting.
 
+def merge_rows(left, right, **kwargs):
+    """Validate lookup cardinality before joining WAR, bore, and lease tables."""
+    before = len(left)
+    result = pd.merge(left, right, validate="many_to_one", **kwargs)
+    assert len(result) == before, "Lookup join changed input row count"
+    return result
+
+
+def diagnose_blank_post_td(war, boreholes, remarks):
+    """Count post-TD WAR rows lacking text; infer no completion-day basis.
+
+    Issue 875, B6: this count is NOT_EVALUATED pending a day-basis ruling.
+    One WAR row is counted once even if it has multiple remark records.
+    """
+    text = remarks["TEXT_REMARK"].fillna("").astype(str).str.strip().ne("")
+    has_text = text.groupby(remarks["SN_WAR"]).any()
+    joined = merge_rows(war, boreholes[["API_WELL_NUMBER", "TOTAL_DEPTH_DATE"]],
+                        on="API_WELL_NUMBER", how="left")
+    post_td = pd.to_datetime(joined["WAR_END_DT"]) > pd.to_datetime(joined["TOTAL_DEPTH_DATE"])
+    blank = ~joined["SN_WAR"].map(has_text).fillna(False).astype(bool)
+    return {"status": "NOT_EVALUATED", "post_td_blank_remark_rows": int((post_td & blank).sum())}
+
+
 # ------------------ Main ------------------
 def main():
     parser = argparse.ArgumentParser()
@@ -344,17 +367,19 @@ def main():
     # Filter by leases
     wm = wm[wm["SURF_LEASE_NUM"].isin(leases["_LEASE_NUM_NORM"])].copy()
 
+    blank_diagnostic = diagnose_blank_post_td(wm, bh, rk)
+
     # SN_WAR map for remarks
     sn = wm[["SN_WAR","API_WELL_NUMBER","WAR_START_DT","WAR_END_DT"]].dropna(subset=["SN_WAR"]).copy()
-    rk = rk.merge(sn, on="SN_WAR", how="left").dropna(subset=["API_WELL_NUMBER"])
+    rk = merge_rows(rk, sn.drop_duplicates(), on="SN_WAR", how="left").dropna(subset=["API_WELL_NUMBER"])
 
     # Base per API
     base = (wm.groupby("API_WELL_NUMBER", as_index=False)
               .agg({"SURF_LEASE_NUM":"first","WELL_NAME":"first","WATER_DEPTH":"max","LEASE_NAME":"first"}))
-    base = base.merge(bh, on="API_WELL_NUMBER", how="left")
+    base = merge_rows(base, bh, on="API_WELL_NUMBER", how="left")
 
     # Authoritative lease name/depth from leases.xlsx
-    base = base.merge(leases.rename(columns={"_LEASE_NUM_NORM":"SURF_LEASE_NUM"}),
+    base = merge_rows(base, leases.rename(columns={"_LEASE_NUM_NORM":"SURF_LEASE_NUM"}),
                       on="SURF_LEASE_NUM", how="left", suffixes=("","_LEASE"))
     base["LEASE_NAME"] = base["LEASE_NAME"].fillna(base["LEASE_NAME_LEASE"])
     base["WATER_DEPTH"] = np.where(base["LEASE_WATER_DEPTH"].notna(), base["LEASE_WATER_DEPTH"], base["WATER_DEPTH"])
@@ -376,8 +401,8 @@ def main():
     # unattributed, not absent; war_rig_days carries them as coverage and
     # excludes them from every activity total. See #1120.
     prop = load_war_prop(args.war_prop)
-    war_for_days = wm[["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]].merge(
-        prop, on="SN_WAR", how="left"
+    war_for_days = merge_rows(wm[["SN_WAR", "API_WELL_NUMBER", "WAR_START_DT", "WAR_END_DT"]],
+        prop.drop_duplicates(), on="SN_WAR", how="left"
     )
     unattributed = int(war_for_days["WELL_ACTIVITY_CD"].isna().sum())
     if unattributed:
@@ -395,7 +420,7 @@ def main():
         "days_status": "DAYS_STATUS",
         "basis": "BASIS",
     })
-    base = base.merge(
+    base = merge_rows(base,
         days[["API_WELL_NUMBER", "DRILLING_DAYS", "COMPLETION_DAYS",
               "PND_DAYS", "DAYS_STATUS", "BASIS"]],
         on="API_WELL_NUMBER", how="left",
@@ -411,7 +436,7 @@ def main():
         comp_rows,
         columns=["API_WELL_NUMBER", "LAST_COMPLETION_ACTIVITY", "MAX_DRILL_FLUID_WGT"],
     )
-    base = base.merge(comp_df, on="API_WELL_NUMBER", how="left")
+    base = merge_rows(base, comp_df, on="API_WELL_NUMBER", how="left")
 
     # Sort and output
     base = base.sort_values(by=["LEASE_NAME","WELL_NAME","WELL_SPUD_DATE"], ascending=[True,True,True])
@@ -444,6 +469,7 @@ def main():
         leases.to_excel(xw, sheet_name="Lease_List", index=False)
         diag = base[["API_WELL_NUMBER","WELL_SPUD_DATE","TOTAL_DEPTH_DATE","DRILLING_DAYS","COMPLETION_DAYS","LAST_COMPLETION_ACTIVITY","MAX_DRILL_FLUID_WGT"]]
         diag.to_excel(xw, sheet_name="Diagnostics", index=False)
+        pd.DataFrame([blank_diagnostic]).to_excel(xw, sheet_name="Input_Diagnostics", index=False)
 
     print(f"✅ Wrote {args.out} with {len(out)} rows.")
 
