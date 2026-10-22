@@ -9,7 +9,8 @@ information, and operator records. Supports Texas RRC, New Mexico OCD,
 Oklahoma OCC, North Dakota DMR, and Colorado COGCC.
 """
 
-from datetime import date
+import re
+from datetime import date, timedelta
 from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
@@ -105,10 +106,32 @@ class StateGISProvider(BaseProvider):
         },
     }
 
-    def __init__(self, **kwargs) -> None:
-        """Initialize State GIS provider."""
+    def __init__(
+        self, *, permit_date_fields: dict[str, str] | None = None, **kwargs
+    ) -> None:
+        """Initialize with caller-verified ESRI permit date fields, keyed by state.
+
+        No live service date schema is assumed. Without an explicit mapping,
+        date-filtered searches fail before any request. Fields must be plain
+        SQL identifiers referring to the permit issuance date in service time.
+        """
+        self._permit_date_fields = {}
+        for state, field in (permit_date_fields or {}).items():
+            if not isinstance(field, str) or not re.fullmatch(
+                r"[A-Za-z_][A-Za-z_0-9]*", field
+            ):
+                raise ValueError("Permit date field must be a plain SQL identifier")
+            self._permit_date_fields[state.upper()] = field
         super().__init__(**kwargs)
         self._state_clients: Dict[str, Any] = {}
+
+    def _unsupported_search(self, state: str, method: str) -> ProviderError:
+        """Reject a search whose service implementation cannot apply filters."""
+        return ProviderError(
+            message=f"{method} is not supported for {state}",
+            error_code="SEARCH_UNSUPPORTED",
+            details={"provider": self.PROVIDER_NAME, "state": state, "method": method},
+        )
 
     def _get_state_config(self, state: str) -> Dict[str, str]:
         """
@@ -178,7 +201,7 @@ class StateGISProvider(BaseProvider):
             WellSearchResult with matching wells
 
         Raises:
-            ProviderError: If the ESRI request or response decoding fails
+            ProviderError: If the request/decoding fails or the service is unsupported
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -289,10 +312,7 @@ class StateGISProvider(BaseProvider):
         limit: int,
     ) -> List[WellInfo]:
         """Query custom state APIs for wells."""
-        self.logger.info(
-            f"Custom well search for {state} - results may vary by state API"
-        )
-        return []
+        raise self._unsupported_search(state, "search_wells_by_location")
 
     def _map_well_status(self, status_str: str) -> WellStatus:
         """Map string status to WellStatus enum."""
@@ -330,7 +350,7 @@ class StateGISProvider(BaseProvider):
             WellSearchResult with matching wells
 
         Raises:
-            ProviderError: If the ESRI request or response decoding fails
+            ProviderError: If the request/decoding fails or the service is unsupported
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -340,6 +360,9 @@ class StateGISProvider(BaseProvider):
         )
 
         wells: List[WellInfo] = []
+
+        if config["api_format"] != "esri_rest":
+            raise self._unsupported_search(state_upper, "search_by_operator")
 
         if config["api_format"] == "esri_rest":
             base_url = config["base_url"]
@@ -461,8 +484,8 @@ class StateGISProvider(BaseProvider):
             state: Two-letter state code
             county: Optional county name
             operator: Optional operator name
-            start_date: Requested start date; date filtering is not supported
-            end_date: Requested end date; date filtering is not supported
+            start_date: Inclusive first permit date in service time
+            end_date: Inclusive last permit date in service time
             limit: Maximum results to return
 
         Returns:
@@ -470,20 +493,45 @@ class StateGISProvider(BaseProvider):
 
         Raises:
             StateNotSupportedError: If state is not supported
-            ProviderError: If either date bound is supplied; permit-date fields
-                have not been verified for the configured services
+            ValueError: If the range is inverted or its end has no following day
+            ProviderError: If dates lack a caller-verified permit_date_fields
+                entry, or the state's search service is not implemented
             ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
 
-        # #1259 permits explicit rejection when a service cannot filter by date.
-        # Do not guess a date field or silently return an unfiltered result.
-        if start_date is not None or end_date is not None:
+        if start_date is not None and end_date is not None and start_date > end_date:
+            raise ValueError("start_date must not be after end_date")
+
+        date_field = self._permit_date_fields.get(state_upper)
+        has_dates = start_date is not None or end_date is not None
+        if has_dates and (not date_field or config["api_format"] != "esri_rest"):
             raise ProviderError(
                 message=f"Permit date filtering is not supported for {state_upper}",
                 error_code="PERMIT_DATE_FILTER_UNSUPPORTED",
                 details={"provider": self.PROVIDER_NAME, "state": state_upper},
+            )
+
+        if config["api_format"] != "esri_rest":
+            raise self._unsupported_search(state_upper, "search_permits")
+
+        date_clauses = []
+        # Esri SQL reference, "Date-time syntax for geodatabases" (2026 access):
+        # https://pro.arcgis.com/en/pro-app/latest/help/mapping/navigation/sql-reference-for-elements-used-in-query-expressions.htm
+        # A half-open interval includes all timestamps on the requested end day.
+        if start_date is not None:
+            date_clauses.append(f"{date_field} >= TIMESTAMP '{start_date.isoformat()}'")
+        if end_date is not None:
+            try:
+                # datetime.timedelta (Python standard library): one calendar day.
+                exclusive_end = end_date + timedelta(days=1)
+            except OverflowError as exc:
+                raise ValueError(
+                    "end_date must have a representable following day"
+                ) from exc
+            date_clauses.append(
+                f"{date_field} < TIMESTAMP '{exclusive_end.isoformat()}'"
             )
 
         self.logger.info(f"Searching permits in {state_upper}")
@@ -500,6 +548,7 @@ class StateGISProvider(BaseProvider):
                 where_clauses.append(f"UPPER(COUNTY) = '{county.upper()}'")
             if operator:
                 where_clauses.append(f"UPPER(OPERATOR) LIKE '%{operator.upper()}%'")
+            where_clauses.extend(date_clauses)
 
             params = {
                 "where": " AND ".join(where_clauses),
@@ -510,6 +559,12 @@ class StateGISProvider(BaseProvider):
             }
 
             data = self._get_json(query_url, params=params)
+            if "error" in data:
+                raise ProviderError(
+                    message="Permit service rejected the query",
+                    error_code="PERMIT_QUERY_ERROR",
+                    details={"provider": self.PROVIDER_NAME, "state": state_upper},
+                )
             permits = self._parse_esri_permits(data, state_upper)
 
         return PermitSearchResult(
