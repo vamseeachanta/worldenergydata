@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import dataclass, field
+from numbers import Real
 from typing import Optional
 
 import numpy as np
@@ -349,26 +350,48 @@ class RiskCalibrator:
         return list(HSE_TO_RISK_MAP.get(key, []))
 
     def _parse_years_covered(self, hse_df: pd.DataFrame) -> float:
-        """Derive years covered from a date or year column; fallback to 1.0."""
+        """Count calendar years inclusively, including both endpoint years.
+
+        This counts represented calendar exposure, not elapsed fractional years.
+        Numeric date values are refused; integer years belong in a year column.
+        The existing one-year fallback for absent/unparseable time is retained.
+        """
         if hse_df.empty:
             return 1.0
+
+        # Validate all date-labelled columns before choosing a time source;
+        # a valid year column must not hide a malformed incident_date column.
+        for date_col in ("date", "incident_date"):
+            if date_col not in hse_df:
+                continue
+            series = hse_df[date_col]
+            values = series.dropna()
+            if not values.empty and (
+                pd.api.types.is_numeric_dtype(series)
+                or values.map(lambda value: isinstance(value, Real)).any()
+            ):
+                raise ValueError(
+                    f"{date_col} contains numeric date values; use a year column"
+                )
 
         for col in ("date", "year", "incident_date"):
             if col not in hse_df.columns:
                 continue
+            series = hse_df[col]
             try:
-                series = hse_df[col]
                 if col == "year":
                     numeric = pd.to_numeric(series, errors="coerce").dropna()
                     if numeric.empty:
                         continue
-                    years = float(numeric.max() - numeric.min())
+                    # Inclusive cardinality of integer calendar years, not an
+                    # empirical coefficient or an elapsed-time conversion.
+                    years = float(numeric.max() - numeric.min() + 1)
                     return max(years, 1.0)
                 else:
                     dates = pd.to_datetime(series, errors="coerce").dropna()
                     if dates.empty:
                         continue
-                    years = (dates.max() - dates.min()).days / 365.25
+                    years = float(dates.dt.year.max() - dates.dt.year.min() + 1)
                     return max(years, 1.0)
             except Exception:
                 continue

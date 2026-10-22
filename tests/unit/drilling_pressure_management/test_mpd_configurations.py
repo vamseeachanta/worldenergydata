@@ -75,6 +75,7 @@ class TestMPDConfigurationDataclass:
         assert "RFC" in types
 
 
+# Policy and annular losses below are synthetic caller choices, not defaults.
 class TestPressureWindowAnalyzer:
     def setup_method(self):
         self.analyzer = PressureWindowAnalyzer()
@@ -86,6 +87,9 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=5400.0,
             mud_weight_ppg=10.5,
             flow_rate_gpm=800.0,
+            annular_pressure_drop_psi=200,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
         assert isinstance(result, PressureWindow)
 
@@ -96,6 +100,9 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=4500.0,
             mud_weight_ppg=10.0,
             flow_rate_gpm=600.0,
+            annular_pressure_drop_psi=200,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
         assert result.pressure_window_psi == pytest.approx(500.0)
 
@@ -106,18 +113,24 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=5150.0,  # window = 150 psi < 200
             mud_weight_ppg=10.5,
             flow_rate_gpm=800.0,
+            annular_pressure_drop_psi=200,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
         assert result.mpd_required is True
 
-    def test_mpd_required_false_when_window_above_500(self):
+    def test_mpd_required_when_ecd_below_pore_despite_wide_window(self):
         result = self.analyzer.analyze(
             depth_m=1000.0,
             pore_pressure_psi=2000.0,
             fracture_gradient_psi=3000.0,  # window = 1000 psi >> 500
             mud_weight_ppg=9.0,
             flow_rate_gpm=400.0,
+            annular_pressure_drop_psi=200,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
-        assert result.mpd_required is False
+        assert result.mpd_required is True
 
     def test_ecd_pressure_returns_positive_float(self):
         ecd = self.analyzer.ecd_pressure(
@@ -136,6 +149,8 @@ class TestPressureWindowAnalyzer:
             mud_weight_ppg=10.0,
             flow_rate_gpm=700.0,
             annular_pressure_drop_psi=300.0,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
         assert result.ecd_psi > result.pore_pressure_psi
 
@@ -156,13 +171,48 @@ class TestPressureWindowAnalyzer:
             fracture_gradient_psi=3600.0,
             mud_weight_ppg=9.5,
             flow_rate_gpm=500.0,
+            annular_pressure_drop_psi=200,
+            threshold_psi=200,
+            minimum_window_margin_fraction=0.1,
         )
         assert result.depth_m == pytest.approx(1500.0)
 
     def test_mpd_required_helper_boundary_at_200(self):
-        assert self.analyzer.mpd_required(199.9) is True
-        assert self.analyzer.mpd_required(200.1) is False
+        assert (
+            self.analyzer.mpd_required(
+                199.9,
+                threshold_psi=200,
+                ecd_window_position=0.5,
+                minimum_window_margin_fraction=0.1,
+            )
+            is True
+        )
+        assert (
+            self.analyzer.mpd_required(
+                200.1,
+                threshold_psi=200,
+                ecd_window_position=0.5,
+                minimum_window_margin_fraction=0.1,
+            )
+            is False
+        )
 
     def test_mpd_required_helper_custom_threshold(self):
-        assert self.analyzer.mpd_required(300.0, threshold_psi=500.0) is True
-        assert self.analyzer.mpd_required(600.0, threshold_psi=500.0) is False
+        assert (
+            self.analyzer.mpd_required(
+                300.0,
+                threshold_psi=500.0,
+                ecd_window_position=0.5,
+                minimum_window_margin_fraction=0.1,
+            )
+            is True
+        )
+        assert (
+            self.analyzer.mpd_required(
+                600.0,
+                threshold_psi=500.0,
+                ecd_window_position=0.5,
+                minimum_window_margin_fraction=0.1,
+            )
+            is False
+        )

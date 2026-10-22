@@ -188,6 +188,11 @@ class TestPressureWindowCheck:
             pore_pressure_ppg=9.5,
             flow_rate_gpm=450.0,
             depth_ft=8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=8.5,
+            pipe_od_in=5,
+            minimum_window_ppg=0.5,
         )
         assert "compatible" in result
         assert "margin_ppg" in result
@@ -195,19 +200,49 @@ class TestPressureWindowCheck:
 
     def test_compatible_is_bool(self, decision):
         result = decision.pressure_window_check(
-            BoreType.STANDARD, 10.0, 14.0, 9.5, 450.0, 8000.0
+            BoreType.STANDARD,
+            10.0,
+            14.0,
+            9.5,
+            450.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=8.5,
+            pipe_od_in=5,
+            minimum_window_ppg=0.5,
         )
         assert isinstance(result["compatible"], bool)
 
     def test_margin_ppg_is_float(self, decision):
         result = decision.pressure_window_check(
-            BoreType.STANDARD, 10.0, 14.0, 9.5, 450.0, 8000.0
+            BoreType.STANDARD,
+            10.0,
+            14.0,
+            9.5,
+            450.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=8.5,
+            pipe_od_in=5,
+            minimum_window_ppg=0.5,
         )
         assert isinstance(result["margin_ppg"], float)
 
     def test_limiting_factor_is_string(self, decision):
         result = decision.pressure_window_check(
-            BoreType.STANDARD, 10.0, 14.0, 9.5, 450.0, 8000.0
+            BoreType.STANDARD,
+            10.0,
+            14.0,
+            9.5,
+            450.0,
+            8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=8.5,
+            pipe_od_in=5,
+            minimum_window_ppg=0.5,
         )
         assert isinstance(result["limiting_factor"], str)
 
@@ -219,6 +254,11 @@ class TestPressureWindowCheck:
             pore_pressure_ppg=9.0,
             flow_rate_gpm=450.0,
             depth_ft=8000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=8.5,
+            pipe_od_in=5,
+            minimum_window_ppg=0.5,
         )
         assert result["compatible"] is True
 
@@ -231,6 +271,11 @@ class TestPressureWindowCheck:
             pore_pressure_ppg=11.0,
             flow_rate_gpm=800.0,
             depth_ft=1000.0,
+            plastic_viscosity_cp=20,
+            yield_point_lbf_100ft2=15,
+            hole_od_in=6,
+            pipe_od_in=3.5,
+            minimum_window_ppg=0.5,
         )
         # High ECD in slim annulus at shallow depth may exceed fracture gradient
         assert "limiting_factor" in result

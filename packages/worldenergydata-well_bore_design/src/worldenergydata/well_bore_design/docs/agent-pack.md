@@ -5,29 +5,15 @@
 | Module | `well_bore_design` |
 | Repository | `worldenergydata` |
 | Path | `packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design` |
-| Pack revision | 1, 2026-10-16 |
-| Code revision | `3cad44fa0b5d4a5a4a8798cb6cb2dc15739ee746` |
+| Pack revision | 2, 2026-10-22 |
+| Historical code revision | `3cad44fa0b5d4a5a4a8798cb6cb2dc15739ee746` |
 | Analysis family | EC; Python calculations gate set, AQG r0, section 10 |
 | Quality role | Calculations quality manager; deputy assignment open |
 | Status | DRAFT; independent clearance pending |
 
 ## 1. Purpose and scope
 
-The public API exports geometry/profile dataclasses, bore classification, scalar hydraulic calculations and a bore-type recommendation engine. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/__init__.py:L1-L34]
-
-`WellBoreHydraulics` computes annular velocity, pressure loss, equivalent circulating density (ECD), a hole-cleaning index and a comparison using three fixed geometries; its docstring describes simplified decision support. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L10-L24] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L145-L188]
-
-`BoreTypeDecision.recommend` selects a candidate by well type, pressure window and target production rate, then adds compatibility, deviation-based cleaning, risk and completion caveats; `pressure_window_check` separately calls the hydraulics comparison. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L99-L175] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L178-L220] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L276]
-
-`WellBoreDesign.sections` stores caller-supplied dictionaries; the comparison uses `_BORE_GEOMETRY` instead of those section records, and `EcdProfile` stores rather than calculates a depth profile. [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L76] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L89-L120] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L159-L185]
-
-Maturity evidence is the member's Alpha classifier, rather than a routing-registry maturity claim. [packages/worldenergydata-well_bore_design/pyproject.toml:L14-L22]
-
-UNVERIFIED: U1 — Loss magnitude is NON-CONSERVATIVE in the four section-5 force-balance cases (8 to 419 times below the floor); ECD and compatibility are optimistic (#1288). Physical accuracy, empirical applicability and source editions for the hydraulic correlations and cleaning threshold require independent qualification; code attribution alone does not establish them (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L63-L100] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L126-L139]
-
-UNVERIFIED: U2 — Engineering validity of the selection envelopes, relative cost factors and risk thresholds requires independent evidence (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L17-L65] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L226-L276]
-
-UNVERIFIED: U3 — A common depth datum and true-vertical versus measured-depth convention across stored metre depths and hydraulic foot depths is not established; callers must provide that basis explicitly (section 10). [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/schemas.py:L51-L63] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/hydraulics.py:L106-L120] [packages/worldenergydata-well_bore_design/src/worldenergydata/well_bore_design/decision_framework.py:L105-L132]
+The current implementation estimates steady laminar Bingham annular loss using a sourced slot approximation, takes explicit mud rheology and geometry, and checks both pore and fracture bounds. Recommendation categories are normalized and every matrix envelope is checked. These are estimates with stated applicability limits, not design qualification.
 
 ## Revision history
 
@@ -35,6 +21,33 @@ UNVERIFIED: U3 — A common depth datum and true-vertical versus measured-depth 
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial module knowledge pack; qualification gaps recorded. |
 | 1 | 2026-10-16 | Failure inventory expanded after the hydraulic bound and selection checks exposed undocumented limitations. |
+| 2 | 2026-10-22 | Replace the understated annular loss and implicit inputs; detect category and envelope failures. |
+
+### Current implementation update, revision 2
+
+- Method: the public 2025 annular-flow paper, Appendix A1, A29–A30, reduced to Bingham behavior with `N=1`, gives `v=G*h²/(12*mu)*(1-a)²*(1+a/2)`, where `a=2*tau_y/(G*h)` and `h=(D_h-D_p)/2`. A4/A6/A9 give the yield floor `YP/(3*(D_h-D_p))` psi/100 ft. Unit conversions use NIST SP 811 (2008), Appendix B.8.
+- Inputs: rheology and a geometry mapping are required by `compare_bore_types`; `pressure_window_check` requires PV, YP, hole/pipe diameters and caller-selected `minimum_window_ppg`. It reports the rheology used and a laminar-model caveat. Missing inputs raise `TypeError`; invalid physical inputs raise `ValueError`. No implicit numerical basis replaces missing inputs.
+- Selection: case, surrounding whitespace and completion separators are normalized. The preferred candidate is checked against depth, flow and well-type envelopes. An eligible alternative is selected when available; otherwise an explicit envelope caveat is returned. Unknown categories produce a named caveat and `evaluation_status="NOT_EVALUATED"`.
+
+| Finding | Current detection nodes |
+| --- | --- |
+| #1288 SF1: loss below yield floor | `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_annular_yield_floor`; `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_laminar_bingham_worked_case`; `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_newtonian_limit_without_yield` |
+| #1288 SF2: fixed rheology | `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_pressure_window_uses_actual_rheology`; `tests/unit/well_bore_design/test_selection_regressions.py::test_missing_rheology_or_geometry_is_required` |
+| #1288 SF3: ignored envelopes | `tests/unit/well_bore_design/test_selection_regressions.py::test_selection_respects_all_matrix_envelopes` |
+| #1288 SF4: category fall-through | `tests/unit/well_bore_design/test_selection_regressions.py::test_case_and_completion_separators_normalized`; `tests/unit/well_bore_design/test_selection_regressions.py::test_unknown_category_has_explicit_caveat` |
+| Invalid loss inputs and missing pore-bound check | `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_each_annular_input_must_be_finite`; `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_invalid_pressure_loss_input_refused`; `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_zero_flow_has_no_circulating_loss`; `tests/unit/well_bore_design/test_hydraulic_regressions.py::test_pressure_below_pore_is_incompatible` |
+
+Remaining limits: the slot approximation assumes laminar flow, concentric stationary walls and no cuttings; turbulent loss and automatic regime selection are not evaluated. The single hydraulic depth must represent both length and TVD, limiting the window interface to a vertical uniform section. The selection matrix, cleaning heuristic, cost/risk thresholds, stored-profile consistency and empty-profile behavior remain unqualified. A declared compatible estimate does not settle those limitations. The schemas and profile calculations are unchanged.
+
+Sources: [annular-flow paper (2025; corrected 2026), Appendix A](https://doi.org/10.1007/s13202-024-01919-z); [NIST SP 811 (2008), Appendix B.8](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf). The reproducible hand calculation and refusal example are in [the worked example](../../../../../../docs/examples/annular_pressure_screening.md).
+
+### Historical inventory boundary
+
+Sections 2–10 below retain the inventory, citations, execution records and open
+limits at the historical code revision. Findings corrected by the current update
+are historical evidence; the current contracts and detection nodes above supersede
+those earlier behavior statements and test counts. Remaining limits are retained.
+
 
 ## 2. Inputs and outputs
 

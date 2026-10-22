@@ -5,6 +5,7 @@ ABOUTME: Application matrix, pressure window check, capital/operational trade-of
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 
 from worldenergydata.well_bore_design.hydraulics import WellBoreHydraulics
@@ -78,6 +79,7 @@ class BoreTypeRecommendation:
     capital_cost_factor: float  # relative to standard (1.0), < 1.0 = cheaper
     operational_risk_level: str  # "low" | "medium" | "high"
     caveats: list[str] = field(default_factory=list)
+    evaluation_status: str = "EVALUATED"
 
 
 # ---------------------------------------------------------------------------
@@ -89,7 +91,7 @@ class BoreTypeDecision:
     """Decision framework for slim-hole vs standard-hole bore type selection.
 
     The ``recommend`` method applies the application matrix plus a
-    hydraulic feasibility check to return a ``BoreTypeRecommendation``.
+    pressure-window-width heuristic to return a ``BoreTypeRecommendation``.
     """
 
     def __init__(self) -> None:
@@ -125,11 +127,40 @@ class BoreTypeDecision:
         completion_type:
             One of "simple", "gravel_pack", "intelligent".
         """
+        well_type = well_type.strip().lower().replace("-", "_").replace(" ", "_")
+        completion_type = (
+            completion_type.strip().lower().replace("-", "_").replace(" ", "_")
+        )
+        caveats: list[str] = []
+        known_wells = set().union(
+            *(row["well_types"] for row in APPLICATION_MATRIX.values())
+        )
+        if well_type not in known_wells:
+            caveats.append(f"Unknown well_type '{well_type}'; selection NOT_EVALUATED.")
+        if completion_type not in {"simple", "gravel_pack", "intelligent"}:
+            caveats.append(
+                f"Unknown completion_type '{completion_type}'; selection NOT_EVALUATED."
+            )
         candidate = self._select_candidate(
             well_type, total_depth_m, pressure_window_ppg, target_flow_rate_bopd
         )
+        eligible = [
+            bore
+            for bore in BoreType
+            if self._within_envelope(
+                bore, well_type, total_depth_m, target_flow_rate_bopd
+            )
+        ]
+        if candidate not in eligible:
+            if eligible:
+                candidate = (
+                    BoreType.STANDARD if BoreType.STANDARD in eligible else eligible[0]
+                )
+            else:
+                caveats.append(
+                    "No application-matrix envelope covers these inputs; selection NOT_EVALUATED."
+                )
         matrix = APPLICATION_MATRIX[candidate.value]
-        caveats: list[str] = []
 
         pw_ok = pressure_window_ppg >= _MIN_WINDOW_PPG[candidate.value]
         if not pw_ok:
@@ -173,6 +204,11 @@ class BoreTypeDecision:
             capital_cost_factor=matrix["capital_cost_factor"],
             operational_risk_level=risk,
             caveats=caveats,
+            evaluation_status=(
+                "NOT_EVALUATED"
+                if any("NOT_EVALUATED" in c for c in caveats)
+                else "EVALUATED"
+            ),
         )
 
     def pressure_window_check(
@@ -183,36 +219,73 @@ class BoreTypeDecision:
         pore_pressure_ppg: float,
         flow_rate_gpm: float,
         depth_ft: float,
+        *,
+        plastic_viscosity_cp: float,
+        yield_point_lbf_100ft2: float,
+        hole_od_in: float,
+        pipe_od_in: float,
+        minimum_window_ppg: float,
     ) -> dict[str, object]:
         """Check pressure window compatibility for a given bore type.
 
-        Returns dict with:
-            compatible (bool), margin_ppg (float), limiting_factor (str)
+        Rheology, annular diameters and minimum window are required caller
+        inputs. Compatibility is a laminar estimate with both pore and fracture
+        bounds enforced. The depth serves as both annular length and TVD, so
+        this interface is limited to a vertical, uniform annular section.
+
+        Returns compatible, margin, limiting factor, ECD and rheology used.
         """
-        comparison = self._hydraulics.compare_bore_types(
-            flow_rate_gpm=flow_rate_gpm,
-            mud_weight_ppg=mud_weight_ppg,
-            depth_ft=depth_ft,
+        # Acceptance margin is caller policy; the historical selection
+        # heuristics do not establish a qualified hydraulic acceptance limit.
+        if (
+            not all(
+                math.isfinite(value)
+                for value in (
+                    fracture_gradient_ppg,
+                    pore_pressure_ppg,
+                    minimum_window_ppg,
+                )
+            )
+            or pore_pressure_ppg <= 0
+            or fracture_gradient_ppg <= pore_pressure_ppg
+            or minimum_window_ppg < 0
+        ):
+            raise ValueError(
+                "Require finite positive pressure bounds and nonnegative minimum window"
+            )
+        loss = self._hydraulics.pressure_loss_psi_per_100ft(
+            flow_rate_gpm,
+            mud_weight_ppg,
+            plastic_viscosity_cp,
+            yield_point_lbf_100ft2,
+            hole_od_in,
+            pipe_od_in,
         )
-        ecd = comparison[bore_type.value]["ecd_ppg"]
+        ecd = self._hydraulics.ecd_ppg(mud_weight_ppg, loss * depth_ft / 100, depth_ft)
 
         margin_frac = fracture_gradient_ppg - ecd
         available_window = fracture_gradient_ppg - pore_pressure_ppg
-        min_required = _MIN_WINDOW_PPG[bore_type.value]
+        min_required = minimum_window_ppg
 
-        compatible = margin_frac >= 0.0 and available_window >= min_required
+        compatible = (
+            pore_pressure_ppg <= ecd <= fracture_gradient_ppg
+            and available_window >= min_required
+        )
 
-        if margin_frac < 0.0:
+        if ecd < pore_pressure_ppg:
+            limiting = "ecd_below_pore_pressure"
+        elif margin_frac < 0.0:
             limiting = "ecd_exceeds_fracture_gradient"
         elif available_window < min_required:
             limiting = "insufficient_pressure_window"
-        elif ecd > mud_weight_ppg * 1.05:
-            limiting = "high_ecd_in_narrow_annulus"
         else:
             limiting = "none"
 
         return {
             "compatible": compatible,
+            "plastic_viscosity_cp": plastic_viscosity_cp,
+            "yield_point_lbf_100ft2": yield_point_lbf_100ft2,
+            "caveats": ["Laminar slot approximation; turbulent flow is not evaluated."],
             "margin_ppg": round(margin_frac, 4),
             "limiting_factor": limiting,
             "ecd_ppg": round(ecd, 4),
@@ -222,6 +295,21 @@ class BoreTypeDecision:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _within_envelope(
+        bore_type: BoreType,
+        well_type: str,
+        depth_m: float,
+        flow_bopd: float,
+    ) -> bool:
+        """Apply every bound of the existing, unqualified application matrix."""
+        row = APPLICATION_MATRIX[bore_type.value]
+        return (
+            well_type in row["well_types"]
+            and row["depth_range_m"][0] <= depth_m <= row["depth_range_m"][1]
+            and row["flow_range_bopd"][0] <= flow_bopd <= row["flow_range_bopd"][1]
+        )
 
     def _select_candidate(
         self,

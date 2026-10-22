@@ -5,14 +5,9 @@ ABOUTME: Annular pressure loss, ECD, annular velocity, hole cleaning index.
 
 from __future__ import annotations
 
-from worldenergydata.well_bore_design.schemas import BoreType
+import math
 
-# Typical bit-size (hole OD) and drill-pipe OD for each bore type (inches)
-_BORE_GEOMETRY: dict[BoreType, dict[str, float]] = {
-    BoreType.SLIM_HOLE: {"hole_od_in": 6.0, "pipe_od_in": 3.5},
-    BoreType.STANDARD: {"hole_od_in": 8.5, "pipe_od_in": 5.0},
-    BoreType.LARGE_BORE: {"hole_od_in": 12.25, "pipe_od_in": 5.5},
-}
+from worldenergydata.well_bore_design.schemas import BoreType
 
 
 class WellBoreHydraulics:
@@ -60,44 +55,75 @@ class WellBoreHydraulics:
         hole_od_in: float,
         pipe_od_in: float,
     ) -> float:
-        """Simplified Bingham Plastic annular pressure loss (psi per 100 ft).
+        """Laminar Bingham slot approximation in psi per 100 ft.
 
-        Uses the Bourgoyne et al. correlation:
-          - Hydraulic diameter  : Dh = hole_od - pipe_od (in)
-          - Annular velocity    : from annular_velocity_fps()
-          - Laminar/turbulent   : determined by Reynolds number
-          - Laminar  : dP/dL = (PV * AV / (300 * Dh^2)) + (YP / (225 * Dh))
-          - Turbulent: fanning friction factor applied
+        Source: *Stepwise derivation and comparison of the Herschel–Bulkley
+        Laminar Fluid Flow equations—in Annulus* (2025, corrected 2026),
+        DOI 10.1007/s13202-024-01919-z, Appendix A1, A29–A30, with N=1.
+        For radial clearance h, G=dP/dL, a=2*tau_y/(G*h):
+        v = G*h**2/(12*mu) * (1-a)**2 * (1+a/2).
+        Thus G >= 4*tau_y/(hole_diameter-pipe_diameter).
 
-        All results are positive (pressure loss, not pressure gradient).
+        Assumes steady laminar flow, concentric stationary walls, no cuttings.
+        This is a slot approximation, not an exact curved-annulus or turbulent
+        solution. Mud density is validated but does not enter this laminar law.
         """
-        dh_in = hole_od_in - pipe_od_in
-        if dh_in <= 0:
-            raise ValueError("pipe_od_in must be less than hole_od_in")
-
-        av = self.annular_velocity_fps(flow_rate_gpm, hole_od_in, pipe_od_in)
-        av_fpm = av * 60.0  # ft/min
-
-        # Bingham Plastic annular Reynolds number (Bourgoyne form)
-        re = (
-            (109.0 * mud_weight_ppg * av_fpm * dh_in)
-            / (plastic_viscosity_cp + (6.0 * yield_point_lbf_100ft2 * dh_in / av_fpm))
-            if av_fpm > 0
-            else 0.0
+        values = (
+            flow_rate_gpm,
+            mud_weight_ppg,
+            plastic_viscosity_cp,
+            yield_point_lbf_100ft2,
+            hole_od_in,
+            pipe_od_in,
         )
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("Hydraulic inputs must be finite")
+        if (
+            flow_rate_gpm < 0
+            or mud_weight_ppg <= 0
+            or plastic_viscosity_cp <= 0
+            or yield_point_lbf_100ft2 < 0
+            or pipe_od_in <= 0
+            or hole_od_in <= pipe_od_in
+        ):
+            raise ValueError(
+                "Require nonnegative flow/yield and positive mud, PV and annular geometry"
+            )
+        if flow_rate_gpm == 0:
+            return 0.0
 
-        if re < 2100:
-            # Laminar — simplified Bingham Plastic formula (psi/100ft)
-            dP = plastic_viscosity_cp * av_fpm / (
-                300.0 * dh_in**2
-            ) + yield_point_lbf_100ft2 / (225.0 * dh_in)
-        else:
-            # Turbulent — Fanning friction factor (Dodge-Metzner approximation)
-            f = 0.046 / (re**0.2)
-            # dP in psi/100ft = f * mud_weight * AV^2 / (21.1 * dh)
-            dP = f * mud_weight_ppg * av_fpm**2 / (21.1 * dh_in * 1000.0)
+        # NIST SP 811 (2008), Appendix B.8: inch, foot, psi, centipoise,
+        # US gallon/minute. Use psi/14400 for lbf per 100 square feet so the
+        # yield-floor unit identity is preserved despite table rounding.
+        inch_m, foot_m, psi_pa = 0.0254, 0.3048, 6894.757
+        mu = plastic_viscosity_cp * 0.001
+        tau_y = yield_point_lbf_100ft2 * psi_pa / 14400
+        h = (hole_od_in - pipe_od_in) * inch_m / 2
+        area = math.pi * ((hole_od_in * inch_m) ** 2 - (pipe_od_in * inch_m) ** 2) / 4
+        velocity = flow_rate_gpm * 6.309020e-5 / area
+        floor = 2 * tau_y / h
+        viscous = 12 * mu * velocity / h**2  # A29/A30, N=1
 
-        return max(dP, 0.0)
+        def mean_velocity(gradient: float) -> float:
+            a = floor / gradient
+            return gradient * h**2 / (12 * mu) * (1 - a) ** 2 * (1 + a / 2)
+
+        lower, upper = floor, floor + viscous
+        # Bracket by doubling, then bisect to adjacent floating-point values.
+        # These are numerical operations, not empirical acceptance limits.
+        while mean_velocity(upper) < velocity:
+            upper *= 2
+            if not math.isfinite(upper):
+                raise ValueError("Hydraulic inputs exceed numerical range")
+        while True:
+            midpoint = lower + (upper - lower) / 2
+            if midpoint == lower or midpoint == upper:
+                break
+            if mean_velocity(midpoint) < velocity:
+                lower = midpoint
+            else:
+                upper = midpoint
+        return upper * (100 * foot_m) / psi_pa
 
     # -------------------------------------------------------------------
     # ECD
@@ -115,7 +141,7 @@ class WellBoreHydraulics:
 
         Raises ValueError when depth_ft <= 0.
         """
-        if depth_ft <= 0:
+        if not math.isfinite(depth_ft) or depth_ft <= 0:
             raise ValueError("depth_ft must be positive")
         return mud_weight_ppg + annular_pressure_loss_psi / (0.052 * depth_ft)
 
@@ -147,20 +173,23 @@ class WellBoreHydraulics:
         flow_rate_gpm: float,
         mud_weight_ppg: float,
         depth_ft: float,
-        plastic_viscosity_cp: float = 20.0,
-        yield_point_lbf_100ft2: float = 15.0,
+        plastic_viscosity_cp: float,
+        yield_point_lbf_100ft2: float,
+        geometries: dict[BoreType, dict[str, float]],
     ) -> dict[str, dict[str, float]]:
-        """Compare slim, standard, and large-bore hydraulics at given conditions.
+        """Compare caller-supplied bore geometries at given mud conditions.
 
         Returns a dict keyed by bore type name with sub-dicts:
             ecd_ppg, annular_velocity_fps, pressure_loss_psi_per_100ft,
             hole_cleaning_index, total_pressure_loss_psi
         """
+        if not geometries:
+            raise ValueError("At least one bore geometry is required")
         results: dict[str, dict[str, float]] = {}
 
         depth_100ft_sections = depth_ft / 100.0
 
-        for bore_type, geometry in _BORE_GEOMETRY.items():
+        for bore_type, geometry in geometries.items():
             hole_od = geometry["hole_od_in"]
             pipe_od = geometry["pipe_od_in"]
 
