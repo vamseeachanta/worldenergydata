@@ -10,10 +10,8 @@ This module tests the SodirData router and collection workflows:
 """
 
 import json
-import os
 
 # Import modules to be tested
-import sys
 import unittest
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -21,8 +19,6 @@ from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "sodir_module"))
 
 
 class TestSodirDataRouter(unittest.TestCase):
