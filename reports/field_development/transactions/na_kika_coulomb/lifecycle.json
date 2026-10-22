@@ -1,0 +1,215 @@
+{
+  "assets": [
+    {
+      "name": "Na Kika",
+      "kind": "hub",
+      "host": null,
+      "host_concept": "semisub_fps",
+      "host_concept_citation": {
+        "source_id": "catalog_host",
+        "locator": "NA KIKA row; SemiSub classification"
+      },
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "lifecycle_status": "NOT_EVALUATED",
+      "generated_page_status": "missing",
+      "report_path": null,
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Ariel",
+      "kind": "field",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Jun 1995",
+      "catalog_first_production": "Apr 2004",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=Ariel"
+      },
+      "block": "MC429",
+      "block_match": true,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=Ariel"
+      },
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "present",
+      "report_path": "reports/field_development/bsee_matched/ariel.html",
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Coulomb",
+      "kind": "field",
+      "host": "Na Kika",
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": "subsea_tieback",
+      "field_concept_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: Coulomb tieback"
+      },
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Jan 1988",
+      "catalog_first_production": "Jun 2004",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=Coulomb"
+      },
+      "block": "MC657",
+      "block_match": true,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=Coulomb"
+      },
+      "transaction_membership_status": "SOURCE_SUPPORTED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "present",
+      "report_path": "reports/field_development/bsee_matched/coulomb.html",
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "East Anstey",
+      "kind": "field",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Dec 1997",
+      "catalog_first_production": "Dec 2003",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=East Anstey"
+      },
+      "block": "MC607",
+      "block_match": true,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=East Anstey"
+      },
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "present",
+      "report_path": "reports/field_development/bsee_matched/east-anstey.html",
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Fourier",
+      "kind": "field",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Jul 1989",
+      "catalog_first_production": "Jan 2003",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=Fourier"
+      },
+      "block": "MC522",
+      "block_match": true,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=Fourier"
+      },
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "present",
+      "report_path": "reports/field_development/bsee_matched/fourier.html",
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Herschel",
+      "kind": "field",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Jun 1996",
+      "catalog_first_production": "Dec 2003",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=Herschel"
+      },
+      "block": "MC520",
+      "block_match": false,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=Herschel"
+      },
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "missing",
+      "report_path": null,
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Kepler",
+      "kind": "field",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": "semisub_fps",
+      "catalog_discovery": "Dec 1987",
+      "catalog_first_production": "Dec 2003",
+      "catalog_citation": {
+        "source_id": "catalog_fields",
+        "locator": "FIELD_NAME=Kepler"
+      },
+      "block": "MC383",
+      "block_match": true,
+      "block_citation": {
+        "source_id": "catalog_crosswalk",
+        "locator": "og_field_name=Kepler"
+      },
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "CATALOG_ONLY",
+      "generated_page_status": "present",
+      "report_path": "reports/field_development/bsee_matched/kepler.html",
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    },
+    {
+      "name": "Herschel Expansion",
+      "kind": "expansion",
+      "host": null,
+      "host_concept": null,
+      "host_concept_citation": null,
+      "field_concept": null,
+      "field_concept_citation": null,
+      "catalog_host_concept": null,
+      "catalog_discovery": null,
+      "catalog_first_production": null,
+      "catalog_citation": null,
+      "block": null,
+      "block_match": false,
+      "block_citation": null,
+      "transaction_membership_status": "NOT_EVALUATED",
+      "lifecycle_status": "NOT_EVALUATED",
+      "generated_page_status": "missing",
+      "report_path": null,
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+    }
+  ],
+  "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events."
+}
