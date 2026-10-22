@@ -43,8 +43,14 @@ import argparse
 import csv
 import html
 import os
+import sys
 from datetime import date, datetime
 from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from lower_tertiary.war_methodology import methodology_html
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -1137,6 +1143,15 @@ def build_html(
 </section>"""
     )
 
+    body.append(
+        '<section class="war-revision"><h2>Revision history</h2>'
+        '<table><thead><tr><th>Revision</th><th>Date</th>'
+        '<th>Change and reason</th></tr></thead><tbody><tr><td>1</td>'
+        '<td>2026-10-22</td><td>Added shared methodology limits and the '
+        'superseding basis decision. Numerical results are retained.'
+        '</td></tr></tbody></table></section>'
+    )
+
     # ---- tiles ------------------------------------------------------------
     body.append(
         f"""<section class="tiles" aria-label="Agreement at a glance">
@@ -1346,10 +1361,11 @@ def build_html(
   <div class="panel">
     <h3>&plusmn;7-day quantization</h3>
     <p>A WAR is a <em>weekly</em> return (Form BSEE-0133 under 30 CFR 250.743; Sunday 00:00 to
-    Saturday 23:59) carrying one activity code for the whole week. A phase boundary can therefore
-    only ever be located to within one week. Every figure on this page &mdash; ours and the
-    owner's &mdash; inherits a &plusmn;7-day uncertainty at each code transition, which is why the
-    ledger treats |&Delta;| &le; 7 as within-quantum rather than as agreement.</p>
+    Saturday 23:59). When a phase boundary is inferred only from weekly status rows,
+    its location is uncertain by up to one reporting week. Daily narratives or more frequent
+    returns can refine that boundary. This is a cadence-based inference, not a measured
+    error bound on every figure. The existing comparison convention is retained:
+    the ledger treats |&Delta;| &le; 7 as within-quantum rather than as agreement.</p>
   </div>
   <div class="panel">
     <h3>Coverage floor of the WAR feed</h3>
@@ -1380,6 +1396,8 @@ def build_html(
 </section>"""
     )
 
+    body.append(methodology_html(activity=True))
+
     # ---- 8. asks ----------------------------------------------------------
     body.append(
         f"""<section class="sec" id="asks">
@@ -1402,10 +1420,10 @@ def build_html(
       from him decides which.</p></div>
     <div class="ask"><div class="top"><h4>3 &middot; The completion-method decision he asked us for</h4>
       <span class="badge warn"><span class="d"></span>blocking</span></div>
-      <p><code>rig_days_summary.md</code> ends by asking us to pick among his three completion
-      methods and marks method 3 preferred. That question is still open, and it is upstream of
-      every completion number on this page. Answering it &mdash; or having him confirm the WAR
-      code basis supersedes all three &mdash; is <a href="{ISSUE}/1064">#1064</a>.</p></div>
+      <p>The superseding decision selects milestone days as the default while retaining
+      all methods side by side. This activity-code comparison remains a separate basis;
+      wider-population confirmation is required before replacing published figures.
+      The standing methodology note above links the decision.</p></div>
     <div class="ask"><div class="top"><h4>4 &middot; A rig-contract or daily-report cross-check on one well</h4>
       <span class="badge warn"><span class="d"></span>high value</span></div>
       <p>Anything outside BSEE &mdash; a rig day-rate invoice, an operator DDR, a spud-to-rig-release
@@ -1429,7 +1447,9 @@ def build_html(
     demonstrably owner-authored &mdash; both sit in our voice, and the latter closes
     <em>&ldquo;This is how <u>we</u> can calculate&hellip;&rdquo;</em>. (b) There is no April-2004
     eWell step in this feed; monthly returns rise smoothly through 2003&ndash;2005, and the real
-    floor is 1997-10. (c) <code>rig_days_by_milestone.md</code> carries two owner figures the brief
+    observed material-coverage month is 1997-10. This observation does not establish
+    historical completeness or the start of electronic submissions.
+    (c) <code>rig_days_by_milestone.md</code> carries two reference figures the brief
     did not list &mdash; completion = 93 days and D&amp;C = 248 &mdash; and they are the most
     valuable anchors in the repository.</p>
   </div>
