@@ -7,6 +7,11 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+# BLM Specifications for Descriptions of Land (2017), ch. II, pp. 8-9:
+# sections are numbered 1-36; quarter-quarter sections are nominally 40 acres.
+# https://www.blm.gov/sites/default/files/SpecificationsForDescriptionsOfLand.pdf
+# The synthetic pilot fixes nominal cells; this is not surveyed acreage.
+QUARTER_QUARTER_ACRES = 40.0
 QUARTERS = {"NE", "NW", "SE", "SW"}
 TITLE_GAP = (
     "Federal land records are not evidence of title. "
@@ -81,7 +86,7 @@ class TractOfInterest(Contract):
 
     @model_validator(mode="after")
     def validate_gross(self) -> TractOfInterest:
-        if self.gross_area_acres != 40.0 * len(self.aliquots):
+        if self.gross_area_acres != QUARTER_QUARTER_ACRES * len(self.aliquots):
             raise ValueError("Gross area must equal 40 acres per quarter-quarter")
         return self
 
@@ -132,6 +137,7 @@ class AcreageException(Contract):
         "non_intersecting",
         "unit_ambiguous",
         "stale_status",
+        "lease_status_not_established",
     ]
     record_serials: list[str]
     acres: float | None = None
