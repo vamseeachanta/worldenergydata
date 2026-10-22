@@ -121,7 +121,8 @@ class TestAssumptionsManager:
 
         # Unknown system should fall back to default
         value = mgr.get("unknown_system", "ROYALTY_RATE")
-        assert value == 0.188  # default system value
+        # us_gom.yml source_ref BOEM note: default deepwater 18.75 / 100.
+        assert value == 0.1875
 
     def test_get_missing_parameter(self):
         """Test behavior when parameter doesn't exist"""
@@ -253,7 +254,8 @@ class TestIntegration:
         assert surf_cost == 12.0
 
         royalty = mgr.get(dev_system, "ROYALTY_RATE")
-        assert royalty == 0.188
+        # us_gom.yml source_ref BOEM note: deepwater 18.75 / 100.
+        assert royalty == 0.1875
 
     def test_assumptions_manager_aget_equivalence(self):
         """Test that manager.get() matches FDAS Aget() behavior"""
@@ -264,7 +266,8 @@ class TestIntegration:
             ("subsea15", "HOST_CAPEX_MM", 300.0),
             ("subsea20", "SURF_PER_WELL_MM", 12.0),
             ("dry", "HOST_CAPEX_MM", 0.0),
-            ("unknown", "ROYALTY_RATE", 0.188),  # Falls back to default
+            # us_gom.yml source_ref BOEM note: default deepwater 18.75 / 100.
+            ("unknown", "ROYALTY_RATE", 0.1875),
         ]
 
         for system, param, expected in test_cases:
