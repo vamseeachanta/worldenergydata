@@ -6,3 +6,7 @@ workspace member (ADR 0001 Phase 2 — domain-package split, #529).
 Importable transparently as `worldenergydata.eia_us` once the workspace is
 installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for the
 shared `worldenergydata.common` layer.
+
+Production input schemas, calendar weighting, missing-value behavior and a
+worked mixed-unit annual example are documented in
+[the production contract](PRODUCTION_CONTRACT.md).

@@ -1,21 +1,30 @@
 """Monthly crude + NGL production by US state (EIA-914 / state series).
 
 EIA series format: PET.MCRFP{XX}2.M  where XX = two-letter state code.
-Unit in API: Thousand Barrels (Mbbl) — converted to barrels (bbl) on load.
+Input units must be declared; rates are integrated over each calendar month.
 
 Major producing states covered:
   TX, ND, NM, CO, AK, WY, OK, CA, WV, OH, PA, LA
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas as pd
+
+from .measurement import (
+    RATE,
+    VOLUME,
+    annual_volumes,
+    declared_unit,
+    monthly_period,
+    number_or_missing,
+)
 
 logger = logging.getLogger(__name__)
 
 # Two-letter codes for the 12 major crude-producing states
-MAJOR_PRODUCING_STATES: List[str] = [
+MAJOR_PRODUCING_STATES: list[str] = [
     "TX",  # Permian / Eagle Ford
     "ND",  # Bakken
     "NM",  # Permian (NM side) / San Juan
@@ -31,7 +40,7 @@ MAJOR_PRODUCING_STATES: List[str] = [
 ]
 
 
-def STATE_SERIES_ID(state_code: str) -> str:  # noqa: N802
+def STATE_SERIES_ID(state_code: str) -> str:
     """Return EIA series ID for monthly crude production in a given state.
 
     Args:
@@ -47,12 +56,9 @@ def STATE_SERIES_ID(state_code: str) -> str:  # noqa: N802
 class StateProductionLoader:
     """Load and normalise EIA state-level monthly crude production data."""
 
-    # Thousand Barrels → Barrels
-    _KBBL_TO_BBL: float = 1_000.0
-
     def load(
         self,
-        records: List[Dict[str, Any]],
+        records: list[dict[str, Any]],
         state: str,
     ) -> pd.DataFrame:
         """Convert raw EIA API records to normalised state production DataFrame.
@@ -66,51 +72,50 @@ class StateProductionLoader:
             DataFrame with columns: state, year, month, crude_bbl.
             Empty DataFrame (same columns) if records is empty.
         """
-        _cols = ["state", "year", "month", "crude_bbl"]
-
-        if not records:
-            return pd.DataFrame(columns=_cols)
-
+        cols = [
+            "state",
+            "year",
+            "month",
+            "crude_bbl",
+            "value_missing",
+            "unit",
+            "basis",
+            "input_unit",
+            "input_basis",
+        ]
         rows = []
-        state_upper = state.upper().strip()
         for rec in records:
-            period = rec.get("period", "")
-            try:
-                year, month = int(period[:4]), int(period[5:7])
-            except (ValueError, IndexError):
-                logger.warning("Skipping record with unparseable period: %s", period)
-                continue
-
-            raw_value = rec.get("value")
-            if raw_value is None:
-                crude_bbl = None
-            else:
-                crude_bbl = float(raw_value) * self._KBBL_TO_BBL
-
+            unit, scale, basis = declared_unit(rec)
+            year, month, days = monthly_period(rec.get("period"))
+            value = number_or_missing(rec.get("value"))
+            # NIST SP 811 (2008), sections 4 and 7.11: scale, then q * time.
+            volume = value * scale * (days if basis == RATE else 1)
             rows.append(
                 {
-                    "state": state_upper,
+                    "state": state.upper().strip(),
                     "year": year,
                     "month": month,
-                    "crude_bbl": crude_bbl,
+                    "crude_bbl": volume,
+                    "value_missing": pd.isna(value),
+                    "unit": "bbl",
+                    "basis": VOLUME,
+                    "input_unit": unit,
+                    "input_basis": basis,
                 }
             )
-
-        if not rows:
-            return pd.DataFrame(columns=_cols)
-
-        return pd.DataFrame(rows)[_cols].reset_index(drop=True)
+        return pd.DataFrame(rows, columns=cols)
 
     def annual_total(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Aggregate monthly records to annual totals per state.
+        """Return calendar-year bbl; missing months make the total unknown.
 
-        Returns:
-            DataFrame with columns: state, year, crude_bbl.
+        ``reported_crude_bbl`` is a partial subtotal, not an annual estimate.
+        ``crude_missing_months`` enumerates absent and null calendar months.
         """
-        if df.empty:
-            return pd.DataFrame(columns=["state", "year", "crude_bbl"])
-
-        return df.groupby(["state", "year"])["crude_bbl"].sum().reset_index()
+        if not df.empty and (
+            not df["unit"].eq("bbl").all() or not df["basis"].eq(VOLUME).all()
+        ):
+            raise ValueError("Annual aggregation requires monthly volume unit/basis")
+        return annual_volumes(df, "state", ["crude_bbl"])
 
     def filter_year(self, df: pd.DataFrame, year: int) -> pd.DataFrame:
         """Return rows for a specific calendar year."""

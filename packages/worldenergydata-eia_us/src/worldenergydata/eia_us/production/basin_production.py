@@ -14,14 +14,16 @@ Each region has monthly data for:
 
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, ClassVar
 
 import pandas as pd
+
+from .measurement import RATE, declared_unit, monthly_period, number_or_missing
 
 logger = logging.getLogger(__name__)
 
 # EIA DPR region names
-DPR_BASINS: List[str] = [
+DPR_BASINS: list[str] = [
     "Permian",
     "Bakken",
     "Eagle Ford",
@@ -40,7 +42,7 @@ class BasinRecord:
     basin: str
     rig_count: float
     new_well_ip_bopd: float
-    legacy_decline_bopd: float  # Always <= 0
+    legacy_decline_bopd: float  # Signed legacy change; NaN if unreported.
     total_production_bopd: float
 
     @property
@@ -52,7 +54,7 @@ class BasinRecord:
 class BasinProductionLoader:
     """Load and normalise EIA DPR basin-level production data."""
 
-    _REQUIRED_COLS = [
+    _REQUIRED_COLS: ClassVar[list[str]] = [
         "period",
         "basin",
         "rig_count",
@@ -61,7 +63,10 @@ class BasinProductionLoader:
         "total_production_bopd",
     ]
 
-    def load(self, records: List[Dict[str, Any]]) -> pd.DataFrame:
+    _NUMERIC_COLS = _REQUIRED_COLS[2:]
+    _REQUIRED_COLS = _REQUIRED_COLS + [f"{col}_missing" for col in _NUMERIC_COLS]
+
+    def load(self, records: list[dict[str, Any]]) -> pd.DataFrame:
         """Convert raw DPR records to normalised basin production DataFrame.
 
         Args:
@@ -71,25 +76,32 @@ class BasinProductionLoader:
             DataFrame with columns matching _REQUIRED_COLS.
             Empty DataFrame (same columns) if records is empty.
         """
-        if not records:
-            return pd.DataFrame(columns=self._REQUIRED_COLS)
-
         rows = []
         for rec in records:
-            rows.append(
-                {
-                    "period": rec.get("period", ""),
-                    "basin": rec.get("basin", ""),
-                    "rig_count": float(rec.get("rig_count", 0)),
-                    "new_well_ip_bopd": float(rec.get("new_well_ip_bopd", 0.0)),
-                    "legacy_decline_bopd": float(rec.get("legacy_decline_bopd", 0.0)),
-                    "total_production_bopd": float(
-                        rec.get("total_production_bopd", 0.0)
-                    ),
-                }
+            # Named *_bopd fields declare bbl/day; rig_count is a count.
+            declared_unit(rec, schema_unit="bopd")
+            monthly_period(rec.get("period"))
+            row = {
+                "period": rec["period"],
+                "basin": rec.get("basin", ""),
+            }
+            for column in self._NUMERIC_COLS:
+                value = number_or_missing(
+                    rec.get(column), signed=column == "legacy_decline_bopd"
+                )
+                row[column] = value
+                row[f"{column}_missing"] = pd.isna(value)
+            rows.append(row)
+        frame = pd.DataFrame(rows, columns=self._REQUIRED_COLS)
+        frame.attrs["measurements"] = {
+            column: (
+                {"unit": "rigs", "basis": "count"}
+                if column == "rig_count"
+                else {"unit": "bopd", "basis": RATE}
             )
-
-        return pd.DataFrame(rows)[self._REQUIRED_COLS].reset_index(drop=True)
+            for column in self._NUMERIC_COLS
+        }
+        return frame
 
     def filter_basin(self, df: pd.DataFrame, basin: str) -> pd.DataFrame:
         """Return rows for a specific basin (exact match)."""
@@ -99,7 +111,7 @@ class BasinProductionLoader:
         """Return rows for a specific YYYY-MM period."""
         return df[df["period"] == period].copy()
 
-    def to_records(self, df: pd.DataFrame) -> List[BasinRecord]:
+    def to_records(self, df: pd.DataFrame) -> list[BasinRecord]:
         """Convert DataFrame rows to BasinRecord dataclass instances."""
         result = []
         for _, row in df.iterrows():
