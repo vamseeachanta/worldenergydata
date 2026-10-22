@@ -8,6 +8,7 @@ pre-tax chain plumbing, not a UK investment NPV headline.
 
 from __future__ import annotations
 
+import math
 from datetime import datetime
 from typing import Any, Dict, Optional
 
@@ -35,6 +36,21 @@ def run_ukcs_reference_chain(
     oil_price_usd_bbl: float = 75.0,
 ) -> Dict[str, Any]:
     """Run the #717 one-field UKCS chain slice."""
+    depth = field_meta.get("water_depth_m")
+    if (
+        isinstance(depth, bool)
+        or not isinstance(depth, (int, float))
+        or not math.isfinite(depth)
+        or depth < 0
+    ):
+        raise ValueError(
+            "water_depth_m must be explicitly supplied, finite and nonnegative"
+        )
+    field_concept = build_uk_field_concept(field_meta)
+    dev_system = dev_system_from_water_depth_m(field_concept.water_depth_m)
+    if dev_system == "unknown":
+        raise ValueError("water_depth_m does not identify a development system")
+
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],
@@ -44,7 +60,6 @@ def run_ukcs_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
-    field_concept = build_uk_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
     first_oil = _first_oil_date(fdas_production)
@@ -52,10 +67,6 @@ def run_ukcs_reference_chain(
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
     }
-    dev_system = dev_system_from_water_depth_m(field_concept.water_depth_m)
-    if dev_system == "unknown":
-        dev_system = "subsea15"
-
     cashflows = CashflowEngine(
         AssumptionsManager(),
         dev_system=dev_system,

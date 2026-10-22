@@ -27,11 +27,16 @@ LIMITATIONS = [
         "Drilling CAPEX is absent; gas revenue and after-tax investment economics are "
         "NOT_EVALUATED. Net cashflow is an incomplete pre-tax plumbing result."
     ),
+    (
+        "The inherited nonzero host CAPEX path passes millions into USD fields; "
+        "a separate unit correction is pending before cost use."
+    ),
     "Oil mass conversion uses a generic density approximation, not a measured field density.",
     "A bounded extract does not establish complete field or UKCS coverage.",
     (
-        "The source licence is identified as NSTA Open User Licence; current licence "
-        "terms were not independently verified. The committed example contains synthetic inputs only."
+        "For live extracts, the source licence is identified as NSTA Open User Licence; "
+        "current licence terms were not independently verified. "
+        "The committed example contains synthetic inputs only."
     ),
 ]
 
@@ -98,6 +103,33 @@ def build_report_facts(
                 },
             }
         )
+    observed_month_count = len(history)
+    if history:
+        observed = {row["period"]: row for row in history}
+        first_year, first_month = map(int, history[0]["period"].split("-"))
+        last_year, last_month = map(int, history[-1]["period"].split("-"))
+        history = []
+        for ordinal in range(
+            first_year * 12 + first_month - 1, last_year * 12 + last_month
+        ):
+            year, month = divmod(ordinal, 12)
+            period = f"{year:04d}-{month + 1:02d}"
+            history.append(
+                observed.get(
+                    period,
+                    {
+                        "period": period,
+                        "oil_bbl": None,
+                        "gas_mcf": None,
+                        "water_bbl": None,
+                    },
+                )
+            )
+        missing_periods = [
+            row["period"] for row in history if row["period"] not in observed
+        ]
+    else:
+        missing_periods = []
     concepts = []
     for scored in chain_result["ranked_concepts"]:
         parts = [scored.concept_type, scored.tree_type, scored.topology]
@@ -115,7 +147,10 @@ def build_report_facts(
             "field_name": chain_result["field_name"],
             "coverage": {
                 "row_count": len(frame),
-                "month_count": len(history),
+                "month_count": observed_month_count,
+                "span_month_count": len(history),
+                "missing_month_count": len(missing_periods),
+                "missing_periods": missing_periods,
                 "first_period": history[0]["period"] if history else None,
                 "last_period": history[-1]["period"] if history else None,
             },
@@ -125,9 +160,10 @@ def build_report_facts(
             "pre_tax_metrics": chain_result["pre_tax_metrics"],
             "provenance": "nsta_live" if live else "fixture",
             "source": {
-                "url": source_url,
-                "licence": licence,
-                "licence_url": LICENCE_URL,
+                "kind": "production_source" if live else "schema_reference",
+                "url": source_url if live else DEFAULT_BASE_URL,
+                "licence": licence if live else None,
+                "licence_url": LICENCE_URL if live else None,
                 "refreshed_at": refreshed_at if live else None,
                 "evidence": evidence,
             },
@@ -135,9 +171,17 @@ def build_report_facts(
             "input_echo": input_echo or {},
             "limitations": LIMITATIONS,
             "method": {
-                "production": "Monthly sum of reporting-unit rows after UKCSFieldProductionLoader normalization.",
-                "conversions": "common.units registry at revision d867ba1e; generic oil-density approximation.",
-                "economics": "Existing reference_chain and FDAS cashflow; no new fiscal or cost coefficients.",
+                "production": (
+                    "Monthly sum of reporting-unit rows after "
+                    "UKCSFieldProductionLoader normalization."
+                ),
+                "conversions": (
+                    "common.units registry at revision d867ba1e; generic oil-density approximation."
+                ),
+                "economics": (
+                    "Existing reference_chain and FDAS cashflow; "
+                    "no new fiscal or cost coefficients."
+                ),
                 "readiness": "NOT_EVALUATED for engineering decisions",
             },
             "revision_history": [
@@ -145,7 +189,15 @@ def build_report_facts(
                     "revision": "initial",
                     "date": "2026-10-20",
                     "change": "Reference-chain report with explicit source qualification.",
-                }
+                },
+                {
+                    "revision": "2",
+                    "date": "2026-10-22",
+                    "change": (
+                        "Clarify synthetic provenance, require depth and expose "
+                        "calendar gaps and score differences."
+                    ),
+                },
             ],
         }
     )
@@ -222,7 +274,7 @@ def render_report_html(facts):
     live = _verified_live(
         facts["provenance"], source["refreshed_at"], source["evidence"]
     )
-    badge = "real: NSTA live" if live else "fixture/seed"
+    badge = "real: NSTA live" if live else "SYNTHETIC: invented inputs, not NSTA data"
     coverage = _table(["Coverage", "Value"], facts["coverage"].items())
     production = _table(
         ["Period", "Oil (bbl)", "Gas (Mcf)", "Water (bbl)"],
@@ -236,7 +288,7 @@ def render_report_html(facts):
         [
             (
                 r["name"],
-                _number(r["score"]),
+                f'{100 * r["score"]:.1f}%',
                 "; ".join(r["rationale"]),
                 "; ".join(r["warnings"]),
             )
@@ -245,36 +297,57 @@ def render_report_html(facts):
     )
     metrics = _table(
         ["Pre-tax metric (USD unless months)", "Value"],
-        [(k, _number(v)) for k, v in facts["pre_tax_metrics"].items()],
+        [
+            (k, str(int(v)) if k == "months" and v is not None else _number(v))
+            for k, v in facts["pre_tax_metrics"].items()
+        ],
     )
     revisions = _table(
         ["Revision", "Date", "Change and reason"],
         [(r["revision"], r["date"], r["change"]) for r in facts["revision_history"]],
     )
     limits = "".join(f"<li>{_text(line)}</li>" for line in facts["limitations"])
+    source_title = (
+        "NSTA PPRS production source" if live else "NSTA PPRS schema reference"
+    )
+    source_licence = (
+        _source_link(source["licence_url"], source["licence"])
+        if live
+        else "Synthetic inputs; no production-source licence asserted."
+    )
     return f"""<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
 <title>UKCS reference-chain analysis</title><style>
-body {{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#172b3a}}
-table {{border-collapse:collapse;width:100%;margin:1rem 0}}th,td {{border:1px solid #bdcbd3;padding:.5rem;text-align:left}}
+body {{font:16px system-ui,sans-serif;max-width:1100px;margin:2rem auto;
+padding:0 1rem;color:#172b3a}}
+table {{border-collapse:collapse;width:100%;margin:1rem 0}}
+th,td {{border:1px solid #bdcbd3;padding:.5rem;text-align:left}}
 .banner,.badge {{padding:1rem;background:#fff0bd}}.live {{background:#cdebd9}}
-svg {{width:100%;background:#f3f7fa}}polyline {{stroke:#147189;stroke-width:2;fill:none}}circle {{fill:#147189}}
+svg {{width:100%;background:#f3f7fa}}
+polyline {{stroke:#147189;stroke-width:2;fill:none}}circle {{fill:#147189}}
 pre {{white-space:pre-wrap;overflow-wrap:anywhere}}h2 {{margin-top:2rem}}
 </style></head><body><h1>UKCS reference-chain analysis</h1>
 <h2>Summary</h2><p>Selected field: {_text(facts['field_name'])}.</p>
 <p class="badge {'live' if live else ''}">{badge}</p><p class="banner">{BANNER}</p>
 <h2>Revision history</h2>{revisions}
-<h2>Source coverage</h2>{coverage}<pre>{_text(json.dumps(source['evidence'], indent=2))}</pre>
+<h2>Source coverage</h2>{coverage}
+<pre>{_text(json.dumps(source['evidence'], indent=2))}</pre>
 <h2>Production history</h2>{_chart(facts['production_history'])}{production}
-<p>Table 1. Monthly totals for the selected field; missing values remain unavailable.</p>
-<h2>Concept screening</h2>{concepts}<p>Table 2. Inherited heuristic scores; applicability is NOT_EVALUATED.</p>
-<h2>Pre-tax plumbing metrics</h2>{metrics}<p>Table 3. Incomplete pre-tax cashflow, without investment qualification.</p>
+<p>Table 1. Monthly totals for the selected field; missing calendar months and measurements
+remain unavailable and break chart lines.</p>
+<h2>Concept screening</h2>{concepts}
+<p>Table 2. Inherited heuristic scores; applicability is NOT_EVALUATED.</p>
+<h2>Pre-tax plumbing metrics</h2>{metrics}
+<p>Table 3. Incomplete pre-tax cashflow, without investment qualification.</p>
 <h2>Method and qualification</h2><pre>{_text(json.dumps(facts["method"], indent=2))}</pre>
 <h2>Known limits</h2><ul>{limits}</ul>
-<details><summary>Inputs</summary><pre>{_text(json.dumps(facts['input_echo'], indent=2))}</pre></details>
-<footer><h2>Sources</h2><p>{_source_link(source['url'], 'NSTA PPRS production source')} ·
-{_source_link(source['licence_url'], source['licence'])}</p>
-<p>Cache refresh timestamp: {_text(source['refreshed_at'])}; fixture inputs have no live refresh.</p>
+<details><summary>Inputs</summary>
+<pre>{_text(json.dumps(facts['input_echo'], indent=2))}</pre></details>
+<footer><h2>Sources</h2><p>{_source_link(source['url'], source_title)} ·
+{source_licence}</p>
+<p>Cache refresh timestamp: {_text(source['refreshed_at'])};
+fixture inputs have no live refresh.</p>
 <p>Generated UTC: {_text(facts['generated_at'])}.</p></footer></body></html>
 """
 
@@ -299,9 +372,13 @@ def generate_report(output_dir=None):
     facts = Ukcs().run(cfg)
     destination = Path(cfg["Analysis"]["result_folder"])
     destination.mkdir(parents=True, exist_ok=True)
-    (destination / "index.html").write_text(render_report_html(facts), encoding="utf-8")
+    (destination / "index.html").write_text(
+        render_report_html(facts), encoding="utf-8", newline="\n"
+    )
     (destination / "_facts.json").write_text(
-        json.dumps(facts, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+        json.dumps(facts, indent=2, allow_nan=False) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return facts
 

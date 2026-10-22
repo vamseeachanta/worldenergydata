@@ -198,14 +198,15 @@ class Ukcs:
         ):
             raise ValueError("field_meta.field_name must match the selected field")
         meta["field_name"] = field_name
-        if meta.get("water_depth_m") is not None and (
-            isinstance(meta["water_depth_m"], bool)
+        if (
+            meta.get("water_depth_m") is None
+            or isinstance(meta["water_depth_m"], bool)
             or not isinstance(meta["water_depth_m"], (int, float))
             or not math.isfinite(meta["water_depth_m"])
             or meta["water_depth_m"] < 0
         ):
             raise ValueError(
-                "water_depth_m must be finite and nonnegative when supplied"
+                "water_depth_m must be explicitly supplied, finite and nonnegative"
             )
         adapter = UkcsAdapter(loader=_FrameLoader(normalized))
         from worldenergydata.production.unified.query import ProductionQuery

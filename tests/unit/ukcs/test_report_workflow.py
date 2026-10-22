@@ -317,3 +317,126 @@ def test_period_boundaries_must_be_valid_and_ordered(cfg, start, end):
     cfg["report"].update(start=start, end=end)
     with pytest.raises(ValueError, match="period"):
         Ukcs().run(cfg)
+
+
+@pytest.mark.parametrize("source", ["csv", "nsta_live"])
+@pytest.mark.parametrize(
+    "depth", ["absent", None, float("nan"), float("inf"), -1, True]
+)
+def test_missing_or_invalid_depth_fails_without_outputs(
+    cfg, tmp_path, monkeypatch, source, depth
+):
+    if source == "nsta_live":
+        raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
+        fake_live(monkeypatch, raw)
+        live_config(cfg, tmp_path)
+    if depth == "absent":
+        cfg["report"]["field_meta"].pop("water_depth_m")
+    else:
+        cfg["report"]["field_meta"]["water_depth_m"] = depth
+    with pytest.raises(ValueError, match="water_depth_m"):
+        Ukcs().router(cfg)
+    assert not (tmp_path / "results").exists()
+
+
+def test_reference_chain_rejects_missing_depth(cfg):
+    from worldenergydata.ukcs.reference_chain import run_ukcs_reference_chain
+
+    with pytest.raises(ValueError, match="water_depth_m"):
+        run_ukcs_reference_chain(
+            adapter=None, field_meta={"field_name": "EXAMPLE"}, field_name="Example"
+        )
+
+
+def test_live_template_cache_is_separate_and_ignored():
+    import subprocess
+
+    live = yaml.safe_load((EXAMPLE / "input_live.yml").read_text(encoding="utf-8"))
+    root = EXAMPLE.parents[2]
+    cache = (EXAMPLE / live["data"]["cache_dir"]).resolve()
+    scheduler_cache = root / "data/modules/ukcs/raw"
+    assert cache != scheduler_cache
+    assert not cache.is_relative_to(scheduler_cache)
+    candidate = cache / "nsta_production_2026_monthly.csv"
+    assert (
+        subprocess.run(
+            ["git", "check-ignore", "-q", str(candidate)], cwd=root, check=False
+        ).returncode
+        == 0
+    )
+
+
+def test_crlf_fixture_hashes_exact_bytes_without_changing_arithmetic(cfg, tmp_path):
+    payload = (
+        (EXAMPLE / "sample_nsta_production.csv").read_bytes().replace(b"\r\n", b"\n")
+    )
+    lf_path, crlf_path = tmp_path / "lf.csv", tmp_path / "crlf.csv"
+    lf_path.write_bytes(payload)
+    crlf_path.write_bytes(payload.replace(b"\n", b"\r\n"))
+    results = []
+    for path in (lf_path, crlf_path):
+        cfg["data"]["input_path"] = str(path)
+        result = Ukcs().run(cfg)
+        assert (
+            result["source"]["evidence"]["sha256"]
+            == hashlib.sha256(path.read_bytes()).hexdigest()
+        )
+        results.append(result)
+    assert (
+        results[0]["source"]["evidence"]["sha256"]
+        != results[1]["source"]["evidence"]["sha256"]
+    )
+    assert results[0]["production_history"] == results[1]["production_history"]
+    assert results[0]["pre_tax_metrics"] == results[1]["pre_tax_metrics"]
+
+
+def test_generator_and_router_write_lf_and_match_committed_pairs(
+    cfg, tmp_path, monkeypatch
+):
+    from worldenergydata.ukcs.report import generate_report
+
+    original = Path.write_text
+    writes = []
+
+    def record_write(path, data, **kwargs):
+        if path.suffix in {".json", ".html"}:
+            writes.append(kwargs.get("newline"))
+        return original(path, data, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", record_write)
+    generated = tmp_path / "generated"
+    generate_report(generated)
+    routed = Ukcs().router(cfg)["ukcs"]["outputs"]
+    assert writes == ["\n"] * 4
+
+    fixture_bytes = (EXAMPLE / "sample_nsta_production.csv").read_bytes()
+    input_digest = hashlib.sha256(fixture_bytes).hexdigest()
+    lf_digest = hashlib.sha256(fixture_bytes.replace(b"\r\n", b"\n")).hexdigest()
+
+    def stable(payload):
+        import re
+
+        # Checkout line endings can alter the byte digest, never the arithmetic.
+        payload = payload.replace(input_digest, lf_digest)
+        return re.sub(
+            r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]+\+00:00", "TIMESTAMP", payload
+        )
+
+    pairs = [
+        (
+            generated / "index.html",
+            Path(routed["report_html"]),
+            EXAMPLE / "outputs/ukcs_reference_report_report.html",
+            EXAMPLE.parents[2] / "reports/ukcs_reference/index.html",
+        ),
+        (
+            generated / "_facts.json",
+            Path(routed["facts_json"]),
+            EXAMPLE / "outputs/ukcs_reference_report_facts.json",
+            EXAMPLE.parents[2] / "reports/ukcs_reference/_facts.json",
+        ),
+    ]
+    for paths in pairs:
+        contents = [path.read_bytes() for path in paths]
+        assert all(b"\r" not in payload for payload in contents[:2])
+        assert len({stable(path.read_text(encoding="utf-8")) for path in paths}) == 1

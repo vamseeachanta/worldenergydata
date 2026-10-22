@@ -6,6 +6,7 @@ file_management:
   output_directory: outputs
 data:
   source: csv
+  # Invented synthetic inputs using the NSTA schema; this is not NSTA data.
   input_path: sample_nsta_production.csv
 report:
   field_name: Example

@@ -10,6 +10,7 @@ inline SVG. No HTTP request is made by the CSV workflow.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Add a reproducible fixture example and an explicit live-cache template. |
+| 2 | 2026-10-22 | Correct synthetic attribution, require depth, show calendar gaps and isolate bounded extracts. |
 
 Table 1. Example revision history.
 
@@ -45,8 +46,13 @@ cubic metres, and water in cubic metres.
 
 Monthly reporting-unit rows are summed by period. Selected rows, selected
 months, first/last period, source row/field counts and the raw-input SHA-256
-remain in the facts JSON. The example is always labelled `fixture` even though
-the adapter uses the tag `nsta` for normalized rows.
+remain in the facts JSON. Calendar gaps are counted and listed; absent months
+appear as unavailable and break chart lines. Concept scores display as percentages
+to one decimal, preserving differences between nearby rankings.
+The example is always labelled `fixture` with the badge
+`SYNTHETIC: invented inputs, not NSTA data` even though
+the adapter uses the tag `nsta` for normalized rows. Its source link is a schema
+reference, with no production-source licence asserted.
 
 ## Regeneration
 
@@ -59,8 +65,12 @@ uv run --frozen python -m worldenergydata.ukcs.report
 
 The first command regenerates the example HTML and facts JSON in `outputs/`.
 The second regenerates `reports/ukcs_reference/index.html` and `_facts.json`.
-UTC generation timestamps change; the input digest and calculated values remain
-reproducible. Output paths are taken from the engine's configured result root.
+Both output pairs are checked for equality after masking generation timestamps,
+and both writers emit LF line endings. The SHA-256 identifies the exact input
+bytes: an LF and a CRLF checkout produce different digests while giving the same
+production and cashflow arithmetic. With identical input bytes, only the UTC
+generation timestamp changes. Output paths are taken from the engine's
+configured result root.
 Programmatic embedding requires the engine's normal `default` configuration and
 an explicit result root; the router does not write outside that result root.
 
@@ -69,8 +79,9 @@ an explicit result root; the router does not write outside that result root.
 `input_live.yml` is a template, excluded from the offline workflow registry.
 Replace `REPLACE_WITH_FIELD` with a field present in the bounded source extract,
 choose the reporting year and scenario price, and supply field metadata only
-where evidence is available. Missing water depth stays missing; inherited
-screening and cost assumptions remain unqualified.
+where evidence is available. An explicit finite, nonnegative `water_depth_m` is
+required: missing depth stops the report instead of choosing a default cost
+system. Inherited screening and cost assumptions remain unqualified.
 
 ```sh
 uv run --frozen python -m worldenergydata examples/workflows/ukcs-reference-report/input_live.yml
@@ -78,6 +89,9 @@ uv run --frozen python -m worldenergydata examples/workflows/ukcs-reference-repo
 
 The live configuration requires an explicit cache directory, a positive record
 bound per year, a year or unique year list, and an explicit field selection.
+The template uses a dedicated ignored `.cache/ukcs-reference-report` directory,
+separate from the scheduler cache, so a bounded refresh cannot overwrite the
+scheduler's year extract.
 `force_refresh: true` invokes the existing NSTA client refresh seam; `false`
 reuses its cache. Cache filenames follow the client's monthly convention.
 Raw CSV and parquet files are ignored and are not report deliverables. Exact raw
@@ -100,7 +114,8 @@ source payload or derived live report is included in this example.
 
 ## Sources and limitations
 
-The source licence is identified in the issue as **NSTA Open User Licence**.
+For live extracts, the source licence is identified in the issue as
+**NSTA Open User Licence**.
 The proposed official open-data licence page returned HTTP 404 at the time of
 inspection, and the ArcGIS dataset description contained no licence terms.
 Current reuse rights are therefore not independently established here. The
@@ -114,13 +129,19 @@ recommendation. Its heuristic weights and inherited cashflow costs are assumed,
 based on previous experience; applicability is `NOT_EVALUATED`. The chain has no
 drilling capital schedule. Gas revenue, after-tax fiscal treatment and UK
 investment economics are `NOT_EVALUATED`. The pre-tax net cashflow is incomplete.
+The inherited nonzero host CAPEX path
+passes amounts expressed in millions directly into USD cashflow fields; a
+separate correction remains pending. The explicit shallow synthetic scenario
+uses the `dry` system with zero host CAPEX and does not exercise that defect.
 After-tax treatment remains tracked by issue 736; citation sidecar adoption
 remains tracked by issue 361.
 
 ## Tests
 
 The report tests cover aggregation, strict JSON, missing values, HTML escaping,
-provenance rejection and self-containment. Workflow tests prohibit HTTP and use
+provenance rejection, calendar gaps, score display and self-containment. Workflow
+tests prohibit HTTP and use
 a fake NSTA client to check cache readback, required inputs, empty selections,
-invalid production, output containment and embedded engine execution. The two
+invalid production, missing depth, LF output, CRLF input digests, output containment,
+paired-report drift and embedded engine execution. The two
 registry tests exercise the offline engine and module command.

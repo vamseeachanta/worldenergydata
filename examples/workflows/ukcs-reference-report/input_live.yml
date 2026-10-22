@@ -8,7 +8,7 @@ file_management:
 data:
   source: nsta_live
   # Relative to this input file; raw regenerable data remain ignored.
-  cache_dir: ../../../data/modules/ukcs/raw
+  cache_dir: ../../../.cache/ukcs-reference-report
   # Explicit reporting-year choice, not a claim of complete current-year data.
   year: 2026
   # Operational request bound, not an engineering acceptance limit.
@@ -17,7 +17,7 @@ data:
 report:
   field_name: REPLACE_WITH_FIELD
   field_meta:
-    # Missing depth remains missing; the chain assumptions are not qualified.
+    # Supply an evidenced water_depth_m; the report rejects missing depth.
     source: NSTA
   # Explicit scenario price; replace with the intended analysis input.
   oil_price_usd_bbl: 75.0
