@@ -83,6 +83,15 @@ class DrillingRigEntry(BaseVesselEntry):
     last_block_number: Optional[str] = None
     is_offshore: Optional[bool] = None
 
+    # Optional riser-handling vocabulary from issue 698. Capacity is per
+    # tensioner; unknown ratings stay None until their source is qualified.
+    n_tensioners: int | None = None
+    tensioner_type: str | None = None
+    tensioner_capacity_kips: float | None = None
+    tensioner_stroke_ft: float | None = None
+    tj_stroke_ft: float | None = None
+    n_tension_wires: int | None = None
+
     @property
     def is_deepwater_capable(self) -> bool:
         """Rig is deepwater capable when rated >= 4000 ft."""
