@@ -10,13 +10,13 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from worldenergydata.bsee.analysis import war_rig_days
 from worldenergydata.bsee.analysis.war_rig_days import (
     normalize_api12,
     rig_days_by_bore,
     rig_days_by_well,
 )
 from worldenergydata.bsee.analysis.well_identifier_grain import (
-    bsee_completion_key,
     normalize_bsee_api12,
     summarize_bore_population,
 )
@@ -33,6 +33,7 @@ OTHER_FAMILY = "608120000200"
 def test_normalization_preserves_the_full_bore_key(value):
     """Hand check: removing whitespace/numeric tails leaves the same digits."""
     assert normalize_bsee_api12(value) == BORE
+    assert normalize_api12([value]).tolist() == [BORE]
 
 
 @pytest.mark.parametrize(
@@ -56,11 +57,14 @@ def test_ambiguous_or_missing_identifiers_are_rejected(value):
     """NTL 2009-G33 p. 3 requires the complete numeric wellbore key."""
     with pytest.raises(ValueError, match="API-12"):
         normalize_bsee_api12(value)
+    with pytest.raises(ValueError, match="API-12"):
+        normalize_api12([value])
 
 
 def test_leading_zero_is_preserved_and_never_invented():
     """Hand check: a string retains its first zero; numeric loss is ambiguous."""
     assert normalize_bsee_api12("010010000100") == "010010000100"
+    assert normalize_api12(["010010000100"]).tolist() == ["010010000100"]
     with pytest.raises(ValueError, match="API-12"):
         normalize_bsee_api12(10010000100)
 
@@ -71,24 +75,49 @@ def test_series_normalization_preserves_row_alignment():
     assert normalize_api12(values).to_dict() == {4: BORE, 9: BYPASS_OR_SIDETRACK}
 
 
-@pytest.mark.parametrize("interval", ["S01", "D01", "D02", "T03", "Q04", "V05", "S99"])
-def test_completion_key_keeps_the_interval_separate(interval):
-    """NTL 2009-G33 pp. 4-5: API plus ANN interval, not two extra digits."""
-    assert bsee_completion_key(BORE, interval) == (BORE, interval)
+def test_batch_normalization_does_not_dispatch_each_row_to_the_scalar_helper(
+    monkeypatch,
+):
+    """Full-feed validation must use a batch path rather than Python per row."""
 
+    def scalar_call(value):
+        pytest.fail("Batch normalization dispatched a row to the scalar helper")
 
-def test_bore_only_interval_is_not_a_completion():
-    """NTL 2009-G33 p. 5 specifies X01 for wellbore-only reporting."""
-    assert bsee_completion_key(BORE, "X01") is None
+    monkeypatch.setattr(
+        war_rig_days, "normalize_bsee_api12", scalar_call, raising=False
+    )
+    values = pd.Series([f" {BORE}.00 ", float(OTHER_FAMILY)], index=[9, 9])
+    assert normalize_api12(values).tolist() == [BORE, OTHER_FAMILY]
+    assert normalize_api12(values).index.tolist() == [9, 9]
 
 
 @pytest.mark.parametrize(
-    "interval", [None, pd.NA, "", "01", "S00", "S1", "S001", "Z01", "X02", "s01"]
+    "value",
+    [
+        None,
+        pd.NA,
+        float("nan"),
+        float("inf"),
+        True,
+        BORE[:10],
+        BORE + "01",
+        "１２３４５６７８９０１２",
+    ],
 )
-def test_completion_without_a_documented_interval_is_rejected(interval):
-    """NTL 2009-G33 p. 5 lists S/D/T/Q/V and reservoir numbers 01-99."""
-    with pytest.raises(ValueError, match="interval"):
-        bsee_completion_key(BORE, interval)
+def test_batch_normalization_rejects_an_invalid_row_among_valid_rows(value):
+    """A single invalid key invalidates the entire batch, even at a duplicate index."""
+    values = pd.Series([BORE, value, OTHER_FAMILY], index=[4, 4, 9])
+    with pytest.raises(ValueError, match="API-12"):
+        normalize_api12(values)
+
+
+def test_empty_batch_preserves_its_index():
+    """An empty source has no keys to validate and keeps its index metadata."""
+    values = pd.Series([], index=pd.Index([], name="source_row"), dtype=object)
+    result = normalize_api12(values)
+    assert result.empty
+    assert result.index.equals(values.index)
+    assert result.index.name == "source_row"
 
 
 def test_population_counts_distinct_bores_and_families():
@@ -133,7 +162,7 @@ def test_committed_population_matches_the_documented_family_distribution():
     """
     root = Path(__file__).resolve().parents[4]
     with (root / "reports/lower_tertiary/data/dc_vintage_diff.csv").open(
-        newline=""
+        encoding="utf-8", newline=""
     ) as stream:
         summary = summarize_bore_population(
             row["api12"] for row in csv.DictReader(stream)

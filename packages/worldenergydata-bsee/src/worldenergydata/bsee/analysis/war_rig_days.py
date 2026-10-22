@@ -71,7 +71,6 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from worldenergydata.bsee.analysis.well_identifier_grain import normalize_bsee_api12
 from worldenergydata.lower_tertiary.ops_timeline import WAR_ACTIVITY_LABELS
 
 __all__ = [
@@ -224,7 +223,11 @@ def normalize_api12(values) -> pd.Series:
     format defined in NTL 2009-G33 (2009), attachment p. 3. Never pad API-10
     or truncate an event suffix. Preserve Series indices for row alignment.
     """
-    return pd.Series(values).map(normalize_bsee_api12)
+    normalized = pd.Series(values).astype(str).str.strip()
+    normalized = normalized.str.replace(r"\.0+$", "", regex=True)
+    if not normalized.str.fullmatch(r"[0-9]{12}", na=False).all():
+        raise ValueError("BSEE bore key requires a complete API-12 identifier")
+    return normalized
 
 
 def _parse_war_date(values) -> pd.Series:

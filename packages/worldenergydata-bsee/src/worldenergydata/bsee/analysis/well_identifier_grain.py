@@ -30,25 +30,6 @@ def normalize_bsee_api12(value: object) -> str:
     return text
 
 
-def bsee_completion_key(api12: object, interval: object) -> tuple[str, str] | None:
-    """Return (bore, producing interval), or None for wellbore-only X01.
-
-    Missing or malformed intervals cannot establish a completion. API-14 is
-    not accepted as a substitute for the separate BSEE interval field.
-    """
-    bore = normalize_bsee_api12(api12)
-    # NTL 2009-G33 (2009), attachment pp. 4-5: ANN, reservoir 01-99;
-    # S/D/T/Q/V are tubing configurations, X01 is wellbore-only reporting.
-    if isinstance(interval, str) and interval == "X01":
-        return None
-    if (
-        not isinstance(interval, str)
-        or re.fullmatch(r"[SDTQV](?:0[1-9]|[1-9][0-9])", interval) is None
-    ):
-        raise ValueError("BSEE completion requires a documented producing interval")
-    return bore, interval
-
-
 def summarize_bore_population(values: Iterable[object]) -> dict:
     """Count distinct API-12 bores and API-10 families in the supplied extract.
 

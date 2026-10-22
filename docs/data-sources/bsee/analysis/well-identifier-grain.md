@@ -3,7 +3,7 @@
 ## Summary
 
 The WAR engine now requires complete API-12 bore keys before grouping. API-10
-family counts and completion keys are separate operations. The audit reproduces
+family counts are separate operations; completion keys remain proposed. The audit reproduces
 the committed bore/family population; full raw-feed completeness remains unverified.
 
 ## Revision history
@@ -13,6 +13,7 @@ the committed bore/family population; full raw-feed completeness remains unverif
 | 0 | 2026-10-12 | Recorded identifier definitions, metric grains, and unresolved populations to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | Added identifier validation, completion keys, and tested population counts to prevent ambiguous grain from appearing as missing coverage. |
 | 2 | 2026-10-21 | Separated status and evidence from revision history, restored the original revision, and clarified the dates of the inventory and validation changes. |
+| 3 | 2026-10-22 | Deferred the unused completion-key helper and vectorized bore validation to keep this change focused on WAR aggregation. |
 
 Revision history table. Changes to the identifier-grain record and their purpose.
 
@@ -42,11 +43,10 @@ input error rather than creating an apparent bore or an absent-coverage result.
 The full supplied WAR frame is validated, including rows outside a requested
 population. Correctly formatted identifiers retain the existing day arithmetic.
 
-`bsee_completion_key` returns `(API-12, PROD_INTERVAL_CD)` for the tubing and
-reservoir codes in R1, attachment pages 4-5; `X01` returns no completion key because
-it denotes wellbore-only reporting. Missing or undocumented intervals raise an
-error; completion identity cannot be inferred from an API-14 string. A production
-observation still needs reporting month and reporting context beyond this key.
+Completion-key implementation is deferred until a production caller can establish
+its separate interval field. R1, attachment pages 4-5, defines the producing
+interval and wellbore-only reporting; completion identity cannot be inferred from
+an API-14 string. A production observation also needs reporting month and context.
 
 `summarize_bore_population` counts distinct complete bore keys and their family
 prefixes, including a family-size histogram and observed WB codes. Duplicate
@@ -55,8 +55,8 @@ producers or geologic sidetracks from WB suffixes.
 
 Regression checks enumerate separated re-entry intervals and overlapping bores:
 bore sums and family calendar unions remain distinct and gaps are excluded.
-Completion-key tests distinguish interval keys from wellbore-only records; the
-key helper performs no rig-day allocation. These checks establish the grouping
+Scalar and batch validation tests cover the same accepted and rejected keys;
+batch checks also preserve duplicate row labels. These checks establish the grouping
 contract, not the meaning of undocumented activity codes. R1, R3
 and R4 were reopened on 2026-10-19 with successful responses; the notice's printed
 expiration and unverified current legal status remain limitations below.
@@ -83,7 +83,7 @@ R2 and R3 define `API_WELL_NUMBER` using the component structure above but decla
 | WAR main loader | Reads `API_WELL_NUMBER`, with `API_NUMBER` / `API` aliases. `normalize_api` strips whitespace and a trailing `.0`; it neither pads nor truncates nor enforces length. | [Extractor:73](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L73), [loader:127](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L127). |
 | Borehole loader | Reads `API_WELL_NUMBER` / `API` using the same normalizer. Minimum spud and maximum TD remain grouped by the **full normalized key**, not a derived API-10. They are metadata, no longer the day-count rule. | [Extractor:197](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L197), [grouping:222](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L222). |
 | WAR properties and remarks | `SN_WAR` joins the activity code to WAR. Remarks provide narrative/mud-weight information, not drilling or completion days. | [Property loader:158](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L158), [day call:388](../../../modules/bsee/analysis/production/FDAS_V30/extract_drilling_completion_days.py#L388). |
-| Shared WAR engine | `normalize_api12` validates the complete bore key through `normalize_bsee_api12`. `_prepare` reads `API_WELL_NUMBER`; `rig_days_by_bore` groups by the full validated `api12`. The well helper derives the family prefix afterward. | [Identifier contract](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_identifier_grain.py), [WAR engine](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py). |
+| Shared WAR engine | `normalize_api12` validates the complete bore key in a vectorized batch, matching the scalar `normalize_bsee_api12` contract. `_prepare` reads `API_WELL_NUMBER`; `rig_days_by_bore` groups by the full validated `api12`. The well helper derives the family prefix afterward. | [Identifier contract](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/well_identifier_grain.py), [WAR engine](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/analysis/war_rig_days.py). |
 | OGOR-A chronological conversion | Reads `API_WELL_NUMBER`, coerces it numerically, and groups by lease, well name, full API and month. It does not retain interval as a grouping key: this output is bore-month aggregation, although the regulatory production source is completion-based. | [Converter:242](../../../modules/bsee/analysis/production/FDAS_V30/ogora_to_chronological.py#L242). |
 | Local field-definition notes | Map `API_WELL_NUMBER`, spud/TD and raw table names; they do not establish a stored-length profile. The API-number note is an external link, not a local schema guarantee. | [Field mappings:8](../data/analysis_data.md#L8), [drilling fields:13](../data/drilling_data_rev1.md#L13), [API note:1](../data/well_api_number.md#L1). |
 
