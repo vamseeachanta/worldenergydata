@@ -5,9 +5,12 @@ The output protocol comes from the reusable workflow called by ci.yml.
 """
 
 import json
+import re
+import runpy
 import shutil
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -264,3 +267,99 @@ def test_flat_cli_and_root_override(adopted_template, tree):
         "xdist_targets=",
         "seq_targets=",
     ]
+
+
+@pytest.mark.parametrize("compiled", [False, True])
+def test_string_and_flagged_patterns_route_both_suites(engine, rules, tree, compiled):
+    """String routes stay supported; compiled routes retain case-insensitive flags."""
+    module = r"^lib/sample/([^/]+)/"
+    integration = r"^checks/integration/modules/([^/]+)/"
+    changed = [
+        "lib/sample/alpha/api.py",
+        "checks/integration/modules/alpha/test_api.py",
+    ]
+    if compiled:
+        module = re.compile(module, re.IGNORECASE)
+        integration = re.compile(integration, re.IGNORECASE)
+        changed = [path.upper().replace("ALPHA", "alpha") for path in changed]
+    configured = replace(
+        rules, module_patterns=(module,), integration_patterns=(integration,)
+    )
+    assert engine.select(changed, tree, configured) == {
+        "scope": "modules",
+        "xdist": ["checks/unit/core", "checks/unit/alpha"],
+        "seq": ["checks/integration/modules/alpha"],
+    }
+    assert engine.to_matrix(changed, tree, configured) == {
+        "scope": "modules",
+        "include": [
+            {"name": "_always", "targets": "checks/unit/core", "mode": "xdist"},
+            {"name": "unit-alpha", "targets": "checks/unit/alpha", "mode": "xdist"},
+            {
+                "name": "seq-alpha",
+                "targets": "checks/integration/modules/alpha",
+                "mode": "seq",
+            },
+        ],
+    }
+
+
+@pytest.mark.parametrize(
+    "changed,target,mode,name",
+    [
+        (
+            "SRC/WORLDENERGYDATA/alpha/api.py",
+            "tests/unit/alpha",
+            "xdist",
+            "unit-alpha",
+        ),
+        (
+            "PACKAGES/WORLDENERGYDATA-alpha/SRC/WORLDENERGYDATA/alpha/api.py",
+            "tests/unit/alpha",
+            "xdist",
+            "unit-alpha",
+        ),
+        (
+            "PACKAGES/WORLDENERGYDATA-bsee/SRC/WORLDENERGYDATA/hse/api.py",
+            "tests/unit/hse",
+            "xdist",
+            "unit-hse",
+        ),
+        (
+            "TESTS/INTEGRATION/MODULES/alpha/test_api.py",
+            "tests/integration/modules/alpha",
+            "seq",
+            "seq-alpha",
+        ),
+    ],
+)
+def test_repository_adapter_preserves_compile_flags(
+    monkeypatch, tmp_path, changed, target, mode, name
+):
+    """Simulate adding a compile flag to each repository route in turn."""
+    import select_test_targets as adapter
+
+    patterns = {
+        adapter._MODULE_RE.pattern,
+        adapter._PACKAGE_MEMBER_RE.pattern,
+        adapter._CLUSTER_MEMBER_RE.pattern,
+        adapter._INTEGRATION_RE.pattern,
+    }
+    compile_pattern = re.compile
+
+    def flagged_compile(pattern, flags=0):
+        if isinstance(pattern, str) and pattern in patterns:
+            flags |= re.IGNORECASE
+        return compile_pattern(pattern, flags)
+
+    with monkeypatch.context() as patch:
+        patch.setattr(re, "compile", flagged_compile)
+        configured = runpy.run_path(str(ROOT / "scripts/ci/select_test_targets.py"))
+    (tmp_path / target).mkdir(parents=True)
+    expected = {"scope": "modules", "xdist": [], "seq": []}
+    expected[mode] = [target]
+    assert configured["select"]([changed], tmp_path) == expected
+    assert configured["to_matrix"]([changed], tmp_path) == {
+        "scope": "modules",
+        "include": [{"name": name, "targets": target, "mode": mode}],
+    }

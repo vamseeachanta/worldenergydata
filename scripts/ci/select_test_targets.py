@@ -163,11 +163,11 @@ RULES = SelectionRules(
     core_exact=frozenset(CORE_EXACT),
     core_prefixes=CORE_PREFIXES,
     module_patterns=(
-        _MODULE_RE.pattern,
-        _PACKAGE_MEMBER_RE.pattern,
-        _CLUSTER_MEMBER_RE.pattern,
+        _MODULE_RE,
+        _PACKAGE_MEMBER_RE,
+        _CLUSTER_MEMBER_RE,
     ),
-    integration_patterns=(_INTEGRATION_RE.pattern,),
+    integration_patterns=(_INTEGRATION_RE,),
     contract_routes=CONTRACT_ROUTES,
     workflow_prefixes=WORKFLOW_PREFIXES,
 )

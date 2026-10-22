@@ -23,13 +23,14 @@ class SelectionRules:
     All paths are repository-relative POSIX paths. The test tree has ``unit``,
     ``integration/modules`` and ``performance`` children, as in the original
     selector. ``tests_root`` permits a different top-level directory name.
+    Patterns may be strings or compiled expressions; compiled flags are retained.
     """
 
     always_xdist: tuple[str, ...]
     core_exact: frozenset[str]
     core_prefixes: tuple[str, ...]
-    module_patterns: tuple[str, ...]
-    integration_patterns: tuple[str, ...]
+    module_patterns: tuple[re.Pattern[str] | str, ...]
+    integration_patterns: tuple[re.Pattern[str] | str, ...]
     contract_routes: Mapping[str, str]
     workflow_prefixes: tuple[str, ...] = ()
     tests_root: str = "tests"
