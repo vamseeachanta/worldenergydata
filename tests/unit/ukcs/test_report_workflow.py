@@ -1,6 +1,7 @@
 """Offline workflow tests; HTTP is forbidden except for an injected fake client."""
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 
@@ -26,7 +27,7 @@ def no_http(monkeypatch):
 
 @pytest.fixture
 def cfg(tmp_path):
-    config = yaml.safe_load((EXAMPLE / "input.yml").read_text())
+    config = yaml.safe_load((EXAMPLE / "input.yml").read_text(encoding="utf-8"))
     config["Analysis"] = {
         "analysis_root_folder": str(EXAMPLE),
         "result_folder": str(tmp_path / "results"),
@@ -45,12 +46,81 @@ def test_offline_router_writes_under_result_root(cfg, tmp_path):
     result = Ukcs().router(cfg)
     assert result is cfg and result["basename"] == "ukcs"
     outputs = result["ukcs"]["outputs"]
-    facts = json.loads(Path(outputs["facts_json"]).read_text())
+    facts = json.loads(Path(outputs["facts_json"]).read_text(encoding="utf-8"))
     assert facts["provenance"] == "fixture"
     assert facts["pre_tax_metrics"]["gross_revenue_usd"] == pytest.approx(659700)
     assert sum(r["oil_bbl"] for r in facts["production_history"]) == pytest.approx(8796)
     assert facts["coverage"]["month_count"] == 12
     assert all(Path(path).parent == tmp_path / "results" for path in outputs.values())
+
+
+@pytest.mark.parametrize("source", ["csv", "nsta_live"])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_same_month_reporting_units_preserve_revenue_and_coverage(
+    cfg, tmp_path, monkeypatch, source, reverse
+):
+    """Duplicate reporting units must reach cashflow as one monthly total."""
+    raw = pd.DataFrame(
+        {
+            "FIELDNAME": ["EXAMPLE", "EXAMPLE", "OTHER", "EXAMPLE"],
+            "PERIODYR": [2024] * 4,
+            "PERIODMNTH": [1, 1, 1, 2],
+            "OILPRODMAS": [100.0, 200.0, 900.0, 400.0],
+            "AGASPROKSM": [0.0] * 4,
+            "DGASPROKSM": [0.0] * 4,
+            "WATPRODVOL": [0.0] * 4,
+        }
+    )
+    if reverse:
+        raw = raw.iloc[::-1]
+    if source == "csv":
+        path = tmp_path / "production.csv"
+        raw.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+        cfg["data"]["input_path"] = path.as_posix()
+    else:
+        fake_live(monkeypatch, raw)
+        live_config(cfg, tmp_path)
+    cfg["report"].update(start="2024-01", end="2024-01")
+
+    result = Ukcs().router(cfg)
+    facts = json.loads(
+        Path(result["ukcs"]["outputs"]["facts_json"]).read_text(encoding="utf-8")
+    )
+    # Hand arithmetic for synthetic inputs at the declared scenario price:
+    # (100 + 200) tonnes * 7.33 bbl/tonne = 2,199 bbl; * 75 = 164,925 USD.
+    assert facts["production_history"][0]["oil_bbl"] == pytest.approx(2199.0)
+    assert facts["pre_tax_metrics"]["gross_revenue_usd"] == pytest.approx(164925.0)
+    assert facts["pre_tax_metrics"]["months"] == 1
+    assert facts["coverage"]["row_count"] == 2
+    assert facts["coverage"]["month_count"] == 1
+    assert facts["source"]["evidence"]["source_row_count"] == 4
+    assert facts["source"]["evidence"]["source_field_count"] == 2
+
+
+def test_csv_replacement_during_parse_keeps_facts_and_digest_consistent(
+    cfg, tmp_path, monkeypatch
+):
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8").head(1)
+    path = tmp_path / "production.csv"
+    raw.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
+    payload = path.read_bytes()
+    replacement = raw.assign(OILPRODMAS=200.0).to_csv(index=False, lineterminator="\n")
+    cfg["data"]["input_path"] = path.as_posix()
+    read_csv = pd.read_csv
+
+    def replace_after_read(*args, **kwargs):
+        frame = read_csv(*args, **kwargs)
+        path.write_text(replacement, encoding="utf-8", newline="\n")
+        return frame
+
+    monkeypatch.setattr(pd, "read_csv", replace_after_read)
+    facts = Ukcs().run(cfg)
+    assert path.read_text(encoding="utf-8") == replacement
+    # Hand arithmetic for one synthetic month: 100 * 7.33 = 733 bbl;
+    # at the explicit 75 USD/bbl scenario price, 733 * 75 = 54,975 USD.
+    assert facts["production_history"][0]["oil_bbl"] == pytest.approx(733.0)
+    assert facts["pre_tax_metrics"]["gross_revenue_usd"] == pytest.approx(54975.0)
+    assert facts["source"]["evidence"]["sha256"] == hashlib.sha256(payload).hexdigest()
 
 
 def fake_live(monkeypatch, raw, *, write_cache=True):
@@ -65,7 +135,10 @@ def fake_live(monkeypatch, raw, *, write_cache=True):
             assert kwargs["force_refresh"] is True
             if write_cache:
                 raw.to_csv(
-                    self.cache_dir / f"nsta_production_{year}_monthly.csv", index=False
+                    self.cache_dir / f"nsta_production_{year}_monthly.csv",
+                    index=False,
+                    encoding="utf-8",
+                    lineterminator="\n",
                 )
             return raw
 
@@ -84,7 +157,7 @@ def live_config(cfg, tmp_path):
 
 
 def test_live_cache_evidence_and_selection(monkeypatch, cfg, tmp_path):
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
     fake_live(monkeypatch, raw)
     facts = Ukcs().run(live_config(cfg, tmp_path))
     assert facts["provenance"] == "nsta_live"
@@ -97,7 +170,7 @@ def test_live_cache_evidence_and_selection(monkeypatch, cfg, tmp_path):
 
 
 def test_live_requires_cache_file(monkeypatch, cfg, tmp_path):
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
     fake_live(monkeypatch, raw, write_cache=False)
     with pytest.raises(ValueError, match="cache"):
         Ukcs().run(live_config(cfg, tmp_path))
@@ -154,7 +227,7 @@ def test_invalid_price_rejected(cfg, price):
 
 
 def test_bad_period_and_negative_production_rejected(cfg, monkeypatch):
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
     raw.loc[0, "PERIODMNTH"] = 13
     monkeypatch.setattr(pd, "read_csv", lambda *a, **k: raw)
     with pytest.raises(ValueError, match="month"):
@@ -193,7 +266,7 @@ def test_live_retains_digest_snapshot(monkeypatch, cfg, tmp_path):
     """The retained raw bytes, digest and published facts must identify one input."""
     import hashlib
 
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
     fake_live(monkeypatch, raw)
     facts = Ukcs().run(live_config(cfg, tmp_path))
     cache_bytes = (tmp_path / "cache/nsta_production_2024_monthly.csv").read_bytes()
@@ -203,7 +276,7 @@ def test_live_retains_digest_snapshot(monkeypatch, cfg, tmp_path):
 
 
 def test_cached_year_mismatch_rejected(monkeypatch, cfg, tmp_path):
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
     raw["PERIODYR"] = 2023
     fake_live(monkeypatch, raw)
     with pytest.raises(ValueError, match="year"):
@@ -213,7 +286,7 @@ def test_cached_year_mismatch_rejected(monkeypatch, cfg, tmp_path):
 def test_live_multiple_years_and_oldest_timestamp(monkeypatch, cfg, tmp_path):
     import os
 
-    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv")
+    raw = pd.read_csv(EXAMPLE / "sample_nsta_production.csv", encoding="utf-8")
 
     class MultiYearClient:
         def __init__(self, cache_dir):
@@ -223,7 +296,7 @@ def test_live_multiple_years_and_oldest_timestamp(monkeypatch, cfg, tmp_path):
         def download(self, year, **kwargs):
             frame = raw.assign(PERIODYR=year)
             path = self.cache_dir / f"nsta_production_{year}_monthly.csv"
-            frame.to_csv(path, index=False)
+            frame.to_csv(path, index=False, encoding="utf-8", lineterminator="\n")
             # Synthetic timestamps order two cache writes without wall-clock sleeps.
             os.utime(path, (year, year))
             return frame

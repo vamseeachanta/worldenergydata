@@ -75,7 +75,7 @@ def _live_frame(data, input_root):
             snapshot.write_bytes(payload)
         combined_digest.update(payload)
         # Parse the exact digested bytes, even if the mutable cache is replaced.
-        frame = pd.read_csv(io.BytesIO(payload))
+        frame = pd.read_csv(io.BytesIO(payload), encoding="utf-8")
         if not frame.empty and set(frame.PERIODYR.astype(int)) != {year}:
             raise ValueError("NSTA cache year does not match the requested year")
         stamp = datetime.fromtimestamp(before.st_mtime, timezone.utc).isoformat()
@@ -175,9 +175,10 @@ class Ukcs:
         source = data.get("source")
         if source == "csv":
             path = input_root / data["input_path"]
-            raw = pd.read_csv(path)
+            payload = path.read_bytes()
+            raw = pd.read_csv(io.BytesIO(payload), encoding="utf-8")
             evidence = {
-                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "sha256": hashlib.sha256(payload).hexdigest(),
                 "cache_verified": False,
                 "coverage_status": "synthetic_fixture",
             }
@@ -215,18 +216,24 @@ class Ukcs:
             start=report.get("start"),
             end=report.get("end"),
         )
-        if adapter.fetch(query).empty:
+        selected = adapter.fetch(query)
+        if selected.empty:
             raise ValueError(
                 "No production records match the selected field and period"
             )
+        monthly = normalized.groupby(["field", "year", "month"], as_index=False)[
+            ["oil_bbl", "gas_mcf", "water_bbl"]
+        ].sum(min_count=1)
         result = run_ukcs_reference_chain(
-            adapter=adapter,
+            adapter=UkcsAdapter(loader=_FrameLoader(monthly)),
             field_meta=meta,
             field_name=field_name,
             start=report.get("start"),
             end=report.get("end"),
             oil_price_usd_bbl=price,
         )
+        # Report coverage retains reporting-unit rows; cashflow uses monthly sums.
+        result["unified_production"] = selected
         evidence["source_row_count"] = len(raw)
         evidence["source_field_count"] = int(normalized.field.nunique())
         return build_report_facts(
@@ -246,12 +253,17 @@ class Ukcs:
         folder.mkdir(parents=True, exist_ok=True)
         html_path = folder / f"{label}_report.html"
         json_path = folder / f"{label}_facts.json"
-        html_path.write_text(render_report_html(facts), encoding="utf-8")
+        html_path.write_text(render_report_html(facts), encoding="utf-8", newline="\n")
         json_path.write_text(
-            json.dumps(facts, indent=2, allow_nan=False) + "\n", encoding="utf-8"
+            json.dumps(facts, indent=2, allow_nan=False) + "\n",
+            encoding="utf-8",
+            newline="\n",
         )
         cfg["ukcs"] = {
             "status": "completed",
-            "outputs": {"report_html": str(html_path), "facts_json": str(json_path)},
+            "outputs": {
+                "report_html": html_path.as_posix(),
+                "facts_json": json_path.as_posix(),
+            },
         }
         return cfg
