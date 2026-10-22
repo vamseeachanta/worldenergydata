@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Optional
 
+from worldenergydata.scheduler.output import current_output_files
+
 logger = logging.getLogger(__name__)
 
 INTERVAL_THRESHOLDS = {
@@ -50,6 +52,12 @@ class AbstractJob(ABC):
 
     name: str
     default_output_dir: Path
+
+    def resolve_output_dir(self, config: dict) -> Path:
+        """Return the shared scheduler destination without creating it."""
+        from worldenergydata.scheduler.output import resolve_output_dir
+
+        return resolve_output_dir(self.name, config)
 
     @abstractmethod
     def run(self, config: dict) -> JobResult:
@@ -104,16 +112,13 @@ def write_refresh_metadata(
         records_updated: Total records written during this refresh.
     """
     try:
-        file_count = sum(
-            1
-            for p in output_dir.rglob("*")
-            if p.is_file() and p.name != "_metadata.json"
-        )
-        total_size = sum(
-            p.stat().st_size
-            for p in output_dir.rglob("*")
-            if p.is_file() and p.name != "_metadata.json"
-        )
+        files = [
+            p
+            for p in current_output_files(output_dir)
+            if p.name not in {"_metadata.json", "manifest.json"}
+        ]
+        file_count = len(files)
+        total_size = sum(p.stat().st_size for p in files)
         metadata = {
             "module": module_name,
             "last_refresh": datetime.now(tz=timezone.utc).isoformat(),

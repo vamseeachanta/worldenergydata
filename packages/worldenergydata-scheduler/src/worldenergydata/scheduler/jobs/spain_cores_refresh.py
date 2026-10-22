@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any, Callable, cast
 
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
+from worldenergydata.scheduler.output import current_output_files
 
 logger = logging.getLogger(__name__)
 
@@ -205,12 +206,12 @@ class SpainCoresRefreshJob(AbstractJob):
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_files = sorted(
             p
-            for p in output_dir.rglob("*")
+            for p in current_output_files(output_dir)
             if p.is_file() and p.suffix.lower() == ".csv"
         )
         sidecar_files = sorted(
             p
-            for p in output_dir.rglob("*")
+            for p in current_output_files(output_dir)
             if p.is_file()
             and p.suffix.lower() == ".json"
             and p.name not in {"_metadata.json", "manifest.json"}

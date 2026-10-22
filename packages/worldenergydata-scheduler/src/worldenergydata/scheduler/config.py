@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
+from worldenergydata.scheduler.output import validate_output_dir
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,8 @@ def validate_config(config: SchedulerConfig) -> None:
                     settings are out of range.
     """
     for job in config.jobs:
+        if "output_dir" in job:
+            validate_output_dir(job["output_dir"])
         interval = job.get("interval")
         if interval is not None and interval not in VALID_INTERVALS:
             raise ValueError(

@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.metocean.clients.open_meteo_client import OpenMeteoClient
 from worldenergydata.scheduler.jobs.base import (
@@ -37,7 +36,12 @@ class MetoceanRefreshJob(AbstractJob):
         if "archive" in config:
             from worldenergydata.metocean.update import update_archive
 
-            report = update_archive(config["archive"], Path(config["data_root"]))
+            archive_dir = (
+                self.resolve_output_dir(config)
+                if "output_dir" in config
+                else Path(config["data_root"])
+            )
+            report = update_archive(config["archive"], archive_dir)
             return JobResult(
                 job_name=self.name,
                 start_time=start,
