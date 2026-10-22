@@ -26,6 +26,7 @@ pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height
 <tr><td>2</td><td>2026-10-20</td><td>Executed results and a path-based coverage recipe replace stale limitations; review wording is corrected.</td></tr>
 <tr><td>3</td><td>2026-10-20</td><td>The initial commit date and revision metadata complete the original change record.</td></tr>
 <tr><td>4</td><td>2026-10-22</td><td>The first revision label is numbered to match the structured change record.</td></tr>
+<tr><td>5</td><td>2026-10-22</td><td>The Changes panel links to the complete revision history so later revisions remain visible.</td></tr>
 </tbody></table>
 <p class="caption">Document revisions. The initial issue date matches the initial commit date.</p>
 </section>
@@ -94,7 +95,7 @@ pre{overflow:auto;background:#eef4f5;padding:1rem}textarea{width:100%;min-height
 <p>Comments are entered below and saved as a separate JSON file. Select the directory containing this document when saving; browsers without a file picker use a download whose destination is controlled by the browser.</p>
 <label for="comment">Comment</label><textarea id="comment"></textarea>
 <button id="save" type="button">Save comments beside document</button><p id="save-status" role="status"></p>
-<details><summary>Changes</summary><p>Initial edition: synthetic reader behavior, worked equality selections and explicit verification limitations.</p><p>Revision 2: maintainer review wording, 58 passing tests, 100 % line and branch coverage for both loaders, and a path-based coverage recipe.</p><a href="infrastructure-loader-tests.changes.json">Structured change record</a></details>
+<details><summary>Changes</summary><p>See the <a href="#revision-history">revision history</a> for the complete list of document revisions and their dates.</p><a href="infrastructure-loader-tests.changes.json">Structured change record</a></details>
 </section>
 <script>
 document.getElementById('save').addEventListener('click',async()=>{

@@ -48,6 +48,12 @@
       "date": "2026-10-22",
       "section": "revision-history",
       "description": "Numbered the initial HTML revision label to match the structured change record."
+    },
+    {
+      "revision": 5,
+      "date": "2026-10-22",
+      "section": "comments",
+      "description": "Linked the Changes panel to the complete revision history so later revisions remain visible."
     }
   ]
 }
