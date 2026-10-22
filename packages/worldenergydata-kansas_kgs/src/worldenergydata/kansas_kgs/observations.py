@@ -91,6 +91,8 @@ def _observation(
     well_lookup: dict[str, list[pd.Series]],
 ) -> dict[str, object]:
     match, flags = _well_match(row, well_lookup)
+    if match is not None and _has_identity(match.get("quality_flags")):
+        flags.extend(str(match["quality_flags"]).split("|"))
     pressure_psia = round(float(row["pressure_psig_raw"]) + ATMOSPHERIC_PRESSURE_PSI, 6)
     depth = _depth(match)
     gradient = round(pressure_psia / depth, 6) if depth and depth > 0 else pd.NA
@@ -138,7 +140,7 @@ def _well_lookup(wells: pd.DataFrame) -> dict[str, list[pd.Series]]:
         return lookup
     for _, row in wells.iterrows():
         api10 = row.get("api10")
-        if pd.isna(api10):
+        if not _has_identity(api10):
             continue
         lookup.setdefault(str(api10), []).append(row)
     return lookup
@@ -148,7 +150,8 @@ def _well_match(
     row: pd.Series,
     well_lookup: dict[str, list[pd.Series]],
 ) -> tuple[pd.Series | None, list[str]]:
-    candidates = well_lookup.get(str(row.get("api10")), [])
+    api10 = row.get("api10")
+    candidates = well_lookup.get(str(api10), []) if _has_identity(api10) else []
     if not candidates:
         return None, ["missing_well_join", "missing_depth"]
     if len(candidates) == 1:
@@ -156,7 +159,9 @@ def _well_match(
     kid_matches = [
         candidate
         for candidate in candidates
-        if str(candidate.get("well_kid")) == str(row.get("well_kid"))
+        if _has_identity(row.get("well_kid"))
+        and _has_identity(candidate.get("well_kid"))
+        and str(candidate.get("well_kid")) == str(row.get("well_kid"))
     ]
     if len(kid_matches) == 1:
         return kid_matches[0], ["kid_fallback_join"]
@@ -267,9 +272,19 @@ def _identity_key(match: pd.Series | None, row: pd.Series, flags: list[str]) -> 
         return pd.NA
     api14 = _value(match, "api14")
     if pd.notna(api14):
-        return str(api14)
+        return f"api14:{api14}"
     kid = row.get("well_kid")
-    return str(kid) if pd.notna(kid) else pd.NA
+    if _has_identity(kid):
+        return f"kid:{kid}"
+    # Issue #1352 (2026), defect 2: unidentified source rows are independent.
+    source, row_id = row.get("source_file"), row.get("source_row_id")
+    if _has_identity(source) and _has_identity(row_id):
+        return f"source:{source}:{row_id}"
+    return pd.NA
+
+
+def _has_identity(value: object) -> bool:
+    return value is not None and pd.notna(value) and bool(str(value).strip())
 
 
 def _depth_flags(match: pd.Series | None, depth: float | None) -> list[str]:

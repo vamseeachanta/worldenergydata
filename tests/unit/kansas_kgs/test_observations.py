@@ -20,6 +20,7 @@ def test_build_observations_converts_units_and_flags_earliest() -> None:
     assert first["pressure_kind"] == "WHP_shut_in"
     assert first["gradient_psi_ft"] == round(62.0 / 4470.0, 6)
     assert first["is_earliest_observation_for_well"] is True
+    assert observations.iloc[1]["is_earliest_observation_for_well"] is False
     assert first["virgin_pressure_proxy_method"] == "earliest_available_proration_year"
     assert "not_initial_reservoir_pressure" in first["limitations"]
     assert "elevation_not_adjusted" in first["limitations"]
@@ -35,7 +36,19 @@ def test_build_observations_suppresses_ambiguous_api10_gradient() -> None:
     assert pd.isna(row["api14"])
     assert pd.isna(row["reference_depth_ft"])
     assert pd.isna(row["gradient_psi_ft"])
-    assert row["is_earliest_observation_for_well"] is not True
+    assert row["is_earliest_observation_for_well"] is None
+    assert len(result.observations) == 2
+    assert (
+        result.observations[["api14", "reference_depth_ft", "gradient_psi_ft"]]
+        .isna()
+        .all()
+        .all()
+    )
+    assert all(
+        value is None
+        for value in result.observations["is_earliest_observation_for_well"]
+    )
+    assert result.observations["virgin_pressure_proxy_method"].isna().all()
     assert "ambiguous_api10_join" in row["quality_flags"]
     assert "ambiguous_identity_for_virgin_proxy" in row["quality_flags"]
 
@@ -164,6 +177,9 @@ def test_observation_quality_counts_join_and_depth_flags() -> None:
     assert result.quality["missing_depth_count"] == 3
     assert result.quality["ambiguous_api10_join_count"] == 1
     assert result.quality["ambiguous_identity_for_virgin_proxy_count"] == 1
+    # Hand enumeration above: every one of the three rows lacks a gradient.
+    assert result.observations["gradient_psi_ft"].isna().sum() == 3
+    assert result.observations["reference_depth_ft"].isna().sum() == 3
 
 
 @pytest.mark.parametrize("join_case", ["missing", "ambiguous"])
@@ -199,6 +215,71 @@ def test_unresolved_join_counts_each_missing_depth_once(join_case: str) -> None:
         flag_list = flags.split("|")
         assert set(flag_list) == expected_flags
         assert flag_list.count("missing_depth") == 1
+
+
+@pytest.mark.parametrize("blank", ["", "   ", pd.NA])
+def test_blank_identity_rows_remain_independent(tmp_path, blank) -> None:
+    """Issue #1352 (2026), blank-identity hand count.
+
+    Two positive rows, one in each of two years, have neither API nor KID.
+    No evidence links them: each source row is its own identity, so both
+    are earliest, both carry a proxy, and both lack a well join and depth.
+    The same expectations apply to CSV parsing and normalized callers.
+    """
+    from worldenergydata.kansas_kgs.observations import build_pressure_observations
+    from worldenergydata.kansas_kgs.pressure import parse_proration_pressure
+
+    path = tmp_path / "anonymous.csv"
+    path.write_text(
+        "WELL_KID,API_NUMBER,YEAR,SHUT_IN_PRESS\n" " , ,1997,10\n,,1998,20\n"
+    )
+    parsed = parse_proration_pressure(path).normalized
+    assert (
+        parsed[["well_kid", "api10", "api_state_code", "api_county_code"]]
+        .isna()
+        .all()
+        .all()
+    )
+    for rows in (parsed, _pressure_rows().assign(well_kid=blank, api10=blank)):
+        result = build_pressure_observations(rows, pd.DataFrame())
+        assert len(result.observations) == 2
+        assert all(
+            value is True
+            for value in result.observations["is_earliest_observation_for_well"]
+        )
+        assert (
+            result.observations["virgin_pressure_proxy_method"]
+            .eq("earliest_available_proration_year")
+            .all()
+        )
+        assert result.quality["missing_well_join_count"] == 2
+        assert result.quality["missing_depth_count"] == 2
+
+
+@pytest.mark.parametrize("blank", ["", "   ", pd.NA])
+def test_missing_kid_cannot_disambiguate_candidates(blank) -> None:
+    """Hand count: two API candidates and no source KID select zero wells.
+
+    One candidate also lacks KID. Missing values supply no identity evidence;
+    both pressure rows remain ambiguous, with missing depth and earliest flag.
+    """
+    from worldenergydata.kansas_kgs.observations import build_pressure_observations
+
+    rows = _pressure_rows().assign(well_kid=blank)
+    wells = pd.DataFrame(
+        [
+            _well(api14="15067200480000", well_kid=blank, depth=1000),
+            _well(api14="15067200480001", well_kid="populated", depth=2000),
+        ]
+    )
+    result = build_pressure_observations(rows, wells)
+    assert result.quality["ambiguous_api10_join_count"] == 2
+    assert result.quality["missing_depth_count"] == 2
+    assert result.observations["api14"].isna().all()
+    assert all(
+        value is None
+        for value in result.observations["is_earliest_observation_for_well"]
+    )
 
 
 def _pressure_rows(include_stevens: bool = False) -> pd.DataFrame:
