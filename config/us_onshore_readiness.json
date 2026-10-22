@@ -1,0 +1,513 @@
+{
+  "sources": [
+    {
+      "source_id": "texas_rrc",
+      "state": "TX",
+      "source": "Texas RRC",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "permits"
+      ],
+      "status": "downloaded",
+      "evidence": "#909 Current evidence snapshot; config/texas_rrc.yml",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Join well and operator identifiers to land tracts before acquiring overlapping regulator data.",
+      "issues": [
+        "#708",
+        "#680",
+        "#681",
+        "#462"
+      ],
+      "limitations": "Reported directory presence only; artifact counts, vintage, successful refresh and coverage have not been verified. A regulator lease identifier does not establish ownership."
+    },
+    {
+      "source_id": "kansas_kgs",
+      "state": "KS",
+      "source": "Kansas KGS",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production"
+      ],
+      "status": "downloaded",
+      "evidence": "#909 Current evidence snapshot; config/kansas_kgs.yml",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Join well and operator identifiers to land tracts before acquiring overlapping regulator data.",
+      "issues": [
+        "#708",
+        "#680",
+        "#681",
+        "#462"
+      ],
+      "limitations": "Reported directory presence only; artifact counts, vintage, successful refresh and coverage have not been verified. A regulator lease identifier does not establish ownership."
+    },
+    {
+      "source_id": "oklahoma_occ",
+      "state": "OK",
+      "source": "Oklahoma OCC",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production"
+      ],
+      "status": "downloaded",
+      "evidence": "#909 Current evidence snapshot; config/oklahoma_occ.yml",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Join well and operator identifiers to land tracts before acquiring overlapping regulator data.",
+      "issues": [
+        "#708",
+        "#680",
+        "#681",
+        "#462"
+      ],
+      "limitations": "Reported directory presence only; artifact counts, vintage, successful refresh and coverage have not been verified. A regulator lease identifier does not establish ownership."
+    },
+    {
+      "source_id": "colorado_ecmc",
+      "state": "CO",
+      "source": "Colorado ECMC",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "permits"
+      ],
+      "status": "downloaded",
+      "evidence": "#909 Current evidence snapshot; config/colorado_ecmc.yml",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Join well and operator identifiers to land tracts before acquiring overlapping regulator data.",
+      "issues": [
+        "#708",
+        "#680",
+        "#681",
+        "#462"
+      ],
+      "limitations": "Reported directory presence only; artifact counts, vintage, successful refresh and coverage have not been verified. A regulator lease identifier does not establish ownership."
+    },
+    {
+      "source_id": "pressure_screen",
+      "state": "MULTI",
+      "source": "pressure_screen",
+      "domain": "derived analysis",
+      "coverage": [
+        "pressure"
+      ],
+      "status": "derived",
+      "evidence": "#909 Current evidence snapshot; src/worldenergydata/analysis/underpressured_screen/",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Reuse pressure/depletion context when well identity and observation semantics are qualified.",
+      "issues": [
+        "#708",
+        "#462"
+      ],
+      "limitations": "Derived results are not raw reservoir pressure or title evidence; state participation must be checked. Colorado candidate pressures are not qualified shut-in pressures."
+    },
+    {
+      "source_id": "landman_TX",
+      "state": "TX",
+      "source": "Texas landman GIS endpoints",
+      "domain": "land/lease/mineral + regulator",
+      "coverage": [
+        "abstract_info",
+        "survey_plats",
+        "lease",
+        "mineral",
+        "permits"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.TX; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured surveys, mineral leases and well permits; discover mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: abstract_info, survey_plats, mineral_leases, well_permits. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_NM",
+      "state": "NM",
+      "source": "New Mexico landman GIS endpoints",
+      "domain": "land/lease + regulator",
+      "coverage": [
+        "township_range",
+        "lease",
+        "wells"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.NM; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured township/range, state leases and well data; discover mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: township_range, state_leases, well_data. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_OK",
+      "state": "OK",
+      "source": "Oklahoma landman GIS endpoints",
+      "domain": "regulator + lease reference",
+      "coverage": [
+        "permits",
+        "production",
+        "lease"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.OK; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured permits, production and lease references; discover mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_permits, production_data, lease_info. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_ND",
+      "state": "ND",
+      "source": "North Dakota landman GIS endpoints",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "spacing_units"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.ND; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured wells, production and spacing units; discover lease records, mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_data, production, spacing_units. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_CO",
+      "state": "CO",
+      "source": "Colorado landman GIS endpoints",
+      "domain": "regulator",
+      "coverage": [
+        "permits",
+        "production",
+        "spacing_orders"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.CO; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured permits, production and spacing orders; discover lease records, mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_permits, production, spacing_orders. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_WY",
+      "state": "WY",
+      "source": "Wyoming landman GIS endpoints",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "permits"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.WY; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured wells, production and permits; discover lease records, mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_data, production, permits. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_LA",
+      "state": "LA",
+      "source": "Louisiana landman GIS endpoints",
+      "domain": "regulator + lease reference",
+      "coverage": [
+        "wells",
+        "production",
+        "lease",
+        "coastal_permits"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.LA; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured wells, production, lease references and coastal permits; discover mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_data, production, lease_info, coastal_permits. No materialized records or current endpoint access are established. Mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "landman_UT",
+      "state": "UT",
+      "source": "Utah landman GIS endpoints",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "permits"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml state_endpoints.UT; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Inspect configured wells, production and permits; discover lease records, mineral ownership and title instruments.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Configured data types: well_data, production, permits. No materialized records or current endpoint access are established. Lease records, mineral ownership and title instruments are not configured here and need discovery. Lease references and mineral leases do not establish ownership or a title chain."
+    },
+    {
+      "source_id": "arkansas_regulator",
+      "state": "AR",
+      "source": "Arkansas regulator discovery",
+      "domain": "regulator",
+      "coverage": [
+        "wells",
+        "production",
+        "permits"
+      ],
+      "status": "missing",
+      "evidence": "#911 acceptance criteria; #909 Current evidence snapshot",
+      "evidence_scope": "reported inventory",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "first",
+      "reason": "Close the explicitly identified state gap before underwriting Arkansas acreage.",
+      "issues": [
+        "#909",
+        "#911",
+        "#681",
+        "#680"
+      ],
+      "limitations": "Not materialized in the reported inventory; source discovery, authority, endpoints, terms and ingestion contract remain unestablished."
+    },
+    {
+      "source_id": "eia_us",
+      "state": "US",
+      "source": "EIA US",
+      "domain": "macro/production",
+      "coverage": [
+        "production"
+      ],
+      "status": "partial/error",
+      "evidence": "#266 Current State and Runtime Findings; #909 Current evidence snapshot",
+      "evidence_scope": "reported issue evidence",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "first",
+      "reason": "Establish production and market context using the existing scheduler rather than another integration.",
+      "issues": [
+        "#266",
+        "#680",
+        "#462"
+      ],
+      "limitations": "API credential/runtime wiring is an existing blocker; successful scheduled materialization is not established. Aggregate EIA data cannot prove tract ownership."
+    },
+    {
+      "source_id": "blm_mlrs",
+      "state": "US FEDERAL",
+      "source": "BLM MLRS",
+      "domain": "federal land",
+      "coverage": [
+        "lease",
+        "mineral",
+        "title"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml providers.blm and data_types.federal_leases; #909 Current evidence snapshot",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "first",
+      "reason": "Federal lease status, legal descriptions and lessee interests constrain acreage underwriting.",
+      "issues": [
+        "#909",
+        "#911",
+        "#462"
+      ],
+      "limitations": "No materialized BLM directory in the reported inventory. Endpoint reachability, bulk access, terms, lease coverage and current interests require discovery; patents are not a complete current title chain."
+    },
+    {
+      "source_id": "county_reference",
+      "state": "MULTI",
+      "source": "County reference directory",
+      "domain": "county reference",
+      "coverage": [
+        "title"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml providers.county_reference; packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "reuse",
+      "reason": "Use existing office and FIPS references to identify the recording authority.",
+      "issues": [
+        "#909",
+        "#911"
+      ],
+      "limitations": "Static reference code exists; downloaded recorder instruments do not. Office metadata and access guidance are not deeds, lease instruments, ownership or title evidence."
+    },
+    {
+      "source_id": "county_title",
+      "state": "COUNTY",
+      "source": "County recorder/title",
+      "domain": "county title",
+      "coverage": [
+        "title",
+        "lease",
+        "mineral"
+      ],
+      "status": "missing",
+      "evidence": "config/landman.yml Notes on Free Public Data Sources and Limitations",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "first",
+      "reason": "Recorded instruments, assignments, releases and encumbrances are needed to evaluate the title chain.",
+      "issues": [
+        "#909",
+        "#911",
+        "#462"
+      ],
+      "limitations": "County-specific discovery is required. Confirm jurisdiction, recording periods, access terms, fees and reuse rights; no county instrument archive or complete chain has been established."
+    },
+    {
+      "source_id": "mineral_title",
+      "state": "TRACT",
+      "source": "Mineral ownership and title chain",
+      "domain": "mineral title",
+      "coverage": [
+        "mineral",
+        "title"
+      ],
+      "status": "missing",
+      "evidence": "config/landman.yml data_types.mineral_ownership and Limitations",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "first",
+      "reason": "Determine the interests and burdens attached to the target tract using qualified instruments.",
+      "issues": [
+        "#909",
+        "#911"
+      ],
+      "limitations": "Configured fields do not prove ownership, fractions or marketable title. Recorded instrument review, severances and current-interest reconciliation remain NOT_EVALUATED."
+    },
+    {
+      "source_id": "lease_records",
+      "state": "TRACT",
+      "source": "Lease records and assignments",
+      "domain": "lease title",
+      "coverage": [
+        "lease",
+        "title"
+      ],
+      "status": "configured-only",
+      "evidence": "config/landman.yml data_types.lease_records",
+      "evidence_scope": "repository configuration",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "first",
+      "reason": "Identify lease term, held-by-production evidence, assignments and burdens for underwriting.",
+      "issues": [
+        "#909",
+        "#911",
+        "#462"
+      ],
+      "limitations": "No downloaded landman lease archive is established. Regulator lease labels and production alone do not establish enforceability or current lessee interests."
+    },
+    {
+      "source_id": "infrastructure",
+      "state": "MULTI",
+      "source": "Infrastructure overlays",
+      "domain": "infrastructure",
+      "coverage": [
+        "infrastructure"
+      ],
+      "status": "partial/error",
+      "evidence": "docs/data-sources/onshore/texas-rrc/infrastructure-access-metrics.md",
+      "evidence_scope": "repository implementation",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": false,
+      "priority": "next",
+      "reason": "Check physical market access and routing constraints after joining wells and tracts.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Texas infrastructure metrics exist; materialization and broader state coverage are not verified. GIS proximity alone does not establish capacity, commercial access or easements."
+    },
+    {
+      "source_id": "hse_onshore",
+      "state": "MULTI",
+      "source": "HSE and environmental overlays",
+      "domain": "HSE/environmental",
+      "coverage": [
+        "HSE"
+      ],
+      "status": "partial/error",
+      "evidence": "data/modules/hse/offshore/collection_manifest.json; #910 acceptance criteria",
+      "evidence_scope": "repository evidence",
+      "observed_at": "2026-10-20T08:17:16+00:00",
+      "discovery_required": true,
+      "priority": "next",
+      "reason": "Screen compliance and environmental constraints for the target tract and nearby operations.",
+      "issues": [
+        "#911",
+        "#462"
+      ],
+      "limitations": "Existing offshore HSE evidence is not onshore coverage. Onshore regulator enforcement, spill and environmental layers need source and geographic qualification."
+    }
+  ]
+}
