@@ -105,11 +105,24 @@ def test_mixed_source_duration_is_not_compared():
 
 
 @pytest.mark.parametrize("depths", [(10000, 10000), (10000, 15000)])
-def test_constant_depth_or_extrapolation_is_not_evaluated(depths):
+def test_extrapolation_is_not_evaluated(depths):
     rows = _rows()
     for row, depth in zip(rows[1:], depths):
         row["max_well_bore_tvd_ft"] = depth
-    assert benchmark_well(_well(), rows)["status"] == "NOT_EVALUATED"
+    result = benchmark_well(_well(), rows)
+    assert result["status"] == "NOT_EVALUATED"
+    assert result["reason"] == "Target TVD lies outside the peer depth range"
+
+
+def test_constant_depth_is_not_evaluated():
+    well = _well()
+    rows = _rows()
+    for row in rows:
+        row["max_well_bore_tvd_ft"] = well["max_tvd_ft"]
+    result = benchmark_well(well, rows)
+    assert result["status"] == "NOT_EVALUATED"
+    assert result["peer_count"] == 2
+    assert result["reason"] == "Peer TVDs are constant; slope cannot be calculated"
 
 
 def test_invalid_peers_do_not_count_towards_fit():
