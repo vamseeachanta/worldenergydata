@@ -76,6 +76,90 @@ def test_dated_permit_search_preserves_unsupported_state_error(monkeypatch):
     get_json.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    ("bounds", "expected_date_clause"),
+    [
+        ({"start_date": START_DATE}, "ISSUED_AT >= TIMESTAMP '2025-01-01'"),
+        ({"end_date": END_DATE}, "ISSUED_AT < TIMESTAMP '2026-01-01'"),
+        (
+            {"start_date": START_DATE, "end_date": END_DATE},
+            "ISSUED_AT >= TIMESTAMP '2025-01-01' AND ISSUED_AT < TIMESTAMP '2026-01-01'",
+        ),
+        (
+            {"start_date": END_DATE, "end_date": END_DATE},
+            "ISSUED_AT >= TIMESTAMP '2025-12-31' AND ISSUED_AT < TIMESTAMP '2026-01-01'",
+        ),
+    ],
+    ids=["start-only", "end-only", "both", "same-day"],
+)
+@pytest.mark.parametrize("state", ["TX", "NM"])
+def test_verified_permit_date_field_reaches_query(
+    monkeypatch, bounds, expected_date_clause, state
+):
+    """Hand calculation: inclusive Dec 31 ends just before Jan 1 of the next year.
+
+    Bounds are issue #1259's example, not measured data. TIMESTAMP literals follow
+    Esri SQL reference, 'Date-time syntax for geodatabases' (accessed 2026-10-22).
+    ISSUED_AT is a synthetic field supplied explicitly, never a live schema claim.
+    """
+    with StateGISProvider(permit_date_fields={state: "ISSUED_AT"}) as provider:
+        get_json = Mock(return_value={"features": []})
+        monkeypatch.setattr(provider, "_get_json", get_json)
+        result = provider.search_permits(state, county="Synthetic", **bounds)
+
+    assert get_json.call_args.kwargs["params"]["where"] == (
+        "1=1 AND UPPER(COUNTY) = 'SYNTHETIC' AND " + expected_date_clause
+    )
+    get_json.assert_called_once()
+    assert result.permits == []
+
+
+@pytest.mark.parametrize("date_fields", [None, {"TX": "ISSUED_AT"}])
+def test_inverted_permit_dates_fail_before_request(monkeypatch, date_fields):
+    """Hand comparison of #1259's bounds: Dec 31 is after Jan 1 in the same year."""
+    with StateGISProvider(permit_date_fields=date_fields) as provider:
+        get_json = Mock()
+        monkeypatch.setattr(provider, "_get_json", get_json)
+        with pytest.raises(ValueError, match="start_date.*end_date"):
+            provider.search_permits("TX", start_date=END_DATE, end_date=START_DATE)
+        get_json.assert_not_called()
+
+
+def test_permit_date_field_requires_plain_identifier():
+    """A configuration field must not inject a SQL expression into the query."""
+    with pytest.raises(ValueError, match="date field"):
+        StateGISProvider(permit_date_fields={"TX": "ISSUED_AT OR TRUE"})
+
+
+def test_permit_date_upper_bound_overflow_is_explicit(monkeypatch):
+    """date.max has no following calendar day; silently dropping it is invalid."""
+    with StateGISProvider(permit_date_fields={"TX": "ISSUED_AT"}) as provider:
+        get_json = Mock()
+        monkeypatch.setattr(provider, "_get_json", get_json)
+        with pytest.raises(ValueError, match="end_date"):
+            provider.search_permits("TX", end_date=date.max)
+        get_json.assert_not_called()
+
+
+def test_rejected_date_query_is_not_an_empty_success(monkeypatch):
+    """A service error object has no features but is not a matching empty set.
+
+    Source: #1259 requires an error if the service cannot filter by date.
+    The stub's error envelope is synthetic; no live service is contacted.
+    """
+    with StateGISProvider(permit_date_fields={"TX": "ISSUED_AT"}) as provider:
+        get_json = Mock(return_value={"error": {"message": "Unsupported predicate"}})
+        monkeypatch.setattr(provider, "_get_json", get_json)
+        with pytest.raises(ProviderError) as caught:
+            provider.search_permits("TX", start_date=START_DATE)
+    assert caught.value.error_code == "PERMIT_QUERY_ERROR"
+    assert caught.value.details == {
+        "module": "landman",
+        "provider": "state_gis",
+        "state": "TX",
+    }
+
+
 @pytest.mark.parametrize("state", ["TX", "NM"])
 @pytest.mark.parametrize(
     ("filters", "expected_where"),
@@ -135,14 +219,14 @@ def test_undated_esri_permit_search_preserves_query(
 
 
 @pytest.mark.parametrize("state", ["OK", "ND", "CO", "WY", "LA", "UT"])
-def test_undated_custom_permit_search_preserves_empty_result(monkeypatch, state):
-    """The existing custom/sonris branches issue no request and return no records."""
+def test_undated_custom_permit_search_rejects_unsupported_query(monkeypatch, state):
+    """An unimplemented service cannot establish an empty matching record set."""
     provider = StateGISProvider()
     get_json = Mock()
     monkeypatch.setattr(provider, "_get_json", get_json)
 
-    result = provider.search_permits(state)
-
-    assert result.permits == []
-    assert result.total_count == result.returned_count == 0
+    with pytest.raises(ProviderError) as caught:
+        provider.search_permits(state)
+    assert caught.value.error_code == "SEARCH_UNSUPPORTED"
+    assert caught.value.details["state"] == state
     get_json.assert_not_called()

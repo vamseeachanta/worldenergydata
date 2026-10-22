@@ -148,6 +148,7 @@ class TestLandmanRouterFailures:
         error = caught.value
         assert type(error) is LandmanError
         assert error.error_code == "LANDMAN_ROUTER_ERROR"
+        assert error.details == {"module": "landman"}
         assert error.message == "Landman router failed: synthetic failure"
         assert error.cause is cause
         assert error.__cause__ is cause

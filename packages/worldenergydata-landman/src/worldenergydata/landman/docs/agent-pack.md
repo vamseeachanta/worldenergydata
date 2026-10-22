@@ -5,13 +5,21 @@
 | Module | landman |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-landman/src/worldenergydata/landman` |
-| Pack revision | 1, 2026-10-15 |
-| Code revision | `13f3b70aa7a87045631b737406c881e4cb5bcfd0` |
+| Pack revision | 2, 2026-10-22 |
+| Historical code revision | `13f3b70aa7a87045631b737406c881e4cb5bcfd0` |
 | Analysis family | EC; data pipelines, Python calculations gate set |
 | Quality manager role | Calculations quality manager; data-pipeline coverage interim |
 | Status | DRAFT; independent clearance pending |
 
-The header records this pack's scope and review disposition; code citations below resolve at the code revision.
+The header retains the historical code pin for unchanged line citations. The current exception and search contracts below use symbol names and executable test nodes. Live service schemas remain unverified.
+
+## Revision history
+
+| Revision | Date | What changed and why |
+|---|---|---|
+| 0 | 2026-10-15 | Initial package inventory and qualification boundaries |
+| 1 | 2026-10-15 | Recorded exception-constructor and acquisition-error defects |
+| 2 | 2026-10-22 | Refreshed router errors, explicit permit dates and provider filter audits to prevent silent unfiltered answers |
 
 ## 1. Purpose and scope
 
@@ -21,7 +29,7 @@ The automatic route selects `county_records`, then attempts an import of `provid
 
 `CountyReferenceProvider` returns embedded reference information and search instructions; its health check only tests whether the embedded mapping is nonempty. [packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py:L376-L428] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py:L430-L506] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py:L594-L601]
 
-The two federal query branches and three state-GIS query branches suppress transport/parser errors into empty results (5 branches); the custom-GIS stub also returns an empty list. Empty results therefore do not establish absence of records. [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L208-L244] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L370-L406] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L195-L237] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L339-L365] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L478-L510] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L281-L295]
+The federal mining/fluid searches still suppress acquisition failures into empty results. ESRI well, operator and permit searches now propagate transport/parser errors; custom state-GIS searches raise `SEARCH_UNSUPPORTED`. An empty successful ESRI response alone means no matching records. See `tests/unit/landman/providers/test_query_failures.py` and `test_filter_contracts.py`; live completeness remains unqualified.
 
 The manifest advertises `stable`; that is metadata, not a qualification of the provider route. [module-manifest.yaml:L236-L258]
 
@@ -31,7 +39,7 @@ The manifest advertises `stable`; that is metadata, not a qualification of the p
 
 | Input | Unit and range | Default | Source and evidence |
 |---|---|---|---|
-| Router `cfg` | Mapping; nonempty; `data_types` and `provider` checked against constants | Provider `auto`; data types `all`; empty config, unknown data type/provider raise `TypeError`; default `auto` hits D1, caught and wrapped as `TypeError`; these failures do not raise the documented module error type; invalid-state/legal-description factories instead raise `LandmanValidationError` | [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L116-L129] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L152-L211] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L251-L272] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L302-L305] [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L22-L28] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L22-L48] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L207-L223] |
+| Router `cfg` | Nonempty mapping; declared data types and providers validated | Empty config, invalid types/provider/name/county raise `LandmanValidationError`; unexpected router failures raise `LandmanError` with the original cause | `tests/unit/landman/test_landman.py::TestLandmanRouterFailures`; `TestLandmanOwnershipFailures::test_invalid_county`; `LandmanError.__init__` in `exceptions.py` |
 | `state`, `county` | State code text checked against the code mapping; county text 2–100 characters and at least 2 alphabetic characters | Required in ownership search | [packages/worldenergydata-landman/src/worldenergydata/landman/validators.py:L161-L216] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L329-L363] |
 | `legal_description` | Text; 5–1000 characters, then pattern checks; no geometric closure calculation | Optional search filter | [packages/worldenergydata-landman/src/worldenergydata/landman/validators.py:L70-L127] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L365-L388] |
 | `mineral_interest_percent` | Percent; 0–100 inclusive; converted with `float` | Required for the scalar validator, optional in a record | [packages/worldenergydata-landman/src/worldenergydata/landman/validators.py:L218-L255] [packages/worldenergydata-landman/src/worldenergydata/landman/validators.py:L475-L480] |
@@ -41,6 +49,8 @@ The manifest advertises `stable`; that is metadata, not a qualification of the p
 | Date text | Calendar date; five parse formats; year 1800 to current year plus 100 unless overridden | Empty accepted | [packages/worldenergydata-landman/src/worldenergydata/landman/validators.py:L316-L361] |
 | Provider HTTP settings | Timeout 30 s; 3 retries; retry delay 1.0 s; rate delay 0.5 s; cache TTL 3600 s | Constructor defaults; no range enforcement in assignment | [packages/worldenergydata-landman/src/worldenergydata/landman/providers/base.py:L152-L181] |
 | Direct GIS and federal search `limit` | Record count; passed through to request parameters | 100 records | [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L156-L174] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L224-L230] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L134-L160] |
+
+| Permit dates | Inclusive calendar bounds in service time; optional caller-verified `permit_date_fields` mapping | Inverted ranges raise `ValueError`; missing verified field raises `PERMIT_DATE_FILTER_UNSUPPORTED`; custom APIs raise explicitly | `StateGISProvider.search_permits`; `tests/unit/landman/providers/test_state_gis.py` |
 
 ### Outputs
 
@@ -91,6 +101,91 @@ R1 expectation is defined in the two-object fixture, R2 in the three cache looku
 
 Test record: ordinary `uv run python -m pytest tests/unit/landman tests/unit/field_development/test_landman.py -q -rA -p no:cacheprovider --basetemp=<scratch>` with coverage reports directed to scratch; BASE `2a97a58d6e81060ee2f1738150c2b4171f644c41`: 279 run / 279 passed / 0 failed / 0 skipped / 0 NOT_RUN; AFTER 279 run / 279 passed / 0 failed / 0 skipped / 0 NOT_RUN on the uncommitted documentation tree above BASE. Tests use the unchanged module code at the header pin; no addopts override or extra installation. `uv run python -m pytest tests/contracts -q -rA -p no:cacheprovider --basetemp=<scratch>`: BASE 46 run / 46 passed / 0 failed / 0 skipped / 0 NOT_RUN; AFTER 46 run / 46 passed / 0 failed / 0 skipped / 0 NOT_RUN on the same uncommitted tree. The routing registry is absent, so no routing-registry contract test exists. AFTER runs add the documented `--allow-existing-tree-changes` mode, which hashes existing edits and rejects mutations; the first AFTER invocation passed 279 tests but exited 1 because the default tree guard reported the pre-existing pack edit. [tests/conftest.py:L412-L460] [docs/development/index.md:L56-L59]
 
+### Offline permit search and router failure
+
+These executable examples are synthetic regression checks, not live-source
+qualification. Calendar inputs reproduce #1259. The field `ISSUED_AT` is an
+explicit required schema input for the example, not an assertion about a state
+service. The method uses an inclusive start and an exclusive next-day end so
+all timestamps on the last requested day are included. SQL syntax follows
+[Esri, SQL reference, Date-time syntax for geodatabases](https://pro.arcgis.com/en/pro-app/latest/help/mapping/navigation/sql-reference-for-elements-used-in-query-expressions.htm)
+(accessed 2026-10-22); midnight TIMESTAMP literals use ISO calendar dates.
+No engineering coefficients or acceptance tolerances apply.
+
+Permit inputs: state TX, dates 2025-01-01 through 2025-12-31, verified synthetic
+field `ISSUED_AT`, and a stub response containing one permit. Hand calculation:
+the calendar day after 2025-12-31 is 2026-01-01; one supplied record yields one
+returned permit. Before the #1259 fix the date predicates were absent. At the
+implementation base, dated calls explicitly failed. With an explicit field,
+the current answer is the stub permit and the date predicates below. Without a
+verified field the explicit failure remains, avoiding an unfiltered answer.
+
+```python
+from datetime import date
+from unittest.mock import Mock, patch
+from worldenergydata.landman.providers.state_gis import StateGISProvider
+
+# Source of calendar inputs: issue #1259's reproduction (2026).
+service = Mock(return_value={
+    "features": [{"attributes": {"PERMIT_NUMBER": "SYNTHETIC-PERMIT"}}]
+})
+with StateGISProvider(permit_date_fields={"TX": "ISSUED_AT"}) as provider:
+    with patch.object(provider, "_get_json", service):
+        answer = provider.search_permits(
+            "TX", start_date=date.fromisoformat("2025-01-01"),
+            end_date=date.fromisoformat("2025-12-31"),
+        )
+assert service.call_args.kwargs["params"]["where"] == (
+    "1=1 AND ISSUED_AT >= TIMESTAMP '2025-01-01' "
+    "AND ISSUED_AT < TIMESTAMP '2026-01-01'"
+)
+assert [row.permit_number for row in answer.permits] == ["SYNTHETIC-PERMIT"]
+```
+
+Router input: an empty configuration. Method: reject it before acquiring a
+provider. The historical construction below demonstrates the old `TypeError`;
+the corrected router returns the documented validation error, code and module
+context. Expected values come from `Landman._validate_config` and
+`exceptions.LandmanError.__init__`, as specified in #1255.
+
+```python
+from worldenergydata.landman import Landman, LandmanError, LandmanValidationError
+
+try:
+    LandmanError("Configuration cannot be empty", code="LANDMAN_CONFIG_EMPTY")
+except TypeError as before:
+    assert "code" in str(before)
+else:
+    raise AssertionError("Historical incompatible keyword was accepted")
+
+try:
+    Landman().router({})
+except LandmanValidationError as after:
+    assert after.error_code == "LANDMAN_CONFIG_EMPTY"
+    assert after.details == {"module": "landman"}
+else:
+    raise AssertionError("Empty configuration was accepted")
+```
+
+Executable nodes: `tests/unit/landman/test_documented_examples.py::test_documented_example[permit-dates]`
+and `test_documented_example[router-error]`. Additional coverage:
+
+| Contract | Test node |
+|---|---|
+| Closed, open-ended and same-day query intervals | `providers/test_state_gis.py::test_verified_permit_date_field_reaches_query` |
+| Inverted range rejected before requesting data | `providers/test_state_gis.py::test_inverted_permit_dates_fail_before_request` |
+| Missing verified date field rejected | `providers/test_state_gis.py::test_dated_permit_search_fails_before_request` |
+| Service rejection cannot become an empty success | `providers/test_state_gis.py::test_rejected_date_query_is_not_an_empty_success` |
+| Unfiltered county/operator query preserved | `providers/test_state_gis.py::test_undated_esri_permit_search_preserves_query` |
+| Every public search signature parameter | `providers/test_filter_contracts.py::test_each_declared_filter_is_applied_or_rejected` |
+| Every configured state service | `providers/test_filter_contracts.py::test_every_state_service_applies_filters_or_raises` |
+| Constructor keyword compatibility | `test_exception_constructors.py::test_all_landman_error_constructions_accept_their_keywords` |
+
+The table's node paths are relative to `tests/unit/landman/`. Schema checks,
+time-zone interpretation and live API completeness remain NOT_EVALUATED.
+The historical test record above is retained as prior evidence; current
+validation is recorded with this revision's change description.
+
 ## 5. QA gates
 
 Gate selection: AQG r0, section 10, Python calculations row; G5 applies to all families. The following criteria are pack-specific checks, not claims of independent clearance.
@@ -112,19 +207,19 @@ Before any data consumer relies on acquisition, the following detection checks s
 |---|---|---|---|
 | D1 | Inspect `Landman._get_provider` and enumerate provider files at the pin | 1 missing `county_records.py`; `ProviderError` has 0 `unavailable` factory definitions in its hierarchy | Existing routing defect; [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L251-L272] [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L16-L46] |
 | D2 | Inspect `_collect_data` exception branch and router status/count assignment | 1 error string can count as 1 record while status is completed | Existing routing defect; [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L136-L143] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L323-L327] |
-| D3 | Inspect federal query exception branches, `_search_esri_wells`, `search_by_operator`, `search_permits` and custom-GIS implementation | 5 query branches suppress errors into empty results (2 federal, 3 state-GIS); 1 custom-GIS stub always returns an empty list | No live-completeness inference; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L208-L244] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L370-L406] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L195-L237] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L339-L365] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L478-L510] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L281-L295] |
+| D3 | Run `tests/unit/landman/providers/test_query_failures.py` and `test_filter_contracts.py` | Every supplied filter reaches a service request, local selection or explicit error; custom searches cannot return fabricated empty success | ESRI error propagation and unsupported custom searches covered; federal acquisition remains incomplete |
 | D4 | Inspect the well-location, operator, well-detail and permit geometry requests and both parsers | 0 `outSR` declarations across 4 geometry requests; 4 coordinate assignments (y/x in 2 parsers) copied without transformation | Unit/CRS qualification gap; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L224-L230] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L346-L352] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L398-L403] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L491-L497] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L264-L265] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L539-L540] |
 | D5 | Compare record-validation branches with the empty-record tests | 2 empty mappings accepted, 0 mandatory populated-field checks | Callers require a schema/completeness check; [tests/unit/landman/test_validators.py:L449-L451] [tests/unit/landman/test_validators.py:L491-L493] |
-| D6 | Parse the pinned `LandmanError.__init__` parameter names with Python `ast`; count `LandmanError`/`LandmanValidationError` calls in `landman.py` having keywords outside that set | 6 incompatible call sites (count), at lines 159, 176, 193, 201, 230 and 360; readiness requires 0 | Exception-constructor defect; [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L22-L28] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L159-L179] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L193-L205] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L230-L233] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L360-L363] |
+| D6 | Run `tests/unit/landman/test_exception_constructors.py::test_all_landman_error_constructions_accept_their_keywords` | No incompatible constructor keywords in either error hierarchy; inherited, aliased, qualified and class-factory calls included | Regression tests also reject historical `code`/`context` calls against `exceptions.LandmanError` |
 
 ## 6. Known failure modes and pitfalls
 sweep: not run (legacy pack)
 
 | Symptom, cause and limit | Detection | Tracking and observation date |
 |---|---|---|
-| Five query branches (2 federal, 3 state-GIS) suppress transport/parser errors into empty results; custom GIS adds 1 stub returning no records without a query | D3; no existing end-to-end detection test is established | #913, #1256, 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L208-L244] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L370-L406] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L195-L237] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L339-L365] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L478-L510] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L281-L295] |
-| `_search_esri_wells`, `search_by_operator` and `search_permits` catch exceptions, log warnings and expose empty results with counts of 0; `get_well_detail` and `BLMProvider.get_case_detail` instead mask transport errors as `RecordNotFoundError` | D3 detects the 3 suppressed queries; no detection check exists for detail-error masking | #1256, 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L195-L237] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L339-L365] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L478-L510] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L405-L416] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L480-L490] |
-| Six exception calls pass `code=` or `context=` although `LandmanError.__init__` accepts `message, error_code, details, cause`; these calls raise `TypeError`, including the router catch-all wrapper reached by default `auto` after D1 | D6; no executable regression test exists in the focused suite | #1255, 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L22-L28] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L152-L179] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L193-L205] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L230-L233] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L360-L363] |
+| Federal mining/fluid query errors can still become empty results | Inspect federal exception branches; ESRI and custom paths are covered by `test_query_failures.py` and `test_filter_contracts.py` | #913, #1256; federal acquisition remains incomplete |
+| ESRI acquisition errors must propagate; successful empty detail lookup alone means a missing record | `tests/unit/landman/providers/test_query_failures.py::test_transport_failure_is_visible`; `test_successful_empty_response` | #1256; current offline regressions pass |
+| Historical router keywords `code`/`context` caused `TypeError`; corrected calls use `error_code`/`details` | D6 and all six failure paths in `TestLandmanRouterFailures` and `TestLandmanOwnershipFailures` | #1255; correction already present at the implementation base, wrapper details now asserted |
 | A caught collection error is stored as text, status is completed and the nonlist contributes 1 to record count | D2; no existing detection test in the focused suite | #924, 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L136-L143] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L323-L327] |
 | Automatic routing selects an absent provider import; failure handling calls an unavailable factory absent from the imported exception class | D1; constants/init tests do not exercise provider acquisition | #924, 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L251-L288] [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L16-L46] [tests/unit/landman/test_landman.py:L36-L74] |
 | Coordinate labels are assigned from geometry without CRS negotiation; dimensional interpretation is not established | D4; no detection test exists | issue pending (1), 2026-10-15; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L224-L276] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L491-L550] |
@@ -193,6 +288,8 @@ All 11 Python source files in the package were read: `__init__.py`, `errors.py`,
 
 The configuration `config/landman.yml` was also read. [config/landman.yml:L1-L7]
 
+The current focused inventory additionally includes `providers/test_state_gis.py`, `providers/test_query_failures.py`, `providers/test_filter_contracts.py`, `test_exception_constructors.py` and `test_documented_examples.py`. The following inventory and counts describe the historical reading record.
+
 The package README and packaging metadata were read; no package-local tests folder was found. The focused test inventory comprises eight nonempty files: `tests/unit/landman/test_errors.py`, `test_exceptions.py`, `test_landman.py`, `test_models.py`, `test_providers_base.py`, `test_validators.py`, `providers/test_base.py` and `providers/test_county_reference.py`; the two empty test initializers were also read. The separate `tests/unit/field_development/test_landman.py` was read and run without copying identifying fixture values.
 
 Documentation discovery under `docs/` found and inspected Landman passages in the following files; historical status/count claims are not promoted to current qualification:
@@ -225,8 +322,8 @@ Each row assigns follow-up to the maintainers; draft numbers identify unpublishe
 | O1 | UNVERIFIED claim from section 2: CRS, coordinate/depth units and currency basis; engineering interpretation requires source-specific metadata and parser tests | issue pending (1) |
 | O2 | Independent benchmark examples, map family registration, deputy appointment and shared-log/index registration remain open; no independent clearance is asserted | issue pending (2) |
 | O3 | Existing package-data `**/*.md` glob includes nested Markdown; exclusion of this pack from a wheel is not established and requires a packaging change outside the documentation scope | issue pending (3); [packages/worldenergydata-landman/pyproject.toml:L50-L56] |
-| O4 | Default-provider routing, truthful partial-failure status, exception-constructor keywords and complete/finite validation need executable regression coverage | #924, #1255; [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L251-L288] [packages/worldenergydata-landman/src/worldenergydata/landman/exceptions.py:L22-L28] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L159-L179] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L193-L205] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L230-L233] [packages/worldenergydata-landman/src/worldenergydata/landman/landman.py:L360-L363] |
-| O5 | Federal acquisition, source qualification and the federal/state-GIS error/empty distinction remain incomplete; detail lookups mask transport errors as missing records | #913, #1256; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L235-L244] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L232-L237] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L354-L365] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L499-L510] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/state_gis.py:L405-L416] [packages/worldenergydata-landman/src/worldenergydata/landman/providers/blm.py:L480-L490] |
+| O4 | Default-provider routing, truthful partial-failure status and complete/finite validation remain open; exception-constructor regressions are covered by D6 and router tests | #924, #1255; `Landman._get_provider`, `Landman._collect_data`, `tests/unit/landman/test_exception_constructors.py` |
+| O5 | Federal acquisition and live source qualification remain incomplete; ESRI transport/detail errors propagate and custom searches explicitly reject unsupported filters | #913, #1256; `test_query_failures.py`, `test_filter_contracts.py` |
 | O6 | County coverage and current portal access remain reference claims requiring source confirmation | #914; [packages/worldenergydata-landman/src/worldenergydata/landman/providers/county_reference.py:L361-L374] |
 | O7 | Fixture/freshness metadata and older documentation claims require reconciliation against their actual code revision, not issue-update assertions | #928; [module-manifest.yaml:L236-L258] |
 
