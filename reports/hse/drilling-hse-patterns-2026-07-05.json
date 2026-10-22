@@ -1,29 +1,56 @@
 {
-  "generated_at": "2026-07-06T02:39:24.138518Z",
-  "issue": "https://github.com/vamseeachanta/worldenergydata/issues/426",
-  "methodology": "Re-application of #416 Phase 1A: shared IncidentClassifier over BSEE INCINV records, cut to activity==DRILL.",
-  "source_file": "/mnt/ace/worldenergydata/data/modules/hse/raw/bsee/IncInvRawData/mv_acc_investigations.txt",
-  "incinv_total_records": 1987,
-  "drill_filter": "IncidentClassifier(source='bsee').activity == 'DRILL' (Blowout direct-map + drilling-keyword match on ACCIDENT_TYPE)",
+  "status": "evaluated",
+  "generated_at": "2026-10-22T10:49:56.865156Z",
+  "source": {
+    "source_kind": "public",
+    "files": [
+      {
+        "file": "IncInvRawData.zip",
+        "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "http_status": 200,
+        "size_bytes": 35938,
+        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
+      },
+      {
+        "file": "mv_acc_investigations.txt",
+        "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "http_status": 200,
+        "size_bytes": 175510,
+        "sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016",
+        "archive_member": "IncInvRawData/mv_acc_investigations.txt"
+      }
+    ]
+  },
+  "source_file": "mv_acc_investigations.txt",
+  "quantity": "investigation records",
+  "unit": "count",
+  "methodology": "Canonical IncidentClassifier(source='bsee'), activity == DRILL; severity is an accident-type proxy, not injury or fatality counts.",
+  "incinv_total_records": 2027,
+  "drill_total": 85,
+  "incinv_date_range": [
+    "1995-01-04",
+    "2026-09-28"
+  ],
+  "drill_pct_of_incinv": 4.2,
   "activity_distribution_all_incinv": {
-    "PERS": 616,
-    "PSAFE": 529,
-    "ENV": 379,
-    "CRANE": 191,
-    "OTHER": 85,
+    "PERS": 634,
+    "PSAFE": 533,
+    "ENV": 381,
+    "CRANE": 198,
+    "OTHER": 90,
     "DRILL": 85,
-    "MARINE": 70,
-    "CONST": 21,
+    "MARINE": 73,
+    "CONST": 22,
     "ELEC": 4,
     "PROD": 4,
     "PIPE": 3
   },
-  "drill_total": 85,
-  "drill_pct_of_incinv": 4.28,
   "drill_subactivity_distribution": {
     "well_control": 68,
-    "drilling_operations": 6,
     "unknown": 6,
+    "drilling_operations": 6,
     "casing_cementing": 4,
     "logging": 1
   },
@@ -31,35 +58,6 @@
     "bsee_accident_type": 58,
     "keyword_match": 27
   },
-  "drill_confidence_buckets": {
-    "direct_code(>=0.90)": 58,
-    "keyword_low(<0.50)": 14,
-    "keyword_medium(0.50-0.69)": 12,
-    "keyword_high(0.70-0.89)": 1
-  },
-  "drill_accident_type_top": {
-    "- Blowout": 25,
-    "- Blowout - Pollution": 6,
-    "- Blowout - Fire": 5,
-    "- Top Drive Unplanned Descent": 2,
-    "- Well Control Event, shut-in": 1,
-    "- Blowout - Well Control on Prince TLP": 1,
-    "- Loss well control/H2S release": 1,
-    "- Blowout - Fire - KICK WITH GAS": 1,
-    "- Wireline Tool Overboard": 1,
-    "- drill line unspooled": 1,
-    "- Required Muster - Rig listed": 1,
-    "- Blowout - Injury - Fatality": 1,
-    "- Blowout - Required Evacuation - Pollution - Loss of Well Control": 1,
-    "- Blowout - Fatality - Pollution": 1,
-    "- Blowout - Pollution -   (WELL B-7)": 1,
-    "- Blowout - Injury": 1,
-    "- Well control": 1,
-    "- Extended Kick Control": 1,
-    "- Well Collapse": 1,
-    "- Blowout - Diverter on 26-inch hole": 1
-  },
-  "drill_accident_type_distinct": 51,
   "drill_severity_proxy": {
     "major": 56,
     "other": 25,
@@ -98,12 +96,29 @@
     "EI": 12,
     "MC": 8,
     "SS": 8,
-    "MP": 6,
     "GC": 6,
+    "MP": 6,
     "SM": 5,
     "HI": 4,
     "EC": 4,
-    "WC": 3
+    "WC": 3,
+    "EW": 2,
+    "VR": 2,
+    "WD": 2,
+    "MU": 2,
+    "GI": 2,
+    "BA": 1,
+    "WR": 1,
+    "MO": 1,
+    "VK": 1,
+    "CA": 1,
+    "EB": 1
   },
-  "drill_distinct_leases": 80
+  "drill_distinct_leases": 80,
+  "limitations": [
+    "Investigation records are not a complete incident census or a risk rate.",
+    "Operational phases are derived from accident-type text, not reported service types.",
+    "Composite keys detect exact event signatures; no public unique incident ID is supplied.",
+    "Lease is optional; no operator identity, narrative or asset name is exported."
+  ]
 }

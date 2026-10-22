@@ -312,6 +312,12 @@ temporary_exceptions:
       - reports/gtm/seasonal_intervention_risk_windows.py
       - reports/hse/drilling-hse-patterns-2026-07-05.html
       - reports/hse/drilling-hse-patterns-2026-07-05.json
+      - reports/hse/drilling-area-values.csv
+      - reports/hse/drilling-phase-values.csv
+      - reports/hse/drilling-severity-values.csv
+      - reports/hse/drilling-year-values.csv
+      - reports/hse/incinv-manifest.json
+      - reports/hse/incinv-qa.json
       - reports/hse/intervention-hse-patterns-2026-05-18-explore.json
       - reports/hse/intervention-hse-patterns-2026-05-18.md
       - reports/hse/mooring-fatigue-grounded-card.html

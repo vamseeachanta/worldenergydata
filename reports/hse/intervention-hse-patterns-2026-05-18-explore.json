@@ -1,193 +1,64 @@
 {
-  "generated_at": "2026-05-18T21:28:35.901813Z",
-  "issue": "https://github.com/vamseeachanta/worldenergydata/issues/416",
-  "branch": "feat/issue-416-phase1a-intervention-hse-service-type",
-  "hse_db_inventory": {
-    "path": "data/modules/hse/hse_incidents.db",
-    "size_bytes": 59928576,
-    "tables": {
-      "equipment_failures": {
-        "row_count": 0,
-        "columns": [
-          "id",
-          "hse_incident_id",
-          "equipment_type",
-          "equipment_description",
-          "failure_mode",
-          "failure_cause",
-          "downtime_hours",
-          "repair_cost",
-          "preventive_actions"
-        ]
-      }
-    }
-  },
-  "hse_incidents_profile": {
-    "total_rows": 97993,
-    "date_range": {
-      "min": "1948-01-03 00:00:00.000000",
-      "max": "2026-01-29 00:00:00.000000"
-    },
-    "rows_per_year": {
-      "1948": 1,
-      "1972": 27,
-      "1973": 157,
-      "1974": 262,
-      "1975": 624,
-      "1976": 685,
-      "1977": 418,
-      "1978": 415,
-      "1979": 587,
-      "1980": 728,
-      "1981": 736,
-      "1982": 609,
-      "1983": 612,
-      "1984": 949,
-      "1985": 1192,
-      "1986": 1986,
-      "1987": 2060,
-      "1988": 2231,
-      "1989": 2485,
-      "1990": 2536,
-      "1991": 2700,
-      "1992": 2359,
-      "1993": 2493,
-      "1994": 2417,
-      "1995": 2284,
-      "1996": 2583,
-      "1997": 2661,
-      "1998": 2363,
-      "1999": 2325,
-      "2000": 2579,
-      "2001": 2647,
-      "2002": 2314,
-      "2003": 2308,
-      "2004": 2258,
-      "2005": 2150,
-      "2006": 2531,
-      "2007": 2429,
-      "2008": 2263,
-      "2009": 1980,
-      "2010": 2549,
-      "2011": 2592,
-      "2012": 2541,
-      "2013": 2712,
-      "2014": 2679,
-      "2015": 2667,
-      "2016": 2208,
-      "2017": 1973,
-      "2018": 1765,
-      "2019": 1908,
-      "2020": 949,
-      "2021": 1739,
-      "2022": 1802,
-      "2023": 1892,
-      "2024": 1728,
-      "2025": 1265,
-      "2026": 80
-    },
-    "distinct_operators": 16200,
-    "distinct_fields": 0,
-    "distinct_leases": 946,
-    "top_30_incident_types": [
-      {
-        "type": "violation",
-        "count": 91527
-      },
-      {
-        "type": "injury",
-        "count": 4709
-      },
-      {
-        "type": "equipment_failure",
-        "count": 1293
-      },
-      {
-        "type": "spill",
-        "count": 464
-      }
-    ],
-    "severity_distribution": [
-      {
-        "severity": "minor",
-        "count": 85235
-      },
-      {
-        "severity": "recordable",
-        "count": 8130
-      },
-      {
-        "severity": "fatality",
-        "count": 3765
-      },
-      {
-        "severity": "near_miss",
-        "count": 829
-      },
-      {
-        "severity": "lost_time",
-        "count": 34
-      }
-    ],
-    "rows_with_full_join_keys": 1932,
-    "rows_with_lat_lon": 0,
-    "intervention_keyword_hits": {
-      "workover": 9,
-      "intervention": 0,
-      "wireline": 4,
-      "coil tubing": 0,
-      "snubbing": 1,
-      "well control": 11,
-      "well work": 6,
-      "P&A": 3,
-      "plug and abandon": 0
-    }
-  },
-  "war_data": {
-    "path": "data/modules/bsee/.local/war",
-    "exists": true,
+  "status": "evaluated",
+  "source": {
+    "source_kind": "public",
     "files": [
       {
-        "name": "download_metadata.json",
-        "size_bytes": 249,
-        "is_file": true,
-        "is_dir": false
+        "file": "IncInvRawData.zip",
+        "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "http_status": 200,
+        "size_bytes": 35938,
+        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
       },
       {
-        "name": "eWellWARRawData.zip",
-        "size_bytes": 127933804,
-        "is_file": true,
-        "is_dir": false
-      },
-      {
-        "name": "war_borehole_view.pkl",
-        "size_bytes": 6020228,
-        "is_file": true,
-        "is_dir": false
+        "file": "mv_acc_investigations.txt",
+        "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "http_status": 200,
+        "size_bytes": 175510,
+        "sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016",
+        "archive_member": "IncInvRawData/mv_acc_investigations.txt"
       }
     ]
   },
-  "rig_fleet_data": {
-    "path": "data/modules/bsee/.local/rig_fleet",
-    "exists": true,
-    "file_count": 4,
-    "files_sample": [
-      {
-        "name": "rig_fleet_full.bin",
-        "size_bytes": 422385
-      },
-      {
-        "name": "rig_fleet_metadata.json",
-        "size_bytes": 584
-      },
-      {
-        "name": "subsets",
-        "size_bytes": 0
-      },
-      {
-        "name": "subsets/rig_fleet.bin",
-        "size_bytes": 5149
-      }
-    ]
+  "source_file": "mv_acc_investigations.txt",
+  "quantity": "investigation records",
+  "unit": "count",
+  "total_rows": 2027,
+  "date_range": [
+    "1995-01-04",
+    "2026-09-28"
+  ],
+  "missing_optional_leases": 52,
+  "activity_distribution": {
+    "PERS": 634,
+    "PSAFE": 533,
+    "ENV": 381,
+    "CRANE": 198,
+    "OTHER": 90,
+    "DRILL": 85,
+    "MARINE": 73,
+    "CONST": 22,
+    "ELEC": 4,
+    "PROD": 4,
+    "PIPE": 3
+  },
+  "intervention_keyword_hits": {
+    "workover": 0,
+    "intervention": 0,
+    "wireline": 4,
+    "coil tubing": 0,
+    "coiled tubing": 0,
+    "snubbing": 0,
+    "well control": 11,
+    "well work": 0,
+    "p&a": 3,
+    "plug and abandon": 0
+  },
+  "keyword_basis": "Literal case-insensitive ACCIDENT_TYPE matches; categories overlap; these are inventory signals, not confirmed interventions.",
+  "war_join": {
+    "status": "not_evaluated",
+    "reason": "Public INCINV has no API well key; local databases and well activity reports are outside this refresh."
   }
 }

@@ -8,6 +8,8 @@ Issue: https://github.com/vamseeachanta/worldenergydata/issues/426
 
 from __future__ import annotations
 
+import argparse
+import html as html_tools
 import json
 from pathlib import Path
 
@@ -17,8 +19,24 @@ JSON_PATH = REPO / "reports" / "hse" / f"drilling-hse-patterns-{DATE_TAG}.json"
 HTML_PATH = REPO / "reports" / "hse" / f"drilling-hse-patterns-{DATE_TAG}.html"
 
 
-def main() -> None:
-    d = json.loads(JSON_PATH.read_text())
+def render(json_path: Path, html_path: Path) -> None:
+    d = json.loads(json_path.read_text(encoding="utf-8"))
+    if d.get("status") != "evaluated":
+        reason = html_tools.escape(d.get("reason", "QA did not pass"))
+        html_path.write_text(
+            '<!DOCTYPE html><html lang="en"><meta charset="utf-8">'
+            "<title>HSE analysis not evaluated</title><h1>Not evaluated</h1>"
+            f"<p>{reason}</p></html>\n",
+            encoding="utf-8",
+            newline="\n",
+        )
+        return
+    source = next(e for e in d["source"]["files"] if e["file"] == d["source_file"])
+    source_kind = html_tools.escape(d["source"]["source_kind"])
+    download_date = html_tools.escape(source["downloaded_at"])
+    source_url = html_tools.escape(source["url"], quote=True)
+    date_range = " to ".join(d["incinv_date_range"])
+    revision_date = d["generated_at"][:10]
 
     sub = d["drill_subactivity_distribution"]
     sev = d["drill_severity_proxy"]
@@ -38,7 +56,7 @@ def main() -> None:
     html = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Drilling-HSE Patterns — BSEE INCINV (DRILL.*) — {DATE_TAG}</title>
+<title>Drilling-HSE Patterns — BSEE INCINV (DRILL.*) — {revision_date}</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
  body{{font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
@@ -55,20 +73,31 @@ def main() -> None:
  footer{{margin-top:30px;color:#888;font-size:.8rem;}}
 </style></head><body>
 <h1>Drilling-HSE Patterns &mdash; BSEE INCINV (DRILL.*)</h1>
-<div class="sub">Issue #426 (child of #423, sibling of #416) &middot; Data as of {DATE_TAG}
- &middot; Source: BSEE INCINV accident investigations (1996&ndash;2021)</div>
+<div class="sub">Dataset: {source_kind} &middot;
+ Source: <a href="{source_url}">BSEE INCINV accident investigations</a>
+ &middot; Downloaded {download_date} &middot; Occurrence dates {date_range}</div>
 
 <div class="note">Drilling-phase incidents are derived by the repo-canonical
  <code>IncidentClassifier</code> cut to <code>activity == "DRILL"</code> over the BSEE
- INCINV records. The assembled <code>hse_incidents.db</code> is not materialized in
- this environment, so this report uses the authoritative raw INCINV source directly.
- Aggregate-only; no operators named. Engineering interpretation, not a regulatory finding.</div>
+ INCINV records. Counts describe investigation records, not a complete incident census
+ or exposure-normalized risk rates. Severity is a text-derived proxy, not a count of
+ fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.</div>
+
+<h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>1</td><td>2026-07-05</td><td>Initial drilling investigation analysis.</td></tr>
+<tr><td>2</td><td>{revision_date}</td><td>Refresh from the public source with a sealed manifest,
+ input QA and downloadable chart values so the figures can be reproduced.</td></tr></tbody></table>
 
 <div class="kpis">
- <div class="kpi"><div class="v">{payload['drill_total']}</div><div class="l">DRILL.* incidents</div></div>
- <div class="kpi"><div class="v">{payload['incinv_total']}</div><div class="l">INCINV records screened</div></div>
- <div class="kpi"><div class="v">{payload['drill_pct']}%</div><div class="l">of investigated incidents</div></div>
- <div class="kpi"><div class="v">{sub.get('well_control',0)}</div><div class="l">well-control events</div></div>
+ <div class="kpi"><div class="v">{payload['drill_total']}</div>
+  <div class="l">DRILL.* investigation records</div></div>
+ <div class="kpi"><div class="v">{payload['incinv_total']}</div>
+  <div class="l">INCINV records screened</div></div>
+ <div class="kpi"><div class="v">{payload['drill_pct']}%</div>
+  <div class="l">of investigation records</div></div>
+ <div class="kpi"><div class="v">{sub.get('well_control',0)}</div>
+  <div class="l">well-control investigation records</div></div>
 </div>
 
 <div class="chart" id="c_sub"></div>
@@ -77,7 +106,15 @@ def main() -> None:
 <div class="chart" id="c_area"></div>
 
 <footer>Generated from <code>reports/hse/drilling-hse-patterns-{DATE_TAG}.json</code>.
- See <code>drilling-hse-patterns-{DATE_TAG}.md</code> for full findings and limitations.</footer>
+ <a href="incinv-manifest.json">Source manifest</a> &middot;
+ <a href="incinv-qa.json">Input QA</a> &middot;
+ Chart values (investigation records [count]):
+ <a href="drilling-phase-values.csv">phase</a>,
+ <a href="drilling-severity-values.csv">severity proxy</a>,
+ <a href="drilling-year-values.csv">year</a>,
+ <a href="drilling-area-values.csv">area</a>.
+ The historical filename is retained; the source download date above identifies this refresh.
+ The area chart includes all source area codes.</footer>
 
 <script>
 const D = {json.dumps(payload)};
@@ -96,23 +133,30 @@ function bar(div,obj,title,xtitle,color,horizontal){{
       margin:{{l:horizontal?130:50,t:50,r:20,b:60}}}},cfg);
 }}
 
-bar('c_sub',D.sub,'DRILL.* by drilling phase (subactivity)','incidents','#2c7fb8',true);
-bar('c_sev',D.sev,'DRILL.* by severity proxy','incidents','#c0392b',true);
+bar('c_sub',D.sub,'DRILL.* by drilling phase (subactivity)','investigation records','#2c7fb8',true);
+bar('c_sev',D.sev,'DRILL.* by severity proxy','investigation records','#c0392b',true);
 
 // temporal line
 const yk=Object.keys(D.years), yv=yk.map(k=>D.years[k]);
 Plotly.newPlot('c_year',
   [{{type:'scatter',mode:'lines+markers',x:yk,y:yv,line:{{color:'#16a085'}},
-     hovertemplate:'%{{x}}: %{{y}} incidents<extra></extra>'}}],
+     hovertemplate:'%{{x}}: %{{y}} investigation records<extra></extra>'}}],
   {{title:'DRILL.* incidents by year of occurrence',
-    xaxis:{{title:'year'}},yaxis:{{title:'incidents'}},margin:{{t:50}}}},cfg);
+    xaxis:{{title:'year'}},yaxis:{{title:'investigation records'}},margin:{{t:50}}}},cfg);
 
-bar('c_area',D.areas,'DRILL.* top BSEE areas','incidents','#8e44ad',true);
+bar('c_area',D.areas,'DRILL.* by BSEE area','investigation records','#8e44ad',true);
 </script>
 </body></html>
 """
-    HTML_PATH.write_text(html)
-    print(f"Wrote {HTML_PATH.relative_to(REPO)} ({len(html)} bytes)")
+    html_path.write_text(html, encoding="utf-8", newline="\n")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--input", type=Path, default=JSON_PATH)
+    parser.add_argument("--output", type=Path, default=HTML_PATH)
+    args = parser.parse_args()
+    render(args.input, args.output)
 
 
 if __name__ == "__main__":

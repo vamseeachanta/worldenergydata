@@ -1,0 +1,22 @@
+{
+  "source_kind": "public",
+  "files": [
+    {
+      "file": "IncInvRawData.zip",
+      "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+      "downloaded_at": "2026-10-22T10:44:30.516928Z",
+      "http_status": 200,
+      "size_bytes": 35938,
+      "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
+    },
+    {
+      "file": "mv_acc_investigations.txt",
+      "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+      "downloaded_at": "2026-10-22T10:44:30.516928Z",
+      "http_status": 200,
+      "size_bytes": 175510,
+      "sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016",
+      "archive_member": "IncInvRawData/mv_acc_investigations.txt"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+  "data_dir": "data/modules/hse/raw/bsee/public-refresh",
+  "output_dir": "reports/hse",
+  "source_file": "mv_acc_investigations.txt",
+  "source_kind": "public",
+  "encoding": "latin-1",
+  "quantity": "investigation records",
+  "unit": "count",
+  "earliest_date": "1900-01-01",
+  "taxonomy_dir": "packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/taxonomy",
+  "base_dir": "../.."
+}
