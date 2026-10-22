@@ -5,6 +5,7 @@ import pytest
 from worldenergydata.brazil_anp.analysis.field_economics import (
     ConcessionRegime,
     FiscalResult,
+    ParticipationSchedule,
     PSARegime,
     calculate_psa_government_take,
     calculate_royalties_concession,
@@ -42,22 +43,29 @@ class TestConcessionRoyalties:
 
 
 class TestSpecialParticipation:
-    def test_zero_for_small_fields(self):
-        result = calculate_special_participation(net_revenue=100_000.0)
-        assert result == 0.0
+    """Synthetic marginal bands; no statutory thresholds are assumed.
 
-    def test_positive_for_large_fields(self):
-        result = calculate_special_participation(net_revenue=500_000_000.0)
-        assert result > 0.0
+    Hand calculation: the first 100 units are untaxed, the remainder is
+    multiplied by the supplied fraction 0.2. Thus 150 gives 10, 200 gives 20,
+    and a nonpositive revenue gives zero. Inputs use the same quarterly basis.
+    """
 
-    def test_progressive(self):
-        low = calculate_special_participation(net_revenue=100_000_000.0)
-        high = calculate_special_participation(net_revenue=1_000_000_000.0)
-        assert high > low
-
-    def test_max_rate_40_percent(self):
-        result = calculate_special_participation(net_revenue=10_000_000_000.0)
-        assert result <= 10_000_000_000.0 * 0.40
+    @pytest.mark.parametrize(
+        "revenue, expected", [(0, 0), (100, 0), (150, 10), (200, 20)]
+    )
+    def test_explicit_marginal_bands(self, revenue, expected):
+        schedule = ParticipationSchedule(
+            currency="TEST",
+            period="quarter",
+            bands=((100, 0), (float("inf"), 0.2)),
+            source="Synthetic hand calculation in TestSpecialParticipation",
+        )
+        assert (
+            calculate_special_participation(
+                revenue, schedule=schedule, currency="TEST", period="quarter"
+            )
+            == expected
+        )
 
 
 class TestConcessionRegime:
@@ -65,8 +73,23 @@ class TestConcessionRegime:
     def regime(self):
         return ConcessionRegime()
 
-    def test_calculate_returns_fiscal_result(self, regime):
+    @pytest.fixture
+    def basis(self):
+        # Synthetic no-participation case: every revenue unit times zero.
+        return {
+            "currency": "TEST",
+            "period": "quarter",
+            "participation_schedule": ParticipationSchedule(
+                currency="TEST",
+                period="quarter",
+                bands=((float("inf"), 0),),
+                source="Synthetic zero-participation arithmetic fixture",
+            ),
+        }
+
+    def test_calculate_returns_fiscal_result(self, regime, basis):
         result = regime.calculate(
+            **basis,
             gross_revenue=100_000_000.0,
             opex=30_000_000.0,
             capex=20_000_000.0,
@@ -74,8 +97,9 @@ class TestConcessionRegime:
         )
         assert isinstance(result, FiscalResult)
 
-    def test_royalties_present(self, regime):
+    def test_royalties_present(self, regime, basis):
         result = regime.calculate(
+            **basis,
             gross_revenue=100_000_000.0,
             opex=30_000_000.0,
             capex=20_000_000.0,
@@ -83,8 +107,9 @@ class TestConcessionRegime:
         )
         assert result.royalties > 0.0
 
-    def test_corporate_tax_34_percent(self, regime):
+    def test_corporate_tax_34_percent(self, regime, basis):
         result = regime.calculate(
+            **basis,
             gross_revenue=100_000_000.0,
             opex=30_000_000.0,
             capex=20_000_000.0,
@@ -92,8 +117,9 @@ class TestConcessionRegime:
         )
         assert result.corporate_tax_rate == pytest.approx(0.34, abs=0.01)
 
-    def test_net_income_positive_for_profitable_field(self, regime):
+    def test_net_income_positive_for_profitable_field(self, regime, basis):
         result = regime.calculate(
+            **basis,
             gross_revenue=100_000_000.0,
             opex=20_000_000.0,
             capex=10_000_000.0,
@@ -101,8 +127,9 @@ class TestConcessionRegime:
         )
         assert result.net_income > 0.0
 
-    def test_government_take_reasonable(self, regime):
+    def test_government_take_reasonable(self, regime, basis):
         result = regime.calculate(
+            **basis,
             gross_revenue=100_000_000.0,
             opex=20_000_000.0,
             capex=10_000_000.0,
