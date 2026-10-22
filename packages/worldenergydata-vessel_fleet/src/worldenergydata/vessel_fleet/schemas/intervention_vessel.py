@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from math import isfinite
 
 from pydantic import field_validator
 
+from worldenergydata.vessel_fleet.constants import InterventionClass
 from worldenergydata.vessel_fleet.schemas.base import BaseVesselSchema
 
 
@@ -18,16 +19,16 @@ class InterventionVesselSchema(BaseVesselSchema):
     """
 
     # Riser / intervention capability
-    RISER_CAPABLE: Optional[bool] = None
-    INTERVENTION_CLASS: Optional[str] = None  # "light" / "heavy"
-    SUBSEA_LUBRICATOR: Optional[bool] = None
-    IRS_SYSTEM: Optional[str] = None
-    WELL_CONTROL_PACKAGE: Optional[str] = None
-    CT_CAPABLE: Optional[bool] = None
-    GOM_RESIDENT: Optional[bool] = None
+    RISER_CAPABLE: bool | None = None
+    INTERVENTION_CLASS: InterventionClass | None = None
+    SUBSEA_LUBRICATOR: bool | None = None
+    IRS_SYSTEM: str | None = None
+    WELL_CONTROL_PACKAGE: str | None = None
+    CT_CAPABLE: bool | None = None
+    GOM_RESIDENT: bool | None = None
 
     # Operational
-    WATER_DEPTH_RATING_M: Optional[float] = None
+    WATER_DEPTH_RATING_M: float | None = None
 
     # --- Validators ---
 
@@ -43,11 +44,11 @@ class InterventionVesselSchema(BaseVesselSchema):
             return None
         return v
 
-    @field_validator("INTERVENTION_CLASS")
+    @field_validator("INTERVENTION_CLASS", mode="before")
     @classmethod
-    def _validate_intervention_class(cls, v: Optional[str]) -> Optional[str]:
-        if v is not None and v.lower() not in {"light", "heavy"}:
-            raise ValueError("INTERVENTION_CLASS must be 'light' or 'heavy'")
+    def _validate_intervention_class(cls, v: object) -> object:
+        if isinstance(v, str):
+            return v.strip().lower() or None
         return v
 
     @field_validator("WATER_DEPTH_RATING_M", mode="before")
@@ -66,8 +67,9 @@ class InterventionVesselSchema(BaseVesselSchema):
     @classmethod
     def _validate_non_negative_iv_floats(
         cls,
-        v: Optional[float],
-    ) -> Optional[float]:
-        if v is not None and v < 0:
-            raise ValueError("Value must be >= 0")
+        v: float | None,
+    ) -> float | None:
+        # A depth is finite and nonnegative by definition, not a design limit.
+        if v is not None and (not isfinite(v) or v < 0):
+            raise ValueError("Water depth must be finite and >= 0")
         return v
