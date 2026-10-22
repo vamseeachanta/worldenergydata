@@ -181,14 +181,6 @@
         }
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G16942",
-            "lease_name": "Big Foot",
-            "water_depth_ft": 5190,
-            "dev_system": "dry"
-          }
-        ],
         "n_leases": 1,
         "blocks": [
           "WR029"
@@ -213,15 +205,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G16942</td><td>5190</td><td>dry</td><td>WR029</td><td>PROD</td><td>1996-09-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-08-31</td><td>312242 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 27.5% (assignment approved 2026-07-28)<br>312241 / group not reported / aliquot 1 / ME Bigfoot, LLC: 12.5% (assignment approved 2026-07-28)<br>312240 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 60.0% (assignment approved 2026-07-28)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2011-12-30 / effective 2025-07-01 / approved 2026-07-28<br>Chevron U.S.A. Inc. / status C / designated 2007-03-14 / effective 2025-07-01 / approved 2026-07-28<br>Chevron U.S.A. Inc. / status C / designated 2026-07-28 / effective 2025-07-01 / approved 2026-07-28</details></td><td>RS C</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "eTLP",
@@ -469,20 +487,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G31751",
-            "lease_name": "Anchor",
-            "water_depth_ft": 5080,
-            "dev_system": "subsea20"
-          },
-          {
-            "lease_num": "G31752",
-            "lease_name": "Anchor",
-            "water_depth_ft": 5080,
-            "dev_system": "subsea20"
-          }
-        ],
         "n_leases": 2,
         "blocks": [
           "GC807"
@@ -507,15 +511,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G31751</td><td>5080</td><td>subsea20</td><td>GC806</td><td>UNIT</td><td>2008-03-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2018-02-28</td><td>296732 / group not reported / aliquot 1 / TEP Anchor, LLC: 12.5% (assignment approved 2020-01-27)<br>296731 / group not reported / aliquot 1 / TotalEnergies E&amp;P USA, Inc.: 24.64% (assignment approved 2020-01-27)<br>296730 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 62.86% (assignment approved 2020-01-27)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2013-12-02 / effective 2019-11-01 / approved 2020-01-27<br>Chevron U.S.A. Inc. / status C / designated 2018-07-13 / effective 2019-11-01 / approved 2020-01-27<br>Chevron U.S.A. Inc. / status C / designated 2014-10-28 / effective 2019-11-01 / approved 2020-01-27</details></td><td>RS13</td></tr><tr><td>G31752</td><td>5080</td><td>subsea20</td><td>GC807</td><td>UNIT</td><td>2008-03-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2018-02-28</td><td>296734 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 62.86% (assignment approved 2020-01-27)<br>296735 / group not reported / aliquot 1 / TEP Anchor, LLC: 12.5% (assignment approved 2020-01-27)<br>296733 / group not reported / aliquot 1 / TotalEnergies E&amp;P USA, Inc.: 24.64% (assignment approved 2020-01-27)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2014-05-09 / effective 2019-11-01 / approved 2020-01-27<br>Chevron U.S.A. Inc. / status C / designated 2018-07-13 / effective 2019-11-01 / approved 2020-01-27<br>Chevron U.S.A. Inc. / status C / designated 2014-10-28 / effective 2019-11-01 / approved 2020-01-27</details></td><td>RS12</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",
@@ -741,20 +771,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G16965",
-            "lease_name": "Cascade",
-            "water_depth_ft": 8200,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G16997",
-            "lease_name": "Chinook",
-            "water_depth_ft": 8900,
-            "dev_system": "subsea15"
-          }
-        ],
         "n_leases": 2,
         "blocks": [
           "WR205",
@@ -777,15 +793,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G16965</td><td>8200</td><td>subsea15</td><td>WR206</td><td>UNIT</td><td>1996-08-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-07-31</td><td>294407 / group not reported / aliquot 1 / MP Gulf of Mexico, LLC: 100.0% (assignment approved 2019-03-15)</td><td>Murphy Exploration &amp; Production Company - USA<details><summary>Current operator designations</summary>Murphy Exploration &amp; Production Company - USA / status C / designated 2019-03-15 / effective 2018-12-10 / approved 2019-03-15</details></td><td>RS C</td></tr><tr><td>G16997</td><td>8900</td><td>subsea15</td><td>WR469</td><td>UNIT</td><td>1996-08-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-07-31</td><td>296448 / group not reported / aliquot 1 / MP Gulf of Mexico, LLC: 66.67% (assignment approved 2019-12-03)<br>296447 / group not reported / aliquot 1 / Murphy Exploration &amp; Production Company - USA: 33.33% (assignment approved 2019-12-03)</td><td>Murphy Exploration &amp; Production Company - USA<details><summary>Current operator designations</summary>Murphy Exploration &amp; Production Company - USA / status C / designated 2019-12-03 / effective 2019-09-01 / approved 2019-12-03<br>Murphy Exploration &amp; Production Company - USA / status C / designated 2019-02-15 / effective 2019-09-01 / approved 2019-12-03</details></td><td>RS C</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "FPSO",
@@ -1040,44 +1082,6 @@
         }
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G17015",
-            "lease_name": "St Malo",
-            "water_depth_ft": 6820,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G17016",
-            "lease_name": "St Malo",
-            "water_depth_ft": 6820,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G18745",
-            "lease_name": "St Malo",
-            "water_depth_ft": 6820,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G18753",
-            "lease_name": "St Malo",
-            "water_depth_ft": 6820,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G20394",
-            "lease_name": "St Malo",
-            "water_depth_ft": 6820,
-            "dev_system": "subsea15"
-          },
-          {
-            "lease_num": "G21245",
-            "lease_name": "Jack",
-            "water_depth_ft": 7240,
-            "dev_system": "subsea15"
-          }
-        ],
         "n_leases": 6,
         "blocks": [
           "WR678",
@@ -1104,15 +1108,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G17015</td><td>6820</td><td>subsea15</td><td>WR758</td><td>UNIT</td><td>1996-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-06-30</td><td>247810 / group not reported / aliquot 1 / TEP Jack, LLC: 25.0% (assignment approved 2010-03-05)<br>247809 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 25.0% (assignment approved 2010-03-05)<br>247808 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 50.0% (assignment approved 2010-03-05)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2009-02-23 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2009-02-23 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2010-03-05 / effective 2010-01-01 / approved 2010-03-05</details></td><td>RS C</td></tr><tr><td>G17016</td><td>6820</td><td>subsea15</td><td>WR759</td><td>UNIT</td><td>1996-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-06-30</td><td>247845 / group not reported / aliquot 1 / TEP Jack, LLC: 25.0% (assignment approved 2010-03-05)<br>247844 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 25.0% (assignment approved 2010-03-05)<br>247843 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 50.0% (assignment approved 2010-03-05)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2011-12-30 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2005-08-09 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2010-03-05 / effective 2010-01-01 / approved 2010-03-05</details></td><td>RS C</td></tr><tr><td>G18745</td><td>6820</td><td>subsea15</td><td>WR634</td><td>UNIT</td><td>1997-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2007-06-30</td><td>293921 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 21.5% (assignment approved 2019-02-12)<br>293920 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 12.5% (assignment approved 2019-02-12)<br>293922 / group not reported / aliquot 1 / Union Oil Company of California: 38.5% (assignment approved 2019-02-12)<br>293925 / group not reported / aliquot 1 / MP Gulf of Mexico, LLC: 25.0% (assignment approved 2019-02-12)<br>293924 / group not reported / aliquot 1 / Eni Petroleum US LLC: 1.25% (assignment approved 2019-02-12)<br>293923 / group not reported / aliquot 1 / Exxon Mobil Corporation: 1.25% (assignment approved 2019-02-12)</td><td>Union Oil Company of California<details><summary>Current operator designations</summary>Union Oil Company of California / status C / designated 2011-12-15 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-07 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-12 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2006-09-25 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2005-08-22 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2019-02-12 / effective 2018-12-10 / approved 2019-02-12</details></td><td>RS C</td></tr><tr><td>G18753</td><td>6820</td><td>subsea15</td><td>WR677</td><td>UNIT</td><td>1997-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2007-06-30</td><td>293934 / group not reported / aliquot 1 / Eni Petroleum US LLC: 1.25% (assignment approved 2019-02-12)<br>293932 / group not reported / aliquot 1 / Union Oil Company of California: 38.5% (assignment approved 2019-02-12)<br>293931 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 21.5% (assignment approved 2019-02-12)<br>293930 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 12.5% (assignment approved 2019-02-12)<br>293933 / group not reported / aliquot 1 / Exxon Mobil Corporation: 1.25% (assignment approved 2019-02-12)<br>293935 / group not reported / aliquot 1 / MP Gulf of Mexico, LLC: 25.0% (assignment approved 2019-02-12)</td><td>Union Oil Company of California<details><summary>Current operator designations</summary>Union Oil Company of California / status C / designated 2011-12-15 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-07 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-12 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2006-09-25 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2005-08-22 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2019-02-12 / effective 2018-12-10 / approved 2019-02-12</details></td><td>RS C</td></tr><tr><td>G20394</td><td>6820</td><td>subsea15</td><td>WR802</td><td>UNIT</td><td>1998-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2008-06-30</td><td>247793 / group not reported / aliquot 1 / TEP Jack, LLC: 25.0% (assignment approved 2010-03-05)<br>247792 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 50.0% (assignment approved 2010-03-05)<br>247794 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 25.0% (assignment approved 2010-03-05)</td><td>Chevron U.S.A. Inc.<details><summary>Current operator designations</summary>Chevron U.S.A. Inc. / status C / designated 2011-12-30 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2005-08-09 / effective 2010-01-01 / approved 2010-03-05<br>Chevron U.S.A. Inc. / status C / designated 2010-03-05 / effective 2010-01-01 / approved 2010-03-05</details></td><td>RS C</td></tr><tr><td>G21245</td><td>7240</td><td>subsea15</td><td>WR678</td><td>UNIT</td><td>1999-07-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2009-06-30</td><td>293942 / group not reported / aliquot 1 / Chevron U.S.A. Inc.: 12.5% (assignment approved 2019-02-12)<br>293946 / group not reported / aliquot 1 / MP Gulf of Mexico, LLC: 25.0% (assignment approved 2019-02-12)<br>293943 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 21.5% (assignment approved 2019-02-12)<br>293944 / group not reported / aliquot 1 / Exxon Mobil Corporation: 1.25% (assignment approved 2019-02-12)<br>293945 / group not reported / aliquot 1 / Eni Petroleum US LLC: 1.25% (assignment approved 2019-02-12)<br>293941 / group not reported / aliquot 1 / Union Oil Company of California: 38.5% (assignment approved 2019-02-12)</td><td>Union Oil Company of California<details><summary>Current operator designations</summary>Union Oil Company of California / status C / designated 2011-12-15 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-07 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2003-11-12 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2006-09-26 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2005-08-22 / effective 2018-12-10 / approved 2019-02-12<br>Union Oil Company of California / status C / designated 2019-02-12 / effective 2018-12-10 / approved 2019-02-12</details></td><td>RS C</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",
@@ -1364,14 +1394,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G20351",
-            "lease_name": "Julia",
-            "water_depth_ft": 7335,
-            "dev_system": "tieback15"
-          }
-        ],
         "n_leases": 1,
         "blocks": [
           "WR627"
@@ -1391,15 +1413,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G20351</td><td>7335</td><td>tieback15</td><td>WR584</td><td>UNIT</td><td>1998-06-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2008-05-31</td><td>231750 / group not reported / aliquot 1 / Exxon Mobil Corporation: 50.0% (assignment approved 2009-01-26)<br>231749 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 50.0% (assignment approved 2009-01-26)</td><td>Exxon Mobil Corporation<details><summary>Current operator designations</summary>Exxon Mobil Corporation / status C / designated not reported / effective 2008-02-01 / approved 2009-01-26<br>Exxon Mobil Corporation / status C / designated 2008-01-04 / effective 2008-02-01 / approved 2009-01-26</details></td><td>RS C</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Subsea tieback",
@@ -1624,20 +1672,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G19555",
-            "lease_name": "Kaskida",
-            "water_depth_ft": 5860,
-            "dev_system": "subsea20"
-          },
-          {
-            "lease_num": "G25792",
-            "lease_name": "Kaskida",
-            "water_depth_ft": 5860,
-            "dev_system": "subsea20"
-          }
-        ],
         "n_leases": 2,
         "blocks": [
           "KC291",
@@ -1653,15 +1687,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G19555</td><td>5860</td><td>subsea20</td><td>KC336</td><td>UNIT</td><td>1997-12-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2007-11-30</td><td>255337 / group not reported / aliquot 1 / BP Exploration &amp; Production Inc.: 100.0% (assignment approved 2011-07-26)</td><td>BP Exploration &amp; Production Inc.<details><summary>Current operator designations</summary>BP Exploration &amp; Production Inc. / status C / designated not reported / effective 2010-01-01 / approved 2011-07-26</details></td><td>RS C</td></tr><tr><td>G25792</td><td>5860</td><td>subsea20</td><td>KC292</td><td>UNIT</td><td>2003-12-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2014-11-30</td><td>255511 / group not reported / aliquot 1 / BP Exploration &amp; Production Inc.: 100.0% (assignment approved 2011-08-03)</td><td>BP Exploration &amp; Production Inc.<details><summary>Current operator designations</summary>BP Exploration &amp; Production Inc. / status C / designated not reported / effective 2010-01-01 / approved 2011-08-03</details></td><td>RS F</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",
@@ -1856,20 +1916,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G30876",
-            "lease_name": "North Platte",
-            "water_depth_ft": 5840,
-            "dev_system": "subsea20"
-          },
-          {
-            "lease_num": "G32460",
-            "lease_name": "North Platte",
-            "water_depth_ft": 4230,
-            "dev_system": "subsea20"
-          }
-        ],
         "n_leases": 2,
         "blocks": [
           "GB915",
@@ -1892,15 +1938,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G30876</td><td>5840</td><td>subsea20</td><td>GB959</td><td>UNIT</td><td>2006-12-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2017-03-22</td><td>304374 / group not reported / aliquot 1 / Shell Offshore Inc.: 51.0% (assignment approved 2022-07-20)<br>304373 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 49.0% (assignment approved 2022-07-20)</td><td>Shell Offshore Inc.<details><summary>Current operator designations</summary>Shell Offshore Inc. / status C / designated 2022-07-20 / effective 2022-05-08 / approved 2022-07-20<br>Shell Offshore Inc. / status C / designated 2022-07-19 / effective 2022-05-08 / approved 2022-07-20</details></td><td>RS3</td></tr><tr><td>G32460</td><td>4230</td><td>subsea20</td><td>GB958</td><td>UNIT</td><td>2008-06-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2018-05-31</td><td>304377 / group not reported / aliquot 1 / Shell Offshore Inc.: 51.0% (assignment approved 2022-07-20)<br>304376 / group not reported / aliquot 1 / Equinor US Offshore EP LLC: 49.0% (assignment approved 2022-07-20)</td><td>Shell Offshore Inc.<details><summary>Current operator designations</summary>Shell Offshore Inc. / status C / designated 2022-07-20 / effective 2022-05-08 / approved 2022-07-20<br>Shell Offshore Inc. / status C / designated 2022-07-20 / effective 2022-05-08 / approved 2022-07-20</details></td><td>RS18</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",
@@ -2119,20 +2191,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G25232",
-            "lease_name": "Shenandoah",
-            "water_depth_ft": 5840,
-            "dev_system": "subsea20"
-          },
-          {
-            "lease_num": "G31938",
-            "lease_name": "Shenandoah",
-            "water_depth_ft": 5800,
-            "dev_system": "subsea20"
-          }
-        ],
         "n_leases": 2,
         "blocks": [
           "WR051"
@@ -2157,15 +2215,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G25232</td><td>5840</td><td>subsea20</td><td>WR052</td><td>UNIT</td><td>2003-06-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2014-05-31</td><td>302335 / group not reported / aliquot 1 / Beacon II Exploration LLC: 10.95% (assignment approved 2021-09-30)<br>302334 / group not reported / aliquot 1 / HEQ Blue Ridge, LLC: 20.0% (assignment approved 2021-09-30)<br>302333 / group not reported / aliquot 1 / ShenHai, LLC: 49.0% (assignment approved 2021-09-30)<br>302332 / group not reported / aliquot 1 / Beacon Offshore Energy Development LLC: 20.05% (assignment approved 2021-09-30)</td><td>BOE Exploration &amp; Production LLC<details><summary>Current operator designations</summary>BOE Exploration &amp; Production LLC / status C / designated 2020-11-09 / effective 2021-08-01 / approved 2021-09-30<br>BOE Exploration &amp; Production LLC / status C / designated 2020-11-09 / effective 2021-08-01 / approved 2021-09-30<br>BOE Exploration &amp; Production LLC / status C / designated 2020-12-09 / effective 2021-08-01 / approved 2021-09-30<br>BOE Exploration &amp; Production LLC / status C / designated 2021-09-30 / effective 2021-08-01 / approved 2021-09-30</details></td><td>RS F</td></tr><tr><td>G31938</td><td>5800</td><td>subsea20</td><td>WR051</td><td>UNIT</td><td>2007-12-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2017-11-30</td><td>302344 / group not reported / aliquot 1 / Beacon II Exploration LLC: 10.95% (assignment approved 2021-10-01)<br>302343 / group not reported / aliquot 1 / HEQ Blue Ridge, LLC: 20.0% (assignment approved 2021-10-01)<br>302341 / group not reported / aliquot 1 / Beacon Offshore Energy Development LLC: 20.05% (assignment approved 2021-10-01)<br>302342 / group not reported / aliquot 1 / ShenHai, LLC: 49.0% (assignment approved 2021-10-01)</td><td>BOE Exploration &amp; Production LLC<details><summary>Current operator designations</summary>BOE Exploration &amp; Production LLC / status C / designated 2020-11-06 / effective 2021-08-01 / approved 2021-10-01<br>BOE Exploration &amp; Production LLC / status C / designated 2020-11-06 / effective 2021-08-01 / approved 2021-10-01<br>BOE Exploration &amp; Production LLC / status C / designated 2020-12-09 / effective 2021-08-01 / approved 2021-10-01<br>BOE Exploration &amp; Production LLC / status C / designated 2021-10-01 / effective 2021-08-01 / approved 2021-10-01</details></td><td>RS12</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",
@@ -2412,14 +2496,6 @@
         }
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G17001",
-            "lease_name": "Stones",
-            "water_depth_ft": 9525,
-            "dev_system": "subsea15"
-          }
-        ],
         "n_leases": 1,
         "blocks": [
           "WR508"
@@ -2434,15 +2510,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G17001</td><td>9525</td><td>subsea15</td><td>WR508</td><td>UNIT</td><td>1996-06-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2006-05-31</td><td>269908 / group not reported / aliquot 1 / Shell Offshore Inc.: 100.0% (assignment approved 2013-06-28)</td><td>Shell Offshore Inc.<details><summary>Current operator designations</summary>Shell Offshore Inc. / status C / designated 2006-04-28 / effective 2013-01-28 / approved 2013-06-28</details></td><td>RS C</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "FPSO",
@@ -2659,14 +2761,6 @@
         "decommissioning": null
       },
       "landman": {
-        "leases": [
-          {
-            "lease_num": "G25782",
-            "lease_name": "Tiber",
-            "water_depth_ft": 4130,
-            "dev_system": "subsea20"
-          }
-        ],
         "n_leases": 1,
         "blocks": [
           "KC102"
@@ -2681,15 +2775,41 @@
           }
         ],
         "pending": [
-          "status",
-          "effective_date",
           "expiration_date",
-          "lease_type",
-          "per_lease_block",
-          "per_lease_working_interest",
-          "operator_of_record_history"
+          "lease_type"
         ],
-        "ingest_issue": 959
+        "ingest_issue": 959,
+        "source": {
+          "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+          "retrieved_at_utc": [
+            "2026-10-11T19:44:36.776142Z",
+            "2026-10-11T19:44:39.187947Z",
+            "2026-10-11T19:44:41.664436Z",
+            "2026-10-11T19:44:44.526452Z",
+            "2026-10-11T19:44:46.947992Z",
+            "2026-10-11T19:44:50.371118Z",
+            "2026-10-11T19:44:52.780303Z",
+            "2026-10-11T19:44:55.838768Z",
+            "2026-10-11T19:44:58.256254Z",
+            "2026-10-11T19:45:00.888341Z"
+          ],
+          "source_urls": [
+            "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+            "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+            "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+            "https://www.data.bsee.gov/Main/Leasing.aspx"
+          ],
+          "source_vintage": null,
+          "freshness_status": "unknown",
+          "freshness_reason": "Retrieval time does not establish database freshness"
+        },
+        "table_html": "<div class=\"scrollx\"><table class=\"lease xwells\"><caption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.</caption><thead><tr><th scope=\"col\">Lease</th><th scope=\"col\">Water depth (ft)</th><th scope=\"col\">Development system</th><th scope=\"col\">Area/block</th><th scope=\"col\">Status code</th><th scope=\"col\">Effective</th><th scope=\"col\">Actual expiration</th><th scope=\"col\">Expected expiration</th><th scope=\"col\">Owner assignment interest (%)</th><th scope=\"col\">Designated operator</th><th scope=\"col\">Royalty bid-system code</th></tr></thead><tbody><tr><td>G25782</td><td>4130</td><td>subsea20</td><td>KC102</td><td>UNIT</td><td>2003-12-01</td><td>No actual expiration date in Lease Data; expected date is distinct</td><td>2014-11-30</td><td>293765 / group not reported / aliquot 1 / BP Exploration &amp; Production Inc.: 100.0% (assignment approved 2018-12-19)</td><td>BP Exploration &amp; Production Inc.<details><summary>Current operator designations</summary>BP Exploration &amp; Production Inc. / status C / designated 2018-12-19 / effective 2018-11-30 / approved 2018-12-19</details></td><td>RS E</td></tr></tbody></table></div><p class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. <a href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources</a>.</p>"
       },
       "concept": {
         "type": "Semisub FPU",

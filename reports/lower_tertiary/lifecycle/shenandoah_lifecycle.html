@@ -557,20 +557,6 @@ const FIELD = {
     "decommissioning": null
   },
   "landman": {
-    "leases": [
-      {
-        "lease_num": "G25232",
-        "lease_name": "Shenandoah",
-        "water_depth_ft": 5840,
-        "dev_system": "subsea20"
-      },
-      {
-        "lease_num": "G31938",
-        "lease_name": "Shenandoah",
-        "water_depth_ft": 5800,
-        "dev_system": "subsea20"
-      }
-    ],
     "n_leases": 2,
     "blocks": [
       "WR051"
@@ -595,15 +581,41 @@ const FIELD = {
       }
     ],
     "pending": [
-      "status",
-      "effective_date",
       "expiration_date",
-      "lease_type",
-      "per_lease_block",
-      "per_lease_working_interest",
-      "operator_of_record_history"
+      "lease_type"
     ],
-    "ingest_issue": 959
+    "ingest_issue": 959,
+    "source": {
+      "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac",
+      "retrieved_at_utc": [
+        "2026-10-11T19:44:36.776142Z",
+        "2026-10-11T19:44:39.187947Z",
+        "2026-10-11T19:44:41.664436Z",
+        "2026-10-11T19:44:44.526452Z",
+        "2026-10-11T19:44:46.947992Z",
+        "2026-10-11T19:44:50.371118Z",
+        "2026-10-11T19:44:52.780303Z",
+        "2026-10-11T19:44:55.838768Z",
+        "2026-10-11T19:44:58.256254Z",
+        "2026-10-11T19:45:00.888341Z"
+      ],
+      "source_urls": [
+        "https://www.data.bsee.gov/Company/Files/compalldelimit.zip",
+        "https://www.data.bsee.gov/Leasing/Files/lseownddelimit.zip",
+        "https://www.data.bsee.gov/Leasing/Files/lseowndelimit.zip",
+        "https://www.data.bsee.gov/Leasing/Files/lsetapefixed.zip",
+        "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=Disclaimer",
+        "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=companyAll",
+        "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseData",
+        "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwner",
+        "https://www.data.bsee.gov/Main/HtmlPage.aspx?page=leaseOwnerOper",
+        "https://www.data.bsee.gov/Main/Leasing.aspx"
+      ],
+      "source_vintage": null,
+      "freshness_status": "unknown",
+      "freshness_reason": "Retrieval time does not establish database freshness"
+    },
+    "table_html": "\u003cdiv class=\"scrollx\">\u003ctable class=\"lease xwells\">\u003ccaption>BSEE snapshot retrieved 2026-10-11T19:44:36.776142Z; source update date unknown.\u003c/caption>\u003cthead>\u003ctr>\u003cth scope=\"col\">Lease\u003c/th>\u003cth scope=\"col\">Water depth (ft)\u003c/th>\u003cth scope=\"col\">Development system\u003c/th>\u003cth scope=\"col\">Area/block\u003c/th>\u003cth scope=\"col\">Status code\u003c/th>\u003cth scope=\"col\">Effective\u003c/th>\u003cth scope=\"col\">Actual expiration\u003c/th>\u003cth scope=\"col\">Expected expiration\u003c/th>\u003cth scope=\"col\">Owner assignment interest (%)\u003c/th>\u003cth scope=\"col\">Designated operator\u003c/th>\u003cth scope=\"col\">Royalty bid-system code\u003c/th>\u003c/tr>\u003c/thead>\u003ctbody>\u003ctr>\u003ctd>G25232\u003c/td>\u003ctd>5840\u003c/td>\u003ctd>subsea20\u003c/td>\u003ctd>WR052\u003c/td>\u003ctd>UNIT\u003c/td>\u003ctd>2003-06-01\u003c/td>\u003ctd>No actual expiration date in Lease Data; expected date is distinct\u003c/td>\u003ctd>2014-05-31\u003c/td>\u003ctd>302335 / group not reported / aliquot 1 / Beacon II Exploration LLC: 10.95% (assignment approved 2021-09-30)\u003cbr>302334 / group not reported / aliquot 1 / HEQ Blue Ridge, LLC: 20.0% (assignment approved 2021-09-30)\u003cbr>302333 / group not reported / aliquot 1 / ShenHai, LLC: 49.0% (assignment approved 2021-09-30)\u003cbr>302332 / group not reported / aliquot 1 / Beacon Offshore Energy Development LLC: 20.05% (assignment approved 2021-09-30)\u003c/td>\u003ctd>BOE Exploration &amp; Production LLC\u003cdetails>\u003csummary>Current operator designations\u003c/summary>BOE Exploration &amp; Production LLC / status C / designated 2020-11-09 / effective 2021-08-01 / approved 2021-09-30\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2020-11-09 / effective 2021-08-01 / approved 2021-09-30\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2020-12-09 / effective 2021-08-01 / approved 2021-09-30\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2021-09-30 / effective 2021-08-01 / approved 2021-09-30\u003c/details>\u003c/td>\u003ctd>RS F\u003c/td>\u003c/tr>\u003ctr>\u003ctd>G31938\u003c/td>\u003ctd>5800\u003c/td>\u003ctd>subsea20\u003c/td>\u003ctd>WR051\u003c/td>\u003ctd>UNIT\u003c/td>\u003ctd>2007-12-01\u003c/td>\u003ctd>No actual expiration date in Lease Data; expected date is distinct\u003c/td>\u003ctd>2017-11-30\u003c/td>\u003ctd>302344 / group not reported / aliquot 1 / Beacon II Exploration LLC: 10.95% (assignment approved 2021-10-01)\u003cbr>302343 / group not reported / aliquot 1 / HEQ Blue Ridge, LLC: 20.0% (assignment approved 2021-10-01)\u003cbr>302341 / group not reported / aliquot 1 / Beacon Offshore Energy Development LLC: 20.05% (assignment approved 2021-10-01)\u003cbr>302342 / group not reported / aliquot 1 / ShenHai, LLC: 49.0% (assignment approved 2021-10-01)\u003c/td>\u003ctd>BOE Exploration &amp; Production LLC\u003cdetails>\u003csummary>Current operator designations\u003c/summary>BOE Exploration &amp; Production LLC / status C / designated 2020-11-06 / effective 2021-08-01 / approved 2021-10-01\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2020-11-06 / effective 2021-08-01 / approved 2021-10-01\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2020-12-09 / effective 2021-08-01 / approved 2021-10-01\u003cbr>BOE Exploration &amp; Production LLC / status C / designated 2021-10-01 / effective 2021-08-01 / approved 2021-10-01\u003c/details>\u003c/td>\u003ctd>RS12\u003c/td>\u003c/tr>\u003c/tbody>\u003c/table>\u003c/div>\u003cp class=\"leadin\">Owner interests retain source groups and aliquots; no totals across groups. Actual and expected expiration dates are distinct. Company names are those resolved at retrieval. Only current operator designations are shown; full history remains in the source snapshot. Lease type is not mapped. BSEE working database; not a legal document. \u003ca href=\"https://www.data.bsee.gov/Main/Leasing.aspx\">BSEE leasing sources\u003c/a>.\u003c/p>"
   },
   "concept": {
     "type": "Semisub FPU",
@@ -764,28 +776,17 @@ if (FIELD.architecture) {
     `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">${body}</section>`;
 }
 
-// Lease & landman panel (#951). Real: lease id, water depth, dev system, blocks,
-// operator, partner WI. Placeholders (status/dates/per-lease block/WI) LINK the
-// BSEE lease ingest issue — grabbable work, never a blank cell.
+// Lease source table is escaped once in the shared Python renderer.
 if (FIELD.landman) {
   const L = FIELD.landman;
-  const iss = `https://github.com/vamseeachanta/worldenergydata/issues/${L.ingest_issue}`;
-  const ph = `<a href="${iss}" style="color:var(--muted)">— pending</a>`;
-  const rows = L.leases.map(r =>
-    `<tr><td>${r.lease_num}</td><td>${r.water_depth_ft ? r.water_depth_ft.toLocaleString()+" ft" : ph}</td>`
-    + `<td>${r.dev_system || ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td><td>${ph}</td></tr>`).join("");
   const wi = (L.working_interest || []).map(w =>
     `${w.name} ${w.wi}%${w.operator ? " (op)" : ""}`).join(" · ");
   $("f-landman").innerHTML =
     `<section style="padding:18px clamp(18px,2.4vw,30px);border-top:1px solid var(--line)">`
     + `<h3 style="margin:0 0 6px;font-size:15px">Lease &amp; landman</h3>`
-    + `<p style="margin:0 0 4px;font-size:13px;color:var(--muted)">Operator <b>${L.operator||"—"}</b>`
-    + `${wi ? " · WI " + wi : ""} · Blocks ${L.blocks.join(", ")}${L.block_note ? " ("+L.block_note+")" : ""}</p>`
-    + `<p style="margin:0 0 10px;font-size:12px;color:var(--muted)">Lease status, dates, per-lease block &amp; working interest pending the `
-    + `<a href="${iss}">BSEE lease-data ingest (#${L.ingest_issue})</a> — contributions welcome.</p>`
-    + `<div class="scrollx"><table style="width:100%;border-collapse:collapse;font-size:12.5px">`
-    + `<thead><tr style="text-align:left;color:var(--muted)"><th>Lease</th><th>Water depth</th><th>Dev system</th>`
-    + `<th>Status</th><th>Effective</th><th>Expiration</th><th>WI</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+    + `<p style="font-size:13px;color:var(--muted)">Field operator <b>${L.operator||"—"}</b>`
+    + `${wi ? " · Field WI " + wi : ""} · Registry blocks ${L.blocks.join(", ")}${L.block_note ? " (" + L.block_note + ")" : ""}</p>`
+    + (L.table_html || "<p>Lease snapshot unavailable.</p>") + `</section>`;
 }
 
 $("f-metrics").innerHTML = FIELD.metrics.map(m =>

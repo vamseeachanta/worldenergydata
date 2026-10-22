@@ -12,6 +12,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 from tests.test_markers import unit
 from worldenergydata.common.fields_registry import load_fields
 
@@ -96,3 +98,119 @@ def test_rendered_poster_has_hidden_economics_card_and_secondary_benchmark_chip(
     assert "Well benchmarking" in html
     assert "FIELD.economics_href" in html
     assert "FIELD.benchmark_href" in html
+
+
+@unit
+def test_poster_and_explorer_use_the_same_sourced_lease_table():
+    """Expected values are literal source columns, independently loaded from JSON."""
+    builder = _load_builder()
+    source = PROJECT_ROOT / "data/modules/bsee/leases"
+    expected = {
+        r["lease_num"]: r for r in json.loads((source / "leases.json").read_text())
+    }
+    seen = set()
+    for facts in _facts():
+        field = builder.facts_to_field(facts)
+        for row in field["landman"]["leases"]:
+            reference = expected[row["lease_num"]]
+            assert row["status"] == reference["status"]
+            assert row["per_lease_block"] == reference["area_block"]
+            assert row["effective_date"] == reference["effective_date"]
+            seen.add(row["lease_num"])
+        assert "L.table_html" in builder.render(field)
+    assert seen == set(expected)
+    atlas = (PROJECT_ROOT / "reports/field-atlas/atlas_template.html").read_text(
+        encoding="utf-8"
+    )
+    assert "L.table_html" in atlas
+
+
+@unit
+def test_published_explorer_uses_sourced_lease_table():
+    atlas = (PROJECT_ROOT / "reports/field-atlas/index.html").read_text(
+        encoding="utf-8"
+    )
+    landman = atlas.split('let landman = "";', 1)[1].split(
+        "// Concept & development", 1
+    )[0]
+    assert "L.table_html" in landman
+    assert "— pending" not in landman
+
+
+@unit
+@pytest.mark.parametrize("lease_panels_only", [False, True])
+def test_generator_can_write_to_a_separate_output_directory(
+    tmp_path, monkeypatch, lease_panels_only
+):
+    """Generated panels and Explorer must carry identical serialized payloads."""
+    builder = _load_builder()
+    argv = ["build_lifecycle_posters.py", "--output-dir", str(tmp_path)]
+    if lease_panels_only:
+        argv.append("--lease-panels-only")
+    monkeypatch.setattr("sys.argv", argv)
+    builder.main()
+    explorer = json.loads((tmp_path / "_explorer.json").read_text())
+    for field_id, field in explorer["fields"].items():
+        poster = (tmp_path / f"{field_id}_lifecycle.html").read_text(encoding="utf-8")
+        # The generator embeds exactly this JSON object in the poster script.
+        assert (
+            json.dumps(field, indent=2, ensure_ascii=False).replace("<", "\\u003c")
+            in poster
+        )
+        assert field["landman"]["source"]["freshness_status"] == "unknown"
+        assert "leases" not in field["landman"]
+        assert field["landman"]["n_leases"] > 0
+        assert '<table class="lease xwells">' in field["landman"]["table_html"]
+    if lease_panels_only:
+        frozen = json.loads((builder.HERE / "_explorer.json").read_text())
+        for field_id, field in explorer["fields"].items():
+            assert {k: v for k, v in field.items() if k != "landman"} == {
+                k: v for k, v in frozen["fields"][field_id].items() if k != "landman"
+            }
+
+
+@unit
+def test_source_names_cannot_close_the_embedded_poster_script():
+    from worldenergydata.field_development.landman import render_lease_table
+
+    builder = _load_builder()
+    field = builder.facts_to_field(_facts()[0])
+    malicious = "</script><script>alert('source name')</script>"
+    field["landman"]["leases"][0]["per_lease_working_interest"] = [
+        {"owner_name": malicious}
+    ]
+    field["landman"]["table_html"] = render_lease_table(field["landman"])
+    assert malicious not in builder.render(field)
+    assert "&lt;/script&gt;" in builder.render(field)
+
+
+@unit
+def test_poster_serialization_uses_one_lease_representation_without_mutating_input():
+    builder = _load_builder()
+    field = builder.facts_to_field(_facts()[0])
+    original = json.loads(json.dumps(field))
+    poster = builder.render(field)
+    published = json.loads(re.search(r"const FIELD = (\{.*?\n\});", poster, re.S)[1])
+    assert "leases" not in published["landman"]
+    assert published["landman"]["table_html"] == original["landman"]["table_html"]
+    assert {k: v for k, v in published.items() if k != "landman"} == {
+        k: v for k, v in original.items() if k != "landman"
+    }
+    assert field == original
+
+
+@unit
+@pytest.mark.parametrize("published", [False, True])
+def test_poster_block_caveats_remain_visible(published):
+    """Registry caveats must reach the rendered and committed poster sections."""
+    builder = _load_builder()
+    for facts in _facts():
+        field = builder.facts_to_field(facts)
+        if published:
+            html = (builder.HERE / f"{field['id']}_lifecycle.html").read_text(
+                encoding="utf-8"
+            )
+        else:
+            html = builder.render(field)
+        landman = html.split("if (FIELD.landman) {", 1)[1].split('$("f-metrics")', 1)[0]
+        assert "L.block_note" in landman

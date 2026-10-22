@@ -375,5 +375,29 @@
       "scheduler_last_success_ts": null,
       "refresh_interval_days": null
     }
+  },
+  "datasets": {
+    "bsee_leases": {
+      "module": "bsee",
+      "path": "data/modules/bsee/leases",
+      "coverage": "Canonical lifecycle-poster leases only",
+      "record_count": 20,
+      "retrieved_at_utc": [
+        "2026-10-11T19:44:36.776142Z",
+        "2026-10-11T19:44:39.187947Z",
+        "2026-10-11T19:44:41.664436Z",
+        "2026-10-11T19:44:44.526452Z",
+        "2026-10-11T19:44:46.947992Z",
+        "2026-10-11T19:44:50.371118Z",
+        "2026-10-11T19:44:52.780303Z",
+        "2026-10-11T19:44:55.838768Z",
+        "2026-10-11T19:44:58.256254Z",
+        "2026-10-11T19:45:00.888341Z"
+      ],
+      "source_vintage": null,
+      "freshness_status": "unknown",
+      "reason": "Retrieval time does not establish database freshness",
+      "source_manifest_sha256": "054cd68e176849a8b5ccda3f940ec5ef5b740de4842225da931ed10f397d59ac"
+    }
   }
 }

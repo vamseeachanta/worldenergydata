@@ -316,7 +316,10 @@ def test_markdown_writes_committed_scorecard(tmp_path: Path) -> None:
 
     write_markdown(scorecard, output)
 
-    rows = output.read_text().splitlines()[4:]
+    # Dataset notes follow the module table; count only that table's rows.
+    rows = [
+        line for line in output.read_text().splitlines()[4:] if line.startswith("|")
+    ]
     assert len(rows) == len(scorecard["modules"])
     for row, module in zip(rows, sorted(scorecard["modules"])):
         expected = scorecard["modules"][module].get("fixture_readiness", "none")
@@ -337,3 +340,33 @@ def test_markdown_preserves_packaged_readiness(tmp_path: Path) -> None:
     rows = output.read_text().splitlines()[4:]
     row = next(row for row in rows if row.split("|")[1].strip() == "texas_rrc")
     assert row.split("|")[-2].strip() == "packaged"
+
+
+def test_lease_snapshot_is_a_separate_unknown_freshness_entry(tmp_path: Path):
+    """Retrieval is evidence of access, not a source update date or freshness SLA.
+
+    Counts and timestamps come directly from the committed lease extract and
+    source manifests. No age threshold or acceptance limit is assumed.
+    """
+    root = Path(__file__).resolve().parents[3]
+    source = root / "data/modules/bsee/leases"
+    extract = json.loads((source / "extract_manifest.json").read_text())
+    manifest = json.loads((source / "source_manifest.json").read_text())
+    scorecard = build_scorecard(root, report_date="2026-10-20")
+    entry = scorecard["datasets"]["bsee_leases"]
+    assert entry["record_count"] == extract["leases_ingested"]
+    assert entry["retrieved_at_utc"] == sorted(
+        {r["retrieved_at_utc"] for r in manifest["files"]}
+    )
+    assert entry["source_vintage"] is None
+    assert entry["freshness_status"] == "unknown"
+    assert entry["source_manifest_sha256"] == extract["source_manifest_sha256"]
+    output = tmp_path / "scorecard.md"
+    write_markdown(scorecard, output)
+    assert "BSEE lease snapshot" in output.read_text()
+    assert "source update date unknown" in output.read_text()
+
+
+def test_absent_lease_snapshot_adds_no_dataset_claim(tmp_path: Path):
+    _write_project(tmp_path)
+    assert build_scorecard(tmp_path, report_date="2026-10-20")["datasets"] == {}
