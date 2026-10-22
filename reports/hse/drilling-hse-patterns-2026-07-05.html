@@ -26,13 +26,18 @@
  <code>IncidentClassifier</code> cut to <code>activity == "DRILL"</code> over the BSEE
  INCINV records. Counts describe investigation records, not a complete incident census
  or exposure-normalized risk rates. Severity is a text-derived proxy, not a count of
- fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.</div>
+ fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.
+ The source endpoint is mutable. Recalculation requires the exact archived input;
+ no durable public copy of that input is supplied. Chart CSVs record the published values.</div>
 
 <h2>Revision history</h2>
 <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>1</td><td>2026-07-05</td><td>Initial drilling investigation analysis.</td></tr>
 <tr><td>2</td><td>2026-10-22</td><td>Refresh from the public source with a sealed manifest,
- input QA and downloadable chart values so the figures can be reproduced.</td></tr></tbody></table>
+ input QA and downloadable chart values so the figures can be reproduced.</td></tr>
+<tr><td>3</td><td>2026-10-22</td><td>Restore confidence buckets and zero-fill source years.
+ Correct earlier reproducibility wording: recalculation requires the exact archived input;
+ no durable public archive copy is supplied with this report.</td></tr></tbody></table>
 
 <div class="kpis">
  <div class="kpi"><div class="v">85</div>
@@ -59,10 +64,13 @@
  <a href="drilling-year-values.csv">year</a>,
  <a href="drilling-area-values.csv">area</a>.
  The historical filename is retained; the source download date above identifies this refresh.
- The area chart includes all source area codes.</footer>
+ The area chart includes all source area codes. Years without DRILL records are
+ zero-filled across the source occurrence window; zero does not establish complete
+ incident coverage. The percentage is rounded to one decimal place.
+ Confidence buckets remain in the JSON; raw accident-type text is excluded to avoid identities.</footer>
 
 <script>
-const D = {"sub": {"well_control": 68, "unknown": 6, "drilling_operations": 6, "casing_cementing": 4, "logging": 1}, "sev": {"major": 56, "other": 25, "fatality": 2, "evacuation_muster": 1, "serious": 1}, "years": {"1996": 4, "1997": 6, "1998": 7, "1999": 6, "2000": 8, "2001": 9, "2002": 9, "2003": 5, "2004": 6, "2005": 6, "2006": 4, "2008": 2, "2009": 2, "2011": 1, "2012": 2, "2013": 1, "2014": 2, "2016": 1, "2017": 3, "2021": 1}, "areas": {"ST": 13, "EI": 12, "MC": 8, "SS": 8, "GC": 6, "MP": 6, "SM": 5, "HI": 4, "EC": 4, "WC": 3, "EW": 2, "VR": 2, "WD": 2, "MU": 2, "GI": 2, "BA": 1, "WR": 1, "MO": 1, "VK": 1, "CA": 1, "EB": 1}, "drill_total": 85, "incinv_total": 2027, "drill_pct": 4.2};
+const D = {"sub": {"well_control": 68, "unknown": 6, "drilling_operations": 6, "casing_cementing": 4, "logging": 1}, "sev": {"major": 56, "other": 25, "fatality": 2, "evacuation_muster": 1, "serious": 1}, "years": {"1995": 0, "1996": 4, "1997": 6, "1998": 7, "1999": 6, "2000": 8, "2001": 9, "2002": 9, "2003": 5, "2004": 6, "2005": 6, "2006": 4, "2007": 0, "2008": 2, "2009": 2, "2010": 0, "2011": 1, "2012": 2, "2013": 1, "2014": 2, "2015": 0, "2016": 1, "2017": 3, "2018": 0, "2019": 0, "2020": 0, "2021": 1, "2022": 0, "2023": 0, "2024": 0, "2025": 0, "2026": 0}, "areas": {"ST": 13, "EI": 12, "MC": 8, "SS": 8, "GC": 6, "MP": 6, "SM": 5, "HI": 4, "EC": 4, "WC": 3, "EW": 2, "VR": 2, "WD": 2, "MU": 2, "GI": 2, "BA": 1, "WR": 1, "MO": 1, "VK": 1, "CA": 1, "EB": 1}, "drill_total": 85, "incinv_total": 2027, "drill_pct": 4.2};
 const cfg = {responsive:true, displaylogo:false,
   modeBarButtonsToAdd:['toImage'], toImageButtonOptions:{format:'png'}};
 

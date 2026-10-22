@@ -36,7 +36,7 @@ def render(json_path: Path, html_path: Path) -> None:
     download_date = html_tools.escape(source["downloaded_at"])
     source_url = html_tools.escape(source["url"], quote=True)
     date_range = " to ".join(d["incinv_date_range"])
-    revision_date = d["generated_at"][:10]
+    revision_date = source["downloaded_at"][:10]
 
     sub = d["drill_subactivity_distribution"]
     sev = d["drill_severity_proxy"]
@@ -81,13 +81,18 @@ def render(json_path: Path, html_path: Path) -> None:
  <code>IncidentClassifier</code> cut to <code>activity == "DRILL"</code> over the BSEE
  INCINV records. Counts describe investigation records, not a complete incident census
  or exposure-normalized risk rates. Severity is a text-derived proxy, not a count of
- fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.</div>
+ fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.
+ The source endpoint is mutable. Recalculation requires the exact archived input;
+ no durable public copy of that input is supplied. Chart CSVs record the published values.</div>
 
 <h2>Revision history</h2>
 <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>1</td><td>2026-07-05</td><td>Initial drilling investigation analysis.</td></tr>
 <tr><td>2</td><td>{revision_date}</td><td>Refresh from the public source with a sealed manifest,
- input QA and downloadable chart values so the figures can be reproduced.</td></tr></tbody></table>
+ input QA and downloadable chart values so the figures can be reproduced.</td></tr>
+<tr><td>3</td><td>{revision_date}</td><td>Restore confidence buckets and zero-fill source years.
+ Correct earlier reproducibility wording: recalculation requires the exact archived input;
+ no durable public archive copy is supplied with this report.</td></tr></tbody></table>
 
 <div class="kpis">
  <div class="kpi"><div class="v">{payload['drill_total']}</div>
@@ -114,7 +119,10 @@ def render(json_path: Path, html_path: Path) -> None:
  <a href="drilling-year-values.csv">year</a>,
  <a href="drilling-area-values.csv">area</a>.
  The historical filename is retained; the source download date above identifies this refresh.
- The area chart includes all source area codes.</footer>
+ The area chart includes all source area codes. Years without DRILL records are
+ zero-filled across the source occurrence window; zero does not establish complete
+ incident coverage. The percentage is rounded to one decimal place.
+ Confidence buckets remain in the JSON; raw accident-type text is excluded to avoid identities.</footer>
 
 <script>
 const D = {json.dumps(payload)};

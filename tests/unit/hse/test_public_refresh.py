@@ -89,7 +89,15 @@ def test_synthetic_headlines_and_chart_exports(case):
     assert result["incinv_total_records"] == 4
     assert result["drill_total"] == 2
     assert result["drill_pct_of_incinv"] == 50.0
-    assert result["drill_by_year"] == {"2020": 1, "2022": 1}
+    assert result["drill_by_year"] == {"2020": 1, "2021": 0, "2022": 1}
+    assert result["drill_year_range"] == [2020, 2022]
+    assert result["drill_confidence_buckets"] == {
+        "direct_code(>=0.90)": 1,
+        "keyword_low(<0.50)": 1,
+    }
+    assert result["drill_subactivity_distribution"] == {"well_control": 1, "logging": 1}
+    assert result["drill_top_areas"] == {"AA": 1, "CC": 1}
+    assert result["drill_distinct_leases"] == 1
     assert result["drill_severity_proxy"] == {"major": 1, "other": 1}
     assert result["source"]["source_kind"] == "synthetic"
     assert result["source"]["files"][0]["downloaded_at"] == "2026-10-01T00:00:00Z"
@@ -107,6 +115,10 @@ def test_synthetic_headlines_and_chart_exports(case):
         with (out / f"{name}.csv").open(encoding="utf-8", newline="") as stream:
             rows = list(csv.reader(stream))
         assert rows[0] == ["category", "investigation records [count]"]
+        assert (
+            dict((row[0], int(row[1])) for row in rows[1:])
+            == result[refresh.CHARTS[name]]
+        )
         assert sum(int(row[1]) for row in rows[1:]) == result["drill_total"]
     assert {
         k: v for k, v in sys.modules.items() if k.startswith("worldenergydata")
@@ -193,7 +205,7 @@ def test_fail_closed(case, mode, reason):
     qa = json.loads((out / "incinv-qa.json").read_text(encoding="utf-8"))
     assert qa["status"] == "not_evaluated"
     assert reason in qa["reason"]
-    for name in (refresh.HEADLINES, refresh.INVENTORY):
+    for name in (refresh.HEADLINES, refresh.INVENTORY, "incinv-manifest.json"):
         failed = json.loads((out / name).read_text(encoding="utf-8"))
         assert failed["status"] == "not_evaluated"
         assert set(failed) == {"status", "reason"}
@@ -210,13 +222,19 @@ def test_download_manifest_and_resume(tmp_path, monkeypatch):
     def fake_download(url, destination):
         calls.append(url)
         destination.write_bytes(archive.read_bytes())
-        return 200
+        return {
+            "http_status": 200,
+            "etag": '"synthetic-tag"',
+            "last_modified": "Thu, 01 Oct 2026 00:00:00 GMT",
+        }
 
     monkeypatch.setattr(refresh, "_download", fake_download)
     cfg = {"data_dir": str(tmp_path / "data"), "url": URL, "source_kind": "public"}
     manifest = refresh.fetch(cfg)
     assert calls == [URL]
     assert manifest["files"][0]["http_status"] == 200
+    assert manifest["files"][0]["etag"] == '"synthetic-tag"'
+    assert manifest["files"][0]["last_modified"] == "Thu, 01 Oct 2026 00:00:00 GMT"
     for entry in manifest["files"]:
         payload = (Path(cfg["data_dir"]) / entry["file"]).read_bytes()
         assert entry["size_bytes"] == len(payload)
@@ -244,12 +262,25 @@ def test_renderer_and_failed_qa_replace_public_page(case):
     )
     renderer = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(renderer)
-    refresh.analyze(cfg)
+    result = refresh.analyze(cfg)
+    result["generated_at"] = "2099-12-31T00:00:00Z"
     out = Path(cfg["output_dir"])
+    (out / refresh.HEADLINES).write_text(json.dumps(result), encoding="utf-8")
     page = out / "report.html"
     renderer.render(out / refresh.HEADLINES, page)
     text = page.read_text(encoding="utf-8")
     assert "2026-10-01T00:00:00Z" in text
+    assert "<td>2</td><td>2026-10-01</td>" in text
+    assert "2099-12-31" not in text
+    assert "exact archived input" in text
+    assert "Correct earlier reproducibility wording" in text
+    for value, label in [
+        ("2", "DRILL.* investigation records"),
+        ("4", "INCINV records screened"),
+        ("50.0%", "of investigation records"),
+        ("1", "well-control investigation records"),
+    ]:
+        assert f'<div class="v">{value}</div>\n  <div class="l">{label}</div>' in text
     assert URL in text
     assert "2020-01-02 to 2022-04-05" in text
     assert "incinv-qa.json" in text
@@ -277,6 +308,7 @@ def test_cli_offline_config_from_another_directory(case, tmp_path, script):
     result = subprocess.run(
         [
             sys.executable,
+            "-I",
             str(ROOT / "scripts/exploration" / script),
             "--config",
             str(path),
@@ -317,3 +349,69 @@ def test_failed_network_invalidates_existing_public_outputs(case, monkeypatch):
     assert "Not evaluated" in (out / "drilling-hse-patterns-2026-07-05.html").read_text(
         encoding="utf-8"
     )
+
+
+def test_download_records_response_headers(tmp_path, monkeypatch):
+    import subprocess
+
+    def response(command, **kwargs):
+        headers = Path(command[command.index("--dump-header") + 1])
+        headers.write_text(
+            'HTTP/1.1 302 Found\r\nETag: "redirect"\r\n\r\n'
+            'HTTP/2 200\r\neTaG: "synthetic-tag"\r\n'
+            "Last-Modified: Thu, 01 Oct 2026 00:00:00 GMT\r\n\r\n",
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="200", stderr="")
+
+    monkeypatch.setattr(refresh.subprocess, "run", response)
+    destination = tmp_path / "archive.zip"
+    evidence = refresh._download(URL, destination)
+    assert evidence == {
+        "http_status": 200,
+        "etag": '"synthetic-tag"',
+        "last_modified": "Thu, 01 Oct 2026 00:00:00 GMT",
+    }
+    request = json.loads(destination.with_suffix(".request.json").read_text())
+    assert request["etag"] == evidence["etag"]
+    assert request["last_modified"] == evidence["last_modified"]
+
+
+def test_years_cover_source_window_when_drill_is_sparse(case):
+    cfg, raw, manifest = case
+    edit_rows(cfg, raw, manifest, lambda rows: rows[1].update(DATE_OCCURRED="1/1/2018"))
+    result = refresh.analyze(cfg)
+    assert result["drill_by_year"] == {
+        "2018": 0,
+        "2019": 0,
+        "2020": 1,
+        "2021": 0,
+        "2022": 1,
+    }
+    edit_rows(
+        cfg,
+        raw,
+        manifest,
+        lambda rows: [row.update(ACCIDENT_TYPE="Fire") for row in rows],
+    )
+    result = refresh.analyze(cfg)
+    assert result["drill_total"] == 0
+    assert result["drill_by_year"] == {str(year): 0 for year in range(2018, 2023)}
+    assert result["drill_year_range"] is None
+    assert result["drill_confidence_buckets"] == {}
+
+
+@pytest.mark.parametrize(
+    "text,label",
+    [
+        ("Fatality, Blowout", "fatality"),
+        ("Explosion, LTA", "major"),
+        ("LTA, Fire", "injury_lost_time"),
+        ("RW/JT", "injury_lost_time"),
+        ("Damage >$25K, Muster", "serious"),
+        ("Evacuation", "evacuation_muster"),
+        ("unclassified", "other"),
+    ],
+)
+def test_analyst_severity_precedence(text, label):
+    assert refresh._severity(text) == label

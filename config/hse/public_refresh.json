@@ -7,7 +7,8 @@
   "encoding": "latin-1",
   "quantity": "investigation records",
   "unit": "count",
-  "earliest_date": "1900-01-01",
+  "earliest_date": "1995-01-01",
   "taxonomy_dir": "packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/taxonomy",
-  "base_dir": "../.."
+  "base_dir": "../..",
+  "earliest_date_basis": "Start of the earliest observed year in the sealed public snapshot (first occurrence 1995-01-04); not a claim of complete coverage."
 }

@@ -1,6 +1,6 @@
 {
   "status": "evaluated",
-  "generated_at": "2026-10-22T10:49:56.865156Z",
+  "generated_at": "2026-10-22T22:25:50.232280Z",
   "source": {
     "source_kind": "public",
     "files": [
@@ -10,7 +10,10 @@
         "downloaded_at": "2026-10-22T10:44:30.516928Z",
         "http_status": 200,
         "size_bytes": 35938,
-        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
+        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6",
+        "etag": "\"b44ca4a1962dd1:0\"",
+        "last_modified": "Thu, 22 Oct 2026 09:42:19 GMT",
+        "response_metadata_observed_at": "2026-10-22T22:22:12.747905+00:00"
       },
       {
         "file": "mv_acc_investigations.txt",
@@ -19,14 +22,17 @@
         "http_status": 200,
         "size_bytes": 175510,
         "sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016",
-        "archive_member": "IncInvRawData/mv_acc_investigations.txt"
+        "archive_member": "IncInvRawData/mv_acc_investigations.txt",
+        "etag": "\"b44ca4a1962dd1:0\"",
+        "last_modified": "Thu, 22 Oct 2026 09:42:19 GMT",
+        "response_metadata_observed_at": "2026-10-22T22:22:12.747905+00:00"
       }
     ]
   },
   "source_file": "mv_acc_investigations.txt",
   "quantity": "investigation records",
   "unit": "count",
-  "methodology": "Canonical IncidentClassifier(source='bsee'), activity == DRILL; severity is an accident-type proxy, not injury or fatality counts.",
+  "methodology": "Canonical IncidentClassifier(source='bsee'), activity == DRILL; severity is an analyst-defined first-match accident-type proxy, not a regulatory ranking or injury or fatality counts. Vocabulary: BSEE NTL 2019-N05, Definitions; see docs/hse/public-refresh.md.",
   "incinv_total_records": 2027,
   "drill_total": 85,
   "incinv_date_range": [
@@ -58,6 +64,12 @@
     "bsee_accident_type": 58,
     "keyword_match": 27
   },
+  "drill_confidence_buckets": {
+    "direct_code(>=0.90)": 58,
+    "keyword_low(<0.50)": 14,
+    "keyword_medium(0.50-0.69)": 12,
+    "keyword_high(0.70-0.89)": 1
+  },
   "drill_severity_proxy": {
     "major": 56,
     "other": 25,
@@ -66,6 +78,7 @@
     "serious": 1
   },
   "drill_by_year": {
+    "1995": 0,
     "1996": 4,
     "1997": 6,
     "1998": 7,
@@ -77,15 +90,26 @@
     "2004": 6,
     "2005": 6,
     "2006": 4,
+    "2007": 0,
     "2008": 2,
     "2009": 2,
+    "2010": 0,
     "2011": 1,
     "2012": 2,
     "2013": 1,
     "2014": 2,
+    "2015": 0,
     "2016": 1,
     "2017": 3,
-    "2021": 1
+    "2018": 0,
+    "2019": 0,
+    "2020": 0,
+    "2021": 1,
+    "2022": 0,
+    "2023": 0,
+    "2024": 0,
+    "2025": 0,
+    "2026": 0
   },
   "drill_year_range": [
     1996,

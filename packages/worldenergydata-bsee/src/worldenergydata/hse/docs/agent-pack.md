@@ -158,7 +158,7 @@ Residual legacy source files are listed as outside-package sources, not claimed 
 
 | Outside-package source | Classification / map follow-up |
 |---|---|
-| Exploratory drilling `_severity` | Independent keyword classifier with its own severity labels; outside-package map gap, issue pending (2) [scripts/exploration/drilling_hse_patterns_analysis.py:L156-L168] |
+| Exploratory drilling entry point | Delegates the analyst-defined severity proxy to the package refresh; implementation-map follow-up remains issue pending (2) [packages/worldenergydata-bsee/src/worldenergydata/hse/public_refresh.py:L239-L257] |
 | Legacy statistics `normalize_data` | Own column conversion algorithm; map gap, issue pending (2) [src/worldenergydata/modules/hse/importers/bsee_statistics_importer.py:L91-L260] |
 | Legacy incident URL `fetch_data` | Download/processor wrapper; alternative source route to inventory, issue pending (2) [src/worldenergydata/modules/hse/importers/bsee_incidents_importer_url.py:L51-L92] |
 | Legacy penalty URL `fetch_data` | Download/processor wrapper; alternative source route to inventory, issue pending (2) [src/worldenergydata/modules/hse/importers/bsee_penalties_importer_url.py:L57-L104] |

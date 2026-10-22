@@ -31,6 +31,7 @@ CHARTS = {
 }
 KEYS = ("DATE_OCCURRED", "MILITARY_TIME", "AREA_BLOCK", "ACCIDENT_TYPE")
 COLUMNS = (*KEYS, "LEASE_NUMBER", "PANEL_DISTRICT", "STATUS")
+# Analyst-selected inventory terms; basis and limitations: docs/hse/public-refresh.md.
 KEYWORDS = (
     "workover",
     "intervention",
@@ -82,6 +83,8 @@ def _download(url, destination):
             "180",
             "--output",
             str(destination),
+            "--dump-header",
+            str(destination.with_suffix(".headers")),
             "--write-out",
             "%{http_code}",
             url,
@@ -91,6 +94,20 @@ def _download(url, destination):
         check=False,
     )
     status = response.stdout.strip()
+    # Reset on every response so redirect headers cannot describe the final body.
+    headers = {}
+    header_path = destination.with_suffix(".headers")
+    if header_path.exists():
+        for line in header_path.read_text(encoding="latin-1").splitlines():
+            if line.startswith("HTTP/"):
+                headers = {}
+            elif ":" in line:
+                key, value = line.split(":", 1)
+                headers[key.lower()] = value.strip()
+    evidence = {
+        "etag": headers.get("etag"),
+        "last_modified": headers.get("last-modified"),
+    }
     _write_json(
         destination.with_suffix(".request.json"),
         {
@@ -98,11 +115,12 @@ def _download(url, destination):
             "requested_at": _utc(),
             "http_status": status,
             "curl_exit_code": response.returncode,
+            **evidence,
         },
     )
     if response.returncode or status != "200":
         raise NetworkError(f"BLOCKED-NETWORK: {url}; HTTP {status or 'unavailable'}")
-    return int(status)
+    return {"http_status": int(status), **evidence}
 
 
 def _verified_files(data_dir, manifest):
@@ -151,7 +169,7 @@ def fetch(config):
             raise QAError("provenance: incomplete public download")
         return manifest
     archive = data_dir / "IncInvRawData.zip"
-    status = _download(url, archive)
+    response_evidence = _download(url, archive)
     stamp = _utc()
     member = "IncInvRawData/mv_acc_investigations.txt"
     with zipfile.ZipFile(archive) as zipped:
@@ -164,7 +182,7 @@ def fetch(config):
                 "file": path.name,
                 "url": url,
                 "downloaded_at": stamp,
-                "http_status": status,
+                **response_evidence,
                 "size_bytes": path.stat().st_size,
                 "sha256": _digest(path),
             }
@@ -219,6 +237,13 @@ def _load_classifier(taxonomy):
 
 
 def _severity(text):
+    """Analyst-defined first-match proxy, not a regulatory severity ranking.
+
+    Vocabulary: BSEE NTL 2019-N05, Definitions (30 CFR 250.188 categories).
+    LTA denotes lost-time accident; RW/JT denotes restricted work/job transfer;
+    $25k matches source damage-category text, not an inflation-adjusted cutoff.
+    Ranking and additional screening terms are explained in docs/hse/public-refresh.md.
+    """
     text = text.lower()
     for terms, label in (
         (("fatality",), "fatality"),
@@ -315,7 +340,7 @@ def invalidate(config, reason):
     out = Path(config["output_dir"])
     out.mkdir(parents=True, exist_ok=True)
     qa = {"status": "not_evaluated", "reason": reason}
-    for name in (HEADLINES, INVENTORY, "incinv-qa.json"):
+    for name in (HEADLINES, INVENTORY, "incinv-qa.json", "incinv-manifest.json"):
         _write_json(out / name, qa)
     _csv_outputs(out)
     (out / HTML).write_text(
@@ -358,6 +383,18 @@ def analyze(config):
     years = Counter(
         datetime.strptime(row["DATE_OCCURRED"], "%m/%d/%Y").year for row, _ in drill
     )
+
+    def confidence_bucket(confidence):
+        if confidence >= 0.90:
+            return "direct_code(>=0.90)"
+        if confidence >= 0.70:
+            return "keyword_high(0.70-0.89)"
+        if confidence >= 0.50:
+            return "keyword_medium(0.50-0.69)"
+        return "keyword_low(<0.50)"
+
+    first_year = date.fromisoformat(qa["date_range"][0]).year
+    last_year = date.fromisoformat(qa["date_range"][1]).year
     result = {
         "status": "evaluated",
         "generated_at": _utc(),
@@ -366,7 +403,9 @@ def analyze(config):
         "quantity": "investigation records",
         "unit": "count",
         "methodology": "Canonical IncidentClassifier(source='bsee'), activity == DRILL; "
-        "severity is an accident-type proxy, not injury or fatality counts.",
+        "severity is an analyst-defined first-match accident-type proxy, "
+        "not a regulatory ranking or injury or fatality counts. "
+        "Vocabulary: BSEE NTL 2019-N05, Definitions; see docs/hse/public-refresh.md.",
         "incinv_total_records": len(rows),
         "drill_total": len(drill),
         "incinv_date_range": qa["date_range"],
@@ -376,10 +415,15 @@ def analyze(config):
         ),
         "drill_subactivity_distribution": distribution(r.subactivity for _, r in drill),
         "drill_match_method": distribution(r.match_method for _, r in drill),
+        "drill_confidence_buckets": distribution(
+            confidence_bucket(r.confidence) for _, r in drill
+        ),
         "drill_severity_proxy": distribution(
             _severity(row["ACCIDENT_TYPE"]) for row, _ in drill
         ),
-        "drill_by_year": {str(k): v for k, v in sorted(years.items())},
+        "drill_by_year": {
+            str(year): years[year] for year in range(first_year, last_year + 1)
+        },
         "drill_year_range": [min(years), max(years)] if years else None,
         "drill_top_areas": distribution(
             row["AREA_BLOCK"].split()[0] for row, _ in drill
