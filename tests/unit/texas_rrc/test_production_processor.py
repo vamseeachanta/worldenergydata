@@ -302,6 +302,61 @@ class TestAggregateAnnual:
 
 
 class TestAggregateByDistrict:
+    @pytest.mark.parametrize("as_records", [False, True])
+    @pytest.mark.parametrize("all_missing", [False, True])
+    def test_missing_district_conserves_totals(self, as_records, all_missing):
+        """Hand calculation on synthetic records; no conversion factors apply.
+
+        Known district 01 follows TexasDataValidator.VALID_DISTRICTS.
+        Record sums: oil 100+200+300=600 BBL; gas 10+20+30=60 MCF;
+        water 1+2+3=6 BBL; condensate 4+5+6=15 BBL; BOE 7+8+9=24.
+        BOE values are supplied aggregation inputs, not converted from gas.
+        With one known key, missing keys sum to oil 500, gas 50, water 5,
+        condensate 11 and BOE 17. With all keys missing, they sum to the
+        record totals. Missing keys have one unique lease ("missing");
+        an all-missing group also contains "known", so it has two leases.
+        Exact equality is required because these integer sums are exact.
+        """
+        frame = pd.DataFrame(
+            {
+                "district": [None if all_missing else "01", None, float("nan")],
+                "lease_number": ["known", "missing", "missing"],
+                "oil_production": [100.0, 200.0, 300.0],
+                "gas_production": [10.0, 20.0, 30.0],
+                "water_production": [1.0, 2.0, 3.0],
+                "condensate": [4.0, 5.0, 6.0],
+                "boe_total": [7.0, 8.0, 9.0],
+            }
+        )
+        data = frame.to_dict("records") if as_records else frame
+        result = ProductionProcessor().aggregate_by_district(data)
+
+        totals = {
+            "oil_production": 600.0,
+            "gas_production": 60.0,
+            "water_production": 6.0,
+            "condensate": 15.0,
+            "boe_total": 24.0,
+        }
+        missing_totals = (
+            totals
+            if all_missing
+            else {
+                "oil_production": 500.0,
+                "gas_production": 50.0,
+                "water_production": 5.0,
+                "condensate": 11.0,
+                "boe_total": 17.0,
+            }
+        )
+        missing = result.loc[result["district"].isna()]
+        assert len(missing) == 1
+        assert len(result) == (1 if all_missing else 2)
+        assert missing.iloc[0]["lease_count"] == (2 if all_missing else 1)
+        for field, total in totals.items():
+            assert result[field].sum() == total
+            assert missing.iloc[0][field] == missing_totals[field]
+
     def test_basic(self):
         proc = ProductionProcessor()
         df = pd.DataFrame(

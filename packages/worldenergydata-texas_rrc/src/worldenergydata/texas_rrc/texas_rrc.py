@@ -220,6 +220,11 @@ class TexasRRC:
         processor = ProductionProcessor()
         processed = processor.process(production_records, validate=False)
         districts = processor.aggregate_by_district(processed)
+        unassigned = (
+            districts.loc[districts["district"].isna()]
+            if "district" in districts
+            else districts
+        )
 
         label = cfg.get("meta", {}).get("label", "texas_rrc_production_summary")
         result_folder = Path(cfg["Analysis"]["result_folder"])
@@ -230,9 +235,20 @@ class TexasRRC:
         districts.to_csv(districts_path, index=False)
         summary = {
             "total_records": len(processed),
-            "district_count": int(len(districts)),
+            "district_count": (
+                int(districts["district"].count()) if "district" in districts else 0
+            ),
             "oil_production_total": float(districts["oil_production"].sum()),
             "gas_production_total": float(districts["gas_production"].sum()),
+            "unassigned_records": sum(
+                record.get("district") is None for record in processed
+            ),
+            "unassigned_oil_production_total": float(
+                unassigned["oil_production"].sum()
+            ),
+            "unassigned_gas_production_total": float(
+                unassigned["gas_production"].sum()
+            ),
         }
         summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
 

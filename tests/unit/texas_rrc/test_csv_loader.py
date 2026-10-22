@@ -85,15 +85,29 @@ class TestConvertValue:
 
     def test_integer_field(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "5") == 5
+        assert loader._convert_value("county_code", "5") == 5
 
     def test_integer_field_float_input(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "5.0") == 5
+        assert loader._convert_value("county_code", "5.0") == 5
 
     def test_integer_field_invalid(self):
         loader = CSVLoader()
-        assert loader._convert_value("district", "abc") is None
+        assert loader._convert_value("county_code", "abc") is None
+
+    @pytest.mark.parametrize(
+        "district",
+        # Source: TexasDataValidator.VALID_DISTRICTS; identity, no numeric cast.
+        ["01", "02", "03", "04", "05", "06", "7B", "7C", "08", "8A", "09", "10"],
+    )
+    def test_district_is_string_code(self, district):
+        """Each district string is preserved exactly after whitespace removal."""
+        assert CSVLoader()._convert_value("district", f" {district} ") == district
+
+    @pytest.mark.parametrize("district", ["5", "5.0", "abc"])
+    def test_district_defers_validation(self, district):
+        """Synthetic input strings pass through; the processor validates codes."""
+        assert CSVLoader()._convert_value("district", district) == district
 
     def test_string_field(self):
         loader = CSVLoader()
@@ -154,13 +168,16 @@ class TestLoadFromFile:
         with pytest.raises(FileNotFoundError):
             loader.load(tmp_path / "nonexistent.csv")
 
-    def test_with_mapping(self, tmp_path):
+    # Codes: TexasDataValidator.VALID_DISTRICTS, including single-digit input.
+    @pytest.mark.parametrize("district", ["3", "7B", "7C", "8A"])
+    def test_with_mapping(self, tmp_path, district):
+        """District identity follows the literal CSV input, with no numeric cast."""
         f = tmp_path / "test.csv"
-        f.write_text("OG_DIST_NO,OG_OIL_PROD\n3,150.5\n")
+        f.write_text(f"OG_DIST_NO,OG_OIL_PROD\n{district},150.5\n")
         loader = CSVLoader()
         mapping = {"OG_DIST_NO": "district", "OG_OIL_PROD": "oil_production"}
         records = loader.load(f, field_mapping=mapping)
-        assert records[0]["district"] == 3
+        assert records[0]["district"] == district
         assert records[0]["oil_production"] == 150.5
 
 
@@ -176,6 +193,6 @@ class TestConstants:
         assert "latitude" in CSVLoader.NUMERIC_FIELDS
 
     def test_integer_fields(self):
-        assert "district" in CSVLoader.INTEGER_FIELDS
+        assert "district" not in CSVLoader.INTEGER_FIELDS
         assert "county_code" in CSVLoader.INTEGER_FIELDS
         assert "lease_number" in CSVLoader.INTEGER_FIELDS

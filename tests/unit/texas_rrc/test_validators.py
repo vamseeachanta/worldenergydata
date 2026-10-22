@@ -1,5 +1,7 @@
 """Tests for Texas RRC data validators."""
 
+import pytest
+
 from worldenergydata.texas_rrc.validators import (
     TexasDataValidator,
     is_valid_texas_api_number,
@@ -357,6 +359,20 @@ class TestNormalizeDistrict:
 
     def test_lowercase(self):
         assert self.v.normalize_district("7b") == "7B"
+
+    @pytest.mark.parametrize(
+        ("district", "expected"),
+        [("3.0", "03"), ("10.0", "10"), ("03.00", "03"), ("7B", "7B")],
+    )
+    def test_integral_decimal_codes(self, district, expected):
+        assert self.v.normalize_district(district) == expected
+
+    @pytest.mark.parametrize(
+        "district",
+        ["3.5", "10.1", "003.0", "3e0", "+3.0", "-3.0", "0.0", "99.0"],
+    )
+    def test_invalid_numeric_codes(self, district):
+        assert self.v.normalize_district(district) is None
 
     def test_invalid(self):
         assert self.v.normalize_district("99") is None
