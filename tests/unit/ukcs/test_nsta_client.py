@@ -149,6 +149,12 @@ class TestNSTAClientDownload:
 
     @patch("worldenergydata.ukcs.production.nsta_client.requests")
     def test_download_paginates_official_arcgis_endpoint(self, mock_requests, tmp_path):
+        """The old test expected offset 2000 after one row, skipping 1999 rows.
+
+        ArcGIS Query resultOffset counts records skipped; one returned row
+        requires next offset 0+1=1, regardless of requested page size.
+        Source: ArcGIS REST Query (Feature Service/Layer), resultOffset.
+        """
         client = NSTAClient(cache_dir=str(tmp_path))
         first_response = MagicMock()
         first_response.json.return_value = {
@@ -172,9 +178,7 @@ class TestNSTAClientDownload:
             mock_requests.get.call_args_list[0].kwargs["params"]["resultRecordCount"]
             == 2000
         )
-        assert (
-            mock_requests.get.call_args_list[1].kwargs["params"]["resultOffset"] == 2000
-        )
+        assert mock_requests.get.call_args_list[1].kwargs["params"]["resultOffset"] == 1
         assert (
             mock_requests.get.call_args_list[1].kwargs["params"]["resultRecordCount"]
             == 2000
@@ -230,3 +234,41 @@ class TestNSTAClientDownload:
         with patch("worldenergydata.ukcs.production.nsta_client.requests", None):
             with pytest.raises(RuntimeError, match="requests"):
                 client.download(year=2022, force_refresh=True)
+
+
+@pytest.mark.parametrize("cap", [None, 3, 5])
+def test_short_pages_preserve_every_row_and_cache(monkeypatch, tmp_path, cap):
+    """Hand indexing: five rows [0,1,2,3,4], at most two returned per call.
+
+    Uncapped requests visit offsets [0,2,4]; cap=3 visits [0,2] and returns
+    [0,1,2]. Cap=5 visits [0,2,4] and returns all five. ArcGIS Query
+    resultOffset is records skipped, resultRecordCount is an upper bound:
+    https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
+    No response or expected index is derived from the client under test.
+    """
+    requests_seen = []
+    rows = [{"row_id": i} for i in range(5)]
+
+    def get(url, *, params, timeout):
+        offset, count = params["resultOffset"], params["resultRecordCount"]
+        requests_seen.append((offset, count))
+        page = rows[offset : offset + min(count, 2)]
+        response = MagicMock()
+        response.json.return_value = {
+            "features": [{"attributes": row} for row in page],
+            "exceededTransferLimit": offset + len(page) < len(rows),
+        }
+        return response
+
+    monkeypatch.setattr("worldenergydata.ukcs.production.nsta_client.requests.get", get)
+    client = NSTAClient(cache_dir=str(tmp_path))
+    result = client.download(year=2022, max_records=cap)
+    expected = [0, 1, 2] if cap == 3 else [0, 1, 2, 3, 4]
+    assert result["row_id"].tolist() == expected
+    assert client.load_cached(2022)["row_id"].tolist() == expected
+    expected_requests = {
+        None: [(0, 2000), (2, 2000), (4, 2000)],
+        3: [(0, 3), (2, 1)],
+        5: [(0, 5), (2, 3), (4, 1)],
+    }
+    assert requests_seen == expected_requests[cap]

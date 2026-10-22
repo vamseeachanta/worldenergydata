@@ -1,6 +1,7 @@
 """UKCS NSTA reference-chain tests (#717)."""
 
 import math
+from unittest.mock import Mock
 
 import pandas as pd
 import pytest
@@ -68,6 +69,7 @@ def test_uk_field_meta_mapping_builds_sparse_concept():
 
 def test_sparse_uk_concept_screen_is_deterministic():
     first = run_ukcs_reference_chain(
+        drilling_timeline={"drilling_monthly": {"1975-08": 1.0}},
         adapter=UkcsAdapter(loader=FixtureNstaLoader()),
         field_meta=_field_meta(),
         field_name="Forties",
@@ -75,6 +77,7 @@ def test_sparse_uk_concept_screen_is_deterministic():
         end="1975-10",
     )
     second = run_ukcs_reference_chain(
+        drilling_timeline={"drilling_monthly": {"1975-08": 1.0}},
         adapter=UkcsAdapter(loader=FixtureNstaLoader()),
         field_meta=_field_meta(),
         field_name="Forties",
@@ -91,6 +94,7 @@ def test_sparse_uk_concept_screen_is_deterministic():
 
 def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty():
     result = run_ukcs_reference_chain(
+        drilling_timeline={"drilling_monthly": {"1975-08": 1.0}},
         adapter=UkcsAdapter(loader=FixtureNstaLoader()),
         field_meta=_field_meta(),
         field_name="Forties",
@@ -107,3 +111,76 @@ def test_reference_chain_returns_labeled_finite_pre_tax_metrics_and_zero_royalty
     assert math.isfinite(result["pre_tax_metrics"]["gross_revenue_usd"])
     assert math.isfinite(result["pre_tax_metrics"]["net_cashflow_usd"])
     assert result["ranked_concepts"]
+
+
+@pytest.mark.parametrize("timeline", [None, {}, {"drilling_monthly": {}}])
+def test_missing_drilling_timeline_is_refused(timeline):
+    """Issue 1284: absence of drilling costs is unknown, never established zero."""
+    adapter = Mock()
+    with pytest.raises(ValueError, match="drilling"):
+        run_ukcs_reference_chain(
+            adapter=adapter,
+            field_meta={},
+            field_name="Synthetic",
+            drilling_timeline=timeline,
+        )
+    adapter.fetch.assert_not_called()
+
+
+def test_empty_production_is_refused():
+    """An unmatched field cannot establish first oil or evaluated economics."""
+    with pytest.raises(ValueError, match="production is empty"):
+        run_ukcs_reference_chain(
+            adapter=UkcsAdapter(loader=FixtureNstaLoader()),
+            field_meta={},
+            field_name="Synthetic",
+            drilling_timeline={"drilling_monthly": {"2024-01": 1.0}},
+        )
+
+
+def test_drilling_timeline_reaches_cashflow_engine(monkeypatch):
+    """The supplied calendar/day mapping must reach the engine unchanged.
+
+    This checks capital-input wiring, without qualifying inherited cost units.
+    """
+    from worldenergydata.fdas.analysis.cashflow import CashflowEngine
+
+    captured = []
+    original = CashflowEngine.generate_monthly_cashflow
+
+    def capture(self, production, timeline, prices, first_oil):
+        captured.append(timeline)
+        return original(self, production, timeline, prices, first_oil)
+
+    monkeypatch.setattr(CashflowEngine, "generate_monthly_cashflow", capture)
+    timeline = {"drilling_monthly": {"1975-08": 1.0}}
+    run_ukcs_reference_chain(
+        adapter=UkcsAdapter(loader=FixtureNstaLoader()),
+        field_meta=_field_meta(),
+        field_name=_field_meta()["field_name"],
+        drilling_timeline=timeline,
+    )
+    assert captured == [timeline]
+    assert captured[0] is timeline
+
+
+@pytest.mark.parametrize(
+    "monthly",
+    [
+        {"bad": 1.0},
+        {"2024-01": -1.0},
+        {"2024-01": float("nan")},
+        {"2024-01": float("inf")},
+        {"2024-01": 0.0},
+        {"2024-01": True},
+    ],
+)
+def test_invalid_drilling_timeline_is_refused(monthly):
+    """Issue 1284 requires a finite positive effort basis, with calendar months."""
+    with pytest.raises((TypeError, ValueError), match="drilling_monthly"):
+        run_ukcs_reference_chain(
+            adapter=Mock(),
+            field_meta={},
+            field_name="Synthetic",
+            drilling_timeline={"drilling_monthly": monthly},
+        )

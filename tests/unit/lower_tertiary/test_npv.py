@@ -5,6 +5,7 @@ import pytest
 import yaml
 
 from worldenergydata.lower_tertiary.npv import (
+    FinancialInputError,
     _normalize_lease,
     _read_yaml,
     _resolve_first_oil,
@@ -37,8 +38,8 @@ class TestNormalizeLease:
 
 class TestResolveFirstOil:
     def test_none(self):
-        result = _resolve_first_oil(None)
-        assert result == pd.Timestamp("1970-01-01")
+        with pytest.raises(ValueError, match="first_oil"):
+            _resolve_first_oil(None)
 
     def test_string(self):
         result = _resolve_first_oil("2020-06-01")
@@ -312,11 +313,105 @@ class TestSummarizeFieldFinancials:
                 pd.DataFrame(), self._make_profile(), self._make_econ_config()
             )
 
-    def test_zero_capex(self):
+    @pytest.mark.parametrize("capex", [None, {}, {"total_mm_usd": None}])
+    def test_missing_capex(self, capex):
+        """Issue 1269: an unknown investment cannot establish project NPV or PI."""
         profile = self._make_profile()
-        profile["capex"] = {}
-        result = summarize_field_financials(
-            self._make_monthly(), profile, self._make_econ_config()
-        )
-        assert result["CAPEX ($MM)"] == 0.0
-        assert result["PI"] == 0.0
+        profile["capex"] = capex
+        with pytest.raises(ValueError, match="capex.total_mm_usd"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    @pytest.mark.parametrize("date", [None, "", "not-a-date", "NaT", pd.NaT, 0])
+    def test_missing_or_invalid_first_oil(self, date):
+        """Issue 1269 requires an observed calendar origin, never an epoch guess."""
+        profile = self._make_profile()
+        profile["first_oil"] = date
+        with pytest.raises(ValueError, match="first_oil"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    @pytest.mark.parametrize(
+        "investment", [0, -1, float("nan"), float("inf"), "bad", True]
+    )
+    def test_invalid_capex(self, investment):
+        """A finite positive denominator is necessary for the retained PI ratio."""
+        profile = self._make_profile()
+        profile["capex"] = {"total_mm_usd": investment}
+        with pytest.raises(ValueError, match="capex.total_mm_usd"):
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+
+    @pytest.mark.parametrize("cashflow", [None, float("nan"), float("inf")])
+    def test_unknown_cashflow_is_not_zero(self, cashflow):
+        """A missing or non-finite money observation cannot establish NPV."""
+        monthly = self._make_monthly()
+        if cashflow is None:
+            monthly = monthly.drop(columns="operating_cash_flow")
+        else:
+            monthly["operating_cash_flow"] = monthly["operating_cash_flow"].astype(
+                float
+            )
+            monthly.loc[0, "operating_cash_flow"] = cashflow
+        with pytest.raises(ValueError, match="operating_cash_flow"):
+            summarize_field_financials(
+                monthly, self._make_profile(), self._make_econ_config()
+            )
+
+    @pytest.mark.parametrize("rate", [-0.1, float("nan"), float("inf")])
+    def test_invalid_discount_rate(self, rate):
+        """Rate inputs follow the non-negative finite convention of issue 1324."""
+        config = self._make_econ_config()
+        config["financial_metrics"]["discount_rates"]["primary_discount_rate"] = rate
+        with pytest.raises(ValueError, match="discount_rate"):
+            summarize_field_financials(
+                self._make_monthly(), self._make_profile(), config
+            )
+
+
+def test_inventory_preserves_unknown_first_oil(tmp_path):
+    """Inventory may contain unknown dates; financial evaluation must refuse them."""
+    (tmp_path / "synthetic.yml").write_text("field_id: synthetic\n")
+    profile = load_field_inputs(tmp_path, {"fields": {}})["synthetic"]
+    assert profile["first_oil"] is None
+
+
+@pytest.mark.parametrize(
+    "annual_rate, expected_operations, expected_project",
+    [(0.0, 150.0, 50.0), (1.1**12 - 1, 16600 / 121, 4500 / 121)],
+)
+def test_three_month_worked_example(annual_rate, expected_operations, expected_project):
+    """Independent hand calculation; all amounts are synthetic MM USD.
+
+    Cashflows [100,-50,100] at first-oil months t=[0,1,2], investment 100.
+    Zero discount: PV=100-50+100=150; project NPV=150-100=50.
+    Monthly r=0.1: PV=100-50/1.1+100/1.21=16600/121;
+    NPV=4500/121. Annual effective r=1.1**12-1 matches this monthly rate.
+    Source: NumPy v1.17 npv Notes (2020), citing Principles of Managerial
+    Finance, Brief, third edition (2003), page 346; t counts months here.
+    """
+    monthly = pd.DataFrame(
+        {
+            "date": pd.date_range("2024-01-01", periods=3, freq="MS"),
+            "operating_cash_flow": [100_000_000.0, -50_000_000.0, 100_000_000.0],
+        }
+    )
+    profile = {"first_oil": "2024-01-01", "capex": {"total_mm_usd": 100.0}}
+    config = {
+        "financial_metrics": {
+            "discount_rates": {
+                "primary_discount_rate": annual_rate,
+            }
+        }
+    }
+    result = summarize_field_financials(monthly, profile, config)
+    assert result["NPV Operations ($MM)"] == pytest.approx(expected_operations)
+    assert result["NPV Project ($MM)"] == pytest.approx(expected_project)
+    assert result["PI"] == pytest.approx(expected_project / 100)
+    profile.pop("first_oil")
+    with pytest.raises(FinancialInputError) as caught:
+        summarize_field_financials(monthly, profile, config)
+    assert caught.value.field == "first_oil"

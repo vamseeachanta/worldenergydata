@@ -5,8 +5,8 @@
 | Module | bsee:lower_tertiary |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary |
-| Pack revision | 1, 2026-10-15 |
-| Code revision | 285d65c40896b17ccf44568e59f5b789d59c943e |
+| Pack revision | 2, 2026-10-22 |
+| Code revision | Historical pin `285d65c40896b17ccf44568e59f5b789d59c943e`; the containing commit binds revision 2 behavior and test nodes. |
 | Analysis family | EC; data pipelines and calculations |
 | Quality manager role | Calculations quality manager |
 | Status | DRAFT |
@@ -30,6 +30,8 @@ The scope is this package, including its helper modules; physical design, equipm
 | 0 | 2026-10-15 | Initial module scope, methods, evidence and limitations |
 | 1 | 2026-10-15 | Correct the discount-rate citation; identify absent-data groups, silent defaults, public-record checks and the parallel implementation so evidence and limits are explicit |
 
+| 2 | 2026-10-22 | Refuse unknown valuation inputs, preserve zero OPEX and add hand-calculated regression evidence. |
+
 ## 2. Inputs and outputs
 
 ### Inputs
@@ -37,9 +39,9 @@ The scope is this package, including its helper modules; physical design, equipm
 | Interface / input | Unit and convention | Range / default | Source and citation |
 | --- | --- | --- | --- |
 | `load_lease_mapping` | Lease identifier; stripped and uppercased | Empty mappings become empty dictionaries | YAML mapping; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L16-L50] |
-| `load_field_inputs` | `first_oil`, `data_through`: timestamps; `capex.total_mm_usd`: USD million | Status filter optional; missing first-oil resolves to 1970-01-01 | Field YAML directory and lease mapping; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L53-L130] |
+| `load_field_inputs` | `first_oil`, `data_through`: timestamps; `capex.total_mm_usd`: USD million | Status filter optional; missing inventory first oil remains `None`; evaluation requires a calendar date | Field YAML directory and lease mapping; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L53-L130] |
 | `calculate_monthly_financials` | `oil_bbl`: bbl/month; `gas_mcf`: Mcf/month; oil price USD/bbl; gas price USD/Mcf; opex USD/boe; rates dimensionless | Empty input returns unchanged; missing volume columns use zero | Monthly DataFrame and economic configuration; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L133-L170] |
-| `summarize_field_financials` | `date`: month timestamp; cashflow USD/month; annual effective discount fraction | Empty input raises; missing cashflow is zero; missing capex is zero | Monthly financials, profile and economic configuration; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L173-L226] |
+| `summarize_field_financials` | `date`: month timestamp; cashflow USD/month; annual effective discount fraction | Empty input, unknown cashflow and invalid CAPEX raise `FinancialInputError`; CAPEX must be finite and positive | Monthly financials, profile and economic configuration; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L173-L226] |
 | `load_ogor_production` | `PRODUCTION_DATE`: YYYYMM; `MON_O_PROD_VOL`: bbl/month | Years 2000–2025 by default; malformed oil becomes zero; absent archives skipped | Yearly ZIP records; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L116-L200] |
 | `classify_production` | Oil bbl/month; string `PRODUCT_CODE`, `WELL_STAT_CD`; timestamp `date` | Optional first-oil mapping; default grouping key `development` | Record-level DataFrame; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/production_classifier.py:L19-L81] |
 | `compute_learning` | `drill_days`: days; `MAX_WELL_BORE_TVD`: ft; spud timestamps | At least 4 dated wells per group; threshold 10.0 percent | Cleaned drilling DataFrame; [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/drilling_learning.py:L21-L67] |
@@ -117,6 +119,22 @@ Gate selection: AQG r0, section 10, Python calculations; G5 also applies under s
 
 These are executable evidence checks, not a signed release clearance; the comprehensive report validates citation presence and roster consistency before rendering. [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/comprehensive_report.py:L110-L129]
 
+### Valuation-input regression evidence, revision 2
+
+The independent example is [three-month valuation](../../../../../../docs/examples/economics-input-validation.md). Equation source: [NumPy v1.17 NPV Notes (2020)](https://numpy.org/doc/1.17/reference/generated/numpy.npv.html), citing *Principles of Managerial Finance, Brief*, third edition (2003), page 346. Monthly elapsed periods start at first oil, so its first receipt is at time zero. The historical project-NPV/CAPEX PI ratio remains unchanged and differs from a gross-PV/investment definition.
+
+| Finding | Detection test node | Expected basis |
+| --- | --- | --- |
+| Missing or invalid date | `tests/unit/lower_tertiary/test_npv.py::TestSummarizeFieldFinancials::test_missing_or_invalid_first_oil` | Issue #1269: refuse rather than invent a calendar origin |
+| Missing or invalid investment | `tests/unit/lower_tertiary/test_npv.py::TestSummarizeFieldFinancials::test_missing_capex`; `tests/unit/lower_tertiary/test_npv.py::TestSummarizeFieldFinancials::test_invalid_capex` | Issue #1269; a zero denominator cannot define PI |
+| Unknown inventory date | `tests/unit/lower_tertiary/test_npv.py::test_inventory_preserves_unknown_first_oil` | Inventory retains `None` |
+| Unknown monthly money | `tests/unit/lower_tertiary/test_npv.py::TestSummarizeFieldFinancials::test_unknown_cashflow_is_not_zero` | Missing and non-finite observations are refused |
+| Invalid discount rate | `tests/unit/lower_tertiary/test_npv.py::TestSummarizeFieldFinancials::test_invalid_discount_rate` | Finite non-negative rate convention |
+| Discounted signed receipts | `tests/unit/lower_tertiary/test_npv.py::test_three_month_worked_example` | Independent arithmetic in the docstring; zero-rate NPV 50.0 MM USD, positive-rate NPV 37.2 MM USD |
+| Explicit zero OPEX | `tests/unit/lower_tertiary/test_portfolio_economics.py::test_explicit_zero_opex_is_preserved` | Independent one-year arithmetic: zero OPEX gives 40.0 MM USD; absent OPEX retains 25.0 MM USD |
+
+Limits remain: no new price, fiscal, unit-conversion or field-date authority is established. Optional production and reporting totals still have zero defaults; the broader sweep remains follow-up. Earlier offline receipts below are historical and are not revised by these input checks.
+
 ### Offline execution receipt
 
 Code pin: `285d65c40896b17ccf44568e59f5b789d59c943e`; BASE: `1d59b3f6ee29e40f08ea4be17a0fa0f1a878a167`. Local checks use workspace sources through `PYTHONPATH`, declared test dependencies and calculation / I/O dependencies installed as wheels, with configured addopts retained. Coverage, performance and temporary outputs are directed to scratch. AFTER results are recorded on the uncommitted documentation tree with the existing `--allow-existing-tree-changes` option, retaining the tree-preservation guard.
@@ -149,7 +167,7 @@ sweep: not run (legacy pack)
 | --- | --- | --- | --- |
 | Missing OGOR years are skipped by the ZIP loader; malformed oil is coerced to zero | C0b protects the separate retained-input route; no detection check exists for completeness of the general ZIP route | Issue pending (3), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/v30_reproducer.py:L144-L184] |
 | Configured first-oil dates affect the discount origin; #747 reports historical public-record discrepancies, including a date about 9 years late, and operator discrepancies. The pin already contains a limited correction and regression check | C0c checks 3 records and rejects a reverted date; no detection check exists auditing every configuration date against the public record | #747 (open), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L100-L103] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L186] [tests/unit/lower_tertiary/test_field_public_record_747.py:L11-L64] |
-| Missing first oil silently resolves to 1970-01-01, so later cashflows are discounted from January 1970 without warning; missing `capex.total_mm_usd` silently becomes 0.0, making project NPV equal operating NPV and PI 0.0 | No detection check exists rejecting either silent default; C2 verifies revenue arithmetic only | #1269 (open), 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L54-L59] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L175-L192] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/npv.py:L203-L207] |
+| Unknown first oil, CAPEX or operating cashflow cannot establish valuation | Corrected: `FinancialInputError` exposes `field` and `reason`; calendar dates and finite positive investment are required. Inventory may retain `None`. | #1269; regression nodes in section 5 | `npv.py::_resolve_first_oil`, `npv.py::summarize_field_financials` |
 | Missing WTI observations fall through to a fixed historical constant; early workbook return does not cap the requested month | Inspect output maximum month and fallback source counts; no detection check exists enforcing the intended capped-date / latest-observation contract | #1191, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/wti_prices.py:L199-L206] [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/wti_prices.py:L240-L266] |
 | HSE placeholder carries a zero incident count; absence of observations must remain visible | Reporting test requires all placeholder counts to become unknown; 0 retained numeric placeholders in `report_hse` | #366, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py:L334-L354] [tests/integration/reporting/test_comprehensive_delivery.py:L99-L102] |
 | Cost comparison calls the disclosure query with an empty revision view and catches failures | Inspect `benchmark_status` and caveats; no detection check exists establishing live disclosure coverage | #343, #344, 2026-10-15 | [packages/worldenergydata-bsee/src/worldenergydata/lower_tertiary/portfolio_analytics.py:L388-L425] |

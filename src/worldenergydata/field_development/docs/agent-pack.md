@@ -6,7 +6,7 @@
 | Repository | `worldenergydata` |
 | Path | `src/worldenergydata/field_development` (package scope) |
 | Pack | `src/worldenergydata/field_development/docs/agent-pack.md` |
-| Pack revision | 2, 2026-10-18 |
+| Pack revision | 3, 2026-10-22 |
 | Code revision | Audit corrections based on `7ea5f6600dc8a7c7f4739dd948bbcf0356e9b26a`; the containing commit binds the revised functions and tests. Historical records below retain their original pins. |
 | Analysis family | EC (engineering calculations); data pipeline; AQG r0 section 10 Python calculations gate set |
 | Quality manager role | Calculations quality manager, interim data-pipeline coverage |
@@ -27,6 +27,12 @@ UNVERIFIED: U1 — conformity to the named engineering standards, their governin
 UNVERIFIED: U2 — independent engineering validation, comprehensive coverage of the supporting paths, and deployment suitability beyond the offline checks remain open; #1323.
 
 Routing audit record: no `docs/registry/module-routing.yaml` exists at the code pin; no registry maturity is asserted.
+
+## Revision history
+
+| Revision | Date | Change and reason |
+| --- | --- | --- |
+| 3 | 2026-10-22 | Add zero/default/positive-rate arithmetic and invalid-rate checks; earlier revision details remain in repository history. |
 
 ## 2. Inputs and outputs
 
@@ -140,6 +146,14 @@ Gate selection: AQG r0, section 10, Python calculations; section 9, evidence app
 | FD-G5-2 | `estimate_economics().note`, `build_fdp_html`; `tests/modules/field_development/test_audit_economics.py::test_proxy_has_hand_checked_npv_and_label`, `tests/modules/field_development/test_audit_outputs.py::test_default_layout_and_report_disclose_schematic_offset` | Output labels state undeclined oil-price proxy and unused gas price; default SVG/report state schematic 1.5 km | G5 |
 
 Both module test directories and discovered consumer tests should also run, retaining every skip reason. G3/G4 remain not applicable; no commercial solver result is asserted.
+
+### Discount selection and arithmetic, revision 3
+
+`tests/modules/field_development/test_discount_rate.py::test_discount_selection_and_hand_calculated_npv` covers absent, `None`, explicit zero and positive rates, including a zero default and explicit zero without a default. Its independent two-year example gives -100 + 100 + 100 = 100.0 MM USD at zero; at 25.0 percent, -100 + 100/1.25 + 100/1.25² = 44.0 MM USD. Default selection uses `is None`, and the existing default assumption is unchanged.
+
+Source: [NumPy v1.17 NPV Notes (2020)](https://numpy.org/doc/1.17/reference/generated/numpy.npv.html), citing *Principles of Managerial Finance, Brief*, third edition (2003), page 346. The period is one year, investment occurs at time zero, and receipts occur at year end. All amounts and rates above are synthetic scenario inputs. No physical coefficient or acceptance limit is introduced.
+
+`tests/modules/field_development/test_discount_rate.py::test_invalid_discount_rate_is_refused` checks model validation. `tests/modules/field_development/test_discount_rate.py::test_unvalidated_discount_rate_does_not_produce_npv` checks model-copy updates: a negative or non-finite rate suppresses NPV and names the missing valid basis. This retains the undeclined oil-price proxy limitations of E4; it does not establish a tax or investment model.
 
 ## 6. Known failure modes and pitfalls
 

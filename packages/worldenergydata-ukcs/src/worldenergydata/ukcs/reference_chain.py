@@ -8,7 +8,9 @@ pre-tax chain plumbing, not a UK investment NPV headline.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import datetime
+from math import isfinite
 from typing import Any, Dict, Optional
 
 import pandas as pd
@@ -33,8 +35,33 @@ def run_ukcs_reference_chain(
     start: Optional[str] = None,
     end: Optional[str] = None,
     oil_price_usd_bbl: float = 75.0,
+    drilling_timeline: dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
-    """Run the #717 one-field UKCS chain slice."""
+    """Run the #717 chain with explicit drilling days and nonempty production.
+
+    Raises ValueError if the drilling basis or production is unavailable;
+    nonnumeric drilling-day values raise TypeError.
+    Costs retain the FDAS assumptions and pre-tax qualification limits.
+    """
+    drilling_monthly = (
+        drilling_timeline.get("drilling_monthly")
+        if isinstance(drilling_timeline, Mapping)
+        else None
+    )
+    if not isinstance(drilling_monthly, Mapping) or not drilling_monthly:
+        raise ValueError("drilling_timeline requires nonempty drilling_monthly")
+    # Issue 1284: zero/unknown drilling effort cannot establish drilling capital.
+    for month, days in drilling_monthly.items():
+        try:
+            datetime.strptime(month, "%Y-%m")
+        except (TypeError, ValueError) as exc:
+            raise ValueError("drilling_monthly requires year-month keys") from exc
+        if isinstance(days, bool) or not isinstance(days, (int, float)):
+            raise TypeError("drilling_monthly requires numeric days")
+        if not isfinite(days) or days < 0:
+            raise ValueError("drilling_monthly requires finite non-negative days")
+    if not any(days > 0 for days in drilling_monthly.values()):
+        raise ValueError("drilling_monthly requires positive drilling effort")
     unified = adapter.fetch(
         ProductionQuery(
             regions=["ukcs"],
@@ -44,10 +71,10 @@ def run_ukcs_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
+    first_oil = _first_oil_date(fdas_production)
     field_concept = build_uk_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
-    first_oil = _first_oil_date(fdas_production)
     price_deck = {
         str(year_month): oil_price_usd_bbl
         for year_month in fdas_production.get("YEAR_MONTH", pd.Series(dtype="object"))
@@ -62,7 +89,7 @@ def run_ukcs_reference_chain(
         fiscal_terms=get_fiscal_terms("uk"),
     ).generate_monthly_cashflow(
         fdas_production,
-        {"drilling_monthly": {}},
+        drilling_timeline,
         price_deck,
         first_oil,
     )
@@ -85,7 +112,7 @@ def build_uk_field_concept_from_meta(field_meta: Dict[str, Any]):
 
 def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     if fdas_production.empty:
-        return datetime(1970, 1, 1)
+        raise ValueError("production is empty; cannot determine first-oil date")
     first_period = str(fdas_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 

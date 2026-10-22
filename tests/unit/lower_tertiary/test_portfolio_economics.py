@@ -141,3 +141,37 @@ class TestRendering:
             assert fid in contents, f"HTML missing field id: {fid}"
         # And the citations panel should mention the BSEE royalty.
         assert "30 CFR" in contents
+
+
+@pytest.mark.parametrize("opex", [0.0, None])
+def test_explicit_zero_opex_is_preserved(monkeypatch, opex):
+    """Synthetic one-year hand calculation, all amounts in MM USD.
+
+    Plateau 1000/365 thousand bbl/day * 365/1000 = 1 MMbbl/year.
+    Investment is 10; oil price is 50 and royalty is zero. With r=0,
+    NPV = -10 + 1*(50-OPEX). Zero OPEX gives 40; absent OPEX retains
+    the inherited 15 USD/bbl assumption, giving 25. The value 15 is an
+    existing scenario assumption, not a newly qualified engineering default.
+    Source: portfolio_economics.DEFAULT_OPEX_PER_BOE; NPV equation:
+    NumPy v1.17 npv Notes (2020), citing Principles of Managerial Finance,
+    Brief, third edition (2003), page 346.
+    """
+    monkeypatch.setattr(
+        "worldenergydata.lower_tertiary.portfolio_economics._load_field_yaml",
+        lambda _: {
+            "capex": {"total_mm_usd": 10.0},
+            "production_profile": {"plateau_rate_mbopd": 1000 / 365},
+            "opex_per_boe": opex,
+        },
+    )
+    result = analyze_field(
+        "synthetic",
+        discount_rate=0.0,
+        oil_price_usd_per_bbl=50.0,
+        sensitivity_prices=[50.0],
+        project_years=1,
+        plateau_years=1,
+        annual_decline=0.0,
+        royalty_rate=0.0,
+    )
+    assert result.npv_mm_usd == pytest.approx(40.0 if opex == 0.0 else 25.0)
