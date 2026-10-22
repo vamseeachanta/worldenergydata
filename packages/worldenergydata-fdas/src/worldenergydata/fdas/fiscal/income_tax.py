@@ -20,7 +20,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterable
 from dataclasses import dataclass
-from numbers import Real
+from numbers import Integral, Real
 
 
 def _amount(name: str, value: float, *, nonnegative: bool = False) -> float:
@@ -66,7 +66,9 @@ class IncomeTaxPolicy:
 
 @dataclass(frozen=True)
 class AnnualTaxInput:
-    """One complete tax year; all amounts are USD on the same interest basis.
+    """One complete tax year, with amounts in undiscounted nominal USD.
+
+    Amounts use money of each tax year and one consistent ownership share.
 
     ``taxable_income_before_nol_usd`` is nonnegative income after caller-provided
     tax adjustments but before this pool's deduction. In a loss year it is zero
@@ -83,7 +85,7 @@ class AnnualTaxInput:
     def __post_init__(self) -> None:
         if (
             isinstance(self.year, bool)
-            or not isinstance(self.year, int)
+            or not isinstance(self.year, Integral)
             or self.year <= 0
         ):
             raise ValueError("year must be a positive integer")

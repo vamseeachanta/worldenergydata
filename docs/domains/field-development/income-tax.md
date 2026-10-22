@@ -14,13 +14,14 @@ interfaces. This helper does not make an assumption deck canonical.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-19 | Added an annual bridge to test explicit tax and loss inputs before integration. |
+| Update | 2026-10-22 | Clarified nominal money and loss-vintage eligibility, accepted NumPy integer years, and moved the guide out of package data. |
 
 ## Scope and source
 
 The equation source is the [IRS Instructions for Form 1120 (2025)](https://www.irs.gov/instructions/i1120),
 line 30, **Net operating loss (NOL)**, and Schedule J, line 1a, **Income Tax**.
 The public page was read on 2026-10-19 with HTTP status 200. That edition supplies
-the example corporate rate of 21% and the post-2017 NOL offset limit of 80%.
+the example corporate rate of 21% and a conditional NOL offset limit of 80%.
 These values are example inputs, not defaults or approved cost-basis changes.
 The source also describes older loss vintages and special limitations that this
 single-pool helper does not implement.
@@ -28,6 +29,15 @@ single-pool helper does not implement.
 The caller must establish applicability for each supplied tax year. One schedule
 uses one non-expiring carryforward pool and one policy. Mixed loss vintages,
 carrybacks, ownership changes and special restrictions require separate treatment.
+The 80% example limit covers losses originating in tax years beginning after
+2017 when deducted in tax years beginning after 2020. Its income base excludes
+the NOL deduction and deductions under sections 199A and 250; it does not apply
+the 80% cap to a pre-2018 loss pool. See
+[26 USC 172(a)(2)](https://www.law.cornell.edu/uscode/text/26/172), read on
+2026-10-22 with HTTP status 200, and the IRS instructions cited above, reopened
+on the same date with HTTP status 200. Mixed vintages require separate treatment,
+including the older-loss adjustment to the income base.
+
 In particular, the example policy must not be applied across the full historical
 production window as though it were valid in every year.
 
@@ -54,7 +64,9 @@ the previous closing NOL as the next opening NOL after checking pool eligibility
 
 All dollar amounts and years here are synthetic test inputs. The policy rates
 are cited above; the test docstring writes out the hand calculation independently
-of the helper. All amounts must use USD and the same interest basis.
+of the helper. All amounts must be undiscounted nominal USD (money of each tax
+year), using one consistent ownership share. The helper performs no inflation
+adjustment or discounting.
 
 ```python
 from worldenergydata.fdas.fiscal.income_tax import (
@@ -93,7 +105,9 @@ Taxable income and eligible losses are deliberately separate from pre-tax
 cashflow. A cash outflow for CAPEX is not automatically a tax deduction.
 The helper rejects a year containing both positive taxable income and a new
 NOL. Rates, amounts and years are validated; results and provenance are immutable.
-Missing required inputs prevent evaluation rather than selecting a fallback.
+Positive integer years include NumPy integer scalars taken from a DataFrame;
+boolean and floating-point years remain invalid. Missing required inputs prevent
+evaluation rather than selecting a fallback.
 
 The following remain **NOT_EVALUATED** by this helper:
 

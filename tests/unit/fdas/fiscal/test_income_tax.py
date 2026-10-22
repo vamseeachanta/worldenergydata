@@ -8,6 +8,7 @@ All dollar amounts and years below are synthetic test inputs, not cost estimates
 
 from dataclasses import FrozenInstanceError, replace
 
+import numpy as np
 import pytest
 
 from worldenergydata.fdas.fiscal.income_tax import (
@@ -159,7 +160,31 @@ def test_simultaneous_taxable_profit_and_new_loss_rejected():
         _year(nol_generated_usd=100)
 
 
-@pytest.mark.parametrize("bad", [True, 0, -1, 2025.0, "2025", None])
+@pytest.mark.parametrize("year_type", [np.int32, np.int64, np.uint64])
+def test_numpy_integer_years_support_consecutive_schedule(year_type):
+    """DataFrame-style integer scalars retain the annual ordering contract."""
+    rows = [_year(year=year_type(year)) for year in (2025, 2026)]
+    result = calculate_annual_income_tax(rows, policy=_policy(), opening_nol_usd=0)
+    assert [row.year for row in result.years] == [2025, 2026]
+    assert [row.income_tax_usd for row in result.years] == [210, 210]
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        True,
+        0,
+        -1,
+        2025.0,
+        "2025",
+        None,
+        np.bool_(True),
+        np.int64(0),
+        np.int64(-1),
+        np.uint64(0),
+        np.float64(2025),
+    ],
+)
 def test_invalid_year_rejected(bad):
     with pytest.raises(ValueError, match="year"):
         _year(year=bad)
