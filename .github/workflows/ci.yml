@@ -311,6 +311,20 @@ jobs:
       - name: Install dependencies
         run: uv sync --all-extras
 
+      - name: Check F821 scan consistency
+        # Repetitions follow the issue investigation plan; timeout is an execution budget.
+        run: |
+          uv run --no-sync python scripts/ci/check_f821.py src/ tests/ packages/ \
+            --runs 5 --timeout 300 --output "${RUNNER_TEMP}/f821-scan"
+
+      - name: Upload F821 scan evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: f821-scan-evidence
+          path: ${{ runner.temp }}/f821-scan
+          if-no-files-found: ignore
+
       - name: Run Black
         run: uv run black --check --diff src/ tests/
 
