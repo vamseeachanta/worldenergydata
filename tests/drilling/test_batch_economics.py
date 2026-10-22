@@ -6,7 +6,6 @@
 import math
 
 import pandas as pd
-import pytest
 
 from worldenergydata.drilling.batch_economics.bsee_batch_detector import (
     BSEEBatchDetector,
@@ -55,7 +54,10 @@ class TestLearningCurve:
     def test_learning_curve_monotonic_decrease(self):
         """Later wells should take progressively less time than earlier wells."""
         base = 60.0
-        times = [self.calc.learning_curve_time(base, pos) for pos in range(1, 6)]
+        times = [
+            self.calc.learning_curve_time(base, pos, lc_factor=0.85)
+            for pos in range(1, 6)
+        ]
         for i in range(len(times) - 1):
             assert times[i] > times[i + 1], (
                 f"Expected time to decrease from position {i+1} to {i+2}: "
@@ -147,11 +149,13 @@ class TestBreakEven:
             mob_cost=5_000_000.0,
             day_rate=350_000.0,
             base_well_days=60.0,
+            lc_factor=0.85,  # Explicit synthetic factor from the campaign fixture.
         )
         n_high = self.calc.break_even_n_wells(
             mob_cost=50_000_000.0,
             day_rate=350_000.0,
             base_well_days=60.0,
+            lc_factor=0.85,  # Explicit synthetic factor from the campaign fixture.
         )
         assert (
             n_high >= n_low
@@ -163,13 +167,14 @@ class TestBreakEven:
             mob_cost=20_000_000.0,
             day_rate=350_000.0,
             base_well_days=60.0,
+            lc_factor=0.85,  # Explicit synthetic factor from the campaign fixture.
         )
         assert isinstance(n, int)
         assert n >= 1
 
 
 # ---------------------------------------------------------------------------
-# NPV comparison tests
+# NPV comparison tests (explicit synthetic 60-day base, as in duration tests)
 # ---------------------------------------------------------------------------
 
 
@@ -181,7 +186,9 @@ class TestBatchVsStandaloneNPV:
         """Batch campaign total cost should be less than sum of standalone costs
         when N wells > break-even (learning curve + mob sharing produce savings)."""
         campaign = _make_campaign(n_wells=5, lc_factor=0.85)
-        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
+        result = self.calc.batch_vs_standalone_npv(
+            campaign, discount_rate=0.10, base_days_per_well=60.0
+        )
         assert result["batch_npv"] < result["standalone_npv"], (
             f"Expected batch_npv < standalone_npv: "
             f"batch={result['batch_npv']:.0f} standalone={result['standalone_npv']:.0f}"
@@ -190,7 +197,9 @@ class TestBatchVsStandaloneNPV:
     def test_batch_savings_positive_for_multi_well(self):
         """batch_savings must be positive for a multi-well campaign."""
         campaign = _make_campaign(n_wells=4, lc_factor=0.85)
-        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
+        result = self.calc.batch_vs_standalone_npv(
+            campaign, discount_rate=0.10, base_days_per_well=60.0
+        )
         assert (
             result["batch_savings"] > 0.0
         ), f"Expected positive savings, got {result['batch_savings']}"
@@ -198,7 +207,9 @@ class TestBatchVsStandaloneNPV:
     def test_single_well_no_mob_savings(self):
         """Single-well campaign: batch NPV should equal standalone (no mob savings)."""
         campaign = _make_campaign(n_wells=1)
-        result = self.calc.batch_vs_standalone_npv(campaign, discount_rate=0.10)
+        result = self.calc.batch_vs_standalone_npv(
+            campaign, discount_rate=0.10, base_days_per_well=60.0
+        )
         assert math.isclose(
             result["batch_npv"], result["standalone_npv"], rel_tol=1e-6
         ), (
@@ -209,7 +220,7 @@ class TestBatchVsStandaloneNPV:
     def test_result_has_required_keys(self):
         """Result dict must contain batch_npv, standalone_npv, batch_savings."""
         campaign = _make_campaign(n_wells=3)
-        result = self.calc.batch_vs_standalone_npv(campaign)
+        result = self.calc.batch_vs_standalone_npv(campaign, base_days_per_well=60.0)
         for key in ("batch_npv", "standalone_npv", "batch_savings"):
             assert key in result, f"Missing key: {key}"
 

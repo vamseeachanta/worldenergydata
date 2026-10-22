@@ -5,8 +5,8 @@
 | Module | drilling |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-drilling/src/worldenergydata/drilling` |
-| Pack revision | 3, 2026-10-19 |
-| Code revision | `b1394197a66f95d78615425b4e1ad4ff78bd9de2` |
+| Pack revision | 4, 2026-10-22 |
+| Historical code revision | `b1394197a66f95d78615425b4e1ad4ff78bd9de2` |
 | Analysis family | EC; Python calculations gate set, AQG r0 section 10 |
 | Quality role | Calculations quality manager; data-pipeline coverage |
 | Status | DRAFT; independent clearance pending |
@@ -28,6 +28,59 @@ The package metadata declares Alpha maturity and Python >=3.10; this declaration
 | 0 | 2026-10-17 | Initial inputs, methods, regression examples and failure inventory to guide package use. |
 | 1 | 2026-10-17 | Record constant break-even output, stronger numeric gates, pinned digests and node outcomes to expose weak regression oracles. |
 | 3 | 2026-10-19 | Add a pinned mobilization enrollment proposal and exact allocation checks; defer counted inventory changes until review. |
+| 4 | 2026-10-22 | Define finite-input, sequence and empty-campaign contracts; require unqualified learning and duration inputs; add a primary-source duration interpretation and independent arithmetic examples. |
+
+### Current campaign contracts and duration basis
+
+This subsection and [campaign-contracts.md](campaign-contracts.md) supersede the
+historical input/duration descriptions, numeric defaults and corresponding
+failure dispositions in sections 2-10 below. Those sections retain the header's
+historical code pin and prior evidence; their old source ranges and observations
+must not be treated as a description of current campaign behavior. Detector
+qualification and the other tracked follow-ups remain separate.
+
+Current models and direct calculator calls reject nonfinite, incorrectly typed
+and out-of-domain inputs with structured named-field errors. The model docstring
+contains the field/unit/sign/finite table. Learning factors are required; no
+calibrated default is established. Comparison requires an explicit first-well
+base duration. The depth helper requires every coefficient, retains its additive
+arithmetic, and no longer provides an automatic fallback.
+
+Campaigns require at least one well and unique well IDs. Empty or absent sequence
+selects insertion order; any nonempty sequence must be a complete permutation.
+Duplicate, unknown and omitted identifiers are rejected with the identifier in
+the error. Filtering every well out is an empty campaign and is rejected. Cost
+calls revalidate mutable campaign inputs; silent omission is not permitted.
+
+The public primary reference is NASA, *Guidelines for Application of Learning/Cost
+Improvement Curves* (1975), sections IV.A-B, printed pp. 6-7, and VII.B formulas
+1-2, printed p. 15:
+[public NASA copy](https://ntrs.nasa.gov/api/citations/19760006882/downloads/19760006882.pdf).
+The individual-duration law is `t(n)=T1*n**e`, `e=log(L)/log(2)`;
+its total is a sum. Interpreting the ordinate as a cumulative average instead
+requires `N*A(N)`. The implementation retains individual durations and corrects
+the prior average label. The source establishes the form, not drilling
+calibration. The worked example and test docstrings independently derive both
+three-well totals and distinguish the former fixed-term prose from the actual
+addition. Arithmetic examples do not establish engineering clearance.
+
+Current executable nodes:
+
+| Contract or reference | Test node or file | Provenance |
+| --- | --- | --- |
+| Numeric types, signs, finiteness and required fields | `tests/unit/drilling/test_campaign_contracts.py` | API domain boundaries; synthetic invalid inputs |
+| Exact permutation, duplicate well IDs, empty/all-excluded and mutated campaigns | `tests/unit/drilling/test_campaign_contracts.py::test_incomplete_sequence_rejected`; `tests/unit/drilling/test_campaign_contracts.py::test_empty_campaign_rejected`; `tests/unit/drilling/test_campaign_contracts.py::test_direct_campaign_revalidates_mutation` | Explicit three-well membership and zero-well rejection |
+| Individual-unit three-well time and cost | `tests/unit/drilling/test_duration_qualification.py::test_individual_duration_reference` | NASA (1975), IV.B and VII.B.1-2; independent radical expressions |
+| Cumulative-average alternative | `tests/unit/drilling/test_duration_qualification.py::test_cumulative_average_reference` | NASA (1975), IV.A and VII.B.1-2; average times count and differencing |
+| Required depth coefficients and actual fixed-term addition | `tests/unit/drilling/test_duration_qualification.py::test_depth_arithmetic_reference` | Explicitly assumed coefficients; hand arithmetic, not calibration |
+
+The current arithmetic evidence supplements the historical regression examples;
+independent field validation remains absent. Retained limits include geographic
+datum/range qualification, drilling calibration/population/range, extreme-value
+conditioning, detector default qualification, and the cost/break-even semantics
+tracked in #1345. Sections 7-10 retain the remaining inventory, distribution and
+clearance work. No new counted-family or engineering-readiness claim is made.
+
 
 ## 2. Inputs and outputs
 
