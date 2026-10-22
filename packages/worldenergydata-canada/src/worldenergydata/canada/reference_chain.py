@@ -44,8 +44,10 @@ def run_canada_reference_chain(
     Gas pricing requires standardized saleable ``gas_mcf`` input and a price
     for every production month; FDAS validates both. CNSOER gas-equivalent
     native rows require a supported realization basis before this chain.
-    No gas deck preserves oil-only revenue. The default fiscal/cost assumptions
-    remain illustrative, rather than Canadian field investment economics.
+    No gas deck preserves oil-only revenue and reports ``gas_revenue_usd`` as
+    ``None`` (unpriced); an explicit zero-price deck reports 0.0 (priced zero).
+    The default fiscal/cost assumptions remain illustrative, rather than
+    Canadian field investment economics.
     """
     unified = adapter.fetch(
         ProductionQuery(
@@ -86,7 +88,9 @@ def run_canada_reference_chain(
         "ranked_concepts": ranked_concepts,
         "economics_label": "chain_plumbing_pre_tax",
         "dev_system": dev_system,
-        "pre_tax_metrics": _pre_tax_metrics(cashflows, dev_system),
+        "pre_tax_metrics": _pre_tax_metrics(
+            cashflows, dev_system, gas_priced=gas_prices is not None
+        ),
     }
 
 
@@ -97,7 +101,7 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     return datetime.strptime(first_period, "%Y-%m")
 
 
-def _pre_tax_metrics(cashflows, dev_system: str) -> dict[str, Any]:
+def _pre_tax_metrics(cashflows, dev_system: str, *, gas_priced: bool) -> dict[str, Any]:
     return {
         "months": len(cashflows),
         # Revenue = quantity * realized unit price, summed across streams.
@@ -106,8 +110,8 @@ def _pre_tax_metrics(cashflows, dev_system: str) -> dict[str, Any]:
         # existing FDAS monthly_gas_revenue function without unit conversion.
         "gross_revenue_usd": float(sum(cf.total_revenue_usd for cf in cashflows)),
         "oil_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
-        "gas_revenue_usd": float(
-            sum(getattr(cf, "gas_revenue_usd", 0.0) for cf in cashflows)
+        "gas_revenue_usd": (
+            float(sum(cf.gas_revenue_usd for cf in cashflows)) if gas_priced else None
         ),
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),

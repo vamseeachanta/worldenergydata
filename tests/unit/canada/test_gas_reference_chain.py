@@ -10,6 +10,7 @@ import pytest
 from worldenergydata.canada.reference_chain import run_canada_reference_chain
 from worldenergydata.fdas.analysis.cashflow import CashflowError
 from worldenergydata.production.unified.adapters.canada_adapter import CanadaAdapter
+from worldenergydata.production.unified.query import ProductionQuery
 
 
 class SyntheticGasLoader:
@@ -69,7 +70,7 @@ def test_absent_gas_deck_preserves_oil_only_revenue():
     """Hand calculation: no priced gas; oil = (10 + 20) * 2 = 60 USD."""
     metrics = run_chain(oil=(10.0, 20.0))["pre_tax_metrics"]
     assert metrics["gross_revenue_usd"] == 60.0
-    assert metrics["gas_revenue_usd"] == 0.0
+    assert metrics["gas_revenue_usd"] is None
 
 
 @pytest.mark.parametrize("deck", [{}, {"2018-01": 3.0}, {"2018-01": -1.0}])
@@ -117,6 +118,31 @@ def test_unknown_gas_is_rejected_only_when_priced(gas, priced):
             evaluate()
     else:
         metrics = evaluate()
-        expected_gas = gas * 3.0 if priced else 0.0
+        expected_gas = gas * 3.0 if priced else None
         assert metrics["gas_revenue_usd"] == expected_gas
-        assert metrics["gross_revenue_usd"] == 20.0 + expected_gas
+        assert metrics["gross_revenue_usd"] == 20.0 + (
+            0.0 if expected_gas is None else expected_gas
+        )
+
+
+@pytest.mark.parametrize("gas", ["missing", float("nan"), "bad", 0.0, 100.0])
+def test_adapter_preserves_unknown_gas_and_measured_volumes(gas):
+    """Unknown gas stays NaN; measured 0 and 100 Mcf retain their values."""
+
+    class GasInputLoader(SyntheticGasLoader):
+        def load_field_production(self, field_name):
+            frame = super().load_field_production(field_name)
+            if gas == "missing":
+                return frame.drop(columns="gas_mcf")
+            frame["gas_mcf"] = gas
+            return frame
+
+    out = CanadaAdapter(loader=GasInputLoader()).fetch(
+        ProductionQuery(regions=["canada"], fields=["Synthetic gas field"])
+    )
+
+    assert len(out) == 2
+    if isinstance(gas, str) or pd.isna(gas):
+        assert out["gas_mcf"].isna().all()
+    else:
+        assert out["gas_mcf"].tolist() == [gas, gas]
