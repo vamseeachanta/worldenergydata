@@ -14,7 +14,7 @@ For the FPSO+subsea fields it is a documented simplification (see
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pandas as pd
 
@@ -32,13 +32,21 @@ from worldenergydata.production.unified.query import ProductionQuery
 def run_canada_reference_chain(
     *,
     adapter,
-    field_meta: Dict[str, Any],
+    field_meta: dict[str, Any],
     field_name: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
+    start: str | None = None,
+    end: str | None = None,
     oil_price_usd_bbl: float = 75.0,
-) -> Dict[str, Any]:
-    """Run the #719 one-field Canada C-NLOER chain slice."""
+    gas_prices: dict[str, float] | None = None,
+) -> dict[str, Any]:
+    """Run a one-field Canada chain with optional realized USD/Mcf gas prices.
+
+    Gas pricing requires standardized saleable ``gas_mcf`` input and a price
+    for every production month; FDAS validates both. CNSOER gas-equivalent
+    native rows require a supported realization basis before this chain.
+    No gas deck preserves oil-only revenue. The default fiscal/cost assumptions
+    remain illustrative, rather than Canadian field investment economics.
+    """
     unified = adapter.fetch(
         ProductionQuery(
             regions=["canada"],
@@ -67,6 +75,7 @@ def run_canada_reference_chain(
         {"drilling_monthly": {}},
         price_deck,
         first_oil,
+        gas_prices=gas_prices,
     )
 
     return {
@@ -88,10 +97,18 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     return datetime.strptime(first_period, "%Y-%m")
 
 
-def _pre_tax_metrics(cashflows, dev_system: str) -> Dict[str, Any]:
+def _pre_tax_metrics(cashflows, dev_system: str) -> dict[str, Any]:
     return {
         "months": len(cashflows),
-        "gross_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
+        # Revenue = quantity * realized unit price, summed across streams.
+        # Source: OpenStax, Principles of Managerial Accounting (2019), section
+        # 3.2, sales dollars from units times selling price; implemented by the
+        # existing FDAS monthly_gas_revenue function without unit conversion.
+        "gross_revenue_usd": float(sum(cf.total_revenue_usd for cf in cashflows)),
+        "oil_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
+        "gas_revenue_usd": float(
+            sum(getattr(cf, "gas_revenue_usd", 0.0) for cf in cashflows)
+        ),
         "royalty_usd": float(sum(cf.royalty_usd for cf in cashflows)),
         "host_capex_usd": float(sum(cf.host_capex_usd for cf in cashflows)),
         "net_cashflow_usd": float(sum(cf.net_cashflow_usd for cf in cashflows)),

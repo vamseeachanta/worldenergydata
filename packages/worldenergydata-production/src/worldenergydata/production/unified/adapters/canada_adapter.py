@@ -81,7 +81,8 @@ class CanadaAdapter(AbstractProductionAdapter):
         out["year"] = loader_df["year"].astype(int)
         out["month"] = loader_df["month"].astype(int)
         out["oil_bbl"] = _numeric_or_default(loader_df, "oil_bbl", default=0.0)
-        out["gas_mcf"] = _numeric_or_default(loader_df, "gas_mcf", default=0.0)
+        # Preserve unknown gas so priced-gas validation can reject it.
+        out["gas_mcf"] = _numeric_or_default(loader_df, "gas_mcf", default=np.nan)
         out["water_bbl"] = _numeric_or_default(loader_df, "water_bbl", default=np.nan)
         out["condensate_bbl"] = _numeric_or_default(
             loader_df, "condensate_bbl", default=np.nan
