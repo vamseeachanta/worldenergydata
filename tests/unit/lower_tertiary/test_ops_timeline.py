@@ -7,6 +7,7 @@ as published WAR definitions. Dates and identifiers below are synthetic.
 
 import pandas as pd
 import pytest
+
 from worldenergydata.lower_tertiary import ops_timeline
 
 
