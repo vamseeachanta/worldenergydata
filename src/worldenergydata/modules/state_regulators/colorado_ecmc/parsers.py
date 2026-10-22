@@ -197,16 +197,23 @@ def build_quality_stats(
         "filtered_out_of_window_test_year_count": int(
             (has_gas_pressure & depth.gt(0) & ~in_window).sum()
         ),
-        "dropped_duplicate_pressure_observation_count": int(
-            observations.attrs.get("dropped_duplicate_pressure_observation_count", 0)
+        "dropped_duplicate_pressure_observation_count": observations.attrs.get(
+            "dropped_duplicate_pressure_observation_count"
         ),
+        "rejected_missing_api_count": int(production["api12"].isna().sum()),
         "test_year_window": [int(min_year), int(max_year)],
         "pressure_kind_counts": _counts(observations["pressure_kind"]),
         "reference_depth_source_counts": _counts(
             observations["reference_depth_source"]
         ),
         "test_year_range": _year_range(observations),
-        "source_warnings": source_warnings,
+        "source_warnings": source_warnings
+        + (
+            ["duplicate_count_NOT_EVALUATED"]
+            if "dropped_duplicate_pressure_observation_count" not in observations.attrs
+            and not observations.empty
+            else []
+        ),
     }
 
 
@@ -238,8 +245,13 @@ def _zip_member(archive: ZipFile, suffix: str) -> str:
 def _join_production_wells(
     production: pd.DataFrame, wells: pd.DataFrame
 ) -> pd.DataFrame:
-    frame = production.copy().reset_index(names="source_row_index")
-    wells_unique = wells.drop_duplicates("api12")
+    # A missing identity must not match another missing identity (pandas NA joins).
+    frame = (
+        production[production["api12"].notna()]
+        .copy()
+        .reset_index(names="source_row_index")
+    )
+    wells_unique = wells[wells["api12"].notna()].drop_duplicates("api12")
     joined = frame.merge(
         wells_unique,
         on="api12",
@@ -254,7 +266,7 @@ def _join_production_wells(
     )
     if missing.any() and "facility_id" in joined and "facility_id" in wells:
         fallback = frame[missing].merge(
-            wells.drop_duplicates("facility_id"),
+            wells[wells["facility_id"].notna()].drop_duplicates("facility_id"),
             on="facility_id",
             how="left",
             suffixes=("", "_well"),
@@ -294,7 +306,7 @@ def _candidate_rows(
             "well_name": _values(rows, "well_name"),
             "operator": _values(rows, "operator"),
             "operator_number": _values(rows, "operator_number"),
-            "field": rows["field"].fillna(rows.get("formation_code")).to_numpy(),
+            "field": rows["field"].to_numpy(),
             "formation_code": _values(rows, "formation_code"),
             "test_date": pd.to_datetime(rows["test_date"], errors="coerce"),
             "test_year": pd.to_numeric(rows["report_year"], errors="coerce").astype(

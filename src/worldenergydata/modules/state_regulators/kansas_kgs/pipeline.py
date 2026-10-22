@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -117,7 +118,7 @@ def build_pressure_observations(
             "lease": merged["LEASE"],
             "operator": merged["OPERATOR"],
             "field": merged["FIELD"],
-            "county_code": merged["API_NUMBER"].str.slice(3, 6),
+            "county_code": merged["API_NUMBER"].map(_county_code),
             "test_year": merged["YEAR"],
             "test_type": settings["test_type"],
             "pressure_psig_reported": merged["SHUT_IN_PRESS"],
@@ -149,6 +150,17 @@ def build_pressure_observations(
     earliest = observations.groupby("well_key")["test_year"].transform("min")
     observations["is_earliest_observation"] = observations["test_year"] == earliest
     return observations[OBSERVATION_COLUMNS]
+
+
+def _county_code(value: object) -> str:
+    """Use the state/county/sequence schema in test_kansas_kgs.py fixtures.
+
+    Separators may be absent; partial and malformed identifiers are rejected.
+    """
+    match = re.fullmatch(r"15-([0-9]{3})-[0-9]{5}|15([0-9]{3})[0-9]{5}", str(value))
+    if match is None:
+        raise ValueError("invalid Kansas API_NUMBER")
+    return match.group(1) or match.group(2)
 
 
 def build_coverage_stats(
