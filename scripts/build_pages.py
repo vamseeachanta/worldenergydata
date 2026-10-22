@@ -48,17 +48,18 @@ from __future__ import annotations
 
 import argparse
 import html
-from html import unescape as _html_unescape
+import json
 import re
 import shutil
 import sys
+from html import unescape as _html_unescape
 from pathlib import Path
 
 _SCRIPTS = Path(__file__).resolve().parent
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402  (nav-spine helper, issue #850)
-from lower_tertiary.war_methodology import methodology_html
+from lower_tertiary.war_methodology import methodology_html, methodology_metadata
 
 ROOT = Path(__file__).resolve().parent.parent
 REPORTS = ROOT / "reports"
@@ -419,6 +420,11 @@ def build_lower_tertiary(available_viz: dict[str, bool]) -> list[tuple]:
     portfolio summary, and the Julia 3D well-path page. Returns the list of
     ``(slug, display, filename, npv_str, npv_value)`` tuples the landing page
     uses to build its economics table."""
+    # Public capability consumers can display the same caveats as the reports.
+    (PUBLIC / "war-methodology.json").write_text(
+        json.dumps(methodology_metadata(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     # --- Field life-cycle "page 1" gallery (stage-gate posters) ---
     # Self-contained HTML built by scripts/lower_tertiary/build_lifecycle_posters.py.
     # Publish the 10 per-field posters + the gallery index (skip the template + _facts.json).
