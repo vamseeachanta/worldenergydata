@@ -163,6 +163,18 @@ def test_required_aggregate_checks_full_result(job_id, full_result, tmp_path):
     assert result.returncode == (0 if full_result == "success" else 1), result.stdout
 
 
+def test_aggregate_shell_timeout_propagates(monkeypatch, tmp_path):
+    """A hung gate shell has a deadline and its timeout fails the test."""
+
+    def hung_shell(command, *, timeout, **kwargs):
+        assert timeout == 10
+        raise subprocess.TimeoutExpired(command, timeout)
+
+    monkeypatch.setattr(subprocess, "run", hung_shell)
+    with pytest.raises(subprocess.TimeoutExpired):
+        test_required_aggregate_checks_full_result("lint-gate", "success", tmp_path)
+
+
 def test_missing_draft_guard_is_rejected():
     job = load_workflow("docs.yml")["jobs"]["docs"]
     job.pop("if", None)
