@@ -15,11 +15,18 @@ Total: 43 tests
 
 from __future__ import annotations
 
+import ast
+import csv
+import json
+import re
 from io import StringIO
+from pathlib import Path
 
 import pandas as pd
 import pytest
+import yaml
 
+from worldenergydata.safety_analysis import calibrator as calibrator_module
 from worldenergydata.safety_analysis.calibrator import (
     CalibrationRecord,
     CalibrationReport,
@@ -409,3 +416,83 @@ class TestIntegrationWithSkill:
         assert isinstance(calibrated.risk_score, float)
         assert 0.0 <= calibrated.risk_score <= 1.0
         assert isinstance(uncalibrated.risk_score, float)
+
+
+# Issue #1240 (2026): whitelist the generic convention, never a real-name list.
+_OPERATOR_PATTERN = re.compile(r"^OPERATOR-[A-Z]+$")
+_OPERATOR_FIELDS = {"operator", "operators", "operator_name", "company_name"}
+
+
+def _assert_operator_values(value):
+    """Inspect structured fixtures without recording operator values on failure."""
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in _OPERATOR_FIELDS:
+                labels = item if isinstance(item, list) else [item]
+                assert all(
+                    isinstance(label, str) and _OPERATOR_PATTERN.fullmatch(label)
+                    for label in labels
+                ), "Operator field does not follow the codename contract"
+            else:
+                _assert_operator_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            _assert_operator_values(item)
+
+
+def test_package_source_and_fixtures_use_operator_codenames():
+    """Issue #1240: scan all package source and safety-specific fixture trees.
+
+    Operator-bearing source expressions and structured fixture fields are
+    whitelisted by ^OPERATOR-[A-Z]+$, without storing real names or a denylist.
+    This is a structural regression check, not free-text entity recognition.
+    """
+    package = Path(calibrator_module.__file__).parent
+    repo = Path(__file__).resolve().parents[3]
+    roots = [package]
+    roots.extend(path for path in (repo / "tests/fixtures").glob("*safety*"))
+    fixture_sources = list((repo / "tests/unit/safety_analysis").rglob("conftest.py"))
+    paths = fixture_sources + [path for root in roots for path in root.rglob("*")]
+    source_fields = []
+    for path in sorted(paths):
+        if path.suffix == ".py":
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            expressions = []
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Dict):
+                    expressions.extend(
+                        value
+                        for key, value in zip(node.keys, node.values)
+                        if isinstance(key, ast.Constant)
+                        and key.value in _OPERATOR_FIELDS
+                    )
+                elif isinstance(node, ast.Assign):
+                    if any(
+                        isinstance(target, ast.Name) and target.id in _OPERATOR_FIELDS
+                        for target in node.targets
+                    ):
+                        expressions.append(node.value)
+            for expression in expressions:
+                for node in ast.walk(expression):
+                    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                        assert _OPERATOR_PATTERN.fullmatch(node.value), (
+                            path.relative_to(repo),
+                            node.lineno,
+                            "Operator literal does not follow the codename contract",
+                        )
+                        source_fields.append(node)
+        elif path.suffix == ".csv":
+            with path.open(encoding="utf-8", newline="") as stream:
+                _assert_operator_values(list(csv.DictReader(stream)))
+        elif path.suffix == ".json":
+            _assert_operator_values(json.loads(path.read_text(encoding="utf-8")))
+        elif path.suffix in {".yaml", ".yml"}:
+            _assert_operator_values(yaml.safe_load(path.read_text(encoding="utf-8")))
+    assert source_fields, "The scan must reach the synthetic operator literals"
+
+
+def test_operator_fixture_guard_rejects_generic_non_codename():
+    """A generic invalid label proves the fixture guard is not vacuous."""
+    with pytest.raises(AssertionError, match="codename contract"):
+        _assert_operator_values({"operator": "UNLABELLED"})
+    _assert_operator_values({"operator": "OPERATOR-AA"})
