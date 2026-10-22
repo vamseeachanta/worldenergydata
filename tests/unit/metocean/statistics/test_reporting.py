@@ -9,18 +9,15 @@ import tempfile
 import numpy as np
 import pandas as pd
 import pytest
-
 from worldenergydata.metocean.statistics.environmental_contours import (
-    ContourResult,
     EnvironmentalContour,
 )
-from worldenergydata.metocean.statistics.eva import EVAResult, ExtremeValueAnalysis
+from worldenergydata.metocean.statistics.eva import ExtremeValueAnalysis
 from worldenergydata.metocean.statistics.joint_probability import (
     JointProbabilityModel,
 )
 from worldenergydata.metocean.statistics.reporting import MetoceanReport
 from worldenergydata.metocean.statistics.weather_windows import (
-    OperabilityResult,
     WeatherWindowAnalysis,
 )
 
@@ -62,7 +59,7 @@ def joint_model():
 @pytest.fixture
 def contour_result(joint_model):
     ec = EnvironmentalContour()
-    return ec.iform(joint_model, return_period=50)
+    return ec.lonowe(joint_model, return_period=50)
 
 
 @pytest.fixture
