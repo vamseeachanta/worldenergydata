@@ -27,7 +27,11 @@ def run_brazil_reference_chain(
     end: Optional[str] = None,
     oil_price_usd_bbl: float = 75.0,
 ) -> Dict[str, Any]:
-    """Run one Brazil field through production, concept, and FDAS plumbing."""
+    """Run one Brazil field through production, concept, and FDAS plumbing.
+
+    Raises:
+        ValueError: production is empty for the requested field and period.
+    """
     unified = adapter.fetch(
         ProductionQuery(
             regions=["brazil"],
@@ -37,6 +41,7 @@ def run_brazil_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
+    first_oil = _first_oil_date(fdas_production)
     field_concept = build_brazil_field_concept(field_meta)
     ranked_concepts = recommend(field_concept)
 
@@ -55,7 +60,7 @@ def run_brazil_reference_chain(
         fdas_production,
         {"drilling_monthly": {}},
         price_deck,
-        _first_oil_date(fdas_production),
+        first_oil,
     )
 
     return {
@@ -71,7 +76,7 @@ def run_brazil_reference_chain(
 
 def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     if fdas_production.empty:
-        return datetime(1970, 1, 1)
+        raise ValueError("production is empty; cannot determine first-oil date")
     first_period = str(fdas_production["YEAR_MONTH"].min())
     return datetime.strptime(first_period, "%Y-%m")
 
