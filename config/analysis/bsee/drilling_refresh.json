@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "synthetic": false,
+  "data_dir": "data/modules/bsee/.local/drilling_refresh",
+  "output_dir": "reports/bsee/drilling_refresh",
+  "population_csv": "docs/modules/bsee/analysis/production/FDAS_V30/drilling_and_completion_days_v21_kc.csv",
+  "basis": "DRL+COM",
+  "sources": [
+    {
+      "file": "eWellWARRawData.zip",
+      "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
+    }
+  ],
+  "tables": {
+    "war": {
+      "file": "eWellWARRawData.zip",
+      "member": "mv_war_main",
+      "keys": ["SN_WAR"],
+      "required": ["API_WELL_NUMBER"],
+      "dates": ["WAR_START_DT", "WAR_END_DT"],
+      "min_rows": 1,
+      "max_span_days": 90,
+      "unit": "day"
+    },
+    "activity": {
+      "file": "eWellWARRawData.zip",
+      "member": "mv_war_main_prop",
+      "keys": ["SN_WAR", "WELL_ACTIVITY_CD"],
+      "required": [],
+      "dates": [],
+      "min_rows": 1,
+      "unit": "record"
+    },
+    "boreholes": {
+      "file": "eWellWARRawData.zip",
+      "member": "mv_war_boreholes_view",
+      "keys": ["API_WELL_NUMBER"],
+      "required": [],
+      "dates": ["WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"],
+      "min_rows": 1,
+      "unit": "day"
+    }
+  }
+}
