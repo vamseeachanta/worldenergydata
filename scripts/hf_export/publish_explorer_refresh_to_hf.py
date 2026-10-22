@@ -93,7 +93,7 @@ def _released_economics(slug: str, performance: dict) -> dict:
 
 def build_fields(live_parquet: Path) -> pd.DataFrame:
     fields = pd.read_parquet(live_parquet)
-    perf_by_slug = json.loads(PERFORMANCE.read_text())["fields"]
+    perf_by_slug = json.loads(PERFORMANCE.read_text(encoding="utf-8"))["fields"]
     # Validate and mask before assigning any economics column to the live table.
     released = {
         slug: _released_economics(slug, perf_by_slug.get(slug, {}))
@@ -121,8 +121,8 @@ def build_fields(live_parquet: Path) -> pd.DataFrame:
 
 
 def build_parametric() -> pd.DataFrame:
-    grid = json.loads(PARAMETRIC_JSON.read_text())
-    performance = json.loads(PERFORMANCE.read_text())["fields"]
+    grid = json.loads(PARAMETRIC_JSON.read_text(encoding="utf-8"))
+    performance = json.loads(PERFORMANCE.read_text(encoding="utf-8"))["fields"]
     rows = []
     for slug, f in grid["fields"].items():
         current = performance.get(slug, {})
@@ -151,7 +151,7 @@ def build_parametric() -> pd.DataFrame:
 
 
 def build_readme(n_param_rows: int, param_fields: list[str]) -> str:
-    grid = json.loads(PARAMETRIC_JSON.read_text())
+    grid = json.loads(PARAMETRIC_JSON.read_text(encoding="utf-8"))
     prov = grid["provenance"]
     return f"""---
 license: cc-by-4.0
@@ -191,6 +191,9 @@ Live Explorer: https://vamseeachanta.github.io/worldenergydata/field-atlas/
 
 ## Economics basis
 
+- `fields.economics_basis = life_to_date_pretax_npv_at_10pct` fixes the discount
+  rate at 10%; `parametric_economics.economics_basis = life_to_date_pretax_npv`
+  uses each row's `discount_rate`, so the labels intentionally differ.
 - `npv_mm` / `breakeven_wti` are **life-to-date**, pre-tax, 10%-discounted: full sunk capex
   charged against oil produced to date, not full-cycle EUR. Fields early in life are withheld
   (`economics_status = early_life`, values null) rather than surfaced as absurd numbers.
@@ -246,7 +249,7 @@ def main() -> int:
         out.mkdir()
         fields.to_parquet(out / "fields.parquet", index=False)
         param.to_parquet(out / "parametric_economics.parquet", index=False)
-        (out / "README.md").write_text(readme)
+        (out / "README.md").write_text(readme, encoding="utf-8", newline="\n")
 
         print(f"fields: {fields.shape}, parametric: {param.shape}")
         print(fields[["id", "eur_mmbbl", "npv_mm", "breakeven_wti", "economics_status"]])

@@ -47,7 +47,9 @@ def record(**changes):
 
 def inputs(tmp_path, monkeypatch, records):
     performance = tmp_path / "performance.json"
-    performance.write_text(json.dumps({"fields": records}))
+    performance.write_text(
+        json.dumps({"fields": records}), encoding="utf-8", newline="\n"
+    )
     monkeypatch.setattr(export, "PERFORMANCE", performance)
     live = tmp_path / "fields.parquet"
     # Deliberately stale economics in the live table must never survive refresh.
@@ -122,7 +124,9 @@ def grid_input(tmp_path, monkeypatch, status="surfaced"):
                     }
                 }
             }
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     monkeypatch.setattr(export, "PARAMETRIC_JSON", path)
 
@@ -145,6 +149,7 @@ def test_grid_requires_both_snapshots_to_allow_release(tmp_path, monkeypatch):
     assert actual["field"].tolist() == ["mature"]
     assert actual["npv_musd"].tolist() == [-20.0]
     assert actual["breakeven_multiplier"].tolist() == [1.25]
+    assert actual["economics_basis"].tolist() == ["life_to_date_pretax_npv"]
 
 
 def test_grid_excludes_fields_missing_from_current_contract(tmp_path, monkeypatch):
@@ -157,9 +162,9 @@ def test_grid_excludes_fields_missing_from_current_contract(tmp_path, monkeypatc
 def test_grid_row_status_cannot_override_withholding(tmp_path, monkeypatch, status):
     inputs(tmp_path, monkeypatch, {"mature": record()})
     grid_input(tmp_path, monkeypatch)
-    grid = json.loads(export.PARAMETRIC_JSON.read_text())
+    grid = json.loads(export.PARAMETRIC_JSON.read_text(encoding="utf-8"))
     grid["fields"]["mature"]["grid"][0]["economics_status"] = status
-    export.PARAMETRIC_JSON.write_text(json.dumps(grid))
+    export.PARAMETRIC_JSON.write_text(json.dumps(grid), encoding="utf-8", newline="\n")
     assert export.build_parametric().empty
 
 
@@ -169,6 +174,9 @@ def test_card_explains_release_policy_without_promising_full_cycle():
     assert "stale grid cannot" in card
     assert "Negative life-to-date NPV" in card
     assert "Full-cycle economics remain" in card
+    assert f"`fields.economics_basis = {BASIS}`" in card
+    assert "`parametric_economics.economics_basis = life_to_date_pretax_npv`" in card
+    assert "each row's `discount_rate`" in card
 
 
 def test_committed_economics_propagate_without_reinterpreting_npv(tmp_path):
@@ -178,8 +186,8 @@ def test_committed_economics_propagate_without_reinterpreting_npv(tmp_path):
     It compares every economics level and the sensitivity-grid baseline with
     the performance contract, and the contract with the Explorer bundle.
     """
-    perf = json.loads(export.PERFORMANCE.read_text())["fields"]
-    bundle = json.loads(export.BUNDLE.read_text())["fields"]
+    perf = json.loads(export.PERFORMANCE.read_text(encoding="utf-8"))["fields"]
+    bundle = json.loads(export.BUNDLE.read_text(encoding="utf-8"))["fields"]
     live = tmp_path / "fields.parquet"
     pd.DataFrame({"id": list(bundle)}).to_parquet(live, index=False)
     actual = export.build_fields(live).set_index("id")
@@ -195,7 +203,7 @@ def test_committed_economics_propagate_without_reinterpreting_npv(tmp_path):
             else:
                 assert pd.isna(row[key])
 
-    grid = json.loads(export.PARAMETRIC_JSON.read_text())
+    grid = json.loads(export.PARAMETRIC_JSON.read_text(encoding="utf-8"))
     published = export.build_parametric()
     surfaced = {k for k, v in perf.items() if v["economics_status"] == "surfaced"}
     assert set(published["field"]) == surfaced

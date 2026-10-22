@@ -4,6 +4,8 @@ Hand-calculation source: OpenStax, Principles of Finance (2022), section 16.2,
 equation 16.1 (present-value inflows minus outflows). With an immediate cost
 of 100 and two units sold at p, NPV(p)=-100+2p, and breakeven p=50.
 The production basis label follows the reviewed contract #976 (2026).
+Node is required: a missing binary fails this release guard rather than skipping
+execution of the shipped renderer.
 """
 
 import json
@@ -24,7 +26,7 @@ def render(page, performance):
     node = shutil.which("node")
     if node is None:
         pytest.fail("Node is required to execute the shipped economics renderer")
-    html = page.read_text()
+    html = page.read_text(encoding="utf-8")
     function = "function renderField(" + html.split("function renderField(", 1)[1]
     function = function.split("function renderWells(", 1)[0]
     context = """
@@ -39,7 +41,7 @@ const show = html => process.stdout.write(html);
         [node, "-e", context + function + f"\nrenderField({{}}, {json.dumps(field)});"],
         check=True,
         capture_output=True,
-        text=True,
+        encoding="utf-8",
     )
     return html, result.stdout
 
@@ -83,3 +85,23 @@ def test_surfaced_negative_npv_is_honestly_labelled(page):
     assert "$-20" in output and "$50" in output
     assert "NPV, life-to-date @10%" in output
     assert "LTD breakeven WTI @10%" in output
+
+
+@pytest.mark.parametrize("page", PAGES, ids=lambda p: p.name)
+@pytest.mark.parametrize("boundary", ["html", "node"])
+def test_rendering_decodes_utf8_under_legacy_locale(page, monkeypatch, boundary):
+    """Exercise real HTML reads and Node output with cp1252 defaults."""
+    if boundary == "html":
+        monkeypatch.setattr(
+            "io.text_encoding", lambda encoding, stacklevel=2: encoding or "cp1252"
+        )
+    else:
+        monkeypatch.setattr(subprocess, "_text_encoding", lambda: "cp1252")
+    _, output = render(page, values(economics_status="withheld"))
+    assert "n/a — economics withheld" in output
+
+
+def test_rendering_requires_node(monkeypatch):
+    monkeypatch.setattr(shutil, "which", lambda command: None)
+    with pytest.raises(pytest.fail.Exception, match="Node is required"):
+        render(PAGES[0], values())
