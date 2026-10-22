@@ -36,8 +36,8 @@ Emits ``scope=`` / ``xdist_targets=`` / ``seq_targets=`` lines (GitHub Actions
 from __future__ import annotations
 
 import argparse
-import re
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -76,6 +76,19 @@ CORE_PREFIXES = (
 
 # Exact non-module paths that should run a specific contract suite.
 CONTRACT_ROUTES = {
+    "config/hse/public_refresh.json": "tests/unit/hse",
+    "scripts/exploration/drilling_hse_patterns_analysis.py": "tests/unit/hse",
+    "scripts/exploration/intervention_hse_phase1a_explore.py": "tests/unit/hse",
+    "scripts/exploration/drilling_hse_render_html.py": "tests/unit/hse",
+    "reports/hse/drilling-hse-patterns-2026-07-05.json": "tests/unit/hse",
+    "reports/hse/drilling-hse-patterns-2026-07-05.html": "tests/unit/hse",
+    "reports/hse/incinv-manifest.json": "tests/unit/hse",
+    "reports/hse/incinv-qa.json": "tests/unit/hse",
+    "reports/hse/drilling-phase-values.csv": "tests/unit/hse",
+    "reports/hse/drilling-severity-values.csv": "tests/unit/hse",
+    "reports/hse/drilling-year-values.csv": "tests/unit/hse",
+    "reports/hse/drilling-area-values.csv": "tests/unit/hse",
+    "reports/hse/intervention-hse-patterns-2026-05-18-explore.json": "tests/unit/hse",
     "config/repo_structure.yml": "tests/repo_structure",
     "scripts/capabilities/build_onepagers.py": "tests/test_capability_onepagers.py",
     "tests/test_capability_onepagers.py": "tests/test_capability_onepagers.py",
@@ -229,7 +242,11 @@ def _existing_unique(targets: list[str], root: Path) -> list[str]:
     seen, out = set(), []
     for t in targets:
         target = root / t
-        is_test_file = target.is_file() and target.name.startswith("test_") and target.suffix == ".py"
+        is_test_file = (
+            target.is_file()
+            and target.name.startswith("test_")
+            and target.suffix == ".py"
+        )
         if t not in seen and (target.is_dir() or is_test_file):
             seen.add(t)
             out.append(t)
@@ -277,11 +294,7 @@ def to_matrix(changed: list[str], root: Path) -> dict:
         unit = root / "tests" / "unit"
         if unit.is_dir():
             for child in sorted(unit.iterdir()):
-                if (
-                    child.is_dir()
-                    and child.name != "__pycache__"
-                    and _has_tests(child)
-                ):
+                if child.is_dir() and child.name != "__pycache__" and _has_tests(child):
                     shards.append(
                         {
                             "name": f"unit-{child.name}",

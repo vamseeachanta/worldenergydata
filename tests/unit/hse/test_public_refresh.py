@@ -4,6 +4,8 @@ import csv
 import hashlib
 import importlib.util
 import json
+import os
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -53,7 +55,7 @@ def case(tmp_path):
         "encoding": "utf-8",
         "quantity": "investigation records",
         "unit": "count",
-        "earliest_date": "1900-01-01",
+        "earliest_date": "2020-01-01",
         "latest_date": "2026-10-01",
     }
     (data / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
@@ -89,8 +91,15 @@ def test_synthetic_headlines_and_chart_exports(case):
     assert result["incinv_total_records"] == 4
     assert result["drill_total"] == 2
     assert result["drill_pct_of_incinv"] == 50.0
-    assert result["drill_by_year"] == {"2020": 1, "2022": 1}
+    assert result["drill_by_year"] == {"2020": 1, "2021": 0, "2022": 1}
     assert result["drill_severity_proxy"] == {"major": 1, "other": 1}
+    assert result["drill_subactivity_distribution"] == {"well_control": 1, "logging": 1}
+    assert result["drill_top_areas"] == {"AA": 1, "CC": 1}
+    assert result["drill_distinct_leases"] == 1
+    assert result["drill_confidence_buckets"] == {
+        "direct_code(>=0.90)": 1,
+        "keyword_low(<0.50)": 1,
+    }
     assert result["source"]["source_kind"] == "synthetic"
     assert result["source"]["files"][0]["downloaded_at"] == "2026-10-01T00:00:00Z"
     out = Path(cfg["output_dir"])
@@ -108,6 +117,13 @@ def test_synthetic_headlines_and_chart_exports(case):
             rows = list(csv.reader(stream))
         assert rows[0] == ["category", "investigation records [count]"]
         assert sum(int(row[1]) for row in rows[1:]) == result["drill_total"]
+        expected = {
+            "drilling-phase-values": [["well_control", "1"], ["logging", "1"]],
+            "drilling-severity-values": [["major", "1"], ["other", "1"]],
+            "drilling-year-values": [["2020", "1"], ["2021", "0"], ["2022", "1"]],
+            "drilling-area-values": [["AA", "1"], ["CC", "1"]],
+        }
+        assert rows[1:] == expected[name]
     assert {
         k: v for k, v in sys.modules.items() if k.startswith("worldenergydata")
     } == before
@@ -199,6 +215,10 @@ def test_fail_closed(case, mode, reason):
         assert set(failed) == {"status", "reason"}
     for name in refresh.CHARTS:
         assert len((out / f"{name}.csv").read_text(encoding="utf-8").splitlines()) == 1
+    assert json.loads((out / "incinv-manifest.json").read_text(encoding="utf-8")) == {
+        "status": "not_evaluated",
+        "reason": "refresh incomplete",
+    }
 
 
 def test_download_manifest_and_resume(tmp_path, monkeypatch):
@@ -210,13 +230,15 @@ def test_download_manifest_and_resume(tmp_path, monkeypatch):
     def fake_download(url, destination):
         calls.append(url)
         destination.write_bytes(archive.read_bytes())
-        return 200
+        return {"http_status": 200, "etag": '"synthetic"', "last_modified": "test date"}
 
     monkeypatch.setattr(refresh, "_download", fake_download)
     cfg = {"data_dir": str(tmp_path / "data"), "url": URL, "source_kind": "public"}
     manifest = refresh.fetch(cfg)
     assert calls == [URL]
     assert manifest["files"][0]["http_status"] == 200
+    assert manifest["files"][0]["etag"] == '"synthetic"'
+    assert manifest["files"][0]["last_modified"] == "test date"
     for entry in manifest["files"]:
         payload = (Path(cfg["data_dir"]) / entry["file"]).read_bytes()
         assert entry["size_bytes"] == len(payload)
@@ -246,14 +268,31 @@ def test_renderer_and_failed_qa_replace_public_page(case):
     spec.loader.exec_module(renderer)
     refresh.analyze(cfg)
     out = Path(cfg["output_dir"])
+    headlines = out / refresh.HEADLINES
+    result = json.loads(headlines.read_text(encoding="utf-8"))
+    result["generated_at"] = "2099-12-31T00:00:00Z"
+    headlines.write_text(json.dumps(result), encoding="utf-8", newline="\n")
     page = out / "report.html"
-    renderer.render(out / refresh.HEADLINES, page)
+    renderer.render(headlines, page)
     text = page.read_text(encoding="utf-8")
     assert "2026-10-01T00:00:00Z" in text
     assert URL in text
     assert "2020-01-02 to 2022-04-05" in text
     assert "incinv-qa.json" in text
     assert "drilling-year-values.csv" in text
+    assert "2099-12-31" not in text
+    payload = json.loads(re.search(r"const D = (.*);", text)[1])
+    assert payload["drill_total"] == 2
+    assert payload["incinv_total"] == 4
+    assert payload["drill_pct"] == 50.0
+    assert payload["sub"] == {"well_control": 1, "logging": 1}
+    assert "No durable source archive" in text
+    # A later source refresh must not rewrite the dates of issued revisions.
+    result["source"]["files"][0]["downloaded_at"] = "2026-11-01T00:00:00Z"
+    headlines.write_text(json.dumps(result), encoding="utf-8", newline="\n")
+    renderer.render(headlines, page)
+    later = page.read_text(encoding="utf-8")
+    assert "<td>2</td><td>2026-10-01</td>" in later
     edit_rows(cfg, raw, manifest, lambda rows: rows.clear())
     with pytest.raises(refresh.QAError):
         refresh.analyze(cfg)
@@ -277,6 +316,7 @@ def test_cli_offline_config_from_another_directory(case, tmp_path, script):
     result = subprocess.run(
         [
             sys.executable,
+            "-I",
             str(ROOT / "scripts/exploration" / script),
             "--config",
             str(path),
@@ -317,3 +357,97 @@ def test_failed_network_invalidates_existing_public_outputs(case, monkeypatch):
     assert "Not evaluated" in (out / "drilling-hse-patterns-2026-07-05.html").read_text(
         encoding="utf-8"
     )
+
+
+def test_zero_drilling_still_exports_every_source_year(case):
+    cfg, raw, manifest = case
+    edit_rows(
+        cfg,
+        raw,
+        manifest,
+        lambda rows: [row.update(ACCIDENT_TYPE="Fire") for row in rows],
+    )
+    result = refresh.analyze(cfg)
+    assert result["drill_total"] == 0
+    assert result["drill_pct_of_incinv"] == 0.0
+    assert result["drill_year_range"] is None
+    assert result["drill_by_year"] == {"2020": 0, "2021": 0, "2022": 0}
+    assert result["drill_confidence_buckets"] == {}
+
+
+def test_date_bound_and_analyst_rules_have_source_basis(case):
+    config = refresh.load_config(ROOT / "config/hse/public_refresh.json")
+    assert config["earliest_date"] == "1995-01-04"
+    assert config["earliest_date_basis"]["source_url"] == URL
+    assert config["earliest_date_basis"]["source_sha256"] == (
+        "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016"
+    )
+    result = refresh.analyze(case[0])
+    assert result["classification_basis"]["severity_ranking"] == "analyst-defined"
+    assert result["classification_basis"]["keyword_vocabulary"] == "analyst-defined"
+    assert result["classification_basis"]["accident_type_source"] == URL
+
+
+def test_historical_memo_pins_both_evidence_artifacts():
+    memo = (ROOT / "reports/hse/intervention-hse-patterns-2026-05-18.md").read_text(
+        encoding="utf-8"
+    )
+    assert "a814fe13149465d1daeb8a06ca2f024b60a335a1" in memo
+    assert "git show" in memo
+    assert "historical evidence" in memo
+
+
+def test_download_records_final_response_validators(tmp_path, monkeypatch):
+    import subprocess
+
+    def fake_curl(args, **kwargs):
+        headers = Path(args[args.index("--dump-header") + 1])
+        headers.write_text(
+            'HTTP/1.1 302 Found\nETag: "old"\n\n'
+            'HTTP/1.1 200 OK\nETag: "final"\nLast-Modified: source date\n\n',
+            encoding="utf-8",
+            newline="\n",
+        )
+        return subprocess.CompletedProcess(args, 0, "200", "")
+
+    monkeypatch.setattr(refresh.subprocess, "run", fake_curl)
+    destination = tmp_path / "archive.zip"
+    receipt = refresh._download(URL, destination)
+    assert receipt["http_status"] == 200
+    assert receipt["etag"] == '"final"'
+    assert receipt["last_modified"] == "source date"
+    recorded = json.loads(
+        destination.with_suffix(".request.json").read_text(encoding="utf-8")
+    )
+    assert recorded["etag"] == '"final"'
+    assert recorded["url"] == URL
+
+
+def test_pinned_public_headlines_replay(tmp_path):
+    """Optional local replay; CI never depends on an unversioned network response."""
+    location = os.environ.get("HSE_REPLAY_DATA_DIR")
+    if not location:
+        pytest.skip(
+            "Matching retained public bytes required; see docs/hse/public-refresh.md"
+        )
+    data = Path(location)
+    assert hashlib.sha256((data / "IncInvRawData.zip").read_bytes()).hexdigest() == (
+        "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
+    )
+    assert hashlib.sha256(
+        (data / "mv_acc_investigations.txt").read_bytes()
+    ).hexdigest() == (
+        "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016"
+    )
+    config = refresh.load_config(
+        ROOT / "config/hse/public_refresh.json", data_dir=data, output_dir=tmp_path
+    )
+    result = refresh.analyze(config)
+    # Literals checked against the reviewed public source and prior hand count.
+    assert result["incinv_total_records"] == 2027
+    assert result["drill_total"] == 85
+    assert result["drill_pct_of_incinv"] == 4.2
+    assert result["drill_subactivity_distribution"]["well_control"] == 68
+    assert result["drill_confidence_buckets"]["keyword_low(<0.50)"] == 14
+    assert len(result["drill_by_year"]) == 32
+    assert sum(count == 0 for count in result["drill_by_year"].values()) == 12

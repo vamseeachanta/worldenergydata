@@ -13,6 +13,27 @@ A Phase 0 exploration report against the [#416 plan](../../docs/plans/2026-05-18
 
 This is **NOT** the pattern-mining memo the original plan called for. The exploration revealed data constraints that block the full pattern set; this document captures those constraints so the next step is an informed re-plan, not a hand-waved analysis.
 
+## Revision history
+
+| Revision | Date | Change and reason |
+|---|---|---|
+| 1 | 2026-05-18 | Phase 0 inventory and source-prefix findings were recorded. |
+| 2 | 2026-10-22 | The historical evidence is pinned because the working script and JSON now describe a separate public INCINV inventory. |
+
+The evidence for this memo is the repository revision
+`a814fe13149465d1daeb8a06ca2f024b60a335a1`, at both exact paths below:
+
+```bash
+git show a814fe13149465d1daeb8a06ca2f024b60a335a1:reports/hse/intervention-hse-patterns-2026-05-18-explore.json
+git show a814fe13149465d1daeb8a06ca2f024b60a335a1:scripts/exploration/intervention_hse_phase1a_explore.py
+```
+
+Both historical artifacts remain available at that immutable revision. Their
+database and well-activity-report inventory supports the historical findings;
+the current public-only JSON and script do not support those findings. This
+revision adds evidence locators and does not recalculate the historical database
+or infer comparability with the public investigation-record population.
+
 ## Caveat block
 
 > Data sources: `data/modules/hse/hse_incidents.db` (60 MB, 97,993 rows, cross-source: BSEE + EPA TRI + OSHA + PHMSA implied by 16,200 distinct operators). Coverage gap: BSEE FY2007-2018 offshore incident XLSX files are stub-sized (15 of 17 — only CY2019 + CY2021 contain full data per [WRK-012 audit](./wrk012_hse_data_audit.md)). All operator-level patterns are aggregate; no individual operator is named. This memo represents engineering-analysis interpretation of public regulatory data and is not a regulatory finding.

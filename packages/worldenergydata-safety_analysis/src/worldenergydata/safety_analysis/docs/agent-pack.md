@@ -167,7 +167,7 @@ Escalate tolerance changes, unsupported references and conflicting input evidenc
 | Input collections | Five accepted incident-source IDs: bsee, osha, marine_safety, phmsa, epa_tri; files or SQLite passed to assembler loaders | [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/risk_index/data_assembler.py:L35-L51] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/risk_index/data_assembler.py:L386-L551] |
 | Shared services | Common logger, exception hierarchy and data-root resolver | [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/exceptions.py:L20-L24] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/config.py:L52-L58] [packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/adapters/base_adapter.py:L48-L55] |
 | Downstream CLI | Root CLI registers the safety-analysis sub-app | [src/worldenergydata/cli/main.py:L145-L149] |
-| Script consumer | Exploration script loads taxonomy modules from the package tree | [scripts/exploration/drilling_hse_patterns_analysis.py:L99-L134] |
+| Public refresh consumer | The HSE refresh loads the canonical taxonomy from the package tree | `packages/worldenergydata-bsee/src/worldenergydata/hse/public_refresh.py::_load_classifier` |
 | Geohazard fixture | Recorded GeoJSON and provenance manifest used by offline parser/reproduction tests | [tests/unit/safety_analysis/geohazard/test_usgs.py:L216-L233] |
 
 Routing audit at the code pin: `docs/registry/module-routing.yaml` is absent; no registry fields are added. Dependency inventory identifiers above are package names and source IDs, rather than invented inventory rows.

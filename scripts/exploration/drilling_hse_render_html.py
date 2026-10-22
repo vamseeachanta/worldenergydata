@@ -36,7 +36,13 @@ def render(json_path: Path, html_path: Path) -> None:
     download_date = html_tools.escape(source["downloaded_at"])
     source_url = html_tools.escape(source["url"], quote=True)
     date_range = " to ".join(d["incinv_date_range"])
-    revision_date = d["generated_at"][:10]
+    revision_date = source["downloaded_at"][:10]
+    revision_rows = "\n".join(
+        f"<tr><td>{html_tools.escape(str(item['revision']))}</td>"
+        f"<td>{html_tools.escape(item.get('date') or item['source_downloaded_at'][:10])}</td>"
+        f"<td>{html_tools.escape(item['change'])}</td></tr>"
+        for item in d["revision_history"]
+    )
 
     sub = d["drill_subactivity_distribution"]
     sev = d["drill_severity_proxy"]
@@ -80,14 +86,15 @@ def render(json_path: Path, html_path: Path) -> None:
 <div class="note">Drilling-phase incidents are derived by the repo-canonical
  <code>IncidentClassifier</code> cut to <code>activity == "DRILL"</code> over the BSEE
  INCINV records. Counts describe investigation records, not a complete incident census
- or exposure-normalized risk rates. Severity is a text-derived proxy, not a count of
+ or exposure-normalized risk rates. Severity is an analyst-defined text proxy, not a count of
  fatalities or injuries. Aggregate-only. Engineering interpretation, not a regulatory finding.</div>
+<p>No durable source archive is supplied with this report. Exact replay requires
+ retained archive and member bytes matching the manifest digests; a later public
+ download may differ. The manifest records source response validators when available.</p>
 
 <h2>Revision history</h2>
 <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
-<tbody><tr><td>1</td><td>2026-07-05</td><td>Initial drilling investigation analysis.</td></tr>
-<tr><td>2</td><td>{revision_date}</td><td>Refresh from the public source with a sealed manifest,
- input QA and downloadable chart values so the figures can be reproduced.</td></tr></tbody></table>
+<tbody>{revision_rows}</tbody></table>
 
 <div class="kpis">
  <div class="kpi"><div class="v">{payload['drill_total']}</div>
@@ -104,6 +111,17 @@ def render(json_path: Path, html_path: Path) -> None:
 <div class="chart" id="c_sev"></div>
 <div class="chart" id="c_year"></div>
 <div class="chart" id="c_area"></div>
+<p>Confidence buckets (classifier scores, not calibrated probabilities):
+ <code>{html_tools.escape(json.dumps(d['drill_confidence_buckets']))}</code>.
+ Counts and classifications are derived from the source member in the manifest.
+ Percentages use one decimal place. The year axis spans every calendar year in the
+ screened occurrence range; zero denotes no DRILL-classified investigation records,
+ not an absence of incidents. The observed DRILL year range is recorded separately in JSON.</p>
+<p>The keyword vocabulary and severity precedence are analyst-defined.
+ <a href="{html_tools.escape(d['classification_basis']['regulatory_context'], quote=True)}">30 CFR
+ 250.188 (2025), incident reporting categories</a> supplies regulatory context,
+ not a severity ranking or historical coding dictionary.
+ <a href="../../docs/hse/public-refresh.md#classification-basis">Classification basis</a>.</p>
 
 <footer>Generated from <code>reports/hse/drilling-hse-patterns-{DATE_TAG}.json</code>.
  <a href="incinv-manifest.json">Source manifest</a> &middot;

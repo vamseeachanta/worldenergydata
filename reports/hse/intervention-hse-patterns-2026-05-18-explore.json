@@ -6,19 +6,23 @@
       {
         "file": "IncInvRawData.zip",
         "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
-        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "downloaded_at": "2026-10-22T22:22:58Z",
         "http_status": 200,
         "size_bytes": 35938,
-        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6"
+        "sha256": "dbc6337c50221855191036e2cce387e862b7785d67cceb7430cc0212a1f43eb6",
+        "etag": "\"b44ca4a1962dd1:0\"",
+        "last_modified": "Thu, 22 Oct 2026 09:42:19 GMT"
       },
       {
         "file": "mv_acc_investigations.txt",
         "url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
-        "downloaded_at": "2026-10-22T10:44:30.516928Z",
+        "downloaded_at": "2026-10-22T22:22:58Z",
         "http_status": 200,
         "size_bytes": 175510,
         "sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016",
-        "archive_member": "IncInvRawData/mv_acc_investigations.txt"
+        "archive_member": "IncInvRawData/mv_acc_investigations.txt",
+        "etag": "\"b44ca4a1962dd1:0\"",
+        "last_modified": "Thu, 22 Oct 2026 09:42:19 GMT"
       }
     ]
   },
@@ -57,6 +61,16 @@
     "plug and abandon": 0
   },
   "keyword_basis": "Literal case-insensitive ACCIDENT_TYPE matches; categories overlap; these are inventory signals, not confirmed interventions.",
+  "classification_basis": {
+    "accident_type_source": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+    "regulatory_context": "https://www.govinfo.gov/content/pkg/CFR-2025-title30-vol2/xml/CFR-2025-title30-vol2-sec250-188.xml",
+    "regulatory_scope": "30 CFR 250.188 (2025), reporting categories only; not a historical coding dictionary or a severity scale.",
+    "severity_ranking": "analyst-defined",
+    "severity_method": "First matching term group in _severity; accident-type vocabulary comes from the source member. Labels do not establish consequence magnitude or individual injury counts.",
+    "keyword_vocabulary": "analyst-defined",
+    "keyword_method": "KEYWORDS is a screening vocabulary, not an official service taxonomy; literal case-insensitive matches may overlap.",
+    "confidence_basis": "Historical reporting thresholds applied to canonical IncidentClassifier confidence; scores are not calibrated probabilities."
+  },
   "war_join": {
     "status": "not_evaluated",
     "reason": "Public INCINV has no API well key; local databases and well activity reports are outside this refresh."

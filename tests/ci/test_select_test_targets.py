@@ -46,6 +46,32 @@ def test_hse_change_is_module_scoped_not_full():
     assert all(t in r["xdist"] for t in ALWAYS_XDIST)
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "config/hse/public_refresh.json",
+        "scripts/exploration/drilling_hse_patterns_analysis.py",
+        "scripts/exploration/intervention_hse_phase1a_explore.py",
+        "scripts/exploration/drilling_hse_render_html.py",
+        "reports/hse/drilling-hse-patterns-2026-07-05.json",
+        "reports/hse/drilling-hse-patterns-2026-07-05.html",
+        "reports/hse/incinv-manifest.json",
+        "reports/hse/incinv-qa.json",
+        "reports/hse/drilling-phase-values.csv",
+        "reports/hse/drilling-severity-values.csv",
+        "reports/hse/drilling-year-values.csv",
+        "reports/hse/drilling-area-values.csv",
+        "reports/hse/intervention-hse-patterns-2026-05-18-explore.json",
+        "tests/unit/hse/fixtures/incinv_synthetic.csv",
+        "tests/unit/hse/test_public_refresh.py",
+    ],
+)
+def test_public_refresh_paths_run_hse_tests(path):
+    result = select([path], REPO_ROOT)
+    assert "tests/unit/hse" in result["xdist"]
+    assert all(target in result["xdist"] for target in ALWAYS_XDIST)
+
+
 def test_carved_domain_member_change_routes_to_its_shard_not_full():
     """A change under a carved uv workspace member
     (packages/worldenergydata-<domain>/src/worldenergydata/<domain>/) is

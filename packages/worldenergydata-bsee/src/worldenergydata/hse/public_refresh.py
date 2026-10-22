@@ -43,6 +43,22 @@ KEYWORDS = (
     "p&a",
     "plug and abandon",
 )
+CLASSIFICATION_BASIS = {
+    "accident_type_source": SOURCE_URL,
+    "regulatory_context": "https://www.govinfo.gov/content/pkg/"
+    "CFR-2025-title30-vol2/xml/CFR-2025-title30-vol2-sec250-188.xml",
+    "regulatory_scope": "30 CFR 250.188 (2025), reporting categories only; "
+    "not a historical coding dictionary or a severity scale.",
+    "severity_ranking": "analyst-defined",
+    "severity_method": "First matching term group in _severity; "
+    "accident-type vocabulary comes from the source member. "
+    "Labels do not establish consequence magnitude or individual injury counts.",
+    "keyword_vocabulary": "analyst-defined",
+    "keyword_method": "KEYWORDS is a screening vocabulary, not an official "
+    "service taxonomy; literal case-insensitive matches may overlap.",
+    "confidence_basis": "Historical reporting thresholds applied to canonical "
+    "IncidentClassifier confidence; scores are not calibrated probabilities.",
+}
 
 
 class QAError(ValueError):
@@ -82,6 +98,8 @@ def _download(url, destination):
             "180",
             "--output",
             str(destination),
+            "--dump-header",
+            str(destination.with_suffix(".headers")),
             "--write-out",
             "%{http_code}",
             url,
@@ -91,18 +109,31 @@ def _download(url, destination):
         check=False,
     )
     status = response.stdout.strip()
+    headers = {}
+    header_path = destination.with_suffix(".headers")
+    if header_path.exists():
+        with header_path.open(encoding="utf-8", newline="\n") as stream:
+            for line in stream:
+                if line.startswith("HTTP/"):
+                    headers = {}  # Only the final response supplied the bytes.
+                elif ":" in line:
+                    key, value = line.split(":", 1)
+                    headers[key.lower()] = value.strip()
+    receipt = {
+        "url": url,
+        "requested_at": _utc(),
+        "http_status": int(status) if status.isdigit() else status,
+        "curl_exit_code": response.returncode,
+        "etag": headers.get("etag"),
+        "last_modified": headers.get("last-modified"),
+    }
     _write_json(
         destination.with_suffix(".request.json"),
-        {
-            "url": url,
-            "requested_at": _utc(),
-            "http_status": status,
-            "curl_exit_code": response.returncode,
-        },
+        receipt,
     )
     if response.returncode or status != "200":
         raise NetworkError(f"BLOCKED-NETWORK: {url}; HTTP {status or 'unavailable'}")
-    return int(status)
+    return receipt
 
 
 def _verified_files(data_dir, manifest):
@@ -151,7 +182,7 @@ def fetch(config):
             raise QAError("provenance: incomplete public download")
         return manifest
     archive = data_dir / "IncInvRawData.zip"
-    status = _download(url, archive)
+    response = _download(url, archive)
     stamp = _utc()
     member = "IncInvRawData/mv_acc_investigations.txt"
     with zipfile.ZipFile(archive) as zipped:
@@ -164,7 +195,9 @@ def fetch(config):
                 "file": path.name,
                 "url": url,
                 "downloaded_at": stamp,
-                "http_status": status,
+                "http_status": response["http_status"],
+                "etag": response["etag"],
+                "last_modified": response["last_modified"],
                 "size_bytes": path.stat().st_size,
                 "sha256": _digest(path),
             }
@@ -219,6 +252,7 @@ def _load_classifier(taxonomy):
 
 
 def _severity(text):
+    """Analyst-defined first-match proxy; see CLASSIFICATION_BASIS."""
     text = text.lower()
     for terms, label in (
         (("fatality",), "fatality"),
@@ -230,6 +264,18 @@ def _severity(text):
         if any(term in text for term in terms):
             return label
     return "other"
+
+
+def _confidence_bucket(confidence):
+    """Preserve the historical report's grouping of classifier scores."""
+    for lower, label in (
+        (0.90, "direct_code(>=0.90)"),
+        (0.70, "keyword_high(0.70-0.89)"),
+        (0.50, "keyword_medium(0.50-0.69)"),
+    ):
+        if confidence >= lower:
+            return label
+    return "keyword_low(<0.50)"
 
 
 def _qualify(config, qa):
@@ -315,7 +361,7 @@ def invalidate(config, reason):
     out = Path(config["output_dir"])
     out.mkdir(parents=True, exist_ok=True)
     qa = {"status": "not_evaluated", "reason": reason}
-    for name in (HEADLINES, INVENTORY, "incinv-qa.json"):
+    for name in (HEADLINES, INVENTORY, "incinv-qa.json", "incinv-manifest.json"):
         _write_json(out / name, qa)
     _csv_outputs(out)
     (out / HTML).write_text(
@@ -358,15 +404,34 @@ def analyze(config):
     years = Counter(
         datetime.strptime(row["DATE_OCCURRED"], "%m/%d/%Y").year for row, _ in drill
     )
+    source = next(e for e in manifest["files"] if e["file"] == config["source_file"])
     result = {
         "status": "evaluated",
         "generated_at": _utc(),
         "source": manifest,
         "source_file": config["source_file"],
+        "revision_history": config.get(
+            "revision_history",
+            [
+                {
+                    "revision": 2,
+                    "source_downloaded_at": source["downloaded_at"],
+                    "change": "Analysis of the manifest-qualified source.",
+                },
+            ],
+        ),
         "quantity": "investigation records",
         "unit": "count",
         "methodology": "Canonical IncidentClassifier(source='bsee'), activity == DRILL; "
         "severity is an accident-type proxy, not injury or fatality counts.",
+        "classification_basis": CLASSIFICATION_BASIS,
+        "reporting_changes": [
+            "Percentages are rounded to one decimal place.",
+            "drill_top_areas and the area CSV include all observed DRILL area codes.",
+            "Confidence buckets retain the historical reporting thresholds.",
+            "Year values cover every calendar year in the screened date range, "
+            "including zero DRILL counts; zero does not establish zero incidents.",
+        ],
         "incinv_total_records": len(rows),
         "drill_total": len(drill),
         "incinv_date_range": qa["date_range"],
@@ -376,10 +441,18 @@ def analyze(config):
         ),
         "drill_subactivity_distribution": distribution(r.subactivity for _, r in drill),
         "drill_match_method": distribution(r.match_method for _, r in drill),
+        "drill_confidence_buckets": distribution(
+            _confidence_bucket(r.confidence) for _, r in drill
+        ),
         "drill_severity_proxy": distribution(
             _severity(row["ACCIDENT_TYPE"]) for row, _ in drill
         ),
-        "drill_by_year": {str(k): v for k, v in sorted(years.items())},
+        "drill_by_year": {
+            str(year): years[year]
+            for year in range(
+                int(qa["date_range"][0][:4]), int(qa["date_range"][1][:4]) + 1
+            )
+        },
         "drill_year_range": [min(years), max(years)] if years else None,
         "drill_top_areas": distribution(
             row["AREA_BLOCK"].split()[0] for row, _ in drill
@@ -393,6 +466,9 @@ def analyze(config):
             "Composite keys detect exact event signatures; "
             "no public unique incident ID is supplied.",
             "Lease is optional; no operator identity, narrative or asset name is exported.",
+            "No durable source archive is supplied with this report. Exact replay "
+            "requires retained bytes matching both manifest digests; a later "
+            "public download may differ.",
         ],
     }
     inventory = {
@@ -411,6 +487,7 @@ def analyze(config):
         },
         "keyword_basis": "Literal case-insensitive ACCIDENT_TYPE matches; categories overlap; "
         "these are inventory signals, not confirmed interventions.",
+        "classification_basis": CLASSIFICATION_BASIS,
         "war_join": {
             "status": "not_evaluated",
             "reason": "Public INCINV has no API well key; "

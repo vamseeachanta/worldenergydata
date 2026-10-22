@@ -7,7 +7,29 @@
   "encoding": "latin-1",
   "quantity": "investigation records",
   "unit": "count",
-  "earliest_date": "1900-01-01",
+  "earliest_date": "1995-01-04",
+  "earliest_date_basis": {
+    "rule": "Minimum DATE_OCCURRED in the pinned public source member; a coverage guard, not a regulatory start date.",
+    "source_url": "https://www.data.bsee.gov/Other/Files/IncInvRawData.zip",
+    "source_sha256": "d11cbe0f72b393a976c1e3d58838031c7ecb8060fff9cabd9a7b4f3d4c8e5016"
+  },
+  "revision_history": [
+    {
+      "revision": 1,
+      "date": "2026-07-05",
+      "change": "Initial drilling investigation analysis."
+    },
+    {
+      "revision": 2,
+      "source_downloaded_at": "2026-10-22T10:44:30.516928Z",
+      "change": "Refresh from the public source with a sealed manifest, input QA and downloadable chart values."
+    },
+    {
+      "revision": 3,
+      "source_downloaded_at": "2026-10-22T22:22:58Z",
+      "change": "Restore classifier confidence buckets, include zero-count years and qualify source retention and analyst-defined rules."
+    }
+  ],
   "taxonomy_dir": "packages/worldenergydata-safety_analysis/src/worldenergydata/safety_analysis/taxonomy",
   "base_dir": "../.."
 }
