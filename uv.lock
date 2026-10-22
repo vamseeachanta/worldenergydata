@@ -8074,6 +8074,7 @@ source = { editable = "packages/worldenergydata-cost" }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "openpyxl" },
     { name = "pydantic" },
     { name = "scikit-learn", version = "1.7.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scikit-learn", version = "1.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -8083,6 +8084,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "numpy", specifier = ">=2.2.6,<3.0" },
+    { name = "openpyxl", specifier = ">=3.1.5,<4.0" },
     { name = "pydantic", specifier = ">=2.13.4,<3.0" },
     { name = "scikit-learn", specifier = ">=1.7.2,<2.0" },
     { name = "worldenergydata-core", editable = "packages/worldenergydata-core" },
