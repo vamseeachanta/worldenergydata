@@ -119,11 +119,17 @@ class MetoceanReport:
                 **{
                     f"marginal_hs_{k}": v
                     for k, v in model.marginal_hs.items()
-                    if k != "distribution"
+                    if k not in {"distribution", "h", "pdf"}
                 },
                 "conditional_tp_model": model.conditional_tp.get("model", ""),
-                "mu_tp": model.conditional_tp.get("mu", ""),
-                "sigma_tp": model.conditional_tp.get("sigma", ""),
+                "mu_coefficients": model.conditional_tp.get("mu_coefficients", ""),
+                "variance_coefficients": model.conditional_tp.get(
+                    "variance_coefficients", ""
+                ),
+                "guarded_zero_residuals": sum(
+                    len(point["indices"]) for point in model.guarded_points
+                ),
+                "independent_fit_validation": model.validation,
             }
         )
 

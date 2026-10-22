@@ -2,20 +2,21 @@
 ABOUTME: Joint probability model for Hs-Tp (or any two-variable) analysis.
 ABOUTME: Wraps metocean-stats joint_distribution_Hs_Tp and calculate_scatter.
 
-Uses real metocean-stats library (v1.1.9) as the statistical backend.
+Uses real metocean-stats library (v1.2.0) as the statistical backend.
 All visualisations use Plotly — metocean-stats matplotlib outputs are converted.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 import metocean_stats.stats as ms
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+from .backend import JointBackendResult, fit_backend
 
 
 @dataclass
@@ -28,12 +29,16 @@ class JointModel:
     """Parameters of the conditional Tp|Hs distribution."""
     n_samples: int
     """Number of data points used to fit the model."""
-    hs_samples: Optional[np.ndarray] = None
-    """Monte-Carlo Hs samples from the fitted model."""
-    tp_samples: Optional[np.ndarray] = None
-    """Monte-Carlo Tp samples from the fitted model."""
-    _raw_result: Optional[tuple] = field(default=None, repr=False)
-    """Raw tuple returned by metocean-stats joint_distribution_Hs_Tp."""
+    hs_samples: np.ndarray | None = None
+    """Observed Hs values; the backend does not return Monte Carlo samples."""
+    tp_samples: np.ndarray | None = None
+    """Observed Tp values paired with hs_samples."""
+    _raw_result: JointBackendResult | None = field(default=None, repr=False)
+    """Named backend outputs; retained for backend iso-density contours."""
+    guarded_points: list[dict] = field(default_factory=list)
+    """Locations and indices of exact zero residuals guarded during fitting."""
+    validation: str = "NOT_EVALUATED"
+    """Independent validation of the unconstrained backend fit remains open."""
 
 
 class JointProbabilityModel:
@@ -68,7 +73,7 @@ class JointProbabilityModel:
         self,
         hs: pd.Series,
         tp: pd.Series,
-        periods: list[int] = None,
+        periods: list[int] | None = None,
     ) -> JointModel:
         """
         Fit a conditional Hs-Tp joint model using metocean-stats.
@@ -91,38 +96,27 @@ class JointProbabilityModel:
 
         df = pd.DataFrame({"hs": hs.values, "tp": tp.values}, index=hs.index)
 
-        # metocean-stats returns a 12-element tuple
-        raw = ms.joint_distribution_Hs_Tp(
-            df,
-            var_hs="hs",
-            var_tp="tp",
-            periods=periods,
-        )
-
-        # Decode the tuple (indices documented in aux_funcs.py)
-        a1, b1, a2, b2, mu_tp, sigma_tp = raw[0], raw[1], raw[2], raw[3], raw[4], raw[5]
-        hs_samples = raw[6]
-        tp_samples = raw[7]
-
+        raw, guarded = fit_backend(df, periods)
+        # Release 1.2.0, extreme.py: these are conditional log-period mean
+        # and VARIANCE coefficients, not Weibull parameters or constant sigma.
         marginal_hs = {
-            "distribution": "Weibull_2P",
-            "params": (float(a1), float(b1)),
-            "shape_a2": float(a2),
-            "shape_b2": float(b2),
+            "distribution": "tabulated_LogNoWe",
+            "h": np.asarray(raw.h, dtype=float),
+            "pdf": np.asarray(raw.pdf_Hs, dtype=float),
         }
         conditional_tp = {
             "model": "lognormal_conditional",
-            "mu": float(mu_tp),
-            "sigma": float(sigma_tp),
+            "mu_coefficients": (float(raw.a1), float(raw.a2), float(raw.a3)),
+            "variance_coefficients": (float(raw.b1), float(raw.b2), float(raw.b3)),
         }
-
         return JointModel(
             marginal_hs=marginal_hs,
             conditional_tp=conditional_tp,
             n_samples=len(hs),
-            hs_samples=hs_samples,
-            tp_samples=tp_samples,
+            hs_samples=hs.to_numpy(copy=True),
+            tp_samples=tp.to_numpy(copy=True),
             _raw_result=raw,
+            guarded_points=guarded,
         )
 
     # ------------------------------------------------------------------
@@ -133,8 +127,8 @@ class JointProbabilityModel:
         self,
         hs: pd.Series,
         tp: pd.Series,
-        hs_bins: Optional[np.ndarray] = None,
-        tp_bins: Optional[np.ndarray] = None,
+        hs_bins: np.ndarray | None = None,
+        tp_bins: np.ndarray | None = None,
     ) -> pd.DataFrame:
         """
         Compute a 2D Hs-Tp occurrence table in percent.
@@ -263,7 +257,7 @@ class JointProbabilityModel:
         fig.update_layout(
             title="Hs-Tp Joint Distribution",
             template="plotly_white",
-            xaxis3=dict(title="Tp (s)"),
-            yaxis3=dict(title="Hs (m)"),
+            xaxis3={"title": "Tp (s)"},
+            yaxis3={"title": "Hs (m)"},
         )
         return fig

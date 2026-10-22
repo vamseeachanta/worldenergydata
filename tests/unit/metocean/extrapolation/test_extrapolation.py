@@ -260,3 +260,31 @@ def test_spatial_transfer_does_not_claim_buoy_calibration(
     assert api._assessor.assess(28.5, -88.5, source).correction_needed
     assert not any("bias_correction" in c for c in result.corrections_applied)
     assert "spatial_transfer" in result.corrections_applied
+
+
+@pytest.mark.parametrize("method", ["nearest", "weighted_average"])
+def test_correction_labels_follow_executed_transfer(monkeypatch, method):
+    """Labels follow executed operations, independently of catalogue type.
+
+    This synthetic context requires a transfer. Each spy delegates to the
+    existing model; the method never fits coefficients from observations.
+    Numeric outputs and the physical transfer assumptions are NOT_EVALUATED.
+    """
+    import worldenergydata.metocean.extrapolation as api
+
+    source = MetoceanSource("synthetic_grid", "reanalysis", 0.0, 0.0, 500)
+    monkeypatch.setattr(api._finder, "find_nearest", lambda *args, **kwargs: [source])
+    calls = []
+    for name in ("_wave_model", "_current_model"):
+        model = getattr(api, name)
+        transfer = model.transfer
+
+        def track(*args, _transfer=transfer, _name=name):
+            calls.append(_name)
+            return _transfer(*args)
+
+        monkeypatch.setattr(model, "transfer", track)
+    result = api.extrapolate(28.5, -88.5, method=method)
+    assert set(calls) == {"_wave_model", "_current_model"}
+    assert "spatial_transfer" in result.corrections_applied
+    assert not any("bias" in label for label in result.corrections_applied)
