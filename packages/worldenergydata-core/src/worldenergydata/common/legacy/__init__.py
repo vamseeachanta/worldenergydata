@@ -1,16 +1,10 @@
-"""Legacy module for ONG Field Development components.
+"""Retained legacy utilities for field development and data processing.
 
-This module provides backward-compatible imports for the refactored
-ONG Field Development components.
+The unused field-development coordinator and its drilling helpers were retired
+together. For WAR rig attribution, fluid weights and phase durations, use
+``worldenergydata.bsee.analysis.war_rig_days``. See the retirement note in
+``docs/modules/bsee/analysis/legacy_component_retirement.md``.
 """
-
-from .ong_fd_components_refactored import ONGFDComponents
-
-# Re-export drilling functions
-from .ong_fd_drilling import (
-    assign_st_bp_tree_info,
-    get_rig_days_and_drilling_wt,
-)
 
 # Re-export geometry functions
 from .ong_fd_geometry import (
@@ -59,36 +53,26 @@ from .ong_fd_wellpath import (
 )
 
 __all__ = [
-    # Main class
-    "ONGFDComponents",
-    # Utils
     "add_gis_info_to_df",
-    "delete_well_data_for_api10",
-    "get_api10_from_well_api",
-    "save_output_data_to_excel",
-    "transform_list_to_unique",
-    # Production
     "add_production_from_all_wells",
     "add_production_rate_and_date",
     "add_production_to_well_data",
-    "prepare_field_production",
-    "prepare_field_production_rate",
-    # Drilling
-    "assign_st_bp_tree_info",
-    "calculate_drilling_completion_summary",
-    "get_rig_days_and_drilling_wt",
-    # Wellpath
     "add_relative_wh_positions",
-    "convert_survey_to_azimuth_inclination",
-    "plot_field_wells",
-    "prepare_well_paths",
-    "process_survey_xyz",
-    # Tubulars
+    "calculate_drilling_completion_summary",
     "clean_tubulars_data",
+    "convert_survey_to_azimuth_inclination",
+    "delete_well_data_for_api10",
+    "evaluate_well_distances",
+    "get_api10_from_well_api",
+    "plot_field_wells",
     "prepare_casing_data",
     "prepare_casing_tubular_summary_all_wells",
-    "tubular_summary_based_on_api12_and_hole",
-    # Geometry
-    "evaluate_well_distances",
     "prepare_completion_data",
+    "prepare_field_production",
+    "prepare_field_production_rate",
+    "prepare_well_paths",
+    "process_survey_xyz",
+    "save_output_data_to_excel",
+    "transform_list_to_unique",
+    "tubular_summary_based_on_api12_and_hole",
 ]
