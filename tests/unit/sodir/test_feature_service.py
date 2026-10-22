@@ -101,7 +101,7 @@ def test_entity_schema_and_query(
     calls = transport(
         monkeypatch, client, [{"features": [{"attributes": rows[entity]}]}]
     )
-    assert client.query_entity(entity) == [rows[entity]]
+    assert client.query_entity(entity, select=list(rows[entity])) == [rows[entity]]
     validate_record(entity, rows[entity])
     query = calls[0][1]
     assert query["timeout"] == 30
@@ -156,7 +156,7 @@ def test_page_cap(monkeypatch: pytest.MonkeyPatch, client: SodirAPIClient) -> No
         ],
     )
     with pytest.raises(ValueError, match="page cap"):
-        client.query_entity("fields")
+        client.query_entity("fields", select=["OBJECTID"])
 
 
 def test_byte_cap(monkeypatch: pytest.MonkeyPatch, client: SodirAPIClient) -> None:
@@ -273,7 +273,10 @@ def test_total_byte_cap_across_pages(
     transport(monkeypatch, client, [page, {"features": []}])
     with pytest.raises(ValueError, match="byte cap"):
         client.query_entity(
-            "fields", max_pages=2, max_bytes=len(json.dumps(page).encode()) + 1
+            "fields",
+            select=["OBJECTID"],
+            max_pages=2,
+            max_bytes=len(json.dumps(page).encode()) + 1,
         )
 
 
@@ -293,7 +296,7 @@ def test_nonascending_page_rejected(
         ],
     )
     with pytest.raises(ValueError, match="object ID"):
-        client.query_entity("fields")
+        client.query_entity("fields", select=["OBJECTID"])
 
 
 def test_pause_between_requests(
