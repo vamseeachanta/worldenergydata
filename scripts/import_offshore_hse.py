@@ -13,9 +13,13 @@ import os
 from pathlib import Path
 
 from worldenergydata.hse.importers.offshore_importer import OffshoreImporter
+from worldenergydata.hse.offshore_review import (
+    build_review_worklist,
+    collection_readiness,
+)
 
 
-def main(argv=None):
+def _build_parser():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--data-root", type=Path, default=os.environ.get("WED_DATA_ROOT")
@@ -30,7 +34,20 @@ def main(argv=None):
         "--export", help="new export directory name beneath the collection root"
     )
     parser.add_argument("--digest", action="store_true")
-    args = parser.parse_args(argv)
+    parser.add_argument(
+        "--readiness",
+        action="store_true",
+        help="report recorded gates and missing evidence",
+    )
+    parser.add_argument(
+        "--review-worklist",
+        choices=("pilot", "bulk"),
+        help="prepare cited evidence for independent review; grants no approval",
+    )
+    return parser
+
+
+def _validate_args(parser, args):
     repo_root = Path(__file__).resolve().parents[1]
     if args.data_root is None or args.data_root.resolve().is_relative_to(repo_root):
         parser.error(
@@ -44,8 +61,23 @@ def main(argv=None):
         parser.error("--pilot-event-id is required with --pilot-review")
     if args.bulk_review and not args.existing_indexes:
         parser.error("--existing-indexes is required with --bulk-review")
+
+
+def main(argv=None):
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+    _validate_args(parser, args)
     root = args.data_root / "modules" / "hse" / "offshore"
-    importer = OffshoreImporter(root / "offshore.sqlite")
+    report_only = (args.readiness or args.review_worklist is not None) and not any(
+        (
+            args.packet,
+            args.pilot_review,
+            args.existing_indexes,
+            args.bulk_review,
+            args.export,
+        )
+    )
+    importer = OffshoreImporter(root / "offshore.sqlite", read_only=report_only)
     result = {}
     if args.packet:
         result["intake"] = importer.ingest(
@@ -65,6 +97,12 @@ def main(argv=None):
         result["manifest"] = importer.export(root / args.export)
     if args.digest:
         result["dataset_sha256"] = importer.content_digest()
+    if args.readiness:
+        result["readiness"] = collection_readiness(importer)
+    if args.review_worklist:
+        result["review_worklist"] = build_review_worklist(
+            importer, stage=args.review_worklist, pilot_event_id=args.pilot_event_id
+        )
     print(json.dumps(result, indent=2))
 
 

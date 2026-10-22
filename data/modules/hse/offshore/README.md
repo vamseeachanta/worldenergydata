@@ -29,6 +29,13 @@ Intake refuses a matching row when its operation, failure mode, failure summary 
 
 ## Privacy and review limits
 
+`--readiness` reports the recorded gates and missing evidence without changing
+the database. `--review-worklist pilot` or `--review-worklist bulk` prepares cited,
+digest-bound evidence for independent review; it grants no approval. Linked
+records retain their canonical identities and classification annotations in the
+worklist. See the [review preparation guide](../../../../docs/hse-offshore-review.html)
+for the criteria, commands, limits and a runnable synthetic example.
+
 The importer rejects unreviewed string values and contact patterns before persistence. The reviewed-text inventory must be curated and independently checked; the importer does not generate it. Contact checks also cover external identities. This is an admission control, not universal personal-name recognition: a falsely approved inventory can still contain a name. Review receipts have a closed schema and cannot carry free-form reviewer names or notes. `InjuryIncident.injured_person_name` is untouched.
 
 ## Collection disposition
