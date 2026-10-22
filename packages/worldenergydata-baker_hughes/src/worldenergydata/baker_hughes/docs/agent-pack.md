@@ -1,22 +1,24 @@
 # Baker Hughes module knowledge pack
 
-Summary: section 11 defines date-range completeness for issue #1335, slice 1.
-Sections 1–10 retain the historical evidence at the code revision below;
-section 11 supersedes the F13/F19 dispositions for the current implementation.
+Summary: section 12 defines strict counts, depth validation and declared units
+for #1334. It supersedes F1–F6 and F11–F12. Section 11 retains the date
+completeness contract. Sections 1–10 are historical evidence at the code
+revision below; unrelated gaps and unverified source claims remain open.
 
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
+| 4 | 2026-10-22 | Add count rejection, explicit depth units and detection tests; distinguish input validation from source qualification. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 3 |
-| Pack date | 2026-10-19 |
+| Pack revision | 4 |
+| Pack date | 2026-10-22 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
@@ -225,3 +227,80 @@ The new file has ten parametrized cases. Together with the existing loader
 and package smoke tests, 25 cases pass. Later slices of #1335 address the
 retained schema, filter and dimension checks above; #1334 and #1336 retain
 numeric and independent source-qualification gaps.
+
+
+## 12. Numeric ingestion contract (issue #1334)
+
+The loaders reject an entire workbook with `ValueError` on an invalid count
+or a present invalid depth. The error names the output field and row index;
+there is no repaired partial result, zero imputation or integer truncation.
+Summary row indices refer to the melted table. Validation precedes pivot
+filters, so filtering cannot hide corrupt cells.
+
+Counts must be finite, nonnegative whole numbers. Blank, missing, invalid,
+fractional and grouped values are rejected; no locale is inferred.
+Decimal and scientific notation without grouping are supported.
+Decimal parsing avoids a float round trip for textual whole counts. These
+are input-domain rules from #1334, not engineering acceptance thresholds.
+
+Empty depth cells remain missing; other cells must be finite nonnegative
+numbers representable as finite floats without underflow to zero. `WellDepth` and `WaterDepth` require caller `depth_unit="ft"` or
+`depth_unit="m"`. Alternatively `WellDepth_ft`, `WellDepth_m`, `WaterDepth_ft`
+and `WaterDepth_m` declare units per field. Each field requires exactly one
+source column. A declaration conflicting with a suffix is rejected. An
+unlabelled external workbook now requires caller action, including fixtures
+whose source units have not independently been qualified.
+
+Outputs retain `well_depth_ft` and `water_depth_ft`, always in international
+feet after validation and conversion. The equation is
+`depth_ft = depth_m / 0.3048` for metre inputs; feet inputs are unchanged.
+Source: [NIST SP 811 (2008), Appendix B.6](https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf),
+the 1959 agreement defines the international foot as exactly 0.3048 m.
+Survey feet and other units are unsupported. No datum conversion is performed.
+
+Successful DataFrames expose `attrs["numeric_validation"]`: the count rejection
+policy and, for pivots, source units, output unit and missing-depth policy.
+The ordinary ingestion report is unchanged; rejection is communicated by the
+exception and accepted-input metadata stays on the returned DataFrame.
+
+Tests below are in `tests/unit/baker_hughes/test_numeric_contract.py`.
+Parametrized nodes independently exercise both loaders or depth fields.
+
+| Gap | Detection test node | Current disposition |
+| --- | --- | --- |
+| F1 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Pivot missing/invalid/locale inputs rejected, including literal NA. |
+| F2 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts` | Fractions rejected; exact whole values preserved, including a large textual integer. |
+| F3 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Present invalid well depth rejected; blank remains missing in the conversion test. |
+| F4 | `tests/unit/baker_hughes/test_numeric_contract.py::test_invalid_depth_rejected` | Present invalid water depth rejected; blank remains missing in the conversion test. |
+| F5 | `tests/unit/baker_hughes/test_numeric_contract.py::test_ambiguous_depth_requires_declaration`; `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_declared_metres_converted_to_labelled_feet` | Well source unit required or read from suffix; mismatch rejected; metres converted to feet. |
+| F6 | `tests/unit/baker_hughes/test_numeric_contract.py::test_header_declaration_mismatch_rejected`; `tests/unit/baker_hughes/test_numeric_contract.py::test_detects_units_per_header` | Water source unit independently validated; mixed labelled units converted per field. |
+| F11 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts` | Summary missing/invalid/locale inputs rejected. |
+| F12 | `tests/unit/baker_hughes/test_numeric_contract.py::test_rejects_bad_counts`; `tests/unit/baker_hughes/test_numeric_contract.py::test_preserves_whole_counts` | Summary fractions rejected and whole values preserved. |
+
+`test_unsupported_unit_rejected`, `test_duplicate_depth_representation_rejected`
+`test_invalid_count_is_checked_before_filter`,
+`test_undeclared_separators_rejected` and
+`test_unrepresentable_or_grouped_depth_rejected` cover contract boundaries.
+Fixture tests now explicitly declare feet, preserving their original schema
+and expected counts; this declaration is not external source qualification.
+
+UNVERIFIED: A caller declaration or header suffix can be factually wrong.
+Source workbook revision, independent source counts, physical depth units,
+datum and signed fingerprinted evidence remain unqualified under #1336.
+Schema, filter diagnostics and dimension completeness gaps remain as stated
+in section 11. No claim of engineering qualification follows from these tests.
+
+
+The shared worked example is `docs/examples/tabular-input-validation.md`,
+with inputs in `tests/fixtures/tabular_validation/` and executable nodes in
+`tests/unit/test_tabular_validation_example.py`. Its hand check derives
+`3.048 m / (0.3048 m/ft) = 10 ft` from NIST SP 811 (2008), Appendix B.6;
+component checks independently evaluate sign, finiteness and literal text.
+The example does not qualify external data or engineering capacity.
+
+Current offline results on the uncommitted tree (2026-10-22): 88 module
+cases passed; 31 shared-example cases also passed in the same combined
+invocation. The combined total is 236 passing cases. The downstream
+CAD test module retains its existing import skip because CadQuery is absent;
+no CAD result is claimed. Ruff passed on changed Python files. These current
+results supplement rather than rewrite historical result tables.

@@ -1,0 +1,8 @@
+case,component_id,component_type,manufacturer,size_mm,mbl_kn,weight_kg_per_m,material,data_source,notes
+clean,synthetic,chain,NA,2,3,1,NA,synthetic,NA
+positive_infinity,synthetic,chain,NA,2,inf,1,NA,synthetic,NA
+not_a_number,synthetic,chain,NA,2,NaN,1,NA,synthetic,NA
+negative_weight,synthetic,chain,NA,2,3,-1,NA,synthetic,NA
+infinite_weight,synthetic,chain,NA,2,3,inf,NA,synthetic,NA
+invalid_numeric_text,synthetic,chain,NA,2,3,NA,NA,synthetic,NA
+absent_weight,synthetic,chain,NA,2,3,,NA,synthetic,

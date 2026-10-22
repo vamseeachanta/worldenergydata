@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
+# Synthetic fixture depths are declared international feet; this does not
+# qualify units in external workbooks (issue #1334, F5/F6).
 FIXTURES = Path(__file__).parent / "fixtures" / "baker_hughes"
 
 
@@ -16,14 +18,14 @@ class TestPivotTableLoader:
     def test_load_pivot_returns_dataframe(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         assert isinstance(df, pd.DataFrame)
         assert len(df) > 0
 
     def test_pivot_standardized_columns(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         expected_cols = {
             "date",
             "country",
@@ -43,20 +45,20 @@ class TestPivotTableLoader:
     def test_pivot_date_parsed(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         assert pd.api.types.is_datetime64_any_dtype(df["date"])
 
     def test_pivot_rig_count_is_numeric(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         assert pd.api.types.is_numeric_dtype(df["rig_count"])
 
     def test_pivot_filters_by_country(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
         df = load_pivot_table(
-            FIXTURES / "na_pivot_sample.xlsx", country="UNITED STATES"
+            FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft", country="UNITED STATES"
         )
         assert (df["country"] == "UNITED STATES").all()
         # Fixture has 1 Canada row, should be excluded
@@ -65,13 +67,15 @@ class TestPivotTableLoader:
     def test_pivot_filters_by_basin(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", basin="PERMIAN")
+        df = load_pivot_table(
+            FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft", basin="PERMIAN"
+        )
         assert (df["basin"] == "PERMIAN").all()
 
     def test_pivot_depth_columns_numeric(self):
         from worldenergydata.baker_hughes.loader import load_pivot_table
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         assert pd.api.types.is_numeric_dtype(df["well_depth_ft"])
         # water_depth_ft should be numeric (NaN for land wells)
         assert pd.api.types.is_numeric_dtype(df["water_depth_ft"])
@@ -124,7 +128,7 @@ class TestIngestionReport:
         from worldenergydata.baker_hughes.loader import load_pivot_table
         from worldenergydata.baker_hughes.report import generate_report
 
-        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx")
+        df = load_pivot_table(FIXTURES / "na_pivot_sample.xlsx", depth_unit="ft")
         report = generate_report(df, source="pivot")
         assert report["source"] == "pivot"
         assert report["record_count"] == len(df)
