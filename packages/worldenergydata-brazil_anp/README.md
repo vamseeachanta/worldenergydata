@@ -7,6 +7,13 @@ Importable transparently as `worldenergydata.brazil_anp` once the workspace is
 installed (`uv sync --all-extras`). Depends on `worldenergydata-core` for the
 shared `worldenergydata.common` layer.
 
+## Production source discovery
+
+`production.source_discovery` discovers published ZIP and CSV links from the
+official ANP indexes without assuming a production REST API or uniform file
+names. See the [access assessment](../../docs/reports/anp-production-access.md)
+for source observations, sample downloads, API status and ingestion limits.
+
 ## Illustrative concession royalty scale
 
 `analysis.field_economics.ROYALTY_SCALE` is **illustrative**.
