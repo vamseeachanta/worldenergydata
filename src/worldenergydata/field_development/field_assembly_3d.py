@@ -27,6 +27,7 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 
 import cadquery as cq
@@ -148,16 +149,32 @@ def _route(points_m: tuple[Point, ...], diameter_m: float) -> cq.Shape:
     # coordinates can produce an invalid OCCT corner. Translate the result.
     origin = points[0]
     local = [point - origin for point in points]
-    path = cq.Wire.makePolygon(local)
-    plane = cq.Plane(origin=local[0], normal=local[1] - local[0])
     # Radius = diameter / 2 by circle definition; no bend-radius assumption.
-    return (
+    radius = diameter_m * _M_TO_MM / 2
+    # These routes have one 90-degree mitre, which extends one radius along
+    # each leg. A straight vertical-only route has no such restriction.
+    if len(local) > 2 and any(
+        (end - start).Length <= radius for start, end in pairwise(local)
+    ):
+        raise ValueError("Mitred route legs must be longer than the route radius")
+    path = cq.Wire.makePolygon(local)
+    direction = local[1] - local[0]
+    # Keep the circular profile seam perpendicular to the bend plane. OCCT can
+    # fail at an axis-aligned mitre when the seam lies in that plane.
+    x_direction = (
+        direction.cross(cq.Vector(0, 0, 1)) if len(local) > 2 else cq.Vector(1, 0, 0)
+    )
+    plane = cq.Plane(origin=local[0], xDir=x_direction, normal=direction)
+    shape = (
         cq.Workplane(plane)
-        .circle(diameter_m * _M_TO_MM / 2)
+        .circle(radius)
         .sweep(cq.Workplane(obj=path), isFrenet=True, transition="right")
         .val()
         .translate(origin)
     )
+    if not shape.isValid() or len(shape.Solids()) != 1:
+        raise ValueError("Route construction did not produce one valid solid")
+    return shape
 
 
 def build_field_assembly(
@@ -183,7 +200,8 @@ def build_field_assembly(
     child metadata. Equipment bases sit at the specified elevations; route
     *centrelines* sit at the seabed elevation. All dimensions are required.
     Invalid dimensions, nonfinite coordinates and inconsistent assignments raise
-    ValueError before CAD construction. An empty field is rejected.
+    ValueError before CAD construction. An empty field is rejected. Mitred legs
+    must exceed the route radius; invalid route solids also raise ValueError.
     """
     layout = layout_solution
     _validate(layout, wells, dimensions, seabed_z_m, host_z_m, umbilical_offset_m)
@@ -236,7 +254,8 @@ def build_field_assembly(
 
 
 def export_field_step(assembly: cq.Assembly, path: str | Path) -> Path:
-    """Export the named hierarchy using the nondeprecated STEP assembly writer."""
+    """Export the named hierarchy, raising OSError if the STEP writer fails."""
     output = Path(path)
-    exportAssembly(assembly, str(output))
+    if not exportAssembly(assembly, str(output)):
+        raise OSError("STEP assembly export failed")
     return output

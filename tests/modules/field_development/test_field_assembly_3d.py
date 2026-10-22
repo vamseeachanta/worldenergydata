@@ -171,12 +171,14 @@ def test_host_above_manifold_needs_only_vertical_routes(inputs):
         assert route.toCompound().isValid()
 
 
-@pytest.mark.parametrize("host", [(4, 6), (-2, -2), (1, 7), (6, 2)])
+@pytest.mark.parametrize(
+    "host", [(4, 6), (-2, -2), (1, 7), (6, 2), (1, -3), (-4, 2), (4, -2), (-2, 6)]
+)
 def test_route_volume_in_different_plan_directions(inputs, host):
     """From (1,2) km each host has a 5 km plan leg (3-4-5 or axis-aligned).
 
     Translate the entire field by (1234,-2345) km; length stays 5100 m.
-    Flowline volume remains pi * (200 mm)**2 * 5100000 mm.
+    Route volumes remain pi * radius**2 * 5100000 mm, with radii 200/100 mm.
     This checks CAD construction at a large nonzero local-frame origin.
     """
     inputs["wells"] = [Well(w.id, w.x + 1234, w.y - 2345) for w in inputs["wells"]]
@@ -185,14 +187,71 @@ def test_route_volume_in_different_plan_directions(inputs, host):
     )
     assembly = build_field_assembly(**inputs)
     assert assembly.toCompound().isValid()
-    shape = _group(assembly, "flowlines").children[0].toCompound()
-    assert shape.Volume() == pytest.approx(math.pi * 200**2 * 5100000)
+    for group, radius in (("flowlines", 200), ("umbilicals", 100)):
+        shape = _group(assembly, group).children[0].toCompound()
+        assert shape.isValid()
+        assert len(shape.Solids()) == 1
+        assert shape.Volume() == pytest.approx(math.pi * radius**2 * 5100000)
 
 
 def test_input_layout_and_wells_unchanged(inputs):
     before = copy.deepcopy(inputs)
     build_field_assembly(**inputs)
     assert inputs == before
+
+
+def _route_inputs(inputs, horizontal_m, riser_m):
+    inputs["wells"] = [Well("a", 0, 0)]
+    inputs["layout_solution"] = optimize_layout(
+        inputs["wells"], host=(horizontal_m / 1000, 0)
+    )
+    inputs["seabed_z_m"] = 0
+    inputs["host_z_m"] = riser_m
+    return inputs
+
+
+@pytest.mark.parametrize("leg", ["horizontal", "riser"])
+@pytest.mark.parametrize("length_m", [0.1, 0.2])
+@pytest.mark.parametrize("field", ["flowline_diameter_m", "umbilical_diameter_m"])
+def test_mitred_route_legs_at_or_below_radius_rejected(inputs, leg, length_m, field):
+    """A 90-degree mitre needs each leg longer than the 0.2 m radius."""
+    inputs = _route_inputs(
+        inputs,
+        horizontal_m=length_m if leg == "horizontal" else 100,
+        riser_m=length_m if leg == "riser" else 100,
+    )
+    inputs["dimensions"] = replace(
+        inputs["dimensions"], flowline_diameter_m=0.1, umbilical_diameter_m=0.1
+    )
+    inputs["dimensions"] = replace(inputs["dimensions"], **{field: 0.4})
+    with pytest.raises(ValueError, match="route.*radius"):
+        build_field_assembly(**inputs)
+
+
+@pytest.mark.parametrize("leg", ["horizontal", "riser"])
+def test_mitred_route_just_above_radius_is_valid(inputs, leg):
+    """0.201 m clears a 0.2 m radius; total path length is 100.201 m."""
+    inputs = _route_inputs(
+        inputs,
+        horizontal_m=0.201 if leg == "horizontal" else 100,
+        riser_m=0.201 if leg == "riser" else 100,
+    )
+    assembly = build_field_assembly(**inputs)
+    for group, radius in (("flowlines", 200), ("umbilicals", 100)):
+        shape = _group(assembly, group).children[0].toCompound()
+        assert shape.isValid()
+        assert len(shape.Solids()) == 1
+        assert shape.Volume() == pytest.approx(math.pi * radius**2 * 100201)
+
+
+def test_short_vertical_only_route_is_valid(inputs):
+    """A straight 0.1 m riser has no mitre; volume is pi*r**2*100 mm."""
+    assembly = build_field_assembly(**_route_inputs(inputs, 0, 0.1))
+    for group, radius in (("flowlines", 200), ("umbilicals", 100)):
+        shape = _group(assembly, group).children[0].toCompound()
+        assert shape.isValid()
+        assert len(shape.Solids()) == 1
+        assert shape.Volume() == pytest.approx(math.pi * radius**2 * 100)
 
 
 def test_step_export_keeps_named_hierarchy(inputs, tmp_path):
@@ -213,6 +272,15 @@ def test_step_export_keeps_named_hierarchy(inputs, tmp_path):
         "umbilical_0",
     ):
         assert f"'{name}'" in contents
+
+
+@pytest.mark.parametrize("as_string", [False, True])
+def test_step_export_missing_parent_raises(inputs, tmp_path, as_string):
+    assembly = build_field_assembly(**inputs)
+    path = tmp_path / "missing" / "field.step"
+    with pytest.raises(OSError, match="STEP"):
+        export_field_step(assembly, str(path) if as_string else path)
+    assert not path.exists()
 
 
 @pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf")])
