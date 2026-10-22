@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Any, Callable, Mapping, Optional
+from typing import Any
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
 
@@ -73,8 +74,8 @@ class CoresWorkbookSource:
         self,
         *,
         cache_root: Path,
-        http_get: Optional[Callable[..., CoresHttpResponse]] = None,
-        clock: Optional[Callable[[], str]] = None,
+        http_get: Callable[..., CoresHttpResponse] | None = None,
+        clock: Callable[[], str] | None = None,
     ):
         self.cache_root = Path(cache_root)
         self.raw_dir = self.cache_root / "raw"
@@ -83,7 +84,7 @@ class CoresWorkbookSource:
         self._http_get = http_get or _urlopen_get
         self._clock = clock or utc_now_iso
 
-    def discover(self, *, page_html: Optional[str] = None) -> dict[str, CoresWorkbook]:
+    def discover(self, *, page_html: str | None = None) -> dict[str, CoresWorkbook]:
         html = page_html if page_html is not None else self._fetch_statistics_page()
         hrefs = _extract_hrefs(html)
         inventory = {}
@@ -165,15 +166,16 @@ class CoresWorkbookSource:
     ) -> dict[str, Any]:
         entry = self.metadata().get("workbooks", {}).get(workbook.product, {})
         if entry:
-            return entry
-        return _workbook_metadata(
+            return {**entry, "cache_reused": True}
+        entry = _workbook_metadata(
             workbook=workbook,
             path=path,
             cache_root=self.cache_root,
             content=path.read_bytes(),
             headers={},
-            status=200,
+            status=None,
         )
+        return {**entry, "acquired_at_utc": None, "cache_reused": True}
 
     def _response_metadata(
         self,
@@ -181,7 +183,7 @@ class CoresWorkbookSource:
         path: Path,
         response: CoresHttpResponse,
     ) -> dict[str, Any]:
-        return _workbook_metadata(
+        entry = _workbook_metadata(
             workbook=workbook,
             path=path,
             cache_root=self.cache_root,
@@ -189,12 +191,28 @@ class CoresWorkbookSource:
             headers=response.headers,
             status=response.status,
         )
+        return {**entry, "acquired_at_utc": self._clock(), "cache_reused": False}
 
     def _write_metadata(self, workbook_entries: Mapping[str, Any]) -> None:
         self.metadata_dir.mkdir(parents=True, exist_ok=True)
+        # Issue 1293 SF4: a complete source is only as fresh as its oldest
+        # acquisition. A check of cached paths is not a workbook download.
+        acquired = [
+            workbook_entries.get(product, {}).get("acquired_at_utc")
+            for product in DEFAULT_WORKBOOKS
+        ]
+        refreshed = (
+            min(
+                acquired,
+                key=lambda value: datetime.fromisoformat(value.replace("Z", "+00:00")),
+            )
+            if all(acquired)
+            else None
+        )
         metadata = {
             "statistics_page": STATISTICS_PAGE_URL,
-            "refreshed_at_utc": self._clock(),
+            "refreshed_at_utc": refreshed,
+            "checked_at_utc": self._clock(),
             "workbooks": workbook_entries,
         }
         self.metadata_path.write_text(
@@ -222,7 +240,7 @@ def _extract_hrefs(html: str) -> list[str]:
     return parser.hrefs
 
 
-def _find_workbook_url(hrefs: list[str], filename: str) -> Optional[str]:
+def _find_workbook_url(hrefs: list[str], filename: str) -> str | None:
     for href in hrefs:
         if href.split("?", 1)[0].endswith(filename):
             return href
@@ -254,7 +272,7 @@ def _workbook_metadata(
     cache_root: Path,
     content: bytes,
     headers: Mapping[str, str],
-    status: int,
+    status: int | None,
 ) -> dict[str, Any]:
     return {
         "byte_count": len(content),
