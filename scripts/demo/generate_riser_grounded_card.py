@@ -53,7 +53,12 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", default="reports/hse/riser-fatigue-grounded-card.html")
     modes = ap.add_mutually_exclusive_group()
     modes.add_argument(
-        "--summary-csv", type=Path, help="Import results without running a solver."
+        "--summary-csv",
+        type=Path,
+        help=(
+            "Import results without running a solver. Nonfinite life "
+            "(including zero-damage infinite life) rejects the entire import."
+        ),
     )
     ap.add_argument(
         "--required-life-years",

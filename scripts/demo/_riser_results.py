@@ -5,6 +5,8 @@
 
 Source: digitalmodel, riser_fatigue/workflow.py, _evaluate_segment (2026).
 The summary carries segment_id, wave_damage, viv_damage and fatigue_life_years.
+Optional required_life_years must match the caller's criterion on every row;
+optional passes_dff must agree with the life comparison on every row.
 No S-N equation, coefficient, DFF or engineering acceptance limit is embedded here.
 Required factored life and its documentary source are supplied by the caller.
 An imported result is not evidence that a live calculation ran in this process.
@@ -64,22 +66,38 @@ def analysis_from_csv(
         life = _number(row["fatigue_life_years"], "fatigue_life_years", positive=True)
         wave = _number(row["wave_damage"], "wave_damage")
         viv = _number(row["viv_damage"], "viv_damage")
+        if "required_life_years" in row:
+            imported_required = _number(
+                row["required_life_years"], "required_life_years", positive=True
+            )
+            if imported_required != required:
+                raise ValueError("required_life_years mismatch with supplied criterion")
+        if "passes_dff" in row:
+            imported_pass = row["passes_dff"]
+            if imported_pass not in {"True", "False"}:
+                raise ValueError("Invalid passes_dff: expected True or False")
+            if (imported_pass == "True") != (life >= required):
+                raise ValueError("passes_dff disagrees with fatigue life comparison")
         segments.append((life, identifier, wave, viv))
     if not segments:
         raise ValueError("Empty riser fatigue summary")
     life, identifier, wave, viv = min(segments, key=lambda segment: segment[0])
     relation = "meets" if life >= required else "below"
+    life_label, required_label = f"{life:,.1f}", f"{required:,.1f}"
+    if life != required and life_label == required_label:
+        # Round-trip precision preserves distinctions hidden by one-decimal labels.
+        life_label, required_label = repr(life), repr(required)
     return AnalysisSummary(
         title="Riser fatigue analysis — imported summary",
         headline=(
-            f"Minimum fatigue life {life:,.1f} yr at segment {identifier} — "
-            f"{relation} the {required:,.1f}-yr required factored life."
+            f"Minimum fatigue life {life_label} yr at segment {identifier} — "
+            f"{relation} the {required_label}-yr required factored life."
         ),
         metrics=[
-            (f"{life:,.1f} yr", "Min fatigue life"),
+            (f"{life_label} yr", "Min fatigue life"),
             (f"{wave:.3f}", "Wave damage"),
             (f"{viv:.3f}", "VIV damage"),
-            (f"{required:,.1f} yr", "Required factored life"),
+            (f"{required_label} yr", "Required factored life"),
         ],
         method="Imported digitalmodel riser_fatigue summary; no solver executed.",
         basis=(
