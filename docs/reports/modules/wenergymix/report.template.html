@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="document-binding" content="@@binding@@">
+<title>Energy mix module analysis</title>
+<style>@@style@@</style>
+<style>
+.hs-doc .panel{background:#f2f7f8;border:1px solid var(--line);padding:18px;margin:20px 0}
+.hs-doc svg{width:100%;height:auto}
+.hs-doc svg text{fill:currentColor;font:14px sans-serif}
+.hs-doc .series{fill:none;stroke:var(--ink);stroke-width:2}
+.hs-doc .limit{stroke:#a54236;stroke-width:2;stroke-dasharray:6 4}
+.hs-doc .sample{fill:var(--ink);stroke:white;stroke-width:1;cursor:crosshair}
+.hs-doc .sample:focus,.hs-doc .sample:hover{fill:var(--report-accent);r:8}
+.hs-doc label{display:block;margin-top:12px;font:14px sans-serif}
+.hs-doc textarea,.hs-doc select{width:100%;font:16px/1.5 sans-serif;padding:8px;border:1px solid var(--line)}
+.hs-doc button{background:var(--ink);color:white;border:0;padding:10px 14px;margin:8px 8px 8px 0;cursor:pointer}
+.hs-doc button:focus-visible,.hs-doc a:focus-visible{outline:3px solid var(--report-accent);outline-offset:3px}
+.hs-doc pre{overflow-x:auto;background:#f2f7f8;padding:12px;font:13px/1.6 monospace}
+.hs-doc code,.hs-doc td{overflow-wrap:anywhere}
+.hs-doc .note{white-space:pre-wrap}
+@media print{.hs-doc .review-controls,.hs-doc .chart-controls{display:none}}
+</style>
+</head>
+<body class="hs-doc">
+<header><h1>Energy mix module analysis</h1>
+<p>Offline offshore-wind observations and energy-unit conversion</p>
+<p>Revision 00 · 2026-10-21</p><p>Draft for maintainer review</p></header>
+<div class="layout">
+<nav aria-label="Contents"><ol>
+<li><a href="#section-1">Executive Summary</a></li>
+<li><a href="#section-2">Introduction and scope</a></li>
+<li><a href="#section-3">Basis and criteria</a></li>
+<li><a href="#section-4">Inputs and outputs</a></li>
+<li><a href="#section-5">Theory and method</a></li>
+<li><a href="#section-6">Worked example</a></li>
+<li><a href="#section-7">Validation evidence</a></li>
+<li><a href="#section-8">Limits and recommendations</a></li>
+<li><a href="#section-9">References</a></li>
+<li><a href="#section-10">Appendices and comments</a></li>
+</ol></nav>
+<main>
+<section id="section-1"><h2>1. Executive Summary</h2>
+<p>The energy mix module is an offline data pipeline for country/year offshore-wind observations. Analysis is performed to determine its documented behavior and numerical evidence; key results are summarized below.</p>
+<ul>
+<li>The published synthetic example converts @@metric:alpha_gwh@@ GWh to @@metric:alpha_mwh@@ MWh.
+<ul><li>The result equals the energy-unit conversion in <a href="#section-5">Section 5</a>. It supports use of the documented conversion interface on this example; source-observation accuracy remains not evaluated.</li></ul></li>
+<li>Unavailable generation remains unavailable, and reported zero remains @@metric:zero_mwh@@ MWh.
+<ul><li>The nonnegative measurement boundary is @@metric:zero_mwh@@ MWh. Missing generation cannot be interpreted as a measured zero or inferred from capacity.</li></ul></li>
+<li>Use on source observations requires an established data basis.
+<ul><li>Source units, observation vintage, coverage, accuracy and reuse rights require evidence before an engineering conclusion is drawn. The module supplies no national energy shares, generation forecast or equipment operating envelope.</li></ul></li>
+</ul>
+<p>The example and its limitations are developed in <a href="#section-6">Section 6</a> using <a href="#ref-example">the documented public repository example</a>. Required next actions are given in <a href="#section-8">Section 8</a>.</p>
+</section>
+<div id="revision-history"><h3>Revision history</h3>
+<table><thead><tr><th>Revision</th><th>Date</th><th>What changed and why</th></tr></thead>
+<tbody><tr><td>00</td><td>2026-10-21</td><td>The offshore-wind data workflow and synthetic conversion evidence are documented to distinguish numerical behavior from source-data qualification.</td></tr></tbody>
+<caption>Revision history. Engineering changes are listed newest first.</caption></table></div>
+
+<section id="section-2"><h2>2. Introduction and scope</h2>
+<p>Caller-normalized observations are validated and selected without network access. Offshore-wind capacity and generation are carried as distinct quantities with source citations.</p>
+<p>The main workflow covers loading a normalized comma-separated-values table, selecting country/year records, converting generation to megawatt hours, and emitting a manifest for the original input. Public Python functions and a command interface are documented in <a href="#repository-records">Section 9.2</a>. The International Renewable Energy Agency is abbreviated IRENA; its name identifies the intended source family and does not establish that the example contains agency observations.</p>
+<h3>2.1 Not covered</h3>
+<p>Native-source ingestion, automated retrieval, other generation technologies, national totals, energy-mix percentages, capacity factors, dispatch, emissions, economics and time-series forecasting are outside this workflow. No physical plant, vessel, mesh or load model is solved. The package name does not establish those capabilities (<a href="#ref-loader">implementation</a>; <a href="#ref-query">query contract</a>).</p>
+</section>
+
+<section id="section-3"><h2>3. Basis and criteria</h2>
+<p>The calculation basis is the published synthetic offshore-wind example and the International System of Units. Numerical criteria are separated from source-data qualification.</p>
+<h3>3.1 Numerical basis</h3>
+<p>The conversion is defined by <a href="#ref-si">the BIPM SI Brochure, ninth edition, version 4.01, Section 3, Table 7</a>. The reference is the prefix ratio, not a fit to observations. Exact decimal equality is required for the hand-worked conversion anchors. Display consistency is checked with an absolute tolerance of 10<sup>−12</sup> in each displayed unit; this is a numerical checking tolerance and assigns no measurement uncertainty (<a href="#ref-report-checks">report checks</a>).</p>
+<h3>3.2 Input boundaries</h3>
+<p>The loader accepts at most @@metric:max_bytes@@ bytes and calendar years from 1960 through the current Coordinated Universal Time year, @@metric:clock_year@@ at preparation. Both are software policies in <a href="#ref-loader">the loader</a>, not published source coverage. Measurements are finite and nonnegative; the lower bound is @@metric:zero_mwh@@ in the declared unit. At least one of capacity and generation is required per row. No physical upper measurement limit or accuracy criterion is supplied.</p>
+<p>Real-source readiness is not evaluated by successful parsing. Source authenticity, units, permissions, geographic definitions, completeness and intended-use eligibility require separate evidence. Unavailable values are distinguished from true zero throughout this report. No missing engineering input is replaced by an assumed observation.</p>
+</section>
+
+<section id="section-4"><h2>4. Inputs and outputs</h2>
+<p>The input is an explicitly normalized byte table with declared units. A list of validated records, selected table bytes and a provenance manifest are returned by separate interfaces.</p>
+<p>The table has @@metric:column_count@@ ordered columns: country, optional alphabetic country code, year, technology, capacity in megawatts, generation in gigawatt hours, source address and citation. The exact column names are given in <a href="#repository-records">Section 9.2</a>. Technology is exactly offshore wind. Country names and citations are nonempty; surrounding whitespace is rejected. Country codes are blank or uppercase three-letter strings; registry membership is not checked.</p>
+<p>Duplicate country/year keys and inconsistent country/code mappings are rejected. Year bounds in a query are inclusive. Country matching is case insensitive, repeated country selections do not duplicate observations, and input order is preserved. An empty selection returns a header without observations. Invalid unselected rows still fail validation (<a href="#ref-query">query implementation</a>).</p>
+<p>The loader returns Python floating-point measurements or a missing-value sentinel. The query rereads validated source text and preserves supplied decimal digits; megawatt-hour output uses decimal multiplication and a renamed generation column. Capacity remains in megawatts. Converted output is a distinct contract and cannot be reloaded through the original gigawatt-hour header contract.</p>
+<p>The manifest records the original input digest, size, row count, declared units, supplied citations and synthetic status. A real export requires a caller-supplied UTC retrieval time and terms provenance; these assertions are not authenticated by the emitter. Query output does not carry a new manifest. The original manifest does not identify filtered or converted bytes (<a href="#ref-loader">manifest interface</a>).</p>
+</section>
+
+<section id="section-5"><h2>5. Theory and method</h2>
+<p>Energy units are converted by a decimal prefix ratio, and records are selected by explicit keys. Capacity is not converted into generation.</p>
+<h3>5.1 Energy conversion</h3>
+<p>Let E<sub>G</sub> denote the numerical generation value in GWh, E<sub>M</sub> its numerical value in MWh and k the conversion coefficient in MWh/GWh. The equation is E<sub>M</sub> = k E<sub>G</sub>, with k = 10<sup>9</sup>/10<sup>6</sup> = @@metric:conversion@@ MWh/GWh. Giga and mega are defined in <a href="#ref-si">Section 3, Table 7 of the SI Brochure</a>; the hour is unchanged. The symbols GWh and MWh mean gigawatt hour and megawatt hour. MW denotes megawatt, a unit of power.</p>
+<p>This relation rescales a supplied energy quantity; it introduces no efficiency, operating hours, availability or capacity-factor coefficient. Blank generation is not multiplied. The decimal result is written exactly or conversion fails when exact representation is unavailable (<a href="#ref-query">query implementation</a>).</p>
+<h3>5.2 Data model and boundaries</h3>
+<figure><svg viewBox="0 0 900 225" role="img" aria-labelledby="model-title model-description">
+<title id="model-title">Offshore-wind observation data model</title>
+<desc id="model-description">A wind turbine and electrical meter illustrate the source boundary. No turbine output is simulated. Caller-normalized observations pass through schema checks and selection to a unit-converted table. A separate manifest identifies original input bytes.</desc>
+<g fill="none" stroke="currentColor" stroke-width="2"><path d="M55 175 V75 M55 75 L24 39 M55 75 L100 66 M55 75 L44 121 M20 175 H105 M0 188 Q20 177 40 188 T80 188 T120 188"/>
+<path d="M67 147 H145 M145 123 H208 V168 H145 Z M155 147 l9 -13 9 24 10 -21 10 13 M208 146 H245"/>
+<rect x="255" y="99" width="170" height="78"/><rect x="470" y="99" width="170" height="78"/><rect x="685" y="99" width="185" height="78"/>
+<path d="M425 138 H470 M640 138 H685 M390 99 V51 H760 V99"/></g>
+<g><text x="10" y="23">Source boundary only</text><text x="139" y="198">Reported energy</text>
+<text x="270" y="125">Normalized observations</text><text x="270" y="152">Country · year · units</text>
+<text x="486" y="125">Validate and select</text><text x="486" y="152">No inferred records</text>
+<text x="700" y="125">Convert energy units</text><text x="700" y="152">Capacity unchanged</text>
+<text x="445" y="43">Original-input manifest; separate output</text></g></svg>
+<figcaption>Figure 1. Observation-processing model. The source illustration is conceptual; no turbine geometry, metering uncertainty or physical boundary condition is calculated.</figcaption></figure>
+<p>The whole input is checked before selection. Source addresses and citations are preserved, but no source request or independent observation reconciliation occurs. The optional loader serialization changes numeric text through floating-point parsing; exact supplied decimal text is preserved by the direct query route (<a href="#ref-loader">loader</a>; <a href="#ref-query">query</a>).</p>
+</section>
+
+<section id="section-6"><h2>6. Worked example</h2>
+<p>The documented public repository example is processed by calling the module. The observations are authored synthetic data, not measured or IRENA-published generation.</p>
+<p>The original table has @@metric:input_rows@@ observations and @@metric:source_bytes@@ bytes. Generation of @@metric:alpha_gwh@@ GWh in the first row is returned as @@metric:alpha_mwh@@ MWh; generation of @@metric:beta_gwh@@ GWh in the last row is returned as @@metric:beta_mwh@@ MWh. The middle generation value remains unavailable. Inputs and outputs are given in Table 1 (<a href="#ref-example">example and manifest</a>).</p>
+<div class="table-wrap"><table id="example-table"><thead><tr><th>Area</th><th>Year</th><th>Capacity (MW)</th><th>Input energy (GWh)</th><th>Returned energy (MWh)</th><th>Source</th></tr></thead><tbody>@@rows@@</tbody>
+<caption>Table 1. The published synthetic example, read through the loader and direct query interfaces. Unavailable is a missing observation, not zero.</caption></table></div>
+<p>Selecting the first area's name with equal inclusive bounds of @@metric:row_0_year@@ returns @@metric:selected_rows@@ observation and @@metric:alpha_mwh@@ MWh. The selection does not aggregate countries or years. A separate boundary variation replaces only the first row's input energy with @@metric:zero_gwh@@ GWh; the returned energy is @@metric:zero_mwh@@ MWh. This variation demonstrates a reported zero, while the middle row remains missing.</p>
+<figure><div class="chart-controls"><label for="chart-case">Inspect a calculation case</label><select id="chart-case"></select></div>
+<svg id="conversion-chart" viewBox="0 0 900 420" role="img" aria-labelledby="chart-title chart-description"><title id="chart-title">Returned energy against input energy</title><desc id="chart-description">Interactive synthetic conversion results with the nonnegative measurement lower bound. The adjacent table supplies the observations without scripting.</desc></svg>
+<p id="chart-readout" class="panel" aria-live="polite">Select a case or focus a plotted point to inspect its returned energy and lower bound.</p>
+<figcaption>Figure 2. Returned generation in MWh against supplied generation in GWh. The dashed line marks the nonnegative measurement lower bound. It is a parser boundary, not an operating limit. Unavailable generation is omitted from the plot.</figcaption></figure>
+<p>The source manifest identifies the original byte table only. Its size and count are obtained from the manifest interface. The input digest is given in <a href="#repository-records">Section 9.2</a>. No observed energy total, national share or uncertainty estimate is calculated.</p>
+</section>
+
+<section id="section-7"><h2>7. Validation evidence</h2>
+<p>Repository evidence is examined through existing offline tests and report-specific numerical checks. These checks establish behavior for their stated cases and do not qualify real observations.</p>
+<p><a href="#ref-loader-tests">Loader tests</a> exercise the fixture round trip, malformed headers and measurements, duplicate keys, country-code consistency, provenance syntax, input preservation, manifest equality and refusal of live fetching. <a href="#ref-query-tests">Query tests</a> exercise inclusive selection, empty outputs, validation of excluded rows, missing versus zero generation, exact conversion, extreme decimal exponents, supplied precision and command output protection.</p>
+<p>The published conversion example is already demonstrated in the query documentation. The only committed observation dataset used here is explicitly synthetic, and its saved manifest is available. A native-source comparison dataset, measured benchmark and real-source accuracy criterion are not established by the inspected module evidence (<a href="#ref-example">fixture</a>; <a href="#ref-query-doc">published query example</a>).</p>
+<p><a href="#ref-report-checks">Report checks</a> assert the hand-worked conversion values @@metric:alpha_mwh@@ MWh, @@metric:beta_mwh@@ MWh and @@metric:zero_mwh@@ MWh with exact decimal equality. Separate consistency checks rebuild the document and compare marked numerical values with module returns, check missing cells, recompute the headline from displayed inputs and preserve source bytes. These are consistency checks rather than a second implementation of the data pipeline.</p>
+</section>
+
+<section id="section-8"><h2>8. Limits and recommendations</h2>
+<p>The demonstrated capability is bounded by the normalized input contract and synthetic evidence. The following actions address the missing basis before broader use.</p>
+<h3>8.1 Limits of use</h3>
+<p>Native export headers, current source access, observation accuracy and source reuse permission remain not evaluated. The live-fetch function refuses locally without transport. Its recorded access message is historical and supplies no evidence of present source availability. No live source probe is made for this report (<a href="#ref-source-doc">source-access record</a>).</p>
+<p>The loader uses floating-point parsing for validation and records; it assigns no measurement precision. Extreme small nonzero text can lose magnitude in a loaded record, although direct query conversion retains the supplied decimal spelling. Country-code syntax does not establish official membership. An HTTPS-shaped address and nonempty citation do not authenticate a source. The command checks destination collisions, but paired table and manifest writes are not a transaction (<a href="#ref-loader">loader</a>; <a href="#ref-query">query</a>; <a href="#ref-cli">command interface</a>).</p>
+<h3>8.2 Recommendations</h3>
+<p>Before source observations support an engineering comparison, obtain a permitted source export with readable terms, preserve its original bytes and reconcile normalized headers, units, country keys and vintage against the source. Record uncertainty and completeness criteria appropriate to the decision; these are required inputs, not values supplied by this module (<a href="#ref-source-doc">remaining source evidence</a>).</p>
+<p>For exact decimal energy text, use the direct query route rather than a loader-to-serializer round trip. Preserve the original manifest separately and record a new digest for any selected or converted output. Add a source-backed benchmark after accuracy and reuse evidence are established. Define paired-output failure behavior before automated use relies on both table and manifest being present (<a href="#ref-query-doc">query contract</a>; <a href="#ref-pack">documented failure modes</a>).</p>
+</section>
+
+<section id="section-9"><h2>9. References</h2>
+<p>The report basis is defined by the published unit reference and repository records. Source locators and executable details are collected here.</p>
+<h3>9.1 Published unit reference</h3>
+<p id="ref-si">Bureau International des Poids et Mesures, <a href="https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf">The International System of Units, ninth edition (2019), version 4.01 (June 2026)</a>, Section 3, Table 7, SI prefixes. The prefix ratio is applied without modification. The document is distributed under <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0</a>. The cited table was read for this report.</p>
+<h3 id="repository-records">9.2 Repository records and invocation</h3>
+<ul>
+<li id="ref-loader"><a href="../../../../src/worldenergydata/energy_mix/irena.py">Loader, serializer and manifest implementation</a>: input policy, ordered schema, provenance and original-byte digest.</li>
+<li id="ref-query"><a href="../../../../src/worldenergydata/energy_mix/query.py">Country/year query implementation</a>: selection and decimal energy conversion.</li>
+<li id="ref-cli"><a href="../../../../src/worldenergydata/energy_mix/__main__.py">Command interface</a>: load, query and refused fetch operations.</li>
+<li id="ref-example"><a href="../../../../tests/fixtures/energy_mix/irena_offshore_synthetic.csv">Public synthetic example</a> and <a href="../../../../tests/fixtures/energy_mix/irena_offshore_synthetic.manifest.json">saved manifest</a>: invented observations for testing only.</li>
+<li id="ref-source-doc"><a href="../../../data/irena_offshore_wind.md">Offline loader documentation</a>, Source and access finding; Input contract; Remaining evidence.</li>
+<li id="ref-query-doc"><a href="../../../data/irena_offshore_queries.md">Published query documentation</a>, initial revision dated 2026-10-19, Unit basis and Command interface.</li>
+<li id="ref-loader-tests"><a href="../../../../tests/unit/energy_mix/test_irena.py">Existing loader tests</a>.</li>
+<li id="ref-query-tests"><a href="../../../../tests/unit/energy_mix/test_irena_query.py">Existing query tests</a>.</li>
+<li id="ref-report-checks"><a href="../../../../tests/unit/energy_mix/test_module_report.py">Report numerical and rebuild checks</a>.</li>
+<li id="ref-pack"><a href="../../../../src/worldenergydata/energy_mix/docs/agent-pack.md">Module evidence pack</a>, Known failure modes and pitfalls. This earlier inventory predates the query extension; current code and tests govern the query behavior stated here.</li>
+<li><a href="../../../../scripts/reporting/build_wenergymix_report.py">Report generator</a>; the stylesheet follows the existing module-report family layout with an inlined copy.</li>
+</ul>
+<p>The original example digest, using the Secure Hash Algorithm with a 256-bit output, is <code>@@digest@@</code>. Calculation-source identities for the inspected package are:</p><ul>@@sources@@</ul>
+<p>The exact normalized input and a complete direct invocation are given below. The source address in the synthetic fixture is deliberately non-resolving.</p>
+<pre><code>@@input_csv@@</code></pre>
+<pre><code>from pathlib import Path
+from worldenergydata.energy_mix.irena import emit_manifest, load_export
+from worldenergydata.energy_mix.query import query_export
+
+raw = Path("tests/fixtures/energy_mix/irena_offshore_synthetic.csv").read_bytes()
+records = load_export(raw)
+converted = query_export(raw, generation_unit="MWh")
+manifest = emit_manifest(raw, synthetic=True)
+print(converted.decode("utf-8"))
+</code></pre>
+<p>Rebuild and check commands, run from the repository root:</p>
+<pre><code>PYTHONPATH=src python scripts/reporting/build_wenergymix_report.py
+PYTHONPATH=src python -m pytest --noconftest -o addopts='' tests/unit/energy_mix
+</code></pre>
+</section>
+
+<section id="section-10"><h2>10. Appendices and comments</h2>
+<p>Data qualification and delivery checks are recorded separately from the numerical example. Section comments can be exported and reopened without changing the report.</p>
+<h3>10.1 Data register</h3>
+<div class="table-wrap"><table><thead><tr><th>Data item</th><th>Basis and status</th><th>Use and missing evidence</th><th>Source</th></tr></thead><tbody>
+<tr><td>Example observations</td><td>Authored synthetic fixture; not measured data</td><td>Interface demonstration only; no inference about an actual area</td><td>Table 1; Section 9.2</td></tr>
+<tr><td>Energy-unit coefficient</td><td>Defined SI prefix ratio</td><td>Unit conversion only; no performance coefficient</td><td>Section 5.1; Section 9.1</td></tr>
+<tr><td>Zero-energy variation</td><td>Authored boundary test; first row only</td><td>Reported zero remains distinct from unavailable generation</td><td>Section 6; Figure 2</td></tr>
+<tr><td>Source accuracy and uncertainty</td><td>NOT_EVALUATED</td><td>Source-backed observations, accuracy and intended-use criterion are required</td><td>Sections 7 and 8</td></tr>
+<tr><td>Reuse permission and native schema</td><td>NOT_EVALUATED</td><td>Permitted export and readable terms are required</td><td>Section 8.2; Section 9.2</td></tr>
+<tr><td>Engineering assumptions</td><td>No assumed source observation is introduced</td><td>No ASSUMED - to be confirmed value is used to fill a missing engineering input</td><td>Section 3</td></tr>
+</tbody><caption>Table 2. Data register and intended-use boundaries. Not evaluated identifies missing evidence; unavailable denotes a missing observation.</caption></table></div>
+<h3>10.2 Quality pre-flight evidence</h3>
+<p>The report-specific tests check the numerical anchors, displayed inputs, source preservation, source identities, section links, text encoding and rebuilt document. Browser interaction checks cover the chart and comment controls. Folder saving is checked against the browser API contract; the operating-system folder-selection dialogue is not exercised. The exact executed commands and outcomes accompany the delivery record; the report does not embed a test count that becomes stale when tests are added.</p>
+<p>Real-source retrieval, national-total benchmarking, field measurements and operating-envelope validation are not run because this workflow has no qualified source dataset or physical response model. Numerical check success does not close those evidence gaps.</p>
+<h3>10.3 Engineering changes and section comments</h3>
+<details id="changes-panel" class="panel"><summary>Engineering changes since the initial issue</summary><p>Revision 00 · 2026-10-21</p><ul>@@changes@@</ul></details>
+<div class="review-controls panel">
+<p>Comments apply to this revision and calculation content. Select the folder containing the report to save comments beside it. Where folder access is unavailable, download the comments and save the file beside the report. Comments are held in this page until saved; closing the page discards unsaved text. Save any existing comments before saving another file with the same name.</p>
+<label for="comment-section">Report section</label><select id="comment-section"></select>
+<label for="comment-text">Comment</label><textarea id="comment-text" rows="4"></textarea>
+<button type="button" id="add-comment">Add comment</button>
+<button type="button" id="save-comments">Save comments beside report</button>
+<button type="button" id="download-comments">Download comments</button>
+<label for="import-comments">Open saved comments for this report</label><input type="file" id="import-comments" accept="application/json,.json">
+<p id="comment-status" role="status">No comments have been saved.</p><ol id="comment-list"></ol>
+</div>
+</section>
+</main></div>
+<script id="report-data" type="application/json">@@data@@</script>
+<script>@@interactions@@</script>
+</body></html>
