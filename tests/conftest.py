@@ -659,24 +659,9 @@ def pytest_ignore_collect(collection_path, config):
         Path("tests/unit/pipeline_ci_cd/test_pipeline_utils.py"),
     }
 
-    broken_module_dirs = {
-        # Missing tests.modules.marine_safety.fixtures package for directory conftest imports
-        Path("tests/unit/marine_safety"),
-    }
-
     try:
         rel_path = Path(collection_path).resolve().relative_to(repo_root)
     except ValueError:
         return False
 
-    if rel_path in broken_module_tests:
-        return True
-
-    for dir_pattern in broken_module_dirs:
-        try:
-            rel_path.relative_to(dir_pattern)
-            return True
-        except ValueError:
-            continue
-
-    return False
+    return rel_path in broken_module_tests

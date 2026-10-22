@@ -4,6 +4,8 @@ This module provides reusable fixtures for testing marine safety incident
 database operations, parsers, and API interactions.
 """
 
+import importlib.util
+import json
 import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -91,7 +93,7 @@ def sample_incident_batch():
     Returns:
       list: List of incident dictionaries
     """
-    from tests.modules.marine_safety.fixtures.sample_data import generate_batch
+    from tests.unit.marine_safety.fixtures.sample_data import generate_batch
 
     return generate_batch(count=5)
 
@@ -240,7 +242,7 @@ def performance_test_data():
     Returns:
       list: Large list of incident dictionaries
     """
-    from tests.modules.marine_safety.fixtures.sample_data import generate_batch
+    from tests.unit.marine_safety.fixtures.sample_data import generate_batch
 
     return generate_batch(count=1000)
 
@@ -257,3 +259,70 @@ def reset_test_state():
     yield
     # Cleanup after test
     pass
+
+
+def pytest_collection_modifyitems(items):
+    """Expose known failures as strict xfails; keep optional tests collected.
+
+    Sources: canonical docs/ISSUES_DRAFT.md, drafts 3, 4, 5 and 8;
+    per-node causes are recorded in baseline_failures.json after an unmarked run.
+    Issue #1239 requires optional dependencies to skip rather than hide files.
+    """
+    from pydantic import ValidationError
+
+    exceptions = {
+        "AttributeError": AttributeError,
+        "AssertionError": AssertionError,
+        "ValidationError": ValidationError,
+    }
+    failures = {
+        entry["nodeid"]: entry
+        for entry in json.loads(
+            Path(__file__)
+            .with_name("baseline_failures.json")
+            .read_text(encoding="utf-8")
+        )
+    }
+    missing = [
+        name
+        for name in ("transformers", "torch")
+        if importlib.util.find_spec(name) is None
+    ]
+    for item in items:
+        entry = failures.get(item.nodeid)
+        if entry is not None:
+            item.add_marker(
+                pytest.mark.xfail(
+                    strict=True,
+                    raises=exceptions[entry["exception"]],
+                    reason=(
+                        "Canonical marine-safety docs/ISSUES_DRAFT.md, draft "
+                        + entry["draft"]
+                        + " (#1351): "
+                        + entry["cause"]
+                    ),
+                )
+            )
+        if (
+            item.nodeid.startswith(
+                "tests/unit/marine_safety/analysis/test_llm_classifier.py::"
+            )
+            and missing
+        ):
+            item.add_marker(
+                pytest.mark.skip(
+                    reason="Optional classifier dependencies unavailable: "
+                    + ", ".join(missing)
+                ),
+                append=False,
+            )
+        if (
+            item.nodeid
+            == "tests/unit/marine_safety/test_uscg_scraper.py::TestPDFExtraction::test_extract_pdf_text"
+            and importlib.util.find_spec("PyPDF2") is None
+        ):
+            item.add_marker(
+                pytest.mark.skip(
+                    reason="Optional PDF test dependency unavailable: PyPDF2"
+                )
+            )
