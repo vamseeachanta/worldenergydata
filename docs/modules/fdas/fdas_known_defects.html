@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FDAS reference pipeline defect analysis</title>
+<style>
+body{font:16px/1.6 system-ui,sans-serif;max-width:1100px;margin:2rem auto;padding:0 1rem;color:#18283b}
+table{border-collapse:collapse;width:100%;font-size:.9rem}td,th{border:1px solid #bdc9d5;padding:.5rem;text-align:left;vertical-align:top}th{background:#eaf0f6}code{overflow-wrap:anywhere}caption{text-align:left;caption-side:bottom;padding:.5rem 0}h1,h2{line-height:1.2}a{color:#164c85}
+</style>
+</head>
+<body>
+<h1>FDAS reference pipeline defect analysis</h1>
+<p>The reference readers and financial generator are hardened using synthetic
+fixtures. The package production processor has named columns and does not share
+the positional API defect. Published workbooks, reports, prices, canonical
+financial calculations and the activity-code day basis are unchanged.
+Matching the golden header establishes schema agreement, not agreement with its values.</p>
+<h2>Revision history</h2>
+<table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
+<tbody><tr><td>Initial</td><td>2026-10-22</td><td>Record reference-reader corrections,
+financial input guards and unresolved basis choices to prevent silent reuse.</td></tr></tbody>
+<caption>Table 1. Revision record.</caption></table>
+<h2>Finding register</h2>
+<p>Test names below are in <code>tests/unit/fdas/reference/</code>, except the
+existing activity-code regression named for B13. FIXED refers only to the
+bounded reference path. NOT_EVALUATED identifies an unresolved interpretation.</p>
+<table><thead><tr><th>Finding</th><th>Status and evidence</th><th>Regression test</th></tr></thead><tbody>
+<tr><td>B1</td><td>FIXED: API is zero-based column 8; eight columns cannot supply it.
+The package port already uses named API columns.</td><td><code>test_b1_uses_api_after_eight_fields</code>, <code>test_b1_package_has_named_identity</code></td></tr>
+<tr><td>B2</td><td>FIXED: all text/CSV members are concatenated; exact repeated
+records count once. Equal member basenames cannot overwrite another extraction.</td><td><code>test_b2_all_members_and_exact_duplicates</code>, <code>test_b2_extraction_does_not_overwrite_equal_basenames</code></td></tr>
+<tr><td>B3</td><td>FIXED: only product O contributes oil; other products can still
+contribute water.</td><td><code>test_b3_b9_chrono_product_filter_and_water</code></td></tr>
+<tr><td>B4</td><td>FIXED: required finance/reinvestment deck inputs are passed
+separately. Legacy direct two-argument calls retain equal rates. The textbook
+basis and formula source are distinguished below.</td><td><code>test_b4_separate_finance_and_reinvestment_rates</code>, <code>test_b4_generator_uses_both_deck_rates</code></td></tr>
+<tr><td>B5</td><td>FIXED schema: 17 header aliases and seven existing count/day
+aggregates produce the shipped header and order. Golden values are not adopted.</td><td><code>test_b5_emitted_header_matches_golden_header_only</code></td></tr>
+<tr><td>B6</td><td>NOT_EVALUATED: the extractor already uses activity codes.
+A separate diagnostic counts post-TD WAR rows with blank or absent remarks,
+without inferring completion days.</td><td><code>test_b6_blank_post_td_is_diagnostic_only</code></td></tr>
+<tr><td>B7</td><td>FIXED: an incomplete host-CAPEX window raises before output,
+rather than losing spending before the index start.</td><td><code>test_b7_outside_host_window_raises</code>, <code>test_b7_full_host_window_conserves_capex</code></td></tr>
+<tr><td>B8</td><td>RECONCILED: the repository's positional layout identifies
+column 7 as water. The chronological reader's condensate label is corrected;
+the matrix's water interpretation agrees with that layout.</td><td><code>test_b3_matrix_oil_filter_and_b8_documented_water</code></td></tr>
+<tr><td>B9</td><td>FIXED: documented water is read; missing or partially missing
+water remains missing with NOT_EVALUATED status.</td><td><code>test_b9_absent_water_is_not_zero</code>, <code>test_b9_partial_water_is_not_a_complete_total</code></td></tr>
+<tr><td>B10</td><td>FIXED: no implicit price substitution. Chronological output
+without a price is NOT_EVALUATED; financial generation requires every indexed
+price and rejects duplicate months.</td><td><code>test_b10_omitted_price_is_not_zero</code>, <code>test_b10_missing_month_raises</code></td></tr>
+<tr><td>B11</td><td>NOT_EVALUATED: drilled developments lacking positive
+production are counted in Diagnostics; the financial universe is unchanged.</td><td><code>test_b11_diagnostic_export_preserves_existing_universe</code></td></tr>
+<tr><td>B12</td><td>FIXED: lookup merges validate many-to-one cardinality and
+assert row preservation; conflicting lease mappings raise. Matrix pivots retain
+observed well/API pairs rather than creating a Cartesian product.</td><td><code>test_b12_matrix_rejects_war_fanout</code>, <code>test_b12_matrix_preserves_well_pairs</code>, <code>test_b12_duplicate_price_month_raises</code></td></tr>
+<tr><td>B13</td><td>ALREADY REPLACED: activity-code interval unions replaced the
+calendar spud/TD split. This change does not select a new day basis.</td><td><code>tests/unit/bsee/analysis/test_war_rig_days.py::TestUnionDays::test_overlapping_intervals_are_not_double_counted</code></td></tr>
+<tr><td>B14</td><td>FIXED: financial D&amp;C input requires a numeric API; an unnamed
+well with an API remains valid, and a named totals row without one is excluded.</td><td><code>test_b14_named_totals_excluded_and_unnamed_well_retained</code></td></tr>
+</tbody><caption>Table 2. Reference-path dispositions and executable evidence.</caption></table>
+<h2>Worked MIRR example</h2>
+<p>Inputs are synthetic monthly cashflows [-100, 50, -110, 200] in USD, a finance
+rate of 10.0% per month and a reinvestment rate of 20.0% per month. The supplied
+annual effective rates are (1.1<sup>12</sup> − 1) and (1.2<sup>12</sup> − 1).
+These are demonstration inputs, not economic assumptions.</p>
+<p>The Microsoft MIRR definition compounds positive flows to the terminal period
+at the reinvestment rate and discounts negative flows to inception at the finance
+rate. With three intervals, FV+ = 50 × 1.2<sup>2</sup> + 200 = 272 USD and
+|PV−| = 100 + 110 / 1.1<sup>2</sup> = 2100/11 USD.
+MIRR = (FV+ / |PV−|)<sup>1/3</sup> − 1 = (748/525)<sup>1/3</sup> − 1,
+or 12.5% per month. Annual MIRR = (748/525)<sup>4</sup> − 1, or 312.1%.</p>
+<p>Source distinction: <cite>Principles of Finance</cite>, OpenStax, 2022 web
+edition, section 16.3, establishes the discounted-cashflow/IRR basis. The
+separate-rate MIRR definition is taken from Microsoft's web reference, not
+attributed to that textbook. A directly accessible textbook MIRR definition
+has not been established; independent textbook qualification remains NOT_EVALUATED.
+The test's expected result is the rational hand calculation above, not another
+call to the implementation.</p>
+<h2>Worked archive example</h2>
+<p>A synthetic archive has first.txt with 10 bbl for API 101 and second.csv with
+the same record plus 20 bbl for API 102. Reading only the first member yields
+10 bbl. Reading all members and removing exact repeated records yields two
+records and 10 + 20 = 30 bbl. The 20 bbl loss follows directly from the supplied
+fixture. Distinct completion records remain additive; no API/month-only
+deduplication is used.</p>
+<h2>Sources and limits</h2>
+<ul>
+<li><a href="../../data/legacy/data/bsee_yearly_production_data.yml">Repository
+OGORA layout</a>, first df_columns sequence, repository edition: positional
+API/water mapping. This is a repository schema, not a newly verified source specification.</li>
+<li><a href="https://support.microsoft.com/en-us/office/mirr-function-b020f038-7492-4fb4-93c1-35c345b53524">Microsoft MIRR</a>, web edition, Syntax and Remarks,
+retrieved 2026-10-22: distinct finance and reinvestment rates.</li>
+<li><a href="https://openstax.org/books/principles-finance/pages/16-3-internal-rate-of-return-irr-method">Principles of Finance</a>, 2022 web edition,
+section 16.3: discounting and IRR.</li>
+<li><a href="../bsee/analysis/production/FDAS_V30/financial_project_summary.xlsx">Shipped
+financial workbook</a>, Project_Summary header only: schema comparison.</li>
+</ul>
+<p>The stale unsuffixed field report requires a separate regeneration and date-basis
+review. Refreshed WTI observations require dated public-series reconciliation.
+Gas-deck adoption requires a gas-volume, unit, price and fiscal basis. None is
+changed here. Candidate workbook exports, package adapter column migration and
+canonical valuation changes remain separate open work. No report or price is regenerated.</p>
+<p>Second-provider review remains pending. Generalizable findings are that
+lookup cardinality, partial-observation sums and multi-index pivot combinations
+need explicit invariants; successful joins and nonempty sums alone do not
+establish complete or correctly attributed production.</p>
+</body>
+</html>
