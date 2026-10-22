@@ -34,6 +34,12 @@ rejected. Each source relationship is retained: a lease is not assumed to map
 to only one field. Combined area/block text is preserved without reconstruction.
 These identifiers carry no physical units and require no conversion constants.
 
+The first-line shape (header presence and quoting) of the Appendix B member in
+the archive recorded by `manifest.json` has not yet been verified. Alias header
+rows are rejected anywhere in the member, including after data rows; an empty
+member raises an explicit "no Appendix B rows" error. No lease-number pattern
+is inferred from the synthetic test rows.
+
 The master grain is **field and lease**, with cumulative production and a
 first-production month. It is not a monthly field production time series.
 Oil/condensate are labelled STB and gas MCF on the
@@ -65,8 +71,10 @@ curated files, including the Appendix B output, are preserved by refusing a
 repeat run. A previously curated cache therefore requires a fresh output
 directory rather than an overwrite.
 The annual standalone catalog in `config/bsee.yml` follows the existing reserves
-workbook pattern. It does not install a scheduler or widen the weekly BSEE host
-allowlist. The weekly scheduler reads its configured or built-in dataset list,
+workbook pattern. Appendix B is marked supported by the standalone typed
+entry point; no generic `registry_dir` is assigned for it. The catalog does not
+install a scheduler or widen the weekly BSEE host allowlist. The weekly scheduler
+reads its configured or built-in dataset list,
 neither of which includes these two specs. A full run of
 `scripts/refresh_bsee_all.py` (also `--skip-ogor`) iterates the registry and
 includes them: it downloads the archives and writes generic workbook/delimited

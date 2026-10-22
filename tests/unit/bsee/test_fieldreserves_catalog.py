@@ -10,7 +10,7 @@ from worldenergydata.bsee.fieldreserves_fetch import FILES
 
 def test_annual_catalog_matches_fetch_and_supported_registry() -> None:
     root = Path(__file__).parents[3]
-    config = yaml.safe_load((root / "config/bsee.yml").read_text())
+    config = yaml.safe_load((root / "config/bsee.yml").read_text(encoding="utf-8"))
     family = config["fieldreserves_annual"]
     assert family["entry_point"] == "scripts/bsee/fetch_fieldreserves_family.py"
     assert set(family["archives"]) == set(FILES)
@@ -24,6 +24,7 @@ def test_annual_catalog_matches_fetch_and_supported_registry() -> None:
         family["archives"]["appendbdelimit.zip"]["classification"]
         == "lease_to_field_index"
     )
+    assert family["archives"]["appendbdelimit.zip"]["status"] == "supported"
 
 
 def test_weekly_config_and_builtin_catalog_exclude_annual_specs() -> None:

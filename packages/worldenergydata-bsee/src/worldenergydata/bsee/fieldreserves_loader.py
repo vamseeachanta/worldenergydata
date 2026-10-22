@@ -136,11 +136,20 @@ def load_monthly(archive: bytes, *, retrieved_utc: str) -> pd.DataFrame:
 def load_appendix(archive: bytes, *, retrieved_utc: str) -> pd.DataFrame:
     """Read all Appendix B relationships without inferring a unique lease map."""
     raw = _member(archive, APPENDIX_MEMBER)
-    df = pd.read_csv(
-        io.BytesIO(raw), header=None, dtype="string", keep_default_na=False
-    )
+    try:
+        df = pd.read_csv(
+            io.BytesIO(raw),
+            header=None,
+            dtype="string",
+            keep_default_na=False,
+            encoding="utf-8",
+        )
+    except pd.errors.EmptyDataError as exc:
+        raise ValueError("no Appendix B rows") from exc
     if len(df.columns) != len(APPENDIX_COLUMNS):
         raise ValueError("Appendix B columns differ from BOEM field definitions")
     df.columns = APPENDIX_COLUMNS
     df = _codes(df, APPENDIX_COLUMNS)
+    if df.eq(["LEASE", "FIELD", "AREA", "BLOCK", "AR/BLK"]).all(axis=1).any():
+        raise ValueError("Appendix B header row is not a lease-to-field mapping")
     return _cite(df, archive, "appendbdelimit.zip", APPENDIX_MEMBER, retrieved_utc)

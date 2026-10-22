@@ -39,17 +39,38 @@ def test_appendix_preserves_identifiers_rows_and_citations() -> None:
 
 
 @pytest.mark.parametrize(
-    "body",
+    "body, message",
     [
-        b'"G00001","ZZ001","ZZ","001"\n',
-        b'"G00001","ZZ001","ZZ","001","ZZ 001","extra"\n',
-        b'"G00001","ZZ001","ZZ","001","ZZ 001"\n"G00002","ZZ002"\n',
-        b'"G00001"," ","ZZ","001","ZZ 001"\n',
-        b"",
+        (b'"G00001","ZZ001","ZZ","001"\n', "Appendix B columns"),
+        (b'"G00001","ZZ001","ZZ","001","ZZ 001","extra"\n', "Appendix B columns"),
+        (
+            b'"G00001","ZZ001","ZZ","001","ZZ 001"\n"G00002","ZZ002"\n',
+            "Missing identifier",
+        ),
+        (b'"G00001"," ","ZZ","001","ZZ 001"\n', "Missing identifier"),
+        (b"", "no Appendix B rows"),
+        (b" \n\t\n", "no Appendix B rows"),
     ],
 )
-def test_appendix_rejects_incomplete_or_changed_schema(body: bytes) -> None:
-    with pytest.raises(ValueError):
+def test_appendix_rejects_incomplete_or_changed_schema(
+    body: bytes, message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        loader.load_appendix(archive("appendbdelimit.txt", body), retrieved_utc=STAMP)
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        b"LEASE,FIELD,AREA,BLOCK,AR/BLK\n",
+        b"LEASE,FIELD,AREA,BLOCK,AR/BLK\nG00001,ZZ001,ZZ,001,ZZ 001\n",
+        b'" LEASE "," FIELD "," AREA "," BLOCK "," AR/BLK "\r\n'
+        b'"G00001","ZZ001","ZZ","001","ZZ 001"\r\n',
+        b"G00001,ZZ001,ZZ,001,ZZ 001\nLEASE,FIELD,AREA,BLOCK,AR/BLK\n",
+    ],
+)
+def test_appendix_rejects_alias_header_as_data(body: bytes) -> None:
+    with pytest.raises(ValueError, match="Appendix B header row"):
         loader.load_appendix(archive("appendbdelimit.txt", body), retrieved_utc=STAMP)
 
 
