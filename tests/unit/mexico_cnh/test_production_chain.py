@@ -136,3 +136,57 @@ def test_boolean_water_is_not_a_measurement(tmp_path):
         SenerProductionAdapter(observed).fdas_inputs(
             water_bbl={("EXAMPLE", 2024, 2): False}
         )
+
+
+@pytest.mark.parametrize("liquids_only", [False, True])
+def test_fetch_preserves_unknown_operator_contributions(tmp_path, liquids_only):
+    """One known operator never masks another operator's missing measurement."""
+    from openpyxl import load_workbook
+
+    path = workbook(tmp_path / "source.xlsx")
+    book = load_workbook(path)
+    liquid = book["Aceite y condensado"]
+    other = [cell.value for cell in liquid[4]]
+    other[4], other[6] = "OTHER", None
+    liquid.append(other)
+    gas = book["Gas Natural"]
+    if liquids_only:
+        gas.delete_rows(3)
+    else:
+        other = [cell.value for cell in gas[3]]
+        other[4], other[5] = "OTHER", None
+        gas.append(other)
+    book.save(path)
+    book.close()
+    observed = load_production_workbook(path)
+    frame = SenerProductionAdapter(observed).fetch(ProductionQuery(regions=["mexico"]))
+    assert len(frame) == 1
+    assert frame[["oil_bbl", "gas_mcf", "water_bbl"]].isna().all().all()
+    assert frame.iloc[0].condensate_bbl == 58000
+
+
+@pytest.mark.parametrize("water", ["7", None, complex(7, 1)])
+def test_non_numeric_water_is_rejected(tmp_path, water):
+    observed = load_production_workbook(workbook(tmp_path / "source.xlsx"))
+    with pytest.raises(ValueError, match="water.*numeric"):
+        SenerProductionAdapter(observed).fdas_inputs(
+            water_bbl={("EXAMPLE", 2024, 2): water}
+        )
+
+
+@pytest.mark.parametrize("water", [-1, float("nan"), "7", None])
+def test_evaluated_fdas_failure_is_reported(tmp_path, water):
+    from worldenergydata.mexico_cnh.chain import run_chain
+
+    observed = load_production_workbook(workbook(tmp_path / "source.xlsx"))
+    result = run_chain(observed, water_bbl={("EXAMPLE", 2024, 2): water})
+    assert result.checks["fdas_inputs"] == "FAIL"
+    assert result.fdas is None
+    assert "FAIL" in result.html
+
+
+def test_missing_supplied_water_is_a_failed_check(tmp_path):
+    from worldenergydata.mexico_cnh.chain import run_chain
+
+    observed = load_production_workbook(workbook(tmp_path / "source.xlsx"))
+    assert run_chain(observed, water_bbl={}).checks["fdas_inputs"] == "FAIL"

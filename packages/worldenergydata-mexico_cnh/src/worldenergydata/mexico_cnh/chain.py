@@ -32,15 +32,19 @@ def run_chain(
     screening cannot be established from historical production alone.
     """
     bundle = None
+    fdas_status = "NOT_EVALUATED"
     try:
         adapter = SenerProductionAdapter(observed, basin=basin, location=location)
+        if water_bbl is not None:
+            fdas_status = "FAIL"
         bundle = adapter.fdas_inputs(water_bbl=water_bbl)
+        fdas_status = "PASS"
         production_reason = "Complete oil, gas and caller-supplied water volumes."
     except ValueError as exc:
         production_reason = str(exc)
     checks = {
         "production": "PASS",
-        "fdas_inputs": "PASS" if bundle else "NOT_EVALUATED",
+        "fdas_inputs": fdas_status,
         "freshness": "NOT_EVALUATED",
         "concept_screening": "NOT_EVALUATED",
         "economics": "NOT_EVALUATED",

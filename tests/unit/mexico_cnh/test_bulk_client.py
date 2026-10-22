@@ -115,3 +115,121 @@ def test_redirect_cannot_leave_source_origin():
             {},
             "https://elsewhere.invalid/",
         )
+
+
+@pytest.mark.parametrize("redirect", [True, False])
+def test_default_opener_checks_redirect_and_response_origin(monkeypatch, redirect):
+    """Exercise the actual opener chain without opening a network connection."""
+    import urllib.request
+    from email.message import Message
+    from urllib.response import addinfourl
+
+    calls = []
+
+    class FakeHTTPSHandler(urllib.request.HTTPSHandler):
+        def https_open(self, request):
+            calls.append(request.full_url)
+            assert len(calls) == 1, "untrusted redirect was followed"
+            headers = Message()
+            headers["Location"] = "https://elsewhere.invalid/input.xlsx"
+            response = addinfourl(
+                BytesIO(b"unused"),
+                headers,
+                request.full_url if redirect else headers["Location"],
+                302 if redirect else 200,
+            )
+            response.msg = "Moved" if redirect else "OK"
+            return response
+
+    monkeypatch.setattr(urllib.request, "HTTPSHandler", FakeHTTPSHandler)
+    client = BulkProductionClient(timeout=5, max_bytes=10000)
+    with pytest.raises(ValueError, match="source"):
+        client.discover()
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("explicit_budget", [False, True])
+def test_archive_expansion_budget_is_checked_before_parsing(
+    tmp_path, monkeypatch, explicit_budget
+):
+    from zipfile import ZIP_DEFLATED, ZipFile
+
+    from worldenergydata.mexico_cnh import bulk_client
+
+    archive = BytesIO()
+    with ZipFile(archive, "w", ZIP_DEFLATED) as zipped:
+        zipped.writestr("first.xml", b"x" * 6000)
+        zipped.writestr("second.xml", b"x" * 6000)
+    payload = archive.getvalue()
+
+    def unexpected_parse(path):
+        pytest.fail("oversized archive reached workbook parser")
+
+    monkeypatch.setattr(bulk_client, "load_production_workbook", unexpected_parse)
+    budget = {"max_uncompressed_bytes": 10000} if explicit_budget else {}
+    client = BulkProductionClient(
+        timeout=5,
+        max_bytes=1000,
+        opener=lambda url, **kw: Response(payload, url),
+        **budget,
+    )
+    with pytest.raises(ValueError, match="uncompressed.*budget"):
+        client.download(tmp_path / "retained", url=bulk_client.LISTING_URL + "a.xlsx")
+    assert not (tmp_path / "retained").exists()
+
+
+def test_discovery_accepts_cp1252_listing():
+    html = '<p>Información</p><a href="/producción-nacional.xlsx">Excel</a>'
+    client = BulkProductionClient(
+        timeout=5,
+        max_bytes=10000,
+        opener=lambda url, **kw: Response(html.encode("cp1252"), url),
+    )
+    assert client.discover().endswith("/producci%C3%B3n-nacional.xlsx")
+
+
+def test_total_transfer_deadline_rejects_slow_chunks(monkeypatch):
+    from worldenergydata.mexico_cnh import bulk_client
+
+    elapsed = [0.0]
+
+    class SlowResponse(Response):
+        def read(self, size):
+            return self.read1(size)
+
+        def read1(self, size):
+            elapsed[0] += 3
+            return b"x"
+
+    monkeypatch.setattr(bulk_client, "monotonic", lambda: elapsed[0], raising=False)
+    client = BulkProductionClient(
+        timeout=5,
+        max_bytes=100,
+        opener=lambda url, **kw: SlowResponse(b"", url),
+    )
+    with pytest.raises(TimeoutError, match="transfer.*budget"):
+        client.discover()
+
+
+def test_repeated_digest_retains_each_retrieval_receipt(tmp_path):
+    import json
+
+    source = workbook(tmp_path / "source.xlsx").read_bytes()
+    client = BulkProductionClient(
+        timeout=5,
+        max_bytes=10000,
+        opener=lambda url, **kw: Response(source, url),
+    )
+    directory = tmp_path / "retained"
+    first = client.download(
+        directory, url="https://hidrocarburos.energia.gob.mx/media/a.xlsx"
+    )
+    before = {path.name: path.read_bytes() for path in directory.glob("*.json")}
+    second = client.download(
+        directory, url="https://hidrocarburos.energia.gob.mx/media/b.xlsx"
+    )
+    assert first.path == second.path
+    assert all((directory / name).read_bytes() == data for name, data in before.items())
+    receipts = [json.loads(path.read_text()) for path in directory.glob("*.json")]
+    assert len(receipts) == 2
+    assert first.receipt in receipts and second.receipt in receipts

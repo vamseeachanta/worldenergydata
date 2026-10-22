@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from numbers import Real
+
 import numpy as np
 
 from worldenergydata.fdas.adapters.contract import FdasInputs, to_fdas_production
@@ -46,9 +48,9 @@ class SenerProductionAdapter(AbstractProductionAdapter):
         if frame.empty:
             return self._empty_frame()
         metrics = ["oil_bbl", "gas_mcf", "water_bbl", "condensate_bbl"]
-        frame = frame.groupby(["field_name", "year", "month"], as_index=False)[
-            metrics
-        ].agg(lambda values: values.sum(min_count=len(values)))
+        groups = frame.groupby(["field_name", "year", "month"])[metrics]
+        complete = groups.count().eq(groups.size(), axis="index")
+        frame = groups.sum(min_count=1).where(complete).reset_index()
         frame["region"] = self.region
         frame["source"] = "sener_field_production"
         return frame[list(STANDARD_COLUMNS)].reset_index(drop=True)
@@ -72,12 +74,16 @@ class SenerProductionAdapter(AbstractProductionAdapter):
             raise ValueError(
                 "water production is unavailable; supply field-month water_bbl"
             )
-        frame["water_bbl"] = [
+        water = [
             water_bbl.get((r.field_name, r.year, r.month), np.nan)
             for r in frame.itertuples()
         ]
-        if any(isinstance(value, (bool, np.bool_)) for value in frame.water_bbl):
-            raise ValueError("water must be a measurement, not a boolean")
+        if any(
+            isinstance(value, (bool, np.bool_)) or not isinstance(value, Real)
+            for value in water
+        ):
+            raise ValueError("water measurements must be numeric and not boolean")
+        frame["water_bbl"] = water
         values = frame[["oil_bbl", "gas_mcf", "water_bbl"]].to_numpy(dtype=float)
         if not np.isfinite(values).all() or (values < 0).any():
             raise ValueError(
