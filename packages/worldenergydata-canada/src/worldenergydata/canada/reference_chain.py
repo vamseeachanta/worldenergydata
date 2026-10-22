@@ -13,11 +13,13 @@ For the FPSO+subsea fields it is a documented simplification (see
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pandas as pd
 
+from worldenergydata.canada.development_wells import DevelopmentWell
 from worldenergydata.canada.field_concept import build_canada_field_concept
 from worldenergydata.fdas.adapters.contract import to_fdas_production
 from worldenergydata.fdas.adapters.field_concept_normalizer import (
@@ -32,12 +34,13 @@ from worldenergydata.production.unified.query import ProductionQuery
 def run_canada_reference_chain(
     *,
     adapter,
-    field_meta: Dict[str, Any],
+    field_meta: dict[str, Any],
     field_name: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
+    development_wells: Iterable[DevelopmentWell] = (),
+    start: str | None = None,
+    end: str | None = None,
     oil_price_usd_bbl: float = 75.0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Run the #719 one-field Canada C-NLOER chain slice."""
     unified = adapter.fetch(
         ProductionQuery(
@@ -48,7 +51,9 @@ def run_canada_reference_chain(
         )
     )
     fdas_production = to_fdas_production(unified)
-    field_concept = build_canada_field_concept(field_meta)
+    field_concept = build_canada_field_concept(
+        field_meta, development_wells=development_wells
+    )
     ranked_concepts = recommend(field_concept)
 
     first_oil = _first_oil_date(fdas_production)
@@ -88,7 +93,7 @@ def _first_oil_date(fdas_production: pd.DataFrame) -> datetime:
     return datetime.strptime(first_period, "%Y-%m")
 
 
-def _pre_tax_metrics(cashflows, dev_system: str) -> Dict[str, Any]:
+def _pre_tax_metrics(cashflows, dev_system: str) -> dict[str, Any]:
     return {
         "months": len(cashflows),
         "gross_revenue_usd": float(sum(cf.oil_revenue_usd for cf in cashflows)),
