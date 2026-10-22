@@ -42,6 +42,12 @@
       "date": "2026-10-20",
       "section": "revision-history",
       "description": "Recorded the initial commit date and completed revision metadata for the three original change entries."
+    },
+    {
+      "revision": 4,
+      "date": "2026-10-22",
+      "section": "revision-history",
+      "description": "Numbered the initial HTML revision label to match the structured change record."
     }
   ]
 }
