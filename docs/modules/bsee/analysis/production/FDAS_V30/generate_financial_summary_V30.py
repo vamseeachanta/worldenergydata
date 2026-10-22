@@ -59,7 +59,9 @@ def load_leases(fp: str) -> pd.DataFrame:
         'LEASE_NAME': df[pick('LEASE_NAME','LEASE','LEASE TITLE','LEASE_ID')].astype(str).map(norm_name),
         'DEV_NAME':   df[pick('DEV_NAME','DEV NAME','DEVELOPMENT','PROJECT NAME','PROJECT')].astype(str).map(norm_name),
         'DEV_SYSTEM': df[pick('DEV_SYSTEM','SYSTEM','DEV TYPE','DEVTYPE')].map(norm_dev_system),
-    }).drop_duplicates(subset=['LEASE_NAME'])
+    }).drop_duplicates()
+    if out['LEASE_NAME'].duplicated().any():
+        raise pd.errors.MergeError('Conflicting financial lease mappings')
     return out
 
 def load_assumptions_fixed(fp: str) -> pd.DataFrame:
@@ -157,7 +159,7 @@ def load_wti(fp: str, A: pd.DataFrame) -> pd.DataFrame:
     out = df[['MONTH', price_col]].copy()
     out['MONTH'] = pd.to_datetime(out['MONTH'], errors='coerce').dt.to_period('M').dt.to_timestamp()
     out = out.rename(columns={price_col: 'WTI_USD'})
-    out['WTI_USD'] = pd.to_numeric(out['WTI_USD'], errors='coerce').fillna(0.0)
+    out['WTI_USD'] = pd.to_numeric(out['WTI_USD'], errors='coerce')
     return out
 
 def load_dnc(fp: str, leases: pd.DataFrame) -> pd.DataFrame:
@@ -173,26 +175,70 @@ def load_dnc(fp: str, leases: pd.DataFrame) -> pd.DataFrame:
         if n not in df.columns: raise RuntimeError('dnc missing '+n)
     df['LEASE_NAME'] = df['LEASE_NAME'].astype(str).map(norm_name)
     df['API_WELL_NUMBER'] = pd.to_numeric(df['API_WELL_NUMBER'], errors='coerce')
+    # Well identity, not a blank lease name, excludes aggregate totals rows.
+    df = df[df["API_WELL_NUMBER"].notna()].copy()
     df['WELL_SPUD_DATE'] = pd.to_datetime(df['WELL_SPUD_DATE'], errors='coerce')
     if 'TOTAL_DEPTH_DATE' in df.columns:
         df['TOTAL_DEPTH_DATE'] = pd.to_datetime(df['TOTAL_DEPTH_DATE'], errors='coerce')
     else:
         df['TOTAL_DEPTH_DATE'] = pd.NaT
-    j = df.merge(leases[['LEASE_NAME','DEV_NAME','DEV_SYSTEM']], on='LEASE_NAME', how='left')
+    j = df.pipe(merge_rows, leases[['LEASE_NAME','DEV_NAME','DEV_SYSTEM']], on='LEASE_NAME', how='left')
     j['DEV_NAME'] = j['DEV_NAME'].map(norm_name); j['DEV_SYSTEM'] = j['DEV_SYSTEM'].map(norm_dev_system)
     return j
 
-def excel_like_mirr(cf: np.ndarray, r_ann: float) -> float:
+def excel_like_mirr(cf: np.ndarray, r_ann: float, reinvest_rate_ann=None) -> float:
+    """Monthly MIRR with separate annual finance and reinvestment rates.
+
+    Source: Microsoft MIRR, web edition, Syntax/Remarks (2026-10-22).
+    FV+ = sum(CF[t]*(1+rr)**(n-t)); PV- = sum(CF[t]/(1+fr)**t).
+    MIRR = (FV+/abs(PV-))**(1/n)-1. Monthly rate=(1+annual)**(1/12)-1.
+    The existing boundary-zero trimming convention is retained.
+    Synthetic hand example [-100,50,-110,200], fr=0.1, rr=0.2 monthly:
+    FV+=50*1.2**2+200=272; abs(PV-)=100+110/1.1**2=2100/11;
+    MIRR=(748/525)**(1/3)-1. Rates are example inputs, not assumptions.
+    Textbook present-value basis: Principles of Finance (OpenStax, 2022,
+    web edition), section 16.3; see fdas_known_defects.html for source limits.
+    """
+    if not np.isfinite(cf).all():
+        raise ValueError("MIRR cashflows must be finite")
+    if reinvest_rate_ann is None:
+        reinvest_rate_ann = r_ann  # Compatibility for direct legacy callers.
+    if not all(np.isfinite(rate) and rate > -1 for rate in (r_ann, reinvest_rate_ann)):
+        raise ValueError("MIRR rates must be finite and greater than -1")
     nz = np.where(np.abs(cf) > 1e-6)[0]
     if nz.size == 0: return np.nan
     cf = cf[nz[0]:nz[-1]+1]
     if not (np.any(cf > 0) and np.any(cf < 0)): return np.nan
     n = cf.size - 1
-    r = (1.0 + r_ann)**(1/12) - 1.0
-    fv_pos = sum(cf[t] * ((1.0 + r) ** (n - t)) for t in range(cf.size) if cf[t] > 0)
-    pv_neg = sum(cf[t] / ((1.0 + r) ** t) for t in range(cf.size) if cf[t] < 0)
+    fr = (1.0 + r_ann)**(1/12) - 1.0
+    rr = (1.0 + reinvest_rate_ann)**(1/12) - 1.0
+    fv_pos = sum(cf[t] * ((1.0 + rr) ** (n - t)) for t in range(cf.size) if cf[t] > 0)
+    pv_neg = sum(cf[t] / ((1.0 + fr) ** t) for t in range(cf.size) if cf[t] < 0)
     if pv_neg >= 0 or fv_pos <= 0: return np.nan
     return (fv_pos / -pv_neg) ** (1.0 / n) - 1.0
+
+
+def merge_rows(left, right, **kwargs):
+    """Reject ambiguous lookup keys before any many-to-many multiplication."""
+    before = len(left)
+    result = pd.merge(left, right, validate="many_to_one", **kwargs)
+    assert len(result) == before, "Lookup join changed input row count"
+    return result
+
+
+def diagnose_universe(prod, dnc):
+    """Count excluded developments without adopting a new economic universe."""
+    producing = set(prod.loc[prod["MONTHLY_OIL_VOLUME"] > 0, "DEV_NAME"].dropna())
+    drilled = set(dnc.loc[dnc["API_WELL_NUMBER"].notna(), "DEV_NAME"].dropna())
+    return {"status": "NOT_EVALUATED", "drilled_without_production": len(drilled - producing)}
+
+
+def require_assumption(assumptions, system, name):
+    value = Aget(assumptions, system, name, np.nan)
+    if not np.isfinite(value):
+        raise ValueError(f"Required assumption missing: {name}")
+    return value
+
 
 def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
     leases = load_leases(leases_xlsx)
@@ -219,10 +265,10 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
     dev_sys = leases[['DEV_NAME','DEV_SYSTEM']].drop_duplicates()
 
     base = (oil_sum
-            .merge(dev_sys, on='DEV_NAME', how='left')
-            .merge(fo_by_dev, on='DEV_NAME', how='left')
-            .merge(producer_wells, on='DEV_NAME', how='left')
-            .merge(total_wellbores, on='DEV_NAME', how='left')
+            .pipe(merge_rows, dev_sys, on='DEV_NAME', how='left')
+            .pipe(merge_rows, fo_by_dev, on='DEV_NAME', how='left')
+            .pipe(merge_rows, producer_wells, on='DEV_NAME', how='left')
+            .pipe(merge_rows, total_wellbores, on='DEV_NAME', how='left')
             .fillna({'PRODUCER_WELLS':0,'TOTAL_WELLBORES':0}))
     base['DEV_SYSTEM'] = base['DEV_SYSTEM'].fillna('unknown')
 
@@ -246,7 +292,7 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
     spud_td = (dnc.groupby('DEV_NAME')[['WELL_SPUD_DATE','TOTAL_DEPTH_DATE']]
                .agg({'WELL_SPUD_DATE':'min','TOTAL_DEPTH_DATE':'max'}).reset_index())
 
-    WTI_base_default = Aget(A, 'default','WTI_BASE_$/BBL', 75.0)
+    universe_diagnostic = diagnose_universe(prod, dnc)
 
     for dev in base['DEV_NAME'].dropna().unique():
         sys_name = base.loc[base['DEV_NAME']==dev,'DEV_SYSTEM'].iloc[0]
@@ -257,12 +303,13 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
         dev_start = min([x for x in [sp_min.iloc[0] if len(sp_min) else pd.NaT, pm['MONTH'].min() if len(pm) else pd.NaT, g_start] if pd.notna(x)])
         idx = pd.DataFrame({'MONTH': ym_index(dev_start, g_end)})
 
-        monthly = idx.merge(pm.groupby('MONTH')['MONTHLY_OIL_VOLUME'].sum().reset_index(), on='MONTH', how='left').fillna({'MONTHLY_OIL_VOLUME':0.0})
+        monthly = idx.pipe(merge_rows, pm.groupby('MONTH')['MONTHLY_OIL_VOLUME'].sum().reset_index(), on='MONTH', how='left').fillna({'MONTHLY_OIL_VOLUME':0.0})
         if not wti.empty:
-            monthly = monthly.merge(wti, on='MONTH', how='left')
-            monthly['WTI_USD'] = monthly['WTI_USD'].fillna(WTI_base_default)
+            monthly = monthly.pipe(merge_rows, wti, on='MONTH', how='left')
         else:
-            monthly['WTI_USD'] = WTI_base_default
+            monthly['WTI_USD'] = np.nan
+        if not np.isfinite(pd.to_numeric(monthly['WTI_USD'], errors='coerce')).all():
+            raise ValueError(f'Missing or nonfinite WTI month for {dev}; explicit prices required')
 
         dev_dnc = dnc[dnc['DEV_NAME']==dev].copy()
         drill_rows, comp_rows = [], []
@@ -303,7 +350,7 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
 
         dnc_m = pd.DataFrame(drill_rows, columns=['MONTH','DRILLING_DAYS']).groupby('MONTH', as_index=False)['DRILLING_DAYS'].sum() if drill_rows else pd.DataFrame(columns=['MONTH','DRILLING_DAYS'])
         cmp_m = pd.DataFrame(comp_rows,  columns=['MONTH','COMPLETION_DAYS']).groupby('MONTH', as_index=False)['COMPLETION_DAYS'].sum() if comp_rows else pd.DataFrame(columns=['MONTH','COMPLETION_DAYS'])
-        monthly = monthly.merge(dnc_m, on='MONTH', how='left').merge(cmp_m, on='MONTH', how='left').fillna({'DRILLING_DAYS':0.0,'COMPLETION_DAYS':0.0})
+        monthly = monthly.pipe(merge_rows, dnc_m, on='MONTH', how='left').pipe(merge_rows, cmp_m, on='MONTH', how='left').fillna({'DRILLING_DAYS':0.0,'COMPLETION_DAYS':0.0})
 
         prod_by_api = (prod[(prod['DEV_NAME']==dev)].groupby('API_WELL_NUMBER')['MONTHLY_OIL_VOLUME'].sum())
         producer_cnt = int((prod_by_api > 0).sum())
@@ -355,6 +402,9 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
         monthly['Host_CAPEX_USD'] = 0.0
         if pd.notna(fo) and Host_MM>0 and Host_Pre_M>0:
             start = month_floor(fo) - pd.DateOffset(months=Host_Pre_M)
+            spread = pd.date_range(start, periods=Host_Pre_M, freq='MS')
+            if not spread.isin(monthly['MONTH']).all():
+                raise ValueError(f'Host CAPEX window outside timeline for {dev}')
             mask  = (monthly['MONTH'] >= start) & (monthly['MONTH'] < month_floor(fo))
             monthly.loc[mask,'Host_CAPEX_USD'] = (Host_MM * 1_000_000.0) / Host_Pre_M
 
@@ -398,10 +448,12 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
         monthly_eval['PV_CashFlow_USD'] = np.where(monthly_eval['Disc_Factor']!=0,
                                                    monthly_eval['Net_CashFlow_USD']/monthly_eval['Disc_Factor'], 0.0)
         cf_eval = monthly_eval['Net_CashFlow_USD'].values.astype(float)
-        mirr_m = excel_like_mirr(cf_eval, Disc_ann)
+        finance_rate = require_assumption(A, sys_name, "MIRR_FINANCE_RATE")
+        reinvest_rate = require_assumption(A, sys_name, "MIRR_REINVEST_RATE")
+        mirr_m = excel_like_mirr(cf_eval, finance_rate, reinvest_rate)
         mirr_a = (1.0 + mirr_m) ** 12 - 1.0 if pd.notna(mirr_m) else np.nan
 
-        sums = monthly_eval[['Net_CashFlow_USD','PV_CashFlow_USD']].sum(numeric_only=True)
+        sums = monthly_eval[['Net_CashFlow_USD','PV_CashFlow_USD']].apply(pd.to_numeric, errors='raise').sum()
 
         proj_rows.append({
             'Project Name': dev,
@@ -425,16 +477,38 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
             'NPV_USD': float(sums['PV_CashFlow_USD']),
             'MIRR_monthly': mirr_m,
             'MIRR_annual': mirr_a,
+            # Schema: shipped financial_project_summary.xlsx, Project_Summary header.
+            'PRODUCER WELLS': producer_cnt,
+            'INJECTOR WELLS': inj,
+            'Booster Pump Count': booster_count,
+            'Water Injection Pump Count': wi_pump_count,
+            'TOTAL WELLBORES': int(base.loc[base['DEV_NAME'] == dev, 'TOTAL_WELLBORES'].iloc[0]),
+            'TOTAL DRILLING DAYS': dev_dnc['DRILLING_DAYS'].sum(min_count=1),
+            'TOTAL COMPLETION DAYS': dev_dnc['COMPLETION_DAYS'].sum(min_count=1),
         })
 
         dev_sheets[dev] = monthly[['MONTH','WTI_USD','MONTHLY_OIL_VOLUME','Revenue_USD','Royalty_USD',
                                    'Variable_OPEX_USD','Fixed_OPEX_USD','DRILLING_DAYS','DRILLING_COST_USD',
                                    'COMPLETION_DAYS','COMPLETION_COST_USD','Facilities_USD','Net_CashFlow_USD']]
 
-    proj_df = pd.DataFrame(proj_rows)
+    header_aliases = {
+        'DEV_SYSTEM': 'DEV SYSTEM', 'Host_CAPEX_USD': 'Host CAPEX USD',
+        'SURF_USD': 'SURF USD', 'Booster_Pump_USD': 'Booster Pump USD',
+        'Water_Injection_Pump_USD': 'Water Injection Pump USD',
+        'Dry_Well_System_USD': 'Dry Well System USD',
+        'DRILLING_COST_USD': 'DRILLING COST USD',
+        'COMPLETION_COST_USD': 'COMPLETION COST USD',
+        'DnC_Total_USD': 'Drilling and Completion Total USD',
+        'Revenue_USD': 'Revenue USD', 'Royalty_USD': 'Royalty USD',
+        'Variable_OPEX_USD': 'Variable OPEX USD', 'Fixed_OPEX_USD': 'Fixed OPEX USD',
+        'Net_CashFlow_USD': 'Net CashFlow USD', 'NPV_USD': 'NPV USD',
+        'MIRR_monthly': 'MIRR monthly', 'MIRR_annual': 'MIRR annual',
+    }
+    proj_df = pd.DataFrame(proj_rows).rename(columns=header_aliases)
 
     with pd.ExcelWriter(out_xlsx, engine='openpyxl') as w:
         proj_df.to_excel(w, sheet_name='Project_Summary', index=False)
+        pd.DataFrame([universe_diagnostic]).to_excel(w, sheet_name='Diagnostics', index=False)
         for dev, df in dev_sheets.items():
             safe_name = (str(dev) or 'DEV').strip()[:31]
             df.to_excel(w, sheet_name=safe_name, index=False)
@@ -447,7 +521,8 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
     cur_cols = {'Host_CAPEX_USD','SURF_USD','Booster_Pump_USD','Water_Injection_Pump_USD','Dry_Well_System_USD',
                 'Facilities Cost USD','DRILLING_COST_USD','COMPLETION_COST_USD','DnC_Total_USD',
                 'Revenue_USD','Royalty_USD','Variable_OPEX_USD','Fixed_OPEX_USD','Net_CashFlow_USD','NPV_USD'}
-    pct_cols = {'MIRR_monthly','MIRR_annual'}
+    cur_cols = {header_aliases.get(name, name) for name in cur_cols}
+    pct_cols = {'MIRR monthly','MIRR annual'}
     date_cols = {'FO Month'}
     int_cols  = {'TOTAL OIL BBL'}
     for j, h in enumerate(headers, start=1):
