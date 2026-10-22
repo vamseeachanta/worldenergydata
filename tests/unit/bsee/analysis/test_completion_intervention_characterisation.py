@@ -63,6 +63,7 @@ def test_fixture_digests_and_source_rows():
 
 
 def test_source_counts_reconcile_without_join_multiplication():
+    """Each source report contributes once, regardless of child completion rows."""
     t = tables()
     result = activity().analyse(t)
     assert result["summary"]["eor_records"] == len(t["mv_eor_mainquery"])
@@ -70,6 +71,10 @@ def test_source_counts_reconcile_without_join_multiplication():
     assert sum(r["records"] for r in result["eor_by_year_type"]) == len(
         t["mv_eor_mainquery"]
     )
+    for source, table in [("eor", "mv_eor_mainquery"), ("war", "mv_war_main")]:
+        assert sum(r["records"] for r in result[source + "_activity_strata"]) == len(
+            t[table]
+        )
 
 
 def test_workover_counts_include_recorded_zero_wells():
@@ -397,3 +402,119 @@ def test_completion_strata_sidecar_preserves_every_record(tmp_path):
         rows = list(csv.DictReader(stream))
     assert rows == [{k: str(v) for k, v in x.items()} for x in r["completion_strata"]]
     assert sum(int(x["records"]) for x in rows) == r["summary"]["completion_records"]
+
+
+def activity_strata_scenario():
+    """Synthetic inputs using the source columns in the fixture manifest.
+
+    Hand calculation: reports a and b have code W, field AA, depth 10 ft
+    and years 2001/2002. Both fall below the chosen 15 ft / 2010 edges,
+    so that stratum contains 1 + 1 = 2 reports. Report c contributes one C
+    to BB at 20 ft in 2011; d has no metadata/code/date and contributes one
+    all-unknown report; e contributes one NEW to AA. Total: 2 + 1 + 1 + 1 = 5.
+    The edges are synthetic grouping inputs, not engineering limits. WAR
+    codes deliberately reuse these tokens without assigning EOR meanings.
+    """
+    t = tables()
+    apis = ["100000000001", "100000000001", "100000000002", "", "100000000001"]
+    codes = ["W", "W", "C", "", "NEW"]
+    dates = ["1/1/2001", "1/1/2002", "1/1/2011", "invalid", "1/1/2001"]
+    keys = ["a", "b", "c", "d", "e"]
+    t["mv_eor_mainquery"] = pd.DataFrame(
+        {
+            "SN_EOR": keys,
+            "API_WELL_NUMBER": apis,
+            "EOR_OPERATION_CD": codes,
+            "BOREHOLE_STAT_DT": dates,
+        }
+    )
+    t["mv_war_main"] = pd.DataFrame(
+        {"SN_WAR": keys, "API_WELL_NUMBER": apis, "WAR_START_DT": dates}
+    )
+    t["mv_war_main_prop"] = pd.DataFrame({"SN_WAR": keys, "WELL_ACTIVITY_CD": codes})
+    t["mv_api_list_all"] = pd.DataFrame(
+        {"API_WELL_NUMBER": apis[:3], "BOTM_FLD_NAME_CD": ["AA", "AA", "BB"]}
+    )
+    t["mv_boreholes_all"] = pd.DataFrame(
+        {"API_WELL_NUMBER": apis[:3], "WATER_DEPTH": [10, 10, 20]}
+    )
+    return t, activity().Parameters(depth_edges=(15,), era_edges=(2010,))
+
+
+@pytest.mark.parametrize("source", ["eor", "war"])
+def test_activity_strata_match_hand_count_and_reconcile(source):
+    """Expected groups and counts are calculated in activity_strata_scenario."""
+    t, p = activity_strata_scenario()
+    result = activity().analyse(t, p)
+    assert result[source + "_activity_strata"] == [
+        {
+            "field": "AA",
+            "water_depth_band": "below 15 ft",
+            "era": "before 2010",
+            "code": "NEW",
+            "records": 1,
+        },
+        {
+            "field": "AA",
+            "water_depth_band": "below 15 ft",
+            "era": "before 2010",
+            "code": "W",
+            "records": 2,
+        },
+        {
+            "field": "BB",
+            "water_depth_band": "at least 15 ft",
+            "era": "2010 onwards",
+            "code": "C",
+            "records": 1,
+        },
+        {
+            "field": "unknown",
+            "water_depth_band": "unknown",
+            "era": "unknown",
+            "code": "unknown",
+            "records": 1,
+        },
+    ]
+    assert sum(r["records"] for r in result[source + "_activity_strata"]) == 5
+
+
+@pytest.mark.parametrize("source", ["eor", "war"])
+def test_activity_strata_count_duplicate_reports_once(source):
+    """Repeating report a adds no report identity: the hand total remains five."""
+    t, p = activity_strata_scenario()
+    name = "mv_eor_mainquery" if source == "eor" else "mv_war_main"
+    t[name] = pd.concat([t[name], t[name].iloc[:1]])
+    result = activity().analyse(t, p)
+    assert sum(r["records"] for r in result[source + "_activity_strata"]) == 5
+
+
+@pytest.mark.parametrize("source", ["eor", "war"])
+def test_empty_activity_has_no_strata(source):
+    """No input reports give no occupied groups, rather than invented zeros."""
+    t, p = activity_strata_scenario()
+    name = "mv_eor_mainquery" if source == "eor" else "mv_war_main"
+    t[name] = t[name].iloc[:0]
+    assert activity().analyse(t, p)[source + "_activity_strata"] == []
+
+
+def test_missing_war_property_keeps_report_in_unknown_code_stratum():
+    """Dropping a's property leaves b in W and moves a to unknown: one each."""
+    t, p = activity_strata_scenario()
+    t["mv_war_main_prop"] = t["mv_war_main_prop"].iloc[1:]
+    rows = activity().analyse(t, p)["war_activity_strata"]
+    assert {r["code"]: r["records"] for r in rows if r["field"] == "AA"} == {
+        "NEW": 1,
+        "W": 1,
+        "unknown": 1,
+    }
+
+
+def test_activity_strata_survive_json_product(tmp_path):
+    """The public product retains both tables exactly; no rounding is applied."""
+    t, p = activity_strata_scenario()
+    result = activity().analyse(t, p)
+    report().write_products(result, revision(), tmp_path)
+    saved = json.loads((tmp_path / "results.json").read_text())
+    for source in ("eor", "war"):
+        assert saved[source + "_activity_strata"] == result[source + "_activity_strata"]
