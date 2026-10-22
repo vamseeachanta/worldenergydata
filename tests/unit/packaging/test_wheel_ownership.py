@@ -166,3 +166,25 @@ def test_command_line_exit_status(tmp_path, conflict):
     )
     assert bool(result.returncode) is conflict
     assert ("namespace root" in result.stderr) is conflict
+
+
+@pytest.mark.parametrize("file_first", [False, True])
+@pytest.mark.parametrize("file_placement", ["", "purelib", "platlib"])
+@pytest.mark.parametrize("child_placement", ["", "purelib", "platlib"])
+def test_file_ancestor_conflicts_are_rejected(
+    tmp_path, file_first, file_placement, child_placement
+):
+    """Both sorted processing orders must reject incompatible destinations."""
+    file_name, child_name = ("a", "z") if file_first else ("z", "a")
+    file_prefix = f"a-0.1.0.data/{file_placement}/" if file_placement else ""
+    child_prefix = f"z-0.1.0.data/{child_placement}/" if child_placement else ""
+    parent = wheel(tmp_path, file_name, [file_prefix + "worldenergydata/eia"])
+    child = wheel(tmp_path, child_name, [child_prefix + "worldenergydata/eia/a.py"])
+    errors = checker.check_wheels([parent, child])
+    assert any("file/directory conflict at worldenergydata/eia" in e for e in errors)
+
+
+def test_shared_implied_directories_are_allowed(tmp_path):
+    first = wheel(tmp_path, "a", ["worldenergydata/eia/a.py"])
+    second = wheel(tmp_path, "z", ["worldenergydata/eia/b.py"])
+    assert checker.check_wheels([first, second]) == []

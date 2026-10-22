@@ -52,6 +52,7 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
     errors: list[str] = []
     distributions: dict[str, str] = {}
     owners: dict[str, str] = {}
+    directories: dict[str, set[str]] = {}
     for path in paths:
         label = path.name
         try:
@@ -95,6 +96,24 @@ def check_wheels(wheels: Iterable[Path]) -> list[str]:
                         errors.append(
                             f"{label}: overlap at {installed} with {owners[installed]}"
                         )
+                    parents = [
+                        str(parent) for parent in PurePosixPath(installed).parents
+                        if str(parent) != "."
+                    ]
+                    conflicts = {
+                        (parent, owners[parent]) for parent in parents
+                        if parent in owners and owners[parent] != label
+                    }
+                    conflicts.update(
+                        (installed, owner) for owner in directories.get(installed, set())
+                        if owner != label
+                    )
+                    for destination, owner in sorted(conflicts):
+                        errors.append(
+                            f"{label}: file/directory conflict at {destination} with {owner}"
+                        )
+                    for parent in parents:
+                        directories.setdefault(parent, set()).add(label)
                     owners[installed] = label
         except (OSError, BadZipFile) as exc:
             # Avoid printing archive contents or environment-specific paths.
