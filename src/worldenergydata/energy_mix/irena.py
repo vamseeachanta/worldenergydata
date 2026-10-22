@@ -44,10 +44,40 @@ def fetch_irena() -> bytes:
 def _measurement(value: str) -> float | None:
     if value == "":
         return None
+    # Normalized CSV policy: ASCII decimal/scientific notation, no separators.
+    if not re.fullmatch(
+        r"[+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", value
+    ):
+        raise ValueError("Measurements must be finite nonnegative ASCII decimal text")
     number = float(value)
     if not math.isfinite(number) or number < 0:
         raise ValueError("Measurements must be finite and nonnegative")
     return number
+
+
+def _validate_url(value: str, label: str) -> None:
+    """Validate evidence locators syntactically; never establish access or rights."""
+    # Repository evidence policy rejects whitespace, controls and backslashes
+    # before urlsplit can silently remove characters from the supplied locator.
+    if (
+        any(character.isspace() or not character.isprintable() for character in value)
+        or "\\" in value
+    ):
+        raise ValueError(f"{label} requires public HTTPS without credentials")
+    try:
+        url = urlsplit(value)
+        _ = url.port  # Trigger urllib's malformed/out-of-range port checks.
+        valid = (
+            url.scheme == "https"
+            and url.hostname
+            and not url.username
+            and not url.password
+            and not url.netloc.endswith(":")
+        )
+    except ValueError as error:
+        raise ValueError(f"{label} requires a valid HTTPS authority") from error
+    if not valid:
+        raise ValueError(f"{label} requires public HTTPS without credentials")
 
 
 def _validate_row(row: dict[str, str], max_year: int) -> dict[str, Any]:
@@ -67,9 +97,7 @@ def _validate_row(row: dict[str, str], max_year: int) -> dict[str, Any]:
         raise ValueError("Year outside supported historical range")
     if row["technology"] != "offshore wind":
         raise ValueError("Technology must be offshore wind")
-    url = urlsplit(row["source_url"])
-    if url.scheme != "https" or not url.netloc or url.username or url.password:
-        raise ValueError("Source URL must be public HTTPS without credentials")
+    _validate_url(row["source_url"], "Source URL")
     capacity = _measurement(row["capacity_mw"])
     generation = _measurement(row["generation_gwh"])
     if capacity is None and generation is None:
@@ -147,11 +175,7 @@ def _validate_provenance(
             raise ValueError("Retrieval timestamp must be UTC")
         if timestamp > datetime.now(timezone.utc):
             raise ValueError("Retrieval timestamp cannot be in the future")
-        url = urlsplit(str(terms_url))
-        if url.scheme != "https" or not url.hostname or url.username or url.password:
-            raise ValueError(
-                "Terms provenance requires public HTTPS without credentials"
-            )
+        _validate_url(str(terms_url), "Terms provenance")
 
 
 def emit_manifest(
