@@ -5,7 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     # Metadata edits copy the last full result; base changes run the full gate.
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
@@ -82,8 +82,9 @@ jobs:
   domain-tests:
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request')
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
   # ------------------------------------------------------------ full matrix --
@@ -92,12 +93,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
       github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'ci-full')))
+       contains(github.event.pull_request.labels.*.name, 'ci-full'))))
     strategy:
       fail-fast: false
       matrix:
@@ -230,7 +232,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -329,7 +332,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -420,7 +424,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -514,8 +519,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
-      == 'success'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
+      == 'success')
 
     steps:
       - name: Checkout repository
@@ -608,8 +614,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
+      == 'pull_request')
 
     steps:
       - name: Checkout repository
