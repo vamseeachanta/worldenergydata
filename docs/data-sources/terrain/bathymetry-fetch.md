@@ -73,6 +73,29 @@ reader opens the verified file read-only, reads coordinate axes and the bounded
 index window, and leaves no temporary or derived file. Readers share no
 extraction path. `max_cells` defaults to one million.
 
+## Read bounds and missing values
+
+`max_cells` accepts positive Python or NumPy integers. Booleans, floats
+(including integral floats), NaN, infinity, zero and negative values raise
+`ValueError` before archive verification or reader imports. The budget counts
+the reader window before pixels are loaded; it is a resource limit rather than
+an engineering acceptance criterion. A window equal to the budget is allowed.
+
+Masked cells, NaN and either infinity become NaN before depth-sign conversion.
+Clips and nearest-cell profiles retain those missing cells without filling them.
+Zero remains a valid depth unless the source explicitly declares it nodata.
+The BOEM manifest's inspected grids declare zero nodata, so their missing cells
+remain missing rather than becoming shoreline depths. Finiteness follows the
+[NumPy isfinite reference](https://numpy.org/doc/2.3/reference/generated/numpy.isfinite.html);
+source nodata handling follows
+[Rasterio's masked-array convention](https://rasterio.readthedocs.io/en/stable/topics/masks.html#numpy-masked-arrays).
+
+Offline regressions use a synthetic grid with the BOEM sign and nodata
+conventions. Expected depths, cell counts and centre coordinates are calculated
+in the test docstrings; the grid does not reproduce BOEM resolution or measured
+depths. These checks do not requalify the full archives or establish engineering
+suitability.
+
 Each read still hashes the entire source file before opening it. Verified BOEM
 clips took approximately 8.1 s (west) and 13.3 s (east), including this hash and
 ZIP reader work; these are observed timings, not a benchmark guarantee. The
