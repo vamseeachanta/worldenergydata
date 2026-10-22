@@ -214,7 +214,8 @@ def render_html(data: dict, results: tuple[Synthesis, ...]) -> str:
         ),
         "<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>",
         f'<tr><td>1</td><td>{escape(data["revision_date"])}</td><td>Initial synthesis to expose residuals and inference.</td></tr>',
-        "<tr><td>2</td><td>2026-10-20</td><td>Required real-money years, preserved JSON decimals and identified allocation cases to retain their comparison basis.</td></tr></table>",
+        "<tr><td>2</td><td>2026-10-20</td><td>Required real-money years, preserved JSON decimals and identified allocation cases to retain their comparison basis.</td></tr>",
+        "<tr><td>3</td><td>2026-10-22</td><td>Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity.</td></tr></table>",
         (
             "<p>Solid green: observed evidence. Dashed amber: inferred allocations. "
             "Ranges are enclosures, not probability intervals. Marginal ranges are non-additive.</p>"
@@ -323,6 +324,7 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
             "target_endpoint",
             "target_open",
             "limiting",
+            "quantity_kind",
         )
     )
     quantum = Decimal(data["quantum"])
@@ -354,6 +356,7 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                     "",
                     "",
                     "",
+                    "project_metric",
                 )
             )
         for row in r.contributions:
@@ -370,14 +373,19 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                     "",
                     "",
                     "",
+                    "award",
                 )
             )
         for a in r.allocations:
-            values = a.amounts + (
-                ("unallocated", a.unallocated),
-                ("unreconciled_variance", a.unreconciled_variance),
+            values = tuple(("requirement", k, v) for k, v in a.amounts) + (
+                ("unallocated", "unallocated", a.unallocated),
+                (
+                    "unreconciled_variance",
+                    "unreconciled_variance",
+                    a.unreconciled_variance,
+                ),
             )
-            for key, value in values:
+            for kind, key, value in values:
                 writer.writerow(
                     (
                         r.project.project_id,
@@ -391,6 +399,7 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                         a.target_endpoint,
                         str(a.target_open).lower(),
                         str(a.limiting).lower(),
+                        kind,
                     )
                 )
     return stream.getvalue()
@@ -404,7 +413,7 @@ def build(path: Path, output: Path, **qualification) -> dict:
         "project_cost_map.csv": render_csv(data, results),
     }
     for name, content in files.items():
-        (output / name).write_text(content, encoding="utf-8", newline="")
+        (output / name).write_text(content, encoding="utf-8", newline="\n")
     modules = sorted(Path(__file__).parent.glob("*.py"))
     manifest = {
         "contract_version": "3.0.0",
@@ -435,5 +444,6 @@ def build(path: Path, output: Path, **qualification) -> dict:
         # JSON numeric fractions are retained as exact decimal strings.
         json.dumps(manifest, sort_keys=True, indent=2, default=str) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return manifest

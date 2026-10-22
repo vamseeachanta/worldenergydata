@@ -11,6 +11,7 @@ asserting estimates for any real development.
 | --- | --- | --- |
 | 1 | 2026-10-19 | Introduced explicit basis checks, residuals and conserving scenarios to make inference auditable. |
 | 2 | 2026-10-20 | Required real-money reference years, preserved numeric JSON decimals and identified allocation boundary cases to retain their comparison basis. |
+| 3 | 2026-10-22 | Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity. |
 
 ## Accounting method and sources
 
@@ -132,6 +133,12 @@ is open. Allocation amount bounds describe the hypothetical joint calculation;
 `target_open` describes whether its target endpoint is attainable. Point totals
 have a single `point` case with `limiting=false`. HTML retains each exact target
 total and the same case qualifiers, separately from rounded monetary displays.
+
+Every CSV row carries `quantity_kind`: `project_metric` for observed totals and
+ratios, `award` for ledger contributions, `requirement` for scenario allocations,
+and `unallocated` or `unreconciled_variance` for the corresponding accounting
+bucket. Requirement identities may equal either bucket name; consumers distinguish
+these rows by quantity kind as well as project, scenario, identity and case.
 
 ```bash
 export PYTHONPATH=src:packages/worldenergydata-cost/src

@@ -18,11 +18,11 @@
   "outputs": [
     {
       "path": "project_cost_map.csv",
-      "sha256": "b61adb9b4621ddbe4b8b29b64c98a0a3c8222baed7b2ff8cd42de75158a23db3"
+      "sha256": "17abfd089547bfffe17195b4509c0b21d2f9f744052cd94861ffa01d610b2af9"
     },
     {
       "path": "project_cost_map.html",
-      "sha256": "5a7772685c1051ceafd24bda9b1eaf653fc5d6ddb3de95bed516b9fed117b2c4"
+      "sha256": "2638d0c9416e41a856e46e26571c3f7677e210a999de55a16dd5e4adb6443d78"
     }
   ],
   "producer": [
@@ -40,7 +40,7 @@
     },
     {
       "path": "reporting.py",
-      "sha256": "bfeb8e42c6b90a5b6bad2000eed14c4f3c40d7ffad7ade90a1606b2ed1ab0ca0"
+      "sha256": "4e06785c255f6720d875fac07fe26137602afa5092034dc815eb41b217a3deb7"
     },
     {
       "path": "scenarios.py",
@@ -78,7 +78,7 @@
   ],
   "schema": {
     "path": "reporting.py",
-    "sha256": "bfeb8e42c6b90a5b6bad2000eed14c4f3c40d7ffad7ade90a1606b2ed1ab0ca0",
+    "sha256": "4e06785c255f6720d875fac07fe26137602afa5092034dc815eb41b217a3deb7",
     "version": "1.0"
   },
   "upstream_manifest_sha256": null
