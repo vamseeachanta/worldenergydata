@@ -228,6 +228,9 @@ def build_quality_stats(
     return {
         "input_rows": int(len(completions)),
         "curated_count": int(len(observations)),
+        "source_warnings": (
+            [] if len(observations) else ["no_usable_pressure_observations"]
+        ),
         "filtered_missing_pressure_count": int((~has_pressure).sum()),
         "filtered_missing_depth_count": int((has_pressure & ~has_depth).sum()),
         "filtered_missing_test_date_count": int(

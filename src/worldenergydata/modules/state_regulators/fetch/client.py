@@ -19,7 +19,7 @@ from .policy import (
     header_delay,
     origin_of,
 )
-from .storage import CacheStore, FetchResult, atomic_json
+from .storage import CacheStore, FetchResult, atomic_json, validate_response
 
 
 class _NoRedirect(HTTPRedirectHandler):
@@ -112,7 +112,9 @@ class Fetcher:
                     raise
             else:
                 self._cooldown(url, headers)
-                return self.store.put(url, payload, headers, asdict(permission))
+                return self.store.put(
+                    url, payload, headers, asdict(permission), retry_count=attempt
+                )
         raise AssertionError("Retry loop exhausted without a result")
 
     def _request(self, url: str) -> tuple[bytes, dict[str, str]]:
@@ -131,6 +133,9 @@ class Fetcher:
                 payload = response.read(cap + 1)
                 if len(payload) > cap:
                     raise ResponseTooLarge(message, dict(response.headers))
+                validate_response(
+                    url, payload, dict(response.headers), response.getcode()
+                )
                 return payload, dict(response.headers)
         except HTTPError:
             raise

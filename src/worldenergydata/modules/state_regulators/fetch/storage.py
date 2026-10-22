@@ -4,10 +4,72 @@ import hashlib
 import json
 import math
 import os
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
+from urllib.parse import urlsplit
+
+
+def validate_response(
+    url: str, payload: bytes, headers: Mapping[str, str], status: int = 200
+) -> None:
+    """Qualify reuse before writing, including old cache objects.
+
+    RFC 9110 (2022), sections 8.3 and 15.3.1 define media type and 200 OK.
+    Issue #1301 requires nonempty bodies and rejects error representations.
+    No source-specific minimum size is assumed.
+    """
+    if status != 200:
+        raise ValueError("Cannot cache a non-200 response")
+    if not payload:
+        raise ValueError("Cannot cache an empty payload")
+    media = {k.lower(): v for k, v in headers.items()}.get("content-type", "")
+    media = media.split(";", 1)[0].strip().lower()
+    text = payload.lstrip().lower()
+    html = media in {"text/html", "application/xhtml+xml"} or text.startswith(
+        (b"<!doctype html", b"<html", b"<head", b"<body", b"<title", b"<h1")
+    )
+    suffix = Path(urlsplit(url).path).suffix.lower()
+    if suffix in {".csv", ".zip", ".txt", ".xls", ".xlsx"} and html:
+        raise ValueError("Cannot cache HTML in place of a data file")
+    expected_media = {
+        ".csv": {
+            "text/csv",
+            "application/csv",
+            "text/plain",
+            "application/octet-stream",
+        },
+        ".zip": {
+            "application/zip",
+            "application/x-zip-compressed",
+            "application/octet-stream",
+        },
+        ".txt": {"text/plain", "text/csv", "application/octet-stream"},
+        ".aspx": {"text/html", "application/xhtml+xml"},
+        ".html": {"text/html", "application/xhtml+xml"},
+        ".htm": {"text/html", "application/xhtml+xml"},
+    }
+    if media and suffix in expected_media and media not in expected_media[suffix]:
+        raise ValueError("Unexpected data-file content-type")
+    # Error headings are a conservative rejection rule, not a size heuristic.
+    if html:
+        headings = re.findall(
+            rb"<(?:title|h1)\b[^>]*>(.*?)</(?:title|h1)\s*>", text, re.DOTALL
+        )
+        for heading in headings:
+            heading = re.sub(rb"<[^>]*>", b" ", heading)
+            if re.search(
+                rb"\b(?:error|denied|unavailable|not found|forbidden)\b", heading
+            ):
+                raise ValueError("Cannot cache an HTML error page")
+    visible = re.sub(rb"<[^>]*>", b" ", text).strip()
+    if html and re.match(
+        rb"(?:error\b|server error|access denied|service unavailable|not found|forbidden)",
+        visible,
+    ):
+        raise ValueError("Cannot cache an HTML error page")
 
 
 @dataclass(frozen=True)
@@ -116,8 +178,16 @@ class CacheStore:
             or len(payload) != metadata["size_bytes"]
         ):
             raise ValueError("Cache integrity verification failed")
-        if not payload:
-            raise ValueError("Cache integrity: empty payload; preserve for inspection")
+        try:
+            validate_response(
+                url,
+                payload,
+                metadata.get("response_headers", {}),
+                metadata.get("status_code", 200),
+            )
+        except ValueError:
+            # Preserve the old bytes. A miss must still pass permission and budget.
+            return None
         return FetchResult(path, metadata, True)
 
     def put(
@@ -126,10 +196,11 @@ class CacheStore:
         payload: bytes,
         headers: Mapping[str, str],
         terms_check: dict[str, Any],
+        *,
+        status: int = 200,
+        retry_count: int = 0,
     ) -> FetchResult:
-        # Issue #1301 cache contract: a response with no bytes is not reusable.
-        if not payload:
-            raise ValueError("Cannot cache an empty payload")
+        validate_response(url, payload, headers, status)
         digest = hashlib.sha256(payload).hexdigest()
         path = self.objects / digest
         scratch = path.with_suffix(".pending")
@@ -142,6 +213,8 @@ class CacheStore:
             "url": url,
             "sha256": digest,
             "size_bytes": len(payload),
+            "status_code": status,
+            "retry_count": retry_count,
             "fetched_at": datetime.now(timezone.utc).isoformat(),
             "response_headers": dict(headers),
             "terms_check": terms_check,
