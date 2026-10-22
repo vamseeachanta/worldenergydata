@@ -426,6 +426,7 @@ markers = [
     "smoke: Smoke tests for quick validation",
     "regression: Regression tests for existing functionality",
     "network: Tests requiring network access",
+    "credentialed: Optional publisher-account checks requiring environment credentials",
     "skip_ci: Tests to skip in CI/CD pipeline",
     "wip: Work-in-progress tests",
     "timeout: Tests with custom timeout settings",

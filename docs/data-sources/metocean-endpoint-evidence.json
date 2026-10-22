@@ -1,0 +1,348 @@
+{
+  "description": "Documentation and terms retrieval evidence. Original responses are retained outside the repository. Digests refer to those original responses, not observation fixtures.",
+  "sources": [
+    {
+      "url": "https://api.met.no/weatherapi/oceanforecast/2.0/documentation",
+      "checked_at": "2026-10-22T16:29:33.326633+00:00",
+      "http_status": 200,
+      "sha256": "6b913fabf8b15909fc3d3c991cc0f64cf6e0e5ad222c4d1fb33d133f7dc4e987",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+      "checked_at": "2026-10-22T16:14:47.590261+00:00",
+      "http_status": 200,
+      "sha256": "2f35c273fdb3eeca2aa98111d0ed62998500c2ed9f4c507b0543d919dd6b4da5",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://cds.climate.copernicus.eu/disclaimer-privacy",
+      "checked_at": "2026-10-22T16:26:07.898684+00:00",
+      "http_status": 200,
+      "sha256": "643503f96f6c4a4330e1ee32f56678239275e24ab21f6b057317268ea979aba3",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://cds.climate.copernicus.eu/en/how-to-api",
+      "checked_at": "2026-10-22T16:14:51.798867+00:00",
+      "http_status": 200,
+      "sha256": "7ea42a69b16f319caf5e45912740b805398571eb149d05c7d6be4302bba66ad5",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://coastwatch.pfeg.noaa.gov/erddap/legal.html",
+      "checked_at": "2026-10-22T16:18:17.858371+00:00",
+      "http_status": 200,
+      "sha256": "c4ac09a6efa04554f444076c83878462f494a96bb5483c2f328fb3caef4fa4e7",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://coastwatch.pfeg.noaa.gov/erddap/tabledap/documentation.html",
+      "checked_at": "2026-10-22T16:18:17.014418+00:00",
+      "http_status": 200,
+      "sha256": "81995a510758568f26981c2f1401d4aa701caf10bc02117300e4ad6b9ccab688",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://docs.api.met.no/doc/TermsOfService.html",
+      "checked_at": "2026-10-22T16:14:49.251954+00:00",
+      "http_status": 200,
+      "sha256": "60a7b5c0ea1ce5d221140070a2333190904fa09f4af73254723fcca9421fa4e1",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://docs.api.met.no/doc/oceanforecast/datamodel.html",
+      "checked_at": "2026-10-22T16:14:49.113760+00:00",
+      "http_status": 200,
+      "sha256": "dae1ad3cd46775d7a71d384fd40b7dee598c6af3f204c10abedded45f2c3948f",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://eccc-msc.github.io/open-data/licence/readme_en/",
+      "checked_at": "2026-10-22T16:29:34.926557+00:00",
+      "http_status": 200,
+      "sha256": "b77b61cda7d2b995f39c6b00467cda27d399a7abd83eea100081e37d8b1abbc9",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/",
+      "checked_at": "2026-10-22T16:29:34.809612+00:00",
+      "http_status": 200,
+      "sha256": "85987fb0a9e2e8d18168b41bce0ab11789d915a457cf57a95871e1597cf3d466",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.gcoos.org/erddap/legal.html",
+      "checked_at": "2026-10-22T16:18:17.497246+00:00",
+      "http_status": 200,
+      "sha256": "7689bd3f62cd2473804ae0764c0b24eb880e3ee43c8c4694a4a75f66c4d542e3",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.gcoos.org/erddap/tabledap/documentation.html",
+      "checked_at": "2026-10-22T16:18:16.245814+00:00",
+      "http_status": 200,
+      "sha256": "6f2448d1536d0275cdb4504095780889973f64a55112cfc18cf28737f497fe32",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.ioos.us/erddap/legal.html",
+      "checked_at": "2026-10-22T16:18:17.323790+00:00",
+      "http_status": 200,
+      "sha256": "8d00f6165755e1aab67cce8bd1b103daa786403b28428b2b2fedc914be54aae6",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.ioos.us/erddap/tabledap/documentation.html",
+      "checked_at": "2026-10-22T16:18:15.866827+00:00",
+      "http_status": 200,
+      "sha256": "19672134cc89f5a170c87596113fab1ce56ab47f5ce55706cf569f9edafcab55",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+      "checked_at": "2026-10-22T16:29:34.678596+00:00",
+      "http_status": 200,
+      "sha256": "3e28bee534799b19c79565129f8f7db64b1e1d3d1ee1754fca1a50397f4c2d91",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://erddap.marine.ie/erddap/tabledap/documentation.html",
+      "checked_at": "2026-10-22T16:14:48.807166+00:00",
+      "http_status": 200,
+      "sha256": "4cd39c02fee87a8911ab6419664b07e351a25ba95f69638b32527a6c7fc356bf",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://help.marine.copernicus.eu/en/articles/8185007-copernicus-marine-toolbox-credentials-configuration",
+      "checked_at": "2026-10-22T16:18:13.938960+00:00",
+      "http_status": 200,
+      "sha256": "a5bdb2d8ddd05e08a652f13167a1932dabe1de67c99866843301dcfbb0f56cd6",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://help.marine.copernicus.eu/en/articles/8283072-copernicus-marine-toolbox-api-subset",
+      "checked_at": "2026-10-22T16:14:56.764004+00:00",
+      "http_status": 200,
+      "sha256": "d866c68799c5c823d4a308c2197bf217422271a49f6c0d3e96ae42a9b28a1058",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://help.marine.copernicus.eu/en/articles/8612591-switching-from-old-to-new-services",
+      "checked_at": "2026-10-22T16:14:54.992984+00:00",
+      "http_status": 200,
+      "sha256": "b4eb83d53ed4c5ed36ccf3932560159a91e52d596f9f75e7d45631eb85bcb235",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf",
+      "checked_at": "2026-10-22T16:29:35.299428+00:00",
+      "http_status": 200,
+      "sha256": "afda6c36c8e503e65790376a8ef375ae0dee98970bb6739604185faad325e381",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://incois.gov.in/site/dataholdings.jsp",
+      "checked_at": "2026-10-22T16:29:38.788933+00:00",
+      "http_status": 200,
+      "sha256": "a7a5a9c4fee8f7b7f24ee6dbee51329db6ebee74b14a318adf1db6e85a0928ba",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://marine.copernicus.eu/user-corner/service-commitments-and-licence",
+      "checked_at": "2026-10-22T16:18:10.554158+00:00",
+      "http_status": 200,
+      "sha256": "44394af3760626f66055b98b482371a6666c42ff6f405a664500900eddd63241",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://maritim.bmkg.go.id/apidoc",
+      "checked_at": "2026-10-22T16:29:44.433171+00:00",
+      "http_status": 200,
+      "sha256": "191aeb2724e7bfc8edfb771b36eeee4d030635e5e9ec790248a09c4a5dcdd94c",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://open-meteo.com/en/docs/marine-weather-api",
+      "checked_at": "2026-10-22T16:14:49.430242+00:00",
+      "http_status": 200,
+      "sha256": "62adb6493d0274caea0e255738490f6b38d9564d57d7573416aa6fad5b77c9f8",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://open-meteo.com/en/terms",
+      "checked_at": "2026-10-22T16:14:49.587884+00:00",
+      "http_status": 200,
+      "sha256": "3a3963ad378cb2769f1c70217723363dcce400b762b6bc1a5437943d2f5c9d66",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ecmwf/cdsapi/master/cdsapi/api.py",
+      "checked_at": "2026-10-22T16:14:56.908653+00:00",
+      "http_status": 200,
+      "sha256": "db05d53d316f43efc72a3421bdb6d608887ef17cf5457091eceff0cbb7b748a0",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mercator-ocean/copernicus-marine-toolbox/main/copernicusmarine/python_interface/subset.py",
+      "checked_at": "2026-10-22T16:14:57.194233+00:00",
+      "http_status": 200,
+      "sha256": "b32122172c69b137967b400dfc06f40823f31b8ddc9b48e8b15da09519fdeda7",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://tidesandcurrents.noaa.gov/disclaimers.html",
+      "checked_at": "2026-10-22T16:29:32.631653+00:00",
+      "http_status": 200,
+      "sha256": "4af265156e195fda2a8c4457af5bd2f73b74d70cd9219f3a4ae94d2d2543363c",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.bom.gov.au/copyright",
+      "checked_at": "2026-10-22T16:29:35.735219+00:00",
+      "http_status": 200,
+      "sha256": "dde9ccfdae171d2401fbaf488e0c219cc05b7f9324109ab4d85bc7ba7e7a4539",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+      "checked_at": "2026-10-22T16:29:35.664809+00:00",
+      "http_status": 200,
+      "sha256": "324cfa6d95764ced828d60d16bdae8613c7b6608bc4a4db9aaa3d5a8d72fb07d",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php",
+      "checked_at": "2026-10-22T16:29:45.346928+00:00",
+      "http_status": 200,
+      "sha256": "f3e4a61c08931e2920749db389fac9583c71048ad1007684c98571b76a2de2c8",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.hycom.org/dataserver",
+      "checked_at": "2026-10-22T16:18:15.170255+00:00",
+      "http_status": 200,
+      "sha256": "bbf36269de3b64f8b719d2a61ba6b40f27b6be0630d66f16038c9f63a68aab10",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+      "checked_at": "2026-10-22T16:29:34.981541+00:00",
+      "http_status": 403,
+      "sha256": "cd4dc3e593f3424383d6671a919d2500ba44355130d13f00fbac0457b6ae34e1",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.ndbc.noaa.gov/data/realtime2/",
+      "checked_at": "2026-10-22T16:29:46.713548+00:00",
+      "http_status": 200,
+      "sha256": "77ba6b2926413d6791945d38e9f5b77491c0b810af23c23526871a89172e6a97",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
+      "checked_at": "2026-10-22T16:26:08.067901+00:00",
+      "http_status": 200,
+      "sha256": "13b3e07fc82e2ecf65ec1ca3f614bd180a97cc8ec3519238ab403ca0ede5ec26",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.ndbc.noaa.gov/faq/measdes.shtml",
+      "checked_at": "2026-10-22T16:14:47.213975+00:00",
+      "http_status": 200,
+      "sha256": "759c1a15a1f58959a71aa029ee0922671c968b8fe66b6f480b5b34f747f2b219",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.nhc.noaa.gov/data/",
+      "checked_at": "2026-10-22T16:29:46.856602+00:00",
+      "http_status": 200,
+      "sha256": "9a6732e12f5443a414fcf9c179eec82e59ebb63b505e8126fa005801a7137619",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+      "checked_at": "2026-10-22T16:29:44.832838+00:00",
+      "http_status": 200,
+      "sha256": "f2878345e256a128670fe15fbbfe8272ff37683e20170585d503c484e7c5527e",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.weather.gov/disclaimer",
+      "checked_at": "2026-10-22T16:29:45.492526+00:00",
+      "http_status": 200,
+      "sha256": "8919bb160c331dbee30b25a03f3061b9f934bf05bb684c62fd1680e44ae43b8f",
+      "scope": "Documentation/terms response only; not a data-availability verdict"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.txt",
+      "checked_at": "2026-10-22T16:49:35.759293+00:00",
+      "http_status": 200,
+      "sha256": "21c1cdce6ab0e5509b04d84a28000836c7a087cf786efe6f04877ebfff47232a",
+      "scope": "HTTP status classification specification"
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc6585.txt",
+      "checked_at": "2026-10-22T16:49:35.903617+00:00",
+      "http_status": 200,
+      "sha256": "f6d55d1b491cd515c35827cf9181753b23b2a68c4df14e56d83dc445b3876e58",
+      "scope": "HTTP status classification specification"
+    }
+  ],
+  "probes": [
+    {
+      "source": "coops",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250101%2000:00&end_date=20250101%2000:00&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&application=DataAPI_Sample&format=json",
+      "checked_at": "2026-10-22T16:39:04.963830+00:00",
+      "http_status": 200,
+      "sha256": "cb70eb8faa2235f82c179485698eb260ce8d646d686d03a6de74d1f8ffa3423b",
+      "status": "OK",
+      "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
+    },
+    {
+      "source": "met_norway",
+      "url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+      "checked_at": "2026-10-22T16:39:06.724195+00:00",
+      "http_status": 200,
+      "sha256": "ca0540ffe78248724ca85aeb571eafa1cc5edf88c11cd72238c4e2724a2ffc60",
+      "status": "OK",
+      "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
+    },
+    {
+      "source": "irish_weather_buoys",
+      "url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.json?time%2Cstation_id%2CWaveHeight%2CTp&time%3E=2025-12-31T00%3A00%3A00Z&time%3C=2025-12-31T00%3A00%3A00Z",
+      "checked_at": "2026-10-22T16:39:05.861941+00:00",
+      "http_status": 200,
+      "sha256": "fa3b3dd0d9947ca414e21950921644efc50a5e7ac50f3d2a9bc201d4bc8c671f",
+      "status": "OK",
+      "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
+    },
+    {
+      "source": "ndbc_realtime",
+      "url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "checked_at": "2026-10-22T16:39:04.685810+00:00",
+      "http_status": 200,
+      "sha256": "83c570b14ddbc121e77cbfd6bba54886bd402a58f2c947b743de7676b02f76a9",
+      "status": "OK",
+      "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
+    },
+    {
+      "source": "era5",
+      "url": "https://cds.climate.copernicus.eu/api/catalogue/v1/collections/reanalysis-era5-single-levels",
+      "checked_at": "2026-10-22T16:40:42.312958+00:00",
+      "http_status": 200,
+      "sha256": "6863fb06bb3c646134d30f8d381a231a5f49b0ecda8810534da92d174d796a0f",
+      "status": "OK",
+      "scope": "public catalogue schema/identity only; authenticated download NOT_EVALUATED"
+    },
+    {
+      "source": "cmems",
+      "url": "https://stac.marine.copernicus.eu/metadata/catalog.stac.json",
+      "checked_at": "2026-10-22T16:40:44.133708+00:00",
+      "http_status": 200,
+      "sha256": "e5923e60b6e7387a64e5c3a8156e4f7363f8b23aecca289d93481841a5b4eb94",
+      "status": "OK",
+      "scope": "public catalogue schema/identity only; authenticated download NOT_EVALUATED"
+    }
+  ]
+}

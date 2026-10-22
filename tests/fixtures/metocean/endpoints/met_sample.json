@@ -1,0 +1,38 @@
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [
+      5.0012,
+      60.1023
+    ]
+  },
+  "properties": {
+    "meta": {
+      "updated_at": "2026-10-22T15:08:27Z",
+      "units": {
+        "sea_surface_wave_from_direction": "degrees",
+        "sea_surface_wave_height": "m",
+        "sea_water_speed": "m/s",
+        "sea_water_temperature": "celsius",
+        "sea_water_to_direction": "degrees"
+      }
+    },
+    "timeseries": [
+      {
+        "time": "2026-10-22T16:00:00Z",
+        "data": {
+          "instant": {
+            "details": {
+              "sea_surface_wave_from_direction": 204.1,
+              "sea_surface_wave_height": 2.9,
+              "sea_water_speed": 0.5,
+              "sea_water_temperature": 12.6,
+              "sea_water_to_direction": 358.0
+            }
+          }
+        }
+      }
+    ]
+  }
+}

@@ -17,6 +17,16 @@ from worldenergydata.metocean.clients import copernicus_clients as clients
 from worldenergydata.metocean.constants import CMEMS_BASE_URL
 
 
+@pytest.fixture(autouse=True)
+def synthetic_credentials(monkeypatch):
+    for name in (
+        "CDSAPI_KEY",
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD",
+    ):
+        monkeypatch.setenv(name, "synthetic-placeholder")
+
+
 @pytest.mark.parametrize("source", ["era5", "cmems"])
 def test_catalogue_probe(source):
     def respond(request):
@@ -121,7 +131,12 @@ def test_era5_retrieve_uses_current_api(monkeypatch):
     )
     assert result == "download.grib"
     assert calls == [
-        {"url": "https://cds.climate.copernicus.eu/api"},
+        {
+            "url": "https://cds.climate.copernicus.eu/api",
+            "key": "synthetic-placeholder",
+            "quiet": True,
+            "debug": False,
+        },
         ("reanalysis-era5-pressure-levels", request, "download.grib"),
     ]
 
@@ -150,7 +165,14 @@ def test_marine_subset_uses_toolbox(monkeypatch):
         clients.CMEMSClient().subset("cmems_mod_glo_phy_my_0.083deg_P1D-m", **selection)
         == "subset.nc"
     )
-    assert calls == [{"dataset_id": "cmems_mod_glo_phy_my_0.083deg_P1D-m", **selection}]
+    assert calls == [
+        {
+            "dataset_id": "cmems_mod_glo_phy_my_0.083deg_P1D-m",
+            "username": "synthetic-placeholder",
+            "password": "synthetic-placeholder",
+            **selection,
+        }
+    ]
 
 
 @pytest.mark.parametrize(
