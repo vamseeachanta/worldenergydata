@@ -18,11 +18,11 @@
   "outputs": [
     {
       "path": "project_cost_map.csv",
-      "sha256": "17abfd089547bfffe17195b4509c0b21d2f9f744052cd94861ffa01d610b2af9"
+      "sha256": "6bd003ab6d331df6968a9d1628139d727c45b761b4546236b59575fbeaa4b4a4"
     },
     {
       "path": "project_cost_map.html",
-      "sha256": "2638d0c9416e41a856e46e26571c3f7677e210a999de55a16dd5e4adb6443d78"
+      "sha256": "be0e1a00e26275cd2ef02bff8898c80e2c372d890fac43fc8c610ed356b74fe7"
     }
   ],
   "producer": [
@@ -32,7 +32,7 @@
     },
     {
       "path": "basis.py",
-      "sha256": "536ea1e0e8813f319083ca95087e73ea8467a20dcc6980daf697974dbd06b0ef"
+      "sha256": "1887189c9afe51c54aaf0e4d263cb57154846177a4c9e0a144fd0d6f825c40a5"
     },
     {
       "path": "intervals.py",
@@ -40,7 +40,7 @@
     },
     {
       "path": "reporting.py",
-      "sha256": "4e06785c255f6720d875fac07fe26137602afa5092034dc815eb41b217a3deb7"
+      "sha256": "90c5cd528b155f5c11139f758c939dcdac20387105b7cbca1fff56ef14fec261"
     },
     {
       "path": "scenarios.py",
@@ -48,7 +48,7 @@
     },
     {
       "path": "synthesis.py",
-      "sha256": "82b0c02ae6bd7b3121a80384554debc96906194ed2975cc8cf6b7180542e9b31"
+      "sha256": "e01597d0b76cb15f0d8d7a88ed11cacbe578cba49373ab5244a23aef2328d834"
     }
   ],
   "revision_date": "2026-10-19",
@@ -78,7 +78,7 @@
   ],
   "schema": {
     "path": "reporting.py",
-    "sha256": "4e06785c255f6720d875fac07fe26137602afa5092034dc815eb41b217a3deb7",
+    "sha256": "90c5cd528b155f5c11139f758c939dcdac20387105b7cbca1fff56ef14fec261",
     "version": "1.0"
   },
   "upstream_manifest_sha256": null

@@ -12,7 +12,7 @@ import io
 import json
 from dataclasses import asdict
 from datetime import date
-from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal, localcontext
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal, InvalidOperation, localcontext
 from html import escape
 from pathlib import Path
 
@@ -72,6 +72,10 @@ def _preflight(
 
 
 def _interval(value: dict) -> Interval:
+    if any(
+        type(value.get(key, False)) is not bool for key in ("low_open", "high_open")
+    ):
+        raise ValueError("interval open flags must be boolean")
     return Interval(
         Decimal(value["low"]),
         Decimal(value["high"]),
@@ -95,7 +99,14 @@ def load_portfolio(
     elif data["evidence_status"] != "synthetic":
         raise ValueError("unknown evidence status")
     date.fromisoformat(data["revision_date"])
-    quantum = Decimal(data["quantum"])
+    try:
+        if isinstance(data["quantum"], bool):
+            raise TypeError("boolean quantum")
+        quantum = Decimal(data["quantum"])
+    except (InvalidOperation, TypeError, ValueError):
+        raise ValueError("positive finite quantum required") from None
+    if not quantum.is_finite() or quantum <= 0:
+        raise ValueError("positive finite quantum required")
     scenarios = tuple(
         Scenario(
             s["scenario_id"],
@@ -156,12 +167,17 @@ def _bound(value: Decimal, quantum: Decimal, upper: bool) -> str:
         return str(value)
     with localcontext() as ctx:
         ctx.prec = max(
-            PRECISION, len(value.as_tuple().digits) + abs(value.adjusted()) + 4
+            PRECISION,
+            len(value.as_tuple().digits)
+            + abs(value.adjusted())
+            + abs(quantum.as_tuple().exponent)
+            + 4,
         )
         rounded = (value / quantum).to_integral_value(
             rounding=ROUND_CEILING if upper else ROUND_FLOOR
         ) * quantum
-        return str(rounded.copy_abs() if rounded == 0 else rounded)
+        rounded = rounded.quantize(quantum)
+        return format(rounded.copy_abs() if rounded == 0 else rounded, "f")
 
 
 def _bounds(value: Interval | None, quantum: Decimal) -> tuple[str, str, str, str]:
@@ -215,7 +231,8 @@ def render_html(data: dict, results: tuple[Synthesis, ...]) -> str:
         "<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>",
         f'<tr><td>1</td><td>{escape(data["revision_date"])}</td><td>Initial synthesis to expose residuals and inference.</td></tr>',
         "<tr><td>2</td><td>2026-10-20</td><td>Required real-money years, preserved JSON decimals and identified allocation cases to retain their comparison basis.</td></tr>",
-        "<tr><td>3</td><td>2026-10-22</td><td>Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity.</td></tr></table>",
+        "<tr><td>3</td><td>2026-10-22</td><td>Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity.</td></tr>",
+        "<tr><td>4</td><td>2026-10-22</td><td>Required complete scenario shares and explicit non-nominal years, validated report inputs and overlap membership, and corrected numeric displays and metric sources to preserve the evidence basis.</td></tr></table>",
         (
             "<p>Solid green: observed evidence. Dashed amber: inferred allocations. "
             "Ranges are enclosures, not probability intervals. Marginal ranges are non-additive.</p>"
@@ -275,7 +292,7 @@ def render_html(data: dict, results: tuple[Synthesis, ...]) -> str:
             )
             out.append(
                 f"<details><summary>{escape(a.scenario_id)} — {escape(a.derivation)}; "
-                f"case {escape(a.case_id)}; target {escape(str(a.total))}; "
+                f"case {escape(a.case_id)}; target {escape(format(a.total, 'f'))}; "
                 f"{escape(qualifier)}</summary><ul>"
             )
             for key, value in a.amounts:
@@ -343,6 +360,26 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                 if name in {"coverage", "residual_fraction"}
                 else quantum
             )
+            if name == "total":
+                sources = {r.project.source}
+            else:
+                disposition = {
+                    "eligible": "included",
+                    "excluded_compatible": "excluded",
+                    "overlap_compatible": "overlap",
+                    "residual": "included",
+                    "coverage": "included",
+                    "residual_fraction": "included",
+                }[name]
+                sources = {
+                    row.source
+                    for row in r.contributions
+                    if row.disposition == disposition
+                    and row.amount is not None
+                    and row.basis == r.project.basis
+                }
+                if name in {"residual", "coverage", "residual_fraction"}:
+                    sources.add(r.project.source)
             writer.writerow(
                 (
                     r.project.project_id,
@@ -350,7 +387,7 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                     "",
                     "observed",
                     *_bounds(value, q),
-                    r.project.source,
+                    json.dumps(sorted(sources), ensure_ascii=False),
                     "",
                     "",
                     "",
@@ -395,7 +432,7 @@ def render_csv(data: dict, results: tuple[Synthesis, ...]) -> str:
                         *_bounds(Interval.point(value), quantum),
                         a.source,
                         a.case_id,
-                        str(a.total),
+                        format(a.total, "f"),
                         a.target_endpoint,
                         str(a.target_open).lower(),
                         str(a.limiting).lower(),

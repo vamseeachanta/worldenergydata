@@ -112,6 +112,37 @@ def test_real_basis_year_controls_award_eligibility(project, basis):
         synthesize(target, (row(replace(real, basis_year=2021)),))
 
 
+@pytest.mark.parametrize(
+    "price_basis", ["constant", "real-2020", "Real Terms", "deflated"]
+)
+def test_every_non_nominal_basis_requires_year(basis, price_basis):
+    with pytest.raises(ValueError, match="year"):
+        replace(basis, price_basis=price_basis)
+
+
+@pytest.mark.parametrize(
+    "price_basis", ["constant", "real-2020", "Real Terms", "deflated"]
+)
+def test_non_nominal_basis_compares_explicit_year(project, basis, price_basis):
+    explicit = replace(basis, price_basis=price_basis, basis_year=2020)
+    target = replace(project, basis=explicit)
+    # A compatible 20..30 award counts only against the same explicit year.
+    assert synthesize(target, (row(explicit),)).eligible == Interval(D(20), D(30))
+    with pytest.raises(ValueError, match="basis"):
+        synthesize(target, (row(replace(explicit, basis_year=2021)),))
+
+
+@pytest.mark.parametrize(
+    "placeholder", ["TBD", "-", "NA", "null", "NaN", "Not Applicable", "not available"]
+)
+@pytest.mark.parametrize(
+    "field", ["currency", "price_basis", "ownership", "scope", "capex", "phase"]
+)
+def test_basis_placeholders_fail_closed(basis, field, placeholder):
+    with pytest.raises(ValueError, match="known"):
+        replace(basis, **{field: f" {placeholder} "}, basis_year=2020)
+
+
 def test_count_once_and_bundle_not_split(project, basis):
     """One 20..30 award linked to both requirements still contributes 20..30."""
     bundled = row(basis, requirement_ids=project.requirement_ids)
@@ -151,6 +182,46 @@ def test_overlap_and_non_capex_not_added(project, basis):
     assert result.not_public == ("awd-secret",)
     with pytest.raises(ValueError, match="overlap"):
         synthesize(project, (rows[0], replace(rows[0], award_id="awd-c")))
+
+
+@pytest.mark.parametrize("undisclosed", [(True, True), (True, False), (False, True)])
+def test_undisclosed_included_awards_reserve_overlap_group(project, basis, undisclosed):
+    rows = tuple(
+        row(
+            basis,
+            award_id=f"awd-{index}",
+            overlap_group="epci",
+            amount=None if missing else Interval.point(D(20)),
+            value_basis="not_public" if missing else "point",
+        )
+        for index, missing in enumerate(undisclosed)
+    )
+    with pytest.raises(ValueError, match="overlap"):
+        synthesize(project, rows)
+
+
+def test_duplicate_undisclosed_award_counts_once(project, basis):
+    hidden = row(basis, amount=None, value_basis="not_public", overlap_group="epci")
+    result = synthesize(project, (hidden, hidden))
+    assert result.not_public == (hidden.award_id,)
+    assert result.eligible == Interval.point(D(0))
+
+
+@pytest.mark.parametrize("disposition", ["excluded", "overlap"])
+def test_undisclosed_nonincluded_award_does_not_reserve_group(
+    project, basis, disposition
+):
+    hidden = row(
+        basis,
+        award_id="awd-hidden",
+        amount=None,
+        value_basis="not_public",
+        disposition=disposition,
+        overlap_group="epci",
+        reason="not_counted",
+    )
+    observed = row(basis, overlap_group="epci")
+    assert synthesize(project, (hidden, observed)).eligible == Interval(D(20), D(30))
 
 
 @pytest.mark.parametrize(
@@ -204,6 +275,36 @@ def test_scenario_accounting_distinguishes_residual_and_unallocated(project, bas
     assert allocation.unallocated == D(10)
     assert allocation.unreconciled_variance == 0
     assert allocation.derivation == "allocated"
+
+
+@pytest.mark.parametrize("ranged", [False, True])
+@pytest.mark.parametrize("missing_scenario", [0, 1])
+def test_each_scenario_requires_every_requirement(project, ranged, missing_scenario):
+    target = replace(
+        project,
+        total=Interval(D(90), D(110)) if ranged else project.total,
+        requirement_ids=(*project.requirement_ids, "req-subsea"),
+    )
+    complete = scenario(shares=(*scenario().shares, ("req-subsea", D(0))))
+    missing = scenario(scenario_id="scn-missing")
+    scenarios = [complete, complete]
+    scenarios[missing_scenario] = missing
+    with pytest.raises(ValueError, match="every.*requirement"):
+        synthesize(target, (), tuple(scenarios), quantum=D(".01"))
+
+
+@pytest.mark.parametrize("ranged", [False, True])
+def test_explicit_zero_requirement_share_is_evidence(project, ranged):
+    # Explicit zero gives 0 at both total endpoints; absence is not a zero share.
+    target = replace(
+        project,
+        total=Interval(D(90), D(110)) if ranged else project.total,
+        requirement_ids=(*project.requirement_ids, "req-subsea"),
+    )
+    complete = scenario(shares=(*scenario().shares, ("req-subsea", D(0))))
+    result = synthesize(target, (), (complete,), quantum=D(".01"))
+    assert dict(result.bands)["req-subsea"] == Interval.point(D(0))
+    assert all(dict(a.amounts)["req-subsea"] == 0 for a in result.allocations)
 
 
 def test_largest_remainder_quantization():

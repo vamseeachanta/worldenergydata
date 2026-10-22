@@ -49,12 +49,12 @@ def synthesize(
     groups: set[str] = set()
     for row in unique.values():
         row.validate_for(project)
-        if row.amount is None:
-            continue
         if row.disposition == "included" and row.overlap_group:
             if row.overlap_group in groups:
                 raise ValueError("multiple included awards in one overlap group")
             groups.add(row.overlap_group)
+        if row.amount is None:
+            continue
         # Excluded foreign-basis amounts cannot form a meaningful monetary sum.
         # They remain in the evidence ledger; compatible diagnostics sum only.
         if row.basis == project.basis:
@@ -69,6 +69,8 @@ def synthesize(
             raise ValueError("incompatible architecture")
         if not {k for k, _ in scenario.shares} <= set(project.requirement_ids):
             raise ValueError("scenario references unknown requirement")
+        if {k for k, _ in scenario.shares} != set(project.requirement_ids):
+            raise ValueError("scenario must list every project requirement explicitly")
         if quantum is None:
             raise ValueError("allocation quantum required")
         if not project.total.low.is_finite() or not project.total.high.is_finite():
@@ -90,13 +92,13 @@ def synthesize(
     bands = []
     if allocations:
         for key in sorted(project.requirement_ids):
-            values = [dict(a.amounts).get(key, ZERO) for a in allocations]
+            values = [dict(a.amounts)[key] for a in allocations]
             if project.total.low != project.total.high:
                 # Largest remainder is not monotonic in total (apportionment
                 # paradox). Floor/ceil of raw shares encloses interior totals too.
                 values = []
                 for scenario in scenarios:
-                    share = Fraction(dict(scenario.shares).get(key, ZERO))
+                    share = Fraction(dict(scenario.shares)[key])
                     low = Fraction(project.total.low) * share / Fraction(quantum)
                     high = Fraction(project.total.high) * share / Fraction(quantum)
                     values.extend(

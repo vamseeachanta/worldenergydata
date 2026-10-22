@@ -22,6 +22,13 @@ def known(value: str) -> bool:
             "n/a",
             "todo",
             "not_public",
+            "tbd",
+            "-",
+            "na",
+            "null",
+            "nan",
+            "not applicable",
+            "not available",
         }
     )
 
@@ -47,8 +54,8 @@ class Basis:
             type(self.basis_year) is not int or not 1 <= self.basis_year <= 9999
         ):
             raise ValueError("basis year must be an integer calendar year")
-        if self.price_basis.strip().lower() == "real" and self.basis_year is None:
-            raise ValueError("real money requires an explicit basis year")
+        if self.price_basis.strip().lower() != "nominal" and self.basis_year is None:
+            raise ValueError("non-nominal money requires an explicit basis year")
 
 
 @dataclass(frozen=True)

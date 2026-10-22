@@ -1,13 +1,13 @@
 project_id,view,identity,derivation,low,high,low_open,high_open,source,allocation_case,target_total,target_endpoint,target_open,limiting,quantity_kind
-prj-demo,total,,observed,100,100,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,eligible,,observed,20,30,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,excluded_compatible,,observed,50,50,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,overlap_compatible,,observed,0,0,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,residual,,observed,70,80,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,coverage,,observed,0.20,0.30,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,residual_fraction,,observed,0.70,0.80,false,false,Synthetic total: 100 monetary units; hand calculation (2026),,,,,,project_metric
-prj-demo,included,awd-demo,observed,20,30,false,false,Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026),,,,,,award
-prj-demo,excluded,awd-lease,observed,50,50,false,false,"Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)",,,,,,award
+prj-demo,total,,observed,100.00,100.00,false,false,"[""Synthetic total: 100 monetary units; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,eligible,,observed,20.00,30.00,false,false,"[""Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,excluded_compatible,,observed,50.00,50.00,false,false,"[""Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,overlap_compatible,,observed,0.00,0.00,false,false,[],,,,,,project_metric
+prj-demo,residual,,observed,70.00,80.00,false,false,"[""Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)"", ""Synthetic total: 100 monetary units; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,coverage,,observed,0.200,0.300,false,false,"[""Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)"", ""Synthetic total: 100 monetary units; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,residual_fraction,,observed,0.700,0.800,false,false,"[""Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)"", ""Synthetic total: 100 monetary units; hand calculation (2026)""]",,,,,,project_metric
+prj-demo,included,awd-demo,observed,20.00,30.00,false,false,Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026),,,,,,award
+prj-demo,excluded,awd-lease,observed,50.00,50.00,false,false,"Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)",,,,,,award
 prj-demo,scn-alternative,req-host,modeled,20.00,20.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false,requirement
 prj-demo,scn-alternative,req-wells,modeled,70.00,70.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false,requirement
 prj-demo,scn-alternative,unallocated,modeled,10.00,10.00,false,false,Synthetic joint shares: 0.2 + 0.7 + 0.1 = 1; hand calculation (2026),point,100,point,false,false,unallocated

@@ -10,21 +10,22 @@ table{border-collapse:collapse;width:100%}td,th{border:1px solid #aaa;padding:.5
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
 <tr><td>1</td><td>2026-10-19</td><td>Initial synthesis to expose residuals and inference.</td></tr>
 <tr><td>2</td><td>2026-10-20</td><td>Required real-money years, preserved JSON decimals and identified allocation cases to retain their comparison basis.</td></tr>
-<tr><td>3</td><td>2026-10-22</td><td>Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity.</td></tr></table>
+<tr><td>3</td><td>2026-10-22</td><td>Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity.</td></tr>
+<tr><td>4</td><td>2026-10-22</td><td>Required complete scenario shares and explicit non-nominal years, validated report inputs and overlap membership, and corrected numeric displays and metric sources to preserve the evidence basis.</td></tr></table>
 <p>Solid green: observed evidence. Dashed amber: inferred allocations. Ranges are enclosures, not probability intervals. Marginal ranges are non-additive.</p>
 <section id="70726f6a656374-70726a2d64656d6f"><h2>prj-demo</h2>
 <p>Architecture: subsea_tieback. Basis: {&#x27;currency&#x27;: &#x27;USD&#x27;, &#x27;price_basis&#x27;: &#x27;nominal&#x27;, &#x27;ownership&#x27;: &#x27;gross&#x27;, &#x27;scope&#x27;: &#x27;development&#x27;, &#x27;capex&#x27;: &#x27;project_capex&#x27;, &#x27;phase&#x27;: &#x27;FID&#x27;, &#x27;basis_year&#x27;: None}.</p>
 <p>Target source: Synthetic total: 100 monetary units; hand calculation (2026)</p>
 <div class="observed"><h3>Observed bottom-up accounting</h3><dl>
-<dt>Disclosed target</dt><dd>100</dd>
-<dt>Eligible subtotal</dt><dd>[20, 30]</dd>
-<dt>Excluded compatible subtotal</dt><dd>50</dd>
-<dt>Overlap compatible subtotal</dt><dd>0</dd>
-<dt>Residual</dt><dd>[70, 80]</dd>
+<dt>Disclosed target</dt><dd>100.0</dd>
+<dt>Eligible subtotal</dt><dd>[20.0, 30.0]</dd>
+<dt>Excluded compatible subtotal</dt><dd>50.0</dd>
+<dt>Overlap compatible subtotal</dt><dd>0.0</dd>
+<dt>Residual</dt><dd>[70.0, 80.0]</dd>
 <dt>Coverage</dt><dd>[20.0, 30.0] %</dd><dt>Residual percentage</dt><dd>[70.0, 80.0] %</dd></dl>
 <p>Excluded or overlapping values with other bases remain in the ledger and are omitted from compatible diagnostic subtotals.</p><ul>
-<li>awd-demo: [20, 30]; included; range; ; <a href="#726571-70726a2d64656d6f-7265712d686f7374">req-host</a> <a href="#726571-70726a2d64656d6f-7265712d77656c6c73">req-wells</a>; basis {&#x27;currency&#x27;: &#x27;USD&#x27;, &#x27;price_basis&#x27;: &#x27;nominal&#x27;, &#x27;ownership&#x27;: &#x27;gross&#x27;, &#x27;scope&#x27;: &#x27;development&#x27;, &#x27;capex&#x27;: &#x27;project_capex&#x27;, &#x27;phase&#x27;: &#x27;FID&#x27;, &#x27;basis_year&#x27;: None}; source Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)</li>
-<li>awd-lease: 50; excluded; lease_contract; non_capex; <a href="#726571-70726a2d64656d6f-7265712d686f7374">req-host</a>; basis {&#x27;currency&#x27;: &#x27;USD&#x27;, &#x27;price_basis&#x27;: &#x27;nominal&#x27;, &#x27;ownership&#x27;: &#x27;gross&#x27;, &#x27;scope&#x27;: &#x27;development&#x27;, &#x27;capex&#x27;: &#x27;project_capex&#x27;, &#x27;phase&#x27;: &#x27;FID&#x27;, &#x27;basis_year&#x27;: None}; source Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)</li>
+<li>awd-demo: [20.0, 30.0]; included; range; ; <a href="#726571-70726a2d64656d6f-7265712d686f7374">req-host</a> <a href="#726571-70726a2d64656d6f-7265712d77656c6c73">req-wells</a>; basis {&#x27;currency&#x27;: &#x27;USD&#x27;, &#x27;price_basis&#x27;: &#x27;nominal&#x27;, &#x27;ownership&#x27;: &#x27;gross&#x27;, &#x27;scope&#x27;: &#x27;development&#x27;, &#x27;capex&#x27;: &#x27;project_capex&#x27;, &#x27;phase&#x27;: &#x27;FID&#x27;, &#x27;basis_year&#x27;: None}; source Synthetic bundled award: 20 to 30 monetary units; hand calculation (2026)</li>
+<li>awd-lease: 50.0; excluded; lease_contract; non_capex; <a href="#726571-70726a2d64656d6f-7265712d686f7374">req-host</a>; basis {&#x27;currency&#x27;: &#x27;USD&#x27;, &#x27;price_basis&#x27;: &#x27;nominal&#x27;, &#x27;ownership&#x27;: &#x27;gross&#x27;, &#x27;scope&#x27;: &#x27;development&#x27;, &#x27;capex&#x27;: &#x27;project_capex&#x27;, &#x27;phase&#x27;: &#x27;FID&#x27;, &#x27;basis_year&#x27;: None}; source Synthetic lease value: 50 monetary units, excluded; hand calculation (2026)</li>
 </ul></div><div class="inferred"><h3>Top-down scenarios</h3>
 <p>Status: evaluated. Allocations are never award disclosures.</p>
 <details><summary>scn-alternative — modeled; case point; target 100; point case</summary><ul>

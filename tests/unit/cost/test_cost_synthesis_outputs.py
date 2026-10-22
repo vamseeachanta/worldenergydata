@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import json
+import re
 from decimal import Decimal
 from html.parser import HTMLParser
 from pathlib import Path
@@ -13,6 +14,39 @@ from worldenergydata.cost.portfolio.reporting import build, load_portfolio
 
 ROOT = Path(__file__).resolve().parents[3]
 EXAMPLE = ROOT / "data/modules/cost/examples/portfolio_synthesis.json"
+REBUILD = (
+    "Rebuild with scripts/cost/build_project_cost_map.py "
+    "--input data/modules/cost/examples/portfolio_synthesis.json --output-dir reports/cost"
+)
+
+
+def observed_values(html):
+    class Definitions(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.tag = None
+            self.label = None
+            self.values = {}
+
+        def handle_starttag(self, tag, attrs):
+            if tag in {"dt", "dd"}:
+                self.tag = tag
+
+        def handle_endtag(self, tag):
+            if tag in {"dt", "dd"}:
+                self.tag = None
+
+        def handle_data(self, text):
+            if self.tag == "dt":
+                self.label = text
+            elif self.tag == "dd":
+                self.values[self.label] = tuple(
+                    Decimal(v) for v in re.findall(r"-?\d+(?:\.\d+)?", text)
+                )
+
+    parser = Definitions()
+    parser.feed(html)
+    return parser.values
 
 
 @pytest.mark.parametrize(
@@ -28,7 +62,7 @@ def test_csv_quantity_kinds_distinguish_requirements_from_buckets(
     project["contributions"][0]["requirement_ids"][0] = requirement_id
     for scenario in value["scenarios"]:
         scenario["shares"][requirement_id] = scenario["shares"].pop("req-host")
-    cases = [("point", Decimal("100"), Decimal("60"), Decimal("30"), Decimal("10"))]
+    cases = [("point", Decimal(100), Decimal(60), Decimal(30), Decimal(10))]
     if target_kind != "point":
         is_open = target_kind == "open-range"
         project["total"] = {
@@ -38,13 +72,13 @@ def test_csv_quantity_kinds_distinguish_requirements_from_buckets(
             "high_open": is_open,
         }
         cases = [
-            ("lower-bound", Decimal("90"), Decimal("54"), Decimal("27"), Decimal("9")),
+            ("lower-bound", Decimal(90), Decimal(54), Decimal(27), Decimal(9)),
             (
                 "upper-bound",
-                Decimal("110"),
-                Decimal("66"),
-                Decimal("33"),
-                Decimal("11"),
+                Decimal(110),
+                Decimal(66),
+                Decimal(33),
+                Decimal(11),
             ),
         ]
     path = tmp_path / "input.json"
@@ -83,7 +117,7 @@ def test_csv_quantity_kinds_distinguish_requirements_from_buckets(
             ("requirement", requirement_id): requirement,
             ("requirement", "req-wells"): wells,
             ("unallocated", "unallocated"): unallocated,
-            ("unreconciled_variance", "unreconciled_variance"): Decimal("0"),
+            ("unreconciled_variance", "unreconciled_variance"): Decimal(0),
         }
         assert sum(amounts.values()) == target
         assert all(Decimal(r["high"]) == Decimal(r["low"]) for r in group)
@@ -262,7 +296,20 @@ def test_deterministic_cost_map_and_manifest(tmp_path):
     assert ">Project total</a>" in html
     assert "observed" in html and "inferred" in html
     assert "NOT_EVALUATED" not in html
-    assert "70.0" in html and "80.0" in html
+    observed = observed_values(html)
+    # T=100; E=[20,30]; R=100-E=[70,80]; E/T*100=[20,30] percent.
+    expected = {
+        "Disclosed target": (Decimal(100),),
+        "Eligible subtotal": (Decimal(20), Decimal(30)),
+        "Residual": (Decimal(70), Decimal(80)),
+        "Coverage": (Decimal(20), Decimal(30)),
+        "Residual percentage": (Decimal(70), Decimal(80)),
+    }
+    for label, values in expected.items():
+        assert len(observed[label]) == len(values)
+        assert all(
+            abs(a - b) <= Decimal("0.000001") for a, b in zip(observed[label], values)
+        )
     assert "Revision history" in html
     csv = (tmp_path / "first/project_cost_map.csv").read_text(encoding="utf-8")
     assert "residual_fraction" in csv
@@ -278,7 +325,93 @@ def test_deterministic_cost_map_and_manifest(tmp_path):
             == hashlib.sha256(
                 (tmp_path / "first" / item["path"]).read_bytes()
             ).hexdigest()
-        ), "Rebuild with scripts/cost/build_project_cost_map.py"
+        ), REBUILD
+
+
+def test_committed_cost_map_matches_fresh_build(tmp_path):
+    fresh = build(EXAMPLE, tmp_path / "fresh")
+    committed = ROOT / "reports/cost"
+    saved = json.loads(
+        (committed / "cost_synthesis_manifest.v3.json").read_text(encoding="utf-8")
+    )
+    assert saved == fresh, REBUILD
+    for item in fresh["outputs"]:
+        assert (
+            hashlib.sha256((committed / item["path"]).read_bytes()).hexdigest()
+            == item["sha256"]
+        ), REBUILD
+    # Rebuilt accounting numbers agree within a millionth of a monetary unit.
+    for label, values in observed_values(
+        (tmp_path / "fresh/project_cost_map.html").read_text(encoding="utf-8")
+    ).items():
+        stored = observed_values(
+            (committed / "project_cost_map.html").read_text(encoding="utf-8")
+        )[label]
+        assert len(stored) == len(values), REBUILD
+        assert all(
+            abs(a - b) <= Decimal("0.000001") for a, b in zip(stored, values)
+        ), REBUILD
+
+
+def test_csv_metric_sources_follow_the_contributing_evidence(tmp_path):
+    from copy import deepcopy
+
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    project = value["projects"][0]
+    project["source"] = "synthetic target"
+    included, excluded = project["contributions"]
+    included["source"] = "synthetic included range"
+    excluded["source"] = "synthetic excluded amount"
+    overlap = deepcopy(included)
+    overlap.update(
+        award_id="awd-overlap",
+        disposition="overlap",
+        reason="duplicate_scope",
+        overlap_group="epci",
+        source="synthetic overlap amount",
+    )
+    second = deepcopy(included)
+    second.update(
+        award_id="awd-second",
+        source="synthetic included point",
+        amount={"low": "10", "high": "10"},
+        value_basis="point",
+    )
+    foreign = deepcopy(excluded)
+    foreign.update(award_id="awd-foreign", source="synthetic foreign exclusion")
+    foreign["basis"]["currency"] = "EUR"
+    hidden = deepcopy(included)
+    hidden.update(
+        award_id="awd-hidden",
+        source="synthetic undisclosed award",
+        amount=None,
+        value_basis="not_public",
+    )
+    project["contributions"].extend([overlap, second, foreign, hidden, second])
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    build(path, tmp_path / "report")
+    with (tmp_path / "report/project_cost_map.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
+        rows = list(csv.DictReader(stream))
+    metrics = {r["view"]: r for r in rows if r["quantity_kind"] == "project_metric"}
+    included_sources = {"synthetic included range", "synthetic included point"}
+    expected = {
+        "total": {"synthetic target"},
+        "eligible": included_sources,
+        "excluded_compatible": {"synthetic excluded amount"},
+        "overlap_compatible": {"synthetic overlap amount"},
+        "residual": included_sources | {"synthetic target"},
+        "coverage": included_sources | {"synthetic target"},
+        "residual_fraction": included_sources | {"synthetic target"},
+    }
+    for metric, sources in expected.items():
+        assert json.loads(metrics[metric]["source"]) == sorted(sources)
+    assert (
+        next(r for r in rows if r["identity"] == "awd-hidden")["source"]
+        == hidden["source"]
+    )
 
 
 def test_production_input_requires_pinned_manifest(tmp_path):
@@ -322,6 +455,60 @@ def test_no_scenarios_surfaces_not_evaluated(tmp_path):
     html = (tmp_path / "report/project_cost_map.html").read_text(encoding="utf-8")
     assert "NOT_EVALUATED" in html
     assert "unallocated unavailable" in html
+
+
+@pytest.mark.parametrize("scenarios_present", [False, True])
+@pytest.mark.parametrize(
+    "quantum", ["-0.01", "0", "NaN", "Infinity", "-Infinity", "invalid", None, True]
+)
+def test_load_rejects_invalid_quantum_without_relying_on_scenarios(
+    tmp_path, quantum, scenarios_present
+):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    value["quantum"] = quantum
+    if not scenarios_present:
+        value["scenarios"] = []
+        value["projects"][0]["total"] = {"low": "20.005", "high": "20.005"}
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    with pytest.raises(ValueError, match="quantum"):
+        load_portfolio(path)
+
+
+@pytest.mark.parametrize("endpoint", ["low_open", "high_open"])
+@pytest.mark.parametrize("location", ["total", "amount"])
+@pytest.mark.parametrize("flag", ["false", 0, 1, None, [], {}])
+def test_load_rejects_non_boolean_open_flags(tmp_path, endpoint, location, flag):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    value["scenarios"] = []
+    project = value["projects"][0]
+    target = (
+        project["total"]
+        if location == "total"
+        else project["contributions"][0]["amount"]
+    )
+    target.update({"low": "20", "high": "30", endpoint: flag})
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    with pytest.raises(ValueError, match="boolean"):
+        load_portfolio(path)
+
+
+@pytest.mark.parametrize("flag", [False, True])
+def test_load_retains_boolean_open_flags_without_scenarios(tmp_path, flag):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    value["scenarios"] = []
+    value["projects"][0]["total"] = {
+        "low": "90",
+        "high": "110",
+        "low_open": flag,
+        "high_open": flag,
+    }
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    _, results = load_portfolio(path)
+    assert results[0].project.total.low_open is flag
+    assert results[0].project.total.high_open is flag
 
 
 def test_pinned_portfolio_manifest_and_tamper_detection(tmp_path):
@@ -411,6 +598,41 @@ def test_display_does_not_present_a_rounded_point_as_exact():
     from worldenergydata.cost.portfolio.reporting import _display
 
     assert _display(Interval.point(Decimal(".03"))) == "[0.0, 0.1]"
+
+
+@pytest.mark.parametrize(
+    "value,expected", [("100", "100.0"), ("1E+3", "1000.0"), ("-0", "0.0")]
+)
+def test_display_uses_fixed_one_decimal_place(value, expected):
+    from worldenergydata.cost.portfolio.intervals import Interval
+    from worldenergydata.cost.portfolio.reporting import _display
+
+    assert _display(Interval.point(Decimal(value))) == expected
+
+
+def test_serialized_bound_retains_small_quantum_precision():
+    from worldenergydata.cost.portfolio.reporting import _bound
+
+    assert _bound(Decimal(1), Decimal("1E-60"), False) == "1." + "0" * 60
+
+
+def test_html_accounting_and_csv_bounds_quantize_input_exponents(tmp_path):
+    value = json.loads(EXAMPLE.read_text(encoding="utf-8"))
+    value["projects"][0]["total"] = {"low": "1E+3", "high": "1E+3"}
+    path = tmp_path / "input.json"
+    path.write_text(json.dumps(value), encoding="utf-8", newline="\n")
+    build(path, tmp_path / "report")
+    html = (tmp_path / "report/project_cost_map.html").read_text(encoding="utf-8")
+    assert "<dt>Disclosed target</dt><dd>1000.0</dd>" in html
+    assert "<dt>Eligible subtotal</dt><dd>[20.0, 30.0]</dd>" in html
+    assert "target 1000" in html
+    with (tmp_path / "report/project_cost_map.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
+        rows = list(csv.DictReader(stream))
+    total = next(r for r in rows if r["view"] == "total")
+    assert (total["low"], total["high"]) == ("1000.00", "1000.00")
+    assert all("E" not in r["target_total"] for r in rows)
 
 
 def test_all_html_fragments_resolve_for_unusual_identifiers(tmp_path):

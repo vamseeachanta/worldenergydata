@@ -12,6 +12,7 @@ asserting estimates for any real development.
 | 1 | 2026-10-19 | Introduced explicit basis checks, residuals and conserving scenarios to make inference auditable. |
 | 2 | 2026-10-20 | Required real-money reference years, preserved numeric JSON decimals and identified allocation boundary cases to retain their comparison basis. |
 | 3 | 2026-10-22 | Added CSV quantity kinds to distinguish requirement allocations from accounting buckets with the same identity. |
+| 4 | 2026-10-22 | Required complete scenario shares and explicit non-nominal years, validated report inputs and overlap membership, and corrected numeric displays and metric sources to preserve the evidence basis. |
 
 ## Accounting method and sources
 
@@ -63,8 +64,11 @@ known and must match exactly for a valued included award. No FX conversion,
 price rebasing, gross-up or cross-phase comparison happens automatically. Source
 amounts must already have a documented compatible comparison basis.
 
-For `price_basis="real"`, `basis_year` is required as an integer calendar year;
-the year participates in exact basis matching. Nominal inputs may omit it.
+Every non-nominal price basis, including `constant`, `real-2020` and `Real Terms`,
+requires `basis_year` as an integer calendar year; an embedded year in a label
+does not replace that field. The year participates in exact basis matching.
+Nominal inputs may omit it. Placeholder tokens such as `TBD`, `-`, `NA` and
+`null` are rejected in every comparison field, regardless of capitalization.
 An explicitly supplied year is validated and compared for either price basis.
 JSON fractional numbers are parsed directly as Decimal, including amounts,
 shares and the output quantum. Manifests retain these fractions as exact decimal
@@ -72,7 +76,8 @@ strings rather than converting them through binary floating point.
 
 A bundled award can reference several requirements but contributes money once
 per award identity. Conflicting versions of one identity fail. A recognized
-EPCI overlap group allows at most one included award. Other members carry an
+EPCI overlap group allows at most one included award, including undisclosed
+included awards. Other members carry an
 explicit overlap disposition and reason. Overlap discovery itself requires
 upstream scope evidence; this implementation cannot infer commercial overlap.
 
@@ -89,6 +94,9 @@ and do not imply disclosed asset splits.
 
 `Scenario` requires an architecture, source reference, nonnegative joint shares,
 an explicit unallocated share and an `allocated` or `modeled` derivation.
+Every compatible scenario must list every project requirement explicitly.
+An explicit zero share is permitted; an omitted requirement fails validation
+instead of receiving an invented zero allocation or marginal band.
 Architecture selection uses exact equality, keeping dry-tree, tieback, floating,
 platform and LNG-heavy relationships separate. No numerical priors are built in.
 Sources are caller assertions retained for review, not automatically authenticated
@@ -133,6 +141,18 @@ is open. Allocation amount bounds describe the hypothetical joint calculation;
 `target_open` describes whether its target endpoint is attainable. Point totals
 have a single `point` case with `limiting=false`. HTML retains each exact target
 total and the same case qualifiers, separately from rounded monetary displays.
+
+The output quantum must be finite and strictly positive, including when no
+scenarios are supplied. Interval open flags must be JSON booleans; strings and
+numbers are rejected. Numeric bounds use fixed-point notation at the declared
+display or serialization precision, independent of the input exponent.
+
+For `project_metric` rows, CSV `source` contains a sorted JSON array of the
+distinct sources used by that metric. Compatible subtotals cite their valued
+award sources; residuals and ratios also cite the target. Foreign-basis and
+undisclosed rows retain their sources in the award ledger but do not enter
+compatible subtotal source sets. An empty subtotal has an empty source array.
+Award and allocation rows retain their individual source strings.
 
 Every CSV row carries `quantity_kind`: `project_metric` for observed totals and
 ratios, `award` for ledger contributions, `requirement` for scenario allocations,
