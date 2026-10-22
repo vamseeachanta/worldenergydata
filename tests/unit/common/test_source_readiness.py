@@ -8,6 +8,7 @@ These are test inputs, not regulatory limits or production defaults.
 import json
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -99,6 +100,35 @@ def test_freshness_uses_source_vintage(source, tmp_path, age, freshness, usable)
     result = probe(source, tmp_path, data_as_of=None if age is None else AS_OF - age)
     assert result["freshness"] == freshness
     assert result["usable"] is usable
+
+
+def test_freshness_counts_elapsed_hours_across_offset_change(source, tmp_path):
+    zone = ZoneInfo("America/New_York")
+    # 04:00 UTC on Nov 1 to 05:00 UTC on Nov 2 is 25 elapsed hours.
+    result = probe(
+        source,
+        tmp_path,
+        as_of=datetime(2026, 11, 2, tzinfo=zone),
+        data_as_of=datetime(2026, 11, 1, tzinfo=zone),
+        max_age=timedelta(hours=24),
+    )
+    assert result["freshness"] == "stale"
+    assert result["reasons"] == ["stale"]
+    assert result["usable"] is False
+
+
+def test_future_vintage_during_repeated_hour_is_rejected(source, tmp_path):
+    zone = ZoneInfo("America/New_York")
+    # Observation at 05:45 UTC precedes the vintage at 06:15 UTC.
+    result = probe(
+        source,
+        tmp_path,
+        as_of=datetime(2026, 11, 1, 1, 45, tzinfo=zone, fold=0),
+        data_as_of=datetime(2026, 11, 1, 1, 15, tzinfo=zone, fold=1),
+    )
+    assert result["freshness"] == "future"
+    assert result["reasons"] == ["future"]
+    assert result["usable"] is False
 
 
 @pytest.mark.parametrize(

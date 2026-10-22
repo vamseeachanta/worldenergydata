@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import csv
 from collections.abc import Mapping
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from worldenergydata.common.catalog import DatasetEntry
@@ -166,7 +166,7 @@ def probe_source(
         )
     freshness = "not_evaluated"
     if data_as_of is not None:
-        age = as_of - data_as_of
+        age = as_of.astimezone(timezone.utc) - data_as_of.astimezone(timezone.utc)
         freshness = (
             "future"
             if age < timedelta(0)
