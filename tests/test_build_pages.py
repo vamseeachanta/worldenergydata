@@ -218,7 +218,16 @@ def test_insights_publish_without_capabilities_overview(bp, tmp_path, monkeypatc
     published = bp.PUBLIC / "capabilities" / "insights.html"
     assert published.is_file()
     bp.build_index()
-    assert published.read_bytes() == source.read_bytes()
+    text = published.read_text(encoding="utf-8")
+    breadcrumb = re.search(r'<a href="([^"]+)">Capabilities</a>', text)
+    assert breadcrumb is not None
+    assert (published.parent / breadcrumb.group(1)).is_file()
+    assert breadcrumb.group(1) == "../index.html"
+    expected = source.read_text(encoding="utf-8").replace(
+        '<a href="index.html">Capabilities</a>',
+        '<a href="../index.html">Capabilities</a>',
+    )
+    assert text == expected
     assert not (bp.PUBLIC / "capabilities" / "index.html").exists()
     landing = (bp.PUBLIC / "index.html").read_text(encoding="utf-8")
     assert 'href="capabilities/insights.html"' in landing

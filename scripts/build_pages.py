@@ -756,12 +756,17 @@ def build_capabilities(available_viz: dict[str, bool]) -> list[tuple]:
     dst.mkdir(parents=True, exist_ok=True)
     if src.exists():
         shutil.copyfile(src, dst / "index.html")
-    # Life-cycle Insights HUB (self-contained, hand-authored). Copied verbatim so
-    # its sibling link (index.html) and its ../ links to the published front
-    # doors resolve under /capabilities/.
+    # Retain the hub even when the optional overview is unavailable.
     insights = REPORTS / "capabilities" / "insights.html"
     if insights.exists():
-        shutil.copyfile(insights, dst / "insights.html")
+        if src.exists():
+            shutil.copyfile(insights, dst / "insights.html")
+        else:
+            text = insights.read_text(encoding="utf-8").replace(
+                '<a href="index.html">Capabilities</a>',
+                '<a href="../index.html">Capabilities</a>',
+            )
+            (dst / "insights.html").write_text(text, encoding="utf-8")
     # Publish the intervention-serviceability brief (lives under docs/) so the
     # Insights hub's Workover front-door link resolves in the published tree at
     # /intervention-db/intervention-stats-brief.html. Self-contained (inline
