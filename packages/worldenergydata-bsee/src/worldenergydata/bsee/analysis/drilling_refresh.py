@@ -16,10 +16,13 @@ import statistics
 import zipfile
 from collections import Counter
 from datetime import datetime, timezone
+from http.client import HTTPException
 from pathlib import Path
 from urllib.error import URLError
 from urllib.parse import urlsplit
 from urllib.request import urlopen
+
+from worldenergydata.bsee.analysis.war_rig_days import MAX_PLAUSIBLE_SPAN_DAYS
 
 
 class QualityError(ValueError):
@@ -36,6 +39,11 @@ def _json(path: Path, value: dict) -> None:
         stream.write("\n")
 
 
+def _load_json(path: Path) -> dict:
+    with path.open(encoding="utf-8", newline="\n") as stream:
+        return json.load(stream)
+
+
 def _digest(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -47,7 +55,7 @@ def _digest(path: Path) -> str:
 def _manifest(config: dict) -> dict:
     path = Path(config["data_dir"]) / "manifest.json"
     if path.exists():
-        return json.loads(path.read_text(encoding="utf-8"))
+        return _load_json(path)
     return {"version": 1, "files": []}
 
 
@@ -129,9 +137,14 @@ def fetch(config: dict, *, opener=urlopen) -> dict:
         try:
             with opener(source["url"], timeout=180) as response:
                 status = response.status
+                expected = getattr(response, "headers", {}).get("Content-Length")
                 with path.open("xb") as stream:
                     for chunk in iter(lambda: response.read(1024 * 1024), b""):
                         stream.write(chunk)
+                if expected is not None and path.stat().st_size != int(expected):
+                    raise NetworkBlocked("BLOCKED-NETWORK: Content-Length mismatch")
+        except HTTPException as exc:
+            raise NetworkBlocked("BLOCKED-NETWORK: incomplete HTTP response") from exc
         except (URLError, TimeoutError, OSError) as exc:
             raise NetworkBlocked(
                 f"BLOCKED-NETWORK: required URL {source['url']}"
@@ -181,7 +194,17 @@ def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
         "row_count": int(len(rows) < spec["min_rows"]),
         "duplicate_keys": sum(count - 1 for count in counts.values()),
         "missing_keys": sum(
-            any(not row[key] for key in spec["keys"] + spec["required"]) for row in rows
+            any(
+                not row[key]
+                for key in spec["keys"] + spec["required"]
+                if key != "WELL_ACTIVITY_CD"
+            )
+            for row in rows
+        ),
+        "missing_activity_code": sum(row.get("WELL_ACTIVITY_CD") == "" for row in rows),
+        "invalid_war_key": sum(
+            "SN_WAR" in row and re.fullmatch(r"-?[0-9]+", row["SN_WAR"]) is None
+            for row in rows
         ),
         "invalid_api": sum(
             "API_WELL_NUMBER" in row
@@ -192,6 +215,7 @@ def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
         "invalid_dates": 0,
         "reversed_dates": 0,
         "implausible_span": 0,
+        "out_of_range_dates": 0,
         "unit_check": int(spec["unit"] != expected_unit),
     }
     dates = []
@@ -205,13 +229,17 @@ def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
                 value = _date(row[column])
                 dates.append(value)
                 pair.append(value)
+                checks["out_of_range_dates"] += int(
+                    value.isoformat() < spec.get("date_min", "0001-01-01")
+                    or value.isoformat() > spec.get("date_max", "9999-12-31")
+                )
             except ValueError:
                 checks["invalid_dates"] += 1
         if len(pair) == 2:
             span = (pair[1] - pair[0]).days
             checks["reversed_dates"] += int(span < 0)
-            if "max_span_days" in spec:
-                checks["implausible_span"] += int(span + 1 > spec["max_span_days"])
+            if "SN_WAR" in row:
+                checks["implausible_span"] += int(span > MAX_PLAUSIBLE_SPAN_DAYS)
     return {
         "rows": len(rows),
         "date_min": min(dates).isoformat() if dates else None,
@@ -221,7 +249,19 @@ def _table_qa(rows: list[dict], spec: dict, expected_unit: str) -> dict:
     }
 
 
-def _quality(tables: dict, config: dict, population: set[str]) -> dict:
+def _population_tables(tables: dict, population: set[str]) -> dict:
+    war = [row for row in tables["war"] if row["API_WELL_NUMBER"] in population]
+    keys = {row["SN_WAR"] for row in war}
+    return {
+        "war": war,
+        "activity": [row for row in tables["activity"] if row["SN_WAR"] in keys],
+        "boreholes": [
+            row for row in tables["boreholes"] if row["API_WELL_NUMBER"] in population
+        ],
+    }
+
+
+def _quality(tables: dict, config: dict, population: set[str], *, scoped=False) -> dict:
     result = {"status": "pass", "tables": {}, "failures": []}
     for name, spec in config["tables"].items():
         qa = _table_qa(tables[name], spec, "record" if name == "activity" else "day")
@@ -230,6 +270,16 @@ def _quality(tables: dict, config: dict, population: set[str]) -> dict:
             f"{name}: {check} ({count})"
             for check, count in qa["checks"].items()
             if count
+            and check
+            in {
+                "row_count",
+                "duplicate_keys",
+                "missing_keys",
+                "invalid_api",
+                "invalid_war_key",
+                "unit_check",
+            }
+            and not (scoped and check == "row_count")
         )
     war_keys = {row["SN_WAR"] for row in tables["war"]}
     activity_keys = {row["SN_WAR"] for row in tables["activity"]}
@@ -242,13 +292,34 @@ def _quality(tables: dict, config: dict, population: set[str]) -> dict:
     }
     result["joins"] = joins
     result["population_bores"] = len(population)
-    result["failures"].extend(
-        f"{name} ({count})" for name, count in joins.items() if count
-    )
     if config["basis"] != "DRL+COM":
         result["failures"].append("unsupported rig-day basis")
     if result["failures"]:
         result["status"] = "not-evaluated"
+    if not scoped:
+        selected = _population_tables(tables, population)
+        result["population_tables"] = _quality(
+            selected, config, population, scoped=True
+        )["tables"]
+        result["bore_quality"] = []
+        for api in sorted(population):
+            bore = _quality(
+                _population_tables(selected, {api}), config, {api}, scoped=True
+            )
+            result["bore_quality"].append(
+                {
+                    "api12": api,
+                    "checks": {
+                        name: {
+                            key: count
+                            for key, count in table["checks"].items()
+                            if count and key != "row_count"
+                        }
+                        for name, table in bore["tables"].items()
+                    },
+                    "joins": bore["joins"],
+                }
+            )
     return result
 
 
@@ -262,12 +333,19 @@ def _csv(path: Path, headers: list[str], rows: list[list]) -> None:
 QUALITY_REASONS = {
     "row_count": "The source row count is below the configured minimum.",
     "duplicate_keys": "Excess copies share a configured source key; no copy is selected.",
-    "missing_keys": "A required source key or activity code is blank.",
+    "missing_keys": "A required source key is blank.",
+    "missing_activity_code": "An activity code is blank; coverage remains unattributed.",
+    "invalid_war_key": "The report key is not a signed decimal integer.",
     "invalid_api": "The bore key is not a twelve-digit API identifier.",
     "missing_dates": "A required source date is blank; each blank date is counted.",
     "invalid_dates": "A source date cannot be read using the supported date formats.",
     "reversed_dates": "The source end date precedes its start date.",
-    "implausible_span": "The inclusive WAR interval exceeds the configured day limit.",
+    "implausible_span": (
+        "The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged."
+    ),
+    "out_of_range_dates": (
+        "A date is outside the configured evaluation range; that quantity is not evaluated."
+    ),
     "unit_check": "The configured unit does not match the required quantity.",
     "orphan_keys": "An activity report key has no matching WAR report.",
     "unattributed_reports": "A WAR report key has no matching activity record.",
@@ -280,10 +358,14 @@ QUALITY_REASONS = {
 
 def _public_key(row: dict) -> str:
     # Never export a free-text field, malformed key or fabricated row identifier.
-    for field, pattern in (("SN_WAR", r"[0-9]+"), ("API_WELL_NUMBER", r"[0-9]{12}")):
-        value = row.get(field, "")
-        if re.fullmatch(pattern, value):
-            return value
+    field, pattern = (
+        ("SN_WAR", r"-?[0-9]+")
+        if "SN_WAR" in row
+        else ("API_WELL_NUMBER", r"[0-9]{12}")
+    )
+    value = row.get(field, "")
+    if re.fullmatch(pattern, value):
+        return value
     raise QualityError("defect has no publishable public record key")
 
 
@@ -307,8 +389,16 @@ def _defect_records(tables: dict, config: dict, population: set[str], qa: dict) 
             if key in seen:
                 add(prefix + "duplicate_keys", row)
             seen.add(key)
-            if any(not row[column] for column in spec["keys"] + spec["required"]):
+            if any(
+                not row[column]
+                for column in spec["keys"] + spec["required"]
+                if column != "WELL_ACTIVITY_CD"
+            ):
                 add(prefix + "missing_keys", row)
+            if row.get("WELL_ACTIVITY_CD") == "":
+                add(prefix + "missing_activity_code", row)
+            if "SN_WAR" in row and not re.fullmatch(r"-?[0-9]+", row["SN_WAR"]):
+                add(prefix + "invalid_war_key", row)
             if "API_WELL_NUMBER" in row and not re.fullmatch(
                 r"[0-9]{12}", row["API_WELL_NUMBER"]
             ):
@@ -319,14 +409,19 @@ def _defect_records(tables: dict, config: dict, population: set[str], qa: dict) 
                     add(prefix + "missing_dates", row)
                 else:
                     try:
-                        dates.append(_date(row[column]))
+                        value = _date(row[column])
+                        dates.append(value)
+                        if value.isoformat() < spec.get(
+                            "date_min", "0001-01-01"
+                        ) or value.isoformat() > spec.get("date_max", "9999-12-31"):
+                            add(prefix + "out_of_range_dates", row)
                     except ValueError:
                         add(prefix + "invalid_dates", row)
             if len(dates) == 2:
                 span = (dates[1] - dates[0]).days
                 if span < 0:
                     add(prefix + "reversed_dates", row)
-                if "max_span_days" in spec and span + 1 > spec["max_span_days"]:
+                if "SN_WAR" in row and span > MAX_PLAUSIBLE_SPAN_DAYS:
                     add(prefix + "implausible_span", row)
         for check in ("row_count", "unit_check"):
             if qa["tables"][name]["checks"][check]:
@@ -355,46 +450,43 @@ def _defect_records(tables: dict, config: dict, population: set[str], qa: dict) 
     return defects
 
 
-def write_data_quality(
-    output: Path, defects: dict, excluded: dict, *, synthetic: bool = False
-) -> dict:
-    """Write validated exclusion accounting; no source-supported corrections exist.
+def write_data_quality(output: Path, defects: dict, *, synthetic: bool = False) -> dict:
+    """Report observations without claiming that every defect was excluded.
 
-    Each disposition must match the detected record-key multiset, not just its
-    length. All validation precedes writing. The caller must enforce exclusion
-    by withholding every statistic whenever source QA has any failure.
+    Occurrences are reconciled with QA by the caller. The canonical rig-day
+    implementation retains implausible spans and unattributed weeks, rejects
+    reversed intervals, and exposes phase coverage separately.
     """
-    if defects.keys() != excluded.keys():
-        raise QualityError("defect accounting classes do not match")
-    rows, accounting = [], {}
+    rows = []
     for defect, records in sorted(defects.items()):
-        if not records or Counter(records) != Counter(excluded[defect]):
-            raise QualityError("defect accounting does not cover every occurrence")
+        if not records:
+            raise QualityError("defect accounting has no occurrences")
         if any(
-            not isinstance(key, str) or not re.fullmatch(r"[0-9]+", key)
+            not isinstance(key, str) or not re.fullmatch(r"-?[0-9]+", key)
             for key in records
         ):
             raise QualityError("example must be a public record key")
         check = defect.rsplit(".", 1)[-1]
         if check not in QUALITY_REASONS:
-            raise QualityError("defect accounting has no stated exclusion criterion")
+            raise QualityError("defect accounting has no stated reporting criterion")
         rows.append(
             {
                 "defect": defect,
                 "count": len(records),
                 "example_id": min(records),
-                "rule": "excluded",
+                "rule": "reported",
                 "reason": QUALITY_REASONS[check],
             }
         )
-        accounting[defect] = {"excluded": len(excluded[defect]), "corrected": 0}
     headers = ["defect", "count", "example_id", "rule", "reason"]
     text = "Public data quality\n"
     if rows:
-        text += "Source checks failed. All statistics and chart values are withheld.\n"
+        text += (
+            "Row defects are reported; structural failures withhold all statistics.\n"
+        )
         text += (
             "\n".join(
-                f"{row['defect']}: {row['count']} excluded. {row['reason']}"
+                f"{row['defect']}: {row['count']} reported. {row['reason']}"
                 for row in rows
             )
             + "\n"
@@ -405,10 +497,12 @@ def write_data_quality(
     result = {
         "columns": headers,
         "rows": rows,
-        "accounting": accounting,
         "synthetic": synthetic,
         "public_data_quality": text,
-        "basis": "Entire supplied tables; source QA gates every statistic. No corrections applied.",
+        "basis": (
+            "Whole-table observations; row diagnostics are also scoped per population bore in QA. "
+            "No corrections applied."
+        ),
     }
     _csv(
         output / "data_quality.csv",
@@ -425,8 +519,6 @@ def write_data_quality(
 def _products(
     tables: dict, config: dict, population: set[str], sources: list, quality: dict
 ) -> dict:
-    if quality["rows"]:
-        raise QualityError("source defects exclude all statistics")
     import pandas as pd
 
     from worldenergydata.bsee.analysis.war_rig_days import (
@@ -435,29 +527,72 @@ def _products(
         rig_days_by_well,
     )
 
-    war = pd.DataFrame(tables["war"])
-    activity = pd.DataFrame(tables["activity"])
+    tables = _population_tables(tables, population)
+    war = pd.DataFrame(
+        tables["war"],
+        columns=config["tables"]["war"]["keys"]
+        + config["tables"]["war"]["required"]
+        + config["tables"]["war"]["dates"],
+    )
+    activity = pd.DataFrame(tables["activity"], columns=["SN_WAR", "WELL_ACTIVITY_CD"])
+    for row in war.to_dict("records"):
+        try:
+            for column in config["tables"]["war"]["dates"]:
+                value = _date(row[column]).isoformat()
+                spec = config["tables"]["war"]
+                if (
+                    not spec.get("date_min", "0001-01-01")
+                    <= value
+                    <= spec.get("date_max", "9999-12-31")
+                ):
+                    war.loc[war["SN_WAR"] == row["SN_WAR"], column] = ""
+        except ValueError:
+            pass  # Canonical rig-day preparation drops invalid date intervals.
     joined = war.merge(activity, on="SN_WAR", how="left", validate="one_to_many")
     bores = rig_days_by_bore(joined, basis=BASIS_DRL_COM, population=sorted(population))
     wells = rig_days_by_well(joined, basis=BASIS_DRL_COM, population=sorted(population))
     calendar = []
-    for row in tables["boreholes"]:
-        if row["API_WELL_NUMBER"] in population:
+    boreholes = {row["API_WELL_NUMBER"]: row for row in tables["boreholes"]}
+    for api in sorted(population):
+        row = boreholes.get(api, {})
+        try:
             start, end = _date(row["WELL_SPUD_DATE"]), _date(row["TOTAL_DEPTH_DATE"])
-            calendar.append(
-                [row["API_WELL_NUMBER"], start.isoformat(), (end - start).days]
+            spec = config["tables"]["boreholes"]
+            valid = end >= start and all(
+                spec.get("date_min", "0001-01-01")
+                <= value.isoformat()
+                <= spec.get("date_max", "9999-12-31")
+                for value in (start, end)
             )
-    annual = Counter(
-        (str(_date(row["WAR_START_DT"]).year), row["WELL_ACTIVITY_CD"])
-        for row in joined.to_dict("records")
-    )
+            calendar.append(
+                [
+                    api,
+                    start.isoformat(),
+                    (end - start).days if valid else None,
+                    "EVALUATED" if valid else "NOT_EVALUATED",
+                ]
+            )
+        except (KeyError, ValueError):
+            calendar.append([api, None, None, "NOT_EVALUATED"])
+    annual = Counter()
+    for row in joined.to_dict("records"):
+        if pd.isna(row["WELL_ACTIVITY_CD"]) or not row["WELL_ACTIVITY_CD"]:
+            continue
+        try:
+            annual[(str(_date(row["WAR_START_DT"]).year), row["WELL_ACTIVITY_CD"])] += 1
+        except ValueError:
+            continue
 
     def total(series):
         value = series.sum(min_count=1)
         return None if pd.isna(value) else float(value)
 
     headlines = {
-        "calendar_median_days": statistics.median(row[2] for row in calendar),
+        "calendar_median_days": (
+            statistics.median(row[2] for row in calendar if row[2] is not None)
+            if any(row[2] is not None for row in calendar)
+            else None
+        ),
         "bore_drilling_days_sum": total(bores["drilling_days"]),
         "well_drilling_days_union": total(wells["drilling_days"]),
         "completion_days_sum": total(bores["completion_days"]),
@@ -485,7 +620,12 @@ def _products(
     output = Path(config["output_dir"])
     charts = {
         "calendar": (
-            ["api12 [identifier]", "spud_date [date]", "calendar_days [day]"],
+            [
+                "api12 [identifier]",
+                "spud_date [date]",
+                "calendar_days [day]",
+                "status [category]",
+            ],
             sorted(calendar),
             {"median_days": headlines["calendar_median_days"]},
         ),
@@ -508,6 +648,9 @@ def _products(
                 "completion_days [day]",
                 "pnd_days [day]",
                 "days_status [category]",
+                "war_weeks_rejected [record]",
+                "war_weeks_implausible [record]",
+                "war_weeks_unattributed [record]",
             ],
             [
                 [
@@ -516,6 +659,9 @@ def _products(
                     None if pd.isna(r.completion_days) else r.completion_days,
                     r.pnd_days,
                     r.days_status,
+                    r.war_weeks_rejected,
+                    r.war_weeks_implausible,
+                    r.war_weeks_unattributed,
                 ]
                 for r in bores.itertuples()
             ],
@@ -557,8 +703,8 @@ def _products(
 def analyse(config: dict) -> dict:
     """Evaluate a manifest-backed vintage in a new, immutable output directory.
 
-    QA covers entire supplied tables, before population filtering. On source
-    failure only QA and exclusion accounting are retained, never statistics.
+    Structural checks cover entire tables. Row diagnostics are reported per
+    selected bore and do not prevent other bores or quantities being evaluated.
     """
     output = Path(config["output_dir"])
     if output.exists() and any(output.iterdir()):
@@ -576,7 +722,7 @@ def analyse(config: dict) -> dict:
             for name, spec in config["tables"].items()
         }
         with Path(config["population_csv"]).open(
-            encoding="utf-8", newline=""
+            encoding="utf-8", newline="\n"
         ) as stream:
             population_rows = list(csv.DictReader(stream))
         population = {row["API_WELL_NUMBER"] for row in population_rows}
@@ -590,13 +736,16 @@ def analyse(config: dict) -> dict:
         qa["sources"] = manifest["files"]
         qa["population_sha256"] = _digest(Path(config["population_csv"]))
         qa["workflow_sha256"] = _digest(Path(__file__))
-        qa["scope"] = "entire supplied tables before population filtering"
-        qa["criterion"] = "Every source check and join must pass before any statistic."
+        qa["scope"] = "whole-table structural checks; population-scoped row diagnostics"
+        qa["criterion"] = (
+            "Verified schema, provenance, key formats and unique keys are required; "
+            "row defects are reported per bore."
+        )
         qa["basis"] = config["basis"]
         _json(output / "qa.json", qa)
         defects = _defect_records(tables, config, population, qa)
         quality = write_data_quality(
-            output, defects, defects, synthetic=config.get("synthetic", False)
+            output, defects, synthetic=config.get("synthetic", False)
         )
         qa["data_quality"] = quality
         _json(output / "qa.json", qa)
@@ -605,7 +754,7 @@ def analyse(config: dict) -> dict:
     except (QualityError, KeyError, ValueError, OSError, zipfile.BadZipFile) as exc:
         receipt = output / "qa.json"
         if receipt.exists():
-            qa = json.loads(receipt.read_text(encoding="utf-8"))
+            qa = _load_json(receipt)
             qa["status"] = "not-evaluated"
             if not str(exc).startswith("QA not-evaluated"):
                 qa["failures"].append(str(exc))
@@ -639,7 +788,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--fetch", action="store_true")
     args = parser.parse_args(argv)
-    config = json.loads(args.config.read_text(encoding="utf-8"))
+    config = _load_json(args.config)
     for key in ("data_dir", "output_dir"):
         value = getattr(args, key)
         if value is not None:

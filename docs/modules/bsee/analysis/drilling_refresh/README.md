@@ -1,10 +1,9 @@
 # Public drilling and completion refresh
 
-The refresh workflow downloads public WAR archives, records their provenance,
-and checks source quality before computing descriptive statistics. The retained
-public vintage is **not evaluated**: the source failed QA, so no new chart values,
-headline statistics or public HTML were generated. Existing pages retain their
-historical basis and must not be presented as refreshed results.
+The refresh checks public WAR source structure before computing descriptive
+statistics for the configured bore population. Row defects are reported per
+bore. Missing date or phase evidence remains unevaluated and is never converted
+to a measured zero. Retained exports and their source receipts are in `quality/`.
 
 ## Revision history
 
@@ -12,11 +11,12 @@ historical basis and must not be presented as refreshed results.
 | --- | --- | --- |
 | 1 | 2026-10-22 | Add reproducible retrieval, offline tests and a source-quality receipt; withhold statistics where source evidence fails QA. |
 | 2 | 2026-10-22 | Add checked exclusion accounting and explanations generated from quality counts; preserve the source-quality gate. |
+| 3 | 2026-10-22 | Separate structural failures from per-bore diagnostics, retain signed report identifiers and rebuild population exports. Remove the unsupported exclusion-accounting claim. |
 
 ## Run a new vintage
 
 Install the package with its existing dependencies. From the repository root,
-run the following with a new data directory and a new output directory:
+use a new data directory and an empty output directory:
 
 ```sh
 python -m worldenergydata.bsee.analysis.drilling_refresh \
@@ -24,131 +24,119 @@ python -m worldenergydata.bsee.analysis.drilling_refresh \
   --fetch --data-dir <download-directory> --output-dir <new-output-directory>
 ```
 
-The JSON configuration names the data folder, output folder, archive members,
-required columns, keys, row-count floor, units, date columns and historical
-API12 population CSV. Relative paths resolve from the working directory.
-The population file selects bores only; its old duration values are never used.
-Its digest is recorded in the QA receipt and successful headline exports.
+Configuration names the archive members, source keys, required columns, units,
+date bounds and historical API12 population CSV. Relative paths resolve from the
+working directory. The population CSV selects bores only; its old duration
+values are not used. Each export records its digest.
 
-The downloader uses the standard library, reads one source at a time and writes
-`manifest.json` beside the archive. Each entry records the public URL, observed
-HTTP status, UTC download time, byte size and SHA-256 of the original bytes.
-Raw downloads remain outside version control. HTTP failures report
-`BLOCKED-NETWORK` with the required URL; an HTML response cannot become a data
-archive. Completed files resume only after digest validation. To re-pull a new
-vintage, use a new data directory. An interrupted, unrecorded file is preserved
-and requires a new directory rather than an automatic overwrite.
+The row-count floor of `1` is an empty-table guard, not evidence of corpus
+completeness. No stable public completeness threshold is available. Every table
+is counted in the QA receipt so changes between vintages remain visible. Date
+bounds are inclusive: `1900-01-01` is a broad historical sanity bound rather
+than a claim about the earliest record; `2026-10-22` is this evaluation's cutoff.
+Update that cutoff explicitly when evaluating a later vintage. Missing,
+malformed or out-of-range dates leave the affected quantity unevaluated.
+
+The downloader writes `manifest.json` beside the archive, recording public URL,
+observed HTTP status, UTC retrieval time, byte size and SHA-256. Completed
+files resume only after size and digest validation. HTTP protocol errors and
+Content-Length mismatches report `BLOCKED-NETWORK`; incomplete files do not
+enter the manifest. Unrecorded partial files are preserved and require a new
+directory. Raw downloads remain outside version control.
 
 Omit `--fetch` to analyse previously downloaded, manifest-backed bytes offline.
-For downloads made with curl, `record_download` accepts the observed HTTP status
-and retrieval time after validating the configured destination and ZIP format.
-It does not infer a retrieval time from a file modification time.
+For curl retrievals, `record_download` accepts the observed status and UTC time
+and validates the ZIP and destination. It never infers retrieval time from a
+file modification time. ZIP members are read in memory; source text retains
+its published encoding. Generated report text uses UTF-8 and LF.
 
 ## QA and output contract
 
-QA covers all supplied rows before population selection. It records row counts,
-date ranges, duplicate keys, missing keys, API12 validity, missing or malformed
-dates, reversed intervals, implausible WAR spans, unit contracts, activity joins
-and population coverage. Calendar dates support both the date-only and timestamp
-forms supplied by BSEE. The configured WAR span bound follows the existing
-canonical rig-day implementation's plausibility bound; it is a rejection rule,
-not a measured operating limit.
+Whole-table schema, provenance, key-format and duplicate-key failures block all
+statistics. Empty tables, invalid configured units and an unsupported basis
+also fail the structural contract. A failed run retains `qa.json` with
+`status: not-evaluated`; row quality files are written when identifiers can be
+published safely. No arbitrary row is selected from duplicate keys.
 
-Any failed check produces `qa.json` with `status: not-evaluated`, the criterion,
-basis, reasons and source digests. It returns a nonzero exit status and withholds
-every statistic and chart value, including those for otherwise valid records.
-A passing subset is not inferred from incomplete source evidence. A run requires
-an empty output directory, preventing old statistics from appearing beside a new
-failed QA receipt. Import digest mismatches also fail closed. The workflow digest
-identifies the implementation that evaluated the recorded source vintage.
+Row diagnostics do not block the population rebuild. The QA receipt contains
+whole-table counts, `population_tables` counts and `bore_quality` entries for
+every selected API12. Each bore entry records date and activity defects plus
+missing joins. Whole-table legacy defects remain visible without entering the
+population's statistics. Activity rows without matching WAR rows cannot be
+assigned to a bore and are reported in the whole-table join count.
 
-When source records can be evaluated, the refresh also writes `data_quality.csv`,
-`data_quality.json` and `public_data_quality.txt`, even when source checks fail.
-CSV columns and the JSON `columns` array are `defect`, `count`, `example_id`,
-`rule`, `reason`. Each defect class has one row, one numeric public report or bore
-key, and its exclusion criterion. Free-text source values are never examples.
-JSON includes the excluded and corrected occurrence counts for each class, the
-synthetic-fixture label and the whole-table evaluation basis. No supported
-correction is currently applied: every detected occurrence is `excluded`, with
-zero corrected occurrences. Raw source bytes are retained without alteration.
+The canonical `war_rig_days` implementation supplies all rig-day arithmetic:
+reversed intervals are rejected and counted per bore; implausible spans are
+retained and flagged; unattributed weeks remain coverage without contributing
+to a coded activity total. The refresh imports `MAX_PLAUSIBLE_SPAN_DAYS` and
+compares the exclusive span with that bound. Inclusive endpoint counting still
+applies when computing usable WAR interval unions.
 
-Accounting compares the full detected and excluded key multisets, including
-repeated occurrences, before writing the table. It also reconciles detected
-occurrences against every source QA count. Missing dispositions, extra classes,
-unpublishable examples or unmatched counts fail closed with a QA receipt and no
-statistics. Schema or provenance failures before record evaluation may prevent
-the table from being written; no example identifier is invented.
+`data_quality.csv`, `data_quality.json` and `public_data_quality.txt` report
+detected occurrences reconciled against QA counts. They do not claim that all
+reported occurrences were excluded or corrected. The columns are `defect`,
+`count`, `example_id`, `rule`, `reason`; `rule` is `reported`. Examples use the
+original signed decimal SN_WAR for report/activity records and API12 for
+borehole or population records. A malformed report key never falls back to a
+bore identifier. Free text is never published as an example.
 
-Counts retain the QA basis: missing dates count blank fields, duplicate keys count
-excess copies, and missing joins count distinct source keys. Population coverage
-adds missing borehole joins and missing WAR joins separately, so a bore can count
-twice. Defect classes can overlap and their sum is not a distinct-bore count.
-All copies of an ambiguous record remain outside every statistic under the gate.
-The `Public data quality` text is generated from the table rows and their reasons;
-its numbers are never maintained separately. Passing exports repeat the text in
-each product JSON, beside the statistics basis and limits.
+Missing dates count fields, duplicate keys count excess copies, and missing
+joins count distinct keys. Population coverage counts missing borehole and WAR
+joins separately. These overlapping counts cannot be summed as distinct bores.
+The public quality explanation is generated from the same rows and reasons.
 
-After QA passes, the workflow emits the following paired CSV and JSON products:
+Successful runs emit paired CSV and JSON products:
 
 | Product | Quantity and basis |
 | --- | --- |
-| `calendar` | Per-bore spud-to-TD elapsed calendar days, excluding the endpoint adjustment. |
-| `completion` | Per-bore inclusive WAR-union days attributed to COM, with phase coverage status. |
-| `drilldown` | API12 drilling and completion WAR-union days; PND stays separate. |
-| `rig_day_basis` | API10 interval unions across sidetracks, for comparison with overlapping API12 sums. |
-| `activity` | Annual raw activity-code record counts for the whole supplied WAR table. |
+| `calendar` | Per-bore spud-to-TD elapsed days; missing or unusable milestones give a blank value and `NOT_EVALUATED`. |
+| `completion` | Per-bore inclusive COM interval-union days and phase status. |
+| `drilldown` | API12 drilling, completion and separate PND days, coverage status, rejected, implausible and unattributed week counts. |
+| `rig_day_basis` | API10 interval unions across sidetracks, compared with overlapping API12 sums. |
+| `activity` | Annual raw code-bearing record counts for the selected population and usable start dates. |
 
-CSV headers name quantity and unit. Each JSON repeats source URLs, download
-dates, byte digests, population digest, basis and limits. `headlines.json`
-collects the same headline values. `run_config.json` records the criteria without
-machine-specific directories. Missing phase evidence is null, never zero.
-The existing `war_rig_days` functions supply all rig-day arithmetic.
+JSON products repeat source provenance, population digest, basis, quality
+explanation and limits. `headlines.json` collects the same headlines;
+`run_config.json` records criteria without local directories. Calendar medians
+use only evaluated bores. Missing phase values stay null with their coverage
+status. A passing structural receipt does not assert complete phase coverage.
 
-Calendar cycle times do not establish learning, rig utilisation or efficiency.
-Code-bearing record counts do not establish intervention counts or service
-durations. Undocumented activity tokens are preserved without assigning meanings.
-No independent external validation of the rig-day basis is claimed. The fixed
-historical population does not discover additional wells from the new vintage.
+Calendar elapsed days do not establish learning, utilisation or efficiency.
+Code-bearing records do not establish intervention counts or service durations.
+Unknown activity tokens retain their raw meaning. No independent validation of
+the rig-day interpretation is claimed. The fixed historical population does
+not discover additional bores from the new vintage. Existing HTML builders and
+chart adapters remain unchanged.
 
-## Retained public source evaluation
+## Retained source evaluation
 
-`manifest.json` records the fresh public WAR retrieval. `qa.json` records the
-evaluation of those bytes. The source failed because of reversed dates,
-implausible spans, blank activity keys, missing borehole milestone dates,
-unattributed reports and missing population joins. Counts and date ranges are
-available in that machine-readable receipt; no analysis figures are published.
+The original `manifest.json` and `qa.json` retain the earlier whole-table gate
+result and original workflow digest. The current rebuild, its manifest, QA,
+quality explanation and population products are retained under `quality/`.
+The current receipt identifies the implementation by its exact LF byte digest.
+The archive and temporary computations remain outside version control.
 
-The rebuild command returned `1` with `QA not-evaluated: see qa.json`.
-Existing drilling, completion, D&C and intervention HTML builders were therefore
-not run against this vintage. The new exports do not yet replace the existing
-dashboard chart adapters. A maintainer must resolve the source-quality and
-coverage gaps before those builders can publish refreshed statistics; missing
-evidence must not be converted to zero or removed silently.
-
-The subsequent public rebuild also returned `1` with the same source-quality
-rejection. Its generated [quality table](quality/data_quality.csv),
-[accounting](quality/data_quality.json) and
-[Public data quality explanation](quality/public_data_quality.txt) are retained
-under `quality/`, beside the new manifest and QA receipt. The response was HTTP
-200; archive bytes and temporary computation outputs remain outside version
-control. The original receipt above remains unchanged. No chart adapter or HTML
-builder was run because the source gate did not pass.
+The [current headlines](quality/headlines.json) report a calendar median of
+47.0 days, a drilling bore sum and API10 union of 11,484.0 days each, a completion
+bore sum of 5,522.0 days and 4,041 code-bearing activity records. These are
+descriptive values on the stated population and available evidence. The
+[QA receipt](quality/qa.json) supplies whole-table and population counts plus
+each bore's diagnostics; the [calendar export](quality/calendar.csv) identifies
+every unevaluated calendar value. These exports are not independent validation
+of the activity interpretation.
 
 ## Offline verification
 
-The committed fixture in
-`tests/unit/bsee/analysis/fixtures/drilling_refresh/` is **synthetic**. It includes
-overlapping sidetrack weeks so that bore sums and well unions differ. Tests
-regenerate headline values, preserve missing phase evidence, check timestamp
-parsing and exercise each QA rejection, download provenance, resume behaviour,
-network failure, invalid archives, source schema and digest mismatches.
-The combined synthetic quality fixture covers every retained defect type, checks
-the CSV/JSON columns and generated text, and proves excluded records never reach
-the statistics computation. Separate cases reject mismatched exclusion accounting
-and free-text examples before any table is written. The retained historical QA
-receipt keeps its original workflow digest; fresh receipts are checked against
-the current implementation digest.
+The fixture in `tests/unit/bsee/analysis/fixtures/drilling_refresh/` is synthetic.
+Hand-worked literals assert calendar durations of 13 and 6 days (median 9.5),
+a DRL bore sum of 21 days, an API10 union of 14 days and a COM sum of 7 days.
+Those are fixture expectations, not public-source measurements. Separate tests
+cover negative report keys, legacy rows outside the population, missing dates,
+unattributed coverage, span boundaries, partial HTTP responses, provenance,
+schema, duplicate keys, invalid keys and count disagreement. No test downloads
+data or starts a browser.
 
-Run `tests/unit/bsee/analysis/test_drilling_refresh.py` together with the existing
-`test_war_rig_days*.py` regression files using pytest. No test downloads data.
-No test starts a browser or uses a licensed solver.
+Run `test_drilling_refresh*.py` and `test_war_rig_days*.py` in
+`tests/unit/bsee/analysis/`. The CI selector routes source and test changes to
+the BSEE shard and configuration changes to its analysis tests; selector
+regressions assert those routes.

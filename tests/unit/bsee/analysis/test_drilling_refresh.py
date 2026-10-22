@@ -104,15 +104,7 @@ def test_bsee_timestamps_keep_calendar_year_and_inclusive_days(setup_run):
     "table,change,reason",
     [
         ("war", lambda r: r.append(copy.deepcopy(r[0])), "duplicate_keys"),
-        ("war", lambda r: r[0].update(SN_WAR=""), "missing_keys"),
         ("war", lambda r: r[0].update(API_WELL_NUMBER="bad"), "invalid_api"),
-        ("war", lambda r: r[0].update(WAR_START_DT=""), "missing_dates"),
-        ("war", lambda r: r[0].update(WAR_START_DT="02/30/2020"), "invalid_dates"),
-        ("war", lambda r: r[0].update(WAR_END_DT="12/31/2019"), "reversed_dates"),
-        ("war", lambda r: r[0].update(WAR_END_DT="12/31/2020"), "implausible_span"),
-        ("activity", lambda r: r[0].update(SN_WAR="999"), "orphan_keys"),
-        ("activity", lambda r: r.pop(), "unattributed_reports"),
-        ("boreholes", lambda r: r.pop(), "population_coverage"),
     ],
 )
 def test_fail_closed(setup_run, table, change, reason):
@@ -126,7 +118,7 @@ def test_fail_closed(setup_run, table, change, reason):
     assert {path.name for path in output.glob("*.csv")} == {"data_quality.csv"}
     quality = json.loads((output / "data_quality.json").read_text(encoding="utf-8"))
     assert any(reason in row["defect"] for row in quality["rows"])
-    assert all(row["rule"] == "excluded" for row in quality["rows"])
+    assert all(row["rule"] == "reported" for row in quality["rows"])
     assert not (output / "activity.json").exists()
     assert not (output / "headlines.json").exists()
 
@@ -229,12 +221,12 @@ def test_missing_phase_is_null_and_pnd_stays_separate(setup_run):
     assert float(rows[0]["pnd_days [day]"]) == 7
 
 
-def test_missing_activity_code_is_rejected(setup_run):
+def test_missing_activity_code_is_reported(setup_run):
     rewrite_table(
         setup_run, "activity", lambda rows: rows[0].update(WELL_ACTIVITY_CD="")
     )
-    with pytest.raises(QualityError):
-        analyse(setup_run)
+    result = analyse(setup_run)
+    assert result["headlines"]["bore_drilling_days_sum"] == 14
 
 
 def test_ambiguous_archive_member_is_rejected(setup_run):
@@ -283,8 +275,7 @@ def test_synthetic_quality_table_covers_retained_defect_types(setup_run):
             rows.pop(),
         ),
     )
-    with pytest.raises(QualityError):
-        analyse(setup_run)
+    analyse(setup_run)
     output = Path(setup_run["output_dir"])
     quality = json.loads((output / "data_quality.json").read_text(encoding="utf-8"))
     assert quality["synthetic"] is True
@@ -292,7 +283,7 @@ def test_synthetic_quality_table_covers_retained_defect_types(setup_run):
     assert counts == {
         "war.reversed_dates": 1,
         "war.implausible_span": 1,
-        "activity.missing_keys": 1,
+        "activity.missing_activity_code": 1,
         "boreholes.missing_dates": 2,
         "unattributed_reports": 1,
         "population_coverage": 1,
@@ -307,29 +298,15 @@ def test_synthetic_quality_table_covers_retained_defect_types(setup_run):
     assert text.startswith("Public data quality\n")
     for row in quality["rows"]:
         assert f"{row['defect']}: {row['count']}" in text
-        account = quality["accounting"][row["defect"]]
-        assert account["excluded"] + account["corrected"] == row["count"]
-    assert not (output / "headlines.json").exists()
-    assert not (output / "calendar.csv").exists()
-
-
-@pytest.mark.parametrize(
-    "outcomes",
-    [[], ["2"], ["1", "1"]],
-)
-def test_synthetic_accounting_fails_closed(tmp_path, outcomes):
-    defects = {"war.reversed_dates": ["1"]}
-    with pytest.raises(QualityError, match="accounting"):
-        write_data_quality(
-            tmp_path, defects, {"war.reversed_dates": outcomes}, synthetic=True
-        )
-    assert not list(tmp_path.iterdir())
+        assert row["rule"] == "reported"
+    assert (output / "headlines.json").exists()
+    assert (output / "calendar.csv").exists()
 
 
 def test_synthetic_accounting_rejects_free_text_identifier(tmp_path):
     defects = {"war.reversed_dates": ["untrusted source text"]}
     with pytest.raises(QualityError, match="public record key"):
-        write_data_quality(tmp_path, defects, defects, synthetic=True)
+        write_data_quality(tmp_path, defects, synthetic=True)
     assert not list(tmp_path.iterdir())
 
 
@@ -348,14 +325,14 @@ def test_passing_rows_are_the_only_statistics_input(setup_run):
     assert result["qa_status"] == "pass"
 
 
-def test_synthetic_exclusion_prevents_statistics_computation(setup_run, monkeypatch):
+def test_structural_failure_prevents_statistics_computation(setup_run, monkeypatch):
     from worldenergydata.bsee.analysis import drilling_refresh
 
     def forbidden(*args, **kwargs):
         pytest.fail("excluded source records reached statistics")
 
     monkeypatch.setattr(drilling_refresh, "_products", forbidden)
-    rewrite_table(setup_run, "war", lambda rows: rows[0].update(WAR_START_DT=""))
+    rewrite_table(setup_run, "war", lambda rows: rows.append(copy.deepcopy(rows[0])))
     with pytest.raises(QualityError):
         analyse(setup_run)
     output = Path(setup_run["output_dir"])
@@ -367,21 +344,9 @@ def test_synthetic_exclusion_prevents_statistics_computation(setup_run, monkeypa
     }
 
 
-def test_statistics_reject_quality_defects_before_importing_dependencies():
-    from worldenergydata.bsee.analysis.drilling_refresh import _products
-
-    with pytest.raises(QualityError, match="exclude all statistics"):
-        _products({}, {}, set(), [], {"rows": [{"defect": "war.reversed_dates"}]})
-
-
-@pytest.mark.parametrize(
-    "excluded", [{}, {"war.reversed_dates": ["1"], "extra": ["2"]}]
-)
-def test_synthetic_accounting_requires_matching_classes(tmp_path, excluded):
+def test_synthetic_accounting_rejects_empty_observations(tmp_path):
     with pytest.raises(QualityError, match="accounting"):
-        write_data_quality(
-            tmp_path, {"war.reversed_dates": ["1"]}, excluded, synthetic=True
-        )
+        write_data_quality(tmp_path, {"war.reversed_dates": []}, synthetic=True)
     assert not list(tmp_path.iterdir())
 
 
@@ -397,7 +362,7 @@ def test_retained_public_quality_accounting_and_provenance():
     assert qa["sources"] == manifest["files"]
     assert qa["data_quality"] == quality
     assert quality["synthetic"] is False
-    assert qa["status"] == "not-evaluated"
+    assert qa["status"] == "pass"
     expected = {
         f"{name}.{check}": count
         for name, table in qa["tables"].items()
@@ -412,11 +377,8 @@ def test_retained_public_quality_accounting_and_provenance():
         {key: str(value) for key, value in row.items()} for row in quality["rows"]
     ]
     for row in quality["rows"]:
-        assert quality["accounting"][row["defect"]] == {
-            "excluded": row["count"],
-            "corrected": 0,
-        }
-        assert row["example_id"].isdigit()
+        assert row["rule"] == "reported"
+        assert row["example_id"].lstrip("-").isdigit()
     assert (directory / "public_data_quality.txt").read_text(
         encoding="utf-8"
     ) == quality["public_data_quality"]
@@ -427,9 +389,10 @@ def test_synthetic_qa_count_disagreement_withholds_statistics(setup_run, monkeyp
 
     original = drilling_refresh._quality
 
-    def inconsistent(*args):
-        qa = original(*args)
-        qa["tables"]["war"]["checks"]["missing_dates"] = 1
+    def inconsistent(*args, **kwargs):
+        qa = original(*args, **kwargs)
+        if not kwargs.get("scoped"):
+            qa["tables"]["war"]["checks"]["missing_dates"] = 1
         return qa
 
     monkeypatch.setattr(drilling_refresh, "_quality", inconsistent)

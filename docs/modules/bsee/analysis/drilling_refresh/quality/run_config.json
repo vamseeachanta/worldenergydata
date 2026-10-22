@@ -1,0 +1,52 @@
+{
+  "basis": "DRL+COM",
+  "synthetic": false,
+  "tables": {
+    "activity": {
+      "dates": [],
+      "file": "eWellWARRawData.zip",
+      "keys": [
+        "SN_WAR",
+        "WELL_ACTIVITY_CD"
+      ],
+      "member": "mv_war_main_prop",
+      "min_rows": 1,
+      "required": [],
+      "unit": "record"
+    },
+    "boreholes": {
+      "date_max": "2026-10-22",
+      "date_min": "1900-01-01",
+      "dates": [
+        "WELL_SPUD_DATE",
+        "TOTAL_DEPTH_DATE"
+      ],
+      "file": "eWellWARRawData.zip",
+      "keys": [
+        "API_WELL_NUMBER"
+      ],
+      "member": "mv_war_boreholes_view",
+      "min_rows": 1,
+      "required": [],
+      "unit": "day"
+    },
+    "war": {
+      "date_max": "2026-10-22",
+      "date_min": "1900-01-01",
+      "dates": [
+        "WAR_START_DT",
+        "WAR_END_DT"
+      ],
+      "file": "eWellWARRawData.zip",
+      "keys": [
+        "SN_WAR"
+      ],
+      "member": "mv_war_main",
+      "min_rows": 1,
+      "required": [
+        "API_WELL_NUMBER"
+      ],
+      "unit": "day"
+    }
+  }
+}

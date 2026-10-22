@@ -1,34 +1,3329 @@
 {
   "basis": "DRL+COM",
-  "criterion": "Every source check and join must pass before any statistic.",
-  "data_quality": {
-    "accounting": {
-      "activity.missing_keys": {
-        "corrected": 0,
-        "excluded": 882
+  "bore_quality": [
+    {
+      "api12": "608074030500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
       },
-      "boreholes.missing_dates": {
-        "corrected": 0,
-        "excluded": 1844
-      },
-      "population_coverage": {
-        "corrected": 0,
-        "excluded": 14
-      },
-      "unattributed_reports": {
-        "corrected": 0,
-        "excluded": 1747
-      },
-      "war.implausible_span": {
-        "corrected": 0,
-        "excluded": 33
-      },
-      "war.reversed_dates": {
-        "corrected": 0,
-        "excluded": 10
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
       }
     },
-    "basis": "Entire supplied tables; source QA gates every statistic. No corrections applied.",
+    {
+      "api12": "608074030501",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074030502",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074031400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074031500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074031501",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074031502",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074032000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074032001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074032002",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074032003",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074032800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608074033000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 4
+      }
+    },
+    {
+      "api12": "608074033100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 4
+      }
+    },
+    {
+      "api12": "608074033200",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 20
+      }
+    },
+    {
+      "api12": "608074033300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 11
+      }
+    },
+    {
+      "api12": "608074033400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608074033500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608074033600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608074033700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 8
+      }
+    },
+    {
+      "api12": "608074034100",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608074034300",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 2
+      }
+    },
+    {
+      "api12": "608074034400",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 2
+      }
+    },
+    {
+      "api12": "608084001100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001102",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001103",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001104",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084001601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084002100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084002700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084002701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003102",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003103",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003104",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003105",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084003106",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084004700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084004701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084005500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084006702",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608084007701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114062100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114062101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114063500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114063501",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114063502",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114066100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114066101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114067300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114067301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114072800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114075000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114075100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114076100",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 16
+      }
+    },
+    {
+      "api12": "608114076101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114076900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 7
+      }
+    },
+    {
+      "api12": "608114077400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608114079600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124000400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124000401",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124000402",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124000800",
+      "checks": {
+        "activity": {
+          "missing_activity_code": 1
+        },
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124000801",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124001900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002002",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002003",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002004",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002005",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002302",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002702",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002703",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124002900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003401",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003402",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124003800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004602",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124004701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005102",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005103",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005201",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005202",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005203",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124005900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006302",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006400",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 10
+      }
+    },
+    {
+      "api12": "608124006401",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 7
+      }
+    },
+    {
+      "api12": "608124006402",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124006403",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 6
+      }
+    },
+    {
+      "api12": "608124006404",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006602",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006603",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124006900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124007000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124007100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007102",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007103",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 5
+      }
+    },
+    {
+      "api12": "608124007300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 5
+      }
+    },
+    {
+      "api12": "608124007400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124007500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124007900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124008200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124008300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124008700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009201",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124009900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010102",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010103",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124010900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011101",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011302",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011501",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011502",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011503",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011504",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011602",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011603",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011604",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011605",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011606",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124011801",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012601",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012602",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012800",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012801",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012802",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012803",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012804",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124012900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013201",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013202",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013500",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013700",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013701",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124013900",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014000",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014001",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014002",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014003",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014300",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014301",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124014600",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124015100",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124015200",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 1,
+        "unattributed_reports": 2
+      }
+    },
+    {
+      "api12": "608124015300",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 2
+      }
+    },
+    {
+      "api12": "608124015400",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    },
+    {
+      "api12": "608124015500",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 7
+      }
+    },
+    {
+      "api12": "608124015501",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124015502",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 3
+      }
+    },
+    {
+      "api12": "608124015503",
+      "checks": {
+        "activity": {},
+        "boreholes": {
+          "missing_dates": 2
+        },
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 2
+      }
+    },
+    {
+      "api12": "608124015504",
+      "checks": {
+        "activity": {},
+        "boreholes": {},
+        "war": {}
+      },
+      "joins": {
+        "orphan_keys": 0,
+        "population_coverage": 0,
+        "unattributed_reports": 0
+      }
+    }
+  ],
+  "criterion": "Verified schema, provenance, key formats and unique keys are required; row defects are reported per bore.",
+  "data_quality": {
+    "basis": "Whole-table observations; row diagnostics are also scoped per population bore in QA. No corrections applied.",
     "columns": [
       "defect",
       "count",
@@ -36,61 +3331,54 @@
       "rule",
       "reason"
     ],
-    "public_data_quality": "Public data quality\nSource checks failed. All statistics and chart values are withheld.\nactivity.missing_keys: 882 excluded. A required source key or activity code is blank.\nboreholes.missing_dates: 1844 excluded. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 excluded. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 excluded. A WAR report key has no matching activity record.\nwar.implausible_span: 33 excluded. The inclusive WAR interval exceeds the configured day limit.\nwar.reversed_dates: 10 excluded. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
+    "public_data_quality": "Public data quality\nRow defects are reported; structural failures withhold all statistics.\nactivity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.\nboreholes.missing_dates: 1844 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
     "rows": [
       {
         "count": 882,
-        "defect": "activity.missing_keys",
+        "defect": "activity.missing_activity_code",
         "example_id": "10028",
-        "reason": "A required source key or activity code is blank.",
-        "rule": "excluded"
+        "reason": "An activity code is blank; coverage remains unattributed.",
+        "rule": "reported"
       },
       {
         "count": 1844,
         "defect": "boreholes.missing_dates",
         "example_id": "177000013501",
         "reason": "A required source date is blank; each blank date is counted.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 14,
         "defect": "population_coverage",
         "example_id": "608074033000",
         "reason": "A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 1747,
         "defect": "unattributed_reports",
-        "example_id": "1042",
+        "example_id": "-111163",
         "reason": "A WAR report key has no matching activity record.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 33,
         "defect": "war.implausible_span",
-        "example_id": "1288",
-        "reason": "The inclusive WAR interval exceeds the configured day limit.",
-        "rule": "excluded"
+        "example_id": "-299995",
+        "reason": "The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.",
+        "rule": "reported"
       },
       {
         "count": 10,
         "defect": "war.reversed_dates",
         "example_id": "2004",
         "reason": "The source end date precedes its start date.",
-        "rule": "excluded"
+        "rule": "reported"
       }
     ],
     "synthetic": false
   },
-  "failures": [
-    "war: reversed_dates (10)",
-    "war: implausible_span (33)",
-    "activity: missing_keys (882)",
-    "boreholes: missing_dates (1844)",
-    "unattributed_reports (1747)",
-    "population_coverage (14)"
-  ],
+  "failures": [],
   "joins": {
     "orphan_keys": 0,
     "population_coverage": 14,
@@ -98,10 +3386,72 @@
   },
   "population_bores": 253,
   "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
-  "scope": "entire supplied tables before population filtering",
+  "population_tables": {
+    "activity": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 1,
+        "missing_dates": 0,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": null,
+      "date_min": null,
+      "rows": 4042,
+      "unit": "record"
+    },
+    "boreholes": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 0,
+        "missing_dates": 28,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-02-07",
+      "date_min": "2000-09-21",
+      "rows": 239,
+      "unit": "day"
+    },
+    "war": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 0,
+        "missing_dates": 0,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "date_max": "2026-10-10",
+      "date_min": "2000-09-15",
+      "rows": 4192,
+      "unit": "day"
+    }
+  },
+  "scope": "whole-table structural checks; population-scoped row diagnostics",
   "sources": [
     {
-      "downloaded_at": "2026-10-22T12:32:32.908894+00:00",
+      "downloaded_at": "2026-10-22T19:40:42Z",
       "file": "eWellWARRawData.zip",
       "http_status": 200,
       "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
@@ -109,7 +3459,7 @@
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
     }
   ],
-  "status": "not-evaluated",
+  "status": "pass",
   "tables": {
     "activity": {
       "checks": {
@@ -117,8 +3467,11 @@
         "implausible_span": 0,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 882,
         "missing_dates": 0,
-        "missing_keys": 882,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
         "reversed_dates": 0,
         "row_count": 0,
         "unit_check": 0
@@ -134,8 +3487,11 @@
         "implausible_span": 0,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 0,
         "missing_dates": 1844,
         "missing_keys": 0,
+        "out_of_range_dates": 0,
         "reversed_dates": 0,
         "row_count": 0,
         "unit_check": 0
@@ -151,8 +3507,11 @@
         "implausible_span": 33,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war_key": 0,
+        "missing_activity_code": 0,
         "missing_dates": 0,
         "missing_keys": 0,
+        "out_of_range_dates": 0,
         "reversed_dates": 10,
         "row_count": 0,
         "unit_check": 0
@@ -163,5 +3522,5 @@
       "unit": "day"
     }
   },
-  "workflow_sha256": "e3dfde8d3b3309511bd20a39ea61a4bce85b82f28d77e1a0023835aeaf92a85b"
+  "workflow_sha256": "2bbaaa767d80491a8ca4e2aaed6e3d00226f2f692857fcfa598ab93aaf022a7e"
 }

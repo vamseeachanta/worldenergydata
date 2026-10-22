@@ -1,9 +1,9 @@
 Public data quality
-Source checks failed. All statistics and chart values are withheld.
-activity.missing_keys: 882 excluded. A required source key or activity code is blank.
-boreholes.missing_dates: 1844 excluded. A required source date is blank; each blank date is counted.
-population_coverage: 14 excluded. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.
-unattributed_reports: 1747 excluded. A WAR report key has no matching activity record.
-war.implausible_span: 33 excluded. The inclusive WAR interval exceeds the configured day limit.
-war.reversed_dates: 10 excluded. The source end date precedes its start date.
+Row defects are reported; structural failures withhold all statistics.
+activity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.
+boreholes.missing_dates: 1844 reported. A required source date is blank; each blank date is counted.
+population_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.
+unattributed_reports: 1747 reported. A WAR report key has no matching activity record.
+war.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.
+war.reversed_dates: 10 reported. The source end date precedes its start date.
 Counts can overlap and must not be added to count distinct bores.

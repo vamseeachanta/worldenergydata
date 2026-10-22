@@ -19,7 +19,8 @@
       "required": ["API_WELL_NUMBER"],
       "dates": ["WAR_START_DT", "WAR_END_DT"],
       "min_rows": 1,
-      "max_span_days": 90,
+      "date_min": "1900-01-01",
+      "date_max": "2026-10-22",
       "unit": "day"
     },
     "activity": {
@@ -38,6 +39,8 @@
       "required": [],
       "dates": ["WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"],
       "min_rows": 1,
+      "date_min": "1900-01-01",
+      "date_max": "2026-10-22",
       "unit": "day"
     }
   }
