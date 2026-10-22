@@ -9,7 +9,7 @@ Good coverage for North Atlantic, Arctic, and Nordic seas.
 
 API Documentation: https://api.met.no/
 No authentication required (but User-Agent header required).
-Rate limit: ~20 requests/second
+Traffic policy: https://docs.api.met.no/doc/TermsOfService.html
 """
 
 from dataclasses import dataclass
@@ -305,7 +305,12 @@ class MetNorwayClient(BaseClient):
                     longitude=longitude,
                     forecast_time=forecast_time,
                     updated_at=updated_at,
-                    wave_height_m=data.get("sea_surface_wave_significant_height"),
+                    # Oceanforecast data model: sea_surface_wave_height is metres.
+                    # https://docs.api.met.no/doc/oceanforecast/datamodel.html
+                    wave_height_m=data.get(
+                        "sea_surface_wave_height",
+                        data.get("sea_surface_wave_significant_height"),
+                    ),
                     wave_direction_deg=data.get("sea_surface_wave_from_direction"),
                     wave_period_s=data.get("sea_surface_wave_mean_period"),
                     sea_surface_temp_c=data.get("sea_water_temperature"),

@@ -73,6 +73,32 @@
         "http_status": 200,
         "bytes": 777394,
         "sha256": "b39e26fc3c49ce15e0b3647cfe3760eac3248b9e5e5953fa4fe17fa72dd121d9"
+      },
+      "base_url": "https://api.tidesandcurrents.noaa.gov/api/prod",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://api.tidesandcurrents.noaa.gov/api/prod/",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://api.tidesandcurrents.noaa.gov/api/prod",
+        "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://tidesandcurrents.noaa.gov/disclaimers.html"
+      },
+      "health_url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250101%2000:00&end_date=20250101%2000:00&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&application=DataAPI_Sample&format=json",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:14:47.590261+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20250101%2000:00&end_date=20250101%2000:00&station=9414290&product=water_level&datum=MLLW&time_zone=gmt&units=metric&application=DataAPI_Sample&format=json",
+        "checked_at": "2026-10-22T16:39:04.963830+00:00",
+        "http_status": 200,
+        "sha256": "cb70eb8faa2235f82c179485698eb260ce8d646d686d03a6de74d1f8ffa3423b",
+        "status": "OK",
+        "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
       }
     },
     {
@@ -144,6 +170,31 @@
         "sha256": "1844651a88e96056a31260393d01a9845ee026b4431f6dd1396c36b68e5a58fc",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://api.met.no/weatherapi",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://api.met.no/weatherapi/oceanforecast/2.0/documentation",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://api.met.no/weatherapi"
+      ],
+      "rate_limit": {
+        "value": "Identify application with a contactable User-Agent; cache responses; avoid unnecessary traffic. No numeric limit assumed.",
+        "evidence_url": "https://docs.api.met.no/doc/TermsOfService.html"
+      },
+      "health_url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:33.326633+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://api.met.no/weatherapi/oceanforecast/2.0/complete?lat=60.10&lon=5",
+        "checked_at": "2026-10-22T16:39:06.724195+00:00",
+        "http_status": 200,
+        "sha256": "ca0540ffe78248724ca85aeb571eafa1cc5edf88c11cd72238c4e2724a2ffc60",
+        "status": "OK",
+        "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
       }
     },
     {
@@ -210,6 +261,31 @@
         "sha256": "21df707f6a31e112e09eed61b4204ff67b395c80ccbb3229acf2644096cdc328",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://erddap.marine.ie/erddap",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://erddap.marine.ie/erddap"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.graph"
+      },
+      "health_url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.json?time%2Cstation_id%2CWaveHeight%2CTp&time%3E=2025-12-31T00%3A00%3A00Z&time%3C=2025-12-31T00%3A00%3A00Z",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:34.678596+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://erddap.marine.ie/erddap/tabledap/IWBNetwork.json?time%2Cstation_id%2CWaveHeight%2CTp&time%3E=2025-12-31T00%3A00%3A00Z&time%3C=2025-12-31T00%3A00%3A00Z",
+        "checked_at": "2026-10-22T16:39:05.861941+00:00",
+        "http_status": 200,
+        "sha256": "fa3b3dd0d9947ca414e21950921644efc50a5e7ac50f3d2a9bc201d4bc8c671f",
+        "status": "OK",
+        "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
       }
     },
     {
@@ -271,6 +347,27 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "MSC Datamart HTTPS usage policy requires AMQPS for systematic retrieval and prohibits directory polling. Anonymous access is stated in publisher introduction."
+      },
+      "base_url": "https://dd.weather.gc.ca",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://eccc-msc.github.io/open-data/msc-data/nwp_gdwps/readme_gdwps_en/",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://dd.weather.gc.ca"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://eccc-msc.github.io/open-data/licence/readme_en/"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:34.809612+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -333,6 +430,27 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "Download endpoint and automated access conditions not verified."
+      },
+      "base_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://www.marinha.mil.br/chm/dados-do-goos-brasil/pnboia"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://idem.marinha.mil.br/geonetwork/geonetwork/api/records/26de5378-8016-428e-83cb-993d745b5cdf"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:34.981541+00:00",
+        "http_status": 403,
+        "status": "UNREACHABLE"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -390,6 +508,27 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "could not be confirmed at its source: quotation not found on re-fetch"
+      },
+      "base_url": "https://www.bom.gov.au",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.bom.gov.au/nwp/doc/auswave/data.shtml",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://www.bom.gov.au"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.bom.gov.au/copyright"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:35.664809+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -398,7 +537,7 @@
       "family": "buoy_currents",
       "region": "India",
       "docs_url": "https://incois.gov.in/site/dataholdings.jsp",
-      "terms_url": null,
+      "terms_url": "https://incois.gov.in/site/dataholdings.jsp",
       "terms_quote": "no terms statement found",
       "terms_rechecked": false,
       "eligibility": "not_enabled",
@@ -441,6 +580,28 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "Moored and wave-rider buoy observations are visualization-only with no download. HF Radar requires registered access. Other advertised downloads lack a verified anonymous endpoint."
+      },
+      "base_url": "https://incois.gov.in",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://incois.gov.in/site/dataholdings.jsp",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://incois.gov.in"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://incois.gov.in/site/dataholdings.jsp"
+      },
+      "terms_evaluation": "NOT_EVALUATED; no confirmed reuse grant",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:38.788933+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -449,7 +610,7 @@
       "family": "marine_forecast",
       "region": "South-East Asia",
       "docs_url": "https://maritim.bmkg.go.id/apidoc",
-      "terms_url": null,
+      "terms_url": "https://maritim.bmkg.go.id/apidoc",
       "terms_quote": "no terms statement found",
       "terms_rechecked": false,
       "eligibility": "not_enabled",
@@ -488,6 +649,28 @@
         "sha256": "4eceb7280ca1a380835f2770b5b896293dda7e072162abaa9f8eed7e37fed79b",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://maritim.bmkg.go.id",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://maritim.bmkg.go.id/apidoc",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://maritim.bmkg.go.id"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://maritim.bmkg.go.id/apidoc"
+      },
+      "terms_evaluation": "NOT_EVALUATED; no confirmed reuse grant",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:44.433171+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -541,6 +724,27 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "Publisher states registration is voluntary. This is an international array, not a verified West African national service."
+      },
+      "base_url": "https://www.pmel.noaa.gov/tao",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://www.pmel.noaa.gov/tao"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.pmel.noaa.gov/tao/data_deliv/deliv-nojava-pir.html"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:44.832838+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -596,6 +800,27 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "Archive links observed; bounded anonymous hindcast response not verified. Dataset-specific exceptions require checking. NWS requests unavailable-service retries at one-minute intervals."
+      },
+      "base_url": "https://www.emc.ncep.noaa.gov",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.emc.ncep.noaa.gov/emc/pages/numerical_forecast_systems/wavemodels.php",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://www.emc.ncep.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.weather.gov/disclaimer"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:45.346928+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -603,7 +828,7 @@
       "publisher": "NOAA NDBC",
       "family": "standard_meteorological_archive",
       "region": "station-dependent",
-      "docs_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
       "terms_url": "https://www.weather.gov/disclaimer",
       "terms_quote": "are in the public domain, unless specifically noted otherwise",
       "terms_rechecked": true,
@@ -655,14 +880,35 @@
         "outcome": "success",
         "content_validated": true
       },
-      "readiness": "observations_only"
+      "readiness": "observations_only",
+      "base_url": "https://www.ndbc.noaa.gov",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://www.ndbc.noaa.gov/view_text_file.php?filename=42001h1976.txt.gz&dir=data/historical/stdmet/",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://www.ndbc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.weather.gov/disclaimer"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:26:08.067901+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
     },
     {
       "id": "ndbc_realtime",
       "publisher": "NOAA NDBC",
       "family": "standard_meteorological_realtime",
       "region": "station-dependent",
-      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
       "terms_url": "https://www.weather.gov/disclaimer",
       "terms_quote": "are in the public domain, unless specifically noted otherwise",
       "terms_rechecked": true,
@@ -713,6 +959,31 @@
         "sha256": "00213fc1952f7e6e9e4e19eff8073b7121c073179717c05b0fa6d2429d51a1c0",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://www.ndbc.noaa.gov",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://www.ndbc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.weather.gov/disclaimer"
+      },
+      "health_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:26:08.067901+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://www.ndbc.noaa.gov/data/realtime2/42001.txt",
+        "checked_at": "2026-10-22T16:39:04.685810+00:00",
+        "http_status": 200,
+        "sha256": "83c570b14ddbc121e77cbfd6bba54886bd402a58f2c947b743de7676b02f76a9",
+        "status": "OK",
+        "scope": "sample schema, units and UTC only; engineering suitability NOT_EVALUATED"
       }
     },
     {
@@ -720,7 +991,7 @@
       "publisher": "NOAA NDBC",
       "family": "wave_summary",
       "region": "station-dependent",
-      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
       "terms_url": "https://www.weather.gov/disclaimer",
       "terms_quote": "are in the public domain, unless specifically noted otherwise",
       "terms_rechecked": true,
@@ -771,6 +1042,27 @@
         "sha256": "5c16af994e6df295311bf94025c021ac6913820606a4922c1b7cda3a96cfd393",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://www.ndbc.noaa.gov",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/42001.spec",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://www.ndbc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.weather.gov/disclaimer"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:26:08.067901+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -778,7 +1070,7 @@
       "publisher": "NOAA NDBC",
       "family": "station_metadata",
       "region": "station-dependent",
-      "docs_url": "https://www.ndbc.noaa.gov/activestations.xml",
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
       "terms_url": "https://www.weather.gov/disclaimer",
       "terms_quote": "are in the public domain, unless specifically noted otherwise",
       "terms_rechecked": true,
@@ -829,6 +1121,27 @@
         "sha256": "a56c2fdbd95734531d24f2424be8e12f389ed97240d8195c3c27d82eeb4839c8",
         "outcome": "success",
         "content_validated": false
+      },
+      "base_url": "https://www.ndbc.noaa.gov",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://www.ndbc.noaa.gov/activestations.xml",
+      "auth_evaluation": "confirmed",
+      "endpoints": [
+        "https://www.ndbc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.weather.gov/disclaimer"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:26:08.067901+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -836,8 +1149,8 @@
       "publisher": "NOAA NDBC",
       "family": "ocean_currents",
       "region": "not verified",
-      "docs_url": "https://www.ndbc.noaa.gov/data/realtime2/",
-      "terms_url": null,
+      "docs_url": "https://www.ndbc.noaa.gov/docs/ndbc_web_data_guide.pdf",
+      "terms_url": "https://www.ndbc.noaa.gov/data/realtime2/",
       "terms_quote": "no terms statement found",
       "terms_rechecked": false,
       "eligibility": "unavailable",
@@ -867,6 +1180,28 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "HTTP 403 on publisher directory; endpoint not verified"
+      },
+      "base_url": "https://www.ndbc.noaa.gov",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://www.ndbc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.ndbc.noaa.gov/data/realtime2/"
+      },
+      "terms_evaluation": "NOT_EVALUATED; no confirmed reuse grant",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:26:08.067901+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     },
     {
@@ -875,7 +1210,7 @@
       "family": "tropical_cyclone_best_track",
       "region": "not verified",
       "docs_url": "https://www.nhc.noaa.gov/data/",
-      "terms_url": null,
+      "terms_url": "https://www.nhc.noaa.gov/data/",
       "terms_quote": "no terms statement found",
       "terms_rechecked": false,
       "eligibility": "unavailable",
@@ -905,6 +1240,298 @@
         "fetched_at": null,
         "content_validated": false,
         "reason": "HTTP 403 on publisher page; archive endpoint not verified"
+      },
+      "base_url": "https://www.nhc.noaa.gov",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://www.nhc.noaa.gov/data/",
+      "auth_evaluation": "NOT_EVALUATED: anonymous download access not confirmed; conservatively gated",
+      "endpoints": [
+        "https://www.nhc.noaa.gov"
+      ],
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.nhc.noaa.gov/data/"
+      },
+      "terms_evaluation": "NOT_EVALUATED; no confirmed reuse grant",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:29:46.856602+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
+    },
+    {
+      "id": "open_meteo",
+      "publisher": "Open-Meteo",
+      "base_url": "https://marine-api.open-meteo.com",
+      "endpoints": [
+        "https://marine-api.open-meteo.com"
+      ],
+      "docs_url": "https://open-meteo.com/en/docs/marine-weather-api",
+      "terms_url": "https://open-meteo.com/en/terms",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://open-meteo.com/en/docs/marine-weather-api",
+      "account_required": false,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "Free API: non-commercial use only; published request limits apply. Commercial use requires a subscription.",
+        "evidence_url": "https://open-meteo.com/en/terms"
+      },
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:14:49.430242+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
+    },
+    {
+      "id": "erddap_ioos",
+      "publisher": "ERDDAP server operator",
+      "base_url": "https://erddap.ioos.us/erddap",
+      "endpoints": [
+        "https://erddap.ioos.us/erddap"
+      ],
+      "docs_url": "https://erddap.ioos.us/erddap/tabledap/documentation.html",
+      "terms_url": "https://erddap.ioos.us/erddap/legal.html",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://erddap.ioos.us/erddap/tabledap/documentation.html",
+      "account_required": false,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://erddap.ioos.us/erddap/legal.html"
+      },
+      "terms_evaluation": "Dataset-specific licence must be checked in metadata; server access is not a reuse grant.",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:18:15.866827+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
+    },
+    {
+      "id": "erddap_gcoos",
+      "publisher": "ERDDAP server operator",
+      "base_url": "https://erddap.gcoos.org/erddap",
+      "endpoints": [
+        "https://erddap.gcoos.org/erddap"
+      ],
+      "docs_url": "https://erddap.gcoos.org/erddap/tabledap/documentation.html",
+      "terms_url": "https://erddap.gcoos.org/erddap/legal.html",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://erddap.gcoos.org/erddap/tabledap/documentation.html",
+      "account_required": false,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://erddap.gcoos.org/erddap/legal.html"
+      },
+      "terms_evaluation": "Dataset-specific licence must be checked in metadata; server access is not a reuse grant.",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:18:16.245814+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
+    },
+    {
+      "id": "erddap_coastwatch",
+      "publisher": "ERDDAP server operator",
+      "base_url": "https://coastwatch.pfeg.noaa.gov/erddap",
+      "endpoints": [
+        "https://coastwatch.pfeg.noaa.gov/erddap"
+      ],
+      "docs_url": "https://coastwatch.pfeg.noaa.gov/erddap/tabledap/documentation.html",
+      "terms_url": "https://coastwatch.pfeg.noaa.gov/erddap/legal.html",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://coastwatch.pfeg.noaa.gov/erddap/tabledap/documentation.html",
+      "account_required": false,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://coastwatch.pfeg.noaa.gov/erddap/legal.html"
+      },
+      "terms_evaluation": "Dataset-specific licence must be checked in metadata; server access is not a reuse grant.",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:18:17.014418+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
+      }
+    },
+    {
+      "id": "era5",
+      "publisher": "Copernicus Climate Data Store",
+      "base_url": "https://cds.climate.copernicus.eu/api",
+      "endpoints": [
+        "https://cds.climate.copernicus.eu/api"
+      ],
+      "docs_url": "https://cds.climate.copernicus.eu/en/how-to-api",
+      "terms_url": "https://cds.climate.copernicus.eu/disclaimer-privacy",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://cds.climate.copernicus.eu/en/how-to-api",
+      "account_required": true,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://cds.climate.copernicus.eu/disclaimer-privacy"
+      },
+      "legacy_status": "NOT_EVALUATED",
+      "legacy_url": "https://cds.climate.copernicus.eu/api/v2",
+      "migration_docs_url": "https://cds.climate.copernicus.eu/en/how-to-api",
+      "migration_note": "Current CDS setup specifies /api and cdsapi; old /api/v2 is not the documented API. Legacy service retirement date NOT_EVALUATED.",
+      "credentials_env": [
+        "CDSAPI_KEY"
+      ],
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:14:51.798867+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://cds.climate.copernicus.eu/api/catalogue/v1/collections/reanalysis-era5-single-levels",
+        "checked_at": "2026-10-22T16:40:42.312958+00:00",
+        "http_status": 200,
+        "sha256": "6863fb06bb3c646134d30f8d381a231a5f49b0ecda8810534da92d174d796a0f",
+        "status": "OK",
+        "scope": "public catalogue schema/identity only; authenticated download NOT_EVALUATED"
+      }
+    },
+    {
+      "id": "cmems",
+      "publisher": "Copernicus Marine",
+      "base_url": "https://stac.marine.copernicus.eu/metadata/catalog.stac.json",
+      "endpoints": [
+        "https://stac.marine.copernicus.eu/metadata/catalog.stac.json"
+      ],
+      "docs_url": "https://help.marine.copernicus.eu/en/articles/8283072-copernicus-marine-toolbox-api-subset",
+      "terms_url": "https://marine.copernicus.eu/user-corner/service-commitments-and-licence",
+      "auth_requirement": "account",
+      "auth_evidence_url": "https://help.marine.copernicus.eu/en/articles/8283072-copernicus-marine-toolbox-api-subset",
+      "account_required": true,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://marine.copernicus.eu/user-corner/service-commitments-and-licence"
+      },
+      "legacy_status": "RETIRED",
+      "legacy_url": "https://nrt.cmems-du.eu/motu-web/Motu",
+      "migration_docs_url": "https://help.marine.copernicus.eu/en/articles/8612591-switching-from-old-to-new-services",
+      "migration_note": "Vendor migration page states that old MOTU services no longer exist and are replaced by Marine Data Store services.",
+      "credentials_env": [
+        "COPERNICUSMARINE_SERVICE_USERNAME",
+        "COPERNICUSMARINE_SERVICE_PASSWORD"
+      ],
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:14:56.764004+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "url": "https://stac.marine.copernicus.eu/metadata/catalog.stac.json",
+        "checked_at": "2026-10-22T16:40:44.133708+00:00",
+        "http_status": 200,
+        "sha256": "e5923e60b6e7387a64e5c3a8156e4f7363f8b23aecca289d93481841a5b4eb94",
+        "status": "OK",
+        "scope": "public catalogue schema/identity only; authenticated download NOT_EVALUATED"
+      }
+    },
+    {
+      "id": "hycom",
+      "publisher": "HYCOM",
+      "base_url": "https://ncss.hycom.org/thredds/ncss",
+      "endpoints": [
+        "https://ncss.hycom.org/thredds/ncss"
+      ],
+      "docs_url": "https://www.hycom.org/dataserver",
+      "terms_url": "https://www.hycom.org/dataserver",
+      "auth_requirement": "none",
+      "auth_evidence_url": "https://www.hycom.org/dataserver",
+      "account_required": false,
+      "terms_quote": "No quotation retained; consult linked publisher terms.",
+      "terms_rechecked": false,
+      "access_status": "NOT_EVALUATED",
+      "update_enabled": false,
+      "test_fetch": {
+        "outcome": "NOT_EVALUATED",
+        "content_validated": false
+      },
+      "rate_limit": {
+        "value": "NOT_EVALUATED; consult publisher terms before systematic access",
+        "evidence_url": "https://www.hycom.org/dataserver"
+      },
+      "terms_evaluation": "NOT_EVALUATED; client constant only, no supported parser or confirmed reuse grant.",
+      "endpoint_docs_check": {
+        "checked_at": "2026-10-22T16:18:15.170255+00:00",
+        "http_status": 200,
+        "status": "OK"
+      },
+      "endpoint_probe": {
+        "status": "NOT_EVALUATED",
+        "checked_at": null,
+        "scope": "No supported data probe in this audit; documentation access is not a data-availability verdict"
       }
     }
   ],
