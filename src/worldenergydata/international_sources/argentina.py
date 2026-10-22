@@ -21,7 +21,12 @@ class Resource:
 
 @dataclass(frozen=True)
 class Discovery:
-    """Unknown rights/frequency remain None; no readiness is inferred."""
+    """Unknown rights/frequency remain None; no readiness is inferred.
+
+    source_modified retains the publisher's vintage semantics: CKAN supplies
+    catalogue metadata_modified verbatim, possibly without a timezone. Colombia
+    supplies rowsUpdatedAt as a UTC timestamp. Neither establishes freshness.
+    """
 
     dataset_id: str
     license: str | None

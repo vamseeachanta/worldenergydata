@@ -13,7 +13,7 @@ import math
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from urllib.parse import urlencode, urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from .argentina import Discovery, discover_resources
 from .colombia import (
@@ -67,22 +67,37 @@ def _finite_float(value):
     return number
 
 
-class SourceClient:
-    """Limits are required caller inputs, not engineering acceptance criteria."""
+class _RejectRedirects(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        fp.close()
+        raise ValueError("source redirects are disabled")
 
-    def __init__(self, *, timeout_seconds: float, max_bytes: int, opener=urlopen):
-        if not math.isfinite(timeout_seconds) or timeout_seconds <= 0:
-            raise ValueError("timeout_seconds must be finite and positive")
+
+class SourceClient:
+    """Caller-selected byte cap and per-socket-operation timeout.
+
+    The socket timeout applies separately to blocking connect/read operations;
+    it is not a total elapsed-time deadline. A slowly progressing response may
+    take longer. Redirects are refused by the default transport. An injected
+    opener must provide the same refusal and socket-timeout semantics.
+    """
+
+    def __init__(self, *, socket_timeout_seconds: float, max_bytes: int, opener=None):
+        if not math.isfinite(socket_timeout_seconds) or socket_timeout_seconds <= 0:
+            raise ValueError("socket_timeout_seconds must be finite and positive")
         if type(max_bytes) is not int or max_bytes <= 0:
             raise ValueError("max_bytes must be a positive integer")
-        self.timeout_seconds = timeout_seconds
+        self.socket_timeout_seconds = socket_timeout_seconds
         self.max_bytes = max_bytes
-        self._open = opener
+        self._open = (
+            opener if opener is not None else build_opener(_RejectRedirects()).open
+        )
 
     def _json(self, url: str) -> tuple[dict | list, Evidence]:
         request = Request(url, headers={"Accept": "application/json"})
-        with self._open(request, timeout=self.timeout_seconds) as response:
-            final_url = urlsplit(response.geturl())
+        with self._open(request, timeout=self.socket_timeout_seconds) as response:
+            response_url = response.geturl()
+            final_url = urlsplit(response_url)
             if final_url.scheme != "https" or final_url.netloc != urlsplit(url).netloc:
                 raise ValueError("source redirect is unverified")
             media_type = response.headers.get_content_type()
@@ -103,7 +118,7 @@ class SourceClient:
         if not isinstance(payload, (dict, list)):
             raise TypeError("source JSON must be an object or array")
         evidence = Evidence(
-            url,
+            response_url,
             datetime.now(timezone.utc),
             hashlib.sha256(raw).hexdigest(),
             len(raw),
@@ -112,7 +127,7 @@ class SourceClient:
         return payload, evidence
 
     def argentina_package(self, dataset_id: str) -> tuple[Discovery, Evidence]:
-        """Discover resources for an explicit CKAN package id, without fetching CSVs."""
+        """Discover by CKAN package id or name; retain the canonical returned id."""
         if not isinstance(dataset_id, str) or not dataset_id.strip():
             raise ValueError("dataset_id is required")
         query = urlencode({"id": dataset_id})
@@ -121,7 +136,7 @@ class SourceClient:
         if not isinstance(payload, dict):
             raise TypeError("CKAN response must be an object")
         discovery = discover_resources(payload)
-        if discovery.dataset_id != dataset_id:
+        if dataset_id not in (discovery.dataset_id, payload["result"].get("name")):
             raise ValueError("CKAN response dataset differs from requested dataset")
         return discovery, evidence
 

@@ -29,6 +29,9 @@ coverage, field-identity, rights and fiscal-input criteria.</p>
 <tr><td>1</td><td>2026-10-20</td><td>Source access observations, bounded discovery and
 native monthly parsing are documented to distinguish available samples from
 qualified analysis inputs.</td></tr>
+<tr><td>2</td><td>2026-10-22</td><td>Redirect refusal, per-socket timeout semantics,
+sample-budget rationale and source-vintage distinctions are clarified. Historical
+transport settings and unsupported header details are marked unverified.</td></tr>
 <caption>Table 1. Document revisions.</caption>
 </table>
 <h2>Plan-lite</h2>
@@ -66,14 +69,16 @@ Unknown metadata remains absent rather than defaulted to those historical values
 qualification remain NOT_EVALUATED. No CSV was downloaded.</td></tr>
 <tr><td>3 / Netherlands NLOG</td><td>The earlier REST locator now returns an HTML
 application shell with HTTP 200 to GET. No POST was sent.</td>
-<td>The opened disclaimer permits reuse with attribution, including
-<q>provided NLOG.NL is quoted as the source</q>. Refresh frequency is not established.</td>
+<td>The earlier inspection reported attribution terms, but the quoted passage is
+not retained in the published observations. Exact terms and refresh frequency
+remain unverified for these observations.</td>
 <td>JSON schema and production access remain NOT_EVALUATED; no guessed POST body
 or adapter is provided.</td></tr>
-<tr><td>4 / Denmark DEA</td><td>A header-only request returned HTTP 200 with workbook
-filename <code>1972-2025.xlsx</code>, declared size 62,704 bytes and
-Last-Modified 2026-09-25.</td><td>No credential was supplied. Reuse terms and refresh
-frequency are unverified. A filename is not evidence of the workbook contents.</td>
+<tr><td>4 / Denmark DEA</td><td>The stored header-only observation records HTTP 200.
+The original filename, declared size and Last-Modified header values are not
+retained in the published record and cannot be rechecked here.</td><td>No credential
+was supplied. Reuse terms and refresh frequency are unverified. Response status
+does not establish workbook contents.</td>
 <td>Workbook ingestion remains NOT_EVALUATED pending terms and schema inspection.</td></tr>
 <tr><td>5 / Ghana</td><td>The regulator homepage answered a header-only request with
 HTTP 200, unlike the earlier issue note's refusals.</td><td>Dataset files, reuse terms,
@@ -90,8 +95,9 @@ monthly source or reuse terms are established; ingestion remains NOT_EVALUATED.<
 <caption>Table 2. Observed access is scoped to the listed requests, not all publisher services.</caption>
 </table>
 <p>Guyana, Angola, Senegal, Indonesia, Malaysia, Ireland and Congo remain historical
-watch-list entries from the issue; no fresh access or licence claim is made. Italy is
-covered by the linked European-source investigation. Brazil's dataset-level rights
+watch-list entries from the issue; no fresh access or licence claim is made. Italy
+was not inspected in the <a href="international-source-observations.json">recorded
+source observations</a>. Brazil's dataset-level rights
 remain a separate investigation; no catalogue request or production duplication is introduced.</p>
 <h2>Inputs, method and answer</h2>
 <p>The executable example uses three synthetic contracts for one synthetic field and
@@ -106,13 +112,27 @@ compares the output with the hand calculation written in the test docstring.</p>
 <pre><code>from worldenergydata.international_sources.client import SourceClient
 
 # Explicit operational choices, not engineering limits or source defaults.
-client = SourceClient(timeout_seconds=20, max_bytes=1000000)
+client = SourceClient(socket_timeout_seconds=20, max_bytes=1000000)
 page = client.colombia_page("oil", limit=100, offset=0)
 # page.complete is False; metadata.source_modified is the publisher's vintage.
 # page.rows_evidence.raw_bytes is the original response for separate retention.
 # No request is repeated or paginated automatically.
 </code></pre>
-<p>The byte and timeout limits are required caller inputs. JSON media type, response
+<p>The 100-row page is an operational schema sample rather than a history-coverage
+criterion. The stored 100-row samples contain 43,024 and 44,698 response bytes;
+the 1,000,000-byte cap is about 22.4 times the larger observed sample, allowing
+metadata and row-size variation while refusing bulk responses. These observations
+do not establish a bound for every future page.</p>
+<p>The 20-second socket timeout is a caller-selected maximum stall per blocking
+socket operation for interactive discovery, allowing a slow response without
+waiting indefinitely on one operation. It is not a measured service guarantee or
+a total elapsed-time deadline: a slowly progressing response may take longer,
+and metadata and rows are separate requests. Callers needing a total deadline
+must supply an external execution limit. No such deadline is implemented here.</p>
+<p>The byte cap and socket timeout are required caller inputs. The default
+transport refuses redirects before fetching a target or reading a redirect body;
+injected transports must preserve that policy. Evidence records the returned
+response URL. JSON media type, response
 size, duplicate keys, non-finite numbers and dataset identity are checked before data
 is returned. HTML application shells fail validation even with HTTP 200. Reuse terms
 are exposed as evidence, not interpreted as blanket redistribution permission.</p>
@@ -130,9 +150,14 @@ joining, source completeness, well metadata, field crosswalks and fiscal inputs 
 not established. No empty or fabricated cashflow is emitted. Scheduler registration
 will require retained raw-data ownership, rights and freshness criteria, normalized
 coverage checks and the repository's source-refresh acceptance contract.</p>
-<p>The shared source catalogue and domain-database index were unavailable in the
-inspected checkout. This note is task-scoped evidence, not a replacement catalogue;
-no authoritative source identity or new allocation registry is created.</p>
+<p>The original inspection recorded the shared source catalogue and domain-database
+index as unavailable. Those indexes were accessible during this revision, but no
+catalogue identity is assigned or changed by this note. It remains task-scoped
+evidence rather than an allocation registry.</p>
+<p><code>source_modified</code> preserves source-specific meaning: Argentina supplies
+the catalogue's <code>metadata_modified</code> string, which may omit a timezone;
+Colombia supplies <code>rowsUpdatedAt</code> converted to UTC. Catalogue edits and
+production-row vintages are different events; neither alone establishes freshness.</p>
 <h2>Sources and retained evidence</h2>
 <ul>
 <li><a href="https://www.datos.gov.co/api/views/fdvb-hsrf.json">ANH oil metadata</a> and
@@ -150,7 +175,11 @@ HTTP header evidence only.</li>
 <a href="https://www.nzpam.govt.nz/">NZPAM</a>: landing-page headers only.</li>
 <li><a href="international-source-observations.json">Machine-readable observations</a>:
 request addresses, UTC timestamps, status codes, digest scopes and sample readback results.
-Raw responses remain local research evidence and are not included in this change.</li>
+These historical observations were collected outside <code>SourceClient</code>.
+The original tool invocation and timeout settings were not retained in this record;
+the transport cannot be reproduced from its exit codes alone. Raw responses are
+not published, and their retained locations and bytes were not reverified for
+this revision. The recorded digests do not replace those bytes.</li>
 </ul>
 </body>
 </html>

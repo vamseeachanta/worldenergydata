@@ -1,7 +1,13 @@
 {
   "purpose": "Task-scoped access observations, not an authoritative source registry or engineering input dataset.",
-  "catalog_identity": "The shared source catalogue was unavailable; no new catalogue identities are assigned.",
+  "catalog_identity": "No catalogue identities were assigned at the original inspection; this record remains task-scoped evidence.",
   "criteria": "Native source discovery only; no complete production history, field crosswalk or fiscal model is qualified.",
+  "historical_transport": {
+    "implementation": "External collection, not SourceClient.",
+    "tool": null,
+    "timeout_seconds": null,
+    "limitation": "The original tool invocation and timeout settings were not retained in this record. Exit codes alone do not establish the transport. Raw-response locations and bytes were not reverified for this revision."
+  },
   "observations": [
     {
       "candidate": "argentina-http",
@@ -115,7 +121,7 @@
       "digest_scope": "http-header-output",
       "retained_bytes": 677,
       "raw_retention": "local research evidence; not included in this change",
-      "limitation": "Header-only request; dataset contents, rights and production access are not established."
+      "limitation": "Header-only request; dataset contents, rights and production access are not established. Original filename, declared size and Last-Modified header values were not retained in this record."
     },
     {
       "candidate": "ghana",
@@ -184,7 +190,8 @@
       "sha256": "565d74a17608ee76aa1b9a9ddf16abeba32dc64f17fafffe4ac9aab4ccc53e4a",
       "digest_scope": "response-body",
       "retained_bytes": 79491,
-      "raw_retention": "local research evidence; not included in this change"
+      "raw_retention": "local research evidence; not included in this change",
+      "limitation": "The exact disclaimer passage was not retained in this record; source-specific reuse terms require renewed inspection before use."
     }
   ],
   "sample_validation": {
