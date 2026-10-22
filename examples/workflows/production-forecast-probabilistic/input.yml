@@ -10,6 +10,17 @@ analysis:
 probabilistic:
   field: Synthetic example
   data_basis: synthetic
+  economics_basis: Real 2026 USD; effective annual real discounting; no inflation.
+  revision_history:
+    - revision: 1
+      date: "2026-10-20"
+      change: Initial configured uncertainty example.
+    - revision: 2
+      date: "2026-10-22"
+      change: Replace the unavailable NPV reference with the versioned official implementation.
+    - revision: 3
+      date: "2026-10-22"
+      change: Preserve revision history from inputs and state the currency and discount basis.
   engine: builtin
   # Reproducibility and study dimensions follow the example plan in issue 833.
   seed: 42

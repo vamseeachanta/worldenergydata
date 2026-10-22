@@ -87,6 +87,25 @@ def build_report_html(result):
 
     summary = result.summary
     now = datetime.now(timezone.utc).date().isoformat()
+    history = result.config_echo.get(
+        "revision_history",
+        [
+            {
+                "revision": 1,
+                "date": now,
+                "change": "Initial configured uncertainty example.",
+            }
+        ],
+    )
+    revision_rows = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{html.escape(str(row[key]))}</td>"
+            for key in ("revision", "date", "change")
+        )
+        + "</tr>"
+        for row in history
+    )
     scalars = "".join(
         f"<tr><th>{name}</th>"
         + "".join(
@@ -105,7 +124,7 @@ img{{width:100%}}td,th{{padding:.5em;border:1px solid gray}}pre{{white-space:pre
 Criterion: {html.escape(summary['screening_rule'])}. EUR is future recovery to the rate limit,
 not booked reserves. NPV covers the configured horizon only.</p>
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
-<tr><td>1</td><td>{now}</td><td>Initial configured uncertainty example.</td></tr></table>
+{revision_rows}</table>
 <h2>Production fan</h2>{_fan_chart(result.fan)}
 <p>Figure 1. Month-end rates (bbl/month); p10–p90 band and p50 line.</p>
 <p>Non-exceedance convention: p10 is the 10th percentile (low), p90 the 90th (high).
@@ -123,14 +142,23 @@ Undefined ranks identify constant inputs or outputs.</p>
 package version: {html.escape(package_version)}; generated: {now} (UTC).
 Methods: ArpsDeclineCurve.simulate, ProbabilisticForecast.run and EconomicsQuery.npv.</p>
 <h2>Method and sources</h2>
-<p>Arps rate and cumulative equations: <a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve Analysis</a> (accessed 2026).
+<p>Arps rate and cumulative equations:
+<a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve
+Analysis</a> (accessed 2026).
 Exact monthly volumes are integrated to the rate limit, including partial months.
 Time-zero CAPEX and month-end net operating cash are discounted through FDAS;
-<a href="https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789">numpy-financial 1.0.0, npv function and Notes</a>.
-Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">NumPy 2.2 linear percentiles</a>;
-ranks use <a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">SciPy 1.15.2 Spearman correlation</a>.</p>
+<a
+href="https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789">
+numpy-financial 1.0.0, npv function and Notes</a>.
+Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">
+NumPy 2.2 linear percentiles</a>;
+ranks use
+<a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">
+SciPy 1.15.2 Spearman correlation</a>.</p>
 <h2>Limits and way forward</h2><p>Independent priors; empirical decline with no pressure,
 facility constraints, tax, royalties, fixed operating costs or terminal value.
 Synthetic inputs do not establish public-field reserve distributions. Calibrated public
 production data, documented priors and a governing acceptance criterion are required
-before field screening. No reserve classification is established. Charts are static vectors.</p></html>"""
+before field screening. No reserve classification is established.
+Charts are static vectors.</p></html>
+"""

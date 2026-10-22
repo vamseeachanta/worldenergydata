@@ -7,8 +7,7 @@ img{width:100%}td,th{padding:.5em;border:1px solid gray}pre{white-space:pre-wrap
 Criterion: No minimum NPV criterion was supplied. EUR is future recovery to the rate limit,
 not booked reserves. NPV covers the configured horizon only.</p>
 <h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
-<tr><td>1</td><td>2026-10-20</td><td>Initial configured uncertainty example.</td></tr>
-<tr><td>2</td><td>2026-10-22</td><td>Replace the unavailable NPV reference with the versioned official implementation.</td></tr></table>
+<tr><td>1</td><td>2026-10-20</td><td>Initial configured uncertainty example.</td></tr><tr><td>2</td><td>2026-10-22</td><td>Replace the unavailable NPV reference with the versioned official implementation.</td></tr><tr><td>3</td><td>2026-10-22</td><td>Preserve revision history from inputs and state the currency and discount basis.</td></tr></table>
 <h2>Production fan</h2><img alt="Production fan: p10 to p90 shaded, p50 line" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgMzAwIiByb2xlPSJpbWciPjxwb2x5Z29uIHBvaW50cz0iMzUuMCw2OS42IDY2LjcsODcuNiA5OC41LDEwMy41IDEzMC4yLDExNy42IDE2Mi4wLDEzMC42IDE5My43LDE0MS44IDIyNS40LDE1MS4zIDI1Ny4yLDE2MC4wIDI4OC45LDE2Ny42IDMyMC43LDE3NC4zIDM1Mi40LDE4MC4zIDM4NC4xLDE4Ni4wIDQxNS45LDE5MS4wIDQ0Ny42LDE5NS44IDQ3OS4zLDIwMC4xIDUxMS4xLDIwNC4yIDU0Mi44LDIwOC4yIDU3NC42LDIxMS42IDYwNi4zLDIxNC42IDYzOC4wLDIxNy42IDY2OS44LDIyMC4yIDcwMS41LDIyMi44IDczMy4zLDIyNS4yIDc2NS4wLDIyNy4zIDc2NS4wLDIwNC41IDczMy4zLDIwMi4xIDcwMS41LDE5OS42IDY2OS44LDE5Ni45IDYzOC4wLDE5NC4wIDYwNi4zLDE5MC42IDU3NC42LDE4Ny4xIDU0Mi44LDE4My4zIDUxMS4xLDE3OS4xIDQ3OS4zLDE3NC43IDQ0Ny42LDE2OS43IDQxNS45LDE2NC4zIDM4NC4xLDE1OC43IDM1Mi40LDE1Mi4zIDMyMC43LDE0NS4zIDI4OC45LDEzNy41IDI1Ny4yLDEyOS42IDIyNS40LDEyMC40IDE5My43LDEwOS43IDE2Mi4wLDk4LjQgMTMwLjIsODUuOCA5OC41LDcxLjcgNjYuNyw1NC44IDM1LjAsMzUuMCIgZmlsbD0ibGlnaHRibHVlIi8+PHBvbHlsaW5lIHBvaW50cz0iMzUuMCw1MS41IDY2LjcsNzAuNSA5OC41LDg2LjcgMTMwLjIsMTAxLjUgMTYyLjAsMTE0LjggMTkzLjcsMTI1LjkgMjI1LjQsMTM1LjggMjU3LjIsMTQ0LjkgMjg4LjksMTUyLjggMzIwLjcsMTYwLjMgMzUyLjQsMTY3LjAgMzg0LjEsMTczLjIgNDE1LjksMTc4LjYgNDQ3LjYsMTgzLjYgNDc5LjMsMTg4LjMgNTExLjEsMTkyLjcgNTQyLjgsMTk2LjYgNTc0LjYsMjAwLjMgNjA2LjMsMjAzLjYgNjM4LjAsMjA2LjggNjY5LjgsMjA5LjUgNzAxLjUsMjEyLjIgNzMzLjMsMjE0LjUgNzY1LjAsMjE2LjciIGZpbGw9Im5vbmUiIHN0cm9rZT0ibmF2eSIvPjx0ZXh0IHg9IjM1IiB5PSIyMCI+TW9udGgtZW5kIHJhdGUgKGJibC9tb250aCk7IHVwcGVyIHNjYWxlIDk3OS4yPC90ZXh0Pjx0ZXh0IHg9IjM1IiB5PSIyOTUiPk1vbnRoIDE8L3RleHQ+PHRleHQgeD0iNzAwIiB5PSIyOTUiPk1vbnRoIDI0PC90ZXh0Pjwvc3ZnPg==">
 <p>Figure 1. Month-end rates (bbl/month); p10–p90 band and p50 line.</p>
 <p>Non-exceedance convention: p10 is the 10th percentile (low), p90 the 90th (high).
@@ -24,6 +23,24 @@ Undefined ranks identify constant inputs or outputs.</p>
 <h2>Inputs and provenance</h2><pre>{
   &quot;field&quot;: &quot;Synthetic example&quot;,
   &quot;data_basis&quot;: &quot;synthetic&quot;,
+  &quot;economics_basis&quot;: &quot;Real 2026 USD; effective annual real discounting; no inflation.&quot;,
+  &quot;revision_history&quot;: [
+    {
+      &quot;revision&quot;: 1,
+      &quot;date&quot;: &quot;2026-10-20&quot;,
+      &quot;change&quot;: &quot;Initial configured uncertainty example.&quot;
+    },
+    {
+      &quot;revision&quot;: 2,
+      &quot;date&quot;: &quot;2026-10-22&quot;,
+      &quot;change&quot;: &quot;Replace the unavailable NPV reference with the versioned official implementation.&quot;
+    },
+    {
+      &quot;revision&quot;: 3,
+      &quot;date&quot;: &quot;2026-10-22&quot;,
+      &quot;change&quot;: &quot;Preserve revision history from inputs and state the currency and discount basis.&quot;
+    }
+  ],
   &quot;engine&quot;: &quot;builtin&quot;,
   &quot;seed&quot;: 42,
   &quot;n_samples&quot;: 500,
@@ -71,18 +88,26 @@ Undefined ranks identify constant inputs or outputs.</p>
     }
   ]
 }</pre>
-<p>Input SHA-256: 47fb31629192e7e654bfb361a818cfca3f12a6744db3efb830fd209ef673c87c; backend: builtin.naive-mc;
-package version: 0.1.0; generated: 2026-10-20 (UTC).
+<p>Input SHA-256: b1d6fdf2049b6c088a5d4c5909f69dfb16aa6552966c68d0ce5be93fa714e29f; backend: builtin.naive-mc;
+package version: source tree (metadata unavailable); generated: 2026-10-22 (UTC).
 Methods: ArpsDeclineCurve.simulate, ProbabilisticForecast.run and EconomicsQuery.npv.</p>
 <h2>Method and sources</h2>
-<p>Arps rate and cumulative equations: <a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve Analysis</a> (accessed 2026).
+<p>Arps rate and cumulative equations:
+<a href="https://resinsight.org/plot-window/declinecurveanalysis/">ResInsight Decline Curve
+Analysis</a> (accessed 2026).
 Exact monthly volumes are integrated to the rate limit, including partial months.
 Time-zero CAPEX and month-end net operating cash are discounted through FDAS;
-<a href="https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789">numpy-financial 1.0.0, npv function and Notes</a>.
-Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">NumPy 2.2 linear percentiles</a>;
-ranks use <a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">SciPy 1.15.2 Spearman correlation</a>.</p>
+<a
+href="https://github.com/numpy/numpy-financial/blob/v1.0.0/numpy_financial/_financial.py#L712-L789">
+numpy-financial 1.0.0, npv function and Notes</a>.
+Percentiles use <a href="https://numpy.org/doc/2.2/reference/generated/numpy.percentile.html">
+NumPy 2.2 linear percentiles</a>;
+ranks use
+<a href="https://docs.scipy.org/doc/scipy-1.15.2/reference/generated/scipy.stats.spearmanr.html">
+SciPy 1.15.2 Spearman correlation</a>.</p>
 <h2>Limits and way forward</h2><p>Independent priors; empirical decline with no pressure,
 facility constraints, tax, royalties, fixed operating costs or terminal value.
 Synthetic inputs do not establish public-field reserve distributions. Calibrated public
 production data, documented priors and a governing acceptance criterion are required
-before field screening. No reserve classification is established. Charts are static vectors.</p></html>
+before field screening. No reserve classification is established.
+Charts are static vectors.</p></html>

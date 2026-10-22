@@ -30,13 +30,23 @@ or convergence criteria.
 | `Di` | Nominal initial decline, 1/month |
 | `b` | Dimensionless exponent, from exponential through harmonic |
 | `economic_limit` | Abandonment rate, bbl/month |
-| `oil_price`, `opex` | USD/bbl; OPEX here is variable cost only |
-| `capex` | USD at time zero |
-| `discount_rate` | Effective annual fraction supported by FDAS |
+| `oil_price`, `opex` | Real 2026 USD/bbl; OPEX here is variable cost only |
+| `capex` | Real 2026 USD at time zero |
+| `discount_rate` | Effective annual real fraction supported by FDAS |
 | `price_multipliers` | Optional nonnegative monthly deck factors applied to sampled price |
 | `minimum_p10_npv_usd` | Optional user criterion for the lower non-exceedance NPV percentile |
 
 Table 1. Caller-supplied inputs and their calculation basis.
+
+The synthetic example assumes constant 2026 purchasing power, with no inflation
+or nominal escalation. Its 0.1 discount rate is a real effective annual rate;
+optional price multipliers describe real price changes on the same currency
+basis. Horizon NPV is therefore expressed in real 2026 USD. Other studies must
+supply a consistent currency, base year and real or nominal discount basis.
+
+`revision_history` supplies ordered `revision`, `date` and `change` rows for the
+report. Earlier rows remain in the input when a new revision is appended;
+regeneration writes the current UTC date separately as the generation date.
 
 Supported prior distributions are uniform (`low`, `high`), normal (`mean`,
 `std`), lognormal (`median` or `mean_log`, plus `std_log`) and triangular (`low`,

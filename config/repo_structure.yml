@@ -83,9 +83,13 @@ temporary_exceptions:
   reports:
     category: durable-evidence
     owner: worldenergydata maintainers
-    review_date: "2026-06-30"
+    review_date: "2027-01-31"
     follow_up: https://github.com/vamseeachanta/worldenergydata/issues/394
-    justification: Tracked HTML, Markdown, Python, and JSON report artifacts are preserved as existing durable evidence until a dedicated generated-evidence migration classifies retention, relocation, or deletion.
+    justification: >-
+      Retain existing report evidence and explicitly listed reproducible examples
+      until the generated-evidence migration classifies retention, relocation, or
+      deletion. The production forecast example is regenerated from tracked inputs
+      and its revision history is preserved by the report generator.
     allowed_paths:
       - reports/.gitkeep
       - reports/production_forecast/index.html

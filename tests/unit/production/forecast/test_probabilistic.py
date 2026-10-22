@@ -13,7 +13,7 @@ import os
 import shutil
 import subprocess
 import sys
-import sysconfig
+from datetime import datetime
 from importlib import metadata
 from pathlib import Path
 
@@ -25,6 +25,7 @@ except ModuleNotFoundError:
 import numpy as np
 import pandas as pd
 import pytest
+import yaml
 from packaging.requirements import Requirement
 
 from worldenergydata.production.forecast.decline import ArpsDeclineCurve
@@ -185,6 +186,29 @@ def test_prior_families(spec):
     assert backend == "builtin.naive-mc"
 
 
+@pytest.mark.parametrize(
+    "spec,method,argument,expected",
+    [
+        ({"dist": "lognormal", "median": 2, "std_log": 0.5}, "ppf", 0.9, 3.7959054),
+        (
+            {"dist": "lognormal", "mean_log": math.log(2), "std_log": 0.5},
+            "ppf",
+            0.9,
+            3.7959054,
+        ),
+        ({"dist": "triangular", "low": 0, "mode": 1, "high": 4}, "cdf", 1, 0.25),
+        ({"dist": "normal", "mean": 1, "std": 0.1}, "ppf", 0.9, 1.1281552),
+    ],
+)
+def test_prior_distribution_quantiles(spec, method, argument, expected):
+    """z(.9)=1.2815516; lognormal=2 exp(.5 z); triangle F(mode)=1/4.
+
+    Normal=1+.1 z. Asymmetric inputs distinguish each distribution parameter.
+    """
+    distribution = PriorSpec(name="qi", **spec).frozen()
+    assert getattr(distribution, method)(argument) == pytest.approx(expected)
+
+
 def test_router_and_report(tmp_path):
     cfg = {
         "analysis": {"type": "probabilistic"},
@@ -233,6 +257,17 @@ def test_shut_in_and_screening():
     assert result.summary["screening_status"] == "pass"
     assert result.summary["spearman"]["qi"] is None
     cfg["minimum_p10_npv_usd"] = 0
+    assert ProbabilisticForecast().run(cfg).summary["screening_status"] == "fail"
+
+
+def test_screening_uses_lower_non_exceedance_percentile():
+    """NPV=-10+3qi/(4 ln2); a threshold between p10 and p90 must fail."""
+    cfg = study()
+    sampled = ProbabilisticForecast().run(cfg).run_matrix.qi.to_numpy()
+    low, high = np.percentile(-10 + 3 * sampled / (4 * math.log(2)), [10, 90])
+    threshold = (low + high) / 2
+    assert low < threshold < high
+    cfg["minimum_p10_npv_usd"] = threshold
     assert ProbabilisticForecast().run(cfg).summary["screening_status"] == "fail"
 
 
@@ -345,7 +380,7 @@ sys.path.insert(0, payload['members'])
 import worldenergydata
 assert not hasattr(worldenergydata, '__version__')
 worldenergydata.__path__ = [str(Path(payload['members']) / 'worldenergydata')]
-sys.path.append(payload['third_party'])
+sys.path.extend(payload['third_party'])
 from worldenergydata.production.forecast.probabilistic import ProbabilisticForecast
 result = ProbabilisticForecast().run(payload['config'])
 if payload['render_report']:
@@ -363,7 +398,9 @@ print(json.dumps(result.summary, allow_nan=False))
         input=json.dumps(
             {
                 "members": str(tmp_path / "members"),
-                "third_party": sysconfig.get_path("purelib"),
+                "third_party": sorted(
+                    {str(dist.locate_file("")) for dist in metadata.distributions()}
+                ),
                 "config": study(),
                 "render_report": render_report,
             }
@@ -415,4 +452,48 @@ def test_report_marks_source_tree_without_metadata(monkeypatch):
     monkeypatch.setattr(metadata, "version", unavailable_version)
     assert "package version: source tree (metadata unavailable)" in build_report_html(
         ProbabilisticForecast().run(study())
+    )
+
+
+def test_report_preserves_supplied_revision_history():
+    from worldenergydata.production.forecast.report import build_report_html
+
+    cfg = study()
+    cfg["revision_history"] = [
+        {"revision": 1, "date": "2026-10-20", "change": "Initial example."},
+        {"revision": 2, "date": "2026-10-22", "change": "Retain <history> & sources."},
+    ]
+    html = build_report_html(ProbabilisticForecast().run(cfg))
+    assert "<tr><td>1</td><td>2026-10-20</td><td>Initial example.</td></tr>" in html
+    assert (
+        "<tr><td>2</td><td>2026-10-22</td><td>Retain &lt;history&gt; &amp; sources.</td></tr>"
+        in html
+    )
+
+
+def test_frozen_report_is_reproducible(monkeypatch, tmp_path):
+    from worldenergydata.production.forecast import report
+
+    class FixedDate:
+        @staticmethod
+        def now(tz):
+            return datetime(2026, 10, 22, tzinfo=tz)
+
+    monkeypatch.setattr(report, "datetime", FixedDate)
+
+    def unavailable_version(name):
+        raise metadata.PackageNotFoundError(name)
+
+    monkeypatch.setattr(report.metadata, "version", unavailable_version)
+    root = Path(__file__).resolve().parents[4]
+    cfg = yaml.safe_load(
+        (
+            root / "examples/workflows/production-forecast-probabilistic/input.yml"
+        ).read_text()
+    )
+    cfg["Analysis"] = {"result_folder": str(tmp_path)}
+    outputs = ProductionForecast().router(cfg)["production_forecast"]["outputs"]
+    assert (
+        Path(outputs["report_html"]).read_bytes()
+        == (root / "reports/production_forecast/index.html").read_bytes()
     )
