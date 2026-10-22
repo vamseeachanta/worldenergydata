@@ -2,8 +2,9 @@
 
 All dates, values and references below are synthetic, rather than field data.
 The date ordering is hand checked: 2000-01-01 < 2001-01-01 < 2002-01-01.
-The strict inequality implements the conservative protocol documented in
-calibration-v4.md, based on the 2022 leakage paper, section 2.4 [L2/L3.1].
+Same-day evidence is rejected because calendar-date resolution cannot establish
+order, as documented in calibration-v4.md, based on the 2022 leakage paper,
+section 2.4 [L2/L3.1].
 No numerical hull discriminator or empirical acceptance limit is assumed.
 Candidate and outcome names below independently transcribe the research
 protocol in calibration-v4.md and the concept/architecture field group in
@@ -13,6 +14,7 @@ models.py; expected statuses do not come from the gate's registries.
 from dataclasses import replace
 from datetime import date, datetime
 
+import numpy as np
 import pytest
 
 from worldenergydata.field_development.calibration_evidence import (
@@ -191,3 +193,27 @@ def test_audit_does_not_mutate_evidence():
     before = (replace(observation), replace(record))
     audit_candidates([observation], record)
     assert (observation, record) == before
+
+
+@pytest.mark.parametrize("value", [np.int64(2), []])
+def test_unrecognised_value_types_are_reported_without_implying_absence(value):
+    check = audit_feature(feature(name="prior_spar_count", value=value), decision())
+    assert check.status is EvidenceStatus.NOT_EVALUATED
+    assert check.reason == "value type not recognised"
+
+
+@pytest.mark.parametrize("value", [None, " ", float("nan"), float("inf")])
+def test_missing_or_nonfinite_values_have_a_distinct_reason(value):
+    check = audit_feature(feature(value=value), decision())
+    assert check.status is EvidenceStatus.NOT_EVALUATED
+    assert check.reason == "missing or non-finite feature value"
+
+
+@pytest.mark.parametrize(
+    "name,value",
+    [("prior_spar_count", -3), ("prior_spar_count", True), ("hpht", "maybe")],
+)
+def test_gate_does_not_claim_to_validate_feature_semantics(name, value):
+    """A provenance result does not establish that a value is meaningful."""
+    check = audit_feature(feature(name=name, value=value), decision())
+    assert check.status is EvidenceStatus.ELIGIBLE

@@ -7,7 +7,7 @@ verified. Rankings and the existing in-sample calibration are unchanged.
 Method: *Leakage and the Reproducibility Crisis in ML-based Science*, arXiv
 2207.07048v1 (2022), section 2.4 [L2, L3.1]: justify feature legitimacy and
 exclude future information. See docs/domains/field-development/calibration-v4.md
-for the source, conservative date convention and remaining evidence gaps.
+for the source, strict date ordering and remaining evidence gaps.
 """
 
 from __future__ import annotations
@@ -73,7 +73,11 @@ OUTCOME_FEATURES = frozenset(
 
 @dataclass(frozen=True)
 class DecisionEvidence:
-    """Earliest documented concept decision; source must support its date."""
+    """Earliest documented concept decision; source must support its date.
+
+    The caller guarantees that this decision and every supplied observation
+    describe the same field; field identity is not checked by the audit.
+    """
 
     selected_on: date | None
     source: str | None
@@ -86,6 +90,9 @@ class FeatureEvidence:
     ``available_on`` is when this exact value became public, not a retrieval
     date. ``legitimacy_basis`` explains why its derivation is independent of
     the concept choice. Sources should identify the document and location.
+    The caller guarantees that this value describes the decision's field.
+    Supported value types are bool, int, float and str; per-feature meaning
+    and ranges are not checked. Other types are reported as unrecognised.
     """
 
     name: str
@@ -111,9 +118,10 @@ def audit_feature(
 ) -> EvidenceCheck:
     """Screen a supplied observation without imputing dates, values or timing.
 
-    Strict date ordering is a conservative audit convention derived from the
-    leakage paper's section 2.4 [L2/L3.1], not a published hull-selection rule.
-    Equal calendar dates cannot establish which event happened first.
+    Same-day evidence is rejected because calendar-date resolution cannot
+    establish order. Strict ordering implements the leakage paper's section
+    2.4 [L2/L3.1]; it is not a published hull-selection rule.
+    The caller guarantees that observation and decision describe one field.
     """
     if observation.name in OUTCOME_FEATURES:
         return EvidenceCheck(
@@ -130,13 +138,15 @@ def audit_feature(
     if observation.timing != FeatureTiming.PRE_DECISION:
         return EvidenceCheck(EvidenceStatus.NOT_EVALUATED, "feature timing is unknown")
     value = observation.value
+    if value is not None and not isinstance(value, (bool, int, float, str)):
+        return EvidenceCheck(EvidenceStatus.NOT_EVALUATED, "value type not recognised")
     if (
-        not isinstance(value, (bool, int, float, str))
+        value is None
         or (isinstance(value, str) and not value.strip())
         or (isinstance(value, float) and not math.isfinite(value))
     ):
         return EvidenceCheck(
-            EvidenceStatus.NOT_EVALUATED, "missing or invalid feature value"
+            EvidenceStatus.NOT_EVALUATED, "missing or non-finite feature value"
         )
     if not _has_text(observation.source) or not _has_text(observation.legitimacy_basis):
         return EvidenceCheck(
@@ -167,6 +177,8 @@ def audit_candidates(
 ) -> dict[str, EvidenceCheck]:
     """Report missing candidates explicitly and retain rejected extra inputs.
 
+    The caller guarantees one field per call: all observations must describe
+    the same field as the decision. Field identity is not checked here.
     Duplicate feature names raise rather than silently selecting a vintage.
     No overall pass or predictive-validity conclusion is inferred from this map.
     """

@@ -18,6 +18,7 @@ therefore **NOT_EVALUATED**, rather than a measured negative result. The
 | Revision | Date | Change and reason |
 |---|---|---|
 | Initial | 2026-10-19 | Add a dated-evidence audit before testing a new hull discriminator. |
+| 1 | 2026-10-22 | Distinguish value-type diagnostics and clarify date ordering and caller responsibility for field identity. |
 
 ## Evidence protocol
 
@@ -38,9 +39,9 @@ pre_decision AND sourced_value AND sourced_decision AND (available_on < selected
 Here `available_on` is the first public availability of the **exact value and
 vintage**, and `selected_on` is the earliest documented concept choice, rather
 than the later production date. Sources must identify the document and location
-that support each date. The strict inequality is a conservative implementation
+that support each date. Same-day evidence is rejected because calendar-date
+resolution cannot establish order. The strict inequality is an implementation
 convention derived from the source, not a published hull-selection threshold.
-Same-day evidence is rejected because calendar dates cannot establish order.
 No hull coefficient, depth cutoff, accuracy floor or engineering limit is added.
 
 The caller must classify timing and supply an explanation of independence from
@@ -85,8 +86,19 @@ The research API is in `worldenergydata.field_development.calibration_evidence`.
 It accepts `DecisionEvidence` and `FeatureEvidence` records. `audit_feature`
 checks one observation; `audit_candidates` reports every registered candidate,
 retains extra supplied observations and refuses duplicate feature names.
+The caller guarantees one field per call: the decision and every observation
+must describe the same field. The records do not carry field identifiers, so
+mixed-field inputs cannot be detected by the audit.
+
 True zero and false values are observations; absent, blank and non-finite
-values are not. It does not mutate inputs or call the recommendation engine.
+values are not. Values outside the supported Python `bool`, `int`, `float` and
+`str` types receive `NOT_EVALUATED` with `value type not recognised`; for example,
+a NumPy integer scalar must be converted by the caller before submission.
+Absent, blank and non-finite values instead report `missing or non-finite
+feature value`. Per-feature meaning and ranges are not checked: a negative or
+boolean count, or an arbitrary text flag, can meet this provenance protocol
+without being a scientifically valid input. It does not mutate inputs or call
+the recommendation engine.
 
 ```python
 from worldenergydata.field_development.calibration_evidence import (
