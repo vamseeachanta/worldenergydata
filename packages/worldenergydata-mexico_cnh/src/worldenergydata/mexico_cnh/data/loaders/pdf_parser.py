@@ -253,8 +253,18 @@ class CNHPDFParser:
 
             # Try numeric conversion
             try:
-                # Handle Spanish number format (comma as decimal separator)
-                numeric_values = df[col].str.replace(",", ".", regex=False)
+                # Issue #1282 / PR #1399: nonzero-leading comma groups take
+                # precedence over the retained decimal-comma fallback.
+                # CLDR 48.2, root Latin symbols and #,##0.### decimal pattern:
+                # https://github.com/unicode-org/cldr/blob/release-48-2/common/main/root.xml
+                text_values = df[col].str.strip()
+                grouped = text_values.str.fullmatch(
+                    r"[+-]?[1-9][0-9]{0,2}(?:,[0-9]{3})+(?:\.[0-9]+)?", na=False
+                )
+                numeric_values = text_values.str.replace(",", ".", regex=False)
+                numeric_values = numeric_values.mask(
+                    grouped, text_values.str.replace(",", "", regex=False)
+                )
                 numeric_values = pd.to_numeric(numeric_values, errors="coerce")
 
                 # Only apply if most values are numeric

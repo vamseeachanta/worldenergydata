@@ -2,6 +2,7 @@
 # ABOUTME: Handles Spanish column names and data normalization
 
 import logging
+import unicodedata
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -89,6 +90,17 @@ DTYPE_MAPPING: Dict[str, str] = {
 }
 
 
+def _header_key(value: str) -> str:
+    """Fold accents before looking up Spanish headers (issue #1282).
+
+    Python 3.11 unicodedata: NFKD decomposition and combining marks.
+    https://docs.python.org/3.11/library/unicodedata.html
+    """
+    decomposed = unicodedata.normalize("NFKD", str(value))
+    text = "".join(char for char in decomposed if not unicodedata.combining(char))
+    return text.lower().strip().replace(" ", "_").replace("-", "_")
+
+
 class CNHExcelLoader:
     """Load and parse CNH Excel exports.
 
@@ -108,7 +120,10 @@ class CNHExcelLoader:
             column_mapping: Custom column mapping to override defaults.
             date_columns: List of column names to parse as dates.
         """
-        self.column_mapping = {**COLUMN_MAPPING, **(column_mapping or {})}
+        self.column_mapping = {
+            _header_key(key): value
+            for key, value in {**COLUMN_MAPPING, **(column_mapping or {})}.items()
+        }
         self.date_columns = date_columns or [
             "fecha",
             "date",
@@ -122,6 +137,7 @@ class CNHExcelLoader:
         sheet_name: Union[str, int] = 0,
         skip_rows: int = 0,
         normalize: bool = True,
+        required_columns: list[str] | None = None,
     ) -> pd.DataFrame:
         """Load Excel file and optionally normalize columns.
 
@@ -130,6 +146,8 @@ class CNHExcelLoader:
             sheet_name: Sheet name or index to read.
             skip_rows: Number of rows to skip at the start.
             normalize: Whether to normalize column names.
+            required_columns: Required source headers or canonical target names.
+                Each must map to a known target and be present. Requires normalize.
 
         Returns:
             DataFrame with loaded and optionally normalized data.
@@ -138,6 +156,8 @@ class CNHExcelLoader:
             FileNotFoundError: If the file does not exist.
             ValueError: If the file cannot be parsed.
         """
+        if required_columns and not normalize:
+            raise ValueError("required_columns requires normalize=True")
         file_path = Path(file_path)
         if not file_path.exists():
             raise FileNotFoundError(f"Excel file not found: {file_path}")
@@ -157,37 +177,47 @@ class CNHExcelLoader:
         logger.info(f"Loaded {len(df)} rows from {file_path.name}")
 
         if normalize:
-            df = self.normalize_columns(df)
+            df = self.normalize_columns(df, required_columns=required_columns)
             df = self._convert_dtypes(df)
 
         return df
 
-    def normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Translate Spanish columns to English.
+    def normalize_columns(
+        self, df: pd.DataFrame, required_columns: list[str] | None = None
+    ) -> pd.DataFrame:
+        """Fold accents and map headers; reject missing/unmapped required columns.
 
-        Args:
-            df: DataFrame with Spanish column names.
-
-        Returns:
-            DataFrame with normalized English column names.
+        Required names may be source headers or canonical targets. Optional
+        unknown columns remain normalized text for custom export metadata.
         """
-        # Normalize column names: lowercase, strip whitespace, replace spaces
-        df.columns = [
-            str(col).lower().strip().replace(" ", "_").replace("-", "_")
-            for col in df.columns
-        ]
-
-        # Apply mapping
-        rename_map = {}
-        for col in df.columns:
-            if col in self.column_mapping:
-                rename_map[col] = self.column_mapping[col]
-
-        if rename_map:
-            df = df.rename(columns=rename_map)
-            logger.debug(f"Renamed columns: {rename_map}")
-
+        original_columns = list(df.columns)
+        keys = [_header_key(col) for col in original_columns]
+        targets = [self.column_mapping.get(key, key) for key in keys]
+        known_targets = set(self.column_mapping.values())
+        for required in required_columns or []:
+            key = _header_key(required)
+            target = self.column_mapping.get(key, key)
+            if target not in known_targets or target not in targets:
+                raise ValueError(f"Missing or unmapped required column: {required}")
+        if len(set(targets)) != len(targets):
+            raise ValueError(f"Duplicate normalized columns: {original_columns}")
+        df = df.copy()
+        df.columns = targets
+        df.attrs["source_columns"] = original_columns
         return df
+
+    @staticmethod
+    def _require_recognized_columns(
+        df: pd.DataFrame, candidates: list[str], report: str
+    ) -> None:
+        # Structural policy for #1282: a specialized parser must recognize
+        # its data schema. Callers declare stricter requirements explicitly.
+        if not any(col in df.columns for col in candidates):
+            originals = df.attrs.get("source_columns", list(df.columns))
+            raise ValueError(
+                f"Missing or unmapped required {report} column; "
+                f"expected one of {candidates}; source columns: {originals}"
+            )
 
     def _convert_dtypes(self, df: pd.DataFrame) -> pd.DataFrame:
         """Convert columns to appropriate data types.
@@ -217,6 +247,7 @@ class CNHExcelLoader:
         self,
         file_path: Union[str, Path],
         sheet_name: Union[str, int] = 0,
+        required_columns: list[str] | None = None,
     ) -> pd.DataFrame:
         """Parse production data export.
 
@@ -225,12 +256,15 @@ class CNHExcelLoader:
 
         Args:
             file_path: Path to the production report Excel file.
+            required_columns: Required source headers or canonical target names.
             sheet_name: Sheet name or index containing production data.
 
         Returns:
             DataFrame with normalized production data.
         """
-        df = self.load(file_path, sheet_name=sheet_name)
+        df = self.load(
+            file_path, sheet_name=sheet_name, required_columns=required_columns
+        )
 
         # Ensure numeric production columns
         production_cols = [
@@ -242,6 +276,7 @@ class CNHExcelLoader:
             "cumulative_gas",
         ]
 
+        self._require_recognized_columns(df, production_cols, "production")
         for col in production_cols:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors="coerce")
@@ -256,6 +291,7 @@ class CNHExcelLoader:
         self,
         file_path: Union[str, Path],
         sheet_name: Union[str, int] = 0,
+        required_columns: list[str] | None = None,
     ) -> pd.DataFrame:
         """Parse well data export.
 
@@ -264,13 +300,33 @@ class CNHExcelLoader:
 
         Args:
             file_path: Path to the well report Excel file.
+            required_columns: Required source headers or canonical target names.
             sheet_name: Sheet name or index containing well data.
 
         Returns:
             DataFrame with normalized well data.
         """
-        df = self.load(file_path, sheet_name=sheet_name)
+        df = self.load(
+            file_path, sheet_name=sheet_name, required_columns=required_columns
+        )
 
+        self._require_recognized_columns(
+            df,
+            [
+                "well",
+                "well_name",
+                "well_id",
+                "well_number",
+                "latitude",
+                "longitude",
+                "x_coordinate",
+                "y_coordinate",
+                "depth",
+                "total_depth",
+                "vertical_depth",
+            ],
+            "well",
+        )
         # Ensure numeric coordinate columns
         coord_cols = ["latitude", "longitude", "x_coordinate", "y_coordinate"]
         for col in coord_cols:
