@@ -1,0 +1,28 @@
+{
+  "datasets": [
+    {
+      "id": "wells",
+      "source_id": "wellbore_query",
+      "source_version": "synthetic-fixture",
+      "state": "TX",
+      "domain": "wells",
+      "path": "wells.csv",
+      "status": "downloaded",
+      "keys": {"api14": "api14"},
+      "unique": true
+    },
+    {
+      "id": "observations",
+      "source_id": "completion_data",
+      "source_version": "synthetic-fixture",
+      "state": "TX",
+      "domain": "pressure/depletion",
+      "path": "observations.csv",
+      "status": "derived",
+      "keys": {"api14": "api14"},
+      "unique": false
+    }
+  ],
+  "joins": [{"left": "observations", "right": "wells", "on": ["api14"]}],
+  "artifacts": []
+}
