@@ -318,7 +318,7 @@ def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.Da
     j["date"] = pd.to_datetime(j["WAR_START_DT"], errors="coerce")
     j["API_WELL_NUMBER"] = j["API_WELL_NUMBER"].astype(str).str.strip()
     # A missing display name must not discard a dated operation for a known
-    # API. Normalize before grouping so null and blank names share a group.
+    # API. Names supply display details, not milestone identity.
     j["WELL_NAME"] = j["WELL_NAME"].fillna("").astype(str).str.strip()
     j = j.dropna(subset=["date"])
     j = j[j["date"] <= end_date]
@@ -327,8 +327,11 @@ def derive_war_operations(lease_num: str, end_date: str = "2025-05-31") -> pd.Da
     # For each well + activity-code, take the earliest WAR date as the
     # milestone for that operation phase (deterministic).
     grouped = (
-        j.groupby(["API_WELL_NUMBER", "WELL_NAME", "act"], as_index=False)["date"]
-        .min()
+        j.groupby(["API_WELL_NUMBER", "act"], as_index=False)
+        .agg(
+            date=("date", "min"),
+            WELL_NAME=("WELL_NAME", lambda names: next((n for n in names if n), "")),
+        )
         .sort_values("date")
     )
     for _, r in grouped.iterrows():

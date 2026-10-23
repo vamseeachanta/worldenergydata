@@ -7,6 +7,7 @@ as published WAR definitions. Dates and identifiers below are synthetic.
 
 import pandas as pd
 import pytest
+
 from worldenergydata.lower_tertiary import ops_timeline
 
 
@@ -56,6 +57,49 @@ def test_abandonment_without_well_name_is_retained(monkeypatch, code, label, nam
             "detail": "API 11111111111100",
         }
     ]
+
+
+@pytest.mark.parametrize(
+    ("code", "label"),
+    [
+        ("PA", "Plug & abandon"),
+        ("TA", "Temporary abandonment"),
+        ("COM", "Completion"),
+        ("WO", "Workover"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("later_name", "earlier_name", "detail"),
+    [
+        (None, " Well A ", "Well A (11111111111100)"),
+        (" Well A ", pd.NA, "Well A (11111111111100)"),
+        (" First name ", "Second name", "First name (11111111111100)"),
+        (None, "  ", "API 11111111111100"),
+    ],
+)
+def test_one_milestone_per_api_and_activity(
+    monkeypatch, code, label, later_name, earlier_name, detail
+):
+    """Hand enumeration: two rows give one event on Jan 5, before Jan 9.
+
+    The first non-blank name in input order supplies the detail, independently
+    of which row supplies the earliest date. All-blank groups use the API.
+    """
+    _war_tables(
+        monkeypatch,
+        [
+            (1, "G00001", "11111111111100", later_name, "2024-01-09", code),
+            (2, "G00001", "11111111111100", earlier_name, "2024-01-05", code),
+        ],
+    )
+
+    result = ops_timeline.derive_war_operations("G00001", "2024-01-31")
+
+    assert len(result) == 1
+    assert result["date"].tolist() == [pd.Timestamp("2024-01-05")]
+    assert result["API_WELL_NUMBER"].tolist() == ["11111111111100"]
+    assert result["operation"].tolist() == [label]
+    assert result["detail"].tolist() == [detail]
 
 
 def test_abandonment_keeps_earliest_valid_date_and_existing_operations(monkeypatch):
