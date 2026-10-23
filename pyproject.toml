@@ -325,6 +325,10 @@ line_length = 88
 # splits worldenergydata.common from worldenergydata.<domain>). (#529)
 known_first_party = ["worldenergydata"]
 
+[tool.ruff.lint.isort]
+# Match isort across the split namespace packages.
+known-first-party = ["worldenergydata"]
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
