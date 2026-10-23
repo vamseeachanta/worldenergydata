@@ -1,7 +1,7 @@
 defect,count,example_id,rule,reason
-activity.missing_keys,882,10028,excluded,A required source key or activity code is blank.
-boreholes.missing_dates,1844,177000013501,excluded,A required source date is blank; each blank date is counted.
-population_coverage,14,608074033000,excluded,"A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice."
-unattributed_reports,1747,1042,excluded,A WAR report key has no matching activity record.
-war.implausible_span,33,1288,excluded,The inclusive WAR interval exceeds the configured day limit.
-war.reversed_dates,10,2004,excluded,The source end date precedes its start date.
+activity.missing_keys,882,10028,reported,"A required key or code is blank, including missing-code sentinels."
+boreholes.missing_dates,1844,177000013501,reported,A required source date is blank; each blank date is counted.
+population_coverage,14,608074033000,reported,"A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice."
+unattributed_reports,1747,-111163,reported,A WAR report key has no matching activity record.
+war.implausible_span,33,-299995,reported,The exclusive WAR span exceeds the canonical plausibility limit.
+war.reversed_dates,10,2004,reported,The source end date precedes its start date.

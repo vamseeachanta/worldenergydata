@@ -1,34 +1,36 @@
 {
   "basis": "DRL+COM",
-  "criterion": "Every source check and join must pass before any statistic.",
+  "coverage": {
+    "calendar_evaluated_bores": 225,
+    "completion_evaluated_bores": 77,
+    "drilling_evaluated_bores": 215,
+    "selected_bores": 253,
+    "status": "partial"
+  },
+  "criterion": "Schema, provenance, row floors, identifier formats, duplicate keys, units and orphan keys must pass globally. Population quantities require valid dates within configured bounds; exclusive WAR spans must not exceed the canonical plausibility limit.",
   "data_quality": {
     "accounting": {
       "activity.missing_keys": {
-        "corrected": 0,
-        "excluded": 882
+        "reported": 882
       },
       "boreholes.missing_dates": {
-        "corrected": 0,
-        "excluded": 1844
+        "reported": 1844
       },
       "population_coverage": {
-        "corrected": 0,
-        "excluded": 14
+        "reported": 14
       },
       "unattributed_reports": {
-        "corrected": 0,
-        "excluded": 1747
+        "reported": 1747
       },
       "war.implausible_span": {
-        "corrected": 0,
-        "excluded": 33
+        "reported": 33
       },
       "war.reversed_dates": {
-        "corrected": 0,
-        "excluded": 10
+        "reported": 10
       }
     },
-    "basis": "Entire supplied tables; source QA gates every statistic. No corrections applied.",
+    "basis": "Whole-source detection inventory; population quantities are judged per bore.",
+    "blocking": false,
     "columns": [
       "defect",
       "count",
@@ -36,72 +38,3826 @@
       "rule",
       "reason"
     ],
-    "public_data_quality": "Public data quality\nSource checks failed. All statistics and chart values are withheld.\nactivity.missing_keys: 882 excluded. A required source key or activity code is blank.\nboreholes.missing_dates: 1844 excluded. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 excluded. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 excluded. A WAR report key has no matching activity record.\nwar.implausible_span: 33 excluded. The inclusive WAR interval exceeds the configured day limit.\nwar.reversed_dates: 10 excluded. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
+    "per_bore": {
+      "608074030500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074030501": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074030502": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074031400": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074031500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074031501": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074031502": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074032000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074032001": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074032002": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074032003": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074032800": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608074033000": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 4,
+        "rig": []
+      },
+      "608074033100": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 4,
+        "rig": []
+      },
+      "608074033200": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 20,
+        "rig": []
+      },
+      "608074033300": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 11,
+        "rig": []
+      },
+      "608074033400": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608074033500": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608074033600": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608074033700": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 8,
+        "rig": []
+      },
+      "608074034100": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608074034300": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 2,
+        "rig": []
+      },
+      "608074034400": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 2,
+        "rig": []
+      },
+      "608084001100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001102": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001103": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001104": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084001601": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084002100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084002700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084002701": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003102": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003103": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003104": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003105": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084003106": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084004700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084004701": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084005500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006001": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006101": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006701": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084006702": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007200": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007301": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608084007701": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114062100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114062101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114063500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114063501": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114063502": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114066100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114066101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114067300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114067301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114072800": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114075000": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114075100": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114076100": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 16,
+        "rig": []
+      },
+      "608114076101": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114076900": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 7,
+        "rig": []
+      },
+      "608114077400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608114079600": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124000400": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124000401": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124000402": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124000800": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 1,
+        "rig": []
+      },
+      "608124000801": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001601": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001700": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001701": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124001900": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002001": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002002": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002003": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002004": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002005": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002302": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002701": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002702": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002703": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124002900": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003300": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003301": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003400": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003401": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003402": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124003800": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004400": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004601": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004602": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124004701": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005000": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005102": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005103": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005201": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005202": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005203": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005300": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005600": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005700": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005800": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124005900": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006000": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006001": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006200": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006302": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006400": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 10,
+        "rig": []
+      },
+      "608124006401": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 7,
+        "rig": []
+      },
+      "608124006402": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124006403": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 6,
+        "rig": []
+      },
+      "608124006404": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006500": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006601": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006602": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006603": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006700": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006800": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124006900": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124007000": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124007100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007102": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007103": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007200": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 5,
+        "rig": []
+      },
+      "608124007300": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 5,
+        "rig": []
+      },
+      "608124007400": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124007500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124007900": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124008200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124008300": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124008700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009201": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009500": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009700": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124009900": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010101": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010102": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010103": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010701": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010800": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124010900": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011001": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011100": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011101": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011200": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011301": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011302": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011500": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011501": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011502": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011503": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011504": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011601": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011602": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011603": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011604": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011605": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011606": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011700": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011800": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124011801": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012200": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012300": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012500": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012600": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012601": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012602": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012701": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012800": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012801": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012802": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012803": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012804": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124012900": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013200": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013201": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013202": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013300": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013500": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013600": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013700": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013701": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124013900": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014000": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014001": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014002": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014003": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014100": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014300": {
+        "calendar": [],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014301": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124014600": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124015100": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124015200": {
+        "calendar": [
+          "missing_boreholes"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 2,
+        "rig": []
+      },
+      "608124015300": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 2,
+        "rig": []
+      },
+      "608124015400": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      },
+      "608124015500": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 7,
+        "rig": []
+      },
+      "608124015501": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124015502": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 3,
+        "rig": []
+      },
+      "608124015503": {
+        "calendar": [
+          "missing_dates"
+        ],
+        "completion_status": "no_activity_coded",
+        "drilling_status": "no_activity_coded",
+        "reports_without_code": 2,
+        "rig": []
+      },
+      "608124015504": {
+        "calendar": [],
+        "completion_status": "war_covered",
+        "drilling_status": "war_covered",
+        "reports_without_code": 0,
+        "rig": []
+      }
+    },
+    "public_data_quality": "Public data quality\nSource defects are reported; quantity dispositions are recorded per bore.\nactivity.missing_keys: 882 reported. A required key or code is blank, including missing-code sentinels.\nboreholes.missing_dates: 1844 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
     "rows": [
       {
         "count": 882,
         "defect": "activity.missing_keys",
         "example_id": "10028",
-        "reason": "A required source key or activity code is blank.",
-        "rule": "excluded"
+        "reason": "A required key or code is blank, including missing-code sentinels.",
+        "rule": "reported"
       },
       {
         "count": 1844,
         "defect": "boreholes.missing_dates",
         "example_id": "177000013501",
         "reason": "A required source date is blank; each blank date is counted.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 14,
         "defect": "population_coverage",
         "example_id": "608074033000",
         "reason": "A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 1747,
         "defect": "unattributed_reports",
-        "example_id": "1042",
+        "example_id": "-111163",
         "reason": "A WAR report key has no matching activity record.",
-        "rule": "excluded"
+        "rule": "reported"
       },
       {
         "count": 33,
         "defect": "war.implausible_span",
-        "example_id": "1288",
-        "reason": "The inclusive WAR interval exceeds the configured day limit.",
-        "rule": "excluded"
+        "example_id": "-299995",
+        "reason": "The exclusive WAR span exceeds the canonical plausibility limit.",
+        "rule": "reported"
       },
       {
         "count": 10,
         "defect": "war.reversed_dates",
         "example_id": "2004",
         "reason": "The source end date precedes its start date.",
-        "rule": "excluded"
+        "rule": "reported"
       }
     ],
     "synthetic": false
   },
-  "failures": [
-    "war: reversed_dates (10)",
-    "war: implausible_span (33)",
-    "activity: missing_keys (882)",
-    "boreholes: missing_dates (1844)",
-    "unattributed_reports (1747)",
-    "population_coverage (14)"
-  ],
+  "failures": [],
+  "headlines": {
+    "activity_code_records": 4041,
+    "bore_drilling_days_sum": 11484.0,
+    "calendar_median_days": 47,
+    "completion_days_sum": 5522.0,
+    "well_drilling_days_union": 11484.0
+  },
   "joins": {
     "orphan_keys": 0,
     "population_coverage": 14,
     "unattributed_reports": 1747
   },
+  "overlap": {
+    "all_war_days": 736.0,
+    "criterion": "Additive bore unions minus well unions, for evaluated wells; days.",
+    "drilling_days": 0.0,
+    "drilling_evaluated_wells": 120,
+    "evaluated_wells": 140,
+    "selected_wells": 140,
+    "wells_with_multiple_bores": 56
+  },
+  "per_bore": {
+    "608074030500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074030501": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074030502": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074031400": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074031500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074031501": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074031502": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074032000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074032001": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074032002": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074032003": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074032800": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608074033000": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 4,
+      "rig": []
+    },
+    "608074033100": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 4,
+      "rig": []
+    },
+    "608074033200": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 20,
+      "rig": []
+    },
+    "608074033300": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 11,
+      "rig": []
+    },
+    "608074033400": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608074033500": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608074033600": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608074033700": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 8,
+      "rig": []
+    },
+    "608074034100": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608074034300": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 2,
+      "rig": []
+    },
+    "608074034400": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 2,
+      "rig": []
+    },
+    "608084001100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001102": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001103": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001104": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084001601": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084002100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084002700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084002701": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003102": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003103": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003104": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003105": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084003106": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084004700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084004701": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084005500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006001": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006101": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006701": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084006702": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007200": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007301": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608084007701": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114062100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114062101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114063500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114063501": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114063502": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114066100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114066101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114067300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114067301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114072800": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114075000": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114075100": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114076100": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 16,
+      "rig": []
+    },
+    "608114076101": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114076900": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 7,
+      "rig": []
+    },
+    "608114077400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608114079600": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124000400": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124000401": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124000402": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124000800": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 1,
+      "rig": []
+    },
+    "608124000801": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001601": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001700": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001701": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124001900": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002001": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002002": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002003": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002004": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002005": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002302": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002701": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002702": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002703": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124002900": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003300": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003301": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003400": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003401": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003402": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124003800": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004400": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004601": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004602": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124004701": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005000": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005102": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005103": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005201": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005202": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005203": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005300": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005600": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005700": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005800": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124005900": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006000": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006001": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006200": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006302": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006400": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 10,
+      "rig": []
+    },
+    "608124006401": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 7,
+      "rig": []
+    },
+    "608124006402": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124006403": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 6,
+      "rig": []
+    },
+    "608124006404": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006500": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006601": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006602": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006603": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006700": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006800": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124006900": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124007000": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124007100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007102": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007103": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007200": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 5,
+      "rig": []
+    },
+    "608124007300": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 5,
+      "rig": []
+    },
+    "608124007400": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124007500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124007900": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124008200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124008300": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124008700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009201": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009500": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009700": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124009900": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010101": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010102": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010103": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010701": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010800": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124010900": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011001": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011100": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011101": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011200": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011301": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011302": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011500": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011501": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011502": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011503": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011504": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011601": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011602": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011603": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011604": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011605": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011606": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011700": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011800": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124011801": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012200": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012300": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012500": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012600": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012601": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012602": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012701": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012800": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012801": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012802": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012803": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012804": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124012900": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013200": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013201": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013202": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013300": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013500": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013600": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013700": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013701": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124013900": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014000": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014001": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014002": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014003": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014100": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014300": {
+      "calendar": [],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014301": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124014600": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124015100": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124015200": {
+      "calendar": [
+        "missing_boreholes"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 2,
+      "rig": []
+    },
+    "608124015300": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 2,
+      "rig": []
+    },
+    "608124015400": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    },
+    "608124015500": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 7,
+      "rig": []
+    },
+    "608124015501": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124015502": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 3,
+      "rig": []
+    },
+    "608124015503": {
+      "calendar": [
+        "missing_dates"
+      ],
+      "completion_status": "no_activity_coded",
+      "drilling_status": "no_activity_coded",
+      "reports_without_code": 2,
+      "rig": []
+    },
+    "608124015504": {
+      "calendar": [],
+      "completion_status": "war_covered",
+      "drilling_status": "war_covered",
+      "reports_without_code": 0,
+      "rig": []
+    }
+  },
+  "phase_status_counts": {
+    "completion": {
+      "no_activity_coded": 176,
+      "war_covered": 77
+    },
+    "drilling": {
+      "no_activity_coded": 38,
+      "war_covered": 215
+    }
+  },
   "population_bores": 253,
   "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
-  "scope": "entire supplied tables before population filtering",
+  "population_tables": {
+    "activity": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war": 0,
+        "missing_dates": 0,
+        "missing_keys": 1,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "criteria": {
+        "date_max": null,
+        "date_min": null,
+        "max_exclusive_span_days": null,
+        "min_rows": 1
+      },
+      "date_max": null,
+      "date_min": null,
+      "rows": 4042,
+      "unit": "record"
+    },
+    "boreholes": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war": 0,
+        "missing_dates": 28,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "criteria": {
+        "date_max": "2026-12-31",
+        "date_min": "1900-01-01",
+        "max_exclusive_span_days": null,
+        "min_rows": 1
+      },
+      "date_max": "2026-02-07",
+      "date_min": "2000-09-21",
+      "rows": 239,
+      "unit": "day"
+    },
+    "war": {
+      "checks": {
+        "duplicate_keys": 0,
+        "implausible_span": 0,
+        "invalid_api": 0,
+        "invalid_dates": 0,
+        "invalid_war": 0,
+        "missing_dates": 0,
+        "missing_keys": 0,
+        "out_of_range_dates": 0,
+        "reversed_dates": 0,
+        "row_count": 0,
+        "unit_check": 0
+      },
+      "criteria": {
+        "date_max": "2026-12-31",
+        "date_min": "1900-01-01",
+        "max_exclusive_span_days": 90,
+        "min_rows": 1
+      },
+      "date_max": "2026-10-10",
+      "date_min": "2000-09-15",
+      "rows": 4192,
+      "unit": "day"
+    }
+  },
+  "scope": "global structural checks; row checks and quantities scoped to selected bores",
   "sources": [
     {
-      "downloaded_at": "2026-10-22T12:32:32.908894+00:00",
+      "downloaded_at": "2026-10-22T22:56:18Z",
       "file": "eWellWARRawData.zip",
       "http_status": 200,
       "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
@@ -109,7 +3865,7 @@
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
     }
   ],
-  "status": "not-evaluated",
+  "status": "pass",
   "tables": {
     "activity": {
       "checks": {
@@ -117,11 +3873,19 @@
         "implausible_span": 0,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war": 0,
         "missing_dates": 0,
         "missing_keys": 882,
+        "out_of_range_dates": 0,
         "reversed_dates": 0,
         "row_count": 0,
         "unit_check": 0
+      },
+      "criteria": {
+        "date_max": null,
+        "date_min": null,
+        "max_exclusive_span_days": null,
+        "min_rows": 1
       },
       "date_max": null,
       "date_min": null,
@@ -134,11 +3898,19 @@
         "implausible_span": 0,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war": 0,
         "missing_dates": 1844,
         "missing_keys": 0,
+        "out_of_range_dates": 0,
         "reversed_dates": 0,
         "row_count": 0,
         "unit_check": 0
+      },
+      "criteria": {
+        "date_max": "2026-12-31",
+        "date_min": "1900-01-01",
+        "max_exclusive_span_days": null,
+        "min_rows": 1
       },
       "date_max": "2026-06-10",
       "date_min": "1947-05-10",
@@ -151,11 +3923,19 @@
         "implausible_span": 33,
         "invalid_api": 0,
         "invalid_dates": 0,
+        "invalid_war": 0,
         "missing_dates": 0,
         "missing_keys": 0,
+        "out_of_range_dates": 0,
         "reversed_dates": 10,
         "row_count": 0,
         "unit_check": 0
+      },
+      "criteria": {
+        "date_max": "2026-12-31",
+        "date_min": "1900-01-01",
+        "max_exclusive_span_days": 90,
+        "min_rows": 1
       },
       "date_max": "2026-10-17",
       "date_min": "1988-04-07",
@@ -163,5 +3943,6 @@
       "unit": "day"
     }
   },
-  "workflow_sha256": "e3dfde8d3b3309511bd20a39ea61a4bce85b82f28d77e1a0023835aeaf92a85b"
+  "workflow_digest_basis": "UTF-8 source text with LF line endings",
+  "workflow_sha256": "7a5c5c120f62f57e6eb20fcb51d8473de8e8ac6f08771fb0585d8efe684c58bd"
 }
