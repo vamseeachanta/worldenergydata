@@ -6,6 +6,7 @@ Only relative report locations and severity are emitted, never matched text.
 
 import argparse
 import re
+import stat
 import sys
 from pathlib import Path
 
@@ -72,16 +73,33 @@ def load_rules(path):
     return rules
 
 
+def is_link(metadata):
+    """Include Windows reparse points, such as directory junctions."""
+    return stat.S_ISLNK(metadata.st_mode) or bool(
+        getattr(metadata, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT
+    )
+
+
+def report_files(directory):
+    """Enumerate explicitly so directory-read and entry-stat errors propagate."""
+    for path in directory.iterdir():
+        metadata = path.lstat()
+        if is_link(metadata):
+            raise ValueError("linked report input")
+        if stat.S_ISDIR(metadata.st_mode):
+            yield from report_files(path)
+        elif stat.S_ISREG(metadata.st_mode):
+            yield path
+        else:
+            raise ValueError("unsupported report input")
+
+
 def scan_reports(reports, rules):
     """Scan every UTF-8 report file; missing, binary or linked inputs are errors."""
-    if reports.is_symlink() or not reports.is_dir():
+    metadata = reports.lstat()
+    if is_link(metadata) or not stat.S_ISDIR(metadata.st_mode):
         raise ValueError("report directory missing or linked")
-    files = []
-    for path in sorted(reports.rglob("*")):
-        if path.is_symlink():
-            raise ValueError("linked report input")
-        if path.is_file():
-            files.append(path)
+    files = sorted(report_files(reports))
     if not files:
         raise ValueError("report directory is empty")
     blocked = False

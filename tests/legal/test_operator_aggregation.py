@@ -5,9 +5,12 @@ an external hit blocks; a warning alone does not. No engineering coefficients
 or statistical acceptance thresholds are used.
 """
 
+import importlib.util
 import os
+import stat
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -15,12 +18,37 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 CHECKER = ROOT / "scripts/legal/check-operator-aggregation.sh"
 POLICY = ROOT / "data/modules/bsee/operator-aggregation-denylist.yaml"
+# Independent policy contract: exact-case aliases block except the ambiguous
+# bridge-plug abbreviation; the YAML under test supplies no expected severity.
+EXPECTED_ALIASES = [
+    ("Shell", "block"),
+    ("BP", "warn"),
+    ("Anadarko", "block"),
+    ("Chevron", "block"),
+    ("Murphy", "block"),
+    ("LLOG", "block"),
+    ("Union Oil", "block"),
+    ("Hess", "block"),
+    ("Talos", "block"),
+    ("Woodside", "block"),
+    ("Exxon Mobil", "block"),
+    ("ExxonMobil", "block"),
+    ("Arena Offshore", "block"),
+    ("Kosmos Energy", "block"),
+    ("Cantium", "block"),
+    ("Beacon Growthco", "block"),
+    ("Walter Oil & Gas", "block"),
+    ("BP America", "block"),
+    ("WPX", "block"),
+    ("EOG", "block"),
+    ("OXY", "block"),
+]
 
 
 def run_check(tmp_path, text, external=None, local=None):
     reports = tmp_path / "reports"
     reports.mkdir(exist_ok=True)
-    (reports / "memo.md").write_text(text, encoding="utf-8")
+    (reports / "memo.md").write_text(text, encoding="utf-8", newline="\n")
     external_path = tmp_path / "external.yaml"
     external_path.write_text(
         (
@@ -31,6 +59,7 @@ def run_check(tmp_path, text, external=None, local=None):
             )
         ),
         encoding="utf-8",
+        newline="\n",
     )
     command = [
         "bash",
@@ -43,7 +72,9 @@ def run_check(tmp_path, text, external=None, local=None):
     if local is not None:
         local_path = tmp_path / "local.yaml"
         local_path.write_text(
-            local if isinstance(local, str) else yaml.safe_dump(local), encoding="utf-8"
+            local if isinstance(local, str) else yaml.safe_dump(local),
+            encoding="utf-8",
+            newline="\n",
         )
         command += ["--operator-denylist", str(local_path)]
     env = {
@@ -51,7 +82,7 @@ def run_check(tmp_path, text, external=None, local=None):
     }
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     result = subprocess.run(
-        command, check=False, capture_output=True, text=True, env=env
+        command, check=False, capture_output=True, text=True, encoding="utf-8", env=env
     )
     if result.returncode == 1:
         assert "BLOCK" in result.stdout
@@ -102,21 +133,29 @@ def test_routine_narratives_do_not_block(tmp_path, text, warning):
 
 
 def test_lowercase_short_aliases_do_not_match(tmp_path):
-    policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
-    for entry in policy["operator_aliases"]:
-        if " " not in entry["pattern"]:
-            result = run_check(tmp_path, entry["pattern"].lower())
+    for alias, _severity in EXPECTED_ALIASES:
+        if " " not in alias:
+            result = run_check(tmp_path, alias.lower())
             assert result.returncode == 0, result.stderr
             assert "WARN" not in result.stdout
 
 
-def test_aliases_keep_exact_case_detection(tmp_path):
+def test_alias_policy_matches_documented_contract():
     policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
-    for entry in policy["operator_aliases"]:
-        result = run_check(tmp_path, entry["pattern"])
-        severity = entry["severity"]
-        assert result.returncode == (1 if severity == "block" else 0), result.stderr
-        assert f"{severity.upper()} memo.md:1" in result.stdout
+    assert [
+        (entry["pattern"], entry["severity"]) for entry in policy["operator_aliases"]
+    ] == (EXPECTED_ALIASES)
+    assert all(
+        entry["case_sensitive"] is (" " not in entry["pattern"])
+        for entry in policy["operator_aliases"]
+    )
+
+
+@pytest.mark.parametrize("alias,severity", EXPECTED_ALIASES)
+def test_aliases_keep_exact_case_detection(tmp_path, alias, severity):
+    result = run_check(tmp_path, alias)
+    assert result.returncode == (1 if severity == "block" else 0), result.stderr
+    assert f"{severity.upper()} memo.md:1" in result.stdout
 
 
 @pytest.mark.parametrize("letter_case", ["lower", "upper"])
@@ -248,23 +287,28 @@ def test_each_sourced_operator_is_detected(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "kind", ["empty", "binary", "nul", "utf16", "linked-file", "linked-directory"]
+    "kind",
+    ["empty", "binary", "nul", "utf16", "special", "linked-file", "linked-directory"],
 )
 def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
     reports = tmp_path / "reports"
     reports.mkdir()
     external = tmp_path / "external.yaml"
-    external.write_text("client_references: []\n", encoding="utf-8")
+    external.write_text("client_references: []\n", encoding="utf-8", newline="\n")
     if kind == "binary":
         (reports / "memo.bin").write_bytes(b"\xff")
     elif kind == "nul":
         (reports / "memo.bin").write_bytes(b"Peer aggregate.\x00")
     elif kind == "utf16":
         (reports / "memo.bin").write_bytes("Operator X".encode("utf-16le"))
+    elif kind == "special":
+        os.mkfifo(reports / "memo.pipe")
     elif kind.startswith("linked"):
         target = tmp_path / "target"
         target.mkdir()
-        (target / "memo.md").write_text("Peer aggregate", encoding="utf-8")
+        (target / "memo.md").write_text(
+            "Peer aggregate", encoding="utf-8", newline="\n"
+        )
         source = target / "memo.md" if kind == "linked-file" else target
         (reports / "link").symlink_to(source, target_is_directory=source.is_dir())
     result = subprocess.run(
@@ -279,11 +323,96 @@ def test_unscannable_report_inputs_fail_closed(tmp_path, kind):
         check=False,
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     assert result.returncode == 2
     assert "ERROR" in result.stderr
     assert "no blocking matches" not in result.stdout
     assert str(tmp_path) not in result.stderr
+
+
+def test_unreadable_subdirectory_fails_closed(tmp_path):
+    restricted = tmp_path / "reports" / "restricted"
+    restricted.mkdir(parents=True)
+    (restricted / "memo.md").write_text("Operator X", encoding="utf-8", newline="\n")
+    restricted.chmod(0)
+    try:
+        result = run_check(tmp_path, "Peer aggregate")
+    finally:
+        restricted.chmod(0o700)
+    assert result.returncode == 2
+    assert "ERROR" in result.stderr
+    assert "no blocking matches" not in result.stdout
+    assert "Operator X" not in result.stdout + result.stderr
+    assert str(tmp_path) not in result.stdout + result.stderr
+
+
+def test_nested_readable_report_is_scanned(tmp_path):
+    nested = tmp_path / "reports" / "nested"
+    nested.mkdir(parents=True)
+    (nested / "memo.md").write_text(
+        "Peer aggregate\nOperator X", encoding="utf-8", newline="\n"
+    )
+    result = run_check(tmp_path, "Peer aggregate")
+    assert result.returncode == 1
+    assert "BLOCK nested/memo.md:2" in result.stdout
+    assert "Scanned 2 report files; BLOCK" in result.stdout
+
+
+@pytest.fixture
+def checker_module():
+    spec = importlib.util.spec_from_file_location(
+        "operator_aggregation_checker",
+        CHECKER.with_name("check_operator_aggregation.py"),
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.mark.parametrize("location", ["root", "nested"])
+def test_directory_reparse_points_fail_closed(
+    tmp_path, monkeypatch, checker_module, location
+):
+    reports = tmp_path / "reports"
+    nested = reports / "nested"
+    nested.mkdir(parents=True)
+    (nested / "memo.md").write_text("Peer aggregate", encoding="utf-8", newline="\n")
+    linked = reports if location == "root" else nested
+    original_lstat = Path.lstat
+
+    def reparse_lstat(path):
+        metadata = original_lstat(path)
+        if path == linked:
+            return SimpleNamespace(
+                st_mode=metadata.st_mode,
+                st_file_attributes=stat.FILE_ATTRIBUTE_REPARSE_POINT,
+            )
+        return metadata
+
+    monkeypatch.setattr(Path, "lstat", reparse_lstat)
+    with pytest.raises(ValueError, match="linked"):
+        checker_module.scan_reports(reports, [])
+
+
+def test_disappearing_report_stat_fails_closed(tmp_path, monkeypatch, checker_module):
+    reports = tmp_path / "reports"
+    reports.mkdir()
+    (reports / "readable.md").write_text(
+        "Peer aggregate", encoding="utf-8", newline="\n"
+    )
+    missing = reports / "missing.md"
+    missing.write_text("Operator X", encoding="utf-8", newline="\n")
+    original_stat = Path.stat
+
+    def failing_stat(path, *, follow_symlinks=True):
+        if path == missing:
+            raise FileNotFoundError("report disappeared")
+        return original_stat(path, follow_symlinks=follow_symlinks)
+
+    monkeypatch.setattr(Path, "stat", failing_stat)
+    with pytest.raises(FileNotFoundError):
+        checker_module.scan_reports(reports, [])
 
 
 def test_missing_external_policy_fails_closed(tmp_path):
@@ -292,6 +421,7 @@ def test_missing_external_policy_fails_closed(tmp_path):
         check=False,
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
     assert result.returncode == 2
     assert str(tmp_path) not in result.stderr
