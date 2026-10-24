@@ -324,6 +324,7 @@ class UnifiedMetoceanClient:
         # Find the nearest NDBC buoy by fetching station list and picking closest
         with NDBCClient() as client:
             stations_result = client.fetch_stations()
+            _validate_fetch_result(stations_result)
             station = _nearest_station(
                 stations_result.data,
                 query.lat,
@@ -352,6 +353,7 @@ class UnifiedMetoceanClient:
 
         with COOPSClient() as client:
             stations_result = client.fetch_stations()
+            _validate_fetch_result(stations_result)
             station = _nearest_station(
                 stations_result.data,
                 query.lat,
@@ -475,10 +477,15 @@ class UnifiedMetoceanClient:
         return gaps
 
 
+def _validate_fetch_result(result) -> None:
+    """Reject native fetch errors without exposing upstream diagnostics."""
+    if getattr(result, "had_errors", False) or getattr(result, "error_messages", None):
+        raise RuntimeError("source client reported a fetch error")
+
+
 def _observation_dicts(result) -> list[dict[str, Any]]:
     """Do not turn explicit client failures into apparent absence of data."""
-    if getattr(result, "errors", None):
-        raise RuntimeError("source client reported a fetch error")
+    _validate_fetch_result(result)
     return [vars(obs) if hasattr(obs, "__dict__") else obs for obs in result.data]
 
 

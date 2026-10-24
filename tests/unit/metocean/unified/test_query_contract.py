@@ -14,6 +14,8 @@ import pandas as pd
 import pytest
 from typer.testing import CliRunner
 
+from worldenergydata.metocean.clients.base_client import FetchResult
+from worldenergydata.metocean.constants import DataSource
 from worldenergydata.metocean.unified import (
     MetoceanDashboard,
     MetoceanHarmonizer,
@@ -318,18 +320,119 @@ def test_cli_help_preserves_option_registration(command):
     assert result.exit_code == 0, result.output
 
 
-def test_returned_client_error_is_not_reported_as_empty():
-    client = UnifiedMetoceanClient()
+@pytest.mark.parametrize(
+    "source,method",
+    [
+        ("ndbc", "fetch_historical"),
+        ("coops", "fetch_currents"),
+        ("coops", "fetch_water_level"),
+        ("open_meteo", "fetch_historical"),
+        ("met_norway", "fetch_combined_forecast"),
+        ("erddap", "fetch_tabledap"),
+        ("ndbc", "fetch_stations"),
+        ("coops", "fetch_stations"),
+    ],
+)
+@pytest.mark.parametrize("has_rows", [False, True], ids=["empty", "partial"])
+@pytest.mark.parametrize(
+    "had_errors,error_messages",
+    [
+        (True, ["upstream diagnostic withheld"]),
+        (True, []),
+        (False, ["upstream diagnostic withheld"]),
+        (False, []),
+    ],
+    ids=["both-errors", "flag-only", "messages-only", "clean"],
+)
+def test_native_fetch_outcomes(
+    source, method, has_rows, had_errors, error_messages, caplog
+):
+    """Native errors fail the whole source, before consuming partial records.
+
+    Clean empty results remain EMPTY and clean rows remain OK. A healthy
+    adapter still contributes its three Hs rows when another source fails.
+    """
+    from worldenergydata.metocean.unified.unified_query import _nearest_station
+
+    classes = {
+        "ndbc": "NDBCClient",
+        "coops": "COOPSClient",
+        "open_meteo": "OpenMeteoClient",
+        "met_norway": "MetNorwayClient",
+        "erddap": "ERDDAPClient",
+    }
+
+    def native_result(data, **kwargs):
+        return FetchResult(
+            data=data,
+            source=DataSource(source),
+            fetch_time=datetime(2023, 1, 1),
+            records_count=len(data),
+            **kwargs,
+        )
+
+    stations = [SimpleNamespace(station_id="fixture", latitude=28.5, longitude=-88.5)]
+    observations = [
+        SimpleNamespace(
+            observation_time=datetime(2023, 1, 1),
+            forecast_time=datetime(2023, 1, 1),
+            wave_height_m=2.0,
+            speed_ms=2.0,
+            water_level_m=4.0,
+        )
+    ]
+    discovery = method == "fetch_stations"
+    payload = stations if discovery else observations
+    client = UnifiedMetoceanClient(
+        source_fetchers={"era5": lambda q: rows("era5")},
+        erddap_dataset="fixture",
+        erddap_bbox=(-89.0, -88.0, 28.0, 29.0),
+    )
     with patch(
-        "worldenergydata.metocean.clients.open_meteo_client.OpenMeteoClient"
+        f"worldenergydata.metocean.clients.{source}_client.{classes[source]}"
     ) as factory:
         api = factory.return_value.__enter__.return_value
-        api.fetch_historical.return_value = SimpleNamespace(
-            data=[], errors=["fixture failure"]
+        api.fetch_stations.return_value = native_result(stations)
+        api.fetch_historical.return_value = native_result(observations)
+        api.fetch_currents.return_value = native_result(observations)
+        getattr(api, method).return_value = native_result(
+            payload if has_rows else [],
+            had_errors=had_errors,
+            error_messages=error_messages,
         )
-        with patch.object(client._coverage, "get_clients", return_value=["open_meteo"]):
-            result = client.query(query())
-    assert result.source_status == {"open_meteo": "FAILED"}
+        with (
+            patch.object(
+                client._coverage, "get_clients", return_value=[source, "era5"]
+            ),
+            patch(
+                "worldenergydata.metocean.unified.unified_query._nearest_station",
+                wraps=_nearest_station,
+            ) as nearest,
+        ):
+            product = (
+                "water_level" if method == "fetch_water_level" else "current_speed"
+            )
+            result = client.query(query(parameters=("Hs", product)))
+        getattr(api, method).assert_called_once()
+        if discovery and (had_errors or error_messages):
+            nearest.assert_not_called()
+            api.fetch_historical.assert_not_called()
+            api.fetch_currents.assert_not_called()
+
+    expected = (
+        "FAILED" if had_errors or error_messages else "OK" if has_rows else "EMPTY"
+    )
+    assert result.source_status == {source: expected, "era5": "OK"}
+    native_rows = result.data[result.data.source == source]
+    assert native_rows.empty == (expected != "OK")
+    assert result.sources_used == sorted(
+        ["era5", source] if expected == "OK" else ["era5"]
+    )
+    assert result.data[result.data.source == "era5"].value.tolist() == [2.0, 4.0, 6.0]
+    if expected == "FAILED":
+        assert f"Source {source} failed" in caplog.messages
+    assert "upstream diagnostic withheld" not in caplog.text
+    assert "upstream diagnostic withheld" not in repr(result)
 
 
 def test_historical_cli_retains_delegation_and_defaults():
