@@ -25,7 +25,7 @@ _SCRIPTS = PROJECT_ROOT / "scripts"
 if str(_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(_SCRIPTS))
 import site_nav  # noqa: E402
-from lower_tertiary.war_methodology import methodology_html  # noqa: E402
+from lower_tertiary.war_methodology import methodology_html
 
 DEFAULT_SOURCE = (
     PROJECT_ROOT
@@ -57,7 +57,7 @@ REVISION_HISTORY = (
     (
         4,
         "2026-10-21",
-        "Add sourced WAR limitations and distinguish this page's calendar basis.",
+        "Add sourced WAR limits with a calendar-specific basis; retain the dated intervals and distinguish depth from a duration denominator.",
     ),
 )
 
@@ -91,7 +91,9 @@ def write_csv(df: pd.DataFrame, path: Path) -> None:
         }
     )
     path.parent.mkdir(parents=True, exist_ok=True)
-    out.sort_values(["field", "well_name"], kind="stable").to_csv(path, index=False)
+    out.sort_values(["field", "well_name"], kind="stable").to_csv(
+        path, index=False, encoding="utf-8", lineterminator="\n"
+    )
 
 
 def compute_stats(df: pd.DataFrame) -> dict:
@@ -304,7 +306,7 @@ th,td {{ text-align:left; padding:8px; border-bottom:1px solid #ccd6df; }}
  rig-days. Missing milestones leave their intervals not evaluated.</p>
 <p>Method source: <a href="https://docs.python.org/3/library/datetime.html#timedelta-objects">
  Python 3 datetime, timedelta objects</a> (date subtraction).</p></section>
-{methodology_html(calendar_insights=True)}
+{methodology_html(calendar=True)}
 <footer>Input: <code>{esc(src)}</code>, Sheet1. Report revision date {esc(REVISION_HISTORY[-1][1])}.
  Source dates are preserved in <a href="lt_drilling_insights.csv">the calendar CSV</a>.
  Regenerate with <code>python scripts/lower_tertiary/build_drilling_insights.py</code>.
@@ -332,6 +334,7 @@ def main(argv: list[str] | None = None) -> int:
         ).rstrip()
         + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     print(f"{stats['n_calendar']} of {stats['n_wellbores']} calendar spans derived")
     return 0

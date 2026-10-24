@@ -436,11 +436,6 @@ const FIELD = {
       "k": "OPEX",
       "v": "$15",
       "u": "/boe"
-    },
-    {
-      "k": "Operator WI",
-      "v": "51",
-      "u": "%"
     }
   ],
   "axis": {
@@ -499,22 +494,12 @@ const FIELD = {
       "txt": "FID→first oil ~5 yr"
     }
   ],
-  "workingInterest": [
-    {
-      "name": "Chevron",
-      "wi": 51,
-      "lead": true
-    },
-    {
-      "name": "Equinor",
-      "wi": 24.5
-    },
-    {
-      "name": "Suncor",
-      "wi": 24.5
-    }
-  ],
+  "workingInterest": [],
   "hostFacts": [
+    [
+      "Working interests",
+      "NOT_EVALUATED — field allocation not verified"
+    ],
     [
       "Host type",
       "Semisubmersible FPU"
@@ -613,23 +598,7 @@ const FIELD = {
     ],
     "block_note": "Walker Ridge 678 (St. Malo) / 758-759 (Jack)",
     "operator": "Chevron",
-    "working_interest": [
-      {
-        "name": "Chevron",
-        "wi": 51,
-        "operator": true
-      },
-      {
-        "name": "Equinor",
-        "wi": 24.5,
-        "operator": false
-      },
-      {
-        "name": "Suncor",
-        "wi": 24.5,
-        "operator": false
-      }
-    ],
+    "working_interest": [],
     "pending": [
       "status",
       "effective_date",
@@ -649,14 +618,14 @@ const FIELD = {
       "label": "First oil",
       "value": "Dec 2014"
     },
-    "fdp_href": null,
+    "fdp_href": "../field-development/portfolio/jack-st-malo.html",
     "fdp_issue": 962
   },
   "architecture": {
     "svg": null,
     "pending_issue": 962
   },
-  "provenance": "Facts from in-repo YAML (operator, WI Chevron 51%/Equinor 24.5%/Suncor 24.5%, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this OVERRIDES the YAML's first oil \"2014-02-01\", which appears erroneous. Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident.",
+  "provenance": "Facts from in-repo YAML (operator, capex $7.5B, opex $15/boe, plateau 94 mbopd, GOR 1200, status producing, data through 2024-12-31). Life-cycle dates from public sources: St. Malo discovered Oct 2003 and Jack Jul 2004 (discovery year=2003, earliest of pair); FID/sanction Oct 2010; first oil per Chevron press release Dec 2014 (\"2014-12\") — this matches the reconciled field YAML (issue 747). Water depth ~7000 ft at the FPU (Jack WR758/759 ~7000 ft, St. Malo WR678). host = Semisubmersible FPU. projected end-of-production not confidently estimable. lease year not available; no schedule-driving incident. Working interests NOT_EVALUATED: the combined co-owner split is unverified in the field YAML. Its partners_by_field references P7 (annual report, FY2014) establish separate operator interests, not a combined-field allocation or a current complete co-owner list.",
   "norms": [
     {
       "delta_play_pct": -28.3,

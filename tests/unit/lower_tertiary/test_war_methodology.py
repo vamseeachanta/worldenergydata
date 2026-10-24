@@ -10,6 +10,13 @@ import pytest
 from worldenergydata.bsee.analysis.drilling_intensity import DEPTH_COLUMNS
 
 REPO = Path(__file__).resolve().parents[3]
+DECISION_URL = (
+    "https://api.github.com/repositories/574746314/issues/comments/6132640847"
+)
+ANNUAL_CFR_URL = (
+    "https://www.govinfo.gov/content/pkg/CFR-2025-title30-vol2/xml/"
+    "CFR-2025-title30-vol2-sec250-743.xml"
+)
 
 
 def load_script(relative):
@@ -20,7 +27,7 @@ def load_script(relative):
     return module
 
 
-def assert_limits(text):
+def assert_limits(text, *, calendar=False):
     """Depth names follow the normalization module's existing column symbol."""
     text = " ".join(unescape(text).split())
     for fragment in (
@@ -34,19 +41,29 @@ def assert_limits(text):
         f"true vertical depth (TVD), {DEPTH_COLUMNS['tvd']}",
         "no definition was found in the sources cited here",
         "Publisher-declared basis",
-        "1064#issuecomment-6132640847",
-        "Milestone basis is the default",
-        "retained side by side",
-        "confirmation across the wider well population",
+        "6132640847",
         "reports submitted since April 2004",
         "reported, not confirmed",
-        "per 1,000 ft",
         "per 10,000 ft",
         "20–23 days per 10,000 ft",
         "87117-MS",
         "comparability",
     ):
         assert fragment in text, f"missing methodology disclosure: {fragment}"
+    if calendar:
+        assert "this page reports spud-to-TD calendar days" in text
+        assert "total-depth date minus spud date" in text
+        assert "no depth-normalized ratio is calculated" in text
+        assert "retain their legacy calendar and WAR-union arithmetic" not in text
+        assert "learning-series ratios" not in text
+    else:
+        for fragment in (
+            "Milestone basis is the default",
+            "retained side by side",
+            "confirmation across the wider well population",
+            "per 1,000 ft",
+        ):
+            assert fragment in text
 
 
 @pytest.mark.parametrize(
@@ -67,7 +84,9 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
         mod.PUBLIC = tmp_path / "public"
         mod.ASSETS = mod.PUBLIC / "assets"
         mod.build(domains=["lower_tertiary"])
-        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text()
+        text = (mod.PUBLIC / "wo-april-2026-validation.html").read_text(
+            encoding="utf-8"
+        )
     elif surface == "listing":
         mod = load_script("scripts/lower_tertiary/build_wo_per_well_dc.py")
         text = mod.build_markdown(mod.load_bores(), mod.load_vintage_diff())
@@ -94,7 +113,7 @@ def test_selected_surfaces_disclose_all_limits(surface, tmp_path):
             text = mod.render(mod.compute(wells), reconciliation)
         else:
             text = mod.render_verification(reconciliation, wells)
-    assert_limits(text)
+    assert_limits(text, calendar=surface == "insights")
     assert text.count("WAR methodology limits") == 1
     assert_source_list(text)
 
@@ -115,7 +134,7 @@ def test_committed_duration_pages_disclose_all_limits(relative):
     decision cited by assert_limits. No duration calculation changes here.
     """
     text = (REPO / relative).read_text(encoding="utf-8")
-    assert_limits(text)
+    assert_limits(text, calendar=relative.endswith("drilling_insights.html"))
     assert text.count("WAR methodology limits") == 1
     assert_source_list(text)
     assert text.count("Revision history") == 1
@@ -141,11 +160,16 @@ class NoteParser(HTMLParser):
         self.ancestors = []
         self.items = 0
         self.errors = []
+        self.links = []
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
         if "war-methodology" in attributes.get("class", "").split():
             self.ancestors.append(list(self.stack))
+        if tag == "a" and any(
+            "war-methodology" in attr.get("class", "").split() for _, attr in self.stack
+        ):
+            self.links.append(attributes.get("href"))
         if tag == "li" and any(
             "war-methodology" in attr.get("class", "").split() for _, attr in self.stack
         ):
@@ -179,20 +203,23 @@ class NoteParser(HTMLParser):
 
 
 def assert_source_list(text):
-    """Each selected surface renders four distinct source items."""
+    """Each surface retains the decision link and both regulatory sources."""
     if "<section" in text:
         parser = NoteParser()
         parser.feed(text)
         assert parser.items == 4
+        assert DECISION_URL in parser.links
     else:
         note = text.split("## WAR methodology limits", 1)[1]
         assert len([line for line in note.splitlines() if line.startswith("- ")]) == 4
+        assert f"[#1064 decision]({DECISION_URL})" in note
+    assert ANNUAL_CFR_URL in text
 
 
 def test_note_uses_superseding_milestone_decision():
     note = load_script("scripts/lower_tertiary/war_methodology.py").WAR_METHODOLOGY
     text = " ".join(note.split())
-    assert "1064#issuecomment-6132640847" in text
+    assert f"[#1064 decision]({DECISION_URL})" in text
     assert "6131101384" not in text
     assert "Milestone basis is the default" in text
     assert "total-depth date minus spud date" in text
@@ -245,6 +272,27 @@ def test_sources_are_markdown_and_html_lists():
     assert_source_list(mod.methodology_html())
 
 
+def test_calendar_note_states_the_published_interval():
+    mod = load_script("scripts/lower_tertiary/war_methodology.py")
+    text = mod.methodology_html(calendar=True)
+    assert_limits(text, calendar=True)
+    assert_source_list(text)
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "reports/lower_tertiary/drilling_insights.html",
+        "reports/completion/index.html",
+        "reports/completion/verification.html",
+        "reports/lower_tertiary/dc-drilldown.html",
+        "reports/lower_tertiary/wo-april-2026-per-well-dc.md",
+    ],
+)
+def test_saved_notes_keep_clickable_decision_and_annual_source(relative):
+    assert_source_list((REPO / relative).read_text(encoding="utf-8"))
+
+
 def test_html_source_items_are_escaped():
     mod = load_script("scripts/lower_tertiary/war_methodology.py")
     mod.WAR_METHODOLOGY = "## WAR methodology limits\n\n- <unsafe>&source"
@@ -271,7 +319,7 @@ def test_existing_dataset_card_replaces_old_note_once():
 
 def test_decision_link_and_annual_source():
     mod = load_script("scripts/lower_tertiary/war_methodology.py")
-    url = "https://github.com/vamseeachanta/worldenergydata/issues/1064#issuecomment-6132640847"
+    url = DECISION_URL
     assert f"]({url})" in mod.WAR_METHODOLOGY
     assert f'href="{url}"' in mod.methodology_html()
     assert "CFR-2025-title30-vol2-sec250-743" in mod.WAR_METHODOLOGY
@@ -283,7 +331,7 @@ def test_insights_calendar_basis():
     assert "calendar_days" in wells
     text = mod.render_html(mod.compute_stats(wells), mod.DEFAULT_SOURCE)
     note = text.split('class="panel war-methodology"', 1)[1]
-    assert "This page uses TD date minus spud date in calendar days" in note
+    assert "this page reports spud-to-TD calendar days" in note
     assert "Existing figures retain their legacy" not in note
     assert "The learning-series ratios" not in note
 
@@ -300,9 +348,12 @@ def test_calendar_dates_keep_zero_and_reject_missing_or_reversed(monkeypatch):
     )
     monkeypatch.setattr(mod.pd, "read_excel", lambda *args, **kwargs: frame.copy())
     wells = mod.load_wells(mod.DEFAULT_SOURCE)
+    # Jan 8 - Jan 1 = 7 days; Jan 1 - Jan 1 = 0 days; the other two
+    # intervals are invalid. The valid sum is 7 and median is (7 + 0) / 2.
     assert wells["calendar_days"].iloc[:2].tolist() == [7, 0]
     assert wells["calendar_days"].iloc[2:].isna().all()
     stats = mod.compute_stats(wells)
     assert stats["n_calendar"] == 2
     assert stats["n_missing"] == 2
     assert stats["total_calendar_days"] == 7
+    assert stats["median_days"] == 3.5

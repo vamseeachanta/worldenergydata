@@ -281,15 +281,22 @@ temporary_exceptions:
       - reports/field_development/portfolio/README.md
       - reports/field_development/portfolio/_research.json
       - reports/field_development/portfolio/aconcagua.html
+      - reports/field_development/portfolio/anchor.html
+      - reports/field_development/portfolio/big-foot.html
       - reports/field_development/portfolio/camden-hills.html
       - reports/field_development/portfolio/cheyenne.html
       - reports/field_development/portfolio/chinook.html
       - reports/field_development/portfolio/coulomb.html
       - reports/field_development/portfolio/great-white.html
       - reports/field_development/portfolio/index.html
+      - reports/field_development/portfolio/jack-st-malo.html
       - reports/field_development/portfolio/julia.html
+      - reports/field_development/portfolio/kaskida.html
       - reports/field_development/portfolio/king.html
+      - reports/field_development/portfolio/north-platte.html
+      - reports/field_development/portfolio/shenandoah.html
       - reports/field_development/portfolio/stones.html
+      - reports/field_development/portfolio/tiber.html
       - reports/field_development/portfolio/tobago.html
       - reports/field_development/showcase/index.html
       - reports/gtm/2026-05-04-bsee-field-analysis-comprehensive.html

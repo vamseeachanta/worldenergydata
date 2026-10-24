@@ -14,7 +14,6 @@ from worldenergydata.fdas.adapters.field_concept_normalizer import (
     year_from,
 )
 
-
 _BRAZIL_MAPPING = FieldMetaMapping(
     {
         "name": FieldMapEntry("field_name"),
@@ -35,7 +34,7 @@ def build_brazil_field_meta(
     wells_df: pd.DataFrame,
     field_name: str,
 ) -> Dict[str, Any]:
-    """Reduce official ANP field/platform/well CSV rows to one field meta dict."""
+    """Reduce ANP metadata; a non-blank textual field link is required."""
     field_row = _single_field_row(fields_df, field_name)
     platform_rows = _matching_platforms(platforms_df, field_name)
     well_rows = _matching_wells(wells_df, field_name)
@@ -67,6 +66,8 @@ def brazil_field_meta_mapping() -> FieldMetaMapping:
 
 
 def _single_field_row(fields_df: pd.DataFrame, field_name: str) -> pd.Series:
+    if not _norm(field_name):
+        raise ValueError("field_name must be a non-blank string")
     if fields_df is None or fields_df.empty:
         raise ValueError("fields_df is empty")
     mask = fields_df["CAMPO"].map(_norm) == _norm(field_name)
@@ -80,8 +81,12 @@ def _matching_platforms(platforms_df: pd.DataFrame, field_name: str) -> pd.DataF
     if platforms_df is None or platforms_df.empty or "[CAMPOS]" not in platforms_df:
         return pd.DataFrame()
     needle = _norm(field_name)
-    mask = platforms_df["[CAMPOS]"].fillna("").map(
-        lambda value: needle in [_norm(part) for part in str(value).split(";")]
+    if not needle:
+        return platforms_df.iloc[:0]
+    mask = (
+        platforms_df["[CAMPOS]"]
+        .fillna("")
+        .map(lambda value: needle in [_norm(part) for part in str(value).split(";")])
     )
     return platforms_df[mask]
 
@@ -92,7 +97,10 @@ def _matching_wells(wells_df: pd.DataFrame, field_name: str) -> pd.DataFrame:
     field_col = "Campo" if "Campo" in wells_df.columns else "CAMPO"
     if field_col not in wells_df.columns:
         return pd.DataFrame()
-    return wells_df[wells_df[field_col].map(_norm) == _norm(field_name)]
+    needle = _norm(field_name)
+    if not needle:
+        return wells_df.iloc[:0]
+    return wells_df[wells_df[field_col].map(_norm) == needle]
 
 
 def _platform_water_depth(platforms: pd.DataFrame) -> Optional[float]:
@@ -141,6 +149,11 @@ def _none_if_blank(value: Any) -> Optional[Any]:
 
 
 def _norm(value: Any) -> str:
-    text = unicodedata.normalize("NFKD", str(value or ""))
+    # Field links are textual identities; null scalars must never become names.
+    # pandas.isna API reference (2026) documents None, NaN, NA and NaT as missing.
+    # https://pandas.pydata.org/docs/reference/api/pandas.isna.html
+    if not isinstance(value, str):
+        return ""
+    text = unicodedata.normalize("NFKD", value)
     ascii_text = "".join(ch for ch in text if not unicodedata.combining(ch))
     return ascii_text.strip().casefold()

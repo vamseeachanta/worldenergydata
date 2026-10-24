@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 from urllib.parse import urljoin
 
 from worldenergydata.landman.exceptions import (
+    ProviderError,
     RecordNotFoundError,
     StateNotSupportedError,
 )
@@ -175,6 +176,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -229,12 +233,8 @@ class StateGISProvider(BaseProvider):
             "resultRecordCount": limit,
         }
 
-        try:
-            data = self._get_json(query_url, params=params)
-            return self._parse_esri_wells(data, config)
-        except Exception as e:
-            self.logger.warning(f"ESRI query failed: {e}")
-            return []
+        data = self._get_json(query_url, params=params)
+        return self._parse_esri_wells(data, config)
 
     def _parse_esri_wells(
         self, data: Dict[str, Any], config: Dict[str, str]
@@ -328,6 +328,9 @@ class StateGISProvider(BaseProvider):
 
         Returns:
             WellSearchResult with matching wells
+
+        Raises:
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
@@ -351,11 +354,8 @@ class StateGISProvider(BaseProvider):
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_json(query_url, params=params)
-                wells = self._parse_esri_wells(data, config)
-            except Exception as e:
-                self.logger.warning(f"Operator search failed: {e}")
+            data = self._get_json(query_url, params=params)
+            wells = self._parse_esri_wells(data, config)
 
         return WellSearchResult(
             total_count=len(wells),
@@ -381,6 +381,7 @@ class StateGISProvider(BaseProvider):
 
         Raises:
             RecordNotFoundError: If well not found
+            ProviderError: If the ESRI request or response decoding fails
         """
         if state is None:
             state = self._derive_state_from_api(api_number)
@@ -402,13 +403,10 @@ class StateGISProvider(BaseProvider):
                 "f": "json",
             }
 
-            try:
-                data = self._get_json(query_url, params=params, use_cache=False)
-                wells = self._parse_esri_wells(data, config)
-                if wells:
-                    return wells[0]
-            except Exception as e:
-                self.logger.error(f"Well detail query failed: {e}")
+            data = self._get_json(query_url, params=params, use_cache=False)
+            wells = self._parse_esri_wells(data, config)
+            if wells:
+                return wells[0]
 
         raise RecordNotFoundError(
             record_type="Well",
@@ -463,15 +461,30 @@ class StateGISProvider(BaseProvider):
             state: Two-letter state code
             county: Optional county name
             operator: Optional operator name
-            start_date: Optional start date filter
-            end_date: Optional end date filter
+            start_date: Requested start date; date filtering is not supported
+            end_date: Requested end date; date filtering is not supported
             limit: Maximum results to return
 
         Returns:
             PermitSearchResult with matching permits
+
+        Raises:
+            StateNotSupportedError: If state is not supported
+            ProviderError: If either date bound is supplied; permit-date fields
+                have not been verified for the configured services
+            ProviderError: If the ESRI request or response decoding fails
         """
         config = self._get_state_config(state)
         state_upper = state.upper()
+
+        # #1259 permits explicit rejection when a service cannot filter by date.
+        # Do not guess a date field or silently return an unfiltered result.
+        if start_date is not None or end_date is not None:
+            raise ProviderError(
+                message=f"Permit date filtering is not supported for {state_upper}",
+                error_code="PERMIT_DATE_FILTER_UNSUPPORTED",
+                details={"provider": self.PROVIDER_NAME, "state": state_upper},
+            )
 
         self.logger.info(f"Searching permits in {state_upper}")
 
@@ -496,11 +509,8 @@ class StateGISProvider(BaseProvider):
                 "resultRecordCount": limit,
             }
 
-            try:
-                data = self._get_json(query_url, params=params)
-                permits = self._parse_esri_permits(data, state_upper)
-            except Exception as e:
-                self.logger.warning(f"Permit search failed: {e}")
+            data = self._get_json(query_url, params=params)
+            permits = self._parse_esri_permits(data, state_upper)
 
         return PermitSearchResult(
             total_count=len(permits),
