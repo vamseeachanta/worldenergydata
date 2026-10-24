@@ -10,6 +10,7 @@ unpickling. The selected digest identifies the approved archive version.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-22 | Document verified text loading and an offline example to replace unpickling. |
+| 1 | 2026-10-24 | Validate every CSV record width before table construction to reject absent fields. |
 
 ## Inputs and method
 
@@ -35,6 +36,11 @@ The text is headerless. Column order is pinned to
 Identifiers remain strings, direction codes are stripped and checked, and numeric
 columns must parse as numbers. The first record remains data. Invalid digests,
 mismatched archives and incompatible schemas raise errors before rendering.
+Every CSV record must contain all 13 fields before the table is constructed.
+This rejects mixed valid and short records that pandas could otherwise pad with
+missing values. An explicitly empty optional coordinate field remains accepted;
+an absent field is a schema error. Quoted fields follow CSV record boundaries,
+including quoted line breaks, and width errors identify the record number.
 Existing geometry validation still rejects missing critical numeric inputs.
 
 Legacy `dsptsdelimit.bin` files are ignored and left untouched. A failed or

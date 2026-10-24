@@ -170,6 +170,46 @@ def test_pinned_schema_rejects_malformed_text(demo, text):
         demo.load_surveys(digest)
 
 
+@pytest.mark.parametrize("first", [False, True], ids=["last", "first"])
+@pytest.mark.parametrize("width", ["short", "long"])
+def test_mixed_record_widths_are_rejected_before_dataframe(
+    demo, monkeypatch, first, width
+):
+    malformed = (
+        ROW.rstrip().rsplit(",", 1)[0] + "\n"
+        if width == "short"
+        else ROW.rstrip() + ",extra\n"
+    )
+    text = malformed + ROW if first else ROW + malformed
+    digest = local_archive(demo, archive_bytes(text))
+    monkeypatch.setattr(
+        pd, "DataFrame", Mock(side_effect=AssertionError("Constructed"))
+    )
+    with pytest.raises(ValueError, match="survey schema") as error:
+        demo.load_surveys(digest)
+    record = 1 if first else 2
+    assert f"record {record}" in str(error.value.__cause__)
+
+
+def test_explicitly_empty_optional_coordinate_is_accepted(demo):
+    """The trailing comma supplies field 13; an absent field must be rejected."""
+    empty_latitude = ROW.rstrip().rsplit(",", 1)[0] + ",\n"
+    digest = local_archive(demo, archive_bytes(ROW + empty_latitude))
+    result = demo.load_surveys(digest)
+    assert len(result) == 2
+    assert result["SURF_LATITUDE"].iloc[0] == 28
+    assert pd.isna(result["SURF_LATITUDE"].iloc[1])
+
+
+def test_quoted_fields_are_counted_as_csv_records(demo):
+    text = ROW.replace("000000000001", '"000000000001"').replace(",N,", ',"N\n",')
+    digest = local_archive(demo, archive_bytes(text))
+    result = demo.load_surveys(digest)
+    assert len(result) == 1
+    assert result["API_WELL_NUMBER"].tolist() == ["000000000001"]
+    assert result["WELL_N_S_CODE"].tolist() == ["N"]
+
+
 def test_missing_text_member_is_rejected(demo):
     digest = local_archive(demo, archive_bytes(member="unexpected.txt"))
     with pytest.raises(ValueError, match="dsptsdelimit.txt"):

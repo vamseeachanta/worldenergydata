@@ -47,6 +47,7 @@ an offline worked example. No digest is inferred from a fresh download.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import io
 import math
@@ -163,12 +164,19 @@ def load_surveys(expected_sha256: str) -> pd.DataFrame:
                 raise ValueError("Archive must contain exactly one dsptsdelimit.txt")
             with zf.open(DSPTS_TXT_MEMBER) as raw:
                 try:
-                    # Infer field count before assigning names: supplying names
-                    # to read_csv can silently turn extra fields into an index.
-                    df = pd.read_csv(raw, header=None, dtype=str, keep_default_na=False)
-                    if df.empty or len(df.columns) != len(DSPTS_COLS):
-                        raise ValueError("Unexpected survey field count")
-                    df.columns = DSPTS_COLS
+                    # Check each CSV record before pandas can pad absent fields.
+                    # An explicit empty field still counts toward the schema.
+                    rows = []
+                    with io.TextIOWrapper(raw, encoding="utf-8", newline="") as text:
+                        for number, row in enumerate(csv.reader(text, strict=True), 1):
+                            if len(row) != len(DSPTS_COLS):
+                                raise ValueError(
+                                    f"Unexpected survey field count in record {number}"
+                                )
+                            rows.append(row)
+                    if not rows:
+                        raise ValueError("Empty survey text")
+                    df = pd.DataFrame(rows, columns=DSPTS_COLS)
                     df = _normalize(df)
                     if not df["API_WELL_NUMBER"].str.fullmatch(r"[0-9]+").all():
                         raise ValueError("Invalid survey identifier")
@@ -185,7 +193,7 @@ def load_surveys(expected_sha256: str) -> pd.DataFrame:
                             "WELL_E_W_CODE",
                         ):
                             df[column] = pd.to_numeric(df[column], errors="raise")
-                except (ValueError, pd.errors.ParserError) as error:
+                except (ValueError, csv.Error) as error:
                     raise ValueError(
                         "Text does not match the documented survey schema"
                     ) from error
