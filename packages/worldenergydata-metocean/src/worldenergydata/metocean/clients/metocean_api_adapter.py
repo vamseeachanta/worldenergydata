@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -25,12 +26,27 @@ _DOWNLOAD = """
 import json
 import sys
 from metocean_api.ts import TimeSeries
+from metocean_api.ts.internal import products
 payload = json.load(sys.stdin)
 series = TimeSeries(**payload['request'], datafile=payload['destination'])
-series.import_data(save_csv=False, save_nc=False, use_cache=True)
+product = products.find_product(series.product)
+if series.product == 'NORA3_wave_sub':
+    get_dates = product.get_dates
+    def file_dates(start_date, end_date):
+        return get_dates(start_date.split('T')[0], end_date.split('T')[0])
+    product.get_dates = file_dates
+elif series.depth is not None:
+    combine = product._combine_temporary_files
+    def combine_at_depth(*args, **kwargs):
+        kwargs['depth'] = series.depth
+        return combine(*args, **kwargs)
+    product._combine_temporary_files = combine_at_depth
+# TimeSeries.import_data constructs a fresh product. Use this adapted instance
+# so its real release date enumeration and depth flattening receive the fixes.
+series.data = product.import_data(series, save_csv=False, save_nc=False, use_cache=True)
 if series.data is None or series.data.empty:
     raise ValueError('No sample returned')
-series.data.to_csv(payload['destination'])
+series.data.to_csv(payload['destination'], encoding='utf-8', lineterminator='\\n')
 """
 
 
@@ -40,6 +56,7 @@ class MetoceanAPIAdapter:
     No product passthrough is provided. The dataset names are adapter inputs;
     upstream product identifiers remain private. Existing cache entries can be
     read without the optional backend. A timeout may be supplied by the caller.
+    Current depths are finite, nonnegative metres; unavailable levels fail.
     """
 
     def __init__(self, cache_dir: Path, *, timeout_seconds: float | None = None):
@@ -61,6 +78,20 @@ class MetoceanAPIAdapter:
             raise ValueError("dataset must be NORA3 or NorKyst800")
         if not variables or not all(isinstance(v, str) and v for v in variables):
             raise ValueError("Explicit variable names are required")
+        if depth is not None and dataset != "NorKyst800":
+            raise ValueError("depth selection is only supported for NorKyst800")
+        if depth is not None and (
+            not isinstance(depth, list)
+            or not depth
+            or any(
+                isinstance(d, bool)
+                or not isinstance(d, (int, float))
+                or not math.isfinite(d)
+                or d < 0
+                for d in depth
+            )
+        ):
+            raise ValueError("depth must contain finite, nonnegative numeric levels")
         start, end = pd.Timestamp(start_time), pd.Timestamp(end_time)
         if pd.isna(start) or pd.isna(end) or start > end:
             raise ValueError("Expected an ordered time window")
@@ -73,7 +104,12 @@ class MetoceanAPIAdapter:
             "variable": list(variables),
             "depth": depth,
         }
-        encoded = json.dumps(request, sort_keys=True, allow_nan=False)
+        # Earlier depth requests could cache every level while recording a
+        # selected depth. Preserve those files, but never reuse them as selected.
+        cache_request = (
+            request | {"depth_selection": 1} if depth is not None else request
+        )
+        encoded = json.dumps(cache_request, sort_keys=True, allow_nan=False)
         key = hashlib.sha256(encoded.encode()).hexdigest()
         directory = self.cache_dir / key
         destination = directory / "sample.csv"
@@ -89,13 +125,15 @@ class MetoceanAPIAdapter:
             self._download(request, directory, destination)
             # Parse before publishing a completion record; failed/empty downloads
             # are not recognized as completed cache entries on subsequent runs.
-            if pd.read_csv(destination).empty:
+            if pd.read_csv(destination, encoding="utf-8").empty:
                 raise ValueError("No sample returned")
             record = {"request": request, "sha256": self._digest(destination)}
             manifest.write_text(
-                json.dumps(record, sort_keys=True) + "\n", encoding="utf-8"
+                json.dumps(record, sort_keys=True) + "\n",
+                encoding="utf-8",
+                newline="\n",
             )
-        return pd.read_csv(destination)
+        return pd.read_csv(destination, encoding="utf-8")
 
     @staticmethod
     def _digest(path):
@@ -112,11 +150,14 @@ class MetoceanAPIAdapter:
             )
         result = subprocess.run(
             [sys.executable, "-c", _DOWNLOAD],
-            input=json.dumps({"request": request, "destination": str(destination)}),
+            input=json.dumps(
+                {"request": request, "destination": destination.as_posix()}
+            ),
             cwd=directory,
             check=False,
             capture_output=True,
             text=True,
+            encoding="utf-8",
             timeout=self.timeout_seconds,
         )
         if result.returncode:
