@@ -51,6 +51,44 @@ def test_publisher_replay(source, filename, value, timestamp):
     assert all(s.timestamp.utcoffset() == timezone.utc.utcoffset(None) for s in samples)
 
 
+@pytest.mark.parametrize("missing", ["", None])
+def test_coops_missing_reading_preserves_the_station_day(missing):
+    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    original = parse_sample("coops", json.dumps(payload).encode())
+    payload["data"][0]["v"] = missing
+    # Synthetic missing/zero values; all other fields retain recorded provenance.
+    payload["data"][1]["v"] = "0.000"
+    samples = parse_sample("coops", json.dumps(payload).encode())
+    assert len(samples) == 240
+    assert samples[0].value is None
+    assert samples[0].timestamp == datetime(2025, 1, 1, tzinfo=timezone.utc)
+    assert samples[0].station == "9414290"
+    assert (samples[0].unit, samples[0].datum) == ("m", "MLLW")
+    assert samples[1].value == 0.0
+    assert samples[2:] == original[2:]
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        {"t": "invalid timestamp", "v": ""},
+        {"t": "invalid timestamp", "v": None},
+        {"t": "invalid timestamp", "v": "0.035"},
+        {"t": "2025-01-01 00:00", "v": "not numeric"},
+        {"t": "2025-01-01 00:00", "v": True},
+        {"t": "2025-01-01 00:00", "v": False},
+        {"t": "2025-01-01 00:00", "v": "NaN"},
+        {"t": "2025-01-01 00:00", "v": "inf"},
+        {"t": "2025-01-01 00:00"},
+    ],
+)
+def test_coops_malformed_readings_are_rejected(record):
+    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    payload["data"][0] = record
+    with pytest.raises(EndpointError, match="schema"):
+        parse_sample("coops", json.dumps(payload).encode())
+
+
 @pytest.mark.parametrize("source,filename,value,timestamp", CASES)
 def test_live_contract_uses_same_parser(source, filename, value, timestamp):
     def respond(request):

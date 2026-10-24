@@ -49,7 +49,8 @@ def parse_sample(
     NDBC publishes UTC text. CO-OPS timestamps have no offset; only responses
     requested with time_zone=gmt, units=metric, datum=MLLW are accepted here.
     The response cannot attest those request options, so callers must preserve
-    the request provenance. Missing wave heights remain None, never zero.
+    the request provenance. Missing wave heights and water levels remain None,
+    never zero.
     """
     parsers = {
         "ndbc_realtime": lambda data: _ndbc(data, station_id),
@@ -115,22 +116,30 @@ def _coops(content: bytes) -> list[Sample]:
     station = payload["metadata"]["id"]
     if not isinstance(station, str) or not station:
         raise ValueError("station")
+    samples = []
     with COOPSClient() as client:
-        rows = [
-            client._parse_water_level(station, row, "MLLW") for row in payload["data"]
-        ]
-    return [
-        Sample(
-            "coops",
-            row.station_id,
-            row.observation_time.replace(tzinfo=timezone.utc),
-            row.water_level_m,
-            "m",
-            "water_level",
-            "MLLW",
-        )
-        for row in rows
-    ]
+        for record in payload["data"]:
+            if record["v"] in ("", None):
+                # Keep missing readings without relaxing timestamp validation.
+                timestamp = datetime.strptime(record["t"], "%Y-%m-%d %H:%M")
+                value = None
+            else:
+                if type(record["v"]) not in (str, int, float):
+                    raise ValueError("numeric field")
+                row = client._parse_water_level(station, record, "MLLW")
+                timestamp, value = row.observation_time, row.water_level_m
+            samples.append(
+                Sample(
+                    "coops",
+                    station,
+                    timestamp.replace(tzinfo=timezone.utc),
+                    value,
+                    "m",
+                    "water_level",
+                    "MLLW",
+                )
+            )
+    return samples
 
 
 def _erddap(content: bytes) -> list[Sample]:
