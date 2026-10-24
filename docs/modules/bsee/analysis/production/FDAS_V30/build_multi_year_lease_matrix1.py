@@ -118,7 +118,11 @@ def sniff_read_table(path):
 def load_war_main(path):
     if not path or not os.path.exists(path):
         raise FileNotFoundError("WAR main file not found.")
-    df = sniff_read_csv_like(path, header="infer")
+    p = Path(path)
+    if p.suffix.lower() in (".xlsx", ".xls"):
+        df = sniff_read_table(p)
+    else:
+        df = sniff_read_csv_like(p, header="infer")
     C = {c.upper(): c for c in df.columns}
 
     api   = C.get("API_WELL_NUMBER") or C.get("API_NUMBER") or C.get("API")
@@ -177,7 +181,7 @@ def extract_ogora_zips_to_temp(zip_paths):
                             dst.write(src.read())
                         extracted.append(str(out_path))
         except zipfile.BadZipFile:
-            print(f"⚠️ Skipping unreadable zip: {zp}")
+            print(f"⚠️ Skipping unreadable zip: {Path(zp).as_posix()}")
     return tempdir, extracted
 
 def read_any_table(path):
@@ -313,7 +317,7 @@ def load_ogora_production(ogora_source):
         try:
             df = read_any_table(f)
         except Exception:
-            print(f"⚠️ Skipping unreadable file: {f}")
+            print(f"⚠️ Skipping unreadable file: {Path(f).as_posix()}")
             continue
 
         # Headerless OGORA .txt (positional)
@@ -334,7 +338,7 @@ def load_ogora_production(ogora_source):
         day_col = pick(C, ["DAYS_ON_PROD", "DAYS", "PROD_DAYS", "PRODUCTION_DAYS", "DAYS ON"])
 
         if api_col is None:
-            print(f"⚠️ Skipping file without API column: {f}")
+            print(f"⚠️ Skipping file without API column: {Path(f).as_posix()}")
             continue
 
         api_series = df[api_col].apply(normalize_api)
@@ -347,7 +351,7 @@ def load_ogora_production(ogora_source):
             m = pd.to_numeric(df[m_col], errors="coerce").astype("Int64").clip(lower=1, upper=12)
             date_series = pd.to_datetime(dict(year=y, month=m, day=1), errors="coerce")
         else:
-            print(f"⚠️ Skipping file without usable date/month columns: {f}")
+            print(f"⚠️ Skipping file without usable date/month columns: {Path(f).as_posix()}")
             continue
 
         tmp = pd.DataFrame({
@@ -526,11 +530,12 @@ def main():
     if not ogora_source:
         raise SystemExit("Missing OGORA production source. Provide --ogora-prod or place ogora*.zip or .txt in the directory.")
 
-    print(f"Using WAR main: {war_main_path}")
+    print(f"Using WAR main: {Path(war_main_path).as_posix()}")
     if leases_path:
-        print(f"Using leases:   {leases_path}")
-    print(f"Using OGORA:    {ogora_source}")
-    print(f"Output:         {args.out}")
+        print(f"Using leases:   {Path(leases_path).as_posix()}")
+    sources = ogora_source if isinstance(ogora_source, list) else [ogora_source]
+    print(f"Using OGORA:    {', '.join(Path(p).as_posix() for p in sources)}")
+    print(f"Output:         {Path(args.out).as_posix()}")
 
     war_map = load_war_main(war_main_path)
     leases_df = load_leases(leases_path) if leases_path else pd.DataFrame()
@@ -541,7 +546,7 @@ def main():
 
     build_workbook(prod_monthly, war_map, leases_df, args.out)
 
-    print(f"✅ Built {args.out} with {len(prod_monthly)} rows.")
+    print(f"✅ Built {Path(args.out).as_posix()} with {len(prod_monthly)} rows.")
 
 if __name__ == "__main__":
     main()

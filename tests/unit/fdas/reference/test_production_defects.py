@@ -97,7 +97,10 @@ def test_b2_extraction_does_not_overwrite_equal_basenames(matrix, tmp_path):
     write_zip(b, {"data.txt": [row(api="102")]})
     ctx, files = matrix.extract_ogora_zips_to_temp([a, b])
     assert len(set(files)) == 2
-    assert {Path(f).read_text().split(",")[-1] for f in files} == {"101", "102"}
+    assert {Path(f).read_text(encoding="utf-8").split(",")[-1] for f in files} == {
+        "101",
+        "102",
+    }
     assert Path(ctx.name).exists()
 
 
@@ -140,9 +143,11 @@ def build_fixture(chrono, tmp_path, rows, wti=True, leases=None):
                 "DEV_SYSTEM": ["test"],
             }
         )
-    ).to_csv(lease_path, index=False)
+    ).to_csv(lease_path, index=False, encoding="utf-8", lineterminator="\n")
     price = tmp_path / "wti.csv"
-    pd.DataFrame({"MONTH": ["2025-01-01"], "WTI_USD": [5]}).to_csv(price, index=False)
+    pd.DataFrame({"MONTH": ["2025-01-01"], "WTI_USD": [5]}).to_csv(
+        price, index=False, encoding="utf-8", lineterminator="\n"
+    )
     out = tmp_path / "chrono.xlsx"
     chrono.build_chrono(
         str(tmp_path),
@@ -225,12 +230,34 @@ def test_b1_documented_lease_fallback(matrix):
 def test_b1_raw_reader_to_war_join(matrix, tmp_path):
     """A synthetic API joins lease A even when the completion identifier differs."""
     raw = tmp_path / "ogora.txt"
-    raw.write_text(",".join(map(str, row())))
+    raw.write_text(",".join(map(str, row())), encoding="utf-8", newline="\n")
     war = tmp_path / "war.txt"
-    war.write_text("API_WELL_NUMBER,SURF_LEASE_NUM,LEASE_NAME,WELL_NAME\n101,G1,A,w1\n")
+    war.write_text(
+        "API_WELL_NUMBER,SURF_LEASE_NUM,LEASE_NAME,WELL_NAME\n101,G1,A,w1\n",
+        encoding="utf-8",
+        newline="\n",
+    )
     prod = matrix.load_ogora_production(str(raw))
     out = tmp_path / "joined.xlsx"
     matrix.build_workbook(prod, matrix.load_war_main(str(war)), pd.DataFrame(), out)
     result = pd.read_excel(out, sheet_name="A__bbl")
     assert result["API_WELL_NUMBER"].tolist() == [101]
     assert result["2025-01"].tolist() == [10]
+
+
+def test_war_spreadsheet_preserves_identity(matrix, tmp_path):
+    """Spreadsheet WAR input retains the same identity as delimited input."""
+    path = tmp_path / "war.xlsx"
+    headers = ["API_WELL_NUMBER", "SURF_LEASE_NUM", "LEASE_NAME", "WELL_NAME"]
+    values = [101, "G1", "A", "w1"]
+    pd.DataFrame([values], columns=headers).to_excel(path, index=False)
+    result = matrix.load_war_main(path)
+    assert result.to_dict("records") == [
+        {
+            "API_WELL_NUMBER": "101",
+            "LEASE_NAME": "A",
+            "SURF_LEASE_NUM": "1",
+            "WELL_NAME": "w1",
+            "LEASE_KEY": "A",
+        }
+    ]
