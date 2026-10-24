@@ -3,7 +3,7 @@
 OLS source: NIST/SEMATECH e-Handbook (2003), section 4.4.3.1,
 https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm
 Conformal source: A Gentle Introduction to Conformal Prediction and
-Distribution-Free Uncertainty Quantification (2021), sections 2 and 3.1,
+Distribution-Free Uncertainty Quantification (2021), section 1.1,
 https://arxiv.org/html/2107.07511v6
 
 Linear and quadratic degrees are model definitions, not empirical constants.
@@ -303,7 +303,7 @@ def estimate(
     ]
     scores = tuple(sorted(group_scores))
     diagnostics["calibration_errors"] = scores
-    # Finite-sample correction: conformal introduction (2021), section 2.
+    # Finite-sample correction: conformal introduction (2021), section 1.1.
     rank = int(
         ((len(scores) + 1) * (ONE - policy.alpha)).to_integral_value(
             rounding=ROUND_CEILING

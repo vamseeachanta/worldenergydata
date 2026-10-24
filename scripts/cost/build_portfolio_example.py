@@ -169,7 +169,12 @@ def build_example() -> dict:
                 "revision": "initial",
                 "date": "2026-10-20",
                 "change": "Add an auditable example for accounting and estimation.",
-            }
+            },
+            {
+                "revision": "correction",
+                "date": "2026-10-24",
+                "change": "Correct residual fractions and source sections; pin output bytes.",
+            },
         ],
         "inputs": {
             "basis": basis,
@@ -223,7 +228,7 @@ def build_example() -> dict:
             ),
             (
                 "A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty "
-                "Quantification (2021), sections 2 and 3.1: https://arxiv.org/html/2107.07511v6"
+                "Quantification (2021), section 1.1: https://arxiv.org/html/2107.07511v6"
             ),
             (
                 "Cost-map program plan (2026), Shared Contract to Freeze: "

@@ -123,8 +123,8 @@
       "low": "60"
     },
     "residual_fraction": {
-      "high": "0.9",
-      "low": "0.5"
+      "high": "0.75",
+      "low": "0.6"
     },
     "total": {
       "high": "120",
@@ -1187,12 +1187,17 @@
       "change": "Add an auditable example for accounting and estimation.",
       "date": "2026-10-20",
       "revision": "initial"
+    },
+    {
+      "change": "Correct residual fractions and source sections; pin output bytes.",
+      "date": "2026-10-24",
+      "revision": "correction"
     }
   ],
   "sources": [
     "Synthetic example inputs; portfolio-cost-model.md, Worked example (2026)",
     "NIST/SEMATECH e-Handbook (2003), 4.4.3.1: https://www.itl.nist.gov/div898/handbook/pmd/section4/pmd431.htm",
-    "A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification (2021), sections 2 and 3.1: https://arxiv.org/html/2107.07511v6",
+    "A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification (2021), section 1.1: https://arxiv.org/html/2107.07511v6",
     "Cost-map program plan (2026), Shared Contract to Freeze: docs/plans/2026-07-16-issue-1038-cost-map-program.md"
   ],
   "summary": "Synthetic arithmetic demonstration only. No real-project CAPEX estimate is qualified. Inputs, method, answer and exclusions remain explicit.",

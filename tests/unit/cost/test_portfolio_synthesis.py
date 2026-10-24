@@ -4,7 +4,7 @@ Contract: docs/plans/2026-07-16-issue-1038-cost-map-program.md,
 Shared Contract to Freeze (2026). No empirical cost factors are assumed.
 """
 
-from dataclasses import replace
+from dataclasses import FrozenInstanceError, replace
 from datetime import date
 from decimal import Decimal as D
 
@@ -69,8 +69,51 @@ def test_range_residual_bundle_and_coverage():
     assert result.eligible == Interval(D(30), D(40))
     assert result.residual == Interval(D(60), D(90))
     assert result.coverage == Interval(D("0.25"), D("0.4"))
+    assert result.residual_fraction == Interval(D("0.6"), D("0.75"))
     assert result.covered_requirements == ("host", "installation", "wells")
     assert result.missing_requirements == ("controls",)
+
+
+@pytest.mark.parametrize(
+    "total,amount,expected",
+    [
+        ((0, 10), (0, 0), None),
+        ((10, 10), (20, 30), ("-2", "-1")),
+        ((90, 110), (80, 100), (D(1) - D(100) / D(90), D(1) - D(80) / D(110))),
+        ((100, 120), (0, 0), (1, 1)),
+    ],
+)
+def test_residual_fraction_preserves_total_dependence(total, amount, expected):
+    result = reconcile(
+        Interval(*map(D, total)),
+        basis(),
+        (item(amount=Interval(*map(D, amount))),),
+        ("host", "installation"),
+    )
+    assert result.residual_fraction == (
+        None if expected is None else Interval(*map(D, expected))
+    )
+
+
+def test_portfolio_uses_shared_closed_interval_and_residual():
+    from worldenergydata.cost.portfolio.accounting import interval_residual
+    from worldenergydata.cost.timeseries import cost_map
+
+    assert issubclass(Interval, cost_map.ClosedInterval)
+    assert interval_residual is cost_map.interval_residual
+    interval = Interval(D(1), D(2))
+    with pytest.raises(FrozenInstanceError):
+        interval.low = D(0)
+    with pytest.raises(FrozenInstanceError):
+        interval.extra = D(0)
+
+
+@pytest.mark.parametrize(
+    "low,high", [("NaN", "1"), ("0", "Infinity"), ("-Infinity", "1")]
+)
+def test_portfolio_interval_rejects_nonfinite_bounds(low, high):
+    with pytest.raises(ValueError, match="finite"):
+        Interval(D(low), D(high))
 
 
 @pytest.mark.parametrize(

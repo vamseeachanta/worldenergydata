@@ -11,6 +11,7 @@ it does not qualify a real-project estimate.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | Initial | 2026-10-20 | Add reusable accounting, dated comparisons and a guarded estimator to retain uncertainty and provenance. |
+| Correction | 2026-10-24 | Correct dependent residual fractions, share interval arithmetic, pin output bytes and clarify source sections and publication limits. |
 
 ## Three implementation slices
 
@@ -39,13 +40,23 @@ The accounting equations implement the repository's
 - Eligible subtotal: `E = [sum(component.low), sum(component.high)]`.
 - Residual: `R = [T.low - E.high, T.high - E.low]`.
 - Coverage: `E/T`; evaluate all endpoint quotients with a positive denominator.
-- Residual fraction: `R/T`, preserving negative and zero-crossing residuals.
 - Model consistency: `direct - bottom_up` by interval subtraction; intersecting
   intervals mean `overlap`, not agreement of point values or independence.
 - A joint scenario's nonnegative shares sum exactly to unity. Allocation floors
   each raw amount to the caller's quantum, then distributes remaining units by
   fractional remainder, with stable requirement-ID ties. Each scenario conserves
   its total; marginal min/max bands across scenarios are **not additive**.
+
+The portfolio API additionally reports the residual fraction as `1 - E/T`, with
+bounds `[1 - E.high/T.low, 1 - E.low/T.high]` for nonnegative eligible amounts and
+`T.low > 0`; otherwise it is unavailable. This follows directly from `(T-E)/T`
+and accounts for the common total in numerator and denominator. It preserves
+overruns and zero-crossing residuals. The shared contract specifies residual and
+coverage, without defining this additional fraction. The existing time-series
+`residual_percentage` remains an outer enclosure from interval `R/T`.
+The portfolio interval specializes the existing closed interval with finite-bound
+validation, and its adapters use the existing ratio and residual primitives. The
+frozen time-series producer bytes and its manifest remain intact.
 
 An award linked to several requirements contributes once. Conflicting duplicate
 IDs and multiple included awards in one overlap group fail closed. Overlap
@@ -124,7 +135,8 @@ Three disjoint **predeclared project-group partitions** are mandatory:
 The interval `[prediction-radius, prediction+radius]`, intersected with nonnegative
 costs, follows
 [A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification](https://arxiv.org/html/2107.07511v6)
-(2021), sections 2 and 3.1. Group-maximum scores apply the same construction to
+(2021), section 1.1 (finite-sample quantile construction and Theorem 1).
+Group-maximum scores apply the same construction to
 whole-group error. Its coverage interpretation requires exchangeable groups and
 independent calibration; a historical portfolio is not automatically exchangeable.
 The retained model is not refitted on calibration or validation records.
@@ -164,6 +176,7 @@ Hand calculation:
 
 - Eligible award interval is `[20+10,30+10] = [30,40]`. Residual is
   `[100-40,120-30] = [60,90]`; value coverage is `[30/120,40/100] = [25.0%,40.0%]`.
+  The residual fraction is `[1-40/100,1-30/120] = [60.0%,75.0%]`.
 - The low-bound joint allocation is host 50.0, wells 30.0, unallocated 20.0. It
   conserves 100.0. The unallocated amount is separate from the residual range.
 - Workbook variance is `[100-90,120-90] = [10,30]`, marked unexplained.
@@ -187,10 +200,28 @@ PYTHONPATH=src:packages/worldenergydata-cost/src \
 
 The checked-in HTML is navigable in both accounting directions. JSON preserves
 calculation precision, and the manifest records the input/output SHA-256 digests.
-No wall clock or local path enters the outputs. Tests compare two builds byte for
-byte and check HTML escaping. Test commands can disable pytest's repository-wide
+All three files use UTF-8 bytes with LF newlines on every platform, so the digests
+describe the actual written files. No wall clock or local path enters the outputs.
+Tests compare two builds byte for byte, simulate Windows text newline translation,
+verify file digests and check HTML escaping. Test commands can disable pytest's repository-wide
 coverage defaults with `--noconftest -o addopts='' -p no:cacheprovider` while running
 the focused tests and their existing cost-domain regressions.
+
+### Publication deviations
+
+This synthetic demonstration does not implement the frozen contract's publication
+envelope. HTML displays amounts to one decimal place and fractions to 0.1%, with
+interval endpoints rounded outward; JSON retains calculation precision rather than
+quantizing published money to 0.01 million with `ROUND_HALF_EVEN`. The example's
+0.01-million allocation quantum applies only to joint allocation arithmetic.
+
+The example manifest uses `contract`, `inputs_sha256`, `output_sha256`, a descriptive
+rounding string and an explicit revision-date policy. It omits the required
+`contract_version`, schema hash, ordered input hashes, producer commit, pinned
+currency/source scale, serialization quantum, rounding modes and boundary. It
+therefore supplies reproducibility digests only and must not be consumed as a
+frozen-contract manifest. Adopting that publication envelope remains later work;
+neither the guide nor this example asserts conformance to it.
 
 ## Known limits and later slices
 

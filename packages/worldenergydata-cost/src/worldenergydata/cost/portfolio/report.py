@@ -165,4 +165,4 @@ def write_report(payload: dict, output_dir: Path) -> None:
     outputs["portfolio_example_manifest.json"] = canonical_json(manifest)
     output_dir.mkdir(parents=True, exist_ok=True)
     for name, value in outputs.items():
-        (output_dir / name).write_text(value, encoding="utf-8")
+        (output_dir / name).write_bytes(value.encode("utf-8"))

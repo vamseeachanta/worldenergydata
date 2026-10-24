@@ -4,6 +4,7 @@ import importlib.util
 import json
 import re
 from decimal import Decimal as D
+from hashlib import sha256
 from pathlib import Path
 
 import pytest
@@ -53,10 +54,30 @@ def test_generated_example_answers_and_deterministic_bytes(tmp_path):
         assert (first / filename).read_bytes() == (second / filename).read_bytes()
     report = json.loads((first / "portfolio_example.json").read_text())
     assert report["bottom_up"]["residual"] == {"low": "60", "high": "90"}
+    assert report["bottom_up"]["residual_fraction"] == {"low": "0.6", "high": "0.75"}
     assert report["estimator"]["interval"] == {"low": "13", "high": "19"}
     assert report["estimator"]["point"] == "16"
     assert report["workbook"]["variance"] == {"low": "10", "high": "30"}
     assert report["synthetic"] is True
+
+
+def test_manifest_hashes_written_bytes_with_windows_text_translation(
+    tmp_path, monkeypatch
+):
+    write_text = Path.write_text
+
+    def windows_write_text(path, data, *args, **kwargs):
+        return write_text(path, data.replace("\n", "\r\n"), *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", windows_write_text)
+    write_report(example_module().build_example(), tmp_path)
+    manifest_bytes = (tmp_path / "portfolio_example_manifest.json").read_bytes()
+    assert b"\r\n" not in manifest_bytes
+    manifest = json.loads(manifest_bytes)
+    for name, digest in manifest["output_sha256"].items():
+        content = (tmp_path / name).read_bytes()
+        assert b"\r\n" not in content
+        assert sha256(content).hexdigest() == digest
 
 
 def test_html_escapes_input_and_shows_provenance_and_revision():

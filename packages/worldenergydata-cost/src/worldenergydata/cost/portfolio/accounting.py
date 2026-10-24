@@ -12,9 +12,30 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 
-from worldenergydata.cost.timeseries.cost_map import largest_remainder_allocate
+from worldenergydata.cost.timeseries.cost_map import (
+    ClosedInterval,
+    _ratio_envelope,
+    interval_residual,
+    largest_remainder_allocate,
+)
 
 ZERO = Decimal(0)
+
+
+@dataclass(frozen=True)
+class Interval(ClosedInterval):
+    """Finite specialization of the shared closed interval.
+
+    Unknown/open bounds must stay unavailable in portfolio accounting.
+    """
+
+    def __post_init__(self):
+        if any(
+            isinstance(value, Decimal) and not value.is_finite()
+            for value in (self.low, self.high)
+        ):
+            raise ValueError("interval bounds must be finite")
+        super().__post_init__()
 
 
 @dataclass(frozen=True)
@@ -48,23 +69,6 @@ class Basis:
             value.strip().casefold() not in {"unknown", "unavailable", "not_disclosed"}
             for value in self.__dict__.values()
         )
-
-
-@dataclass(frozen=True)
-class Interval:
-    """Closed finite interval. Unknown/open bounds must stay unavailable."""
-
-    low: Decimal
-    high: Decimal
-
-    def __post_init__(self):
-        if not all(isinstance(x, Decimal) for x in (self.low, self.high)):
-            raise TypeError("bounds must be Decimal")
-        if (
-            not all(x.is_finite() for x in (self.low, self.high))
-            or self.low > self.high
-        ):
-            raise ValueError("invalid finite interval")
 
 
 @dataclass(frozen=True)
@@ -150,14 +154,8 @@ class Reconciliation:
 
 
 def ratio(numerator: Interval, denominator: Interval) -> Interval | None:
-    if denominator.low <= ZERO:
-        return None
-    values = [
-        n / d
-        for n in (numerator.low, numerator.high)
-        for d in (denominator.low, denominator.high)
-    ]
-    return Interval(min(values), max(values))
+    bounds = _ratio_envelope(numerator, denominator)
+    return None if bounds is None else Interval(bounds.low, bounds.high)
 
 
 def reconcile(
@@ -205,13 +203,21 @@ def reconcile(
         sum((r.amount.low for r in included), ZERO),
         sum((r.amount.high for r in included), ZERO),
     )
-    residual = Interval(total.low - eligible.high, total.high - eligible.low)
+    residual_bounds = interval_residual(total, eligible)
+    residual = Interval(residual_bounds.low, residual_bounds.high)
+    coverage = ratio(eligible, total)
+    # (T-E)/T = 1-E/T: the residual and denominator share the same total.
+    residual_fraction = (
+        None
+        if coverage is None
+        else Interval(Decimal(1) - coverage.high, Decimal(1) - coverage.low)
+    )
     covered = {key for row in included for key in row.requirements}
     return Reconciliation(
         eligible,
         residual,
-        ratio(eligible, total),
-        ratio(residual, total),
+        coverage,
+        residual_fraction,
         tuple(sorted(covered)),
         tuple(sorted(set(requirements) - covered)),
         tuple(sorted(r.identity for r in unique.values() if r.amount is None)),
