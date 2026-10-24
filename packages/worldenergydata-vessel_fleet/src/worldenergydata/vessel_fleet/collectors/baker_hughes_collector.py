@@ -56,7 +56,14 @@ class BakerHughesCollector(BaseCollector):
                 len(df.columns),
             )
             return df
-        except (RequestException, OSError, ValueError, ImportError, BadZipFile):
+        except (
+            RequestException,
+            OSError,
+            ValueError,
+            ImportError,
+            BadZipFile,
+            KeyError,
+        ):
             raise DownloadError("North American workbook download failed") from None
 
     def download_international_rig_count(
@@ -74,5 +81,12 @@ class BakerHughesCollector(BaseCollector):
                 len(df.columns),
             )
             return df
-        except (RequestException, OSError, ValueError, ImportError, BadZipFile):
+        except (
+            RequestException,
+            OSError,
+            ValueError,
+            ImportError,
+            BadZipFile,
+            KeyError,
+        ):
             raise DownloadError("International workbook download failed") from None
