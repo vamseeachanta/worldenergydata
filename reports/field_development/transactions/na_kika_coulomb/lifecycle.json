@@ -22,7 +22,11 @@
       "lifecycle_status": "NOT_EVALUATED",
       "generated_page_status": "missing",
       "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: interests included in the sale"
+      }
     },
     {
       "name": "Ariel",
@@ -49,7 +53,8 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
       "report_path": "reports/field_development/bsee_matched/ariel.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     },
     {
       "name": "Coulomb",
@@ -79,7 +84,11 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
       "report_path": "reports/field_development/bsee_matched/coulomb.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": {
+        "source_id": "shell_release",
+        "locator": "meta[name=description]: interests included in the sale"
+      }
     },
     {
       "name": "East Anstey",
@@ -106,7 +115,8 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
       "report_path": "reports/field_development/bsee_matched/east-anstey.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     },
     {
       "name": "Fourier",
@@ -133,7 +143,8 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
       "report_path": "reports/field_development/bsee_matched/fourier.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     },
     {
       "name": "Herschel",
@@ -160,7 +171,8 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "missing",
       "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     },
     {
       "name": "Kepler",
@@ -187,7 +199,8 @@
       "lifecycle_status": "CATALOG_ONLY",
       "generated_page_status": "present",
       "report_path": "reports/field_development/bsee_matched/kepler.html",
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     },
     {
       "name": "Herschel Expansion",
@@ -208,7 +221,8 @@
       "lifecycle_status": "NOT_EVALUATED",
       "generated_page_status": "missing",
       "report_path": null,
-      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified."
+      "limitation": "Host concept is not a field concept. Satellite association and sale membership require source confirmation; expansion timing is unverified.",
+      "transaction_membership_citation": null
     }
   ],
   "coverage_note": "Requested roster only; not an exhaustive or verified sale-perimeter inventory. Catalog dates are historical source labels, not independently verified lifecycle events."

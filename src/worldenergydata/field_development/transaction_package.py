@@ -178,6 +178,18 @@ def _lifecycle(data: dict, root: Path) -> list[dict]:
                 ),
             }
         )
+    for asset in assets:
+        asset["transaction_membership_citation"] = (
+            {
+                "source_id": "shell_release",
+                "locator": "meta[name=description]: interests included in the sale",
+            }
+            if asset["transaction_membership_status"] == "SOURCE_SUPPORTED"
+            else None
+        )
+        for key, citation in asset.items():
+            if key.endswith("_citation") and citation is not None:
+                _verify_citation(citation, data["sources"])
     return assets
 
 

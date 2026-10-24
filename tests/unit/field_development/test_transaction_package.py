@@ -115,6 +115,63 @@ def test_unavailable_source_cannot_support_known_fact():
         build_package(data, ROOT)
 
 
+@pytest.mark.parametrize(
+    "source_id", ["catalog_host", "catalog_fields", "catalog_crosswalk"]
+)
+def test_unavailable_catalog_cannot_support_generated_lifecycle(source_id):
+    data = json.loads(INPUT.read_text())
+    data["sources"][source_id]["access"] = "unavailable"
+    with pytest.raises(ValueError, match="unavailable"):
+        build_package(data, ROOT)
+
+
+def _release_unavailable_with_available_input_citations():
+    data = json.loads(INPUT.read_text())
+    data["sources"]["input_evidence"] = copy.deepcopy(data["sources"]["shell_release"])
+    data["sources"]["shell_release"]["access"] = "unavailable"
+    data["transaction"]["buyer_group_citation"]["source_id"] = "input_evidence"
+    for fact in data["transaction"]["working_interests"]:
+        fact["citation"]["source_id"] = "input_evidence"
+    for facts in data["bases"].values():
+        for fact in facts.values():
+            if fact.get("value") is not None:
+                fact["citation"]["source_id"] = "input_evidence"
+    return data
+
+
+@pytest.mark.parametrize("kind", ["hub", "field"])
+def test_unavailable_release_cannot_support_generated_lifecycle(kind):
+    """The hub isolates membership from the field's concept and host claims."""
+    data = _release_unavailable_with_available_input_citations()
+    data["assets"] = [asset for asset in data["assets"] if asset["kind"] == kind]
+    with pytest.raises(ValueError, match="unavailable"):
+        build_package(data, ROOT)
+
+
+def test_unavailable_unused_release_does_not_block_uncited_roster_entry():
+    data = _release_unavailable_with_available_input_citations()
+    data["assets"] = [asset for asset in data["assets"] if asset["kind"] == "expansion"]
+    rows = build_package(data, ROOT)["lifecycle"]["assets"]
+    assert len(rows) == 1
+    assert rows[0]["transaction_membership_status"] == "NOT_EVALUATED"
+
+
+def test_supported_membership_has_an_available_source_and_locator():
+    data = json.loads(INPUT.read_text())
+    rows = build_package(data, ROOT)["lifecycle"]["assets"]
+    supported = 0
+    for row in rows:
+        citation = row["transaction_membership_citation"]
+        if row["transaction_membership_status"] == "SOURCE_SUPPORTED":
+            supported += 1
+            assert citation["source_id"] == "shell_release"
+            assert citation["locator"]
+            assert data["sources"][citation["source_id"]]["access"] == "available"
+        else:
+            assert citation is None
+    assert supported == 2
+
+
 def test_source_digest_mismatch_refused(tmp_path):
     data = json.loads(INPUT.read_text())
     copied = copy.deepcopy(data)
