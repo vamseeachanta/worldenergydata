@@ -2,7 +2,10 @@
 
 import ast
 import importlib.util
-from pathlib import Path
+import runpy
+from pathlib import Path, PureWindowsPath
+
+import pytest
 
 SCRIPT = Path(__file__).resolve().parents[3] / "scripts/migrate_print_to_logging.py"
 spec = importlib.util.spec_from_file_location("migrate_print_to_logging", SCRIPT)
@@ -32,10 +35,10 @@ def test_parenthesised_import_stays_parseable(tmp_path):
         'logger = get_logger(__name__)\nlogger.info("ready")\n'
     )
     path = tmp_path / "example.py"
-    path.write_text(source)
+    path.write_text(source, encoding="utf-8", newline="\n")
     assert migration.process_file(path, write=True) == 1
-    ast.parse(path.read_text())
-    assert path.read_text() == expected
+    ast.parse(path.read_text(encoding="utf-8"))
+    assert path.read_text(encoding="utf-8") == expected
 
 
 # Expected blocks below are literal, independently written Python statements.
@@ -109,7 +112,7 @@ def test_unchanged_sources():
         assert migration.migrate_source(source) == (source, 0)
 
 
-def test_existing_import_and_second_run():
+def test_existing_import_and_second_run(tmp_path):
     """Reuse the sole logger import; the second pass has no eligible call."""
     source = migration.LOGGER_IMPORT + '\nprint("ready")\n'
     expected = (
@@ -119,7 +122,50 @@ def test_existing_import_and_second_run():
     )
     actual, count = migration.migrate_source(source)
     assert (actual, count) == (expected, 1)
+    path = tmp_path / "example.py"
+    path.write_text(actual, encoding="utf-8", newline="\n")
+    runpy.run_path(str(path))
     assert migration.migrate_source(actual) == (actual, 0)
+
+
+@pytest.mark.parametrize(
+    "binding",
+    [
+        "get_logger = None",
+        "get_logger: object = None",
+        "(get_logger := None)",
+        "import math as get_logger",
+        "from math import pi as get_logger",
+        "def get_logger():\n    return None",
+        "async def get_logger():\n    return None",
+        "class get_logger:\n    pass",
+        "del get_logger",
+        "for get_logger in (None,):\n    pass",
+        "from contextlib import nullcontext\nwith nullcontext() as get_logger:\n    pass",
+        "try:\n    raise ValueError\nexcept ValueError as get_logger:\n    pass",
+        "match None:\n    case get_logger:\n        pass",
+        'match {"item": None}:\n    case {"item": get_logger}:\n        pass',
+        "match {}:\n    case {**get_logger}:\n        pass",
+        "def helper(get_logger):\n    pass",
+    ],
+)
+def test_competing_factory_bindings_preserve_execution(binding, tmp_path, capsys):
+    """A permitted import cannot hide another binding; no call may change."""
+    source = (
+        "from worldenergydata.common.logging import get_logger\n"
+        + binding
+        + '\nimport os\nprint("ready")\n'
+    )
+    path = tmp_path / "example.py"
+    path.write_text(source, encoding="utf-8", newline="\n")
+    runpy.run_path(str(path))
+    assert capsys.readouterr().out == "ready\n"
+
+    actual, count = migration.migrate_source(source)
+    path.write_text(actual, encoding="utf-8", newline="\n")
+    runpy.run_path(str(path))
+    assert capsys.readouterr().out == "ready\n"
+    assert (actual, count) == (source, 0)
 
 
 def test_levels_and_multiline_calls():
@@ -153,6 +199,20 @@ def test_dry_run_preserves_bytes_and_prints_diff(tmp_path, capsys):
     assert "--- " in diff and "+++ " in diff and "@@ " in diff
     assert '-print("ready")' in diff
     assert '+logger.info("ready")' in diff
+
+
+def test_preview_uses_portable_relative_paths(capsys):
+    """Windows preview headers use forward slashes without filesystem access."""
+
+    class PreviewPath(PureWindowsPath):
+        def read_bytes(self):
+            return b'print("ready")\n'
+
+    assert migration.process_file(PreviewPath("examples/example.py")) == 1
+    assert capsys.readouterr().out.splitlines()[:2] == [
+        "--- examples/example.py",
+        "+++ examples/example.py",
+    ]
 
 
 def test_syntax_error_is_skipped(tmp_path, capsys):
@@ -216,10 +276,10 @@ def test_cli_requires_write_flag(tmp_path, capsys):
     """The same one-call file is unchanged by preview and changed by --write."""
     path = tmp_path / "example.py"
     source = 'print("ready")\n'
-    path.write_text(source)
+    path.write_text(source, encoding="utf-8", newline="\n")
     assert migration.main([str(path)]) == 0
-    assert path.read_text() == source
+    assert path.read_text(encoding="utf-8") == source
     assert "(preview)" in capsys.readouterr().out
     assert migration.main([str(path), "--write"]) == 0
-    assert path.read_text() == BLOCK + 'logger.info("ready")\n'
+    assert path.read_text(encoding="utf-8") == BLOCK + 'logger.info("ready")\n'
     assert "(written)" in capsys.readouterr().out

@@ -15,17 +15,17 @@ from pathlib import Path
 LOGGER_IMPORT = "from worldenergydata.common.logging import get_logger"
 
 
-def _bound_names(tree: ast.Module) -> set[str]:
-    """Conservatively collect bindings, including nested scopes."""
+def _bound_names(tree: ast.Module, logger_imports: set[ast.alias]) -> set[str]:
+    """Collect bindings and deletions, excluding only approved import aliases."""
     names = set()
     for node in ast.walk(tree):
-        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
             names.add(node.id)
         elif isinstance(node, ast.arg):
             names.add(node.arg)
         elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
             names.add(node.name)
-        elif isinstance(node, ast.alias):
+        elif isinstance(node, ast.alias) and node not in logger_imports:
             names.add(node.asname or node.name.split(".")[0])
         elif (
             isinstance(node, (ast.ExceptHandler, ast.MatchAs, ast.MatchStar))
@@ -64,8 +64,18 @@ def _insertion_line(tree: ast.Module, content: str) -> int:
 def migrate_source(content: str) -> tuple[str, int]:
     """Build a candidate without changing the input file; syntax errors propagate."""
     tree = ast.parse(content)
-    bindings = _bound_names(tree)
-    if "logger" in bindings or "print" in bindings or "*" in bindings:
+    # Exempt exact unconditional import aliases, never all bindings of the name.
+    logger_imports = {
+        alias
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom)
+        and node.module == "worldenergydata.common.logging"
+        and not node.level
+        for alias in node.names
+        if alias.name == "get_logger" and alias.asname in (None, "get_logger")
+    }
+    bindings = _bound_names(tree, logger_imports)
+    if {"logger", "print", "get_logger", "*"} & bindings:
         return content, 0
 
     insertion = _insertion_line(tree, content)
@@ -112,21 +122,8 @@ def migrate_source(content: str) -> tuple[str, int]:
         )
 
     newline = "\r\n" if "\r\n" in content else "\n"
-    # Reuse only an unconditional, correctly bound get_logger import.
-    imported = any(
-        isinstance(node, ast.ImportFrom)
-        and node.module == "worldenergydata.common.logging"
-        and not node.level
-        and any(
-            alias.name == "get_logger" and alias.asname in (None, "get_logger")
-            for alias in node.names
-        )
-        for node in tree.body
-    )
-    if "get_logger" in bindings and not imported:
-        return content, 0
     block = newline
-    if not imported:
+    if not logger_imports:
         block += LOGGER_IMPORT + newline + newline
     block += "logger = get_logger(__name__)" + newline
     if insertion and not lines[insertion - 1].endswith(b"\n"):
@@ -166,8 +163,8 @@ def process_file(filepath: Path, *, write: bool = False) -> int:
                 difflib.unified_diff(
                     content.splitlines(keepends=True),
                     rewritten.splitlines(keepends=True),
-                    fromfile=str(filepath),
-                    tofile=str(filepath),
+                    fromfile=filepath.as_posix(),
+                    tofile=filepath.as_posix(),
                 )
             ),
             end="",
@@ -185,7 +182,8 @@ def main(argv: list[str] | None = None) -> int:
     paths = [args.root] if args.root.is_file() else sorted(args.root.rglob("*.py"))
     total = sum(process_file(path, write=args.write) for path in paths)
     print(
-        f"\nTotal: {total} print() -> logger replacements ({'written' if args.write else 'preview'})"
+        f"\nTotal: {total} print() -> logger replacements "
+        f"({'written' if args.write else 'preview'})"
     )
     return 0
 
