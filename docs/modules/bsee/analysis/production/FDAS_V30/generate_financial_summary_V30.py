@@ -54,7 +54,7 @@ def load_leases(fp: str) -> pd.DataFrame:
     def pick(*names):
         for n in names:
             if n in cols: return cols[n]
-        raise RuntimeError(f'{fp} missing one of: {names}')
+        raise RuntimeError(f'{Path(fp).as_posix()} missing one of: {names}')
     out = pd.DataFrame({
         'LEASE_NAME': df[pick('LEASE_NAME','LEASE','LEASE TITLE','LEASE_ID')].astype(str).map(norm_name),
         'DEV_NAME':   df[pick('DEV_NAME','DEV NAME','DEVELOPMENT','PROJECT NAME','PROJECT')].astype(str).map(norm_name),
@@ -112,7 +112,7 @@ def Aget(A: pd.DataFrame, sys_name, key, default=0.0):
     sysn = norm_dev_system(sys_name); keyU = key.upper()
     if 'DEV_SYSTEM' not in A.columns: return default
     if keyU in A.columns:
-        m = (A['DEV_SYSTEM']==sysn); 
+        m = (A['DEV_SYSTEM']==sysn);
         if not m.any(): m = (A['DEV_SYSTEM']=='default')
         if m.any():
             v = A.loc[m, keyU].iloc[0]
@@ -120,7 +120,7 @@ def Aget(A: pd.DataFrame, sys_name, key, default=0.0):
             except Exception: return default
     for alias in ASSUMP_ALIASES.get(keyU, []):
         if alias in A.columns and alias != keyU:
-            m = (A['DEV_SYSTEM']==sysn); 
+            m = (A['DEV_SYSTEM']==sysn);
             if not m.any(): m = (A['DEV_SYSTEM']=='default')
             if m.any():
                 v = A.loc[m, alias].iloc[0]
@@ -135,7 +135,7 @@ def load_production(fp: str) -> pd.DataFrame:
         if not all(n in up for n in ['DEV_NAME','API_WELL_NUMBER']): continue
         if ('MONTH' in up) and (('MONTHLY_OIL_VOLUME' in up) or ('TOTAL_OIL_BBL' in up)):
             chosen=(sh,df); break
-    if not chosen: raise RuntimeError(f'{fp} missing required columns')
+    if not chosen: raise RuntimeError(f'{Path(fp).as_posix()} missing required columns')
     _, df = chosen
     cols = {c.upper(): c for c in df.columns}
     df = df.rename(columns={cols['DEV_NAME']: 'DEV_NAME',
@@ -238,6 +238,15 @@ def require_assumption(assumptions, system, name):
     if not np.isfinite(value):
         raise ValueError(f"Required assumption missing: {name}")
     return value
+
+
+def require_count_assumption(assumptions, system, name, *, minimum=0, integer=False):
+    """Count rules are supplied deck inputs, not implicit design coefficients."""
+    value = require_assumption(assumptions, system, name)
+    if value < minimum or (integer and not value.is_integer()):
+        kind = "integer" if integer else "number"
+        raise ValueError(f"Required assumption {name}: {kind} >= {minimum}")
+    return int(value) if integer else value
 
 
 def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
@@ -354,7 +363,8 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
 
         prod_by_api = (prod[(prod['DEV_NAME']==dev)].groupby('API_WELL_NUMBER')['MONTHLY_OIL_VOLUME'].sum())
         producer_cnt = int((prod_by_api > 0).sum())
-        inj = int(math.floor(producer_cnt * Aget(A, sys_name,'INJECTORS_PER_PRODUCER', 0.2)))
+        injector_ratio = require_count_assumption(A, sys_name, 'INJECTORS_PER_PRODUCER')
+        inj = math.floor(producer_cnt * injector_ratio)
 
         sysn = norm_dev_system(sys_name); sys_is_dry=(sysn=='dry'); sys_is_sub20=(sysn=='subsea20')
 
@@ -382,16 +392,24 @@ def generate(leases_xlsx, assump_xlsx, prod_xlsx, dnc_xlsx, wti_xlsx, out_xlsx):
 
         booster_15k_MM = Aget(A, sys_name, 'BOOSTER_PUMP_15K_MM', 0.0)
         booster_20k_MM = Aget(A, sys_name, 'BOOSTER_PUMP_20K_MM', 0.0)
-        booster_trig   = int(max(1, safe_float(Aget(A, sys_name,'BOOSTER_PUMP_TRIGGER_PRODUCERS', 99))))
         wi_pump_MM     = Aget(A, sys_name, 'WATER_INJECTION_PUMP_MM', 0.0)
-        wi_trig        = int(max(1, safe_float(Aget(A, sys_name,'WATER_INJECTION_TRIGGER_PRODUCERS', 99))))
         wi_fac_MM      = Aget(A, sys_name, 'WATER_INJECTION_FACILITY_COST_MM', 0.0)
 
         booster_cost_MM = booster_20k_MM if sys_is_sub20 else booster_15k_MM
         booster_count = 0; wi_pump_count = 0
         if pd.notna(fo) and not sys_is_dry:
-            booster_count = int(min(2, math.floor(producer_cnt / booster_trig))) if booster_trig>0 else 0
-            wi_pump_count = int(min(2, math.floor(producer_cnt / wi_trig))) if wi_trig>0 and inj>0 else 0
+            booster_trig = require_count_assumption(
+                A, sys_name, 'BOOSTER_PUMP_TRIGGER_PRODUCERS', minimum=1, integer=True)
+            booster_max = require_count_assumption(
+                A, sys_name, 'BOOSTER_PUMP_MAX_COUNT', integer=True)
+            booster_count = min(booster_max, math.floor(producer_cnt / booster_trig))
+            # Dry systems have no subsea pumps; water pumps require injectors.
+            if inj > 0:
+                wi_trig = require_count_assumption(
+                    A, sys_name, 'WATER_INJECTION_TRIGGER_PRODUCERS', minimum=1, integer=True)
+                wi_max = require_count_assumption(
+                    A, sys_name, 'WATER_INJECTION_PUMP_MAX_COUNT', integer=True)
+                wi_pump_count = min(wi_max, math.floor(producer_cnt / wi_trig))
 
         Pump_Package_USD = booster_count * booster_cost_MM * 1_000_000.0
         Water_Injection_Pump_USD = wi_pump_count * wi_pump_MM * 1_000_000.0

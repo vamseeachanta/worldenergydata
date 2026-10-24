@@ -22,6 +22,11 @@ def inputs(finance, monkeypatch):
         {
             "DEV_SYSTEM": ["test"],
             "HOST_CAPEX_MM": [0],
+            "INJECTORS_PER_PRODUCER": [0.5],
+            "BOOSTER_PUMP_TRIGGER_PRODUCERS": [2],
+            "BOOSTER_PUMP_MAX_COUNT": [3],
+            "WATER_INJECTION_TRIGGER_PRODUCERS": [1],
+            "WATER_INJECTION_PUMP_MAX_COUNT": [4],
             "MIRR_FINANCE_RATE": [(1.1**12) - 1],
             "MIRR_REINVEST_RATE": [(1.2**12) - 1],
         }
@@ -207,3 +212,118 @@ def test_b12_financial_lease_conflicts_raise(finance, monkeypatch):
     monkeypatch.setattr(finance, "read_xlsx_any", lambda fp: [("leases", frame)])
     with pytest.raises(pd.errors.MergeError):
         finance.load_leases("unused")
+
+
+COUNT_ASSUMPTIONS = [
+    "INJECTORS_PER_PRODUCER",
+    "BOOSTER_PUMP_TRIGGER_PRODUCERS",
+    "BOOSTER_PUMP_MAX_COUNT",
+    "WATER_INJECTION_TRIGGER_PRODUCERS",
+    "WATER_INJECTION_PUMP_MAX_COUNT",
+]
+
+
+def six_producers(inputs):
+    """Six synthetic producing APIs keep the physical input independent of counts."""
+    prod = inputs[2]
+    for i in range(1, 6):
+        prod.loc[i] = prod.iloc[0]
+        prod.loc[i, "API_WELL_NUMBER"] = 101 + i
+
+
+@pytest.mark.parametrize("name", COUNT_ASSUMPTIONS)
+def test_reference_count_missing_assumption_rejected(finance, inputs, tmp_path, name):
+    six_producers(inputs)
+    inputs[1].drop(columns=name, inplace=True)
+    with pytest.raises(ValueError, match=name):
+        generate(finance, tmp_path)
+    assert not (tmp_path / "financial.xlsx").exists()
+
+
+@pytest.mark.parametrize("name", COUNT_ASSUMPTIONS)
+@pytest.mark.parametrize("value", [None, "invalid", float("nan"), float("inf"), -1])
+def test_reference_count_invalid_assumption_rejected(
+    finance, inputs, tmp_path, name, value
+):
+    six_producers(inputs)
+    inputs[1][name] = value
+    with pytest.raises(ValueError, match=name):
+        generate(finance, tmp_path)
+    assert not (tmp_path / "financial.xlsx").exists()
+
+
+@pytest.mark.parametrize("name", COUNT_ASSUMPTIONS[1:])
+def test_reference_count_fractional_integer_rejected(finance, inputs, tmp_path, name):
+    six_producers(inputs)
+    inputs[1][name] = 1.5
+    with pytest.raises(ValueError, match=name):
+        generate(finance, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "name", ["BOOSTER_PUMP_TRIGGER_PRODUCERS", "WATER_INJECTION_TRIGGER_PRODUCERS"]
+)
+def test_reference_count_zero_trigger_rejected(finance, inputs, tmp_path, name):
+    six_producers(inputs)
+    inputs[1][name] = 0
+    with pytest.raises(ValueError, match=name):
+        generate(finance, tmp_path)
+
+
+@pytest.mark.parametrize("booster_cap, water_cap", [(3, 4), (1, 1), (0, 0)])
+def test_reference_counts_and_costs_follow_supplied_deck(
+    finance, inputs, tmp_path, booster_cap, water_cap
+):
+    """Hand calculation with synthetic supplied rules and unit costs.
+
+    Injectors=floor(6*0.5)=3; uncapped boosters=floor(6/2)=3;
+    uncapped water pumps=floor(6/1)=6. Caps (3,4), (1,1), (0,0) therefore
+    give counts (3,4), (1,1), (0,0). At 2 and 3 million USD per pump,
+    corresponding costs are (6,12), (2,3), (0,0) million USD.
+    These inputs illustrate caller-supplied rules, not qualified design values.
+    """
+    six_producers(inputs)
+    assumptions = inputs[1]
+    assumptions["BOOSTER_PUMP_MAX_COUNT"] = booster_cap
+    assumptions["WATER_INJECTION_PUMP_MAX_COUNT"] = water_cap
+    assumptions["BOOSTER_PUMP_15K_MM"] = 2
+    assumptions["WATER_INJECTION_PUMP_MM"] = 3
+    expected = {
+        (3, 4): (3, 4, 6_000_000, 12_000_000),
+        (1, 1): (1, 1, 2_000_000, 3_000_000),
+        (0, 0): (0, 0, 0, 0),
+    }[(booster_cap, water_cap)]
+    result = pd.read_excel(generate(finance, tmp_path), sheet_name="Project_Summary")
+    assert result["PRODUCER WELLS"].tolist() == [6]
+    assert result["INJECTOR WELLS"].tolist() == [3]
+    for column, value in zip(
+        [
+            "Booster Pump Count",
+            "Water Injection Pump Count",
+            "Booster Pump USD",
+            "Water Injection Pump USD",
+        ],
+        expected,
+    ):
+        assert result[column].tolist() == pytest.approx([value])
+
+
+def test_reference_count_dry_system_needs_no_pump_assumptions(
+    finance, inputs, tmp_path
+):
+    for frame in (inputs[0], inputs[1], inputs[3]):
+        frame["DEV_SYSTEM"] = "dry"
+    inputs[1].drop(columns=COUNT_ASSUMPTIONS[1:], inplace=True)
+    result = pd.read_excel(generate(finance, tmp_path), sheet_name="Project_Summary")
+    assert result["Booster Pump Count"].tolist() == [0]
+    assert result["Water Injection Pump Count"].tolist() == [0]
+
+
+def test_reference_count_no_injectors_needs_no_water_pump_assumptions(
+    finance, inputs, tmp_path
+):
+    inputs[1]["INJECTORS_PER_PRODUCER"] = 0
+    inputs[1].drop(columns=COUNT_ASSUMPTIONS[3:], inplace=True)
+    result = pd.read_excel(generate(finance, tmp_path), sheet_name="Project_Summary")
+    assert result["INJECTOR WELLS"].tolist() == [0]
+    assert result["Water Injection Pump Count"].tolist() == [0]
