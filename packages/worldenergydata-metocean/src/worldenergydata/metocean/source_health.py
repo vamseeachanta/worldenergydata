@@ -9,12 +9,90 @@ import httpx
 
 from worldenergydata.metocean.clients.endpoint_checks import EndpointError, probe_sample
 from worldenergydata.metocean.source_register import (
+    _https_url,
     load_register,
     registered_url,
     validate_register,
 )
 
 _REVISION_NOTE = "Snapshot of registered cheap checks for access diagnostics"
+_REPORT_TYPE = "metocean_source_health"
+_SUMMARY = "Anonymous sample diagnostics; engineering suitability NOT_EVALUATED"
+_STATUSES = {"OK", "RETIRED", "CREDENTIALS_REQUIRED", "UNREACHABLE"}
+
+
+def _report_timestamp(value: object) -> datetime:
+    if not isinstance(value, str):
+        raise ValueError("Expected a UTC timestamp")
+    timestamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if timestamp.utcoffset() != timedelta(0):
+        raise ValueError("Expected a UTC timestamp")
+    return timestamp
+
+
+def _report_text(value: object) -> bool:
+    return isinstance(value, str) and bool(value.strip())
+
+
+def _previous_history(previous: object) -> list[dict]:
+    """Accept only complete reports, preserving earlier valid report histories.
+
+    Legacy reports use the exact summary as their discriminator. New reports
+    also carry report_type. Unknown fields are rejected to avoid data loss.
+    """
+    try:
+        fields = {"summary", "revision_history", "generated_at", "sources"}
+        if not isinstance(previous, dict):
+            raise ValueError
+        if "report_type" in previous:
+            fields.add("report_type")
+            if previous["report_type"] != _REPORT_TYPE:
+                raise ValueError
+        if set(previous) != fields or previous["summary"] != _SUMMARY:
+            raise ValueError
+        generated_at = _report_timestamp(previous["generated_at"])
+        history = previous["revision_history"]
+        if not isinstance(history, list) or not history:
+            raise ValueError
+        for revision, entry in enumerate(history, 1):
+            if not isinstance(entry, dict) or set(entry) != {
+                "revision",
+                "date",
+                "change",
+            }:
+                raise ValueError
+            if type(entry["revision"]) is not int or entry["revision"] != revision:
+                raise ValueError
+            if not _report_text(entry["change"]):
+                raise ValueError
+            _report_timestamp(entry["date"])
+        if _report_timestamp(history[-1]["date"]) != generated_at:
+            raise ValueError
+        sources = previous["sources"]
+        if not isinstance(sources, list):
+            raise ValueError
+        seen = set()
+        for row in sources:
+            if not isinstance(row, dict) or set(row) != {
+                "source",
+                "status",
+                "last_checked",
+                "terms_url",
+                "detail",
+            }:
+                raise ValueError
+            if not _report_text(row["source"]) or row["source"] in seen:
+                raise ValueError
+            seen.add(row["source"])
+            if row["status"] not in _STATUSES or not _report_text(row["detail"]):
+                raise ValueError
+            if not _https_url(row["terms_url"]):
+                raise ValueError
+            if row["last_checked"] is not None:
+                _report_timestamp(row["last_checked"])
+        return history
+    except (ValueError, KeyError, TypeError):
+        raise ValueError("Existing JSON is not a valid source-health report") from None
 
 
 def source_health(
@@ -79,11 +157,7 @@ def source_health(
         history = []
         if path.exists():
             previous = json.loads(path.read_text(encoding="utf-8"))
-            if not isinstance(previous, dict) or not isinstance(
-                previous.get("revision_history"), list
-            ):
-                raise ValueError("Existing JSON is not a source-health report")
-            history = previous["revision_history"]
+            history = _previous_history(previous)
         history = [
             *history,
             {
@@ -93,7 +167,8 @@ def source_health(
             },
         ]
         payload = {
-            "summary": "Anonymous sample diagnostics; engineering suitability NOT_EVALUATED",
+            "report_type": _REPORT_TYPE,
+            "summary": _SUMMARY,
             "revision_history": history,
             "generated_at": stamp,
             "sources": table,

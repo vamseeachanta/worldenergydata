@@ -7,6 +7,7 @@ heights. The first valid row chronologically is 00:10, 1.8 m; the last is
 fixtures. Counts describe these responses; they are not completeness limits.
 """
 
+import json
 from datetime import date
 from pathlib import Path
 
@@ -63,6 +64,32 @@ def test_station_day_worked_example(source, station, day, file, expected):
     assert answer["unit"] == "m"
     if source == "coops":
         assert answer["datum"] == "MLLW"
+
+
+@pytest.mark.parametrize("all_missing", [False, True])
+def test_coops_missing_readings_remain_in_day_summary(all_missing):
+    payload = json.loads((FIXTURES / "coops_station_day.json").read_text())
+    for record in payload["data"] if all_missing else payload["data"][:1]:
+        record["v"] = ""  # Synthetic gaps in the recorded station-day.
+    with httpx.Client(
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, json=payload))
+    ) as http:
+        rows = fetch_station_day(
+            "coops",
+            "9414290",
+            date(2025, 1, 1),
+            http=http,
+            user_agent="test application",
+        )
+    summary = summarize_day(rows)
+    assert summary["rows"] == 240
+    assert rows[0].value is None
+    assert summary["nonmissing"] == (0 if all_missing else 239)
+    assert summary["first_value"] == (None if all_missing else -0.012)
+    assert summary["last_value"] == (None if all_missing else 0.355)
+    assert summary["first_utc"] == (
+        None if all_missing else "2025-01-01T00:06:00+00:00"
+    )
 
 
 def test_absent_day_is_not_an_empty_success():
