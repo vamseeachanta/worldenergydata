@@ -52,6 +52,10 @@ def render(json_path: Path, html_path: Path) -> None:
         "incinv_total": d["incinv_total_records"],
         "drill_pct": d["drill_pct_of_incinv"],
     }
+    confidence_note = (
+        " Confidence buckets remain in the JSON; raw accident-type text is excluded "
+        "to avoid identities.</footer>"
+    )
 
     html = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
@@ -122,7 +126,7 @@ def render(json_path: Path, html_path: Path) -> None:
  The area chart includes all source area codes. Years without DRILL records are
  zero-filled across the source occurrence window; zero does not establish complete
  incident coverage. The percentage is rounded to one decimal place.
- Confidence buckets remain in the JSON; raw accident-type text is excluded to avoid identities.</footer>
+{confidence_note}
 
 <script>
 const D = {json.dumps(payload)};

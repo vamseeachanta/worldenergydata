@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import importlib.util
+import io
 import json
 import logging
 import subprocess
@@ -98,7 +99,7 @@ def _download(url, destination):
     headers = {}
     header_path = destination.with_suffix(".headers")
     if header_path.exists():
-        for line in header_path.read_text(encoding="latin-1").splitlines():
+        for line in header_path.read_bytes().decode("latin-1").splitlines():
             if line.startswith("HTTP/"):
                 headers = {}
             elif ":" in line:
@@ -123,28 +124,75 @@ def _download(url, destination):
     return {"http_status": int(status), **evidence}
 
 
-def _verified_files(data_dir, manifest):
-    entries = manifest["files"]
-    if not entries:
-        raise QAError("provenance: empty manifest")
-    for entry in entries:
-        name = entry["file"]
-        if Path(name).name != name:
-            raise QAError("provenance: file must be a basename")
-        path = data_dir / name
+def _verify_public_files(data_dir, entries):
+    """Require successful retrieval and an extracted member matching its archive."""
+    if len(entries) != 2 or {entry["file"] for entry in entries} != {
+        "IncInvRawData.zip",
+        "mv_acc_investigations.txt",
+    }:
+        raise QAError("provenance: incomplete public download")
+    if any(
+        type(entry.get("http_status")) is not int or entry["http_status"] != 200
+        for entry in entries
+    ):
+        raise QAError("provenance: public retrieval requires HTTP 200")
+    member = "IncInvRawData/mv_acc_investigations.txt"
+    entry = next(e for e in entries if e["file"] == "mv_acc_investigations.txt")
+    if entry.get("archive_member") != member:
+        raise QAError("provenance: unexpected archive member")
+    with zipfile.ZipFile(data_dir / "IncInvRawData.zip") as archive:
+        payload = archive.read(member)
+    if (
+        len(payload) != entry["size_bytes"]
+        or hashlib.sha256(payload).hexdigest() != entry["sha256"]
+    ):
+        raise QAError("provenance: extracted file differs from archive member")
+
+
+def _verified_files(data_dir, manifest, source_kind):
+    try:
         if (
-            path.stat().st_size != entry["size_bytes"]
-            or _digest(path) != entry["sha256"]
+            manifest["source_kind"] not in {"public", "synthetic"}
+            or manifest["source_kind"] != source_kind
         ):
-            raise QAError("integrity: size or SHA-256 mismatch")
-        if entry["url"] != SOURCE_URL:
-            raise QAError("provenance: unexpected source URL")
-        stamp = datetime.fromisoformat(entry["downloaded_at"].replace("Z", "+00:00"))
-        if stamp.utcoffset() is None or stamp.utcoffset().total_seconds() != 0:
-            raise QAError("provenance: download date must be UTC")
-        if stamp > datetime.now(timezone.utc):
-            raise QAError("provenance: future download date")
-    return entries
+            raise QAError("provenance: source kind mismatch")
+        entries = manifest["files"]
+        if not isinstance(entries, list) or not entries:
+            raise QAError("provenance: empty or invalid manifest entries")
+        for entry in entries:
+            name = entry["file"]
+            if Path(name).name != name:
+                raise QAError("provenance: file must be a basename")
+            path = data_dir / name
+            if (
+                path.stat().st_size != entry["size_bytes"]
+                or _digest(path) != entry["sha256"]
+            ):
+                raise QAError("integrity: size or SHA-256 mismatch")
+            if entry["url"] != SOURCE_URL:
+                raise QAError("provenance: unexpected source URL")
+            stamp = datetime.fromisoformat(
+                entry["downloaded_at"].replace("Z", "+00:00")
+            )
+            if stamp.utcoffset() is None or stamp.utcoffset().total_seconds() != 0:
+                raise QAError("provenance: download date must be UTC")
+            if stamp > datetime.now(timezone.utc):
+                raise QAError("provenance: future download date")
+        if manifest["source_kind"] == "public":
+            _verify_public_files(data_dir, entries)
+        return entries
+    except QAError:
+        raise
+    except (
+        OSError,
+        ValueError,
+        KeyError,
+        TypeError,
+        AttributeError,
+        RuntimeError,
+        zipfile.BadZipFile,
+    ) as exc:
+        raise QAError("provenance: missing or invalid manifest evidence") from exc
 
 
 def fetch(config):
@@ -161,12 +209,7 @@ def fetch(config):
     manifest_path = data_dir / "manifest.json"
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        _verified_files(data_dir, manifest)
-        if {e["file"] for e in manifest["files"]} != {
-            "IncInvRawData.zip",
-            "mv_acc_investigations.txt",
-        }:
-            raise QAError("provenance: incomplete public download")
+        _verified_files(data_dir, manifest, "public")
         return manifest
     archive = data_dir / "IncInvRawData.zip"
     response_evidence = _download(url, archive)
@@ -189,6 +232,7 @@ def fetch(config):
         )
     entries[1]["archive_member"] = member
     manifest = {"source_kind": "public", "files": entries}
+    _verified_files(data_dir, manifest, "public")
     _write_json(manifest_path, manifest)
     return manifest
 
@@ -261,12 +305,7 @@ def _qualify(config, qa):
     data_dir = Path(config["data_dir"])
     try:
         manifest = json.loads((data_dir / "manifest.json").read_text(encoding="utf-8"))
-        entries = _verified_files(data_dir, manifest)
-        if (
-            manifest["source_kind"] not in {"public", "synthetic"}
-            or manifest["source_kind"] != config["source_kind"]
-        ):
-            raise QAError("provenance: source kind mismatch")
+        entries = _verified_files(data_dir, manifest, config["source_kind"])
         entry = next(e for e in entries if e["file"] == config["source_file"])
     except QAError:
         raise
@@ -276,9 +315,12 @@ def _qualify(config, qa):
         raise QAError("unit: only investigation records [count] is supported")
     qa["unit_check"] = "investigation records [count]; no exposure denominator"
     try:
-        with (data_dir / entry["file"]).open(
-            encoding=config.get("encoding", "latin-1"), newline=""
-        ) as stream:
+        text = (
+            (data_dir / entry["file"])
+            .read_bytes()
+            .decode(config.get("encoding", "latin-1"))
+        )
+        with io.StringIO(text, newline="") as stream:
             reader = csv.DictReader(stream, strict=True)
             if (
                 not reader.fieldnames

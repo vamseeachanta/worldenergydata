@@ -95,6 +95,12 @@ and the quantity/unit contract `investigation records [count]`. The source has
 no unique incident ID. Its composite key uses date, time, area/block and accident
 type; lease numbers are optional, with missing leases counted separately.
 
+Offline analysis and download resumption use the same provenance checks. A public
+manifest requires exactly one archive and one extracted text entry, HTTP 200 for
+both, and the expected archive-member name. The extracted bytes must match that
+member's size and SHA-256 as well as the manifest. Missing or invalid evidence
+blocks qualification; explicitly synthetic fixtures retain their separate contract.
+
 A failed refresh writes `not_evaluated` with a reason, clears chart values and
 replaces the public HTML with an unevaluated page. QA statistics remain available
 in `incinv-qa.json`; they are not analysis headline numbers. The copied output

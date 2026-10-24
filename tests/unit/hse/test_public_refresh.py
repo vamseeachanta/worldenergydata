@@ -56,7 +56,41 @@ def case(tmp_path):
         "earliest_date": "1900-01-01",
         "latest_date": "2026-10-01",
     }
-    (data / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (data / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
+    return cfg, raw, manifest
+
+
+@pytest.fixture
+def public_case(case):
+    cfg, source, _ = case
+    data = Path(cfg["data_dir"])
+    raw = data / "mv_acc_investigations.txt"
+    raw.write_bytes(source.read_bytes())
+    archive = data / "IncInvRawData.zip"
+    member = "IncInvRawData/mv_acc_investigations.txt"
+    with zipfile.ZipFile(archive, "w") as zipped:
+        zipped.writestr(member, raw.read_bytes())
+    manifest = {"source_kind": "public", "files": []}
+    for path in (archive, raw):
+        manifest["files"].append(
+            {
+                "file": path.name,
+                "url": URL,
+                "downloaded_at": "2026-10-01T00:00:00Z",
+                "http_status": 200,
+                "etag": None,
+                "last_modified": None,
+                "size_bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        )
+    manifest["files"][1]["archive_member"] = member
+    cfg.update(source_kind="public", source_file=raw.name, url=URL)
+    (data / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
     return cfg, raw, manifest
 
 
@@ -65,7 +99,7 @@ def reseal(cfg, raw, manifest):
     entry["sha256"] = hashlib.sha256(raw.read_bytes()).hexdigest()
     entry["size_bytes"] = raw.stat().st_size
     (Path(cfg["data_dir"]) / "manifest.json").write_text(
-        json.dumps(manifest), encoding="utf-8"
+        json.dumps(manifest), encoding="utf-8", newline="\n"
     )
 
 
@@ -86,6 +120,7 @@ def test_synthetic_headlines_and_chart_exports(case):
     cfg, _, _ = case
     before = {k: v for k, v in sys.modules.items() if k.startswith("worldenergydata")}
     result = refresh.analyze(cfg)
+    # Hand count: four rows, two DRILL rows; 100 * 2 / 4 = 50.0%.
     assert result["incinv_total_records"] == 4
     assert result["drill_total"] == 2
     assert result["drill_pct_of_incinv"] == 50.0
@@ -172,7 +207,7 @@ def test_fail_closed(case, mode, reason):
         text = raw.read_text(encoding="utf-8").replace(
             "DATE_OCCURRED,", "DATE_OCCURRED,DATE_OCCURRED,", 1
         )
-        raw.write_text(text, encoding="utf-8")
+        raw.write_text(text, encoding="utf-8", newline="\n")
         reseal(cfg, raw, manifest)
     elif mode == "encoding":
         raw.write_bytes(raw.read_bytes() + b"\xff")
@@ -190,14 +225,14 @@ def test_fail_closed(case, mode, reason):
     elif mode == "bad_url":
         manifest["files"][0]["url"] = "https://example.org/unknown.zip"
     elif mode == "missing_column":
-        raw.write_text("DATE_OCCURRED\n1/1/2020\n", encoding="utf-8")
+        raw.write_text("DATE_OCCURRED\n1/1/2020\n", encoding="utf-8", newline="\n")
         reseal(cfg, raw, manifest)
     elif mode == "malformed_row":
         raw.write_bytes(raw.read_bytes() + b"1/1/2020\n")
         reseal(cfg, raw, manifest)
     if mode in {"size", "missing_manifest", "missing_timestamp", "bad_url", "non_utc"}:
         (Path(cfg["data_dir"]) / "manifest.json").write_text(
-            json.dumps(manifest), encoding="utf-8"
+            json.dumps(manifest), encoding="utf-8", newline="\n"
         )
     with pytest.raises(refresh.QAError, match=reason):
         refresh.analyze(cfg)
@@ -211,6 +246,118 @@ def test_fail_closed(case, mode, reason):
         assert set(failed) == {"status", "reason"}
     for name in refresh.CHARTS:
         assert len((out / f"{name}.csv").read_text(encoding="utf-8").splitlines()) == 1
+
+
+def test_public_manifest_qualifies_offline_and_resumes(public_case, monkeypatch):
+    cfg, _, manifest = public_case
+
+    def no_network(*args):
+        pytest.fail("Verified public inputs must resume offline")
+
+    monkeypatch.setattr(refresh, "_download", no_network)
+    result = refresh.analyze(cfg)
+    # Hand count: four fixture rows, two DRILL rows; 100 * 2 / 4 = 50.0%.
+    assert result["incinv_total_records"] == 4
+    assert result["drill_total"] == 2
+    assert result["drill_pct_of_incinv"] == 50.0
+    assert result["source"] == manifest
+    assert refresh.fetch(cfg) == manifest
+
+
+def test_configured_source_encoding_is_preserved(case):
+    cfg, raw, manifest = case
+    cfg["encoding"] = "latin-1"
+    raw.write_bytes(raw.read_bytes().replace(b"Fire", "Fire \u00e9".encode("latin-1")))
+    reseal(cfg, raw, manifest)
+    result = refresh.analyze(cfg)
+    assert result["incinv_total_records"] == 4
+    assert result["drill_total"] == 2
+
+
+def corrupt_public_evidence(cfg, raw, manifest, mode):
+    entries = manifest["files"]
+    if mode == "missing_archive":
+        entries.pop(0)
+    elif mode == "missing_member":
+        entries.pop(1)
+    elif mode == "duplicate_entry":
+        entries.append(entries[0].copy())
+    elif mode in {"bad_archive_status", "bad_member_status"}:
+        entries[mode == "bad_member_status"]["http_status"] = 503
+    elif mode == "missing_http_status":
+        for entry in entries:
+            entry.pop("http_status")
+    elif mode == "noninteger_http_status":
+        entries[0]["http_status"] = 200.0
+    elif mode == "wrong_member":
+        entries[1]["archive_member"] = "IncInvRawData/other.txt"
+    elif mode == "missing_member_evidence":
+        entries[1].pop("archive_member")
+    elif mode == "extracted_mismatch":
+        raw.write_bytes(raw.read_bytes().replace(b"Blowout", b"Explosion"))
+    elif mode == "archive_member_absent":
+        with zipfile.ZipFile(Path(cfg["data_dir"]) / entries[0]["file"], "w") as zipped:
+            zipped.writestr("IncInvRawData/other.txt", raw.read_bytes())
+    elif mode == "corrupt_archive":
+        (Path(cfg["data_dir"]) / entries[0]["file"]).write_bytes(b"invalid archive")
+    elif mode == "invalid_entries":
+        entries.append(None)
+    elif mode == "source_kind":
+        manifest["source_kind"] = "synthetic"
+    for entry in entries:
+        if isinstance(entry, dict):
+            payload = (Path(cfg["data_dir"]) / entry["file"]).read_bytes()
+            entry.update(
+                size_bytes=len(payload), sha256=hashlib.sha256(payload).hexdigest()
+            )
+    (Path(cfg["data_dir"]) / "manifest.json").write_text(
+        json.dumps(manifest), encoding="utf-8", newline="\n"
+    )
+
+
+@pytest.mark.parametrize("operation", ["analyze", "fetch"])
+@pytest.mark.parametrize(
+    "mode",
+    [
+        "missing_archive",
+        "missing_member",
+        "duplicate_entry",
+        "bad_archive_status",
+        "bad_member_status",
+        "missing_http_status",
+        "noninteger_http_status",
+        "wrong_member",
+        "missing_member_evidence",
+        "extracted_mismatch",
+        "archive_member_absent",
+        "corrupt_archive",
+        "invalid_entries",
+        "source_kind",
+    ],
+)
+def test_public_manifest_rejects_incomplete_evidence(public_case, operation, mode):
+    cfg, raw, manifest = public_case
+    refresh.analyze(cfg)
+    corrupt_public_evidence(cfg, raw, manifest, mode)
+    with pytest.raises(refresh.QAError, match="provenance"):
+        getattr(refresh, operation)(cfg)
+    if operation == "analyze":
+        out = Path(cfg["output_dir"])
+        for name in (
+            refresh.HEADLINES,
+            refresh.INVENTORY,
+            "incinv-manifest.json",
+            "incinv-qa.json",
+        ):
+            assert (
+                json.loads((out / name).read_text(encoding="utf-8"))["status"]
+                == "not_evaluated"
+            )
+        assert "Not evaluated" in (out / refresh.HTML).read_text(encoding="utf-8")
+        for name in refresh.CHARTS:
+            assert (
+                len((out / f"{name}.csv").read_text(encoding="utf-8").splitlines()) == 1
+            )
 
 
 def test_download_manifest_and_resume(tmp_path, monkeypatch):
@@ -265,7 +412,9 @@ def test_renderer_and_failed_qa_replace_public_page(case):
     result = refresh.analyze(cfg)
     result["generated_at"] = "2099-12-31T00:00:00Z"
     out = Path(cfg["output_dir"])
-    (out / refresh.HEADLINES).write_text(json.dumps(result), encoding="utf-8")
+    (out / refresh.HEADLINES).write_text(
+        json.dumps(result), encoding="utf-8", newline="\n"
+    )
     page = out / "report.html"
     renderer.render(out / refresh.HEADLINES, page)
     text = page.read_text(encoding="utf-8")
@@ -304,7 +453,7 @@ def test_cli_offline_config_from_another_directory(case, tmp_path, script):
 
     cfg, _, _ = case
     path = tmp_path / "config.json"
-    path.write_text(json.dumps(cfg), encoding="utf-8")
+    path.write_text(json.dumps(cfg), encoding="utf-8", newline="\n")
     result = subprocess.run(
         [
             sys.executable,
@@ -332,7 +481,7 @@ def test_failed_network_invalidates_existing_public_outputs(case, monkeypatch):
     spec.loader.exec_module(cli)
     refresh.analyze(cfg)
     config_file = Path(cfg["data_dir"]).parent / "config.json"
-    config_file.write_text(json.dumps(cfg), encoding="utf-8")
+    config_file.write_text(json.dumps(cfg), encoding="utf-8", newline="\n")
     monkeypatch.setattr(cli, "workflow", lambda: refresh)
 
     def blocked(config):
@@ -361,6 +510,7 @@ def test_download_records_response_headers(tmp_path, monkeypatch):
             'HTTP/2 200\r\neTaG: "synthetic-tag"\r\n'
             "Last-Modified: Thu, 01 Oct 2026 00:00:00 GMT\r\n\r\n",
             encoding="utf-8",
+            newline="\n",
         )
         return subprocess.CompletedProcess(command, 0, stdout="200", stderr="")
 
@@ -372,7 +522,9 @@ def test_download_records_response_headers(tmp_path, monkeypatch):
         "etag": '"synthetic-tag"',
         "last_modified": "Thu, 01 Oct 2026 00:00:00 GMT",
     }
-    request = json.loads(destination.with_suffix(".request.json").read_text())
+    request = json.loads(
+        destination.with_suffix(".request.json").read_text(encoding="utf-8")
+    )
     assert request["etag"] == evidence["etag"]
     assert request["last_modified"] == evidence["last_modified"]
 
