@@ -152,6 +152,8 @@ def test_existing_ignore_rules_are_preserved(tmp_path, remote):
         client(tmp_path).download(year=2026, field_code="h")
     assert (tmp_path / ".gitignore").read_text() == original
     assert not list(tmp_path.glob("*.pdf"))
+    remote.assert_not_called()
+    cnloer_client.build_opener.assert_not_called()
 
 
 def test_cache_hit_obeys_current_size_limit(tmp_path, remote):
@@ -203,6 +205,45 @@ def test_negated_ignore_pattern_is_rejected(tmp_path, remote):
     with pytest.raises(ValueError, match="gitignore"):
         client(tmp_path).download(year=2026, field_code="h")
     assert not list(tmp_path.glob("*.pdf"))
+    remote.assert_not_called()
+    cnloer_client.build_opener.assert_not_called()
+
+
+@pytest.mark.parametrize("operation", ["write", "flush", "fsync", "replace"])
+def test_atomic_write_failure_closes_before_cleanup(tmp_path, monkeypatch, operation):
+    destination = tmp_path / "snapshot.pdf"
+    destination.write_bytes(PDF)
+    stream = cnloer_client.tempfile.NamedTemporaryFile(dir=tmp_path, delete=False)
+    staging = type(destination)(stream.name)
+    monkeypatch.setattr(
+        cnloer_client.tempfile, "NamedTemporaryFile", Mock(return_value=stream)
+    )
+    failure = OSError("synthetic persistence failure")
+    failing_call = Mock(side_effect=failure)
+    if operation == "fsync":
+        monkeypatch.setattr(cnloer_client.os, operation, failing_call)
+    elif operation == "replace":
+        monkeypatch.setattr(type(destination), operation, failing_call)
+    else:
+        monkeypatch.setattr(stream, operation, failing_call)
+    original_unlink = type(destination).unlink
+    cleanup = []
+
+    def closed_file_unlink(path, *args, **kwargs):
+        if path == staging:
+            if not stream.closed:
+                raise PermissionError("cannot unlink an open temporary file")
+            cleanup.append(path)
+        return original_unlink(path, *args, **kwargs)
+
+    monkeypatch.setattr(type(destination), "unlink", closed_file_unlink)
+    with pytest.raises(OSError, match="synthetic persistence failure") as caught:
+        cnloer_client._atomic_write(destination, PDF + b"changed")
+    assert caught.value is failure
+    assert stream.closed
+    assert cleanup == [staging]
+    assert not staging.exists()
+    assert destination.read_bytes() == PDF
 
 
 @pytest.mark.parametrize(

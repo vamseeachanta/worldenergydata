@@ -30,7 +30,8 @@ SHA-256 digest, byte count and publication restriction. Cache hits verify the
 saved bytes against the manifest without network access. `force_refresh=True`
 fetches again; previous snapshots remain available. HTTP failures, oversized
 bodies and responses without a PDF header leave the last successful manifest
-unchanged. Redirects outside the fixed regulator HTTPS origin are refused.
+unchanged. Redirects outside the fixed regulator HTTPS origin are refused,
+including URLs with an explicit port such as `:443`.
 Transport and filesystem exceptions propagate; there is no synthetic
 fallback. The timeout bounds socket operations, not total elapsed download time.
 

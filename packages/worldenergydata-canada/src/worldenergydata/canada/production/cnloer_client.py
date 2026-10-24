@@ -86,6 +86,9 @@ class CnloerPdfClient:
         if manifest_path.exists() and not force_refresh:
             return self._cached_pdf(manifest_path, stem, url)
 
+        ignore = self.cache_dir / ".gitignore"
+        if ignore.exists() and ignore.read_text() != "*\n":
+            raise ValueError("cache .gitignore must ignore all cache artifacts")
         opener = build_opener(CnloerRedirectHandler())
         with opener.open(url, timeout=self.timeout) as response:
             # One extra byte distinguishes an exact-limit body from an oversized one.
@@ -98,7 +101,6 @@ class CnloerPdfClient:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         # Keep every cache artifact ignored even when a caller chooses a directory
         # inside a checkout. A pre-existing ignore file is never weakened.
-        ignore = self.cache_dir / ".gitignore"
         if ignore.exists() and ignore.read_text() != "*\n":
             raise ValueError("cache .gitignore must ignore all cache artifacts")
         if not ignore.exists():
@@ -149,16 +151,14 @@ class CnloerPdfClient:
 
 def _atomic_write(path: Path, payload: bytes) -> None:
     """Replace a cache artifact only after the complete bytes have been written."""
-    with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
-        staging = Path(stream.name)
-        try:
+    staging = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            staging = Path(stream.name)
             stream.write(payload)
             stream.flush()
             os.fsync(stream.fileno())
-        except BaseException:
-            staging.unlink(missing_ok=True)
-            raise
-    try:
         staging.replace(path)
     finally:
-        staging.unlink(missing_ok=True)
+        if staging is not None:
+            staging.unlink(missing_ok=True)
