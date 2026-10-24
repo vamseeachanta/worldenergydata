@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+import csv
+import zipfile
+from io import StringIO
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
@@ -231,7 +236,9 @@ def test_blank_identity_rows_remain_independent(tmp_path, blank) -> None:
 
     path = tmp_path / "anonymous.csv"
     path.write_text(
-        "WELL_KID,API_NUMBER,YEAR,SHUT_IN_PRESS\n" " , ,1997,10\n,,1998,20\n"
+        "WELL_KID,API_NUMBER,YEAR,SHUT_IN_PRESS\n" " , ,1997,10\n,,1998,20\n",
+        encoding="utf-8",
+        newline="\n",
     )
     parsed = parse_proration_pressure(path).normalized
     assert (
@@ -280,6 +287,59 @@ def test_missing_kid_cannot_disambiguate_candidates(blank) -> None:
         value is None
         for value in result.observations["is_earliest_observation_for_well"]
     )
+
+
+@pytest.mark.parametrize(
+    ("well_kid", "pressure_kids", "earliest"),
+    [
+        ("matched", ("", ""), [True, False]),
+        ("matched", ("   ", pd.NA), [True, False]),
+        ("matched", ("source-a", "source-b"), [True, False]),
+        ("", ("source", "source"), [True, False]),
+        ("", ("source-a", "source-b"), [True, True]),
+        ("", ("", ""), [True, True]),
+    ],
+)
+def test_matched_well_kid_groups_observations_without_api14(
+    tmp_path: Path, well_kid: str, pressure_kids: tuple, earliest: list[bool]
+) -> None:
+    """Hand count for #1352: two years joined to one identified well.
+
+    A twelve-digit API14 is suppressed by parsing. A populated matched-well
+    KID still identifies one well, so exactly one of its two rows is earliest.
+    Without that KID, equal pressure KIDs group the rows; distinct pressure
+    KIDs or independent unidentified source rows each receive two flags.
+    """
+    from worldenergydata.kansas_kgs.observations import build_pressure_observations
+    from worldenergydata.kansas_kgs.wells import REQUIRED_COLUMNS, parse_wells_master
+
+    contents = StringIO()
+    writer = csv.DictWriter(contents, fieldnames=sorted(REQUIRED_COLUMNS))
+    writer.writeheader()
+    writer.writerow(
+        {
+            "KID": well_kid,
+            "API_NUMBER": "15-067-20048",
+            "API_NUM_NODASH": "150672004800",
+            "DEPTH": "1000",
+        }
+    )
+    path = tmp_path / "wells.zip"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("ks_wells.txt", contents.getvalue())
+    wells = parse_wells_master(path)
+    rows = _pressure_rows().assign(well_kid=list(pressure_kids))
+
+    result = build_pressure_observations(rows, wells)
+    observations = result.observations.sort_values("test_year")
+
+    assert len(observations) == 2
+    assert observations["api14"].isna().all()
+    assert observations["quality_flags"].eq("invalid_api14").all()
+    assert result.quality["missing_well_join_count"] == 0
+    assert result.quality["missing_depth_count"] == 0
+    assert observations["is_earliest_observation_for_well"].tolist() == earliest
+    assert observations["virgin_pressure_proxy_method"].notna().tolist() == earliest
 
 
 def _pressure_rows(include_stevens: bool = False) -> pd.DataFrame:

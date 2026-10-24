@@ -5,7 +5,7 @@
 | Module | `kansas_kgs` |
 | Repository | `worldenergydata` |
 | Package scope | `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs` |
-| Pack revision | 3, 2026-10-22 |
+| Pack revision | 4, 2026-10-24 |
 | Baseline code revision | `72716499230d3457ce90a5bcd23a8a8367bc0bd3` |
 | Analysis family | EC; data ingestion and screening calculations |
 | Quality role | Calculations quality manager, interim data-pipeline coverage |
@@ -19,11 +19,13 @@
 | 1 | 2026-10-16 | Publish the eight issue drafts, link their scopes and proposed responsibilities, and record the missing-KID ambiguity |
 | 2 | 2026-10-19 | Count ambiguous joins as missing depth and update C18 and S53 for defect 1 of #1352 |
 | 3 | 2026-10-22 | Correct blank identities, API14 validation, provenance and audit gate evidence for #1352 |
+| 4 | 2026-10-24 | Preserve matched-well KID grouping when API14 is invalid and correct the missing-KID detection record for #1352 |
 
 Line-range citations retain the baseline code revision above. Revision 2 updates
 C18 and S53 using current test node IDs and symbol names. Revision 3 updates
 C07, C13, C16, S14 and S52 with symbol and test references; line-range citations
 and the earlier execution record remain historical evidence at the baseline revision.
+Revision 4 updates C08, S52 and S73 with current symbol and test references.
 
 ## 1. Purpose and scope
 
@@ -119,7 +121,7 @@ Checks below are executable existing tests except the explicit C06 hand arithmet
 | C05 | G1 | Import and execute module, legacy, downstream and contract test paths: 0 failed tests and 0 collection errors | Execution record in section 4; package imports exercised by E1–E6. [tests/unit/kansas_kgs/test_cli.py:L9-L11] [tests/unit/state_regulators/test_kansas_kgs.py:L14-L21] |
 | C06 | G2 | `build_pressure_observations`: hand-add 47.3 + 14.7 = 62.0 psi absolute; divide by 4,470 ft and round to 6 decimal places; exactly 0 psi and 0 psi/ft difference from rounded fixture expectations | E3; arithmetic establishes formula agreement only. [tests/unit/kansas_kgs/test_observations.py:L14-L24] |
 | C07 | G2 | Ambiguous API10: both E4 rows have missing API14, depth, gradient and proxy; both earliest flags are exactly None; E3 earliest flags are exactly True then False | `tests/unit/kansas_kgs/test_observations.py::test_build_observations_suppresses_ambiguous_api10_gradient`; `tests/unit/kansas_kgs/test_observations.py::test_build_observations_converts_units_and_flags_earliest` |
-| C08 | G2 | KID fallback: exactly 1 selected well with 4,470 ft depth and a fallback flag | `tests/unit/kansas_kgs/test_observations.py::test_kid_fallback_disambiguates_api10_join`; [tests/unit/kansas_kgs/test_observations.py:L42-L56] |
+| C08 | G2 | KID fallback: exactly 1 selected well with 4,470 ft depth and a fallback flag. With invalid API14, a populated matched-well KID gives exactly 1 earliest flag across 2 years; without that KID, repeated pressure KIDs give 1 flag and distinct or absent pressure identities give 2 | `tests/unit/kansas_kgs/test_observations.py::test_kid_fallback_disambiguates_api10_join`; `tests/unit/kansas_kgs/test_observations.py::test_matched_well_kid_groups_observations_without_api14` |
 | C09 | G2 | No-positive-pressure input: exactly 0 curated rows, 0 flag counters, null year bounds, and exact schema | `tests/unit/kansas_kgs/test_observations.py::test_no_positive_pressures_returns_empty_observations_and_quality`; [tests/unit/kansas_kgs/test_observations.py:L84-L108] |
 | C10 | G2 | Missing year: exactly 1 missing-year count, a missing-year flag and 0 true earliest flags for that row | `tests/unit/kansas_kgs/test_observations.py::test_missing_year_positive_pressure_is_flagged_not_fatal`; [tests/unit/kansas_kgs/test_observations.py:L111-L123] |
 | C11 | G5 | Manifest: exactly 1 row; CSV digest 64 characters and size greater than 0 bytes; API codes remain strings | E5; [tests/unit/kansas_kgs/test_io.py:L67-L87] |
@@ -196,7 +198,7 @@ rg -n '0\.0|0\.05|1970|cache|to_csv|to_parquet|write_text|replace|NaT|pd.NA|time
 | S49 | Missing pressure county falls back to well county without an origin flag | no detection check exists for origin tracking | issue pending (2) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L244-L246] |
 | S50 | int converts external test_year; direct callers can supply fractional years that truncate | no detection check exists for fractional direct-call years | issue pending (1) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L249-L251] |
 | S51 | Empty/missing quality flags yield zero; missing strings fill with empty text before integer counting | C09 covers empty data; no detection check exists for dropped flags column | issue pending (2) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L254-L258] |
-| S52 | Ambiguity returns missing; identity prefers matched API14, then populated KID, then independent source file/row identity; absent provenance remains indeterminate | C07, C08 and `tests/unit/kansas_kgs/test_observations.py::test_blank_identity_rows_remain_independent` | Blank identity corrected for #1352; row identity does not establish a shared well | Current symbol: `_identity_key` in `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py` |
+| S52 | Ambiguity returns missing; identity prefers matched API14, then populated matched-well KID, then populated pressure KID, then independent source file/row identity; absent provenance remains indeterminate | C07, C08 and `tests/unit/kansas_kgs/test_observations.py::test_blank_identity_rows_remain_independent` | Blank and matched-well identity corrected for #1352; row identity does not establish a shared well | Current symbol: `_identity_key` in `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py` |
 | S53 | No match returns an empty depth-flag list; `_well_match` now assigns missing_depth for both missing and ambiguous joins | C18 tests both unresolved join paths, missing gradients and exactly one depth flag per row | Corrected for #1352, defect 1 | Current symbols: `_well_match`, `_depth_flags` in `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py` |
 | S54 | Positive depth returns no depth flags; nonpositive depth adds missing_depth | C18 | Documented fallback; regression scope as stated | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L274-L274] |
 | S55 | Missing sources mapping defaults to empty catalog; string optional flags use bool rather than strict Boolean validation | no detection check exists | issue pending (3) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L35-L48] |
@@ -217,7 +219,7 @@ rg -n '0\.0|0\.05|1970|cache|to_csv|to_parquet|write_text|replace|NaT|pd.NA|time
 | S70 | Snapshot size starts at zero and hashes all bytes; an empty file receives a valid digest without a completeness failure | C11 checks one nonempty CSV; no empty-file rejection check exists | issue pending (2) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L183-L190] |
 | S71 | Naive output timestamp is assumed UTC | no detection check exists for naive timestamps | issue pending (3) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L211-L215] |
 | S72 | Promotion replaces normalized files and curated outputs individually; a later promotion failure can leave a mixed packet | C12 covers failure before promotion only; no detection check exists for late failure | issue pending (4) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L92-L101] |
-| S73 | Direct calls with several API10 candidates stringify missing KIDs on both sides; a missing pressure KID can select the one missing well KID and emit kid_fallback_join instead of ambiguity flags | no detection check exists; C08 covers populated KIDs only | issue pending (1) | [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L156-L163] |
+| S73 | Several API10 candidates can be disambiguated only by populated matching KIDs; a missing pressure KID cannot select a candidate whose KID is also missing, so both rows retain ambiguity and missing-depth flags with earliest flags exactly None | `tests/unit/kansas_kgs/test_observations.py::test_missing_kid_cannot_disambiguate_candidates` | Missing-KID ambiguity corrected for #1352 | Current symbol: `_well_match` in `packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py` |
 
 The two swallowed exception sites are S01 and S02; the four explicit `continue` sites are S04, S36, S57 and S67; empty-result persistence and zero defaults are included rather than treated as evidence of successful ingestion. [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L73-L85] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/raw_sources.py:L122-L128] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L97-L103] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/io.py:L193-L204] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/pressure.py:L75-L86] [packages/worldenergydata-kansas_kgs/src/worldenergydata/kansas_kgs/observations.py:L135-L144]
 The related feature record is #725, not a confirmed incident report; its repository plan records malformed rows, pressure/depth assumptions and ambiguous joins as risks addressed by explicit tests. [docs/plans/2026-07-03-issue-725-kansas-kgs-pressure-observations.md:L616-L633]

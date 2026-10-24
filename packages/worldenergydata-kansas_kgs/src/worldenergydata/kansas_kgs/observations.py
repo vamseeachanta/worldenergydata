@@ -273,7 +273,9 @@ def _identity_key(match: pd.Series | None, row: pd.Series, flags: list[str]) -> 
     api14 = _value(match, "api14")
     if pd.notna(api14):
         return f"api14:{api14}"
-    kid = row.get("well_kid")
+    kid = _value(match, "well_kid")
+    if not _has_identity(kid):
+        kid = row.get("well_kid")
     if _has_identity(kid):
         return f"kid:{kid}"
     # Issue #1352 (2026), defect 2: unidentified source rows are independent.
