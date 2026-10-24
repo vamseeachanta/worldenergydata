@@ -13,6 +13,7 @@ Existing dashboard adapters and HTML pages retain their historical basis.
 | 1 | 2026-10-22 | Add reproducible retrieval, offline tests and a source-quality receipt; withhold statistics where source evidence fails QA. |
 | 2 | 2026-10-22 | Add checked exclusion accounting and explanations generated from quality counts; preserve the source-quality gate. |
 | 3 | 2026-10-22 | Separate structural failures from per-bore evidence gaps, preserve signed report keys, and retain a public rebuild with explicit partial coverage. |
+| 4 | 2026-10-24 | Replace unsupported calendar cutoffs with cited snapshot coverage bounds and test each inclusive endpoint independently. |
 
 ## Run a new vintage
 
@@ -33,12 +34,34 @@ analysis inputs. Its digest is recorded in the receipt and product JSON.
 Each table's minimum of one row rejects an empty source member. It is an
 emptiness check, not evidence of population completeness. Population joins and
 per-quantity evaluated counts expose missing coverage separately. The configured
-inclusive date bounds, 1900-01-01 through 2026-12-31, are broad calendar sanity
-limits for this vintage; a later vintage requires a reviewed upper-bound update.
-Date minima and maxima are also recorded in QA. WAR plausibility imports
+inclusive date bounds follow the observed coverage of the cited archive, as
+specified below. Date minima and maxima are also recorded in QA. WAR plausibility imports
 `MAX_PLAUSIBLE_SPAN_DAYS` from the canonical rig-day module and rejects an
 exclusive end-minus-start span above that limit. Interval-union day arithmetic
 remains inclusive. The bound is a source-data heuristic, not an operating limit.
+
+### Date-bound basis
+
+Each configured endpoint cites the observed minimum or maximum in the retained
+[source receipt](quality/qa.json), with the archive SHA-256 alongside the
+criterion. The receipt's source identity agrees with the retained
+[download manifest](quality/manifest.json), retrieved on 2026-10-22. These are
+observations at the time of retrieval, not BSEE requirements or independently
+validated limits on historical or future activity.
+
+| Table | Inclusive minimum date | Inclusive maximum date | Evidence in the source receipt |
+| --- | --- | --- | --- |
+| WAR | 1988-04-07 | 2026-10-17 | `tables.war.date_min` and `tables.war.date_max` |
+| Boreholes | 1947-05-10 | 2026-06-10 | `tables.boreholes.date_min` and `tables.boreholes.date_max` |
+
+Table 1. Observed date coverage of the retained archive defines this snapshot's screening envelope.
+
+Dates outside this evidence-supported envelope remain not evaluated for the
+affected quantities. Backfilled records or a new vintage require a separately
+reviewed coverage basis and updated criteria before those quantities can be
+evaluated. Extrema alone do not establish the correctness of individual dates.
+The retained receipt remains the historical result under its recorded criteria;
+it is not represented as a rebuild under the revised configuration.
 
 The downloader records the public URL, observed HTTP status, UTC retrieval time,
 byte size and SHA-256 in `manifest.json` beside the raw archive. HTTP protocol

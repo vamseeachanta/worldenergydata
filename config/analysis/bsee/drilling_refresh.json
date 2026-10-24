@@ -19,8 +19,18 @@
       "required": ["API_WELL_NUMBER"],
       "dates": ["WAR_START_DT", "WAR_END_DT"],
       "min_rows": 1,
-      "date_min": "1900-01-01",
-      "date_max": "2026-12-31",
+      "date_min": "1988-04-07",
+      "date_min_basis": {
+        "reference": "docs/modules/bsee/analysis/drilling_refresh/quality/qa.json#/tables/war/date_min",
+        "archive_sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+        "derivation": "1988-04-07 is the earliest parsed WAR date recorded for the cited archive; this is a snapshot coverage boundary, not a general validity limit."
+      },
+      "date_max": "2026-10-17",
+      "date_max_basis": {
+        "reference": "docs/modules/bsee/analysis/drilling_refresh/quality/qa.json#/tables/war/date_max",
+        "archive_sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+        "derivation": "2026-10-17 is the latest parsed WAR date recorded for the cited archive; this is a snapshot coverage boundary, not a general validity limit."
+      },
       "unit": "day"
     },
     "activity": {
@@ -39,8 +49,18 @@
       "required": [],
       "dates": ["WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"],
       "min_rows": 1,
-      "date_min": "1900-01-01",
-      "date_max": "2026-12-31",
+      "date_min": "1947-05-10",
+      "date_min_basis": {
+        "reference": "docs/modules/bsee/analysis/drilling_refresh/quality/qa.json#/tables/boreholes/date_min",
+        "archive_sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+        "derivation": "1947-05-10 is the earliest parsed borehole milestone date recorded for the cited archive; this is a snapshot coverage boundary, not a general validity limit."
+      },
+      "date_max": "2026-06-10",
+      "date_max_basis": {
+        "reference": "docs/modules/bsee/analysis/drilling_refresh/quality/qa.json#/tables/boreholes/date_max",
+        "archive_sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
+        "derivation": "2026-06-10 is the latest parsed borehole milestone date recorded for the cited archive; this is a snapshot coverage boundary, not a general validity limit."
+      },
       "unit": "day"
     }
   }

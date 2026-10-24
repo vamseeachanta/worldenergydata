@@ -599,6 +599,67 @@ def test_configured_date_range_is_enforced(setup_run):
     assert "out_of_range_dates" in rows[0]["days_status [category]"]
 
 
+@pytest.mark.parametrize(
+    "table, source_date, expected",
+    [
+        ("war", "04/06/1988", 1),
+        ("war", "04/07/1988", 0),
+        ("war", "04/08/1988", 0),
+        ("war", "10/16/2026", 0),
+        ("war", "10/17/2026", 0),
+        ("war", "10/18/2026", 1),
+        ("boreholes", "05/09/1947", 1),
+        ("boreholes", "05/10/1947", 0),
+        ("boreholes", "05/11/1947", 0),
+        ("boreholes", "06/09/2026", 0),
+        ("boreholes", "06/10/2026", 0),
+        ("boreholes", "06/11/2026", 1),
+    ],
+)
+def test_date_bounds_include_each_endpoint_independently(
+    setup_run, table, source_date, expected
+):
+    spec = setup_run["tables"][table]
+    assert (
+        spec["dates"]
+        == {
+            "war": ["WAR_START_DT", "WAR_END_DT"],
+            "boreholes": ["WELL_SPUD_DATE", "TOTAL_DEPTH_DATE"],
+        }[table]
+    )
+    # Vary one date field at a time; every other required date stays in range.
+    for column in spec["dates"]:
+        row = {
+            key: "1" if key == "SN_WAR" else "990000000100"
+            for key in spec["keys"] + spec["required"]
+        }
+        row.update({key: "01/01/2020" for key in spec["dates"]})
+        row[column] = source_date
+        qa = refresh._table_qa([row], spec, "day")
+        assert qa["checks"]["out_of_range_dates"] == expected, column
+
+
+@pytest.mark.parametrize("table", ["war", "boreholes"])
+def test_date_bounds_record_a_basis_beside_each_criterion(table):
+    config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    spec = config["tables"][table]
+    manifest = json.loads(
+        Path(
+            "docs/modules/bsee/analysis/drilling_refresh/quality/manifest.json"
+        ).read_text(encoding="utf-8")
+    )
+    for endpoint in ("date_min", "date_max"):
+        basis = spec[f"{endpoint}_basis"]
+        reference, pointer = basis["reference"].split("#", 1)
+        evidence = json.loads(Path(reference).read_text(encoding="utf-8"))
+        assert evidence["sources"] == manifest["files"]
+        assert basis["archive_sha256"] == manifest["files"][0]["sha256"]
+        for key in pointer.strip("/").split("/"):
+            evidence = evidence[key]
+        assert evidence == spec[endpoint]
+        assert spec[endpoint] in basis["derivation"]
+
+
 def test_workflow_digest_ignores_checkout_line_endings(tmp_path):
     lf, crlf = tmp_path / "lf.py", tmp_path / "crlf.py"
     lf.write_text("value = 1\n", encoding="utf-8", newline="\n")
