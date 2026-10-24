@@ -9,6 +9,7 @@ log(factor)/log(2). All test inputs below are explicitly synthetic.
 
 import math
 
+import numpy as np
 import pytest
 from pydantic import ValidationError
 
@@ -163,7 +164,21 @@ def test_depth_coefficients_are_required(campaign, field):
 @pytest.mark.parametrize(
     "field", ["md_ft_per_day", "water_depth_ft_per_day", "fixed_days", "minimum_days"]
 )
-@pytest.mark.parametrize("value", [math.nan, math.inf, -math.inf, -1, True, "1", None])
+@pytest.mark.parametrize(
+    "value",
+    [
+        math.nan,
+        math.inf,
+        -math.inf,
+        -1,
+        True,
+        False,
+        np.bool_(True),
+        np.bool_(False),
+        "1",
+        None,
+    ],
+)
 def test_depth_coefficient_contract(campaign, field, value):
     inputs = {
         "md_ft_per_day": 400,
@@ -197,7 +212,20 @@ def test_zero_depth_denominator_rejected(campaign, field):
         )
 
 
-@pytest.mark.parametrize("value", [math.nan, math.inf, -math.inf, -1, True, "0"])
+@pytest.mark.parametrize(
+    "value",
+    [
+        math.nan,
+        math.inf,
+        -math.inf,
+        -1,
+        True,
+        False,
+        np.bool_(True),
+        np.bool_(False),
+        "0",
+    ],
+)
 def test_discount_rate_contract(campaign, value):
     with pytest.raises(ValidationError, match="discount_rate"):
         BatchDrillingEconomics().batch_vs_standalone_npv(

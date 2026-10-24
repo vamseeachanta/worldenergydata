@@ -6,6 +6,7 @@ is outside a nonnegative domain, and two exceeds the factor's unit upper bound.
 
 import math
 
+import numpy as np
 import pytest
 from pydantic import ValidationError
 
@@ -38,7 +39,19 @@ def campaign_values():
     }
 
 
-INVALID_REAL = [math.nan, math.inf, -math.inf, "1", True, None, [], {}]
+INVALID_REAL = [
+    math.nan,
+    math.inf,
+    -math.inf,
+    "1",
+    True,
+    False,
+    np.bool_(True),
+    np.bool_(False),
+    None,
+    [],
+    {},
+]
 
 
 @pytest.mark.parametrize("field", ["water_depth_ft", "planned_md_ft"])
@@ -177,7 +190,7 @@ DIRECT_CASES = [
 @pytest.mark.parametrize("method,arguments,field,zero_allowed", DIRECT_CASES)
 @pytest.mark.parametrize("value", INVALID_REAL + [-1, 0])
 def test_direct_numeric_contract(method, arguments, field, zero_allowed, value):
-    if zero_allowed and value == 0 and not isinstance(value, bool):
+    if zero_allowed and type(value) is int and value == 0:
         return
     with pytest.raises(ValidationError, match=field):
         getattr(BatchDrillingEconomics(), method)(**(arguments | {field: value}))
@@ -286,3 +299,39 @@ def test_required_campaign_numeric_fields(field):
     values.pop(field)
     with pytest.raises(ValidationError, match=field):
         DrillCampaign(**values)
+
+
+@pytest.mark.parametrize("scalar", [int, float, np.int64, np.float32, np.float64])
+def test_real_scalar_inputs_remain_valid(scalar):
+    site = DrillingSite(
+        **(
+            site_values()
+            | {
+                "water_depth_ft": scalar(0),
+                "planned_md_ft": scalar(100),
+                "location_coords": (scalar(-1), scalar(1)),
+            }
+        )
+    )
+    campaign = DrillCampaign(
+        **(
+            campaign_values()
+            | {
+                "wells": [site],
+                "rig_day_rate_usd": scalar(100),
+                "mobilization_cost_usd": scalar(0),
+                "learning_curve_factor": scalar(1),
+            }
+        )
+    )
+    assert site.location_coords == (-1.0, 1.0)
+    # One well: zero mobilization + 100 USD/day * 12 days = 1200 USD.
+    assert BatchDrillingEconomics().campaign_total_cost(campaign, scalar(12)) == 1200
+
+
+@pytest.mark.parametrize("value", [True, False, np.bool_(True), np.bool_(False)])
+def test_positional_boolean_errors_name_field(value):
+    with pytest.raises(ValidationError) as caught:
+        BatchDrillingEconomics().learning_curve_time(value, 1, 0.5)
+    assert caught.value.errors()[0]["loc"] == ("base_time_days",)
+    assert caught.value.errors()[0]["type"] == "float_type"

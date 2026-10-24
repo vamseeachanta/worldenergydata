@@ -48,8 +48,10 @@ from functools import wraps
 from inspect import signature
 from typing import Annotated
 
+import numpy as np
 from pydantic import (
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     Field,
     ValidationError,
@@ -57,12 +59,24 @@ from pydantic import (
     field_validator,
     validate_call,
 )
+from pydantic_core import PydanticCustomError
+
+
+def reject_boolean(value: object) -> object:
+    """Reject Boolean scalars before strict float conversion accepts them."""
+    if isinstance(value, (bool, np.bool_)):
+        raise PydanticCustomError("float_type", "Input should be a valid number")
+    return value
+
 
 # Boundaries are API definitions in the table above; no field calibration.
-PositiveReal = Annotated[float, Field(strict=True, gt=0, allow_inf_nan=False)]
-NonnegativeReal = Annotated[float, Field(strict=True, ge=0, allow_inf_nan=False)]
-FiniteReal = Annotated[float, Field(strict=True, allow_inf_nan=False)]
-LearningFactor = Annotated[float, Field(strict=True, gt=0, le=1, allow_inf_nan=False)]
+RealInput = Annotated[float, BeforeValidator(reject_boolean)]
+PositiveReal = Annotated[RealInput, Field(strict=True, gt=0, allow_inf_nan=False)]
+NonnegativeReal = Annotated[RealInput, Field(strict=True, ge=0, allow_inf_nan=False)]
+FiniteReal = Annotated[RealInput, Field(strict=True, allow_inf_nan=False)]
+LearningFactor = Annotated[
+    RealInput, Field(strict=True, gt=0, le=1, allow_inf_nan=False)
+]
 WellCount = Annotated[int, Field(strict=True, ge=1)]
 Identifier = Annotated[str, Field(strict=True, min_length=1, pattern=r"\S")]
 
