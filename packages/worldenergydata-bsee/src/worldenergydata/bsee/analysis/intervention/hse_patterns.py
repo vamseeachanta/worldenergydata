@@ -124,10 +124,13 @@ def _assessment(
         *requirements,
     ]
     cells = tuple((label, counts[label]) for label in labels)
+    # Classifications may be incomplete while known cells are still sparse.
+    # An unavailable table without category cells (p7) has no cells to assess.
+    sparse = any(n < MIN_CELL_SIZE for _, n in cells) or (not cells and not missing)
     if missing:
         reasons.append(missing)
         cells = ()
-    elif not cells or any(n < MIN_CELL_SIZE for _, n in cells):
+    if sparse:
         reasons.append("small_cell_table_withheld")
         cells = ()
     return PatternAssessment(pattern, cells, tuple(reasons))

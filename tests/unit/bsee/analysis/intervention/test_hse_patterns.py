@@ -10,6 +10,7 @@ from dataclasses import asdict
 from datetime import date
 
 import pytest
+
 from worldenergydata.bsee.analysis.intervention.hse_patterns import (
     assess_patterns,
     atlantic_season,
@@ -194,6 +195,51 @@ def test_unqualified_activity_prevents_partial_mix(activity):
     p5 = assess_patterns(rows, [period()]).patterns[0]
     assert p5.cells == ()
     assert "activity_classification_required" in p5.reasons
+
+
+@pytest.mark.parametrize("count", [0, 1, 4])
+def test_missing_activity_preserves_sparse_known_cell_suppression(count):
+    """PERS=10, PSAFE=10, CRANE=count plus one unclassified incident.
+
+    Season and vendor cells exceed the floor. Missing activity must retain the
+    sparse-cell reason so that overlapping public tables are also withheld.
+    """
+    rows = [row for row in balanced_events() if row["activity_code"] != "CRANE"]
+    rows += [event(f"crane-{i}", activity_code="CRANE") for i in range(count)]
+    rows += [event("unknown", activity_code=None)]
+    result = assess_patterns(rows, [period()])
+    p5, p6, _, p8 = result.patterns
+    assert p5.cells == ()
+    assert "activity_classification_required" in p5.reasons
+    assert "small_cell_table_withheld" in p5.reasons
+    assert p6.cells == (("hurricane", 11 + count), ("non_hurricane", 10))
+    assert p8.cells == (("wireline", 21 + count),)
+    assert all(p["cells"] == [] for p in result.public_summary()["patterns"])
+
+
+@pytest.mark.parametrize("count", [1, 4])
+def test_missing_vendor_preserves_sparse_known_cell_suppression(count):
+    """Thirty wireline incidents, count pumping incidents, one unknown type.
+
+    Activity and season cells exceed the floor. Missing vendor mapping must
+    retain the sparse-cell reason and suppress every overlapping public table.
+    """
+    rows = balanced_events()
+    rows += [event(f"pumping-{i}", lease_number="pumping lease") for i in range(count)]
+    rows += [event("unknown", lease_number="unknown lease")]
+    windows = [
+        period(),
+        period(BOTM_LEASE_NUM="pumping lease", vendor_type="pumping"),
+        period(BOTM_LEASE_NUM="unknown lease", vendor_type=None),
+    ]
+    result = assess_patterns(rows, windows)
+    p5, p6, _, p8 = result.patterns
+    assert p8.cells == ()
+    assert "vendor_type_required" in p8.reasons
+    assert "small_cell_table_withheld" in p8.reasons
+    assert p5.cells == (("PERS", 11 + count), ("PSAFE", 10), ("CRANE", 10))
+    assert p6.cells == (("hurricane", 16 + count), ("non_hurricane", 15))
+    assert all(p["cells"] == [] for p in result.public_summary()["patterns"])
 
 
 @pytest.mark.parametrize("vendor", [None, "unapproved name", "WIRELINE", 7])

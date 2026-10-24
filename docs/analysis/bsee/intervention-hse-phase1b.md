@@ -26,6 +26,7 @@ is evidence of unresolved qualification gaps, not a current coverage audit.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-22 | Added conservative assessments and a synthetic example to expose evidence gaps before pattern claims. |
+| 2 | 2026-10-24 | Preserved sparse-cell suppression alongside missing classifications to prevent reconstruction through overlapping tables. |
 
 ## Scope and method
 
@@ -104,8 +105,10 @@ Aggregation Contract rule 2 (2026-05-18), strengthened to every operator-aggrega
 cell by #419. A cell below the floor, including zero in the fixed p5 or p6 table,
 withholds its entire table. No margins are emitted. If any candidate table is
 sparse, `public_summary()` withholds every table in that release, reducing
-reconstruction through overlapping cuts. Counts pool all operators; the helper
-never creates per-operator buckets.
+reconstruction through overlapping cuts. Known cells are checked for sparsity
+even when classifications are incomplete; both reasons are retained, and all
+public tables remain withheld. Counts pool all operators; the helper never
+creates per-operator buckets.
 
 `PatternDiagnostics` contains internal source indices and unsuppressed coverage
 counts. It must not be serialized as a public artifact. Use `public_summary()`
