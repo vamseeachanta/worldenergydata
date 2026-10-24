@@ -5,14 +5,14 @@
 | Module | metocean |
 | Repository | worldenergydata |
 | Path | `packages/worldenergydata-metocean/src/worldenergydata/metocean` |
-| Pack revision | 5 |
+| Pack revision | 6 |
 | Code revision | `a8b26875c1d94a138456fbd885043f43307b73b3` |
 | Analysis family | Data pipeline; Python calculations gate set, AQG r0 §10 |
 | QA family | EC |
 | Quality manager role | Calculations quality manager; data pipeline coverage provisional |
 | Status | DRAFT |
 
-This pack inventories the metocean module's methods, evidence and known limits. Revision 5 corrects joint-model decoding, limits the supported contour method and adds a synthetic hand check; it does not qualify environmental design conditions.
+This pack inventories the metocean module's methods, evidence and known limits. Revision 6 corrects the conditional-density and grid citations and records regression coverage for all six reported conditional coefficients; it does not qualify environmental design conditions.
 
 ## Revision history
 
@@ -20,6 +20,7 @@ This pack inventories the metocean module's methods, evidence and known limits. 
 | --- | --- | --- |
 | 4 | 2026-10-18 | Correct route delegation and document annual-max limitations because the earlier wording conflated POT and annual-max selection and cited an unused contour route; #1354. Earlier revision records remain in section 7. |
 | 5 | 2026-10-22 | Decode the conditional coefficients and Tp-first contour tuple, remove unreliable method labels and fabricated fallback results, and add a synthetic density-curve hand check; #1354. |
+| 6 | 2026-10-24 | Retain all six conditional coefficients in report summaries and correct the density and grid source references so the reported model and its hand check can be traced; #1354. |
 
 ## 1. Purpose and scope
 
@@ -112,13 +113,15 @@ Method: native `joint_distribution_Hs_Tp` LoNoWe tabulated marginal and conditio
 | 100 | 1.9 | 2.5 | 19.7 |
 | 100 | 11.8 | 11.7 | 12.0 |
 
-Hand check of the first branch pair: the conditional density is f(t|h) = exp(-(ln(t)-mu(h))²/(2v(h))) / (t sqrt(2 pi v(h))), from the NIST lognormal PDF above with scale exp(mu) and log variance v; the backend uses that expression at [extreme.py L735-L742](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L735-L742). At fixed h, completing the square in ln(t) gives t_lower * t_upper = exp(2(mu-v)). Substitution of the fitted coefficients and the unrounded first-row height gives an analytic product of **49.5 s²** and a contour product of **49.6 s²**. Each branch is sampled on the upstream Tp grid; using one cell on each side gives product bounds **49.2–50.0 s²**, containing the analytic product. The cell width is (40 - 0.01)/(2000 - 1) s, from [extreme.py L731](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L731). This is a hand check of conditional-density symmetry and coordinate units, not independent qualification of the fitted marginal or tail extrapolation.
+Hand check of the first branch pair: the conditional density is f(t|h) = exp(-(ln(t)-mu(h))²/(2v(h))) / (t sqrt(2 pi v(h))), from the NIST lognormal PDF above with scale exp(mu) and log variance v; the backend uses that expression at [extreme.py L740-L746](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L740-L746). At fixed h, completing the square in ln(t) gives t_lower * t_upper = exp(2(mu-v)). Substitution of the fitted coefficients and the unrounded first-row height gives an analytic product of **49.5 s²** and a contour product of **49.6 s²**. Each branch is sampled on the upstream Tp grid; using one cell on each side gives product bounds **49.2–50.0 s²**, containing the analytic product. The cell width is (40 - 0.01)/(2000 - 1) s, from [extreme.py L735](https://github.com/MET-OM/metocean-stats/blob/v.1.2.0/metocean_stats/stats/extreme.py#L735). This is a hand check of conditional-density symmetry and coordinate units, not independent qualification of the fitted marginal or tail extrapolation.
 
 Executable checks: `tests/unit/metocean/statistics/test_environmental_contours.py::test_one_point_by_independent_log_density_algebra` derives the product and grid bounds independently; `tests/unit/metocean/statistics/test_environmental_contours.py::test_larger_contour_encloses_smaller` checks nested branches. The annual-maxima value test independently inverts the Gumbel maximum CDF, x = loc - scale ln(-ln(1-1/T)), using stipulated fit parameters and the upstream 1-to-1.6 substitution; see [NIST §1.3.6.6.16 percent point function](https://www.itl.nist.gov/div898/handbook/eda/section3/eda366g.htm) (online edition accessed 2026) and `tests/unit/metocean/statistics/test_eva.py::test_annual_gumbel_values_and_partial_year_selection`. That test also confirms partial-year selection and the 100-year Hs exceeds the returned 1-year label's Hs.
 
 NOT_EVALUATED: IFORM/ISORM reliability transforms for this tabulated splice, physical design suitability, and independent calibration against observations. Callers that previously used `iform()` for native curves must explicitly choose `lonowe()`; reliability-method calls now raise rather than returning mislabeled density curves or fabricated ellipses.
 
 ## 5. QA gates
+
+Revision 6 reporting evidence: 111 tests passed across the complete statistics folder and the route-documentation tests with each of metocean-stats 1.1.9 and 1.2.0. The 1.1.9 run left `PYTHONUTF8` unset. `tests/unit/metocean/statistics/test_reporting.py::TestMetoceanReportSaveHTML::test_save_html_retains_fitted_conditional_coefficients` checks both fitted coefficient groups and the removal of the obsolete sigma row; `tests/unit/metocean/statistics/test_reporting.py::TestMetoceanReportSaveHTML::test_save_html_preserves_literal_conditional_coefficients` checks all six stipulated coefficients against literals with a numerical tolerance. Both tests failed on the missing variance group before the report correction.
 
 Correction evidence for revision 5: 109 tests passed across the complete statistics folder and the route-documentation tests with metocean-stats 1.2.0, and the same 109 passed with the declared 1.1.9 dependency. The 1.2.0 run also retained the configured strict-marker and coverage checks, with reports stored outside the repository. Ruff on the changed Python files and pack lint passed. Applying the new data-derived Hs bound to both original reliability-method routes reproduces the swapped-axis defect. These results update this correction's scope only; the historical inventory and broader qualification gaps below remain as recorded.
 

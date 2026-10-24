@@ -8,6 +8,7 @@ Synthetic inputs and hand calculations are specified in lonowe_example.py.
 import numpy as np
 import pandas as pd
 import pytest
+
 from worldenergydata.metocean.statistics.environmental_contours import (
     EnvironmentalContour,
 )
@@ -56,13 +57,15 @@ def test_larger_contour_encloses_smaller(joint_model):
     Compare the branches on the smaller contour's Hs grid; no fitted constants
     or arbitrary numerical tolerances enter this ordering check.
     """
+
     def branches(contour):
         heights = np.unique(contour.hs_values)
-        bounds = [
-            contour.tp_values[contour.hs_values == height]
-            for height in heights
-        ]
-        return heights, np.array([t.min() for t in bounds]), np.array([t.max() for t in bounds])
+        bounds = [contour.tp_values[contour.hs_values == height] for height in heights]
+        return (
+            heights,
+            np.array([t.min() for t in bounds]),
+            np.array([t.max() for t in bounds]),
+        )
 
     ec = EnvironmentalContour()
     small, large = ec.lonowe(joint_model, 1), ec.lonowe(joint_model, 100)
@@ -93,7 +96,9 @@ def test_duration_mismatch_is_rejected(joint_model):
 
 def test_matching_duration_is_accepted(joint_model):
     ec = EnvironmentalContour(state_duration_hours=joint_model.state_duration_hours)
-    np.testing.assert_array_equal(ec.lonowe(joint_model, 1).hs_values, joint_model._raw_result[9][0])
+    np.testing.assert_array_equal(
+        ec.lonowe(joint_model, 1).hs_values, joint_model._raw_result[9][0]
+    )
 
 
 def test_missing_fit_never_fabricates_an_ellipse():
@@ -115,11 +120,11 @@ def test_plot_preserves_units_and_coordinates(joint_model, sample):
 def test_one_point_by_independent_log_density_algebra(joint_model, sample):
     """Hand check, not a call to the backend density/contour implementation.
 
-    From v.1.2.0 extreme.py L735-L742, put y=ln(Tp). Constant density at
+    From v.1.2.0 extreme.py L740-L746, put y=ln(Tp). Constant density at
     fixed Hs gives (y-mu)**2/(2*v)+y=constant. Completing the square gives
     (y-(mu-v))**2=constant, hence t_low*t_high=exp(2*(mu-v)).
     The two sampled roots bracket true roots within one Tp grid cell;
-    the grid endpoints and count are upstream extreme.py L731. Thus the
+    the grid endpoints and count are upstream extreme.py L735. Thus the
     product of the two lower cell edges bounds the analytic product below,
     and the upper edges bound it above. No fitted-output reference number
     or arbitrary tolerance is used. Test height is nearest the sample median.
@@ -136,7 +141,7 @@ def test_one_point_by_independent_log_density_algebra(joint_model, sample):
         b = joint_model.conditional_tp["variance"]
         mu = a["a1"] + a["a2"] * h ** a["a3"]
         v = b["b1"] + b["b2"] * math.exp(-b["b3"] * h)
-        # Grid resolution: v.1.2.0 extreme.py L731, linspace(.01,40,2000).
+        # Grid resolution: v.1.2.0 extreme.py L735, linspace(.01,40,2000).
         cell = (40.0 - 0.01) / (2000 - 1)
         expected_product = math.exp(2 * (mu - v))
         assert (low - cell) * (high - cell) < expected_product

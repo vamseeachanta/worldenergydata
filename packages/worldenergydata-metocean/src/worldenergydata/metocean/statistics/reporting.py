@@ -123,13 +123,13 @@ class MetoceanReport:
                 },
                 "conditional_tp_model": model.conditional_tp.get("model", ""),
                 "mu_tp": model.conditional_tp.get("mu", ""),
-                "sigma_tp": model.conditional_tp.get("sigma", ""),
+                "variance_tp": model.conditional_tp.get("variance", ""),
             }
         )
 
         content = f"""
         <h2>Joint Probability Model</h2>
-        <p>Conditional Hs-Tp joint distribution (metocean-stats CMA method)</p>
+        <p>Conditional Hs-Tp joint distribution (metocean-stats LoNoWe method)</p>
         {params_html}
         """
 
@@ -148,7 +148,7 @@ class MetoceanReport:
         Parameters
         ----------
         result:
-            ContourResult from EnvironmentalContour.iform / isorm.
+            ContourResult from EnvironmentalContour.lonowe.
         """
         ec = EnvironmentalContour()
         fig = ec.plot_contour(result)
@@ -215,7 +215,7 @@ class MetoceanReport:
             File path for the output HTML (e.g. 'report.html').
         """
         html = self._render_html()
-        with open(path, "w", encoding="utf-8") as fh:
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(html)
 
     def _render_html(self) -> str:

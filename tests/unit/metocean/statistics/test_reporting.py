@@ -3,17 +3,21 @@ ABOUTME: Tests for MetoceanReport (HTML report combining all analyses).
 ABOUTME: Uses synthetic results — no live API calls.
 """
 
+import ast
 import os
+import re
 import tempfile
 
 import numpy as np
 import pandas as pd
 import pytest
+
 from worldenergydata.metocean.statistics.environmental_contours import (
     EnvironmentalContour,
 )
 from worldenergydata.metocean.statistics.eva import ExtremeValueAnalysis
 from worldenergydata.metocean.statistics.joint_probability import (
+    JointModel,
     JointProbabilityModel,
 )
 from worldenergydata.metocean.statistics.reporting import MetoceanReport
@@ -111,6 +115,47 @@ class TestMetoceanReportAddSections:
 
 
 class TestMetoceanReportSaveHTML:
+    def test_save_html_retains_fitted_conditional_coefficients(
+        self, joint_model, tmp_path
+    ):
+        report = MetoceanReport(location_name="Synthetic", lat=0.0, lon=0.0)
+        report.add_joint(joint_model)
+        path = tmp_path / "joint-summary.html"
+        report.save_html(path.as_posix())
+        content = path.read_text(encoding="utf-8")
+
+        for label, group in (("mu_tp", "mu"), ("variance_tp", "variance")):
+            row = re.search(rf"<strong>{label}</strong></td><td>(.*?)</td>", content)
+            assert row is not None, f"Missing conditional coefficient group: {group}"
+            coefficients = ast.literal_eval(row.group(1))
+            assert coefficients == pytest.approx(joint_model.conditional_tp[group])
+        assert "sigma_tp" not in content
+
+    def test_save_html_preserves_literal_conditional_coefficients(self, tmp_path):
+        # Stipulated synthetic coefficients are copied without calculation.
+        model = JointModel(
+            marginal_hs={"distribution": "LoNoWe"},
+            conditional_tp={
+                "model": "lognormal_conditional",
+                "mu": {"a1": 1.5, "a2": 0.4, "a3": 0.36},
+                "variance": {"b1": 0.005, "b2": 0.1, "b3": 0.5},
+            },
+            n_samples=5000,
+        )
+        report = MetoceanReport(location_name="Synthetic", lat=0.0, lon=0.0)
+        report.add_joint(model)
+        path = tmp_path / "joint-summary.html"
+        report.save_html(path.as_posix())
+        content = path.read_text(encoding="utf-8")
+
+        for label, expected in (
+            ("mu_tp", {"a1": 1.5, "a2": 0.4, "a3": 0.36}),
+            ("variance_tp", {"b1": 0.005, "b2": 0.1, "b3": 0.5}),
+        ):
+            row = re.search(rf"<strong>{label}</strong></td><td>(.*?)</td>", content)
+            assert row is not None, f"Missing conditional coefficient group: {label}"
+            assert ast.literal_eval(row.group(1)) == pytest.approx(expected)
+
     def test_save_html_creates_file(self, eva_result):
         report = MetoceanReport(location_name="Test", lat=29.0, lon=-94.0)
         report.add_eva(eva_result)
@@ -128,11 +173,13 @@ class TestMetoceanReportSaveHTML:
             location_name="Gulf of Mexico Site", lat=29.0, lon=-94.0
         )
         report.add_eva(eva_result)
-        with tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode="w") as f:
+        with tempfile.NamedTemporaryFile(
+            suffix=".html", delete=False, mode="w", encoding="utf-8", newline="\n"
+        ) as f:
             path = f.name
         try:
             report.save_html(path)
-            with open(path, "r") as fh:
+            with open(path, "r", encoding="utf-8") as fh:
                 content = fh.read()
             assert "Gulf of Mexico Site" in content
         finally:

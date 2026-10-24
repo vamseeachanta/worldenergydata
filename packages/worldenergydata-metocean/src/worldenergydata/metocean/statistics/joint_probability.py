@@ -107,7 +107,7 @@ class JointProbabilityModel:
             "pdf": np.asarray(pdf_hs),
             "grid": np.asarray(h),
         }
-        # extreme.py L731-L742: mu=a1+a2*h**a3;
+        # v.1.2.0 extreme.py L740-L746: mu=a1+a2*h**a3;
         # variance=b1+b2*exp(-b3*h), NOT standard deviation.
         conditional_tp = {
             "model": "lognormal_conditional",
