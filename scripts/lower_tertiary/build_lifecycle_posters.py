@@ -219,6 +219,11 @@ def _span_txt(a, b, label, extra=""):
 
 def facts_to_field(f: dict) -> dict:
     """Transform an author-authored facts record into the render-shaped FIELD object."""
+    # Issue 747: the field YAMLs flag combined allocations as unresolved;
+    # entity ownership and partial per-field references are not a field split.
+    unresolved_wi = f.get("working_interest_status") in ("contradicted", "unverified")
+    if unresolved_wi:
+        f = {**f, "working_interest": []}
     g = f.get("gates", {})
     disc = _year(g.get("discovery_year"))
     fid = _year(g.get("fid_year"))
@@ -346,6 +351,10 @@ def facts_to_field(f: dict) -> dict:
         metrics.append({"k": "Operator WI", "v": f"{op['wi']:g}", "u": "%"})
 
     host_facts = []
+    if unresolved_wi:
+        host_facts.append(
+            ["Working interests", "NOT_EVALUATED — field allocation not verified"]
+        )
     if f.get("host_type"):
         host_facts.append(["Host type", f["host_type"]])
     if f.get("water_depth_ft") is not None:
