@@ -137,7 +137,11 @@ def read_depth_grid(
     """
     _validate_bbox(bbox)
     # Caller-selected resource budget, not a bathymetric acceptance threshold.
-    if isinstance(max_cells, bool) or not isinstance(max_cells, int) or max_cells <= 0:
+    if (
+        isinstance(max_cells, (bool, np.bool_))
+        or not isinstance(max_cells, (int, np.integer))
+        or max_cells <= 0
+    ):
         raise ValueError("max_cells must be a positive integer")
     _qualify_conventions(entry)
     verify_file(archive, entry)
@@ -172,7 +176,7 @@ def _read_tiff(
         from rasterio.windows import Window, from_bounds
     except ImportError as exc:
         raise TerrainFetchError("GeoTIFF reader requires optional rasterio") from exc
-    with rasterio.open(f"zip://{archive.resolve()}!{member}") as source:
+    with rasterio.open(f"zip://{archive.resolve().as_posix()}!{member}") as source:
         if source.units[0] not in (None, "m", "meters", "metres"):
             raise TerrainFetchError("raster units contradict metre source manifest")
         if source.crs is None:
@@ -213,6 +217,7 @@ def _netcdf_axis(variable: Any, name: str, units: str, limit: int) -> Any:
     CF Metadata Conventions 1.6 (2011), section 1.2: coordinates are numeric,
     monotonic, share their dimension's name, and cannot have missing values.
     Geographic unit strings follow sections 4.1 and 4.2.
+    The full coordinate axis is intentionally read to check every value and mask.
     """
     if (
         getattr(variable, "dimensions", None) != (name,)
@@ -263,7 +268,9 @@ def _read_netcdf(
         expected_positive = {
             "elevation_positive_up": "up",
             "depth_positive_down": "down",
-        }[convention]
+        }.get(convention)
+        if expected_positive is None:
+            raise TerrainFetchError("unknown vertical convention")
         # CF 1.6 (2011), section 4.3: positive directions are case insensitive.
         positive = getattr(elevation, "positive", expected_positive)
         if not isinstance(positive, str) or positive.lower() != expected_positive:

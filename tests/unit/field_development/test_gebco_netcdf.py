@@ -21,6 +21,7 @@ from typing_extensions import Self
 
 from worldenergydata.field_development.bathymetry_grid import (
     _read_netcdf,
+    _read_tiff,
     read_depth_grid,
 )
 from worldenergydata.field_development.terrain import TerrainFetchError
@@ -173,13 +174,18 @@ def test_positive_attribute_is_case_insensitive(
     np.testing.assert_array_equal(grid.depth_m, [[1]])
 
 
-def test_bounded_slice_and_cell_limit(variables: dict[str, Variable]) -> None:
+@pytest.mark.parametrize("budget", [2, np.int64(2), np.uint64(2)])
+def test_bounded_slice_and_cell_limit(
+    variables: dict[str, Variable], budget: Any
+) -> None:
     """Columns at 1 and 2 in row 1 contain -5,-6, hence depths 5,6.
 
     The closed box selects 1 row times 2 columns = 2 cells. A caller budget
     of 2 accepts this exact slice; a budget of 1 refuses it before reading.
     """
-    grid = _read_netcdf(Path("unused.nc"), (1, 0.5, 2, 1), 2, "elevation_positive_up")
+    grid = _read_netcdf(
+        Path("unused.nc"), (1, 0.5, 2, 1), budget, "elevation_positive_up"
+    )
     np.testing.assert_array_equal(grid.depth_m, [[5, 6]])
     assert variables["elevation"].reads == [(slice(1, 2), slice(1, 3))]
     variables["elevation"].reads.clear()
@@ -189,7 +195,22 @@ def test_bounded_slice_and_cell_limit(variables: dict[str, Variable]) -> None:
 
 
 @pytest.mark.parametrize(
-    "budget", [True, False, 0, -1, 1.5, float("nan"), float("inf")]
+    "budget",
+    [
+        True,
+        False,
+        np.bool_(True),
+        np.bool_(False),
+        0,
+        -1,
+        np.int64(0),
+        np.int64(-1),
+        np.uint64(0),
+        1.5,
+        np.float64(2),
+        float("nan"),
+        float("inf"),
+    ],
 )
 def test_invalid_budget_refused_before_file_access(budget: Any) -> None:
     """The resource budget is a caller-selected positive integer cell count."""
@@ -197,8 +218,32 @@ def test_invalid_budget_refused_before_file_access(budget: Any) -> None:
         read_depth_grid(Path("absent.nc"), {}, (0, 0, 2, 1), max_cells=budget)
 
 
+def test_unknown_convention_refused(variables: dict[str, Variable]) -> None:
+    """An unknown sign convention must fail before elevation values are read."""
+    with pytest.raises(TerrainFetchError, match="unknown vertical convention"):
+        _read_netcdf(Path("unused.nc"), (0, 0, 2, 1), 6, "unknown")
+    assert variables["elevation"].reads == []
+
+
+def test_raster_archive_uri_uses_posix_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Raster archive URIs must use the POSIX representation on every OS."""
+    rasterio = pytest.importorskip("rasterio")
+    archive = SimpleNamespace(
+        resolve=lambda: SimpleNamespace(as_posix=lambda: "grid.zip")
+    )
+
+    def open_grid(uri: str) -> None:
+        assert uri == "zip://grid.zip!depth.tif"
+        raise RuntimeError("archive URI checked")
+
+    monkeypatch.setattr(rasterio, "open", open_grid)
+    with pytest.raises(RuntimeError, match="archive URI checked"):
+        _read_tiff(archive, "depth.tif", (0, 0, 2, 1), 6, "elevation_positive_up")
+
+
 @pytest.mark.parametrize("descending", [False, True])
-def test_real_packed_netcdf(tmp_path: Path, descending: bool) -> None:
+@pytest.mark.parametrize("budget", [6, np.int64(6), np.uint64(6)])
+def test_real_packed_netcdf(tmp_path: Path, descending: bool, budget: Any) -> None:
     """CF 1.6 section 8.1: unpacked = packed * scale_factor + add_offset.
 
     Invented packed rows [-2, -4, -6], [-8, -10, -12] with scale 0.5 and
@@ -243,7 +288,7 @@ def test_real_packed_netcdf(tmp_path: Path, descending: bool) -> None:
         "head": {"status": 200},
     }
     before = {item.name: item.read_bytes() for item in tmp_path.iterdir()}
-    grid = read_depth_grid(path, entry, (0, 0, 2, 1), max_cells=6)
+    grid = read_depth_grid(path, entry, (0, 0, 2, 1), max_cells=budget)
     np.testing.assert_array_equal(grid.longitude, longitude)
     np.testing.assert_array_equal(grid.latitude, latitude)
     np.testing.assert_allclose(grid.depth_m, expected, equal_nan=True)
