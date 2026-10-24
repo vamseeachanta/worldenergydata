@@ -226,7 +226,7 @@ def test_failed_statistics_update_rolls_back_entire_metric(tmp_path, monkeypatch
 
     def fail_after_update(conn, record):
         update(conn, record)
-        raise sqlite3.OperationalError("injected statistics failure")
+        raise sqlite3.OperationalError("database is locked")
 
     with monkeypatch.context() as patch:
         patch.setattr(db, "_update_statistics", fail_after_update)
@@ -249,7 +249,7 @@ def test_commit_failure_discards_pending_metric(tmp_path, monkeypatch):
 
     class FailedCommit(sqlite3.Connection):
         def commit(self):
-            raise sqlite3.OperationalError("injected commit failure")
+            raise sqlite3.OperationalError("database is locked")
 
     def failing_connect(*args, **kwargs):
         return connect(*args, factory=FailedCommit, **kwargs)
@@ -263,24 +263,47 @@ def test_commit_failure_discards_pending_metric(tmp_path, monkeypatch):
     assert _record_count(db.db_path) == 1
 
 
-def test_connection_operational_error_does_not_escape(tmp_path, monkeypatch, caplog):
+def test_connection_contention_does_not_escape(tmp_path, monkeypatch, caplog):
     """An unavailable connection cannot insert any rows: initial 0 remains 0."""
     db = PerformanceDatabase(tmp_path / "connection.db")
+    _disable_busy_wait(monkeypatch)
 
     def unavailable(*args, **kwargs):
-        raise sqlite3.OperationalError("injected connection failure")
+        raise sqlite3.OperationalError("database is locked")
 
     with monkeypatch.context() as patch:
         patch.setattr(sqlite3, "connect", unavailable)
         db.record_execution(_sample_record())
     assert _record_count(db.db_path) == 0
     assert "Performance metric was not recorded" in caplog.text
-    assert "injected connection failure" not in caplog.text
+    assert "database is locked" not in caplog.text
 
 
-@pytest.mark.parametrize("error_type", [sqlite3.IntegrityError, ValueError])
+@pytest.mark.parametrize(
+    "table,column",
+    [("test_executions", "duration"), ("test_statistics", "total_runs")],
+)
+def test_record_schema_errors_remain_visible(tmp_path, caplog, table, column):
+    """A missing column must raise; both tables retain zero committed rows."""
+    db = PerformanceDatabase(tmp_path / "schema.db")
+    with db._get_connection() as conn:
+        conn.execute(f"ALTER TABLE {table} RENAME COLUMN {column} TO missing_column")
+        conn.commit()
+
+    with pytest.raises(sqlite3.OperationalError, match=f"no column named {column}"):
+        db.record_execution(_sample_record())
+
+    assert _record_count(db.db_path) == 0
+    with db._get_connection() as conn:
+        assert conn.execute("SELECT COUNT(*) FROM test_statistics").fetchone()[0] == 0
+    assert "Performance metric was not recorded" not in caplog.text
+
+
+@pytest.mark.parametrize(
+    "error_type", [sqlite3.IntegrityError, sqlite3.OperationalError, ValueError]
+)
 def test_unexpected_errors_remain_visible(tmp_path, monkeypatch, error_type):
-    """Only OperationalError is diagnostic; unrelated defects still raise."""
+    """Only lock contention is diagnostic; unrelated defects still raise."""
     db = PerformanceDatabase(tmp_path / "unexpected.db")
 
     def fail(conn, record):

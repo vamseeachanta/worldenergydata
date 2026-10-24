@@ -215,10 +215,11 @@ class PerformanceDatabase:
         """
         Record a test execution, dropping unavailable diagnostic metrics.
 
-        SQLite OperationalError (including an exhausted lock timeout) is logged
-        and suppressed for connection setup, insertion, statistics and commit.
+        SQLite lock contention (including an exhausted timeout) is logged and
+        suppressed for connection setup, insertion, statistics and commit.
         Closing the connection discards any uncommitted execution/statistics
-        changes together; other exception types remain visible.
+        changes together; unrelated operational errors and other exceptions
+        remain visible.
         See Python 3.11 sqlite3 transaction control:
         https://docs.python.org/3.11/library/sqlite3.html#transaction-control
 
@@ -254,10 +255,12 @@ class PerformanceDatabase:
                 self._update_statistics(conn, record)
 
                 conn.commit()
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as exc:
+            if not _is_setup_contention(exc):
+                raise
             # Avoid exposing database paths or test payloads in diagnostics.
             logger.warning(
-                "Performance metric was not recorded (SQLite operational error)"
+                "Performance metric was not recorded (SQLite lock contention)"
             )
 
     def _update_statistics(self, conn: sqlite3.Connection, record: TestExecutionRecord):

@@ -2,8 +2,8 @@
 
 ## Summary
 
-Performance records are diagnostic. An SQLite `OperationalError` while recording
-a metric emits a warning and drops that metric, preserving the pytest verdict.
+Performance records are diagnostic. SQLite lock contention while recording a
+metric emits a warning and drops that metric, preserving the pytest verdict.
 The execution row and its statistics are committed together or discarded together.
 
 ## Revision history
@@ -12,6 +12,7 @@ The execution row and its statistics are committed together or discarded togethe
 | --- | --- | --- |
 | Initial | 2026-10-20 | Document fail-open recording and lock recovery to prevent diagnostic writes from changing test verdicts. |
 | 1 | 2026-10-21 | Keep the lock example immediate after connection setup began restoring the write timeout. |
+| 2 | 2026-10-24 | Limit suppression to lock contention so SQL and schema defects remain visible. |
 
 ## Storage and failure policy
 
@@ -26,8 +27,10 @@ The [Python 3.11 sqlite3 connection reference](https://docs.python.org/3.11/libr
 defines `timeout` in seconds and the resulting `OperationalError` when a lock
 cannot be acquired. A timeout reduces contention failures but cannot prevent them.
 
-`record_execution` suppresses `OperationalError` from connection setup, insertion,
-statistics updates and commit. The warning omits raw exception messages, database
+`record_execution` suppresses only lock-related `OperationalError` from connection
+setup, insertion, statistics updates and commit, using the same contention
+classifier as connection setup. Other operational errors, including SQL and
+schema defects, propagate. The warning omits raw exception messages, database
 paths and test payloads. Closing an uncommitted connection discards its pending
 changes, as described by
 [Python 3.11 Connection.close](https://docs.python.org/3.11/library/sqlite3.html#sqlite3.Connection.close).
@@ -102,8 +105,9 @@ Answer: a warning for the locked attempt, followed by
 ## Regression coverage
 
 `tests/unit/ci/test_performance_tracker_concurrency.py` checks real held locks,
-connection and commit failures, rollback after statistics updates, recovery and
-visibility of unrelated errors. Copied-conftest subprocess tests keep a real lock
+connection and commit contention, rollback after statistics updates, recovery and
+visibility of unrelated errors, including missing columns in the execution and
+statistics tables. Copied-conftest subprocess tests keep a real lock
 across report creation and assert both `pytest.ExitCode.OK` and
 `pytest.ExitCode.TESTS_FAILED`, with no `INTERNALERROR`. Existing tests continue to
 check worker isolation, WAL, busy timeout and lossless uncontended writes.
