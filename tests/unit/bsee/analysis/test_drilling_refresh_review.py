@@ -109,6 +109,51 @@ def test_configured_date_bounds_are_checked(setup_run):
     assert qa["tables"]["war"]["checks"]["out_of_range_dates"] == 8
 
 
+@pytest.mark.parametrize(
+    "start,end,out_of_range",
+    [
+        ("2020-01-01", "01/07/2020", 0),
+        ("2020-01-01", "01/07/2027", 1),
+        ("01/01/2020", "2020-01-07", 0),
+        ("01/01/2027", "2027-01-07", 1),
+    ],
+)
+def test_rejected_date_formats_never_contribute_days(
+    setup_run, start, end, out_of_range
+):
+    rewrite_table(
+        setup_run,
+        "war",
+        lambda rows: rows[0].update(WAR_START_DT=start, WAR_END_DT=end),
+    )
+    result = analyse(setup_run)
+    # Only the two accepted DRL weeks remain: 7 + 7 = 14 bore days.
+    assert result["headlines"]["bore_drilling_days_sum"] == 14
+    assert result["headlines"]["well_drilling_days_union"] == 7
+    assert result["headlines"]["completion_days_sum"] == 7
+    qa = json.loads(
+        (Path(setup_run["output_dir"]) / "qa.json").read_text(encoding="utf-8")
+    )
+    checks = qa["bore_quality"][0]["checks"]["war"]
+    assert checks["invalid_dates"] == 1
+    assert checks.get("out_of_range_dates", 0) == out_of_range
+
+
+def test_accepted_date_bounds_preserve_days_and_activity_year(setup_run):
+    setup_run["tables"]["war"].update(date_min="2020-01-01", date_max="2020-01-21")
+    result = analyse(setup_run)
+    # DRL bore sum = 14 + 7; API10 union = 14; COM = 7 inclusive days.
+    assert result["headlines"]["bore_drilling_days_sum"] == 21
+    assert result["headlines"]["well_drilling_days_union"] == 14
+    assert result["headlines"]["completion_days_sum"] == 7
+    with (Path(setup_run["output_dir"]) / "activity.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
+        rows = list(csv.DictReader(stream))
+    assert {row["year [year]"] for row in rows} == {"2020"}
+    assert result["headlines"]["activity_code_records"] == 4
+
+
 @pytest.mark.parametrize("failure", ["exception", "short"])
 def test_partial_http_body_is_explicit(setup_run, failure):
     setup_run["data_dir"] += "-partial"
@@ -191,3 +236,54 @@ def test_missing_population_joins_remain_visible(setup_run):
         rows = list(csv.DictReader(stream))
     assert rows[1]["drilling_days [day]"] == ""
     assert rows[1]["days_status [category]"] == "no_war_activity"
+
+
+@pytest.mark.parametrize(
+    "change,reason,count",
+    [
+        ({"WAR_END_DT": "01/07/2020"}, "reversed_dates", 1),
+        ({"WAR_START_DT": ""}, "missing_dates", 1),
+        ({"WAR_START_DT": "2020-01-08"}, "invalid_dates", 1),
+        ({"WAR_END_DT": "01/14/2027"}, "out_of_range_dates", 1),
+        ({"WAR_START_DT": "", "WAR_END_DT": ""}, "missing_dates", 2),
+    ],
+)
+def test_rejected_only_bore_retains_source_diagnostics(
+    setup_run, change, reason, count
+):
+    rewrite_table(setup_run, "war", lambda rows: rows[3].update(change))
+    result = analyse(setup_run)
+    # The first bore retains its two DRL weeks: 7 + 7 = 14 days.
+    assert result["headlines"]["bore_drilling_days_sum"] == 14
+    output = Path(setup_run["output_dir"])
+    qa = json.loads((output / "qa.json").read_text(encoding="utf-8"))
+    assert qa["bore_quality"][1]["checks"]["war"][reason] == count
+    with (output / "drilldown.csv").open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream))
+    assert rows[0]["days_status [category]"] == "war_covered"
+    assert rows[0]["war_weeks_rejected [record]"] == "0"
+    assert rows[1]["drilling_days [day]"] == ""
+    assert rows[1]["completion_days [day]"] == ""
+    assert rows[1]["days_status [category]"] == "no_usable_war_interval"
+    assert rows[1]["war_weeks_rejected [record]"] == "1"
+    with (output / "completion.csv").open(encoding="utf-8", newline="") as stream:
+        completion = list(csv.DictReader(stream))
+    assert completion[1]["status [category]"] == "no_usable_war_interval"
+
+
+@pytest.mark.parametrize("end", ["", "12/31/2019"])
+def test_rejected_report_count_is_independent_of_activity_rows(setup_run, end):
+    rewrite_table(setup_run, "war", lambda rows: rows[0].update(WAR_END_DT=end))
+    rewrite_table(
+        setup_run,
+        "activity",
+        lambda rows: rows.append(dict(rows[0], WELL_ACTIVITY_CD="PND")),
+    )
+    result = analyse(setup_run)
+    assert result["headlines"]["bore_drilling_days_sum"] == 14
+    with (Path(setup_run["output_dir"]) / "drilldown.csv").open(
+        encoding="utf-8", newline=""
+    ) as stream:
+        rows = list(csv.DictReader(stream))
+    assert rows[0]["days_status [category]"] == "war_covered"
+    assert rows[0]["war_weeks_rejected [record]"] == "1"

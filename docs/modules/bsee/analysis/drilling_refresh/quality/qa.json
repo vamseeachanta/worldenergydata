@@ -3331,7 +3331,7 @@
       "rule",
       "reason"
     ],
-    "public_data_quality": "Public data quality\nRow defects are reported; structural failures withhold all statistics.\nactivity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.\nboreholes.missing_dates: 1844 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
+    "public_data_quality": "Public data quality\nRow defects are reported; structural failures withhold all statistics.\nactivity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.\nboreholes.missing_dates: 1846 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1755 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
     "rows": [
       {
         "count": 882,
@@ -3341,7 +3341,7 @@
         "rule": "reported"
       },
       {
-        "count": 1844,
+        "count": 1846,
         "defect": "boreholes.missing_dates",
         "example_id": "177000013501",
         "reason": "A required source date is blank; each blank date is counted.",
@@ -3355,7 +3355,7 @@
         "rule": "reported"
       },
       {
-        "count": 1747,
+        "count": 1755,
         "defect": "unattributed_reports",
         "example_id": "-111163",
         "reason": "A WAR report key has no matching activity record.",
@@ -3382,7 +3382,7 @@
   "joins": {
     "orphan_keys": 0,
     "population_coverage": 14,
-    "unattributed_reports": 1747
+    "unattributed_reports": 1755
   },
   "population_bores": 253,
   "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
@@ -3404,7 +3404,7 @@
       },
       "date_max": null,
       "date_min": null,
-      "rows": 4042,
+      "rows": 4043,
       "unit": "record"
     },
     "boreholes": {
@@ -3442,20 +3442,20 @@
         "row_count": 0,
         "unit_check": 0
       },
-      "date_max": "2026-10-10",
+      "date_max": "2026-10-17",
       "date_min": "2000-09-15",
-      "rows": 4192,
+      "rows": 4193,
       "unit": "day"
     }
   },
   "scope": "whole-table structural checks; population-scoped row diagnostics",
   "sources": [
     {
-      "downloaded_at": "2026-10-22T19:40:42Z",
+      "downloaded_at": "2026-10-24T16:43:08.718688+00:00",
       "file": "eWellWARRawData.zip",
       "http_status": 200,
-      "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
-      "size_bytes": 130673137,
+      "sha256": "94186fbf59182a8d46c2472b59eb08a81512c7975e3e234b9f7f49ef65fac449",
+      "size_bytes": 130633359,
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
     }
   ],
@@ -3478,7 +3478,7 @@
       },
       "date_max": null,
       "date_min": null,
-      "rows": 368305,
+      "rows": 368345,
       "unit": "record"
     },
     "boreholes": {
@@ -3489,7 +3489,7 @@
         "invalid_dates": 0,
         "invalid_war_key": 0,
         "missing_activity_code": 0,
-        "missing_dates": 1844,
+        "missing_dates": 1846,
         "missing_keys": 0,
         "out_of_range_dates": 0,
         "reversed_dates": 0,
@@ -3498,7 +3498,7 @@
       },
       "date_max": "2026-06-10",
       "date_min": "1947-05-10",
-      "rows": 54857,
+      "rows": 54858,
       "unit": "day"
     },
     "war": {
@@ -3516,11 +3516,11 @@
         "row_count": 0,
         "unit_check": 0
       },
-      "date_max": "2026-10-17",
+      "date_max": "2026-10-22",
       "date_min": "1988-04-07",
-      "rows": 370052,
+      "rows": 370100,
       "unit": "day"
     }
   },
-  "workflow_sha256": "2bbaaa767d80491a8ca4e2aaed6e3d00226f2f692857fcfa598ab93aaf022a7e"
+  "workflow_sha256": "db19375c6b1e521fcab2a207fac428d4c88ee0e4523421bd0a7cad4eea3dc6c8"
 }

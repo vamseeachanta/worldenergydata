@@ -11,15 +11,15 @@
     "Population follows the configured historical bore list, not new discoveries."
   ],
   "population_sha256": "a6fdd82382ef6c564c0fa0576625630f0f49a969390cdadfb66c02bb5a3bfd64",
-  "public_data_quality": "Public data quality\nRow defects are reported; structural failures withhold all statistics.\nactivity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.\nboreholes.missing_dates: 1844 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1747 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
+  "public_data_quality": "Public data quality\nRow defects are reported; structural failures withhold all statistics.\nactivity.missing_activity_code: 882 reported. An activity code is blank; coverage remains unattributed.\nboreholes.missing_dates: 1846 reported. A required source date is blank; each blank date is counted.\npopulation_coverage: 14 reported. A selected bore lacks a borehole or WAR join; missing joins are counted separately, so a bore can be counted twice.\nunattributed_reports: 1755 reported. A WAR report key has no matching activity record.\nwar.implausible_span: 33 reported. The exclusive WAR span exceeds the canonical plausibility limit; retained and flagged.\nwar.reversed_dates: 10 reported. The source end date precedes its start date.\nCounts can overlap and must not be added to count distinct bores.\n",
   "qa_status": "pass",
   "sources": [
     {
-      "downloaded_at": "2026-10-22T19:40:42Z",
+      "downloaded_at": "2026-10-24T16:43:08.718688+00:00",
       "file": "eWellWARRawData.zip",
       "http_status": 200,
-      "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
-      "size_bytes": 130673137,
+      "sha256": "94186fbf59182a8d46c2472b59eb08a81512c7975e3e234b9f7f49ef65fac449",
+      "size_bytes": 130633359,
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
     }
   ],

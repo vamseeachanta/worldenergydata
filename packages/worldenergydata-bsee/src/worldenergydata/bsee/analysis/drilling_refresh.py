@@ -535,21 +535,39 @@ def _products(
         + config["tables"]["war"]["dates"],
     )
     activity = pd.DataFrame(tables["activity"], columns=["SN_WAR", "WELL_ACTIVITY_CD"])
+    spec = config["tables"]["war"]
+    for index, row in war.iterrows():
+        for column in spec["dates"]:
+            try:
+                value = _date(row[column])
+            except ValueError:
+                war.at[index, column] = ""
+                continue
+            war.at[index, column] = (
+                value.strftime("%m/%d/%Y")
+                if spec.get("date_min", "0001-01-01")
+                <= value.isoformat()
+                <= spec.get("date_max", "9999-12-31")
+                else ""
+            )
+    rejected = Counter()
     for row in war.to_dict("records"):
-        try:
-            for column in config["tables"]["war"]["dates"]:
-                value = _date(row[column]).isoformat()
-                spec = config["tables"]["war"]
-                if (
-                    not spec.get("date_min", "0001-01-01")
-                    <= value
-                    <= spec.get("date_max", "9999-12-31")
-                ):
-                    war.loc[war["SN_WAR"] == row["SN_WAR"], column] = ""
-        except ValueError:
-            pass  # Canonical rig-day preparation drops invalid date intervals.
+        if (
+            not row["WAR_START_DT"]
+            or not row["WAR_END_DT"]
+            or _date(row["WAR_END_DT"]) < _date(row["WAR_START_DT"])
+        ):
+            rejected[row["API_WELL_NUMBER"]] += 1
     joined = war.merge(activity, on="SN_WAR", how="left", validate="one_to_many")
     bores = rig_days_by_bore(joined, basis=BASIS_DRL_COM, population=sorted(population))
+    # Count source reports before the activity join can duplicate their rows.
+    bores["war_weeks_rejected"] = bores["api12"].map(rejected).fillna(0).astype(int)
+    unusable = bores["days_status"].eq("no_war_activity") & bores[
+        "war_weeks_rejected"
+    ].gt(0)
+    bores.loc[
+        unusable, ["days_status", "drilling_days_status", "completion_days_status"]
+    ] = "no_usable_war_interval"
     wells = rig_days_by_well(joined, basis=BASIS_DRL_COM, population=sorted(population))
     calendar = []
     boreholes = {row["API_WELL_NUMBER"]: row for row in tables["boreholes"]}

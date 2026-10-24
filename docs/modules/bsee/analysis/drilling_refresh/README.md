@@ -12,6 +12,7 @@ to a measured zero. Retained exports and their source receipts are in `quality/`
 | 1 | 2026-10-22 | Add reproducible retrieval, offline tests and a source-quality receipt; withhold statistics where source evidence fails QA. |
 | 2 | 2026-10-22 | Add checked exclusion accounting and explanations generated from quality counts; preserve the source-quality gate. |
 | 3 | 2026-10-22 | Separate structural failures from per-bore diagnostics, retain signed report identifiers and rebuild population exports. Remove the unsupported exclusion-accounting claim. |
+| 4 | 2026-10-24 | Validate each WAR date endpoint before calculation, preserve rejected-only bore diagnostics and refresh the public source evaluation. |
 
 ## Run a new vintage
 
@@ -71,6 +72,10 @@ retained and flagged; unattributed weeks remain coverage without contributing
 to a coded activity total. The refresh imports `MAX_PLAUSIBLE_SPAN_DAYS` and
 compares the exclusive span with that bound. Inclusive endpoint counting still
 applies when computing usable WAR interval unions.
+The refresh counts rejected source reports before joining activity rows. Missing,
+invalid, out-of-range and reversed intervals contribute no rig days. A bore
+with reports but no usable interval carries `no_usable_war_interval`; a bore
+without reports retains `no_war_activity`.
 
 `data_quality.csv`, `data_quality.json` and `public_data_quality.txt` report
 detected occurrences reconciled against QA counts. They do not claim that all
@@ -118,7 +123,7 @@ The archive and temporary computations remain outside version control.
 
 The [current headlines](quality/headlines.json) report a calendar median of
 47.0 days, a drilling bore sum and API10 union of 11,484.0 days each, a completion
-bore sum of 5,522.0 days and 4,041 code-bearing activity records. These are
+bore sum of 5,522.0 days and 4,042 code-bearing activity records. These are
 descriptive values on the stated population and available evidence. The
 [QA receipt](quality/qa.json) supplies whole-table and population counts plus
 each bore's diagnostics; the [calendar export](quality/calendar.csv) identifies

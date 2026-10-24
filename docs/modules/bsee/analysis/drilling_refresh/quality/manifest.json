@@ -1,11 +1,11 @@
 {
   "files": [
     {
-      "downloaded_at": "2026-10-22T19:40:42Z",
+      "downloaded_at": "2026-10-24T16:43:08.718688+00:00",
       "file": "eWellWARRawData.zip",
       "http_status": 200,
-      "sha256": "7b5de6aff8f736ab5d6c7978a857eba5c1212fcca176bec21cd394155da756ce",
-      "size_bytes": 130673137,
+      "sha256": "94186fbf59182a8d46c2472b59eb08a81512c7975e3e234b9f7f49ef65fac449",
+      "size_bytes": 130633359,
       "url": "https://www.data.bsee.gov/Well/Files/eWellWARRawData.zip"
     }
   ],
