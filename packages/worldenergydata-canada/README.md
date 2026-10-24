@@ -14,6 +14,10 @@ caller-normalized input, rather than an ArcGIS attribute map. Its required
 fields are `uwi`, `field_name`, nullable `water_depth_m`, `depth_unit`,
 `depth_datum` and `source`. Only explicitly supplied `m` units are supported.
 Field linkage is exact and case-sensitive; UWI is an opaque identifier.
+A case mismatch contributes no measurements, even when the legacy
+case-insensitive lookup recognizes a representative field default. In that
+case, the supplied field depth or default is retained and the sidecar reports
+`linked_well_count=0` with no contributing identifiers.
 Source fields, units, linkage and measurement authenticity require independent
 qualification before engineering use. A source string is lineage evidence,
 not proof of access permission or measurement validity.

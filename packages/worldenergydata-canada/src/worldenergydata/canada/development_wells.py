@@ -46,14 +46,17 @@ class DevelopmentWell:
         if depth is not None:
             # Nonnegative physical magnitude: FieldConcept.must_be_non_negative,
             # src/worldenergydata/field_development/models.py (schema 1.0.0).
-            if (
-                isinstance(depth, bool)
-                or not isinstance(depth, (int, float))
-                or not math.isfinite(depth)
-                or depth < 0
-            ):
+            if isinstance(depth, bool) or not isinstance(depth, (int, float)):
                 raise ValueError("water depth must be finite and nonnegative or None")
-            object.__setattr__(self, "water_depth_m", float(depth))
+            try:
+                depth = float(depth)
+            except OverflowError as error:
+                raise ValueError(
+                    "water depth must be finite and nonnegative or None"
+                ) from error
+            if not math.isfinite(depth) or depth < 0:
+                raise ValueError("water depth must be finite and nonnegative or None")
+            object.__setattr__(self, "water_depth_m", depth)
 
 
 @dataclass(frozen=True)

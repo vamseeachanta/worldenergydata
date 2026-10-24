@@ -117,6 +117,27 @@ def test_no_implicit_field_linkage(build):
     assert result.water_depth_m is None
 
 
+@pytest.mark.parametrize("build", BUILDERS)
+def test_case_mismatch_retains_legacy_default(build):
+    name, expected = next(iter(CANADA_WATER_DEPTH_M.items()))
+    result = build({"field_name": name.title()}, wells=records(name))
+    assert result.water_depth_m == expected
+    assert "water_depth_m=default" in result.data_source
+
+
+def test_case_mismatch_sidecar_records_no_linked_measurements():
+    name, expected = next(iter(CANADA_WATER_DEPTH_M.items()))
+    result = enrich_canada_field_metadata({"field_name": name.title()}, records(name))
+    assert result["water_depth_m"] == expected
+    evidence = result["water_depth_provenance"]
+    assert evidence["origin"] == "default"
+    assert evidence["linked_well_count"] == 0
+    assert evidence["contributing_uwis"] == []
+    assert evidence["sources"] == []
+    assert evidence["depth_datum"] is None
+    assert evidence["manifest"]["record_count"] == 3
+
+
 def test_default_sidecar_is_not_measured():
     name, expected = next(iter(CANADA_WATER_DEPTH_M.items()))
     result = enrich_canada_field_metadata({"field_name": name}, [])

@@ -46,6 +46,12 @@ def test_invalid_depth_rejected(depth):
         well(depth=depth)
 
 
+@pytest.mark.parametrize("depth", [10**400, -(10**400)], ids=["positive", "negative"])
+def test_out_of_range_integer_depth_rejected(depth):
+    with pytest.raises(ValueError, match="depth"):
+        well(depth=depth)
+
+
 @pytest.mark.parametrize("key", ["uwi", "field_name", "depth_datum", "source"])
 @pytest.mark.parametrize("value", ["", " ", None, 12, " untrimmed "])
 def test_required_identifiers(key, value):
