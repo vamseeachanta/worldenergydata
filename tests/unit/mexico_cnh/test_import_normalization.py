@@ -7,6 +7,7 @@ Accents use Python 3.11 unicodedata.normalize (NFKD) and combining:
 https://docs.python.org/3.11/library/unicodedata.html
 """
 
+from pathlib import PureWindowsPath
 from unittest.mock import patch
 
 import pandas as pd
@@ -113,6 +114,51 @@ def test_specialized_parser_converts_accented_numeric_header(
     pd.DataFrame({header: ["3.5"]}).to_excel(path, index=False)
     result = getattr(CNHExcelLoader(), method)(path)
     assert result.loc[0, expected] == 3.5
+
+
+@pytest.mark.parametrize(
+    "header,target",
+    [
+        ("BPD", "bpd"),
+        ("Barriles Por Día", "barrels_per_day"),
+        ("MMPCD", "mmcfd"),
+        ("Miles Pies Cúbicos", "mcf"),
+    ],
+)
+def test_production_parser_accepts_rate_only_workbook(tmp_path, header, target):
+    """3.5 = 3 + 5/10; 12.5 = 12 + 5/10; 0.0254 = 254/10000."""
+    path = tmp_path / "synthetic.xlsx"
+    pd.DataFrame(
+        {
+            "Fecha": ["2026-01-03", "2026-01-01", "2026-01-02", "2026-01-04"],
+            "Campo": ["Synthetic field"] * 4,
+            header: ["0.0254", "3.5", "12.5", "invalid"],
+        }
+    ).to_excel(path, index=False)
+
+    result = CNHExcelLoader().parse_production_report(path)
+
+    assert pd.api.types.is_numeric_dtype(result[target])
+    assert result[target].iloc[:3].tolist() == pytest.approx([3.5, 12.5, 0.0254])
+    assert pd.isna(result[target].iloc[3])
+    assert result["date"].dt.day.tolist() == [1, 2, 3, 4]
+
+
+def test_missing_workbook_diagnostic_uses_forward_slashes():
+    class MissingWindowsPath(PureWindowsPath):
+        def exists(self):
+            return False
+
+    with (
+        patch(
+            "worldenergydata.mexico_cnh.data.loaders.excel_loader.Path",
+            MissingWindowsPath,
+        ),
+        pytest.raises(FileNotFoundError) as error,
+    ):
+        CNHExcelLoader().load("relative/synthetic.xlsx")
+
+    assert str(error.value) == "Excel file not found: relative/synthetic.xlsx"
 
 
 @pytest.mark.parametrize("method", ["parse_production_report", "parse_well_report"])

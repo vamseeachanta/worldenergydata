@@ -160,9 +160,9 @@ class CNHExcelLoader:
             raise ValueError("required_columns requires normalize=True")
         file_path = Path(file_path)
         if not file_path.exists():
-            raise FileNotFoundError(f"Excel file not found: {file_path}")
+            raise FileNotFoundError(f"Excel file not found: {file_path.as_posix()}")
 
-        logger.info(f"Loading Excel file: {file_path}")
+        logger.info(f"Loading Excel file: {file_path.as_posix()}")
 
         try:
             df = pd.read_excel(
@@ -274,6 +274,10 @@ class CNHExcelLoader:
             "condensate_production",
             "cumulative_oil",
             "cumulative_gas",
+            "bpd",
+            "barrels_per_day",
+            "mmcfd",
+            "mcf",
         ]
 
         self._require_recognized_columns(df, production_cols, "production")
