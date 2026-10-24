@@ -33,7 +33,6 @@ Section 6 records corrected input and cashflow failures under #1284. The revisio
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial implementation inventory and regression evidence |
 | 1 | 2026-10-16 | Record silent failures and detection gaps; distinguish a pagination regression that encodes row loss from completeness evidence |
-
 | 2 | 2026-10-22 | Reject unknown economics inputs, preserve loss cashflows and correct short-page offsets; retain fiscal and unit qualification limits. |
 
 ## 2. Inputs and outputs

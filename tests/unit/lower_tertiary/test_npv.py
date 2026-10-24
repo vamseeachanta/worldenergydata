@@ -333,6 +333,18 @@ class TestSummarizeFieldFinancials:
                 self._make_monthly(), profile, self._make_econ_config()
             )
 
+    @pytest.mark.parametrize("date", ["today", "now", "TODAY", "NOW", " today ", " now "])
+    def test_relative_first_oil_is_refused(self, date):
+        """Execution time cannot establish the calendar origin for valuation."""
+        profile = self._make_profile()
+        profile["first_oil"] = date
+        with pytest.raises(FinancialInputError) as caught:
+            summarize_field_financials(
+                self._make_monthly(), profile, self._make_econ_config()
+            )
+        assert caught.value.field == "first_oil"
+        assert "explicit" in caught.value.reason
+
     @pytest.mark.parametrize(
         "investment", [0, -1, float("nan"), float("inf"), "bad", True]
     )

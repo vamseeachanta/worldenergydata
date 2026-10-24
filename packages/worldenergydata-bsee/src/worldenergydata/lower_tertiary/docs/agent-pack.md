@@ -29,7 +29,6 @@ The scope is this package, including its helper modules; physical design, equipm
 | --- | --- | --- |
 | 0 | 2026-10-15 | Initial module scope, methods, evidence and limitations |
 | 1 | 2026-10-15 | Correct the discount-rate citation; identify absent-data groups, silent defaults, public-record checks and the parallel implementation so evidence and limits are explicit |
-
 | 2 | 2026-10-22 | Refuse unknown valuation inputs, preserve zero OPEX and add hand-calculated regression evidence. |
 
 ## 2. Inputs and outputs

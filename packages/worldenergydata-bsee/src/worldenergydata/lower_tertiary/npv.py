@@ -68,6 +68,8 @@ def _resolve_first_oil(value: object) -> pd.Timestamp:
     message = "an explicit, parseable calendar date is required"
     if not isinstance(value, (str, date, pd.Timestamp)):
         raise FinancialInputError("first_oil", message)
+    if isinstance(value, str) and value.strip().casefold() in {"today", "now"}:
+        raise FinancialInputError("first_oil", message)
     try:
         resolved = pd.Timestamp(value)
     except (TypeError, ValueError, OverflowError) as exc:
