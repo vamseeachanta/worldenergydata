@@ -47,6 +47,11 @@ def validate_response(
             "application/octet-stream",
         },
         ".txt": {"text/plain", "text/csv", "application/octet-stream"},
+        ".xls": {"application/vnd.ms-excel", "application/octet-stream"},
+        ".xlsx": {
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/octet-stream",
+        },
         ".aspx": {"text/html", "application/xhtml+xml"},
         ".html": {"text/html", "application/xhtml+xml"},
         ".htm": {"text/html", "application/xhtml+xml"},
@@ -82,7 +87,7 @@ class FetchResult:
 def atomic_json(path: Path, value: Any) -> None:
     """Publish only a complete JSON record; scratch stays beside the target."""
     scratch = path.with_suffix(path.suffix + ".pending")
-    with scratch.open("w", encoding="utf-8") as stream:
+    with scratch.open("w", encoding="utf-8", newline="\n") as stream:
         json.dump(value, stream, sort_keys=True, indent=2)
         stream.write("\n")
         stream.flush()
@@ -99,7 +104,7 @@ def read_record(path: Path, *, progress: bool = False) -> dict[str, Any]:
         else "Preserve it for inspection; restore verified provenance before reuse."
     )
     try:
-        value = json.loads(path.read_text())
+        value = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(value, dict):
             raise ValueError("expected a mapping")
         if progress:

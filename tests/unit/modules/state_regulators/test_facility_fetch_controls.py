@@ -64,11 +64,11 @@ def source_rows():
     )
 
 
-def stub_transport(monkeypatch, bodies, *, status=200):
+def stub_transport(monkeypatch, bodies, *, status=200, response_headers=None):
     calls = []
 
     class Response:
-        headers: ClassVar = {"Content-Type": "text/html"}
+        headers: ClassVar = response_headers or {"Content-Type": "text/html"}
 
         def __enter__(self):
             return self
@@ -272,3 +272,52 @@ def test_non_ok_transport_response_not_cached(tmp_path, monkeypatch):
     cache = tmp_path / "raw" / "facility_detail" / "cache"
     assert not list((cache / "objects").iterdir())
     assert not list((cache / "records").iterdir())
+
+
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {"Retry-After": "60"},
+        {"RateLimit-Remaining": "0", "RateLimit-Reset": "60"},
+        {
+            "x-dotrequest-cost": "1",
+            "x-dotratelimit-toks-remaining": "0",
+            "x-dotratelimit-reset": "60",
+        },
+    ],
+)
+@pytest.mark.parametrize("body,status", [(b"<html>error</html>", 200), (b"x", 204)])
+def test_rejected_response_paces_restarted_collection(
+    tmp_path, monkeypatch, headers, body, status
+):
+    """Two rejected responses still require the server's 60-second spacing.
+
+    Hand timeline: the first request is at t=0; a fresh collector must wait
+    until t=60 before the second. Neither response creates reusable evidence.
+    RFC 9110 (2022), section 10.2.3 defines Retry-After delay-seconds.
+    Other header semantics follow the existing shared header_delay policy.
+    """
+    calls = stub_transport(
+        monkeypatch,
+        [body, body],
+        status=status,
+        response_headers={"Content-Type": "text/html", **headers},
+    )
+    now, waits = [0.0], []
+
+    def sleep(delay):
+        waits.append(delay)
+        now[0] += delay
+
+    config = settings(tmp_path)
+    for _ in range(2):
+        with pytest.raises(ValueError):
+            fetch_facility_detail_pages(
+                source_rows().head(1), config, clock=lambda: now[0], sleep=sleep
+            )
+        cache = tmp_path / "raw" / "facility_detail" / "cache"
+        assert not list((cache / "objects").iterdir())
+        assert not list((cache / "records").iterdir())
+    assert len(calls) == 2
+    assert waits == [60.0]
+    assert now[0] == 60.0

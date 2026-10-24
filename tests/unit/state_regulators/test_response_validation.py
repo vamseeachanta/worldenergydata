@@ -35,6 +35,18 @@ from worldenergydata.modules.state_regulators.fetch.storage import CacheStore
             {"Content-Type": "application/json"},
             200,
         ),
+        (
+            "data.xls",
+            b'{"error": "unavailable"}',
+            {"Content-Type": "application/json"},
+            200,
+        ),
+        (
+            "data.xlsx",
+            b'{"error": "unavailable"}',
+            {"Content-Type": "application/json"},
+            200,
+        ),
         ("data.csv", b"a,b\n", {}, 503),
     ],
 )
@@ -52,15 +64,24 @@ def test_invalid_response_never_mutates_cache(tmp_path, url, payload, headers, s
     assert not store.progress.exists()
 
 
-@pytest.mark.parametrize("payload", [b"", b"<html>error</html>"])
+@pytest.mark.parametrize(
+    "suffix,payload,headers",
+    [
+        (".csv", b"", {}),
+        (".csv", b"<html>error</html>", {}),
+        (".xls", b'{"error":"unavailable"}', {"Content-Type": "application/json"}),
+        (".xlsx", b'{"error":"unavailable"}', {"Content-Type": "application/json"}),
+    ],
+)
 def test_poisoned_cache_refetched_through_permission_layer(
-    tmp_path, monkeypatch, payload
+    tmp_path, monkeypatch, suffix, payload, headers
 ):
     """Hand calculation: one invalid legacy object needs one replacement request.
 
-    A second read needs no request because the replacement CSV is reusable.
+    A second read needs no request because the replacement is reusable.
     """
     url = "https://records.example/data.csv"
+    url = url.removesuffix(".csv") + suffix
     fetcher = Fetcher(
         FetchConfig(tmp_path, "offline-test"),
         [TermsCheck(url, url, "2020-01-01T00:00:00+00:00", True)],
@@ -74,17 +95,46 @@ def test_poisoned_cache_refetched_through_permission_layer(
                 "url": url,
                 "sha256": digest,
                 "size_bytes": len(payload),
+                "response_headers": headers,
             }
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     calls = []
 
     def request(target):
         calls.append(target)
-        return b"a,b\n", {"Content-Type": "text/csv"}
+        return b"a,b\n", {"Content-Type": "application/octet-stream"}
 
     monkeypatch.setattr(fetcher, "_request", request)
     assert fetcher.fetch(url).path.read_bytes() == b"a,b\n"
     assert fetcher.fetch(url).cached
     assert calls == [url]
     assert (store.objects / digest).read_bytes() == payload
+
+
+@pytest.mark.parametrize(
+    "suffix,media",
+    [
+        (".xls", "application/vnd.ms-excel"),
+        (
+            ".xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ),
+        (".xls", "application/octet-stream"),
+        (".xlsx", "application/octet-stream"),
+    ],
+)
+def test_spreadsheet_media_round_trip(tmp_path, suffix, media):
+    """Declared spreadsheet types and generic binary media remain reusable.
+
+    This qualifies media compatibility, not spreadsheet structure or contents.
+    """
+    store = CacheStore(tmp_path)
+    url = "data" + suffix
+    result = store.put(url, b"spreadsheet bytes", {"Content-Type": media}, {})
+    assert not result.cached
+    cached = CacheStore(tmp_path).get(url)
+    assert cached.cached
+    assert cached.path.read_bytes() == b"spreadsheet bytes"

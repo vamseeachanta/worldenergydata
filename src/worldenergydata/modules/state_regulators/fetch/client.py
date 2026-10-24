@@ -22,6 +22,14 @@ from .policy import (
 from .storage import CacheStore, FetchResult, atomic_json, validate_response
 
 
+class _RejectedResponse(ValueError):
+    """Carry pacing headers when successful transport yields invalid evidence."""
+
+    def __init__(self, message: str, headers: dict[str, str]) -> None:
+        super().__init__(message)
+        self.headers = headers
+
+
 class _NoRedirect(HTTPRedirectHandler):
     def redirect_request(
         self, req: Any, fp: Any, code: int, msg: str, headers: Any, newurl: str
@@ -102,8 +110,8 @@ class Fetcher:
             self._reserve(url)
             try:
                 payload, headers = self._request(url)
-            except ResponseTooLarge as oversized:
-                self._cooldown(url, oversized.headers)
+            except (ResponseTooLarge, _RejectedResponse) as rejected:
+                self._cooldown(url, rejected.headers)
                 raise
             except HTTPError as error:
                 self._cooldown(url, error.headers)
@@ -133,10 +141,12 @@ class Fetcher:
                 payload = response.read(cap + 1)
                 if len(payload) > cap:
                     raise ResponseTooLarge(message, dict(response.headers))
-                validate_response(
-                    url, payload, dict(response.headers), response.getcode()
-                )
-                return payload, dict(response.headers)
+                headers = dict(response.headers)
+                try:
+                    validate_response(url, payload, headers, response.getcode())
+                except ValueError as error:
+                    raise _RejectedResponse(str(error), headers) from error
+                return payload, headers
         except HTTPError:
             raise
         except (URLError, OSError) as error:
