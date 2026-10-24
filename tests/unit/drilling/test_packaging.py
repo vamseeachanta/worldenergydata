@@ -1,7 +1,7 @@
 """Wheel boundary from the drilling README and member pyproject.toml.
 
-The oracle is exact archive membership and byte equality with the checked-in
-pack, not an engineering calculation. No numeric tolerance is needed.
+The oracle is explicit archive membership and byte equality with the checked-in
+documents, not an engineering calculation. No numeric tolerance is needed.
 """
 
 import shutil
@@ -14,6 +14,8 @@ import pytest
 
 MEMBER = Path(__file__).resolve().parents[3] / "packages/worldenergydata-drilling"
 PACK = "worldenergydata/drilling/docs/agent-pack.md"
+# This contract is supplied by main; it is absent from the pre-integration head.
+DETECTOR_CONTRACT = "worldenergydata/drilling/docs/detector-contracts.md"
 
 
 @pytest.fixture(scope="module")
@@ -44,6 +46,23 @@ def test_wheel_ships_exact_knowledge_pack(drilling_wheel):
     """README boundary: the distributed draft must equal the reviewed source."""
     with ZipFile(drilling_wheel) as archive:
         assert archive.read(PACK) == (MEMBER / "src" / PACK).read_bytes()
+
+
+def test_wheel_ships_only_declared_data(drilling_wheel):
+    """Require deliberate additions and exact bytes for every drilling data file."""
+    expected = {PACK}
+    if (MEMBER / "src" / DETECTOR_CONTRACT).is_file():
+        expected.add(DETECTOR_CONTRACT)
+    with ZipFile(drilling_wheel) as archive:
+        data = {
+            name
+            for name in archive.namelist()
+            if name.startswith("worldenergydata/drilling/")
+            and not name.endswith((".py", "/"))
+        }
+        assert data == expected
+        for name in expected:
+            assert archive.read(name) == (MEMBER / "src" / name).read_bytes()
 
 
 def test_wheel_owns_only_drilling_namespace(drilling_wheel):

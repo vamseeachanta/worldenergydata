@@ -31,6 +31,7 @@ The four highest-leverage capability gaps are: (a) `MODULE_INDEX.md` reconciliat
 | --- | --- | --- |
 | Original | 2026-04-26 | Capability audit recorded the source tree and documentation at that date. |
 | Drilling update | 2026-10-19 | Qualify the historical empty-domain claim against the present implementation and wheel boundary. |
+| Drilling distribution update | 2026-10-24 | Describe all distributed Markdown, preserve document-specific qualification and check non-Python wheel membership explicitly. |
 
 ### Current drilling qualification (2026-10-19)
 
@@ -43,13 +44,19 @@ Its `__init__.py` exports `BatchDrillingEconomics`, `BSEEBatchDetector`,
 cost calculations, data models and historical grouping. Runtime regression
 tests are in `tests/drilling/` and `tests/unit/drilling/`.
 
-The member intentionally distributes its DRAFT knowledge pack with the wheel;
+The member distributes all Markdown under `worldenergydata/drilling/docs/`;
 see the [distribution boundary](../../packages/worldenergydata-drilling/README.md#knowledge-pack-distribution-boundary).
+The documented set comprises the DRAFT `agent-pack.md` and
+`detector-contracts.md`, whose engineering applicability is **NOT_EVALUATED**.
+The detector contract is supplied by `main` and is included when present in the
+source tree. Each document retains its own status and qualification limits.
 `tests/unit/drilling/test_packaging.py` builds a wheel and checks exact pack
-bytes and drilling-only Python ownership. Existing package-data rules include
-the pack without modification. These packaging checks do not independently
-validate the engineering methods or clear the pack for engineering use.
-The pack's open qualification limits remain authoritative. Source-distribution
+and detector-contract bytes when present, an explicit inventory of every
+non-Python drilling member, and drilling-only Python ownership. An explicit
+`docs/*.md` package-data pattern supports the declared setuptools 61.0 minimum.
+These packaging checks do not independently validate engineering methods or
+clear either document for engineering use. The documents' open qualification
+limits remain authoritative. Source-distribution
 inspection and release evidence are later work under #1347.
 
 The original tables, recommendations, counts and companion artifact are retained
