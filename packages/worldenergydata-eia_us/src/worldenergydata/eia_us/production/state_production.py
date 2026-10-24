@@ -89,7 +89,7 @@ class StateProductionLoader:
             year, month, days = monthly_period(rec.get("period"))
             value = number_or_missing(rec.get("value"))
             # NIST SP 811 (2008), sections 4 and 7.11: scale, then q * time.
-            volume = value * scale * (days if basis == RATE else 1)
+            volume = number_or_missing(value * scale * (days if basis == RATE else 1))
             rows.append(
                 {
                     "state": state.upper().strip(),

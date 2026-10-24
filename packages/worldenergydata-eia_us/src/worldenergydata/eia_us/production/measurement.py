@@ -13,6 +13,7 @@ import math
 import re
 from datetime import date
 
+import numpy as np
 import pandas as pd
 
 RATE = "rate_per_day"
@@ -72,7 +73,7 @@ def number_or_missing(value, *, signed=False):
     """
     if value is None or pd.isna(value):
         return math.nan
-    if isinstance(value, bool):
+    if isinstance(value, (bool, np.bool_)):
         raise TypeError("Boolean is not a production number")
     number = float(value)
     if not math.isfinite(number) or (not signed and number < 0):
@@ -116,7 +117,11 @@ def annual_volumes(frame, entity, columns):
             values = group[column].map(number_or_missing)
             reported_months = set(group.loc[values.notna(), "month"])
             missing = tuple(sorted(expected_months - reported_months))
-            subtotal = values.sum(min_count=1)
+            try:
+                with np.errstate(over="raise", invalid="raise"):
+                    subtotal = number_or_missing(values.sum(min_count=1))
+            except FloatingPointError as exc:
+                raise ValueError("Annual production subtotal must be finite") from exc
             row[column] = math.nan if missing else subtotal
             row[f"reported_{column}"] = subtotal
             row[column.replace("_bbl", "_missing_months")] = missing

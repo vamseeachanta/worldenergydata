@@ -8,6 +8,7 @@ All rates, years and amounts below are selected synthetic inputs, not estimates.
 
 import math
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -254,16 +255,32 @@ def test_country_synthetic_provenance_survives_ranking():
 
 
 @pytest.mark.parametrize("value", [None, float("nan"), pd.NA])
-def test_state_explicit_missing_markers(value):
+@pytest.mark.parametrize(
+    "unit",
+    ["Barrels", "Thousand Barrels", "Barrels per Day", "Thousand Barrels per Day"],
+)
+def test_state_explicit_missing_markers(value, unit):
     """None, NaN and nullable scalar mean unreported; never substitute zero."""
     frame = StateProductionLoader().load(
-        [{"period": "2024-01", "value": value, "unit": "Barrels"}], "TX"
+        [{"period": "2024-01", "value": value, "unit": unit}], "TX"
     )
     assert frame.loc[0, "value_missing"]
     assert pd.isna(frame.loc[0, "crude_bbl"])
 
 
-@pytest.mark.parametrize("value", [-1, float("inf"), float("-inf"), "invalid", True])
+@pytest.mark.parametrize(
+    "value",
+    [
+        -1,
+        float("inf"),
+        float("-inf"),
+        "invalid",
+        True,
+        False,
+        np.bool_(True),
+        np.bool_(False),
+    ],
+)
 @pytest.mark.parametrize("kind", ["state", "alaska", "basin", "country"])
 def test_invalid_production_is_rejected(kind, value):
     """Unsigned physical amounts cannot be negative, infinite or nonnumeric.
@@ -409,3 +426,78 @@ def test_country_year_rejects_invalid_calendar_year(year):
     """Missing, non-integral and out-of-calendar years cannot identify a period."""
     with pytest.raises((TypeError, ValueError), match="year|period"):
         CountryProductionLoader().load([{"country": "synthetic", "year": year}])
+
+
+@pytest.mark.parametrize(
+    "unit", ["Thousand Barrels", "Barrels per Day", "Thousand Barrels per Day"]
+)
+def test_state_monthly_volume_overflow_rejected(unit):
+    """Finite synthetic input must not become infinite after scaling or integration."""
+    with pytest.raises(ValueError, match="finite"):
+        StateProductionLoader().load(
+            [{"period": "2024-01", "value": 1e308, "unit": unit}], "TX"
+        )
+
+
+@pytest.mark.parametrize("kind", ["state", "alaska"])
+@pytest.mark.parametrize("month_count", [11, 12])
+def test_annual_volume_overflow_rejected(kind, month_count):
+    """Finite monthly volumes cannot yield infinite totals or partial subtotals.
+
+    Synthetic state months each report 1e308 bbl. Alaska months integrate
+    1e306 bbl/day over 31, 29 or 30 days; every monthly volume is finite,
+    but even January-November totals 335*1e306 = 3.35e308 bbl, above float range.
+    """
+    if kind == "state":
+        loader = StateProductionLoader()
+        frame = loader.load(
+            [
+                {"period": f"2024-{month:02d}", "value": 1e308, "unit": "Barrels"}
+                for month in range(1, month_count + 1)
+            ],
+            "TX",
+        )
+    else:
+        loader = AlaskaProductionLoader()
+        frame = loader.load(
+            [
+                {
+                    "period": f"2024-{month:02d}",
+                    "field": "synthetic",
+                    "crude_bopd": 1e306,
+                    "ngl_bopd": None,
+                }
+                for month in range(1, month_count + 1)
+            ]
+        )
+    with pytest.raises(ValueError, match="finite"):
+        loader.annual_total(frame)
+
+
+@pytest.mark.parametrize("column", ["crude_bopd", "ngl_bopd"])
+def test_alaska_monthly_integration_overflow_rejected(column):
+    """The existing annual boundary also rejects overflow in either rate component."""
+    loader = AlaskaProductionLoader()
+    frame = loader.load([{"period": "2024-01", "field": "synthetic", column: 1e308}])
+    with pytest.raises(ValueError, match="finite"):
+        loader.annual_total(frame)
+
+
+def test_large_finite_volume_is_retained():
+    """Synthetic 1e300 kbbl/day: January 1e300*1000*31 = 3.1e304 bbl.
+
+    Annual leap-year volume is 1e300*1000*366 = 3.66e305 bbl; both are finite.
+    """
+    loader = StateProductionLoader()
+    frame = loader.load(
+        [
+            {"period": f"2024-{month:02d}", "value": 1e300, "unit": "kbd"}
+            for month in range(1, 13)
+        ],
+        "TX",
+    )
+    assert frame.loc[0, "crude_bbl"] == pytest.approx(3.1e304)
+    annual = loader.annual_total(frame)
+    assert annual.loc[0, "crude_bbl"] == pytest.approx(3.66e305)
+    assert annual.loc[0, "reported_crude_bbl"] == pytest.approx(3.66e305)
+    assert annual.loc[0, "status"] == "COMPLETE"
