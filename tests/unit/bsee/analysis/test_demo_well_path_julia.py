@@ -229,12 +229,48 @@ def test_missing_war_name_fails(records, bad_name):
         demo.julia_well_metadata(war, boreholes)
 
 
-@pytest.mark.parametrize("bad_coordinate", [None, "unknown", "inf"])
-def test_missing_or_nonfinite_surface_position_fails(records, bad_coordinate):
+@pytest.mark.parametrize("column", ["SURF_LATITUDE", "SURF_LONGITUDE"])
+@pytest.mark.parametrize("bad_coordinate", [None, "unknown", "inf", "-inf"])
+def test_missing_or_nonfinite_surface_position_fails(records, column, bad_coordinate):
     war, boreholes = records
-    boreholes["SURF_LATITUDE"] = bad_coordinate
+    boreholes[column] = bad_coordinate
     with pytest.raises(ValueError, match="Invalid borehole surface coordinates"):
         demo.julia_well_metadata(war, boreholes)
+
+
+@pytest.mark.parametrize(
+    "column, value",
+    [
+        ("SURF_LATITUDE", "91"),
+        ("SURF_LATITUDE", "-91"),
+        ("SURF_LONGITUDE", "181"),
+        ("SURF_LONGITUDE", "-181"),
+    ],
+)
+def test_out_of_domain_surface_position_fails(records, column, value):
+    """Reject impossible positions before they can shift the field origin."""
+    war, boreholes = records
+    boreholes.loc[0, column] = value
+    with pytest.raises(
+        ValueError, match=f"Invalid borehole surface coordinates: {column}"
+    ):
+        demo.julia_well_metadata(war, boreholes)
+
+
+@pytest.mark.parametrize(
+    "column, value",
+    [
+        ("SURF_LATITUDE", "90"),
+        ("SURF_LATITUDE", "-90"),
+        ("SURF_LONGITUDE", "180"),
+        ("SURF_LONGITUDE", "-180"),
+    ],
+)
+def test_geographic_domain_endpoints_are_valid(records, column, value):
+    war, boreholes = records
+    boreholes.loc[0, column] = value
+    result = demo.julia_well_metadata(war, boreholes).set_index("API_WELL_NUMBER")
+    assert result.loc[DC_API, column] == float(value)
 
 
 def test_missing_survey_for_any_selected_bore_fails(records):

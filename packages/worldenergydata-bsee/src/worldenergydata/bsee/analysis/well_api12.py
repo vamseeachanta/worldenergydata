@@ -597,15 +597,14 @@ class WellAPI12:
             survey_for_db["z"] = survey_xyz_wh_adjusted["z_coor"]
             survey_for_db = survey_for_db.round(decimals=1)
             try:
-                api10_value = self.get_API10_from_well_API(api12)
+                # Parent bores and sidetracks share API10; labels require API12.
+                rows = self.output_data_api12_df[
+                    self.output_data_api12_df.API12 == api12
+                ]
                 label = (
-                    self.output_data_api12_df[
-                        self.output_data_api12_df.API10 == api10_value
-                    ]["Well Name"].values[0]
+                    rows["Well Name"].values[0]
                     + "-"
-                    + self.output_data_api12_df[
-                        self.output_data_api12_df.API10 == api10_value
-                    ]["Sidetrack and Bypass"].values[0]
+                    + rows["Sidetrack and Bypass"].values[0]
                 )
                 label = label.strip()
             except Exception:
@@ -814,9 +813,8 @@ class WellAPI12:
         labels = {}
         for api12 in self.output_data_well_path:
             try:
-                api10 = self.get_API10_from_well_API(api12)
                 rows = self.output_data_api12_df[
-                    self.output_data_api12_df.API10 == api10
+                    self.output_data_api12_df.API12 == api12
                 ]
                 labels[api12] = (
                     rows["Well Name"].values[0]

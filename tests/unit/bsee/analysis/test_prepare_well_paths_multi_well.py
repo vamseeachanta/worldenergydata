@@ -11,7 +11,10 @@ by asserting the SECOND well is genuinely deviated.
 
 from __future__ import annotations
 
+import json
+
 import pandas as pd
+import pytest
 
 from worldenergydata.bsee.analysis.well_api12 import WellAPI12
 
@@ -69,3 +72,31 @@ def test_prepare_well_paths_multi_well_second_well_is_deviated():
         # not stuck at the surface (the pre-fix dead-vertical symptom).
         lateral = (survey["x_coor"].abs() + survey["y_coor"].abs()).max()
         assert lateral > 100.0, f"{api12} rendered dead-vertical (offset={lateral})"
+
+
+@pytest.mark.parametrize("reverse_metadata", [False, True])
+def test_shared_api10_preserves_bore_labels_through_export(tmp_path, reverse_metadata):
+    """Parent and sidetrack labels follow API12, regardless of metadata order."""
+    surveys, well_data = _two_well_inputs()
+    metadata = well_data["merged_api12_df"]
+    metadata["Well Name"] = "WELL A"
+    metadata["Sidetrack and Bypass"] = ["ST00BP00", "ST01BP00"]
+    if reverse_metadata:
+        well_data["merged_api12_df"] = metadata.iloc[::-1].copy()
+    expected = {
+        "608124000401": "WELL A-ST00BP00",
+        "608124000402": "WELL A-ST01BP00",
+    }
+
+    api = WellAPI12()
+    api.prepare_well_paths(surveys, well_data)
+    output = tmp_path / "paths.json"
+    payload = api.export_well_paths(output_path=output)
+    assert json.loads(output.read_text()) == payload
+    assert payload["well_count"] == 2
+    assert {well["api12"]: well["label"] for well in payload["wells"]} == expected
+    prepared = api.output_data_api12_df
+    assert {
+        str(row["API12"]): json.loads(row["xyz"])["label"]
+        for _, row in prepared.iterrows()
+    } == expected

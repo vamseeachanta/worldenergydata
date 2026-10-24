@@ -263,12 +263,13 @@ def julia_well_metadata(
     if disagrees.any():
         apis = result.loc[disagrees, "API_WELL_NUMBER"].tolist()
         raise ValueError(f"Conflicting well names between WAR and boreholes: {apis}")
-    for column in ("SURF_LATITUDE", "SURF_LONGITUDE"):
+    for column, limit in (("SURF_LATITUDE", 90), ("SURF_LONGITUDE", 180)):
         result[column] = pd.to_numeric(result[column], errors="coerce")
         if (
             not result[column]
             .map(lambda value: pd.notna(value) and math.isfinite(value))
             .all()
+            or not result[column].between(-limit, limit).all()
         ):
             raise ValueError(f"Invalid borehole surface coordinates: {column}")
     # A missing suffix is optional, but pd.NA must not reach boolean fallback
