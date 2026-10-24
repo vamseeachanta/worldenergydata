@@ -85,7 +85,7 @@ def estimate_bhp(observations: pd.DataFrame, settings: dict) -> pd.DataFrame:
 
 def classify_tiers(frame: pd.DataFrame, tiers: dict) -> pd.DataFrame:
     frame = frame.copy()
-    gradient = frame["bhp_gradient_psi_ft"]
+    gradient = frame["bhp_gradient_psi_ft"].astype(float)
     valid = gradient.map(math.isfinite) & (gradient > 0)
     gradient = gradient.where(valid)
     frame["bhp_gradient_psi_ft"] = gradient
@@ -234,7 +234,7 @@ def run_screen(config_path: str | Path) -> dict:
         out_dir / "underpressured_field_ranking.parquet"
     )
     (out_dir / "screen_summary.json").write_text(
-        json.dumps(summary, indent=2), encoding="utf-8"
+        json.dumps(summary, indent=2), encoding="utf-8", newline="\n"
     )
 
     if not gate["passed"]:
