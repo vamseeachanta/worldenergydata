@@ -133,6 +133,7 @@ dev = [
     "black>=23.0",
     "flake8>=7.4.1",
     "isort>=8.0.1",
+    "ruff>=0.13.2",
     "mypy>=1.0",
     "pre-commit>=3.0",
     "types-requests>=2.33.0.20260518",
@@ -581,14 +582,17 @@ docs = [
     "mkdocs-material>=9.5.0",
 ]
 dev = [
+    # Install the development tools with uv pip install --group dev.
     "faker>=37.8.0",
     "hypothesis>=6.168.5",
+    "isort>=8.0.1",
     "mypy>=1.18.2",
     "numpy-financial>=1.0.0",
     "pytest-asyncio>=1.2.0",
     "pytest-cov>=7.0.0",
     "pytest-timeout>=2.4.0",
     "responses>=0.26.3",
+    "ruff>=0.13.2",
     "xmltodict>=1.0.2",
 ]
 
