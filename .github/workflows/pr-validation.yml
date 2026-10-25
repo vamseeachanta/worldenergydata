@@ -2,7 +2,7 @@ name: PR Validation
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
+    types: [opened, synchronize, reopened, edited]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
@@ -15,7 +15,6 @@ permissions:
 jobs:
   pr-title:
     name: Validate PR Title
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
 
     steps:
@@ -44,7 +43,6 @@ jobs:
 
   file-size:
     name: Check File Sizes
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
 
     steps:
@@ -73,7 +71,6 @@ jobs:
 
   sensitive-files:
     name: Check Sensitive Files
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
 
     steps:
@@ -134,7 +131,6 @@ jobs:
 
   changelog-check:
     name: Changelog Check
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
     # in the main branch ruleset, and a required check that is skipped (via a
@@ -158,7 +154,6 @@ jobs:
 
   code-owners:
     name: Code Owners Check
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
 
     steps:
@@ -175,7 +170,6 @@ jobs:
 
   pack-lint:
     name: Lint Changed Knowledge Packs
-    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
     runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
