@@ -270,7 +270,10 @@ class UnifiedMetoceanClient:
         ].copy()
         if (
             not df.empty
-            and not df["unit"].eq(df["parameter"].map(PARAMETER_UNITS)).all()
+            and not df["unit"]
+            .eq(df["parameter"].map(PARAMETER_UNITS))
+            .fillna(False)
+            .all()
         ):
             raise ValueError(
                 "adapter units do not match the standard parameter contract"

@@ -178,7 +178,7 @@ def test_cli_exports_combined_csv_and_plotly(tmp_path):
         )
     assert invocation.exit_code == 0, invocation.output
     assert len(pd.read_csv(tmp_path / "combined.csv")) == 6
-    assert "Plotly.newPlot" in (tmp_path / "combined.html").read_text()
+    assert "Plotly.newPlot" in (tmp_path / "combined.html").read_text(encoding="utf-8")
 
 
 def test_cli_invalid_location_is_reported():
@@ -217,6 +217,32 @@ def test_wrong_adapter_units_fail_source_without_relabelling():
         result = client.query(query())
     assert result.source_status == {"era5": "FAILED"}
     assert result.sources_used == []
+
+
+@pytest.mark.parametrize("source", ["era5", "cmems"])
+@pytest.mark.parametrize(
+    "units,status,values",
+    [
+        pytest.param(["m"], "OK", [2.0], id="matching"),
+        pytest.param([pd.NA], "FAILED", [], id="missing"),
+        pytest.param(["m", pd.NA], "FAILED", [], id="missing-last"),
+        pytest.param([pd.NA, "m"], "FAILED", [], id="missing-first"),
+        pytest.param(["m", "cm"], "FAILED", [], id="mixed-mismatch"),
+        pytest.param(["m", "m"], "OK", [2.0, 4.0], id="matching-multiple"),
+    ],
+)
+def test_nullable_adapter_units_require_every_row_to_match(
+    source, units, status, values
+):
+    """Missing or mismatched units reject the source, including partial results."""
+    data = rows(source).iloc[: len(units)].copy()
+    data["unit"] = pd.Series(units, dtype="string")
+    client = UnifiedMetoceanClient(source_fetchers={source: lambda q: data})
+    with patch.object(client._coverage, "get_clients", return_value=[source]):
+        result = client.query(query(parameters=("Hs",)))
+    assert result.source_status == {source: status}
+    assert result.sources_used == ([source] if status == "OK" else [])
+    assert result.data.value.tolist() == values
 
 
 @pytest.mark.parametrize(
@@ -309,7 +335,7 @@ def test_offline_worked_example(tmp_path):
         "gulf": {"rows": 18, "mean_Hs_m": 4.0},
         "north_sea": {"rows": 15, "mean_Hs_m": 4.0},
     }
-    assert "Plotly.newPlot" in (tmp_path / "north_sea.html").read_text()
+    assert "Plotly.newPlot" in (tmp_path / "north_sea.html").read_text(encoding="utf-8")
 
 
 @pytest.mark.parametrize("command", ["unified", "historical", "update"])
