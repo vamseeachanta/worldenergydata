@@ -32,6 +32,11 @@ That release's wheel includes the LGPL license in its distribution metadata.
 Its transitive dependencies include geospatial and NetCDF packages; platform
 availability must be checked before installing the extra.
 
+The optional-dependency tests check the extra declarations, Python-version markers
+and isolated resolution using a synthetic wheel. They do not validate installation
+of the real transitive dependency stack or the full workspace lock. Those checks
+remain necessary before merging dependency changes.
+
 This slice supplies the dependency boundary only. It does not provide a dataset
 adapter or restrict direct upstream calls. The planned adapter will cover NORA3
 and NorKyst800 only. Cached sample retrieval tests and corrections to the external
