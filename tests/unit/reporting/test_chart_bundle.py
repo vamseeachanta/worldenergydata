@@ -15,6 +15,7 @@ import csv
 import importlib
 import json
 from dataclasses import asdict, replace
+from decimal import Decimal
 
 import pytest
 
@@ -432,3 +433,134 @@ def test_chart_bundle_accepts_equivalent_numeric_csv_spelling(api, payload, tmp_
         ],
     )
     assert api.validate_chart_bundle(path).chart_id == "synthetic-energy"
+
+
+def _write_numeric_bundle(tmp_path, payload, token, location):
+    placeholder = "numeric-token"
+    if location == "x":
+        payload["x_values"][0] = placeholder
+    elif location == "limit":
+        payload["limits"] = [
+            {
+                "label": "Synthetic marker",
+                "value": placeholder,
+                "citation": "Test table",
+            }
+        ]
+    else:
+        payload["series"][0]["values"][0] = placeholder
+    rows = [
+        ["period", "primary", "secondary"],
+        [
+            placeholder if location == "x" else "first",
+            placeholder if location == "series" else "1.25",
+            "0",
+        ],
+        ["second", "", "3.75"],
+        ["third", "-2.5", "5"],
+    ]
+    path = _write_unchecked(tmp_path, payload, rows)
+    # Replace only the targeted cell, without a float conversion.
+    for target, marker in (
+        (path, f'"{placeholder}"'),
+        (path.with_name(payload["csv_name"]), placeholder),
+    ):
+        target.write_text(
+            target.read_text(encoding="utf-8").replace(marker, token),
+            encoding="utf-8",
+        )
+    return path
+
+
+@pytest.mark.parametrize("token", ["1.25000000000000001", "1e-400"])
+@pytest.mark.parametrize("location", ["series", "x", "limit"])
+def test_chart_bundle_rejects_lossy_return_values(
+    api, payload, tmp_path, token, location
+):
+    path = _write_numeric_bundle(tmp_path, payload, token, location)
+    # Matching files must not yield a rounded model that could be re-exported.
+    with pytest.raises(ValueError, match="numeric representation"):
+        api.validate_chart_bundle(path)
+
+
+@pytest.mark.parametrize("token", ["1.2500", "0.1", "1e-300", "5e-324"])
+@pytest.mark.parametrize("location", ["series", "x", "limit"])
+def test_chart_bundle_preserves_supported_return_values_and_reexport(
+    api, payload, tmp_path, token, location
+):
+    path = _write_numeric_bundle(tmp_path, payload, token, location)
+    chart = api.validate_chart_bundle(path)
+    if location == "x":
+        value = chart.x_values[0]
+    elif location == "limit":
+        value = chart.limits[0].value
+    else:
+        value = chart.series[0].values[0]
+    assert Decimal(str(value)) == Decimal(token)
+    exported, _ = api.write_chart_bundle(chart, tmp_path / "copy" / "chart.json")
+    exact = json.loads(exported.read_text(encoding="utf-8"), parse_float=Decimal)
+    if location == "x":
+        assert exact["x_values"][0] == Decimal(token)
+    elif location == "limit":
+        assert exact["limits"][0]["value"] == Decimal(token)
+    else:
+        assert exact["series"][0]["values"][0] == Decimal(token)
+    assert api.validate_chart_bundle(exported) == chart
+
+
+@pytest.fixture(params=[None, 64])
+def csv_field_limit(request):
+    previous = csv.field_size_limit()
+    try:
+        if request.param is not None:
+            csv.field_size_limit(request.param)
+        yield csv.field_size_limit()
+    finally:
+        csv.field_size_limit(previous)
+
+
+def _set_csv_text(payload, field, text):
+    if field == "x":
+        payload["x_values"][0] = text
+    elif field == "series":
+        payload["series"][0]["name"] = text
+    else:
+        payload["x_variable"] = text
+
+
+@pytest.mark.parametrize("field", ["x", "series", "header"])
+def test_chart_bundle_csv_field_boundary_round_trip(
+    api, payload, tmp_path, csv_field_limit, field
+):
+    # The parser counts decoded characters, including quoted CSV punctuation.
+    text = ('é,\n"' * (csv_field_limit // 4 + 1))[:csv_field_limit]
+    _set_csv_text(payload, field, text)
+    chart = api.ChartBundle.from_dict(payload)
+    path, _ = api.write_chart_bundle(chart, tmp_path / "chart.json")
+    assert api.validate_chart_bundle(path) == chart
+
+
+@pytest.mark.parametrize("field", ["x", "series", "header"])
+def test_chart_bundle_rejects_oversized_write_without_touching_outputs(
+    api, payload, tmp_path, csv_field_limit, field
+):
+    chart = api.ChartBundle.from_dict(payload)
+    path, csv_path = api.write_chart_bundle(chart, tmp_path / "chart.json")
+    original = path.read_bytes(), csv_path.read_bytes()
+    _set_csv_text(payload, field, "x" * (csv_field_limit + 1))
+    # Bypass construction to check the writer's own validation as well.
+    if field == "x":
+        invalid = replace(chart, x_values=tuple(payload["x_values"]))
+    elif field == "series":
+        invalid = replace(
+            chart, series=(replace(chart.series[0], name=payload["series"][0]["name"]),)
+        )
+    else:
+        invalid = replace(chart, x_variable=payload["x_variable"])
+    with pytest.raises(ValueError, match="field size"):
+        api.ChartBundle.from_dict(payload)
+    for target in (path, tmp_path / "new" / "chart.json"):
+        with pytest.raises(ValueError, match="field size"):
+            api.write_chart_bundle(invalid, target)
+    assert (path.read_bytes(), csv_path.read_bytes()) == original
+    assert not (tmp_path / "new").exists()

@@ -10,6 +10,9 @@ the library does not supply engineering or regulatory limits.
 payload before touching either output. ``validate_chart_bundle(json_path)``
 reads both files and checks their provenance, columns, row counts and values.
 File-system failures can interrupt a write; pairwise atomicity is not promised.
+CSV fields must fit the active ``csv.field_size_limit()`` in decoded characters,
+including column names. Configure that process-wide limit before constructing,
+writing or reading bundles, and keep it unchanged during those operations.
 """
 
 from __future__ import annotations
@@ -205,6 +208,15 @@ def _validate(chart):
         _text(limit.label, "limit label")
         _text(limit.citation, "limit citation")
         _number(limit.value, "limit value")
+    field_limit = csv.field_size_limit()
+    for row in _csv_rows(chart):
+        if any(len("" if value is None else str(value)) > field_limit for value in row):
+            raise ValueError("CSV field size exceeds csv.field_size_limit()")
+
+
+def _csv_rows(chart):
+    yield [chart.x_variable, *(series.name for series in chart.series)]
+    yield from zip(chart.x_values, *(series.values for series in chart.series))
 
 
 def write_chart_bundle(chart: ChartBundle, json_path: str | Path) -> tuple[Path, Path]:
@@ -219,8 +231,7 @@ def write_chart_bundle(chart: ChartBundle, json_path: str | Path) -> tuple[Path,
     json_text = json.dumps(asdict(chart), indent=2, allow_nan=False) + "\n"
     stream = io.StringIO(newline="")
     writer = csv.writer(stream)
-    writer.writerow([chart.x_variable, *(series.name for series in chart.series)])
-    writer.writerows(zip(chart.x_values, *(series.values for series in chart.series)))
+    writer.writerows(_csv_rows(chart))
     csv_text = stream.getvalue()
     json_path.parent.mkdir(parents=True, exist_ok=True)
     csv_path.write_text(csv_text, encoding="utf-8", newline="")
@@ -235,6 +246,17 @@ def _unique_object(pairs):
             raise ValueError(f"Duplicate JSON field: {key}")
         result[key] = value
     return result
+
+
+def _json_float(token):
+    value = float(token)
+    # The model and both writers use float's shortest decimal spelling. Reject
+    # rounding/underflow rather than returning a different validated value.
+    if not math.isfinite(value) or Decimal(str(value)) != Decimal(token):
+        raise ValueError(
+            "JSON number changes value in the supported numeric representation"
+        )
+    return value
 
 
 def _matches(cell, value):
@@ -254,15 +276,16 @@ def validate_chart_bundle(json_path: str | Path) -> ChartBundle:
 
     Numeric cells are compared as exact decimals, with no rounding tolerance.
     Different spellings of the same number (for example, 1 and 1.0) agree.
+    JSON decimals must retain their value in the returned float's decimal
+    spelling and its JSON/CSV re-export; otherwise the bundle is rejected.
     """
     json_path = Path(json_path)
     try:
         text = json_path.read_text(encoding="utf-8")
-        payload = json.loads(text, object_pairs_hook=_unique_object)
+        payload = json.loads(
+            text, object_pairs_hook=_unique_object, parse_float=_json_float
+        )
         chart = ChartBundle.from_dict(payload)
-        # Preserve JSON decimal precision during comparison, including tampering
-        # beyond binary float precision (RFC 8259 section 6 interoperability).
-        exact = json.loads(text, parse_float=Decimal)
     except (OSError, UnicodeError, ValueError) as exc:
         raise ValueError(f"Invalid chart JSON: {exc}") from exc
     try:
@@ -278,7 +301,7 @@ def validate_chart_bundle(json_path: str | Path) -> ChartBundle:
     data_rows = rows[1:]
     if len(data_rows) != len(chart.x_values):
         raise ValueError("CSV row count does not match chart values")
-    expected = zip(exact["x_values"], *(s["values"] for s in exact["series"]))
+    expected = zip(chart.x_values, *(series.values for series in chart.series))
     for row, values in zip(data_rows, expected):
         if len(row) != len(header) or any(
             not _matches(cell, value) for cell, value in zip(row, values)
