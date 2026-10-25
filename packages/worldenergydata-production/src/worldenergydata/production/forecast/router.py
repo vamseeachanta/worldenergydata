@@ -64,7 +64,9 @@ class ProductionForecast:
         outputs["summary_json"].write_text(
             json.dumps(result.summary, indent=2, allow_nan=False), encoding="utf-8"
         )
-        outputs["report_html"].write_text(build_report_html(result), encoding="utf-8")
+        outputs["report_html"].write_text(
+            build_report_html(result), encoding="utf-8", newline="\n"
+        )
         return {key: str(value) for key, value in outputs.items()}
 
     def _run_arps(self, cfg: dict[str, Any]) -> dict[str, str]:

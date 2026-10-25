@@ -471,8 +471,23 @@ def test_report_preserves_supplied_revision_history():
     )
 
 
-def test_frozen_report_is_reproducible(monkeypatch, tmp_path):
+@pytest.mark.parametrize("platform_newline", ["\n", "\r\n"], ids=["posix", "windows"])
+def test_frozen_report_is_reproducible(monkeypatch, tmp_path, platform_newline):
     from worldenergydata.production.forecast import report
+
+    native_write_text = Path.write_text
+
+    def platform_write_text(path, text, *, encoding=None, errors=None, newline=None):
+        """Exercise native newline translation unless the writer specifies it."""
+        return native_write_text(
+            path,
+            text,
+            encoding=encoding,
+            errors=errors,
+            newline=platform_newline if newline is None else newline,
+        )
+
+    monkeypatch.setattr(Path, "write_text", platform_write_text)
 
     class FixedDate:
         @staticmethod
