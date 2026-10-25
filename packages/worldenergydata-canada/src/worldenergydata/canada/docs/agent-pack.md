@@ -5,7 +5,7 @@
 | Module | canada |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-canada/src/worldenergydata/canada` |
-| Pack revision | 1, 2026-10-20 |
+| Pack revision | 2, 2026-10-24 |
 | Code revision | `285d65c40896b17ccf44568e59f5b789d59c943e` |
 | Analysis family | Data pipeline; QA family EC; AQG r0 Python calculations |
 | Quality role | Calculations family quality manager |
@@ -19,6 +19,7 @@ The code revision pins repository citations; original BASE/AFTER outcomes are ob
 |---|---|---|
 | 0 | 2026-10-15 | Initial pinned module reference, regression evidence and open items |
 | 1 | 2026-10-20 | Add omitted failure semantics and parser hazard; clarify test evidence and detection gaps |
+| 2 | 2026-10-24 | Expand historical failed-node IDs and record a reproducible sweep with candidate dispositions |
 
 ## 1. Purpose and scope
 
@@ -123,6 +124,32 @@ For C2.1, read the two synthetic rows, add their imperial oil and water cells ou
 For C5.1, resolve every bracketed repository path and line range through `git show <code revision>:<path>`; retain the source SHA-256 and the ten manually checked passages, then attach the record to the review. For C5.2, compare sorted pytest node/status pairs, rather than comparing console progress lines.
 
 ## 6. Known failure modes and pitfalls
+
+sweep: 74 found
+
+Run on 2026-10-24 over the package path in the header, with Python source bytes unchanged from the code revision. The count is matching lines, including intentional fallbacks and two docstring examples; it is not a count of confirmed defects. Command run, with that package path substituted for `$PACKAGE`:
+
+```bash
+rg -n '^\s*(except\b|return (None\b|\[\]|\{\})|pass\b)' "$PACKAGE" --glob '*.py'
+```
+
+The file groups below account for all 74 matches (9 + 12 + 2 + 12 + 11 + 5 + 4 + 6 + 6 + 1 + 1 + 3 + 2). The risk rows that follow also cover behavior this syntax search cannot detect, including dropped filters, numeric-width dispatch and placeholder totals. Source paths are relative to the package path; their pinned-file references are in section 9.
+
+| Sweep file | Matching lines at the code revision | Count | Disposition and relationship to the risk rows below |
+|---|---|---|---|
+| `aer/aer.py` | 63, 95, 110, 125, 138, 151, 164, 211, 238 | 9 | Error mapping is SF1; seven empty-list stubs and the unknown-type fallback belong to collection/control-flow gaps, issue pending (2). |
+| `aer/api_client.py` | 34, 39, 193, 374, 376, 504, 557, 635, 687, 763, 863, 865 | 12 | Three optional-dependency/connection fallbacks and six retry or re-raise sites do not establish empty acquisition; the final three matches are SF2's missing-licence and empty-search outcomes, issue pending (3). |
+| `analysis/analysis.py` | 58, 260 | 2 | The handler records analysis error status; the empty result is a placeholder under the comparative-analysis row, issue pending (2). |
+| `bcer/api_client.py` | 33, 38, 44, 211, 387, 389, 568, 570, 656, 867, 896, 920 | 12 | Four dependency/connection fallbacks, six retry or structured-error sites and two explicit no-match returns; these are not additional silent-acquisition findings. Cache isolation remains a separate risk row, issue pending (3). |
+| `bcer/bcer.py` | 76, 108, 171, 184, 197, 210, 223, 263, 285, 332, 357 | 11 | Error mapping is SF1; nine list/lookup stubs and the unknown-type fallback belong to collection/control-flow gaps, issue pending (2). |
+| `cache.py` | 76, 175, 187, 231, 238 | 5 | Three intentional cache misses; metadata read/write exceptions only warn, with load failure clearing in-memory metadata. Cache warnings are not proof of durable caching; the initialization risk is recorded below under issue pending (1). |
+| `canada.py` | 43, 111, 256, 276 | 4 | Lazy initialization, a router handler recording error status, and invalid/unknown-province lookup fallbacks; routing limitations remain under issue pending (2). |
+| `common/uwi.py` | 31, 46, 48, 70, 94, 111 | 6 | Empty/invalid parsing and province lookup return `None`; normalization failure returns the original input with a warning; validation failure returns a false/error pair. Callers must inspect these outcomes; validation semantics remain under issue pending (5). |
+| `common/uwi_parser.py` | 402, 534, 542, 550, 558, 597 | 6 | Five explicit validation-error conversions and an unknown-province fallback; inference limits remain under issue pending (5). |
+| `common/validators.py` | 636 | 1 | A rejected date format advances to the next format; exhausting formats adds a validation error. This is intentional parsing control flow. |
+| `emerging_basins/discoveries.py` | 102 | 1 | Explicit lookup no-match; the missing-CSV risk below is a distinct empty-data path, issue pending (5). |
+| `emerging_basins/discovery_schema.py` | 94, 101, 105 | 3 | Intentional empty/unknown-value normalization; required fields are checked afterward. Schema validity does not establish source availability or accuracy. |
+| `errors.py` | 27, 29 | 2 | Docstring exception-handling examples, not executable handlers. |
 
 The issues below are references and follow-ups, not a claim that each historical request is an unresolved incident.
 
@@ -291,27 +318,29 @@ The inventory below gives all 15 module test files plus the dedicated consumer f
 
 All 19 failing nodes are in `tests/unit/canada/aer/test_api_client.py`; each reaches default file-cache creation before its intended assertion. The same constructor and test calls are present at the code pin and on the inspected default-branch ref.
 
-| Failed node suffix (append to the file above with `::`) | BASE / AFTER |
+Use complete repository-relative node IDs in every result table so each historical result can be selected directly by pytest.
+
+| Full failed node ID | BASE / AFTER |
 |---|---|
-| `TestAERClientInit::test_default_values` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
-| `TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_params` | FAIL / FAIL |
-| `TestAERClientInit::test_config_dict` | FAIL / FAIL |
-| `TestSetupHeaders::test_default_headers` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
-| `TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
-| `TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
-| `TestContextManager::test_enter_exit` | FAIL / FAIL |
-| `TestContextManager::test_close` | FAIL / FAIL |
-| `TestContextManager::test_double_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_default_values` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_config_dict` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_default_headers` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_enter_exit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_double_close` | FAIL / FAIL |
 
 Failure evidence: cache construction is immediate in `AERClient.__init__`, the cache constructor creates its directory, and the affected tests supply no custom directory. [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L149-L151] [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L146-L164] [tests/unit/canada/aer/test_api_client.py:L13-L55] [tests/unit/canada/aer/test_api_client.py:L87-L194]
 
