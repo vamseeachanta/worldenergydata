@@ -36,6 +36,12 @@ selector. Configure a real always-on suite: an empty matrix raises an error
 instead of emitting a gate with no test jobs. `skip` means narrow testing,
 not absence of testing.
 
+Changes under `tests/ci/` now select full scope (84 shards in this tree),
+rather than skip scope (one always-on shard), so selector contract changes
+exercise every domain. These counts come from running the repository adapter
+with `tests/ci/test_domain_matrix.py` and `docs/ci/domain-matrix.md`,
+respectively, as the changed path. Shard counts depend on the test tree.
+
 The shared workflow invokes the adapter with:
 
 ```sh
