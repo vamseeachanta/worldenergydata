@@ -14,8 +14,9 @@ import pytest
 
 MEMBER = Path(__file__).resolve().parents[3] / "packages/worldenergydata-drilling"
 PACK = "worldenergydata/drilling/docs/agent-pack.md"
-# This contract is supplied by main; it is absent from the pre-integration head.
+# These documents are supplied by main; they are absent from this source tree.
 DETECTOR_CONTRACT = "worldenergydata/drilling/docs/detector-contracts.md"
+IMPLEMENTATION_MAP = "worldenergydata/drilling/docs/implementation-map.json"
 
 
 @pytest.fixture(scope="module")
@@ -51,8 +52,9 @@ def test_wheel_ships_exact_knowledge_pack(drilling_wheel):
 def test_wheel_ships_only_declared_data(drilling_wheel):
     """Require deliberate additions and exact bytes for every drilling data file."""
     expected = {PACK}
-    if (MEMBER / "src" / DETECTOR_CONTRACT).is_file():
-        expected.add(DETECTOR_CONTRACT)
+    for document in (DETECTOR_CONTRACT, IMPLEMENTATION_MAP):
+        if (MEMBER / "src" / document).is_file():
+            expected.add(document)
     with ZipFile(drilling_wheel) as archive:
         data = {
             name
