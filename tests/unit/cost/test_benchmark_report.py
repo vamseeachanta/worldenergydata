@@ -2,6 +2,7 @@
 
 import math
 from dataclasses import replace
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -68,7 +69,7 @@ def test_render_is_offline_escaped_and_repeatable(tmp_path):
         name: path.read_bytes()
         for name, path in write_report(tmp_path, "2026-10-20").items()
     }
-    html = outputs["html"].read_text()
+    html = outputs["html"].read_text(encoding="utf-8")
     for forbidden in ("<script src=", "<link href=", 'src="http', "cdn.plot"):
         assert forbidden not in html
     for required in (
@@ -95,6 +96,27 @@ def test_render_is_offline_escaped_and_repeatable(tmp_path):
     assert "<img src=x" not in rendered
     assert "&lt;img" in rendered
     assert 'href="javascript:' not in rendered
+
+
+@pytest.mark.parametrize("kind", ["html", "facts"])
+def test_report_uses_lf_with_crlf_platform_default(tmp_path, monkeypatch, kind):
+    from worldenergydata.cost.reporting.benchmark_report import write_report
+
+    original_open = Path.open
+
+    def crlf_default_open(path, mode="r", **kwargs):
+        if "b" not in mode and kwargs.get("newline") is None:
+            kwargs["newline"] = "\r\n"
+        return original_open(path, mode, **kwargs)
+
+    with monkeypatch.context() as platform:
+        platform.setattr(Path, "open", crlf_default_open)
+        outputs = write_report(tmp_path, "2026-10-20")
+
+    output = outputs[kind].read_bytes()
+    output.decode("utf-8")
+    assert b"\n" in output
+    assert b"\r" not in output
 
 
 def test_outliers_retain_operator_and_source_identity():

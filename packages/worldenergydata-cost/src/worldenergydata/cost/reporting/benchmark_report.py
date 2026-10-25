@@ -394,7 +394,8 @@ def _source_links(facts):
     )
 
 
-_REPORT_TEMPLATE = Template("""<!doctype html>
+_REPORT_TEMPLATE = Template(
+    """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>Operator cost benchmarking analysis</title><style>
 body{font:16px system-ui,sans-serif;background:#f4f7fa;color:#183044;margin:0 auto;padding:2rem;max-width:1200px}
@@ -438,7 +439,8 @@ function selectOperator() {
 selector.addEventListener('change', selectOperator);
 selectOperator();
 </script></body></html>
-""")
+"""
+)
 
 
 def render_html(facts: dict) -> str:
@@ -495,9 +497,10 @@ def write_report(out_dir: Path, report_date: str) -> dict[str, Path]:
         "html": out_dir / "operator_cost_benchmarking.html",
         "facts": out_dir / "operator_cost_benchmarking_facts.json",
     }
-    outputs["html"].write_text(render_html(facts), encoding="utf-8")
+    outputs["html"].write_text(render_html(facts), encoding="utf-8", newline="\n")
     outputs["facts"].write_text(
         json.dumps(facts, sort_keys=True, indent=2, allow_nan=False) + "\n",
         encoding="utf-8",
+        newline="\n",
     )
     return outputs
