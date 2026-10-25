@@ -20,6 +20,9 @@ lower_snake_case string `value`s shown below.
 ## Reservoir / fluid
 | Field | Type | Units | Notes |
 |---|---|---|---|
+| `reservoir_depth_tvd_m` | float | m TVD | Supplied reservoir true vertical depth, not water depth; finite and nonnegative. Omitted or unavailable measurements are `None`. |
+| `reservoir_pressure_psi` | float | psi | Supplied reservoir pressure, not a pressure gradient; finite and nonnegative. Omitted or unavailable measurements are `None`. |
+| `reservoir_temperature_f` | float | °F | Supplied reservoir temperature; finite subzero values are allowed. Omitted or unavailable measurements are `None`. |
 | `recoverable_reserves_mmboe` | float | MMboe | Recoverable reserves. |
 | `fluid_type` | enum | — | `oil`, `gas`, `condensate`, `gas_condensate`. |
 | `api_gravity` | float | °API | 0–100. |
@@ -29,6 +32,10 @@ lower_snake_case string `value`s shown below.
 | `sour` | bool | — | H2S/CO2 present. |
 | `hpht` | bool | — | High pressure / high temperature. |
 | `reservoir_distribution` | enum | — | `compact_stacked`, `distributed` — drives dry-vs-wet tree. |
+
+The reservoir measurement constraints follow the input contract in issue #761.
+These measurements are not inferred from `hpht` and do not set or change that
+flag. No pressure or temperature screening threshold is applied.
 
 ## Production
 | Field | Type | Units | Notes |
