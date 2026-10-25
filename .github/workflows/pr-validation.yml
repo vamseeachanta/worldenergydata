@@ -1,10 +1,10 @@
 name: PR Validation
 
-# PR_GATE_RUNNER: only self-hosted-arm64 maps to [self-hosted, linux, ARM64].
-# Selection requires a same-repository pull_request and ARM64 eligibility.
-# Eligibility is fixed false: locked nlopt 2.10.0 has no Linux aarch64 wheel
-# or source archive. All jobs stay on ubuntu-latest, even with that token.
-# Unset, empty, malformed and unknown values, forks and other events use hosted.
+# PR_GATE_RUNNER: only self-hosted-x64 maps to [self-hosted, Linux, X64].
+# Selection allows same-repository pull_request, push and workflow_dispatch.
+# Forks, other events and all other values (including self-hosted-arm64, unset,
+# empty, malformed and unknown values) use ubuntu-latest.
+# ARM64 remains unsupported: locked nlopt 2.10.0 lacks compatible artifacts.
 # Linux tooling: bash, git, Python and uv. Unsetting affects future routing;
 # it cannot undo prior execution or clean runner state.
 
@@ -25,10 +25,11 @@ jobs:
     permissions:
       pull-requests: read
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Check PR title format
@@ -57,10 +58,11 @@ jobs:
   file-size:
     name: Check File Sizes
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -90,10 +92,11 @@ jobs:
   sensitive-files:
     name: Check Sensitive Files
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -155,10 +158,11 @@ jobs:
   changelog-check:
     name: Changelog Check
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     # NOTE: This job must ALWAYS run. "Changelog Check" is a required status check
     # in the main branch ruleset, and a required check that is skipped (via a
     # job-level `if:`) is never "satisfied" — it deadlocks the PR at BLOCKED
@@ -183,10 +187,11 @@ jobs:
   code-owners:
     name: Code Owners Check
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout repository
@@ -205,10 +210,11 @@ jobs:
   pack-lint:
     name: Lint Changed Knowledge Packs
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
 

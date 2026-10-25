@@ -1,10 +1,10 @@
 name: CI
 
-# PR_GATE_RUNNER: only self-hosted-arm64 maps to [self-hosted, linux, ARM64].
-# Selection requires a same-repository pull_request and ARM64 eligibility.
-# Eligibility is fixed false: locked nlopt 2.10.0 has no Linux aarch64 wheel
-# or source archive. All jobs stay on ubuntu-latest, even with that token.
-# Unset, empty, malformed and unknown values, forks and other events use hosted.
+# PR_GATE_RUNNER: only self-hosted-x64 maps to [self-hosted, Linux, X64].
+# Selection allows same-repository pull_request, push and workflow_dispatch.
+# Forks, other events and all other values (including self-hosted-arm64, unset,
+# empty, malformed and unknown values) use ubuntu-latest.
+# ARM64 remains unsupported: locked nlopt 2.10.0 lacks compatible artifacts.
 # Linux tooling: bash, git, Python and uv. Unsetting affects future routing;
 # it cannot undo prior execution or clean runner state.
 
@@ -36,10 +36,11 @@ jobs:
   mode:
     name: Gate mode
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -99,19 +100,21 @@ jobs:
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
-    # The inspected reusable contract keeps discover, test-domain and aggregate
-    # on ubuntu-latest and exposes no runner input. Caller runs-on cannot flow
-    # into it; its mutable main ref is independent of PR_GATE_RUNNER.
+    # The reusable workflow owns routing and exposes no runner input.
+    # Inspected upstream main recognizes self-hosted-arm64, not self-hosted-x64;
+    # self-hosted-x64 therefore uses ubuntu-latest there. Caller runs-on cannot
+    # override it; review upstream routing before using another token.
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
   # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
@@ -249,10 +252,11 @@ jobs:
   lint:
     name: Lint (full)
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -353,10 +357,11 @@ jobs:
   type-check:
     name: Type Check (full)
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -449,10 +454,11 @@ jobs:
   security:
     name: Security Scan (full)
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -548,10 +554,11 @@ jobs:
   build:
     name: Build Package
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
@@ -647,10 +654,11 @@ jobs:
   docs:
     name: Documentation (full)
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
@@ -748,10 +756,11 @@ jobs:
     needs: [mode, lint]
     if: ${{ !cancelled() }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -788,10 +797,11 @@ jobs:
     needs: [mode, type-check]
     if: ${{ !cancelled() }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -828,10 +838,11 @@ jobs:
     needs: [mode, security]
     if: ${{ !cancelled() }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -868,10 +879,11 @@ jobs:
     needs: [mode, docs]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -908,10 +920,11 @@ jobs:
     needs: [mode, domain-tests]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
     runs-on: >-
-      ${{ github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
-      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
+      ${{ ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository) ||
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      vars.PR_GATE_RUNNER == 'self-hosted-x64' &&
+      fromJSON('["self-hosted", "Linux", "X64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read

@@ -10,7 +10,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = ("ci.yml", "pr-validation.yml")
-LABELS = ["self-hosted", "linux", "ARM64"]
+LABELS = ["self-hosted", "Linux", "X64"]
 JOB_NAMES = {
     "ci.yml": {
         "mode": "Gate mode",
@@ -65,7 +65,8 @@ def evaluate(expression, context):
                 node.id, context.get(node.id, "")
             )
         if isinstance(node, ast.Attribute):
-            return visit(node.value).get(node.attr, "")
+            parent = visit(node.value)
+            return parent.get(node.attr, "") if isinstance(parent, dict) else ""
         if isinstance(node, ast.BoolOp):
             result = visit(node.values[0])
             for child in node.values[1:]:
@@ -131,10 +132,14 @@ def context(value=None, event="pull_request", fork=False, draft=False):
         '"ubuntu-missing"',
         '["self-hosted"]',
         "self-hosted-arm64",
+        '"self-hosted-x64"',
+        "self-hosted-x64 ",
+        " self-hosted-x64",
+        "self-hosted-x64-extra",
     ],
 )
-def test_repository_is_ineligible_for_arm64(name, value):
-    """The locked dependency set requires hosted x64 even with a valid token."""
+def test_unrecognized_configuration_uses_hosted(name, value):
+    """ARM64 and arbitrary runner configuration must retain the hosted fallback."""
     for job_id, job in workflow(name)["jobs"].items():
         if "runs-on" in job:
             assert evaluate(job["runs-on"], context(value)) == "ubuntu-latest", job_id
@@ -169,19 +174,43 @@ def test_coverage_upload_has_no_repository_secret():
 @pytest.mark.parametrize("name", WORKFLOWS)
 @pytest.mark.parametrize(
     "event",
-    ["pull_request", "push", "schedule", "workflow_dispatch", "pull_request_target"],
+    [
+        "pull_request",
+        "push",
+        "schedule",
+        "workflow_dispatch",
+        "pull_request_target",
+        "workflow_call",
+        "issues",
+    ],
 )
 @pytest.mark.parametrize(
     "fork,draft", [(False, False), (True, False), (False, True), (True, True)]
 )
-def test_production_routes_all_event_cases_to_hosted(name, event, fork, draft):
-    values = [None, "", "{broken", "unknown", '"ubuntu-missing"', "self-hosted-arm64"]
+def test_runner_selection_across_events(name, event, fork, draft):
+    values = [
+        None,
+        "",
+        "{broken",
+        "unknown",
+        '"ubuntu-missing"',
+        "self-hosted-arm64",
+        "self-hosted-x64",
+    ]
     for job in workflow(name)["jobs"].values():
         if "runs-on" in job:
             for value in values:
+                eligible = event in ("push", "workflow_dispatch") or (
+                    event == "pull_request" and not fork
+                )
+                expected = (
+                    LABELS
+                    if value == "self-hosted-x64" and eligible
+                    else "ubuntu-latest"
+                )
                 assert (
                     evaluate(job["runs-on"], context(value, event, fork, draft))
-                    == "ubuntu-latest"
+                    == expected
                 )
 
 
@@ -198,50 +227,27 @@ def test_fixed_mapping_cannot_parse_runner_configuration(name):
         assert isinstance(call.func, ast.Name) and call.func.id == "fromJSON"
         assert len(call.args) == 1 and isinstance(call.args[0], ast.Constant)
         assert json.loads(call.args[0].value) == LABELS
-        assert (
-            sum(isinstance(node, ast.Name) and node.id == "false" for node in nodes)
-            == 1
+        assert not any(
+            isinstance(node, ast.Name) and node.id == "false" for node in nodes
         )
         assert (
             "github.event.pull_request.head.repo.full_name == github.repository"
             in expression
         )
-        assert "vars.PR_GATE_RUNNER == 'self-hosted-arm64'" in expression
+        assert "vars.PR_GATE_RUNNER == 'self-hosted-x64'" in expression
 
 
 @pytest.mark.parametrize("name", WORKFLOWS)
-def test_reserved_mapping_requires_the_token_and_same_repository(name):
-    """Probe the disabled branch as well, so its false guard cannot hide defects."""
+@pytest.mark.parametrize("missing", ["pull_request", "head"])
+def test_pull_request_with_missing_head_uses_hosted(name, missing):
+    event_context = context("self-hosted-x64")
+    if missing == "pull_request":
+        event_context["github"]["event"].clear()
+    else:
+        event_context["github"]["event"]["pull_request"].pop("head")
     for job in workflow(name)["jobs"].values():
-        if "runs-on" not in job:
-            continue
-        expression = job["runs-on"]
-        assert expression.count("&& false &&") == 1
-        enabled = expression.replace("&& false &&", "&& true &&")
-        for value in [
-            None,
-            "",
-            "{broken",
-            "unknown",
-            '["self-hosted"]',
-            "self-hosted-arm64",
-        ]:
-            for event, fork in [
-                ("pull_request", False),
-                ("pull_request", True),
-                ("push", False),
-                ("schedule", False),
-                ("workflow_dispatch", False),
-                ("pull_request_target", False),
-            ]:
-                expected = (
-                    LABELS
-                    if value == "self-hosted-arm64"
-                    and event == "pull_request"
-                    and not fork
-                    else "ubuntu-latest"
-                )
-                assert evaluate(enabled, context(value, event, fork)) == expected
+        if "runs-on" in job:
+            assert evaluate(job["runs-on"], event_context) == "ubuntu-latest"
 
 
 @pytest.mark.parametrize("name", WORKFLOWS)
@@ -256,7 +262,7 @@ def test_drafts_and_metadata_edits_preserve_every_gate(name, draft, action):
     assert {
         job_id: job.get("name") for job_id, job in data["jobs"].items()
     } == JOB_NAMES[name]
-    event_context = context("self-hosted-arm64", draft=draft)
+    event_context = context("self-hosted-x64", draft=draft)
     event_context["github"]["event"]["action"] = action
     for job_id, job in data["jobs"].items():
         for execution in [job, *job.get("steps", [])]:
