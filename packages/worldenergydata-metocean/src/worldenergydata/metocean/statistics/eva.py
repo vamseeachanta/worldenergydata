@@ -152,7 +152,7 @@ class ExtremeValueAnalysis:
         series:
             Time-indexed series with at least 3 full years.
         distribution:
-            'GEV' or other block-maxima distributions supported by metocean-stats.
+            Case-sensitive selector: 'GEV' or 'GUM'.
         periods:
             Return periods in years.
 
@@ -162,7 +162,14 @@ class ExtremeValueAnalysis:
         Returns
         -------
         EVAResult
+
+        Raises
+        ------
+        ValueError
+            If distribution is not the string 'GEV' or 'GUM'.
         """
+        if not isinstance(distribution, str) or distribution not in ("GEV", "GUM"):
+            raise ValueError("Annual-maxima distribution must be 'GEV' or 'GUM'")
         if confidence_level is not None and not 0 < confidence_level < 1:
             raise ValueError("Confidence level must be between zero and one")
         df = self._series_to_df(series)
