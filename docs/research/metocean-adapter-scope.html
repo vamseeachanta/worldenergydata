@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Regional metocean adapter source scope</title>
+<style>body{font:16px/1.6 system-ui;margin:2rem auto;max-width:76rem;
+padding:0 1rem;color:#172b3a}h1,h2{color:#164c63}pre{white-space:pre-wrap;
+overflow-wrap:anywhere;background:#f1f5f7;padding:1rem}table{border-collapse:
+collapse;width:100%}td,th{border:1px solid #b4c5cf;padding:.5rem;text-align:left}
+</style></head><body><h1>Regional metocean adapter source scope</h1>
+<h2>Summary</h2><p>Two regional sources are BLOCKED pending product-specific rights, metadata and mapping decisions. Package licence and API declarations are confirmed from retained release evidence. This report scopes one optional boundary; it implements no adapter, download capability or dependency change.</p>
+<p>SCOPED: 0; BLOCKED: 2. Validated benchmarks: 0. Readiness is source scope only.</p>
+<h2>Revision history</h2><table><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr>
+<tr><td>1</td><td>2026-10-25</td><td>Initial source scope separates package licensing, dataset rights, API evidence and engineering qualification.</td></tr>
+</table><h2>Scope</h2><dl><dt><strong>Boundary</strong></dt><dd>One proposed optional metocean-api extra, limited to NORA3 and NorKyst800; importing the core must not import this backend. No manifest change is made.</dd><dt><strong>Proposed backend version</strong></dt><dd>metocean-api 1.1.14, inspected as release source only; any future pin needs integration review.</dd><dt><strong>Python boundary</strong></dt><dd>Release metadata requires Python &gt;=3.11; the local member supports &gt;=3.10. Decide compatibility before adding an extra.</dd><dt><strong>Readiness meaning</strong></dt><dd>SCOPED means complete reviewed source-scope evidence only; BLOCKED names missing inputs. Neither means engineering validity, live access or permission to redistribute.</dd><dt><strong>Regional limit</strong></dt><dd>NORA3 covers regional northern European seas; NorKyst800 is coastal. Neither is a global replacement.</dd></dl>
+<h2>Repository inventory</h2><dl><dt><strong>Baseline commit</strong></dt><dd>a2956f045dc8655f5d17722911537b0ff89b6272</dd><dt><strong>Catalogue</strong></dt><dd>NearestSourceFinder contains existing global reanalysis and MET Norway entries, but no NORA3 or NorKyst800 entries.</dd><dt><strong>Current declaration</strong></dt><dd>The domain member declares metocean-stats==1.1.9 in regular dependencies; it declares no metocean-api extra. The root manifest declares neither package.</dd><dt><strong>Existing plan</strong></dt><dd>docs/plans/2026-05-04-issue-268-metocean-adapter.md concerns Open-Meteo, not these regional archives.</dd><dt><strong>Historical locator</strong></dt><dd>packages/worldenergydata-metocean/src/worldenergydata/metocean</dd><dt><strong>Local contract</strong></dt><dd>BaseClient / FetchResult are the current client boundary. The existing MET Norway forecast client is distinct from archive hindcasts.</dd><dt><strong>Locator state</strong></dt><dd>Present in the executing checkout; the historical root source path is absent.</dd><dt><strong>Missing search roots</strong></dt><dd>[&#x27;The root source metocean directory and tests/metocean did not exist before this work; domain source and tests/unit/metocean are present.&#x27;]</dd><dt><strong>Overlap check</strong></dt><dd>Open pull requests were inspected. #1393 covers the optional dependency; #1708 implements a regional adapter and statistics repairs. Its listed files do not include this source-scope utility, test or report. No implementation is duplicated here.</dd></dl>
+<details><summary>Local signatures and digests</summary><pre>[
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/base_client.py&quot;,
+    &quot;signatures&quot;: [
+      {
+        &quot;declared_fields&quot;: [
+          &quot;data: List[T]&quot;,
+          &quot;source: DataSource&quot;,
+          &quot;fetch_time: datetime&quot;,
+          &quot;records_count: int&quot;,
+          &quot;had_errors: bool&quot;,
+          &quot;error_messages: List[str]&quot;
+        ],
+        &quot;line&quot;: 34,
+        &quot;symbol&quot;: &quot;FetchResult&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def __init__(\n    self, source: DataSource, base_url: str, name: Optional[str] = None\n) -&gt; None:&quot;,
+        &quot;line&quot;: 80,
+        &quot;symbol&quot;: &quot;BaseClient.__init__&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def fetch_stations(\n    self, bbox: Optional[tuple] = None, active_only: bool = True\n) -&gt; FetchResult:&quot;,
+        &quot;line&quot;: 276,
+        &quot;symbol&quot;: &quot;BaseClient.fetch_stations&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def fetch_realtime(\n    self, station_id: str, parameters: Optional[List[str]] = None\n) -&gt; FetchResult:&quot;,
+        &quot;line&quot;: 292,
+        &quot;symbol&quot;: &quot;BaseClient.fetch_realtime&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def fetch_historical(\n    self,\n    station_id: str,\n    start_date: datetime,\n    end_date: datetime,\n    parameters: Optional[List[str]] = None,\n) -&gt; FetchResult:&quot;,
+        &quot;line&quot;: 308,
+        &quot;symbol&quot;: &quot;BaseClient.fetch_historical&quot;
+      }
+    ],
+    &quot;source_sha256&quot;: &quot;3546a46cd0d864cb12881d98d7d002e0738371de2e3065f151a572c9f66c4b96&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/clients/met_norway_client.py&quot;,
+    &quot;signatures&quot;: [
+      {
+        &quot;declared_fields&quot;: [
+          &quot;latitude: float&quot;,
+          &quot;longitude: float&quot;,
+          &quot;forecast_time: datetime&quot;,
+          &quot;updated_at: Optional[datetime]&quot;,
+          &quot;wave_height_m: Optional[float]&quot;,
+          &quot;wave_direction_deg: Optional[float]&quot;,
+          &quot;wave_period_s: Optional[float]&quot;,
+          &quot;sea_surface_temp_c: Optional[float]&quot;,
+          &quot;current_speed_ms: Optional[float]&quot;,
+          &quot;current_direction_deg: Optional[float]&quot;,
+          &quot;wind_speed_ms: Optional[float]&quot;,
+          &quot;wind_direction_deg: Optional[float]&quot;,
+          &quot;wind_gust_ms: Optional[float]&quot;,
+          &quot;air_temp_c: Optional[float]&quot;,
+          &quot;pressure_hpa: Optional[float]&quot;,
+          &quot;humidity_percent: Optional[float]&quot;,
+          &quot;cloud_cover_percent: Optional[float]&quot;
+        ],
+        &quot;line&quot;: 24,
+        &quot;symbol&quot;: &quot;MetNorwayForecast&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def fetch_ocean_forecast(\n    self,\n    latitude: float,\n    longitude: float,\n) -&gt; FetchResult[MetNorwayForecast]:&quot;,
+        &quot;line&quot;: 113,
+        &quot;symbol&quot;: &quot;MetNorwayClient.fetch_ocean_forecast&quot;
+      }
+    ],
+    &quot;source_sha256&quot;: &quot;6e1948ffe4fa0d6d61f6860071292eeee5ba906e877f8fb36b5f5d0d81ce72bc&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/database/models.py&quot;,
+    &quot;signatures&quot;: [
+      {
+        &quot;declared_fields&quot;: [
+          &quot;observation_id: Mapped[int]&quot;,
+          &quot;station_id: Mapped[int]&quot;,
+          &quot;observation_time: Mapped[datetime]&quot;,
+          &quot;source: Mapped[str]&quot;,
+          &quot;wave_height_m: Mapped[Optional[Decimal]]&quot;,
+          &quot;wave_period_s: Mapped[Optional[Decimal]]&quot;,
+          &quot;wave_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_speed_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_gust_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;current_speed_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;current_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;sea_surface_temp_c: Mapped[Optional[Decimal]]&quot;,
+          &quot;water_level_m: Mapped[Optional[Decimal]]&quot;,
+          &quot;pressure_hpa: Mapped[Optional[Decimal]]&quot;,
+          &quot;air_temp_c: Mapped[Optional[Decimal]]&quot;,
+          &quot;quality_flag: Mapped[int]&quot;,
+          &quot;raw_data_json: Mapped[Optional[dict]]&quot;,
+          &quot;station: Mapped[&#x27;Station&#x27;]&quot;
+        ],
+        &quot;line&quot;: 163,
+        &quot;symbol&quot;: &quot;Observation&quot;
+      },
+      {
+        &quot;declared_fields&quot;: [
+          &quot;grid_point_id: Mapped[int]&quot;,
+          &quot;source: Mapped[str]&quot;,
+          &quot;latitude: Mapped[Decimal]&quot;,
+          &quot;longitude: Mapped[Decimal]&quot;,
+          &quot;depth_m: Mapped[Optional[Decimal]]&quot;,
+          &quot;metadata_json: Mapped[Optional[dict]]&quot;
+        ],
+        &quot;line&quot;: 345,
+        &quot;symbol&quot;: &quot;GridPoint&quot;
+      },
+      {
+        &quot;declared_fields&quot;: [
+          &quot;forecast_id: Mapped[int]&quot;,
+          &quot;source: Mapped[str]&quot;,
+          &quot;station_id: Mapped[Optional[int]]&quot;,
+          &quot;latitude: Mapped[Decimal]&quot;,
+          &quot;longitude: Mapped[Decimal]&quot;,
+          &quot;init_time: Mapped[datetime]&quot;,
+          &quot;valid_time: Mapped[datetime]&quot;,
+          &quot;lead_hours: Mapped[int]&quot;,
+          &quot;wave_height_m: Mapped[Optional[Decimal]]&quot;,
+          &quot;wave_period_s: Mapped[Optional[Decimal]]&quot;,
+          &quot;wave_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_speed_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;wind_gust_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;current_speed_ms: Mapped[Optional[Decimal]]&quot;,
+          &quot;current_direction_deg: Mapped[Optional[Decimal]]&quot;,
+          &quot;sea_surface_temp_c: Mapped[Optional[Decimal]]&quot;,
+          &quot;water_level_m: Mapped[Optional[Decimal]]&quot;,
+          &quot;pressure_hpa: Mapped[Optional[Decimal]]&quot;,
+          &quot;air_temp_c: Mapped[Optional[Decimal]]&quot;,
+          &quot;station: Mapped[Optional[&#x27;Station&#x27;]]&quot;
+        ],
+        &quot;line&quot;: 410,
+        &quot;symbol&quot;: &quot;Forecast&quot;
+      }
+    ],
+    &quot;source_sha256&quot;: &quot;fd1f57127cae6eb6b007f0e87bcee4b342269caf43af91db2276889eb0e5c29e&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/constants.py&quot;,
+    &quot;signatures&quot;: [],
+    &quot;source_sha256&quot;: &quot;c75e65f94b90b7e3558e9cc97011461c4bffe435b3223652f0200f66ea4af3ca&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/extrapolation/source_catalog.py&quot;,
+    &quot;signatures&quot;: [
+      {
+        &quot;declared_fields&quot;: [
+          &quot;name: str&quot;,
+          &quot;source_type: str&quot;,
+          &quot;lat: float&quot;,
+          &quot;lon: float&quot;,
+          &quot;coverage_radius_km: float&quot;,
+          &quot;parameters: list&quot;,
+          &quot;priority: int&quot;,
+          &quot;region: str&quot;
+        ],
+        &quot;line&quot;: 19,
+        &quot;symbol&quot;: &quot;MetoceanSource&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def list_sources(self) -&gt; list[MetoceanSource]:&quot;,
+        &quot;line&quot;: 60,
+        &quot;symbol&quot;: &quot;NearestSourceFinder.list_sources&quot;
+      },
+      {
+        &quot;declaration&quot;: &quot;def find_by_parameter(\n    self, lat: float, lon: float, parameter: str\n) -&gt; list[MetoceanSource]:&quot;,
+        &quot;line&quot;: 85,
+        &quot;symbol&quot;: &quot;NearestSourceFinder.find_by_parameter&quot;
+      }
+    ],
+    &quot;source_sha256&quot;: &quot;dc6752bdedfba10008437f41eee04fd912547c6c3c935e03a7763352b1894403&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/pyproject.toml&quot;,
+    &quot;signatures&quot;: [],
+    &quot;source_sha256&quot;: &quot;7049ca25bf36a97fb0ebfc65ab0972e8db05afd830a2e3e12c7e212e8503d52e&quot;
+  },
+  {
+    &quot;path&quot;: &quot;packages/worldenergydata-metocean/src/worldenergydata/metocean/docs/agent-pack.md&quot;,
+    &quot;signatures&quot;: [],
+    &quot;source_sha256&quot;: &quot;8adb0f0b6c81d2e7aeb88aaae44d0f4f8319d9c625357815d74a468ca48a325e&quot;
+  }
+]
+</pre></details>
+<h2>Source observations</h2><table><tr><th>Dataset</th><th>Package licence</th><th>Dataset terms</th><th>Readiness</th></tr>
+<tr><td>NORA3</td><td>LGPL-2.1-or-later</td><td>UNKNOWN</td><td>BLOCKED</td></tr>
+<tr><td>NorKyst800</td><td>LGPL-2.1-or-later</td><td>UNKNOWN</td><td>BLOCKED</td></tr>
+</table>
+<h3>NORA3 — BLOCKED</h3><p>The publisher describes NORA3 as regional: North Sea, Norwegian Sea and Barents Sea. Its atmospheric domain is confirmed; wave-subset footprint and current temporal bounds still need product metadata.</p><details><summary>Reviewed record and provenance</summary><pre>{
+  &quot;access_state&quot;: &quot;METADATA_ONLY&quot;,
+  &quot;api_symbols&quot;: [
+    {
+      &quot;evidence&quot;: [
+        &quot;release:ts-init&quot;
+      ],
+      &quot;signature&quot;: &quot;def __init__(\n    self,\n    lon: float,\n    lat: float,\n    start_time: str = \&quot;1990-01-01T00:00\&quot;,\n    end_time: str = \&quot;1991-12-31T23:59\&quot;,\n    variable: List[str] = None,\n    name: str = \&quot;AnonymousArea\&quot;,\n    product: str = \&quot;NORA3_wave_sub\&quot;,\n    datafile: str = None,\n    data=None,\n    height: List[float] = None,\n    depth: List[float] = None,\n):&quot;,
+      &quot;symbol&quot;: &quot;TimeSeries.__init__&quot;
+    },
+    {
+      &quot;evidence&quot;: [
+        &quot;release:ts-import_data&quot;
+      ],
+      &quot;signature&quot;: &quot;def import_data(self, save_csv=True, save_nc=False, use_cache=False):&quot;,
+      &quot;symbol&quot;: &quot;TimeSeries.import_data&quot;
+    }
+  ],
+  &quot;coverage&quot;: {
+    &quot;description&quot;: &quot;The publisher describes NORA3 as regional: North Sea, Norwegian Sea and Barents Sea. Its atmospheric domain is confirmed; wave-subset footprint and current temporal bounds still need product metadata.&quot;,
+    &quot;evidence&quot;: [
+      &quot;nora-description:regional-coverage&quot;
+    ],
+    &quot;state&quot;: &quot;CONFIRMED&quot;
+  },
+  &quot;dataset_id&quot;: &quot;NORA3&quot;,
+  &quot;dataset_terms&quot;: {
+    &quot;evidence&quot;: [],
+    &quot;expression&quot;: null,
+    &quot;general_terms_evidence&quot;: [
+      &quot;publisher-terms:general-permission&quot;,
+      &quot;publisher-terms:general-licences&quot;,
+      &quot;publisher-terms:attribution&quot;,
+      &quot;catalog:per-file-exceptions&quot;
+    ],
+    &quot;reason&quot;: &quot;Publisher-wide NLOD and CC BY 4.0 terms were read; exact product metadata and per-file exceptions are not verified.&quot;,
+    &quot;redistribution&quot;: &quot;NOT_APPROVED&quot;,
+    &quot;state&quot;: &quot;UNKNOWN&quot;
+  },
+  &quot;http_status&quot;: 200,
+  &quot;missing_inputs&quot;: [
+    &quot;Confirm product-specific dataset terms and any per-file licence exceptions using open metadata; general publisher terms alone are insufficient.&quot;,
+    &quot;Verify actual variable units, missing-value encodings, timestamps/calendar, grid coordinates and directional conventions from product metadata; no data files were requested.&quot;,
+    &quot;Agree a model-grid identity and source identifier without representing hindcasts as measured station observations; current DataSource has no NORA3 or NorKyst800 member.&quot;,
+    &quot;Define bounded optional backend execution, retained provenance, date slicing, temporary-file ownership and deterministic failure/cache semantics before implementation.&quot;,
+    &quot;Confirm NORA3_wave_sub footprint, units and time coverage; the descriptive page still discusses a 1984-2021 production phase, so it is not current temporal inventory.&quot;,
+    &quot;Resolve date-only enumeration in Nora3WaveSub.get_dates against TimeSeries timestamp defaults and requested subdaily windows.&quot;
+  ],
+  &quot;package_licence&quot;: {
+    &quot;evidence&quot;: [
+      &quot;package:licence&quot;
+    ],
+    &quot;expression&quot;: &quot;LGPL-2.1-or-later&quot;,
+    &quot;state&quot;: &quot;CONFIRMED&quot;
+  },
+  &quot;package_name&quot;: &quot;metocean-api&quot;,
+  &quot;package_version&quot;: &quot;1.1.14&quot;,
+  &quot;provenance&quot;: [
+    &quot;catalog&quot;,
+    &quot;metno-catalog&quot;,
+    &quot;nora-current&quot;,
+    &quot;nora-description&quot;,
+    &quot;nora-project&quot;,
+    &quot;norkyst-current&quot;,
+    &quot;norkyst-description&quot;,
+    &quot;ocean-catalog&quot;,
+    &quot;ocean-current&quot;,
+    &quot;package&quot;,
+    &quot;projects-catalog&quot;,
+    &quot;publisher-terms&quot;,
+    &quot;release&quot;
+  ],
+  &quot;readiness&quot;: &quot;BLOCKED&quot;,
+  &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:20Z&quot;,
+  &quot;source_sha256&quot;: &quot;0eaa4c7a903910a54757a92dba9e38d850e12bb1bacbc8e4886756c1b84a2d0f&quot;,
+  &quot;source_url&quot;: &quot;https://pypi.org/pypi/metocean-api/json&quot;
+}
+</pre></details>
+<h3>NorKyst800 — BLOCKED</h3><p>Regional coastal ocean system. The current catalogue identifies an 800 m parent grid and nested coastal domains; exact Norwegian-coast extent and equivalence to the package legacy product are unverified.</p><details><summary>Reviewed record and provenance</summary><pre>{
+  &quot;access_state&quot;: &quot;METADATA_ONLY&quot;,
+  &quot;api_symbols&quot;: [
+    {
+      &quot;evidence&quot;: [
+        &quot;release:ts-init&quot;
+      ],
+      &quot;signature&quot;: &quot;def __init__(\n    self,\n    lon: float,\n    lat: float,\n    start_time: str = \&quot;1990-01-01T00:00\&quot;,\n    end_time: str = \&quot;1991-12-31T23:59\&quot;,\n    variable: List[str] = None,\n    name: str = \&quot;AnonymousArea\&quot;,\n    product: str = \&quot;NORA3_wave_sub\&quot;,\n    datafile: str = None,\n    data=None,\n    height: List[float] = None,\n    depth: List[float] = None,\n):&quot;,
+      &quot;symbol&quot;: &quot;TimeSeries.__init__&quot;
+    },
+    {
+      &quot;evidence&quot;: [
+        &quot;release:ts-import_data&quot;
+      ],
+      &quot;signature&quot;: &quot;def import_data(self, save_csv=True, save_nc=False, use_cache=False):&quot;,
+      &quot;symbol&quot;: &quot;TimeSeries.import_data&quot;
+    }
+  ],
+  &quot;coverage&quot;: {
+    &quot;description&quot;: &quot;Regional coastal ocean system. The current catalogue identifies an 800 m parent grid and nested coastal domains; exact Norwegian-coast extent and equivalence to the package legacy product are unverified.&quot;,
+    &quot;evidence&quot;: [
+      &quot;norkyst-description:regional-coverage&quot;
+    ],
+    &quot;state&quot;: &quot;CONFIRMED&quot;
+  },
+  &quot;dataset_id&quot;: &quot;NorKyst800&quot;,
+  &quot;dataset_terms&quot;: {
+    &quot;evidence&quot;: [],
+    &quot;expression&quot;: null,
+    &quot;general_terms_evidence&quot;: [
+      &quot;publisher-terms:general-permission&quot;,
+      &quot;publisher-terms:general-licences&quot;,
+      &quot;publisher-terms:attribution&quot;,
+      &quot;catalog:per-file-exceptions&quot;
+    ],
+    &quot;reason&quot;: &quot;Publisher-wide NLOD and CC BY 4.0 terms were read; exact product metadata and per-file exceptions are not verified.&quot;,
+    &quot;redistribution&quot;: &quot;NOT_APPROVED&quot;,
+    &quot;state&quot;: &quot;UNKNOWN&quot;
+  },
+  &quot;http_status&quot;: 200,
+  &quot;missing_inputs&quot;: [
+    &quot;Confirm product-specific dataset terms and any per-file licence exceptions using open metadata; general publisher terms alone are insufficient.&quot;,
+    &quot;Verify actual variable units, missing-value encodings, timestamps/calendar, grid coordinates and directional conventions from product metadata; no data files were requested.&quot;,
+    &quot;Agree a model-grid identity and source identifier without representing hindcasts as measured station observations; current DataSource has no NORA3 or NorKyst800 member.&quot;,
+    &quot;Define bounded optional backend execution, retained provenance, date slicing, temporary-file ownership and deterministic failure/cache semantics before implementation.&quot;,
+    &quot;Resolve the package NORKYST800 legacy route against the current NorKyst v3 catalogue, product version, geographic footprint and time coverage.&quot;,
+    &quot;Confirm depth selection: Norkyst800.import_data forwards height to the combiner but does not forward ts.depth; current-vector rotation and direction cannot be inferred.&quot;
+  ],
+  &quot;package_licence&quot;: {
+    &quot;evidence&quot;: [
+      &quot;package:licence&quot;
+    ],
+    &quot;expression&quot;: &quot;LGPL-2.1-or-later&quot;,
+    &quot;state&quot;: &quot;CONFIRMED&quot;
+  },
+  &quot;package_name&quot;: &quot;metocean-api&quot;,
+  &quot;package_version&quot;: &quot;1.1.14&quot;,
+  &quot;provenance&quot;: [
+    &quot;catalog&quot;,
+    &quot;metno-catalog&quot;,
+    &quot;nora-current&quot;,
+    &quot;nora-description&quot;,
+    &quot;nora-project&quot;,
+    &quot;norkyst-current&quot;,
+    &quot;norkyst-description&quot;,
+    &quot;ocean-catalog&quot;,
+    &quot;ocean-current&quot;,
+    &quot;package&quot;,
+    &quot;projects-catalog&quot;,
+    &quot;publisher-terms&quot;,
+    &quot;release&quot;
+  ],
+  &quot;readiness&quot;: &quot;BLOCKED&quot;,
+  &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:20Z&quot;,
+  &quot;source_sha256&quot;: &quot;0eaa4c7a903910a54757a92dba9e38d850e12bb1bacbc8e4886756c1b84a2d0f&quot;,
+  &quot;source_url&quot;: &quot;https://pypi.org/pypi/metocean-api/json&quot;
+}
+</pre></details>
+<h2>Proposed contract</h2><dl><dt><strong>Backend api</strong></dt><dd>from metocean_api.ts import TimeSeries; construct with explicit parameters; import_data mutates self.data and has no explicit return value. Do not treat its return as a FetchResult.</dd><dt><strong>Failure behavior</strong></dt><dd>Missing rights, metadata, digest match, API declaration, grid identity or units keeps the source BLOCKED. Do not enable fetches from this report. Future implementation must reject ambiguous selections, preserve partial-fetch errors, avoid silent fallback or invented values, and retain content-addressed evidence outside the checkout.</dd><dt><strong>Local result</strong></dt><dd>Propose FetchResult.data as explicit model-grid records, source as a separately reviewed source identity, fetch_time as retrieval UTC, records_count=len(data), and explicit had_errors/error_messages. No existing enum value should disguise a new product.</dd><dt><strong>Query</strong></dt><dd>Require explicit supported dataset/product, longitude, latitude, start/end UTC, variables and relevant height/depth. Reject unsupported identifiers before any I/O. Bound selection to the actual regional footprint.</dd><dt><strong>Station boundary</strong></dt><dd>BaseClient.fetch_historical expects station_id and datetimes, while upstream takes lon/lat and string times. A deterministic grid-point identifier and separate hindcast model record are unresolved. fetch_stations and fetch_realtime must explicitly reject unsupported operations rather than invent stations or forecasts.</dd><dt><strong>Status</strong></dt><dd>PROPOSED; no production contract or adapter added.</dd></dl>
+<table><tr><th>Upstream</th><th>Local field and unit</th><th>State and unresolved input</th></tr>
+<tr><td>lon, lat / lon_data, lat_data</td><td>MetNorwayForecast.latitude/longitude or GridPoint.latitude/longitude (degrees)</td><td>GAP: Preserve requested and actual grid coordinates separately; rotated-grid and nearest-point distance rules need metadata.</td></tr>
+<tr><td>time index</td><td>Observation.observation_time (timezone-aware) (UTC)</td><td>GAP: Verify calendar/timezone, inclusive boundaries and duplicates; preserve native timestamps without interpolation.</td></tr>
+<tr><td>NORA3 hs</td><td>Observation.wave_height_m / MetNorwayForecast.wave_height_m (m)</td><td>GAP: Source code names hs; actual source units and missing values were not inspected.</td></tr>
+<tr><td>NORA3 tp</td><td>Observation.wave_period_s; MetNorwayForecast.wave_period_s describes mean period (s)</td><td>GAP: Peak, dominant and mean period semantics differ; no silent mapping from tp to a mean-period field.</td></tr>
+<tr><td>NORKYST800 u, v</td><td>Observation.current_speed_ms / current_direction_deg (m/s; degrees)</td><td>GAP: Verify component units, grid rotation, selected depth and direction convention before deriving vector magnitude or angle.</td></tr>
+<tr><td>NORKYST800 temperature, salinity, zeta</td><td>Observation.sea_surface_temp_c only for verified surface temperature; no generic salinity/zeta mapping proposed (degC for the local temperature field)</td><td>GAP: Upstream units/depths and vertical datum are unverified. Do not call arbitrary-depth temperature surface temperature.</td></tr>
+</table>
+<details><summary>Complete proposed contract</summary><pre>{
+  &quot;backend_api&quot;: &quot;from metocean_api.ts import TimeSeries; construct with explicit parameters; import_data mutates self.data and has no explicit return value. Do not treat its return as a FetchResult.&quot;,
+  &quot;failure_behavior&quot;: &quot;Missing rights, metadata, digest match, API declaration, grid identity or units keeps the source BLOCKED. Do not enable fetches from this report. Future implementation must reject ambiguous selections, preserve partial-fetch errors, avoid silent fallback or invented values, and retain content-addressed evidence outside the checkout.&quot;,
+  &quot;field_mapping&quot;: [
+    {
+      &quot;local&quot;: &quot;MetNorwayForecast.latitude/longitude or GridPoint.latitude/longitude&quot;,
+      &quot;local_unit&quot;: &quot;degrees&quot;,
+      &quot;reason&quot;: &quot;Preserve requested and actual grid coordinates separately; rotated-grid and nearest-point distance rules need metadata.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;lon, lat / lon_data, lat_data&quot;
+    },
+    {
+      &quot;local&quot;: &quot;Observation.observation_time (timezone-aware)&quot;,
+      &quot;local_unit&quot;: &quot;UTC&quot;,
+      &quot;reason&quot;: &quot;Verify calendar/timezone, inclusive boundaries and duplicates; preserve native timestamps without interpolation.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;time index&quot;
+    },
+    {
+      &quot;local&quot;: &quot;Observation.wave_height_m / MetNorwayForecast.wave_height_m&quot;,
+      &quot;local_unit&quot;: &quot;m&quot;,
+      &quot;reason&quot;: &quot;Source code names hs; actual source units and missing values were not inspected.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;NORA3 hs&quot;
+    },
+    {
+      &quot;local&quot;: &quot;Observation.wave_period_s; MetNorwayForecast.wave_period_s describes mean period&quot;,
+      &quot;local_unit&quot;: &quot;s&quot;,
+      &quot;reason&quot;: &quot;Peak, dominant and mean period semantics differ; no silent mapping from tp to a mean-period field.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;NORA3 tp&quot;
+    },
+    {
+      &quot;local&quot;: &quot;Observation.current_speed_ms / current_direction_deg&quot;,
+      &quot;local_unit&quot;: &quot;m/s; degrees&quot;,
+      &quot;reason&quot;: &quot;Verify component units, grid rotation, selected depth and direction convention before deriving vector magnitude or angle.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;NORKYST800 u, v&quot;
+    },
+    {
+      &quot;local&quot;: &quot;Observation.sea_surface_temp_c only for verified surface temperature; no generic salinity/zeta mapping proposed&quot;,
+      &quot;local_unit&quot;: &quot;degC for the local temperature field&quot;,
+      &quot;reason&quot;: &quot;Upstream units/depths and vertical datum are unverified. Do not call arbitrary-depth temperature surface temperature.&quot;,
+      &quot;status&quot;: &quot;GAP&quot;,
+      &quot;upstream&quot;: &quot;NORKYST800 temperature, salinity, zeta&quot;
+    }
+  ],
+  &quot;local_result&quot;: &quot;Propose FetchResult.data as explicit model-grid records, source as a separately reviewed source identity, fetch_time as retrieval UTC, records_count=len(data), and explicit had_errors/error_messages. No existing enum value should disguise a new product.&quot;,
+  &quot;missing_inputs&quot;: [
+    &quot;Product-specific rights and units&quot;,
+    &quot;Grid/source identity&quot;,
+    &quot;Timestamp and depth selection&quot;,
+    &quot;Optional extra Python compatibility&quot;,
+    &quot;Bounded upstream cache/file behavior&quot;
+  ],
+  &quot;products&quot;: {
+    &quot;NORA3&quot;: &quot;NORA3_wave_sub (candidate wave subset)&quot;,
+    &quot;NorKyst800&quot;: &quot;NORKYST800 (legacy candidate; not interchangeable with NORKYST800_V3 or current coastal forecasts)&quot;
+  },
+  &quot;query&quot;: &quot;Require explicit supported dataset/product, longitude, latitude, start/end UTC, variables and relevant height/depth. Reject unsupported identifiers before any I/O. Bound selection to the actual regional footprint.&quot;,
+  &quot;station_boundary&quot;: &quot;BaseClient.fetch_historical expects station_id and datetimes, while upstream takes lon/lat and string times. A deterministic grid-point identifier and separate hindcast model record are unresolved. fetch_stations and fetch_realtime must explicitly reject unsupported operations rather than invent stations or forecasts.&quot;,
+  &quot;status&quot;: &quot;PROPOSED; no production contract or adapter added.&quot;
+}
+</pre></details>
+<h2>Method boundaries</h2><pre>{
+  &quot;annual_max_selection&quot;: [
+    &quot;pandas&quot;
+  ],
+  &quot;cma_contours&quot;: [
+    &quot;virocon&quot;
+  ],
+  &quot;extreme_distribution_fitting&quot;: [
+    &quot;scipy.stats&quot;
+  ],
+  &quot;joint_distribution_Hs_Tp&quot;: [
+    &quot;native LoNoWe fit and contours&quot;
+  ],
+  &quot;pot_extreme_selection&quot;: [
+    &quot;pyextremes&quot;
+  ],
+  &quot;three_parameter_weibull_moments&quot;: [
+    &quot;native&quot;
+  ]
+}
+</pre>
+<h2>Unresolved inputs</h2><pre>{
+  &quot;NORA3&quot;: [
+    &quot;Confirm product-specific dataset terms and any per-file licence exceptions using open metadata; general publisher terms alone are insufficient.&quot;,
+    &quot;Verify actual variable units, missing-value encodings, timestamps/calendar, grid coordinates and directional conventions from product metadata; no data files were requested.&quot;,
+    &quot;Agree a model-grid identity and source identifier without representing hindcasts as measured station observations; current DataSource has no NORA3 or NorKyst800 member.&quot;,
+    &quot;Define bounded optional backend execution, retained provenance, date slicing, temporary-file ownership and deterministic failure/cache semantics before implementation.&quot;,
+    &quot;Confirm NORA3_wave_sub footprint, units and time coverage; the descriptive page still discusses a 1984-2021 production phase, so it is not current temporal inventory.&quot;,
+    &quot;Resolve date-only enumeration in Nora3WaveSub.get_dates against TimeSeries timestamp defaults and requested subdaily windows.&quot;
+  ],
+  &quot;NorKyst800&quot;: [
+    &quot;Confirm product-specific dataset terms and any per-file licence exceptions using open metadata; general publisher terms alone are insufficient.&quot;,
+    &quot;Verify actual variable units, missing-value encodings, timestamps/calendar, grid coordinates and directional conventions from product metadata; no data files were requested.&quot;,
+    &quot;Agree a model-grid identity and source identifier without representing hindcasts as measured station observations; current DataSource has no NORA3 or NorKyst800 member.&quot;,
+    &quot;Define bounded optional backend execution, retained provenance, date slicing, temporary-file ownership and deterministic failure/cache semantics before implementation.&quot;,
+    &quot;Resolve the package NORKYST800 legacy route against the current NorKyst v3 catalogue, product version, geographic footprint and time coverage.&quot;,
+    &quot;Confirm depth selection: Norkyst800.import_data forwards height to the combiner but does not forward ts.depth; current-vector rotation and direction cannot be inferred.&quot;
+  ]
+}
+</pre>
+<h2>Retrieval evidence</h2><table><tr><th>Source</th><th>UTC</th><th>HTTP / command exit</th><th>Retained body SHA-256</th></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog.html">catalog</a></td><td>2026-10-25T01:37:24Z</td><td>200 / 0</td><td><code>6005544377e6838a2b2320183e4109b45831d95f4676f8bc54d99d707de01542</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog/metno.html">metno-catalog</a></td><td>2026-10-25T01:38:01Z</td><td>200 / 0</td><td><code>8fdfc0d56de9b720be4b005d464ed6fa54442ee4d7a74ce2b94f2030fafc89ff</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog/projects/nora3.html">nora-current</a></td><td>2026-10-25T01:38:10Z</td><td>200 / 0</td><td><code>484aefb2023dd7bd116b30d1c33171d78c1f5a2d35b25ad178f117f1f1af00b2</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog-content/nora3-content.html">nora-description</a></td><td>2026-10-25T01:38:18Z</td><td>200 / 0</td><td><code>84ab9036cdf47ce27a7ce5f7a5ad707c315906eefef6158d921669ae16c376ce</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/projects/nora3.html">nora-project</a></td><td>2026-10-25T01:37:41Z</td><td>404 / 22</td><td><code>ef9c8ad9e87a63eebf14f8aaeea5c6105136de6ac68eebd348ff6cd514121d1b</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog/fou-hi/norkystv3.html">norkyst-current</a></td><td>2026-10-25T01:38:15Z</td><td>200 / 0</td><td><code>b429fb92c4711d01543fb4d6cf5100ece1529386e85321eb1c7f33258b68edcc</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog-content/norkystv3-content.html">norkyst-description</a></td><td>2026-10-25T01:38:21Z</td><td>200 / 0</td><td><code>7a5d28ee5a0f11c8d3b409065ff4dd6af2066a46bf896b484fc37e91e528abf6</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/fou-hi/fou-hi.html">ocean-catalog</a></td><td>2026-10-25T01:37:36Z</td><td>404 / 22</td><td><code>5567e88fbd61f62f8d240cc28cda780ab3d77a5373e20a1ac86d58b848fce131</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog/fou-hi/fou-hi.html">ocean-current</a></td><td>2026-10-25T01:37:49Z</td><td>200 / 0</td><td><code>a6db4f96f301c2b3ae03a95e84dd5b3fec5c9fa999af6abbc45564dff37227ef</code></td></tr>
+<tr><td><a href="https://pypi.org/pypi/metocean-api/json">package</a></td><td>2026-10-25T01:37:20Z</td><td>200 / 0</td><td><code>0eaa4c7a903910a54757a92dba9e38d850e12bb1bacbc8e4886756c1b84a2d0f</code></td></tr>
+<tr><td><a href="https://thredds.met.no/thredds/catalog/projects.html">projects-catalog</a></td><td>2026-10-25T01:38:05Z</td><td>200 / 0</td><td><code>d08dd4ea5f194cc2689c5fea56f3ba8f9b2035e1d3a63f155cf2325380f25078</code></td></tr>
+<tr><td><a href="https://www.met.no/en/free-meteorological-data/Licensing-and-crediting">publisher-terms</a></td><td>2026-10-25T01:37:53Z</td><td>200 / 0</td><td><code>db72cfb6e8026a0d1089e9483abf2384480edd6378446766fb8340a561594c43</code></td></tr>
+<tr><td><a href="https://files.pythonhosted.org/packages/a0/c6/685670081040e9ce828a2e9dce3f94ca779a1c3f62803163b79efc0c093b/metocean_api-1.1.14-py3-none-any.whl">release</a></td><td>2026-10-25T01:37:30Z</td><td>200 / 0</td><td><code>3270d81679ee0ac21a9f90e74ba82afe1f83362478bc9678b65f2f41ff99b9f2</code></td></tr>
+</table><details><summary>Frozen excerpts and retrieval metadata</summary><pre>[
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/catalog.html&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;excerpt_id&quot;: &quot;per-file-exceptions&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;general_terms&quot;,
+        &quot;locator&quot;: &quot;Terms of Service / Data Licensing&quot;,
+        &quot;sha256&quot;: &quot;6640ee56aafc70b53a7617bb3f3fc3d68262077f8c989cb3bfdc59487a40d945&quot;,
+        &quot;text&quot;: &quot;unless other licenses are explicitly referred in the data files.&quot;
+      },
+      {
+        &quot;excerpt_id&quot;: &quot;access-load&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;access_terms&quot;,
+        &quot;locator&quot;: &quot;Terms of Service / first paragraph&quot;,
+        &quot;sha256&quot;: &quot;983d7f2f8af18bf56e3d12c8cff27cc6e98a8a8ece3de98fa714a3230656443c&quot;,
+        &quot;text&quot;: &quot;This is a shared public service that may experience high traffic loads. We reserve the right to block\n                IP addresses that cause excessive load. Please avoid spawning multiple parallel sessions for\n                OPeNDAP access or file downloads, as this can impact service availability for all users.&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:24Z&quot;,
+    &quot;source_id&quot;: &quot;catalog&quot;,
+    &quot;source_sha256&quot;: &quot;6005544377e6838a2b2320183e4109b45831d95f4676f8bc54d99d707de01542&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/metno.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:01Z&quot;,
+    &quot;source_id&quot;: &quot;metno-catalog&quot;,
+    &quot;source_sha256&quot;: &quot;8fdfc0d56de9b720be4b005d464ed6fa54442ee4d7a74ce2b94f2030fafc89ff&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog/metno.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/projects/nora3.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:10Z&quot;,
+    &quot;source_id&quot;: &quot;nora-current&quot;,
+    &quot;source_sha256&quot;: &quot;484aefb2023dd7bd116b30d1c33171d78c1f5a2d35b25ad178f117f1f1af00b2&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog/projects/nora3.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog-content/nora3-content.html&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;excerpt_id&quot;: &quot;regional-coverage&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;coverage&quot;,
+        &quot;locator&quot;: &quot;Opening paragraph&quot;,
+        &quot;sha256&quot;: &quot;31027447679b22a21a92e0b7ae2db95da8b54a6f6c93f60434b8f78d63ce1689&quot;,
+        &quot;text&quot;: &quot;The 3-km Norwegian Reanalysis (NORA3) is a mesoscale-permitting atmospheric hindcast of the North Sea, the Norwegian Sea, and the Barents Sea, currently covering the period 1984-2021, but due to be extended back to 1979 and to be continuously updated.&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:18Z&quot;,
+    &quot;source_id&quot;: &quot;nora-description&quot;,
+    &quot;source_sha256&quot;: &quot;84ab9036cdf47ce27a7ce5f7a5ad707c315906eefef6158d921669ae16c376ce&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog-content/nora3-content.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 22,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/projects/nora3.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 404,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:41Z&quot;,
+    &quot;source_id&quot;: &quot;nora-project&quot;,
+    &quot;source_sha256&quot;: &quot;ef9c8ad9e87a63eebf14f8aaeea5c6105136de6ac68eebd348ff6cd514121d1b&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/projects/nora3.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/fou-hi/norkystv3.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:15Z&quot;,
+    &quot;source_id&quot;: &quot;norkyst-current&quot;,
+    &quot;source_sha256&quot;: &quot;b429fb92c4711d01543fb4d6cf5100ece1529386e85321eb1c7f33258b68edcc&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog/fou-hi/norkystv3.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog-content/norkystv3-content.html&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;excerpt_id&quot;: &quot;regional-coverage&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;coverage&quot;,
+        &quot;locator&quot;: &quot;Title and grid paragraph&quot;,
+        &quot;segments&quot;: [
+          &quot;ROMS Norkyst v3 coastal ocean forecasting system&quot;,
+          &quot;Members &gt;= 70 represent two-way nested models with an 800m parent grid and a higher resolution child domain.&quot;
+        ],
+        &quot;sha256&quot;: &quot;70820f9a6cbfe29fe838e176c8ca92962196aa65f36a026abcc85f0060006a30&quot;,
+        &quot;text&quot;: &quot;ROMS Norkyst v3 coastal ocean forecasting system\nMembers &gt;= 70 represent two-way nested models with an 800m parent grid and a higher resolution child domain.&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:21Z&quot;,
+    &quot;source_id&quot;: &quot;norkyst-description&quot;,
+    &quot;source_sha256&quot;: &quot;7a5d28ee5a0f11c8d3b409065ff4dd6af2066a46bf896b484fc37e91e528abf6&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog-content/norkystv3-content.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 22,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/fou-hi/fou-hi.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 404,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:36Z&quot;,
+    &quot;source_id&quot;: &quot;ocean-catalog&quot;,
+    &quot;source_sha256&quot;: &quot;5567e88fbd61f62f8d240cc28cda780ab3d77a5373e20a1ac86d58b848fce131&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/fou-hi/fou-hi.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/fou-hi/fou-hi.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:49Z&quot;,
+    &quot;source_id&quot;: &quot;ocean-current&quot;,
+    &quot;source_sha256&quot;: &quot;a6db4f96f301c2b3ae03a95e84dd5b3fec5c9fa999af6abbc45564dff37227ef&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog/fou-hi/fou-hi.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://pypi.org/pypi/metocean-api/json&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;excerpt_id&quot;: &quot;licence&quot;,
+        &quot;kind&quot;: &quot;package_licence&quot;,
+        &quot;locator&quot;: &quot;info.license_expression&quot;,
+        &quot;sha256&quot;: &quot;feb2b2000cf34d369bb3d993dace0ff396df2ac4af57ec43b9e130d8895e607a&quot;,
+        &quot;text&quot;: &quot;LGPL-2.1-or-later&quot;
+      },
+      {
+        &quot;excerpt_id&quot;: &quot;release&quot;,
+        &quot;extraction&quot;: &quot;json_fields&quot;,
+        &quot;fields&quot;: [
+          &quot;name&quot;,
+          &quot;version&quot;,
+          &quot;requires_python&quot;
+        ],
+        &quot;kind&quot;: &quot;package_metadata&quot;,
+        &quot;locator&quot;: &quot;info.name, info.version, info.requires_python&quot;,
+        &quot;sha256&quot;: &quot;35efcc2cb40c12d0dddf25558e35b9b334e70d2068a6bc960cabfa2ec5ad793f&quot;,
+        &quot;text&quot;: &quot;{\&quot;name\&quot;: \&quot;metocean-api\&quot;, \&quot;requires_python\&quot;: \&quot;&gt;=3.11\&quot;, \&quot;version\&quot;: \&quot;1.1.14\&quot;}&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:20Z&quot;,
+    &quot;source_id&quot;: &quot;package&quot;,
+    &quot;source_sha256&quot;: &quot;0eaa4c7a903910a54757a92dba9e38d850e12bb1bacbc8e4886756c1b84a2d0f&quot;,
+    &quot;source_url&quot;: &quot;https://pypi.org/pypi/metocean-api/json&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://thredds.met.no/thredds/catalog/projects.html&quot;,
+    &quot;excerpts&quot;: [],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:38:05Z&quot;,
+    &quot;source_id&quot;: &quot;projects-catalog&quot;,
+    &quot;source_sha256&quot;: &quot;d08dd4ea5f194cc2689c5fea56f3ba8f9b2035e1d3a63f155cf2325380f25078&quot;,
+    &quot;source_url&quot;: &quot;https://thredds.met.no/thredds/catalog/projects.html&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;effective_url&quot;: &quot;https://www.met.no/en/free-meteorological-data/Licensing-and-crediting&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;excerpt_id&quot;: &quot;general-permission&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;general_terms&quot;,
+        &quot;locator&quot;: &quot;Introductory paragraph&quot;,
+        &quot;sha256&quot;: &quot;fa63753ff12a01fa88da49421bb2dbe8a269a96d3da3e7cbdc546fd4954585cd&quot;,
+        &quot;text&quot;: &quot;The Norwegian Meteorological Institute&#x27;s official data sources and products are freely available to the public for use, dissemination and further processing. You must familiarise yourself with the terms and conditions of the license for using our data, and comply with the applicable terms and conditions for the use of our services.&quot;
+      },
+      {
+        &quot;excerpt_id&quot;: &quot;general-licences&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;general_terms&quot;,
+        &quot;locator&quot;: &quot;Licensing&quot;,
+        &quot;sha256&quot;: &quot;c7de6e4545acd1fa2fc33b2901fccfc67baa210d9ad0a172950f552b6c9c0dd0&quot;,
+        &quot;text&quot;: &quot;Data and products are licensed under Norwegian license for public data (NLOD) and Creative Commons 4.0 BY Internasjonal:&quot;
+      },
+      {
+        &quot;excerpt_id&quot;: &quot;attribution&quot;,
+        &quot;extraction&quot;: &quot;html_text&quot;,
+        &quot;kind&quot;: &quot;general_terms&quot;,
+        &quot;locator&quot;: &quot;Crediting&quot;,
+        &quot;sha256&quot;: &quot;fbb21e848010a0fc8ae6caa0f703723560c0ba80fff54a3989541ff3668fc541&quot;,
+        &quot;text&quot;: &quot;Credit should be given to The Norwegian Meteorological institute, shortened “MET Norway”, as the source of data.&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:53Z&quot;,
+    &quot;source_id&quot;: &quot;publisher-terms&quot;,
+    &quot;source_sha256&quot;: &quot;db72cfb6e8026a0d1089e9483abf2384480edd6378446766fb8340a561594c43&quot;,
+    &quot;source_url&quot;: &quot;https://www.met.no/en/free-meteorological-data/Licensing-and-crediting&quot;
+  },
+  {
+    &quot;command_exit&quot;: 0,
+    &quot;discovered_from&quot;: &quot;package: urls[packagetype=bdist_wheel]&quot;,
+    &quot;effective_url&quot;: &quot;https://files.pythonhosted.org/packages/a0/c6/685670081040e9ce828a2e9dce3f94ca779a1c3f62803163b79efc0c093b/metocean_api-1.1.14-py3-none-any.whl&quot;,
+    &quot;excerpts&quot;: [
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/ts_mod.py&quot;,
+        &quot;excerpt_id&quot;: &quot;ts-init&quot;,
+        &quot;kind&quot;: &quot;api&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/ts_mod.py:TimeSeries.__init__:L34&quot;,
+        &quot;member_sha256&quot;: &quot;89334847fe1ed6b4740eb483164df70850b34812e77613f0fe473cb7926fc514&quot;,
+        &quot;sha256&quot;: &quot;86606d1f54dc65b021bc256df60ed6bfae2ec80d8d358172aba44cb0e4a95dc7&quot;,
+        &quot;text&quot;: &quot;def __init__(\n    self,\n    lon: float,\n    lat: float,\n    start_time: str = \&quot;1990-01-01T00:00\&quot;,\n    end_time: str = \&quot;1991-12-31T23:59\&quot;,\n    variable: List[str] = None,\n    name: str = \&quot;AnonymousArea\&quot;,\n    product: str = \&quot;NORA3_wave_sub\&quot;,\n    datafile: str = None,\n    data=None,\n    height: List[float] = None,\n    depth: List[float] = None,\n):&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/ts_mod.py&quot;,
+        &quot;excerpt_id&quot;: &quot;ts-import_data&quot;,
+        &quot;kind&quot;: &quot;api&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/ts_mod.py:TimeSeries.import_data:L68&quot;,
+        &quot;member_sha256&quot;: &quot;89334847fe1ed6b4740eb483164df70850b34812e77613f0fe473cb7926fc514&quot;,
+        &quot;sha256&quot;: &quot;eb508328e9ba912e17349523887a4a2c972e1f80b74b7b814d9a7ff5d038e9c7&quot;,
+        &quot;text&quot;: &quot;def import_data(self, save_csv=True, save_nc=False, use_cache=False):&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/__init__.py&quot;,
+        &quot;excerpt_id&quot;: &quot;public-export&quot;,
+        &quot;kind&quot;: &quot;api_export&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/__init__.py:L15&quot;,
+        &quot;member_sha256&quot;: &quot;478e3240d29c8b1f925cd7227efca7c7310ca3495b432b36ab9f7c51240c65d8&quot;,
+        &quot;sha256&quot;: &quot;8126dcb027489004595e19a2d8a1eabd9888ef8628d9fbe4b4403162345a88f2&quot;,
+        &quot;text&quot;: &quot;from .ts_mod import TimeSeries&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/internal/metno/met_products.py&quot;,
+        &quot;excerpt_id&quot;: &quot;wave-variables&quot;,
+        &quot;kind&quot;: &quot;source_behavior&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/internal/metno/met_products.py:Nora3Wave.get_default_variables:L73&quot;,
+        &quot;member_sha256&quot;: &quot;9b8dc10e5b953aaff7720914e8e25111a2a11d6ec5954c215ce6511d0653accf&quot;,
+        &quot;sha256&quot;: &quot;a7ae9da5a97969c38c9512d30e01db1bb4c370970840d49219650eef39b248af&quot;,
+        &quot;text&quot;: &quot;def get_default_variables(self):\n    return [\n        \&quot;hs\&quot;,\n        \&quot;tp\&quot;,\n        \&quot;fpI\&quot;,\n        \&quot;tm1\&quot;,\n        \&quot;tm2\&quot;,\n        \&quot;tmp\&quot;,\n        \&quot;Pdir\&quot;,\n        \&quot;thq\&quot;,\n        \&quot;hs_sea\&quot;,\n        \&quot;tp_sea\&quot;,\n        \&quot;thq_sea\&quot;,\n        \&quot;hs_swell\&quot;,\n        \&quot;tp_swell\&quot;,\n        \&quot;thq_swell\&quot;,\n    ]&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/internal/metno/met_products.py&quot;,
+        &quot;excerpt_id&quot;: &quot;wave-dates&quot;,
+        &quot;kind&quot;: &quot;source_behavior&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/internal/metno/met_products.py:Nora3WaveSub.get_dates:L116&quot;,
+        &quot;member_sha256&quot;: &quot;9b8dc10e5b953aaff7720914e8e25111a2a11d6ec5954c215ce6511d0653accf&quot;,
+        &quot;sha256&quot;: &quot;9c9396cedaff8a6e322311761be7881adf464f47f14a24f0400c18df579f5334&quot;,
+        &quot;text&quot;: &quot;def get_dates(self, start_date, end_date):\n    return pd.date_range(\n        start=datetime.strptime(start_date, \&quot;%Y-%m-%d\&quot;).strftime(\&quot;%Y-%m\&quot;),\n        end=datetime.strptime(end_date, \&quot;%Y-%m-%d\&quot;).strftime(\&quot;%Y-%m\&quot;),\n        freq=\&quot;MS\&quot;,\n    )&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/internal/metno/met_products.py&quot;,
+        &quot;excerpt_id&quot;: &quot;current-variables&quot;,
+        &quot;kind&quot;: &quot;source_behavior&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/internal/metno/met_products.py:Norkyst800.get_default_variables:L433&quot;,
+        &quot;member_sha256&quot;: &quot;9b8dc10e5b953aaff7720914e8e25111a2a11d6ec5954c215ce6511d0653accf&quot;,
+        &quot;sha256&quot;: &quot;e81cc94080543ca1538878920b7de64bccda94d411e81b813cfb9f71dfea0457&quot;,
+        &quot;text&quot;: &quot;def get_default_variables(self):\n    return [\&quot;salinity\&quot;, \&quot;temperature\&quot;, \&quot;u\&quot;, \&quot;v\&quot;, \&quot;zeta\&quot;]&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/internal/metno/met_products.py&quot;,
+        &quot;excerpt_id&quot;: &quot;product-keys&quot;,
+        &quot;kind&quot;: &quot;source_behavior&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/internal/metno/met_products.py:find_product:L26-L46&quot;,
+        &quot;member_sha256&quot;: &quot;9b8dc10e5b953aaff7720914e8e25111a2a11d6ec5954c215ce6511d0653accf&quot;,
+        &quot;sha256&quot;: &quot;c81d3149aac6bab834044ad3a1a329c80e98f42c5cb3055e3295e91d52d407ed&quot;,
+        &quot;text&quot;: &quot;match name:\n        case \&quot;NORA3_wave_sub\&quot;:\n            return Nora3WaveSub(name)\n        case \&quot;NORA3_wave\&quot;:\n            return Nora3Wave(name)\n        case \&quot;NORA3_wind_sub\&quot;:\n            return NORA3WindSub(name)\n        case \&quot;NORAC_wave\&quot;:\n            return NORACWave(name)\n        case \&quot;NORA3_wind_wave\&quot;:\n            return NORA3WindWaveCombined(name)\n        case \&quot;NORA3_stormsurge\&quot;:\n            return NORA3StormSurge(name)\n        case \&quot;NORA3_atm_sub\&quot;:\n            return NORA3AtmSub(name)\n        case \&quot;NORA3_atm3hr_sub\&quot;:\n            return NORA3Atm3hrSub(name)\n        case \&quot;NORKYST800\&quot;:\n            return Norkyst800(name)\n        case \&quot;NORKYST800_V3\&quot;:\n            return Norkyst800_v3(name)&quot;
+      },
+      {
+        &quot;archive_member&quot;: &quot;metocean_api/ts/internal/metno/met_products.py&quot;,
+        &quot;excerpt_id&quot;: &quot;depth-forwarding&quot;,
+        &quot;kind&quot;: &quot;source_behavior&quot;,
+        &quot;locator&quot;: &quot;metocean_api/ts/internal/metno/met_products.py:Norkyst800.import_data:L503&quot;,
+        &quot;member_sha256&quot;: &quot;9b8dc10e5b953aaff7720914e8e25111a2a11d6ec5954c215ce6511d0653accf&quot;,
+        &quot;sha256&quot;: &quot;3afcdcfdf9410b7d54de1aa9bde27d84eee484019dbcd97193b73ef492bb2de0&quot;,
+        &quot;text&quot;: &quot;return self._combine_temporary_files(ts, save_csv, save_nc, use_cache, tempfiles, lon_near, lat_near, height=ts.height)&quot;
+      }
+    ],
+    &quot;http_status&quot;: 200,
+    &quot;publisher_sha256&quot;: &quot;3270d81679ee0ac21a9f90e74ba82afe1f83362478bc9678b65f2f41ff99b9f2&quot;,
+    &quot;retrieved_utc&quot;: &quot;2026-10-25T01:37:30Z&quot;,
+    &quot;source_id&quot;: &quot;release&quot;,
+    &quot;source_sha256&quot;: &quot;3270d81679ee0ac21a9f90e74ba82afe1f83362478bc9678b65f2f41ff99b9f2&quot;,
+    &quot;source_url&quot;: &quot;https://files.pythonhosted.org/packages/a0/c6/685670081040e9ce828a2e9dce3f94ca779a1c3f62803163b79efc0c093b/metocean_api-1.1.14-py3-none-any.whl&quot;
+  }
+]
+</pre></details>
+<h2>Historical example evidence boundary</h2><pre>{
+  &quot;evidence_boundary&quot;: &quot;The current source inspection confirms metocean-api TimeSeries declarations only. No statistics skill examples are changed or presented as runnable here; the local reference pack is the existing route-specific reference, not new package-version verification.&quot;,
+  &quot;previously_reported_examples_not_current_assertions&quot;: [
+    &quot;plots.plot_multi_diagnostic_return_levels&quot;,
+    &quot;plots.plot_directional_return_periods&quot;,
+    &quot;plots.plot_joint_2D_contour&quot;
+  ],
+  &quot;status&quot;: &quot;Not reverified against a current metocean-stats release in this scope.&quot;,
+  &quot;unverified_historical_examples&quot;: [
+    &quot;EVA&quot;,
+    &quot;return_periods.calculate&quot;,
+    &quot;joint_probability.fit&quot;,
+    &quot;contours.IFORM&quot;,
+    &quot;DirectSampling&quot;,
+    &quot;directional.sector_stats&quot;
+  ]
+}
+</pre>
+<h2>Skipped</h2><pre>[
+  &quot;Existing version-pin work&quot;,
+  &quot;Existing reference-pack work&quot;,
+  &quot;Existing skill corrections&quot;,
+  &quot;ERA5 duplication&quot;,
+  &quot;Engineering benchmarking&quot;,
+  &quot;Production adapter and dependency implementation&quot;,
+  &quot;Dataset/granule downloads and live numerical checks&quot;
+]
+</pre>
+<h2>Known limits</h2><pre>[
+  &quot;No package was installed or imported; archive members were read by name without extraction or build execution.&quot;,
+  &quot;The catalogue and publisher terms are general; per-file exceptions and exact product applicability remain unresolved. Package LGPL-2.1-or-later does not grant dataset rights.&quot;,
+  &quot;Two requests returned HTTP 404: a package-linked project page and an initially misresolved relative catalogue link. Current catalogue links were resolved using the effective redirected catalogue URL. All successful and unsuccessful bodies are retained outside the checkout with request time, status, command exit and digest.&quot;,
+  &quot;NORA3 descriptive text contains historical production dates; no current temporal-coverage claim is made. Current NorKyst v3 metadata is not proof of equivalence to the package legacy route.&quot;,
+  &quot;Embedded excerpts have independent digests; full HTTP bodies remain outside the repository. Regeneration checks excerpt consistency and local source digests. The optional evidence directory additionally checks full retained-body digests.&quot;,
+  &quot;Offline tests establish validator behavior only; no live data access, engineering qualification, redistribution approval or validated benchmark is claimed.&quot;,
+  &quot;Package licensing, dataset rights, API existence and engineering qualification must be verified separately.&quot;
+]
+</pre>
+</body></html>
