@@ -5,11 +5,13 @@ No engineering coefficients or acceptance limits are used in these tests.
 """
 
 import json
-from datetime import datetime
+import socket
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
 import yaml
+
 from worldenergydata.scheduler.jobs.base import AbstractJob, JobResult
 from worldenergydata.scheduler.scheduler import DataScheduler
 
@@ -21,7 +23,9 @@ class WritingJob(AbstractJob):
     def run(self, config):
         output_dir = Path(config["output_dir"])
         output_dir.mkdir(parents=True, exist_ok=True)
-        (output_dir / "observations.csv").write_text("value\nfirst\n")
+        (output_dir / "observations.csv").write_text(
+            "value\nfirst\n", encoding="utf-8", newline="\n"
+        )
         now = datetime.now()
         return JobResult(self.name, now, now, "success", 1, None)
 
@@ -46,7 +50,9 @@ def make_scheduler(root, job, **settings):
                     "retry_max": 1,
                 },
             }
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     scheduler = DataScheduler(str(config_path))
     scheduler.register_job(job)
@@ -90,8 +96,13 @@ def test_payload_and_manifest_share_root_from_another_working_directory(
     monkeypatch.chdir(elsewhere)
     assert scheduler.run_once(job.name).status == "success"
     expected = root / (setting or "data/modules/example")
-    assert (expected / "observations.csv").read_text() == "value\nfirst\n"
-    assert json.loads((expected / "manifest.json").read_text())["status"] == "success"
+    assert (expected / "observations.csv").read_text(
+        encoding="utf-8"
+    ) == "value\nfirst\n"
+    assert (
+        json.loads((expected / "manifest.json").read_text(encoding="utf-8"))["status"]
+        == "success"
+    )
     assert not (elsewhere / "data").exists()
     assert "_scheduler_repo_root" not in scheduler._config.jobs[0]
 
@@ -133,9 +144,11 @@ def test_success_preserves_timestamped_payloads_without_recursive_archives(root)
     output_dir = root / "data" / "modules" / "example"
     first = next((output_dir / "runs").iterdir())
     assert first.name.endswith("Z")
-    assert (first / "observations.csv").read_text() == "value\nfirst\n"
-    (output_dir / "observations.csv").write_text("changed\n")
-    assert (first / "observations.csv").read_text() == "value\nfirst\n"
+    assert (first / "observations.csv").read_text(encoding="utf-8") == "value\nfirst\n"
+    (output_dir / "observations.csv").write_text(
+        "changed\n", encoding="utf-8", newline="\n"
+    )
+    assert (first / "observations.csv").read_text(encoding="utf-8") == "value\nfirst\n"
     scheduler.run_once("example_refresh")
     snapshots = list((output_dir / "runs").iterdir())
     assert len(snapshots) == 2  # Hand count: one snapshot per successful run.
@@ -200,12 +213,16 @@ def test_refresh_metadata_does_not_count_historical_runs(root):
     """One live file plus one historical copy still means one current file."""
     from worldenergydata.scheduler.jobs.base import write_refresh_metadata
 
-    (root / "observations.csv").write_text("value\nfirst\n")
+    (root / "observations.csv").write_text(
+        "value\nfirst\n", encoding="utf-8", newline="\n"
+    )
     history = root / "runs" / "earlier"
     history.mkdir(parents=True)
-    (history / "observations.csv").write_text("value\nold\n")
+    (history / "observations.csv").write_text(
+        "value\nold\n", encoding="utf-8", newline="\n"
+    )
     write_refresh_metadata("example", root, 1)
-    metadata = json.loads((root / "_metadata.json").read_text())
+    metadata = json.loads((root / "_metadata.json").read_text(encoding="utf-8"))
     assert metadata["file_count"] == 1  # Hand count of the live file above.
     assert metadata["total_size_bytes"] == len(b"value\nfirst\n")
 
@@ -219,7 +236,7 @@ def test_snapshot_rejects_symlink_payloads(root, nested):
     parent = payload / "nested" if nested else payload
     parent.mkdir(exist_ok=True)
     outside = root / "outside.csv"
-    outside.write_text("private\n")
+    outside.write_text("private\n", encoding="utf-8", newline="\n")
     (parent / "link.csv").symlink_to(outside)
     with pytest.raises(ValueError, match="symlink"):
         snapshot_outputs(payload)
@@ -242,12 +259,12 @@ def test_spain_metadata_excludes_run_copies(root):
     """One live CSV plus a historical copy gives file_count = one."""
     from worldenergydata.scheduler.jobs.spain_cores_refresh import SpainCoresRefreshJob
 
-    (root / "live.csv").write_text("value\nfirst\n")
+    (root / "live.csv").write_text("value\nfirst\n", encoding="utf-8", newline="\n")
     earlier = root / "runs" / "earlier"
     earlier.mkdir(parents=True)
-    (earlier / "old.csv").write_text("value\nold\n")
+    (earlier / "old.csv").write_text("value\nold\n", encoding="utf-8", newline="\n")
     SpainCoresRefreshJob._write_refresh_metadata(root, 1)
-    metadata = json.loads((root / "_metadata.json").read_text())
+    metadata = json.loads((root / "_metadata.json").read_text(encoding="utf-8"))
     assert metadata["files"] == ["live.csv"]
 
 
@@ -271,7 +288,103 @@ def test_metocean_archive_obeys_output_dir(root, monkeypatch):
         }
     )
     assert result.status == "success"
-    assert calls == [root / "data/modules/metocean"]
+    assert calls == [root / "data/modules/metocean/archive"]
+
+
+@pytest.fixture
+def archive_payload(monkeypatch):
+    """Replace upstream acquisition while retaining real storage and parsing."""
+    from worldenergydata.metocean import update
+    from worldenergydata.metocean.clients.archive_transport import Download
+    from worldenergydata.metocean.clients.ndbc_client import NDBCClient
+
+    raw = b"#YY MM DD hh mm WVHT DPD\n2020 01 02 03 00 1.5 8.3\n"
+    requests = []
+
+    def fetch_resource(self, url, transport, headers=None):
+        requests.append(url)
+        return Download(url, raw, 200, {}, datetime.now(timezone.utc))
+
+    def forbid_network(*args, **kwargs):
+        raise AssertionError("Real connections are forbidden in this regression")
+
+    source = {
+        "id": "ndbc_archive",
+        "update_enabled": True,
+        "terms_rechecked": True,
+        "account_required": False,
+        "terms_quote": "Synthetic fixture only",
+    }
+    monkeypatch.setattr(update, "get_source", lambda name: source)
+    monkeypatch.setattr(NDBCClient, "fetch_resource", fetch_resource)
+    monkeypatch.setattr(socket.socket, "connect", forbid_network)
+    monkeypatch.setattr(socket, "create_connection", forbid_network)
+    return raw, requests
+
+
+def read_synthetic_archive(archive, raw):
+    from worldenergydata.metocean.database.archive_store import ArchiveStore
+
+    store = ArchiveStore(archive)
+    assert len(store.entries) == 1
+    assert store.verify() == []
+    entry = store.entries[0]
+    rows = store.read_rows(entry)
+    assert len(rows) == 2  # One height and one period from the literal input.
+    assert [row["value"] for row in rows] == pytest.approx([1.5, 8.3])
+    assert (archive / entry["raw_path"]).read_bytes() == raw
+    return store.entries, rows
+
+
+@pytest.mark.parametrize("scheduled", [False, True])
+def test_metocean_archive_preserves_provenance_across_two_runs(
+    root, archive_payload, scheduled
+):
+    """Both scheduler runs retain usable provenance; legacy calls still work."""
+    from worldenergydata.scheduler.jobs.metocean_refresh import MetoceanRefreshJob
+
+    raw, requests = archive_payload
+    job = MetoceanRefreshJob()
+    legacy = root / "legacy"
+    output = root / "results"
+    settings = {
+        "data_root": legacy.as_posix(),
+        "archive": {
+            "stations": [{"id": "SYN001", "start_year": 2020, "end_year": 2020}]
+        },
+    }
+    if scheduled:
+        scheduler = make_scheduler(root, job, output_dir=output.as_posix(), **settings)
+
+    def run():
+        return scheduler.run_once(job.name) if scheduled else job.run(settings)
+
+    first = run()
+    second = run()
+    assert [first.status, second.status] == ["success", "success"]
+    # One new height gives one updated record; a cached repeat needs no request.
+    assert first.records_updated == 1
+    assert second.records_updated == 0
+    assert len(requests) == 1
+    archive = output / "archive" if scheduled else legacy
+    entries, rows = read_synthetic_archive(archive, raw)
+    if scheduled:
+        assert not legacy.exists()
+        health = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
+        assert health["status"] == "success"
+        snapshots = list((output / "runs").iterdir())
+        assert len(snapshots) == 2
+        for snapshot in snapshots:
+            assert read_synthetic_archive(snapshot / "archive", raw) == (entries, rows)
+            assert (snapshot / "archive/manifest.json").read_bytes() == (
+                archive / "manifest.json"
+            ).read_bytes()
+            assert (
+                json.loads((snapshot / "manifest.json").read_text(encoding="utf-8"))[
+                    "status"
+                ]
+                == "success"
+            )
 
 
 def test_standalone_config_anchors_relative_outputs_at_its_directory(root):
@@ -286,7 +399,9 @@ def test_standalone_config_anchors_relative_outputs_at_its_directory(root):
                     "status_file": str(root / "status.json"),
                 },
             }
-        )
+        ),
+        encoding="utf-8",
+        newline="\n",
     )
     scheduler = DataScheduler(str(config))
     scheduler.register_job(WritingJob())

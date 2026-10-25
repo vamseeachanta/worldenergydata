@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
 from worldenergydata.common.data_resolver import get_module_data_safe
 from worldenergydata.metocean.clients.open_meteo_client import OpenMeteoClient
 from worldenergydata.scheduler.jobs.base import (
@@ -31,13 +32,17 @@ class MetoceanRefreshJob(AbstractJob):
     default_output_dir = _DEFAULT_OUTPUT_DIR
 
     def run(self, config: dict) -> JobResult:
-        """Fetch Open-Meteo forecasts and write one Parquet file per location."""
+        """Fetch forecasts or retain an archive below scheduler health metadata.
+
+        With output_dir, archive provenance resides in its archive subdirectory.
+        Standalone archive calls without output_dir retain the data_root layout.
+        """
         start = datetime.now()
         if "archive" in config:
             from worldenergydata.metocean.update import update_archive
 
             archive_dir = (
-                self.resolve_output_dir(config)
+                self.resolve_output_dir(config) / "archive"
                 if "output_dir" in config
                 else Path(config["data_root"])
             )
