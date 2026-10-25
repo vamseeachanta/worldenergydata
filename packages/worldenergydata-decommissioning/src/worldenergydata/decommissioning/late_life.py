@@ -145,15 +145,12 @@ def _estimate_cessation_year(
         Estimated cessation year (calendar year), 0 if not applicable, or
         None when a missing/non-finite rate prevents evaluation.
     """
-    if (
-        current_bopd is None
-        or not isfinite(current_bopd)
-        or decline_pct_5yr is None
-        or not isfinite(decline_pct_5yr)
-    ):
+    if current_bopd is None or not isfinite(current_bopd):
         return None
     if current_bopd <= _NEAR_ZERO_BOPD:
         return 0
+    if decline_pct_5yr is None or not isfinite(decline_pct_5yr):
+        return None
     if decline_pct_5yr <= 0:
         return 0
 

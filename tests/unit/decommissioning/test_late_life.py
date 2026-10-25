@@ -302,6 +302,26 @@ def test_observed_zero_final_month_remains_known(identifier):
     assert result.production_data_status == "available"
 
 
+@pytest.mark.parametrize(
+    "oil_bbl, expected_bopd, expected_cessation",
+    [(0.0, 0.0, 0), (150.0, 5.0, 0), (300.0, 10.0, 0), (330.0, 11.0, None)],
+)
+def test_missing_baseline_preserves_observed_idle_cessation(
+    identifier, oil_bbl, expected_bopd, expected_cessation
+):
+    """Unknown decline prevents extrapolation, not a measured idle sentinel."""
+    # Existing month conversion: 0/30=0, 150/30=5, 300/30=10, 330/30=11 bopd.
+    # Rates through 10 bopd retain sentinel 0; an active rate needs a decline.
+    frame = pd.DataFrame(
+        {"year": [2020, 2025], "month": [1, 1], "oil_bbl": [float("nan"), oil_bbl]}
+    )
+    result = identifier.assess_field("Synthetic", frame)
+    assert result.decline_pct_5yr is None
+    assert result.current_production_bopd == pytest.approx(expected_bopd)
+    assert result.production_data_status == "available"
+    assert result.estimated_cessation_year == expected_cessation
+
+
 def test_portfolio_retains_unknown_final_month(identifier):
     """Each missing endpoint must remain unknown through portfolio screening."""
     frame = pd.DataFrame({"year": [2025], "month": [1], "oil_bbl": [float("nan")]})
