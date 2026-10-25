@@ -4,19 +4,24 @@ Summary: section 11 defines date-range completeness for issue #1335, slice 1.
 Sections 1–10 retain the historical evidence at the code revision below;
 section 11 supersedes the F13/F19 dispositions for the current implementation.
 
+The [method coverage proposal](method-overlap.md) for #1337 separately inventories
+the package methods and independent collector/export path. It proposes rows;
+the historical registered-coverage evidence below remains unchanged.
+
 ## Revision history
 
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 3 | 2026-10-19 | Added date completeness detection and tests so empty or missing dates cannot imply complete bounds. Earlier revision evidence remains below. |
+| 4 | 2026-10-25 | Linked the explicit method coverage proposal for #1337 without replacing the historical registry evidence. |
 
 | Header | Value |
 | --- | --- |
 | Module | baker_hughes |
 | Repository | worldenergydata |
 | Path | packages/worldenergydata-baker_hughes/src/worldenergydata/baker_hughes |
-| Pack revision | 3 |
-| Pack date | 2026-10-19 |
+| Pack revision | 4 |
+| Pack date | 2026-10-25 |
 | Code revision | b1394197a66f95d78615425b4e1ad4ff78bd9de2 |
 | Analysis family | EC; data pipeline; AQG r0 Python calculations gate set |
 | Quality role | Calculations quality manager; deputy: to be appointed |
