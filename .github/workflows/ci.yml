@@ -5,7 +5,7 @@ on:
     branches: [main, develop]
   pull_request:
     # Metadata edits copy the last full result; base changes run the full gate.
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened, edited, ready_for_review]
   schedule:
     - cron: "17 9 * * *" # nightly full matrix (~04:17 CT)
   workflow_dispatch:
@@ -24,7 +24,8 @@ env:
 jobs:
   mode:
     name: Gate mode
-    runs-on: ubuntu-latest
+    if: (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -82,22 +83,18 @@ jobs:
   domain-tests:
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name == 'pull_request')
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
   # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
-      github.event_name == 'push' ||
-      github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'ci-full')))
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && ( github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ci-full'))))
     strategy:
       fail-fast: false
       matrix:
@@ -227,10 +224,11 @@ jobs:
 
   lint:
     name: Lint (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -326,10 +324,11 @@ jobs:
 
   type-check:
     name: Type Check (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -417,10 +416,11 @@ jobs:
 
   security:
     name: Security Scan (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true'))
 
     steps:
       - name: Checkout repository
@@ -511,11 +511,11 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
-      == 'success'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result == 'success')
 
     steps:
       - name: Checkout repository
@@ -605,11 +605,11 @@ jobs:
 
   docs:
     name: Documentation (full)
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
-      !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
-      == 'pull_request'
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name == 'pull_request')
 
     steps:
       - name: Checkout repository
@@ -700,8 +700,10 @@ jobs:
   lint-gate:
     name: Lint
     needs: [mode, lint]
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled())
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -736,8 +738,10 @@ jobs:
   type-check-gate:
     name: Type Check
     needs: [mode, type-check]
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled())
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -772,8 +776,10 @@ jobs:
   security-gate:
     name: Security Scan
     needs: [mode, security]
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled())
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -808,8 +814,10 @@ jobs:
   docs-gate:
     name: Documentation
     needs: [mode, docs]
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && github.event_name == 'pull_request')
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -844,8 +852,10 @@ jobs:
   pr-gate:
     name: Test (PR gate)
     needs: [mode, domain-tests]
-    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.draft == false) &&
+      (!cancelled() && github.event_name == 'pull_request')
+    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
