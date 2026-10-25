@@ -66,12 +66,17 @@ def _select_member(archive: zipfile.ZipFile) -> str:
 
 def _normalize_wells(frame: pd.DataFrame) -> pd.DataFrame:
     counties = load_kansas_counties()
+    frame = frame.replace(r"^\s*$", pd.NA, regex=True)
     result = pd.DataFrame()
     result["well_kid"] = frame.get("KID", pd.Series(dtype="string")).astype("string")
     result["api10"] = frame.get("API_NUMBER", pd.Series(dtype="string")).map(_api10)
     result["api14"] = frame.get("API_NUM_NODASH", pd.Series(dtype="string")).astype(
         "string"
     )
+    # Issue #1352 (2026), defect 4: API14 requires exactly fourteen digits.
+    valid_api14 = result["api14"].str.fullmatch(r"\d{14}", na=False)
+    result["api14"] = result["api14"].where(valid_api14, pd.NA)
+    result["quality_flags"] = valid_api14.map({True: "", False: "invalid_api14"})
     result["api_county_code"] = result["api10"].map(_county_code)
     result["county_name"] = result["api_county_code"].map(counties)
     result["field_name"] = frame.get("FIELD", pd.Series(dtype="string"))
@@ -92,6 +97,7 @@ def _normalize_wells(frame: pd.DataFrame) -> pd.DataFrame:
         date_failures += failures
     result.attrs["quality"] = {
         "well_row_count": len(result),
+        "wells_invalid_api14_count": int((~valid_api14).sum()),
         "wells_missing_api10_count": int(result["api10"].isna().sum()),
         "wells_missing_depth_count": int(result["reference_depth_ft"].isna().sum()),
         "wells_date_parse_failure_count": date_failures,
