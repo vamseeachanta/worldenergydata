@@ -1,5 +1,13 @@
 name: CI
 
+# PR_GATE_RUNNER: only self-hosted-arm64 maps to [self-hosted, linux, ARM64].
+# Selection requires a same-repository pull_request and ARM64 eligibility.
+# Eligibility is fixed false: locked nlopt 2.10.0 has no Linux aarch64 wheel
+# or source archive. All jobs stay on ubuntu-latest, even with that token.
+# Unset, empty, malformed and unknown values, forks and other events use hosted.
+# Linux tooling: bash, git, Python and uv. Unsetting affects future routing;
+# it cannot undo prior execution or clean runner state.
+
 on:
   push:
     branches: [main, develop]
@@ -18,13 +26,20 @@ concurrency:
     ${{ github.event_name == 'pull_request' &&
     (github.event.action != 'edited' || github.event.changes.base != null) }}
 
+permissions:
+  contents: read
+
 env:
   PYTHON_VERSION_DEFAULT: "3.11"
 
 jobs:
   mode:
     name: Gate mode
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -84,12 +99,19 @@ jobs:
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
       == 'pull_request'
+    # The inspected reusable contract keeps discover, test-domain and aggregate
+    # on ubuntu-latest and exposes no runner input. Caller runs-on cannot flow
+    # into it; its mutable main ref is independent of PR_GATE_RUNNER.
     uses: vamseeachanta/workspace-hub/.github/workflows/domain-matrix.yml@main
 
   # ------------------------------------------------------------ full matrix --
   test:
     name: Test Python ${{ matrix.python-version }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && (
@@ -107,6 +129,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 1
@@ -222,12 +245,14 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
           verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     name: Lint (full)
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -236,6 +261,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 1
@@ -326,7 +352,11 @@ jobs:
 
   type-check:
     name: Type Check (full)
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -335,6 +365,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 1
@@ -417,7 +448,11 @@ jobs:
 
   security:
     name: Security Scan (full)
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true')
@@ -426,6 +461,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 0
@@ -511,7 +547,11 @@ jobs:
 
   build:
     name: Build Package
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode, lint] # test job skips on unlabeled PRs (module gate covers them)
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && needs.lint.result
@@ -521,6 +561,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 1
@@ -605,7 +646,11 @@ jobs:
 
   docs:
     name: Documentation (full)
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     needs: [mode]
     if: >-
       !cancelled() && (needs.mode.result != 'success' || needs.mode.outputs.replay != 'true') && github.event_name
@@ -615,6 +660,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
           fetch-depth: 1
@@ -701,7 +747,11 @@ jobs:
     name: Lint
     needs: [mode, lint]
     if: ${{ !cancelled() }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -737,7 +787,11 @@ jobs:
     name: Type Check
     needs: [mode, type-check]
     if: ${{ !cancelled() }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -773,7 +827,11 @@ jobs:
     name: Security Scan
     needs: [mode, security]
     if: ${{ !cancelled() }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -809,7 +867,11 @@ jobs:
     name: Documentation
     needs: [mode, docs]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
@@ -845,7 +907,11 @@ jobs:
     name: Test (PR gate)
     needs: [mode, domain-tests]
     if: ${{ !cancelled() && github.event_name == 'pull_request' }}
-    runs-on: ${{ vars.PR_GATE_RUNNER && fromJSON(vars.PR_GATE_RUNNER) || 'ubuntu-latest' }}
+    runs-on: >-
+      ${{ github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      vars.PR_GATE_RUNNER == 'self-hosted-arm64' && false &&
+      fromJSON('["self-hosted", "linux", "ARM64"]') || 'ubuntu-latest' }}
     permissions:
       contents: read
       actions: read
