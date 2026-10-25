@@ -7,6 +7,7 @@ Expected arithmetic is written out below; fiscal applicability is not tested.
 from unittest.mock import MagicMock
 
 import pytest
+
 from worldenergydata.west_africa.analysis import field_economics as fiscal
 from worldenergydata.west_africa.eiti import eiti_api as eiti
 from worldenergydata.west_africa.nigeria import blend_production as blends
@@ -243,6 +244,86 @@ def test_pdf_units_are_not_assumed(monkeypatch):
     pdf_fixture(monkeypatch, [("March 2024", [table])])
     with pytest.raises(nuprc.NuprcAPIError, match="units"):
         nuprc.parse_blend_table_from_pdf(b"synthetic")
+
+
+@pytest.mark.parametrize(
+    "headers,values",
+    [
+        (["Volume (barrels)", "Production (kbd)"], ["8000", "8"]),
+        (["Production (kbd)", "Volume (barrels)"], ["8", "8000"]),
+        (["Quantity", "Production (kbd)"], ["8000", "8"]),
+        (["Volume (barrels)", "thousand barrels per day"], ["8000", "8"]),
+    ],
+)
+def test_pdf_selects_the_column_with_explicit_rate_units(monkeypatch, headers, values):
+    """Synthetic 8000 barrels must never replace the explicitly labeled 8 kbd."""
+    table = [["Blend", *headers], ["ALPHA", *values]]
+    pdf_fixture(monkeypatch, [("March 2024", [table])])
+    rows = nuprc.parse_blend_table_from_pdf(b"synthetic")
+    assert rows == [{"blend": "ALPHA", "volume_kbd": 8.0, "month": 3, "year": 2024}]
+
+
+@pytest.mark.parametrize(
+    "headers,text",
+    [
+        (["Volume (barrels)"], "March 2024; unrelated comparison in kbd"),
+        (["Production"], "March 2024; unrelated comparison in kbd"),
+        (["Volume (barrels)"], "March 2024; comparison: thousand barrels per day"),
+        (["Production (kbd / barrels)"], "March 2024"),
+        (["Production (bopd / kbd)"], "March 2024"),
+        (["Production (tonnes / kbd)"], "March 2024"),
+        (["Production (kbd / month)"], "March 2024"),
+        (["Production (kbd)", "Quantity (kbd)"], "March 2024"),
+    ],
+)
+def test_pdf_rejects_unbound_conflicting_or_ambiguous_units(monkeypatch, headers, text):
+    """Only a unique value-column label can establish its daily-rate units."""
+    table = [["Blend", *headers], ["ALPHA", *(["8"] * len(headers))]]
+    pdf_fixture(monkeypatch, [(text, [table])])
+    with pytest.raises(nuprc.NuprcAPIError, match="units"):
+        nuprc.parse_blend_table_from_pdf(b"synthetic")
+
+
+@pytest.mark.parametrize(
+    "period",
+    [
+        "January-March 2024",
+        "January–March 2024",
+        "January—March 2024",
+        "January to March 2024",
+        "January through March 2024",
+        "January and March 2024",
+        "January, February and March 2024",
+        "January/March 2024",
+        "Jan-March 2024",
+        "January-Mar 2024",
+        "March 2024 (January-February average)",
+        "December 2023-March 2024",
+        "March-March 2024",
+        "March 2024 to March 2024",
+    ],
+)
+def test_loader_rejects_multi_month_average(monkeypatch, period):
+    """A March request must reject a quarterly average ending in March."""
+    table = [["Blend", "Production (kbd)"], ["ALPHA", "8"]]
+    pdf_fixture(monkeypatch, [(f"Average production {period} (kbd)", [table])])
+    loader = blends.BlendProductionLoader()
+    monkeypatch.setattr(loader._client, "download_pdf", lambda _: b"synthetic")
+    with pytest.raises(nuprc.NuprcAPIError, match="period"):
+        loader.load(2024, 3, pdf_url="https://example.org/report.pdf")
+
+
+@pytest.mark.parametrize(
+    "header", ["Production (kbd)", "Production (thousand barrels /day)"]
+)
+def test_loader_accepts_repeated_single_month_labels(monkeypatch, header):
+    """Repeated labels for one month do not create a period range."""
+    table = [["Blend", f"{header} March 2024"], ["ALPHA", "8"]]
+    pdf_fixture(monkeypatch, [("Monthly production MARCH 2024", [table])])
+    loader = blends.BlendProductionLoader()
+    monkeypatch.setattr(loader._client, "download_pdf", lambda _: b"synthetic")
+    records = loader.load(2024, 3, pdf_url="https://example.org/report.pdf")
+    assert [(r.volume_kbd, r.month, r.year) for r in records] == [(8.0, 3, 2024)]
 
 
 def test_zero_and_distinct_periods_are_preserved(monkeypatch):

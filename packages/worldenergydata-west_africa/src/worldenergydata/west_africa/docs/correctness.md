@@ -10,14 +10,23 @@ and legal fiscal applicability remain **NOT_EVALUATED**.
 | Revision | Date | What changed and why |
 | --- | --- | --- |
 | 1 | 2026-10-21 | Document report validation and fiscal accounting to prevent silent misattribution and duplicate allocations. |
+| 2 | 2026-10-25 | Bind rate units to the value column and reject shared-year month ranges to prevent barrel totals and quarterly averages from being accepted as monthly daily rates. |
 
 ## Report identity and failure handling
 
-The PDF parser supports blend tables explicitly labeled `kbd` or thousand
-barrels per day, with one unambiguous full month name and year in the page
-text or table header. It does not infer a rate from a monthly barrel total.
-Multi-period tables, abbreviated month labels, and unsupported units raise
-`NuprcAPIError`; additional layouts need source fixtures before support is added.
+The PDF parser supports blend tables with exactly one value column explicitly
+labeled `kbd` or thousand barrels per day. A barrel-volume column may accompany
+the rate column; its values are not selected. Page text or another column cannot
+establish units for an unlabeled value column. Conflicting unit labels, multiple
+rate columns and unknown header qualifiers raise `NuprcAPIError`; additional
+layouts need source fixtures before support is added.
+
+One unambiguous full month name and year must appear in the page text or table
+header. Repeated labels for that same month are permitted. Month ranges and
+multiple named months, including shared-year ranges such as January–March 2024,
+raise `NuprcAPIError` before matching the requested month. Abbreviated labels
+cannot establish the report period, and abbreviated endpoints also trigger range
+rejection. No rate is inferred from a monthly barrel total.
 
 Total, subtotal and grand-total labels are excluded. Equal repeated rows with
 the same normalized blend, year and month are retained once; different values

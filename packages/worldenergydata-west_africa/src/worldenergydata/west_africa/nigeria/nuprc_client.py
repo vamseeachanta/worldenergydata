@@ -196,6 +196,22 @@ def _report_period(text: str):
     names = {
         name.casefold(): month for month, name in enumerate(calendar.month_name) if name
     }
+    all_names = names | {
+        name.casefold(): month for month, name in enumerate(calendar.month_abbr) if name
+    }
+    month_pattern = r"\b(?:" + "|".join(all_names) + r")\b"
+    named_months = {
+        all_names[name.casefold()]
+        for name in re.findall(month_pattern, text, flags=re.IGNORECASE)
+    }
+    # A shared trailing year must not turn a range into its final month.
+    range_pattern = (
+        month_pattern
+        + r"\.?(?:[\s,\-/]+\d{4})?\s*(?:[-–—/&]|\b(?:to|through|and)\b)\s*"
+        + month_pattern
+    )
+    if len(named_months) != 1 or re.search(range_pattern, text, flags=re.IGNORECASE):
+        raise NuprcAPIError("Report period is missing or ambiguous")
     pattern = r"\b(" + "|".join(names) + r")[\s,\-/]+(\d{4})\b"
     periods = {
         (int(year), names[name.casefold()])
@@ -204,6 +220,32 @@ def _report_period(text: str):
     if len(periods) != 1:
         raise NuprcAPIError("Report period is missing or ambiguous")
     return periods.pop()
+
+
+def _kbd_column(header: List[str], blend_col: int) -> int:
+    """Require one column with explicit kbd units and no conflicting label.
+
+    Only value labels and calendar labels may accompany the unit. Unknown
+    qualifiers need a supported source fixture, rather than unit inference.
+    """
+    units = r"\bkbd\b|\bthousand barrels\s+(?:per\s+day|/\s*day)\b"
+    labels = (
+        r"\b(?:production|volume|quantity|rate|average|daily|monthly|crude|oil|"
+        r"condensate|"
+        + "|".join(name.lower() for name in calendar.month_name if name)
+        + r"|\d{4})\b"
+    )
+    candidates = []
+    for idx, cell in enumerate(header):
+        if idx == blend_col or not re.search(units, cell):
+            continue
+        remainder = re.sub(labels, "", re.sub(units, "", cell))
+        if re.search(r"[^\s()[\],:;.\-]", remainder):
+            raise NuprcAPIError("Production units conflict or are unsupported")
+        candidates.append(idx)
+    if len(candidates) != 1:
+        raise NuprcAPIError("Production units are missing or ambiguous")
+    return candidates[0]
 
 
 def _parse_blend_rows_from_table(
@@ -227,16 +269,16 @@ def _parse_blend_rows_from_table(
 
     # Identify column indices heuristically
     blend_col = _find_column(header, ["blend", "stream", "crude", "name"])
-    vol_col = _find_column(header, ["volume", "kbd", "production", "quantity"])
+    vol_col = _find_column(
+        header, ["volume", "kbd", "production", "quantity", "thousand barrels"]
+    )
 
     if blend_col is None or vol_col is None or blend_col == vol_col:
         return []
 
     # No volume-to-rate inference: only explicit thousand-barrels/day labels
     # are supported. BIPM SI Brochure, 9th ed. (2019), section 3, Table 7.
-    context = " ".join(header) + " " + page_text.lower()
-    if not re.search(r"\bkbd\b|thousand barrels (?:per day|/day)", context):
-        raise NuprcAPIError("Production units are not explicitly kbd")
+    vol_col = _kbd_column(header, blend_col)
     year, month = _report_period(" ".join(header) + " " + page_text)
 
     for row in table[1:]:
