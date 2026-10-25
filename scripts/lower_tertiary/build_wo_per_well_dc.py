@@ -20,6 +20,7 @@ from __future__ import annotations
 import csv
 import sys
 from datetime import datetime
+from math import isfinite
 from pathlib import Path
 from typing import Literal
 
@@ -126,9 +127,13 @@ def _parse_date(raw: str) -> tuple[int, str]:
     return (int(dt.strftime("%Y%m%d")), dt.strftime("%Y-%m-%d"))
 
 
-def _int(raw: str) -> int:
+def _int(raw: str, *, nullable_nonfinite: bool = False) -> int | float:
+    """Retain unknown preview days as NaN rather than a measured zero."""
     raw = (raw or "").strip()
-    return int(float(raw)) if raw else 0
+    value = float(raw) if raw else 0
+    if nullable_nonfinite and not isfinite(value):
+        return float("nan")
+    return int(value)
 
 
 def load_bores(
@@ -151,7 +156,10 @@ def load_bores(
             api12 = row["API_WELL_NUMBER"].strip()
             spud_key, spud = _parse_date(row["WELL_SPUD_DATE"])
             _, td = _parse_date(row["TOTAL_DEPTH_DATE"])
-            drill = _int(row["DRILLING_DAYS"])
+            drill = _int(
+                row["DRILLING_DAYS"],
+                nullable_nonfinite=intensity_denominator is not None,
+            )
             compl = _int(row["COMPLETION_DAYS"])
             devs.setdefault(dev, []).append(
                 {
@@ -188,8 +196,10 @@ def load_bores(
     return devs
 
 
-def _fmt(n: int) -> str:
-    return f"{n:,}"
+def _fmt(n: float, *, grouped: bool = True) -> str:
+    if not isfinite(n):
+        return "—"
+    return f"{n:,}" if grouped else str(n)
 
 
 def load_vintage_diff() -> dict[str, list[dict]]:
@@ -314,7 +324,7 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         if wo:
             tot["wo_bores"] += wo[0]
             tot["wo_dc"] += wo[2]
-        delta = f"{drill + compl - wo[2]:+d}" if wo else "—"
+        delta = f"{drill + compl - wo[2]:+d}" if wo and isfinite(drill) else "—"
         lines.append(
             f"| [{dev}](#{_anchor(dev)}) | {n} | {wo[0] if wo else '—'} |"
             f" {prod or '—'} | {wo[1] if wo else '—'} |"
@@ -371,7 +381,8 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
             lines.append(
                 f"| {b['api12']} | {b['bore']} | {b['lease_name']}"
                 f" {b['lease_num']} | {b['spud']} | {b['td']} |"
-                f" {b['drill']} | {b['compl']} | {b['drill'] + b['compl']} |"
+                f" {_fmt(b['drill'], grouped=False)} | {b['compl']} |"
+                f" {_fmt(b['drill'] + b['compl'], grouped=False)} |"
                 f" {'ST' if b['sidetrack'] else ''} |"
                 f" {'✓' if b['producer'] else ''} | {b['note']} |"
             )
@@ -416,10 +427,10 @@ def main(argv: list[str] | None = None) -> None:
     output = args.output or OUT_MD
     devs = load_bores(intensity_denominator=args.intensity_denominator)
     vintage = load_vintage_diff()
-    output.write_text(build_markdown(devs, vintage), encoding="utf-8")
+    output.write_text(build_markdown(devs, vintage), encoding="utf-8", newline="\n")
     total = sum(b["drill"] + b["compl"] for bores in devs.values() for b in bores)
     bores_n = sum(len(bores) for bores in devs.values())
-    print(f"wrote {output} — {bores_n} bores, {total:,} D&C days")
+    print(f"wrote {output.as_posix()} — {bores_n} bores, {_fmt(total)} D&C days")
 
 
 if __name__ == "__main__":

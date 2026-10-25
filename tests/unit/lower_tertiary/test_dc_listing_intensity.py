@@ -20,11 +20,12 @@ def surfaces(monkeypatch, tmp_path):
     drilldown = load_script(REPO / "scripts/lower_tertiary/build_dc_drilldown.py")
     exporter = load_script(REPO / "scripts/hf_export/publish_dc_days_to_hf.py")
     inputs = [tmp_path / f"input-{i}.csv" for i in range(3)]
-    inputs[1].write_text("api12\n", encoding="utf-8")
+    inputs[1].write_text("api12\n", encoding="utf-8", newline="\n")
     inputs[2].write_text(
         "api12,dev,category,drill_v30,compl_v30,drill_wed,compl_wed,d_drill,d_compl,spud_wed\n"
         "synthetic-00,synthetic-field,unchanged,0,0,0,0,0,0,\n",
         encoding="utf-8",
+        newline="\n",
     )
     for mod in (listing, drilldown):
         patch_inputs(monkeypatch, mod, inputs)
@@ -85,7 +86,7 @@ def test_rollup_weighting_and_independent_coverage(surfaces):
     assert "46.7" in text
 
 
-@pytest.mark.parametrize("raw", ["", "-1", "0", "0.5"])
+@pytest.mark.parametrize("raw", ["", "-1", "0", "0.5", "nan", "inf", "-inf"])
 def test_nullable_raw_days_not_legacy_display_values(surfaces, raw):
     """Absent/negative: undefined; 0/20000*10000=0; 0.5/20000*10000=0.25."""
     listing, _, exporter = surfaces
@@ -93,10 +94,70 @@ def test_nullable_raw_days_not_legacy_display_values(surfaces, raw):
     tables = exporter.build_tables(intensity_denominator="md")
     for name in ("dc_bores", "dc_development_summary"):
         value = tables[name].iloc[0]["days_per_10k_ft"]
-        if raw in ("", "-1"):
+        if raw in ("", "-1", "nan", "inf", "-inf"):
             assert pd.isna(value)
         else:
             assert value == float(raw) / 2
+
+
+def assert_excluded_drilling(row):
+    for suffix in ("md", "tvd"):
+        assert pd.isna(row[f"days_per_10k_{suffix}"])
+        assert row[f"included_bores_{suffix}"] == 0
+        assert row[f"excluded_bores_{suffix}"] == 1
+        assert row[f"intensity_status_{suffix}"] == "no_valid_pairs"
+
+
+@pytest.mark.parametrize("raw", ["nan", "inf", "-inf"])
+@pytest.mark.parametrize("denominator,expected", [("md", 20), ("tvd", 40)])
+@pytest.mark.parametrize("surface", ["listing", "dataset"])
+@pytest.mark.parametrize("valid_neighbor", [True, False])
+def test_nonfinite_days_excluded_without_losing_rows(
+    surfaces, raw, denominator, expected, surface, valid_neighbor
+):
+    """Valid neighbor: 40/20000*10000=20 MD; 40/10000*10000=40 TVD."""
+    listing, _, exporter = surfaces
+    write_bores(
+        listing,
+        {"DRILLING_DAYS": raw},
+        {"DRILLING_DAYS": "40" if valid_neighbor else raw},
+    )
+    listing.WO_ARTICLE["synthetic-field"] = (2, 0, 1840)
+    if surface == "listing":
+        from lower_tertiary.dc_intensity import rollup
+
+        devs = listing.load_bores(intensity_denominator=denominator)
+        bores = devs["synthetic-field"]
+        summary = rollup(bores, denominator=denominator)
+        text = listing.build_markdown(devs, {})
+        assert "| — | 900 | — |" in text
+        ratio_text = str(float(expected)) if valid_neighbor else "—"
+        assert f"| synthetic-field | {ratio_text} |" in text
+    else:
+        tables = exporter.build_tables(intensity_denominator=denominator)
+        bores = tables["dc_bores"].to_dict("records")
+        summary = tables["dc_development_summary"].iloc[0]
+    assert len(bores) == 2
+    assert pd.isna(bores[0]["days_per_10k_ft"])
+    assert_excluded_drilling(bores[0])
+    for suffix in ("md", "tvd"):
+        assert summary[f"included_bores_{suffix}"] == int(valid_neighbor)
+        assert summary[f"excluded_bores_{suffix}"] == 2 - int(valid_neighbor)
+    if valid_neighbor:
+        assert bores[1]["days_per_10k_ft"] == expected
+        assert summary["days_per_10k_ft"] == expected
+        assert summary["total_drilling_days_md"] == 40
+        assert summary["total_depth_ft_md"] == 20000
+        assert summary["intensity_status"] == "computed_partial"
+    else:
+        assert pd.isna(summary["days_per_10k_ft"])
+        assert pd.isna(summary["total_drilling_days_md"])
+        assert summary["intensity_status"] == "no_valid_pairs"
+    if surface == "dataset":
+        assert pd.isna(bores[0]["drilling_days"])
+        assert pd.isna(bores[0]["dc_days"])
+        assert pd.isna(summary["drilling_days"])
+        assert pd.isna(summary["delta_days"])
 
 
 def test_unlabelled_source_refuses_ratios(surfaces):
