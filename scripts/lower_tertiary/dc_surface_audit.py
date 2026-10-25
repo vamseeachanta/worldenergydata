@@ -55,6 +55,8 @@ def _tables(text, required):
             continue
         cells = [_plain(c) for c in line.strip().strip("|").split("|")]
         if required.issubset(cells):
+            if len(cells) != len(set(cells)):
+                raise ValueError("duplicate snapshot Markdown header")
             header = cells
         elif header and cells and not re.fullmatch(r"[-: ]+", cells[0]):
             if len(cells) != len(header):

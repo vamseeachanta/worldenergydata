@@ -132,6 +132,57 @@ def test_nulls_are_not_compared_as_zero(snapshots):
     assert result["surfaces"][0]["findings"][0]["expected"] is None
 
 
+@pytest.mark.parametrize(
+    "surface,identity,duplicate",
+    [
+        ("validation", "Development", column)
+        for column in ("Development", "WED bores", "WED D&C")
+    ]
+    + [
+        ("listing", "Development", column)
+        for column in (
+            "Development",
+            "Bores (wed)",
+            "Drilling",
+            "Completion",
+            "D&C (wed)",
+        )
+    ]
+    + [
+        ("listing", "API12", column)
+        for column in ("API12", "Drilling", "Completion", "D&C")
+    ],
+)
+@pytest.mark.parametrize("display", ["{}", "**{}**", "[{}](#column)"])
+def test_duplicate_normalized_markdown_headers_cannot_match(
+    snapshots, surface, identity, duplicate, display
+):
+    root, bores = snapshots
+    path = root / surfaces.LOCAL_SURFACES[surface]
+    lines = path.read_text().splitlines()
+    start = next(
+        i for i, line in enumerate(lines) if line.startswith(f"| {identity} |")
+    )
+    header = [cell.strip() for cell in lines[start].strip("|").split("|")]
+    position = header.index(duplicate)
+    for index in range(start, len(lines)):
+        if not lines[index].startswith("|"):
+            break
+        cells = [cell.strip() for cell in lines[index].strip("|").split("|")]
+        # Keep the matching value last, hiding the contradictory first value.
+        value = display.format(duplicate) if index == start else "999"
+        if index == start + 1:
+            value = "---"
+        cells.insert(position, value)
+        lines[index] = "| " + " | ".join(cells) + " |"
+    path.write_text("\n".join(lines) + "\n")
+    result = surfaces.audit_surfaces(root, bores)
+    snapshot = next(s for s in result["surfaces"] if s["surface"] == surface)
+    assert snapshot["status"] == "INVALID"
+    assert snapshot["findings"] == [{"kind": "invalid snapshot schema or count"}]
+    assert result["local_status"] == "MISMATCH"
+
+
 @pytest.mark.parametrize("duplicate", ["api12", "dev", "drill_wed", "compl_wed"])
 def test_duplicate_csv_headers_cannot_match(snapshots, duplicate):
     root, bores = snapshots
