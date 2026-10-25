@@ -132,6 +132,93 @@ def test_nulls_are_not_compared_as_zero(snapshots):
     assert result["surfaces"][0]["findings"][0]["expected"] is None
 
 
+@pytest.mark.parametrize("duplicate", ["api12", "dev", "drill_wed", "compl_wed"])
+def test_duplicate_csv_headers_cannot_match(snapshots, duplicate):
+    root, bores = snapshots
+    columns = ["api12", "dev", "drill_wed", "compl_wed"]
+    position = columns.index(duplicate)
+    columns.insert(position, duplicate)
+    path = root / surfaces.LOCAL_SURFACES["vintage"]
+    with path.open("w", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(columns)
+        for bore in bores:
+            row = [
+                bore["api12"],
+                bore["development"],
+                bore["before"]["drilling_days"],
+                bore["before"]["completion_days"],
+            ]
+            row.insert(position, "999")  # Contradictory value hidden by DictReader.
+            writer.writerow(row)
+    result = surfaces.audit_surfaces(root, bores)
+    assert result["surfaces"][3]["status"] == "INVALID"
+    assert result["local_status"] == "MISMATCH"
+
+
+@pytest.mark.parametrize("problem", ["truncated", "truncated_optional", "extra"])
+def test_csv_row_width_must_match_header(snapshots, problem):
+    root, bores = snapshots
+    columns = ["api12", "dev", "drill_wed", "compl_wed"]
+    rows = [["100000000001", "synthetic", 6, 10], ["100000000002", "synthetic", 0, 0]]
+    if problem == "truncated_optional":
+        columns.append("note")
+        rows[1].append("synthetic note")
+    elif problem == "truncated":
+        rows[0].pop()
+    else:
+        rows[0].append("unexpected cell")
+    path = root / surfaces.LOCAL_SURFACES["vintage"]
+    with path.open("w", newline="") as stream:
+        writer = csv.writer(stream)
+        writer.writerow(columns)
+        writer.writerows(rows)
+    result = surfaces.audit_surfaces(root, bores)
+    assert result["surfaces"][3]["status"] == "INVALID"
+    assert result["local_status"] == "MISMATCH"
+
+
+def test_csv_allows_unique_additional_columns_with_complete_rows(snapshots):
+    root, bores = snapshots
+    path = root / surfaces.LOCAL_SURFACES["vintage"]
+    lines = path.read_text().splitlines()
+    path.write_text(lines[0] + ",note\n" + "\n".join(line + "," for line in lines[1:]))
+    assert surfaces.audit_surfaces(root, bores)["surfaces"][3]["status"] == "MATCH"
+
+
+@pytest.mark.parametrize("malformed", ["1,6", "16,", ",16", "0,16", "1,,6", "1,6.0"])
+def test_malformed_numeric_grouping_cannot_match(snapshots, malformed):
+    root, bores = snapshots
+    path = root / surfaces.LOCAL_SURFACES["validation"]
+    path.write_text(path.read_text().replace("**16**", f"**{malformed}**"))
+    result = surfaces.audit_surfaces(root, bores)
+    assert result["surfaces"][0]["status"] == "INVALID"
+    assert result["local_status"] == "MISMATCH"
+
+
+@pytest.mark.parametrize("malformed", ["1,23,456", "1,2345", "1234,567", "1,234e3"])
+def test_invalid_thousands_groups_are_rejected(malformed):
+    with pytest.raises(ValueError, match="snapshot count"):
+        surfaces._number(malformed)
+
+
+@pytest.mark.parametrize(
+    "displayed,expected",
+    [
+        ("1,234", 1234),
+        ("**1,234,567**", 1234567),
+        (" *1,234.00* ", 1234),
+        ("**16**", 16),
+        ("0", 0),
+        ("16.0", 16),
+        ("", None),
+        (None, None),
+    ],
+)
+def test_valid_snapshot_numeric_formatting_is_preserved(displayed, expected):
+    assert surfaces._number(displayed) == expected
+
+
 def test_existing_artifacts_are_compared_without_running_generators():
     from pathlib import Path
 

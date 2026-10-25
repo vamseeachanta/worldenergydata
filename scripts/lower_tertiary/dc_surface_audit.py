@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 from decimal import Decimal, InvalidOperation
+from io import StringIO
 from pathlib import Path
 
 LOCAL_SURFACES = {
@@ -31,8 +32,13 @@ def _plain(value):
 def _number(value):
     if value is None or value == "":
         return None
+    plain = _plain(str(value))
+    if "," in plain and not re.fullmatch(
+        r"[0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]+)?", plain
+    ):
+        raise ValueError("invalid snapshot count")
     try:
-        number = Decimal(_plain(str(value)).replace(",", ""))
+        number = Decimal(plain.replace(",", ""))
     except InvalidOperation as error:
         raise ValueError("invalid snapshot count") from error
     if not number.is_finite() or number < 0 or number != number.to_integral_value():
@@ -162,14 +168,26 @@ def _markdown(surface, text, by_bore, by_dev):
     return findings
 
 
+def _csv_rows(text, required):
+    """Validate the schema before duplicate or missing cells can be hidden."""
+    rows = csv.reader(StringIO(text), strict=True)
+    header = next(rows, [])
+    if len(header) != len(set(header)) or not required.issubset(header):
+        raise ValueError("invalid snapshot CSV header")
+    for cells in rows:
+        if len(cells) != len(header):
+            raise ValueError("invalid snapshot CSV row width")
+        yield dict(zip(header, cells))
+
+
 def _structured(surface, text, by_bore, by_dev):
     if surface == "vintage":
-        rows = csv.DictReader(text.splitlines())
         columns = {
             "development": "dev",
             "drilling_days": "drill_wed",
             "completion_days": "compl_wed",
         }
+        rows = _csv_rows(text, {"api12", *columns.values()})
         actual = _index(rows, "api12", columns, text_columns={"development"})
         expected = {
             api: {key: row[key] for key in columns} for api, row in by_bore.items()
@@ -224,7 +242,7 @@ def audit_surfaces(root: Path, bores: list[dict]) -> dict:
                 )
                 snapshot["findings"] = reader(surface, text, by_bore, by_dev)
                 snapshot["status"] = "MISMATCH" if snapshot["findings"] else "MATCH"
-            except (ValueError, KeyError, TypeError, AttributeError):
+            except (csv.Error, ValueError, KeyError, TypeError, AttributeError):
                 snapshot["status"] = "INVALID"
                 snapshot["findings"] = [{"kind": "invalid snapshot schema or count"}]
         snapshots.append(snapshot)
