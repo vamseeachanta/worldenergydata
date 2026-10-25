@@ -12,17 +12,18 @@ qualification remain open.
 | 0 | 2026-10-15 | Initial package inventory and qualification boundaries |
 | 1 | 2026-10-15 | Recorded exception-constructor and acquisition-error defects |
 | 2 | 2026-10-22 | Added failure/cache/SQL regressions and a sourced parcel area example |
+| 3 | 2026-10-25 | Added a current counted sweep with pinned locations, detection limits and reproducible searches |
 
 | Header | Value |
 |---|---|
 | Module | landman |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-landman/src/worldenergydata/landman` |
-| Pack revision | 2, 2026-10-22 |
+| Pack revision | 3, 2026-10-25 |
 | Historical code revision | `13f3b70aa7a87045631b737406c881e4cb5bcfd0` |
 | Analysis family | EC; data pipelines, Python calculations gate set |
 | Quality manager role | Calculations quality manager; data-pipeline coverage interim |
-| Status | DRAFT; independent clearance pending |
+| Status | Draft for maintainer review; independent clearance pending |
 
 Numbered code citations retain the historical pin. Current provider contracts use symbol names and executable test nodes below; historical test records do not describe current acquisition readiness.
 
@@ -156,9 +157,86 @@ Before any data consumer relies on acquisition, the following detection checks s
 | D7 | Run four-parser/cache recovery cases | Invalid envelopes create no cache entries; explicit good/empty lists remain cacheable | `tests/unit/landman/providers/test_response_contracts.py` |
 | D8 | Compare every interpolated SQL value against literal hand queries | Embedded quotes are doubled; SQL fragments remain inside the string literal | `tests/unit/landman/providers/test_esri_literals.py` |
 | D9 | Compare synthetic rectangular area to hand arithmetic | Exact 6.0 are for the declared 20.0 m by 30.0 m fixture and sourced factor | `tests/unit/landman/test_parcel.py` |
+| D10 | Run county fallback and filtering cases | Unknown coverage returns empty lists, general instructions or false availability; these outcomes do not prove absence | `tests/unit/landman/providers/test_county_reference.py::TestGetCountiesForState::test_unknown_state`; `tests/unit/landman/providers/test_county_reference.py::TestGetNearbyCounties::test_unknown_state`; `tests/unit/landman/providers/test_county_reference.py::TestGetSearchInstructions::test_unknown_returns_general`; `tests/unit/landman/providers/test_county_reference.py::TestCheckOnlineAvailability::test_unknown_county`; `tests/unit/landman/providers/test_county_reference.py::TestSearchCounties::test_unknown_state_empty`; `tests/unit/landman/providers/test_county_reference.py::TestSearchCounties::test_online_only` |
+| D11 | Run the federal land-status failure cases | Every tested failure preserves both unknown status and an error value | `tests/unit/landman/providers/test_query_failures.py::test_federal_land_status_retains_explicit_error_result` |
 
 ## 6. Known failure modes and pitfalls
-Historical broad sweep retained; focused failure/cache/SQL and parcel regressions added in revision 2.
+sweep: 39 found
+
+The current sweep was performed on 2026-10-25 against code revision
+`595fb57534f15435a5a051ccd103bb4fb9164bb5`. All 12 Python source files in the
+header package were enumerated. The control/conversion search returned 58
+candidate source lines; the fallback/unit/cache search returned 234. These are
+search-match counts, not defect counts. Manual inspection produced the 39
+observations listed individually below, including the explicitly signalled
+land-status fallback. Historical observations remain in the following table;
+this new record does not qualify live acquisition or resolve the retained gaps.
+
+The exact searches, run from the repository root, were:
+
+```bash
+package=packages/worldenergydata-landman/src/worldenergydata/landman
+rg --files --glob '*.py' "$package"
+rg -n --glob '*.py' '^\s*except\b|^\s*continue\b|return (None|\[\]|\{\})|= 0(\.0)?\b|1970|0\.05|\b(int|float)\(' "$package"
+rg -n --glob '*.py' '\.get\(|\bor\b|outSR|latitude|longitude|depth|acreage|royalty|rental|consideration|bonus_per_acre|has_more|_cache\.set' "$package"
+```
+
+The 22 exception handlers, 9 continue statements, 4 None returns and 2 literal
+empty-list returns were inspected. Retried HTTP requests and date-format
+alternatives either recover or report failure; they are not silent record
+omissions. Cache-miss/expiry and invalid-state normalization return explicit
+None sentinels. Zero-valued cache/request/validation counters and the recomputed
+record count are bookkeeping, not substituted measurements. No error-path
+literal empty-dictionary return, 1970 default or 0.05 constant was found.
+The two cache writes were checked: raw HTTP caching is separate; JSON cache
+insertion follows envelope/list validation, including valid explicit empty
+lists (D7). Missing identifiers and nested fields remain outside that guarantee.
+
+Locations in this table are relative to the header package at the sweep pin.
+Rows identify both remaining risks and tested fallback boundaries; a passing
+fallback test does not establish acquisition readiness.
+
+| Location at sweep pin | Symptom and limit | Detection and tracking |
+|---|---|---|
+| `landman.py:323` | Collection exceptions become text while the router can report completed status and count an error as one record. | D2; #924 |
+| `landman.py:410` | Unexpected ownership-search exceptions return a result with errors and empty records; ignoring the errors can imply absence. | no detection check exists; #924 |
+| `providers/state_gis.py:263` | A well without an identifier is silently omitted. | no detection check exists; #1260 |
+| `providers/state_gis.py:565` | A permit without an identifier is silently omitted. | no detection check exists; #1260 |
+| `providers/blm.py:248` | A mining claim without either identifier alias is silently omitted. | no detection check exists; #1260 |
+| `providers/blm.py:402` | A fluid lease without either identifier alias is silently omitted. | no detection check exists; #1260 |
+| `providers/county_reference.py:373` | An unrepresented state returns an empty county list rather than a coverage error. | D10; #914 |
+| `providers/county_reference.py:590` | An unrepresented state returns an empty nearby-county list rather than a coverage error. | D10; #914 |
+| `providers/county_reference.py:443` | Unsupported-state or missing-county errors become general search instructions. | D10; #914 |
+| `providers/county_reference.py:522` | Unsupported-state or missing-county errors become false online availability. | D10; #914 |
+| `providers/county_reference.py:546` | A state absent from the embedded mapping is skipped and can produce an empty search. | D10; #914 |
+| `providers/county_reference.py:552` | Online-only filtering omits records with false or missing availability metadata; the result does not establish coverage. | D10 tests false metadata; no detection check exists for missing metadata; #914 |
+| `providers/state_gis.py:607` | Any health-check exception becomes false; the boolean alone loses the failure category. | no detection check exists; #924 |
+| `providers/blm.py:539` | Any federal health-check exception becomes false; the boolean alone loses the failure category. | no detection check exists; #924 |
+| `providers/blm.py:516` | Land-status failures return unknown with an explicit error; consumers must inspect both fields. | D11; the error is explicit, rather than an empty success; #1256 |
+| `providers/base.py:266` | Retry-After defaults to 60 seconds and is parsed as an integer; a date or malformed value can escape as a conversion error. | no detection check exists; #1256 |
+| `validators.py:236` | Mineral-interest float conversion has no locale normalization or explicit finite check; NaN passes the comparisons. | no detection check exists for nonfinite or locale-formatted text; #924 |
+| `validators.py:271` | Royalty float conversion lacks an explicit finite check and infers percent scale only above one; NaN and ambiguous scales remain unqualified. | no detection check exists for nonfinite or ambiguous-scale input; #924 |
+| `validators.py:421` | Acreage float conversion lacks an explicit finite check or locale normalization; NaN passes the comparisons. | no detection check exists for nonfinite or locale-formatted text; #924 |
+| `validators.py:382` | Primary-term integer conversion can truncate a supplied fractional number; integral input is not established. | no detection check exists for fractional or locale-formatted input; #924 |
+| `validators.py:394` | Secondary-term integer conversion can truncate a supplied fractional number; integral input is not established. | no detection check exists for fractional or locale-formatted input; #924 |
+| `providers/blm.py:250,286` | Missing and unrecognized mining-claim types default to LODE rather than an unknown classification. | no detection check exists; #1260 |
+| `providers/blm.py:404,436` | Missing and unrecognized fluid-lease types default to OIL_AND_GAS rather than an unknown classification. | no detection check exists; #1260 |
+| `providers/state_gis.py:275-276` | Well coordinates copy y/x into latitude/longitude without establishing the source reference frame or angular units. | D4; issue pending (1) |
+| `providers/state_gis.py:577-578` | Permit coordinates copy y/x into latitude/longitude without establishing the source reference frame or angular units. | D4; issue pending (1) |
+| `models.py:82` | Well depth is stored without a declared length unit. | no detection check exists; issue pending (1) |
+| `models.py:133` | Proposed permit depth is stored without a declared length unit. | no detection check exists; issue pending (1) |
+| `models.py:219` | Fluid-lease rental rate lacks a declared currency, area basis and time basis. | no detection check exists; issue pending (1) |
+| `models.py:220` | Fluid-lease royalty rate lacks an established decimal-versus-percent convention for remote records. | no detection check exists; issue pending (1) |
+| `models.py:515` | Lease bonus per acre does not establish currency or source area qualification. | no detection check exists; issue pending (1) |
+| `models.py:615` | Title consideration is stored without a declared currency basis. | no detection check exists; issue pending (1) |
+| `providers/state_gis.py:282` | The depth alias uses or, so a genuine zero can be replaced by another value or None. | no detection check exists; #1260 |
+| `providers/state_gis.py:582` | The proposed-depth alias uses or, so a genuine zero can be replaced by another value or None. | no detection check exists; #1260 |
+| `providers/blm.py:269` | The mining-acreage alias uses or, so a genuine zero can be replaced by another value or None. | no detection check exists; #1260 |
+| `providers/blm.py:419` | The fluid-acreage alias uses or, so a genuine zero can be replaced by another value or None. | no detection check exists; #1260 |
+| `models.py:298` | SearchResult defaults has_more to false without establishing remote pagination completeness. | no detection check exists; #1260 |
+| `models.py:693` | OwnerSearchResult defaults has_more_results to false without establishing remote pagination completeness. | no detection check exists; #924 |
+| `validators.py:493` | An empty ownership mapping passes because no mandatory populated fields are checked. | D5; #924 |
+| `validators.py:567` | An empty lease mapping passes because no mandatory populated fields are checked. | D5; #924 |
 
 | Symptom, cause and limit | Detection | Tracking and observation date |
 |---|---|---|
