@@ -20,13 +20,19 @@ from __future__ import annotations
 import csv
 import sys
 from datetime import datetime
+from math import isfinite
 from pathlib import Path
+from typing import Literal
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lower_tertiary.dc_provenance import (
-    carries_basis, markdown_labels, provenance, validate_day_schema, validate_vintage_row,
+    carries_basis,
+    markdown_labels,
+    provenance,
+    validate_day_schema,
+    validate_vintage_row,
 )
 from lower_tertiary.war_methodology import WAR_METHODOLOGY
 
@@ -121,12 +127,22 @@ def _parse_date(raw: str) -> tuple[int, str]:
     return (int(dt.strftime("%Y%m%d")), dt.strftime("%Y-%m-%d"))
 
 
-def _int(raw: str) -> int:
+def _int(raw: str, *, nullable_nonfinite: bool = False) -> int | float:
+    """Retain unknown preview days as NaN rather than a measured zero."""
     raw = (raw or "").strip()
-    return int(float(raw)) if raw else 0
+    value = float(raw) if raw else 0
+    if nullable_nonfinite and not isfinite(value):
+        return float("nan")
+    return int(value)
 
 
-def load_bores() -> dict[str, list[dict]]:
+def load_bores(
+    *, intensity_denominator: Literal["md", "tvd"] | None = None
+) -> dict[str, list[dict]]:
+    """Optionally derive Days/10K from raw cells without choosing a day basis."""
+    if intensity_denominator not in (None, "md", "tvd"):
+        raise ValueError("intensity_denominator shall be 'md' or 'tvd'")
+    seen = set()
     producers = set()
     with BENCHMARK_CSV.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
@@ -140,7 +156,10 @@ def load_bores() -> dict[str, list[dict]]:
             api12 = row["API_WELL_NUMBER"].strip()
             spud_key, spud = _parse_date(row["WELL_SPUD_DATE"])
             _, td = _parse_date(row["TOTAL_DEPTH_DATE"])
-            drill = _int(row["DRILLING_DAYS"])
+            drill = _int(
+                row["DRILLING_DAYS"],
+                nullable_nonfinite=intensity_denominator is not None,
+            )
             compl = _int(row["COMPLETION_DAYS"])
             devs.setdefault(dev, []).append(
                 {
@@ -161,13 +180,26 @@ def load_bores() -> dict[str, list[dict]]:
             )
             if carries_basis(row):
                 validate_day_schema(devs[dev][-1])
+            if intensity_denominator is not None:
+                from lower_tertiary.dc_intensity import add_bore
+
+                if api12 in seen:
+                    raise ValueError(
+                        "drilling intensity requires unique bore identifiers"
+                    )
+                seen.add(api12)
+                add_bore(
+                    devs[dev][-1], row, field=dev, denominator=intensity_denominator
+                )
     for bores in devs.values():
         bores.sort(key=lambda b: (b["spud_key"], b["api12"]))
     return devs
 
 
-def _fmt(n: int) -> str:
-    return f"{n:,}"
+def _fmt(n: float, *, grouped: bool = True) -> str:
+    if not isfinite(n):
+        return "—"
+    return f"{n:,}" if grouped else str(n)
 
 
 def load_vintage_diff() -> dict[str, list[dict]]:
@@ -292,7 +324,7 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         if wo:
             tot["wo_bores"] += wo[0]
             tot["wo_dc"] += wo[2]
-        delta = f"{drill + compl - wo[2]:+d}" if wo else "—"
+        delta = f"{drill + compl - wo[2]:+d}" if wo and isfinite(drill) else "—"
         lines.append(
             f"| [{dev}](#{_anchor(dev)}) | {n} | {wo[0] if wo else '—'} |"
             f" {prod or '—'} | {wo[1] if wo else '—'} |"
@@ -349,7 +381,8 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
             lines.append(
                 f"| {b['api12']} | {b['bore']} | {b['lease_name']}"
                 f" {b['lease_num']} | {b['spud']} | {b['td']} |"
-                f" {b['drill']} | {b['compl']} | {b['drill'] + b['compl']} |"
+                f" {_fmt(b['drill'], grouped=False)} | {b['compl']} |"
+                f" {_fmt(b['drill'] + b['compl'], grouped=False)} |"
                 f" {'ST' if b['sidetrack'] else ''} |"
                 f" {'✓' if b['producer'] else ''} | {b['note']} |"
             )
@@ -363,20 +396,41 @@ def build_markdown(devs: dict[str, list[dict]], vintage: dict[str, list[dict]]) 
         " `tests/unit/lower_tertiary/test_wo_per_well_dc.py`.",
         "",
     ]
-    return "\n".join(markdown_labels(lines, devs, vintage)) + "\n" + WAR_METHODOLOGY
+    preview = ""
+    if any("_intensity_input" in b for members in devs.values() for b in members):
+        from lower_tertiary.dc_intensity import markdown_preview
+
+        preview = "\n" + markdown_preview(devs)
+    return (
+        "\n".join(markdown_labels(lines, devs, vintage))
+        + "\n"
+        + WAR_METHODOLOGY
+        + preview
+    )
 
 
 def _anchor(title: str) -> str:
     return title.lower().replace(" ", "-")
 
 
-def main() -> None:
-    devs = load_bores()
+def main(argv: list[str] | None = None) -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--intensity-denominator", choices=("md", "tvd"))
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args(argv)
+    if args.intensity_denominator and (
+        args.output is None or args.output.resolve() == OUT_MD.resolve()
+    ):
+        parser.error("intensity previews require a separate --output")
+    output = args.output or OUT_MD
+    devs = load_bores(intensity_denominator=args.intensity_denominator)
     vintage = load_vintage_diff()
-    OUT_MD.write_text(build_markdown(devs, vintage), encoding="utf-8")
+    output.write_text(build_markdown(devs, vintage), encoding="utf-8", newline="\n")
     total = sum(b["drill"] + b["compl"] for bores in devs.values() for b in bores)
     bores_n = sum(len(bores) for bores in devs.values())
-    print(f"wrote {OUT_MD} — {bores_n} bores, {total:,} D&C days")
+    print(f"wrote {output.as_posix()} — {bores_n} bores, {_fmt(total)} D&C days")
 
 
 if __name__ == "__main__":
