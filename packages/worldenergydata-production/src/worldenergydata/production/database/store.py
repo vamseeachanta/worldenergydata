@@ -6,6 +6,7 @@ import hashlib
 import json
 import sqlite3
 from collections.abc import Iterable, Mapping
+from contextlib import contextmanager
 from dataclasses import asdict
 from datetime import date
 from importlib.resources import files
@@ -63,6 +64,14 @@ class ProductionDatabase:
         """Release the database; each public write has its own transaction."""
         self._db.close()
 
+    @contextmanager
+    def _write_transaction(self):
+        """Reject nested writers before they can commit or roll back an ingest."""
+        if self._db.in_transaction:
+            raise RuntimeError("reentrant database writes are not allowed")
+        with self._db:
+            yield
+
     def _one(self, query, parameters, name):
         row = self._db.execute(query, parameters).fetchone()
         if row is None:
@@ -84,7 +93,7 @@ class ProductionDatabase:
         if not isinstance(snapshot, SourceSnapshot):
             raise TypeError("snapshot must be SourceSnapshot")
         try:
-            with self._db:
+            with self._write_transaction():
                 self._db.execute(
                     "INSERT INTO snapshots VALUES (?, ?, ?, ?, ?, ?, ?, 0)",
                     tuple(asdict(snapshot).values()),
@@ -99,7 +108,7 @@ class ProductionDatabase:
         if kind not in {"field", "facility", "reservoir", "aggregate"}:
             raise ValueError("invalid asset kind")
         try:
-            with self._db:
+            with self._write_transaction():
                 self._db.execute(
                     "INSERT INTO assets VALUES (?, ?, ?)", (asset_id, name, kind)
                 )
@@ -113,7 +122,7 @@ class ProductionDatabase:
         if self._asset(child_id)["kind"] not in {"facility", "reservoir"}:
             raise ValueError("child must be a facility or reservoir")
         try:
-            with self._db:
+            with self._write_transaction():
                 self._db.execute(
                     "INSERT INTO asset_links VALUES (?, ?)", (field_id, child_id)
                 )
@@ -141,7 +150,7 @@ class ProductionDatabase:
         if self._asset(asset_id)["kind"] not in {"field", "aggregate"}:
             raise ValueError("production mappings require a field or aggregate")
         try:
-            with self._db:
+            with self._write_transaction():
                 self._db.execute(
                     "INSERT INTO field_mappings VALUES (?, ?, ?)",
                     (source_id, external_id, asset_id),
@@ -156,12 +165,13 @@ class ProductionDatabase:
 
         Unknown values are explicit None. NaN and infinity are rejected so that
         malformed measurements cannot silently become missing data.
+        Reentrant public writes raise RuntimeError before changing the transaction.
         """
         if dict(units) != dict(CANONICAL_UNITS):
             raise ValueError("units must match the canonical monthly-volume units")
         count = 0
         try:
-            with self._db:
+            with self._write_transaction():
                 # Serialize the loaded check and inserts across concurrent connections.
                 self._db.execute("BEGIN IMMEDIATE")
                 snapshot = self.source_snapshot(snapshot_id)
@@ -318,7 +328,7 @@ class ProductionDatabase:
             raise ValueError("decline exponent does not match model")
         origin = self.production(history.snapshot_id, history.asset_id)[0]["period"]
         try:
-            with self._db:
+            with self._write_transaction():
                 self._db.execute(
                     "INSERT INTO decline_curves VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (

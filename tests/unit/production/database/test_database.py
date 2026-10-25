@@ -285,7 +285,9 @@ def test_worked_example_uses_existing_fitter_and_retains_raw_bytes(tmp_path):
         hashlib.sha256((tmp_path / result["raw_file"]).read_bytes()).hexdigest()
         == result["raw_sha256"]
     )
-    assert json.loads((tmp_path / "manifest.json").read_text()) == result
+    assert (
+        json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8")) == result
+    )
     with pytest.raises(FileExistsError):
         example["run_example"](tmp_path)
 
@@ -341,3 +343,99 @@ def test_two_regulators_can_map_one_field_without_combining_snapshots(database):
     )
     assert database.production("release-a", "field-01")[0]["oil_bbl"] == 100
     assert database.production("second-regulator", "field-01")[0]["oil_bbl"] == 90
+
+
+def test_reentrant_mapping_cannot_partially_commit_ingest(database, tmp_path):
+    def records():
+        yield row()
+        database.map_field("bsee-data-center", "external-02", "field-01")
+        yield row(12, field_name="external-02", oil=-1)
+
+    with pytest.raises((ValueError, RuntimeError)):
+        database.ingest("release-a", records(), units=UNITS)
+    database.close()
+
+    with ProductionDatabase(tmp_path / "production.sqlite") as reopened:
+        assert reopened.production("release-a", "field-01") == []
+        assert reopened.source_snapshot("release-a")["loaded"] == 0
+        assert reopened.ingest("release-a", history_rows(), units=UNITS) == 3
+
+
+@pytest.mark.parametrize(
+    "write",
+    [
+        pytest.param(
+            lambda db, history: db.add_snapshot(snapshot("nested")),
+            id="add-snapshot",
+        ),
+        pytest.param(
+            lambda db, history: db.add_asset("field-02", "Example field", "field"),
+            id="add-asset",
+        ),
+        pytest.param(
+            lambda db, history: db.link_asset("field-01", "facility-01"),
+            id="link-asset",
+        ),
+        pytest.param(
+            lambda db, history: db.map_field(
+                "bsee-data-center", "external-02", "field-01"
+            ),
+            id="map-field",
+        ),
+        pytest.param(
+            lambda db, history: db.ingest("release-a", [row(12)], units=UNITS),
+            id="ingest",
+        ),
+        pytest.param(
+            lambda db, history: db.save_decline(
+                "nested",
+                history,
+                model="exponential",
+                qi=125,
+                di=math.log(1.25),
+                b=0,
+                method_ref="Hand calculation",
+            ),
+            id="save-decline",
+        ),
+    ],
+)
+def test_public_writes_reject_reentrancy_during_ingest(write):
+    with ProductionDatabase(":memory:") as database:
+        database.add_asset("field-01", "Example field", "field")
+        database.add_snapshot(snapshot())
+        database.map_field("bsee-data-center", "external-01", "field-01")
+        database.add_asset("facility-01", "Example facility", "facility")
+        database.add_snapshot(snapshot("loaded"))
+        database.ingest("loaded", history_rows(), units=UNITS)
+        history = database.decline_history("loaded", "field-01")
+
+        def records():
+            yield row()
+            write(database, history)
+            yield row(12)
+
+        with pytest.raises(RuntimeError, match="reentrant"):
+            database.ingest("release-a", records(), units=UNITS)
+        assert database.production("release-a", "field-01") == []
+        assert database.source_snapshot("release-a")["loaded"] == 0
+        assert database.ingest("release-a", history_rows(), units=UNITS) == 3
+
+
+@pytest.mark.parametrize("external_id", ["external-01", "external-02"])
+def test_caught_reentrant_write_preserves_outer_ingest(database, tmp_path, external_id):
+    def records():
+        yield row()
+        assert database.production("release-a", "field-01")[0]["oil_bbl"] == 100
+        with pytest.raises(RuntimeError, match="reentrant"):
+            database.map_field("bsee-data-center", external_id, "field-01")
+        yield row(12, oil=80)
+
+    assert database.ingest("release-a", records(), units=UNITS) == 2
+    database.close()
+
+    with ProductionDatabase(tmp_path / "production.sqlite") as reopened:
+        assert [
+            item["oil_bbl"] for item in reopened.production("release-a", "field-01")
+        ] == [100, 80]
+        assert reopened.source_snapshot("release-a")["loaded"] == 1
