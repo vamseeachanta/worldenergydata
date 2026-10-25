@@ -261,3 +261,29 @@ def test_war_spreadsheet_preserves_identity(matrix, tmp_path):
             "LEASE_KEY": "A",
         }
     ]
+
+
+@pytest.mark.parametrize("suffix", [".xls", ".XLS", ".xlsx", ".XLSX"])
+def test_war_spreadsheet_dispatches_to_excel(matrix, tmp_path, monkeypatch, suffix):
+    """Both spreadsheet suffixes use the Excel reader, including uppercase.
+
+    The reader is stubbed to test dispatch without a legacy XLS engine;
+    test_war_spreadsheet_preserves_identity exercises real XLSX decoding.
+    """
+    path = tmp_path / f"war{suffix}"
+    path.touch()
+    calls = []
+
+    def read_excel(source):
+        calls.append(source)
+        return pd.DataFrame({"API_WELL_NUMBER": [101], "SURF_LEASE_NUM": ["G1"]})
+
+    def reject_text(*args, **kwargs):
+        pytest.fail("Spreadsheet WAR input reached the delimited-text reader")
+
+    monkeypatch.setattr(matrix.pd, "read_excel", read_excel)
+    monkeypatch.setattr(matrix, "sniff_read_csv_like", reject_text)
+    result = matrix.load_war_main(path)
+    assert calls == [path]
+    assert result["API_WELL_NUMBER"].tolist() == ["101"]
+    assert result["LEASE_KEY"].tolist() == ["1"]

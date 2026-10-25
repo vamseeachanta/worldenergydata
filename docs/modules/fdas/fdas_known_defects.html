@@ -19,7 +19,9 @@ Matching the golden header establishes schema agreement, not agreement with its 
 <h2>Revision history</h2>
 <table><thead><tr><th>Revision</th><th>Date</th><th>Change and reason</th></tr></thead>
 <tbody><tr><td>Initial</td><td>2026-10-22</td><td>Record reference-reader corrections,
-financial input guards and unresolved basis choices to prevent silent reuse.</td></tr></tbody>
+financial input guards and unresolved basis choices to prevent silent reuse.</td></tr>
+<tr><td>1</td><td>2026-10-25</td><td>Document required count inputs and spreadsheet
+dispatch coverage so synthetic checks are not treated as design qualification.</td></tr></tbody>
 <caption>Table 1. Revision record.</caption></table>
 <h2>Finding register</h2>
 <p>Test names below are in <code>tests/unit/fdas/reference/</code>, except the
@@ -60,6 +62,36 @@ calendar spud/TD split. This change does not select a new day basis.</td><td><co
 <tr><td>B14</td><td>FIXED: financial D&amp;C input requires a numeric API; an unnamed
 well with an API remains valid, and a named totals row without one is excluded.</td><td><code>test_b14_named_totals_excluded_and_unnamed_well_retained</code></td></tr>
 </tbody><caption>Table 2. Reference-path dispositions and executable evidence.</caption></table>
+<h2>WAR input formats</h2>
+<p>The matrix WAR loader preserves XLS and XLSX dispatch through the spreadsheet
+reader. Header inference applies only to delimited WAR input. The one-row XLSX
+regression exercises spreadsheet decoding and identity normalization; a separate
+dispatch regression covers both suffixes and their uppercase forms. Legacy XLS
+decoding itself is not exercised because that regression stubs the Excel reader.</p>
+<h2>Required count inputs and qualification limits</h2>
+<p>The financial generator requires supplied deck values for injector and pump
+count rules. The previous implicit injector ratio and fixed pump caps are no
+longer used. All applicable inputs must be finite; invalid or missing inputs
+raise before a workbook is written.</p>
+<table><thead><tr><th>Deck input</th><th>Constraint and use</th></tr></thead><tbody>
+<tr><td><code>INJECTORS_PER_PRODUCER</code></td><td>Nonnegative ratio; injector
+count is floor(producer count &times; ratio).</td></tr>
+<tr><td><code>BOOSTER_PUMP_TRIGGER_PRODUCERS</code></td><td>Positive integer;
+booster count before the cap is floor(producer count / trigger).</td></tr>
+<tr><td><code>BOOSTER_PUMP_MAX_COUNT</code></td><td>Nonnegative integer cap on
+the calculated booster count; zero explicitly disables boosters.</td></tr>
+<tr><td><code>WATER_INJECTION_TRIGGER_PRODUCERS</code></td><td>Positive integer;
+water pump count before the cap is floor(producer count / trigger).</td></tr>
+<tr><td><code>WATER_INJECTION_PUMP_MAX_COUNT</code></td><td>Nonnegative integer
+cap on the calculated water pump count; zero explicitly disables water pumps.</td></tr>
+</tbody><caption>Table 3. Caller-supplied count rules; no design values are prescribed.</caption></table>
+<p>Pump inputs apply to producing non-dry systems. Water pump inputs are required
+only when the calculated injector count is positive. Dry systems retain zero
+subsea pumps. Synthetic regressions check missing and invalid inputs, integer
+constraints, caller-supplied caps, exported counts and associated costs. These
+rules remain simplified count relationships: supplying a deck value does not
+establish a cited engineering basis or qualify pump capacity or injector demand.
+The caller must establish that basis before using the outputs for design.</p>
 <h2>Worked MIRR example</h2>
 <p>Inputs are synthetic monthly cashflows [-100, 50, -110, 200] in USD, a finance
 rate of 10.0% per month and a reinvestment rate of 20.0% per month. The supplied
