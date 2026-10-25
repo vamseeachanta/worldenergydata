@@ -263,3 +263,105 @@ def test_recompute_quarantines_invalid_keys(mod, monkeypatch, bad_key):
     assert bore["drilling_days"] == "7"
     assert bore["max_md_ft"] == "100"
     assert {row["grain"] for row in rows} == {"bore", "well", "meta"}
+
+
+@pytest.fixture
+def recompute_synthetic(mod, monkeypatch):
+    import pandas as pd
+
+    def run(api12s, codes, population):
+        main = pd.DataFrame(
+            {
+                "SN_WAR": [1, 2],
+                "API_WELL_NUMBER": api12s,
+                "WAR_START_DT": ["2020-01-01", "2020-01-08"],
+                "WAR_END_DT": ["2020-01-07", "2020-01-14"],
+            }
+        )
+        prop = pd.DataFrame(
+            {
+                "SN_WAR": [1, 2],
+                "WELL_ACTIVITY_CD": codes,
+                "DRILLING_MD": [100, 200],
+                "DRILLING_TVD": [100, 200],
+                "DRILL_FLUID_WGT": [10, 11],
+            }
+        )
+        monkeypatch.setattr(
+            pd,
+            "read_pickle",
+            lambda path: (main if path.name == "mv_war_main.bin" else prop),
+        )
+        monkeypatch.setattr(
+            mod,
+            "load_population",
+            lambda: [{"api12": api, "well_name": "synthetic"} for api in population],
+        )
+        return mod.recompute(Path("unused"))
+
+    return run
+
+
+@pytest.mark.parametrize(
+    "all_invalid", [True, False], ids=["all-invalid", "absent-well"]
+)
+def test_recompute_keeps_uncovered_well_totals_missing(
+    recompute_synthetic, all_invalid
+):
+    api, other = "123456789012", "987654321012"
+    if all_invalid:
+        with pytest.warns(
+            UserWarning, match=r"Quarantined 2 WAR row\(s\).*invalid API12"
+        ):
+            rows = recompute_synthetic([None, "invalid"], ["DRL", "COM"], [api])
+    else:
+        rows = recompute_synthetic([other, other], ["DRL", "COM"], [api, other])
+        for covered in (r for r in rows if r["api10"] == other[:10]):
+            assert covered["days_status"] == "war_covered"
+            assert covered["drilling_days"] == covered["completion_days"] == "7"
+            assert covered["war_days_total"] == "14"
+    uncovered = [r for r in rows if r["api10"] == api[:10]]
+    assert {r["grain"] for r in uncovered} == {"bore", "well"}
+    for row in uncovered:
+        assert row["days_status"] == "no_war_activity"
+        for metric in (
+            "drilling_days",
+            "completion_days",
+            "pnd_days",
+            "war_days_total",
+        ):
+            assert row[metric] == "", (row["grain"], metric)
+        if row["grain"] == "well":
+            for metric in (
+                "drilling_days_additive",
+                "completion_days_additive",
+                "overlap_days",
+            ):
+                assert row[metric] == "", metric
+    assert {r["grain"] for r in rows} == {"bore", "well", "meta"}
+
+
+@pytest.mark.parametrize(
+    "code, drilling, completion",
+    [("DRL", "14", ""), ("COM", "", "14"), (None, "", "")],
+    ids=["drilling-only", "completion-only", "unattributed"],
+)
+def test_recompute_keeps_unobserved_activity_missing(
+    recompute_synthetic, code, drilling, completion
+):
+    api = "123456789012"
+    rows = recompute_synthetic([api, api], [code, code], [api])
+    bore = next(r for r in rows if r["grain"] == "bore")
+    well = next(r for r in rows if r["grain"] == "well")
+    for row in (bore, well):
+        assert row["drilling_days"] == drilling
+        assert row["completion_days"] == completion
+    assert well["war_days_total"] == "14"
+    assert bore["war_days_total"] == ("14" if code else "")
+    assert bore["days_status"] == (
+        "war_covered" if code else "war_covered_no_activity_code"
+    )
+    assert well["days_status"] == "war_covered"
+    assert well["drilling_days_additive"] == drilling
+    assert well["completion_days_additive"] == completion
+    assert well["pnd_days"] == well["overlap_days"] == "0"
