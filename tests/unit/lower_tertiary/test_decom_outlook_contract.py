@@ -26,6 +26,19 @@ def outlook():
     return load_script("build_decom_outlook")
 
 
+@pytest.fixture
+def stub_decom_totals(monkeypatch):
+    import pandas as pd
+
+    from worldenergydata.bsee.analysis import field_decom
+
+    def stub(rows):
+        totals = pd.DataFrame(rows)
+        monkeypatch.setattr(field_decom, "load_decom_totals", lambda: totals)
+
+    return stub
+
+
 def test_hand_calculation(outlook):
     """Synthetic 1,000 ft, two bores: d=1000*0.3048=304.8 m (NIST
     SP 811, 2008, Appendix B.8, foot). Repository cost_model.py, _COST_FACTORS
@@ -76,9 +89,11 @@ def test_zero_count_is_preserved(outlook):
     assert record["pa_estimate_musd"] == 0
 
 
-def test_committed_sidecar_reproduces_inputs(outlook):
+def test_committed_sidecar_reproduces_inputs(outlook, stub_decom_totals):
     import yaml
 
+    # Reproduce the committed unavailable-source basis on every installation.
+    stub_decom_totals([])
     facts = json.loads((LIFECYCLE / "_facts.json").read_text())
     registry = yaml.safe_load(
         (ROOT / "config/ong_field_development/fields_registry.yml").read_text()
@@ -88,6 +103,33 @@ def test_committed_sidecar_reproduces_inputs(outlook):
     expected = outlook.build_outlook(facts, registry, generated_on=generated_on)
     assert actual == expected
     assert set(actual["fields"]) == {field["id"] for field in facts}
+
+
+@pytest.mark.parametrize(
+    ("rows", "reason"),
+    [
+        (
+            [],
+            "BSEE decom totals unavailable or unreadable; no liability band established",
+        ),
+        (
+            [{"P50_COST": 1.0}],
+            "BSEE totals present; canonical field attribution NOT_EVALUATED",
+        ),
+    ],
+    ids=["absent", "present"],
+)
+def test_bsee_source_availability(outlook, stub_decom_totals, rows, reason):
+    """Source availability changes the reason without inventing a field band."""
+    stub_decom_totals(rows)
+    result = outlook.build_outlook(
+        [{"id": "synthetic", "water_depth_ft": 1000}],
+        {"synthetic": {"validated_economics": {"wellbores": 2}}},
+    )
+    record = result["fields"]["synthetic"]
+    assert record["bsee_reason"] == reason
+    assert record["bsee_decom_band"] is None
+    assert record["pa_estimate_musd"] == pytest.approx(25.144)
 
 
 def test_cop_gate_and_optional_poster_card():
