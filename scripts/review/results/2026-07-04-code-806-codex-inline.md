@@ -59,7 +59,7 @@ None blocking.
 
 - RED: missing `worldenergydata.spain.production.cores_live` import failed as expected before implementation.
 - RED: `CoresProductionLoader(..., sheet_name="Production")` failed as expected before implementation.
-- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=packages/worldenergydata-spain/src:packages/worldenergydata-production/src:packages/worldenergydata-project_economics/src:packages/worldenergydata-core/src .venv/bin/python -m pytest tests/unit/spain tests/unit/production/unified/test_spain_cores_adapter_loader.py --noconftest -o addopts='' -q`  
+- `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=packages/worldenergydata-spain/src:packages/worldenergydata-production/src:packages/worldenergydata-project_economics/src:packages/worldenergydata-core/src .venv/bin/python -m pytest tests/unit/spain tests/unit/production/unified/test_spain_cores_adapter_loader.py --noconftest -o addopts='' -q`
   Result: `20 passed in 43.95s`.
 - `.venv/bin/python -m ruff check ...`  
   Result: `All checks passed!`.

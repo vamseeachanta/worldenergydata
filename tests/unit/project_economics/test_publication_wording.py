@@ -65,7 +65,7 @@ def tracked_files():
         key: value for key, value in os.environ.items() if not key.startswith("GIT_")
     }
     result = subprocess.run(
-        ["git", "ls-files", "-z", "--cached", "--exclude-standard"],
+        ["git", "ls-files", "-z", "--cached"],
         cwd=ROOT,
         env=env,
         capture_output=True,
