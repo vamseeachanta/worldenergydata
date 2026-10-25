@@ -11,6 +11,7 @@
 |---|---|---|
 | 0 | 2026-10-12 | The metric inventory and source definitions were recorded to distinguish bore counts from family counts. |
 | 1 | 2026-10-19 | WAR identifier validation and grain regression tests were added to prevent malformed keys from becoming bore or family results. |
+| 2 | 2026-10-24 | Compatibility results and their limits were recorded to distinguish stored-snapshot evidence from current-feed validation. |
 
 Table 0. Revision history of the decision record.
 
@@ -108,10 +109,22 @@ Its proposed replacement for the date hull would calculate days per bore and sum
 
 Current `rig_days_by_well` already unions the family's WAR intervals and emits additive columns separately. That implementation addresses overlap at bore transitions; it is **not** the research note's conditional sum of per-bore milestone differences. Episode partitioning, renumbering and any change to retained metadata need their own reviewed implementation and declared acceptance rule.
 
+## Compatibility evidence and limits
+
+The follow-up comment on #1443 at `e3d4d166` reports the following results. These are retained results from that run, not a new raw-feed recomputation:
+
+- The stored snapshot contained 363,786 WAR main rows and 54,714 borehole rows, with zero missing or malformed identifiers after normalization. Its last weekly start was 2026-02-15, so this check does not establish current-feed compatibility.
+- The enrichment caller completed for 54,714 bores: 12,376 had drilling-day values, 14,657 had no drilling code and 27,681 had no WAR coverage. The QA caller completed bore and family aggregation, then raised `TypeError` for `NAType` in the existing `_n` serializer at line 469 when converting a null activity-day value to an integer. A completed QA report is not established.
+- The BSEE unit domain changed from 1,707 passed, nine failed and four skipped before the fixture correction to 1,716 passed, zero failed and four skipped afterward. The optional map-export test passed separately after its dependency was supplied; three explicit configuration skips remained.
+
+The compatibility correction uses distinct synthetic twelve-digit keys in [the comparison fixtures](../../../../tests/unit/bsee/analysis/test_ratified_day_basis_comparison.py) and requires the specific multiple-well error. The [identifier-grain CSV check](../../../../tests/unit/bsee/analysis/test_war_identifier_grain.py) specifies UTF-8 and CSV newline handling. The [BSEE knowledge pack](../../../../packages/worldenergydata-bsee/src/worldenergydata/bsee/docs/agent-pack.md), line 205, describes the validating normalizer contract. No caller quarantine or aggregation rule was added.
+
+The knowledge-pack lint also reports `SWEEP: no line` for the required numeric `sweep: N found` marker. The legacy marker at pack line 115 and the same checker requirement are present on `origin/main`; this is a pre-existing documentation defect. No package-wide sweep is claimed. The QA null serialization and feed-freshness limits remain unresolved. The overlapping identifier change in #1445 requires a maintainer merge choice.
+
 ## Not verified
 
 - API Bulletin D12A and the full PPDM standard were not opened here. R8 verifies custody/successor status only. API-14 as a vendor event sequence is the research note's **secondary-only** description (R9), not a verified primary standard or a BSEE completion identifier.
-- Stored length/format across the full borehole, WAR and OGOR-A feeds was not profiled. The committed population check establishes twelve digits only for its extracted CSV.
+- Current-feed length/format across the borehole, WAR and OGOR-A feeds remains unverified. The reported stored-snapshot check above does not establish live-feed freshness, and the committed population test covers only its extracted CSV.
 - Repeated original spud dates on sidetracks, actual WB-to-ST/BP mappings within families, and a field-definition page for the completion table itself remain unverified. OGOR-A and the handbook are supporting production evidence, not that missing table definition.
 - R1's cover prints an expiration date of 2014-11-03; R1a still displays Active. Formal reissue/current legal status beyond those observations is not established. R1 is used for the documented numbering scheme, not a current compliance opinion.
 - The memberships behind 184 and 211, live external publication parity, and complete raw-data recomputation are not established. No private datasets or licensed software were used.
