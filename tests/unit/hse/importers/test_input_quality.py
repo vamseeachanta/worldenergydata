@@ -370,6 +370,90 @@ def test_invalid_configuration_fails_even_without_records(options, mutation):
 
 
 @pytest.mark.parametrize(
+    "date_format",
+    ["%Q", "%Y-%m-%d%", "%Y-%Y", "%G", "%Y-%V-%u", "%G-%V-%u-%j"],
+)
+@pytest.mark.parametrize("input_kind", ["empty", "record", "unreadable"])
+def test_invalid_date_format_is_policy_error_before_iteration(
+    options, date_format, input_kind
+):
+    options["date_format"] = date_format
+
+    def unreadable():
+        pytest.fail("Invalid policy must be rejected before reading records")
+        yield
+
+    row = dict(
+        source_id="clean",
+        record_key="unique",
+        occurred="2024-06-01",
+        category="synthetic_allowed",
+    )
+    rows = {"empty": [], "record": [row], "unreadable": unreadable()}[input_kind]
+    with pytest.raises(ValueError, match="date_format"):
+        summarize_input_quality(rows, **options)
+
+
+@pytest.mark.parametrize("date_format", ["%Q", "%Y-%m-%d%"])
+@pytest.mark.parametrize("empty", [True, False])
+def test_invalid_date_format_preserves_exports(tmp_path, options, date_format, empty):
+    csv_path, json_path = export_input_quality([], tmp_path, **options)
+    before = (csv_path.read_bytes(), json_path.read_bytes())
+    options["date_format"] = date_format
+    rows = (
+        []
+        if empty
+        else [
+            dict(
+                source_id="clean",
+                record_key="unique",
+                occurred="2024-06-01",
+                category="synthetic_allowed",
+            )
+        ]
+    )
+    with pytest.raises(ValueError, match="date_format"):
+        export_input_quality(rows, tmp_path, **options)
+    assert before == (csv_path.read_bytes(), json_path.read_bytes())
+    destination = tmp_path / "new-output"
+    with pytest.raises(ValueError, match="date_format"):
+        export_input_quality(rows, destination, **options)
+    assert not destination.exists()
+
+
+@pytest.mark.parametrize(
+    ("date_format", "valid_text", "invalid_text"),
+    [
+        ("%Y-%m-%d", "2024-06-01", "2024-02-30"),
+        ("%d/%m/%Y", "01/06/2024", "30/02/2024"),
+        ("%Y %% %m-%d", "2024 % 06-01", "2024 % 02-30"),
+        ("%G-W%V-%u", "2024-W22-6", "2024-W99-6"),
+    ],
+)
+def test_valid_date_formats_keep_record_parse_failures(
+    options, date_format, valid_text, invalid_text
+):
+    options["date_format"] = date_format
+    assert summarize_input_quality([], **options) == []
+    row = dict(
+        source_id="date",
+        record_key="unique",
+        occurred=valid_text,
+        category="synthetic_allowed",
+    )
+    assert summarize_input_quality([row], **options) == []
+    row["occurred"] = invalid_text
+    assert summarize_input_quality([row], **options) == [
+        {
+            "defect": "invalid_date",
+            "count": 1,
+            "example_source_row_id": "date",
+            "rule": "dropped",
+        }
+    ]
+
+
+@pytest.mark.parametrize(
     "defect",
     [
         "duplicate_key",

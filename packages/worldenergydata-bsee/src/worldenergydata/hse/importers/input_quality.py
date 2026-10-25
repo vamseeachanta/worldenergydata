@@ -20,6 +20,8 @@ The table sorts defect names and uses the lexicographically smallest source-row
 id (integers rendered as strings) as the example, independently of input order.
 Only observed defects need rules, but every supplied rule is validated, including
 unused entries. Unknown defects and dispositions fail closed before export.
+Date format syntax and ISO week directive combinations are validated before
+reading records; malformed formats are policy errors, not source defects.
 """
 
 from __future__ import annotations
@@ -28,11 +30,14 @@ import csv
 import io
 import json
 import math
+import re
 from collections import Counter
 from collections.abc import Iterable, Mapping
 from datetime import date, datetime
 from pathlib import Path
 from typing import TypedDict
+
+import _strptime
 
 _DEFECTS = frozenset(
     {
@@ -81,6 +86,22 @@ def _validate_policy(fields, date_window, date_format, allowed_codes, rules):
         raise ValueError("date_window lower bound must not exceed upper bound")
     if not isinstance(date_format, str) or not date_format.strip():
         raise ValueError("date_format must be a nonblank parsing format")
+    if date_format.replace("%%", "").endswith("%"):
+        raise ValueError("date_format must not end with an unescaped percent")
+    # Use strptime's own compiler so accepted directives and escaped percent
+    # signs follow the running interpreter, without parsing any source record.
+    try:
+        date_directives = _strptime.TimeRE().compile(date_format).groupindex
+    except (KeyError, IndexError, re.error) as exc:
+        raise ValueError("date_format must be a valid strptime format") from exc
+    # strptime checks these combinations only after matching input text.
+    if "G" in date_directives or "V" in date_directives:
+        if (
+            not {"G", "V"} <= date_directives.keys()
+            or not {"A", "a", "w", "u"} & date_directives.keys()
+            or "j" in date_directives
+        ):
+            raise ValueError("date_format has incompatible ISO week directives")
     if isinstance(allowed_codes, (str, bytes, Mapping)):
         raise ValueError("allowed_codes must be a collection of exact string tokens")
     try:
