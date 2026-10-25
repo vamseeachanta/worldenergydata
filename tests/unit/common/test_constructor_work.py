@@ -86,9 +86,10 @@ def test_no_config_constructor_does_not_open_files(monkeypatch):
 
     opened = Mock(side_effect=AssertionError("unexpected file open"))
     loaded = Mock(side_effect=AssertionError("unexpected config load"))
-    monkeypatch.setattr("builtins.open", opened)
-    monkeypatch.setattr(Path, "open", opened)
-    monkeypatch.setattr(DataValidator, "_load_config", loaded)
-    assert DataValidator().config == {}
+    with monkeypatch.context() as scoped:
+        scoped.setattr("builtins.open", opened)
+        scoped.setattr(Path, "open", opened)
+        scoped.setattr(DataValidator, "_load_config", loaded)
+        assert DataValidator().config == {}
     opened.assert_not_called()
     loaded.assert_not_called()
