@@ -282,7 +282,20 @@ def test_check_preserves_byte_equality(tmp_path, monkeypatch, change):
     assert module.main(["--check"]) == 0
 
 
-def test_inventory_excludes_uppercase_extensions(tmp_path):
+class CaseInsensitiveGlobPath(type(Path())):
+    """Return mixed-case HTML matches on a case-sensitive filesystem too."""
+
+    def glob(self, pattern):
+        assert pattern.endswith(".html")
+        return super().glob(pattern[:-5] + ".[hH][tT][mM][lL]")
+
+    def rglob(self, pattern):
+        assert pattern.endswith(".html")
+        return super().rglob(pattern[:-5] + ".[hH][tT][mM][lL]")
+
+
+@pytest.mark.parametrize("path_type", [Path, CaseInsensitiveGlobPath])
+def test_inventory_excludes_uppercase_extensions(tmp_path, path_type):
     """Only the literal .html suffix belongs in the portable inventory."""
     module = inventory_module()
     paths = [
@@ -292,7 +305,19 @@ def test_inventory_excludes_uppercase_extensions(tmp_path):
         "reports/mixed.HtMl",
     ]
     originals = {path: put(tmp_path, path).read_bytes() for path in paths}
-    rows = module.classify_tree(tmp_path, BUILDER)
+    root = path_type(tmp_path)
+    if path_type is CaseInsensitiveGlobPath:
+        # Both discovery operations must receive the non-lowercase candidates.
+        assert "selected.HTML" in {
+            path.name for path in root.glob("reports/completion/*.html")
+        }
+        assert {path.name for path in (root / "reports").rglob("*.html")} == {
+            "index.html",
+            "selected.HTML",
+            "unselected.HTML",
+            "mixed.HtMl",
+        }
+    rows = module.classify_tree(root, BUILDER)
     assert [row["path"] for row in rows] == ["reports/completion/index.html"]
     assert rows[0]["classification"] == "current"
     assert {path: (tmp_path / path).read_bytes() for path in paths} == originals

@@ -119,6 +119,23 @@ def test_config_repo_structure_routes_to_its_contract():
     assert "tests/repo_structure" in r["xdist"]
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "scripts/maintenance/classify_report_inventory.py",
+        "tests/repo_structure/test_report_inventory.py",
+        "docs/modules/report-inventory.csv",
+    ],
+)
+def test_inventory_paths_select_structure_suite(path):
+    result = select([path], REPO_ROOT)
+    assert result["scope"] == "modules"
+    assert result["xdist"].count("tests/repo_structure") == 1
+    matrix = to_matrix([path], REPO_ROOT)
+    targets = [t for shard in matrix["include"] for t in shard["targets"].split()]
+    assert targets.count("tests/repo_structure") == 1
+
+
 @pytest.mark.parametrize("module", _unit_modules())
 def test_every_unit_module_is_selected(module):
     """Drift guard: a change under any tests/unit/<module> must be module-scoped
