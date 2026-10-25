@@ -10,20 +10,26 @@ import argparse
 import hashlib
 import json
 import re
-import xml.etree.ElementTree as ET
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
+
+from defusedxml import ElementTree as ET
+from defusedxml.common import DefusedXmlException
 
 COLLECTIONS = {"001": "C3433822507-NSIDC_CPRD", "002": "C4085168939-NSIDC_CPRD"}
 COLLECTION_ID = COLLECTIONS["002"]
 BASE = "https://cmr.earthdata.nasa.gov/search/"
 SOURCE_URLS = {
     "collections": BASE + "collections.umm_json?short_name=ATL24&page_size=10",
-    "granules": BASE + f"granules.umm_json?collection_concept_id={COLLECTION_ID}&page_size=1",
+    "granules": BASE
+    + f"granules.umm_json?collection_concept_id={COLLECTION_ID}&page_size=1",
     "atom": BASE + f"granules.atom?collection_concept_id={COLLECTION_ID}&page_size=1",
 }
-NS = {"a": "http://www.w3.org/2005/Atom",
-      "e": "https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#atom"}
+NS = {
+    "a": "http://www.w3.org/2005/Atom",
+    "e": "https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html#atom",
+}
 UNVERIFIED = "UNVERIFIED"
 
 
@@ -53,18 +59,27 @@ def _revision(meta):
         r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z", value
     ):
         raise ValueError("invalid revision date")
+    # Validate the calendar and clock without changing fractional precision.
+    datetime.strptime(value[:19], "%Y-%m-%dT%H:%M:%S")
     return value
 
 
 def _collection(item):
     umm, meta = item["umm"], item["meta"]
     version = umm["Version"]
-    if (umm["ShortName"] != "ATL24" or version not in COLLECTIONS
-            or meta["concept-id"] != COLLECTIONS[version]
-            or umm["DOI"]["DOI"] != f"10.5067/ATLAS/ATL24.{version}"):
+    if (
+        umm["ShortName"] != "ATL24"
+        or version not in COLLECTIONS
+        or meta["concept-id"] != COLLECTIONS[version]
+        or umm["DOI"]["DOI"] != f"10.5067/ATLAS/ATL24.{version}"
+    ):
         raise ValueError("collection identity/version/DOI mismatch")
-    return {"concept_id": COLLECTIONS[version], "version": version,
-            "doi": f"10.5067/ATLAS/ATL24.{version}", "revision": _revision(meta)}
+    return {
+        "concept_id": COLLECTIONS[version],
+        "version": version,
+        "doi": f"10.5067/ATLAS/ATL24.{version}",
+        "revision": _revision(meta),
+    }
 
 
 def _select_collection(items):
@@ -79,8 +94,11 @@ def _select_collection(items):
     required_clause = "provided that you are logged into your nasa earthdata profile"
     if required_clause not in " ".join(access.split()):
         raise ValueError("Earthdata authentication requirement not established")
-    historical = [_collection(item) for item in items
-                  if item["meta"]["concept-id"] == COLLECTIONS["001"]]
+    historical = [
+        _collection(item)
+        for item in items
+        if item["meta"]["concept-id"] == COLLECTIONS["001"]
+    ]
     return selected, record, historical
 
 
@@ -92,10 +110,10 @@ def _element(entry, path):
 
 
 def _atom_entry(raw):
-    # CMR Atom has no DTD. Reject entities, including UTF-16 encoded declarations.
-    if b"<!" in raw.replace(b"\x00", b"").upper():
-        raise ValueError("XML declarations/entities are not supported")
-    root = ET.fromstring(raw)
+    # CMR Atom needs no DTD; reject declarations before any entity expansion.
+    root = ET.fromstring(
+        raw, forbid_dtd=True, forbid_entities=True, forbid_external=True
+    )
     if root.tag != f"{{{NS['a']}}}feed":
         raise ValueError("expected Atom feed")
     entries = root.findall("a:entry", NS)
@@ -127,24 +145,42 @@ def _sample(item, selected, entry):
     title = selected["umm"]["EntryTitle"]
     if umm["CollectionReference"]["EntryTitle"] != title:
         raise ValueError("UMM collection reference mismatch")
-    identifiers = [i["Identifier"] for i in umm["DataGranule"]["Identifiers"]
-                   if i["IdentifierType"] == "ProducerGranuleId"]
+    identifiers = [
+        i["Identifier"]
+        for i in umm["DataGranule"]["Identifiers"]
+        if i["IdentifierType"] == "ProducerGranuleId"
+    ]
     if len(identifiers) != 1 or not re.fullmatch(
         r"ATL24_\d{14}_\d{8}_\d{3}_\d{2}_002_\d{2}\.h5", identifiers[0]
     ):
         raise ValueError("missing or ambiguous ATL24 version 002 filename")
-    expected = {"a:id": concept_id, "a:title": umm["GranuleUR"],
-                "e:collectionConceptId": COLLECTION_ID, "e:datasetId": title,
-                "e:producerGranuleId": identifiers[0]}
+    expected = {
+        "a:id": concept_id,
+        "a:title": umm["GranuleUR"],
+        "e:collectionConceptId": COLLECTION_ID,
+        "e:datasetId": title,
+        "e:producerGranuleId": identifiers[0],
+    }
     if any(_element(entry, path) != value for path, value in expected.items()):
         raise ValueError("UMM and Atom granule identities disagree")
-    units = [info.get("SizeUnit") for info in
-             umm["DataGranule"].get("ArchiveAndDistributionInformation", [])]
-    unit = units[0] if len(units) == 1 and units[0] in {"MB", "KB", "GB", "Bytes"} else UNVERIFIED
-    return {"concept_id": concept_id, "filename": identifiers[0],
-            "revision": _revision(meta), "advertised_size": _size(entry),
-            "umm_size_unit": unit, "payload_bytes": UNVERIFIED,
-            "payload_sha256": UNVERIFIED}
+    units = [
+        info.get("SizeUnit")
+        for info in umm["DataGranule"].get("ArchiveAndDistributionInformation", [])
+    ]
+    unit = (
+        units[0]
+        if len(units) == 1 and units[0] in {"MB", "KB", "GB", "Bytes"}
+        else UNVERIFIED
+    )
+    return {
+        "concept_id": concept_id,
+        "filename": identifiers[0],
+        "revision": _revision(meta),
+        "advertised_size": _size(entry),
+        "umm_size_unit": unit,
+        "payload_bytes": UNVERIFIED,
+        "payload_sha256": UNVERIFIED,
+    }
 
 
 def summarize(collections: bytes, granules: bytes, atom: bytes) -> dict:
@@ -159,21 +195,40 @@ def summarize(collections: bytes, granules: bytes, atom: bytes) -> dict:
         if len(items) != 1:
             raise ValueError("exactly one UMM granule is required")
         sample = _sample(items[0], selected, _atom_entry(atom))
-    except (KeyError, TypeError, AttributeError, IndexError, ValueError,
-            ET.ParseError, InvalidOperation, UnicodeError) as exc:
+    except (
+        KeyError,
+        TypeError,
+        AttributeError,
+        IndexError,
+        ValueError,
+        ET.ParseError,
+        DefusedXmlException,
+        InvalidOperation,
+        UnicodeError,
+    ) as exc:
         # Do not echo arbitrary metadata, local paths, contacts or access URLs.
         raise ValueError("invalid or inconsistent ATL24 metadata evidence") from exc
     inputs = {"collections": collections, "granules": granules, "atom": atom}
-    return {"schema_version": 1, "metadata_only": True,
-            "metadata_status": "identity_consistent",
-            "collection": record, "historical_collections": historical,
-            "sample": sample, "science_access": "earthdata_authentication_required",
-            "science_acquisition": UNVERIFIED, "engineering_qualification": UNVERIFIED,
-            "collection_storage": {"total_bytes": UNVERIFIED, "size_range": UNVERIFIED},
-            "sources": {key: {"declared_url": SOURCE_URLS[key],
-                              "sha256": hashlib.sha256(raw).hexdigest(),
-                              "retrieval_status": UNVERIFIED}
-                        for key, raw in inputs.items()}}
+    return {
+        "schema_version": 1,
+        "metadata_only": True,
+        "metadata_status": "identity_consistent",
+        "collection": record,
+        "historical_collections": historical,
+        "sample": sample,
+        "science_access": "earthdata_authentication_required",
+        "science_acquisition": UNVERIFIED,
+        "engineering_qualification": UNVERIFIED,
+        "collection_storage": {"total_bytes": UNVERIFIED, "size_range": UNVERIFIED},
+        "sources": {
+            key: {
+                "declared_url": SOURCE_URLS[key],
+                "sha256": hashlib.sha256(raw).hexdigest(),
+                "retrieval_status": UNVERIFIED,
+            }
+            for key, raw in inputs.items()
+        },
+    }
 
 
 def main(argv=None):
@@ -182,13 +237,19 @@ def main(argv=None):
         parser.add_argument("--" + name, required=True, type=Path)
     args = parser.parse_args(argv)
     inputs = [args.collections, args.granules, args.atom]
-    if args.out.resolve() in {path.resolve() for path in inputs}:
-        parser.exit(2, "output must not overwrite metadata evidence\n")
     try:
+        if args.out.resolve() in {path.resolve() for path in inputs} or (
+            args.out.exists() and any(args.out.samefile(path) for path in inputs)
+        ):
+            parser.exit(2, "output must not overwrite metadata evidence\n")
         summary = summarize(*(path.read_bytes() for path in inputs))
-        args.out.write_text(json.dumps(summary, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        args.out.write_text(
+            json.dumps(summary, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
     except (ValueError, OSError):
-        parser.exit(2, "ATL24 summary failed: check metadata evidence and file access\n")
+        parser.exit(
+            2, "ATL24 summary failed: check metadata evidence and file access\n"
+        )
 
 
 if __name__ == "__main__":
