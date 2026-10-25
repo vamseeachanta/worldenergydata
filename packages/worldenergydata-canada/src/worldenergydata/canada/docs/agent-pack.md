@@ -5,7 +5,7 @@
 | Module | canada |
 | Repository | worldenergydata |
 | Package path | `packages/worldenergydata-canada/src/worldenergydata/canada` |
-| Pack revision | 1, 2026-10-20 |
+| Pack revision | 2, 2026-10-24 |
 | Code revision | `285d65c40896b17ccf44568e59f5b789d59c943e` |
 | Analysis family | Data pipeline; QA family EC; AQG r0 Python calculations |
 | Quality role | Calculations family quality manager |
@@ -19,6 +19,7 @@ The code revision pins repository citations; original BASE/AFTER outcomes are ob
 |---|---|---|
 | 0 | 2026-10-15 | Initial pinned module reference, regression evidence and open items |
 | 1 | 2026-10-20 | Add omitted failure semantics and parser hazard; clarify test evidence and detection gaps |
+| 2 | 2026-10-24 | Expand historical failure node IDs and record the package silent-failure sweep |
 
 ## 1. Purpose and scope
 
@@ -124,6 +125,10 @@ For C5.1, resolve every bracketed repository path and line range through `git sh
 
 ## 6. Known failure modes and pitfalls
 
+sweep: 19 found
+
+The package sweep on 2026-10-24 used `rg -n --glob '*.py' 'except|return \[\]|return \{\}|return None|\bpass\b|\bcontinue\b|logger\.(warning|error)|pending|placeholder' packages/worldenergydata-canada/src/worldenergydata/canada`, followed by inspection of the matched branches and the existing row citations. The count is 19 grouped failure modes and pitfalls in the table below, not the number of matching lines or proven defects: 17 retained rows and 2 additional fallback rows. Repeated provincial stubs and retry branches are grouped; propagated exceptions, documented cache misses, optional imports and schema-null returns are not counted separately. The rights, gas-coverage and implemented-parser rows retain scope or disposition limits rather than asserting swallowed exceptions. This static sweep does not establish live acquisition or exhaustive defect coverage.
+
 The issues below are references and follow-ups, not a claim that each historical request is an unresolved incident.
 
 | Symptom / cause | Detection or missing detection | Incident / tracking | Evidence at the pin |
@@ -145,6 +150,8 @@ The issues below are references and follow-ups, not a claim that each historical
 | Runtime download/refresh and public redistribution rights remain separate from parser success | C0.4 keeps synthetic source visible; no detection check exists for legal eligibility | #814, #819 | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L15-L23] [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L350-L358] |
 | Legacy gas-only ingestion and complete gas economics are outside this chain's recorded oil-revenue aggregation | no detection check exists for a gas-only chain | #816 | [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L54-L70] [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L91-L101] |
 | Historical modal-parser request already has an implementation and offline synthetic coverage | C1.2, C2.2; do not describe the parser as absent merely because the request remains open | #817 | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L321-L347] [tests/unit/canada/production/test_cnloer_html.py:L74-L119] |
+| Cache metadata load failures reset metadata to an empty mapping; save failures only log a warning, so a completed cache write does not establish persisted metadata | no detection check exists for caller-visible persistence failure; require an explicit degraded-cache outcome when metadata cannot be read or saved | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L166-L188] |
+| UWI convenience parsing returns invalid components after a warning and returns `None` on exceptions; normalization returns the original input on exceptions | no detection check exists for downstream rejection of fallback values; require callers to distinguish validated identifiers from invalid or unchanged fallback values | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi.py:L30-L48] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi.py:L61-L72] |
 
 ## 7. Lessons log
 
@@ -291,27 +298,27 @@ The inventory below gives all 15 module test files plus the dedicated consumer f
 
 All 19 failing nodes are in `tests/unit/canada/aer/test_api_client.py`; each reaches default file-cache creation before its intended assertion. The same constructor and test calls are present at the code pin and on the inspected default-branch ref.
 
-| Failed node suffix (append to the file above with `::`) | BASE / AFTER |
+| Failed test node ID | BASE / AFTER |
 |---|---|
-| `TestAERClientInit::test_default_values` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
-| `TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
-| `TestAERClientInit::test_custom_params` | FAIL / FAIL |
-| `TestAERClientInit::test_config_dict` | FAIL / FAIL |
-| `TestSetupHeaders::test_default_headers` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
-| `TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
-| `TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
-| `TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
-| `TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
-| `TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
-| `TestContextManager::test_enter_exit` | FAIL / FAIL |
-| `TestContextManager::test_close` | FAIL / FAIL |
-| `TestContextManager::test_double_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_default_values` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_min_interval_positive` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_config_dict` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_default_headers` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_merged` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestSetupHeaders::test_custom_headers_override` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_without_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_with_params` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_same_params_same_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestGenerateCacheKey::test_different_params_different_key` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_valid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_strips_whitespace` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_invalid_uwi` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestValidateUWI::test_uwi_with_e_direction` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_enter_exit` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_close` | FAIL / FAIL |
+| `tests/unit/canada/aer/test_api_client.py::TestContextManager::test_double_close` | FAIL / FAIL |
 
 Failure evidence: cache construction is immediate in `AERClient.__init__`, the cache constructor creates its directory, and the affected tests supply no custom directory. [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L149-L151] [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L146-L164] [tests/unit/canada/aer/test_api_client.py:L13-L55] [tests/unit/canada/aer/test_api_client.py:L87-L194]
 
