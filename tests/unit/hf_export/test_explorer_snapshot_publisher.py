@@ -176,11 +176,15 @@ def test_cli_transport_failure_is_redacted(monkeypatch, capsys, error_type):
 
 def test_cli_missing_git_input_is_redacted(monkeypatch, capsys):
     run = snapshot.subprocess.run
-    source_sha = run(
-        ["git", "-C", str(REPO), "rev-parse", "HEAD"],
-        check=True,
-        capture_output=True,
-    ).stdout.decode().strip()
+    source_sha = (
+        run(
+            ["git", "-C", str(REPO), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+        )
+        .stdout.decode()
+        .strip()
+    )
 
     def clean_preflight(args, **kwargs):
         # Permit this test's edited checkout; Git object reads remain real.
