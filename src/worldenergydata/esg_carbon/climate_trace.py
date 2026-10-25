@@ -4,6 +4,11 @@ Schema source: Climate TRACE Inventory September 2026, v5.11.0, Data Licensing,
 Schema, and Citation Guide, section emissions_sources.csv metadata:
 https://media.climatetrace.org/about_the_data_latest_b6e7b8d419.pdf
 
+Temporal-granularity enum: Climate TRACE Data Schema, tools schema README,
+revision 61dbefb85a9eb759036c17e02ca59f0015a7c7dc (2024-07-26), Descriptions,
+source_information_external.temporal_granularity: month, day, hour, week,
+annual, other. The v5.11.0 guide defines resolution without listing this enum.
+
 Compatibility mapping: co2e_100yr -> co2e_100gwp and co2e_20yr -> co2e_20gwp.
 Both spellings use the existing canonical horizon labels without mass conversion.
 This mapping is not evidence of the labels in a particular source-file release.
@@ -38,6 +43,8 @@ _REQUIRED = (
 # Internal canonical species/horizon labels, with compatibility aliases below.
 # Real v5.11.0 source-file spellings are unverified; no GWP factors are inferred.
 _GASES = frozenset({"co2", "ch4", "n2o", "co2e_100gwp", "co2e_20gwp"})
+# Supported resolution labels from the schema revision cited above.
+_TEMPORAL_GRANULARITIES = frozenset({"month", "day", "hour", "week", "annual", "other"})
 # Guide v5.11.0, emissions_quantity metadata; slash spelling is also accepted.
 _MISSING = frozenset({"", "null", "n-a", "n/a"})
 
@@ -60,6 +67,8 @@ def _record(row: dict[str, str]) -> EmissionRecord:
     for field in _REQUIRED:
         if field != "emissions_quantity" and not row[field]:
             raise ValueError(f"{field} must be nonempty")
+    if row["temporal_granularity"] not in _TEMPORAL_GRANULARITIES:
+        raise ValueError("temporal_granularity must be supported")
     if not re.fullmatch(r"[A-Z]{3}", row["iso3_country"]):
         raise ValueError("iso3_country must be three uppercase letters")
     gas = _GAS_ALIASES.get(row["gas"], row["gas"])

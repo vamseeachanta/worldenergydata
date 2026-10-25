@@ -64,7 +64,7 @@ def test_empty_selection_is_not_a_zero_total(tmp_path):
         (",co2,", ",co2e_100gwp,"),
         ("2024-01-01", "2024-02-01"),
         ("2024-12-31", "2024-11-30"),
-        ("annual", "monthly"),
+        ("annual", "month"),
         ("USA", "CAN"),
         ("oil-and-gas-production-and-transport", "oil-and-gas-refining"),
         ("fossil-fuel-operations", "synthetic-sector"),

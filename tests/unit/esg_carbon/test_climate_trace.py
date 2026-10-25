@@ -250,3 +250,43 @@ def test_malformed_csv_has_line_context(tmp_path, text, line):
 def test_validation_errors_use_physical_line_context(tmp_path, text, line, message):
     with pytest.raises(ValueError, match=rf"CSV row {line}:.*{message}"):
         read_climate_trace_csv(write_inventory(tmp_path, text), edition="x")
+
+
+@pytest.mark.parametrize(
+    "granularity", ["month", "day", "hour", "week", "annual", "other"]
+)
+def test_supported_temporal_granularities_preserve_basis(tmp_path, granularity):
+    """Climate TRACE Data Schema, revision 61dbefb8, lists six resolutions."""
+    inventory = read_climate_trace_csv(
+        write_inventory(tmp_path, HEADER + ROW.replace("annual", granularity)),
+        edition="v5.11.0",
+    )
+    assert inventory.records[0].temporal_granularity == granularity
+    summary = inventory.summarize()
+    assert summary.basis.temporal_granularity == granularity
+    assert summary.status == "COMPLETE"
+    assert summary.total_tonnes == 12.5
+
+
+@pytest.mark.parametrize(
+    "granularity",
+    ["annuall", "monthly", "daily", "yearly", "Annual", "ANNUAL", "unknown", "0"],
+)
+def test_unsupported_temporal_granularity_is_rejected(tmp_path, granularity):
+    with pytest.raises(
+        ValueError, match=r"^CSV row 2: temporal_granularity must be supported$"
+    ):
+        read_climate_trace_csv(
+            write_inventory(tmp_path, HEADER + ROW.replace("annual", granularity)),
+            edition="v5.11.0",
+        )
+
+
+def test_invalid_later_granularity_aborts_import_with_row_context(tmp_path):
+    rows = ROW + ROW.replace("synthetic-1", "synthetic-2").replace("annual", "annuall")
+    with pytest.raises(
+        ValueError, match=r"^CSV row 3: temporal_granularity must be supported$"
+    ):
+        read_climate_trace_csv(
+            write_inventory(tmp_path, HEADER + rows), edition="v5.11.0"
+        )

@@ -28,7 +28,10 @@
       qualified summaries establish the initial carbon inventory interface.</td></tr>
       <tr><td>2</td><td>2026-10-20</td><td>CO2e spelling compatibility, explicit
         period filters, optional units and CSV error context resolve ingestion
-        and example limitations.</td></tr></tbody>
+        and example limitations.</td></tr>
+      <tr><td>3</td><td>2026-10-25</td><td>Validate temporal granularity against
+        the cited schema enum so unsupported labels cannot produce a complete
+        summary.</td></tr></tbody>
     <caption>Table 1. Module documentation revisions.</caption>
   </table>
 
@@ -41,6 +44,16 @@
     reported zero from blank, null and N-A observations. Its gas metadata
     distinguishes species from separate CO2-equivalent horizons. No GWP or
     emission-factor coefficients are included in this module.</p>
+  <p>Temporal-granularity validation uses the six-value enum in Climate TRACE
+    Data Schema, tools repository <code>climate_trace_tools/schema/README.md</code>,
+    revision <code>61dbefb85a9eb759036c17e02ca59f0015a7c7dc</code> (2024-07-26),
+    Descriptions, <code>source_information_external.temporal_granularity</code>,
+    accessed 2026-10-25. The retrieved schema README has SHA-256
+    <code>5d4d972b3e426f8a0ae3f4ca34c7ebb6e050f38f37136a98e9644240bb9e4076</code>.
+    The v5.11.0 guide describes temporal granularity as the resolution of the
+    available data without enumerating labels. The earlier tools schema supplies
+    this importer's supported vocabulary; release-file compatibility remains
+    unverified.</p>
   <p>The retrieved guide has SHA-256
     <code>e0f88eda2e8d127961c7d91fcc1d5eb31bb1fa96e22da56e166fb6c859d33c3e</code>.
     The URL is mutable; this digest identifies the edition inspected for the
@@ -85,6 +98,12 @@ print(summary.edition, summary.sha256)</code></pre>
   <h2>Validation and calculation</h2>
   <p>Required fields are source_id, source_name, iso3_country, sector, subsector,
     start_time, end_time, gas, emissions_quantity and temporal_granularity.
+    Temporal granularity shall be one of <code>month</code>, <code>day</code>,
+    <code>hour</code>, <code>week</code>, <code>annual</code> or <code>other</code>.
+    After surrounding whitespace is stripped, labels are case-sensitive;
+    unsupported labels abort the import with CSV row context. Labels are retained
+    in the summation basis. No period-duration inference or consistency check is
+    applied, including for <code>other</code>.
     Additional columns are ignored, except an explicit emissions_quantity_units
     cell, when nonempty, shall contain tonnes. Blank cells use the schema
     basis of metric tonnes. Required identifiers are nonempty. Country
