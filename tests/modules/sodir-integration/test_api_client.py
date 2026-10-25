@@ -12,7 +12,6 @@ Tests verify:
 import json
 import time
 from datetime import datetime, timedelta
-from pathlib import Path
 from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
@@ -155,6 +154,7 @@ class TestRateLimiting:
         mock_get.return_value = mock_response
 
         client = SodirAPIClient("https://test.api", rate_limit=0)
+        client.cache_enabled = False
 
         # Make rapid requests
         start_time = time.time()
@@ -206,6 +206,7 @@ class TestCaching:
         mock_get.return_value = mock_response
 
         # Set cache TTL to very short time for testing
+        client_with_cache.cache_ttl = 0.1
         client_with_cache.cache.default_ttl = 0.1  # 100ms
 
         # First call
@@ -317,6 +318,8 @@ class TestErrorHandling:
             client.get("/test")
 
         assert exc_info.value.status_code == 500
+        assert exc_info.value.context["status_code"] == 500
+        assert exc_info.value.context["module"] == "sodir"
         assert mock_get.call_count == 4  # Initial + 3 retries
 
     @patch("worldenergydata.sodir.transport.requests.Session.get")
@@ -351,7 +354,84 @@ class TestErrorHandling:
             client.get("/test")
 
         assert exc_info.value.status_code == 400
+        assert exc_info.value.context["status_code"] == 400
         assert mock_get.call_count == 1  # No retries
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_exhausted_rate_limit_preserves_error(self, mock_sleep, client):
+        """Keep the rate-limit subtype and retry delay after the last attempt."""
+        response = Mock(status_code=429, headers={"Retry-After": "2"})
+        response.text = "Rate limit exceeded"
+        with patch.object(client, "_make_request", return_value=response) as request:
+            with pytest.raises(SodirRateLimitError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(2), call(2), call(2)]
+        assert exc_info.value.status_code == 429
+        assert exc_info.value.retry_after == 2
+        assert exc_info.value.context["status_code"] == 429
+        assert exc_info.value.context["retry_after"] == 2
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_structured_server_error_preserves_context(self, mock_sleep, client):
+        """Retry transient structured errors without replacing their context."""
+        failure = SodirAPIError(
+            "Temporary failure", status_code=503, context={"operation": "synthetic"}
+        )
+        with patch.object(client, "_make_request", side_effect=failure) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(0.1), call(0.2), call(0.4)]
+        assert exc_info.value is failure
+        assert exc_info.value.context["status_code"] == 503
+        assert exc_info.value.context["operation"] == "synthetic"
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_network_errors_keep_retry_backoff(self, mock_sleep, client):
+        """Keep bounded retries and backoff for transport connection failures."""
+        with patch.object(
+            client, "_make_request", side_effect=ConnectionError("Connection failed")
+        ) as request:
+            with pytest.raises(SodirAPIError, match="Request failed after 4 attempts"):
+                client.get("/test")
+
+        assert request.call_count == 4
+        assert mock_sleep.call_args_list == [call(0.1), call(0.2), call(0.4)]
+
+    @pytest.mark.parametrize("status", [400, 500])
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_zero_retries_preserves_status(self, mock_sleep, client, status):
+        """The first failed response is terminal when no retries are allowed."""
+        client.max_retries = 0
+        response = Mock(status_code=status, text="Request failed")
+        with patch.object(client, "_make_request", return_value=response) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 1
+        mock_sleep.assert_not_called()
+        assert exc_info.value.status_code == status
+        assert exc_info.value.context["status_code"] == status
+
+    @patch("worldenergydata.sodir.transport.time.sleep")
+    def test_client_error_after_server_error_is_terminal(self, mock_sleep, client):
+        """A client rejection must not be retried into a later success."""
+        server_error = Mock(status_code=500, text="Temporary failure")
+        client_error = Mock(status_code=400, text="Request rejected")
+        success = Mock(status_code=200)
+        success.json.return_value = {"data": []}
+        with patch.object(
+            client, "_make_request", side_effect=[server_error, client_error, success]
+        ) as request:
+            with pytest.raises(SodirAPIError) as exc_info:
+                client.get("/test")
+
+        assert request.call_count == 2
+        assert mock_sleep.call_args_list == [call(0.1)]
+        assert exc_info.value.status_code == 400
 
 
 class TestSODIREndpoints:

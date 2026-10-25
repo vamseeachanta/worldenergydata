@@ -272,6 +272,15 @@ class SodirTransport:
                     )
 
             except Exception as e:
+                if isinstance(e, SodirAPIError) and (
+                    attempt == self.max_retries
+                    or (
+                        e.status_code is not None
+                        and 400 <= e.status_code < 500
+                        and e.status_code != 429
+                    )
+                ):
+                    raise
                 # Handle both requests exceptions and other errors
                 if requests_available and isinstance(
                     e, requests.exceptions.RequestException

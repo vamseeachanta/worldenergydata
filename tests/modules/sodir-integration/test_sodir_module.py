@@ -176,7 +176,7 @@ class TestSodirConfiguration:
     def test_configuration_structure(self, config_path):
         """Test configuration file has required structure."""
         if config_path.exists():
-            with open(config_path, "r") as f:
+            with open(config_path, "r", encoding="utf-8") as f:
                 config = yaml.safe_load(f)
 
             # Check required sections
@@ -207,7 +207,7 @@ class TestSodirConfiguration:
             # Should be able to load configuration
             config_path = Path(__file__).parent / "configs" / "sodir.yml"
             if config_path.exists():
-                with open(config_path, "r") as f:
+                with open(config_path, "r", encoding="utf-8") as f:
                     config = yaml.safe_load(f)
 
                 # Should accept loaded configuration
@@ -228,7 +228,9 @@ class TestSodirDataTypes:
 
             assert "blocks" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["blocks"]["id"] == "1001"
-            assert SODIR_ENDPOINTS["blocks"]["endpoint"] == "/api/rest/1001"
+            assert SODIR_ENDPOINTS["blocks"]["endpoint"] == (
+                "/api/rest/services/DataService/Data/FeatureServer/1001/query"
+            )
         except ImportError:
             # Expected to fail initially
             pass
@@ -240,7 +242,9 @@ class TestSodirDataTypes:
 
             assert "wellbores" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["wellbores"]["id"] == "5000"
-            assert SODIR_ENDPOINTS["wellbores"]["endpoint"] == "/api/rest/5000"
+            assert SODIR_ENDPOINTS["wellbores"]["endpoint"] == (
+                "/api/rest/services/DataService/Data/FeatureServer/5000/query"
+            )
         except ImportError:
             # Expected to fail initially
             pass
@@ -252,7 +256,9 @@ class TestSodirDataTypes:
 
             assert "fields" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["fields"]["id"] == "7100"
-            assert SODIR_ENDPOINTS["fields"]["endpoint"] == "/api/rest/7100"
+            assert SODIR_ENDPOINTS["fields"]["endpoint"] == (
+                "/api/rest/services/DataService/Data/FeatureServer/7100/query"
+            )
         except ImportError:
             # Expected to fail initially
             pass
@@ -264,7 +270,9 @@ class TestSodirDataTypes:
 
             assert "discoveries" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["discoveries"]["id"] == "7000"
-            assert SODIR_ENDPOINTS["discoveries"]["endpoint"] == "/api/rest/7000"
+            assert SODIR_ENDPOINTS["discoveries"]["endpoint"] == (
+                "/api/rest/services/DataService/Data/FeatureServer/7000/query"
+            )
         except ImportError:
             # Expected to fail initially
             pass
@@ -276,7 +284,9 @@ class TestSodirDataTypes:
 
             assert "surveys" in SODIR_ENDPOINTS
             assert SODIR_ENDPOINTS["surveys"]["id"] == "4000"
-            assert SODIR_ENDPOINTS["surveys"]["endpoint"] == "/api/rest/4000"
+            assert SODIR_ENDPOINTS["surveys"]["endpoint"] == (
+                "/api/rest/services/DataService/Data/FeatureServer/4000/query"
+            )
         except ImportError:
             # Expected to fail initially
             pass

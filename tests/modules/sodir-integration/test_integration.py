@@ -10,10 +10,11 @@ import shutil
 import tempfile
 import time
 import unittest
-from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, Mock, patch
+
+import pandas as pd
 
 from worldenergydata.sodir.analysis import SodirAnalysis
 from worldenergydata.sodir.api_client import SodirAPIClient
@@ -23,6 +24,7 @@ from worldenergydata.sodir.cache_optimizer import SodirCacheOptimizer
 from worldenergydata.sodir.cross_regional import CrossRegionalAnalyzer
 from worldenergydata.sodir.data import SodirData
 from worldenergydata.sodir.datasets import DatasetGenerator
+from worldenergydata.sodir.errors import SodirAPIError
 from worldenergydata.sodir.parallel import SodirParallelProcessor
 from worldenergydata.sodir.processors.block_processor import BlockProcessor
 from worldenergydata.sodir.processors.discovery_processor import DiscoveryProcessor
@@ -54,56 +56,54 @@ class TestSodirIntegration(unittest.TestCase):
             "collection": {"batch_size": 100, "parallel": True},
         }
 
-        # Mock API responses for testing
+        # Synthetic API records use the canonical raw field names and units.
         self.mock_blocks_data = [
             {
-                "blockId": "BLOCK_001",
-                "blockName": "Block 31/2",
-                "quadrantId": 31,
-                "status": "ACTIVE",
+                "blcNpdidBlock": "BLOCK_001",
+                "blcName": "31/2",
+                "blcStatus": "AWARDED",
                 "coordinates": {"utmZone": 31, "northing": 6500000, "easting": 500000},
             },
             {
-                "blockId": "BLOCK_002",
-                "blockName": "Block 31/3",
-                "quadrantId": 31,
-                "status": "ACTIVE",
+                "blcNpdidBlock": "BLOCK_002",
+                "blcName": "31/3",
+                "blcStatus": "AWARDED",
                 "coordinates": {"utmZone": 31, "northing": 6550000, "easting": 550000},
             },
         ]
 
         self.mock_wellbores_data = [
             {
-                "wellboreId": "WELL_001",
-                "wellboreName": "31/2-1",
-                "blockId": "BLOCK_001",
-                "totalDepthMd": 3500,
-                "waterDepth": 350,
-                "status": "PRODUCING",
-                "drillingOperator": "Equinor",
+                "wlbNpdidWellbore": "WELL_001",
+                "wlbName": "WELL_A",
+                "wlbTotalDepth": 3500,
+                "wlbWaterDepth": 350,
+                "wlbStatus": "PRODUCING",
+                "wlbDrillingOperator": "OPERATOR_A",
             },
             {
-                "wellboreId": "WELL_002",
-                "wellboreName": "31/3-1",
-                "blockId": "BLOCK_002",
-                "totalDepthMd": 4200,
-                "waterDepth": 380,
-                "status": "PLUGGED",
-                "drillingOperator": "Aker BP",
+                "wlbNpdidWellbore": "WELL_002",
+                "wlbName": "WELL_B",
+                "wlbTotalDepth": 4200,
+                "wlbWaterDepth": 380,
+                "wlbStatus": "PLUGGED",
+                "wlbDrillingOperator": "OPERATOR_B",
             },
         ]
 
         self.mock_fields_data = [
             {
-                "fieldId": "FIELD_001",
-                "fieldName": "Johan Sverdrup",
-                "blockId": "BLOCK_001",
-                "originalOilInPlaceSm3": 500000000,
-                "originalGasInPlaceSm3": 100000000,
-                "remainingOilSm3": 400000000,
-                "remainingGasSm3": 80000000,
-                "status": "PRODUCING",
-                "discoveryYear": 2010,
+                "fldNpdidField": "FIELD_001",
+                "fldName": "FIELD_A",
+                "fldOriginalReservesOil": 500,
+                "fldOriginalReservesGas": 0.1,
+                "fldRemainingReservesOil": 400,
+                "fldRemainingReservesGas": 0.08,
+                "fldRecoverableOil": 500,
+                "fldRecoverableGas": 0.1,
+                "fldStatus": "PRODUCING",
+                "fldDiscoveryYear": 2010,
+                "fldWaterDepth": 350,
             }
         ]
 
@@ -170,43 +170,30 @@ class TestSodirIntegration(unittest.TestCase):
             self.assertEqual(len(results[2]["data"]), 1)  # 1 field
 
     def test_data_processing_pipeline(self):
-        """Test the complete data processing pipeline."""
-        # Initialize processors
-        block_processor = BlockProcessor()
-        wellbore_processor = WellboreProcessor()
-        field_processor = FieldProcessor()
+        """Test the complete data processing pipeline with canonical API records."""
+        processed_blocks = BlockProcessor().process_batch(self.mock_blocks_data)
+        processed_wellbores = WellboreProcessor().process_batch(
+            self.mock_wellbores_data
+        )
+        processed_fields = FieldProcessor().process_batch(self.mock_fields_data)
 
-        # Process mock data
-        processed_blocks = block_processor.process_batch(self.mock_blocks_data)
-        processed_wellbores = wellbore_processor.process_batch(self.mock_wellbores_data)
-        processed_fields = field_processor.process_batch(self.mock_fields_data)
-
-        # Verify processing results
         self.assertEqual(len(processed_blocks), 2)
         self.assertEqual(len(processed_wellbores), 2)
         self.assertEqual(len(processed_fields), 1)
-
-        # Check coordinate conversion (UTM to WGS84)
         for block in processed_blocks:
-            self.assertIn("latitude", block)
-            self.assertIn("longitude", block)
             self.assertIsInstance(block["latitude"], float)
             self.assertIsInstance(block["longitude"], float)
 
-        # Check unit conversions
-        for field in processed_fields:
-            self.assertIn("original_oil_bbl", field)
-            self.assertIn("original_gas_bcf", field)
-            # Verify conversion (1 Sm³ oil = 6.29 barrels)
-            expected_oil_bbl = self.mock_fields_data[0]["originalOilInPlaceSm3"] * 6.29
-            self.assertAlmostEqual(
-                field["original_oil_bbl"], expected_oil_bbl, delta=1000
-            )
-
-        # Check status normalization
-        for wellbore in processed_wellbores:
-            self.assertIn("status_normalized", wellbore)
-            self.assertIn(wellbore["status_normalized"], ["ACTIVE", "INACTIVE"])
+        field = processed_fields[0]
+        self.assertAlmostEqual(field["original_reserves_oil_mmbbl"], 3145.0)
+        self.assertAlmostEqual(field["original_reserves_gas_bcf"], 3.53)
+        self.assertAlmostEqual(field["remaining_reserves_oil_mmbbl"], 2516.0)
+        # The fixture recovers (500 - 400) / 500 of the original oil.
+        self.assertAlmostEqual(field["recovery_factor_oil"], 0.2)
+        self.assertEqual(
+            [well["status_normalized"] for well in processed_wellbores],
+            ["PRODUCING", "PLUGGED_AND_ABANDONED"],
+        )
 
     def test_storage_and_retrieval(self):
         """Test data storage and retrieval functionality."""
@@ -214,7 +201,7 @@ class TestSodirIntegration(unittest.TestCase):
         storage = DataStorage(self.temp_dir)
 
         # Save different data types
-        storage.save_raw_data(self.mock_blocks_data, "blocks")
+        raw_blocks_path = storage.save_raw_data(self.mock_blocks_data, "blocks")
         storage.save_raw_data(self.mock_wellbores_data, "wellbores")
         storage.save_raw_data(self.mock_fields_data, "fields")
 
@@ -223,40 +210,36 @@ class TestSodirIntegration(unittest.TestCase):
         processed_blocks = block_processor.process_batch(self.mock_blocks_data)
         storage.save_processed_data(processed_blocks, "blocks")
 
-        # Verify files exist
-        raw_blocks_file = (
-            Path(self.temp_dir)
-            / "raw"
-            / f'blocks_{datetime.now().strftime("%Y%m%d")}.json'
+        # Read the exact timestamped path returned by the storage API.
+        raw_blocks_file = Path(raw_blocks_path)
+        self.assertTrue(raw_blocks_file.is_file())
+        loaded_blocks = json.loads(raw_blocks_file.read_text(encoding="utf-8"))
+        self.assertEqual(loaded_blocks, self.mock_blocks_data)
+        loaded_processed = storage.load_processed_data("blocks")
+        self.assertEqual(
+            loaded_processed["block_id"].tolist(), ["BLOCK_001", "BLOCK_002"]
         )
-        self.assertTrue(raw_blocks_file.exists())
-
-        # Load and verify data
-        loaded_blocks = json.loads(raw_blocks_file.read_text())
-        self.assertEqual(len(loaded_blocks), 2)
-        self.assertEqual(loaded_blocks[0]["blockId"], "BLOCK_001")
 
     def test_analysis_integration(self):
-        """Test integration of analysis components."""
-        # Initialize analysis
+        """Test processed field records through the canonical portfolio API."""
         analysis = SodirAnalysis(config={"output_dir": self.temp_dir})
-
-        # Process mock data first
-        field_processor = FieldProcessor()
-        processed_fields = field_processor.process_batch(self.mock_fields_data)
-
-        # Perform field analysis
-        field_metrics = analysis.analyze_fields(processed_fields)
-
-        # Verify analysis results
-        self.assertIn("total_fields", field_metrics)
-        self.assertIn("producing_fields", field_metrics)
-        self.assertIn("total_original_oil_sm3", field_metrics)
-        self.assertIn("total_remaining_oil_sm3", field_metrics)
-        self.assertIn("average_recovery_factor", field_metrics)
+        processed_fields = FieldProcessor().process_batch(self.mock_fields_data)
+        analysis.data = {
+            "fields": pd.DataFrame(processed_fields).rename(
+                columns={"recovery_factor_oil": "recovery_factor"}
+            )
+        }
+        field_metrics = analysis.analyze_portfolio()
 
         self.assertEqual(field_metrics["total_fields"], 1)
-        self.assertEqual(field_metrics["producing_fields"], 1)
+        self.assertEqual(field_metrics["fields_by_status"], {"PRODUCING": 1})
+        self.assertAlmostEqual(field_metrics["total_recoverable_oil"], 3145.0)
+        self.assertAlmostEqual(field_metrics["total_recoverable_gas"], 3.53)
+        self.assertAlmostEqual(field_metrics["average_recovery_factor"], 0.2)
+        self.assertEqual(
+            field_metrics["field_rankings"]["by_oil_reserves"][0]["field_name"],
+            "FIELD_A",
+        )
 
     def test_caching_integration(self):
         """Test caching integration across components."""
@@ -373,81 +356,85 @@ class TestSodirIntegration(unittest.TestCase):
         self.assertIn("water_depth_m", wellbore_dataset.columns)
         self.assertIn("status_normalized", wellbore_dataset.columns)
 
-        # Generate production dataset
-        production_dataset = generator.generate_production_dataset(processed_fields)
-
-        # Verify production dataset
-        self.assertIn("field_id", production_dataset.columns)
-        self.assertIn("original_oil_bbl", production_dataset.columns)
-        self.assertIn("recovery_factor", production_dataset.columns)
+        # Production records are distinct from the processed field metadata.
+        production_records = [
+            {"field_id": "FIELD_001", "oil_production": 1000, "gas_production": 6000},
+            {"field_id": "FIELD_001", "oil_production": 1500, "gas_production": 12000},
+        ]
+        field_metadata = pd.DataFrame(processed_fields)[["field_id", "field_name"]]
+        field_metadata["recoverable_oil"] = 10000
+        production_dataset = generator.generate_production_dataset(
+            production_records, field_metadata
+        )
+        self.assertEqual(
+            production_dataset["field_id"].tolist(), ["FIELD_001", "FIELD_001"]
+        )
+        self.assertEqual(production_dataset["cumulative_oil"].tolist(), [1000, 2500])
+        # Cumulative recovery is 1000 / 10000, then (1000 + 1500) / 10000.
+        self.assertEqual(production_dataset["recovery_factor"].tolist(), [0.1, 0.25])
 
     def test_error_handling_integration(self):
-        """Test error handling across integrated components."""
-        # Test API client error handling
+        """Test API errors, record validation and invalid storage destinations."""
         client = SodirAPIClient(
-            base_url="https://invalid.url",
+            base_url=self.test_config["api"]["base_url"],
             rate_limit=10,
             max_retries=1,
             retry_delay=0.1,
         )
+        with patch("worldenergydata.sodir.transport.requests.Session.get") as mock_get:
+            mock_get.side_effect = ConnectionError("Connection error")
+            with self.assertRaisesRegex(
+                SodirAPIError, "Request failed after 2 attempts"
+            ):
+                client.get_blocks(limit=10)
+            self.assertEqual(mock_get.call_count, 2)
 
-        # Mock failed request
-        with patch("requests.Session.get") as mock_get:
-            mock_get.side_effect = Exception("Connection error")
-
-            # Should handle error gracefully
-            result = client.get_blocks(limit=10)
-            self.assertIsNone(result)
-
-        # Test processor error handling
         processor = BlockProcessor()
+        invalid_record = {"invalid": "data"}
+        processed = processor.process_batch([invalid_record])
+        self.assertEqual(len(processed), 0)
+        self.assertEqual(processor.error_count, 1)
+        is_valid, errors = processor.validate(invalid_record)
+        self.assertFalse(is_valid)
+        self.assertIn("Missing required field: blcName", errors)
 
-        # Invalid data should be handled
-        invalid_data = [{"invalid": "data"}]
-        processed = processor.process_batch(invalid_data)
-        self.assertEqual(len(processed), 1)
-
-        # Test storage error handling
-        storage = DataStorage("/invalid/path")
-
-        # Should handle invalid path gracefully
-        success = storage.save_raw_data(self.mock_blocks_data, "blocks")
-        # Storage will attempt to create directory or fail gracefully
+        invalid_destination = Path(self.temp_dir) / "not-a-directory"
+        invalid_destination.write_text("fixture", encoding="utf-8", newline="\n")
+        with self.assertRaises(FileExistsError):
+            DataStorage(str(invalid_destination))
 
     def test_workflow_orchestration(self):
-        """Test complete workflow orchestration."""
-        # Initialize workflow
+        """Test configured collection, processing and storage through execute."""
         workflow = CollectionWorkflow(
-            {"batch_size": 10, "parallel": True, "save_intermediate": True}
+            {
+                **self.test_config,
+                "datasets": ["blocks", "wellbores", "fields"],
+                "filters": {"limit": 100},
+            }
         )
-
-        # Mock components
         mock_client = Mock()
         mock_client.get_blocks.return_value = self.mock_blocks_data
         mock_client.get_wellbores.return_value = self.mock_wellbores_data
         mock_client.get_fields.return_value = self.mock_fields_data
+        workflow.sodir_data = SodirData(self.test_config)
+        workflow.sodir_data.api_client = mock_client
+        storage = workflow.sodir_data.storage
 
-        mock_storage = Mock()
-        mock_storage.save_raw_data.return_value = True
-        mock_storage.save_processed_data.return_value = True
-
-        # Configure workflow
-        workflow.api_client = mock_client
-        workflow.storage = mock_storage
-
-        # Execute workflow
-        results = workflow.collect_all_data(
-            data_types=["blocks", "wellbores", "fields"], params={"limit": 100}
+        with patch.object(storage, "save", wraps=storage.save) as save:
+            results = workflow.execute()
+        self.assertTrue(results["success"])
+        self.assertEqual(
+            results["datasets_collected"], ["blocks", "wellbores", "fields"]
         )
-
-        # Verify workflow execution
-        self.assertIsNotNone(results)
-        self.assertIn("blocks", results)
-        self.assertIn("wellbores", results)
-        self.assertIn("fields", results)
-
-        # Verify storage was called
-        self.assertTrue(mock_storage.save_raw_data.called)
+        self.assertEqual(results["total_records"], 5)
+        self.assertEqual(save.call_count, 3)
+        for dataset, count in (("blocks", 2), ("wellbores", 2), ("fields", 1)):
+            stored = results["storage"][dataset]
+            self.assertTrue(stored["success"])
+            self.assertEqual(stored["records"], count)
+            records = json.loads(Path(stored["path"]).read_text(encoding="utf-8"))
+            self.assertEqual(len(records), count)
+        mock_client.get_blocks.assert_called_once_with(limit=100)
 
     def test_performance_optimization_integration(self):
         """Test that performance optimizations work together."""
@@ -496,48 +483,43 @@ class TestModuleIntegration(unittest.TestCase):
     """Test integration between SODIR module components."""
 
     def test_module_initialization(self):
-        """Test that all module components initialize correctly."""
-        config = {
-            "api": {"base_url": "https://factmaps.sodir.no/api/rest", "rate_limit": 10},
-            "cache": {"ttl": 86400},
-            "storage": {"base_path": tempfile.mkdtemp()},
-        }
-
-        # Initialize main module
-        module = Sodir()
-
-        # Verify module initialized
-        self.assertIsNotNone(module)
-        self.assertEqual(module.module_name, "sodir")
-
-        # Test router method
-        result = module.router(config)
-        # Router should return the config (possibly modified)
-        self.assertIsInstance(result, dict)
+        """Test the real module router with temporary storage and mocked HTTP data."""
+        with tempfile.TemporaryDirectory() as directory:
+            config = {
+                "data_types": ["blocks"],
+                "storage": {"base_path": directory},
+            }
+            module = Sodir()
+            self.assertIsNotNone(module)
+            self.assertEqual(module.module_name, "sodir")
+            with patch.object(
+                SodirAPIClient,
+                "get_blocks",
+                return_value=[{"blcNpdidBlock": "1", "blcName": "31/2"}],
+            ) as get_blocks:
+                result = module.router(config)
+            self.assertIsInstance(result, dict)
+            self.assertEqual(result["sodir"]["status"], "completed")
+            self.assertEqual(result["sodir"]["data_collected"], ["blocks"])
+            get_blocks.assert_called_once_with()
 
     def test_component_communication(self):
-        """Test that components communicate correctly."""
-        # Create mock components
+        """Test that API data passes through processing and the storage API."""
         mock_api = Mock()
-        mock_cache = Mock()
+        mock_api.get_blocks.return_value = [{"blcNpdidBlock": "1", "blcName": "31/2"}]
         mock_storage = Mock()
+        mock_storage.save.return_value = "raw/blocks.json"
+        with tempfile.TemporaryDirectory() as directory:
+            data_router = SodirData({"storage": {"base_path": directory}})
+            data_router.api_client = mock_api
+            data_router.storage = mock_storage
+            result = data_router.collect_and_store("blocks")
 
-        # Set up return values
-        mock_api.get_blocks.return_value = [{"blockId": "1"}]
-        mock_cache.get.return_value = None
-        mock_storage.save_raw_data.return_value = True
-
-        # Wire components together
-        data_router = SodirData({"storage": {"base_path": "/tmp"}})
-        data_router.api_client = mock_api
-        data_router.storage = mock_storage
-
-        # Execute operation that requires component communication
-        result = data_router.collect_blocks(limit=10)
-
-        # Verify communication occurred
-        mock_api.get_blocks.assert_called_once()
-        mock_storage.save_raw_data.assert_called()
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(result["count"], 1)
+        self.assertEqual(result["data"][0]["block_id"], "1")
+        mock_api.get_blocks.assert_called_once_with()
+        mock_storage.save.assert_called_once_with("blocks", result)
 
 
 if __name__ == "__main__":
