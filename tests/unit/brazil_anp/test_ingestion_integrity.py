@@ -43,6 +43,29 @@ def archive(text=None):
     return buffer.getvalue()
 
 
+def production_archive(frame):
+    """Encode synthetic observations with the client's two-row CSV header."""
+    header = frame.iloc[:0].to_csv(sep=";", index=False, lineterminator="\n")
+    padding = ";" * (len(frame.columns) - 1) + "\n"
+    rows = frame.to_csv(sep=";", index=False, header=False, lineterminator="\n")
+    return archive(header + padding * 2 + rows)
+
+
+def assert_rejected_refresh_keeps_valid_cache(tmp_path, invalid_payload):
+    client = ANPClient(cache_dir=str(tmp_path))
+    retained = production_archive(raw_row())
+    cache = tmp_path / client._cache_key(2024, 2)
+    cache.write_bytes(retained)
+    with patch("worldenergydata.brazil_anp.production.anp_client.requests") as requests:
+        requests.get.return_value.content = invalid_payload
+        with pytest.raises(ValueError, match="ANP"):
+            client.download_month(2024, 2, force_refresh=True)
+        assert cache.read_bytes() == retained
+        result = WellProductionLoader().load(client.download_month(2024, 2))
+    # Leap February: the retained 0.5 bbl/day * 29 days = 14.5 bbl.
+    assert result.iloc[0].oil_bbl == 14.5
+
+
 @pytest.mark.parametrize("value", ["0.5", 0.5, "0,5", "1.000,5", "1000.5", 1000.5])
 def test_decimal_rates_preserve_value(value):
     """Leap February: 0.5 * 29 = 14.5 or 1000.5 * 29 = 29014.5 bbl."""
@@ -137,6 +160,20 @@ def test_missing_well_evidence_stays_unknown(wells):
     assert meta["well_count"] is None
 
 
+@pytest.mark.parametrize("field_column", ["Campo", "CAMPO"])
+@pytest.mark.parametrize("missing", [None, float("nan"), pd.NA, "", "  ", 0])
+def test_mixed_unresolved_well_links_keep_count_unknown(field_column, missing):
+    meta = build_brazil_field_meta(
+        fields_df=pd.DataFrame({"CAMPO": ["synthetic"]}),
+        platforms_df=pd.DataFrame(),
+        wells_df=pd.DataFrame(
+            {field_column: ["synthetic", missing], "POCO": ["a", "b"]}
+        ),
+        field_name="synthetic",
+    )
+    assert meta["well_count"] is None
+
+
 def test_well_count_uses_distinct_nonblank_identities():
     """The repeated well-month rows {a, a, b} represent exactly two wells."""
     meta = build_brazil_field_meta(
@@ -146,6 +183,18 @@ def test_well_count_uses_distinct_nonblank_identities():
         field_name="synthetic",
     )
     assert meta["well_count"] == 2
+
+
+def test_complete_well_links_count_only_the_selected_field():
+    meta = build_brazil_field_meta(
+        fields_df=pd.DataFrame({"CAMPO": ["synthetic"]}),
+        platforms_df=pd.DataFrame(),
+        wells_df=pd.DataFrame(
+            {"Campo": ["synthetic", "synthetic-other"], "POCO": ["a", "b"]}
+        ),
+        field_name="synthetic",
+    )
+    assert meta["well_count"] == 1
 
 
 @pytest.mark.parametrize("rate", [None, float("nan"), float("inf"), -1])
@@ -197,7 +246,7 @@ def test_client_rejects_mixed_valid_and_invalid_rows(tmp_path, period):
 def test_invalid_download_does_not_replace_valid_cache(tmp_path):
     """Invalid replacement bytes must leave the previously retained bytes intact."""
     client = ANPClient(cache_dir=str(tmp_path))
-    retained = archive("Campo;Período\n;\n;\nsynthetic;2024/02\n")
+    retained = production_archive(raw_row())
     cache = tmp_path / client._cache_key(2024, 2)
     cache.write_bytes(retained)
     with patch("worldenergydata.brazil_anp.production.anp_client.requests") as requests:
@@ -205,6 +254,71 @@ def test_invalid_download_does_not_replace_valid_cache(tmp_path):
         with pytest.raises(ValueError):
             client.download_month(2024, 2, force_refresh=True)
     assert cache.read_bytes() == retained
+
+
+@pytest.mark.parametrize(
+    "column",
+    [
+        "Óleo (bbl/dia)",
+        "Condensado (bbl/dia)",
+        "Gás Natural (Mm³/dia) Gás Total",
+        "Água (bbl/dia)",
+    ],
+)
+@pytest.mark.parametrize("invalid", [None, "", "bad", "nan", "inf", "-inf", "-1"])
+def test_invalid_rate_refresh_preserves_valid_cache(tmp_path, column, invalid):
+    payload = production_archive(raw_row(**{column: invalid}))
+    assert_rejected_refresh_keeps_valid_cache(tmp_path, payload)
+
+
+@pytest.mark.parametrize("column", ["Campo", "Nome Poço ANP"])
+@pytest.mark.parametrize("missing", [None, "", "  "])
+def test_missing_identity_refresh_preserves_valid_cache(tmp_path, column, missing):
+    payload = production_archive(raw_row(**{column: missing}))
+    assert_rejected_refresh_keeps_valid_cache(tmp_path, payload)
+
+
+@pytest.mark.parametrize(
+    "column",
+    [
+        "Campo",
+        "Nome Poço ANP",
+        "Óleo (bbl/dia)",
+        "Condensado (bbl/dia)",
+        "Gás Natural (Mm³/dia) Gás Total",
+        "Água (bbl/dia)",
+    ],
+)
+def test_missing_column_refresh_preserves_valid_cache(tmp_path, column):
+    payload = production_archive(raw_row().drop(columns=[column]))
+    assert_rejected_refresh_keeps_valid_cache(tmp_path, payload)
+
+
+def test_invalid_overlap_cannot_be_hidden_before_cache_validation(tmp_path):
+    valid = production_archive(raw_row())
+    invalid = production_archive(raw_row(**{"Óleo (bbl/dia)": "-1"}))
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as combined:
+        for name, payload in [("mar.csv", invalid), ("presal.csv", valid)]:
+            with zipfile.ZipFile(io.BytesIO(payload)) as partition:
+                combined.writestr(name, partition.read("partition.csv"))
+    assert_rejected_refresh_keeps_valid_cache(tmp_path, buffer.getvalue())
+
+
+@pytest.mark.parametrize("rate,expected", [("0", 0), ("1.5", 43.5)])
+def test_valid_refresh_publishes_reusable_cache(tmp_path, rate, expected):
+    """Leap February: 0 * 29 = 0; 1.5 * 29 = 43.5 bbl."""
+    client = ANPClient(cache_dir=str(tmp_path))
+    cache = tmp_path / client._cache_key(2024, 2)
+    cache.write_bytes(production_archive(raw_row()))
+    replacement = production_archive(raw_row(**{"Óleo (bbl/dia)": rate}))
+    with patch("worldenergydata.brazil_anp.production.anp_client.requests") as requests:
+        requests.get.return_value.content = replacement
+        refreshed = client.download_month(2024, 2, force_refresh=True)
+        reused = client.download_month(2024, 2)
+    assert cache.read_bytes() == replacement
+    pd.testing.assert_frame_equal(refreshed, reused)
+    assert WellProductionLoader().load(reused).iloc[0].oil_bbl == expected
 
 
 @pytest.mark.parametrize("missing", [None, pd.NA, "", " "])

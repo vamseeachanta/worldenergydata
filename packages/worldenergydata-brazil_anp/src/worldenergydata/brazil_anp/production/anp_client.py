@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from worldenergydata.brazil_anp.production.well_production import WellProductionLoader
+
 try:
     import requests
 except ImportError:
@@ -152,6 +154,12 @@ class ANPClient:
         )
         if not valid.all() or dates.isna().any():
             raise ANPIngestionError("Invalid ANP production period; no rows accepted")
+        try:
+            WellProductionLoader().load(df)
+        except (KeyError, ValueError) as exc:
+            raise ANPIngestionError(
+                "Invalid or incomplete ANP production observations"
+            ) from exc
         return df.reset_index(drop=True)
 
 

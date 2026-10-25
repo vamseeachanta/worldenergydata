@@ -46,7 +46,7 @@ def build_brazil_field_meta(
         "environment": _environment(field_row, well_rows),
         "region": "brazil",
         "water_depth_m": _platform_water_depth(platform_rows),
-        "well_count": _well_count(well_rows),
+        "well_count": _well_count(wells_df, field_name),
         "first_oil_date": _none_if_blank(field_row.get("DATA_INICIO_PRODUCAO")),
         "source": "anp_fase_desenvolvimento_producao",
     }
@@ -114,8 +114,14 @@ def _platform_water_depth(platforms: pd.DataFrame) -> float | None:
     return float(sum(values) / len(values))
 
 
-def _well_count(wells: pd.DataFrame) -> int | None:
+def _well_count(wells: pd.DataFrame, field_name: str) -> int | None:
     """Absent links or identities do not establish a measured well count."""
+    if wells is None or wells.empty:
+        return None
+    field_col = "Campo" if "Campo" in wells.columns else "CAMPO"
+    if field_col not in wells.columns or wells[field_col].map(_norm).eq("").any():
+        return None
+    wells = _matching_wells(wells, field_name)
     if wells.empty:
         return None
     for col in ("Nome_poço_anp", "Nome Poço ANP", "POCO", "Poço"):
