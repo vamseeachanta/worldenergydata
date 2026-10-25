@@ -4,6 +4,7 @@
 
 | File | Safety Class | Notes |
 |------|-------------|-------|
+| `economics_views.py` | `bounded-safe` | Synthetic cash flows; offline assertions check NPV, IRR, MIRR and calendar discounting |
 | `fdas_complete_workflow.py` | `fixture-only` | Pure financial calculations, no data or network |
 | `validation_examples.py` | `fixture-only` | Validation logic only, no external I/O |
 | `marine_safety_cause_visualization_demo.py` | `data-required` | Requires local marine safety DB |
