@@ -43,7 +43,9 @@ def test_production_label_contract(code):
     assert code in TexasRRC().get_valid_districts()
     assert code in VALID_DISTRICTS
     assert code in TEXAS_DISTRICTS
-    config = yaml.safe_load((REPO_ROOT / "config/texas_rrc.yml").read_text())
+    config = yaml.safe_load(
+        (REPO_ROOT / "config/texas_rrc.yml").read_text(encoding="utf-8")
+    )
     assert code in config["districts"]
     TexasRRC()._validate_config({"districts": [code]})
 
@@ -57,7 +59,9 @@ def test_production_lists_have_no_unqualified_labels():
     assert set(TexasRRC.VALID_DISTRICTS) == set(EXPECTED_DISTRICTS)
     assert set(VALID_DISTRICTS) == set(EXPECTED_DISTRICTS)
     assert set(TEXAS_DISTRICTS) == set(EXPECTED_DISTRICTS)
-    config = yaml.safe_load((REPO_ROOT / "config/texas_rrc.yml").read_text())
+    config = yaml.safe_load(
+        (REPO_ROOT / "config/texas_rrc.yml").read_text(encoding="utf-8")
+    )
     assert set(config["districts"]) == set(EXPECTED_DISTRICTS)
 
 
@@ -91,15 +95,17 @@ def test_csv_route_preserves_special_district_and_accounts_unknowns(tmp_path, co
     csv_path.write_text(
         "district,lease_number,oil_production,gas_production\n"
         f"{code},1,100,10\n{code},1,25,5\n"
-        "03,2,50,7\ninvalid,3,20,3\n,4,10,2\n"
+        "03,2,50,7\ninvalid,3,20,3\n,4,10,2\n",
+        encoding="utf-8",
+        newline="\n",
     )
     cfg = {
         "data_types": ["production"],
         "districts": [code, "03"],
-        "data": {"source": "csv", "files": {"production": str(csv_path)}},
+        "data": {"source": "csv", "files": {"production": csv_path.as_posix()}},
         "Analysis": {
-            "analysis_root_folder": str(tmp_path),
-            "result_folder": str(tmp_path / "results"),
+            "analysis_root_folder": tmp_path.as_posix(),
+            "result_folder": (tmp_path / "results").as_posix(),
         },
     }
     result = TexasRRC().router(cfg)
@@ -114,7 +120,7 @@ def test_csv_route_preserves_special_district_and_accounts_unknowns(tmp_path, co
     assert unassigned["gas_production"] == 5
     assert districts["oil_production"].sum() == 205
     assert districts["gas_production"].sum() == 27
-    summary = json.loads(Path(outputs["summary_json"]).read_text())
+    summary = json.loads(Path(outputs["summary_json"]).read_text(encoding="utf-8"))
     assert summary["total_records"] == 5
     assert summary["district_count"] == 2
     assert summary["oil_production_total"] == 205
@@ -128,6 +134,93 @@ def test_csv_route_preserves_special_district_and_accounts_unknowns(tmp_path, co
     assert summary["missing_district_oil_production_total"] == 10
     assert summary["invalid_district_gas_production_total"] == 3
     assert summary["missing_district_gas_production_total"] == 2
+
+
+@pytest.mark.parametrize("missing", ["NaN", ""])
+def test_csv_route_missing_measurements_match_district_totals(tmp_path, missing):
+    """Hand sums in BBL/MCF; missing measurements add no reported volume.
+
+    Assigned 6E: oil 10, gas 2 + 1 = 3; assigned 03: both totals 0.
+    Invalid: oil 1, gas 3; missing district: oil 4, gas 5.
+    Unassigned: oil 1 + 4 = 5, gas 3 + 5 = 8.
+    Overall: oil 10 + 1 + 4 = 15, gas 3 + 3 + 5 = 11; seven rows.
+    """
+    csv_path = tmp_path / "production.csv"
+    csv_path.write_text(
+        "district,oil_production,gas_production\n"
+        f"6E,10,2\n6E,{missing},1\ninvalid,{missing},3\n"
+        f"invalid,1,{missing}\n,{missing},5\n,4,{missing}\n"
+        f"03,{missing},{missing}\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+    cfg = {
+        "data_types": ["production"],
+        "data": {"source": "csv", "files": {"production": csv_path.as_posix()}},
+        "Analysis": {
+            "analysis_root_folder": tmp_path.as_posix(),
+            "result_folder": (tmp_path / "results").as_posix(),
+        },
+    }
+    outputs = TexasRRC().router(cfg)["texas_rrc"]["outputs"]
+
+    def reject_nonfinite(value):
+        raise ValueError("Non-finite summary JSON")
+
+    summary = json.loads(
+        Path(outputs["summary_json"]).read_text(encoding="utf-8"),
+        parse_constant=reject_nonfinite,
+    )
+    assert summary == {
+        "total_records": 7,
+        "district_count": 2,
+        "oil_production_total": 15,
+        "gas_production_total": 11,
+        "invalid_district_records": 2,
+        "invalid_district_oil_production_total": 1,
+        "invalid_district_gas_production_total": 3,
+        "missing_district_records": 2,
+        "missing_district_oil_production_total": 4,
+        "missing_district_gas_production_total": 5,
+        "unassigned_records": 4,
+        "unassigned_oil_production_total": 5,
+        "unassigned_gas_production_total": 8,
+    }
+    districts = pd.read_csv(outputs["districts_csv"], dtype={"district": str})
+    assert districts["oil_production"].sum() == 15
+    assert districts["gas_production"].sum() == 11
+    unassigned = districts.loc[districts["district"].isna()].iloc[0]
+    assert unassigned["oil_production"] == 5
+    assert unassigned["gas_production"] == 8
+    all_missing = districts.loc[districts["district"] == "03"].iloc[0]
+    assert all_missing["oil_production"] == 0
+    assert all_missing["gas_production"] == 0
+
+
+@pytest.mark.parametrize("district", ["6E", "invalid", ""])
+@pytest.mark.parametrize("volume", ["oil_production", "gas_production"])
+@pytest.mark.parametrize("nonfinite", ["inf", "-inf"])
+def test_csv_route_rejects_nonfinite_summary(tmp_path, district, volume, nonfinite):
+    """Infinity is invalid measurement data, not an absent volume or zero."""
+    csv_path = tmp_path / "production.csv"
+    csv_path.write_text(
+        f"district,oil_production,gas_production\n{district},"
+        + (f"{nonfinite},1\n" if volume == "oil_production" else f"1,{nonfinite}\n"),
+        encoding="utf-8",
+        newline="\n",
+    )
+    result_folder = tmp_path / "results"
+    cfg = {
+        "data_types": ["production"],
+        "data": {"source": "csv", "files": {"production": csv_path.as_posix()}},
+        "Analysis": {
+            "analysis_root_folder": tmp_path.as_posix(),
+            "result_folder": result_folder.as_posix(),
+        },
+    }
+    with pytest.raises(ValueError, match="Out of range float values"):
+        TexasRRC().router(cfg)
+    assert not (result_folder / "texas_rrc_production_summary_summary.json").exists()
 
 
 @pytest.mark.parametrize("as_dataframe", [False, True])

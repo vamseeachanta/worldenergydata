@@ -204,6 +204,8 @@ class TexasRRC:
         data: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Persist deterministic outputs for local CSV registry workflows."""
+        import pandas as pd
+
         from .processors import ProductionProcessor
 
         production_records = data.get("production", {}).get("records", [])
@@ -217,7 +219,9 @@ class TexasRRC:
         districts_path = result_folder / f"{label}_districts.csv"
         summary_path = result_folder / f"{label}_summary.json"
 
-        districts.to_csv(districts_path, index=False)
+        districts.to_csv(
+            districts_path, index=False, encoding="utf-8", lineterminator="\n"
+        )
         summary = {
             "total_records": len(processed),
             "district_count": int(districts["district"].notna().sum()),
@@ -242,13 +246,20 @@ class TexasRRC:
             ]
             summary[f"{prefix}_records"] = len(records)
             for volume in ("oil_production", "gas_production"):
+                # Match district aggregation: sum observed volumes, omitting missing.
                 summary[f"{prefix}_{volume}_total"] = float(
-                    sum(record.get(volume) or 0 for record in records)
+                    pd.Series(
+                        [record.get(volume) for record in records], dtype=float
+                    ).sum(skipna=True)
                 )
-        summary_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        summary_path.write_text(
+            json.dumps(summary, indent=2, allow_nan=False),
+            encoding="utf-8",
+            newline="\n",
+        )
 
         cfg[cfg["basename"]]["outputs"] = {
-            "districts_csv": str(districts_path),
-            "summary_json": str(summary_path),
+            "districts_csv": districts_path.as_posix(),
+            "summary_json": summary_path.as_posix(),
         }
         return cfg
