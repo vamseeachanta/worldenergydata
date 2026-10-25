@@ -217,6 +217,37 @@ def test_local_interface_digest_checked(observation, tmp_path):
         scope.validate_document(observation, repo_root=tmp_path)
 
 
+@pytest.mark.parametrize("line_ending", [b"\n", b"\r\n"])
+def test_local_interface_checkout_line_endings(observation, tmp_path, line_ending):
+    canonical = b"# Interface\nVALUE = 'regional'\n"
+    observation["local_interfaces"] = [
+        {
+            "path": "interface.py",
+            "source_sha256": scope.digest(canonical),
+            "signatures": [],
+        }
+    ]
+    target = tmp_path / "interface.py"
+    checkout = canonical.replace(b"\n", line_ending)
+    target.write_bytes(checkout)
+    scope.validate_document(observation, repo_root=tmp_path)
+    for changed in (
+        checkout.replace(b"regional", b"altered"),
+        checkout + b" ",
+        canonical.replace(b"\n", b"\r"),
+    ):
+        target.write_bytes(changed)
+        with pytest.raises(ValueError, match="local interface digest mismatch"):
+            scope.validate_document(observation, repo_root=tmp_path)
+
+
+def test_retained_body_line_endings_remain_byte_exact(observation, tmp_path):
+    body = "\n".join(e["text"] for e in observation["sources"][0]["excerpts"])
+    (tmp_path / "synthetic.body").write_bytes(body.replace("\n", "\r\n").encode())
+    with pytest.raises(ValueError, match="source body digest mismatch"):
+        scope.validate_document(observation, evidence_dir=tmp_path)
+
+
 def test_render_escapes_untrusted_text(observation):
     observation["summary"] = "<script>alert('metadata')</script>"
     rendered = scope.render_html(observation)
@@ -306,22 +337,77 @@ def test_excerpt_must_exist_in_retained_source(observation, tmp_path):
 
 def test_checked_in_report_is_blocked_and_regenerates(tmp_path):
     path = SCRIPT.parents[2] / "docs/research/metocean-adapter-scope.json"
-    document = json.loads(path.read_text())
+    document = json.loads(path.read_text(encoding="utf-8"))
     scope.validate_document(document, repo_root=SCRIPT.parents[2])
     assert {r["dataset_id"] for r in document["records"]} == {"NORA3", "NorKyst800"}
     assert all(r["readiness"] == "BLOCKED" for r in document["records"])
-    assert path.read_text() == scope.serialize_document(document)
-    assert path.with_suffix(".html").read_text() == scope.render_html(document)
+    assert path.read_text(encoding="utf-8") == scope.serialize_document(document)
+    assert path.with_suffix(".html").read_text(encoding="utf-8") == scope.render_html(
+        document
+    )
     result = subprocess.run(
         [sys.executable, str(SCRIPT), "--input", str(path), "--out-dir", str(tmp_path)],
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0, result.stderr
-    assert (tmp_path / path.name).read_bytes() == path.read_bytes()
-    assert (tmp_path / path.with_suffix(".html").name).read_bytes() == path.with_suffix(
-        ".html"
-    ).read_bytes()
+    for report in (path, path.with_suffix(".html")):
+        assert (tmp_path / report.name).read_bytes() == report.read_text(
+            encoding="utf-8"
+        ).encode("utf-8")
+
+
+@pytest.mark.parametrize("line_ending", ["\n", "\r\n"])
+@pytest.mark.parametrize("checkout_line_ending", ["\n", "\r\n"])
+def test_canonical_reports_across_text_platforms(
+    tmp_path, monkeypatch, line_ending, checkout_line_ending
+):
+    """Exercise real files with each platform's default write translation."""
+    path = SCRIPT.parents[2] / "docs/research/metocean-adapter-scope.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    source = tmp_path / "input.json"
+    source.write_bytes(
+        path.read_text(encoding="utf-8").replace("\n", checkout_line_ending).encode()
+    )
+    for interface in document["local_interfaces"]:
+        target = tmp_path / interface["path"]
+        target.parent.mkdir(parents=True, exist_ok=True)
+        canonical = (
+            (SCRIPT.parents[2] / interface["path"]).read_bytes().replace(b"\r\n", b"\n")
+        )
+        assert scope.digest(canonical) == interface["source_sha256"]
+        target.write_bytes(canonical.replace(b"\n", checkout_line_ending.encode()))
+    output = tmp_path / "reports"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(SCRIPT),
+            "--input",
+            str(source),
+            "--out-dir",
+            str(output),
+            "--repo-root",
+            str(tmp_path),
+        ],
+    )
+    original_open = Path.open
+
+    def platform_open(
+        self, mode="r", buffering=-1, encoding=None, errors=None, newline=None
+    ):
+        if "b" not in mode:
+            encoding = encoding or "cp1252"
+            if newline is None and any(flag in mode for flag in "wax"):
+                newline = line_ending
+        return original_open(self, mode, buffering, encoding, errors, newline)
+
+    monkeypatch.setattr(Path, "open", platform_open)
+    scope.main()
+    for report in (path, path.with_suffix(".html")):
+        expected = report.read_text(encoding="utf-8").encode("utf-8")
+        assert (output / report.name).read_bytes() == expected
+        assert b"\r" not in expected
 
 
 def test_scope_cannot_claim_validated_benchmarks(observation):

@@ -4,6 +4,10 @@
 Regenerate with --input docs/research/metocean-adapter-scope.json --out-dir DIR.
 Optional --evidence-dir verifies retained HTTP bodies named SOURCE_ID.body;
 --repo-root defaults to this checkout and verifies local interface digests.
+Local interface SHA-256 uses repository LF bytes: only CRLF pairs are replaced
+with LF before hashing; all other bytes remain significant. Retained HTTP bodies
+and excerpts keep their existing byte-exact digest rules. Reports use UTF-8 LF
+bytes regardless of platform text defaults or checkout line-ending conversion.
 Embedded excerpts are checksummed independently. They are reviewed observations,
 not a substitute for reopening a publisher's terms or inspecting dataset files.
 """
@@ -372,7 +376,8 @@ def validate_document(document, *, repo_root=None, evidence_dir=None):
             target = Path(repo_root) / relative
             require(target.is_file(), "local interface source is missing")
             require(
-                digest(target.read_bytes()) == interface["source_sha256"],
+                digest(target.read_bytes().replace(b"\r\n", b"\n"))
+                == interface["source_sha256"],
                 "local interface digest mismatch",
             )
     return document
@@ -566,10 +571,10 @@ def main():
     except (ValueError, OSError, TypeError, KeyError) as error:
         parser.exit(2, "Scope validation failed: " + type(error).__name__ + "\n")
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / (STEM + ".json")).write_text(
-        serialize_document(document), encoding="utf-8"
+    (args.out_dir / (STEM + ".json")).write_bytes(
+        serialize_document(document).encode("utf-8")
     )
-    (args.out_dir / (STEM + ".html")).write_text(rendered, encoding="utf-8")
+    (args.out_dir / (STEM + ".html")).write_bytes(rendered.encode("utf-8"))
     print("Validated source records:", len(document["records"]))
 
 
