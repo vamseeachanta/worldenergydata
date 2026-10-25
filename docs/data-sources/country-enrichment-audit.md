@@ -7,13 +7,16 @@ SODIR joins, existing observation columns retain their values and origins, and
 an exhausted FeatureServer byte budget prevents another request. Australia
 requires a non-blank textual well identifier and integer byte limits. Offline
 regressions exercise repeated enrichment, changed access terms and remaining
-budgets. They establish software behavior, not current source permissions.
+budgets. Partial enrichment pairs imported values with their own origins and
+rejects orphan evidence. These checks establish software behavior, not current
+source permissions.
 
 ## Revision history
 
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | Initial | 2026-10-21 | Record inspected coverage, correct observed identity and budget defects, and provide reproducible synthetic cases. |
+| 1 | 2026-10-25 | Pair imported values with their own origins, reject orphan evidence, and define the shared-source limit for partial enrichment. |
 
 ## Scope and method
 
@@ -55,6 +58,35 @@ Only new columns are added. Filling an unknown observation from field metadata
 would require a separate value/origin policy. This also prevents `_x`/`_y`
 suffixes on repeated joins. The wellbore completeness denominator excludes its
 own previously calculated indicator so repetition does not inflate it.
+
+Supplemental origin entries are restricted to newly imported value columns.
+Entries for retained values, including null observations, are discarded before
+supplemental rows are compared. New entries extend the existing origin map
+without changing its retained entries or mutating either input. Supplemental
+origin maps are dictionaries or null; other forms raise `pandas.errors.MergeError`.
+Null evidence establishes no origin. Output origin maps are copied recursively
+per row, so changing one output's evidence cannot alter another row or an input.
+
+An existing origin entry for an absent value cannot label an imported fallback.
+A matched record with that ambiguity raises `pandas.errors.MergeError` and
+requires correction of the observation/evidence pair before enrichment. A
+non-null existing source without any observation columns also raises when
+new values would be imported. These checks apply to every matched record;
+unlinked records receive no supplemental evidence.
+
+The shared `source` column describes retained observations when it already
+exists. It does not establish the source of supplemental additions. A new
+supplemental `source` is copied only when the input has no observation columns,
+so all non-key values come from the supplemental row. If any observation column
+is retained, including an unknown value, a supplemental source is omitted.
+Sources for new values in such mixed records remain unestablished; the join
+does not invent a per-value source schema.
+
+The wellbore entry point intentionally imports only field identity, name,
+operator and discovery year. Supplemental depths, sources and origin maps
+are excluded by that projection. Existing observation values and evidence
+remain intact; provenance-bearing supplemental values are handled by the
+production entry point.
 
 Australia's normalized well schema declares `well_identifier` as string or
 null (`packages/worldenergydata-australia/src/worldenergydata/australia/data/nopta_well.schema.json`).
@@ -129,7 +161,7 @@ depth sentinels and budget arithmetic are specified independently in their
 docstrings. Network boundaries are blocked in transport tests. Existing Brazil
 link tests and the tests of all changed modules are included in validation.
 
-All 58 new regression cases passed. The combined module run produced 284 passes
+Initial validation recorded 58 passing new regression cases. Its combined module run produced 284 passes
 and three existing snapshot failures at
 `tests/unit/australia/test_field_concept_opt_in.py:27`: the recorded outputs
 omit `flowline_liquid_rate_bpd`, already present in
@@ -139,6 +171,16 @@ the baseline mismatch. Ruff reported 54 diagnostics on unchanged source spans;
 the new tests passed with first-party import classification matching the
 repository's isort configuration. Black, isort, the repository structure check,
 the engineering-register check and the documented example passed.
+
+Partial-enrichment validation ran all SODIR, Australia and audit unit tests:
+the unchanged head produced 1,081 passes and three baseline snapshot failures;
+the revised code produced 1,096 passes and the same three failures with
+`PYTHONUTF8` unset. The SODIR enrichment file now contains 51 cases, including
+15 additional cases. Eleven new cases failed before their corresponding fixes;
+four positive cases exercise complete imports, a later-row guard and the
+wellbore projection with and without existing observations. The three
+baseline failures remain at the unchanged assertion described above. Broader
+repository suites and live-source access were not run for this revision.
 
 No engineering coefficients, datum conversions or classification thresholds
 are added. Existing conversion constants and classifications are outside this

@@ -167,3 +167,217 @@ def test_supplemental_structured_origins_are_compared_without_coercion(conflicti
         assert result["water_depth"].tolist() == [12]
         assert result["value_origins"].tolist() == [{"water_depth": "measured"}]
         assert_frame_equal(result, generator.create_production_dataset(result, fields))
+
+
+@pytest.mark.parametrize("depth", [12, None])
+def test_retained_value_without_evidence_does_not_inherit_fallback_evidence(depth):
+    """Depth stays 12 or unknown; only the imported operator gets an origin."""
+    records = pd.DataFrame({"field_id": ["linked"], "water_depth": [depth]})
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "water_depth": [99],
+            "operator": ["synthetic"],
+            "value_origins": [{"water_depth": "default", "operator": "reported"}],
+            "source": ["synthetic fallback"],
+        }
+    )
+    generator = DatasetGenerator()
+    result = generator.create_production_dataset(records, fields)
+    assert result.loc[0, "water_depth"] == depth
+    assert result.loc[0, "operator"] == "synthetic"
+    assert result.loc[0, "value_origins"] == {"operator": "reported"}
+    assert "source" not in result
+    assert_frame_equal(result, generator.create_production_dataset(result, fields))
+
+
+def test_existing_evidence_without_its_value_cannot_label_a_fallback():
+    """A measured label without an observation cannot establish depth 99."""
+    records = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "source": ["synthetic measurement"],
+            "value_origins": [{"water_depth": "measured"}],
+        }
+    )
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "water_depth": [99],
+            "source": ["synthetic fallback"],
+            "value_origins": [{"water_depth": "default"}],
+        }
+    )
+    with pytest.raises(pd.errors.MergeError, match="provenance has no observation"):
+        DatasetGenerator().create_production_dataset(records, fields)
+
+
+def test_imported_origins_extend_existing_evidence_without_mutating_inputs():
+    """Retained depth 12 stays measured; the imported operator is reported."""
+    records = pd.DataFrame(
+        {
+            "field_id": ["linked", None],
+            "water_depth": [12, None],
+            "source": ["synthetic measurement", None],
+            "value_origins": [{"water_depth": "measured"}, None],
+        }
+    )
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "water_depth": [99],
+            "operator": ["synthetic"],
+            "source": ["synthetic fallback"],
+            "value_origins": [{"water_depth": "default", "operator": "reported"}],
+        }
+    )
+    generator = DatasetGenerator()
+    result = generator.create_production_dataset(records, fields)
+    assert result.loc[0, "water_depth"] == 12
+    assert result.loc[0, "source"] == "synthetic measurement"
+    assert result.loc[0, "value_origins"] == {
+        "water_depth": "measured",
+        "operator": "reported",
+    }
+    assert pd.isna(result.loc[1, "operator"])
+    assert result.loc[1, "value_origins"] is None
+    assert records.loc[0, "value_origins"] == {"water_depth": "measured"}
+    assert fields.loc[0, "value_origins"] == {
+        "water_depth": "default",
+        "operator": "reported",
+    }
+    assert_frame_equal(result, generator.create_production_dataset(result, fields))
+
+
+def test_entirely_imported_values_keep_their_shared_source():
+    """With identity only, depth 99 and its default/source evidence join together."""
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "water_depth": [99],
+            "source": ["synthetic fallback"],
+            "value_origins": [{"water_depth": "default"}],
+        }
+    )
+    result = DatasetGenerator().create_production_dataset(
+        pd.DataFrame({"field_id": ["linked"]}), fields
+    )
+    assert result.loc[0, "water_depth"] == 99
+    assert result.loc[0, "value_origins"] == {"water_depth": "default"}
+    assert result.loc[0, "source"] == "synthetic fallback"
+
+
+def test_origins_for_retained_values_do_not_make_imported_metadata_ambiguous():
+    """Two discarded depth origins cannot make one imported operator ambiguous."""
+    records = pd.DataFrame({"field_id": ["linked"], "water_depth": [12]})
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked", "linked"],
+            "water_depth": [99, 99],
+            "operator": ["synthetic", "synthetic"],
+            "value_origins": [
+                {"water_depth": "measured", "operator": "reported"},
+                {"water_depth": "default", "operator": "reported"},
+            ],
+        }
+    )
+    result = DatasetGenerator().create_production_dataset(records, fields)
+    assert result.loc[0, "water_depth"] == 12
+    assert result.loc[0, "operator"] == "synthetic"
+    assert result.loc[0, "value_origins"] == {"operator": "reported"}
+
+
+@pytest.mark.parametrize("origins", [[], "measured", 12])
+def test_invalid_supplemental_origins_fail_closed(origins):
+    """Non-mapping evidence cannot establish an imported value's origin."""
+    fields = pd.DataFrame(
+        {"field_id": ["linked"], "water_depth": [99], "value_origins": [origins]}
+    )
+    with pytest.raises(pd.errors.MergeError, match="origins must be a mapping or null"):
+        DatasetGenerator().create_production_dataset(
+            pd.DataFrame({"field_id": ["linked"]}), fields
+        )
+
+
+def test_existing_source_without_observations_cannot_describe_imported_values():
+    """A source alone provides no retained value to which it can be attributed."""
+    records = pd.DataFrame(
+        {"field_id": ["linked"], "source": ["synthetic measurement"]}
+    )
+    fields = pd.DataFrame({"field_id": ["linked"], "water_depth": [99]})
+    with pytest.raises(pd.errors.MergeError, match="source has no observation"):
+        DatasetGenerator().create_production_dataset(records, fields)
+
+
+def test_orphan_origin_guard_checks_each_matched_record():
+    """The second matched row's origin cannot label an imported fallback."""
+    records = pd.DataFrame(
+        {
+            "field_id": ["first", "second"],
+            "operator": ["synthetic", "synthetic"],
+            "value_origins": [None, {"water_depth": "measured"}],
+        }
+    )
+    fields = pd.DataFrame({"field_id": ["first", "second"], "water_depth": [99, 99]})
+    with pytest.raises(pd.errors.MergeError, match="provenance has no observation"):
+        DatasetGenerator().create_production_dataset(records, fields)
+
+
+@pytest.mark.parametrize("existing_origins", [False, True])
+def test_result_origins_are_independent_between_rows_and_inputs(existing_origins):
+    """Changing one output's nested evidence cannot change another observation."""
+    records = pd.DataFrame(
+        {"field_id": ["linked", "linked"], "operator": ["synthetic", "synthetic"]}
+    )
+    if existing_origins:
+        records["value_origins"] = [
+            {"operator": {"kind": "reported"}},
+            {"operator": {"kind": "reported"}},
+        ]
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "water_depth": [99],
+            "value_origins": [{"water_depth": {"kind": "default"}}],
+        }
+    )
+    result = DatasetGenerator().create_production_dataset(records, fields)
+    result.loc[0, "value_origins"]["water_depth"]["kind"] = "altered"
+    assert result.loc[1, "value_origins"]["water_depth"] == {"kind": "default"}
+    assert fields.loc[0, "value_origins"] == {"water_depth": {"kind": "default"}}
+    if existing_origins:
+        result.loc[0, "value_origins"]["operator"]["kind"] = "altered"
+        assert result.loc[1, "value_origins"]["operator"] == {"kind": "reported"}
+        assert records["value_origins"].tolist() == [
+            {"operator": {"kind": "reported"}},
+            {"operator": {"kind": "reported"}},
+        ]
+
+
+@pytest.mark.parametrize("observed", [False, True])
+def test_wellbore_imports_only_descriptive_field_metadata(observed):
+    """The wellbore projection excludes supplemental values and their evidence."""
+    records = pd.DataFrame({"field_id": ["linked"]})
+    if observed:
+        records["water_depth"] = [12]
+        records["source"] = ["synthetic measurement"]
+        records["value_origins"] = [{"water_depth": "measured"}]
+    fields = pd.DataFrame(
+        {
+            "field_id": ["linked"],
+            "field_name": ["synthetic"],
+            "operator": ["synthetic"],
+            "discovery_year": [None],
+            "water_depth": [99],
+            "source": ["synthetic fallback"],
+            "value_origins": [{"water_depth": "default", "operator": "reported"}],
+        }
+    )
+    result = DatasetGenerator().create_wellbore_dataset(records, fields)
+    assert result.loc[0, "field_name"] == "synthetic"
+    if observed:
+        assert result.loc[0, "water_depth"] == 12
+        assert result.loc[0, "source"] == "synthetic measurement"
+        assert result.loc[0, "value_origins"] == {"water_depth": "measured"}
+    else:
+        assert {"water_depth", "source", "value_origins"}.isdisjoint(result.columns)

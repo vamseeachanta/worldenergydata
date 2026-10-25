@@ -6,6 +6,7 @@ between SODIR and BSEE data.
 """
 
 import logging
+from copy import deepcopy
 from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
@@ -13,12 +14,19 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
-def _enrich_fields(records: pd.DataFrame, fields: pd.DataFrame) -> pd.DataFrame:
-    """Add new field columns using explicit, unambiguous field identities.
+def _origin_map(value: Any) -> Dict[str, Any]:
+    """Copy structured evidence; absent evidence establishes no origin."""
+    if isinstance(value, dict):
+        return value.copy()
+    if pd.api.types.is_scalar(value) and pd.isna(value):
+        return {}
+    raise pd.errors.MergeError("value_origins must be a mapping or null")
 
-    Existing observation columns, including unknown values and provenance,
-    remain authoritative. Filling them would need a value/origin policy.
-    """
+
+def _field_additions(
+    records: pd.DataFrame, fields: pd.DataFrame
+) -> tuple[pd.DataFrame, List[str]]:
+    """Project supplemental values and only the evidence belonging to them."""
     # pandas DataFrame.merge API reference (2026), Warning: null join keys
     # match each other. Exclude absent right identities before a left join.
     # https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html
@@ -26,8 +34,24 @@ def _enrich_fields(records: pd.DataFrame, fields: pd.DataFrame) -> pd.DataFrame:
     valid = identities.notna() & identities.map(
         lambda value: not isinstance(value, str) or bool(value.strip())
     )
-    columns = ["field_id"] + [col for col in fields.columns if col not in records]
-    additions = fields.loc[valid, columns]
+    evidence = {"field_id", "source", "value_origins"}
+    imported = [col for col in fields if col not in records and col not in evidence]
+    columns = ["field_id", *imported]
+    # A shared source cannot describe a mixture of retained and imported values.
+    if not set(records).difference(evidence) and "source" not in records:
+        if "source" in fields:
+            columns.append("source")
+    if "value_origins" in fields:
+        columns.append("value_origins")
+    additions = fields.loc[valid, columns].copy()
+    if "value_origins" in additions:
+        additions["value_origins"] = additions["value_origins"].map(
+            lambda origins: {
+                key: value
+                for key, value in _origin_map(origins).items()
+                if key in imported
+            }
+        )
     # Compare duplicate rows without hashing/coercing structured origin values.
     duplicate_keys = additions["field_id"].duplicated(keep=False)
     for _, group in additions.loc[duplicate_keys].groupby("field_id", sort=False):
@@ -36,9 +60,57 @@ def _enrich_fields(records: pd.DataFrame, fields: pd.DataFrame) -> pd.DataFrame:
                 "conflicting field metadata; not a many-to-one merge"
             )
     additions = additions.drop_duplicates(subset="field_id")
+    return additions, imported
+
+
+def _check_existing_field_evidence(
+    records: pd.DataFrame, additions: pd.DataFrame, imported: List[str]
+) -> None:
+    """Reject evidence that would otherwise be assigned to a new value."""
+    matched = records["field_id"].isin(additions["field_id"])
+    if "value_origins" in records:
+        for origins in records.loc[matched, "value_origins"]:
+            if _origin_map(origins).keys() & set(imported):
+                raise pd.errors.MergeError(
+                    "existing provenance has no observation for a supplemental value"
+                )
+    retained = set(records).difference({"field_id", "source", "value_origins"})
+    if imported and not retained and "source" in records:
+        if records.loc[matched, "source"].notna().any():
+            raise pd.errors.MergeError("existing source has no observation")
+
+
+def _enrich_fields(records: pd.DataFrame, fields: pd.DataFrame) -> pd.DataFrame:
+    """Preserve observations and pair supplemental values with their own evidence.
+
+    Existing nulls stay unknown. An origin for an absent observation cannot
+    label a supplemental value; that ambiguity requires explicit correction.
+    Existing source describes retained observations only; supplemental source
+    is copied only when all non-key values are imported.
+    """
+    additions, imported = _field_additions(records, fields)
+    _check_existing_field_evidence(records, additions, imported)
     # The same reference's validate="many_to_one" prevents row multiplication
     # when one field identity has conflicting supplemental metadata.
-    return records.merge(additions, on="field_id", how="left", validate="many_to_one")
+    values = additions.drop(columns="value_origins", errors="ignore")
+    result = records.merge(values, on="field_id", how="left", validate="many_to_one")
+    if "value_origins" in additions:
+        origin_lookup = additions.set_index("field_id")["value_origins"]
+        incoming = result["field_id"].map(origin_lookup)
+        if "value_origins" in result:
+            result["value_origins"] = [
+                (
+                    {**_origin_map(prior), **extra}
+                    if isinstance(extra, dict) and extra
+                    else prior
+                )
+                for prior, extra in zip(result["value_origins"], incoming)
+            ]
+        else:
+            result["value_origins"] = incoming
+    if "value_origins" in result:
+        result["value_origins"] = result["value_origins"].map(deepcopy)
+    return result
 
 
 class DatasetGenerator:
