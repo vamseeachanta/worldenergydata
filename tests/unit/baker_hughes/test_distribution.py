@@ -7,12 +7,14 @@ Build dependencies (build, setuptools, wheel) must be supplied by the caller.
 """
 
 import json
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import zipfile
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -51,7 +53,22 @@ def archives(tmp_path_factory):
         check=False,
     )
     (scratch / "build.log").write_text(result.stdout + result.stderr)
-    assert result.returncode == 0, "Archive build failed; see external build.log"
+    if result.returncode != 0:
+        diagnostic = f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+        # Replace known roots first, including roots containing spaces.
+        for path in sorted(
+            {str(scratch), str(ROOT), str(Path.home()), sys.executable, sys.prefix},
+            key=len,
+            reverse=True,
+        ):
+            diagnostic = diagnostic.replace(path, "[path removed]")
+        diagnostic = re.sub(
+            r"(?:[A-Za-z]:[\\/]|/)[^\s'\"<>]*", "[path removed]", diagnostic
+        )
+        pytest.fail(
+            f"Archive build failed (exit {result.returncode})\n{diagnostic}",
+            pytrace=False,
+        )
     wheel = next((scratch / "dist").glob("*.whl"))
     sdist = next((scratch / "dist").glob("*.tar.gz"))
     with zipfile.ZipFile(wheel) as archive:
@@ -102,3 +119,32 @@ def test_sdist_documentation_policy(archives):
             assert (
                 archive.extractfile(files[name]).read() == (MEMBER / name).read_bytes()
             )
+
+
+def test_archive_build_failure_reports_sanitized_output(tmp_path, monkeypatch):
+    """A failed real-build invocation must expose both streams without paths."""
+    scratch = tmp_path / "distribution"
+    scratch.mkdir()
+    external_path = Path(tmp_path.anchor) / "external" / "build backend"
+    windows_path = "Z:" + chr(92) + "temporary" + chr(92) + "backend"
+    stdout = f"ERROR Missing dependencies: wheel\nsource: {scratch}\n"
+    stderr = (
+        f"backend failed: {sys.executable}\n"
+        f"external: {external_path}\nwindows: {windows_path}\n"
+    )
+
+    def failed_build(command, **kwargs):
+        return subprocess.CompletedProcess(command, 1, stdout, stderr)
+
+    monkeypatch.setattr(subprocess, "run", failed_build)
+    factory = SimpleNamespace(mktemp=lambda name: scratch)
+    with pytest.raises(pytest.fail.Exception) as failure:
+        archives.__wrapped__(factory)
+    diagnostic = str(failure.value)
+    assert "ERROR Missing dependencies: wheel" in diagnostic
+    assert "backend failed:" in diagnostic
+    assert "stdout:" in diagnostic and "stderr:" in diagnostic
+    for path in (str(scratch), sys.executable, str(external_path), windows_path):
+        assert path not in diagnostic
+    assert "[path removed]" in diagnostic
+    assert (scratch / "build.log").read_text() == stdout + stderr
