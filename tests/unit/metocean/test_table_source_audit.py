@@ -37,9 +37,9 @@ def inputs(tmp_path):
 
 def update_json(inputs, name, mutate):
     path = inputs / name
-    content = json.loads(path.read_text())
+    content = json.loads(path.read_text(encoding="utf-8"))
     mutate(content)
-    path.write_text(json.dumps(content))
+    path.write_text(json.dumps(content), encoding="utf-8", newline="\n")
 
 
 def test_current_worked_example(audit):
@@ -49,7 +49,7 @@ def test_current_worked_example(audit):
     assert len(report["maintainer_decisions"]) == 8
     assert report["status"] == "NOT_EVALUATED"
     assert [row["name"] for row in report["maintainer_decisions"]] == sorted(
-        json.loads((DATA / "table_sources.json").read_text())["tables"]
+        json.loads((DATA / "table_sources.json").read_text(encoding="utf-8"))["tables"]
     )
     for row in report["maintainer_decisions"]:
         assert row["missing_fields"] == ["edition", "table_or_clause"]
@@ -62,7 +62,7 @@ def test_current_worked_example(audit):
 @pytest.mark.parametrize("defect", ["missing", "duplicate", "wrong_pointer"])
 def test_catalogue_drift_fails(audit, inputs, catalogue, defect):
     path = inputs / catalogue
-    content = yaml.safe_load(path.read_text())
+    content = yaml.safe_load(path.read_text(encoding="utf-8"))
     entries = content["datasets" if catalogue.endswith("yaml") else "external_datasets"]
     if defect == "missing":
         entries.pop()
@@ -70,10 +70,10 @@ def test_catalogue_drift_fails(audit, inputs, catalogue, defect):
         entries.append(entries[0].copy())
     else:
         entries[0]["source_record"] = "table_sources.json#/tables/unknown.csv"
-    path.write_text(yaml.safe_dump(content))
+    path.write_text(yaml.safe_dump(content), encoding="utf-8", newline="\n")
     # JSON remains JSON even though the schema fixture is serialized as YAML.
     if catalogue.endswith("json"):
-        path.write_text(json.dumps(content))
+        path.write_text(json.dumps(content), encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="inventory|duplicate|source_record"):
         audit.audit_sources(inputs)
 
@@ -100,6 +100,63 @@ def test_inconsistent_records_fail(audit, inputs, field, value):
     update_json(inputs, "table_sources.json", mutate)
     with pytest.raises(ValueError):
         audit.audit_sources(inputs)
+
+
+@pytest.mark.parametrize("separator", ["/", "\\"], ids=["posix", "windows"])
+@pytest.mark.parametrize(
+    "form",
+    ["rooted", "drive_relative", "drive_rooted", "network", "parent", "nested_parent"],
+)
+def test_non_repository_evidence_paths_fail(audit, inputs, separator, form):
+    path = separator.join(("docs", "evidence.md"))
+    if form == "rooted":
+        path = separator + path
+    elif form == "drive_relative":
+        path = "Z:" + path
+    elif form == "drive_rooted":
+        path = "Z:" + separator + path
+    elif form == "network":
+        path = separator * 2 + separator.join(("synthetic", "share", path))
+    elif form == "parent":
+        path = ".." + separator + path
+    else:
+        path = separator.join(("docs", "..", "..", "evidence.md"))
+
+    def mutate(content):
+        for record in content["tables"].values():
+            record["evidence"].append({**record["evidence"][0], "path": path})
+
+    update_json(inputs, "table_sources.json", mutate)
+    with pytest.raises(ValueError, match="repository-relative path"):
+        audit.audit_sources(inputs)
+
+
+@pytest.mark.parametrize(
+    "path",
+    ["docs\\evidence.md", "docs//evidence.md", "./evidence.md", "docs/./evidence.md"],
+)
+def test_noncanonical_evidence_paths_fail(audit, inputs, path):
+    def mutate(content):
+        next(iter(content["tables"].values()))["evidence"][0]["path"] = path
+
+    update_json(inputs, "table_sources.json", mutate)
+    with pytest.raises(ValueError, match="repository-relative path"):
+        audit.audit_sources(inputs)
+
+
+@pytest.mark.parametrize(
+    "path", ["evidence.md", "docs/evidence.md", "docs/évidence.md"]
+)
+def test_forward_slash_relative_evidence_paths_pass(audit, inputs, path):
+    def mutate(content):
+        for record in content["tables"].values():
+            record["evidence"][0]["path"] = path
+
+    update_json(inputs, "table_sources.json", mutate)
+    report = audit.audit_sources(inputs)
+    assert all(
+        row["evidence"][0]["path"] == path for row in report["maintainer_decisions"]
+    )
 
 
 def test_complete_metadata_does_not_override_pending_verification(audit, inputs):
@@ -156,7 +213,7 @@ def test_record_cannot_override_computed_report_fields(audit, inputs):
 )
 def test_duplicate_mapping_keys_are_not_silently_overwritten(audit, inputs, name):
     path = inputs / name
-    content = path.read_text()
+    content = path.read_text(encoding="utf-8")
     if name.endswith("json"):
         content = (
             '{"tables": {},' + content[1:]
@@ -165,7 +222,7 @@ def test_duplicate_mapping_keys_are_not_silently_overwritten(audit, inputs, name
         )
     else:
         content = "datasets: []\n" + content
-    path.write_text(content)
+    path.write_text(content, encoding="utf-8", newline="\n")
     with pytest.raises(ValueError, match="duplicate"):
         audit.audit_sources(inputs)
 
@@ -175,18 +232,23 @@ def test_cli_reports_unresolved_citations(inputs, strict, expected):
     command = [sys.executable, str(SCRIPT), "--data-dir", str(inputs)]
     if strict:
         command.append("--require-citations")
-    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    result = subprocess.run(
+        command, capture_output=True, text=True, encoding="utf-8", check=False
+    )
     assert result.returncode == expected
     assert json.loads(result.stdout)["status"] == "NOT_EVALUATED"
     assert result.stderr == ""
 
 
 def test_cli_invalid_input_has_no_payload_or_path_disclosure(inputs):
-    (inputs / "table_sources.json").write_text("SYNTHETIC_INVALID_JSON")
+    (inputs / "table_sources.json").write_text(
+        "SYNTHETIC_INVALID_JSON", encoding="utf-8", newline="\n"
+    )
     result = subprocess.run(
         [sys.executable, str(SCRIPT), "--data-dir", str(inputs)],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
     assert result.returncode == 2
@@ -197,14 +259,16 @@ def test_cli_invalid_input_has_no_payload_or_path_disclosure(inputs):
 
 def test_yaml_object_tags_are_refused(audit, inputs):
     """A duplicate-aware loader must retain SafeLoader's tag restrictions."""
-    (inputs / "schema.yaml").write_text("!!python/tuple [SYNTHETIC_TAG]\n")
+    (inputs / "schema.yaml").write_text(
+        "!!python/tuple [SYNTHETIC_TAG]\n", encoding="utf-8", newline="\n"
+    )
     with pytest.raises(yaml.constructor.ConstructorError):
         audit.audit_sources(inputs)
 
 
 def test_documented_example_matches_report(audit):
     report = audit.audit_sources(DATA)
-    readme = (DATA / "README.md").read_text()
+    readme = (DATA / "README.md").read_text(encoding="utf-8")
     assert "audit_metocean_table_sources.py" in readme
     for field in ("table_count", "verified_citation_count"):
         assert f'"{field}": {report[field]}' in readme

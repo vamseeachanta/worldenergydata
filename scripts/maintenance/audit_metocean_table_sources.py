@@ -85,10 +85,12 @@ def _validate_record(record: object) -> list[str]:
             all(_text(item.get(key)) for key in ("path", "revision", "scope")),
             "Incomplete source evidence",
         )
-        path = Path(item["path"])
+        path = item["path"]
         _require(
-            not path.is_absolute() and ".." not in path.parts and ":" not in str(path),
-            "Evidence must use a repository-relative path",
+            "\\" not in path
+            and ":" not in path
+            and all(part not in ("", ".", "..") for part in path.split("/")),
+            "Evidence must use a forward-slash repository-relative path",
         )
         _require(
             re.fullmatch(r"[0-9a-f]{40}", item["revision"]) is not None,
