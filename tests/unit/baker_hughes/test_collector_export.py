@@ -85,6 +85,32 @@ def workbook_bytes(malformed):
     return content.getvalue()
 
 
+def malformed_xml_workbook_bytes():
+    """Break XML inside a valid XLSX without removing any archive members."""
+    content = io.BytesIO()
+    with ZipFile(io.BytesIO(workbook_bytes(malformed=False))) as source:
+        with ZipFile(content, "w") as target:
+            for member in source.infolist():
+                data = source.read(member.filename)
+                if member.filename == "xl/workbook.xml":
+                    data = b"<workbook>"
+                target.writestr(member, data)
+    return content.getvalue()
+
+
+@pytest.mark.parametrize(
+    "method", ["download_na_rig_count", "download_international_rig_count"]
+)
+def test_collector_malformed_workbook_xml(monkeypatch, method):
+    """Real XML parser failures must raise the documented download error."""
+    collector = BakerHughesCollector()
+    content = malformed_xml_workbook_bytes()
+    monkeypatch.setattr(collector, "get_bytes", lambda *args: content)
+
+    with pytest.raises(DownloadError, match="workbook download failed"):
+        getattr(collector, method)()
+
+
 @pytest.mark.parametrize(
     "method", ["download_na_rig_count", "download_international_rig_count"]
 )
@@ -98,6 +124,7 @@ def test_collector_missing_workbook_member(monkeypatch, method):
         getattr(collector, method)()
 
 
+@pytest.mark.parametrize("damage", ["missing_member", "malformed_xml"])
 @pytest.mark.parametrize(
     "malformed, expected",
     [
@@ -107,11 +134,18 @@ def test_collector_missing_workbook_member(monkeypatch, method):
         ((False, False), {"na": "exported", "international": "exported"}),
     ],
 )
-def test_export_real_workbooks(monkeypatch, tmp_path, malformed, expected):
-    """Real readers must attempt both sources even when an XLSX member is absent."""
+def test_export_real_workbooks(monkeypatch, tmp_path, malformed, expected, damage):
+    """Real readers must attempt both sources after member or XML failures."""
     module = caller()
     collector = BakerHughesCollector()
-    payloads = iter(workbook_bytes(broken) for broken in malformed)
+    payloads = iter(
+        (
+            malformed_xml_workbook_bytes()
+            if broken and damage == "malformed_xml"
+            else workbook_bytes(broken)
+        )
+        for broken in malformed
+    )
     attempts = []
     saved = []
 
@@ -170,7 +204,9 @@ def test_export_write_exception(tmp_path):
     def save(*args, **kwargs):
         raise OSError("synthetic write failure")
 
-    download = lambda: pd.DataFrame({"Count": [2]})
+    def download():
+        return pd.DataFrame({"Count": [2]})
+
     result = module.export_baker_hughes(
         SimpleNamespace(
             download_na_rig_count=download, download_international_rig_count=download

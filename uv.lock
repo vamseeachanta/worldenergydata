@@ -7586,6 +7586,18 @@ wheels = [
 ]
 
 [[package]]
+name = "wheel"
+version = "0.48.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d0/20/50ed6bdf27dec98b568a8ae25dc599f35baa3d9709f9e83fd1edb56b9a90/wheel-0.48.0.tar.gz", hash = "sha256:94800765601e9171bf5d58d066e640662842bcedcbab982b2c90787a2c987322", size = 66471, upload-time = "2026-08-11T22:02:27.327Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl", hash = "sha256:3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab", size = 33320, upload-time = "2026-08-11T22:02:26.1Z" },
+]
+
+[[package]]
 name = "win32-setctime"
 version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -7738,6 +7750,7 @@ safety-ml = [
     { name = "xgboost" },
 ]
 test = [
+    { name = "build" },
     { name = "factory-boy" },
     { name = "faker" },
     { name = "hypothesis", version = "6.168.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -7749,6 +7762,8 @@ test = [
     { name = "pytest-mock" },
     { name = "pytest-timeout" },
     { name = "responses" },
+    { name = "setuptools" },
+    { name = "wheel" },
 ]
 
 [package.dev-dependencies]
@@ -7756,6 +7771,7 @@ benchmark = [
     { name = "pytest-benchmark" },
 ]
 dev = [
+    { name = "build" },
     { name = "faker" },
     { name = "hypothesis", version = "6.168.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "hypothesis", version = "6.169.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -7765,6 +7781,8 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-timeout" },
     { name = "responses" },
+    { name = "setuptools" },
+    { name = "wheel" },
     { name = "xmltodict" },
 ]
 docs = [
@@ -7779,6 +7797,7 @@ requires-dist = [
     { name = "assetutilities", git = "https://github.com/vamseeachanta/assetutilities.git?branch=main" },
     { name = "beautifulsoup4", specifier = ">=4.15.0,<5.0" },
     { name = "black", marker = "extra == 'dev'", specifier = ">=23.0" },
+    { name = "build", marker = "extra == 'test'", specifier = ">=1.3.0" },
     { name = "cadquery", marker = "python_full_version >= '3.11' and extra == 'cad'", specifier = ">=2.8" },
     { name = "dash", specifier = ">=2.14.0,<3.0" },
     { name = "factory-boy", marker = "extra == 'dev'", specifier = ">=3.3.3" },
@@ -7830,6 +7849,7 @@ requires-dist = [
     { name = "selenium", specifier = ">=4.15.0,<5.0" },
     { name = "sentencepiece", marker = "extra == 'llm'", specifier = ">=0.1.99" },
     { name = "sentencepiece", marker = "extra == 'safety-bert'", specifier = ">=0.1.99" },
+    { name = "setuptools", marker = "extra == 'test'", specifier = ">=61.0" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=6.0" },
     { name = "sphinx-rtd-theme", marker = "extra == 'docs'", specifier = ">=3.1.0" },
     { name = "sqlalchemy", specifier = ">=2.0.49,<3.0" },
@@ -7843,6 +7863,7 @@ requires-dist = [
     { name = "types-python-dateutil", marker = "extra == 'dev'", specifier = ">=2.9" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.12.20260906" },
     { name = "types-requests", marker = "extra == 'dev'", specifier = ">=2.33.0.20260518" },
+    { name = "wheel", marker = "extra == 'test'" },
     { name = "worldenergydata-australia", editable = "packages/worldenergydata-australia" },
     { name = "worldenergydata-baker-hughes", editable = "packages/worldenergydata-baker_hughes" },
     { name = "worldenergydata-brazil-anp", editable = "packages/worldenergydata-brazil_anp" },
@@ -7889,6 +7910,7 @@ provides-extras = ["dev", "test", "docs", "llm", "safety-ml", "safety-bert", "ca
 [package.metadata.requires-dev]
 benchmark = [{ name = "pytest-benchmark", specifier = ">=4.0.0,<5.0.0" }]
 dev = [
+    { name = "build", specifier = ">=1.3.0" },
     { name = "faker", specifier = ">=37.8.0" },
     { name = "hypothesis", specifier = ">=6.168.5" },
     { name = "mypy", specifier = ">=1.18.2" },
@@ -7897,6 +7919,8 @@ dev = [
     { name = "pytest-cov", specifier = ">=7.0.0" },
     { name = "pytest-timeout", specifier = ">=2.4.0" },
     { name = "responses", specifier = ">=0.26.3" },
+    { name = "setuptools", specifier = ">=61.0" },
+    { name = "wheel" },
     { name = "xmltodict", specifier = ">=1.0.2" },
 ]
 docs = [

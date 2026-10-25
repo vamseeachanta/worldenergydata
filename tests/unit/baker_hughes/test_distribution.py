@@ -17,6 +17,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from packaging.requirements import Requirement
 
 ROOT = Path(__file__).resolve().parents[3]
 MEMBER = ROOT / "packages" / "worldenergydata-baker_hughes"
@@ -26,6 +27,37 @@ PAYLOAD = {
     "worldenergydata/baker_hughes/report.py",
     "worldenergydata/baker_hughes/docs/agent-pack.md",
 }
+
+
+@pytest.mark.parametrize("selection", [[], ["--all-extras"]])
+def test_archive_tools_in_shard_dependency_selection(selection):
+    """Frozen install and the shard's default uv run must retain build tools."""
+    result = subprocess.run(
+        [
+            "uv",
+            "export",
+            "--frozen",
+            "--no-hashes",
+            "--no-header",
+            "--no-annotate",
+            "--no-emit-local",
+            *selection,
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        encoding="utf-8",
+        check=False,
+    )
+    assert result.returncode == 0, "Frozen shard dependency export failed"
+    selected = {
+        Requirement(line).name
+        for line in result.stdout.splitlines()
+        if line and not line.startswith("#")
+    }
+    missing = {"build", "setuptools", "wheel"} - selected
+    assert not missing, "Shard selection omits archive tools: " + ", ".join(
+        sorted(missing)
+    )
 
 
 @pytest.fixture(scope="module")
@@ -49,22 +81,22 @@ def archives(tmp_path_factory):
             str(source),
         ],
         capture_output=True,
-        text=True,
+        encoding="utf-8",
         check=False,
     )
-    (scratch / "build.log").write_text(result.stdout + result.stderr)
+    diagnostic = f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
+    # Replace known roots first, including roots containing spaces.
+    for path in sorted(
+        {str(scratch), str(ROOT), str(Path.home()), sys.executable, sys.prefix},
+        key=len,
+        reverse=True,
+    ):
+        diagnostic = diagnostic.replace(path, "[path removed]")
+    diagnostic = re.sub(
+        r"(?:[A-Za-z]:[\\/]|/)[^\s'\"<>]*", "[path removed]", diagnostic
+    )
+    (scratch / "build.log").write_text(diagnostic, encoding="utf-8", newline="\n")
     if result.returncode != 0:
-        diagnostic = f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
-        # Replace known roots first, including roots containing spaces.
-        for path in sorted(
-            {str(scratch), str(ROOT), str(Path.home()), sys.executable, sys.prefix},
-            key=len,
-            reverse=True,
-        ):
-            diagnostic = diagnostic.replace(path, "[path removed]")
-        diagnostic = re.sub(
-            r"(?:[A-Za-z]:[\\/]|/)[^\s'\"<>]*", "[path removed]", diagnostic
-        )
         pytest.fail(
             f"Archive build failed (exit {result.returncode})\n{diagnostic}",
             pytrace=False,
@@ -76,11 +108,15 @@ def archives(tmp_path_factory):
     with tarfile.open(sdist) as archive:
         sdist_names = sorted(archive.getnames())
     evidence = json.loads(
-        (ROOT / "docs/modules/baker_hughes-distribution-contents.json").read_text()
+        (ROOT / "docs/modules/baker_hughes-distribution-contents.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert evidence["members"] == {"wheel": wheel_names, "sdist": sdist_names}
     (scratch / "contents.json").write_text(
-        json.dumps({"wheel": wheel_names, "sdist": sdist_names}, indent=2) + "\n"
+        json.dumps({"wheel": wheel_names, "sdist": sdist_names}, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     return wheel, sdist
 
@@ -144,7 +180,10 @@ def test_archive_build_failure_reports_sanitized_output(tmp_path, monkeypatch):
     assert "ERROR Missing dependencies: wheel" in diagnostic
     assert "backend failed:" in diagnostic
     assert "stdout:" in diagnostic and "stderr:" in diagnostic
+    log = (scratch / "build.log").read_text(encoding="utf-8")
     for path in (str(scratch), sys.executable, str(external_path), windows_path):
         assert path not in diagnostic
+        assert path not in log
     assert "[path removed]" in diagnostic
-    assert (scratch / "build.log").read_text() == stdout + stderr
+    assert "ERROR Missing dependencies: wheel" in log
+    assert "backend failed:" in log

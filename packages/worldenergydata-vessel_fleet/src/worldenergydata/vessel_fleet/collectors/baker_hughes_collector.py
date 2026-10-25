@@ -63,6 +63,7 @@ class BakerHughesCollector(BaseCollector):
             ImportError,
             BadZipFile,
             KeyError,
+            SyntaxError,  # ElementTree.ParseError and lxml.etree.XMLSyntaxError.
         ):
             raise DownloadError("North American workbook download failed") from None
 
@@ -88,5 +89,6 @@ class BakerHughesCollector(BaseCollector):
             ImportError,
             BadZipFile,
             KeyError,
+            SyntaxError,  # ElementTree.ParseError and lxml.etree.XMLSyntaxError.
         ):
             raise DownloadError("International workbook download failed") from None
