@@ -12,6 +12,7 @@ coverage reporting; it does not describe the complete offshore population.
 | --- | --- | --- |
 | 1 | 2026-10-19 | Added area distributions and explicit operator-class coverage to expose missing classifications. |
 | 2 | 2026-10-21 | Corrected classification requirements and digest labels, added reproducible fixture generation and independent CSV counts, and omitted unevaluated operator charts. |
+| 3 | 2026-10-25 | Recorded a fresh focused test run and the completed hosted check rollup to bound verification claims. |
 
 ## Method and sources
 
@@ -90,6 +91,23 @@ analysis, delivered area chart and table, and the note's fixture totals.
 Tests also exercise missing and conflicting metadata, persisted results,
 digest labels and reproducible example generation. The existing characterisation tests cover
 report grains, revision history, digests and deterministic products.
+
+At revision `abb89b7f`, the focused suite was rerun on 2026-10-25:
+59 tests passed, with zero failures and zero skips (25 area/operator-class
+cases and 34 existing characterisation cases). This includes two byte-for-byte
+reproductions of the delivered fixture example and rejection of a modified
+projection before output is written. No new test cases were added for this
+verification record.
+
+The hosted check rollup at that revision has 106 successes, 11 failures and
+8 skips, with none queued. Five failures are replay refusals with the reason
+"newer full run in progress"; they do not report execution of lint, type,
+security, documentation or test tools. Four domain checks failed (Australia,
+safety analysis, repository inventory and integration); the aggregate result
+and full test gate also failed. These results do not establish a passing
+repository-wide suite. The second-provider verdict at that revision is
+CHANGES-REQUESTED. Maintainer selection between drafts #1436 and #1432,
+including closure of the unselected draft, remains required before merging.
 
 WAR rows remain reporting records; EOR years remain borehole-status years.
 Completion codes describe status, not completion design. Snapshot area
