@@ -6,6 +6,7 @@ no freshness row, and creates no success manifest. No engineering equations,
 empirical constants, or upstream data values are used by these tests.
 """
 
+import json
 import os
 import subprocess
 from pathlib import Path
@@ -14,6 +15,7 @@ from unittest.mock import patch
 import pytest
 import yaml
 
+from worldenergydata.scheduler.cli import _JOB_SPECS, _load_job_class, get_all_jobs
 from worldenergydata.scheduler.config import load_config
 from worldenergydata.scheduler.jobs.lng_terminals_refresh import LngTerminalsRefreshJob
 from worldenergydata.scheduler.scheduler import DataScheduler
@@ -45,6 +47,82 @@ def test_unimplemented_lng_is_not_enabled_for_freshness():
     assert lng["enabled"] is False
     assert lng not in config.get_enabled_jobs()
     assert lng["output_dir"] == "data/modules/lng_terminals"
+
+
+def test_enabled_adapters_are_implemented():
+    """Issue #458: every enabled default adapter must declare readiness.
+
+    This checks adapter classes without running collectors or accessing data.
+    Unimplemented adapters must opt out via ``implemented = False``.
+    """
+    config = load_config(str(CONFIG_PATH))
+    classes = dict(_JOB_SPECS)
+    for job in config.get_enabled_jobs():
+        adapter = _load_job_class(classes[job["name"]])
+        assert adapter.implemented, f"Disable unimplemented adapter {job['name']}"
+    assert LngTerminalsRefreshJob.implemented is False
+
+
+def test_direct_unimplemented_lng_fails_without_writing(tmp_path):
+    """No upstream request implies zero updates and no freshness evidence (#458)."""
+    output_dir = tmp_path / "lng"
+    result = LngTerminalsRefreshJob().run({"output_dir": str(output_dir)})
+    assert result.status == "failure"
+    assert result.retryable is False
+    assert result.records_updated == 0
+    assert "not implemented" in result.error_msg
+    assert "enabled: false" in result.error_msg
+    assert not output_dir.exists()
+
+
+@pytest.mark.parametrize("existing_manifest", [False, True])
+@pytest.mark.parametrize("lazy", [False, True])
+def test_enabled_unimplemented_lng_reports_failure_without_backoff(
+    isolated_config, existing_manifest, lazy
+):
+    """An accidental enable must be visible as failure, never successful freshness.
+
+    Independent trace: one adapter call, no sleeps, zero updated records;
+    existing success evidence is unchanged (issue #458, linked issue #360).
+    """
+    config = yaml.safe_load(isolated_config.read_text())
+    lng = next(j for j in config["jobs"] if j["name"] == LngTerminalsRefreshJob.name)
+    lng["enabled"] = True
+    isolated_config.write_text(yaml.safe_dump(config))
+    output_dir = Path(lng["output_dir"])
+    manifest = output_dir / "manifest.json"
+    sentinel = '{"status": "success", "last_success_ts": "unchanged"}\n'
+    if existing_manifest:
+        output_dir.mkdir(parents=True)
+        manifest.write_text(sentinel)
+
+    scheduler = DataScheduler(str(isolated_config))
+    job = (
+        next(j for j in get_all_jobs() if j.name == LngTerminalsRefreshJob.name)
+        if lazy
+        else LngTerminalsRefreshJob()
+    )
+    scheduler.register_job(job)
+    with (
+        patch.object(job, "run", wraps=job.run) as run,
+        patch("worldenergydata.scheduler.monitor.time.sleep") as sleep,
+    ):
+        result = scheduler.run_once(job.name)
+    run.assert_called_once()
+    sleep.assert_not_called()
+    assert result.status == "failure"
+    assert result.retryable is False
+    assert result.records_updated == 0
+    assert scheduler.status()["jobs"][job.name]["last_result"] == "failure"
+    reported = json.loads(Path(config["monitoring"]["status_file"]).read_text())
+    detail = reported["jobs"][job.name]
+    assert detail["status"] == "failure"
+    assert detail["retryable"] is False
+    assert detail["error_msg"] == result.error_msg
+    if existing_manifest:
+        assert manifest.read_text() == sentinel
+    else:
+        assert not output_dir.exists()
 
 
 def test_unimplemented_lng_is_not_scheduled(isolated_config):

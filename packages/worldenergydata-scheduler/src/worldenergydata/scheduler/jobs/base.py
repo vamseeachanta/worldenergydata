@@ -48,6 +48,9 @@ class JobResult:
 class AbstractJob(ABC):
     """Abstract base class for all data collection jobs."""
 
+    # Readiness contract: placeholders must opt out and remain disabled in
+    # shipped scheduler configuration (issue #458, acceptance criteria).
+    implemented: bool = True
     name: str
     default_output_dir: Path
 
