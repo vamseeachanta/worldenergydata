@@ -15,7 +15,9 @@ its own reference date. V30 is lineage-only.
 All columns are required. `FO Month`, `MIRR monthly` and `MIRR annual` may
 contain `NotApplicable(reason)` when a result is undefined. Each marker requires
 a nonblank reason, such as "No first oil by cutoff" or "MIRR undefined; cash flows
-lack both signs". It is exported as an empty cell, with its reason recorded under
+lack both signs". Reasons longer than 32,767 characters are rejected before any
+output file is created, so the explanation cannot be silently truncated.
+The marker is exported as an empty cell, with its reason recorded under
 `not_applicable.Project_Summary!<cell address>` in `Metadata`. The address binds
 the reason to the project row and column in the exported summary. Unannotated
 `None`, NaN and NaT remain invalid, including in these three columns. All other

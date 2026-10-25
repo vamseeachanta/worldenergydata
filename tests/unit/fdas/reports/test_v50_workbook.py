@@ -268,3 +268,37 @@ def test_nullable_reason_is_literal(tmp_path, summary, metadata):
         cells = {row[0].value: row[1] for row in book["Metadata"]}
         assert cells["not_applicable.Project_Summary!U2"].data_type == "s"
         assert cells["not_applicable.Project_Summary!U2"].value == "=1+1"
+
+
+@pytest.mark.parametrize(
+    "column,letter", [("FO Month", "C"), ("MIRR monthly", "T"), ("MIRR annual", "U")]
+)
+@pytest.mark.parametrize(
+    "reason",
+    ["x" * 32766, "x" * 32767, " " * 32766 + "x"],
+    ids=["below-limit", "at-limit", "nonblank-suffix-at-limit"],
+)
+def test_nullable_reason_length_boundary_roundtrip(
+    tmp_path, summary, metadata, column, letter, reason
+):
+    summary[column] = v50_workbook.NotApplicable(reason)
+    target = tmp_path / "boundary.xlsx"
+    v50_workbook.write_v50_workbook(target, summary, metadata)
+    with closing(load_workbook(target)) as book:
+        assert book["Project_Summary"][f"{letter}2"].value is None
+        info = dict(book["Metadata"].values)
+        assert info[f"not_applicable.Project_Summary!{letter}2"] == reason
+
+
+@pytest.mark.parametrize("column", ["FO Month", "MIRR monthly", "MIRR annual"])
+@pytest.mark.parametrize(
+    "reason",
+    ["x" * 32768, " " * 32767 + "Undefined result"],
+    ids=["one-over-limit", "nonblank-suffix-over-limit"],
+)
+def test_overlong_nullable_reason_rejected(tmp_path, summary, metadata, column, reason):
+    summary[column] = v50_workbook.NotApplicable(reason)
+    target = tmp_path / "bad.xlsx"
+    with pytest.raises(ValueError, match=f"{column} not-applicable reason.*32767"):
+        v50_workbook.write_v50_workbook(target, summary, metadata)
+    assert not target.exists()

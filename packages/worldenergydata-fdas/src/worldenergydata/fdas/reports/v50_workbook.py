@@ -135,6 +135,11 @@ def _validated_rows(summary):
                     raise ValueError(
                         f"{name} not-applicable reason must be nonblank text"
                     )
+                # openpyxl silently truncates cell text beyond this limit.
+                if len(value.reason) > 32767:
+                    raise ValueError(
+                        f"{name} not-applicable reason must not exceed 32767 characters"
+                    )
                 continue
             if name in _TEXT_COLUMNS:
                 if not isinstance(value, str) or not value.strip():
