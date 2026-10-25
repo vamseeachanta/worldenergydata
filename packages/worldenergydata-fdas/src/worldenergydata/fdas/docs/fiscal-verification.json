@@ -1,0 +1,978 @@
+{
+  "schema_version": 1,
+  "recorded_date_utc": "2026-10-25",
+  "tested_revision": "c26786ced1976d773cba5184fed9bcc7103168fd",
+  "scope": "Local fiscal source-note consistency and FDAS regression execution; no legal-rate qualification.",
+  "revision_policy": "Final-tree runs use identical source and test bytes at the immutable tested revision; only documentation and this record change.",
+  "reproduction": {
+    "environment": "uv run --no-project with the dependency requirements below; PYTHONPATH includes src and every packages/*/src directory.",
+    "requirements": [
+      "pytest",
+      "numpy",
+      "numpy-financial",
+      "pandas<3",
+      "openpyxl",
+      "pyyaml",
+      "pytest-cov",
+      "pytest-asyncio",
+      "plotly<6",
+      "psutil",
+      "pydantic",
+      "pydantic-settings",
+      "loguru",
+      "tenacity",
+      "scikit-learn"
+    ],
+    "python_arguments": [
+      "-m",
+      "pytest",
+      "<test_path>",
+      "-q",
+      "-rA",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp=<external temporary directory>",
+      "--cov-report=term",
+      "--cov-report=xml:<external XML destination>",
+      "--cov-report=json:<external JSON destination>",
+      "--cov-report=html:<external HTML destination>",
+      "--junitxml=<external JUnit destination>",
+      "--allow-existing-tree-changes"
+    ],
+    "coverage": "Repository coverage options remain enabled; COVERAGE_FILE and report destinations are external to the repository.",
+    "bytecode": "PYTHONDONTWRITEBYTECODE=1; UV_COMPILE_BYTECODE=0",
+    "path_redaction": "Environment-specific output destinations are represented by placeholders; node names and outcome counts are unchanged."
+  },
+  "versions": {
+    "python": "3.12.15",
+    "pytest": "9.1.1",
+    "numpy": "2.5.4",
+    "numpy-financial": "1.0.0",
+    "pandas": "2.3.3",
+    "openpyxl": "3.1.5",
+    "pyyaml": "6.0.3",
+    "pytest-cov": "7.1.0",
+    "pytest-asyncio": "1.4.0",
+    "plotly": "5.24.1",
+    "psutil": "7.2.2",
+    "pydantic": "2.14.1",
+    "pydantic-settings": "2.16.1",
+    "loguru": "0.7.3",
+    "tenacity": "9.2.1",
+    "scikit-learn": "1.9.1"
+  },
+  "runs": [
+    {
+      "tree": "BASE",
+      "test_path": "tests/unit/fdas/fiscal",
+      "outcomes": {
+        "passed": 79,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "nodes": [
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_norway_none_yields_zero_royalty",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_uk_flat_zero_yields_zero_royalty",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_norway_full_cashflow_runs",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_declarative_fields_are_not_consumed",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[4000-50000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[5000-50000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[5001-75000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[60000-150000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[None]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates2]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates3]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates4]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates5]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-01-124000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-04-120000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-02-112000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2024-02-116000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_monthly_volume_raises[None]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_monthly_volume_raises[nan]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_only_royalty_and_net_change",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_npv_saving[0.0]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_npv_saving[0.1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[dry]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[subsea15]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[subsea20]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[default]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[unmapped]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_explicit_rate_arg_overrides_deck",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_runtime_reference_scale_parity",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_corrected_gulf_deck_has_distinct_revision_and_correction_note",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_income_tax_rates_equal_their_source_note[uk-source_patterns0]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_income_tax_rates_equal_their_source_note[norway-source_patterns1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_all_shipped_decks_validate",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_us_gom_royalty_matches_source_percentages",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_norway_is_none_model",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_uk_is_flat_zero",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_country_raises_with_available_list",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_top_level_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_royalty_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_valid_bands_load",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_flat_requires_exact_four_dev_systems",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_royalty_rate_bounds_enforced",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_none_model_must_not_carry_rate_map",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[source_url]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[source_ref]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[revision]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[effective_date]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_missing_provenance_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_wrong_schema_version_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bad_price_marker_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_fiscal_terms_is_frozen",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_validate_deck_is_pure_roundtrip",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands0-increasing]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands1-unbounded]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands2-rate]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands3-finite]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands4-keys]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands5-non-empty]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands6-last]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands7-number]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands8-rate]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bands_rejected_for_other_models[flat]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bands_rejected_for_other_models[none]",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "tree": "BASE",
+      "test_path": "tests/unit/fdas",
+      "outcomes": {
+        "passed": 414,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 2
+      },
+      "skip_reasons": [
+        "Existing golden-baseline placeholder",
+        "Existing workbook sheet mismatch"
+      ]
+    },
+    {
+      "tree": "final documentation tree",
+      "test_path": "tests/unit/fdas/fiscal",
+      "outcomes": {
+        "passed": 79,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "nodes": [
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_norway_none_yields_zero_royalty",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_uk_flat_zero_yields_zero_royalty",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_norway_full_cashflow_runs",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_declarative_fields_are_not_consumed",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[4000-50000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[5000-50000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[5001-75000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_synthetic_band_selection[60000-150000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[None]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates2]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates3]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates4]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_or_invalid_rate_raises[rates5]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-01-124000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-04-120000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2025-02-112000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_calendar_month_daily_rate_and_basis[2024-02-116000-4000]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_monthly_volume_raises[None]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py::test_sliding_scale_missing_monthly_volume_raises[nan]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_only_royalty_and_net_change",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_npv_saving[0.0]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_deckless_vs_us_gom_npv_saving[0.1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[dry]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[subsea15]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[subsea20]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[default]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_calculate_royalty_source_note_hand_calculation[unmapped]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_explicit_rate_arg_overrides_deck",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_deck_parity.py::test_runtime_reference_scale_parity",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[dry-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea15-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[subsea20-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[default-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-norway]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-uk]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_royalty_rate_equals_its_source_note[unmapped-us_gom]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_corrected_gulf_deck_has_distinct_revision_and_correction_note",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_income_tax_rates_equal_their_source_note[uk-source_patterns0]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_source_rates.py::test_income_tax_rates_equal_their_source_note[norway-source_patterns1]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_all_shipped_decks_validate",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_us_gom_royalty_matches_source_percentages",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_norway_is_none_model",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_uk_is_flat_zero",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_country_raises_with_available_list",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_top_level_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_unknown_royalty_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_valid_bands_load",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_flat_requires_exact_four_dev_systems",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_royalty_rate_bounds_enforced",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_none_model_must_not_carry_rate_map",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[source_url]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[source_ref]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[revision]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_provenance_fields_required_nonempty[effective_date]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_missing_provenance_field_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_wrong_schema_version_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bad_price_marker_rejected",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_fiscal_terms_is_frozen",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_validate_deck_is_pure_roundtrip",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands0-increasing]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands1-unbounded]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands2-rate]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands3-finite]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands4-keys]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands5-non-empty]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands6-last]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands7-number]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_sliding_scale_invalid_bands[bands8-rate]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bands_rejected_for_other_models[flat]",
+          "status": "passed"
+        },
+        {
+          "node": "tests/unit/fdas/fiscal/test_terms.py::test_bands_rejected_for_other_models[none]",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "tree": "final documentation tree",
+      "test_path": "tests/unit/fdas",
+      "outcomes": {
+        "passed": 414,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 2
+      },
+      "skip_reasons": [
+        "Existing golden-baseline placeholder",
+        "Existing workbook sheet mismatch"
+      ]
+    }
+  ],
+  "source_and_test_sha256": [
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/__init__.py",
+      "sha256": "81e0c8fe2c75208014ee7d6e376effd3383bb2b57b22d84f66c568f8d94a9e27"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/adapters/__init__.py",
+      "sha256": "222f1beea7bada84674205a487fbf1a632c1e50ee8b15e3b9ee2f78ac53d8f9d"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/adapters/bsee_adapter.py",
+      "sha256": "55de106f403a23fcfb3bcd1a0996cb9a69ce372279930810b240b751f16bfd73"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/adapters/contract.py",
+      "sha256": "2be1f907c5f6d049b598902f61788f9b43030b09ab9b9b155cce2f8ddf50a6e5"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/adapters/field_concept_normalizer.py",
+      "sha256": "b46c52b40d8eb5cda10eb16a3f0d2615609dc2c03a74a573912102bd377674f3"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/__init__.py",
+      "sha256": "e4aa34efcc8f1d383fb1ac0a50fdc07c8866cef8f74e5c2f97c524669ec22799"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/cashflow.py",
+      "sha256": "3458ca19124e0c07432005dc1f65bf32acaeb0494e19ff2c9d2e0a3f5e19097f"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/analysis/gas_revenue.py",
+      "sha256": "25ca7abe064edfa3cc160fcf1b889bb3f8566501bb94626cbfd6b27893dd6740"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/api.py",
+      "sha256": "897cc3ff9ee63b57ee5017fa79389016f5d496bb1b98c8a576d7402900afcdf0"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/__init__.py",
+      "sha256": "a9e93d4241de1db00f850208cb45a4544f7053f9b2f87d9d2914535ca0da221f"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/config.py",
+      "sha256": "19d9f7a1613f25bf53a3be27498279e6d5d714fa479ba783a0a23d1d7346c27c"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/core/financial.py",
+      "sha256": "3fa582e62b82abc05dfb45ae67ffa532dc292bfa8ee71d87feed4fa7ec020c84"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/data/__init__.py",
+      "sha256": "7352552db16702c22c5cb01749fc3288a6d5218c8a51539acf1ef8ec10b9e633"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/data/production.py",
+      "sha256": "b664eb8f631b356421dc34ba67e84ce99ad30c6512df3366f34dd9d0068287c7"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fdas.py",
+      "sha256": "e9835ced8974cbf3ad569e928b3186bb6c1dde83322f4c28c0ff3cb1311d1164"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/__init__.py",
+      "sha256": "9878acc34b09547e4d29a092a3b48adb02f5ca1b7ef8eed48f7f2c2312d46f3f"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/decks/norway.yml",
+      "sha256": "daba007da661d1b984cb4b77d9ad35aafaf87fd943e56f1c6b8906ba559a4c74"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/decks/uk.yml",
+      "sha256": "c681c2eacf9be399ad1847c0e1fce26fdd3af5f67f72fd90b7a36a5beb00b3ab"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/decks/us_gom.yml",
+      "sha256": "d9ec3ff1e4e76bf61712b97883e557bac21d9958c48ec6cfd7582b6e1d0062b5"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/schema.py",
+      "sha256": "8e8320af0818d912b2d07612ee7393ea05604b9cbd171446bcdc0cbf4bc8f88b"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/fiscal/terms.py",
+      "sha256": "aecdd2f26dcd87423324136e06eb0a662b22a8a8534febef0d1fd7bb046845dd"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/reports/__init__.py",
+      "sha256": "79ff0238c379083c58c164b4445e54ad5c65a4337b737c6a9e1f640fd5c937b8"
+    },
+    {
+      "path": "packages/worldenergydata-fdas/src/worldenergydata/fdas/reports/excel_generator.py",
+      "sha256": "5b161bf4aa920dcfb4a7be580df9eedd246db85d8be481195388f7bf562d40c7"
+    },
+    {
+      "path": "tests/unit/fdas/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/adapters/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/adapters/test_conformance.py",
+      "sha256": "b9b785f0c7a622bfab3260c71b25f2ccf6da03cdd61bfa0edc27f3f00697ce2d"
+    },
+    {
+      "path": "tests/unit/fdas/adapters/test_contract.py",
+      "sha256": "d3ab877dfc2b259ff0b34948166247cf0c0285c02eacc3602507e84a6a41de6f"
+    },
+    {
+      "path": "tests/unit/fdas/adapters/test_field_concept_normalizer.py",
+      "sha256": "4c9bef55f051860290f2359a6850491ab586ac8e842f3b4782eeec9707917adb"
+    },
+    {
+      "path": "tests/unit/fdas/adapters/test_registration_checklist.py",
+      "sha256": "1555dad6053fd3d1f8a9f0d2d4a3ece8cdf6259e5889970bd4ac7a5ece2eb5f7"
+    },
+    {
+      "path": "tests/unit/fdas/analysis/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/analysis/test_cashflow.py",
+      "sha256": "a5248a5a425b91267cde2910297f39968662f9003d7d1e4bcd88ae875484290e"
+    },
+    {
+      "path": "tests/unit/fdas/analysis/test_gas_cashflow.py",
+      "sha256": "05a94496a6ef6d422c1eaf6f994b7c19a10918ecf1a081167dca77e19905b5f7"
+    },
+    {
+      "path": "tests/unit/fdas/core/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/core/test_config.py",
+      "sha256": "78e9bcfe70ca1f4d649210673b79280f51fbc164b405e3728ff837199589ec5d"
+    },
+    {
+      "path": "tests/unit/fdas/data/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/data/test_production.py",
+      "sha256": "1b21b7e2749cf34a9c2a24359e90d851e0d1c834f0fcee840216c69153d8ccdb"
+    },
+    {
+      "path": "tests/unit/fdas/fiscal/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/fiscal/test_cashflow_fiscal.py",
+      "sha256": "8317d21a60722b3e1dbde16d219d39306ca1f77c53c0d890417e249a630befe9"
+    },
+    {
+      "path": "tests/unit/fdas/fiscal/test_deck_parity.py",
+      "sha256": "15e31f8f2ff62ce14e33068dbb66bfc2470850229a530fb0cbd0dbf9f7da5511"
+    },
+    {
+      "path": "tests/unit/fdas/fiscal/test_source_rates.py",
+      "sha256": "8bca49f4858ddd164686b6073cfd4d44222a5be87d947cd3dcd2223ca744327d"
+    },
+    {
+      "path": "tests/unit/fdas/fiscal/test_terms.py",
+      "sha256": "0d9ba9feb09a1b57a4c17be71d04c1da5383d126bcf82e428b412181e95f4f3b"
+    },
+    {
+      "path": "tests/unit/fdas/integration/__init__.py",
+      "sha256": "d44737a1ba201b1e7ade40068f2c085873ef249ace3fb2aa4c4f4ab3a7b3360c"
+    },
+    {
+      "path": "tests/unit/fdas/integration/test_end_to_end.py",
+      "sha256": "c819920c85d1366a91cce3166fecf6c508860689dc1de5e5b6603793ee14dded"
+    },
+    {
+      "path": "tests/unit/fdas/reports/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/unit/fdas/reports/test_excel_generator.py",
+      "sha256": "5c7ff6178b86b84b21ee57b602adde007f8fd9c088a7e310c36633950406ee71"
+    },
+    {
+      "path": "tests/unit/fdas/test_bsee_adapter.py",
+      "sha256": "fbf0eedbf936c0c2869c810067a52519f6c621ddbc2e1f0d3ea97de3ee8bc73a"
+    },
+    {
+      "path": "tests/unit/fdas/test_disclosure_api.py",
+      "sha256": "8074b42ae53c08f1cd0f25607dc127f937d08cc637f39a78916d17e4277fb143"
+    },
+    {
+      "path": "tests/unit/fdas/test_financial.py",
+      "sha256": "b618c204e3e0700253978ce87230126bff8049437fcbd25a330a2683d7f84931"
+    },
+    {
+      "path": "tests/unit/fdas/test_packaging.py",
+      "sha256": "946f04adcc9cfce191ac1488560f57ed175be9f4fdb9e61a294e856d06219fb7"
+    },
+    {
+      "path": "tests/unit/fdas/unit/test_config.py",
+      "sha256": "174b0a6487c812f34a6633edbc031f21766cac60eaeb65011d9ee82c1c750e40"
+    },
+    {
+      "path": "tests/unit/fdas/unit/test_financial.py",
+      "sha256": "3d80cc68989977cedf26ed516aa11aa36b0b40092adcfd2d46c31430a3398f9b"
+    },
+    {
+      "path": "tests/unit/fdas/validation/__init__.py",
+      "sha256": "67f5707dc6d3678df3bd3b45dba9ef463d9c03120ea3138c7942114b802cf295"
+    },
+    {
+      "path": "tests/unit/fdas/validation/conftest.py",
+      "sha256": "2c86478ce0f9ea7a34052f04c1d57b5ae06e406e7d1c9161fcb376bd177901f7"
+    },
+    {
+      "path": "tests/unit/fdas/validation/test_against_original.py",
+      "sha256": "9013624807317340b180dad7401c4fbe6b8b0b8d6d7ee027c62a8f3c5185662f"
+    },
+    {
+      "path": "tests/unit/fdas/validation/test_v30_determinism.py",
+      "sha256": "dea752cf8b9f9c59e6021a933a401ef3292df27b7adf9790cc64405e1840f4e4"
+    }
+  ],
+  "limits": [
+    "The earlier unpinned verification is superseded by these retained local records.",
+    "The two full-suite skips remain skipped, not passed.",
+    "Hosted results on a later commit must be assessed separately.",
+    "Current law, effective dates and live legacy-default policy are not qualified."
+  ]
+}
