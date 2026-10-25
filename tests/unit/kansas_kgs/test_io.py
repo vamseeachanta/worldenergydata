@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -123,35 +124,62 @@ def test_output_writer_does_not_promote_normalized_files_when_curated_write_fail
     assert not list(tmp_path.rglob(".staging-*"))
 
 
+@pytest.mark.parametrize(
+    "binding,missing",
+    [(None, False)]
+    + [
+        (binding, missing)
+        for binding in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "combined")
+        for missing in (False, True)
+    ],
+)
 def test_manifest_uses_package_revision_from_unrelated_repository(
-    tmp_path, monkeypatch
+    tmp_path, monkeypatch, binding, missing
 ):
     """Independent provenance oracle for issue #1352 (2026), defect 3.
 
     The package checkout has a HEAD; a fresh unrelated Git repository has
     none. The manifest must retain the package HEAD, not return the caller's
-    absent revision. Dirty state is compared with Git's own tracked status.
+    absent revision, even with conflicting or invalid repository bindings.
+    Dirty state is compared with Git's own tracked status. Both independent
+    oracles exclude all inherited Git settings before bindings are injected.
     No commit or identity configuration is needed in the temporary repository.
     """
     import subprocess
 
     from worldenergydata.kansas_kgs import io
 
+    oracle_env = {
+        key: value for key, value in os.environ.items() if not key.startswith("GIT_")
+    }
     package_dir = Path(io.__file__).resolve().parent
     revision = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=package_dir, text=True
+        ["git", "rev-parse", "HEAD"], cwd=package_dir, env=oracle_env, text=True
     ).strip()
     dirty = bool(
         subprocess.check_output(
             ["git", "status", "--porcelain", "--untracked-files=no"],
             cwd=package_dir,
+            env=oracle_env,
             text=True,
         ).strip()
     )
     unrelated = tmp_path / "unrelated"
     unrelated.mkdir()
-    subprocess.run(["git", "init", "--quiet"], cwd=unrelated, check=True)
+    subprocess.run(
+        ["git", "init", "--quiet"], cwd=unrelated, env=oracle_env, check=True
+    )
+    target = tmp_path / "missing" if missing else unrelated
+    bindings = {
+        "GIT_DIR": target / ".git",
+        "GIT_WORK_TREE": target,
+        "GIT_COMMON_DIR": target / ".git",
+    }
+    for key, value in bindings.items():
+        if binding in (key, "combined"):
+            monkeypatch.setenv(key, str(value))
     monkeypatch.chdir(unrelated)
+    caller_env = os.environ.copy()
     manifest = io.write_pressure_observation_outputs(
         pd.DataFrame(),
         pd.DataFrame(),
@@ -162,5 +190,5 @@ def test_manifest_uses_package_revision_from_unrelated_repository(
         allow_non_ace_root=True,
     )
     payload = json.loads(manifest.manifest_path.read_text())
-    assert payload["code_revision"] == revision
-    assert payload["code_dirty"] is dirty
+    assert (payload["code_revision"], payload["code_dirty"]) == (revision, dirty)
+    assert dict(os.environ) == caller_env

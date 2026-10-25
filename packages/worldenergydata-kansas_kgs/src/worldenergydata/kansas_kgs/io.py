@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -192,11 +193,41 @@ def _file_snapshot(path: Path) -> dict[str, object]:
     return {"size_bytes": size, "sha256": digest.hexdigest()}
 
 
+def _git_environment() -> dict[str, str]:
+    """Copy the environment without caller repository or discovery bindings."""
+    env = os.environ.copy()
+    # Repository-local settings reported by git rev-parse --local-env-vars,
+    # plus namespace and discovery controls that can hide the package checkout.
+    for key in (
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_CONFIG",
+        "GIT_CONFIG_PARAMETERS",
+        "GIT_CONFIG_COUNT",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_DIR",
+        "GIT_WORK_TREE",
+        "GIT_IMPLICIT_WORK_TREE",
+        "GIT_GRAFT_FILE",
+        "GIT_INDEX_FILE",
+        "GIT_NO_REPLACE_OBJECTS",
+        "GIT_REPLACE_REF_BASE",
+        "GIT_PREFIX",
+        "GIT_SHALLOW_FILE",
+        "GIT_COMMON_DIR",
+        "GIT_NAMESPACE",
+        "GIT_CEILING_DIRECTORIES",
+        "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+    ):
+        env.pop(key, None)
+    return env
+
+
 def _git_revision() -> str | None:
     try:
         result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=Path(__file__).resolve().parent,
+            env=_git_environment(),
             check=True,
             capture_output=True,
             text=True,
@@ -213,6 +244,7 @@ def _git_dirty() -> bool | None:
         result = subprocess.run(
             ["git", "status", "--porcelain", "--untracked-files=no"],
             cwd=Path(__file__).resolve().parent,
+            env=_git_environment(),
             check=True,
             capture_output=True,
             text=True,
