@@ -55,7 +55,7 @@ class Citation:
         if (
             not self.wiki_path.startswith("wikis/")
             or "\\" in self.wiki_path
-            or any(part in ("", ".", "..", "sources") for part in segments)
+            or any(part.casefold() in ("", ".", "..", "sources") for part in segments)
         ):
             raise ValueError("wiki_path must identify a nonsource page under wikis/")
 
@@ -67,7 +67,7 @@ def _read_evidence(citation: Citation, wiki_root: Path) -> dict:
         page = (root / citation.wiki_path).resolve()
         if not page.is_relative_to(root):
             raise ValueError("outside_root")
-        if "sources" in page.relative_to(root).parts:
+        if any(part.casefold() == "sources" for part in page.relative_to(root).parts):
             raise ValueError("source_page")
         lines = page.read_text(encoding="utf-8").splitlines()
         if not lines or lines[0] != "---":

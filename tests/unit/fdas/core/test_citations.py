@@ -82,6 +82,9 @@ def test_rate_must_match_page(cited_royalty, tmp_path):
         "../royalty.md",
         "wikis/../royalty.md",
         "wikis/engineering/sources/royalty.md",
+        "wikis/engineering/Sources/royalty.md",
+        "wikis/engineering/SOURCES/royalty.md",
+        "wikis/engineering/sOuRcEs/royalty.md",
         "wikis//royalty.md",
         "wikis/./royalty.md",
         "wikis\\royalty.md",
@@ -100,8 +103,9 @@ def test_symlink_escape_rejected(cited_royalty, tmp_path):
         cited_royalty.validate(root)
 
 
-def test_symlink_to_source_page_rejected(cited_royalty, tmp_path):
-    source = tmp_path / "wikis/engineering/sources/royalty.md"
+@pytest.mark.parametrize("component", ["sources", "Sources", "SOURCES", "sOuRcEs"])
+def test_symlink_to_source_page_rejected(cited_royalty, tmp_path, component):
+    source = tmp_path / "wikis" / "engineering" / component / "royalty.md"
     source.parent.mkdir(parents=True)
     source.write_text(
         (tmp_path / cited_royalty.citation.wiki_path).read_text(encoding="utf-8"),

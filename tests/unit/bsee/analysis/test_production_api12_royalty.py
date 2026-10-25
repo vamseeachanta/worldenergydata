@@ -7,6 +7,7 @@ No input describes an actual well, lease, price deck or statutory rate.
 
 from dataclasses import replace
 from fractions import Fraction
+from unittest.mock import Mock
 
 import pandas as pd
 import pytest
@@ -158,3 +159,43 @@ def test_cited_result_rejects_missing_or_nonfinite_inputs(
         ProductionAPI12Analysis().calculate_npv_with_citations(
             cfg, revenue, royalty=royalty, wiki_root=tmp_path
         )
+
+
+@pytest.mark.parametrize("value", ["$", ",,,", "$ , "])
+def test_symbol_only_revenue_prevents_calculation(
+    inputs, royalty, tmp_path, monkeypatch, value
+):
+    cfg, revenue = inputs
+    revenue.loc[0, "Revenue (USD)"] = value
+    analyzer = ProductionAPI12Analysis()
+    calculate = Mock(return_value=0)
+    monkeypatch.setattr(analyzer, "calculate_npv", calculate)
+    with pytest.raises(ValueError, match="missing Revenue"):
+        analyzer.calculate_npv_with_citations(
+            cfg, revenue, royalty=royalty, wiki_root=tmp_path
+        )
+    calculate.assert_not_called()
+
+
+@pytest.mark.parametrize("value", ["$", ",,,", "$ , "])
+def test_scalar_symbol_only_revenue_keeps_zero_behavior(inputs, value):
+    cfg, revenue = inputs
+    analyzer = ProductionAPI12Analysis()
+    revenue.loc[0, "Revenue (USD)"] = 0
+    expected = analyzer.calculate_npv(cfg, revenue, period="annual")
+    revenue.loc[0, "Revenue (USD)"] = value
+    assert analyzer.calculate_npv(cfg, revenue, period="annual") == expected
+    result = analyzer.calculate_npv_with_citations(cfg, revenue, period="annual")
+    assert result["npv"] == expected
+    assert result["royalty_status"] == "NOT_EVALUATED"
+
+
+@pytest.mark.parametrize("value", [0, 0.0, "0", "$0.00", "$ 0,000.00"])
+def test_cited_explicit_zero_revenue_is_valid(inputs, royalty, tmp_path, value):
+    cfg, revenue = inputs
+    revenue.loc[0, "Revenue (USD)"] = value
+    result = ProductionAPI12Analysis().calculate_npv_with_citations(
+        cfg, revenue, period="annual", royalty=royalty, wiki_root=tmp_path
+    )
+    # Synthetic cashflows: -1000, -200 and 2225, discounted annually at 1/10.
+    assert result["npv"] == pytest.approx(float(Fraction(79500, 121)))

@@ -59,6 +59,15 @@ def _royalty_adjusted_revenue(revenue_df, rate):
         values = working[column]
         if values.isna().any() or values.astype(str).str.strip().eq("").any():
             raise ValueError(f"missing {column}")
+    revenue_tokens = (
+        working["Revenue (USD)"]
+        .astype(str)
+        .str.replace("$", "", regex=False)
+        .str.replace(",", "", regex=False)
+        .str.strip()
+    )
+    if revenue_tokens.eq("").any():
+        raise ValueError("missing Revenue (USD)")
     gross = working["Revenue (USD)"].apply(_currency_to_float)
     production = pd.to_numeric(working["Monthly Oil Production"], errors="coerce")
     if not np.isfinite(gross).all() or not np.isfinite(production).all():
