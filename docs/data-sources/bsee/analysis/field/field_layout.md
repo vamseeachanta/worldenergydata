@@ -18,7 +18,7 @@ If you do have the demarcation (rough) coordinates of those curves etc. , I can 
 Thank you,
 Vamsee
 
-On Wed, Jun 11, 2025 at 5:04 PM <reference@example.invalid> wrote:
+Earlier correspondence from the analyst:
 Vamsee, have y’all generated or can you generate a map showing these blocks in one image?
 
 ![data_screenshot](modulesseenalysis
