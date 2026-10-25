@@ -13,7 +13,8 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
 
     ``df`` must contain ``date`` and ``rig_count`` columns. Counts must be
     finite, nonnegative whole numbers; dates must be timezone-naive dates or
-    complete ISO 8601 date strings. Times within a calendar date are combined.
+    complete ISO 8601 date strings (YYYY-MM-DD, optionally with a time).
+    Times within a calendar date are combined.
 
     Each row must represent a disjoint part of the requested population.
     Filter to the desired population before calling; combining overlapping
@@ -58,7 +59,8 @@ def aggregate_rig_counts(df: pd.DataFrame, *, window: int) -> pd.DataFrame:
         ):
             raise ValueError("numeric epochs are not calendar dates")
         if any(
-            isinstance(value, str) and re.fullmatch(r"\s*\d{4}(?:-\d{1,2})?\s*", value)
+            isinstance(value, str)
+            and not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}(?:[T ].+)?", value)
             for value in df["date"]
         ):
             raise ValueError("incomplete calendar date")

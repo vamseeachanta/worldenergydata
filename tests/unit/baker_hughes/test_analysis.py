@@ -143,6 +143,14 @@ def test_invalid_date_is_rejected(date):
         aggregate_rig_counts(rows, window=1)
 
 
+@pytest.mark.parametrize("date", ["2026/01", "2026/1"])
+def test_incomplete_slash_dates_are_rejected(date):
+    """A supplied year and month must not invent an observation day."""
+    rows = pd.DataFrame({"date": [date], "rig_count": [4]})
+    with pytest.raises(ValueError, match="date"):
+        aggregate_rig_counts(rows, window=1)
+
+
 @pytest.mark.parametrize("reverse", [False, True])
 def test_ambiguous_day_first_dates_are_rejected(reverse):
     """Slash dates must not silently mix month-first and day-first readings."""
