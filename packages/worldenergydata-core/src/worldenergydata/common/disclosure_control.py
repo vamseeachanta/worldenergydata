@@ -1,11 +1,19 @@
 """Conservative disclosure control for a single, one-dimensional count table.
 
-Method and scope: repository issue #1703 requires primary suppression below
-an explicit caller threshold, with complementary suppression so that the
-released total cannot reveal a hidden count. This policy withholds EVERY
-count and the total if any count falls below that threshold. Consequently,
-this table publishes neither a total nor other counts from which to subtract
-and reconstruct a suppressed value. Counts below the threshold have reason
+Method reference: Handbook on Statistical Disclosure Control, Chapter 5,
+"Frequency tables", section 5.3, "Methods" (post-tabular cell suppression):
+https://sdctools.github.io/HandbookSDC/05-frequency-tables.html#sec-Methods_freq
+The handbook describes primary suppression of unsafe cells and secondary
+(complementary) suppression of additional cells to prevent reconstruction
+by subtraction from published marginal totals.
+
+Local policy and scope: repository issue #1703 requires primary suppression
+below an explicit caller threshold, with complementary suppression so that
+the released total cannot reveal a hidden count. Whole-table withholding is
+the local conservative variant, not a selection algorithm from the reference:
+it withholds EVERY count and the total if any count falls below that threshold.
+Consequently, this table publishes neither a total nor other counts from which
+to subtract and reconstruct a suppressed value. Counts below the threshold have reason
 ``primary``; the other counts and withheld total have reason ``complementary``.
 When no count is below the threshold, every count and the exact sum are released.
 
