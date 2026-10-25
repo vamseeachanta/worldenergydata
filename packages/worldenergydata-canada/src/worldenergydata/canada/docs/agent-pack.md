@@ -19,7 +19,7 @@ The code revision pins repository citations; original BASE/AFTER outcomes are ob
 |---|---|---|
 | 0 | 2026-10-15 | Initial pinned module reference, regression evidence and open items |
 | 1 | 2026-10-20 | Add omitted failure semantics and parser hazard; clarify test evidence and detection gaps |
-| 2 | 2026-10-24 | Expand historical failure node IDs and record the package silent-failure sweep |
+| 2 | 2026-10-24 | Expand historical failed-node IDs and record a reproducible sweep with candidate dispositions |
 
 ## 1. Purpose and scope
 
@@ -125,9 +125,31 @@ For C5.1, resolve every bracketed repository path and line range through `git sh
 
 ## 6. Known failure modes and pitfalls
 
-sweep: 19 found
+sweep: 74 found
 
-The package sweep on 2026-10-24 used `rg -n --glob '*.py' 'except|return \[\]|return \{\}|return None|\bpass\b|\bcontinue\b|logger\.(warning|error)|pending|placeholder' packages/worldenergydata-canada/src/worldenergydata/canada`, followed by inspection of the matched branches and the existing row citations. The count is 19 grouped failure modes and pitfalls in the table below, not the number of matching lines or proven defects: 17 retained rows and 2 additional fallback rows. Repeated provincial stubs and retry branches are grouped; propagated exceptions, documented cache misses, optional imports and schema-null returns are not counted separately. The rights, gas-coverage and implemented-parser rows retain scope or disposition limits rather than asserting swallowed exceptions. This static sweep does not establish live acquisition or exhaustive defect coverage.
+Run on 2026-10-24 over the package path in the header, with Python source bytes unchanged from the code revision. The count is matching lines, including intentional fallbacks and two docstring examples; it is not a count of confirmed defects. Command run, with that package path substituted for `$PACKAGE`:
+
+```bash
+rg -n '^\s*(except\b|return (None\b|\[\]|\{\})|pass\b)' "$PACKAGE" --glob '*.py'
+```
+
+The file groups below account for all 74 matches (9 + 12 + 2 + 12 + 11 + 5 + 4 + 6 + 6 + 1 + 1 + 3 + 2). The risk rows that follow also cover behavior this syntax search cannot detect, including dropped filters, numeric-width dispatch and placeholder totals. Source paths are relative to the package path; their pinned-file references are in section 9.
+
+| Sweep file | Matching lines at the code revision | Count | Disposition and relationship to the risk rows below |
+|---|---|---|---|
+| `aer/aer.py` | 63, 95, 110, 125, 138, 151, 164, 211, 238 | 9 | Error mapping is SF1; seven empty-list stubs and the unknown-type fallback belong to collection/control-flow gaps, issue pending (2). |
+| `aer/api_client.py` | 34, 39, 193, 374, 376, 504, 557, 635, 687, 763, 863, 865 | 12 | Three optional-dependency/connection fallbacks and six retry or re-raise sites do not establish empty acquisition; the final three matches are SF2's missing-licence and empty-search outcomes, issue pending (3). |
+| `analysis/analysis.py` | 58, 260 | 2 | The handler records analysis error status; the empty result is a placeholder under the comparative-analysis row, issue pending (2). |
+| `bcer/api_client.py` | 33, 38, 44, 211, 387, 389, 568, 570, 656, 867, 896, 920 | 12 | Four dependency/connection fallbacks, six retry or structured-error sites and two explicit no-match returns; these are not additional silent-acquisition findings. Cache isolation remains a separate risk row, issue pending (3). |
+| `bcer/bcer.py` | 76, 108, 171, 184, 197, 210, 223, 263, 285, 332, 357 | 11 | Error mapping is SF1; nine list/lookup stubs and the unknown-type fallback belong to collection/control-flow gaps, issue pending (2). |
+| `cache.py` | 76, 175, 187, 231, 238 | 5 | Three intentional cache misses; metadata read/write exceptions only warn, with load failure clearing in-memory metadata. Cache warnings are not proof of durable caching; the initialization risk is recorded below under issue pending (1). |
+| `canada.py` | 43, 111, 256, 276 | 4 | Lazy initialization, a router handler recording error status, and invalid/unknown-province lookup fallbacks; routing limitations remain under issue pending (2). |
+| `common/uwi.py` | 31, 46, 48, 70, 94, 111 | 6 | Empty/invalid parsing and province lookup return `None`; normalization failure returns the original input with a warning; validation failure returns a false/error pair. Callers must inspect these outcomes; validation semantics remain under issue pending (5). |
+| `common/uwi_parser.py` | 402, 534, 542, 550, 558, 597 | 6 | Five explicit validation-error conversions and an unknown-province fallback; inference limits remain under issue pending (5). |
+| `common/validators.py` | 636 | 1 | A rejected date format advances to the next format; exhausting formats adds a validation error. This is intentional parsing control flow. |
+| `emerging_basins/discoveries.py` | 102 | 1 | Explicit lookup no-match; the missing-CSV risk below is a distinct empty-data path, issue pending (5). |
+| `emerging_basins/discovery_schema.py` | 94, 101, 105 | 3 | Intentional empty/unknown-value normalization; required fields are checked afterward. Schema validity does not establish source availability or accuracy. |
+| `errors.py` | 27, 29 | 2 | Docstring exception-handling examples, not executable handlers. |
 
 The issues below are references and follow-ups, not a claim that each historical request is an unresolved incident.
 
@@ -152,6 +174,14 @@ The issues below are references and follow-ups, not a claim that each historical
 | Historical modal-parser request already has an implementation and offline synthetic coverage | C1.2, C2.2; do not describe the parser as absent merely because the request remains open | #817 | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L321-L347] [tests/unit/canada/production/test_cnloer_html.py:L74-L119] |
 | Cache metadata load failures reset metadata to an empty mapping; save failures only log a warning, so a completed cache write does not establish persisted metadata | no detection check exists for caller-visible persistence failure; require an explicit degraded-cache outcome when metadata cannot be read or saved | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/cache.py:L166-L188] |
 | UWI convenience parsing returns invalid components after a warning and returns `None` on exceptions; normalization returns the original input on exceptions | no detection check exists for downstream rejection of fallback values; require callers to distinguish validated identifiers from invalid or unchanged fallback values | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi.py:L30-L48] [packages/worldenergydata-canada/src/worldenergydata/canada/common/uwi.py:L61-L72] |
+| An empty production frame selects first-oil date 1970-01-01 before the delegated cashflow call; an empty cashflow collection sums to zero-valued metrics | no detection check exists for an empty-input date or economic-availability outcome; require an explicit no-production result rather than treating the fallback date and zero totals as observations | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L42-L87] [packages/worldenergydata-canada/src/worldenergydata/canada/reference_chain.py:L91-L101] |
+| Discovery year and water-depth coercion applies `int(float(text))` or `int(value)`, truncating fractional values before range validation; comma-grouped numeric text raises instead of being normalized | no detection check exists for fractional truncation or numeric-separator policy; require explicit rejection or a documented conversion before range checks | issue pending (5) | [packages/worldenergydata-canada/src/worldenergydata/canada/emerging_basins/discovery_schema.py:L97-L109] |
+| Text production parsing removes every comma before float conversion and ignores nonmatching tokens; decimal-comma text can change magnitude, and fractional year values are truncated | no detection check exists for decimal-comma input, discarded numeric tokens or fractional years; require unambiguous numeric notation and an integral year | issue pending (4) | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L134-L144] |
+| Retry-After and download content-length headers are converted with `int`; date-form Retry-After or malformed numeric headers enter the exception paths, while missing content length defaults to zero | no detection check exists for nonnumeric header handling; require an explicit header-format policy and distinguish unknown download size from an observed zero size | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L332-L336] [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L470-L476] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L345-L349] |
+| A successful HTTP status permits caching empty AER response bytes; BCER defaults a missing features key to an empty list and caches it | no detection check exists for empty-response cache poisoning or a missing feature envelope; distinguish a validated empty acquisition from unavailable or malformed data before caching | issue pending (3) | [packages/worldenergydata-canada/src/worldenergydata/canada/aer/api_client.py:L422-L430] [packages/worldenergydata-canada/src/worldenergydata/canada/bcer/api_client.py:L538-L553] |
+| Volume extraction assumes column-count-selected units and imported conversion factors; its short-vector fallback returns three zeros, although the normal text parser excludes that width | R3 checks implementation-derived conversion only; no detection check exists for independent unit provenance or direct short-vector fallback rejection | issue pending (6) | [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L39-L48] [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L139-L145] [packages/worldenergydata-canada/src/worldenergydata/canada/production/cnloer_loader.py:L170-L189] |
+
+Supplementary inspection used `rg -n --glob '*.py' 'except|\bcontinue\b|return (None|\[\]|\{\})|\b(int|float)\(|\b1970\b|= (0(\.0)?|0\.05)\b|unit|cache' "$PACKAGE"`. These wider matches include ordinary control flow and documentation; the table retains 19 earlier risk rows and adds 6 dispositions for defaults, external numeric conversions, units and empty-cache outcomes. The 74-line syntax count above is unchanged.
 
 ## 7. Lessons log
 
@@ -298,7 +328,9 @@ The inventory below gives all 15 module test files plus the dedicated consumer f
 
 All 19 failing nodes are in `tests/unit/canada/aer/test_api_client.py`; each reaches default file-cache creation before its intended assertion. The same constructor and test calls are present at the code pin and on the inspected default-branch ref.
 
-| Failed test node ID | BASE / AFTER |
+Use complete repository-relative node IDs in every result table so each historical result can be selected directly by pytest.
+
+| Full failed node ID | BASE / AFTER |
 |---|---|
 | `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_default_values` | FAIL / FAIL |
 | `tests/unit/canada/aer/test_api_client.py::TestAERClientInit::test_custom_rate_limit` | FAIL / FAIL |
