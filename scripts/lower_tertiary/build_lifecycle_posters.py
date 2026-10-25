@@ -565,15 +565,16 @@ def main():
         help="Optional field-keyed JSON with TA/COM USD prices, source and price_basis",
     )
     args = ap.parse_args()
-    _WELL_PA_SIGNALS = _load_well_pa_signals(
-        json.loads(args.well_pa_costs.read_text()) if args.well_pa_costs else None
-    )
+    cost_inputs = json.loads(args.well_pa_costs.read_text()) if args.well_pa_costs else {}
 
     facts = (
         [BIG_FOOT_FACTS]
         if (args.self_test or not FACTS.exists())
         else json.loads(FACTS.read_text())
     )
+    if set(cost_inputs) - {field["id"] for field in facts}:
+        raise ValueError("Cost inputs require lifecycle facts for every supplied field")
+    _WELL_PA_SIGNALS = _load_well_pa_signals(cost_inputs)
     # Phase-norm chips (issue #848): attach per-field vs-norm strip data when
     # the norms contract exists (build_phase_norms.py writes it). Posters stay
     # buildable without it — the template hides the strip when norms is empty.

@@ -11,6 +11,7 @@ ownership, outstanding obligations or geological targeting.
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | A | 2026-10-20 | Connect the existing bottom-lease attribution to field screens; require explicit prices to avoid unsupported liability estimates. |
+| B | 2026-10-24 | Reject costs without lifecycle facts to prevent discarded scenarios; preserve the final addition carry in decimal totals and test costs against attributed rows. |
 
 ## Inputs and method
 
@@ -85,8 +86,10 @@ the JSON is keyed by canonical field id and follows this synthetic example:
 }
 ```
 
-Use actual registry ids with actual evidence for a real build. Unknown cost
-field ids fail instead of silently discarding inputs. No default field prices
+Use actual registry ids with actual evidence for a real build. Cost field ids
+must occur in both the snapshot and the lifecycle facts selected for the build;
+otherwise the generator fails before writing any outputs. This also applies to
+snapshot-only fields and the single-field `--self-test` build. No default field prices
 are committed. The generator embeds identical risk objects in posters,
 `_explorer.json` and `_risk.json`. The Explorer reads the existing
 `_explorer.json` contract; it does not perform a second join. Both views show

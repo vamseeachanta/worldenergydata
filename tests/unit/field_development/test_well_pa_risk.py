@@ -6,6 +6,7 @@ Synthetic prices below are arithmetic fixtures, not engineering cost estimates.
 """
 
 from copy import deepcopy
+from decimal import Inexact, localcontext
 
 import pytest
 
@@ -90,6 +91,28 @@ def test_decimal_costs_are_exact():
     inputs["sample_field"]["unit_cost_usd"] = {"TA": "0.1", "COM": "0.2"}
     cost = build_well_pa_signals(snapshot(), inputs)["sample_field"]["cost"]
     assert cost["total_usd"] == "0.8"
+
+
+@pytest.mark.parametrize("precision", [6, 28])
+def test_decimal_total_retains_the_final_addition_carry(precision):
+    """18 * (10**27 - 1) cents = 179999999999999999999999999.82 USD."""
+    data = snapshot()
+    data["fields"][0].update(borehole_count=18, status_counts={"TA": 9, "COM": 9})
+    data.update(joined_boreholes=18, source_boreholes=19)
+    inputs = prices()
+    inputs["sample_field"]["unit_cost_usd"] = {
+        "TA": "9999999999999999999999999.99",
+        "COM": "9999999999999999999999999.99",
+    }
+    with localcontext() as context:
+        context.prec = precision
+        context.traps[Inexact] = True
+        cost = build_well_pa_signals(data, inputs)["sample_field"]["cost"]
+    assert cost["total_usd"] == "179999999999999999999999999.82"
+    assert cost["by_status_usd"] == {
+        "TA": "89999999999999999999999999.91",
+        "COM": "89999999999999999999999999.91",
+    }
 
 
 def test_empty_field_has_no_inferred_zero_liability():

@@ -66,13 +66,14 @@ def _cost(counts: dict, basis: dict | None, borehole_count: int) -> dict:
     # https://openstax.org/books/principles-managerial-accounting/pages/2-2-identify-and-apply-basic-cost-behavior-patterns
     # Both per-borehole prices and their source are required scenario inputs.
     # Size decimal precision from the inputs so multiplication and addition are
-    # exact even when price exponents differ. Output strings retain USD precision.
+    # exact even when price exponents differ, including the final addition carry.
+    # Output strings retain USD precision.
     low = min(price.as_tuple().exponent for price in prices.values())
     high = max(
         price.adjusted() + len(str(counts[code])) for code, price in prices.items()
     )
     with localcontext() as context:
-        context.prec = max(context.prec, high - low + len(str(len(prices))))
+        context.prec = max(context.prec, high - low + 1 + len(str(len(prices))))
         parts = {code: prices[code] * counts[code] for code in CANDIDATE_STATUSES}
         total = sum(parts.values(), Decimal(0))
     return {

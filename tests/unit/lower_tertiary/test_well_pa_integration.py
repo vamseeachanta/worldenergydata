@@ -6,6 +6,8 @@ import runpy
 from collections import Counter
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "data/modules/bsee/borehole_status"
 POSTERS = ROOT / "reports/lower_tertiary/lifecycle"
@@ -66,6 +68,10 @@ def test_explicit_cost_inputs_flow_to_the_consumer(monkeypatch, tmp_path):
     """Every candidate at a hypothetical 10 USD costs 10*(TA+COM) USD."""
     module = builder()
     facts = json.loads((POSTERS / "_facts.json").read_text())[0]
+    rows = json.loads((DATA / "attributed.json").read_text())
+    counts = Counter(
+        row["status_code"] for row in rows if row["field_id"] == facts["id"]
+    )
     path = tmp_path / "costs.json"
     path.write_text(
         json.dumps(
@@ -87,9 +93,44 @@ def test_explicit_cost_inputs_flow_to_the_consumer(monkeypatch, tmp_path):
     risk = json.loads((tmp_path / "_risk.json").read_text())
     signal = risk["fields"][facts["id"]]["well_pa"]
     assert signal["cost"]["status"] == "SCENARIO"
-    assert signal["cost"]["total_usd"] == str(
-        (signal["ta_count"] + signal["com_count"]) * 10
+    assert signal["cost"]["total_usd"] == str((counts["TA"] + counts["COM"]) * 10)
+
+
+@pytest.mark.parametrize("extra_args", [[], ["--self-test"]])
+def test_cost_inputs_without_lifecycle_facts_fail_before_writing(
+    monkeypatch, tmp_path, extra_args
+):
+    """Snapshot membership alone must not allow silently discarded costs."""
+    module = builder()
+    facts_ids = {facts["id"] for facts in json.loads(module.FACTS.read_text())}
+    snapshot_ids = {
+        field["field_id"]
+        for field in json.loads((DATA / "summary.json").read_text())["fields"]
+    }
+    snapshot_only = snapshot_ids - facts_ids
+    assert len(snapshot_only) == 1
+    costs = tmp_path / "costs.json"
+    costs.write_text(
+        json.dumps(
+            {
+                next(iter(snapshot_only)): {
+                    "unit_cost_usd": {"TA": "10", "COM": "20"},
+                    "source": "Synthetic arithmetic fixture",
+                    "price_basis": "Hypothetical USD; not a field estimate",
+                }
+            }
+        )
     )
+    output = tmp_path / "posters"
+    output.mkdir()
+    monkeypatch.setattr(module, "HERE", output)
+    monkeypatch.setattr(
+        "sys.argv",
+        ["build_lifecycle_posters.py", "--well-pa-costs", str(costs), *extra_args],
+    )
+    with pytest.raises(ValueError, match="Cost inputs require lifecycle facts"):
+        module.main()
+    assert list(output.iterdir()) == []
 
 
 def test_templates_render_count_provenance_and_cost_limit():
