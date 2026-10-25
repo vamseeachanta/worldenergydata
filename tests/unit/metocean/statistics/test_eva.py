@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pytest
+
 from worldenergydata.metocean.statistics.eva import (
     EVAResult,
     ExtremeValueAnalysis,
@@ -202,10 +203,16 @@ def test_annual_gumbel_values_and_partial_year_selection(monkeypatch):
 
     series = pd.Series(
         [1.0, 5.0, 2.0, 7.0, 3.0, 9.0],
-        index=pd.to_datetime([
-            "2010-12-30", "2010-12-31", "2011-06-01",
-            "2011-12-31", "2012-01-01", "2012-01-02",
-        ]),
+        index=pd.to_datetime(
+            [
+                "2010-12-30",
+                "2010-12-31",
+                "2011-06-01",
+                "2011-12-31",
+                "2012-01-01",
+                "2012-01-02",
+            ]
+        ),
         name="hs",
     )
     selected = []
@@ -216,7 +223,9 @@ def test_annual_gumbel_values_and_partial_year_selection(monkeypatch):
 
     monkeypatch.setattr(upstream.st.gumbel_r, "fit", fit)
     result = ExtremeValueAnalysis().fit_annual_maxima(
-        series, distribution="GUM", periods=[1, 100],
+        series,
+        distribution="GUM",
+        periods=[1, 100],
     )
     assert selected
     assert all(values == [5.0, 7.0, 9.0] for values in selected)

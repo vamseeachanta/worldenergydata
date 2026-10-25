@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import pytest
+
 from worldenergydata.metocean.statistics.joint_probability import (
     JointModel,
     JointProbabilityModel,
@@ -147,4 +148,6 @@ def test_decode_upstream_positions(monkeypatch):
     np.testing.assert_array_equal(model.tp_samples, tp)
     assert model.fitted_periods == (50,)
     # Independently repeat the documented upstream duration expression.
-    assert model.state_duration_hours == ((hs.index[-1] - hs.index[0]).days + 1) * 24 / len(hs)
+    assert model.state_duration_hours == (
+        (hs.index[-1] - hs.index[0]).days + 1
+    ) * 24 / len(hs)
