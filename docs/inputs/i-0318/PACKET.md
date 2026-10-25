@@ -11,13 +11,15 @@ Found: report inventory, duration tables, quality counts, website snapshots, and
 | Revision | Date | Change and reason |
 | --- | --- | --- |
 | 1 | 2026-10-24 | Pin public input evidence and identify unresolved defects for later specification [R1], [D4], [H6]. |
+| 2 | 2026-10-25 | Add public, immutable website references and an exact snapshot resolver for independent source checks [S1-S5]. |
 
 ## Source inventory
 
-WED denotes this repository; SITE denotes the website checkout containing [S1-S5].
+WED denotes this repository; SITE denotes the [public website repository](https://api.github.com/repositories/304057831) containing [S1-S5].
 WED revision: `a2956f045dc8655f5d17722911537b0ff89b6272`; SITE revision: `21dff6519755593fabd3fac7d298621d02815dba`.
 Digests cover opened file bytes; sizes use bytes; file dates are last commit dates; [E1-E2] use UTC retrieval times, not dataset vintages.
-References resolve below; [S2] uses a uniquely resolved filename glob.
+The [revision-pinned SITE tree](https://api.github.com/repositories/304057831/git/trees/21dff6519755593fabd3fac7d298621d02815dba?recursive=1) resolves exact paths; [S2] is its unique entry with blob `eededa9bbdcdb003cbcd4093682285162d1ec0e4`.
+[S2]'s account-bearing filename is resolved in that tree rather than reproduced; its immutable blob link below returns the source bytes as base64-encoded API content.
 Software/documentation reuse follows [L1]; third-party payload rights require separate confirmation [H5], [H6].
 Only paths, digests, schemas, and permitted metadata are reproduced; publication permissions below apply to this metadata [H6].
 
@@ -44,11 +46,11 @@ Only paths, digests, schemas, and permitted metadata are reproduced; publication
 | H6 | `WED:data/modules/hse/offshore/README.md` | `75da251722dd012077e31af03a7e3aa3be924072bba6cc2976dee8affab77616` | 7528 bytes | 2026-10-24 | Canonical index and review requirements | not applicable; documentation | ours; MIT; yes |
 | H7 | `WED:packages/worldenergydata-bsee/src/worldenergydata/hse/importers/bsee_incinv_importer.py` | `b12a33b5090f7558ba954e97d5a456bc611617202255644c4e404cf5b0d70737` | 11241 bytes | 2026-06-24 | Incident schema and generated keys | dates, incident counts; code | ours; MIT; yes |
 | H8 | `WED:packages/worldenergydata-bsee/src/worldenergydata/hse/acquirers/bsee_acquirer.py` | `ff7d4962ff13c65b6a9c9636491f9dc1529f69fb2258587c2a31361bc0cce84d` | 10709 bytes | 2026-06-24 | Regulator acquisition URLs | not applicable; code | ours; MIT; yes |
-| S1 | `SITE:demos/hse-risk-dashboard-data.js` | `53057448b3c094418dceab3bd45b5108a8edbacd45a0d2994ba3f37978587ab4` | 11338 bytes | 2026-02-24 | Embedded risk scores | dimensionless scores, incident counts; code | reuse UNVERIFIED; metadata: yes |
-| S2 | `SITE:data/hf-cache/*__dc_bores.json` | `c0ac5fd09ffb9763f55cd7f484f0a0f34bbb61d8d3e2abc8d9cae7ce823f32a5` | 131091 bytes | 2026-07-26 | Website drilling/completion snapshot | days, ft, ppg; 253 rows | reuse UNVERIFIED; metadata: yes |
-| S3 | `SITE:scripts/generate_marine_safety_data.py` | `d4edcf131f8913f7288fbbb3f23ccccf263394563557f8adae5f81b813da5987` | 8126 bytes | 2026-02-13 | Sample-data generator | incident counts; code, not cases | reuse UNVERIFIED; metadata: yes |
-| S4 | `SITE:demos/hse-risk-dashboard.html` | `985c2fa1aeac5181a16ff915e221c8c3d73356ef55e74aa7d04d9944286e3de9` | 35619 bytes | 2026-08-04 | Interactive dashboard and limitations | dimensionless scores; page | reuse UNVERIFIED; metadata: yes |
-| S5 | `SITE:scripts/refresh-hf-data.js` | `fe7c339d31d927a25b44003c658b7cb6ecc2f9221ca4593524987eb457488c59` | 2050 bytes | 2026-07-26 | Snapshot refresh and publication route | not applicable; code | reuse UNVERIFIED; metadata: yes |
+| S1 | [`SITE:demos/hse-risk-dashboard-data.js`](https://api.github.com/repositories/304057831/contents/demos/hse-risk-dashboard-data.js?ref=21dff6519755593fabd3fac7d298621d02815dba) | `53057448b3c094418dceab3bd45b5108a8edbacd45a0d2994ba3f37978587ab4` | 11338 bytes | 2026-02-24 | Embedded risk scores | dimensionless scores, incident counts; code | reuse UNVERIFIED; metadata: yes |
+| S2 | [SITE:S2 immutable blob](https://api.github.com/repositories/304057831/git/blobs/eededa9bbdcdb003cbcd4093682285162d1ec0e4) | `c0ac5fd09ffb9763f55cd7f484f0a0f34bbb61d8d3e2abc8d9cae7ce823f32a5` | 131091 bytes | 2026-07-26 | Website drilling/completion snapshot | days, ft, ppg; 253 rows | reuse UNVERIFIED; metadata: yes |
+| S3 | [`SITE:scripts/generate_marine_safety_data.py`](https://api.github.com/repositories/304057831/contents/scripts/generate_marine_safety_data.py?ref=21dff6519755593fabd3fac7d298621d02815dba) | `d4edcf131f8913f7288fbbb3f23ccccf263394563557f8adae5f81b813da5987` | 8126 bytes | 2026-02-13 | Sample-data generator | incident counts; code, not cases | reuse UNVERIFIED; metadata: yes |
+| S4 | [`SITE:demos/hse-risk-dashboard.html`](https://api.github.com/repositories/304057831/contents/demos/hse-risk-dashboard.html?ref=21dff6519755593fabd3fac7d298621d02815dba) | `985c2fa1aeac5181a16ff915e221c8c3d73356ef55e74aa7d04d9944286e3de9` | 35619 bytes | 2026-08-04 | Interactive dashboard and limitations | dimensionless scores; page | reuse UNVERIFIED; metadata: yes |
+| S5 | [`SITE:scripts/refresh-hf-data.js`](https://api.github.com/repositories/304057831/contents/scripts/refresh-hf-data.js?ref=21dff6519755593fabd3fac7d298621d02815dba) | `fe7c339d31d927a25b44003c658b7cb6ecc2f9221ca4593524987eb457488c59` | 2050 bytes | 2026-07-26 | Snapshot refresh and publication route | not applicable; code | reuse UNVERIFIED; metadata: yes |
 | L1 | `WED:LICENSE` | `abe9282066701ba45ec516e77329e14f5e27e5ae462fd1fd23fe9f62e27d4d91` | 1071 bytes | 2026-03-24 | Software and documentation licence | not applicable; licence | ours; MIT; yes |
 | E1 | <https://www.data.bsee.gov/Main/HtmlPage.aspx?page=boreholeFields> | `7d3eb1bf9a1d1b91328f55031720ab5911134ebcfb41aa03d224d2bd6cf013d3` | 35001 bytes | 2026-10-25T02:08:22Z retrieved | Regulator borehole status definitions | not applicable; reference page | public page; metadata: yes; payload terms UNVERIFIED |
 | E2 | <https://www.bsee.gov/stats-facts/offshore-incident-statistics> | `6b623967787488b8c1b6f6bc17cbcad011f0caf313b0ca296a115883cff2e611` | 88966 bytes | 2026-10-25T02:08:44Z retrieved | Regulator incident statistics landing page | not applicable; reference page | public page; metadata: yes; payload terms UNVERIFIED |
