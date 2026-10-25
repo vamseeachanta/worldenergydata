@@ -1,5 +1,8 @@
 """Independent arithmetic on synthetic Climate TRACE schema observations."""
 
+from dataclasses import replace
+from datetime import date
+
 import pytest
 
 from worldenergydata.esg_carbon import read_climate_trace_csv
@@ -148,6 +151,21 @@ def test_naive_period_filters_are_rejected(tmp_path, method, field, empty):
 
 
 @pytest.mark.parametrize("method", ["select", "summarize"])
+@pytest.mark.parametrize("field", ["start_time", "end_time"])
+@pytest.mark.parametrize("empty", [False, True])
+@pytest.mark.parametrize("value", [date(2024, 1, 1), "2024-01-01T00:00:00Z", 2024])
+def test_non_datetime_period_filters_are_rejected(
+    tmp_path, method, field, empty, value
+):
+    inventory = read_climate_trace_csv(write_inventory(tmp_path), edition="x")
+    filters = {field: value}
+    if empty:
+        filters["source_id"] = "absent"
+    with pytest.raises(ValueError, match=rf"{field}.*timezone-aware"):
+        getattr(inventory, method)(**filters)
+
+
+@pytest.mark.parametrize("method", ["select", "summarize"])
 @pytest.mark.parametrize("horizon", ["100", "20"])
 def test_alias_gas_filters_match_canonical_records(tmp_path, method, horizon):
     text = HEADER + ROW.replace(",co2,", f",co2e_{horizon}yr,")
@@ -162,3 +180,31 @@ def test_alias_gas_filters_match_canonical_records(tmp_path, method, horizon):
         assert result.record_count == 1
         assert result.status == "COMPLETE"
         assert result.total_tonnes == 12.5
+
+
+@pytest.mark.parametrize("method", ["select", "summarize"])
+@pytest.mark.parametrize("horizon", ["100", "20"])
+def test_direct_records_share_canonical_gas_basis(tmp_path, method, horizon):
+    inventory = read_climate_trace_csv(write_inventory(tmp_path), edition="x")
+    record = inventory.records[0]
+    alias = replace(record, gas=f"co2e_{horizon}yr")
+    canonical = replace(record, source_id="synthetic-2", gas=f"co2e_{horizon}gwp")
+    other_horizon = "20" if horizon == "100" else "100"
+    other = replace(record, gas=f"co2e_{other_horizon}yr")
+    inventory = replace(inventory, records=(alias, canonical, other))
+
+    assert alias.gas == f"co2e_{horizon}gwp"
+    assert alias.basis == canonical.basis
+    assert alias.basis != other.basis
+    query = getattr(inventory, method)
+    result = query(gas=f"co2e_{horizon}yr")
+    assert result == query(gas=f"co2e_{horizon}gwp")
+    if method == "select":
+        assert result == (alias, canonical)
+    else:
+        assert result.record_count == 2
+        assert result.total_tonnes == 25.0
+        assert result.status == "COMPLETE"
+        assert result.gas == f"co2e_{horizon}gwp"
+    with pytest.raises(ValueError, match="basis"):
+        inventory.summarize()

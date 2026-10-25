@@ -36,6 +36,10 @@ class EmissionRecord(EmissionBasis):
     emissions_quantity: float | None
     units: str = "tonnes"
 
+    def __post_init__(self) -> None:
+        """Keep direct construction on the same canonical basis as CSV imports."""
+        object.__setattr__(self, "gas", _GAS_ALIASES.get(self.gas, self.gas))
+
     @property
     def basis(self) -> EmissionBasis:
         return EmissionBasis(
@@ -96,7 +100,9 @@ class EmissionInventory:
     ) -> tuple[EmissionRecord, ...]:
         """Match canonical gas aliases; period filters shall be timezone-aware."""
         for field, value in (("start_time", start_time), ("end_time", end_time)):
-            if value is not None and value.utcoffset() is None:
+            if value is not None and (
+                not isinstance(value, datetime) or value.utcoffset() is None
+            ):
                 raise ValueError(f"{field} filter must be timezone-aware")
         filters = {
             "source_id": source_id,
