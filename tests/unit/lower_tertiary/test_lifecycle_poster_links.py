@@ -170,6 +170,50 @@ def test_generator_can_write_to_a_separate_output_directory(
 
 
 @unit
+@pytest.mark.parametrize("lease_panels_only", [False, True])
+@pytest.mark.parametrize("operation", ["read", "write"])
+def test_generator_outputs_utf8_with_a_windows_default_encoding(
+    tmp_path, monkeypatch, lease_panels_only, operation
+):
+    """Both modes must preserve output bytes when the text default is cp1252."""
+    builder = _load_builder()
+    reference = tmp_path / "reference"
+    localized = tmp_path / "localized"
+
+    def generate(output):
+        argv = ["build_lifecycle_posters.py", "--output-dir", str(output)]
+        if lease_panels_only:
+            argv.append("--lease-panels-only")
+        monkeypatch.setattr("sys.argv", argv)
+        builder.main()
+
+    generate(reference)
+    read_text = Path.read_text
+    write_text = Path.write_text
+
+    def windows_read(path, encoding=None, errors=None):
+        if path.is_relative_to(builder.HERE):
+            encoding = encoding or "cp1252"
+        return read_text(path, encoding=encoding, errors=errors)
+
+    def windows_write(path, data, encoding=None, errors=None, newline=None):
+        return write_text(
+            path, data, encoding=encoding or "cp1252", errors=errors, newline=newline
+        )
+
+    if operation == "read":
+        monkeypatch.setattr(Path, "read_text", windows_read)
+    else:
+        monkeypatch.setattr(Path, "write_text", windows_write)
+    generate(localized)
+    assert {p.name for p in localized.iterdir()} == {
+        p.name for p in reference.iterdir()
+    }
+    for expected in reference.iterdir():
+        assert (localized / expected.name).read_bytes() == expected.read_bytes()
+
+
+@unit
 def test_source_names_cannot_close_the_embedded_poster_script():
     from worldenergydata.field_development.landman import render_lease_table
 

@@ -167,6 +167,26 @@ def test_snapshot_rejects_changed_source_bytes(tmp_path, filename):
         load_lease_snapshot(tmp_path)
 
 
+@pytest.mark.parametrize(
+    "filename",
+    ["leases.json", "panel_values.json", "operators.json", "source_manifest.json"],
+)
+def test_snapshot_rejects_crlf_checkout_bytes_and_recovers(tmp_path, filename):
+    """Checkout conversion must not bypass validation of the recorded bytes."""
+    for source in SOURCE.glob("*.json"):
+        (tmp_path / source.name).write_bytes(source.read_bytes())
+    expected = load_lease_snapshot(tmp_path)
+    path = tmp_path / filename
+    original = path.read_bytes()
+    converted = original.replace(b"\n", b"\r\n")
+    assert converted != original
+    path.write_bytes(converted)
+    with pytest.raises(ValueError, match="digest"):
+        load_lease_snapshot(tmp_path)
+    path.write_bytes(original)
+    assert load_lease_snapshot(tmp_path) == expected
+
+
 def test_snapshot_rejects_duplicate_normalized_identifiers(tmp_path):
     for path in SOURCE.glob("*.json"):
         (tmp_path / path.name).write_bytes(path.read_bytes())
