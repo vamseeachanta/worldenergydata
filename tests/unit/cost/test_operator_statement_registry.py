@@ -256,6 +256,91 @@ def test_document_channels_and_nonadjacent_year_bounds(synthetic_operator, chann
     assert result["coverage_by_channel"][channel] == [2020, 2024]
 
 
+def test_mixed_channels_and_statuses_have_independent_coverage(synthetic_operator):
+    """Hand table within synthetic_operator's supported 2020–2024 window:
+
+    year | status         | channel
+    2020 | verified       | annual_report
+    2021 | missing        | none
+    2022 | verified       | sec_10k
+    2023 | access_refused | none
+    2024 | verified       | annual_report
+
+    Bounds are the first and last verified years in this table. Each channel
+    lists only its own verified years, once each, in ascending order.
+    Refusal evidence follows refused_operator's synthetic HTTP 403 example.
+    """
+    synthetic_operator["filing_channels"] = ["annual_report", "sec_10k"]
+    for year, channel in [
+        (2020, "annual_report"),
+        (2022, "sec_10k"),
+        (2024, "annual_report"),
+    ]:
+        document = {
+            **synthetic_document(),
+            "url": f"https://example.org/report-{year}.pdf",
+            "fiscal_year": year,
+            "channel": channel,
+            "identity_quote": f"Synthetic Operator {channel} {year}",
+        }
+        synthetic_operator["coverage_by_year"][str(year)] = {
+            "status": "verified",
+            "note": "Synthetic evidence",
+            "documents": [document],
+        }
+
+    refusal = synthetic_observations()[0]
+    refusal.update(url="https://example.org/restricted-2023", http_status=403)
+    synthetic_operator["observations"].append(refusal)
+    synthetic_operator["coverage_by_year"]["2023"].update(
+        status="access_refused",
+        refusal_url=refusal["url"],
+        refusal_scope="Synthetic restricted annual statement",
+    )
+
+    expected = {
+        "earliest_covered_year": 2020,
+        "latest_verified_year": 2024,
+        "coverage_by_channel": {
+            "annual_report": [2020, 2024],
+            "sec_10k": [2022],
+        },
+        "coverage_by_year": {
+            2020: "verified",
+            2021: "missing",
+            2022: "verified",
+            2023: "access_refused",
+            2024: "verified",
+        },
+    }
+    assert (
+        derive_coverage(OperatorStatement.model_validate(synthetic_operator))
+        == expected
+    )
+
+    # A distinct supplemental document must not repeat a channel's year.
+    documents = synthetic_operator["coverage_by_year"]["2020"]["documents"]
+    documents.append(
+        {**documents[0], "url": "https://example.org/report-2020-supplement.pdf"}
+    )
+    assert (
+        derive_coverage(OperatorStatement.model_validate(synthetic_operator))
+        == expected
+    )
+
+    reversed_operator = deepcopy(synthetic_operator)
+    reversed_operator["filing_channels"].reverse()
+    reversed_operator["observations"].reverse()
+    reversed_operator["coverage_by_year"] = dict(
+        reversed(list(reversed_operator["coverage_by_year"].items()))
+    )
+    for coverage in reversed_operator["coverage_by_year"].values():
+        coverage["documents"].reverse()
+    assert (
+        derive_coverage(OperatorStatement.model_validate(reversed_operator)) == expected
+    )
+
+
 def test_verified_listing_requires_successful_observation(synthetic_operator):
     synthetic_operator["observations"] = []
     synthetic_operator["coverage_by_year"]["2022"] = {
