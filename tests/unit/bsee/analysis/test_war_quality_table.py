@@ -186,6 +186,70 @@ def test_only_valid_reversed_dates_are_flagged():
     assert table["affected_share"].tolist() == [1 / 3]
 
 
+@pytest.mark.parametrize(
+    "invalid_date",
+    [
+        "now",
+        "today",
+        " NoW\t",
+        " TODAY ",
+        "12:30",
+        " 12:30:45 ",
+        "12:30+05:00",
+        "12:30 AM",
+        "January 7",
+        "2024-01",
+        "2024",
+        "01/2024",
+        "01/07/24",
+        "240107",
+    ],
+)
+@pytest.mark.parametrize("bound", ["start", "end"])
+def test_dates_without_explicit_calendar_components_are_invalid(invalid_date, bound):
+    start, end = (
+        (invalid_date, "2000-01-01")
+        if bound == "start"
+        else ("2099-01-01", invalid_date)
+    )
+    frame = pd.DataFrame([[None, start, end, "DRL"]], columns=INPUT_COLUMNS)
+    table = summarize_quality(frame, KNOWN_CODES)
+    # One missing key / one row; an invalid bound never counts as reversed.
+    assert table["defect_type"].tolist() == ["missing_well_key"]
+    assert table["count"].tolist() == [1]
+    assert table["affected_share"].tolist() == [1.0]
+    if bound == "start":
+        assert table["year"].isna().all()
+    else:
+        assert table["year"].tolist() == [2099]
+
+
+@pytest.mark.parametrize(
+    "start,end,year",
+    [
+        ("2024-01-07", "2024-01-01", 2024),
+        ("01/07/2024", "01/01/2024", 2024),
+        ("January 7, 2024", "January 1, 2024", 2024),
+        ("7 Jan 2024", "1 Jan 2024", 2024),
+        ("2024-Jan-07", "2024-Jan-01", 2024),
+        ("20240107", "20240101", 2024),
+        (20240107, 20240101, 2024),
+        (20240107.0, 20240101.0, 2024),
+        ("2024-01-07 12:30:00", "2024-01-01 12:30:00", 2024),
+        (pd.Timestamp("2024-01-07"), pd.Timestamp("2024-01-01"), 2024),
+        ("2024-01-01T00:30:00+01:00", "2023-12-31T22:30:00Z", 2023),
+    ],
+)
+def test_explicit_calendar_dates_preserve_reversal_and_utc_year(start, end, year):
+    frame = pd.DataFrame([["key-a", start, end, "DRL"]], columns=INPUT_COLUMNS)
+    table = summarize_quality(frame, KNOWN_CODES)
+    # One reversed row / one row, including a UTC start in the previous year.
+    assert table["defect_type"].tolist() == ["reversed_dates"]
+    assert table["year"].tolist() == [year]
+    assert table["count"].tolist() == [1]
+    assert table["affected_share"].tolist() == [1.0]
+
+
 def test_numeric_dates_are_calendar_dates_not_epoch_offsets():
     frame = pd.DataFrame(
         [

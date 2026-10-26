@@ -6,6 +6,9 @@ The calendar year comes only from the parsed start date; a missing or
 unparseable start has a nullable, unknown year, with no fallback to the end.
 Dates are parsed independently as calendar values, with timezone offsets
 normalized to UTC. Numeric calendar dates are not treated as epoch offsets.
+Supported strings contain a complete numeric or named-month date with a
+four-digit year, optionally followed by a time. Relative tokens, time-only
+values, incomplete dates and two-digit years are invalid bounds.
 
 Each observed (year, defect_type) emits one row; absent defects emit no row.
 ``missing_well_key`` means a null or whitespace-only key. ``reversed_dates``
@@ -58,6 +61,15 @@ _SCHEMA = {
     "affected_share": "float64",
 }
 _DEFECTS = ("missing_well_key", "reversed_dates", "unknown_activity_code")
+_CALENDAR_DATE = (
+    r"(?:[0-9]{8}"
+    r"|[0-9]{4}[-/.][0-9]{1,2}[-/.][0-9]{1,2}"
+    r"|[0-9]{1,2}[-/.][0-9]{1,2}[-/.][0-9]{4}"
+    r"|[0-9]{4}[-\s]+[A-Za-z]+[-\s]+[0-9]{1,2}"
+    r"|[0-9]{1,2}[-\s]+[A-Za-z]+[-\s]+[0-9]{4}"
+    r"|[A-Za-z]+[-\s]+[0-9]{1,2},?[-\s]+[0-9]{4})"
+    r"(?:[T\s].*)?"
+)
 
 
 def _parse_dates(values: pd.Series) -> pd.Series:
@@ -65,6 +77,8 @@ def _parse_dates(values: pd.Series) -> pd.Series:
     # prevents pandas from interpreting these calendar values as epoch offsets.
     text = values.astype("string").str.strip()
     text = text.str.replace(r"^(\d+)\.0+$", r"\1", regex=True)
+    # Require all calendar components before pandas can supply clock defaults.
+    text = text.where(text.str.fullmatch(_CALENDAR_DATE, na=False))
     return pd.to_datetime(text, errors="coerce", format="mixed", utc=True)
 
 
